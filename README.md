@@ -7,7 +7,7 @@ Please subscribe to this repository to participate in discussions.  If you would
 
 ## Charter
 
-*For the full charter, including answers to frequently asked questions, see [charter.md](charter.md).*
+*For the full charter, including answers to frequently asked questions, see [charter.md](docs/charter.md).*
 
 OmnICU is a new project whose objective is to solve the needs of clients who wish to provide client-side i18n for their products in resource-constrained environments.
 
