@@ -7,8 +7,8 @@ Where multiple maintainers are listed, the first name is the primary maintainer:
 
 | **API**               | **Rust Eqivalent**                                             | **Maintainer**      | **CLDR-Aware**   | **Notes**                               |
 | --------------------- | -------------------------------------------------------------- | ------------------- | ---------------- | --------------------------------------- |
-| icu::DateTimeFormat   | [unic-datetime](https://github.com/zbraniecki/unic-datetime)   | Zibi                | ?                |                                         |
-| icu::Locale           | [unic-locale](https://github.com/zbraniecki/unic-locale)       | Zibi                | ?                |                                         |
+| icu::DateTimeFormat   | [unic-datetime](https://github.com/zbraniecki/unic-datetime)   | Zibi                | Yes                |                                         |
+| icu::Locale           | [unic-locale](https://github.com/zbraniecki/unic-locale)       | Zibi                | Yes                |                                         |
 | icu::Bidi             | [unicode-bidi](http://docs.rs/unicode-bidi)                    | Servo / Manish      | N/A              |                                         |
 | icu::Normalization    | [unicode-normalization](http://docs.rs/unicode-normalization/) | Manish / unicode-rs | No               |                                         |
 | icu::Script           | [unicode-script](http://docs.rs/unicode-script/)               | Manish              | N/A              |                                         |
