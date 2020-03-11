@@ -64,15 +64,19 @@ A key is an integer from an enumeration.  Each key has a corresponding type, whi
 | CURR_LOCAL_CODE_V1 | 0x3001 | string | The locale's currency code |
 | CURR_LOCAL_SYM_V1 | 0x3002 | string | The symbol for that currency |
 
+*Open Question:* How do you map from an enum/integer to a type in a type-safe way in Rust?  In C++/Java, this would entail some sort of cast, which I imagine is possible in Rust but might require an unsafe block.
+
 ### Request Variables
 
 Requests made to data providers consist of a key and additional *request variables*.  The variables are:
 
 1. Requested LangID
 2. Optional String Identifier (explained below)
-3. String Encoding (UTF-8 or UTF-16)
+3. String Encoding (UTF-8 or UTF-16, explained below)
 
 The optional string identifier should be a string corresponding to the key, such as the currency code when requesting `CURR_SYM_V1`.  Most keys will not require an optional string identifier.
+
+The string encoding corresponds to the encoding of the string identifier and also the preferred encoding of strings in the response object.  In other words, it is expected that the string encoding in the request should equal the string encoding in the response.
 
 ### Static Data Slicing
 
