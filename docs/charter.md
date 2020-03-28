@@ -59,3 +59,7 @@ Since C++ and Java are both target output languages of OmnICU, it is possible th
 ### Why not put it in the ICU repository governed directly by ICU-TC?
 
 OmnICU will have some overlap of personnel with ICU, but the processes, builds, and release cycle will be run separately from ICU.  The ICU repository is closely tied to the ICU release processes, with each pull request running the ICU4C and ICU4J test suites, linked to Jira issues.
+
+### What if clients need a feature that is not in ECMA-402?
+
+Clients of OmnICU may need features beyond those recommended by ECMA-402.  The subcommittee is not ruling out the option of adding additional features in the same style as ECMA-402 to cover additional client needs.  The details for how to determine what features belong in OmnICU that aren't already in ECMA-402 will be discussed at a future time.
