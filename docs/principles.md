@@ -13,7 +13,7 @@ Clients can mmap, async fetch, package data with the library...
 
 ### No internal threading
 
-Both Clojure and Wasm support multithreading but we don’t have a need for it in the i18n realm.
+Both Rust and Wasm support multithreading but we don’t have a need for it in the i18n realm.
 
 To simplify our library, and make sure we don’t have cross platform/language compatibility issues, one should avoid using threads in the core library.
 
