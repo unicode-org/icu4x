@@ -48,6 +48,10 @@ Internally, the first draft of OmnICU will be built in a [no_std Rust Environmen
 
 The implementation language is intended to be an abstract concept: an internal detail which could change over time.  The focus of OmnICU is on the clients: the web platform, Android, iOS, and the other platforms listed earlier.  Rust, in the context Fuchsia and Gecko, is just one of many clients.
 
+### Why consider Lisp for a transpiler?
+
+A transpiler can be written in any language, but Lisp has a history of being used in high leverage applications like this, and its S-expression syntax is useful in compilers, etc. A modern dialect like Clojure has growth, tooling, and large library access. A one-to-many transpiler, as needed here, has more inherent complexity than just a one-to-one transpiler, so Lisp would maximize chances for success.  [See here](https://elangocheran.com/2020/03/18/why-clojure-lisp-is-good-for-writing-transpilers/) for more info.
+
 ### Won't this increase the maintenance burden?
 
 I18n engineers currently need to maintain several half-baked client-side i18n solutions including Closure i18n and Dart Intl.  We hope OmnICU will be able to eventually replace those libraries, and it will also allow us to fulfill the needs of new clients that we are currently unable to support.
