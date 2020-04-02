@@ -29,10 +29,16 @@ You can include images using code such as the following:
 ![JSON Data Provider](assets/multi-provider-architecture.svg)
 ```
 
-Inside the `![...]` is the alt text, and inside the `(...)` is the relative path to the image file.
+Inside the `![...]` is the alt text, and inside the `(...)` is the relative path to the image file.  You should save your images in an *assets* folder in the same directory as the Markdown file.
 
 Shane likes SVG files because they scale up and down nicely on different screen sizes and resolutions.  However, bitmaps are acceptable, too, depending on how you created the images.
 
 Create the images using your favorite editor.  For the images in [data-pipeline.md](data-pipeline.md), Shane used Lucidchart.  You can also use Inkscape, Gimp, Google Slides, Adobe Illustrator, etc.  If you have a tablet, another good option may be to draw the image on your screen with your stylus into a whiteboard program and export it as an image.
 
+#### Previewing Images in PRs
 
+Here is how others can view your Markdown with images in a PR:
+
+1. In the PR, click "Files Changed" (goes to /pull/123/files)
+2. Find the Markdown file you want to preview
+3. Click the three dots (...) to open the menu, then click "View File" (goes to /blob/abcdef0/docs/example.md)
