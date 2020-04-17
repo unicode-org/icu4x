@@ -1,0 +1,130 @@
+[
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-u-hc-h12"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "extensions": {
+        "unicode": {
+          "keywords": {
+            "hc": "h12"
+          }
+        }
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-u-hc-h23"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "unicode": {
+          "keywords": {
+            "hc": "h23"
+          }
+        }
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-u-foo"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "unicode": {
+          "attributes": [
+            "foo"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-u-hc-h23-ca-gregory"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "unicode": {
+          "keywords": {
+            "hc": "h23",
+            "ca": "gregory"
+          }
+        }
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-t-pl-Latn-DE"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "transform": {
+          "tlang": "pl-Latn-DE"
+        }
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-x-private-foobar"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "private": ["private", "foobar"]
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-u-ca-buddhist-hc-h12-t-es-AR-h0-hybrid-x-private-foobar"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "unicode": {
+          "keywords": {
+            "ca": "buddhist",
+            "hc": "h12"
+          }
+        },
+        "transform": {
+          "tlang": "es-AR",
+          "tfields": {
+            "h0": "hybrid"
+          }
+        },
+        "private": ["private", "foobar"]
+      }
+    }
+  }
+]
