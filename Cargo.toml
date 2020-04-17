@@ -1,3 +1,7 @@
 [workspace]
 
-members = []
+members = [
+    "components/icu",
+    "components/icu4x",
+    "components/locale",
+]
