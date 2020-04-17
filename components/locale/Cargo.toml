@@ -1,6 +1,6 @@
 [package]
 name = "icu-locale"
-description = "API for managing Unicode Langauge and Locale Identifiers"
+description = "API for managing Unicode Language and Locale Identifiers"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
