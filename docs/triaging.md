@@ -17,7 +17,7 @@ OmnICU uses GitHub for tracking feature requests and work items.
 The following labels are types; every issue should have one:
 
 - **bug** = a defect in existing code.
-- **core** = a high-priority improvement or new feature.
+- **core feature** = a high-priority improvement or new feature.
 - **documentation** = relates to documentation, including user guide, architecture design, team processes, and API docs.
 - **enhancement** = a lower-priority improvement or new feature.
 - **question** = an issue that can be addressed in the discussion thread without checking in any code or documentation.
