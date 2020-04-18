@@ -9,11 +9,11 @@ A key piece of rolling out ergonomic OmnICU APIs for Rust and other target langu
 
 When a programmer writes code using Intl, the code they write should demonstrate their *intent*.  They should use what I'm calling the *ergonomic API* of OmnICU.
 
-A *logical API*, on the other hand, is one that is closely tied to specific to functional units, like currencies or measurement units.  A logical API function should require a specific hunk of data and perform a specific task.
+A *logical API*, on the other hand, is one that is closely tied to specific to functional units, like currencies or measurement units.  A logical API function should require a specific hunk of data specific to the functional unit and perform a specific task.
 
 Although ergonomic APIs correspond with what users of i18n intend to do, from an implementation standpoint, they are often quite heavy-weight, pulling in many dependencies that may not be required for all call sites.  Intl.NumberFormat is an example: it supports currency formatting, which requires a lot of code and data, but when formatting a number that's not a currency, you shouldn't need to carry all that extra code and data.
 
-The goal of the *wrapper layer* is to provide an ergonomic API for clients, but map it to the logical API under the hood.
+The goal of the *wrapper layer* is to provide an ergonomic API for clients, but resolve the user request into specific functional units, load the data, and pass the data to the logical API under the hood.
 
 ![Ergonomic to Logical API](assets/ergonomic-logical.svg)
 
@@ -51,3 +51,5 @@ This model decouples the data provider from the core business logic; with calls 
 One of the strengths of OmnICU is that the core business logic is written once and shared by many different environments.
 
 Since the wrapper layer needs to be implemented separately for each host language, as much business logic as possible should be moved into the code slicing layer.  The wrapper layer should transform from the ergonomic API to the logical API and load the required data for the logical API; nothing more.
+
+A transpilation or IDL approach could be considered as options for generating the binding logic. Main issues: [#1](https://github.com/unicode-org/omnicu/issues/1), [#2](https://github.com/unicode-org/omnicu/issues/2).
