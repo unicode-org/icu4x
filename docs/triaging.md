@@ -5,7 +5,7 @@ OmnICU uses GitHub for tracking feature requests and work items.
 
 - All issues should have a type label.
     - [Query: issues needing a type](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+-label%3Abug+-label%3A%22core+feature%22+-label%3Adocumentation+-label%3Aenhancement+-label%3Aquestion+-label%3Ainvalid+)
-- All *open* or *backlog* issues should have and assignee or **help wanted** label.
+- All *open* or *backlog* issues should have an assignee or **help wanted** label.
     - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee+)
     - [Query: backlog issues needing assignee or help wanted](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+-label%3A%22help+wanted%22+no%3Aassignee)
 - All *closed* issues should have a resolution, linked pull request, or the **question** type.
