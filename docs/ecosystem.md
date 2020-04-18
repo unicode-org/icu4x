@@ -12,7 +12,7 @@ Where multiple maintainers are listed, the first name is the primary maintainer:
 | icu::Bidi             | [unicode-bidi](http://docs.rs/unicode-bidi)                    | Servo / Manish      | N/A              | No Action  | Bidi and text layout are unlikely to be coming to ECMA-402         |
 | icu::Normalization    | [unicode-normalization](http://docs.rs/unicode-normalization/) | Manish / unicode-rs | No               | Uncertain  | Main issue: [#40](https://github.com/unicode-org/omnicu/issues/40) |
 | icu::Script           | [unicode-script](http://docs.rs/unicode-script/)               | Manish              | N/A              | No Action  | ICU4X should expose UCD data through its own custom pipeline       |
-| icu::IDNa             | [idna](http://docs.rs/idna/)                                   | Servo / Manish      | CLDR confusables | Uncertain  | IDNA is a specific subject area more related to URLs than i18n     |
+| icu::IDNa             | [idna](http://docs.rs/idna/)                                   | Servo / Manish      | CLDR confusables | Uncertain  | Main issue: [#42](https://github.com/unicode-org/omnicu/issues/42) |
 | icu::PluralRules      | [intl-pluralrules](https://github.com/zbraniecki/pluralrules)  | Zibi                | Yes              | Import     |                                                                    |
 | icu::BreakIterator    | [unicode-segmentation](https://docs.rs/unicode-segmentation/)  | Manish / unicode-rs | No               | No Action  | No line segmentation. Wait for clear user demand outside Rust      |
 | icu::Collator         | -                                                              |                     |                  |            |                                                                    |
@@ -20,9 +20,7 @@ Where multiple maintainers are listed, the first name is the primary maintainer:
 | icu::CharConversion   | -                                                              |                     |                  |            |                                                                    |
 | icu::Char             | -                                                              |                     |                  |            |                                                                    |
 | icu::TimeZone         | -                                                              |                     |                  |            |                                                                    |
-| icu::Regex            | -                                                              |                     |                  |            |                                                                    |
+| icu::Regex            | [regex](https://docs.rs/regex/1.3.7/regex/)                    | Core Rust Team      | ?                | No Action  | Main issue: [#37](https://github.com/unicode-org/omnicu/issues/37) |
 | icu::Calendar         | -                                                              |                     |                  |            |                                                                    |
 | icu::ListFormatter    | -                                                              |                     |                  |            |                                                                    |
 | icu::RelativeDateTime | -                                                              |                     |                  |            |                                                                    |
-
-
