@@ -78,7 +78,7 @@ While this sounds a bit obvious, I think it's important to stress that with Rust
 
 The only place this might be an issue is if we decide to deliver ICU4X as multiple Crates. If we do that then we just added a requirement that our inter-Crate APIs be public (there's no privileged sharing outside Crates). This is one reason I propose we deliver ICU4X as a single Crate with multiple modules.
 
-### No public fields :: required
+### No public fields :: suggested
 
 Unless there is a compelling use case, it seems very sensible to never use public fields in structs. This allows for clean encapsulation with essentially no downside for ICU4X. This post sums things up nicely, which I am summarizing below:
 
@@ -86,10 +86,13 @@ For a **pub** field `bar` in a **pub** struct `Foo`:
 
 * Construction: users can create a `Foo { bar: 42 }`.
   * This also means it’s a breaking change for you to add or remove any fields (and using a Default trait won't help you here since you still have to rely on every caller using it to avoid adding a new field being a breaking change).
-* Mutation: if the user has some `mut var: Foo` or `&mut Foo`, they can change the value.
+* Mutation: if the user has some `mut var: Foo` or `&mut Foo`, they can change the value without notice.
+  * While this won't cause any race conditions in Rust, it does prevent a whole class of useful optimizations for types around internal consistency (e.g. you cannot cache otherwise expensive hash-code values).
 * Partial borrow: if a user binds `let var = &foo.bar;` they can still use other fields without any complaint from the borrow checker.
 
 You can always supply public inlinable getters to access fields, and non-public fields are still directly accessible by the current module and any sub-modules.
+
+One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the visual "cleanliness" of bare fields might outweigh the issues above. See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
 ## Derived Traits
 
