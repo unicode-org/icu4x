@@ -128,7 +128,7 @@ Which types implement these traits should be carefully considered and documented
 * [**Eq**](https://doc.rust-lang.org/std/cmp/trait.Eq.html) and [**PartialEq**](https://doc.rust-lang.org/std/cmp/trait.PartialEq.html) are traits designed for comparing equality of types.
   * These traits define the behaviour of the `==`, `!=` operators.
 * **PartialEq** is useful when a looser equality is required (e.g. comparing `NaN`s for floating point).
-* **Ord** and **PartialOrd** are traits designed for ordering types.
+* [**Ord**](https://doc.rust-lang.org/std/cmp/trait.Ord.html) and [**PartialOrd**](https://doc.rust-lang.org/std/cmp/trait.PartialOrd.html) are traits designed for ordering types.
   * These traits define the behaviour of the comparison operators (`<`, `>`, `<=`, `>=`).
   * Their behavior must be consistent with **Eq** and **PartialEq**.
 
@@ -152,7 +152,7 @@ Types in Rust can be **sized** or **unsized**. A sized type knows at compile tim
 
 Perhaps more importantly, **an unsized type can only be passed by reference to other functions** and cannot be Copy-able (though they can be Clone-able). In particular any trait is, by default, unsized which makes storing traits in other structs a bit interesting (there is a [ToOwned](https://doc.rust-lang.org/std/borrow/trait.ToOwned.html) trait to help with this though).
 
-This adds weight to the idea that we should avoid traits and any other unsized types when specifying user visible types. Obviously we will accept things like "str" as parameters (these are unsized), but we aren't adding them directly to structures by reference.
+This adds weight to the idea that we should avoid traits and any other unsized types when specifying user visible types. Obviously we will accept things like `str` as parameters (these are unsized), but we aren't adding them directly to structures by reference.
 
 For example, I think that in general we should avoid returning an abstract trait to the user (intermediate traits like Iterator might be fine though since a user is expected to consume those fairly immediately).
 
@@ -192,7 +192,9 @@ When passing struct types to functions, it's always semantically safe to pass a 
 
 ### Prefer passing Option<T> by value :: suggested
 
-Option is a bit special, and Rust goes to great lengths to avoid needing to allocate an additional instance for this type. In particular, `Option<char>` is a zero-allocation representation and should be passed by value. This applies to some types where the extra `None` state can be encoded as an otherwise "invalid" bit pattern. In the case of `Option<char>`, `None` is [encoded as `0x110000`](https://rust.godbolt.org/z/-ZFwKB) or other invalid bit patterns. This means types like `Vec<Option<char>>` or `[Option<char>;N]` should be preferred over `Vec<&Option<char>>` or `[&Option<char>;N]` which will often remove the need for additional lifetimes
+[Option](https://doc.rust-lang.org/std/option/enum.Option.html) is a bit special, and Rust goes to great lengths to avoid needing to allocate an additional instance for this type. In particular, `Option<char>` is a zero-allocation representation and should be passed by value. This applies to some types where the extra [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None) state can be encoded as an otherwise "invalid" bit pattern.
+
+In the case of `Option<char>`, `None` is [encoded as `0x110000`](https://rust.godbolt.org/z/-ZFwKB) or other invalid bit patterns. This means types like `Vec<Option<char>>` or `[Option<char>;N]` should be preferred over `Vec<&Option<char>>` or `[&Option<char>;N]` which will often remove the need for additional lifetimes
 
 **Open Question**: Since Option is just an enum, should this advice be extended to enums in general? And what about `Box<T>`, which also feels like it should be "cheap" ?
 
@@ -204,7 +206,7 @@ Fundamental types are essentially free to pass around (at least never more expen
 
 ### Use Option exclusively to represent "missing" data :: required
 
-Option is Rust's only recommended way to represent the equivalent of a "null" value (i.e. missing data). Option has a host of useful traits and methods which make it easy to manipulate, propagate and transform.
+[Option](https://doc.rust-lang.org/std/option/enum.Option.html) is Rust's only recommended way to represent the equivalent of a "null" value (i.e. missing data). Option has a host of useful traits and methods which make it easy to manipulate, propagate and transform.
 
 ```
 // Get the value or a default.
@@ -314,7 +316,7 @@ This is because these APIs return a value (or value reference) which cannot be "
 
 The alternative to using direct data accessors which can panic is to use a method which can return **Option** or **Result**. In the case of collections and strings, where a simple data item is being requested, this is most often provided by functions such as "get" (or "get_mut" for mutable references) which return an Option.
 
-If data access is expected to fail occasionally (e.g. looking up properties in a map) then the resulting Option can be [unwrapped](https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or) or propagated accordingly.
+If data access is expected to fail occasionally (e.g. looking up properties in a map) then the resulting [Option can be unwrapped](https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or) or propagated accordingly.
 
 If missing data signals a "hard" error from which the function cannot recover (e.g. user supplies incorrect input) then any returned Option should be [propagated into a Result immediately](https://doc.rust-lang.org/std/option/enum.Option.html#method.ok_or), with an appropriate error message.
 
@@ -328,11 +330,11 @@ This should not include the contract of code in a different Crate. I.e. if a fun
 
 ### Don't Handle Errors :: required
 
-Functions which can error must return a Result, and APIs should be designed such that you should never need to recover from an Err internally (which should always be immediately propagated up to the user by using the '?' operator). I.e. Never write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
+Functions which can error for any reason must return a Result, and APIs should be designed such that you should never need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should always be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. Never write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
 
-This approach should mean that error handling and the design of functions which can propagate errors is consistent everywhere. For non-error cases where different types of result are possible, use an enum.
+This approach should mean that error handling and the design of functions which can propagate errors is consistent everywhere. For non-error cases, where different types of result are possible, use a normal enum.
 
-The only time you might need to handle an Err is if you call APIs outside the library which return Result rather than Option (e.g. allowing a retry for data loading).
+The only time you might need to handle an **Err** is if you call APIs outside the library which return Result rather than Option (e.g. allowing a retry for data loading).
 
 Finally, and fairly obviously, **never turn an error into a panic by unconditionally unwrapping the result**.
 
@@ -349,22 +351,23 @@ If this check does not occur immediately before the data access (i.e. shortly be
 
 For example, if indices obtained from ICU data are to be trusted for indexed access, the data itself must have been validated at some earlier time (e.g. via a checking pass during data loading or use of a trusted hash).
 
-However, you should **never add a check purely in order to call a method which could otherwise panic**; in that situation you should always prefer to call the non-panicking equivalent and handle the Option/Result idiomatically.
+However, you should **never add a check purely in order to call a method which could otherwise panic**; in that situation you should always prefer to call the non-panicking equivalent and handle the Option or Result idiomatically.
 
 ### Prefer Result over Option :: suggested
 
 When creating functions which can fail:
-* Use **Option** for data accessors where "failing" always implicitly means "no data available".
-* Use **Result** for non-trivial errors or any cases where a user facing error message is needed.
+* Use **Result** for all errors, or any cases where a user facing error message is needed.
+* Use **Option** for data accessors where "failing" always **only** implicitly means "no data available".
+  * Especially in cases where we expect the caller to have a reasonable response getting [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None).
 * Use a different enum for non-error cases with multiple return types (which can't use Option).
 
 # Advanced Features
 
-##Operator Overloading
+## Operator Overloading
 
-### No clever syntax :: required
+### No clever operators :: required
 
-Other than the comparison operators defined by `Eq`, `Ord` etc. there is no obvious benefit to overloading other operators (e.g. overloading '*' to do something clever via the [Mul](https://doc.rust-lang.org/std/ops/trait.Mul.html) trait).
+Other than the comparison operators defined by [**Eq**](https://doc.rust-lang.org/std/cmp/trait.Eq.html), [**Ord**](https://doc.rust-lang.org/std/cmp/trait.Ord.html) etc. there is no obvious benefit to overloading other operators (e.g. overloading `*` to do something clever via the [Mul](https://doc.rust-lang.org/std/ops/trait.Mul.html) trait). This could be relaxed if standard Rust idioms for using particular operator overloads exists, and is well understood in the Rust community.
 
 See also [Operators and Symbols](https://doc.rust-lang.org/book/appendix-02-operators.html).
 
@@ -382,7 +385,7 @@ But the caller could just write:
 use_locale_id(&"en_GB".into());
 ```
 
-Rust's lets you bind traits to existing system type (e.g. "str") for use within a module. And importantly, it lets you expose a series to trait bindings that other people can opt into if they want.
+Rust's lets you bind traits to existing system type (e.g. `str`) for use within a module. And importantly, it lets you expose a series to trait bindings that other people can opt into if they want.
 By implementing the generic [`From<&str>`](https://doc.rust-lang.org/std/convert/trait.From.html) trait on `LocaleId` to convert from a string to a locale ID, we also get the [`Into<Foo>`](https://doc.rust-lang.org/std/convert/trait.Into.html) trait implied on `&str` for free.
 
 ```
