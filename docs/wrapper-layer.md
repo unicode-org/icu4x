@@ -19,6 +19,8 @@ The goal of the *wrapper layer* is to provide an ergonomic API for clients, but 
 
 For example, in the above diagram, a client uses the ergonomic Intl.NumberFormat API with options to enable compact notation in long form.  The wrapper layer performs a bit of logic to figure out that this combination of options requires two functional units: plural rules and compact decimal format.  It then delegates to those two functions in the logical API.
 
+Rule of thumb: A good "ergonomic" API is one that makes the "business logic" of the caller more clearly aligned with the task being performed.  It doesn't have to be "simple to use" (if the task if necessarily complex) but it should avoid adding more complexity than already exists in the problem at hand.  The scopes of responsibility, lifecycle, ownership, etc. should be aligned between the caller and the API.
+
 ## Key Requirements for the Wrapper Layer
 
 ### Host Language
@@ -50,6 +52,6 @@ This model decouples the data provider from the core business logic; with calls 
 
 One of the strengths of OmnICU is that the core business logic is written once and shared by many different environments.
 
-Since the wrapper layer needs to be implemented separately for each host language, as much business logic as possible should be moved into the code slicing layer.  The wrapper layer should transform from the ergonomic API to the logical API and load the required data for the logical API; nothing more.
+Since the wrapper layer needs to be implemented separately for each host language, as much business logic as possible should be moved into the logical API.  The wrapper layer should transform from the ergonomic API to the logical API and load the required data for the logical API; nothing more.
 
 A transpilation or IDL approach could be considered as options for generating the binding logic. Main issues: [#1](https://github.com/unicode-org/omnicu/issues/1), [#2](https://github.com/unicode-org/omnicu/issues/2).
