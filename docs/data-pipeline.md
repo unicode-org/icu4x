@@ -1,18 +1,18 @@
-OmnICU Locale Data Pipeline
-===========================
+ICU4X Locale Data Pipeline
+==========================
 
-One of the key design principles of OmnICU is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application.  This document explains how that goal can be achieved.
+One of the key design principles of ICU4X is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application.  This document explains how that goal can be achieved.
 
 ## Definitions
 
 The following terms are used throughout this document.
 
-- **Data Provider:** An object that returns machine-readable data in a well-specified way.  A data provider provides a link between OmnICU and the raw data.
+- **Data Provider:** An object that returns machine-readable data in a well-specified way.  A data provider provides a link between ICU4X and the raw data.
 - **Data Version:** A version reflecting the data itself, abstracted away from the format version and schema version.  For example, CLDR 37 may be a data version.
 - **Format Version:** A version of the file format, abstracted away from the schema version and data version.  For example, Protobuf 2 and Protobuf 3 are format versions.
 - **Format:** How the data is stored on disk or provided from a service.  Examples of data formats: JSON, YAML, Memory-Mapped, Protobuf.  The format is internal to the data provider.
 - **Hunk:** A small piece of locale data relating to a specific task.  For example, the name of January might be a hunk, and a list of all month names could also be considered a hunk.  A data piece is expected to reflect a specific type.
-- **LangID:** A tuple of language, script, and region.  LangID is a request variable.  Subtags should be handled by the OmnICU code rather than the data provider.
+- **LangID:** A tuple of language, script, and region.  LangID is a request variable.  Subtags should be handled by the ICU4X code rather than the data provider.
 - **Key:** An identifier corresponding to a specific hunk.
 - **Mapping:** A mechanism that a data provider should follow to read from the schema and serve a hunk that may have a different type.
 - **Request Variables:** Metadata that is sent along with a key when requesting data from a data provider.
@@ -31,7 +31,7 @@ A JSON data provider might look something like this:
 
 ![JSON Data Provider](assets/json-data-provider.svg)
 
-In the above diagram, OmnICU requests a specific key from the data provider.  The data provider uses a mapping to figure out what path to load from the JSON file corresponding to the key.  It then may use a mapping to convert the JSON object to the type expected for the hunk, and then finally it sends the hunk back to the OmnICU implementation.
+In the above diagram, ICU4X requests a specific key from the data provider.  The data provider uses a mapping to figure out what path to load from the JSON file corresponding to the key.  It then may use a mapping to convert the JSON object to the type expected for the hunk, and then finally it sends the hunk back to the ICU4X implementation.
 
 Requests to the data provider consist not only of a key, but also additional request variables, such as a requested LangID and possibly other metadata. Responses consist not only of a hunk, but also additional response variables, such as a data version, actual LangID, and possibly other metadata.
 
@@ -39,7 +39,7 @@ Data providers can delegate to other data providers for specific tasks.  For exa
 
 ![JSON Data Provider](assets/multi-provider-architecture.svg)
 
-In this example, data requests from OmnICU first go through an LRU cache, before going to a locale-sensitive provider, which forks to one of three other providers depending on the requested locale.
+In this example, data requests from ICU4X first go through an LRU cache, before going to a locale-sensitive provider, which forks to one of three other providers depending on the requested locale.
 
 The system data provider pulls data for *en* and *zh* from an OS RPC service.  The interaction between the data provider and that service are internal to the data provider.
 
@@ -54,9 +54,9 @@ A key is an integer from an enumeration.  Each key has a corresponding type, whi
 | Key Name | Key Integer | Type | Comments |
 |---|---|---|---|
 | NUM_SYM_DECIMAL_V1 | 0x1000 | string |
-| NUM_SYM_GROUP_V1 | 0x1001 | i32 | Code point, used in older OmnICUs |
+| NUM_SYM_GROUP_V1 | 0x1001 | i32 | Code point, used in older ICU4Xs |
 | NUM_GRP_SIZES_V1 | 0x1002 | tuple(i8, i8) |
-| NUM_SYM_GROUP_V2 | 0x1003 | string | String, used in newer OmnICUs |
+| NUM_SYM_GROUP_V2 | 0x1003 | string | String, used in newer ICU4Xs |
 | DATE_SYM_JAN_V1 | 0x2000 | string |
 | DATE_SYM_FEB_V1 | 0x2001 | string |
 | DATE_SYM_MONTHS_V1 | 0x2002 | string list | Same data, different key/type |
@@ -80,11 +80,11 @@ The string encoding corresponds to the encoding of the string identifier and als
 
 ### Static Data Slicing
 
-Static analysis of OmnICU code can determine which keys are required for a particular build.  This information can be used to automatically generate a minimal JSON file, for example.
+Static analysis of ICU4X code can determine which keys are required for a particular build.  This information can be used to automatically generate a minimal JSON file, for example.
 
-The examples `CURR_SYM_V1` and `CURR_LOCAL_SYM_V1` illustrate an important aspect of data slicing.  If the OmnICU code only ever formats the locale's preferred currency symbol, it can use `CURR_LOCAL_SYM_V1`, and the static data slicer can include only that small piece of data.  However, if OmnICU is compiled to accept any arbitrary currency code, then it should use `CURR_SYM_V1`, and the static data slicer knows that it must include symbols for all currencies.
+The examples `CURR_SYM_V1` and `CURR_LOCAL_SYM_V1` illustrate an important aspect of data slicing.  If the ICU4X code only ever formats the locale's preferred currency symbol, it can use `CURR_LOCAL_SYM_V1`, and the static data slicer can include only that small piece of data.  However, if ICU4X is compiled to accept any arbitrary currency code, then it should use `CURR_SYM_V1`, and the static data slicer knows that it must include symbols for all currencies.
 
-*Note: For the currency example specifically, this may also involve making OmnICU configurable for whether or not it accepts the `-u-cu-` Unicode extension in the locale string, since supporting that extension may require loading full currency data.*
+*Note: For the currency example specifically, this may also involve making ICU4X configurable for whether or not it accepts the `-u-cu-` Unicode extension in the locale string, since supporting that extension may require loading full currency data.*
 
 ### Mappings
 
@@ -114,7 +114,7 @@ switch (key) {
 
 ### Supported Keys
 
-A data provider need not implement a mapping for all keys.  For example, if OmnICU migrates from `NUM_SYM_GROUP_V1` to `NUM_SYM_GROUP_V2`, a data provider might choose to support both keys for a few releases, and at some point drop support for the older key.  This allows the same data provider to be used across multiple OmnICU versions.
+A data provider need not implement a mapping for all keys.  For example, if ICU4X migrates from `NUM_SYM_GROUP_V1` to `NUM_SYM_GROUP_V2`, a data provider might choose to support both keys for a few releases, and at some point drop support for the older key.  This allows the same data provider to be used across multiple ICU4X versions.
 
 ### Schema Version
 
@@ -124,7 +124,7 @@ The expectation is that an offline tool transforms CLDR data into a specific dat
 
 ### Types
 
-The set of supported types is limited so that OmnICU implementations can be written to support them in a consistent way.  The supported types are:
+The set of supported types is limited so that ICU4X implementations can be written to support them in a consistent way.  The supported types are:
 
 - i8
 - i32 (includes code points)
@@ -137,7 +137,7 @@ The set of supported types is limited so that OmnICU implementations can be writ
 
 An open-ended map with string keys is not supported because hash map implementations vary from platform to platform, and they do not deliver guaranteed performance.  Instead, a struct with fixed fields can be used.
 
-The data type should be appropriate for fast evaluation at runtime.  For example, it is not recommended for OmnICU to request a pattern string such as `#,##0.00` for number formatting; instead, it should request a struct corresponding to the parsed version of that pattern string, such that OmnICU doesn't need to parse it at runtime.
+The data type should be appropriate for fast evaluation at runtime.  For example, it is not recommended for ICU4X to request a pattern string such as `#,##0.00` for number formatting; instead, it should request a struct corresponding to the parsed version of that pattern string, such that ICU4X doesn't need to parse it at runtime.
 
 ### Response Variables
 

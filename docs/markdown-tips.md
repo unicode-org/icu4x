@@ -13,7 +13,7 @@ This phase is called "Rapid Prototyping" as defined by the Bylaws.
 
 ### Markdown Draft
 
-Once you've done some basic polishing of your design doc, you should migrate it to Markdown in the OmnICU repository.  You should file issues for all open questions, and reference those open questions from your doc.  Send the Markdown file out for review in a PR, and we will discuss it in the next OmnICU-SC weekly meeting.  If the SC agrees with the design you have put forward in the doc, the PR will be considered as approved and can be merged in.
+Once you've done some basic polishing of your design doc, you should migrate it to Markdown in the ICU4X repository.  You should file issues for all open questions, and reference those open questions from your doc.  Send the Markdown file out for review in a PR, and we will discuss it in the next ICU4X-SC weekly meeting.  If the SC agrees with the design you have put forward in the doc, the PR will be considered as approved and can be merged in.
 
 ### Addressing Open Questions
 

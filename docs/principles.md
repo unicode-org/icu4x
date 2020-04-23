@@ -1,4 +1,4 @@
-# OmnICU Design Principles & Decisions
+# ICU4X Design Principles & Decisions
 
 ## Guiding principles
 

@@ -1,7 +1,7 @@
 
 # Ecosystem tracking
 
-This document tracks the crates that already exist in the ecosystem that cover functionality that we may wish to cover in OmnICU.
+This document tracks the crates that already exist in the ecosystem that cover functionality that we may wish to cover in ICU4X.
 
 Where multiple maintainers are listed, the first name is the primary maintainer: e.g. Manish is a member of the Servo org but does not primarily maintain some of these crates.
 

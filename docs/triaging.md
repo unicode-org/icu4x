@@ -1,19 +1,19 @@
 Issue Triaging
 ==============
 
-OmnICU uses GitHub for tracking feature requests and work items.
+ICU4X uses GitHub for tracking feature requests and work items.
 
 - All issues should have a type label.
-    - [Query: issues needing a type](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+-label%3Abug+-label%3A%22core+feature%22+-label%3Adocumentation+-label%3Aenhancement+-label%3Aquestion+-label%3Ainvalid+)
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3Abug+-label%3A%22core+feature%22+-label%3Adocumentation+-label%3Aenhancement+-label%3Aquestion+-label%3Ainvalid+)
 - All *open* or *backlog* issues should have an assignee or **help wanted** label.
-    - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee+)
-    - [Query: backlog issues needing assignee or help wanted](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+-label%3A%22help+wanted%22+no%3Aassignee)
+    - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee+)
+    - [Query: backlog issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+-label%3A%22help+wanted%22+no%3Aassignee)
 - All *closed* issues should have a resolution, linked pull request, or the **question** type.
-    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3Aquestion+-label%3Abacklog)
+    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3Aquestion+-label%3Abacklog)
 - If an issue is open, the issue should be actionable. Open issues should generally have an activity update once every 60 days.
-    - [Query: least recently updated open issues](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc)
+    - [Query: least recently updated open issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc)
 - If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and be closed.  The backlog should be checked periodically for issues that should be reopened.
-    - [Query: most recently updated backlog issues](https://github.com/unicode-org/omnicu/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+sort%3Aupdated-desc+)
+    - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+sort%3Aupdated-desc+)
 
 ## Fields
 
