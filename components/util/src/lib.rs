@@ -1,6 +1,5 @@
 #![no_std]
 
-pub mod datap;
-pub mod std;
+extern crate no_std_compat as std;
 
-pub type Str = std::Cow<'static, str>;
+pub mod datap;

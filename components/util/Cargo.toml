@@ -14,5 +14,18 @@ include = [
     "README.md"
 ]
 
-[dependencies]
-async-trait = "0.1.30"
+[features]
+default = ["std"]
+std = ["serde/std", "no-std-compat/std"]
+
+[dependencies.async-trait]
+version = "0.1.30"
+
+[dependencies.serde]
+version = "1.0"
+default-features = false
+features = ["derive", "alloc"]
+
+[dependencies.no-std-compat]
+version = "0.4.0"
+features = ["alloc"]

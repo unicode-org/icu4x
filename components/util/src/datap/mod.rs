@@ -2,11 +2,11 @@
 
 pub mod decimal;
 
-use crate::std::Box;
-use crate::std::String;
-use crate::std::Cow;
-use crate::Str;
+use std::prelude::v1::*;
 use async_trait::async_trait;
+use std::borrow::Cow;
+
+pub type Str = Cow<'static, str>;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Category {

@@ -1,0 +1,9 @@
+{
+    "decimal": {
+        "SymbolsV1": {
+            "zero_digit": "0",
+            "decimal_separator": ".",
+            "grouping_separator": ","
+        }
+    }
+}

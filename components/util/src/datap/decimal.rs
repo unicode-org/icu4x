@@ -1,18 +1,20 @@
 // Decimal types
 
-use crate::Str;
+use std::prelude::v1::*;
+
+use serde::{Deserialize, Serialize};
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Key {
     SymbolsV1 = 1,
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Deserialize, Serialize)]
 pub enum Payload {
     // TODO: de-duplicate the name "SymbolsV1" between Key and Payload
     SymbolsV1 {
         zero_digit: char,
-        decimal_separator: Str,
-        grouping_separator: Str,
+        decimal_separator: String,
+        grouping_separator: String,
     }
 }
