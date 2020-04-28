@@ -213,6 +213,10 @@ pub fn inestimable(src: &str) -> String {
 /// Some operation whose output size doesn't have a reasonable
 /// estimator function. (Version that accepts potentially-invalid
 /// UTF-8.)
+///
+/// The returned `String` may have excess capacity. If you are holding onto
+/// it for an extended period of time, consider calling `shrink_to_fit()`
+/// on it.
 pub fn inestimable_utf8(src: &[u8]) -> String {
     // Placeholder implementation that compiles
     String::with_capacity(src.len())
@@ -221,6 +225,10 @@ pub fn inestimable_utf8(src: &[u8]) -> String {
 /// Some operation whose output size doesn't have a reasonable
 /// estimator function. (Version that accepts potentially-invalid
 /// UTF-16.)
+///
+/// The returned `Vec` may have excess capacity. If you are holding onto
+/// it for an extended period of time, consider calling `shrink_to_fit()`
+/// on it.
 pub fn inestimable_utf16(src: &[u16]) -> Vec<u16> {
     // Placeholder implementation that compiles
     Vec::with_capacity(src.len())
@@ -231,6 +239,10 @@ pub fn inestimable_utf16(src: &[u16]) -> Vec<u16> {
 // Start Rust-only boilerplate
 
 /// Returns a `String` whose contents are `src` lower-cased.
+///
+/// The returned `String` may have excess capacity. If you are holding onto
+/// it for an extended period of time, consider calling `shrink_to_fit()`
+/// on it.
 pub fn to_lowercase(src: &str) -> String {
     // This is the same boilerplate for all String`-returning wrappers
     // and should be generated using a macro.
@@ -245,13 +257,12 @@ pub fn to_lowercase(src: &str) -> String {
             written_first + to_lowercase_utf8_max(input_left).unwrap(),
             0,
         );
-        let (read_second, written_second) = to_lowercase_str_utf8(&src[read_first..], &mut vec[written_first..]);
+        let (read_second, written_second) = to_lowercase_str_utf8(src, &mut vec);
         debug_assert_eq!(read_first + read_second, src.len());
         total_written += written_second;
     }
     // Update to `shrink_to` once stable.
     vec.resize(total_written, 0);
-    vec.shrink_to_fit();
     unsafe {
         // Unsafe OK, because we believe we can write valid
         // UTF-8 as promised.
@@ -291,6 +302,16 @@ pub fn to_lowercase_str(src: &str, dst: &mut str) -> (usize, usize) {
 // Note that these will keep everything alive for dead code elimination purposes
 // if exported from a shared library, so there should probably be
 // cargo features for manually managing which ones of these to export.
+
+/// This function can be replaced with `Vec::into_raw_parts()` once it
+/// becomes available on the release channel.
+fn vec_into_raw_parts<T>(vec: Vec<T>) -> (*mut T, usize, usize) {
+    let mut vec = ::std::mem::ManuallyDrop::new(vec);
+    let len = vec.len();
+    let capacity = vec.capacity();
+    let ptr = vec.as_mut_ptr();
+    (ptr, len, capacity)
+}
 
 /// `usize` as `size_t` in .h.
 /// `SIZE_MAX` means overflow, i.e. the operation is saturating.
@@ -382,77 +403,80 @@ pub unsafe extern "C" fn icu_to_lowercase_latin1(
 }
 
 /// `usize` as `size_t` and `u8` as `char8_t` in .h.
-/// `len` is inout; after return `*len` is the length of the returned
-/// buffer. The returned buffer is not U+0000-terminated and the caller
-/// takes its ownership and is responsible for freeing it. Use
-/// `icu_free_utf8` to free it. Alternatively, if ICUX4 has been built
-/// with the same allocator as the caller code, it is OK to use the
-/// corresponding C freeing function. For example, if ICU4X has
-/// been built with `alloc = system`, it is OK to use C `free()`.
+/// `len` is an inout param and `capacity is an out params; after return
+/// `*len` is the logical (filled) length of the returned buffer and
+/// `*capacity` is the allocated capacity of the returned buffer. The
+/// returned buffer is not U+0000-terminated and the caller takes its
+/// ownership and is responsible for freeing it. Use `icu_free_utf8`
+/// to free it. Alternatively, if ICUX4 has been built with the same
+/// allocator as the caller code, it is OK to use the corresponding C
+/// freeing function. For example, if ICU4X has been built with
+/// `alloc = system`, it is OK to use C `free()`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_inestimable_utf8(src: *const u8, len: *mut usize) -> *mut u8 {
+pub unsafe extern "C" fn icu_inestimable_utf8(src: *const u8, len: *mut usize, capacity: *mut usize) -> *mut u8 {
     let src_slice = ::std::slice::from_raw_parts(src, *len);
     let string = inestimable_utf8(src_slice);
-    let mut boxed = string.into_bytes().into_boxed_slice();
-    *len = boxed.len();
-    let ptr = boxed.as_mut_ptr();
-    std::mem::forget(boxed);
+    let (ptr, length, cap) = vec_into_raw_parts(string.into_bytes());
+    *len = length;
+    *capacity = cap;
     ptr
 }
 
 /// `usize` as `size_t` and `u8` as `char8_t` in .h.
-/// `len` is inout; after return `*len` is the length of the returned
-/// buffer. The returned buffer is not U+0000-terminated and the caller
-/// takes its ownership and is responsible for freeing it. Use
-/// `icu_free_utf8` to free it. Alternatively, if ICUX4 has been built
-/// with the same allocator as the caller code, it is OK to use the
-/// corresponding C freeing function. For example, if ICU4X has
-/// been built with `alloc = system`, it is OK to use C `free()`.
+/// `len` is an inout param and `capacity is an out params; after return
+/// `*len` is the logical (filled) length of the returned buffer and
+/// `*capacity` is the allocated capacity of the returned buffer. The
+/// returned buffer is not U+0000-terminated and the caller takes its
+/// ownership and is responsible for freeing it. Use `icu_free_utf8`
+/// to free it. Alternatively, if ICUX4 has been built with the same
+/// allocator as the caller code, it is OK to use the corresponding C
+/// freeing function. For example, if ICU4X has been built with
+/// `alloc = system`, it is OK to use C `free()`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_inestimable_utf8_unsafe(src: *const u8, len: *mut usize) -> *mut u8 {
+pub unsafe extern "C" fn icu_inestimable_utf8_unsafe(src: *const u8, len: *mut usize, capacity: *mut usize) -> *mut u8 {
     let src_slice = ::std::slice::from_raw_parts(src, *len);
     let str_slice = ::std::str::from_utf8_unchecked(src_slice);
     let string = inestimable(str_slice);
-    let mut boxed = string.into_bytes().into_boxed_slice();
-    *len = boxed.len();
-    let ptr = boxed.as_mut_ptr();
-    std::mem::forget(boxed);
+    let (ptr, length, cap) = vec_into_raw_parts(string.into_bytes());
+    *len = length;
+    *capacity = cap;
     ptr
 }
 
 /// `usize` as `size_t` and `u16` as `char16_t` in .h.
-/// `len` is inout; after return `*len` is the length of the returned
-/// buffer. The returned buffer is not U+0000-terminated and the caller
-/// takes its ownership and is responsible for freeing it. Use
-/// `icu_free_utf16` to free it. Alternatively, if ICUX4 has been built
-/// with the same allocator as the caller code, it is OK to use the
-/// corresponding C freeing function. For example, if ICU4X has
-/// been built with `alloc = system`, it is OK to use C `free()`.
+/// `len` is an inout param and `capacity is an out params; after return
+/// `*len` is the logical (filled) length of the returned buffer and
+/// `*capacity` is the allocated capacity of the returned buffer. The
+/// returned buffer is not U+0000-terminated and the caller takes its
+/// ownership and is responsible for freeing it. Use `icu_free_utf16`
+/// to free it. Alternatively, if ICUX4 has been built with the same
+/// allocator as the caller code, it is OK to use the corresponding C
+/// freeing function. For example, if ICU4X has been built with
+/// `alloc = system`, it is OK to use C `free()`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_inestimable_utf16(src: *const u16, len: *mut usize) -> *mut u16 {
+pub unsafe extern "C" fn icu_inestimable_utf16(src: *const u16, len: *mut usize, capacity: *mut usize) -> *mut u16 {
     let src_slice = ::std::slice::from_raw_parts(src, *len);
     let vec = inestimable_utf16(src_slice);
-    let mut boxed = vec.into_boxed_slice();
-    *len = boxed.len();
-    let ptr = boxed.as_mut_ptr();
-    std::mem::forget(boxed);
+    let (ptr, length, cap) = vec_into_raw_parts(vec);
+    *len = length;
+    *capacity = cap;
     ptr
 }
 
 /// Frees a UTF-8 buffer previously obtained from ICU4X. `buf` must
-/// be a pointer obtained from ICU4X and `len` must be the length
+/// be a pointer obtained from ICU4X and `capacity` must be the capacity
 /// that was originally obtained alongside `buf`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_free_utf8(buf: *mut u8, len: usize) {
-    let _ = Box::from_raw(::std::slice::from_raw_parts_mut(buf, len));
+pub unsafe extern "C" fn icu_free_utf8(buf: *mut u8, capacity: usize) {
+    let _ = Vec::from_raw_parts(buf, 0, capacity);
 }
 
 /// Frees a UTF-16 buffer previously obtained from ICU4X. `buf` must
-/// be a pointer obtained from ICU4X and `len` must be the length
+/// be a pointer obtained from ICU4X and `capacity` must be the capacity
 /// that was originally obtained alongside `buf`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_free_utf16(buf: *mut u16, len: usize) {
-    let _ = Box::from_raw(::std::slice::from_raw_parts_mut(buf, len));
+pub unsafe extern "C" fn icu_free_utf16(buf: *mut u16, capacity: usize) {
+    let _ = Vec::from_raw_parts(buf, 0, capacity);
 }
 
 // End FFI boilerplate
@@ -465,8 +489,8 @@ C++ wrapper for a subset of the above FFI using C++20 standard library types.
 extern "C" {
     void icu_to_lowercase_utf8(const char8_t* src, size_t* src_len, char8_t* dst, size_t* dst_len);
     size_t icu_to_lowercase_utf8_max(size_t len);
-    char8_t* icu_inestimable_utf8(const char8_t* src, size_t* len);
-    void icu_free_utf8(char8_t* buf, size_t len);
+    char8_t* icu_inestimable_utf8(const char8_t* src, size_t* len, size_t* capacity);
+    void icu_free_utf8(char8_t* buf, size_t capacity);
 }
 
 namespace icu {
@@ -509,9 +533,10 @@ namespace icu {
 
     std::u8string inestimable(std::u8string_view src) {
         size_t len = src.size();
-        char8_t* buf = icu_inestimable_utf8(src.data(), &len);
+        size_t capacity;
+        char8_t* buf = icu_inestimable_utf8(src.data(), &len, &capacity);
         std::u8string string(buf, len);
-        icu_free_utf8(buf, len);
+        icu_free_utf8(buf, capacity);
         return string;
     }
 
