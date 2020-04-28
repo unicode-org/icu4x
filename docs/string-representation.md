@@ -71,7 +71,7 @@ This is what many systems whose compatibility constraints date back to the 1990s
 
 On the input side, ICU4X must iterate over the input such that unpaired surrogates are treated as the REPLACEMENT CHARACTER. On the output side, ICU4X must guarantee UTF-16 validity. If the API is incremental, i.e. the logical output stream can be split across many API calls, the surrogate pair not be split across output slices even if it means not filling the earlier slice completely.
 
-A given ICU4X operation should provide a version that takes potentially-invalid UTF-16 and outputs guaranteed-valid UTF-16.
+A given ICU4X operation must provide a version that takes potentially-invalid UTF-16 and outputs guaranteed-valid UTF-16.
 
 ### Latin1
 
