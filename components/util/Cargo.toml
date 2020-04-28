@@ -13,3 +13,6 @@ include = [
     "Cargo.toml",
     "README.md"
 ]
+
+[dependencies]
+async-trait = "0.1.30"
