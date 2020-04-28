@@ -9,7 +9,7 @@ pub enum Key {
     SymbolsV1 = 1,
 }
 
-#[derive(PartialEq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub enum Payload {
     // TODO: de-duplicate the name "SymbolsV1" between Key and Payload
     SymbolsV1 {

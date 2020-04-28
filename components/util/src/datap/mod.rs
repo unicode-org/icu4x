@@ -3,8 +3,9 @@
 pub mod decimal;
 
 use std::prelude::v1::*;
-use async_trait::async_trait;
+// use async_trait::async_trait;
 use std::borrow::Cow;
+use std::error::Error;
 
 pub type Str = Cow<'static, str>;
 
@@ -45,12 +46,11 @@ pub enum ResponsePayload {
 pub struct Response {
     // TODO: Make this a Locale instead of a String
     pub locale: String,
-    pub category: Category,
-    pub key: u32,
     pub payload: Cow<'static, ResponsePayload>,
 }
 
-#[async_trait]
+// TODO: Make this async
+// #[async_trait]
 pub trait DataProvider {
-    async fn load(&self, req: Request) -> Response;
+    fn load(&self, req: Request) -> Result<Response, Box<dyn Error>>;
 }

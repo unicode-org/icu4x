@@ -5,11 +5,11 @@ use serde::{Deserialize, Serialize};
 use std::prelude::v1::*;
 
 #[derive(Serialize, Deserialize)]
-struct DecimalJsonSchema {
-    symbols_v1: datap::decimal::Payload,
+pub(crate) struct DecimalJsonSchema {
+    pub(crate) symbols_v1: datap::decimal::Payload,
 }
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct JsonSchema {
-    decimal: DecimalJsonSchema,
+    pub(crate) decimal: DecimalJsonSchema,
 }

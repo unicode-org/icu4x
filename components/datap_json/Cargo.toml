@@ -21,6 +21,9 @@ std = ["no-std-compat/std", "serde/std", "serde_json/std"]
 [dependencies]
 icu-util = { path = "../util" }
 
+[dependencies.async-trait]
+version = "0.1.30"
+
 [dependencies.serde]
 version = "1.0"
 default-features = false
