@@ -39,6 +39,8 @@ ICU4X operations therefore should, where possible taking into account the nature
 * Returns the number of code units read and the number of code units written such that if the former equals the length of the input, there's nothing more to be done, and otherwise it's OK to continue from the input subslice starting at the code unit index equaling to the number of code unit previously read. (That is, the implementation may have actually examined code units further. The number of code units read means the number of code units that correspond to the number of code units written.)
 * Provides a quick worst-case estimator function that takes the number of code units of input and returns the worst case number of code units in output
 
+It is expected that text transformation functions, such as case changes and normalization will fit into this category in terms of output mechanism.
+
 ## Supported encoding forms
 
 The following encoding forms a reasonable candidates to be supported by a given ICU4X operation. Since Rust doesn't have function overloading based on argument type, what are logically overloads need to be signified by naming convention.
@@ -75,9 +77,9 @@ A given ICU4X operation must provide a version that takes potentially-invalid UT
 
 ### Latin1
 
-This is what SpiderMonkey and V8 use as an optimization for strings whose semantics are potentially-invalid UTF-16 semantics but for whose each UTF-16 code unit would have zero bits and the higher half. For input, the Rust type is `&[u8]`. For output, it is `&mut [u8]`. The name annotation is `_latin1`. In the headers for C and C++, the slice pointer shall be of type `char*` (with const and without, respectively). (Note that while it is incorrect, due to sign extension issues on the ABI boundary, to declare `char` as non-pointer argument whose Rust type is Rust `u8`, it is OK to declare `const char*` for `*const u8` and `char*` for `*mut u8`.)
+This is what SpiderMonkey and V8 use as an optimization for strings whose semantics are potentially-invalid UTF-16 but for whose each UTF-16 code unit would have zero bits and the higher half. For input, the Rust type is `&[u8]`. For output, it is `&mut [u8]`. The name annotation is `_latin1`. In the headers for C and C++, the slice pointer shall be of type `char*` (with const and without, respectively). (Note that while it is incorrect, due to sign extension issues on the ABI boundary, to declare `char` as non-pointer argument whose Rust type is Rust `u8`, it is OK to declare `const char*` for `*const u8` and `char*` for `*mut u8`.)
 
-A given ICU4X operation may provide a version that takes Latin1 when it makes sense for performance reasons. If the operation is known to keep the domain of the output within the Latin1 range, the output slice should be Latin1 as well. Otherwise, the output slice should be UTF-16.
+A given ICU4X operation may provide a version that takes Latin1 when it makes sense for performance reasons. If the operation is known to keep the domain of the output within the Latin1 range, the output slice should be Latin1 as well. Otherwise, the output slice should be UTF-16. The case where the output range is known to be within the Latin1 range is expected to be very rare or non-existent: i.e. the common case for Latin1 input is expected to be UTF-16 output.
 
 ### Encoding forms deliberately not included
 
@@ -89,15 +91,17 @@ If the model of returning from an operation early with number of code units read
 
 ## Operations that are neither resumable nor have a reasonable worst-case estimate
 
-For operations that don't fit this model, ICU4X should return `String` in the UTF-8 case and `Vec<u16>` in the UTF-16 case. (It's unlikely that there are operations whose output range is Latin1 but that don't have a reasonable worst-case number of code units estimate.)
+For operations that don't fit into either caller-allocated model, ICU4X should return `String` in the UTF-8 case and `Vec<u16>` in the UTF-16 case. (It's unlikely that there are operations whose output range is Latin1 but that don't have a reasonable worst-case number of code units estimate.)
 
-FFI must then hand out the length and the internal buffer of the `String`/`Vec` by calling `into_boxed_slice()`.
+FFI must then hand out the length, capacity, and the internal buffer of the `String`/`Vec`.
 
 ICU4X must provide functions `icu_free_utf8` and `icu_free_utf16` for freeing these.
 
+It is expected that text formatting functions will fit into this output category. That is, this output category, while the third option in priority, is expected to be very common.
+
 ## Iterators
 
-For Rust callers, a given ICU4X operation may be provided as a version that takes input via an iterator that yields `char`and provides output by implementing an iterator that yields `char`. For some operations, this may be the sole internal implementation such that the slice versions are merely wrapper around this one. However, for operations that need lookahead, the slice operations may be implemented more efficiently by performing lookahead on the slice as opposed to having an iterator implementation that allocates internally in order to turn lookahead into buffering. The name annotation for the function that creates the iterator is `_iter`.
+For Rust callers, a given ICU4X operation may be provided as a version that takes input via an iterator that yields `char` and provides output by implementing an iterator that yields `char`. For some operations, this may be the sole internal implementation such that the slice versions are merely wrapper around this one. However, for operations that need lookahead, the slice operations may be implemented more efficiently by performing lookahead on the slice as opposed to having an iterator implementation that allocates internally in order to turn lookahead into buffering. The name annotation for the function that creates the iterator is `_iter`.
 
 ## Example: `to_lowercase` without locale-sensitive behavior
 
