@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "components/datap_json",
     "components/icu",
     "components/icu4x",
     "components/locale",
