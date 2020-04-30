@@ -52,12 +52,12 @@ impl ToOwned for dyn Bovine {
 pub struct Response {
     // TODO: Make this a Locale instead of a String
     pub locale: String,
-    pub payload2: Cow<'static, dyn Bovine>,
+    pub payload: Cow<'static, dyn Bovine>,
 }
 
 impl Response {
     pub fn unwrap_payload<T: 'static>(&self) -> &T {
-        Any::downcast_ref::<T>(self.payload2.as_any()).unwrap()
+        Any::downcast_ref::<T>(self.payload.as_any()).unwrap()
     }
 }
 
