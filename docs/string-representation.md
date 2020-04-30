@@ -59,13 +59,13 @@ A given ICU4X operation must always provide a version that accepts potentially i
 
 This is what Rust uses natively. C and C++ programmers who want maximum performance and are confident in their code correctness in a particular place in their code could use this for specific things. For input, the type is `&str`, which is idiomatic Rust. For output, the type is `&mut str`, which isn't quite idiomatic Rust. (In particular, the language currently doesn't allow materializing a zero-initialized stack-allocated `&mut str` without `unsafe`, even though there is no fundamental reason why this operation could be provided in the language without `unsafe`.) The pointer types in C and C++ header are the same as in the potentially-invalid case.
 
-In the Rust context, the name annotation is `_str`. In the FFI context of the input side, the main limitation is `_utf8_unsafe`. The point of the different annotations is that of the Rust side, thanks to the guarantees of Rust, calling these functions is safe. However, when called from the language that doesn't have Rust's guarantees as part of the language, it is up to the programmer to ensure that the input is valid UTF-8. Otherwise, Undefined Behavior ensues. Hence the "unsafe" designation in FFI, i.e. the C API. (This type is irrelevant in the FFI context on the output side.) It is
+In the Rust context, the name annotation is `_str`. In the FFI context of the input side, the main limitation is `_utf8_unsafe`. The point of the different annotations is that of the Rust side, thanks to the guarantees of Rust, calling these functions is safe. However, when called from the language that doesn't have Rust's guarantees as part of the language, it is up to the programmer to ensure that the input is valid UTF-8. Otherwise, Undefined Behavior ensues. Hence the "unsafe" designation in FFI, i.e. the C API. (This type is irrelevant in the FFI context on the output side.)
 
 On the input side, `&str` differs from `&[u8]` holding potentially-invalid UTF-8 in performance. The former can be iterated over by Unicode scalar value without having to have branches that take into account invalid byte sequences. In this sense, the distinction between the function that takes `&str` and a function that takes UTF-8 `&[u8]` is one of performance. Correctness-wise, it is always okay for the function that takes `&str` to call `as_bytes()` on the argument and then delegate to the function that takes `&[u8]`. When performance of the operation is more important than minimizing binary size, the function that takes `&str` should make use of the knowledge that there are no ill-formed sequences.
 
-On the outside, the function that takes `&mut str` always delegates to the version that takes `&[u8]` and trailing loop that zeros bytes after the last byte written by the delegate function until either the end of the slice or UTF a lead byte is reached. This is enough to uphold the invariant of `&mut str`.
+On the outside, the function that takes `&mut str` always delegates to the version that takes `&mut [u8]` and trailing loop that zeros bytes after the last byte written by the delegate function until either the end of the slice or UTF a lead byte is reached. This is enough to uphold the invariant of `&mut str`.
 
-A given ICU4X operation that outputs text must always provide a version, whose input type is `&str` and output type is `&[u8]` (this one gets exposed via FFI as `_unsafe_utf8`), the version whose input type is `&str` and output type is `&mut str`, and a version whose input type is `&str` and that returns a `String` instead of having an output argument. The last two or always implemented as a thin mechanical wrappers around the first one. If performance considerations permit, the first one may just delegate to the version that takes `&[u8]` input. The function that returs a `String` has no name annotation.
+A given ICU4X operation that outputs text must always provide a version, whose input type is `&str` and output type is `&mut [u8]` (this one gets exposed via FFI as `_unsafe_utf8`), the version whose input type is `&str` and output type is `&mut str`, and a version whose input type is `&str` and that returns a `String` instead of having an output argument. The last two or always implemented as a thin mechanical wrappers around the first one. If performance considerations permit, the first one may just delegate to the version that takes `&[u8]` input. The function that returs a `String` has no name annotation.
 
 ### Potentially-invalid UTF-16
 
@@ -261,7 +261,8 @@ pub fn to_lowercase(src: &str) -> String {
             written_first + to_lowercase_utf8_max(input_left).unwrap(),
             0,
         );
-        let (read_second, written_second) = to_lowercase_str_utf8(src, &mut vec);
+        let (read_second, written_second) =
+            to_lowercase_str_utf8(&src[read_first..], &mut vec[written_first..]);
         debug_assert_eq!(read_first + read_second, src.len());
         total_written += written_second;
     }
@@ -417,7 +418,11 @@ pub unsafe extern "C" fn icu_to_lowercase_latin1(
 /// freeing function. For example, if ICU4X has been built with
 /// `alloc = system`, it is OK to use C `free()`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_inestimable_utf8(src: *const u8, len: *mut usize, capacity: *mut usize) -> *mut u8 {
+pub unsafe extern "C" fn icu_inestimable_utf8(
+    src: *const u8,
+    len: *mut usize,
+    capacity: *mut usize,
+) -> *mut u8 {
     let src_slice = ::std::slice::from_raw_parts(src, *len);
     let string = inestimable_utf8(src_slice);
     let (ptr, length, cap) = vec_into_raw_parts(string.into_bytes());
@@ -437,7 +442,11 @@ pub unsafe extern "C" fn icu_inestimable_utf8(src: *const u8, len: *mut usize, c
 /// freeing function. For example, if ICU4X has been built with
 /// `alloc = system`, it is OK to use C `free()`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_inestimable_utf8_unsafe(src: *const u8, len: *mut usize, capacity: *mut usize) -> *mut u8 {
+pub unsafe extern "C" fn icu_inestimable_utf8_unsafe(
+    src: *const u8,
+    len: *mut usize,
+    capacity: *mut usize,
+) -> *mut u8 {
     let src_slice = ::std::slice::from_raw_parts(src, *len);
     let str_slice = ::std::str::from_utf8_unchecked(src_slice);
     let string = inestimable(str_slice);
@@ -458,7 +467,11 @@ pub unsafe extern "C" fn icu_inestimable_utf8_unsafe(src: *const u8, len: *mut u
 /// freeing function. For example, if ICU4X has been built with
 /// `alloc = system`, it is OK to use C `free()`.
 #[no_mangle]
-pub unsafe extern "C" fn icu_inestimable_utf16(src: *const u16, len: *mut usize, capacity: *mut usize) -> *mut u16 {
+pub unsafe extern "C" fn icu_inestimable_utf16(
+    src: *const u16,
+    len: *mut usize,
+    capacity: *mut usize,
+) -> *mut u16 {
     let src_slice = ::std::slice::from_raw_parts(src, *len);
     let vec = inestimable_utf16(src_slice);
     let (ptr, length, cap) = vec_into_raw_parts(vec);
