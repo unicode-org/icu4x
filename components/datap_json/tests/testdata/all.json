@@ -6,6 +6,11 @@
                 "decimal_separator": ".",
                 "grouping_separator": ","
             }
+        },
+        "symbols_v1_a": {
+            "zero_digit": "0",
+            "decimal_separator": ".",
+            "grouping_separator": ","
         }
     }
 }

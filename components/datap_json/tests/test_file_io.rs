@@ -5,7 +5,7 @@ extern crate icu_datap_json;
 
 use std::fs::File;
 use std::io::BufReader;
-use std::borrow::Borrow;
+// use std::borrow::Borrow;
 
 use icu_datap_json::JsonDataProvider;
 use icu_util::datap;
@@ -23,11 +23,12 @@ fn test_read_json() {
         key: datap::Key::Decimal(datap::decimal::Key::SymbolsV1),
         payload: None
     }).unwrap();
-    let decimal_data = match data.payload.borrow() {
-        datap::ResponsePayload::Decimal(decimal_data) => decimal_data,
-        _ => unreachable!()
-    };
-    assert_eq!(decimal_data, &datap::decimal::Payload::SymbolsV1 {
+    // let decimal_data = match data.payload.borrow() {
+    //     datap::ResponsePayload::Decimal(decimal_data) => decimal_data,
+    //     _ => unreachable!()
+    // };
+    let decimal_data: &datap::decimal::SymbolsV1 = data.unwrap_payload();
+    assert_eq!(decimal_data, &datap::decimal::SymbolsV1 {
         zero_digit: '0',
         decimal_separator: ".".to_string(),
         grouping_separator: ",".to_string(),
