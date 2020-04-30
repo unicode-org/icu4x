@@ -41,7 +41,6 @@ impl datap::DataProvider for JsonDataProvider {
         // TODO: Use the request variable
         Ok(datap::Response {
             locale: "root".to_string(),
-            // payload: Cow::Owned(datap::ResponsePayload::Decimal(self.data.decimal.symbols_v1.clone()))
             payload2: Cow::Owned(self.data.decimal.symbols_v1_a.clone_into_box())
         })
     }

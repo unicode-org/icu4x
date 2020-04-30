@@ -12,16 +12,7 @@ pub enum Key {
     SymbolsV1 = 1,
 }
 
-#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
-pub enum Payload {
-    // TODO: de-duplicate the name "SymbolsV1" between Key and Payload
-    SymbolsV1 {
-        zero_digit: char,
-        decimal_separator: String,
-        grouping_separator: String,
-    }
-}
-
+// TODO: de-duplicate the name "SymbolsV1" between Key and the struct
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct SymbolsV1 {
     pub zero_digit: char,
@@ -30,7 +21,6 @@ pub struct SymbolsV1 {
 }
 
 impl Bovine for SymbolsV1 {
-    // TODO: How to make this line return Box<SymbolsV1>? Is that necessary?
     fn clone_into_box(&self) -> Box<dyn Bovine> {
         Box::new(self.clone())
     }

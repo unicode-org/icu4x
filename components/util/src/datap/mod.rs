@@ -34,15 +34,6 @@ pub struct Request {
     pub payload: Option<Str>,
 }
 
-// TODO: Make ResponsePayload be a dynamic type specified by each caller
-#[derive(PartialEq, Clone)]
-pub enum ResponsePayload {
-    Undefined,
-    Decimal(decimal::Payload),
-    // TODO: Enable a dynamic type here
-    // PrivateUse(Any),
-}
-
 pub trait Bovine: Any {
     fn clone_into_box(&self) -> Box<dyn Bovine>;
     fn as_any(&self) -> &dyn Any;
@@ -61,9 +52,7 @@ impl ToOwned for dyn Bovine {
 pub struct Response {
     // TODO: Make this a Locale instead of a String
     pub locale: String,
-    // pub payload: Cow<'static, ResponsePayload>,
     pub payload2: Cow<'static, dyn Bovine>,
-    // pub payload3: Box<dyn Any + PartialEq<Any>>,
 }
 
 impl Response {
