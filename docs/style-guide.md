@@ -46,23 +46,33 @@ Based on [this comment](https://github.com/rust-lang/api-guidelines/issues/29#is
 * Infer Crate names from package names where feasible:
   * A package is the directory in which the Cargo.toml exists.
 * Prefer single (lowercase) words for package names where feasible
-* Use __lowercase with underscore__ (a.k.a "snake_case") to split words in package names if needed
+* Use __lowercase with hyphen__ to split words in package names if needed
 
+This means that while Crate names are not trivially 
 I believe this would result in Crate names (which must be Rust identifiers) being identical to the package name at all times.
 
 ## Module Layout
 
 Modules form the basic units of imported code in Rust, so identifying where to split functionality and what to call modules is essential. I suspect this is the right level to divide things like collation vs segmentation etc. but it's also far too early to make hard recommendations about this, so I proposed to leave this issue open for the time being (moving code between modules later should be relatively easy).
 
-**Open Question**: Should we have code in the top-level module of a Crate or always use named sub-modules? This probably ties into what Crates we intend to publish and the granularity of the APIs.
+### Don't have "mixed" Crates :: suggested
+
+The current thinking is that you should either:
+
+* Use a single `lib.rs` file for a Crate with everything in it
+* Use multiple Rust sources and then only use `lib.rs` to export modules
+
+Which of these options you chose is dependent on the size/complexity of the module(s).
+
+There might be cases where an intermediate "mixed" Crate is worthwhile, but it should be clearly documented as to why it is necessary.
 
 ## Shared Internal Code
 
-Rust supports having non-public sub-modules within a Crate, and only the top-level "implicit" module is exposed by default (other modules can be exported by the top level module). See also [File hierarchy - Rust By Example](https://doc.rust-lang.org/rust-by-example/mod/split.html).
+Rust supports having [non-public sub-modules](https://doc.rust-lang.org/reference/visibility-and-privacy.html) within a Crate, and only the top-level "implicit" module is exposed by default (other modules can be exported by the top level module). See also [File hierarchy - Rust By Example](https://doc.rust-lang.org/rust-by-example/mod/split.html).
 
-### Use Private Modules :: required
+### Avoid over-exposing internal APIs :: suggested
 
-While local private functions can just be defined in any module, shared internal functions should always be implemented in a non-exported sub-module. This avoids any misleading dependencies between "public" modules and should help ensure clean code dependencies. Code in internal modules should still be tested and documented thoroughly. It is perfectly expected that we would have multiple internal modules for different aspects of ICU4X.
+When sharing an API between modules in a Crate, use `pub(<scope>)` to express visibility, and select the smallest scope which suits the intent of the API (i.e. prefer `pub(crate::specific_mod)` to `pub(crate)` where appropriate).
 
 # Structs and Traits
 
@@ -72,11 +82,13 @@ For ICU4X we should be looking to keep code consistent and very unsurprising, es
 
 Rust offers a compelling model for encapsulating implementation details based on a hierarchical view of privacy; see [Visibility and Privacy - The Rust Reference](https://doc.rust-lang.org/reference/visibility-and-privacy.html). This should allow ICU4X to encapsulate all of its implementation details neatly from applications using the library and avoid too many cases of [Hyrum's Law](https://www.hyrumslaw.com/).
 
-### Minimize user-visible structs :: required
+### Minimize user-visible structs :: suggested
 
 While this sounds a bit obvious, I think it's important to stress that with Rust's privacy model, there is never any need to have an internal type be user-visible, and once a type is user-visible outside a Crate, it's published and should not be changed.
 
 The only place this might be an issue is if we decide to deliver ICU4X as multiple Crates. If we do that then we just added a requirement that our inter-Crate APIs be public (there's no privileged sharing outside Crates). This is one reason I propose we deliver ICU4X as a single Crate with multiple modules.
+
+There is a known pattern of using [`doc(hidden)`](https://doc.rust-lang.org/rustdoc/the-doc-attribute.html#dochidden) and having module names prefixed with multiple underscores to indicate they must not be relied upon outside the project, but ideally APIs would be deesignedto minimize the need for this and the expected external usage would be clearly documented for future maintainers.
 
 ### No public fields :: suggested
 
@@ -193,13 +205,17 @@ Use "return by value" for any functions which produce new data and let Rust hand
 
 When passing struct types to functions, it's always semantically safe to pass a reference (since there can be no race conditions around its use and it cannot be modified unexpectedly while being processed). The called function should be responsible for taking a copy if it needs to (e.g. by cloning or via the ToOwned trait).
 
-### Prefer passing Option<T> by value :: suggested
+### Pass Option<T> by value where possible :: suggested
 
 [Option](https://doc.rust-lang.org/std/option/enum.Option.html) is a bit special, and Rust goes to great lengths to avoid needing to allocate an additional instance for this type. In particular, `Option<char>` is a zero-allocation representation and should be passed by value. This applies to some types where the extra [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None) state can be encoded as an otherwise "invalid" bit pattern.
 
-In the case of `Option<char>`, `None` is [encoded as `0x110000`](https://rust.godbolt.org/z/-ZFwKB) or other invalid bit patterns. This means types like `Vec<Option<char>>` or `[Option<char>;N]` should be preferred over `Vec<&Option<char>>` or `[&Option<char>;N]` which will often remove the need for additional lifetimes
+In the case of `Option<char>`, `None` is [encoded as `0x110000`](https://rust.godbolt.org/z/-ZFwKB) or other invalid bit patterns. This means types like `Vec<Option<char>>` or `[Option<char>;N]` should be preferred over `Vec<&Option<char>>` or `[&Option<char>;N]` which will often remove the need for additional lifetimes.
 
-**Open Question**: Since Option is just an enum, should this advice be extended to enums in general? And what about `Box<T>`, which also feels like it should be "cheap" ?
+There are times where this may not be possible (e.g. if using non-`Copy` types you may need `&Option<T>` or `Option<&T>`), and there's a trade off between designing `Copy` types, exppected to be smaller value types, and other more complex types.
+
+### Pass Box<T> by value where possible :: suggested
+
+It's unlikely we will have many `Box<T>`s around. We should return boxes by-value, and accept things as `&T` as much as possible, instead of `&Box<T>`.
 
 ### Pass and return fundamental type by value where possible :: required
 
@@ -248,7 +264,7 @@ for n in 0 .. lang.len() {
 
 ## Enums
 
-### Strongly prefer enums to define states :: suggested] 
+### Strongly prefer enums to define states :: suggested
 
 Enums in Rust are cheap/free, and incredibly useful. They can be used (as in C++/Java) for providing named, bounded "choices", including avoiding bare boolean parameters, but they can also provide the basis for type-safe patterns such as [elegant finite state machines](https://bluejekyll.github.io/blog/fsm/rust/2015/08/13/rust-and-the-most-elegant-fsm.html) using generified enums with data.
 
