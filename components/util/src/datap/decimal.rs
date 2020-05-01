@@ -4,7 +4,7 @@ use std::prelude::v1::*;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Key {
     SymbolsV1 = 1,
 }

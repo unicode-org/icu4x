@@ -4,10 +4,8 @@ extern crate no_std_compat as std;
 
 use std::prelude::v1::*;
 // use async_trait::async_trait;
-use std::borrow::Cow;
 
 use icu_util::datap;
-use icu_util::datap::ClonableAny;
 
 mod schema;
 
@@ -37,11 +35,10 @@ impl JsonDataProvider {
 }
 
 impl datap::DataProvider for JsonDataProvider {
-    fn load(&self, _request: datap::Request) -> Result<datap::Response, Box<dyn std::error::Error>> {
+    fn load(&self, _request: datap::Request) -> Result<datap::Response, datap::ResponseError> {
         // TODO: Use the request variable
-        Ok(datap::Response {
-            locale: "root".to_string(),
-            payload: Cow::Owned(self.data.decimal.symbols_v1_a.clone_into_box())
-        })
+        let mut response = datap::Response::with_owned_payload(self.data.decimal.symbols_v1_a.clone());
+        response.locale = "en".to_string();
+        Ok(response)
     }
 }

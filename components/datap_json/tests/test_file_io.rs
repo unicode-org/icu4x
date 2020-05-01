@@ -22,6 +22,7 @@ fn test_read_json() {
         key: datap::Key::Decimal(datap::decimal::Key::SymbolsV1),
         payload: None
     }).unwrap();
+    println!("{:?}", response);
     let decimal_data: &datap::decimal::SymbolsV1 = response.borrow_payload().unwrap();
     assert_eq!(decimal_data, &datap::decimal::SymbolsV1 {
         zero_digit: '0',
