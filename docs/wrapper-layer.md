@@ -1,13 +1,13 @@
-The ICU for X Wrapper Layer
-===========================
+The ICU4X Wrapper Layer
+=======================
 
-A key piece of rolling out ergonomic *ICU for X* APIs for Rust and other target languages is the *wrapper layer*: code that sits between the client and the lower-level *ICU for X* libraries.  This document explains the design behind the *ICU for X* wrapper layer.
+A key piece of rolling out ergonomic ICU4X APIs for Rust and other target languages is the *wrapper layer*: code that sits between the client and the lower-level ICU4X libraries.  This document explains the design behind the ICU4X wrapper layer.
 
 ## Background
 
 ### Ergonomic API versus Logical API
 
-When a programmer writes code using Intl, the code they write should demonstrate their *intent*.  They should use what I'm calling the *ergonomic API* of *ICU for X*.
+When a programmer writes code using Intl, the code they write should demonstrate their *intent*.  They should use what I'm calling the *ergonomic API* of ICU4X.
 
 A *logical API*, on the other hand, is one that is closely tied to specific to functional units, like currencies or measurement units.  A logical API function should require a specific hunk of data specific to the functional unit and perform a specific task.
 
@@ -25,7 +25,7 @@ Rule of thumb: A good "ergonomic" API is one that makes the "business logic" of 
 
 ### Host Language
 
-Since the ergonomic API depends on the host language (e.g., Objective-C calling into *ICU for X* via an FFI), the wrapper layer should be written in each individual host language, mapping to the logical API exported by the *ICU for X* library.
+Since the ergonomic API depends on the host language (e.g., Objective-C calling into ICU4X via an FFI), the wrapper layer should be written in each individual host language, mapping to the logical API exported by the ICU4X library.
 
 This allows different languages to choose different styles for passing options into the library; for example, a Builder pattern could be used in Java, and an options bag could be used in JavaScript.
 
@@ -50,7 +50,7 @@ This model decouples the data provider from the core business logic; with calls 
 
 ### Limited Amount of Code
 
-One of the strengths of *ICU for X* is that the core business logic is written once and shared by many different environments.
+One of the strengths of ICU4X is that the core business logic is written once and shared by many different environments.
 
 Since the wrapper layer needs to be implemented separately for each host language, as much business logic as possible should be moved into the logical API.  The wrapper layer should transform from the ergonomic API to the logical API and load the required data for the logical API; nothing more.
 
