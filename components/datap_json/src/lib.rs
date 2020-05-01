@@ -7,7 +7,7 @@ use std::prelude::v1::*;
 use std::borrow::Cow;
 
 use icu_util::datap;
-use icu_util::datap::Bovine;
+use icu_util::datap::ClonableAny;
 
 mod schema;
 

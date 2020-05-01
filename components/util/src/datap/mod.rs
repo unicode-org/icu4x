@@ -36,23 +36,23 @@ pub struct Request {
     pub payload: Option<Str>,
 }
 
-pub trait Bovine: Any {
-    fn clone_into_box(&self) -> Box<dyn Bovine>;
+pub trait ClonableAny: Any {
+    fn clone_into_box(&self) -> Box<dyn ClonableAny>;
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
 }
 
-impl ToOwned for dyn Bovine {
-    type Owned = Box<dyn Bovine>;
+impl ToOwned for dyn ClonableAny {
+    type Owned = Box<dyn ClonableAny>;
   
     fn to_owned(&self) -> Self::Owned {
-        Bovine::clone_into_box(self)
+        ClonableAny::clone_into_box(self)
     }
 }
 
-// Implement Bovine for all 'static types implementing Clone.
-impl<S: 'static + Clone> Bovine for S {
-    fn clone_into_box(&self) -> Box<dyn Bovine> {
+// Implement ClonableAny for all 'static types implementing Clone.
+impl<S: 'static + Clone> ClonableAny for S {
+    fn clone_into_box(&self) -> Box<dyn ClonableAny> {
         Box::new(self.clone())
     }
     fn as_any(&self) -> &dyn Any {
@@ -68,19 +68,19 @@ impl<S: 'static + Clone> Bovine for S {
 pub struct Response {
     // TODO: Make this a Locale instead of a String
     pub locale: String,
-    pub payload: Cow<'static, dyn Bovine>,
+    pub payload: Cow<'static, dyn ClonableAny>,
 }
 
 // TODO: Should this be an implemention of std::borrow::Borrow?
 impl Response {
     pub fn borrow_payload<T: 'static>(&self) -> Option<&T> {
-        let borrowed: &dyn Bovine = self.payload.borrow();
+        let borrowed: &dyn ClonableAny = self.payload.borrow();
         borrowed.as_any().downcast_ref::<T>()
     }
 
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Option<&mut T> {
-        let boxed: &mut Box<dyn Bovine> = self.payload.to_mut();
-        let borrowed: &mut dyn Bovine = boxed.borrow_mut();
+        let boxed: &mut Box<dyn ClonableAny> = self.payload.to_mut();
+        let borrowed: &mut dyn ClonableAny = boxed.borrow_mut();
         borrowed.as_any_mut().downcast_mut::<T>()
     }
 }
