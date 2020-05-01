@@ -50,23 +50,23 @@ pub struct Request {
     pub payload: Option<Str>,
 }
 
-trait ClonableAny: Debug + Any {
-    fn clone_into_box(&self) -> Box<dyn ClonableAny>;
+trait CloneableAny: Debug + Any {
+    fn clone_into_box(&self) -> Box<dyn CloneableAny>;
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
 }
 
-impl ToOwned for dyn ClonableAny {
-    type Owned = Box<dyn ClonableAny>;
+impl ToOwned for dyn CloneableAny {
+    type Owned = Box<dyn CloneableAny>;
   
     fn to_owned(&self) -> Self::Owned {
-        ClonableAny::clone_into_box(self)
+        CloneableAny::clone_into_box(self)
     }
 }
 
-// Implement ClonableAny for all 'static types implementing Clone.
-impl<S: 'static + Clone + Debug> ClonableAny for S {
-    fn clone_into_box(&self) -> Box<dyn ClonableAny> {
+// Implement CloneableAny for all 'static types implementing Clone.
+impl<S: 'static + Clone + Debug> CloneableAny for S {
+    fn clone_into_box(&self) -> Box<dyn CloneableAny> {
         Box::new(self.clone())
     }
     fn as_any(&self) -> &dyn Any {
@@ -82,26 +82,26 @@ impl<S: 'static + Clone + Debug> ClonableAny for S {
 pub struct Response {
     // TODO: Make this a Locale instead of a String
     pub locale: String,
-    payload: Cow<'static, dyn ClonableAny>,
+    payload: Cow<'static, dyn CloneableAny>,
 }
 
 // TODO: Should this be an implemention of std::borrow::Borrow?
 impl Response {
     pub fn borrow_payload<T: 'static>(&self) -> Option<&T> {
-        let borrowed: &dyn ClonableAny = self.payload.borrow();
+        let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed.as_any().downcast_ref::<T>()
     }
 
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Option<&mut T> {
-        let boxed: &mut Box<dyn ClonableAny> = self.payload.to_mut();
-        let borrowed: &mut dyn ClonableAny = boxed.borrow_mut();
+        let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
+        let borrowed: &mut dyn CloneableAny = boxed.borrow_mut();
         borrowed.as_any_mut().downcast_mut::<T>()
     }
 
     pub fn with_owned_payload<T: 'static + Clone + Debug>(t: T) -> Self {
         Response {
             locale: "und".to_string(),
-            payload: Cow::Owned(Box::new(t) as Box<dyn ClonableAny>),
+            payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
         }
     }
 
