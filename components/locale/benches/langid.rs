@@ -1,59 +1,44 @@
 mod fixtures;
 mod helpers;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
-use icu_locale::LanguageIdentifier;
+use icu_locale::{LanguageIdentifier, Locale};
 
 fn langid_benches(c: &mut Criterion) {
     let path = "./benches/fixtures/langid.json";
-    let data: fixtures::LangId = helpers::read_fixture(path).expect("Failed to read a fixture");
+    let data: fixtures::LocaleList = helpers::read_fixture(path).expect("Failed to read a fixture");
 
     // Construct
     {
-        let mut group = c.benchmark_group("langid_construct");
+        let mut group = c.benchmark_group("langid/construct");
 
-        let data_bytes: Vec<&[u8]> = data.canonicalized.iter().map(|s| s.as_bytes()).collect();
-
-        group.bench_function("from_bytes", |b| {
-            b.iter(|| {
-                for s in &data_bytes {
-                    let _: Result<LanguageIdentifier, _> =
-                        LanguageIdentifier::from_bytes(black_box(s));
-                }
-            })
-        });
-
-        group.bench_function("from_str", |b| {
-            b.iter(|| {
-                for s in &data.canonicalized {
-                    let _: Result<LanguageIdentifier, _> = black_box(s).parse();
-                }
-            })
-        });
+        construct!(group, LanguageIdentifier, "langid", &data.canonicalized);
+        construct!(group, Locale, "locale", &data.canonicalized);
 
         group.finish();
     }
 
     // Stringify
     {
+        let mut group = c.benchmark_group("langid/to_string");
+
         let langids: Vec<LanguageIdentifier> = data
             .canonicalized
             .iter()
             .map(|s| s.parse().unwrap())
             .collect();
 
-        c.bench_function("langid_to_string", |b| {
-            b.iter(|| {
-                for s in &langids {
-                    let _ = black_box(s).to_string();
-                }
-            })
-        });
+        to_string!(group, LanguageIdentifier, "langid", &langids);
+        to_string!(group, Locale, "locale", &langids);
+
+        group.finish();
     }
 
     // Compare
     {
+        let mut group = c.benchmark_group("langid/compare");
+
         let langids: Vec<LanguageIdentifier> = data
             .canonicalized
             .iter()
@@ -65,36 +50,29 @@ fn langid_benches(c: &mut Criterion) {
             .map(|s| s.parse().unwrap())
             .collect();
 
-        let mut group = c.benchmark_group("langid_compare");
+        compare_struct!(group, LanguageIdentifier, "langid", &langids, &langids2);
+        compare_struct!(group, Locale, "locale", &langids, &langids2);
 
-        group.bench_function("langid", |b| {
-            b.iter(|| {
-                for (lid1, lid2) in langids.iter().zip(langids2.iter()) {
-                    let _ = black_box(lid1) == black_box(lid2);
-                }
-            })
-        });
-
-        group.bench_function("str", |b| {
-            b.iter(|| {
-                for (lid, s) in langids.iter().zip(data.canonicalized.iter()) {
-                    let _ = black_box(lid) == &black_box(s).as_str();
-                }
-            })
-        });
+        compare_str!(
+            group,
+            LanguageIdentifier,
+            "langid",
+            &langids,
+            &data.canonicalized
+        );
+        compare_str!(group, Locale, "locale", &langids, &data.canonicalized);
 
         group.finish();
     }
 
     // Canonicalize
     {
-        c.bench_function("langid_canonicalize", |b| {
-            b.iter(|| {
-                for s in &data.casing {
-                    let _ = LanguageIdentifier::canonicalize(black_box(s));
-                }
-            })
-        });
+        let mut group = c.benchmark_group("langid/canonicalize");
+
+        canonicalize!(group, LanguageIdentifier, "langid", &data.casing);
+        canonicalize!(group, Locale, "locale", &data.casing);
+
+        group.finish();
     }
 }
 

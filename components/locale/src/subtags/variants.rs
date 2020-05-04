@@ -6,7 +6,8 @@ use std::ops::Deref;
 /// `Variants` stores a list of [`Variant`] subtags in a canonical form
 /// by sorting and deduplicating them.
 ///
-/// # Example
+/// # Examples
+///
 /// ```
 /// use icu_locale::subtags::{Variant, Variants};
 ///
@@ -23,17 +24,17 @@ use std::ops::Deref;
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
 ///
-/// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
 /// [`Variant`]: ./struct.Variant.html
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Variants(Box<[Variant]>);
 
 impl Variants {
-    /// Creates a new `Variants` list from a vector.
+    /// Creates a new `Variants` set from a vector.
     /// The caller is expected to provide sorted and deduplicated vector as
     /// an input.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// use icu_locale::subtags::{Variant, Variants};
     ///
@@ -45,7 +46,7 @@ impl Variants {
     /// v.sort();
     /// v.dedup();
     ///
-    /// let mut variants: Variants = Variants::from_vec_unchecked(v);
+    /// let variants = Variants::from_vec_unchecked(v);
     /// ```
     ///
     /// For performance and memory constraint environments, it is recommended
@@ -56,7 +57,8 @@ impl Variants {
 
     /// Empties the `Variants` list.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// use icu_locale::subtags::{Variant, Variants};
     ///
