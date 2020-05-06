@@ -50,6 +50,7 @@ pub struct Request {
     pub payload: Option<Str>,
 }
 
+// Please try not to make this trait public, because it is easy to use incorrectly.  It is fine as an internal auto-implemented trait.
 trait CloneableAny: Debug + Any {
     fn clone_into_box(&self) -> Box<dyn CloneableAny>;
     fn as_any(&self) -> &dyn Any;

@@ -37,3 +37,8 @@ features = ["alloc"]
 [dependencies.no-std-compat]
 version = "0.4.0"
 features = ["alloc"]
+
+[[test]]
+name = "file_io"
+path = "tests/test_file_io.rs"
+required-features = ["std"]

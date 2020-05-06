@@ -28,8 +28,19 @@ pub struct JsonDataProvider {
 }
 
 impl JsonDataProvider {
+    #[cfg(feature = "std")]
     pub fn from_reader<R: Read>(reader: R) -> Result<Self, Error> {
         let result: schema::JsonSchema = serde_json::from_reader(reader)?;
+        Ok(JsonDataProvider{ data: result })
+    }
+
+    pub fn from_str(data: &str) -> Result<Self, Error> {
+        let result: schema::JsonSchema = serde_json::from_str(data)?;
+        Ok(JsonDataProvider{ data: result })
+    }
+
+    pub fn from_slice(data: &[u8]) -> Result<Self, Error> {
+        let result: schema::JsonSchema = serde_json::from_slice(data)?;
         Ok(JsonDataProvider{ data: result })
     }
 }
