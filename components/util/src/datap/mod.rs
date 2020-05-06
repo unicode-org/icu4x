@@ -4,14 +4,14 @@ pub mod decimal;
 
 use std::prelude::v1::*;
 // use async_trait::async_trait;
+use core::ops::Deref;
+use downcast_rs::impl_downcast;
+use downcast_rs::Downcast;
 use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::error::Error;
-use std::fmt::{Debug, Display, self};
-use core::ops::Deref;
-use downcast_rs::Downcast;
-use downcast_rs::impl_downcast;
+use std::fmt::{self, Debug, Display};
 
 pub type Str = Cow<'static, str>;
 
@@ -32,7 +32,7 @@ impl Display for Category {
 pub enum Key {
     Undefined,
     Decimal(decimal::Key),
-    PrivateUse(u32)
+    PrivateUse(u32),
 }
 
 impl Display for Key {
@@ -62,7 +62,7 @@ trait CloneableAny: Debug + Downcast {
 
 impl ToOwned for dyn CloneableAny {
     type Owned = Box<dyn CloneableAny>;
-  
+
     fn to_owned(&self) -> Self::Owned {
         CloneableAny::clone_into_box(self)
     }
@@ -108,18 +108,14 @@ impl Response {
 
     pub fn take_payload<T: 'static + Clone>(self) -> Option<Cow<'static, T>> {
         match self.payload {
-            Cow::Borrowed(borrowed) => {
-                match borrowed.as_any().downcast_ref::<T>() {
-                    Some(v) => Some(Cow::Borrowed(v)),
-                    None => None
-                }
-            }
-            Cow::Owned(boxed) => {
-                match boxed.into_any().downcast::<T>() {
-                    Ok(boxed_t) => Some(Cow::Owned(*boxed_t)),
-                    Err(_) => None
-                }
-            }
+            Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
+                Some(v) => Some(Cow::Borrowed(v)),
+                None => None,
+            },
+            Cow::Owned(boxed) => match boxed.into_any().downcast::<T>() {
+                Ok(boxed_t) => Some(Cow::Owned(*boxed_t)),
+                Err(_) => None,
+            },
         }
     }
 }
@@ -162,7 +158,7 @@ impl Error for ResponseError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             ResponseError::ResourceError(error) => Some(error.deref()),
-            _ => None
+            _ => None,
         }
     }
 }
