@@ -46,10 +46,13 @@ impl JsonDataProvider {
 }
 
 impl datap::DataProvider for JsonDataProvider {
-    fn load(&self, _request: datap::Request) -> Result<datap::Response, datap::ResponseError> {
-        // TODO: Use the request variable
-        let mut response = datap::Response::with_owned_payload(self.data.decimal.symbols_v1_a.clone());
-        response.locale = "en".to_string();
+    fn load(&self, request: datap::Request) -> Result<datap::Response, datap::ResponseError> {
+        // Clone the object, since the response could outlive the provider.
+        let payload = self.data.decimal.symbols_v1_a.clone();
+        let response = datap::ResponseBuilder {
+            data_locale: "und".to_string(),
+            request: request
+        }.with_owned_payload(payload);
         Ok(response)
     }
 }

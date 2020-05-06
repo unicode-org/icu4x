@@ -8,9 +8,10 @@ use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::error::Error;
-use std::any::Any;
 use std::fmt::{Debug, Display, self};
 use core::ops::Deref;
+use downcast_rs::Downcast;
+use downcast_rs::impl_downcast;
 
 pub type Str = Cow<'static, str>;
 
@@ -40,21 +41,23 @@ impl Display for Key {
     }
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Request {
     // TODO: Make this a Locale instead of a String
     pub locale: String,
     pub category: Category,
     pub key: Key,
-    // TODO: Make payload a dynamic type instead of a string
+
+    // For now, the request payload is a string. If a more expressive type is needed in the
+    // future, it should implement PartialEq and Clone. Consider using a concrete type, rather
+    // than a detour through Any (like in Response), which complicates the code.
     pub payload: Option<Str>,
 }
 
-// Please try not to make this trait public, because it is easy to use incorrectly.  It is fine as an internal auto-implemented trait.
-trait CloneableAny: Debug + Any {
+// Please do not to make this trait public, because it is easy to use incorrectly. It is fine as
+// an internal auto-implemented trait.
+trait CloneableAny: Debug + Downcast {
     fn clone_into_box(&self) -> Box<dyn CloneableAny>;
-    fn as_any(&self) -> &dyn Any;
-    fn as_any_mut(&mut self) -> &mut dyn Any;
 }
 
 impl ToOwned for dyn CloneableAny {
@@ -70,20 +73,24 @@ impl<S: 'static + Clone + Debug> CloneableAny for S {
     fn clone_into_box(&self) -> Box<dyn CloneableAny> {
         Box::new(self.clone())
     }
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
-    fn as_any_mut(&mut self) -> &mut dyn Any {
-        self
-    }
 }
 
-// TODO: Enable PartialEq on Response (is that necessary?)
+// Adds the Downcast methods to all 'static types implementing CloneableAny.
+impl_downcast!(CloneableAny);
+
 #[derive(Debug, Clone)]
 pub struct Response {
     // TODO: Make this a Locale instead of a String
-    pub locale: String,
+    pub data_locale: String,
+    // TODO: Is it useful to have the Request saved in the Response?
+    pub request: Request,
     payload: Cow<'static, dyn CloneableAny>,
+}
+
+// Used to build a response without a payload.
+pub struct ResponseBuilder {
+    pub data_locale: String,
+    pub request: Request,
 }
 
 // TODO: Should this be an implemention of std::borrow::Borrow?
@@ -99,16 +106,39 @@ impl Response {
         borrowed.as_any_mut().downcast_mut::<T>()
     }
 
-    pub fn with_owned_payload<T: 'static + Clone + Debug>(t: T) -> Self {
+    pub fn take_payload<T: 'static + Clone>(self) -> Option<Cow<'static, T>> {
+        match self.payload {
+            Cow::Borrowed(borrowed) => {
+                match borrowed.as_any().downcast_ref::<T>() {
+                    Some(v) => Some(Cow::Borrowed(v)),
+                    None => None
+                }
+            }
+            Cow::Owned(boxed) => {
+                match boxed.into_any().downcast::<T>() {
+                    Ok(boxed_t) => Some(Cow::Owned(*boxed_t)),
+                    Err(_) => None
+                }
+            }
+        }
+    }
+}
+
+impl ResponseBuilder {
+    // Move from self: the Response replaces the ResponseBuilder
+    pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response {
         Response {
-            locale: "und".to_string(),
+            data_locale: self.data_locale,
+            request: self.request,
             payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
         }
     }
 
-    pub fn with_borrowed_payload<T: 'static + Clone + Debug>(t: &'static T) -> Self {
+    // Move from self: the Response replaces the ResponseBuilder
+    pub fn with_borrowed_payload<T: 'static + Clone + Debug>(self, t: &'static T) -> Response {
         Response {
-            locale: "und".to_string(),
+            data_locale: self.data_locale,
+            request: self.request,
             payload: Cow::Borrowed(t),
         }
     }
