@@ -34,7 +34,9 @@ Labels starting with `T-` are *type* labels, indicating the type of deliverable 
 
 ### Assignee
 
-The assignee is the user who is the "champion" for the issue: tracking its progress, obtaining the necessary approvals, and so forth.  The assignee is often the same as the reporter.  The assignee is not necesarilly the same as the user who is writing the necessary code fixes.
+The assignee is the user who is *accountable* for the issue: tracking its progress, obtaining the necessary approvals, and so forth.  The assignee is often the same as the reporter.  The assignee is not necesarilly the same as the user who is *responsible* for writing the necessary code fixes.  Users interested in being *informed* or *consulted* can subscribe to the issue.
+
+For more on the difference between *responsible*, *accountable*, *consulted*, and *informed*, see the [RACI Matrix](https://en.wikipedia.org/wiki/Responsibility_assignment_matrix).
 
 An issue may have the **help wanted** label if there is no assignee.
 
