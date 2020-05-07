@@ -32,6 +32,16 @@ Labels starting with `T-` are *type* labels, indicating the type of deliverable 
 - **T-task** = a task, not a code change.
 - **T-tests** = the issue can be addressed by unit testing.
 
+### Component
+
+Labels starting with `C-` are *component* labels, indicating the functional component for the issue.  Every issue should have one:
+
+- **C-data** = related to data pipeline components.  Note: issues relating to data specific to a different component should use the more specific component.
+- **C-locale** = related to locale-related components.
+- **C-meta** = not specific to one specific component; affects ICU4X as a whole.
+- **C-process** = related to team processes, but not ICU4X code.
+- **C-test-infra** = related to integration test infrastructure components.  Note: issues relating to tests specific to a different component should use the more specific component (and can use the `T-tests` issue type).
+
 ### Assignee
 
 The assignee is the user who is *accountable* for the issue: tracking its progress, obtaining the necessary approvals, and so forth.  The assignee is often the same as the reporter.  The assignee is not necesarilly the same as the user who is *responsible* for writing the necessary code fixes.  Users interested in being *informed* or *consulted* can subscribe to the issue.
