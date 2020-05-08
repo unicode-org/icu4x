@@ -25,7 +25,7 @@ pub fn parse_language_identifier_from_iter<'a>(
     let language;
     let mut script = None;
     let mut region = None;
-    let mut variants = Vec::new();
+    let mut variant = None;
 
     if let Some(subtag) = iter.next() {
         language = subtags::Language::from_bytes(subtag)?;
@@ -47,11 +47,9 @@ pub fn parse_language_identifier_from_iter<'a>(
             } else if let Ok(s) = subtags::Region::from_bytes(subtag) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
-                if let Err(idx) = variants.binary_search(&v) {
-                    variants.insert(idx, v);
-                }
-                position = ParserPosition::Variant;
+            } else if let Ok(v) = subtags::Variant::try_from_iter(iter) {
+                variant = Some(v);
+                break;
             } else if mode != ParserMode::Partial {
                 return Err(ParserError::InvalidSubtag);
             } else {
@@ -61,20 +59,17 @@ pub fn parse_language_identifier_from_iter<'a>(
             if let Ok(s) = subtags::Region::from_bytes(subtag) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
-                if let Err(idx) = variants.binary_search(&v) {
-                    variants.insert(idx, v);
-                }
-                position = ParserPosition::Variant;
+            } else if let Ok(v) = subtags::Variant::try_from_iter(iter) {
+                variant = Some(v);
+                break;
             } else if mode != ParserMode::Partial {
                 return Err(ParserError::InvalidSubtag);
             } else {
                 break;
             }
-        } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
-            if let Err(idx) = variants.binary_search(&v) {
-                variants.insert(idx, v);
-            }
+        } else if let Ok(v) = subtags::Variant::try_from_iter(iter) {
+            variant = Some(v);
+            break;
         } else if mode != ParserMode::Partial {
             return Err(ParserError::InvalidSubtag);
         } else {
@@ -87,7 +82,7 @@ pub fn parse_language_identifier_from_iter<'a>(
         language,
         script,
         region,
-        variants: subtags::Variants::from_vec_unchecked(variants),
+        variant,
     })
 }
 

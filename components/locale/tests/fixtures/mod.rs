@@ -18,7 +18,7 @@ pub struct LocaleSubtags {
     pub script: Option<String>,
     pub region: Option<String>,
     #[serde(default)]
-    pub variants: Vec<String>,
+    pub variant: Option<String>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -72,16 +72,14 @@ impl TryFrom<LocaleSubtags> for LanguageIdentifier {
         let region = subtags
             .region
             .map(|s| s.parse().expect("Failed to parse region subtag."));
-        let variants = subtags
-            .variants
-            .iter()
-            .map(|v| v.parse().expect("Failed to parse variant subtag."))
-            .collect::<Vec<_>>();
+        let variant = subtags
+            .variant
+            .map(|v| v.parse().expect("Failed to parse variant subtag."));
         Ok(LanguageIdentifier {
             language,
             script,
             region,
-            variants: subtags::Variants::from_vec_unchecked(variants),
+            variant,
         })
     }
 }

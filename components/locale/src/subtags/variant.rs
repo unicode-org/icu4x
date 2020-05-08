@@ -17,8 +17,8 @@ use tinystr::TinyStr8;
 /// ```
 ///
 /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Variant(TinyStr8);
+#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+pub struct Variant(Box<[TinyStr8]>);
 
 const VARIANT_LENGTH: RangeInclusive<usize> = 4..=8;
 const VARIANT_NUM_ALPHA_LENGTH: usize = 4;
@@ -37,7 +37,26 @@ impl Variant {
     ///
     /// assert_eq!(variant, "posix");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+        let mut iter = input.split(|c| *c == b'-' || *c == b'_');
+        Self::try_from_iter(&mut iter)
+    }
+
+    pub fn from_vec_unchecked(input: Vec<TinyStr8>) -> Self {
+        Self(input.into_boxed_slice())
+    }
+
+    pub(crate) fn try_from_iter<'a>(
+        iter: &mut impl Iterator<Item = &'a [u8]>,
+    ) -> Result<Self, ParserError> {
+        let parts = iter
+            .map(|subtag| Self::parse_subtag(subtag))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(Self(parts.into_boxed_slice()))
+    }
+
+    pub fn parse_subtag(v: &[u8]) -> Result<TinyStr8, ParserError> {
         let slen = v.len();
 
         if !VARIANT_LENGTH.contains(&slen) {
@@ -54,27 +73,15 @@ impl Variant {
             return Err(ParserError::InvalidSubtag);
         }
 
-        Ok(Self(s.to_ascii_lowercase()))
+        Ok(s.to_ascii_lowercase())
     }
 
-    /// A helper function for displaying
-    /// a `Variant` subtag as a `&str`.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_locale::subtags::Variant;
-    ///
-    /// let variant = Variant::from_bytes(b"macos")
-    ///     .expect("Parsing failed.");
-    ///
-    /// assert_eq!(variant.as_str(), "macos");
-    /// ```
-    ///
-    /// `Notice`: For many use cases, such as comparison,
-    /// `Variant` implements `PartialEq<&str>` which allows for direct comparisons.
-    pub fn as_str(&self) -> &str {
-        self.0.as_str()
+    pub fn clear(&mut self) {
+        self.0 = Box::new([]);
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 }
 
@@ -88,24 +95,15 @@ impl FromStr for Variant {
 
 impl std::fmt::Display for Variant {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
-
-impl PartialEq<&str> for Variant {
-    fn eq(&self, other: &&str) -> bool {
-        self.as_str() == *other
-    }
-}
-
-impl PartialEq<str> for Variant {
-    fn eq(&self, other: &str) -> bool {
-        *self.as_str() == *other
-    }
-}
-
-impl<'l> From<&'l Variant> for &'l str {
-    fn from(input: &'l Variant) -> Self {
-        input.as_str()
+        let mut initial = true;
+        for subtag in self.0.iter() {
+            if initial {
+                write!(f, "{}", subtag)?;
+                initial = false;
+            } else {
+                write!(f, "-{}", subtag)?;
+            }
+        }
+        Ok(())
     }
 }

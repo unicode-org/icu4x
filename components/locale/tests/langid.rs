@@ -95,16 +95,6 @@ fn test_langid_subtag_script() {
 #[test]
 fn test_langid_subtag_variant() {
     let variant: subtags::Variant = "macos".parse().expect("Failed to parse a variant.");
-    let s: &str = (&variant).into();
+    let s: &str = &variant.to_string();
     assert_eq!(s, "macos");
-    assert_eq!(variant, "macos");
-}
-
-#[test]
-fn test_langid_subtag_variants() {
-    let variant: subtags::Variant = "macos".parse().expect("Failed to parse a variant.");
-    let mut variants = subtags::Variants::from_vec_unchecked(vec![variant]);
-    assert_eq!(variants.get(0).unwrap(), "macos");
-    variants.clear();
-    assert_eq!(variants.len(), 0);
 }

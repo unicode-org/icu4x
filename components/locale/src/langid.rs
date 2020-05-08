@@ -58,7 +58,7 @@ pub struct LanguageIdentifier {
     /// Region subtag of the LanguageIdentifier
     pub region: Option<subtags::Region>,
     /// Variant subtags of the LanguageIdentifier
-    pub variants: subtags::Variants,
+    pub variant: Option<subtags::Variant>,
 }
 
 impl LanguageIdentifier {
@@ -136,9 +136,9 @@ impl std::fmt::Display for LanguageIdentifier {
             f.write_char('-')?;
             region.fmt(f)?;
         }
-        if !self.variants.is_empty() {
+        if let Some(ref variant) = self.variant {
             f.write_char('-')?;
-            self.variants.fmt(f)?;
+            variant.fmt(f)?;
         }
         Ok(())
     }
