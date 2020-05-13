@@ -15,25 +15,7 @@ Many of the practices here are collected from existing sources (which should be 
 
 Note however that none of this document is meant to trump common sense, if if you're in a situation where it would be better to violate a **required** practice, then it just means we should have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However exceptions should always be commented clearly for the next maintainer.
 
-## Sources
-
-* [Learn Rust](https://doc.rust-lang.org/)
-  * The canonical source for Rust information, but it doesn't offer advice on all aspects of code design.
-* [Introduction - Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/)
-  * This is brilliantly written and very educational about how you get into a Rust mindset.
-* [Elegant Library APIs in Rust](https://deterministic.space/elegant-apis-in-rust.html)
-  * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somehwat out of date (2017). It has a video too.
-* [Good Practices for Writing Rust Libraries](https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/)
-  * Shorter and more focussed on the act of coding the libraries, and less about API design. Also potentially out of date in places.
-* [Strategies for Returning References in Rust](http://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html)
-  * Though I don't believe we should be doing this, it's still an interesting read.
-
-## Other Useful Links
-
-* Write and run Rust snippets: https://play.rust-lang.org
-  * You can save snippets in permantent links and incluce them as working examples in docs.
-* Write code and see what it compiles to: https://rust.godbolt.org
-  * Note that you need to enable compiler optimizations via `-C opt-level=3` if you are looking to meaningfully compare two code snippets.
+If you're new to Rust, see the [Appendix](#appendix) for some, hopefully useful, links.
 
 # Naming Conventions
 
@@ -41,19 +23,19 @@ Note however that none of this document is meant to trump common sense, if if yo
 
 Follow the naming advice in [Naming - Rust API Guidelines](https://rust-lang.github.io/api-guidelines/naming.html) at all times, and use [Rust RFC 0430](https://github.com/rust-lang/rfcs/blob/master/text/0430-finalizing-naming-conventions.md) for any ambiguous issues (e.g. Crate naming).
 
-Based on [this comment](https://github.com/rust-lang/api-guidelines/issues/29#issuecomment-342745898) I think the advice for Crate names should be:
-
 * Infer Crate names from package names where feasible:
   * A package is the directory in which the Cargo.toml exists.
 * Prefer single (lowercase) words for package names where feasible
-* Use __lowercase with hyphen__ to split words in package names if needed
+* Use __lowercase-with-hyphen__ when multiple parts exist in a package name.
+  * This seems to be the preferred Rust community approach.
+* Hyphens in package names are converted to __underscore__ in Crate names.
+  * To avoid ambiguity, do not use underscore in package names.
 
-This means that while Crate names are not trivially 
-I believe this would result in Crate names (which must be Rust identifiers) being identical to the package name at all times.
+This should result in Crate names always being unambiguously mappable to/from package names (e.g. the Crate "foo_bar" relates to the package "foo-bar").
 
-## Module Layout
+See also [this discussion on API guidelines](https://github.com/rust-lang/api-guidelines/issues/29#issuecomment-342745898).
 
-Modules form the basic units of imported code in Rust, so identifying where to split functionality and what to call modules is essential. I suspect this is the right level to divide things like collation vs segmentation etc. but it's also far too early to make hard recommendations about this, so I proposed to leave this issue open for the time being (moving code between modules later should be relatively easy).
+## Module and Code Layout
 
 ### Don't have "mixed" Crates :: suggested
 
@@ -66,13 +48,23 @@ Which of these options you chose is dependent on the size/complexity of the modu
 
 There might be cases where an intermediate "mixed" Crate is worthwhile, but it should be clearly documented as to why it is necessary.
 
-## Shared Internal Code
-
-Rust supports having [non-public sub-modules](https://doc.rust-lang.org/reference/visibility-and-privacy.html) within a Crate, and only the top-level "implicit" module is exposed by default (other modules can be exported by the top level module). See also [File hierarchy - Rust By Example](https://doc.rust-lang.org/rust-by-example/mod/split.html).
-
 ### Avoid over-exposing internal APIs :: suggested
 
 When sharing an API between modules in a Crate, use `pub(<scope>)` to express visibility, and select the smallest scope which suits the intent of the API (i.e. prefer `pub(crate::specific_mod)` to `pub(crate)` where appropriate).
+
+## Code Formatting and Linting
+
+### Use "cargo fmt" prior to any code reviews :: required
+
+Hopefully self explanatory. The less time we spend worrying about formatting and the fewer diffs during code reviews, the better.
+
+### Run "cargo clippy" and accept its suggestions :: suggested
+
+There are bound to be some cases where the linter makes suggestion we don't want to follow, but these should be rare. Any such false-positives should be [suppressed](https://github.com/rust-lang/rust-clippy#allowingdenying-lints) and commented for future maintainers.
+
+**Open Question**: Should we prohibit un-suppressed warnings as a github check?
+
+**Open Question**: Is this including all the pedantic warnings?
 
 # Structs and Traits
 
@@ -84,11 +76,14 @@ Rust offers a compelling model for encapsulating implementation details based on
 
 ### Minimize user-visible structs :: suggested
 
-While this sounds a bit obvious, I think it's important to stress that with Rust's privacy model, there is never any need to have an internal type be user-visible, and once a type is user-visible outside a Crate, it's published and should not be changed.
+While this sounds a bit obvious, it's important to stress that with Rust's privacy model, there is never any need to have an internal type be user-visible, and once a type is user-visible outside a Crate, it has a high cost associated with changing it (i.e. a semantic version change to the library). If there are parts of the API which must be released, but for which we cannot provide stability guarantees, they must be marked as such.
 
-The only place this might be an issue is if we decide to deliver ICU4X as multiple Crates. If we do that then we just added a requirement that our inter-Crate APIs be public (there's no privileged sharing outside Crates). This is one reason I propose we deliver ICU4X as a single Crate with multiple modules.
+There is a known pattern of using [`doc(hidden)`](https://doc.rust-lang.org/rustdoc/the-doc-attribute.html#dochidden) and having module names prefixed with multiple underscores to indicate they must not be relied upon outside the project, but ideally APIs would be designed to minimize the need for this and the expected external usage would be clearly documented for future maintainers.
 
-There is a known pattern of using [`doc(hidden)`](https://doc.rust-lang.org/rustdoc/the-doc-attribute.html#dochidden) and having module names prefixed with multiple underscores to indicate they must not be relied upon outside the project, but ideally APIs would be deesignedto minimize the need for this and the expected external usage would be clearly documented for future maintainers.
+There are three areas which may warrant a technically public API that we don't consider stable:
+* Where another crate may need access to non-public API
+* Where we want to expose some non-public API for testing or benchmarking
+* Where we want to expose some non-public API for helper macros
 
 ### No public fields :: suggested
 
@@ -119,12 +114,13 @@ Which types implement these traits should be carefully considered and documented
 * **Clone** is a general purpose duplication mechanism.
   * To derive this trait you must have all fields being Clone-able.
   * Types can also implement this trait manually and provide custom business logic to handle ownership etc.
+  * While deriving or implementing Clone is normal for most data types, it may not be suitable for other types, especially those backed by system resources (e.g. data providers).
 * **Copy** is for types which can always be safely duplicated (e.g by bitwise copying).
   * A type which implements **Copy always implicitly implements Clone**.
   * You cannot override and customize how Copy is implemented.
   * For example, note that `String` does not implement Copy.
 
-This is a subtle one and can require careful consideration. There are pros and cons for using these derived traits, but once a (user) public struct uses a derived trait, it is **part of the published API and cannot be removed**.
+There are pros and cons for using these derived traits, but once a (user) public struct uses a derived trait, it is **part of the published API and cannot be removed**.
 
 Simple value types will benefit the most from implementing Clone and Copy traits, since it allows users to avoid having to deal with lifetimes and borrowing. However this can prohibit (or at least complicate) the act of adding a new field to the struct (e.g. adding a `String` to a Copy-able struct).
 
@@ -169,7 +165,7 @@ Perhaps more importantly, **an unsized type can only be passed by reference to o
 
 This adds weight to the idea that we should avoid traits and any other unsized types when specifying user visible types. Obviously we will accept things like `str` as parameters (these are unsized), but we aren't adding them directly to structures by reference.
 
-For example, I think that in general we should avoid returning an abstract trait to the user (intermediate traits like Iterator might be fine though since a user is expected to consume those fairly immediately).
+For example, in general we should avoid returning an abstract trait to the user (intermediate traits like Iterator might be fine though since a user is expected to consume those fairly immediately).
 
 # Idiomatic Code
 
@@ -193,7 +189,7 @@ fn function_name(param: ParamType) -> ReturnType { … }
 
 may still have parameters "passed by reference" when it can determine that the reference is no longer subsequently used by the calling code (this is a "move" in Rust parlance).
 
-Furthermore, it will often [ellide the copy[(https://en.wikipedia.org/wiki/Copy_elision) of the return value if it determines the returned object would otherwise go out of scope. It will allocate the space for the return value on the caller's stack or use the memory in a destination struct, to directly write the "returned" value in its final destination with no copying whatsoever. This is called Return Value Optimization (RVO) and while it is now available in C++ as well, it's a relatively new feature there.
+Furthermore, it will often [ellide the copy](https://en.wikipedia.org/wiki/Copy_elision) of the return value if it determines the returned object would otherwise go out of scope. It will allocate the space for the return value on the caller's stack or use the memory in a destination struct, to directly write the "returned" value in its final destination with no copying whatsoever. This is called Return Value Optimization (RVO) and while it is now available in C++ as well, it's a relatively new feature there.
 
 It is still often better (for reasons of borrowing and ownership) to pass structs by non-mutable reference, but returning **newly created** results by value (even potentially large structures) is not expected to cause performance issues.
 
@@ -215,7 +211,7 @@ There are times where this may not be possible (e.g. if using non-`Copy` types y
 
 ### Pass Box<T> by value where possible :: suggested
 
-It's unlikely we will have many `Box<T>`s around. We should return boxes by-value, and accept things as `&T` as much as possible, instead of `&Box<T>`.
+It's unlikely we will have many `Box<T>`s in public APIs. We should return boxes by-value, and accept things as `&T` as much as possible, instead of `&Box<T>`. Internally we might use `Box<T>` for efficiency, but it should be avoided in any public APIs.
 
 ### Pass and return fundamental type by value where possible :: required
 
@@ -311,11 +307,35 @@ See also the [Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handl
 
 The ICU4X library should be designed so as to never fail at runtime. Now obviously that's something you'd expect all library writers to say, but in Rust you can control the places where code can fail explicitly, so it's much easier to write self-documenting code where the assumptions around failure are obvious.
 
-Most core rust APIs (traits) have two ways to access data, a version that can "panic" (equivalent to a SEGFAULT in C/C++), and one which returns a [Result](https://doc.rust-lang.org/std/result/index.html) or an [Option](https://doc.rust-lang.org/std/option/enum.Option.html). Rust is a language which likes to avoid "unnecessary" overhead, and in some cases it is perfectly correct to use an API which can "panic" because you have already checked the arguments carefully (and performance will be better).
+Most core rust APIs (traits) have two ways to access data, a version that can "panic" , and one which returns a [Result](https://doc.rust-lang.org/std/result/index.html) or an [Option](https://doc.rust-lang.org/std/option/enum.Option.html). Rust is a language which likes to avoid "unnecessary" overhead, and in some cases it is perfectly correct to use an API which can "panic" because you have already checked the arguments carefully (and performance will be better).
 
 Note that in cases where the Rust compiler can statically determine that a check is sufficient to avoid panic, it will remove the internal check and panic related code, leaving just a provably safe data access.
 
-**Open Question**: Should we have a standard `IcuResult<T>` type (e.g. `Result<T, &'static str>`, or something which could later provide internationalized error messages; e.g. an enum per error).
+### Where Result is needed, use IcuResult<T> :: required
+
+While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X concensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
+
+```
+// Nesting semantically interesting error information inside the generic error type.
+enum IcuError {
+    ParserError(parser::ParserError),
+    RuntimeError(...)
+}
+```
+
+A couple of crates by `@dtolnay` that are considered "new wave of good error APIs" and are complementary to each other:
+
+* https://github.com/dtolnay/thiserror
+* https://github.com/dtolnay/anyhow
+
+Other links on error handling:
+
+* https://blog.yoshuawuyts.com/error-handling-survey/
+* http://sled.rs/errors
+* https://boats.gitlab.io/blog/post/failure-to-fehler/
+* https://boats.gitlab.io/blog/post/why-ok-wrapping/
+* https://vorner.github.io/2020/04/09/wrapping-mental-models.html
+* https://yaah.dev/try-blocks
 
 ## Panicking APIs
 
@@ -333,11 +353,11 @@ This is because these APIs return a value (or value reference) which cannot be "
 
 ## Non-Panicking APIs
 
-The alternative to using direct data accessors which can panic is to use a method which can return **Option** or **Result**. In the case of collections and strings, where a simple data item is being requested, this is most often provided by functions such as "get" (or "get_mut" for mutable references) which return an Option.
+The alternative to using direct data accessors which can panic is to use a method which can return **Option** or **Result**. In the case of collections and strings, where a simple data item is being requested, this is most often provided by functions such as "get" (or "get_mut" for mutable references) which return `Option`.
 
 If data access is expected to fail occasionally (e.g. looking up properties in a map) then the resulting [Option can be unwrapped](https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or) or propagated accordingly.
 
-If missing data signals a "hard" error from which the function cannot recover (e.g. user supplies incorrect input) then any returned Option should be [propagated into a Result immediately](https://doc.rust-lang.org/std/option/enum.Option.html#method.ok_or), with an appropriate error message.
+If missing data signals a "hard" error from which the function cannot recover (e.g. user supplies incorrect input) then any returned `Option` should be [propagated into a `Result` immediately](https://doc.rust-lang.org/std/option/enum.Option.html#method.ok_or), with an appropriate error value.
 
 ## Best Practice
 
@@ -349,13 +369,13 @@ This should not include the contract of code in a different Crate. I.e. if a fun
 
 ### Don't Handle Errors :: required
 
-Functions which can error for any reason must return a Result, and APIs should be designed such that you should never need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should always be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. Never write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
+Functions which can error for any reason must return a `Result`, and APIs should be designed such that you should never need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should always be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. Never write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
 
 This approach should mean that error handling and the design of functions which can propagate errors is consistent everywhere. For non-error cases, where different types of result are possible, use a normal enum.
 
 The only time you might need to handle an **Err** is if you call APIs outside the library which return Result rather than Option (e.g. allowing a retry for data loading).
 
-Finally, and fairly obviously, **never turn an error into a panic by unconditionally unwrapping the result**.
+Finally, and fairly obviously, **never turn an error into a panic by unconditionally unwrapping the result in the library**.
 
 ### Comment Use of Panicking Calls :: required
 
@@ -372,13 +392,19 @@ For example, if indices obtained from ICU data are to be trusted for indexed acc
 
 However, you should **never add a check purely in order to call a method which could otherwise panic**; in that situation you should always prefer to call the non-panicking equivalent and handle the Option or Result idiomatically.
 
-### Prefer Result over Option :: suggested
+### Use Result over Option for errors :: suggested
 
-When creating functions which can fail:
-* Use **Result** for all errors, or any cases where a user facing error message is needed.
-* Use **Option** for data accessors where "failing" always **only** implicitly means "no data available".
-  * Especially in cases where we expect the caller to have a reasonable response getting [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None).
-* Use a different enum for non-error cases with multiple return types (which can't use Option).
+When creating functions which can fail to return a value:
+* Use **IcuResult** for all errors, or any cases where a user facing message is needed.
+* Use **Option** for data accessors where "no data available" is a valid response (i.e. it's not an error per se).
+  * Especially in cases where we expect the caller to have a reasonable response to getting [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None).
+* Use a different enum for non-error cases with multiple return types (which can't use `Option`).
+
+Examples:
+* Does file with this path exists? - Option.
+* Is there an element with this key in the list? - Option
+* Try to open a file - Result
+* Try to parse a string into a valid Language Identifier - Result
 
 # Advanced Features
 
@@ -405,13 +431,12 @@ use_locale_id(&"en_GB".into());
 ```
 
 Rust's lets you bind traits to existing system type (e.g. `str`) for use within a module. And importantly, it lets you expose a series to trait bindings that other people can opt into if they want.
-By implementing the generic [`From<&str>`](https://doc.rust-lang.org/std/convert/trait.From.html) trait on `LocaleId` to convert from a string to a locale ID, we also get the [`Into<Foo>`](https://doc.rust-lang.org/std/convert/trait.Into.html) trait implied on `&str` for free.
+By implementing the generic [`TryFrom<&str>`](https://doc.rust-lang.org/std/convert/trait.TryFrom.html) trait on `LocaleId` to convert from a string to a locale ID, we also get the [`TryInto<Foo>`](https://doc.rust-lang.org/std/convert/trait.TryInto.html) trait implied on `&str` for free.
 
 ```
-impl From<&str> for LocaleId {
-  fn from(s: &str) -> LocaleId {
-    // This is just the normal object creation function on LocaleId.
-    LocaleId::from(s)
+impl TryFrom<&str> for LocaleId {
+  fn try_from(s: &str) -> IcuResult<LocaleId> {
+    ...
   }
 }
 ```
@@ -435,5 +460,25 @@ for w in s.unicode_words() {
 
 Thus we could provide one or more ICU4X traits bound to things like `str` to provide a low friction way to access the libraries (obvious questions like naming notwithstanding).
 
-**Open Question**: Is this too much "cleverness" ? Personally I like this a lot because it's safe and opt-in for users (there can always be plain functions to just call, and bindings like this could be exported in a separate module so users aren't forced to adopt them).
+# Appendix
+
+## Sources
+
+* [Learn Rust](https://doc.rust-lang.org/)
+  * The canonical source for Rust information, but it doesn't offer advice on all aspects of code design.
+* [Introduction - Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/)
+  * This is brilliantly written and very educational about how you get into a Rust mindset.
+* [Elegant Library APIs in Rust](https://deterministic.space/elegant-apis-in-rust.html)
+  * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somehwat out of date (2017). It has a video too.
+* [Good Practices for Writing Rust Libraries](https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/)
+  * Shorter and more focussed on the act of coding the libraries, and less about API design. Also potentially out of date in places.
+* [Strategies for Returning References in Rust](http://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html)
+  * Though I don't believe we should be doing this, it's still an interesting read.
+
+## Other Useful Links
+
+* Write and run Rust snippets: https://play.rust-lang.org
+  * You can save snippets in permantent links and incluce them as working examples in docs.
+* Write code and see what it compiles to: https://rust.godbolt.org
+  * Note that you need to enable compiler optimizations via `-C opt-level=3` if you are looking to meaningfully compare two code snippets.
 
