@@ -5,6 +5,9 @@ Welcome to the home page for the ICU4X-SC.  We are a subcommittee of ICU-TC in t
 
 Please subscribe to this repository to participate in discussions.  If you would like to join the core development team, apply to join [our mailing list](https://groups.google.com/a/unicode.org/forum/#!forum/omnicu-core).
 
+![build & test](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)
+
+
 ## Charter
 
 *For the full charter, including answers to frequently asked questions, see [charter.md](docs/charter.md).*
