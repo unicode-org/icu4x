@@ -22,3 +22,13 @@ features = ["derive", "alloc"]
 version = "1.0"
 default-features = false
 features = ["alloc"]
+
+[[test]]
+name = "test_data_parser"
+path = "lib.rs"
+required-features = ["std"]
+
+[[test]]
+name = "test_data_runner"
+path = "runner/runner.rs"
+required-features = ["std"]
