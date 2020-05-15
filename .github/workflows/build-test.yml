@@ -47,3 +47,13 @@ jobs:
 
     - name: Test
       run: cargo test --verbose
+
+  format:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Rust linter
+      # make this command fail if cargo fmt had to make changes
+      run: cargo fmt && git status --short | wc -l | awk '{if ($1 != 0) {exit 1;}}'
