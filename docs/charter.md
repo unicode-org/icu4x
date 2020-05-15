@@ -1,7 +1,11 @@
 ICU4X Charter
 ==============
 
-ICU4X is a new project whose objective is to solve the needs of clients who wish to provide client-side i18n for their products in resource-constrained environments.
+ICU4X is a project whose objective is to solve the needs of clients who wish to provide client-side i18n for their products in resource-constrained environments.
+
+ICU4X derives from the experience of ICU4C/ICU4J and ECMA402 design decisions.
+
+# Design
 
 ICU4X will be built from the start with several key design constraints:
 
@@ -10,7 +14,41 @@ ICU4X will be built from the start with several key design constraints:
 3. Availability and ease of use in multiple programming languages.
 4. Written by i18n experts to encourage best practices.
 
-ICU4X will provide an API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
+# Scope
+
+ICU4X aims to provide a set of APIs sufficient to internationalize basic modern software.
+
+With the focus on client-side, it will initially focus on the scope covered by the ECMA-402 extended to cover needs of more low level systems such as Gecko or Fuchsia.
+
+The current target is to cover all of ECMA-402 needs, and a modern subset of ICU4X APIs needed for software platforms such as Fuschia and Gecko.
+
+One of the benchmarks on decisions related to whether a given API belongs to ICU4X will be if it requires Unicode/CLDR data and would benefit from being managed together with other APIs that rely on the same version of Unicode and CLDR data.
+
+For ICU4C APIs and other internationalization needs that will not end up being included, ICU4X aims to provide a sufficient access to building blocks to allow third-party libraries to be developed that can interoperate with ICU4X with minimum data and logic duplication.
+
+In some rare cases, ICU4X may diverge from both ECMA-402, and ICU4C. Such diversions should be the result of improved API design and should allow users to cover the same needs with the upgraded APIs.
+
+# Target platforms
+
+The list of target platforms is expected to evolve over time, and will be primarily used when making decisions on features and API tradeoffs between low-level ICU4X-like APIs and high-level ECMA-402 APIs.
+
+Current list of target platforms:
+* Web Platform (V8, SpiderMonkey, JSC)
+* Software platforms (Fuschia, Gecko)
+* Mobile OSes (iOS, Android)
+* Low-power OSes (WearOS, WatchOS)
+* Client-side toolkits (Flutter)
+
+ICU4X is also aiming to provide bindings or compilation targets for a range of programming languages. This list is also dynamic and used when evaluating design tradeoffs:
+
+* Rust
+* JavaScript
+* Objective-C
+* Java
+* Dart
+* C++
+
+Referential platforms and languages may change over time as the industry developers and should represent the current needs of the industry.
 
 ## Frequently Asked Questions
 
