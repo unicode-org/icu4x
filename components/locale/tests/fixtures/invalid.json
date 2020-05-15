@@ -1,0 +1,75 @@
+[
+  {
+    "input": "a1a",
+    "output": {
+      "error": "InvalidLanguage",
+      "text": "The given language subtag is invalid"
+    }
+  },
+  {
+    "input": "Arab-US",
+    "output": {
+      "error": "InvalidLanguage",
+      "text": "The given language subtag is invalid"
+    }
+  },
+  {
+    "input": "",
+    "output": {
+      "error": "InvalidLanguage",
+      "text": "The given language subtag is invalid"
+    }
+  },
+  {
+    "input": "pl-DSDAFAFDF",
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": "pl-Latn-$1231",
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": "pl-Latn-US-$1231",
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": "pl-Latn-12",
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": "pl-Latn-a12",
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": "pl-Latn-US-3_dd",
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-Latn-US-variant-h0-hybrid"
+    },
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
+  }
+]

@@ -10,9 +10,23 @@ ICU4X will be built from the start with several key design constraints:
 3. Availability and ease of use in multiple programming languages.
 4. Written by i18n experts to encourage best practices.
 
-ICU4X will provide an [ECMA-402](https://www.ecma-international.org/publications/standards/Ecma-402.htm)-compatible API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
+ICU4X will provide an API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
 
 ## Frequently Asked Questions
+
+### What is the scope of ICU4X feature coverage?
+
+ICU4X will provide a feature set based on known use cases for the target clients (as stated above, client-side i18n in resource-constrained environments).
+
+The feature coverage of ICU4C and ICU4J goes well beyond what is necessary for the target clients; ICU4X will have a more narrow focus.
+
+[ECMA-402](https://www.ecma-international.org/publications/standards/Ecma-402.htm) provides an API surface that has already been thoroughly vetted for resource-constrained JavaScript clients, and thus everything in ECMA-402 is considered in-scope for ICU4X.
+
+We also recognize that target clients may have needs that extend outside the scope of ECMA-402.  Features falling into one of the following use cases will also be considered in-scope for ICU4X:
+
+- *to be filled in*
+
+The above list may grow over time.  To add an item to this list, a delegate should propose a PR to this file and achieve consensus at the subcommittee meeting.
 
 ### What will be the organizational structure of ICU4X?
 
@@ -59,7 +73,3 @@ Since C++ and Java are both target output languages of ICU4X, it is possible tha
 ### Why not put it in the ICU repository governed directly by ICU-TC?
 
 ICU4X will have some overlap of personnel with ICU, but the processes, builds, and release cycle will be run separately from ICU.  The ICU repository is closely tied to the ICU release processes, with each pull request running the ICU4C and ICU4J test suites, linked to Jira issues.
-
-### What if clients need a feature that is not in ECMA-402?
-
-Clients of ICU4X may need features beyond those recommended by ECMA-402.  The subcommittee is not ruling out the option of adding additional features in the same style as ECMA-402 to cover additional client needs.  The details for how to determine what features belong in ICU4X that aren't already in ECMA-402 will be discussed at a future time.

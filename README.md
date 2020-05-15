@@ -5,6 +5,9 @@ Welcome to the home page for the ICU4X-SC.  We are a subcommittee of ICU-TC in t
 
 Please subscribe to this repository to participate in discussions.  If you would like to join the core development team, apply to join [our mailing list](https://groups.google.com/a/unicode.org/forum/#!forum/omnicu-core).
 
+![build & test](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)
+
+
 ## Charter
 
 *For the full charter, including answers to frequently asked questions, see [charter.md](docs/charter.md).*
@@ -19,3 +22,7 @@ ICU4X, or "ICU for X", will be built from the start with several key design cons
 4. Written by i18n experts to encourage best practices.
 
 ICU4X will provide an ECMA-402-compatible API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
+
+## Documentation
+
+More information about the project can be found in [the docs subdirectory](docs/index.md).
