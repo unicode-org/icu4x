@@ -6,6 +6,8 @@ mod helpers;
 
 use core::ops::Deref;
 use helpers::CloneableAny;
+use std::any::Any;
+use std::any::TypeId;
 use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
@@ -65,31 +67,61 @@ pub struct Response {
     payload: Cow<'static, dyn CloneableAny>,
 }
 
+#[derive(Debug)]
+pub enum PayloadError {
+    /// The type argument does not match the payload. The actual TypeId is provided.
+    TypeMismatchError(TypeId),
+}
+
+impl Display for PayloadError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // TODO: should the Error Display be different from Debug?
+        Debug::fmt(self, f)
+    }
+}
+
+impl Error for PayloadError {}
+
+impl From<TypeId> for PayloadError {
+    fn from(type_id: TypeId) -> Self {
+        PayloadError::TypeMismatchError(type_id)
+    }
+}
+
 // TODO: Should this be an implemention of std::borrow::Borrow?
+// TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
 impl Response {
     /// Get an immutable reference to the payload in a response object.
-    pub fn borrow_payload<T: 'static>(&self) -> Option<&T> {
+    pub fn borrow_payload<T: 'static>(&self) -> Result<&T, PayloadError> {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
-        borrowed.as_any().downcast_ref::<T>()
+        borrowed
+            .as_any()
+            .downcast_ref::<T>()
+            .ok_or_else(|| PayloadError::from(borrowed.as_any().type_id()))
     }
 
     /// Get a mutable reference to the payload in a response object.
-    pub fn borrow_payload_mut<T: 'static>(&mut self) -> Option<&mut T> {
+    pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
         let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
-        let borrowed: &mut dyn CloneableAny = boxed.borrow_mut();
-        borrowed.as_any_mut().downcast_mut::<T>()
+        let borrowed_mut: &mut dyn CloneableAny = boxed.borrow_mut();
+        // TODO: If I move this into the lambda, I get E0502. Why?
+        let type_id = borrowed_mut.as_any().type_id();
+        borrowed_mut
+            .as_any_mut()
+            .downcast_mut::<T>()
+            .ok_or_else(|| PayloadError::from(type_id))
     }
 
     /// Take ownership of the payload from a response object. Consumes the response object.
-    pub fn take_payload<T: 'static + Clone>(self) -> Option<Cow<'static, T>> {
+    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'static, T>, PayloadError> {
         match self.payload {
             Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
-                Some(v) => Some(Cow::Borrowed(v)),
-                None => None,
+                Some(v) => Ok(Cow::Borrowed(v)),
+                None => Err(PayloadError::from(borrowed.as_any().type_id())),
             },
             Cow::Owned(boxed) => match boxed.into_any().downcast::<T>() {
-                Ok(boxed_t) => Some(Cow::Owned(*boxed_t)),
-                Err(_) => None,
+                Ok(boxed_t) => Ok(Cow::Owned(*boxed_t)),
+                Err(boxed_any) => Err(PayloadError::from(boxed_any.type_id())),
             },
         }
     }

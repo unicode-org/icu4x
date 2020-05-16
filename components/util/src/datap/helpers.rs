@@ -1,8 +1,8 @@
 use std::prelude::v1::*;
 
-use downcast_rs::Downcast;
 use downcast_rs::impl_downcast;
-use std::fmt::{Debug};
+use downcast_rs::Downcast;
+use std::fmt::Debug;
 
 // Please do not to make this trait public, because it is easy to use incorrectly. It is fine as
 // an internal auto-implemented trait.

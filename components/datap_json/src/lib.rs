@@ -3,7 +3,6 @@
 extern crate no_std_compat as std;
 
 use std::prelude::v1::*;
-// use async_trait::async_trait;
 
 use icu_util::datap;
 
@@ -23,22 +22,26 @@ impl From<serde_json::error::Error> for Error {
     }
 }
 
+/// A data provider reading from a JSON file.
 pub struct JsonDataProvider {
     data: schema::JsonSchema,
 }
 
 impl JsonDataProvider {
+    /// Create a JsonDataProvider from a file reader.
     #[cfg(feature = "std")]
     pub fn from_reader<R: Read>(reader: R) -> Result<Self, Error> {
         let result: schema::JsonSchema = serde_json::from_reader(reader)?;
         Ok(JsonDataProvider { data: result })
     }
 
+    /// Create a JsonDataProvider from a JSON string slice.
     pub fn from_str(data: &str) -> Result<Self, Error> {
         let result: schema::JsonSchema = serde_json::from_str(data)?;
         Ok(JsonDataProvider { data: result })
     }
 
+    /// Create a JsonDataProvider from a &[u8] slice.
     pub fn from_slice(data: &[u8]) -> Result<Self, Error> {
         let result: schema::JsonSchema = serde_json::from_slice(data)?;
         Ok(JsonDataProvider { data: result })
