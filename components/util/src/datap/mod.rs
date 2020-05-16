@@ -2,19 +2,18 @@
 
 pub mod decimal;
 
-use std::prelude::v1::*;
-// use async_trait::async_trait;
+mod helpers;
+
 use core::ops::Deref;
-use downcast_rs::impl_downcast;
-use downcast_rs::Downcast;
+use helpers::CloneableAny;
 use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::error::Error;
 use std::fmt::{self, Debug, Display};
+use std::prelude::v1::*;
 
-pub type Str = Cow<'static, str>;
-
+/// A top-level collection of related data keys.
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Category {
     Undefined = 0,
@@ -28,6 +27,7 @@ impl Display for Category {
     }
 }
 
+/// A specific key within a category.
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Key {
     Undefined,
@@ -41,6 +41,7 @@ impl Display for Key {
     }
 }
 
+/// A struct to request a certain hunk of data from a data provider.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Request {
     // TODO: Make this a Locale instead of a String
@@ -51,33 +52,10 @@ pub struct Request {
     // For now, the request payload is a string. If a more expressive type is needed in the
     // future, it should implement PartialEq and Clone. Consider using a concrete type, rather
     // than a detour through Any (like in Response), which complicates the code.
-    pub payload: Option<Str>,
+    pub payload: Option<Cow<'static, str>>,
 }
 
-// Please do not to make this trait public, because it is easy to use incorrectly. It is fine as
-// an internal auto-implemented trait.
-trait CloneableAny: Debug + Downcast {
-    fn clone_into_box(&self) -> Box<dyn CloneableAny>;
-}
-
-impl ToOwned for dyn CloneableAny {
-    type Owned = Box<dyn CloneableAny>;
-
-    fn to_owned(&self) -> Self::Owned {
-        CloneableAny::clone_into_box(self)
-    }
-}
-
-// Implement CloneableAny for all 'static types implementing Clone.
-impl<S: 'static + Clone + Debug> CloneableAny for S {
-    fn clone_into_box(&self) -> Box<dyn CloneableAny> {
-        Box::new(self.clone())
-    }
-}
-
-// Adds the Downcast methods to all 'static types implementing CloneableAny.
-impl_downcast!(CloneableAny);
-
+/// A response object containing a data hunk ("payload").
 #[derive(Debug, Clone)]
 pub struct Response {
     // TODO: Make this a Locale instead of a String
@@ -87,25 +65,22 @@ pub struct Response {
     payload: Cow<'static, dyn CloneableAny>,
 }
 
-// Used to build a response without a payload.
-pub struct ResponseBuilder {
-    pub data_locale: String,
-    pub request: Request,
-}
-
 // TODO: Should this be an implemention of std::borrow::Borrow?
 impl Response {
+    /// Get an immutable reference to the payload in a response object.
     pub fn borrow_payload<T: 'static>(&self) -> Option<&T> {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed.as_any().downcast_ref::<T>()
     }
 
+    /// Get a mutable reference to the payload in a response object.
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Option<&mut T> {
         let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
         let borrowed: &mut dyn CloneableAny = boxed.borrow_mut();
         borrowed.as_any_mut().downcast_mut::<T>()
     }
 
+    /// Take ownership of the payload from a response object. Consumes the response object.
     pub fn take_payload<T: 'static + Clone>(self) -> Option<Cow<'static, T>> {
         match self.payload {
             Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
@@ -120,8 +95,15 @@ impl Response {
     }
 }
 
+/// Builder class used to construct a Response.
+pub struct ResponseBuilder {
+    pub data_locale: String,
+    pub request: Request,
+}
+
 impl ResponseBuilder {
-    // Move from self: the Response replaces the ResponseBuilder
+    /// Construct a Response from the builder, with owned data.
+    /// Consumes both the builder and the data.
     pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response {
         Response {
             data_locale: self.data_locale,
@@ -130,7 +112,8 @@ impl ResponseBuilder {
         }
     }
 
-    // Move from self: the Response replaces the ResponseBuilder
+    /// Construct a Response from the builder, with borrowed data.
+    /// Consumes the builder, but not the data.
     pub fn with_borrowed_payload<T: 'static + Clone + Debug>(self, t: &'static T) -> Response {
         Response {
             data_locale: self.data_locale,
@@ -163,6 +146,7 @@ impl Error for ResponseError {
     }
 }
 
+/// An abstract data providewr that takes a request object and returns a response with a payload.
 // TODO: Make this async
 // #[async_trait]
 pub trait DataProvider {
