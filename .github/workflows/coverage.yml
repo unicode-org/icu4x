@@ -1,0 +1,40 @@
+name:                           Coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: '*'
+
+jobs:
+  test:
+
+    name:                       Coverage
+    runs-on:                    ubuntu-latest
+
+    steps:
+      - uses:                   actions/checkout@v2
+
+      - uses:                   actions-rs/toolchain@v1
+        with:
+          profile:              minimal
+          toolchain:            nightly
+          override:             true
+
+      - uses:                   actions-rs/cargo@v1
+        with:
+          command:              test
+          args:                 --all-features --no-fail-fast
+        env:
+          CARGO_INCREMENTAL:    '0'
+          RUSTFLAGS:            '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+          RUSTDOCFLAGS:         '-Cpanic=abort'
+
+      - id:                     coverage
+        uses:                   actions-rs/grcov@v0.1
+
+      - name:                   Push grcov results to Coveralls via GitHub Action
+        uses:                   coverallsapp/github-action@v1.0.1
+        with:
+          github-token:         ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov:         ${{ steps.coverage.outputs.report }}
