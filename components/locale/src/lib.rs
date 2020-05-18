@@ -38,6 +38,8 @@
 //! [`ICU4X`]: https://github.com/unicode-org/icu4x
 mod langid;
 mod parser;
+#[cfg(feature = "serde")]
+mod serde;
 pub mod subtags;
 
 pub use langid::LanguageIdentifier;
