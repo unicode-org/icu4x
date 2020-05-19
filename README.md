@@ -5,8 +5,7 @@ Welcome to the home page for the ICU4X-SC.  We are a subcommittee of ICU-TC in t
 
 Please subscribe to this repository to participate in discussions.  If you would like to join the core development team, apply to join [our mailing list](https://groups.google.com/a/unicode.org/forum/#!forum/omnicu-core).
 
-![build & test](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)
-
+[![Build Status](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=master)](https://coveralls.io/github/unicode-org/icu4x?branch=master)
 
 ## Charter
 
