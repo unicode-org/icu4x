@@ -1,4 +1,4 @@
-extern crate icu_datap_json;
+use icu_datap_json;
 
 use std::fs::File;
 use std::io::BufReader;

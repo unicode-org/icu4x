@@ -91,7 +91,7 @@ impl From<TypeId> for PayloadError {
 // TODO: Should this be an implemention of std::borrow::Borrow?
 // TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
 impl Response {
-    /// Get an immutable reference to the payload in a response object.
+    /// Get an immutable reference to the payload in a Response object.
     pub fn borrow_payload<T: 'static>(&self) -> Result<&T, PayloadError> {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed
@@ -100,7 +100,7 @@ impl Response {
             .ok_or_else(|| PayloadError::from(borrowed.as_any().type_id()))
     }
 
-    /// Get a mutable reference to the payload in a response object.
+    /// Get a mutable reference to the payload in a Response object.
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
         let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
         let borrowed_mut: &mut dyn CloneableAny = boxed.borrow_mut();
@@ -112,7 +112,7 @@ impl Response {
             .ok_or_else(|| PayloadError::from(type_id))
     }
 
-    /// Take ownership of the payload from a response object. Consumes the response object.
+    /// Take ownership of the payload from a Response object. Consumes the Response object.
     pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'static, T>, PayloadError> {
         match self.payload {
             Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
