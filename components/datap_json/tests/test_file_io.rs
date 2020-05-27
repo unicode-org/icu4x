@@ -13,7 +13,7 @@ fn test_read_json() {
     let reader = BufReader::new(file);
     let json_data_provider = JsonDataProvider::from_reader(reader).unwrap();
     let response = json_data_provider
-        .load(datap::Request {
+        .load(&datap::Request {
             locale: "root".to_string(),
             category: datap::Category::Decimal,
             key: datap::Key::Decimal(datap::decimal::Key::SymbolsV1),

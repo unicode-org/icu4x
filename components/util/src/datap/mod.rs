@@ -59,12 +59,12 @@ pub struct Request {
 
 /// A response object containing a data hunk ("payload").
 #[derive(Debug, Clone)]
-pub struct Response {
+pub struct Response<'d> {
     // TODO: Make this a Locale instead of a String
     pub data_locale: String,
     // TODO: Is it useful to have the Request saved in the Response?
     pub request: Request,
-    payload: Cow<'static, dyn CloneableAny>,
+    payload: Cow<'d, dyn CloneableAny>,
 }
 
 #[derive(Debug)]
@@ -90,7 +90,8 @@ impl From<TypeId> for PayloadError {
 
 // TODO: Should this be an implemention of std::borrow::Borrow?
 // TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
-impl Response {
+impl<'d> Response<'d> {
+    // TODO: Return &'d T?
     /// Get an immutable reference to the payload in a Response object.
     pub fn borrow_payload<T: 'static>(&self) -> Result<&T, PayloadError> {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
@@ -100,6 +101,7 @@ impl Response {
             .ok_or_else(|| PayloadError::from(borrowed.as_any().type_id()))
     }
 
+    // TODO: Return &'d mut T?
     /// Get a mutable reference to the payload in a Response object.
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
         let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
@@ -113,7 +115,7 @@ impl Response {
     }
 
     /// Take ownership of the payload from a Response object. Consumes the Response object.
-    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'static, T>, PayloadError> {
+    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'d, T>, PayloadError> {
         match self.payload {
             Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
                 Some(v) => Ok(Cow::Borrowed(v)),
@@ -136,7 +138,8 @@ pub struct ResponseBuilder {
 impl ResponseBuilder {
     /// Construct a Response from the builder, with owned data.
     /// Consumes both the builder and the data.
-    pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response {
+    /// Returns the 'static lifetime since there is no borrowed data.
+    pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response<'static> {
         Response {
             data_locale: self.data_locale,
             request: self.request,
@@ -146,7 +149,7 @@ impl ResponseBuilder {
 
     /// Construct a Response from the builder, with borrowed data.
     /// Consumes the builder, but not the data.
-    pub fn with_borrowed_payload<T: 'static + Clone + Debug>(self, t: &'static T) -> Response {
+    pub fn with_borrowed_payload<'d, T: 'static + Clone + Debug>(self, t: &'d T) -> Response<'d> {
         Response {
             data_locale: self.data_locale,
             request: self.request,
@@ -181,6 +184,6 @@ impl Error for ResponseError {
 /// An abstract data providewr that takes a request object and returns a response with a payload.
 // TODO: Make this async
 // #[async_trait]
-pub trait DataProvider {
-    fn load(&self, req: Request) -> Result<Response, ResponseError>;
+pub trait DataProvider<'d> {
+    fn load(&self, req: &Request) -> Result<Response<'d>, ResponseError>;
 }

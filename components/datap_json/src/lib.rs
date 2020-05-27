@@ -48,13 +48,14 @@ impl JsonDataProvider {
     }
 }
 
-impl datap::DataProvider for JsonDataProvider {
-    fn load(&self, request: datap::Request) -> Result<datap::Response, datap::ResponseError> {
+impl datap::DataProvider<'static> for JsonDataProvider {
+    /// Loads JSON data. Always returns owned data, so the 'static lifetime is used.
+    fn load(&self, request: &datap::Request) -> Result<datap::Response<'static>, datap::ResponseError> {
         // Clone the object, since the response could outlive the provider.
         let payload = self.data.decimal.symbols_v1_a.clone();
         let response = datap::ResponseBuilder {
             data_locale: "und".to_string(),
-            request: request,
+            request: request.clone(), // TODO: don't clone if the request is removed
         }
         .with_owned_payload(payload);
         Ok(response)

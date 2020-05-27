@@ -17,10 +17,10 @@ const DATA: &'static str = r#"{
     }
 }"#;
 
-fn get_response() -> datap::Response {
+fn get_response() -> datap::Response<'static> {
     let json_data_provider = JsonDataProvider::from_str(DATA).unwrap();
     return json_data_provider
-        .load(datap::Request {
+        .load(&datap::Request {
             locale: "root".to_string(),
             category: datap::Category::Decimal,
             key: datap::Key::Decimal(datap::decimal::Key::SymbolsV1),
