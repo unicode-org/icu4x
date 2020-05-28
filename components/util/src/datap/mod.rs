@@ -62,8 +62,6 @@ pub struct Request {
 pub struct Response<'d> {
     // TODO: Make this a Locale instead of a String
     pub data_locale: String,
-    // TODO: Is it useful to have the Request saved in the Response?
-    pub request: Request,
     payload: Cow<'d, dyn CloneableAny>,
 }
 
@@ -91,8 +89,8 @@ impl From<TypeId> for PayloadError {
 // TODO: Should this be an implemention of std::borrow::Borrow?
 // TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
 impl<'d> Response<'d> {
-    // TODO: Return &'d T?
     /// Get an immutable reference to the payload in a Response object.
+    /// The payload may or may not be owned by the Response.
     pub fn borrow_payload<T: 'static>(&self) -> Result<&T, PayloadError> {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed
@@ -101,8 +99,8 @@ impl<'d> Response<'d> {
             .ok_or_else(|| PayloadError::from(borrowed.as_any().type_id()))
     }
 
-    // TODO: Return &'d mut T?
     /// Get a mutable reference to the payload in a Response object.
+    /// The payload may or may not be owned by the Response.
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
         let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
         let borrowed_mut: &mut dyn CloneableAny = boxed.borrow_mut();
@@ -132,7 +130,6 @@ impl<'d> Response<'d> {
 /// Builder class used to construct a Response.
 pub struct ResponseBuilder {
     pub data_locale: String,
-    pub request: Request,
 }
 
 impl ResponseBuilder {
@@ -142,7 +139,6 @@ impl ResponseBuilder {
     pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response<'static> {
         Response {
             data_locale: self.data_locale,
-            request: self.request,
             payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
         }
     }
@@ -152,7 +148,6 @@ impl ResponseBuilder {
     pub fn with_borrowed_payload<'d, T: 'static + Clone + Debug>(self, t: &'d T) -> Response<'d> {
         Response {
             data_locale: self.data_locale,
-            request: self.request,
             payload: Cow::Borrowed(t),
         }
     }
