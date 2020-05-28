@@ -6,12 +6,12 @@ ICU4X uses GitHub for tracking feature requests and work items.
 - All issues should have a type label.
     - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3AT-invalid+-label%3AT-question+-label%3AT-task+-label%3AT-tests)
 - All valid issues should have a component label.
-    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-locale+-label%3AC-meta+-label%3AC-process+-label%3AC-test-infra+-label%3AT-invalid)
+    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-locale+-label%3AC-meta+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid)
 - All *open* or *backlog* issues should have an assignee or **help wanted** label.
     - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee)
     - [Query: backlog issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+-label%3A%22help+wanted%22+no%3Aassignee)
-- All valid *closed* issues should have a resolution, linked pull request, or the **question** type.
-    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3Abacklog+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AT-question+-label%3AT-invalid)
+- All valid *closed* issues should have a resolution, linked pull request, or the **question** or **task** type.
+    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3Abacklog+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AT-question+-label%3AT-invalid+-label%3AT-task)
 - If an issue is open, the issue should be actionable. Open issues should generally have an activity update once every 60 days.
     - [Query: least recently updated open issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc)
 - If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and be closed.  The backlog should be checked periodically for issues that should be reopened.
