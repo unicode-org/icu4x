@@ -177,8 +177,14 @@ impl Error for ResponseError {
 }
 
 /// An abstract data providewr that takes a request object and returns a response with a payload.
+/// Lifetimes:
+/// - 'a = lifetime of the DataProvider object
+/// - 'd = lifetime of the borrowed payload
+/// Note: 'd and 'a can be the same, but they do not need to be. For example, 'd = 'static if:
+/// 1. The provider always returns data that lives in static memory
+/// 2. The provider always returns owned data, not borrowed data
 // TODO: Make this async
 // #[async_trait]
-pub trait DataProvider<'d> {
-    fn load(&self, req: &Request) -> Result<Response<'d>, ResponseError>;
+pub trait DataProvider<'a, 'd> {
+    fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError>;
 }

@@ -17,9 +17,12 @@ const DATA: &'static str = r#"{
     }
 }"#;
 
-fn get_response() -> datap::Response<'static> {
-    let json_data_provider = JsonDataProvider::from_str(DATA).unwrap();
-    return json_data_provider
+fn get_provider() -> JsonDataProvider {
+    JsonDataProvider::from_str(DATA).unwrap()
+}
+
+fn get_response(provider: &JsonDataProvider) -> datap::Response {
+    return provider
         .load(&datap::Request {
             locale: "root".to_string(),
             category: datap::Category::Decimal,
@@ -42,21 +45,35 @@ fn check_data(decimal_data: &datap::decimal::SymbolsV1) {
 
 #[test]
 fn test_read_string() {
-    let response = get_response();
+    let provider = get_provider();
+    let response = get_response(&provider);
     let decimal_data: &datap::decimal::SymbolsV1 = response.borrow_payload().unwrap();
     check_data(decimal_data);
 }
 
 #[test]
 fn test_borrow_payload_mut() {
-    let mut response = get_response();
+    let provider = get_provider();
+    let mut response = get_response(&provider);
     let decimal_data: &mut datap::decimal::SymbolsV1 = response.borrow_payload_mut().unwrap();
     check_data(decimal_data);
 }
 
 #[test]
 fn test_take_payload() {
-    let response = get_response();
-    let decimal_data: Cow<'static, datap::decimal::SymbolsV1> = response.take_payload().unwrap();
+    let provider = get_provider();
+    let response = get_response(&provider);
+    let decimal_data: Cow<datap::decimal::SymbolsV1> = response.take_payload().unwrap();
     check_data(&decimal_data);
+}
+
+#[test]
+fn test_clone_payload() {
+    let final_data = {
+        let provider = get_provider();
+        let response = get_response(&provider);
+        let decimal_data: Cow<datap::decimal::SymbolsV1> = response.take_payload().unwrap();
+        decimal_data.into_owned()
+    };
+    check_data(&final_data);
 }
