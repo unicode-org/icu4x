@@ -1,5 +1,7 @@
 use icu_datap_json;
 
+use std::borrow::Cow;
+
 use std::fs::File;
 use std::io::BufReader;
 
@@ -25,8 +27,8 @@ fn test_read_json() {
         decimal_data,
         &datap::decimal::SymbolsV1 {
             zero_digit: '0',
-            decimal_separator: ".".to_string(),
-            grouping_separator: ",".to_string(),
+            decimal_separator: Cow::Borrowed("."),
+            grouping_separator: Cow::Borrowed(","),
         }
     );
 }
