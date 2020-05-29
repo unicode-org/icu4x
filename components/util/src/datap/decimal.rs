@@ -15,6 +15,8 @@ pub enum Key {
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct SymbolsV1 {
     pub zero_digit: char,
+    // String ownership discussion:
+    // https://github.com/unicode-org/icu4x/pull/61#discussion_r429051895
     pub decimal_separator: Cow<'static, str>,
     pub grouping_separator: Cow<'static, str>,
 }
