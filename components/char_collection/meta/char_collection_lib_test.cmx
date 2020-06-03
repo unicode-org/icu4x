@@ -1,0 +1,5 @@
+{
+    "program": {
+        "binary": "test/char_collection_lib_test"
+    }
+}
