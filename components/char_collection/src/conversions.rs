@@ -7,8 +7,8 @@ use std::convert::TryFrom;
 use std::iter;
 use std::ops::RangeInclusive;
 use unic_char_range::CharRange;
-use unic_ucd_block::Block;
-use unicode_blocks::UnicodeBlockId;
+// use unic_ucd_block::Block;
+// use unicode_blocks::UnicodeBlockId;
 use crate::{CharCollection, MultiCharRange};
 macro_rules! impl_for_range_inclusive_int_type {
     ($($t:ty),*) => {$(
@@ -55,22 +55,22 @@ impl MultiCharRange for RangeInclusive<char> {
     }
 }
 impl_for_range_inclusive_int_type!(u8, i8, u32, i32);
-impl MultiCharRange for UnicodeBlockId {
-    fn iter_ranges(&self) -> Box<dyn Iterator<Item = CharRange>> {
-        self.block().iter_ranges()
-    }
-    fn range_count(&self) -> usize {
-        1
-    }
-}
-impl MultiCharRange for Block {
-    fn iter_ranges<'a>(&'a self) -> Box<dyn Iterator<Item = CharRange> + 'a> {
-        Box::new(self.range.iter_ranges())
-    }
-    fn range_count(&self) -> usize {
-        1
-    }
-}
+// impl MultiCharRange for UnicodeBlockId {
+//     fn iter_ranges(&self) -> Box<dyn Iterator<Item = CharRange>> {
+//         self.block().iter_ranges()
+//     }
+//     fn range_count(&self) -> usize {
+//         1
+//     }
+// }
+// impl MultiCharRange for Block {
+//     fn iter_ranges<'a>(&'a self) -> Box<dyn Iterator<Item = CharRange> + 'a> {
+//         Box::new(self.range.iter_ranges())
+//     }
+//     fn range_count(&self) -> usize {
+//         1
+//     }
+// }
 impl<T: MultiCharRange> From<&T> for CharCollection {
     fn from(source: &T) -> Self {
         let mut collection = CharCollection::new();
@@ -120,37 +120,37 @@ mod multi_char_range_tests {
     test_range_inclusive_int!(i8);
     test_range_inclusive_int!(u32);
     test_range_inclusive_int!(i32);
-    #[test]
-    fn test_unicode_block_id() {
-        let source = unicode_blocks::UnicodeBlockId::BasicLatin;
-        assert_eq!(
-            source.iter_ranges().collect::<Vec<CharRange>>(),
-            vec![chars!('\u{0000}'..='\u{007f}')]
-        );
-        assert_eq!(source.range_count(), 1);
-    }
-    #[test]
-    fn test_unicode_block() {
-        let source = unicode_blocks::UnicodeBlockId::BasicLatin.block();
-        assert_eq!(
-            source.iter_ranges().collect::<Vec<CharRange>>(),
-            vec![chars!('\u{0000}'..='\u{007f}')]
-        );
-        assert_eq!(source.range_count(), 1);
-    }
+    // #[test]
+    // fn test_unicode_block_id() {
+    //     let source = unicode_blocks::UnicodeBlockId::BasicLatin;
+    //     assert_eq!(
+    //         source.iter_ranges().collect::<Vec<CharRange>>(),
+    //         vec![chars!('\u{0000}'..='\u{007f}')]
+    //     );
+    //     assert_eq!(source.range_count(), 1);
+    // }
+    // #[test]
+    // fn test_unicode_block() {
+    //     let source = unicode_blocks::UnicodeBlockId::BasicLatin.block();
+    //     assert_eq!(
+    //         source.iter_ranges().collect::<Vec<CharRange>>(),
+    //         vec![chars!('\u{0000}'..='\u{007f}')]
+    //     );
+    //     assert_eq!(source.range_count(), 1);
+    // }
 }
 #[cfg(test)]
 mod from_tests {
     use crate::CharCollection;
-    use unicode_blocks::UnicodeBlockId;
+    // use unicode_blocks::UnicodeBlockId;
     #[test]
     fn test_char() {
         let actual: CharCollection = (&'a').into();
         assert_eq!(actual, char_collect!('a'..='a'));
     }
-    #[test]
-    fn test_unicode_block_id() {
-        let actual: CharCollection = (&UnicodeBlockId::BasicLatin).into();
-        assert_eq!(actual, char_collect!('\u{0000}'..='\u{007f}'));
-    }
+    // #[test]
+    // fn test_unicode_block_id() {
+    //     let actual: CharCollection = (&UnicodeBlockId::BasicLatin).into();
+    //     assert_eq!(actual, char_collect!('\u{0000}'..='\u{007f}'));
+    // }
 }

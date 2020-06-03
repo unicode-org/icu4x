@@ -10,6 +10,8 @@ use {
         ops::Range,
         vec::Vec,
         error::Error,
+        convert::Into,
+        boxed::Box
     },
     unic_char_range::{chars, CharIter, CharRange},
 };
