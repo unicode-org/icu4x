@@ -7,7 +7,8 @@ use tinystr::TinyStr4;
 /// `Region` represents a Unicode base language code conformat to the
 /// [`unicode_region_id`] field of the Language and Locale Identifier.
 ///
-/// # Example
+/// # Examples
+///
 /// ```
 /// use icu_locale::subtags::Region;
 ///
@@ -26,7 +27,7 @@ impl Region {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `Region`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Region;
@@ -59,7 +60,7 @@ impl Region {
     /// A helper function for displaying
     /// a `Region` subtag as a `&str`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Region;

@@ -1,3 +1,5 @@
+mod macros;
+
 use std::fs::File;
 use std::io::{BufReader, Error};
 

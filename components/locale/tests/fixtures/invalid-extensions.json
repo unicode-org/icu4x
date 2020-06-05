@@ -1,0 +1,62 @@
+[
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-US-x-waytoolongkey"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-US-x-@A_3"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-US-t-h0"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-US-t-h0-x-foo"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-US-t-h0"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pl-US-w-foo"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  }
+]

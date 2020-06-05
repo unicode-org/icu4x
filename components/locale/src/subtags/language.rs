@@ -9,7 +9,8 @@ use tinystr::TinyStr8;
 /// `Language` represents a Unicode base language code conformat to the
 /// [`unicode_language_id`] field of the Language and Locale Identifier.
 ///
-/// # Example
+/// # Examples
+///
 /// ```
 /// use icu_locale::subtags::Language;
 ///
@@ -20,7 +21,8 @@ use tinystr::TinyStr8;
 /// If the `Language` has no value assigned, it serializes to a string `"und"`, which
 /// can be then parsed back to an empty `Language` field.
 ///
-/// # Example
+/// # Examples
+///
 /// ```
 /// use icu_locale::subtags::Language;
 ///
@@ -38,7 +40,7 @@ impl Language {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `Language`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Language;
@@ -68,7 +70,7 @@ impl Language {
     /// A helper function for displaying
     /// a `Language` subtag as a `&str`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Language;
@@ -87,7 +89,8 @@ impl Language {
 
     /// Resets the `Language` subtag to an empty one.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// use icu_locale::subtags::Language;
     ///
@@ -106,7 +109,8 @@ impl Language {
 
     /// Tests if the `Language` subtag is empty.
     ///
-    /// # Example
+    /// # Examples
+    ///
     /// ```
     /// use icu_locale::subtags::Language;
     ///

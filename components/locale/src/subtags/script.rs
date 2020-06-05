@@ -7,7 +7,8 @@ use tinystr::TinyStr4;
 /// `Script` represents a Unicode base language code conformat to the
 /// [`unicode_script_id`] field of the Language and Locale Identifier.
 ///
-/// # Example
+/// # Examples
+///
 /// ```
 /// use icu_locale::subtags::Script;
 ///
@@ -25,7 +26,7 @@ impl Script {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `Script`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Script;
@@ -50,7 +51,7 @@ impl Script {
     /// A helper function for displaying
     /// a `Script` subtag as a `&str`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Script;
