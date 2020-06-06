@@ -69,7 +69,8 @@ fn test_empty_str() {
     let result = JsonDataProvider::from_str("");
     assert!(result.is_err());
     let err = result.unwrap_err();
-    println!("{:?}", err);  // Coverage for Debug trait
+    // Coverage for Debug trait:
+    println!("{:?}", err);
     // An unconditional let is possible here because it is a one-element enum.
     // If more cases are needed, see https://github.com/rust-lang/rfcs/pull/1303
     let Error::JsonError(json_err) = err;

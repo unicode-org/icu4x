@@ -5,16 +5,16 @@ use std::borrow::Cow;
 use std::fs::File;
 use std::io::BufReader;
 
-use icu_data_provider_json::JsonDataProvider;
 use icu_data_provider as datap;
 use icu_data_provider::DataProvider;
+use icu_data_provider_json::JsonDataProvider;
 
 #[test]
 fn test_read_json() {
     let file = File::open("tests/testdata/all.json").unwrap();
     let reader = BufReader::new(file);
     let json_data_provider = JsonDataProvider::from_reader(reader).unwrap();
-    println!("{:?}", json_data_provider);  // Coverage for Debug trait
+    println!("{:?}", json_data_provider); // Coverage for Debug trait
     let response = json_data_provider
         .load(&datap::Request {
             locale: "root".to_string(),
