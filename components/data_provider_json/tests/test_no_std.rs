@@ -24,7 +24,7 @@ fn get_provider() -> JsonDataProvider {
 fn get_response(provider: &JsonDataProvider) -> datap::Response {
     return provider
         .load(&datap::Request {
-            locale: "root".to_string(),
+            langid: "en-US".parse().unwrap(),
             category: datap::Category::Decimal,
             key: datap::decimal::Key::SymbolsV1.into(),
             payload: None,

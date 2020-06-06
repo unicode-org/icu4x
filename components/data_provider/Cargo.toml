@@ -18,6 +18,9 @@ include = [
 default = ["std"]
 std = ["serde/std", "no-std-compat/std"]
 
+[dependencies]
+icu-locale = { path = "../locale" }
+
 [dependencies.downcast-rs]
 version = "1.1.1"
 

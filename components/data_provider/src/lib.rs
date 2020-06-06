@@ -17,6 +17,8 @@ use std::error::Error;
 use std::fmt::{self, Debug, Display};
 use std::prelude::v1::*;
 
+use icu_locale::LanguageIdentifier;
+
 /// A top-level collection of related data keys.
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Category {
@@ -48,8 +50,7 @@ impl Display for Key {
 /// A struct to request a certain hunk of data from a data provider.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Request {
-    // TODO: Make this a Locale instead of a String
-    pub locale: String,
+    pub langid: LanguageIdentifier,
     pub category: Category,
     pub key: Key,
 
@@ -62,8 +63,7 @@ pub struct Request {
 /// A response object containing a data hunk ("payload").
 #[derive(Debug, Clone)]
 pub struct Response<'d> {
-    // TODO: Make this a Locale instead of a String
-    pub data_locale: String,
+    pub data_langid: LanguageIdentifier,
     payload: Cow<'d, dyn CloneableAny>,
 }
 
@@ -131,7 +131,7 @@ impl<'d> Response<'d> {
 
 /// Builder class used to construct a Response.
 pub struct ResponseBuilder {
-    pub data_locale: String,
+    pub data_langid: LanguageIdentifier,
 }
 
 impl ResponseBuilder {
@@ -140,7 +140,7 @@ impl ResponseBuilder {
     /// Returns the 'static lifetime since there is no borrowed data.
     pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response<'static> {
         Response {
-            data_locale: self.data_locale,
+            data_langid: self.data_langid,
             payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
         }
     }
@@ -149,7 +149,7 @@ impl ResponseBuilder {
     /// Consumes the builder, but not the data.
     pub fn with_borrowed_payload<'d, T: 'static + Clone + Debug>(self, t: &'d T) -> Response<'d> {
         Response {
-            data_locale: self.data_locale,
+            data_langid: self.data_langid,
             payload: Cow::Borrowed(t),
         }
     }

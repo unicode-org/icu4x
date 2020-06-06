@@ -17,7 +17,7 @@ fn test_read_json() {
     println!("{:?}", json_data_provider); // Coverage for Debug trait
     let response = json_data_provider
         .load(&datap::Request {
-            locale: "root".to_string(),
+            langid: "en-US".parse().unwrap(),
             category: datap::Category::Decimal,
             key: datap::decimal::Key::SymbolsV1.into(),
             payload: None,
