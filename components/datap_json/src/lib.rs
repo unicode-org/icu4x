@@ -23,6 +23,7 @@ impl From<serde_json::error::Error> for Error {
 }
 
 /// A data provider reading from a JSON file.
+#[derive(Debug)]
 pub struct JsonDataProvider {
     data: schema::JsonSchema,
 }
@@ -57,4 +58,16 @@ impl<'a> datap::DataProvider<'a, 'a> for JsonDataProvider {
         .with_borrowed_payload(&self.data.decimal.symbols_v1_a);
         Ok(response)
     }
+}
+
+#[test]
+fn test_empty_str() {
+    let result = JsonDataProvider::from_str("");
+    assert!(result.is_err());
+    let err = result.unwrap_err();
+    println!("{:?}", err);  // Coverage for Debug trait
+    // An unconditional let is possible here because it is a one-element enum.
+    // If more cases are needed, see https://github.com/rust-lang/rfcs/pull/1303
+    let Error::JsonError(json_err) = err;
+    assert_eq!(json_err.classify(), serde_json::error::Category::Eof);
 }

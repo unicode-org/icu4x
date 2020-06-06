@@ -14,6 +14,7 @@ fn test_read_json() {
     let file = File::open("tests/testdata/all.json").unwrap();
     let reader = BufReader::new(file);
     let json_data_provider = JsonDataProvider::from_reader(reader).unwrap();
+    println!("{:?}", json_data_provider);  // Coverage for Debug trait
     let response = json_data_provider
         .load(&datap::Request {
             locale: "root".to_string(),

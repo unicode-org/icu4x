@@ -52,6 +52,14 @@ fn test_read_string() {
 }
 
 #[test]
+fn test_read_utf8() {
+    let provider = JsonDataProvider::from_slice(DATA.as_bytes()).unwrap();
+    let response = get_response(&provider);
+    let decimal_data: &datap::decimal::SymbolsV1 = response.borrow_payload().unwrap();
+    check_data(decimal_data);
+}
+
+#[test]
 fn test_borrow_payload_mut() {
     let provider = get_provider();
     let mut response = get_response(&provider);
