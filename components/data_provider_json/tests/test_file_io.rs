@@ -19,7 +19,7 @@ fn test_read_json() {
         .load(&datap::Request {
             locale: "root".to_string(),
             category: datap::Category::Decimal,
-            key: datap::Key::Decimal(datap::decimal::Key::SymbolsV1),
+            key: datap::decimal::Key::SymbolsV1.into(),
             payload: None,
         })
         .unwrap();
