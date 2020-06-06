@@ -1,9 +1,9 @@
 [workspace]
 
 members = [
-    "components/datap_json",
+    "components/data_provider",
+    "components/data_provider_json",
     "components/icu",
     "components/icu4x",
     "components/locale",
-    "components/util",
 ]

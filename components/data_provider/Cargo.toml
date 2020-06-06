@@ -1,6 +1,6 @@
 [package]
-name = "icu-util"
-description = "Common trait definitions and utilities for ICU4X"
+name = "icu-data-provider"
+description = "Trait and struct definitions for the ICU data provider"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"

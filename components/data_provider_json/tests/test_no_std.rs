@@ -1,11 +1,11 @@
-extern crate icu_datap_json;
+extern crate icu_data_provider_json;
 
 use std::borrow::Cow;
 use std::prelude::v1::*;
 
-use icu_datap_json::JsonDataProvider;
-use icu_util::datap;
-use icu_util::datap::DataProvider;
+use icu_data_provider_json::JsonDataProvider;
+use icu_data_provider as datap;
+use icu_data_provider::DataProvider;
 
 const DATA: &'static str = r#"{
     "decimal": {

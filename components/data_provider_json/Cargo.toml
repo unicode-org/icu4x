@@ -1,5 +1,5 @@
 [package]
-name = "icu-datap-json"
+name = "icu-data-provider-json"
 description = "ICU4X data provider that reads from JSON files"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
@@ -19,7 +19,7 @@ default = ["std"]
 std = ["no-std-compat/std", "serde/std", "serde_json/std"]
 
 [dependencies]
-icu-util = { path = "../util" }
+icu-data-provider = { path = "../data_provider" }
 
 [dependencies.async-trait]
 version = "0.1.30"

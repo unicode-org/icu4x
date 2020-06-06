@@ -1,4 +1,4 @@
-use icu_util::datap;
+use icu_data_provider as datap;
 use serde::{Deserialize, Serialize};
 
 #[allow(unused_imports)]

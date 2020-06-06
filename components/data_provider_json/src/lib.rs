@@ -4,7 +4,11 @@ extern crate no_std_compat as std;
 
 use std::prelude::v1::*;
 
-use icu_util::datap;
+use icu_data_provider::DataProvider;
+use icu_data_provider::Request;
+use icu_data_provider::Response;
+use icu_data_provider::ResponseBuilder;
+use icu_data_provider::ResponseError;
 
 mod schema;
 
@@ -49,10 +53,10 @@ impl JsonDataProvider {
     }
 }
 
-impl<'a> datap::DataProvider<'a, 'a> for JsonDataProvider {
+impl<'a> DataProvider<'a, 'a> for JsonDataProvider {
     /// Loads JSON data. Returns borrowed data.
-    fn load(&'a self, _request: &datap::Request) -> Result<datap::Response<'a>, datap::ResponseError> {
-        let response = datap::ResponseBuilder {
+    fn load(&'a self, _request: &Request) -> Result<Response<'a>, ResponseError> {
+        let response = ResponseBuilder {
             data_locale: "und".to_string(),
         }
         .with_borrowed_payload(&self.data.decimal.symbols_v1_a);

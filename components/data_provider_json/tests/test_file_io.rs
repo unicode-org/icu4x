@@ -1,13 +1,13 @@
-use icu_datap_json;
+use icu_data_provider_json;
 
 use std::borrow::Cow;
 
 use std::fs::File;
 use std::io::BufReader;
 
-use icu_datap_json::JsonDataProvider;
-use icu_util::datap;
-use icu_util::datap::DataProvider;
+use icu_data_provider_json::JsonDataProvider;
+use icu_data_provider as datap;
+use icu_data_provider::DataProvider;
 
 #[test]
 fn test_read_json() {
