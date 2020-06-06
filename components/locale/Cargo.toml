@@ -30,3 +30,7 @@ harness = false
 [[bench]]
 name = "langid"
 harness = false
+
+[[bench]]
+name = "locale"
+harness = false
