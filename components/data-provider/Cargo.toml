@@ -1,0 +1,37 @@
+[package]
+name = "icu-data-provider"
+description = "Trait and struct definitions for the ICU data provider"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license = "MIT/Apache-2.0"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[features]
+default = ["std"]
+std = ["serde/std", "no-std-compat/std"]
+
+[dependencies]
+icu-locale = { path = "../locale" }
+
+[dependencies.downcast-rs]
+version = "1.1.1"
+
+[dependencies.async-trait]
+version = "0.1.30"
+
+[dependencies.serde]
+version = "1.0"
+default-features = false
+features = ["derive", "alloc"]
+
+[dependencies.no-std-compat]
+version = "0.4.0"
+features = ["alloc"]
