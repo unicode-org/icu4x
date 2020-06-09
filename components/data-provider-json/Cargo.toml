@@ -19,7 +19,7 @@ default = ["std"]
 std = ["no-std-compat/std", "serde/std", "serde_json/std"]
 
 [dependencies]
-icu-data-provider = { path = "../data_provider" }
+icu-data-provider = { path = "../data-provider" }
 
 [dependencies.async-trait]
 version = "0.1.30"
