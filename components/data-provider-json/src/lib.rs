@@ -9,6 +9,7 @@ use icu_data_provider::Request;
 use icu_data_provider::Response;
 use icu_data_provider::ResponseBuilder;
 use icu_data_provider::ResponseError;
+use icu_locale::LanguageIdentifier;
 
 mod schema;
 
@@ -57,7 +58,7 @@ impl<'a> DataProvider<'a, 'a> for JsonDataProvider {
     /// Loads JSON data. Returns borrowed data.
     fn load(&'a self, _request: &Request) -> Result<Response<'a>, ResponseError> {
         let response = ResponseBuilder {
-            data_langid: "und".parse().unwrap(),
+            data_langid: LanguageIdentifier::default(),
         }
         .with_borrowed_payload(&self.data.decimal.symbols_v1_a);
         Ok(response)
