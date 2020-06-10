@@ -48,7 +48,7 @@ impl CharRange {
 // open_left
     pub fn open_left(low: char, high: char) -> CharRange {
         // this is repeated here
-        let high: char = char::from_u32(high as u32 + 1).unwrap();
+        let low: char = char::from_u32(low as u32 + 1).unwrap();
         CharRange{low, high}
     }
 // all
@@ -176,25 +176,6 @@ pub trait MultiCharRange {
 /// The easiest way to create instances is using the
 /// [char_collect!](::char_collection::char_collect) macro.
 ///
-/// ```
-/// use char_collection::CharCollection;
-///
-/// let mut collection: CharCollection = char_collect!('a'..='d', 'x'..='z');
-/// char_collection += 'e';
-/// char_collection += chars!('p'..='t');
-/// assert_eq!(
-///     collection.iter_ranges().collect(),
-///     vec![chars!('a'..='e'), chars!('p'..='t'), chars!('x'..='z')]);
-///
-/// assert!(collection.contains(&'c'));
-/// assert!(collection.contains_range(chars!('q'..='s')));
-/// assert!(!collection.contains(&'9'));
-///
-/// collection -= chars!('t'..='y');
-/// assert_eq!(
-///     collection.iter_ranges().collect(),
-///     vec![chars!('a'..='e', chars!('p'..'s'), chars!('z'..='z'))]);
-/// ```
 ///
 /// TODO(kpozin): Implement IntoIter.
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
