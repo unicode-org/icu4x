@@ -7,32 +7,6 @@
 /// The macro can be used with either a comma-separated list of items, or with an expression
 /// representing set operations.
 ///
-/// ```
-/// use char_collection::char_collect;
-/// use unicode_blocks::UnicodeBlockId;
-/// use unic_char_range::CharRange;
-///
-/// let c1 = char_collect!(
-///     'a'..='z',
-///     CharRange::closed('D', 'G'),
-///     UnicodeBlockId::Cyrillic,
-///     0x01..=0x05,
-///     '@');
-///
-/// let c2 = char_collect!({ ('a'..='z') - ('p'..='t') + UnicodeBlockId::Bengali });
-/// ```
-///
-/// *NOTE:* Parenthetical expressions currently aren't supported unless they start with a
-/// `CharCollection`.
-/// ```
-/// use char_collection::char_collect;
-///
-/// // This works:
-/// let c1 = char_collect!({ ('a'..='z') + (char_collect!('A'..='Z') - ('L'..='P')) });
-///
-/// // This doesn't:
-/// let c1 = char_collect!({ ('a'..='z') + (('A'..='Z') - ('L'..='P')) });
-/// ```
 #[macro_export]
 macro_rules! char_collect {
     ({ $($x:tt)+ }) => {
@@ -51,4 +25,16 @@ macro_rules! char_collect {
             col
         }
     };
+}
+#[macro_export]
+macro_rules! chars {
+    ($low:tt .. $high:tt) => {
+        $crate::CharRange::open_right($low, $high)
+    };
+    ($low:tt ..= $high:tt) => {
+        $crate::CharRange::closed($low, $high)
+    };
+    (..) => {
+        $crate::CharRange::all()
+    }
 }

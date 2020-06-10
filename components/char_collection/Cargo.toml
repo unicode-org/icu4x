@@ -12,3 +12,7 @@ include = [
     "src/**/*",
     "Cargo.toml",
 ]
+
+[dependencies]
+unic-char-range = "0.9.0"
+paste = "0.1.16"

@@ -8,5 +8,7 @@ mod conversions;
 mod operators;
 pub use char_collection::CharCollection;
 pub use char_collection::MultiCharRange;
+pub use char_collection::CharRange;
+pub use char_collection::CharIter;
 pub use conversions::*;
 pub use operators::*;

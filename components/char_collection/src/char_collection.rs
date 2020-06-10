@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 use {
     std::{
+        char,
         clone::Clone,
         cmp::Ordering,
         hash::{Hash, Hasher},
@@ -13,8 +14,151 @@ use {
         convert::Into,
         boxed::Box
     },
-    unic_char_range::{chars, CharIter, CharRange},
+    // unic_char_range::{chars, CharIter, CharRange},
 };
+
+#[derive(Copy, Clone, Debug, Eq)]
+pub struct CharRange {
+    low: char,
+    high: char,
+}
+
+impl CharRange {
+// open_right
+    // would we want this to return a Option next time?
+    pub fn open_right(low: char, high: char) -> CharRange { 
+        // nothing happens if this fails
+        let high: char = char::from_u32(high as u32 - 1).unwrap();
+        CharRange{low,  high}
+    }
+// closed 
+    pub fn closed(low: char, high: char) -> CharRange {
+        // if low == '\u{0}' { // need way to handle this
+        //     // for now just leave alone 
+        // } 
+        CharRange{low, high}
+    }
+// open
+    pub fn open(low: char, high: char) -> CharRange {
+        // this is repeated here
+        let low: char = char::from_u32(low as u32 + 1).unwrap();
+        let high: char = char::from_u32(high as u32 - 1).unwrap();
+        CharRange{low, high}
+    }
+// open_left
+    pub fn open_left(low: char, high: char) -> CharRange {
+        // this is repeated here
+        let high: char = char::from_u32(high as u32 + 1).unwrap();
+        CharRange{low, high}
+    }
+// all
+    pub fn all() -> CharRange {
+        CharRange{low: '\u{0}', high: char::MAX}
+    }
+// cmp_char
+    pub fn cmp_char(&self, comp_char: char) -> Ordering {
+        if self.high < comp_char {
+            Ordering::Less
+        }
+        else if self.low > comp_char {
+            Ordering::Greater
+        }
+        else {
+            Ordering::Equal
+        }
+    }
+// contains 
+    pub fn contains(&self, ch: char) -> bool {
+        self.low <=  ch && ch <= self.high
+    }
+// is_empty
+    pub fn is_empty(&self) -> bool {
+        self.low > self.high
+    }
+    pub fn iter(&self) -> CharIter {
+        (*self).into()
+    }
+}
+
+impl IntoIterator for CharRange {
+    type IntoIter = CharIter;
+    type Item = char;
+    fn into_iter(self) -> CharIter {
+        self.iter()
+    }
+}
+
+impl PartialEq<CharRange> for CharRange {
+    fn eq(&self, other: &CharRange) -> bool {
+        (self.is_empty() && other.is_empty()) || (self.low == other.low  && self.high == other.high)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct CharIter {
+    low: char,
+    high: char
+}
+
+impl From<CharRange> for CharIter {
+    fn from(range: CharRange) -> CharIter {
+        CharIter {
+            low: range.low,
+            high: range.high
+        }
+    }
+}
+
+impl From<CharIter> for CharRange {
+    fn from(iter: CharIter) -> CharRange {
+        CharRange {
+            low: iter.low,
+            high: iter.high
+        }
+    }
+}
+
+impl CharIter {
+    fn advance(&mut self) {
+        if self.low == char::MAX {
+            self.high = '\0';
+        }
+        else {
+            self.low = char::from_u32(self.low as u32 + 1).unwrap();
+        }
+    }
+    fn retreat(&mut self) {
+        if self.high == '\0' {
+            self.low = char::MAX;
+        }
+        else {
+            self.high = char::from_u32(self.high as u32 - 1).unwrap();
+        }
+    }
+    fn next_back(&mut self) -> Option<char> {
+        if self.low > self.high {
+            None
+        }
+        else {
+            let ch = self.high;
+            self.retreat();
+            Some(ch)
+        }
+    }
+}
+
+impl Iterator for CharIter {
+    type Item = char;
+    fn next(&mut self) -> Option<char> {
+        if self.low > self.high {
+            return None;
+        }
+        let ch = self.low;
+        self.advance();
+        Some(ch)
+    }
+}
+
 /// A trait for objects that represent one or more disjoint, non-adjacent
 /// [CharRanges](unic_char_range::CharRange).
 pub trait MultiCharRange {
@@ -411,10 +555,10 @@ fn format_range(range: &CharRange) -> String {
 #[cfg(test)]
 mod tests {
     use {
-        super::{are_chars_adjacent, CharCollection},
+        super::{are_chars_adjacent, CharCollection, CharRange},
         std::error::Error,
         std::char,
-        unic_char_range::{chars, CharRange},
+        // unic_char_range::{chars, CharRange},
     };
     #[test]
     fn test_from_sorted_ranges() -> Result<(), Box<dyn Error>> {
@@ -633,13 +777,13 @@ mod tests {
         assert_eq!(collection_a.intersection(&collection_b), expected);
         assert_eq!(collection_b.intersection(&collection_a), expected);
     }
-    #[test]
-    fn test_macro_expressions() {
-        use unicode_blocks::UnicodeBlockId::Arabic;
-        let collection =
-            char_collect!({ ('c'..='e') + ('f'..='h') - ('a'..='d') + Arabic + (0x5..=0x42) });
-        assert_eq!(collection, char_collect!(0x5..=0x42, 'e'..='h', Arabic));
-    }
+    // #[test]
+    // fn test_macro_expressions() {
+    //     use unicode_blocks::UnicodeBlockId::Arabic;
+    //     let collection =
+    //         char_collect!({ ('c'..='e') + ('f'..='h') - ('a'..='d') + Arabic + (0x5..=0x42) });
+    //     assert_eq!(collection, char_collect!(0x5..=0x42, 'e'..='h', Arabic));
+    // }
     #[test]
     fn test_iter() {
         let collection = char_collect!('a'..='c', 'j'..='l', 'x'..='z');

@@ -6,10 +6,10 @@ use std::boxed::Box;
 use std::convert::TryFrom;
 use std::iter;
 use std::ops::RangeInclusive;
-use unic_char_range::CharRange;
+// use unic_char_range::CharRange;
 // use unic_ucd_block::Block;
 // use unicode_blocks::UnicodeBlockId;
-use crate::{CharCollection, MultiCharRange};
+use crate::{CharRange, CharCollection, MultiCharRange};
 macro_rules! impl_for_range_inclusive_int_type {
     ($($t:ty),*) => {$(
         impl MultiCharRange for RangeInclusive<$t> {
@@ -80,9 +80,9 @@ impl<T: MultiCharRange> From<&T> for CharCollection {
 }
 #[cfg(test)]
 mod multi_char_range_tests {
-    use crate::MultiCharRange;
+    use crate::{MultiCharRange, CharRange};
     use paste;
-    use unic_char_range::{chars, CharRange};
+    // use unic_char_range::{chars, CharRange};
     #[test]
     fn test_char() {
         let source = 'a';
