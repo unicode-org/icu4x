@@ -1,0 +1,95 @@
+[
+  {
+    "rule": "n = 1",
+    "input": {
+      "n": 1
+    },
+    "output": true
+  },
+  {
+    "rule": "i = 2..4, 15 and v = 0",
+    "input": 3.5,
+    "output": false
+  },
+  {
+    "rule": "n % 10 = 0 or n % 10 = 5..9 or n % 100 = 11..14",
+    "input": {
+      "n": 5,
+      "i": 5
+    },
+    "output": true
+  },
+  {
+    "rule": "i ! 10",
+    "input": {},
+    "output": "ExpectedOperator"
+  },
+  {
+    "rule": "i #",
+    "input": {},
+    "output": "ExpectedOperator"
+  },
+  {
+    "rule": "n != 10 and f = 0 and t = 0 and v = 0 and w = 0",
+    "input": {
+      "n": 10
+    },
+    "output": false
+  },
+  {
+    "rule": " @integer 1,2, … @decimal 1.3~1.5",
+    "input": {
+      "n": 1
+    },
+    "output": true
+  },
+  {
+    "rule": "w = 1",
+    "input": {
+      "w": 1
+    },
+    "output": true
+  },
+  {
+    "rule": "t = 1",
+    "input": {
+      "t": 2
+    },
+    "output": false
+  },
+  {
+    "rule": "f = 1",
+    "input": {
+      "f": 1
+    },
+    "output": true
+  },
+  {
+    "rule": "f = 2 or",
+    "input": {
+      "f": 2
+    },
+    "output": "ExpectedAndCondition"
+  },
+  {
+    "rule": "f = 2 and",
+    "input": {
+      "f": 2
+    },
+    "output": "ExpectedRelation"
+  },
+  {
+    "rule": "2 = 2",
+    "input": {
+      "f": 2
+    },
+    "output": "ExpectedOperand"
+  },
+  {
+    "rule": "n = f",
+    "input": {
+      "f": 2
+    },
+    "output": "ExpectedValue"
+  }
+]

@@ -2,3 +2,4 @@ ignore:
   - "/*"
   - "C:/*"
   - "../*"
+  - "components/pluralrules/src/data/*"
