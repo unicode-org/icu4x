@@ -13,6 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
+        feature-set: [ "", "--all-features" ]  # no feature options ("") uses default.
+                                               # --no-default-features is not allowed
+                                               #     at root of virtual workspace for
+                                               #     both build and test.
         
 
     runs-on: ${{ matrix.os }}
@@ -43,10 +47,10 @@ jobs:
     ## Build and run steps
         
     - name: Build
-      run: cargo build --verbose
+      run: cargo build ${{ matrix.feature-set }} --verbose
 
     - name: Test
-      run: cargo test --verbose
+      run: cargo test ${{ matrix.feature-set }} --verbose
 
   format:
     runs-on: ubuntu-latest
