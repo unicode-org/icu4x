@@ -36,5 +36,5 @@ macro_rules! chars {
     };
     (..) => {
         $crate::CharRange::all()
-    }
+    };
 }

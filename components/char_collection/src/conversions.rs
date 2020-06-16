@@ -9,7 +9,7 @@ use std::ops::RangeInclusive;
 // use unic_char_range::CharRange;
 // use unic_ucd_block::Block;
 // use unicode_blocks::UnicodeBlockId;
-use crate::{CharRange, CharCollection, MultiCharRange};
+use crate::{CharCollection, CharRange, MultiCharRange};
 macro_rules! impl_for_range_inclusive_int_type {
     ($($t:ty),*) => {$(
         impl MultiCharRange for RangeInclusive<$t> {
@@ -80,25 +80,34 @@ impl<T: MultiCharRange> From<&T> for CharCollection {
 }
 #[cfg(test)]
 mod multi_char_range_tests {
-    use crate::{MultiCharRange, CharRange};
+    use crate::{CharRange, MultiCharRange};
     use paste;
     // use unic_char_range::{chars, CharRange};
     #[test]
     fn test_char() {
         let source = 'a';
-        assert_eq!(source.iter_ranges().collect::<Vec<CharRange>>(), vec![chars!('a'..='a')]);
+        assert_eq!(
+            source.iter_ranges().collect::<Vec<CharRange>>(),
+            vec![chars!('a'..='a')]
+        );
         assert_eq!(source.range_count(), 1);
     }
     #[test]
     fn test_char_range() {
         let source = chars!('d'..='g');
-        assert_eq!(source.iter_ranges().collect::<Vec<CharRange>>(), vec![chars!('d'..='g')]);
+        assert_eq!(
+            source.iter_ranges().collect::<Vec<CharRange>>(),
+            vec![chars!('d'..='g')]
+        );
         assert_eq!(source.range_count(), 1);
     }
     #[test]
     fn test_range_inclusive_char() {
         let source = 'd'..='g';
-        assert_eq!(source.iter_ranges().collect::<Vec<CharRange>>(), vec![chars!('d'..='g')]);
+        assert_eq!(
+            source.iter_ranges().collect::<Vec<CharRange>>(),
+            vec![chars!('d'..='g')]
+        );
         assert_eq!(source.range_count(), 1);
     }
     macro_rules! test_range_inclusive_int {

@@ -1,20 +1,17 @@
 // Copyright 2019 The Fuchsia Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-use {
-    std::{
-        char,
-        clone::Clone,
-        cmp::Ordering,
-        hash::{Hash, Hasher},
-        iter::Iterator,
-        ops::Range,
-        vec::Vec,
-        error::Error,
-        convert::Into,
-        boxed::Box
-    },
-    // unic_char_range::{chars, CharIter, CharRange},
+use std::{
+    boxed::Box,
+    char,
+    clone::Clone,
+    cmp::Ordering,
+    convert::Into,
+    error::Error,
+    hash::{Hash, Hasher},
+    iter::Iterator,
+    ops::Range,
+    vec::Vec,
 };
 
 #[derive(Copy, Clone, Debug, Eq)]
@@ -24,54 +21,55 @@ pub struct CharRange {
 }
 
 impl CharRange {
-// open_right
+    // open_right
     // would we want this to return a Option next time?
-    pub fn open_right(low: char, high: char) -> CharRange { 
+    pub fn open_right(low: char, high: char) -> CharRange {
         // nothing happens if this fails
         let high: char = char::from_u32(high as u32 - 1).unwrap();
-        CharRange{low,  high}
+        CharRange { low, high }
     }
-// closed 
+    // closed
     pub fn closed(low: char, high: char) -> CharRange {
         // if low == '\u{0}' { // need way to handle this
-        //     // for now just leave alone 
-        // } 
-        CharRange{low, high}
+        //     // for now just leave alone
+        // }
+        CharRange { low, high }
     }
-// open
+    // open
     pub fn open(low: char, high: char) -> CharRange {
         // this is repeated here
         let low: char = char::from_u32(low as u32 + 1).unwrap();
         let high: char = char::from_u32(high as u32 - 1).unwrap();
-        CharRange{low, high}
+        CharRange { low, high }
     }
-// open_left
+    // open_left
     pub fn open_left(low: char, high: char) -> CharRange {
         // this is repeated here
         let low: char = char::from_u32(low as u32 + 1).unwrap();
-        CharRange{low, high}
+        CharRange { low, high }
     }
-// all
+    // all
     pub fn all() -> CharRange {
-        CharRange{low: '\u{0}', high: char::MAX}
+        CharRange {
+            low: '\u{0}',
+            high: char::MAX,
+        }
     }
-// cmp_char
+    // cmp_char
     pub fn cmp_char(&self, comp_char: char) -> Ordering {
         if self.high < comp_char {
             Ordering::Less
-        }
-        else if self.low > comp_char {
+        } else if self.low > comp_char {
             Ordering::Greater
-        }
-        else {
+        } else {
             Ordering::Equal
         }
     }
-// contains 
+    // contains
     pub fn contains(&self, ch: char) -> bool {
-        self.low <=  ch && ch <= self.high
+        self.low <= ch && ch <= self.high
     }
-// is_empty
+    // is_empty
     pub fn is_empty(&self) -> bool {
         self.low > self.high
     }
@@ -90,21 +88,21 @@ impl IntoIterator for CharRange {
 
 impl PartialEq<CharRange> for CharRange {
     fn eq(&self, other: &CharRange) -> bool {
-        (self.is_empty() && other.is_empty()) || (self.low == other.low  && self.high == other.high)
+        (self.is_empty() && other.is_empty()) || (self.low == other.low && self.high == other.high)
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct CharIter {
     low: char,
-    high: char
+    high: char,
 }
 
 impl From<CharRange> for CharIter {
     fn from(range: CharRange) -> CharIter {
         CharIter {
             low: range.low,
-            high: range.high
+            high: range.high,
         }
     }
 }
@@ -113,7 +111,7 @@ impl From<CharIter> for CharRange {
     fn from(iter: CharIter) -> CharRange {
         CharRange {
             low: iter.low,
-            high: iter.high
+            high: iter.high,
         }
     }
 }
@@ -122,24 +120,21 @@ impl CharIter {
     fn advance(&mut self) {
         if self.low == char::MAX {
             self.high = '\0';
-        }
-        else {
+        } else {
             self.low = char::from_u32(self.low as u32 + 1).unwrap();
         }
     }
     fn retreat(&mut self) {
         if self.high == '\0' {
             self.low = char::MAX;
-        }
-        else {
+        } else {
             self.high = char::from_u32(self.high as u32 - 1).unwrap();
         }
     }
     fn next_back(&mut self) -> Option<char> {
         if self.low > self.high {
             None
-        }
-        else {
+        } else {
             let ch = self.high;
             self.retreat();
             Some(ch)
@@ -198,7 +193,9 @@ impl CharCollection {
         T: IntoIterator<Item = CharRange>,
     {
         // If the original `ranges` is also a Vec, this doesn't result in an extra copy.
-        let collection = CharCollection { ranges: ranges.into_iter().collect() };
+        let collection = CharCollection {
+            ranges: ranges.into_iter().collect(),
+        };
         let ranges: &Vec<CharRange> = &collection.ranges;
         match (1..ranges.len()).find(|i| (ranges[*i].low as i64 - ranges[*i - 1].high as i64) <= 1)
         {
@@ -206,7 +203,8 @@ impl CharCollection {
                 "These ranges are out of order, overlapping, or adjacent: {:?}, {:?}",
                 format_range(&ranges[i - 1]),
                 format_range(&ranges[i])
-            ).into()),
+            )
+            .into()),
             None => Ok(collection),
         }
     }
@@ -257,7 +255,9 @@ impl CharCollection {
     /// is the number of ranges in this collection and <var>T</var> is the number of ranges in
     /// `to_add`.
     pub fn insert<V: MultiCharRange>(&mut self, to_add: &V) -> &mut Self {
-        to_add.iter_ranges().for_each(|range| self.insert_char_range(&range));
+        to_add
+            .iter_ranges()
+            .for_each(|range| self.insert_char_range(&range));
         self
     }
     /// Appends a `char` to the end of the existing collection. Panics if the given `char` is not
@@ -297,7 +297,8 @@ impl CharCollection {
                     "Cannot append {:?} after {:?}",
                     format_range(&range),
                     last_range.high
-                ).into());
+                )
+                .into());
             }
             if are_chars_adjacent(&last_range.high, &range.low) {
                 last_range.high = range.high;
@@ -317,7 +318,9 @@ impl CharCollection {
     /// is the number of ranges in this collection and <var>T</var> is the number of ranges in
     /// `to_remove`.
     pub fn remove<V: MultiCharRange>(&mut self, to_remove: &V) -> &mut Self {
-        to_remove.iter_ranges().for_each(|range| self.remove_char_range(&range));
+        to_remove
+            .iter_ranges()
+            .for_each(|range| self.remove_char_range(&range));
         self
     }
     /// Remove all entries from this collection.
@@ -390,7 +393,9 @@ impl CharCollection {
         if prev_high != std::char::MAX {
             result_ranges.push(CharRange::open_left(prev_high, std::char::MAX));
         }
-        CharCollection { ranges: result_ranges }
+        CharCollection {
+            ranges: result_ranges,
+        }
     }
     /// Insert a single `CharRange`.
     ///
@@ -449,8 +454,10 @@ impl CharCollection {
         match lower_existing_range {
             Ok((idx, lower_existing_range)) => {
                 if lower_existing_range.low < range_to_remove.low {
-                    replacement_ranges
-                        .push(CharRange::open_right(lower_existing_range.low, range_to_remove.low));
+                    replacement_ranges.push(CharRange::open_right(
+                        lower_existing_range.low,
+                        range_to_remove.low,
+                    ));
                 }
                 remove_from_idx = idx;
             }
@@ -470,7 +477,8 @@ impl CharCollection {
                 remove_to_idx = idx;
             }
         }
-        self.ranges.splice(remove_from_idx..remove_to_idx, replacement_ranges);
+        self.ranges
+            .splice(remove_from_idx..remove_to_idx, replacement_ranges);
     }
     /// Delete all the existing `CharRange`s that fall within `indices_to_replace` in the vector,
     /// and insert `char_range_to_insert` in their place. If the newly formed range is adjacent to
@@ -496,10 +504,13 @@ impl CharCollection {
                 indices_to_replace.end += 1;
             }
         }
-        self.ranges.splice(indices_to_replace, vec![char_range_to_insert]);
+        self.ranges
+            .splice(indices_to_replace, vec![char_range_to_insert]);
     }
     fn find_containing_range(&self, query: &char) -> Result<(usize, CharRange), usize> {
-        let result = self.ranges.binary_search_by(|range| range.cmp_char(query.clone()));
+        let result = self
+            .ranges
+            .binary_search_by(|range| range.cmp_char(query.clone()));
         match result {
             Ok(index) => Ok((index, self.ranges[index])),
             Err(index) => Err(index),
@@ -516,7 +527,9 @@ impl MultiCharRange for CharCollection {
 }
 impl Hash for CharCollection {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.ranges.iter().for_each(|range| hash_char_range(range, state));
+        self.ranges
+            .iter()
+            .for_each(|range| hash_char_range(range, state));
     }
 }
 fn hash_char_range<H: Hasher>(range: &CharRange, state: &mut H) {
@@ -537,9 +550,9 @@ fn format_range(range: &CharRange) -> String {
 mod tests {
     use {
         super::{are_chars_adjacent, CharCollection, CharRange},
-        std::error::Error,
         std::char,
         // unic_char_range::{chars, CharRange},
+        std::error::Error,
     };
     #[test]
     fn test_from_sorted_ranges() -> Result<(), Box<dyn Error>> {
@@ -593,7 +606,10 @@ mod tests {
     fn test_find_containing_range() {
         let collection = char_collect!({ ('a'..='d') + ('g'..='j') + ('l'..='o') + 'z' });
         assert_eq!(collection.find_containing_range(&'0'), Err(0));
-        assert_eq!(collection.find_containing_range(&'c'), Ok((0, chars!('a'..='d'))));
+        assert_eq!(
+            collection.find_containing_range(&'c'),
+            Ok((0, chars!('a'..='d')))
+        );
         assert_eq!(collection.find_containing_range(&'e'), Err(1));
     }
     #[test]
@@ -605,7 +621,10 @@ mod tests {
     fn test_insert_exact_match() {
         let mut collection = char_collect!('a'..='d', 'g'..='l');
         collection += 'a'..='d';
-        assert_eq!(collection.ranges, vec![chars!('a'..='d'), chars!('g'..='l')]);
+        assert_eq!(
+            collection.ranges,
+            vec![chars!('a'..='d'), chars!('g'..='l')]
+        );
     }
     #[test]
     fn test_insert_non_overlapping_sorted() {
@@ -642,7 +661,10 @@ mod tests {
     fn test_insert_overlapping_with_intersections() {
         let mut collection = char_collect!('c'..='e', 'j'..='m', 'p'..='s');
         collection += 'd'..='k';
-        assert_eq!(collection.ranges, vec![chars!('c'..='m'), chars!('p'..='s')]);
+        assert_eq!(
+            collection.ranges,
+            vec![chars!('c'..='m'), chars!('p'..='s')]
+        );
     }
     #[test]
     fn test_insert_coalesce_adjacent_ranges() {
@@ -653,7 +675,12 @@ mod tests {
     #[test]
     fn test_append() -> Result<(), Box<dyn Error>> {
         let mut collection = char_collect!('a'..='c');
-        collection.append('d')?.append('g')?.append('h')?.append('i')?.append('z')?;
+        collection
+            .append('d')?
+            .append('g')?
+            .append('h')?
+            .append('i')?
+            .append('z')?;
         assert_eq!(collection, char_collect!('a'..='d', 'g'..='i', 'z'));
         Ok(())
     }
@@ -672,7 +699,9 @@ mod tests {
     #[test]
     fn test_append_range() -> Result<(), Box<dyn Error>> {
         let mut collection = char_collect!('a'..='c');
-        collection.append_range(chars!('g'..='i'))?.append_range(chars!('j'..='m'))?;
+        collection
+            .append_range(chars!('g'..='i'))?
+            .append_range(chars!('j'..='m'))?;
         assert_eq!(collection, char_collect!('a'..='c', 'g'..='m'));
         Ok(())
     }
@@ -690,7 +719,10 @@ mod tests {
     fn test_remove_exact_range() {
         let mut collection = char_collect!('c'..='e', 'j'..='m', 'p'..='s');
         collection -= 'j'..='m';
-        assert_eq!(collection.ranges, vec![chars!('c'..='e'), chars!['p'..='s']]);
+        assert_eq!(
+            collection.ranges,
+            vec![chars!('c'..='e'), chars!['p'..='s']]
+        );
     }
     #[test]
     fn test_remove_overlapping_all_existent() {
@@ -710,21 +742,34 @@ mod tests {
         collection -= 'k'..='l';
         assert_eq!(
             collection.ranges,
-            vec![chars!('c'..='e'), chars!('j'..='j'), chars!('m'..='m'), chars!('p'..='s')]
+            vec![
+                chars!('c'..='e'),
+                chars!('j'..='j'),
+                chars!('m'..='m'),
+                chars!('p'..='s')
+            ]
         );
     }
     #[test]
     fn test_remove_intersection() {
         let mut collection = char_collect!('c'..='e', 'j'..='m', 'p'..='s');
         collection -= 'd'..='q';
-        assert_eq!(collection.ranges, vec![chars!('c'..='c'), chars!('r'..='s')]);
+        assert_eq!(
+            collection.ranges,
+            vec![chars!('c'..='c'), chars!('r'..='s')]
+        );
     }
     #[test]
     fn test_complement_simple() {
         let collection = char_collect!(0x10..=0x50, 0x70..=0x70, 0x99..=0x640);
         assert_eq!(
             collection.complement(),
-            char_collect!(0x00..=0x0F, 0x51..=0x6F, 0x71..=0x98, 0x641..=(char::MAX as u32))
+            char_collect!(
+                0x00..=0x0F,
+                0x51..=0x6F,
+                0x71..=0x98,
+                0x641..=(char::MAX as u32)
+            )
         );
     }
     #[test]
@@ -740,7 +785,10 @@ mod tests {
     #[test]
     fn test_complement_includes_min_and_max() {
         let collection = char_collect!(0x0..=0x10, 0x40..=0x50, 0xCCCC..=(char::MAX as u32));
-        assert_eq!(collection.complement(), char_collect!(0x11..=0x3F, 0x51..=0xCCCB));
+        assert_eq!(
+            collection.complement(),
+            char_collect!(0x11..=0x3F, 0x51..=0xCCCB)
+        );
     }
     #[test]
     fn test_union() {
