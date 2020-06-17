@@ -6,7 +6,7 @@
 Each crate released on crates.io should have:
 
 1. Two or more owners
-2. Owners should be from different teams, functional areas or companies
+2. Owners should be from different areas
 3. Team ownership is required for future maintenance
 
 ## Two Owners
@@ -19,7 +19,11 @@ More than one person on ICU4X should be familiar with and supportive of a public
 
 ## Owners from Different Areas
 
-To promote healthy discussion, and ensure we work on impactful crates that cover needs of wide audience vs. one of the members we should have support for the crate from at least two vendors/teams/companies.
+To promote healthy discussion, and ensure we work on impactful crates that cover needs of wide audience vs. one of the members we should have support for the crate from at least two vendors.
+
+***
+*NOTE*: It's *strongly* suggested that owners should come from different companies, functional areas or teams, in that order.
+***
 
 ## Team Ownership
 
