@@ -1,9 +1,9 @@
 ICU4X Charter
 ==============
 
-The ICU4X project designs and develops a set of modular internationalization components suitable for use on the client-side and in resource-constrained environments.
+The ICU4X project designs and develops a set of modular internationalization components suitable for use in client-side and resource-constrained environments.
 
-ICU4X builds on the design and API decisions of [`ICU4C`]/[`ICU4J`] and [`ECMA-402`].
+ICU4X builds on the design and API decisions of [ICU4C]/[ICU4J] and [ECMA-402].
 
 ## Design
 
@@ -16,9 +16,7 @@ ICU4X is being built from the start with several key design constraints:
 
 ## Scope
 
-The scope of ICU4X is the set of functionality covered by [`ECMA-402`], with extensions to cover the needs of clients including Gecko and Fuchsia that are consistent with the spirit of [`ECMA-402`].
-
-One of the benchmarks on decisions related to whether a given API belongs to ICU4X will be if it requires Unicode/CLDR data and would benefit from being managed together with other APIs that rely on the same version of Unicode and CLDR data.
+The scope of ICU4X is the set of functionality covered by [ECMA-402], with extensions to cover the needs of clients including Gecko and Fuchsia that are consistent with the spirit of [ECMA-402].
 
 APIs included in ICU4X will:
 
@@ -28,17 +26,17 @@ APIs included in ICU4X will:
 
 For such APIs and functionality that will not end up being included, ICU4X aims to provide the building blocks to enable third-party libraries to be developed which depend on and interoperate with ICU4X, with minimum data and logic duplication.
 
-In some rare cases, ICU4X may diverge from both [`ECMA-402`], and [`ICU4C`]/[`ICU4J`]. Such diversions should be the result of improved API design and should allow users to cover the same needs with the upgraded APIs.
+In some rare cases, ICU4X may diverge from both [ECMA-402], and [ICU4C]/[ICU4J]. Such diversions should be the result of improved API design and should allow users to cover the same needs with the upgraded APIs.
 
 ## Target platforms
 
-The list of target platforms is expected to evolve over time, and will be primarily used when making decisions on features and API tradeoffs between low-level ICU4X-like APIs and high-level [`ECMA-402`] APIs.
+The list of target platforms is expected to evolve over time, and will be primarily used when making decisions on features and API tradeoffs between low-level ICU4X-like APIs and high-level [ECMA-402] APIs.
 
 Current list of target platforms:
 * Web Platform (V8, SpiderMonkey, JSC)
 * Software platforms (Fuschia, Gecko)
 * Mobile OSes (iOS, Android)
-* Low-power OSes with [`alloc`] (WearOS, WatchOS)
+* Low-power OSes with [alloc] (WearOS, WatchOS)
 * Client-side toolkits (Flutter)
 
 ICU4X is also aiming to provide bindings or compilation targets for a range of programming languages. This list is also dynamic and used when evaluating design tradeoffs:
@@ -52,7 +50,7 @@ ICU4X is also aiming to provide bindings or compilation targets for a range of p
 
 Referential platforms and languages may change over time as the industry developers and should represent the current needs of the industry.
 
-A viable subset of ICU4X will be targeting the [`no_std`] support and in the future we may explore the [`no_std`]+[`alloc`] compatibility for viable components.
+A viable subset of ICU4X will be targeting the [no_std] support and in the future we may explore the [no_std]+[alloc] compatibility for viable components ([#77](https://github.com/unicode-org/icu4x/issues/77)).
 
 ## Frequently Asked Questions
 
@@ -60,11 +58,11 @@ A viable subset of ICU4X will be targeting the [`no_std`] support and in the fut
 
 ICU4X will provide a feature set based on known use cases for the target clients (as stated above, client-side i18n in resource-constrained environments).
 
-The feature coverage of [`ICU4C`] and [`ICU4J`] goes well beyond what is necessary for the target clients; ICU4X will have a more narrow focus.
+The feature coverage of [ICU4C] and [ICU4J] goes well beyond what is necessary for the target clients; ICU4X will have a more narrow focus.
 
-[`ECMA-402`] provides an API surface that has already been thoroughly vetted for resource-constrained JavaScript clients, and thus everything in [`ECMA-402`] is considered in-scope for ICU4X.
+[ECMA-402] provides an API surface that has already been thoroughly vetted for resource-constrained JavaScript clients, and thus everything in [ECMA-402] is considered in-scope for ICU4X.
 
-We also recognize that target clients may have needs that extend outside the scope of [`ECMA-402`].  Features falling into one of the following use cases will also be considered in-scope for ICU4X:
+We also recognize that target clients may have needs that extend outside the scope of [ECMA-402].  Features falling into one of the following use cases will also be considered in-scope for ICU4X:
 
 - *to be filled in*
 
@@ -80,7 +78,7 @@ ICU4X will have an independent code base from ICU, and will operate independentl
 
 No!
 
-ICU4X is a new library to fill the growing need for on-device i18n across a variety of client-side platforms, including IoT, mobile, and web environments.  We hope ICU4X will eventually replace client-side solutions such as Closure i18n (goog.i18n) and Dart Intl.  [`ICU4C`] and [`ICU4J`] will continue to be the gold standard for internationalization on servers and higher-resource environments.
+ICU4X is a new library to fill the growing need for on-device i18n across a variety of client-side platforms, including IoT, mobile, and web environments.  We hope ICU4X will eventually replace client-side solutions such as Closure i18n (goog.i18n) and Dart Intl.  [ICU4C] and [ICU4J] will continue to be the gold standard for internationalization on servers and higher-resource environments.
 
 ### Why make a new project instead of improving ICU?
 
@@ -94,7 +92,7 @@ A new project allows us to build in the client-side needs from day 1, including 
 
 ### How will you actually implement ICU4X?
 
-Internally, the first draft of ICU4X will be built in a [`no_std`], with plans to use either FFI or [WebAssembly](https://webassembly.org/) for porting the code to the other target platforms; however, we are leaving the door open for other options such as transpilation that can produce code directly.  For example, we expect Rust clang/llvm tools to stabilize in the future, which could be the basis of a potential transpilation effort.  We are also looking at a Lisp-like source that can generate high-level code.
+Internally, the first draft of ICU4X will be built in a [no_std] Rust Environment, with plans to use either FFI or [WebAssembly](https://webassembly.org/) for porting the code to the other target platforms; however, we are leaving the door open for other options such as transpilation that can produce code directly.  For example, we expect Rust clang/llvm tools to stabilize in the future, which could be the basis of a potential transpilation effort.  We are also looking at a Lisp-like source that can generate high-level code.
 
 ### Why not call it "icu4rust"?
 
@@ -110,15 +108,15 @@ I18n engineers currently need to maintain several half-baked client-side i18n so
 
 ### Will ICU4C, ICU4J, and ICU4X share any code?
 
-Since C++ and Java are both target output languages of ICU4X, it is possible that certain core algorithms can be implemented in ICU4X first and then shipped under the hood with [`ICU4C`]/[`ICU4J`].  In [`ICU4C`], Rust could be statically built into the [`ICU4C`] shared object files, such that it is transparent to [`ICU4C`] clients.  This is a theoretical possibility that will need to be evaluated by the ICU-TC at a later date.
+Since C++ and Java are both target output languages of ICU4X, it is possible that certain core algorithms can be implemented in ICU4X first and then shipped under the hood with [ICU4C]/[ICU4J].  In [ICU4C], Rust could be statically built into the [ICU4C] shared object files, such that it is transparent to [ICU4C] clients.  This is a theoretical possibility that will need to be evaluated by the ICU-TC at a later date.
 
 ### Why not put it in the ICU repository governed directly by ICU-TC?
 
-ICU4X will have some overlap of personnel with ICU, but the processes, builds, and release cycle will be run separately from ICU.  The ICU repository is closely tied to the ICU release processes, with each pull request running the [`ICU4C`] and [`ICU4J`] test suites, linked to Jira issues.
+ICU4X will have some overlap of personnel with ICU, but the processes, builds, and release cycle will be run separately from ICU.  The ICU repository is closely tied to the ICU release processes, with each pull request running the [ICU4C] and [ICU4J] test suites, linked to Jira issues.
 
-[`ICU4C`]: https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/
-[`ICU4J`]: https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/
-[`ECMA-402`]: https://www.ecma-international.org/publications/standards/Ecma-402.htm
-[`no_std`]: https://rust-embedded.github.io/book/intro/no-std.html
-[`alloc`]: https://doc.rust-lang.org/alloc/
+[ICU4C]: https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/
+[ICU4J]: https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/
+[ECMA-402]: https://www.ecma-international.org/publications/standards/Ecma-402.htm
+[no_std]: https://rust-embedded.github.io/book/intro/no-std.html
+[alloc]: https://doc.rust-lang.org/alloc/
 
