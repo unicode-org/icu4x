@@ -1,6 +1,6 @@
 # Create Ownership Rules
 
-*NOTE*: Rules came from disscussion on issue #72
+*NOTE*: Rules came from discussion on issue #72
 ***
 
 Each crate released on crates.io should have:
@@ -20,6 +20,10 @@ More than one person on ICU4X should be familiar with and supportive of a public
 ## Owners from Different Companies
 
 To promote healthy discussion, and ensure we work on impactful crates that cover needs of wide audience vs. one of the members we should have support for the crate from at least two vendors.
+
+***
+*NOTE*: We may bend this rule in the beginning due to limited number of participants.
+***
 
 ## Team Ownership
 
