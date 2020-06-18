@@ -15,48 +15,19 @@ jobs:
     steps:
       - uses:                   actions/checkout@v2
 
-      ## Cache steps
-
-      - name: Cache cargo registry
-        uses: actions/cache@v1
+      - name:                   Install stable toolchain
+        uses:                   actions-rs/toolchain@v1
         with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
-
-      - name: Cache cargo index
-        uses: actions/cache@v1
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
-
-      - name: Cache cargo build
-        uses: actions/cache@v1
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
-
-      ## Coverage steps
-
-      - uses:                   actions-rs/toolchain@v1
-        with:
-          profile:              minimal
-          toolchain:            nightly
+          toolchain:            stable
           override:             true
 
-      - uses:                   actions-rs/cargo@v1
+      - name:                   Generate code coverage
+        uses:                   actions-rs/tarpaulin@v0.1
         with:
-          command:              test
-          args:                 --all-features --no-fail-fast
-        env:
-          CARGO_INCREMENTAL:    '0'
-          RUSTFLAGS:            '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
-          RUSTDOCFLAGS:         '-Cpanic=abort'
+          version:              '0.9.0'
+          args:                 '-- --test-threads 1'
 
-      - id:                     coverage
-        uses:                   actions-rs/grcov@v0.1
-
-      - name:                   Push grcov results to Coveralls via GitHub Action
-        uses:                   coverallsapp/github-action@v1.0.1
+      - name:                   Upload to codecov.io
+        uses:                   codecov/codecov-action@v1
         with:
-          github-token:         ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov:         ${{ steps.coverage.outputs.report }}
+          fail_ci_if_error:     true
