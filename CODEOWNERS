@@ -3,7 +3,7 @@
 
 # Fallback to core group for crates or folders without specific owners, like docs/.
 
-* @nciric @zbraniecki @sffc @echeran
+* @unicode-org/icu4x-sc
 
 # List of components with at least two owners as specified in docs/crate-ownership.
 
