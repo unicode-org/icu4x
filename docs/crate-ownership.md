@@ -13,6 +13,8 @@ Each crate released on crates.io should have:
 
 More than one person on ICU4X should be familiar with and supportive of a public crate maintained by the team.
 
+To modify owners of a crate go to CODEOWNERS file in the root of the repository.
+
 ***
 *NOTE*: It's owner's responsibility to find replacement if they are leaving the project/crate.
 ***
@@ -30,5 +32,5 @@ To promote healthy discussion, and ensure we work on impactful crates that cover
 To ensure further maintenance and publishing rights, team ownership should be added to each public crate.
 
 ```
-cargo owner -a github:unicode-org/teamname
+cargo owner -a github:icu4x/cargo-publish
 ```
