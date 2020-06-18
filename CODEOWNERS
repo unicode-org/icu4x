@@ -1,0 +1,11 @@
+# See https://github.blog/2017-07-06-introducing-code-owners/ for details
+# Format of the file follows: https://git-scm.com/docs/gitattributes
+
+# Fallback to core group for crates without specific owners, like docs/.
+
+* @nciric @zbraniecki @sffc @echeran
+
+# List of components with at least two owners as specified in docs/crate-ownership.
+
+components/locale/*               @zbraniecki @nciric
+components/data-provider/*        @sffc
