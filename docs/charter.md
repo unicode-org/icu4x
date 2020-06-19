@@ -22,7 +22,7 @@ APIs included in ICU4X will:
 
 * Be useful to a broad audience of client-side applications
 * Depend on Unicode or CLDR data or algorithms
-* Benefits from being versioned alongside Unicode and CLDR data
+* Benefit from being versioned alongside Unicode and CLDR data
 
 For such APIs and functionality that will not end up being included, ICU4X aims to provide the building blocks to enable third-party libraries to be developed which depend on and interoperate with ICU4X, with minimum data and logic duplication.
 
@@ -75,8 +75,6 @@ The ICU4X sub-committee (ICU4X-SC), a sub-committee of the ICU technical committ
 ICU4X will have an independent code base from ICU, and will operate independently of the ICU-TC. It will need no support from the the core staff of the Unicode Consortium except an occasional announcement.
 
 ### Is ICU4X going to replace ICU?
-
-No!
 
 ICU4X is a new library to fill the growing need for on-device i18n across a variety of client-side platforms, including IoT, mobile, and web environments.  We hope ICU4X will eventually replace client-side solutions such as Closure i18n (goog.i18n) and Dart Intl.  [ICU4C] and [ICU4J] will continue to be the gold standard for internationalization on servers and higher-resource environments.
 
