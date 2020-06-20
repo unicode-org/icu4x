@@ -1,0 +1,21 @@
+[package]
+name = "icu-num-util"
+description = "Low-level tools for dealing with numbers"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+smallvec = "1.4.0"
+num = "0.2.1"
+static_assertions = "1.1.0"
+more-asserts = "0.2.1"
