@@ -6,4 +6,5 @@ members = [
     "components/icu",
     "components/icu4x",
     "components/locale",
+    "components/num-util",
 ]
