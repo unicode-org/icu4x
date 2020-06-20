@@ -33,7 +33,37 @@ Follow the naming advice in [Naming - Rust API Guidelines](https://rust-lang.git
 
 This should result in Crate names always being unambiguously mappable to/from package names (e.g. the Crate "foo_bar" relates to the package "foo-bar").
 
-See also [this discussion on API guidelines](https://github.com/rust-lang/api-guidelines/issues/29#issuecomment-342745898).
+Each component should have its own unique name in form `icu-{package}` which will be used for its releases. When released as part of the meta `icu` package, it will be re-exported as `icu::{package}::{struct}` and for core structures it may also be re-exported as `icu::{struct}}`.
+
+#### Examples
+
+| Package | Crate | Standalone Import | ICU Meta-package | 
+|----|----|----|----|
+| locale | `icu-locale` | `use icu_locale::Locale` | `use icu::Locale` |
+| pluralrules | `icu-pluralrules` | `use icu_pluralrules::PluralRules` | `use icu::PluralRules` |
+| datetime | `icu-datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
+| datetime | `icu-datetime` | `use icu_datetime::DateTimeStyle` | `use icu::datetime::DateTimeStyle` |
+
+While the scheme may feel repetitive when looking at the import lines, it pays off in being unambigous without aliasing when multiple structs from different components get used together:
+
+```rust
+use icu_locale::Locale;
+use icu_datetime::{DateTimeFormat, options::{DateTimeStyle, DateTimeOptions}};
+use icu_list::{ListFormat, options::ListOptions};
+
+fn format() -> Result {
+    let loc: Locale = "ru".parse()?;
+
+    let mut dt_ops = DateTimeOptions::default();
+    dt_opts.date_style = DateTimeStyle::Long;
+    
+    let dtf = DateTimeFormat::try_new(loc.clone(), dt_opts)?;
+    
+    let lf = ListFormat::try_new(loc, ListOptions::default())?;
+}
+```
+
+Note: See also [this discussion on API guidelines](https://github.com/rust-lang/api-guidelines/issues/29#issuecomment-342745898).
 
 ## Module and Code Layout
 
@@ -85,27 +115,90 @@ There are three areas which may warrant a technically public API that we don't c
 * Where we want to expose some non-public API for testing or benchmarking
 * Where we want to expose some non-public API for helper macros
 
-### No public fields :: suggested
+### Public fields vs getter/setter :: required
 
-Unless there is a compelling use case, it seems very sensible to never use public fields in structs. This allows for clean encapsulation with essentially no downside for ICU4X. This post sums things up nicely, which I am summarizing below:
+Each exposure of a public field should be considered carefully.
+Public fields represent an equally binding API contract to a pair of getter/setter public methods without any validation.
 
-For a **pub** field `bar` in a **pub** struct `Foo`:
+There is no difference in field mutability between exposing them vs wrapping in a getter/setter model.
+This is a major difference for users coming from the C++ family of languages.
 
-* Construction: users can create a `Foo { bar: 42 }`.
-  * This also means it’s a breaking change for you to add or remove any fields (and using a Default trait won't help you here since you still have to rely on every caller using it to avoid adding a new field being a breaking change).
-* Mutation: if the user has some `mut var: Foo` or `&mut Foo`, they can change the value without notice.
-  * While this won't cause any race conditions in Rust, it does prevent a whole class of useful optimizations for types around internal consistency (e.g. you cannot cache otherwise expensive hash-code values).
-* Partial borrow: if a user binds `let var = &foo.bar;` they can still use other fields without any complaint from the borrow checker.
+Since mutability is controlled via ownership and borrow checker rules, if the getter is just returning a reference, and
+the setter is only assigning the value, then exposing a public field is recommended for ergonomics.
 
-You can always supply public inlinable getters to access fields, and non-public fields are still directly accessible by the current module and any sub-modules.
+#### Example
 
-One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the visual "cleanliness" of bare fields might outweigh the issues above. See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
+```rust
+enum DateTimeStyle {
+    Long,
+    Short,
+}
+
+struct DateTimeOptions {
+    pub time_style: DateTimeStyle,
+    pub date_style: DateTimeStyle,
+}
+
+fn main() {
+    let mut opts = DateTimeOptions {
+        time_style: DateTimeStyle::Short,
+        date_style: DateTimeStyle::Long,
+    }
+  
+    // Override
+    opts.time_style = DateTimeStyle::Long;
+}
+```
+
+Since the `date_style` and `time_style` fields can accept only valid values, and the getter/setter methods
+would not perform any additional operations, those fields can be exposed as public.
+
+In all other situations, where the getter/setter are fallible, or perform additional computations or optimizations, the equivalent getter/setter model is advised:
+
+```rust
+enum DateTimeStyle {
+    Long,
+    Short,
+}
+
+struct DateTimeOptions {
+    meta: Option<TinyStr8>,
+}
+
+impl DateTimeOptions {
+    pub fn get_time_style(&self) -> Option<&DateTimeStyle>;
+    pub fn set_time_style(&mut self, input: DateTimeStyle) -> Result;
+
+    pub fn get_date_style(&self) -> Option<&DateTimeStyle>;
+    pub fn set_date_style(&mut self, input: DateTimeStyle) -> Result;
+    
+    pub fn get_meta(&self) -> Option<&str>;
+    pub fn set_meta(&mut self, input: &str) -> Result;
+}
+
+fn main() {
+    let mut opts = DateTimeOptions {
+        time_style: DateTimeStyle::Short,
+        date_style: DateTimeStyle::Long,
+        meta: None,
+    }
+  
+    // Override
+    opts.set_time_style(DateTimeStyle::Long)?;
+}
+```
+
+Note: Any change to field visibility constitute a breaking change to the public API.
+Note: Even if the setter is infallible, the getter/setter model is useful when optimized type is used internally while public API exposes a standard type, like in the case of `meta` field in the example above.
+
+One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the superior ergonomics of the public fields can be benefited from.
+See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
 ## Derived Traits
 
-### Debug Trait on Public Types :: required
+### Debug Trait on Public Types :: suggested
 
-This might be contentious, but I firmly believe we should allow all public types used by ICU4X to support (at least) the [Debug](https://doc.rust-lang.org/std/fmt/trait.Debug.html) trait. This adds a bit of additional code, and requires that all fields in the struct also have this trait (unless you add a non-derived custom implementation).
+It is recommended that all public types used by ICU4X support (at least) the [Debug](https://doc.rust-lang.org/std/fmt/trait.Debug.html) trait. This adds a bit of additional code, and requires that all fields in the struct also have this trait (unless you add a non-derived custom implementation).
 
 ### Implement Clone and Copy only as needed :: suggested
 
@@ -175,7 +268,7 @@ A lot of this section just boils down to "[Read the Book](https://doc.rust-lang.
 
 There is something a bit subtle about how Rust handles "pass by value" which means you should not just apply standard C++ best-practice. In particular, in C++ you would might expect a method like:
 
-```
+```cpp
 ReturnType ClassName::FunctionName(ParamType param) { … }
 ```
 
@@ -183,7 +276,7 @@ to copy the parameter and return types during the course of calling the method (
 
 Rust treats "pass by value" a little differently, and it can be thought more of an indication that "ownership is being transferred" rather than the API wants "a copy of the data". Thus the Rust equivalent code:
 
-```
+```rust
 fn function_name(param: ParamType) -> ReturnType { … }
 ```
 
@@ -200,6 +293,52 @@ Use "return by value" for any functions which produce new data and let Rust hand
 ### Pass struct parameters by reference where possible :: suggested
 
 When passing struct types to functions, it's always semantically safe to pass a reference (since there can be no race conditions around its use and it cannot be modified unexpectedly while being processed). The called function should be responsible for taking a copy if it needs to (e.g. by cloning or via the ToOwned trait).
+
+### Avoid implicit allocations :: suggested
+
+Where possible, the public API should not take a reference, if the value is going to be cloned internally.
+
+
+#### Examples
+
+```rust
+struct ListFormat {
+    locale: Locale
+}
+
+impl ListFormat {
+    // GOOD
+    pub fn try_new(locale: Locale) -> Result<Self, ()> {
+      Ok(Self {
+        locale
+      })
+    }
+
+    // BAD
+    pub fn try_new(locale: &Locale) -> Result<Self, ()> {
+      Ok(Self {
+        locale: locale.clone()
+      })
+    }
+}
+```
+
+This rule may become a tradeoff in rare cases of APIs which optionally allocates. For example an API that in 95% of cases only needs a reference, but in the remaining 5% it needs to allocate, should be explicitly marked as such.
+An example of such API in the `stdlib` is `HashSet::get_or_insert` and `HashSet::get_or_insert_owned`:
+
+```rust
+impl HashSet {
+    pub fn get_or_insert(&mut self, value: T) -> &T;
+
+    pub fn get_or_insert_owned<Q: ?Sized>(&mut self, value: &Q) -> &T where
+        T: Borrow<Q>,
+        Q: Hash + Eq + ToOwned<Owned = T>;
+}
+```
+
+In this example, the `get_or_insert` method accepts an owned value, in order to use it if the set does not contain it.
+The `get_or_insert_owned` method, allows the user to pass a reference to a value that can implements `ToOwned`, and
+this trait will be used in the scenario of allocation.
 
 ### Pass Option<T> by value where possible :: suggested
 
@@ -223,18 +362,18 @@ Fundamental types are essentially free to pass around (at least never more expen
 
 [Option](https://doc.rust-lang.org/std/option/enum.Option.html) is Rust's only recommended way to represent the equivalent of a "null" value (i.e. missing data). Option has a host of useful traits and methods which make it easy to manipulate, propagate and transform.
 
-```
+```rust
 // Get the value or a default.
 let x = opt_value.unwrap_or(other_value);
 ```
 
-```
+```rust
 // Get the value or return an Err
 // (this can only be called in a function that returns a Result)
 let y = opt_value.ok_or("Error message")?;
 ```
 
-```
+```rust
 // Transform with lazy default value (note how "into()" can elide the
 // type since it's already known to be OtherType).
 let z = opt_value.map_or_else(OtherType::get_default, |v| v.into());
@@ -246,11 +385,11 @@ let z = opt_value.map_or_else(OtherType::get_default, |v| v.into());
 
 Prefer using iterators rather than directly indexing data to avoid the need for any explicit bounds checks. The Rust compiler will make this at least as performant as a manual loop.
 
-```
+```rust
+// GOOD
 let tags: Vec<Tag> = ["en", "fr", "de"].iter().map(Tag::from).collect();
-```
 
-```
+// BAD
 let mut tags: Vec<String> = Vec::new();
 let lang = ["en", "fr", "de"];
 for n in 0 .. lang.len() {
@@ -276,7 +415,7 @@ Even a simple if/else block can be expressed more idiomatically using a match st
 
 From [Rust By Example](https://doc.rust-lang.org/rust-by-example/flow_control/match.html):
 
-```
+```rust
 match number {
     // Match a single value
     1 => println!("One!"),
@@ -291,7 +430,7 @@ match number {
 
 Another nice property of match is that it returns a value, which tied to the fact that it must cover all cases means you get a readable idiom for ad-hoc matching and mapping:
 
-```
+```rust
 let x = match number {
     0     => "Zero",
     1..=9 => "Some",
@@ -300,6 +439,80 @@ let x = match number {
 ```
 
 Obviously where an if-statement is simply there to do optional work, and not cover every case, it may well be more suitable to just use that.
+
+# Constructors :: suggested
+
+If the struct doesn't require any arguments to be initialied, it should implement or derive the `Default` trait.
+For structs with argumented constructors, `new` or `try_new` methods should be used for canonical construction, `From` and `TryFrom` traits should be implemented for generic conversions and `from_*` and `try_from_*` for non-trait based specific conversions.
+
+| Type | Fallible | Trait | Use |
+| ---- | ---- | ---- | ---- |
+| Default | 𐄂 | `Default` | `Struct::default();` |
+| Arguments | 𐄂 | | `Struct::new(locale, options);` |
+| Arguments | ✓ | | `Struct::try_new(locale, options)?;` |
+| `&str` | ✓ | `FromStr` | `value.parse()?` |
+| Type | 𐄂 | `From` | `Struct::from(value);` |
+| Type | ✓ | `TryFrom` | `Struct::try_from(value);` |
+| Other | 𐄂 | | `Struct::from_{name}(value);` |
+| Other | ✓ | | `Struct::try_from_{name}(value);` |
+
+## Options
+
+Many ICU related constructors require a number of options to be passed. In such cases, it is recommended to provide a separate structure that is used to assemble all required options, and pass it to the constructor.
+
+### Examples
+
+```rust
+#[derive(Default)]
+struct MyStructOptions {
+    pub min_fraction_digits: usize,
+    pub max_fraction_digits: usize,
+}
+
+impl Default for MyStructOptions {
+    pub fn default() -> Self {
+        Self {
+            min_fraction_digits: 3,
+            max_fraction_digits: 5,
+        }
+    }
+}
+
+impl MyStructOptions {
+   // Additional helper methods for setting the options,
+   // or validating the consistency of the options.
+}
+
+struct MyStruct {
+  locale: Locale,
+  fraction_digits: Range<usize>,
+}
+
+impl MyStruct {
+    pub fn new(locale: Locale, options: MyStructOptions) -> Result<Self, ()> { ... };
+}
+
+fn main() {
+    let mut options = MyStructOptions::default();
+    options_max_fraction_digits = 10;
+    // Optional debug time validation of the options
+    assert!(options.validate());
+
+    let s = MyStruct::try_new(locale, options).expect("Construction failed.");
+}
+```
+
+It is also recommended that such structs implement `Default` trait to simplify common construction models:
+
+```rust
+fn main() {
+    let s = MyStruct::try_new(locale, MyStructOptions::default()).expect("Construction failed.");
+}
+```
+
+This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
+
+If mutability is needed, one can always add `Struct::extend_with(&mut self);` method or a constructor which takes a previous instance and constructs a new instance based on the old one and additional data.
 
 # Error Handling
 
@@ -315,7 +528,7 @@ Note that in cases where the Rust compiler can statically determine that a check
 
 While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X concensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
 
-```
+```rust
 // Nesting semantically interesting error information inside the generic error type.
 enum IcuError {
     ParserError(parser::ParserError),
@@ -343,7 +556,7 @@ The most common example of an API which can panic is access to slices and elemen
 
 Thus statements like:
 
-```
+```rust
 let x = self.data[n];
 ```
 
@@ -381,7 +594,7 @@ Finally, and fairly obviously, **never turn an error into a panic by uncondition
 
 Use panicking methods only when the input has been explicitly checked to be correct.
 
-```
+```rust
 // Attribute keys are checked for validity during data loading by ...
 let x = self.attribute_map[char_attribute.key];
 ```
@@ -420,20 +633,20 @@ See also [Operators and Symbols](https://doc.rust-lang.org/book/appendix-02-oper
 
 Rust has neat ways to provide users with simple type conversion. Imagine if you have a function taking (reference to) a semantic type:
 
-```
+```rust
 fn use_locale_id(id: &LocaleId) { … }
 ```
 
 But the caller could just write:
 
-```
+```rust
 use_locale_id(&"en_GB".into());
 ```
 
 Rust's lets you bind traits to existing system type (e.g. `str`) for use within a module. And importantly, it lets you expose a series to trait bindings that other people can opt into if they want.
 By implementing the generic [`TryFrom<&str>`](https://doc.rust-lang.org/std/convert/trait.TryFrom.html) trait on `LocaleId` to convert from a string to a locale ID, we also get the [`TryInto<Foo>`](https://doc.rust-lang.org/std/convert/trait.TryInto.html) trait implied on `&str` for free.
 
-```
+```rust
 impl TryFrom<&str> for LocaleId {
   fn try_from(s: &str) -> IcuResult<LocaleId> {
     ...
@@ -445,7 +658,7 @@ Note that there's also the [FromStr](https://doc.rust-lang.org/beta/std/str/trai
 
 However you can do more than just conversion types, and the [Unicode Segmentation](https://crates.io/crates/unicode-segmentation) crate binds a trait with many functions onto `str` to allow users to write things like:
 
-```
+```rust
 use unicode_segmentation::UnicodeSegmentation;
 
 // A vector of individual graphemes (true => extended).
