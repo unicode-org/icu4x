@@ -323,8 +323,8 @@ impl ListFormat {
 }
 ```
 
-This rule may become a tradeoff in rare cases of APIs which optionally allocates. For example an API that in 95% of cases only needs a reference, but in the remaining 5% it needs to allocate, should be explicitly marked as such.
-An example of such API in the `stdlib` is `HashSet::get_or_insert` and `HashSet::get_or_insert_owned`:
+This rule may become a tradeoff in rare cases of APIs which optionally allocate. For example, if an API only needs a reference in 95% of cases, but in the remaining 5% needs to allocate, it should be explicitly marked as such.
+An example of such an API in the `stdlib` is `HashSet::get_or_insert` and `HashSet::get_or_insert_owned`:
 
 ```rust
 impl HashSet {
@@ -336,8 +336,8 @@ impl HashSet {
 }
 ```
 
-In this example, the `get_or_insert` method accepts an owned value, in order to use it if the set does not contain it.
-The `get_or_insert_owned` method, allows the user to pass a reference to a value that can implements `ToOwned`, and
+In this example, the `get_or_insert` method accepts an owned value, in order to use it if the set does not contain it already.
+The `get_or_insert_owned` method allows the user to pass a reference to a value that implements `ToOwned`, and
 this trait will be used in the scenario of allocation.
 
 ### Pass Option<T> by value where possible :: suggested
