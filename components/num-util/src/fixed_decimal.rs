@@ -9,7 +9,6 @@ use std::string::ToString;
 use num::{FromPrimitive, Integer, ToPrimitive, Unsigned};
 use static_assertions::const_assert;
 
-use super::digit_converter::DigitConverter;
 use super::uint_iterator::UintIterator;
 
 #[cfg(test)]
@@ -331,13 +330,12 @@ impl ToString for FixedDecimal {
         if self.is_negative {
             result.push('-');
         }
-        let cnv = DigitConverter { zero_char: '0' };
         for m in self.magnitude_range().rev() {
             if m == -1 {
                 result.push('.');
             }
             let d = self.digit_at(m);
-            result.push(cnv.char_for(d));
+            result.push((b'0' + d) as char);
         }
         debug_assert_ge!(max_len, result.len());
         return result;

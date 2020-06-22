@@ -1,4 +1,3 @@
-mod digit_converter;
 pub mod fixed_decimal;
 mod uint_iterator;
 
