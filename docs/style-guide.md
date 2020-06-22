@@ -153,7 +153,7 @@ fn main() {
 Since the `date_style` and `time_style` fields can accept only valid values, and the getter/setter methods
 would not perform any additional operations, those fields can be exposed as public.
 
-In all other situations, where the getter/setter are fallible, or perform additional computations or optimizations, the equivalent getter/setter model is advised:
+In all other situations, where the getter/setter are fallible, perform additional computations or optimizations, or an invariant between the fields has to be achieved, it is advised to use an equivalent getter/setter model:
 
 ```rust
 enum DateTimeStyle {
@@ -191,7 +191,8 @@ fn main() {
 Note: Any change to field visibility constitute a breaking change to the public API.
 Note: Even if the setter is infallible, the getter/setter model is useful when optimized type is used internally while public API exposes a standard type, like in the case of `meta` field in the example above.
 
-One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the superior ergonomics of the public fields can be benefited from.
+One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the superior ergonomics of the public fields can be benefited from. In that case, it is recommended to also implement or derive the `Default` trait. See `Constructor` section below for details.
+
 See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
 ## Derived Traits
@@ -307,17 +308,17 @@ struct ListFormat {
 }
 
 impl ListFormat {
-    // GOOD
-    pub fn try_new(locale: Locale) -> Result<Self, ()> {
-      Ok(Self {
-        locale
-      })
-    }
-
     // BAD
     pub fn try_new(locale: &Locale) -> Result<Self, ()> {
       Ok(Self {
         locale: locale.clone()
+      })
+    }
+
+    // GOOD
+    pub fn try_new(locale: Locale) -> Result<Self, ()> {
+      Ok(Self {
+        locale
       })
     }
 }
