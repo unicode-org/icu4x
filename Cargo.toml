@@ -3,6 +3,6 @@
 members = [
     "components/icu",
     "components/icu4x",
-    "components/char_collection",
+    "components/uniset",
     "components/locale",
 ]
