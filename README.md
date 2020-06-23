@@ -1,9 +1,9 @@
 ICU4X
 =====
 
-Welcome to the home page for the ICU4X-SC.  We are a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.
+Welcome to the home page for the ICU4X-SC.  We are a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.  See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
 
-Please subscribe to this repository to participate in discussions.  If you would like to join the core development team, apply to join [our mailing list](https://groups.google.com/a/unicode.org/forum/#!forum/omnicu-core).
+Please subscribe to this repository to participate in discussions.  If you want to contribute, see our list of [Help Wanted](https://github.com/unicode-org/icu4x/issues?q=label%3A%22help+wanted%22) issues!
 
 [![Build Status](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=master)](https://coveralls.io/github/unicode-org/icu4x?branch=master)
 
