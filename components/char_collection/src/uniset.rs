@@ -1,17 +1,4 @@
-use std::{
-    boxed::Box,
-    char,
-    clone::Clone,
-    cmp::Ordering,
-    convert::From, // https://doc.rust-lang.org/std/convert/trait.From.html rust practice says do not use Into
-    error::Error,
-    hash::{Hash, Hasher},
-    iter::Iterator,
-    num::ParseIntError,
-    ops::Range,
-    str::Split,
-    vec::Vec,
-};
+use std::{boxed::Box, error::Error, iter::Iterator, slice::Iter, vec::Vec};
 
 const UNICODESET_MAX: u32 = 0x10FFFF; // does max imply inclusive? else should be 10FFFF
 const UNICODESET_MIN: u32 = 0x000000;
@@ -43,7 +30,7 @@ fn parse_serial_string(serialize_str: &str) -> Result<Vec<u32>, Box<dyn Error>> 
         if serialized_vec.len() + 1 > serialized_vec.capacity() {
             return Err("Serialization capacity is too small".into());
         }
-        if parsed < prev {
+        if parsed <= prev {
             return Err("Serialization must be sorted".into());
         }
         serialized_vec.push(parsed);
@@ -121,6 +108,25 @@ impl UnicodeSet {
             set: vec![UNICODESET_MIN, BMP_MAX + 1],
         }
     }
+    /// Returns an `Iter` of start and stop `u32` points of the UnicodeSet
+    pub fn iter(&self) -> Iter<u32> {
+        self.set.iter()
+    }
+
+    /// Returns the cardinality of the UnicodeSet
+    pub fn size(&self) -> Result<usize, Box<dyn Error>> {
+        if self.set.len() < 2 {
+            return Err("UnicodeSet length < 2".into());
+        }
+        let end: u32 = self.iter().skip(1).step_by(2).sum::<u32>();
+        let start: u32 = self.iter().step_by(2).sum::<u32>();
+        Ok((end - start) as usize)
+    }
+
+    /// Returns whether or not the UnicodeSet is empty
+    pub fn is_empty(&self) -> bool {
+        self.set.len() < 2 // unsure if this is appropriate definition of just self.set.is_empty()
+    }
 
     /// Checks to see the query is in the UnicodeSet
     ///
@@ -156,10 +162,7 @@ impl UnicodeSet {
 
 #[cfg(test)]
 mod tests {
-    use {
-        super::{parse_serial_string, UnicodeSet, BMP_MAX, UNICODESET_MAX, UNICODESET_MIN},
-        std::num::ParseIntError,
-    };
+    use super::{parse_serial_string, UnicodeSet, BMP_MAX, UNICODESET_MAX, UNICODESET_MIN};
     // parse_serial_string
     #[test]
     fn test_parse_serial_string() {
@@ -178,6 +181,14 @@ mod tests {
     #[test]
     fn test_parse_serial_string_wrong_format() {
         assert!(parse_serial_string("[4, 2, 3, 4, 5  ]").is_err());
+    }
+    #[test]
+    fn test_parse_serial_string_wrong_order() {
+        assert!(parse_serial_string("4 1 0 4 2").is_err());
+    }
+    #[test]
+    fn test_parse_serial_string_single_char_error() {
+        assert!(parse_serial_string("4 1 1 2 2").is_err());
     }
     #[test]
     fn test_parse_serial_string_capacity_not_even() {
@@ -239,6 +250,28 @@ mod tests {
         assert!(!check.contains(&9));
         assert!(!check.contains(&15));
         assert!(!check.contains(&16));
+    }
+    #[test]
+    fn test_unicodeset_size() {
+        let check = UnicodeSet::new("4 2 5 10 15").unwrap();
+        assert_eq!(8, check.size().unwrap());
+        let check = UnicodeSet::all();
+        let expected = UNICODESET_MAX + 1 - UNICODESET_MIN;
+        assert_eq!(expected as usize, check.size().unwrap());
+    }
+    #[test]
+    fn test_unicodeset_size_error() {
+        let check = UnicodeSet { set: vec![0] };
+        assert!(check.size().is_err());
+    }
+    #[test]
+    fn test_unicodeset_is_empty() {
+        let check = UnicodeSet { set: vec![] };
+        assert!(check.is_empty());
+        let check = UnicodeSet { set: vec![0] };
+        assert!(check.is_empty());
+        let check = UnicodeSet::all();
+        assert!(!check.is_empty());
     }
 }
 // impl From<io:: // need to define an error
