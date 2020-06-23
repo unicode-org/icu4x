@@ -13,16 +13,13 @@ const BMP_MAX: u32 = 0xFFFF;
 /// Example String: `4 0 5 10 15` designates a capacity of size 4, followed by 2 ranges
 /// The ranges are {0, 4} and {10, 14} inclusive
 fn parse_serial_string(serialize_str: &str) -> Result<Vec<u32>, Box<dyn Error>> {
-    // wondering how much this method catches in tests
-    // let split_serialize: Split<&str> = serialize.split(" ");
-    // let capacity: u8 = split_serialize.next().unwrap().
     let mut serialize = serialize_str.split(" ");
     let capacity: usize = serialize.next().unwrap().parse()?;
     if capacity % 2 != 0 {
         return Err("Capacity must be even".into());
     }
     let mut serialized_vec: Vec<u32> = Vec::with_capacity(capacity);
-    let mut prev: u32 = 0;
+    let mut prev: Option<u32> = None;
     for str_ele in serialize {
         // unsure if the capacity matters if we can expand, but that might be an issue if you expand into too much memory
         // otherwise shrink_to_fit is possible
@@ -30,11 +27,11 @@ fn parse_serial_string(serialize_str: &str) -> Result<Vec<u32>, Box<dyn Error>> 
         if serialized_vec.len() + 1 > serialized_vec.capacity() {
             return Err("Serialization capacity is too small".into());
         }
-        if parsed <= prev {
+        if Some(parsed) <= prev {
             return Err("Serialization must be sorted".into());
         }
         serialized_vec.push(parsed);
-        prev = parsed;
+        prev = Some(parsed);
     }
     if serialized_vec.len() % 2 != 0 {
         return Err("Serialization must be even".into());
@@ -128,35 +125,61 @@ impl UnicodeSet {
         self.set.len() < 2 // unsure if this is appropriate definition of just self.set.is_empty()
     }
 
-    /// Checks to see the query is in the UnicodeSet
-    ///
-    /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// on the set using `std::vec::Vec` implementation
-    pub fn contains(&self, query: &u32) -> bool {
+    /// Wrapper for contains conditions closures
+    fn contains<C>(&self, query: &u32, condition: C) -> bool
+    where
+        C: Fn(usize) -> bool,
+    {
         match self.set.binary_search(query) {
             Ok(pos) => {
                 if pos % 2 == 0 {
-                    true
+                    return condition(pos);
                 } else {
-                    if pos > 0 && &self.set[pos - 1] == query {
-                        true
-                    } else {
-                        false
-                    }
+                    false
                 }
             }
             Err(pos) => {
-                if pos % 2 == 0 {
-                    false
+                if pos % 2 != 0 && pos < self.set.len() {
+                    return condition(pos);
                 } else {
-                    if pos >= self.set.len() {
-                        false
-                    } else {
-                        true
-                    }
+                    false
                 }
             }
         }
+    }
+
+    /// Checks to see the query is in the UnicodeSet
+    ///
+    /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
+    /// in the set using `std::vec::Vec` implementation
+    ///
+    /// Example: `contains_point(&10)`
+    pub fn contains_point(&self, query: &u32) -> bool {
+        let condition_closure = |_: usize| -> bool { true };
+        self.contains(query, condition_closure)
+    }
+
+    /// Checks to see if the range is in the UnicodeSet, returns a Result
+    ///
+    /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
+    /// in the set using `std::vec::Vec` implementation
+    ///
+    /// Only runs the search once on the `start` parameter, while the `end` parameter is checked
+    /// in a single `O(1)` step
+    ///
+    /// Example: `contains_range(&0, &10)`
+    pub fn contains_range(&self, start: &u32, end: &u32) -> Result<bool, Box<dyn Error>> {
+        if start >= end {
+            return Err("Range cannot be out of order".into());
+        }
+        let condition_closure = |pos: usize| -> bool {
+            if end < &self.set[pos + 1] {
+                true
+            } else {
+                false
+            }
+        };
+        return Ok(self.contains(start, condition_closure));
     }
 }
 
@@ -237,19 +260,41 @@ mod tests {
     #[test]
     fn test_unicodeset_contains() {
         let check = UnicodeSet::new("4 2 5 10 15").unwrap();
-        assert!(check.contains(&2));
-        assert!(check.contains(&4));
-        assert!(check.contains(&10));
-        assert!(check.contains(&14));
+        assert!(check.contains_point(&2));
+        assert!(check.contains_point(&4));
+        assert!(check.contains_point(&10));
+        assert!(check.contains_point(&14));
     }
     #[test]
     fn test_unicodeset_contains_false() {
         let check = UnicodeSet::new("4 2 5 10 15").unwrap();
-        assert!(!check.contains(&1));
-        assert!(!check.contains(&5));
-        assert!(!check.contains(&9));
-        assert!(!check.contains(&15));
-        assert!(!check.contains(&16));
+        assert!(!check.contains_point(&1));
+        assert!(!check.contains_point(&5));
+        assert!(!check.contains_point(&9));
+        assert!(!check.contains_point(&15));
+        assert!(!check.contains_point(&16));
+    }
+    #[test]
+    fn test_unicodeset_contains_range() {
+        let check = UnicodeSet::new("4 0 10 15 25").unwrap();
+        assert!(check.contains_range(&2, &5).unwrap());
+        assert!(check.contains_range(&0, &9).unwrap());
+        assert!(check.contains_range(&15, &24).unwrap());
+    }
+    #[test]
+    fn test_unicodeset_contains_range_false() {
+        let check = UnicodeSet::new("4 0 10 15 25").unwrap();
+        assert!(!check.contains_range(&0, &10).unwrap());
+        assert!(!check.contains_range(&15, &25).unwrap());
+        assert!(!check.contains_range(&0, &16).unwrap());
+        assert!(!check.contains_range(&10, &15).unwrap());
+        assert!(!check.contains_range(&11, &14).unwrap());
+    }
+    #[test]
+    fn test_unicodeset_contains_range_invalid() {
+        let check = UnicodeSet::all();
+        assert!(check.contains_range(&10, &0).is_err());
+        assert!(check.contains_range(&0, &0).is_err());
     }
     #[test]
     fn test_unicodeset_size() {
