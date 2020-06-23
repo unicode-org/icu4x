@@ -66,9 +66,17 @@ A key is an integer from an enumeration.  Each key has a corresponding type, whi
 
 *Note:* Above, `i8` and `i32` signify an 8-bit or 32-bit signed integer.  The exact types might differ based on the host language.
 
+*Note:* The keys above are for illustrative purposes only.  The actual data hunks will likely be on the larger side, such as "all number symbols for this locale and numbering system".
+
 *Open Question:* How do you map from an enum/integer to a type in a type-safe way in Rust?  In C++/Java, this would entail some sort of cast, which I imagine is possible in Rust but might require an unsafe block.  Main issue: [#8](https://github.com/unicode-org/omnicu/issues/8)
 
 *Open Question:* Due to ongoing developments in [wrapper-layer.md](wrapper-layer.md), the above list of example keys may be more fine-grained than we will need in the final product.  It may be better to have more coarse-grained hunks, like "all decimal format symbols" instead of "grouping separator" and "decimal separator".  Main issue: [#26](https://github.com/unicode-org/omnicu/issues/26)
+
+### Data Key Struct Definitions
+
+The actual data keys and the structs to which they correspond should be defined in a central location in the repository: [components/data-provider/src](https://github.com/unicode-org/icu4x/tree/master/components/data-provider/src).  Follow conventions of existing data provider struct definitions when adding a new one.
+
+There should generally be a 1-to-1 relationship between components (number formatter, plural rules, date format) and modules in the data provider crate.  However, this is not strictly enforced; use your best judgement.
 
 ### Request Variables
 
