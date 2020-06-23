@@ -13,11 +13,17 @@ use std::{
     vec::Vec,
 };
 
-const UNICODESET_MAX: u32 = 0x110000; // does max imply inclusive? else should be 10FFFF
+const UNICODESET_MAX: u32 = 0x10FFFF; // does max imply inclusive? else should be 10FFFF
 const UNICODESET_MIN: u32 = 0x000000;
-
+const BMP_MAX: u32 = 0xFFFF;
 /// Given string representation of inversion list create set
-/// Check if sorted during iteration
+///
+/// Requires starting capacity integer, followed by space delimited integer code points.
+/// There must be an even number of elements (not including the capacity int), and must be
+/// in ascending sorted order.
+///
+/// Example String: `4 0 5 10 15` designates a capacity of size 4, followed by 2 ranges
+/// The ranges are {0, 4} and {10, 14} inclusive
 fn parse_serial_string(serialize_str: &str) -> Result<Vec<u32>, Box<dyn Error>> {
     // wondering how much this method catches in tests
     // let split_serialize: Split<&str> = serialize.split(" ");
@@ -49,6 +55,10 @@ fn parse_serial_string(serialize_str: &str) -> Result<Vec<u32>, Box<dyn Error>> 
     Ok(serialized_vec)
 }
 
+/// UnicodeSet membership wrapper
+///
+/// Provides exposure to membership functions and constructors from serialized UnicodeSets
+/// and predefined ranges.
 //#[derive(Copy, Clone, Debug, Eq)]
 pub struct UnicodeSet {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
@@ -65,58 +75,32 @@ impl UnicodeSet {
         }
     }
 
-    pub fn from_range(start: &u32, end: &u32) -> UnicodeSet {
-        UnicodeSet {
-            set: vec![*start, *end],
+    pub fn from_range(start: &u32, end: &u32) -> Result<UnicodeSet, Box<dyn Error>> {
+        if start > end {
+            return Err("Range is out of order".into())
         }
+        if start < &UNICODESET_MIN || end > &UNICODESET_MAX {
+            return Err("Range is out of bounds".into())
+        }
+        Ok(UnicodeSet {
+            set: vec![*start, *end],
+        })
     }
 
     pub fn all() -> UnicodeSet {
         UnicodeSet {
-            set: vec![UNICODESET_MIN, UNICODESET_MAX],
+            set: vec![UNICODESET_MIN, UNICODESET_MAX + 1],
         }
     }
 
     pub fn bmp() -> UnicodeSet {
         UnicodeSet {
-            set: vec![UNICODESET_MIN, 0xFFFF],
+            set: vec![UNICODESET_MIN, BMP_MAX + 1],
         }
     }
 
     pub fn contains(&self, query: &u32) -> bool {
-        // need an enforcement of pattern
-        //Need to evaluate
-        // let mut low = 0;
-        // let mut high = self.set.len() - 1;
-        // if low >= high || query > self.set[high] || query < self.set[low]{
-        //     false
-        // }
-        // // [2, 5, 10, 12] => [2, 4], [10, 11]
-        // // [2, 5, 10] => [2, 4], [10]
-        // // [2, 5, 10, 10, 12]
-        // // [1, 1, 0]
-        // // 5, 9
-        // let mut pos: i8 = -1;
-        // while low <= high {
-        //     let middle = (low + high) >> 1;
-        //     let check = self.set[middle];
-        //     if middle == low {
-        //         pos = middle;
-        //         break
-        //     }
-        //     if check < query {
-        //         low = middle + 1;
-        //     }
-        //     else {
-        //         high = middle - 1;
-        //     }
-        // }
-        // if pos == -1 {
-        //     pos = middle + 1;
-        // }
-        // [2, 5, 10, 15]
         match self.set.binary_search(query) {
-            // relies on having even # elements
             Ok(pos) => {
                 if pos % 2 == 0 {
                     true
@@ -132,7 +116,7 @@ impl UnicodeSet {
                 if pos % 2 == 0 {
                     false
                 } else {
-                    if pos >= self.set.len() - 1 {
+                    if pos >= self.set.len() {
                         false
                     } else {
                         true
@@ -146,7 +130,7 @@ impl UnicodeSet {
 #[cfg(test)]
 mod tests {
     use {
-        super::{parse_serial_string, UnicodeSet},
+        super::{parse_serial_string, UnicodeSet, UNICODESET_MIN, UNICODESET_MAX, BMP_MAX},
         std::num::ParseIntError,
     };
     // parse_serial_string
@@ -178,5 +162,56 @@ mod tests {
     }
 
     // UnicodeSet constructors
+    #[test]
+    fn test_unicodeset_new() {
+        let expected = vec![2, 3, 4, 5];
+        let actual = UnicodeSet::new("4 2 3 4 5").unwrap().set;
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_unicodeset_new_error() {
+        assert!(UnicodeSet::new("3 2 4 3").is_err());
+    }
+    #[test]
+    fn test_unicodeset_from_range() {
+        let expected = vec![4, 10];
+        let actual = UnicodeSet::from_range(&4, &10).unwrap().set;
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_unicodeset_from_range_bad_order() {
+        assert!(UnicodeSet::from_range(&10, &5).is_err());
+    }
+    #[test]
+    fn test_unicodeset_from_range_out_of_bounds() {
+        assert!(UnicodeSet::from_range(&0, &0x110000).is_err());
+    }
+    #[test]
+    fn test_unicodeset_all() {
+        let expected = vec![UNICODESET_MIN, UNICODESET_MAX + 1];
+        assert_eq!(UnicodeSet::all().set, expected);
+    }
+    #[test]
+    fn test_unicodeset_bmp() {
+        let expected = vec![UNICODESET_MIN, BMP_MAX + 1];
+        assert_eq!(UnicodeSet::bmp().set, expected);
+    }
+    #[test]
+    fn test_unicodeset_contains() {
+        let check = UnicodeSet::new("4 2 5 10 15").unwrap();
+        assert!(check.contains(&2));
+        assert!(check.contains(&4));
+        assert!(check.contains(&10));
+        assert!(check.contains(&14));
+    }
+    #[test]
+    fn test_unicodeset_contains_false() {
+        let check = UnicodeSet::new("4 2 5 10 15").unwrap();
+        assert!(!check.contains(&1));
+        assert!(!check.contains(&5));
+        assert!(!check.contains(&9));
+        assert!(!check.contains(&15));
+        assert!(!check.contains(&16));
+    }
 }
 // impl From<io:: // need to define an error
