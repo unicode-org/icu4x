@@ -69,11 +69,11 @@ pub struct UnicodeSet {
 }
 
 impl UnicodeSet {
-    /// Returns Result of UnicodeSet from serialized string 
+    /// Returns Result of UnicodeSet from serialized string
     ///
-    /// Returns an error if the serialized string fails to parse. 
+    /// Returns an error if the serialized string fails to parse.
     /// The serialized string requires starting capacity integer, followed by space delimited
-    /// integer code points. There must be an even number of elements (not including the 
+    /// integer code points. There must be an even number of elements (not including the
     /// capacity int), and must be in ascending sorted order.
     ///
     /// Example String: `"4 0 5 10 15"` designates a capacity of size `4`, followed by 2 ranges
@@ -86,26 +86,26 @@ impl UnicodeSet {
     }
 
     /// Returns Result of UnicodeSet from a single pair of integers defining a range
-    /// 
+    ///
     /// `start`: inclusive, `end`: exclusive
-    /// 
+    ///
     /// Returns an error if the range is invalid (out of order and out of bounds).
-    /// 
+    ///
     /// Example Call: `UnicodeSet::from_range(&0, &15)`
     pub fn from_range(start: &u32, end: &u32) -> Result<UnicodeSet, Box<dyn Error>> {
         if start > end {
-            return Err("Range is out of order".into())
+            return Err("Range is out of order".into());
         }
         if start < &UNICODESET_MIN || end > &UNICODESET_MAX {
-            return Err("Range is out of bounds".into())
+            return Err("Range is out of bounds".into());
         }
         Ok(UnicodeSet {
             set: vec![*start, *end],
         })
     }
 
-    /// Returns UnicodeSet spanning entire Unicode range 
-    /// 
+    /// Returns UnicodeSet spanning entire Unicode range
+    ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> UnicodeSet {
         UnicodeSet {
@@ -113,8 +113,8 @@ impl UnicodeSet {
         }
     }
 
-    /// Returns UnicodeSet spanning BMP range 
-    /// 
+    /// Returns UnicodeSet spanning BMP range
+    ///
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> UnicodeSet {
         UnicodeSet {
@@ -123,9 +123,9 @@ impl UnicodeSet {
     }
 
     /// Checks to see the query is in the UnicodeSet
-    /// 
+    ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// on the set using `std::vec::Vec` implementation 
+    /// on the set using `std::vec::Vec` implementation
     pub fn contains(&self, query: &u32) -> bool {
         match self.set.binary_search(query) {
             Ok(pos) => {
@@ -157,7 +157,7 @@ impl UnicodeSet {
 #[cfg(test)]
 mod tests {
     use {
-        super::{parse_serial_string, UnicodeSet, UNICODESET_MIN, UNICODESET_MAX, BMP_MAX},
+        super::{parse_serial_string, UnicodeSet, BMP_MAX, UNICODESET_MAX, UNICODESET_MIN},
         std::num::ParseIntError,
     };
     // parse_serial_string
