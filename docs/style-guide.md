@@ -35,6 +35,10 @@ This should result in Crate names always being unambiguously mappable to/from pa
 
 Each component should have its own unique name in form `icu-{package}` which will be used for its releases. When released as part of the meta `icu` package, it will be re-exported as `icu::{package}::{struct}` and for core structures it may also be re-exported as `icu::{struct}}`.
 
+Within a single crate, exposure of structs and functions via their modules is up to the discretion of the author. As a rule of thumb, items that are required for common patterns should be available directly, while items needed only for a subset of use cases may be exposed via their modules.
+
+In the example below, since date and time skeletons aren't used in most common scenarios, they are exposed via the `skeleton` module. 
+
 #### Examples
 
 | Package | Crate | Standalone Import | ICU Meta-package | 
@@ -42,24 +46,26 @@ Each component should have its own unique name in form `icu-{package}` which wil
 | locale | `icu-locale` | `use icu_locale::Locale` | `use icu::Locale` |
 | pluralrules | `icu-pluralrules` | `use icu_pluralrules::PluralRules` | `use icu::PluralRules` |
 | datetime | `icu-datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
-| datetime | `icu-datetime` | `use icu_datetime::DateTimeStyle` | `use icu::datetime::DateTimeStyle` |
+| datetime | `icu-datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
 
 While the scheme may feel repetitive when looking at the import lines, it pays off in being unambigous without aliasing when multiple structs from different components get used together:
 
 ```rust
 use icu_locale::Locale;
-use icu_datetime::{DateTimeFormat, options::{DateTimeStyle, DateTimeOptions}};
-use icu_list::{ListFormat, options::ListOptions};
+use icu_datetime::{DateTimeFormat, DateTimeStyle, skeleton::{Skeleton, SkeletonField}};
+use icu_list::ListFormat;
 
 fn format() -> Result {
     let loc: Locale = "ru".parse()?;
 
-    let mut dt_ops = DateTimeOptions::default();
+    let mut dt_ops = Default::default();
     dt_opts.date_style = DateTimeStyle::Long;
     
     let dtf = DateTimeFormat::try_new(loc.clone(), dt_opts)?;
     
-    let lf = ListFormat::try_new(loc, ListOptions::default())?;
+    let lf = ListFormat::try_new(loc, Default::default())?;
+    
+    assert_eq!(Skeleton::from_style(dt_opts.date_style).get(0), Some(SkeletonField::YYYY));
 }
 ```
 
@@ -156,35 +162,21 @@ would not perform any additional operations, those fields can be exposed as publ
 In all other situations, where the getter/setter are fallible, perform additional computations or optimizations, or an invariant between the fields has to be achieved, it is advised to use an equivalent getter/setter model:
 
 ```rust
-enum DateTimeStyle {
-    Long,
-    Short,
-}
-
+#[derive(Default)]
 struct DateTimeOptions {
     meta: Option<TinyStr8>,
 }
 
-impl DateTimeOptions {
-    pub fn get_time_style(&self) -> Option<&DateTimeStyle>;
-    pub fn set_time_style(&mut self, input: DateTimeStyle) -> Result;
-
-    pub fn get_date_style(&self) -> Option<&DateTimeStyle>;
-    pub fn set_date_style(&mut self, input: DateTimeStyle) -> Result;
-    
+impl DateTimeOptions {    
     pub fn get_meta(&self) -> Option<&str>;
     pub fn set_meta(&mut self, input: &str) -> Result;
 }
 
 fn main() {
-    let mut opts = DateTimeOptions {
-        time_style: DateTimeStyle::Short,
-        date_style: DateTimeStyle::Long,
-        meta: None,
-    }
+    let mut opts = DateTimeOptions::default();
   
     // Override
-    opts.set_time_style(DateTimeStyle::Long)?;
+    opts.set_meta("foo")?;
 }
 ```
 
@@ -453,9 +445,9 @@ For structs with argumented constructors, `new` or `try_new` methods should be u
 | Arguments | ✓ | | `Struct::try_new(locale, options)?;` |
 | `&str` | ✓ | `FromStr` | `value.parse()?` |
 | Type | 𐄂 | `From` | `Struct::from(value);` |
-| Type | ✓ | `TryFrom` | `Struct::try_from(value);` |
+| Type | ✓ | `TryFrom` | `Struct::try_from(value)?;` |
 | Other | 𐄂 | | `Struct::from_{name}(value);` |
-| Other | ✓ | | `Struct::try_from_{name}(value);` |
+| Other | ✓ | | `Struct::try_from_{name}(value)?;` |
 
 ## Options
 
