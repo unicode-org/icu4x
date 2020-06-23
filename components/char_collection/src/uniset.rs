@@ -274,4 +274,3 @@ mod tests {
         assert!(!check.is_empty());
     }
 }
-// impl From<io:: // need to define an error
