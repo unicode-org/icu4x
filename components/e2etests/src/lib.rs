@@ -31,7 +31,7 @@ struct TestData {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct LocaleTestData {
     input: String,
-    output: LocaleTestOutput,
+    output: Option<LocaleTestOutput>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]

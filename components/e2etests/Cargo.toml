@@ -13,6 +13,9 @@ include = [
     "README.md"
 ]
 
+[dependencies]
+icu-locale = { path = "../locale" }
+
 [dependencies.serde]
 version = "1.0"
 default-features = false

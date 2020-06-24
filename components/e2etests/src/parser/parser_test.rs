@@ -40,11 +40,13 @@ fn locale_test_data_deser() {
     let region = String::from("US");
     let subtags = vec![ vec![ String::from("u"), String::from("hc"), String::from("buddhist") ]];
     let output =
-        LocaleTestOutput {
-            lang,
-            region,
-            subtags,
-        };
+        Some(
+            LocaleTestOutput {
+                lang,
+                region,
+                subtags,
+            }
+        );
     let exp_test_data =
         LocaleTestData {
             input,
@@ -70,11 +72,13 @@ fn test_data_deser() {
     let region = String::from("US");
     let subtags = vec![ vec![ String::from("u"), String::from("hc"), String::from("buddhist") ]];
     let output =
-        LocaleTestOutput {
-            lang,
-            region,
-            subtags,
-        };
+        Some(
+            LocaleTestOutput {
+                lang,
+                region,
+                subtags,
+            }
+        );
     let locale_test_data =
         LocaleTestData {
             input,
@@ -110,11 +114,13 @@ fn test_base_data_deser() {
     let region = String::from("US");
     let subtags = vec![ vec![ String::from("u"), String::from("hc"), String::from("buddhist") ]];
     let output =
-        LocaleTestOutput {
-            lang,
-            region,
-            subtags,
-        };
+        Some(
+            LocaleTestOutput {
+                lang,
+                region,
+                subtags,
+            }
+        );
     let locale_test_data =
         LocaleTestData {
             input,
