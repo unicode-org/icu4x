@@ -6,7 +6,7 @@ pub enum TestOp {
     NotEquals,
     Contains,
     NotContains,
-    EqualsAnyOrder
+    EqualsAnyOrder,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -19,7 +19,6 @@ pub struct TestBase {
     msg: String,
     test_data: Vec<TestData>,
 }
-
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 // need to see how to make this behave like Protobuf "oneof".
@@ -55,4 +54,3 @@ mod runner;
 #[cfg(test)]
 #[path = "./parser/parser_test.rs"]
 mod parser_tests;
-

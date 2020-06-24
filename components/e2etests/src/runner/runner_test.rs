@@ -13,7 +13,7 @@ fn locale_test() {
                                     "region": "US",
                                     "subtags": [["u", "hc", "buddhist"]]}}}]}
 "#;
-    
+
     let act_test_base: TestBase = serde_json::from_str(data).expect("cannot parse sample TestBase");
     let act_test_cases_data: Vec<TestData> = act_test_base.test_data;
 
@@ -21,7 +21,6 @@ fn locale_test() {
 
     let act_test_data = &act_test_cases_data[0];
     let act_locale_test_data: &LocaleTestData = &act_test_data.locale_test_data;
-    
-    runner::run_locale_test(&act_locale_test_data);
-}
 
+    run_locale_test(&act_locale_test_data);
+}

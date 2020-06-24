@@ -28,8 +28,7 @@ impl<'de> Deserialize<'de> for Locale {
             where
                 E: serde::de::Error,
             {
-                s.parse::<Locale>()
-                    .map_err(serde::de::Error::custom)
+                s.parse::<Locale>().map_err(serde::de::Error::custom)
             }
         }
 
