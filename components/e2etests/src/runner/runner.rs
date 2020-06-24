@@ -1,11 +1,35 @@
 use super::*;
 
 use icu_locale::Locale;
+use icu_locale::extensions::Extensions;
+use icu_locale::extensions::Unicode;
+use icu_locale::extensions::unicode::Key;
+use icu_locale::extensions::unicode::Value;
 use icu_locale::subtags::Region;
 use icu_locale::subtags::Variant;
-use icu_locale::subtags::Variants;
+
+fn concat_unicode_subtags(variants: &mut Vec<Vec<String>>, unicode_exts: &Unicode) {
+    match unicode_exts {
+        Unicode { keywords, .. } => {
+            let key_vals: Vec<(Key, Value)> = keywords.to_vec();
+            for (key, value) in key_vals {
+                let key_str = String::from(key.as_str());
+                let value_str: String = format!("{}", value);
+                let flattened_subtag: Vec<String> = 
+                    vec![
+                        String::from("u"), 
+                        key_str,
+                        value_str
+                        ];
+                variants.push(flattened_subtag);
+            }
+        }
+    }
+}
 
 impl From<&Locale> for LocaleTestOutput {
+
+
     fn from(input: &Locale) -> Self {
         let language = input.language;
         let script = input.script;
@@ -32,7 +56,20 @@ impl From<&Locale> for LocaleTestOutput {
         let variants: Vec<String> = variants.into_iter()
             .map(|v: Variant| String::from(v.as_str()))
             .collect::<Vec<String>>();
-        let subtags: Vec<Vec<String>> = vec![variants];
+
+        // Create `subtags` as a "flattened" version of Variants. A nested
+        // sequential Vec<Vec<_>> should help preserve order of subtags.
+        let mut subtags: Vec<Vec<String>> = 
+            if variants.len() > 0 {
+                vec![variants] }
+            else {
+                vec![]
+            };
+        if (!input.extensions.is_empty()) {
+            match &input.extensions {
+                Extensions { unicode, .. } => concat_unicode_subtags(&mut subtags, unicode)
+            }
+        }
 
         let locale_test_output = LocaleTestOutput {
             lang,
@@ -44,9 +81,18 @@ impl From<&Locale> for LocaleTestOutput {
     }
 }
 
+pub fn run_locale_test(locale_test_data: &LocaleTestData) {
+    let input: &String = &locale_test_data.input;
+    let output: &Option<LocaleTestOutput> = &locale_test_data.output;
+    
+    let actual_locale: Locale = input.parse()
+        .expect("Failed to parse test input locale string");
+    let actual_locale_test_output = LocaleTestOutput::from(&actual_locale);
 
-pub fn add(x: i32, y: i32) -> i32 {
-    x + y
+    let expected_locale_test_output: &LocaleTestOutput = 
+        output.as_ref().expect("Expected output data required for test");
+
+    assert_eq!(&actual_locale_test_output, expected_locale_test_output);
 }
 
 //

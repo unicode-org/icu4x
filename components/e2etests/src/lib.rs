@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-enum TestOp {
+pub enum TestOp {
     Equals,
     NotEquals,
     Contains,
@@ -10,7 +10,7 @@ enum TestOp {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-struct TestBase {
+pub struct TestBase {
     test_name: String,
     test_feature: String,
     // might need to customize Serde to create Enums
@@ -24,18 +24,18 @@ struct TestBase {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 // need to see how to make this behave like Protobuf "oneof".
 // maybe trait (interface) and derive?
-struct TestData {
+pub struct TestData {
     locale_test_data: LocaleTestData,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-struct LocaleTestData {
+pub struct LocaleTestData {
     input: String,
     output: Option<LocaleTestOutput>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-struct LocaleTestOutput {
+pub struct LocaleTestOutput {
     lang: String,
     region: String,
     subtags: Vec<Vec<String>>,

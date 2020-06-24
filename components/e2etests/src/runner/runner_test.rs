@@ -1,7 +1,5 @@
 use super::*;
 
-use super::runner;
-
 #[test]
 fn locale_test() {
     let data = r#"
@@ -17,9 +15,13 @@ fn locale_test() {
 "#;
     
     let act_test_base: TestBase = serde_json::from_str(data).expect("cannot parse sample TestBase");
+    let act_test_cases_data: Vec<TestData> = act_test_base.test_data;
 
-    // TODO: implement test runner code in runner.rs
-    assert_eq!(add(2,2), 4);
+    assert_eq!(act_test_cases_data.len(), 1);
 
+    let act_test_data = &act_test_cases_data[0];
+    let act_locale_test_data: &LocaleTestData = &act_test_data.locale_test_data;
+    
+    runner::run_locale_test(&act_locale_test_data);
 }
 
