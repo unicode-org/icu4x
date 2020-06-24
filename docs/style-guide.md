@@ -489,13 +489,13 @@ fn main() {
     let mut options = MyStructOptions::default();
     options_max_fraction_digits = 10;
     // Optional debug time validation of the options
-    assert!(options.validate());
+    debug_assert!(options.validate());
 
     let s = MyStruct::try_new(locale, options).expect("Construction failed.");
 }
 ```
 
-It is also recommended that such structs implement `Default` trait to simplify common construction models:
+All such structs should also implement `Default` trait to simplify common construction models:
 
 ```rust
 fn main() {
