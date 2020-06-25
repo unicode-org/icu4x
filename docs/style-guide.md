@@ -163,6 +163,7 @@ In all other situations, where the getter/setter are fallible, perform additiona
 
 ```rust
 #[derive(Default)]
+#[non_exhaustive]
 struct DateTimeOptions {
     meta: Option<TinyStr8>,
 }
@@ -183,7 +184,7 @@ fn main() {
 Note: Any change to field visibility constitute a breaking change to the public API.
 Note: Even if the setter is infallible, the getter/setter model is useful when optimized type is used internally while public API exposes a standard type, like in the case of `meta` field in the example above.
 
-One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the superior ergonomics of the public fields can be benefited from. In that case, it is recommended to also implement or derive the `Default` trait. See `Constructor` section below for details.
+One suggested situation in which public fields would be acceptable is for user-facing "bag of options" structs. These would have no inbuilt semantics and no consistency guarantees, so the superior ergonomics of the public fields can be benefited from. In that case, such struct should also implement or derive the `Default` trait. See `Constructor` section below for details.
 
 See [this issue](https://github.com/unicode-org/rust-discuss/issues/15) for more.
 
@@ -457,6 +458,7 @@ Many ICU related constructors require a number of options to be passed. In such 
 
 ```rust
 #[derive(Default)]
+#[non_exhaustive]
 struct MyStructOptions {
     pub min_fraction_digits: usize,
     pub max_fraction_digits: usize,
@@ -495,7 +497,7 @@ fn main() {
 }
 ```
 
-All such structs should also implement `Default` trait to simplify common construction models:
+All such structs should also implement `Default` trait with `#[non_exhaustive]` attribute to simplify common construction models:
 
 ```rust
 fn main() {
@@ -506,6 +508,8 @@ fn main() {
 This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
 
 If mutability is needed, one can always add `Struct::extend_with(&mut self);` method or a constructor which takes a previous instance and constructs a new instance based on the old one and additional data.
+
+The `#[non_exhaustive]` attribute disabled users ability to construct the Options struct manually, which enables us to extend the struct with additional features without breaking changes.
 
 # Error Handling
 
