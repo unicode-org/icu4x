@@ -28,10 +28,10 @@ features = ["alloc"]
 
 [[test]]
 name = "test_data_parser"
-path = "lib.rs"
+path = "src/lib.rs"
 required-features = ["std"]
 
 [[test]]
 name = "test_data_runner"
-path = "runner/runner.rs"
+path = "src/runner/runner.rs"
 required-features = ["std"]
