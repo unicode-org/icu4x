@@ -16,27 +16,37 @@ The first step is to fork the repository to your namespace and create a branch o
 
 That branch may end up containing one of more commits that are constituting the full scope of the pull request.
 
-### Single vs Multiple Commits per PR
+### Checklist
+
+Each commit and pull request should follow the [style guide](./docs/style-guide.md) and pass all checks such as tests and `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage hovers above `90%`.
+
+### Structure of commits in a Pull Request
+
+Pull Request lifecycle is divided into two phases.
+
+The first one is the work done to get the Pull Request ready for review.
+The other is the review cycle.
+
+#### Draft Phase
+
+If the pull request is simple and short lived, it can be initialized with review request.
+If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
+This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
+
+By the end of this phase, and right before review is requested, it is helpful for the reviewers to have a clean list of commits in the pull request.
 
 In most cases, a single commit per pull request is enough.
 
 Multiple commits should be used when the commit is too large and the scope of changes can be reduced by separating it into multiple commits which are logically self-contained.
 Such commits do not have to pass tests in isolation, and need only to be meaningfully complete for the reviewer to benefit from reading, compared to reviewing all the changes at once.
 
-### Checklist
-
-Each commit and pull request should follow the [style guide](./docs/style-guide.md) and pass all checks such as tests and `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage hovers above `90%`.
-
-### Draft and Review
-
-If the pull request is simple and short lived, it can be initialized with review request.
-
-If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
-This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
+### Review Phase
 
 Once the pull request is ready, the author can switch from draft to regular pull request.
 
 At this point, the pull request will be triaged during the next triage session and reviewers will be assigned to it.
+
+In this phase, any changes applied to the pull request should result in additive commits to it. This allows reviewers to see what changes have been made in result of their feedback and evaluate them.
 
 ### Merging
 
