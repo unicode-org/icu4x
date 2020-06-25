@@ -18,7 +18,7 @@ That branch may end up containing one of more commits that are constituting the 
 
 ### Checklist
 
-Each commit and pull request should follow the [style guide](./docs/style-guide.md) and pass all checks such as tests and `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage hovers above `90%`.
+Each commit and pull request should follow the [style guide](./docs/style-guide.md) and pass all checks such as tests and `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage is above `90%`.
 
 ### Structure of commits in a Pull Request
 
@@ -40,9 +40,9 @@ In most cases, a single commit per pull request is enough.
 Multiple commits should be used when the commit is too large and the scope of changes can be reduced by separating it into multiple commits which are logically self-contained.
 Such commits do not have to pass tests in isolation, and need only to be meaningfully complete for the reviewer to benefit from reading, compared to reviewing all the changes at once.
 
-### Review Phase
+#### Review Phase
 
-Once the pull request is ready, the author can switch from draft to regular pull request.
+Once the pull request is ready for review and passes all tests, the author can switch from draft to regular pull request.
 
 At this point, the pull request will be triaged during the next triage session and reviewers will be assigned to it.
 
@@ -71,9 +71,9 @@ The PR author can specify, when requesting review, what kind of review they are 
 
 The reviewer is responsible for accepting a pull request only once they feel the current PR is ready to be merged even if their comments were not to be applied.
 
-The *accepted* can be set with pending review comments, if those comments don't affect whether the patch is ready to be merged (for example, they're stylistic suggestions).
+The *approve* can be set with pending review comments, if those comments don't affect whether the patch is ready to be merged (for example, they're stylistic suggestions).
 
-The should communicate the nature of their review comments - specifically, between the three types: *"blocking"*, *"suggestion"*, and *"optional"*.
+The reviewer should communicate the nature of their review comments - specifically, between the three types: *"blocking"*, *"suggestion"*, and *"optional"*.
 * **blocking** is when the reviewer considers the change to be unmergable and requires a new revision.
 * **suggestion** is for when the reviewer considers the change to be suboptimal, but usable, and wants to defer the decision to the PR author, while stating their opinion.
 * **optional** is for when the reviewer considers multiple options to be mostly comparable or tradeoffs, and wants to defer to the PR author for the final decision after bringing up a new option.
@@ -88,7 +88,7 @@ For those reasons, we are primarily placing **trust** in pull request authors to
 The role of the **reviewer** in such model is more conservative and is reduced to verification of the code from a particular angle with minimal impact on the pull request.
 Examples of such angle may be:
 
-* How the PR fits into the component public API
+* How the PR fits into the component's public API
 * Alignment of the PR with the goals and scope of the project
 * Memory management of the code in pull request
 * Test coverage, and sanity checks
@@ -100,7 +100,7 @@ The pull request author is expected to evaluate what kind of review(s) they need
 
 An important piece of the reviewer's role is to correctly employ the three types of review comments (required, suggestion, or optional).
 
-Lastly, the reviewers role is to evaluate the stakeholders group and ensure that the review coverage is complete - if they review only portion of the PR, or if they see the need for additional stakeholders to be involved, they should add additional reviewers, or CC them into the issue, depending on what kind of involvement they expect (inform vs verify).
+Lastly, the reviewer's role is to evaluate the stakeholders group and ensure that the review coverage is complete - if they review only portion of the PR, or if they see the need for additional stakeholders to be involved, they should add additional reviewers, or CC them into the issue, depending on what kind of involvement they expect (inform vs verify).
 
 
 #### Mentorship scenario
