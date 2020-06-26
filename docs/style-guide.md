@@ -399,6 +399,10 @@ Enums in Rust are cheap/free, and incredibly useful. They can be used (as in C++
 
 It's probably worth noting here that the [Result](https://doc.rust-lang.org/std/result/) type itself is just a normal enum in Rust with two values (`Ok` and `Err`).
 
+### Don't use explicit usize values :: suggested
+
+ICU4C has a convention of assigning stable integer values to enum entries. However, this is not common practice in Rust (main issue: [#115](https://github.com/unicode-org/icu4x/issues/115)). Instead, limit the definitions of stable values to the FFI layer, such as *cbindgen*.
+
 ## Matching
 
 ### Prefer match statements for exhaustive conditional code :: suggested

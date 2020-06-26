@@ -22,9 +22,9 @@ use icu_locale::LanguageIdentifier;
 /// A top-level collection of related data keys.
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Category {
-    Undefined = 0,
-    Decimal = 1,
-    PrivateUse = 4096,
+    Undefined,
+    Decimal,
+    PrivateUse,
 }
 
 impl Display for Category {
