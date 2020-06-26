@@ -528,7 +528,7 @@ When structs with public string fields contain strings, use the following type c
 - If lifetime parameters are allowed, use `&'a str`.
 - If lifetime parameters are not allowed, use one of:
   - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
-  - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size <= 20 that fits at least 99% of cases.
+  - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits at least 99% of cases.
   - `Cow<'static, str>`  for longer strings.
 
 A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.

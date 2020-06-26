@@ -20,6 +20,6 @@ impl From<Key> for crate::Key {
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct SymbolsV1 {
     pub zero_digit: char,
-    pub decimal_separator: SmallString<[u8; 4]>,
-    pub grouping_separator: SmallString<[u8; 4]>,
+    pub decimal_separator: SmallString<[u8; 8]>,
+    pub grouping_separator: SmallString<[u8; 8]>,
 }
