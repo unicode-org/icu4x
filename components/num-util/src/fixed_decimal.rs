@@ -6,13 +6,14 @@ use std::ops::RangeInclusive;
 use std::cmp;
 use std::string::ToString;
 
-use num::{FromPrimitive, Integer, ToPrimitive, Unsigned};
+use num_integer::Integer;
+use num_traits::{FromPrimitive, ToPrimitive, Unsigned};
 use static_assertions::const_assert;
 
 use super::uint_iterator::UintIterator;
 
 #[cfg(test)]
-use num::BigUint;
+use num_bigint::BigUint;
 #[cfg(test)]
 use std::convert::TryInto;
 
@@ -59,7 +60,7 @@ pub enum Error {
 /// ```
 /// use icu_num_util::FixedDecimal;
 /// use icu_num_util::fixed_decimal::UnsignedWrapper;
-/// use num::BigUint;
+/// use num_bigint::BigUint;
 /// use std::convert::TryFrom;
 ///
 /// let input = BigUint::parse_bytes(b"98765432109876543210", 10).unwrap();
@@ -210,7 +211,8 @@ impl FixedDecimal {
             debug_assert_le!(i, X);
             result.digits.extend_from_slice(&mem[(X - i)..]);
         }
-        debug_assert!(result.check_invariants());
+        #[cfg(debug_assertions)]
+        result.check_invariants();
         return Ok(result);
     }
 
@@ -236,7 +238,7 @@ impl FixedDecimal {
             // The following line can't fail: magnitude <= self.magnitude, by
             // the if statement above, and u16::MAX == i16::MAX - i16::MIN, and
             // usize is asserted to be at least as big as u16.
-            let j: usize = (self.magnitude as i32 - magnitude as i32) as usize;
+            let j = (self.magnitude as i32 - magnitude as i32) as usize;
             match self.digits.get(j) {
                 Some(v) => *v,
                 None => 0, // Trailing zero
@@ -293,7 +295,8 @@ impl FixedDecimal {
             self.upper_magnitude = cmp::max(0, upper_magnitude);
         }
         self.magnitude += delta;
-        debug_assert!(self.check_invariants());
+        #[cfg(debug_assertions)]
+        self.check_invariants();
         return Ok(());
     }
 
@@ -302,7 +305,7 @@ impl FixedDecimal {
     ///
     /// Example: `debug_assert!(self.check_invariants())`
     #[cfg(debug_assertions)]
-    fn check_invariants(&self) -> bool {
+    fn check_invariants(&self) {
         // magnitude invariants:
         debug_assert_ge!(self.upper_magnitude, self.magnitude, "{:?}", self);
         debug_assert_le!(self.lower_magnitude, self.magnitude, "{:?}", self);
@@ -316,9 +319,6 @@ impl FixedDecimal {
             debug_assert_ne!(self.digits[0], 0, "{:?}", self);
             debug_assert_ne!(self.digits[self.digits.len() - 1], 0, "{:?}", self);
         }
-
-        // All OK
-        true
     }
 }
 

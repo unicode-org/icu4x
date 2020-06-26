@@ -1,7 +1,8 @@
-use num::{FromPrimitive, Integer, ToPrimitive, Unsigned};
+use num_integer::Integer;
+use num_traits::{FromPrimitive, ToPrimitive, Unsigned};
 
 #[cfg(test)]
-use num::BigUint;
+use num_bigint::BigUint;
 
 /// An iterator over the decimal digits of an unsigned integer, from least to most significant.
 pub(crate) struct UintIterator<T: Unsigned + Integer + FromPrimitive + ToPrimitive>(T);
