@@ -486,10 +486,17 @@ When possible, write your code in such a way as to reduce dependencies, especial
 The standard library HashMap makes bloated binaries.  In order to reduce code size, consider one of these options:
 
 1. If the keys are known ahead of time, use a `struct` or `enum_map`.
-2. If the set is small, use a vector (with linear-time lookup).
-3. If the set is larger, use a sorted vector (with logarithmic-time lookup).
+1. Otherwise, use a sorted vector.
 
-For option 3, note that sorting algorithms are also bloated.  If possible, you should perform sorting offline (e.g., by requiring that data returned by the data provider is already sorted).
+If using a vector, please note that sorting algorithms are also bloated.  Better practice to reduce code size is to either perform sorting offline (e.g., by requiring that data returned by the data provider is already sorted), or to perform binary searches when inserting new elements.  Example:
+
+```rust
+fn insert_sorted<A>(vec: &mut Vec<A>, item: A) {
+  if let Err(idx) = vec.binary_search(&item) {
+    vec.insert(idx, item);
+  }
+}
+```
 
 # Advanced Features
 
