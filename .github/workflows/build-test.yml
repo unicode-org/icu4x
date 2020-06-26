@@ -7,6 +7,9 @@ on:
     branches: '*'
 
 jobs:
+
+  # Build job
+
   build:
 
     strategy:
@@ -24,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    ## Cache steps
+    # Build job > Cache steps
       
     - name: Cache cargo registry
       uses: actions/cache@v1
@@ -44,7 +47,7 @@ jobs:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
 
-    ## Build and run steps
+    # Build job > Build and run steps
         
     - name: Build
       run: cargo build ${{ matrix.feature-set }} --verbose
@@ -52,15 +55,18 @@ jobs:
     - name: Test
       run: cargo test ${{ matrix.feature-set }} --verbose
 
+  # Formatting job
+
   format:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v2
 
-    - name: Rust linter
-      # make this command fail if cargo fmt had to make changes
+    - name: Rust formatter
+      ## make this command fail if cargo fmt had to make changes
       run: cargo fmt && git diff-index --exit-code HEAD
+
 
   # Linting job (cargo-clippy) - completes and puts warnings inline in PR
 
@@ -81,3 +87,77 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-targets --all-features -- -D warnings
+
+  # Doc-GH-Pages job
+
+  doc_gh_pages:
+    runs-on: ubuntu-latest
+
+    needs: [build, format]
+
+    ## Only create docs for merges/pushes to master (skip PRs).
+    ## Multiple unfinished PRs should not clobber docs from approved code.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Doc-GH-Pages job > Cache steps
+      
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
+
+    # Doc-GH-Pages job > Generate `cargo doc` step
+
+    - name: Cargo doc
+      uses: actions-rs/cargo@v1
+      with:
+        command: doc
+        args: --workspace --release --all-features
+
+    # Doc-GH-Pages job > Generate dummy root index.html to redirect to `icu4x` crate
+
+    - name: Create doc /index.html
+      run: |
+        mkdir -p target/doc
+        cat > target/doc/index.html <<EOL
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="refresh" content="0;url=./icu4x" />
+            <title>ICU4X Developer Docs</title>
+          </head>
+          <body>
+            <p><a href="./icu4x">Redirect to icu4x crate doc</a></p>
+          </body>
+        </html>
+        EOL
+
+    # Doc-GH-Pages job > Commit docs on GH Pages branch step
+
+    - name: Doc -> Github Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        # Setup for publishing to an external repo:
+        # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
+        # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-create-ssh-deploy-key
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        external_repository: unicode-org/icu4x-docs
+        publish_branch: gh-pages
+        publish_dir: ./target/doc
