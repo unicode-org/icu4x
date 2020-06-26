@@ -2,8 +2,8 @@
 
 use std::prelude::v1::*;
 
-use smallstr::SmallString;
 use serde::{Deserialize, Serialize};
+use smallstr::SmallString;
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Key {
