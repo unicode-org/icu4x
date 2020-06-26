@@ -521,12 +521,17 @@ fn main() {
 
 ### Conventions for strings in structs :: suggested
 
+Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
+
 When structs with public string fields contain strings, use the following type conventions:
 
 - If lifetime parameters are allowed, use `&'a str`.
-- If lifetime parameters are not allowed, use either [SmallString](https://crates.io/crates/smallstr) (discussion: [#113](https://github.com/unicode-org/icu4x/issues/113)) or one of the types from [tinystr](https://github.com/zbraniecki/tinystr).
+- If lifetime parameters are not allowed, use one of:
+  - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
+  - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size <= 20 that fits at least 99% of cases.
+  - `Cow<'static, str>`  for longer strings.
 
-A case where lifetime parameters are not allowed is in the data provider structs.  SmallString should be used in data provider structs when the text is UTF-8, and the appropriate TinyStr should be used when the text is ASCII.
+A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.
 
 # Error Handling
 
