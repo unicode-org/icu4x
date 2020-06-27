@@ -2,6 +2,7 @@ extern crate icu_data_provider_json;
 
 use std::borrow::Cow;
 use std::prelude::v1::*;
+use std::str::FromStr;
 
 use icu_data_provider as datap;
 use icu_data_provider::DataProvider;

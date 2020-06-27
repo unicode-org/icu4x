@@ -4,6 +4,8 @@ extern crate no_std_compat as std;
 
 use std::prelude::v1::*;
 
+use std::str::FromStr;
+
 use icu_data_provider::DataProvider;
 use icu_data_provider::Request;
 use icu_data_provider::Response;
@@ -41,15 +43,20 @@ impl JsonDataProvider {
         Ok(JsonDataProvider { data: result })
     }
 
-    /// Create a JsonDataProvider from a JSON string slice.
-    pub fn from_str(data: &str) -> Result<Self, Error> {
-        let result: schema::JsonSchema = serde_json::from_str(data)?;
-        Ok(JsonDataProvider { data: result })
-    }
-
     /// Create a JsonDataProvider from a &[u8] slice.
+    /// Also see from_str().
     pub fn from_slice(data: &[u8]) -> Result<Self, Error> {
         let result: schema::JsonSchema = serde_json::from_slice(data)?;
+        Ok(JsonDataProvider { data: result })
+    }
+}
+
+impl FromStr for JsonDataProvider {
+    type Err = Error;
+
+    /// Create a JsonDataProvider from a JSON string slice.
+    fn from_str(data: &str) -> Result<Self, Error> {
+        let result: schema::JsonSchema = serde_json::from_str(data)?;
         Ok(JsonDataProvider { data: result })
     }
 }
