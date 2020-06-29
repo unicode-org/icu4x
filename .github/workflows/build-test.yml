@@ -104,8 +104,7 @@ jobs:
         args: --all-targets --all-features
 
     # Run clippy second time to fail job on warnings
+    # cargo clean should not be necessary, but empirically, it is on Github 
+    # (but not locally in CLI?). poss ex: https://github.com/rust-lang/rust-clippy/issues/4612
     - name: Fail clippy on warnings
-      uses: actions-rs/clippy-check@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        args: --all-targets --all-features -- -D warnings
+      run: cargo clean && cargo clippy --all-targets --all-features -- -D warnings
