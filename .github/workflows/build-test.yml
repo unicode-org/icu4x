@@ -62,7 +62,7 @@ jobs:
       # make this command fail if cargo fmt had to make changes
       run: cargo fmt && git diff-index --exit-code HEAD
 
-  # Linting job (cargo-clippy)
+  # Linting job permissive (cargo-clippy) - completes and puts warnings inline in PR
 
   lint:
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Linting job > Cache steps
+    # Linting job permissive > Cache steps
 
     - name: Cache cargo registry
       uses: actions/cache@v1
@@ -92,7 +92,7 @@ jobs:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
 
-    # Linting job > Install and run clippy steps
+    # Linting job permissive > Install and run clippy steps
 
     - name: Install clippy
       run: rustup component add clippy
@@ -103,8 +103,43 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-targets --all-features
 
+  # Linting job strict (cargo-clippy)
+
+  lint_strict:
+    runs-on: ubuntu-latest
+
+    needs: [build]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Linting job strict > Cache steps
+
+    - name: Cache cargo registry
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Cache cargo index
+      uses: actions/cache@v1
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+
+    - name: Cache cargo build
+      uses: actions/cache@v1
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
+
+    # Linting job strict > Install and run clippy steps
+
+    - name: Install clippy
+      run: rustup component add clippy
+
     # Run clippy second time to fail job on warnings
-    # cargo clean should not be necessary, but empirically, it is on Github 
+    # `cargo clean` should not be necessary, but empirically, it is needed during Github Actions
     # (but not locally in CLI?). poss ex: https://github.com/rust-lang/rust-clippy/issues/4612
     - name: Fail clippy on warnings
       run: cargo clean && cargo clippy --all-targets --all-features -- -D warnings
