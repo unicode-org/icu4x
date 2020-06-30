@@ -438,7 +438,11 @@ let x = match number {
 
 Obviously where an if-statement is simply there to do optional work, and not cover every case, it may well be more suitable to just use that.
 
-# Constructors :: suggested
+# Structs
+
+## Structs with Private Fields
+
+### Constructor conventions :: suggested
 
 If the struct doesn't require any arguments to be initialied, it should implement or derive the `Default` trait.
 For structs with argumented constructors, `new` or `try_new` methods should be used for canonical construction, `From` and `TryFrom` traits should be implemented for generic conversions and `from_*` and `try_from_*` for non-trait based specific conversions.
@@ -454,9 +458,25 @@ For structs with argumented constructors, `new` or `try_new` methods should be u
 | Other | 𐄂 | | `Struct::from_{name}(value);` |
 | Other | ✓ | | `Struct::try_from_{name}(value)?;` |
 
-## Options
+## Structs With All Public Fields
 
 Many ICU related constructors require a number of options to be passed. In such cases, it is recommended to provide a separate structure that is used to assemble all required options, and pass it to the constructor.
+
+If mutability is needed, one can always add `Struct::extend_with(&mut self);` method or a constructor which takes a previous instance and constructs a new instance based on the old one and additional data.
+
+### Implement `Default` and `#[non_exhaustive]` :: required
+
+All such structs should also implement `Default` trait with `#[non_exhaustive]` attribute to simplify common construction models:
+
+```rust
+fn main() {
+    let s = MyStruct::try_new(locale, MyStructOptions::default()).expect("Construction failed.");
+}
+```
+
+This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
+
+The `#[non_exhaustive]` attribute disabled users ability to construct the Options struct manually, which enables us to extend the struct with additional features without breaking changes.
 
 ### Examples
 
@@ -501,19 +521,21 @@ fn main() {
 }
 ```
 
-All such structs should also implement `Default` trait with `#[non_exhaustive]` attribute to simplify common construction models:
+## Data Types
 
-```rust
-fn main() {
-    let s = MyStruct::try_new(locale, MyStructOptions::default()).expect("Construction failed.");
-}
-```
+### Conventions for strings in structs :: suggested
 
-This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
+Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
 
-If mutability is needed, one can always add `Struct::extend_with(&mut self);` method or a constructor which takes a previous instance and constructs a new instance based on the old one and additional data.
+When structs with public string fields contain strings, use the following type conventions:
 
-The `#[non_exhaustive]` attribute disabled users ability to construct the Options struct manually, which enables us to extend the struct with additional features without breaking changes.
+- If lifetime parameters are allowed, use `&'a str`.
+- If lifetime parameters are not allowed, use one of:
+  - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
+  - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits at least 99% of cases.
+  - `Cow<'static, str>`  for longer strings.
+
+A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.
 
 # Error Handling
 
