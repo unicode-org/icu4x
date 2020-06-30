@@ -8,6 +8,7 @@ use icu_data_provider as datap;
 use icu_data_provider::DataProvider;
 use icu_data_provider_json::JsonDataProvider;
 
+#[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
     "decimal": {
         "symbols_v1_a": {
@@ -23,14 +24,14 @@ fn get_provider() -> JsonDataProvider {
 }
 
 fn get_response(provider: &JsonDataProvider) -> datap::Response {
-    return provider
+    provider
         .load(&datap::Request {
             langid: "en-US".parse().unwrap(),
             category: datap::Category::Decimal,
             key: datap::decimal::Key::SymbolsV1.into(),
             payload: None,
         })
-        .unwrap();
+        .unwrap()
 }
 
 fn check_data(decimal_data: &datap::decimal::SymbolsV1) {

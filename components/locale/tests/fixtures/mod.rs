@@ -125,6 +125,7 @@ pub struct LocaleError {
 
 #[derive(Deserialize, Clone)]
 #[serde(untagged)]
+#[allow(clippy::large_enum_variant)] // test code
 pub enum LocaleInfo {
     String(String),
     Error(LocaleError),
