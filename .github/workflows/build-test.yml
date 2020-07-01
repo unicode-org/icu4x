@@ -113,33 +113,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Linting job strict > Cache steps
-
-    - name: Cache cargo registry
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
-
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
-
-    - name: Cache cargo build
-      uses: actions/cache@v1
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
-
     # Linting job strict > Install and run clippy steps
 
     - name: Install clippy
       run: rustup component add clippy
 
-    # Run clippy second time to fail job on warnings
-    # `cargo clean` should not be necessary, but empirically, it is needed during Github Actions
-    # (but not locally in CLI?). poss ex: https://github.com/rust-lang/rust-clippy/issues/4612
+    # avoid caching to prevent confusing cargo clippy
     - name: Fail clippy on warnings
-      run: cargo clean && cargo clippy --all-targets --all-features -- -D warnings
+      run: cargo clippy --all-targets --all-features -- -D warnings
