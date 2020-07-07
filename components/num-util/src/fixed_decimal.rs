@@ -259,12 +259,18 @@ impl FixedDecimal {
     /// ```
     pub fn adjust_magnitude(&mut self, delta: i16) -> Result<(), Error> {
         if delta > 0 {
-            self.upper_magnitude = self.upper_magnitude.checked_add(delta).ok_or(Error::Limit)?;
+            self.upper_magnitude = self
+                .upper_magnitude
+                .checked_add(delta)
+                .ok_or(Error::Limit)?;
             // If we get here, then the magnitude change is in-bounds.
             let lower_magnitude = self.lower_magnitude + delta;
             self.lower_magnitude = cmp::min(0, lower_magnitude);
         } else if delta < 0 {
-            self.lower_magnitude = self.lower_magnitude.checked_add(delta).ok_or(Error::Limit)?;
+            self.lower_magnitude = self
+                .lower_magnitude
+                .checked_add(delta)
+                .ok_or(Error::Limit)?;
             // If we get here, then the magnitude change is in-bounds.
             let upper_magnitude = self.upper_magnitude + delta;
             self.upper_magnitude = cmp::max(0, upper_magnitude);
