@@ -171,7 +171,7 @@ impl FixedDecimal {
                 return Err(Error::Limit);
             }
             // TODO: Should we check here that `d` is between 0 and 9?
-            // That should always be the case if UintIterator is used.
+            // That should always be the case if IntIterator is used.
             if i != 0 || d != 0 {
                 i += 1;
                 match X.checked_sub(i) {
@@ -259,18 +259,12 @@ impl FixedDecimal {
     /// ```
     pub fn adjust_magnitude(&mut self, delta: i16) -> Result<(), Error> {
         if delta > 0 {
-            self.upper_magnitude = match self.upper_magnitude.checked_add(delta) {
-                Some(v) => v,
-                None => return Err(Error::Limit),
-            };
+            self.upper_magnitude = self.upper_magnitude.checked_add(delta).ok_or(Error::Limit)?;
             // If we get here, then the magnitude change is in-bounds.
             let lower_magnitude = self.lower_magnitude + delta;
             self.lower_magnitude = cmp::min(0, lower_magnitude);
         } else if delta < 0 {
-            self.lower_magnitude = match self.lower_magnitude.checked_add(delta) {
-                Some(v) => v,
-                None => return Err(Error::Limit),
-            };
+            self.lower_magnitude = self.lower_magnitude.checked_add(delta).ok_or(Error::Limit)?;
             // If we get here, then the magnitude change is in-bounds.
             let upper_magnitude = self.upper_magnitude + delta;
             self.upper_magnitude = cmp::max(0, upper_magnitude);
@@ -303,7 +297,8 @@ impl FixedDecimal {
     }
 }
 
-// TODO(review): This should be fmt::Display, but that is very no_std-unfriendly for code size.
+// `Display` provides a heavier implementation of `ToString` while we want to explicitly handle
+// `ToString` for library use.
 impl ToString for FixedDecimal {
     fn to_string(&self) -> String {
         let max_len = self.magnitude_range().len() + 2;
