@@ -1,21 +1,12 @@
 use smallvec::SmallVec;
 
-use std::convert::TryFrom;
-use std::ops::RangeInclusive;
-
 use std::cmp;
+use std::ops::RangeInclusive;
 use std::string::ToString;
 
-use num_integer::Integer;
-use num_traits::{FromPrimitive, ToPrimitive, Unsigned};
 use static_assertions::const_assert;
 
-use super::uint_iterator::UintIterator;
-
-#[cfg(test)]
-use num_bigint::BigUint;
-#[cfg(test)]
-use std::convert::TryInto;
+use super::uint_iterator::IntIterator;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
 const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
@@ -42,30 +33,19 @@ pub enum Error {
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, used for formatting and plural selection.
 ///
-/// You can create a FixedDecimal from an unsigned integer or an isize.
+/// You can create a FixedDecimal from a standard integer type. To represent fraction digits,
+/// call `.adjust_magnitude()` after creating your FixedDecimal.
 ///
 /// # Examples
 ///
-/// ## From an isize
-///
 /// ```
 /// use icu_num_util::FixedDecimal;
 ///
-/// let dec1 = FixedDecimal::from(250);
-/// assert_eq!("250", dec1.to_string());
-/// ```
+/// let mut dec = FixedDecimal::from(250);
+/// assert_eq!("250", dec.to_string());
 ///
-/// ## From a BigUint
-///
-/// ```
-/// use icu_num_util::FixedDecimal;
-/// use icu_num_util::fixed_decimal::UnsignedWrapper;
-/// use num_bigint::BigUint;
-/// use std::convert::TryFrom;
-///
-/// let input = BigUint::parse_bytes(b"98765432109876543210", 10).unwrap();
-/// let dec2 = FixedDecimal::try_from(UnsignedWrapper(input)).unwrap();
-/// assert_eq!("98765432109876543210", dec2.to_string());
+/// dec.adjust_magnitude(-2);
+/// assert_eq!("2.50", dec.to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
@@ -125,59 +105,60 @@ impl Default for FixedDecimal {
     }
 }
 
-impl From<isize> for FixedDecimal {
-    fn from(value: isize) -> Self {
-        let value_abs = if value == std::isize::MIN {
-            // isize::MIN.abs() is too big for isize by 1
-            std::isize::MAX as usize + 1
-        } else {
-            value.abs() as usize
-        };
-        let mut result = FixedDecimal::from_ascending(UintIterator::from(value_abs)).unwrap();
-        result.is_negative = value < 0;
-        result
-    }
+macro_rules! impl_from_signed_integer_type {
+    ($itype:ident, $utype: ident) => {
+        impl From<$itype> for FixedDecimal {
+            fn from(value: $itype) -> Self {
+                let int_iterator: IntIterator<$utype> = value.into();
+                let is_negative = int_iterator.is_negative;
+                let mut result = FixedDecimal::from_ascending(int_iterator)
+                    .expect("All built-in integer types should fit");
+                result.is_negative = is_negative;
+                result
+            }
+        }
+    };
 }
 
-/// A wrapper over an unsigned integer, used when constructing a FixedDecimal.
-/// This is a workaround for: https://github.com/rust-lang/rust/issues/50133
-pub struct UnsignedWrapper<T: Unsigned + Integer + FromPrimitive + ToPrimitive>(pub T);
-
-impl<T> TryFrom<UnsignedWrapper<T>> for FixedDecimal
-where
-    T: Unsigned + Integer + FromPrimitive + ToPrimitive,
-{
-    type Error = Error;
-
-    /// Create a FixedDecimal from an unsigned integer.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_num_util::FixedDecimal;
-    /// use icu_num_util::fixed_decimal::UnsignedWrapper;
-    /// use std::convert::TryInto;
-    ///
-    /// let dec: FixedDecimal = UnsignedWrapper(750usize).try_into().unwrap();
-    /// assert_eq!("750", dec.to_string());
-    /// ```
-    fn try_from(value: UnsignedWrapper<T>) -> Result<Self, Self::Error> {
-        FixedDecimal::from_ascending(UintIterator::from(value.0))
-    }
+macro_rules! impl_from_unsigned_integer_type {
+    ($utype: ident) => {
+        impl From<$utype> for FixedDecimal {
+            fn from(value: $utype) -> Self {
+                let int_iterator: IntIterator<$utype> = value.into();
+                FixedDecimal::from_ascending(int_iterator)
+                    .expect("All built-in integer types should fit")
+            }
+        }
+    };
 }
+
+impl_from_signed_integer_type!(isize, usize);
+impl_from_signed_integer_type!(i128, u128);
+impl_from_signed_integer_type!(i64, u64);
+impl_from_signed_integer_type!(i32, u32);
+impl_from_signed_integer_type!(i16, u16);
+impl_from_signed_integer_type!(i8, u8);
+
+impl_from_unsigned_integer_type!(usize);
+impl_from_unsigned_integer_type!(u128);
+impl_from_unsigned_integer_type!(u64);
+impl_from_unsigned_integer_type!(u32);
+impl_from_unsigned_integer_type!(u16);
+impl_from_unsigned_integer_type!(u8);
 
 impl FixedDecimal {
     /// Initialize a FixedDecimal with an iterator of digits in ascending
     /// order of magnitude, starting with the digit at magnitude 0.
     ///
-    /// This method is not public; use TryFrom::<UintIterator<T>> instead.
+    /// This method is not public; use TryFrom::<isize> instead.
     fn from_ascending<T>(digits_iter: T) -> Result<Self, Error>
     where
         T: Iterator<Item = u8>,
     {
         // TODO: make X a usize generic to customize the size of this array
         // https://github.com/rust-lang/rust/issues/44580
-        const X: usize = 32;
+        // NOTE: 39 is the size required for u128: ceil(log10(u128::MAX)) == 39.
+        const X: usize = 39;
         // A temporary structure to allow the digits in the iterator to be reversed.
         // The digits are inserted started from the end, and then a slice is copied
         // into its final destination (result.digits).
@@ -458,6 +439,14 @@ fn test_isize_limits() {
 }
 
 #[test]
+fn test_ui128_limits() {
+    let udec_max: FixedDecimal = std::u128::MAX.into();
+    assert_eq!(std::u128::MAX.to_string(), udec_max.to_string());
+    let idec_min: FixedDecimal = std::i128::MIN.into();
+    assert_eq!(std::i128::MIN.to_string(), idec_min.to_string());
+}
+
+#[test]
 fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
@@ -477,41 +466,4 @@ fn test_lower_magnitude_bounds() {
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.adjust_magnitude(-1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
-}
-
-#[cfg(test)]
-fn create_huge_uint(infix_zeros: usize, trailing_zeros: usize) -> UnsignedWrapper<BigUint> {
-    let mut digits = Vec::<u8>::new();
-    digits.resize(infix_zeros + trailing_zeros + 2, '0' as u8);
-    digits[0] = '1' as u8;
-    digits[infix_zeros + 1] = '2' as u8;
-    let result = BigUint::parse_bytes(&digits, 10).unwrap();
-    UnsignedWrapper(result)
-}
-
-#[test]
-fn test_uint_basic() {
-    // TODO(review): how do combine the following two lines into one?
-    let dec: FixedDecimal = create_huge_uint(3, 3).try_into().unwrap();
-    assert_eq!("10002000", dec.to_string(), "{:?}", dec);
-}
-
-#[test]
-fn test_uint_longest() {
-    // Maximum number of digits in the BigUint
-    let dec: FixedDecimal = create_huge_uint(2, 32764).try_into().unwrap();
-    let s = dec.to_string();
-    assert_eq!("100200", &s[0..6]);
-
-    // Create an equivalent FixedDecimal without using BigUint
-    let mut expected: FixedDecimal = 1002.into();
-    expected.adjust_magnitude(32764).unwrap();
-    assert_eq!(expected, dec);
-}
-
-#[test]
-fn test_uint_bounds() {
-    // BigUint that is one digit too long
-    let input = create_huge_uint(2, 32765);
-    FixedDecimal::try_from(input).unwrap_err();
 }

@@ -15,16 +15,13 @@ include = [
 ]
 
 [dependencies]
-smallvec = "1.4.0"
-num-traits = "0.2.12"
-num-integer = "0.1.43"
+smallvec = "1.4.1"
 static_assertions = "1.1.0"
 more-asserts = "0.2.1"
 
 [dev-dependencies]
 rand = "0.7.3"
 criterion = "0.3"
-num-bigint = "0.3"
 rand_pcg = "0.2.1"
 rand_distr = "0.2.2"
 
