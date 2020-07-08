@@ -1,11 +1,27 @@
-use std::convert::TryInto;
-
 /// An iterator over the decimal digits of an integer, from least to most significant
 pub(crate) struct IntIterator<T> {
     /// Digits remaining to be returned from the iterator
     unum: T,
     /// Whether the number is negative
     pub is_negative: bool,
+}
+
+macro_rules! impl_iterator_unsigned_integer_type {
+    ($utype: ident) => {
+        impl Iterator for IntIterator<$utype> {
+            type Item = u8;
+            fn next(&mut self) -> Option<Self::Item> {
+                if self.unum == 0 {
+                    None
+                } else {
+                    let div = self.unum / 10;
+                    let rem = self.unum % 10;
+                    self.unum = div;
+                    Some(rem as u8)
+                }
+            }
+        }
+    }
 }
 
 macro_rules! impl_from_signed_integer_type {
@@ -37,6 +53,7 @@ macro_rules! impl_from_unsigned_integer_type {
                 }
             }
         }
+        impl_iterator_unsigned_integer_type!($utype);
     };
 }
 
@@ -54,32 +71,10 @@ impl_from_unsigned_integer_type!(u32);
 impl_from_unsigned_integer_type!(u16);
 impl_from_unsigned_integer_type!(u8);
 
-impl<T> Iterator for IntIterator<T>
-where
-    T: Copy
-        + std::ops::Div<Output = T>
-        + std::ops::Rem<Output = T>
-        + From<u8>
-        + TryInto<u8>
-        + PartialEq<T>,
-{
-    type Item = u8;
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.unum == 0.into() {
-            None
-        } else {
-            let div: T = self.unum / 10.into();
-            let rem: T = self.unum % 10.into();
-            self.unum = div;
-            rem.try_into().ok()
-        }
-    }
-}
-
 #[test]
 fn test_basic() {
     let mut it = IntIterator {
-        unum: 123,
+        unum: 123usize,
         is_negative: false,
     };
     assert_eq!(Some(3), it.next());
@@ -91,7 +86,7 @@ fn test_basic() {
 #[test]
 fn test_zeros() {
     let mut it = IntIterator {
-        unum: 9080,
+        unum: 9080usize,
         is_negative: false,
     };
     assert_eq!(Some(0), it.next());
