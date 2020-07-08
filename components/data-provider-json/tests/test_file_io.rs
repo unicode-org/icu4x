@@ -1,5 +1,3 @@
-use icu_data_provider_json;
-
 use std::fs::File;
 use std::io::BufReader;
 
