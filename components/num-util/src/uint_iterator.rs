@@ -21,7 +21,7 @@ macro_rules! impl_iterator_unsigned_integer_type {
                 }
             }
         }
-    }
+    };
 }
 
 macro_rules! impl_from_signed_integer_type {
