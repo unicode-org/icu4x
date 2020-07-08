@@ -21,6 +21,11 @@ std = ["serde/std", "no-std-compat/std"]
 [dependencies]
 icu-locale = { path = "../locale" }
 
+[dependencies.smallstr]
+version = "0.2.0"
+default-features = false
+features = ["serde"]
+
 [dependencies.downcast-rs]
 version = "1.1.1"
 

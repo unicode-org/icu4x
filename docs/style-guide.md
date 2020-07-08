@@ -438,7 +438,11 @@ let x = match number {
 
 Obviously where an if-statement is simply there to do optional work, and not cover every case, it may well be more suitable to just use that.
 
-# Constructors :: suggested
+# Structs
+
+## Structs with Private Fields
+
+### Constructor conventions :: suggested
 
 If the struct doesn't require any arguments to be initialied, it should implement or derive the `Default` trait.
 For structs with argumented constructors, `new` or `try_new` methods should be used for canonical construction, `From` and `TryFrom` traits should be implemented for generic conversions and `from_*` and `try_from_*` for non-trait based specific conversions.
@@ -454,9 +458,25 @@ For structs with argumented constructors, `new` or `try_new` methods should be u
 | Other | 𐄂 | | `Struct::from_{name}(value);` |
 | Other | ✓ | | `Struct::try_from_{name}(value)?;` |
 
-## Options
+## Structs With All Public Fields
 
 Many ICU related constructors require a number of options to be passed. In such cases, it is recommended to provide a separate structure that is used to assemble all required options, and pass it to the constructor.
+
+If mutability is needed, one can always add `Struct::extend_with(&mut self);` method or a constructor which takes a previous instance and constructs a new instance based on the old one and additional data.
+
+### Implement `Default` and `#[non_exhaustive]` :: required
+
+All such structs should also implement `Default` trait with `#[non_exhaustive]` attribute to simplify common construction models:
+
+```rust
+fn main() {
+    let s = MyStruct::try_new(locale, MyStructOptions::default()).expect("Construction failed.");
+}
+```
+
+This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
+
+The `#[non_exhaustive]` attribute disabled users ability to construct the Options struct manually, which enables us to extend the struct with additional features without breaking changes.
 
 ### Examples
 
@@ -501,19 +521,21 @@ fn main() {
 }
 ```
 
-All such structs should also implement `Default` trait with `#[non_exhaustive]` attribute to simplify common construction models:
+## Data Types
 
-```rust
-fn main() {
-    let s = MyStruct::try_new(locale, MyStructOptions::default()).expect("Construction failed.");
-}
-```
+### Conventions for strings in structs :: suggested
 
-This model provides a good separation between the `options` struct which most likely will be mutable while used, and the final struct which can be optimized to only contain the final set of computed fields and remain immutable.
+Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
 
-If mutability is needed, one can always add `Struct::extend_with(&mut self);` method or a constructor which takes a previous instance and constructs a new instance based on the old one and additional data.
+When structs with public string fields contain strings, use the following type conventions:
 
-The `#[non_exhaustive]` attribute disabled users ability to construct the Options struct manually, which enables us to extend the struct with additional features without breaking changes.
+- If lifetime parameters are allowed, use `&'a str`.
+- If lifetime parameters are not allowed, use one of:
+  - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
+  - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits at least 99% of cases.
+  - `Cow<'static, str>`  for longer strings.
+
+A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.
 
 # Error Handling
 
@@ -581,13 +603,13 @@ Call non-panicking data access APIs whenever data is not guaranteed to be safe.
 
 This should not include the contract of code in a different Crate. I.e. if a function in a different Crate promises to return a valid map key, but it's not a compile time checked type (like an enum), then the calling code must allow for it to fail.
 
-### Don't Handle Errors :: required
+### Don't Handle Errors :: suggested
 
-Functions which can error for any reason must return a `Result`, and APIs should be designed such that you should never need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should always be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. Never write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
+Functions which can error for any reason must return a `Result`, and APIs should be designed such that you should not generally need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should normally be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. don't generally write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
 
 This approach should mean that error handling and the design of functions which can propagate errors is consistent everywhere. For non-error cases, where different types of result are possible, use a normal enum.
 
-The only time you might need to handle an **Err** is if you call APIs outside the library which return Result rather than Option (e.g. allowing a retry for data loading).
+Since an `Err` in `Result` is more expressive than a `None` in `Option`, there may be cases in which it is appropriate to handle a recoverable error. For example, you may call a function with one set of inputs, and if that call fails, you attempt to call it with a second set of inputs, before propagating the error.
 
 Finally, and fairly obviously, **never turn an error into a panic by unconditionally unwrapping the result in the library**.
 
@@ -619,6 +641,98 @@ Examples:
 * Is there an element with this key in the list? - Option
 * Try to open a file - Result
 * Try to parse a string into a valid Language Identifier - Result
+
+### Test all error cases :: required
+
+You should write unit tests that cover all code paths that can generate an error.
+
+If you find a bit of error-handling code that is unreachable by a unit test, you should consider replacing that code with `unreachable!()`.
+
+## Integer Overflow
+
+### Do not have unchecked overflow :: required
+
+Malformed user input should not be able to cause integer overflow inside ICU4X implementation code.  You should return an error result if the user's input is too big and may cause integer overflow.
+
+#### Use appropriately-sized integer types
+
+You don't need a `usize` to represent a decimal digit 0-9.  By using the smallest possible integer type, you can reason better about cases where overflow can or cannot occur.
+
+#### Checked Arithmetic
+
+In cases where a hard limit on input is not possible, you can use methods such as [checked_add](https://doc.rust-lang.org/std/primitive.usize.html#method.checked_add).
+
+#### Bounds Testing
+
+By default, the `+` operator in Rust will panic upon overflow in debug mode.  You should employ thorough testing of boundaries to ensure that your arithmetic is never able to overflow.
+
+### Don't accept infinite iterators :: suggested
+
+Consider using `enumerate` to avoid an infinite iterator causing integer overflow by checking that the index does not exceed a bound that you set on the input.
+
+Please do not mind that the following example could be written with `fold` instead of `enumerate`.
+
+```rust
+#[non_exhaustive]
+#[derive(Debug, PartialEq)]
+pub enum Error {
+  Limit,
+}
+
+/// iter: must contain fewer than usize::MAX elements
+pub fn count_zeros<T>(iter: T) -> Result<usize, Error>
+where
+  T: Iterator<Item=u8>
+{
+  let mut result: usize = 0;
+  for (i, v) in iter.enumerate() {
+    if i == std::usize::MAX {
+      return Err(Error::Limit)
+    }
+    if v == 0 {
+      result += 1;
+    }
+  }
+  return Ok(result)
+}
+```
+
+# Imports and Configurations
+
+## Features
+
+### Use no_std :: suggested
+
+Main issues: [#77](https://github.com/unicode-org/icu4x/issues/77), [#151](https://github.com/unicode-org/icu4x/issues/151)
+
+Most ICU4X code will not work in [no_std](https://rust-embedded.github.io/book/intro/no-std.html), since memory allocation is very often required to handle edge cases.  Even our most fundamental type, Locale, requires memory allocation.
+
+However, when designing traits and interfaces, we should make them `no_std`-friendly, such that we can more easily expand in this direction more easily in the future.
+
+## Dependencies
+
+### Avoid heavy dependencies :: suggested
+
+Code size is an important factor for portability.  One of the easiest ways to accidentally bloat your code size is to pull in a heavy dependency.
+
+When possible, write your code in such a way as to reduce dependencies, especially dependencies on heavier libraries.  If you need to add a dependency, consider putting it behind a feature flag.
+
+### Avoid `std::collections::HashMap` :: suggested
+
+The standard library HashMap makes bloated binaries.  In order to reduce code size, consider one of these options:
+
+1. If the keys are known ahead of time, use a `struct` or `enum_map`.
+1. Otherwise, use a sorted vector.
+
+If using a vector, please note that sorting algorithms are also bloated.  Better practice to reduce code size is to either perform sorting offline (e.g., by requiring that data returned by the data provider is already sorted), or to perform binary searches when inserting new elements.  Example:
+
+```rust
+fn insert_sorted<A>(vec: &mut Vec<A>, item: A) {
+  if let Err(idx) = vec.binary_search(&item) {
+    vec.insert(idx, item);
+  }
+}
+```
 
 # Advanced Features
 

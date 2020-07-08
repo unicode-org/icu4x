@@ -39,8 +39,8 @@ fn check_data(decimal_data: &datap::decimal::SymbolsV1) {
         decimal_data,
         &datap::decimal::SymbolsV1 {
             zero_digit: '0',
-            decimal_separator: Cow::Borrowed("."),
-            grouping_separator: Cow::Borrowed(","),
+            decimal_separator: ".".into(),
+            grouping_separator: ",".into(),
         }
     );
 }
