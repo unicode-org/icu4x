@@ -4,7 +4,7 @@ use std::{
 };
 
 /// Returns whether the vector is sorted ascending non inclusive
-pub fn is_sorted(v: &Vec<u32>) -> bool {
+pub fn is_sorted(v: &[u32]) -> bool {
     v.chunks(2).all(|chunk| chunk[0] < chunk[1])
 }
 
