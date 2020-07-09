@@ -3,4 +3,10 @@
 // found in the LICENSE file.
 #[macro_use]
 mod uniset;
+mod conversions;
+mod utils;
+// mod iter;
+pub use conversions::*;
 pub use uniset::UnicodeSet;
+pub use utils::*;
+// pub use iter::UnicodeSetIter;
