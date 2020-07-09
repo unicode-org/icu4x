@@ -156,10 +156,7 @@ impl UnicodeSet {
     /// assert!(!example.contains('C'));
     /// ```
     pub fn contains(&self, query: char) -> bool {
-        match self.contains_impl(query as u32) {
-            Some(_) => true,
-            None => false,
-        }
+        self.contains_impl(query as u32).is_some()
     }
 
     /// Checks to see if the range is in the UnicodeSet, returns a Result
