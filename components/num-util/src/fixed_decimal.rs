@@ -186,10 +186,10 @@ impl FixedDecimal {
         let mut result: Self = Default::default();
         if i != 0 {
             let magnitude = trailing_zeros + i - 1;
-            debug_assert_le!(magnitude, std::i16::MAX as usize);
+            debug_assert!(magnitude <= std::i16::MAX as usize);
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
-            debug_assert_le!(i, X);
+            debug_assert!(i <= X);
             result.digits.extend_from_slice(&mem[(X - i)..]);
         }
         #[cfg(debug_assertions)]
@@ -240,7 +240,7 @@ impl FixedDecimal {
     /// assert_eq!(0..=2, dec.magnitude_range());
     /// ```
     pub fn magnitude_range(&self) -> RangeInclusive<i16> {
-        RangeInclusive::new(self.lower_magnitude, self.upper_magnitude)
+        self.lower_magnitude..=self.upper_magnitude
     }
 
     /// Shift the digits by a power of 10. Leading or trailing zeros may be added to keep the digit
@@ -288,14 +288,14 @@ impl FixedDecimal {
     #[cfg(debug_assertions)]
     fn check_invariants(&self) {
         // magnitude invariants:
-        debug_assert_ge!(self.upper_magnitude, self.magnitude, "{:?}", self);
-        debug_assert_le!(self.lower_magnitude, self.magnitude, "{:?}", self);
-        debug_assert_ge!(self.upper_magnitude, 0, "{:?}", self);
-        debug_assert_le!(self.lower_magnitude, 0, "{:?}", self);
+        debug_assert!(self.upper_magnitude >= self.magnitude, "{:?}", self);
+        debug_assert!(self.lower_magnitude <= self.magnitude, "{:?}", self);
+        debug_assert!(self.upper_magnitude >= 0, "{:?}", self);
+        debug_assert!(self.lower_magnitude <= 0, "{:?}", self);
 
         // digits invariants:
         let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
-        debug_assert_le!(self.digits.len(), max_len, "{:?}", self);
+        debug_assert!(self.digits.len() <= max_len, "{:?}", self);
         if self.digits.len() > 0 {
             debug_assert_ne!(self.digits[0], 0, "{:?}", self);
             debug_assert_ne!(self.digits[self.digits.len() - 1], 0, "{:?}", self);
@@ -319,7 +319,7 @@ impl ToString for FixedDecimal {
             let d = self.digit_at(m);
             result.push((b'0' + d) as char);
         }
-        debug_assert_ge!(max_len, result.len());
+        debug_assert!(max_len >= result.len());
         return result;
     }
 }
