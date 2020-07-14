@@ -1,3 +1,4 @@
+use super::USetError;
 use crate::utils::deconstruct_range;
 use crate::UnicodeSet;
 use std::{
@@ -5,119 +6,116 @@ use std::{
     ops::{Range, RangeBounds, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
-fn try_from_range_impl(range: impl RangeBounds<char>) -> Result<UnicodeSet, (u32, u32)> {
+fn try_from_range_impl(range: &impl RangeBounds<char>) -> Result<UnicodeSet, USetError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
         Ok(UnicodeSet::try_from(set).unwrap())
     } else {
-        Err((from, till))
+        Err(USetError::InvalidRange(from, till))
     }
 }
 
-impl TryFrom<Range<char>> for UnicodeSet {
-    type Error = String;
+impl TryFrom<&Range<char>> for UnicodeSet {
+    type Error = USetError;
 
-    fn try_from(range: Range<char>) -> Result<Self, Self::Error> {
-        match try_from_range_impl(range) {
-            Ok(u) => Ok(u),
-            Err((from, till)) => Err(format!("Range must be ascending: {} - {}", from, till)),
-        }
+    fn try_from(range: &Range<char>) -> Result<Self, Self::Error> {
+        try_from_range_impl(range)
     }
 }
 
-impl TryFrom<RangeFrom<char>> for UnicodeSet {
-    type Error = String;
+impl TryFrom<&RangeFrom<char>> for UnicodeSet {
+    type Error = USetError;
 
-    fn try_from(range: RangeFrom<char>) -> Result<Self, Self::Error> {
-        match try_from_range_impl(range) {
-            Ok(u) => Ok(u),
-            Err((from, till)) => Err(format!("Range must be ascending: {} - {}", from, till)),
-        }
+    fn try_from(range: &RangeFrom<char>) -> Result<Self, Self::Error> {
+        try_from_range_impl(range)
     }
 }
 
-impl TryFrom<RangeFull> for UnicodeSet {
-    type Error = String;
+impl TryFrom<&RangeFull> for UnicodeSet {
+    type Error = USetError;
 
-    fn try_from(_: RangeFull) -> Result<Self, Self::Error> {
+    fn try_from(_: &RangeFull) -> Result<Self, Self::Error> {
         Ok(UnicodeSet::all())
     }
 }
 
-impl TryFrom<RangeInclusive<char>> for UnicodeSet {
-    type Error = String;
+impl TryFrom<&RangeInclusive<char>> for UnicodeSet {
+    type Error = USetError;
 
-    fn try_from(range: RangeInclusive<char>) -> Result<Self, Self::Error> {
-        match try_from_range_impl(range) {
-            Ok(u) => Ok(u),
-            Err((from, till)) => Err(format!("Range must be ascending: {} - {}", from, till)),
-        }
+    fn try_from(range: &RangeInclusive<char>) -> Result<Self, Self::Error> {
+        try_from_range_impl(range)
     }
 }
 
-impl TryFrom<RangeTo<char>> for UnicodeSet {
-    type Error = String;
+impl TryFrom<&RangeTo<char>> for UnicodeSet {
+    type Error = USetError;
 
-    fn try_from(range: RangeTo<char>) -> Result<Self, Self::Error> {
-        match try_from_range_impl(range) {
-            Ok(u) => Ok(u),
-            Err((from, till)) => Err(format!("Range must be ascending: {} - {}", from, till)),
-        }
+    fn try_from(range: &RangeTo<char>) -> Result<Self, Self::Error> {
+        try_from_range_impl(range)
     }
 }
 
-impl TryFrom<RangeToInclusive<char>> for UnicodeSet {
-    type Error = String;
+impl TryFrom<&RangeToInclusive<char>> for UnicodeSet {
+    type Error = USetError;
 
-    fn try_from(range: RangeToInclusive<char>) -> Result<Self, Self::Error> {
-        Ok(try_from_range_impl(range).unwrap())
+    fn try_from(range: &RangeToInclusive<char>) -> Result<Self, Self::Error> {
+        try_from_range_impl(range)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::USetError;
     use crate::UnicodeSet;
     use std::convert::TryFrom;
-
     #[test]
     fn test_try_from_range() {
-        assert!(UnicodeSet::try_from('A'..'B').is_ok());
+        let check: Vec<char> = UnicodeSet::try_from(&('A'..'B')).unwrap().iter().collect();
+        assert_eq!(vec!['A'], check);
     }
     #[test]
     fn test_try_from_range_error() {
-        assert!(UnicodeSet::try_from('A'..'A').is_err());
+        let check = UnicodeSet::try_from(&('A'..'A'));
+        assert_eq!(Err(USetError::InvalidRange(65, 65)), check);
     }
     #[test]
     fn test_try_from_range_inclusive() {
-        assert!(UnicodeSet::try_from('A'..='A').is_ok());
+        let check: Vec<char> = UnicodeSet::try_from(&('A'..='A')).unwrap().iter().collect();
+        assert_eq!(vec!['A'], check);
     }
     #[test]
     fn test_try_from_range_inclusive_err() {
-        assert!(UnicodeSet::try_from('B'..='A').is_err());
+        let check = UnicodeSet::try_from(&('B'..'A'));
+        assert_eq!(Err(USetError::InvalidRange(66, 65)), check);
     }
     #[test]
     fn test_try_from_range_from() {
-        assert!(UnicodeSet::try_from('A'..).is_ok());
-    }
-    #[test]
-    fn test_try_from_range_from_err() {
-        assert!(UnicodeSet::try_from((std::char::MAX)..).is_err());
+        let uset = UnicodeSet::try_from(&('A'..)).unwrap();
+        let check: Vec<&u32> = uset.ranges().collect();
+        assert_eq!(vec![&65, &((std::char::MAX as u32) + 1)], check);
     }
     #[test]
     fn test_try_from_range_to() {
-        assert!(UnicodeSet::try_from(..'A').is_ok());
+        let uset = UnicodeSet::try_from(&(..'A')).unwrap();
+        let check: Vec<&u32> = uset.ranges().collect();
+        assert_eq!(vec![&0, &65], check);
     }
     #[test]
     fn test_try_from_range_to_err() {
-        assert!(UnicodeSet::try_from(..(0 as char)).is_err());
+        let check = UnicodeSet::try_from(&(..(0 as char)));
+        assert_eq!(Err(USetError::InvalidRange(0, 0)), check);
     }
     #[test]
     fn test_try_from_range_to_inclusive() {
-        assert!(UnicodeSet::try_from(..='A').is_ok());
+        let uset = UnicodeSet::try_from(&(..='A')).unwrap();
+        let check: Vec<&u32> = uset.ranges().collect();
+        assert_eq!(vec![&0, &66], check);
     }
     #[test]
     fn test_try_from_range_full() {
-        assert!(UnicodeSet::try_from(..).is_ok());
+        let uset = UnicodeSet::try_from(&(..)).unwrap();
+        let check: Vec<&u32> = uset.ranges().collect();
+        assert_eq!(vec![&0, &((std::char::MAX as u32) + 1)], check);
     }
 }

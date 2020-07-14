@@ -1,5 +1,5 @@
 [package]
-name = "icu4x-unicodeset"
+name = "icu-unicodeset"
 description = "API for managing Unicode Language and Locale Identifiers"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
