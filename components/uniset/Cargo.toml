@@ -12,3 +12,10 @@ include = [
     "src/**/*",
     "Cargo.toml",
 ]
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "inv_list"
+harness = false

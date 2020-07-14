@@ -94,7 +94,7 @@ impl UnicodeSet {
         self.inv_list
             .chunks(2)
             .flat_map(|pair| (pair[0]..pair[1]))
-            .map(|val| from_u32(val).unwrap())
+            .filter_map(from_u32)
     }
 
     /// Returns the number of elements of the UnicodeSet
@@ -140,7 +140,7 @@ impl UnicodeSet {
     /// Checks to see the query is in the UnicodeSet
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using `std::vec::Vec` implementation
+    /// in the set using `std` implementation
     ///
     /// Example:
     ///
@@ -159,10 +159,8 @@ impl UnicodeSet {
     /// Checks to see if the range is in the UnicodeSet, returns a Result
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using `std::vec::Vec` implementation
-    ///
-    /// Only runs the search once on the `start` parameter, while the `end` parameter is checked
-    /// in a single `O(1)` step
+    /// in the set using `std::vec::Vec` implementation Only runs the search once on the `start`
+    /// parameter, while the `end` parameter is checked in a single `O(1)` step
     ///
     /// Example:
     ///
@@ -174,6 +172,20 @@ impl UnicodeSet {
     /// assert!(example.contains_range(&('A'..'C')));
     /// assert!(example.contains_range(&('A'..='B')));
     /// assert!(!example.contains_range(&('A'..='C')));
+    /// ```
+    ///
+    /// Surrogate points (`0xD800 -> 0xDFFF`) will return false if the Range contains them but the
+    /// UnicodeSet does not.
+    ///
+    /// Example:
+    ///
+    /// ```
+    /// use icu_unicodeset::UnicodeSet;
+    /// use std::{convert::TryFrom, char::from_u32};
+    /// let check = from_u32(0xD7FE).unwrap() .. from_u32(0xE001).unwrap();
+    /// let example_list = vec![0xD7FE, 0xD7FF, 0xE000, 0xE001];
+    /// let example = UnicodeSet::try_from(example_list).unwrap();
+    /// assert!(!example.contains_range(&(check)));
     /// ```
     pub fn contains_range(&self, range: &impl RangeBounds<char>) -> bool {
         let (from, till) = deconstruct_range(range);
@@ -291,7 +303,7 @@ mod tests {
     }
     #[test]
     fn test_unicodeset_iter() {
-        let ex = vec![65, 68, 69, 70];
+        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
         let check = UnicodeSet::try_from(ex).unwrap();
         let mut iter = check.iter();
         assert_eq!(Some('A'), iter.next());
