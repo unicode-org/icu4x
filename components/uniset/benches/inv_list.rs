@@ -1,59 +1,43 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use icu_unicodeset::UnicodeSet;
-use std::convert::TryFrom;
+use std::{convert::TryFrom, char::{MAX, from_u32}};
 
-/// Best Case Contains
-///
-/// Create a single small range and check contains on every value in range
-fn best_case_contains(c: &mut Criterion) {
-    let check = vec![65, 70];
-    let uset = UnicodeSet::try_from(check).unwrap();
-    c.bench_function("inv_list/contains_best", |b| {
-        b.iter(|| uset.iter().map(|c| uset.contains(c)))
+fn contains_bench(c: &mut Criterion) {
+    let best_ex = vec![65, 70];
+    let best_sample = UnicodeSet::try_from(best_ex).unwrap();
+    let worst_ex: Vec<u32> = (0..((MAX as u32) + 1)).collect();
+    let worst_sample = UnicodeSet::try_from(worst_ex).unwrap();
+
+    let mut group = c.benchmark_group("uniset/contains");
+    group.bench_with_input("best", &best_sample, |b, sample| {
+        b.iter(|| sample.iter().map(|ch| sample.contains(ch)))
     });
+    group.bench_with_input("worst", &worst_sample, |b, sample| {
+        b.iter(|| sample.iter().take(100).map(|ch| sample.contains(ch)))
+    });
+    group.finish();
 }
 
-/// Worst Case Contains
-///
-/// Create the maximum number of ranges ([0, 1, 2, 3], etc.) and check contains on 100 first values
-fn worst_case_contains(c: &mut Criterion) {
-    let check: Vec<u32> = (0..((std::char::MAX as u32) + 1)).collect();
-    let uset = UnicodeSet::try_from(check).unwrap();
-    c.bench_function("inv_list/contains_worst", |b| {
-        b.iter(|| uset.iter().take(100).map(|c| uset.contains(c)))
-    });
-}
-/// Best Case Contains Range
-///
-/// Create a single small range and check contains on every value in range
-fn best_case_contains_range(c: &mut Criterion) {
-    let check = vec![65, 70];
-    let uset = UnicodeSet::try_from(check).unwrap();
-    c.bench_function("inv_list/contains_range_best", |b| {
-        b.iter(|| uset.iter().map(|c| uset.contains_range(&('A'..c))))
-    });
-}
+fn contains_range_bench(c: &mut Criterion) {
+    let best_ex = vec![65, 70];
+    let best_sample = UnicodeSet::try_from(best_ex).unwrap();
+    let worst_ex: Vec<u32> = (0..((MAX as u32) + 1)).collect();
+    let worst_sample = UnicodeSet::try_from(worst_ex).unwrap();
 
-/// Worst Case Contains Range
-///
-/// Create the maximum number of ranges ([0, 1, 2, 3], etc.) and check contains on 100 first values
-fn worst_case_contains_range(c: &mut Criterion) {
-    let check: Vec<u32> = (0..((std::char::MAX as u32) + 1)).collect();
-    let start = std::char::from_u32(0).unwrap();
-    let uset = UnicodeSet::try_from(check).unwrap();
-    c.bench_function("inv_list/contains_range_worst", |b| {
+    let mut group = c.benchmark_group("uniset/contains_range");
+    group.bench_with_input("best", &best_sample, |b, sample| {
+        b.iter(|| sample.iter().map(|ch| sample.contains_range(&('A'..ch))))
+    });
+    group.bench_with_input("worst", &worst_sample, |b, sample| {
         b.iter(|| {
-            uset.iter()
+            sample
+                .iter()
                 .take(100)
-                .map(|c| uset.contains_range(&(start..c)))
+                .map(|ch| sample.contains_range(&(from_u32(0).unwrap()..ch)))
         })
     });
+    group.finish();
 }
-criterion_group!(
-    benches,
-    best_case_contains,
-    worst_case_contains,
-    best_case_contains_range,
-    worst_case_contains_range
-);
+
+criterion_group!(benches, contains_bench, contains_range_bench);
 criterion_main!(benches);

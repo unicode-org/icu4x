@@ -6,7 +6,7 @@ use std::{
     ops::{Range, RangeBounds, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
-fn try_from_range_impl(range: &impl RangeBounds<char>) -> Result<UnicodeSet, USetError> {
+fn try_from_range(range: &impl RangeBounds<char>) -> Result<UnicodeSet, USetError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
@@ -20,7 +20,7 @@ impl TryFrom<&Range<char>> for UnicodeSet {
     type Error = USetError;
 
     fn try_from(range: &Range<char>) -> Result<Self, Self::Error> {
-        try_from_range_impl(range)
+        try_from_range(range)
     }
 }
 
@@ -28,7 +28,7 @@ impl TryFrom<&RangeFrom<char>> for UnicodeSet {
     type Error = USetError;
 
     fn try_from(range: &RangeFrom<char>) -> Result<Self, Self::Error> {
-        try_from_range_impl(range)
+        try_from_range(range)
     }
 }
 
@@ -44,7 +44,7 @@ impl TryFrom<&RangeInclusive<char>> for UnicodeSet {
     type Error = USetError;
 
     fn try_from(range: &RangeInclusive<char>) -> Result<Self, Self::Error> {
-        try_from_range_impl(range)
+        try_from_range(range)
     }
 }
 
@@ -52,7 +52,7 @@ impl TryFrom<&RangeTo<char>> for UnicodeSet {
     type Error = USetError;
 
     fn try_from(range: &RangeTo<char>) -> Result<Self, Self::Error> {
-        try_from_range_impl(range)
+        try_from_range(range)
     }
 }
 
@@ -60,7 +60,7 @@ impl TryFrom<&RangeToInclusive<char>> for UnicodeSet {
     type Error = USetError;
 
     fn try_from(range: &RangeToInclusive<char>) -> Result<Self, Self::Error> {
-        try_from_range_impl(range)
+        try_from_range(range)
     }
 }
 

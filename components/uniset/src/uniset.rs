@@ -118,7 +118,7 @@ impl UnicodeSet {
     /// Wrapper for contains
     ///
     /// Returns an Option as to whether or not it is possible for the query to be contained
-    fn contains_impl(&self, query: u32) -> Option<usize> {
+    fn contains_query(&self, query: u32) -> Option<usize> {
         match self.inv_list.binary_search(&query) {
             Ok(pos) => {
                 if pos % 2 == 0 {
@@ -153,7 +153,7 @@ impl UnicodeSet {
     /// assert!(!example.contains('C'));
     /// ```
     pub fn contains(&self, query: char) -> bool {
-        self.contains_impl(query as u32).is_some()
+        self.contains_query(query as u32).is_some()
     }
 
     /// Checks to see if the range is in the UnicodeSet, returns a Result
@@ -192,7 +192,7 @@ impl UnicodeSet {
         if from >= till {
             return false;
         }
-        match self.contains_impl(from) {
+        match self.contains_query(from) {
             Some(pos) => (till) <= self.inv_list[pos + 1],
             None => false,
         }

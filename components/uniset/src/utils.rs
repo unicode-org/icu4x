@@ -8,14 +8,13 @@ use std::{
 pub fn is_valid(v: &[u32]) -> bool {
     v.len() % 2 == 0
         && v.windows(2).all(|chunk| chunk[0] < chunk[1])
-        && v[v.len() - 1] <= (MAX as u32) + 1
+        && v.last().map_or(false, |e| e <= &((MAX as u32) + 1))
 }
 
 /// Returns start (inclusive) and end (exclusive) bounds of RangeBounds
 pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
     let from = match range.start_bound() {
-        Included(b) => (*b as u32),
-        Excluded(b) => (*b as u32),
+        Included(b) | Excluded(b) => (*b as u32),
         Unbounded => 0,
     };
     let till = match range.end_bound() {
@@ -35,6 +34,11 @@ mod tests {
     fn test_is_valid() {
         let check = vec![2, 3, 4, 5];
         assert!(is_valid(&check));
+    }
+    #[test]
+    fn test_is_valid_empty() {
+        let check = vec![];
+        assert!(!is_valid(&check));
     }
     #[test]
     fn test_is_valid_overlapping() {
