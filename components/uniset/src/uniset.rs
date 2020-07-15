@@ -206,13 +206,14 @@ mod tests {
 
     #[test]
     fn test_unicodeset_try_from_vec() {
-        let check = UnicodeSet::try_from(vec![2, 3, 4, 5]).unwrap().inv_list;
-        assert_eq!(vec![2, 3, 4, 5], check);
+        let ex = vec![2, 3, 4, 5];
+        let check = UnicodeSet::try_from(ex.clone()).unwrap().inv_list;
+        assert_eq!(ex, check);
     }
     #[test]
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![1, 1, 2, 3, 4];
-        let set = UnicodeSet::try_from(vec![1, 1, 2, 3, 4]);
+        let set = UnicodeSet::try_from(check.clone());
         assert_eq!(Err(USetError::InvalidSet(check)), set);
     }
     #[test]

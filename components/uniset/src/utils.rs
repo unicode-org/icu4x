@@ -7,7 +7,7 @@ use std::{
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
     v.len() % 2 == 0
-        && v.chunks(2).all(|chunk| chunk[0] < chunk[1])
+        && v.windows(2).all(|chunk| chunk[0] < chunk[1])
         && v[v.len() - 1] <= (MAX as u32) + 1
 }
 
@@ -35,6 +35,11 @@ mod tests {
     fn test_is_valid() {
         let check = vec![2, 3, 4, 5];
         assert!(is_valid(&check));
+    }
+    #[test]
+    fn test_is_valid_overlapping() {
+        let check = vec![2, 5, 4, 6];
+        assert!(!is_valid(&check));
     }
     #[test]
     fn test_is_valid_out_of_order() {
