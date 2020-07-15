@@ -1,6 +1,9 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use icu_unicodeset::UnicodeSet;
-use std::{convert::TryFrom, char::{MAX, from_u32}};
+use std::{
+    char::{from_u32, MAX},
+    convert::TryFrom,
+};
 
 fn contains_bench(c: &mut Criterion) {
     let best_ex = vec![65, 70];
