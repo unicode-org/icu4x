@@ -128,7 +128,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --workspace --release --all-features
+        args: --workspace --release --all-features --no-deps
 
     # Doc-GH-Pages job > Generate dummy root index.html to redirect to `icu4x` crate
 
