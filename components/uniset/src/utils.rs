@@ -1,5 +1,5 @@
 use std::{
-    char::MAX,
+    char,
     ops::{Bound::*, RangeBounds},
 };
 
@@ -8,19 +8,20 @@ use std::{
 pub fn is_valid(v: &[u32]) -> bool {
     v.len() % 2 == 0
         && v.windows(2).all(|chunk| chunk[0] < chunk[1])
-        && v.last().map_or(false, |e| e <= &((MAX as u32) + 1))
+        && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1))
 }
 
-/// Returns start (inclusive) and end (exclusive) bounds of RangeBounds
+/// Returns start (inclusive) and end (excluisive) bounds of RangeBounds
 pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
     let from = match range.start_bound() {
-        Included(b) | Excluded(b) => (*b as u32),
+        Included(b) => (*b as u32),
+        Excluded(_) => unreachable!(),
         Unbounded => 0,
     };
     let till = match range.end_bound() {
         Included(b) => (*b as u32) + 1,
         Excluded(b) => (*b as u32),
-        Unbounded => (MAX as u32) + 1,
+        Unbounded => (char::MAX as u32) + 1,
     };
     (from, till)
 }
@@ -28,7 +29,7 @@ pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
 #[cfg(test)]
 mod tests {
     use super::{deconstruct_range, is_valid};
-    use std::char::MAX;
+    use std::char;
 
     #[test]
     fn test_is_valid() {
@@ -62,7 +63,7 @@ mod tests {
     }
     #[test]
     fn test_is_valid_out_of_range() {
-        let check = vec![1, 2, 3, 4, (MAX as u32) + 1];
+        let check = vec![1, 2, 3, 4, (char::MAX as u32) + 1];
         assert!(!is_valid(&check));
     }
     // deconstruct_range
@@ -74,12 +75,12 @@ mod tests {
         let check = deconstruct_range(&('A'..='D')); // Range Inclusive
         assert_eq!(check, expected);
         let check = deconstruct_range(&('A'..)); // Range From
-        assert_eq!(check, (65, (MAX as u32) + 1));
+        assert_eq!(check, (65, (char::MAX as u32) + 1));
         let check = deconstruct_range(&(..'A')); // Range To
         assert_eq!(check, (0, 65));
         let check = deconstruct_range(&(..='A')); // Range To Inclusive
         assert_eq!(check, (0, 66));
         let check = deconstruct_range(&(..)); // Range Full
-        assert_eq!(check, (0, (MAX as u32) + 1));
+        assert_eq!(check, (0, (char::MAX as u32) + 1));
     }
 }

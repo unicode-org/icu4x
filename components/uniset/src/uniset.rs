@@ -1,9 +1,4 @@
-use std::{
-    char::{from_u32, MAX},
-    convert::TryFrom,
-    ops::RangeBounds,
-    slice::Iter,
-};
+use std::{char, convert::TryFrom, ops::RangeBounds, slice::Iter};
 
 use super::USetError;
 use crate::utils::{deconstruct_range, is_valid};
@@ -41,7 +36,7 @@ impl UnicodeSet {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> UnicodeSet {
         UnicodeSet {
-            inv_list: vec![0, (MAX as u32) + 1],
+            inv_list: vec![0, (char::MAX as u32) + 1],
         }
     }
 
@@ -94,7 +89,7 @@ impl UnicodeSet {
         self.inv_list
             .chunks(2)
             .flat_map(|pair| (pair[0]..pair[1]))
-            .filter_map(from_u32)
+            .filter_map(char::from_u32)
     }
 
     /// Returns the number of elements of the UnicodeSet
@@ -181,8 +176,8 @@ impl UnicodeSet {
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
-    /// use std::{convert::TryFrom, char::from_u32};
-    /// let check = from_u32(0xD7FE).unwrap() .. from_u32(0xE001).unwrap();
+    /// use std::{convert::TryFrom, char};
+    /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
     /// let example_list = vec![0xD7FE, 0xD7FF, 0xE000, 0xE001];
     /// let example = UnicodeSet::try_from(example_list).unwrap();
     /// assert!(!example.contains_range(&(check)));
@@ -202,7 +197,7 @@ impl UnicodeSet {
 #[cfg(test)]
 mod tests {
     use super::{USetError, UnicodeSet, BMP_MAX};
-    use std::{char::MAX, convert::TryFrom, vec::Vec};
+    use std::{char, convert::TryFrom, vec::Vec};
 
     #[test]
     fn test_unicodeset_try_from_vec() {
@@ -218,7 +213,7 @@ mod tests {
     }
     #[test]
     fn test_unicodeset_all() {
-        let expected = vec![0, (MAX as u32) + 1];
+        let expected = vec![0, (char::MAX as u32) + 1];
         assert_eq!(UnicodeSet::all().inv_list, expected);
     }
     #[test]
@@ -274,7 +269,7 @@ mod tests {
         let check = UnicodeSet::try_from(ex).unwrap();
         assert_eq!(8, check.size());
         let check = UnicodeSet::all();
-        let expected = (MAX as u32) + 1;
+        let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
         let check = UnicodeSet {
             inv_list: Vec::new(),
