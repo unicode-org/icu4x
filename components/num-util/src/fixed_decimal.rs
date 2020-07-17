@@ -322,7 +322,7 @@ impl FixedDecimal {
     /// use icu_num_util::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(42);
-    /// let mut result = String::with_capacity(dec.write_len() + 1);
+    /// let mut result = String::with_capacity(dec.write_len());
     /// dec.write_to(&mut result).expect("write_to(String) should not fail");
     /// assert_eq!("42", result);
     /// ```
@@ -342,9 +342,9 @@ impl FixedDecimal {
 
     /// The number of bytes that will be written by FixedDecimal::write_to. Use this function to
     /// pre-allocate capacity in the destination buffer.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use icu_num_util::FixedDecimal;
     ///
