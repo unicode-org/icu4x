@@ -22,9 +22,9 @@ use icu_locale::LanguageIdentifier;
 /// A top-level collection of related data keys.
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Category {
-    Undefined = 0,
-    Decimal = 1,
-    PrivateUse = 4096,
+    Undefined,
+    Decimal,
+    PrivateUse,
 }
 
 impl Display for Category {
@@ -104,8 +104,7 @@ impl<'d> Response<'d> {
     /// Get a mutable reference to the payload in a Response object.
     /// The payload may or may not be owned by the Response.
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
-        let boxed: &mut Box<dyn CloneableAny> = self.payload.to_mut();
-        let borrowed_mut: &mut dyn CloneableAny = boxed.borrow_mut();
+        let borrowed_mut: &mut dyn CloneableAny = self.payload.to_mut().borrow_mut();
         // TODO: If I move this into the lambda, I get E0502. Why?
         let type_id = borrowed_mut.as_any().type_id();
         borrowed_mut
@@ -147,6 +146,7 @@ impl ResponseBuilder {
 
     /// Construct a Response from the builder, with borrowed data.
     /// Consumes the builder, but not the data.
+    #[allow(clippy::needless_lifetimes)]
     pub fn with_borrowed_payload<'d, T: 'static + Clone + Debug>(self, t: &'d T) -> Response<'d> {
         Response {
             data_langid: self.data_langid,

@@ -61,3 +61,23 @@ jobs:
     - name: Rust linter
       # make this command fail if cargo fmt had to make changes
       run: cargo fmt && git diff-index --exit-code HEAD
+
+  # Linting job (cargo-clippy) - completes and puts warnings inline in PR
+
+  lint:
+    runs-on: ubuntu-latest
+
+    needs: [build]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Linting job > Install and run clippy steps
+
+    - name: Install clippy
+      run: rustup component add clippy
+
+    - uses: actions-rs/clippy-check@v1.0.7
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        args: --all-targets --all-features -- -D warnings

@@ -24,7 +24,7 @@ APIs included in ICU4X will:
 * Depend on Unicode or CLDR data or algorithms
 * Benefit from being versioned alongside Unicode and CLDR data
 
-For such APIs and functionality that will not end up being included, ICU4X aims to provide the building blocks to enable third-party libraries to be developed which depend on and interoperate with ICU4X, with minimum data and logic duplication.
+The feature coverage of [ICU4C] and [ICU4J] goes well beyond what is necessary for the target clients; ICU4X will have a more narrow focus. For such APIs and functionality that will not end up being included, ICU4X aims to provide the building blocks to enable third-party libraries to be developed which depend on and interoperate with ICU4X, with minimum data and logic duplication. For example, ICU4X will not include Spoof Checker (UTS 39) or IDNA (UTS 46), but third-party libraries could build on top of ICU4X's Unicode Properties APIs to implement those features.
 
 In some rare cases, ICU4X may diverge from both [ECMA-402], and [ICU4C]/[ICU4J]. Such diversions should be the result of improved API design and should allow users to cover the same needs with the upgraded APIs.
 
@@ -53,20 +53,6 @@ Referential platforms and languages may change over time as the industry develop
 A viable subset of ICU4X will be targeting the [no_std] support and in the future we may explore the [no_std]+[alloc] compatibility for viable components ([#77](https://github.com/unicode-org/icu4x/issues/77)).
 
 ## Frequently Asked Questions
-
-### What is the scope of ICU4X feature coverage?
-
-ICU4X will provide a feature set based on known use cases for the target clients (as stated above, client-side i18n in resource-constrained environments).
-
-The feature coverage of [ICU4C] and [ICU4J] goes well beyond what is necessary for the target clients; ICU4X will have a more narrow focus.
-
-[ECMA-402] provides an API surface that has already been thoroughly vetted for resource-constrained JavaScript clients, and thus everything in [ECMA-402] is considered in-scope for ICU4X.
-
-We also recognize that target clients may have needs that extend outside the scope of [ECMA-402].  Features falling into one of the following use cases will also be considered in-scope for ICU4X:
-
-- *to be filled in*
-
-The above list may grow over time.  To add an item to this list, a delegate should propose a PR to this file and achieve consensus at the subcommittee meeting.
 
 ### What will be the organizational structure of ICU4X?
 
