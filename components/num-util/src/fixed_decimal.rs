@@ -1,8 +1,9 @@
 use smallvec::SmallVec;
 
 use std::cmp;
-use std::ops::RangeInclusive;
+use std::cmp::Ordering;
 use std::fmt;
+use std::ops::RangeInclusive;
 
 use static_assertions::const_assert;
 
@@ -194,7 +195,7 @@ impl FixedDecimal {
         }
         #[cfg(debug_assertions)]
         result.check_invariants();
-        return Ok(result);
+        Ok(result)
     }
 
     /// Gets the digit at the specified order of magnitude. Returns 0 if the magnitude is out of
@@ -263,27 +264,31 @@ impl FixedDecimal {
     /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiply_pow10(&mut self, delta: i16) -> Result<(), Error> {
-        if delta > 0 {
-            self.upper_magnitude = self
-                .upper_magnitude
-                .checked_add(delta)
-                .ok_or(Error::Limit)?;
-            // If we get here, then the magnitude change is in-bounds.
-            let lower_magnitude = self.lower_magnitude + delta;
-            self.lower_magnitude = cmp::min(0, lower_magnitude);
-        } else if delta < 0 {
-            self.lower_magnitude = self
-                .lower_magnitude
-                .checked_add(delta)
-                .ok_or(Error::Limit)?;
-            // If we get here, then the magnitude change is in-bounds.
-            let upper_magnitude = self.upper_magnitude + delta;
-            self.upper_magnitude = cmp::max(0, upper_magnitude);
-        }
+        match delta.cmp(&0) {
+            Ordering::Greater => {
+                self.upper_magnitude = self
+                    .upper_magnitude
+                    .checked_add(delta)
+                    .ok_or(Error::Limit)?;
+                // If we get here, then the magnitude change is in-bounds.
+                let lower_magnitude = self.lower_magnitude + delta;
+                self.lower_magnitude = cmp::min(0, lower_magnitude);
+            }
+            Ordering::Less => {
+                self.lower_magnitude = self
+                    .lower_magnitude
+                    .checked_add(delta)
+                    .ok_or(Error::Limit)?;
+                // If we get here, then the magnitude change is in-bounds.
+                let upper_magnitude = self.upper_magnitude + delta;
+                self.upper_magnitude = cmp::max(0, upper_magnitude);
+            }
+            Ordering::Equal => {}
+        };
         self.magnitude += delta;
         #[cfg(debug_assertions)]
         self.check_invariants();
-        return Ok(());
+        Ok(())
     }
 
     /// Shift the digits by a power of 10, consuming self and returning a new object if successful.
@@ -332,7 +337,7 @@ impl FixedDecimal {
             let d = self.digit_at(m);
             sink.write_char((b'0' + d) as char)?;
         }
-        return Ok(());
+        Ok(())
     }
 
     /// Assert that the invariants among struct fields are enforced. Returns true if all are okay.
@@ -350,13 +355,12 @@ impl FixedDecimal {
         // digits invariants:
         let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
         debug_assert!(self.digits.len() <= max_len, "{:?}", self);
-        if self.digits.len() > 0 {
+        if !self.digits.is_empty() {
             debug_assert_ne!(self.digits[0], 0, "{:?}", self);
             debug_assert_ne!(self.digits[self.digits.len() - 1], 0, "{:?}", self);
         }
     }
 }
-
 
 /// Renders the FixedDecimal according to the syntax documented in FixedDecimal::write_to.
 impl fmt::Display for FixedDecimal {
@@ -364,7 +368,6 @@ impl fmt::Display for FixedDecimal {
         self.write_to(f)
     }
 }
-
 
 #[test]
 fn test_basic() {

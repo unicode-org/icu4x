@@ -2,7 +2,7 @@ use rand::SeedableRng;
 use rand_distr::{Distribution, Triangular};
 use rand_pcg::Lcg64Xsh32;
 
-use criterion::{BenchmarkId, black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
 use icu_num_util::FixedDecimal;
 
@@ -52,18 +52,44 @@ fn larger_isize_benches(c: &mut Criterion) {
 fn to_string_benches(c: &mut Criterion) {
     let objects = [
         FixedDecimal::from(2250),
-        FixedDecimal::from(2250).with_adjusted_magnitude(-2).unwrap(),
+        FixedDecimal::from(2250).multiplied_pow10(-2).unwrap(),
         FixedDecimal::from(908070605040302010u128),
     ];
 
-    let mut group = c.benchmark_group("to_string");
-    for object in objects.iter() {
-        group.bench_with_input(BenchmarkId::from_parameter(object.to_string()), object, |b, object| {
-            b.iter(|| object.to_string())
-        });
+    {
+        let mut group = c.benchmark_group("to_string");
+        for object in objects.iter() {
+            group.bench_with_input(
+                BenchmarkId::from_parameter(object.to_string()),
+                object,
+                |b, object| b.iter(|| object.to_string()),
+            );
+        }
+        group.finish();
     }
-    group.finish();
+
+    {
+        let mut group = c.benchmark_group("write_to");
+        for object in objects.iter() {
+            group.bench_with_input(
+                BenchmarkId::from_parameter(object.to_string()),
+                object,
+                |b, object| {
+                    b.iter(|| {
+                        let mut result = String::with_capacity(24);
+                        object.write_to(&mut result)
+                    })
+                },
+            );
+        }
+        group.finish();
+    }
 }
 
-criterion_group!(benches, smaller_isize_benches, larger_isize_benches, to_string_benches);
+criterion_group!(
+    benches,
+    smaller_isize_benches,
+    larger_isize_benches,
+    to_string_benches
+);
 criterion_main!(benches);
