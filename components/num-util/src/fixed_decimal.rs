@@ -322,7 +322,7 @@ impl FixedDecimal {
     /// use icu_num_util::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(42);
-    /// let mut result = String::new();
+    /// let mut result = String::with_capacity(dec.write_len() + 1);
     /// dec.write_to(&mut result).expect("write_to(String) should not fail");
     /// assert_eq!("42", result);
     /// ```
@@ -338,6 +338,27 @@ impl FixedDecimal {
             sink.write_char((b'0' + d) as char)?;
         }
         Ok(())
+    }
+
+    /// The number of bytes that will be written by FixedDecimal::write_to. Use this function to
+    /// pre-allocate capacity in the destination buffer.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use icu_num_util::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
+    /// let mut result = String::new();
+    /// dec.write_to(&mut result).expect("write_to(String) should not fail");
+    /// assert_eq!("-50.00", result);
+    /// assert_eq!(6, dec.write_len());
+    /// ```
+    pub fn write_len(&self) -> usize {
+        let num_digits = 1 + (self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize;
+        num_digits
+            + (if self.is_negative { 1 } else { 0 })
+            + (if self.lower_magnitude < 0 { 1 } else { 0 })
     }
 
     /// Assert that the invariants among struct fields are enforced. Returns true if all are okay.
@@ -472,7 +493,9 @@ fn test_basic() {
     for cas in &cases {
         let mut dec: FixedDecimal = cas.input.into();
         dec.multiply_pow10(cas.delta).unwrap();
-        assert_eq!(cas.expected, dec.to_string(), "{:?}", cas);
+        let string = dec.to_string();
+        assert_eq!(cas.expected, string, "{:?}", cas);
+        assert_eq!(string.len(), dec.write_len(), "{:?}", cas);
     }
 }
 

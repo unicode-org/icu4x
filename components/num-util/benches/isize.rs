@@ -51,7 +51,6 @@ fn larger_isize_benches(c: &mut Criterion) {
 
 fn to_string_benches(c: &mut Criterion) {
     let objects = [
-        FixedDecimal::from(2250),
         FixedDecimal::from(2250).multiplied_pow10(-2).unwrap(),
         FixedDecimal::from(908070605040302010u128),
     ];
@@ -76,7 +75,7 @@ fn to_string_benches(c: &mut Criterion) {
                 object,
                 |b, object| {
                     b.iter(|| {
-                        let mut result = String::with_capacity(24);
+                        let mut result = String::with_capacity(object.write_len());
                         object.write_to(&mut result)
                     })
                 },
