@@ -2,7 +2,7 @@ use smallvec::SmallVec;
 
 use std::cmp;
 use std::ops::RangeInclusive;
-use std::string::ToString;
+use std::fmt;
 
 use static_assertions::const_assert;
 
@@ -243,8 +243,13 @@ impl FixedDecimal {
         self.lower_magnitude..=self.upper_magnitude
     }
 
-    /// Shift the digits by a power of 10. Leading or trailing zeros may be added to keep the digit
-    /// at magnitude 0 (the last digit before the decimal separator) visible.
+    /// Shift the digits by a power of 10, modifying self.
+    ///
+    /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
+    /// before the decimal separator) visible.
+    ///
+    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
+    /// digits should fit in an i16.
     ///
     /// # Example
     ///
@@ -254,7 +259,7 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.adjust_magnitude(3);
+    /// dec.adjust_magnitude(3).expect("Bounds are small");
     /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn adjust_magnitude(&mut self, delta: i16) -> Result<(), Error> {
@@ -281,6 +286,55 @@ impl FixedDecimal {
         return Ok(());
     }
 
+    /// Shift the digits by a power of 10, consuming self and returning a new object if successful.
+    ///
+    /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
+    /// before the decimal separator) visible.
+    ///
+    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
+    /// digits should fit in an i16.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_num_util::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(42).with_adjusted_magnitude(3).expect("Bounds are small");
+    /// assert_eq!("42000", dec.to_string());
+    /// ```
+    pub fn with_adjusted_magnitude(mut self, delta: i16) -> Result<Self, Error> {
+        match self.adjust_magnitude(delta) {
+            Ok(()) => Ok(self),
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Render the FixedDecimal as a string of ASCII digits with a possible decimal point.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_num_util::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(42);
+    /// let mut result = String::new();
+    /// dec.write_to(&mut result).expect("write_to(String) should not fail");
+    /// assert_eq!("42", result);
+    /// ```
+    pub fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+        if self.is_negative {
+            sink.write_char('-')?;
+        }
+        for m in self.magnitude_range().rev() {
+            if m == -1 {
+                sink.write_char('.')?;
+            }
+            let d = self.digit_at(m);
+            sink.write_char((b'0' + d) as char)?;
+        }
+        return Ok(());
+    }
+
     /// Assert that the invariants among struct fields are enforced. Returns true if all are okay.
     /// Call this in any method that mutates the struct fields.
     ///
@@ -303,26 +357,14 @@ impl FixedDecimal {
     }
 }
 
-// `Display` provides a heavier implementation of `ToString` while we want to explicitly handle
-// `ToString` for library use.
-impl ToString for FixedDecimal {
-    fn to_string(&self) -> String {
-        let max_len = self.magnitude_range().len() + 2;
-        let mut result = String::with_capacity(max_len);
-        if self.is_negative {
-            result.push('-');
-        }
-        for m in self.magnitude_range().rev() {
-            if m == -1 {
-                result.push('.');
-            }
-            let d = self.digit_at(m);
-            result.push((b'0' + d) as char);
-        }
-        debug_assert!(max_len >= result.len());
-        return result;
+
+/// Renders the FixedDecimal according to the syntax documented in FixedDecimal::write_to.
+impl fmt::Display for FixedDecimal {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.write_to(f)
     }
 }
+
 
 #[test]
 fn test_basic() {

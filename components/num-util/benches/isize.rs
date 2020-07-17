@@ -2,7 +2,7 @@ use rand::SeedableRng;
 use rand_distr::{Distribution, Triangular};
 use rand_pcg::Lcg64Xsh32;
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{BenchmarkId, black_box, criterion_group, criterion_main, Criterion};
 
 use icu_num_util::FixedDecimal;
 
@@ -24,7 +24,12 @@ fn smaller_isize_benches(c: &mut Criterion) {
     // Note: this could be bench_function_with_inputs, but there are 1000 random inputs.
     // Instead, consider all inputs together in the same benchmark.
     c.bench_function("isize/smaller", |b| {
-        b.iter(|| nums.iter().map(|v| *v).map(FixedDecimal::from).count());
+        b.iter(|| {
+            nums.iter()
+                .map(|v| black_box(*v))
+                .map(FixedDecimal::from)
+                .count()
+        });
     });
 }
 
@@ -35,9 +40,30 @@ fn larger_isize_benches(c: &mut Criterion) {
     // Note: this could be bench_function_with_inputs, but there are 1000 random inputs.
     // Instead, consider all inputs together in the same benchmark.
     c.bench_function("isize/larger", |b| {
-        b.iter(|| nums.iter().map(|v| *v).map(FixedDecimal::from).count());
+        b.iter(|| {
+            nums.iter()
+                .map(|v| black_box(*v))
+                .map(FixedDecimal::from)
+                .count()
+        });
     });
 }
 
-criterion_group!(benches, smaller_isize_benches, larger_isize_benches);
+fn to_string_benches(c: &mut Criterion) {
+    let objects = [
+        FixedDecimal::from(2250),
+        FixedDecimal::from(2250).with_adjusted_magnitude(-2).unwrap(),
+        FixedDecimal::from(908070605040302010u128),
+    ];
+
+    let mut group = c.benchmark_group("to_string");
+    for object in objects.iter() {
+        group.bench_with_input(BenchmarkId::from_parameter(object.to_string()), object, |b, object| {
+            b.iter(|| object.to_string())
+        });
+    }
+    group.finish();
+}
+
+criterion_group!(benches, smaller_isize_benches, larger_isize_benches, to_string_benches);
 criterion_main!(benches);
