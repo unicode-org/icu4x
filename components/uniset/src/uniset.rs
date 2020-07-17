@@ -206,7 +206,7 @@ mod tests {
     #[test]
     fn test_unicodeset_all() {
         let expected = vec![0, (char::MAX as u32) + 1];
-        assert_eq!(UnicodeSet::all().inv_list, expected.clone());
+        assert_eq!(UnicodeSet::all().inv_list, expected);
         assert_eq!(
             UnicodeSet::all().size(),
             (expected[1] - expected[0]) as usize
@@ -215,7 +215,7 @@ mod tests {
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0, BMP_MAX + 1];
-        assert_eq!(UnicodeSet::bmp().inv_list, expected.clone());
+        assert_eq!(UnicodeSet::bmp().inv_list, expected);
         assert_eq!(
             UnicodeSet::bmp().size(),
             (expected[1] - expected[0]) as usize
