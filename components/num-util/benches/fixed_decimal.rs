@@ -25,6 +25,7 @@ fn smaller_isize_benches(c: &mut Criterion) {
     // Instead, consider all inputs together in the same benchmark.
     c.bench_function("isize/smaller", |b| {
         b.iter(|| {
+            #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
                 .map(FixedDecimal::from)
@@ -41,6 +42,7 @@ fn larger_isize_benches(c: &mut Criterion) {
     // Instead, consider all inputs together in the same benchmark.
     c.bench_function("isize/larger", |b| {
         b.iter(|| {
+            #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
                 .map(FixedDecimal::from)

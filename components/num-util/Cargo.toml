@@ -25,5 +25,5 @@ rand_pcg = "0.2"
 rand_distr = "0.2"
 
 [[bench]]
-name = "isize"
+name = "fixed_decimal"
 harness = false
