@@ -1,12 +1,12 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use icu_unicodeset::UnicodeSet;
-use std::{char, convert::TryFrom};
+use std::char;
 
 fn contains_bench(c: &mut Criterion) {
     let best_ex = vec![65, 70];
-    let best_sample = UnicodeSet::try_from(best_ex).unwrap();
+    let best_sample = UnicodeSet::from_inversion_list(best_ex).unwrap();
     let worst_ex: Vec<u32> = (0..((char::MAX as u32) + 1)).collect();
-    let worst_sample = UnicodeSet::try_from(worst_ex).unwrap();
+    let worst_sample = UnicodeSet::from_inversion_list(worst_ex).unwrap();
 
     let mut group = c.benchmark_group("uniset/contains");
     group.bench_with_input("best", &best_sample, |b, sample| {
@@ -20,9 +20,9 @@ fn contains_bench(c: &mut Criterion) {
 
 fn contains_range_bench(c: &mut Criterion) {
     let best_ex = vec![65, 70];
-    let best_sample = UnicodeSet::try_from(best_ex).unwrap();
+    let best_sample = UnicodeSet::from_inversion_list(best_ex).unwrap();
     let worst_ex: Vec<u32> = (0..((char::MAX as u32) + 1)).collect();
-    let worst_sample = UnicodeSet::try_from(worst_ex).unwrap();
+    let worst_sample = UnicodeSet::from_inversion_list(worst_ex).unwrap();
 
     let mut group = c.benchmark_group("uniset/contains_range");
     group.bench_with_input("best", &best_sample, |b, sample| {
