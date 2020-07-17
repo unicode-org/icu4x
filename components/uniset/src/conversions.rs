@@ -1,23 +1,24 @@
-use super::USetError;
-use crate::utils::deconstruct_range;
-use crate::UnicodeSet;
 use std::{
     convert::TryFrom,
     ops::{Range, RangeBounds, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
-fn try_from_range(range: &impl RangeBounds<char>) -> Result<UnicodeSet, USetError> {
+use super::UnicodeSetError;
+use crate::utils::deconstruct_range;
+use crate::UnicodeSet;
+
+fn try_from_range(range: &impl RangeBounds<char>) -> Result<UnicodeSet, UnicodeSetError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
-        Ok(UnicodeSet::try_from(set).unwrap())
+        Ok(UnicodeSet::from_inversion_list(set).unwrap())
     } else {
-        Err(USetError::InvalidRange(from, till))
+        Err(UnicodeSetError::InvalidRange(from, till))
     }
 }
 
 impl TryFrom<&Range<char>> for UnicodeSet {
-    type Error = USetError;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &Range<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -25,7 +26,7 @@ impl TryFrom<&Range<char>> for UnicodeSet {
 }
 
 impl TryFrom<&RangeFrom<char>> for UnicodeSet {
-    type Error = USetError;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeFrom<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -33,7 +34,7 @@ impl TryFrom<&RangeFrom<char>> for UnicodeSet {
 }
 
 impl TryFrom<&RangeFull> for UnicodeSet {
-    type Error = USetError;
+    type Error = UnicodeSetError;
 
     fn try_from(_: &RangeFull) -> Result<Self, Self::Error> {
         Ok(UnicodeSet::all())
@@ -41,7 +42,7 @@ impl TryFrom<&RangeFull> for UnicodeSet {
 }
 
 impl TryFrom<&RangeInclusive<char>> for UnicodeSet {
-    type Error = USetError;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeInclusive<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -49,7 +50,7 @@ impl TryFrom<&RangeInclusive<char>> for UnicodeSet {
 }
 
 impl TryFrom<&RangeTo<char>> for UnicodeSet {
-    type Error = USetError;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeTo<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -57,7 +58,7 @@ impl TryFrom<&RangeTo<char>> for UnicodeSet {
 }
 
 impl TryFrom<&RangeToInclusive<char>> for UnicodeSet {
-    type Error = USetError;
+    type Error = UnicodeSetError;
 
     fn try_from(range: &RangeToInclusive<char>) -> Result<Self, Self::Error> {
         try_from_range(range)
@@ -66,9 +67,10 @@ impl TryFrom<&RangeToInclusive<char>> for UnicodeSet {
 
 #[cfg(test)]
 mod tests {
-    use super::USetError;
+    use super::UnicodeSetError;
     use crate::UnicodeSet;
-    use std::convert::TryFrom;
+    use std::{char, convert::TryFrom};
+
     #[test]
     fn test_try_from_range() {
         let check: Vec<char> = UnicodeSet::try_from(&('A'..'B')).unwrap().iter().collect();
@@ -77,7 +79,7 @@ mod tests {
     #[test]
     fn test_try_from_range_error() {
         let check = UnicodeSet::try_from(&('A'..'A'));
-        assert_eq!(Err(USetError::InvalidRange(65, 65)), check);
+        assert_eq!(Err(UnicodeSetError::InvalidRange(65, 65)), check);
     }
     #[test]
     fn test_try_from_range_inclusive() {
@@ -87,35 +89,39 @@ mod tests {
     #[test]
     fn test_try_from_range_inclusive_err() {
         let check = UnicodeSet::try_from(&('B'..'A'));
-        assert_eq!(Err(USetError::InvalidRange(66, 65)), check);
+        assert_eq!(Err(UnicodeSetError::InvalidRange(66, 65)), check);
     }
     #[test]
     fn test_try_from_range_from() {
         let uset = UnicodeSet::try_from(&('A'..)).unwrap();
-        let check: Vec<&u32> = uset.ranges().collect();
-        assert_eq!(vec![&65, &((std::char::MAX as u32) + 1)], check);
+        let check: usize = uset.size();
+        let expected: usize = (char::MAX as usize) + 1 - 65;
+        assert_eq!(expected, check);
     }
     #[test]
     fn test_try_from_range_to() {
         let uset = UnicodeSet::try_from(&(..'A')).unwrap();
-        let check: Vec<&u32> = uset.ranges().collect();
-        assert_eq!(vec![&0, &65], check);
+        let check: usize = uset.size();
+        let expected: usize = 65;
+        assert_eq!(expected, check);
     }
     #[test]
     fn test_try_from_range_to_err() {
         let check = UnicodeSet::try_from(&(..(0 as char)));
-        assert_eq!(Err(USetError::InvalidRange(0, 0)), check);
+        assert_eq!(Err(UnicodeSetError::InvalidRange(0, 0)), check);
     }
     #[test]
     fn test_try_from_range_to_inclusive() {
         let uset = UnicodeSet::try_from(&(..='A')).unwrap();
-        let check: Vec<&u32> = uset.ranges().collect();
-        assert_eq!(vec![&0, &66], check);
+        let check: usize = uset.size();
+        let expected: usize = 66;
+        assert_eq!(expected, check);
     }
     #[test]
     fn test_try_from_range_full() {
         let uset = UnicodeSet::try_from(&(..)).unwrap();
-        let check: Vec<&u32> = uset.ranges().collect();
-        assert_eq!(vec![&0, &((std::char::MAX as u32) + 1)], check);
+        let check: usize = uset.size();
+        let expected: usize = (char::MAX as usize) + 1;
+        assert_eq!(expected, check);
     }
 }

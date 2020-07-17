@@ -9,7 +9,7 @@ pub use utils::*;
 
 /// Custom Errors for UnicodeSet.
 #[derive(Debug, PartialEq)]
-pub enum USetError {
+pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     InvalidRange(u32, u32),
 }

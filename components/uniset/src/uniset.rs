@@ -1,6 +1,6 @@
-use std::{char, convert::TryFrom, ops::RangeBounds, slice::Iter};
+use std::{char, ops::RangeBounds};
 
-use super::USetError;
+use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0 , inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -9,34 +9,51 @@ const BMP_MAX: u32 = 0xFFFF;
 ///
 /// Provides exposure to membership functions and constructors from serialized UnicodeSets
 /// and predefined ranges.
-/// Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
 #[derive(Debug, PartialEq)]
 pub struct UnicodeSet {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
     // https://doc.rust-lang.org/nightly/core/array/trait.FixedSizeArray.html
     // Allows for traits of fixed size arrays
+
+    // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     inv_list: Vec<u32>,
-}
-
-impl TryFrom<Vec<u32>> for UnicodeSet {
-    type Error = USetError;
-
-    fn try_from(set: Vec<u32>) -> Result<Self, Self::Error> {
-        if is_valid(&set) {
-            Ok(UnicodeSet { inv_list: set })
-        } else {
-            Err(USetError::InvalidSet(set))
-        }
-    }
+    size: usize,
 }
 
 impl UnicodeSet {
+    /// Returns UnicodeSet from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented by a `Vec<u32>` of codepoints.
+    ///
+    /// The inversion list must be of even length, sorted ascending non-overlapping,
+    /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
+    ///
+    /// Example:
+    ///
+    /// ```
+    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_unicodeset::UnicodeSetError;
+    /// let empty: Vec<u32> = vec![];
+    /// assert_eq!(UnicodeSet::from_inversion_list(empty.clone()), Err(UnicodeSetError::InvalidSet(empty.clone())))
+    /// ```
+    pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<UnicodeSet, UnicodeSetError> {
+        if is_valid(&inv_list) {
+            let size: usize = inv_list
+                .chunks(2)
+                .map(|end_points| end_points[1] - end_points[0])
+                .sum::<u32>() as usize;
+            Ok(UnicodeSet { inv_list, size })
+        } else {
+            Err(UnicodeSetError::InvalidSet(inv_list))
+        }
+    }
+
     /// Returns UnicodeSet spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> UnicodeSet {
         UnicodeSet {
             inv_list: vec![0, (char::MAX as u32) + 1],
+            size: (char::MAX as usize) + 1,
         }
     }
 
@@ -46,27 +63,8 @@ impl UnicodeSet {
     pub fn bmp() -> UnicodeSet {
         UnicodeSet {
             inv_list: vec![0, BMP_MAX + 1],
+            size: (BMP_MAX as usize) + 1,
         }
-    }
-
-    /// Yields an iterator of start and stop points of ranges in the UnicodeSet
-    ///
-    /// Example:
-    ///
-    /// ```
-    /// use icu_unicodeset::UnicodeSet;
-    /// use std::convert::TryFrom;
-    /// let example_list = vec![0, 10, 15, 20];
-    /// let example = UnicodeSet::try_from(example_list).unwrap();
-    /// let mut example_ranges = example.ranges();
-    /// assert_eq!(Some(&0), example_ranges.next());
-    /// assert_eq!(Some(&10), example_ranges.next());
-    /// assert_eq!(Some(&15), example_ranges.next());
-    /// assert_eq!(Some(&20), example_ranges.next());     
-    /// assert_eq!(None, example_ranges.next());
-    /// ```
-    pub fn ranges(&self) -> Iter<u32> {
-        self.inv_list.iter()
     }
 
     /// Yields an iterator going through the character set in the UnicodeSet
@@ -75,9 +73,8 @@ impl UnicodeSet {
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
-    /// use std::convert::TryFrom;
     /// let example_list = vec![65, 68, 69, 70];
-    /// let example = UnicodeSet::try_from(example_list).unwrap();
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// let mut example_iter = example.iter();
     /// assert_eq!(Some('A'), example_iter.next());
     /// assert_eq!(Some('B'), example_iter.next());
@@ -97,12 +94,7 @@ impl UnicodeSet {
         if self.is_empty() {
             return 0;
         }
-        let s: u32 = self
-            .inv_list
-            .chunks(2)
-            .map(|end_points| end_points[1] - end_points[0])
-            .sum();
-        s as usize
+        self.size
     }
 
     /// Returns whether or not the UnicodeSet is empty
@@ -112,7 +104,8 @@ impl UnicodeSet {
 
     /// Wrapper for contains
     ///
-    /// Returns an Option as to whether or not it is possible for the query to be contained
+    /// Returns an `Option` as to whether or not it is possible for the query to be contained.
+    /// The value in the `Option` is the start index of the range that contains the query.
     fn contains_query(&self, query: u32) -> Option<usize> {
         match self.inv_list.binary_search(&query) {
             Ok(pos) => {
@@ -141,9 +134,8 @@ impl UnicodeSet {
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
-    /// use std::convert::TryFrom;
     /// let example_list = vec![65, 67, 68, 69];
-    /// let example = UnicodeSet::try_from(example_list).unwrap();
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert!(example.contains('A'));
     /// assert!(!example.contains('C'));
     /// ```
@@ -161,9 +153,8 @@ impl UnicodeSet {
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
-    /// use std::convert::TryFrom;
     /// let example_list = vec![65, 67, 68, 69];
-    /// let example = UnicodeSet::try_from(example_list).unwrap();
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert!(example.contains_range(&('A'..'C')));
     /// assert!(example.contains_range(&('A'..='B')));
     /// assert!(!example.contains_range(&('A'..='C')));
@@ -176,10 +167,10 @@ impl UnicodeSet {
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
-    /// use std::{convert::TryFrom, char};
+    /// use std::char;
     /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
     /// let example_list = vec![0xD7FE, 0xD7FF, 0xE000, 0xE001];
-    /// let example = UnicodeSet::try_from(example_list).unwrap();
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert!(!example.contains_range(&(check)));
     /// ```
     pub fn contains_range(&self, range: &impl RangeBounds<char>) -> bool {
@@ -196,37 +187,46 @@ impl UnicodeSet {
 
 #[cfg(test)]
 mod tests {
-    use super::{USetError, UnicodeSet, BMP_MAX};
-    use std::{char, convert::TryFrom, vec::Vec};
+    use super::{UnicodeSet, UnicodeSetError, BMP_MAX};
+    use std::{char, vec::Vec};
 
     #[test]
     fn test_unicodeset_try_from_vec() {
         let ex = vec![2, 3, 4, 5];
-        let check = UnicodeSet::try_from(ex.clone()).unwrap().inv_list;
-        assert_eq!(ex, check);
+        let check = UnicodeSet::from_inversion_list(ex.clone()).unwrap();
+        assert_eq!(ex, check.inv_list);
+        assert_eq!(2, check.size());
     }
     #[test]
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![1, 1, 2, 3, 4];
-        let set = UnicodeSet::try_from(check.clone());
-        assert_eq!(Err(USetError::InvalidSet(check)), set);
+        let set = UnicodeSet::from_inversion_list(check.clone());
+        assert_eq!(Err(UnicodeSetError::InvalidSet(check)), set);
     }
     #[test]
     fn test_unicodeset_all() {
         let expected = vec![0, (char::MAX as u32) + 1];
-        assert_eq!(UnicodeSet::all().inv_list, expected);
+        assert_eq!(UnicodeSet::all().inv_list, expected.clone());
+        assert_eq!(
+            UnicodeSet::all().size(),
+            (expected[1] - expected[0]) as usize
+        )
     }
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0, BMP_MAX + 1];
-        assert_eq!(UnicodeSet::bmp().inv_list, expected);
+        assert_eq!(UnicodeSet::bmp().inv_list, expected.clone());
+        assert_eq!(
+            UnicodeSet::bmp().size(),
+            (expected[1] - expected[0]) as usize
+        );
     }
 
     // UnicodeSet membership functions
     #[test]
     fn test_unicodeset_contains() {
         let ex = vec![2, 5, 10, 15];
-        let check = UnicodeSet::try_from(ex).unwrap();
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(check.contains(2 as char));
         assert!(check.contains(4 as char));
         assert!(check.contains(10 as char));
@@ -235,7 +235,7 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_false() {
         let ex = vec![2, 5, 10, 15];
-        let check = UnicodeSet::try_from(ex).unwrap();
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(!check.contains(1 as char));
         assert!(!check.contains(5 as char));
         assert!(!check.contains(9 as char));
@@ -245,14 +245,14 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_range() {
         let ex = vec![65, 70, 75, 85];
-        let check = UnicodeSet::try_from(ex).unwrap();
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(check.contains_range(&('A'..='E'))); // 65 - 69
         assert!(check.contains_range(&('K'..'U'))); // 75 - 84
     }
     #[test]
     fn test_unicodeset_contains_range_false() {
         let ex = vec![65, 70, 75, 85];
-        let check = UnicodeSet::try_from(ex).unwrap();
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(!check.contains_range(&('!'..'A'))); // 33 - 65
         assert!(!check.contains_range(&('F'..'K'))); // 70 - 74
         assert!(!check.contains_range(&('U'..)));
@@ -266,19 +266,23 @@ mod tests {
     #[test]
     fn test_unicodeset_size() {
         let ex = vec![2, 5, 10, 15];
-        let check = UnicodeSet::try_from(ex).unwrap();
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert_eq!(8, check.size());
         let check = UnicodeSet::all();
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
         let check = UnicodeSet {
             inv_list: Vec::new(),
+            size: 0,
         };
         assert_eq!(check.size(), 0);
     }
     #[test]
     fn test_unicodeset_is_empty() {
-        let check = UnicodeSet { inv_list: vec![] };
+        let check = UnicodeSet {
+            inv_list: vec![],
+            size: 0,
+        };
         assert!(check.is_empty());
     }
     #[test]
@@ -287,20 +291,9 @@ mod tests {
         assert!(!check.is_empty());
     }
     #[test]
-    fn test_unicodeset_ranges() {
-        let ex = vec![65, 70, 75, 85];
-        let check = UnicodeSet::try_from(ex).unwrap();
-        let mut iter = check.ranges();
-        assert_eq!(iter.next(), Some(&65));
-        assert_eq!(iter.next(), Some(&70));
-        assert_eq!(iter.next(), Some(&75));
-        assert_eq!(iter.next(), Some(&85));
-        assert_eq!(iter.next(), None);
-    }
-    #[test]
     fn test_unicodeset_iter() {
         let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
-        let check = UnicodeSet::try_from(ex).unwrap();
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
         let mut iter = check.iter();
         assert_eq!(Some('A'), iter.next());
         assert_eq!(Some('B'), iter.next());
