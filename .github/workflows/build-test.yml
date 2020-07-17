@@ -72,9 +72,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Clean
-      run: cargo clean
-
     # Linting job > Install and run clippy steps
 
     - name: Install clippy
