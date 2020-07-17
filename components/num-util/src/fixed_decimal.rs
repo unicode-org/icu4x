@@ -24,7 +24,7 @@ pub enum Error {
     /// use icu_num_util::fixed_decimal::Error;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
-    /// assert_eq!(Error::Limit, dec1.adjust_magnitude(std::i16::MAX).unwrap_err());
+    /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());
     /// ```
     Limit,
 }
@@ -34,7 +34,7 @@ pub enum Error {
 /// zeros, used for formatting and plural selection.
 ///
 /// You can create a FixedDecimal from a standard integer type. To represent fraction digits,
-/// call `.adjust_magnitude()` after creating your FixedDecimal.
+/// call `.multiply_pow10()` after creating your FixedDecimal.
 ///
 /// # Examples
 ///
@@ -44,7 +44,7 @@ pub enum Error {
 /// let mut dec = FixedDecimal::from(250);
 /// assert_eq!("250", dec.to_string());
 ///
-/// dec.adjust_magnitude(-2);
+/// dec.multiply_pow10(-2);
 /// assert_eq!("2.50", dec.to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
@@ -259,10 +259,10 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.adjust_magnitude(3).expect("Bounds are small");
+    /// dec.multiply_pow10(3).expect("Bounds are small");
     /// assert_eq!("42000", dec.to_string());
     /// ```
-    pub fn adjust_magnitude(&mut self, delta: i16) -> Result<(), Error> {
+    pub fn multiply_pow10(&mut self, delta: i16) -> Result<(), Error> {
         if delta > 0 {
             self.upper_magnitude = self
                 .upper_magnitude
@@ -299,11 +299,11 @@ impl FixedDecimal {
     /// ```
     /// use icu_num_util::FixedDecimal;
     ///
-    /// let dec = FixedDecimal::from(42).with_adjusted_magnitude(3).expect("Bounds are small");
+    /// let dec = FixedDecimal::from(42).multiplied_pow10(3).expect("Bounds are small");
     /// assert_eq!("42000", dec.to_string());
     /// ```
-    pub fn with_adjusted_magnitude(mut self, delta: i16) -> Result<Self, Error> {
-        match self.adjust_magnitude(delta) {
+    pub fn multiplied_pow10(mut self, delta: i16) -> Result<Self, Error> {
+        match self.multiply_pow10(delta) {
             Ok(()) => Ok(self),
             Err(err) => Err(err),
         }
@@ -468,7 +468,7 @@ fn test_basic() {
     ];
     for cas in &cases {
         let mut dec: FixedDecimal = cas.input.into();
-        dec.adjust_magnitude(cas.delta).unwrap();
+        dec.multiply_pow10(cas.delta).unwrap();
         assert_eq!(cas.expected, dec.to_string(), "{:?}", cas);
     }
 }
@@ -493,10 +493,10 @@ fn test_ui128_limits() {
 fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
-    dec.adjust_magnitude(32763).unwrap();
+    dec.multiply_pow10(32763).unwrap();
     assert_eq!(dec.upper_magnitude, std::i16::MAX);
     let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.adjust_magnitude(1).unwrap_err());
+    assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
 }
 
@@ -504,9 +504,9 @@ fn test_upper_magnitude_bounds() {
 fn test_lower_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.lower_magnitude, 0);
-    dec.adjust_magnitude(-32768).unwrap();
+    dec.multiply_pow10(-32768).unwrap();
     assert_eq!(dec.lower_magnitude, std::i16::MIN);
     let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.adjust_magnitude(-1).unwrap_err());
+    assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
 }
