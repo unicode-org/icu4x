@@ -8,27 +8,10 @@ use std::ops::RangeInclusive;
 use static_assertions::const_assert;
 
 use super::uint_iterator::IntIterator;
+use crate::Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
 const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
-
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
-    /// magnitude of the most significant digit is std::i16::MAX, and the lowest magnitude of the
-    /// least significant digit is std::i16::MIN.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_num_util::FixedDecimal;
-    /// use icu_num_util::fixed_decimal::Error;
-    ///
-    /// let mut dec1 = FixedDecimal::from(123);
-    /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());
-    /// ```
-    Limit,
-}
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
@@ -349,7 +332,7 @@ impl FixedDecimal {
     /// use icu_num_util::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
-    /// let mut result = String::new();
+    /// let mut result = String::with_capacity(dec.write_len());
     /// dec.write_to(&mut result).expect("write_to(String) should not fail");
     /// assert_eq!("-50.00", result);
     /// assert_eq!(6, dec.write_len());
