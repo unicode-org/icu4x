@@ -9,6 +9,9 @@ use std::any::TypeId;
 // TODO: Automatically delegate from subcategory to type object
 
 pub(crate) fn get_type_id(data_key: &crate::DataKey) -> Option<TypeId> {
+    if data_key.category != crate::Category::Decimal {
+        return None;
+    }
     match data_key.sub_category.as_str() {
         "symbols" => match data_key.version {
             1 => Some(TypeId::of::<SymbolsV1>()),

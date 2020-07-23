@@ -3,6 +3,7 @@
 extern crate no_std_compat as std;
 
 pub mod decimal;
+pub mod plurals;
 
 mod helpers;
 
@@ -26,6 +27,7 @@ use icu_locale::LanguageIdentifier;
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Category {
     Decimal,
+    Plurals,
     PrivateUse(TinyStr16),
 }
 
@@ -33,6 +35,7 @@ impl Display for Category {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Category::Decimal => f.write_str("decimal")?,
+            Category::Plurals => f.write_str("plurals")?,
             Category::PrivateUse(id) => {
                 f.write_str("x-")?;
                 f.write_str(id)?;
@@ -67,6 +70,7 @@ impl DataKey {
     pub fn get_type_id(&self) -> Option<TypeId> {
         match self.category {
             Category::Decimal => decimal::get_type_id(self),
+            Category::Plurals => plurals::get_type_id(self),
             Category::PrivateUse(_) => None,
         }
     }
@@ -201,6 +205,7 @@ pub enum ResponseError {
         actual: TypeId,
         expected: Option<TypeId>,
     },
+    UnavailableEntryError,
     ResourceError(Box<dyn Error>),
 }
 
@@ -231,6 +236,12 @@ impl Error for ResponseError {
 // #[async_trait]
 pub trait DataProvider<'a, 'd> {
     fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError>;
+}
+
+/// A data provider that can iterate over available DataEntry instances.
+pub trait IterableDataProvider<'a> {
+    type Iter: Iterator<Item=DataEntry>;
+    fn iter_for_key(&'a self, data_key: &DataKey) -> Result<Self::Iter, ResponseError>;
 }
 
 /// A data provider that validates the type IDs returned by another data provider.
