@@ -1,6 +1,7 @@
 use std::borrow::Borrow;
 use std::borrow::Cow;
 use std::fs;
+use std::convert::TryFrom;
 
 use icu_cldr_json_data_provider::CldrPluralsDataProvider;
 use icu_data_provider::plurals::PluralRuleStringsV1;
@@ -9,7 +10,7 @@ use icu_data_provider::*;
 #[test]
 fn test_basic() {
     let json_str = fs::read_to_string("tests/testdata/plurals.json").unwrap();
-    let provider = CldrPluralsDataProvider::from_str(&json_str).unwrap();
+    let provider = CldrPluralsDataProvider::try_from(json_str.as_str()).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider

@@ -209,6 +209,18 @@ pub enum ResponseError {
     ResourceError(Box<dyn Error>),
 }
 
+impl From<&DataKey> for ResponseError {
+    fn from(data_key: &DataKey) -> Self {
+        ResponseError::UnsupportedDataKeyError(*data_key)
+    }
+}
+
+impl From<&Category> for ResponseError {
+    fn from(category: &Category) -> Self {
+        ResponseError::UnsupportedCategoryError(*category)
+    }
+}
+
 impl Display for ResponseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // TODO: should the Error Display be different from Debug?
