@@ -9,7 +9,7 @@ use icu_data_provider::*;
 #[test]
 fn test_basic() {
     let json_str = fs::read_to_string("tests/testdata/plurals.json").unwrap();
-    let provider: CldrPluralsDataProvider = json_str.parse().unwrap();
+    let provider = CldrPluralsDataProvider::from_str(&json_str).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider

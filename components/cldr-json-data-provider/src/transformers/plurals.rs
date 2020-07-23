@@ -17,29 +17,19 @@ pub struct LanguagePluralsPair {
 }
 
 #[derive(PartialEq, Debug)]
-pub struct CldrPluralsDataProvider {
-    cardinal: Vec<LanguagePluralsPair>,
-    ordinal: Vec<LanguagePluralsPair>,
+pub struct CldrPluralsDataProvider<'d> {
+    resource: Resource<'d>
 }
 
-impl FromStr for CldrPluralsDataProvider {
+impl<'d> CldrPluralsDataProvider<'d> {
     // type Err = json::Error;
-    type Err = serde_json::error::Error;
+    // type Err = serde_json::error::Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    pub fn from_str(s: &'d str) -> Result<Self, serde_json::error::Error> {
         let obj: Resource = serde_json::from_str(s)?;
-        let mut result = CldrPluralsDataProvider {
-            cardinal: Vec::new(),
-            ordinal: Vec::new(),
+        let result = CldrPluralsDataProvider {
+            resource: obj
         };
-        result.cardinal = obj.supplemental.plurals_type_cardinal.unwrap().0.iter().map(|(l, r)| {
-            let l = if l == &"root" { "und" } else { l };
-            LanguagePluralsPair {
-                langid: l.parse().unwrap(),
-                rules: r.into()
-            }
-        }).collect();
-        // TODO: Ordinal
         Ok(result)
     }
 
@@ -89,8 +79,8 @@ impl FromStr for CldrPluralsDataProvider {
     */
 }
 
-impl<'a> DataProvider<'a, 'a> for CldrPluralsDataProvider {
-    fn load(&'a self, req: &Request) -> Result<Response<'a>, ResponseError> {
+impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
+    fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError> {
         if req.data_key.category != Category::Plurals {
             return Err(ResponseError::UnsupportedCategoryError(
                 req.data_key.category,
@@ -99,45 +89,62 @@ impl<'a> DataProvider<'a, 'a> for CldrPluralsDataProvider {
         if req.data_key.version != 1 {
             return Err(ResponseError::UnsupportedDataKeyError(req.data_key));
         }
-        let list = match req.data_key.sub_category.as_str() {
-            "cardinal" => &self.cardinal,
-            "ordinal" => &self.ordinal,
+        let list: &Rules<'d> = match match req.data_key.sub_category.as_str() {
+            "cardinal" => &self.resource.supplemental.plurals_type_cardinal,
+            "ordinal" => &self.resource.supplemental.plurals_type_ordinal,
             _ => return Err(ResponseError::UnsupportedDataKeyError(req.data_key)),
+        } {
+            Some(r) => r,
+            None => return Err(ResponseError::UnavailableEntryError),
         };
         // TODO: Implement language fallback
-        let pair = match list.binary_search_by_key(&&req.data_entry.langid, |pair| &pair.langid) {
-            Ok(idx) => &list[idx],
+        // TODO: Make this a real type instead of string
+        let langid_str = req.data_entry.langid.to_string();
+        let (_, r) = match list.0.binary_search_by_key(&&langid_str.as_str(), |(l, _)| l) {
+            Ok(idx) => &list.0[idx],
             Err(_) => return Err(ResponseError::UnavailableEntryError),
         };
         Ok(ResponseBuilder {
-            data_langid: pair.langid.clone(),
+            data_langid: req.data_entry.langid.clone(),
         }
-        .with_borrowed_payload(&pair.rules))
+        .with_owned_payload(PluralRuleStringsV1::from(r)))
     }
 }
 
-impl<'a> IterableDataProvider<'a> for CldrPluralsDataProvider {
+impl<'a> IterableDataProvider<'a> for CldrPluralsDataProvider<'a> {
     // TODO: The following works in nightly:
-    // type Iter = impl Iterator<Item=DataEntry>;
-    type Iter = std::iter::Map<
-        std::slice::Iter<'a, LanguagePluralsPair>,
-        fn(&LanguagePluralsPair) -> DataEntry,
-    >;
+    type Iter = impl Iterator<Item=DataEntry>;
+    // type Iter = std::iter::Map<
+    //     std::slice::Iter<'a, (&'a str, LocalePluralRules<'a>)>,
+    //     fn(&(&'a str, LocalePluralRules<'a>)) -> DataEntry,
+    // >;
 
     fn iter_for_key(&'a self, data_key: &DataKey) -> Result<Self::Iter, ResponseError> {
         if data_key.category != Category::Plurals {
             return Err(ResponseError::UnsupportedCategoryError(data_key.category));
         }
-        fn convert(pair: &LanguagePluralsPair) -> DataEntry {
+        fn convert(&(l, _) : &(&str, LocalePluralRules)) -> DataEntry {
             DataEntry {
                 variant: None,
-                langid: pair.langid.clone(),
+                langid: l.parse().unwrap(),
             }
         }
         match data_key.sub_category.as_str() {
-            "cardinal" => Ok(self.cardinal.iter().map(convert)),
-            "ordinal" => Ok(self.ordinal.iter().map(convert)),
+            "cardinal" => Ok(self.resource.supplemental.plurals_type_cardinal.as_ref().unwrap().0.iter().map(convert)),
+            // "ordinal" => Ok(self.ordinal.iter().map(convert)),
             _ => Err(ResponseError::UnsupportedDataKeyError(*data_key)),
+        }
+    }
+}
+
+impl<'a> From<&LocalePluralRules<'a>> for PluralRuleStringsV1 {
+    fn from(other: &LocalePluralRules) -> PluralRuleStringsV1 {
+        PluralRuleStringsV1 {
+            zero: other.zero.map(|s| Cow::Owned(s.to_string())),
+            one: other.one.map(|s| Cow::Owned(s.to_string())),
+            two: other.two.map(|s| Cow::Owned(s.to_string())),
+            few: other.few.map(|s| Cow::Owned(s.to_string())),
+            many: other.many.map(|s| Cow::Owned(s.to_string())),
         }
     }
 }
@@ -154,18 +161,6 @@ pub struct LocalePluralRules<'s> {
     pub few: Option<&'s str>,
     #[serde(rename = "pluralRule-count-many")]
     pub many: Option<&'s str>,
-}
-
-impl<'a> From<&LocalePluralRules<'a>> for PluralRuleStringsV1 {
-    fn from(other: &LocalePluralRules) -> PluralRuleStringsV1 {
-        PluralRuleStringsV1 {
-            zero: other.zero.map(|s| Cow::Owned(s.to_string())),
-            one: other.one.map(|s| Cow::Owned(s.to_string())),
-            two: other.two.map(|s| Cow::Owned(s.to_string())),
-            few: other.few.map(|s| Cow::Owned(s.to_string())),
-            many: other.many.map(|s| Cow::Owned(s.to_string())),
-        }
-    }
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
