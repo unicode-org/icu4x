@@ -6,6 +6,8 @@ use json;
 use icu_data_provider::plurals::PluralRuleStringsV1;
 use icu_data_provider::*;
 use icu_locale::LanguageIdentifier;
+use serde::Deserialize;
+use serde_json;
 
 // TODO: Make this non-pub
 #[derive(PartialEq, Debug)]
@@ -21,8 +23,27 @@ pub struct CldrPluralsDataProvider {
 }
 
 impl FromStr for CldrPluralsDataProvider {
-    type Err = json::Error;
+    // type Err = json::Error;
+    type Err = serde_json::error::Error;
 
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let obj: Resource = serde_json::from_str(s)?;
+        let mut result = CldrPluralsDataProvider {
+            cardinal: Vec::new(),
+            ordinal: Vec::new(),
+        };
+        result.cardinal = obj.supplemental.plurals_type_cardinal.unwrap().0.iter().map(|(l, r)| {
+            let l = if l == &"root" { "und" } else { l };
+            LanguagePluralsPair {
+                langid: l.parse().unwrap(),
+                rules: r.into()
+            }
+        }).collect();
+        // TODO: Ordinal
+        Ok(result)
+    }
+
+    /*
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let obj = json::parse(s)?;
         let obj = &obj["supplemental"];
@@ -65,6 +86,7 @@ impl FromStr for CldrPluralsDataProvider {
             .collect();
         return Ok(result);
     }
+    */
 }
 
 impl<'a> DataProvider<'a, 'a> for CldrPluralsDataProvider {
@@ -118,4 +140,53 @@ impl<'a> IterableDataProvider<'a> for CldrPluralsDataProvider {
             _ => Err(ResponseError::UnsupportedDataKeyError(*data_key)),
         }
     }
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct LocalePluralRules<'s> {
+    #[serde(rename = "pluralRule-count-zero")]
+    pub zero: Option<&'s str>,
+    #[serde(rename = "pluralRule-count-one")]
+    pub one: Option<&'s str>,
+    #[serde(rename = "pluralRule-count-two")]
+    pub two: Option<&'s str>,
+    #[serde(rename = "pluralRule-count-few")]
+    pub few: Option<&'s str>,
+    #[serde(rename = "pluralRule-count-many")]
+    pub many: Option<&'s str>,
+}
+
+impl<'a> From<&LocalePluralRules<'a>> for PluralRuleStringsV1 {
+    fn from(other: &LocalePluralRules) -> PluralRuleStringsV1 {
+        PluralRuleStringsV1 {
+            zero: other.zero.map(|s| Cow::Owned(s.to_string())),
+            one: other.one.map(|s| Cow::Owned(s.to_string())),
+            two: other.two.map(|s| Cow::Owned(s.to_string())),
+            few: other.few.map(|s| Cow::Owned(s.to_string())),
+            many: other.many.map(|s| Cow::Owned(s.to_string())),
+        }
+    }
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Rules<'s>(
+    #[serde(with = "tuple_vec_map")]
+    #[serde(borrow)]
+    pub Vec<(&'s str, LocalePluralRules<'s>)>,
+);
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Supplemental<'s> {
+    #[serde(rename = "plurals-type-cardinal")]
+    #[serde(borrow)]
+    pub plurals_type_cardinal: Option<Rules<'s>>,
+    #[serde(rename = "plurals-type-ordinal")]
+    #[serde(borrow)]
+    pub plurals_type_ordinal: Option<Rules<'s>>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Resource<'s> {
+    #[serde(borrow)]
+    pub supplemental: Supplemental<'s>,
 }

@@ -18,3 +18,6 @@ include = [
 icu-data-provider = { path = "../data-provider" }
 icu-locale = { path = "../locale" }
 json = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde-tuple-vec-map = "1.0"
