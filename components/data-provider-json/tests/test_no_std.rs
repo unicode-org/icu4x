@@ -26,10 +26,15 @@ fn get_provider() -> JsonDataProvider {
 fn get_response(provider: &JsonDataProvider) -> datap::Response {
     provider
         .load(&datap::Request {
-            langid: "en-US".parse().unwrap(),
-            category: datap::Category::Decimal,
-            key: datap::decimal::Key::SymbolsV1.into(),
-            payload: None,
+            data_key: datap::DataKey {
+                category: datap::Category::Decimal,
+                sub_category: "symbols".parse().unwrap(),
+                version: 1,
+            },
+            data_entry: datap::DataEntry {
+                variant: None,
+                langid: "en-US".parse().unwrap(),
+            },
         })
         .unwrap()
 }

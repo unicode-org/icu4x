@@ -11,12 +11,20 @@ fn test_read_json() {
     let reader = BufReader::new(file);
     let json_data_provider = JsonDataProvider::from_reader(reader).unwrap();
     println!("{:?}", json_data_provider); // Coverage for Debug trait
-    let response = json_data_provider
+    let validation_provider = datap::DataProviderValidator {
+        data_provider: &json_data_provider
+    };
+    let response = validation_provider
         .load(&datap::Request {
-            langid: "en-US".parse().unwrap(),
-            category: datap::Category::Decimal,
-            key: datap::decimal::Key::SymbolsV1.into(),
-            payload: None,
+            data_key: datap::DataKey {
+                category: datap::Category::Decimal,
+                sub_category: "symbols".parse().unwrap(),
+                version: 1,
+            },
+            data_entry: datap::DataEntry {
+                variant: None,
+                langid: "en-US".parse().unwrap(),
+            },
         })
         .unwrap();
     let decimal_data: &datap::decimal::SymbolsV1 = response.borrow_payload().unwrap();

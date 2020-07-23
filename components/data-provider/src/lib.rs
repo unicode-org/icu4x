@@ -17,47 +17,76 @@ use std::error::Error;
 use std::fmt::{self, Debug, Display};
 use std::prelude::v1::*;
 
+use tinystr::TinyStr16;
+
 use icu_locale::LanguageIdentifier;
 
 /// A top-level collection of related data keys.
+#[non_exhaustive]
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Category {
-    Undefined,
     Decimal,
-    PrivateUse,
+    PrivateUse(TinyStr16),
 }
 
 impl Display for Category {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Debug::fmt(self, f)
+        match self {
+            Category::Decimal => f.write_str("decimal")?,
+            Category::PrivateUse(id) => {
+                f.write_str("x-")?;
+                f.write_str(id)?;
+            }
+        }
+        return Ok(());
     }
 }
 
-/// A specific key within a category.
+/// A category, subcategory, and version, used for requesting data from a DataProvider.
+///
+/// All of the fields in a DataKey should be resolved at build time.
 #[derive(PartialEq, Copy, Clone, Debug)]
-pub enum Key {
-    Undefined,
-    Decimal(decimal::Key),
-    PrivateUse(u32),
+pub struct DataKey {
+    pub category: Category,
+    pub sub_category: TinyStr16,
+    pub version: u32,
 }
 
-impl Display for Key {
+impl Display for DataKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Debug::fmt(self, f)
+        // TODO: Evaluate the code size of this implementation
+        write!(
+            f,
+            "{}/{}/v{}",
+            self.category, self.sub_category, self.version
+        )
     }
+}
+
+impl DataKey {
+    pub fn get_type_id(&self) -> Option<TypeId> {
+        match self.category {
+            Category::Decimal => decimal::get_type_id(self),
+            Category::PrivateUse(_) => None,
+        }
+    }
+}
+
+/// A variant and language identifier, used for requesting data from a DataProvider.
+/// 
+/// All of the fields in a DataEntry should be resolved at runtime.
+#[derive(PartialEq, Clone, Debug)]
+pub struct DataEntry {
+    // TODO: Consider making this a list of variants
+    pub variant: Option<Cow<'static, str>>,
+    pub langid: LanguageIdentifier,
 }
 
 /// A struct to request a certain hunk of data from a data provider.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct Request {
-    pub langid: LanguageIdentifier,
-    pub category: Category,
-    pub key: Key,
-
-    // For now, the request payload is a string. If a more expressive type is needed in the
-    // future, it should implement PartialEq and Clone. Consider using a concrete type, rather
-    // than a detour through Any (like in Response), which complicates the code.
-    pub payload: Option<Cow<'static, str>>,
+    pub data_key: DataKey,
+    pub data_entry: DataEntry,
 }
 
 /// A response object containing a data hunk ("payload").
@@ -65,9 +94,11 @@ pub struct Request {
 pub struct Response<'d> {
     pub data_langid: LanguageIdentifier,
     payload: Cow<'d, dyn CloneableAny>,
+    // source: Cow<'static, str>,
 }
 
-#[derive(Debug)]
+#[non_exhaustive]
+#[derive(PartialEq, Debug)]
 pub enum PayloadError {
     /// The type argument does not match the payload. The actual TypeId is provided.
     TypeMismatchError(TypeId),
@@ -126,6 +157,12 @@ impl<'d> Response<'d> {
             },
         }
     }
+
+    /// Get the TypeId of the payload.
+    pub fn get_payload_type_id(&self) -> TypeId {
+        let borrowed: &dyn CloneableAny = self.payload.borrow();
+        borrowed.as_any().type_id()
+    }
 }
 
 /// Builder class used to construct a Response.
@@ -155,10 +192,15 @@ impl ResponseBuilder {
     }
 }
 
+#[non_exhaustive]
 #[derive(Debug)]
 pub enum ResponseError {
     UnsupportedCategoryError(Category),
-    UnsupportedKeyError(Category, Key),
+    UnsupportedDataKeyError(DataKey),
+    InvalidTypeError {
+        actual: TypeId,
+        expected: Option<TypeId>,
+    },
     ResourceError(Box<dyn Error>),
 }
 
@@ -178,7 +220,7 @@ impl Error for ResponseError {
     }
 }
 
-/// An abstract data providewr that takes a request object and returns a response with a payload.
+/// An abstract data provider that takes a request object and returns a response with a payload.
 /// Lifetimes:
 /// - 'a = lifetime of the DataProvider object
 /// - 'd = lifetime of the borrowed payload
@@ -189,4 +231,36 @@ impl Error for ResponseError {
 // #[async_trait]
 pub trait DataProvider<'a, 'd> {
     fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError>;
+}
+
+/// A data provider that validates the type IDs returned by another data provider.
+pub struct DataProviderValidator<'a, 'b, 'd> {
+    pub data_provider: &'b dyn DataProvider<'a, 'd>,
+}
+
+impl<'a, 'b, 'd> DataProvider<'a, 'd> for DataProviderValidator<'a, 'b, 'd> {
+    fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError> {
+        match self.data_provider.load(req) {
+            Ok(res) => {
+                let actual_type_id = res.get_payload_type_id();
+                match req.data_key.get_type_id() {
+                    Some(expected_type_id) => {
+                        if expected_type_id == actual_type_id {
+                            Ok(res)
+                        } else {
+                            Err(ResponseError::InvalidTypeError {
+                                actual: actual_type_id,
+                                expected: Some(expected_type_id),
+                            })
+                        }
+                    }
+                    None => Err(ResponseError::InvalidTypeError {
+                        actual: actual_type_id,
+                        expected: None,
+                    }),
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
 }
