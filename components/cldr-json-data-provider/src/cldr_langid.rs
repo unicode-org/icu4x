@@ -27,7 +27,7 @@ impl<'de> Deserialize<'de> for CldrLanguage {
                     Ok(CldrLanguage("und".parse().unwrap()))
                 } else {
                     s.parse::<LanguageIdentifier>()
-                        .map(|v| CldrLanguage(v))
+                        .map(CldrLanguage)
                         .map_err(serde::de::Error::custom)
                 }
             }

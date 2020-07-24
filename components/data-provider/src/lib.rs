@@ -41,7 +41,7 @@ impl Display for Category {
                 f.write_str(id)?;
             }
         }
-        return Ok(());
+        Ok(())
     }
 }
 

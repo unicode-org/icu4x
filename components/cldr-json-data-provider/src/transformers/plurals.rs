@@ -6,7 +6,6 @@ use icu_data_provider::plurals::PluralRuleStringsV1;
 use icu_data_provider::*;
 use icu_locale::LanguageIdentifier;
 use serde::Deserialize;
-use serde_json;
 
 // TODO: Make this non-pub
 #[derive(PartialEq, Debug)]
@@ -40,7 +39,7 @@ impl<'d> CldrPluralsDataProvider<'d> {
         match data_key.sub_category.as_str() {
             "cardinal" => self.resource.supplemental.plurals_type_cardinal.as_ref(),
             "ordinal" => self.resource.supplemental.plurals_type_ordinal.as_ref(),
-            _ => return Err(ResponseError::UnsupportedDataKeyError(*data_key)),
+            _ => return Err(data_key.into()),
         }
         .ok_or(ResponseError::UnavailableEntryError)
     }
@@ -48,7 +47,7 @@ impl<'d> CldrPluralsDataProvider<'d> {
 
 impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
     fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError> {
-        let list: &Rules<'d> = self.get_rules_for(&req.data_key)?;
+        let list = self.get_rules_for(&req.data_key)?;
         // TODO: Implement language fallback
         // TODO: Avoid the clone.
         let cldr_langid = CldrLanguage(req.data_entry.langid.clone());
@@ -66,13 +65,14 @@ impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
 impl<'d> IterableDataProvider<'d> for CldrPluralsDataProvider<'d> {
     // TODO: The following works in nightly with type_alias_impl_trait:
     // type Iter = impl Iterator<Item = DataEntry>;
+    #[allow(clippy::type_complexity)]
     type Iter = std::iter::Map<
         std::slice::Iter<'d, (CldrLanguage, LocalePluralRules<'d>)>,
         fn(&(CldrLanguage, LocalePluralRules<'d>)) -> DataEntry,
     >;
 
     fn iter_for_key(&'d self, data_key: &DataKey) -> Result<Self::Iter, ResponseError> {
-        let list: &Rules<'d> = self.get_rules_for(data_key)?;
+        let list = self.get_rules_for(data_key)?;
         Ok(list.0.iter().map(|(l, _)| DataEntry {
             variant: None,
             // TODO: Avoid the clone
