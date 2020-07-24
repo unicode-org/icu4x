@@ -1,7 +1,7 @@
 use std::borrow::Borrow;
 use std::borrow::Cow;
-use std::fs;
 use std::convert::TryFrom;
+use std::fs;
 
 use icu_cldr_json_data_provider::CldrPluralsDataProvider;
 use icu_data_provider::plurals::PluralRuleStringsV1;

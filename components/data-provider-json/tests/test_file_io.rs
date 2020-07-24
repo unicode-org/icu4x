@@ -12,7 +12,7 @@ fn test_read_json() {
     let json_data_provider = JsonDataProvider::from_reader(reader).unwrap();
     println!("{:?}", json_data_provider); // Coverage for Debug trait
     let validation_provider = datap::DataProviderValidator {
-        data_provider: &json_data_provider
+        data_provider: &json_data_provider,
     };
     let response = validation_provider
         .load(&datap::Request {

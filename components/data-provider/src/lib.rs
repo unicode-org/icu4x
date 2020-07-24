@@ -77,7 +77,7 @@ impl DataKey {
 }
 
 /// A variant and language identifier, used for requesting data from a DataProvider.
-/// 
+///
 /// All of the fields in a DataEntry should be resolved at runtime.
 #[derive(PartialEq, Clone, Debug)]
 pub struct DataEntry {
@@ -251,9 +251,13 @@ pub trait DataProvider<'a, 'd> {
 }
 
 /// A data provider that can iterate over available DataEntry instances.
-pub trait IterableDataProvider<'a> {
-    type Iter: Iterator<Item=DataEntry>;
-    fn iter_for_key(&'a self, data_key: &DataKey) -> Result<Self::Iter, ResponseError>;
+pub trait IterableDataProvider {
+    // Note: This trait could have an associated type for the Iterator, but associated types
+    // prevent the trait from being used as a type object. Instead, we return a Boxed Iterator.
+    fn iter_for_key(
+        &self,
+        data_key: &DataKey,
+    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, ResponseError>;
 }
 
 /// A data provider that validates the type IDs returned by another data provider.
