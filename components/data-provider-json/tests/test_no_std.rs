@@ -5,6 +5,7 @@ use std::prelude::v1::*;
 use std::str::FromStr;
 
 use icu_data_provider as datap;
+use icu_data_provider::icu_data_key;
 use icu_data_provider::DataProvider;
 use icu_data_provider_json::JsonDataProvider;
 
@@ -26,11 +27,7 @@ fn get_provider() -> JsonDataProvider {
 fn get_response(provider: &JsonDataProvider) -> datap::Response {
     provider
         .load(&datap::Request {
-            data_key: datap::DataKey {
-                category: datap::Category::Decimal,
-                sub_category: "symbols".parse().unwrap(),
-                version: 1,
-            },
+            data_key: icu_data_key!(decimal: symbols@1),
             data_entry: datap::DataEntry {
                 variant: None,
                 langid: "en-US".parse().unwrap(),

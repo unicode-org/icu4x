@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::BufReader;
 
 use icu_data_provider as datap;
+use icu_data_provider::icu_data_key;
 use icu_data_provider::DataProvider;
 use icu_data_provider_json::JsonDataProvider;
 
@@ -16,11 +17,7 @@ fn test_read_json() {
     };
     let response = validation_provider
         .load(&datap::Request {
-            data_key: datap::DataKey {
-                category: datap::Category::Decimal,
-                sub_category: "symbols".parse().unwrap(),
-                version: 1,
-            },
+            data_key: icu_data_key!(decimal: symbols@1),
             data_entry: datap::DataEntry {
                 variant: None,
                 langid: "en-US".parse().unwrap(),

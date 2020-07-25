@@ -45,8 +45,6 @@ impl<'a, 'd> DataExporter<'a, 'd> {
                 data_entry: data_entry.clone(),
             })?;
             let payload = response.borrow_payload::<T>()?;
-            // let mut serializer = (self.serializer_factory)(io::stdout(), &mut self.serializer_box);
-            // payload.erased_serialize(&mut serializer)?;
             (self.serialize_fn)(io::stdout(), payload)?;
         }
         Ok(())
