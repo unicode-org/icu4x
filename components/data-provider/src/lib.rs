@@ -315,8 +315,8 @@ pub trait DataProvider<'a, 'd> {
     fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError>;
 }
 
-/// A data provider that can iterate over available DataEntry instances.
-pub trait IterableDataProvider {
+/// An object that exposes an iterable list of DataEntry instances.
+pub trait DataEntryCollection {
     // Note: This trait could have an associated type for the Iterator, but associated types
     // prevent the trait from being used as a type object. Instead, we return a Boxed Iterator.
     fn iter_for_key(
@@ -325,8 +325,13 @@ pub trait IterableDataProvider {
     ) -> Result<Box<dyn Iterator<Item = DataEntry>>, ResponseError>;
 }
 
-// TODO: Give this a better name
-pub trait Combined<'a, 'd>: DataProvider<'a, 'd> + IterableDataProvider {}
+/// A data provider that also exposes an iterable list of DataEntry instances.
+pub trait IterableDataProvider<'a, 'd>: DataProvider<'a, 'd> + DataEntryCollection {}
+
+impl<'a, 'd, T> IterableDataProvider<'a, 'd> for T where
+    T: DataProvider<'a, 'd> + DataEntryCollection
+{
+}
 
 /// A data provider that validates the type IDs returned by another data provider.
 pub struct DataProviderValidator<'a, 'b, 'd> {

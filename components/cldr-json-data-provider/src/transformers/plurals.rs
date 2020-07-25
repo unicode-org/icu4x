@@ -76,7 +76,7 @@ impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
     }
 }
 
-impl<'d> IterableDataProvider for CldrPluralsDataProvider<'d> {
+impl<'d> DataEntryCollection for CldrPluralsDataProvider<'d> {
     fn iter_for_key(
         &self,
         data_key: &DataKey,
@@ -94,8 +94,6 @@ impl<'d> IterableDataProvider for CldrPluralsDataProvider<'d> {
         Ok(Box::new(list.into_iter()))
     }
 }
-
-impl<'a, 'd> Combined<'a, 'd> for CldrPluralsDataProvider<'d> {}
 
 impl<'d> From<&LocalePluralRules<'d>> for PluralRuleStringsV1 {
     fn from(other: &LocalePluralRules) -> PluralRuleStringsV1 {
