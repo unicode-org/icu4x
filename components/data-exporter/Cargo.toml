@@ -18,7 +18,7 @@ include = [
 icu-data-provider = { path = "../data-provider" }
 vfs = "0.2"
 erased-serde = "0.3"
+serde_json = "1.0"
 
 [dev-dependencies]
 icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
-serde_json = "1.0"
