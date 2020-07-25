@@ -19,7 +19,7 @@ impl ToOwned for dyn CloneableAny {
 }
 
 // Implement CloneableAny for all 'static types implementing Clone.
-impl<S: 'static + Clone + Debug> CloneableAny for S {
+impl<T: 'static + Clone + Debug> CloneableAny for T {
     fn clone_into_box(&self) -> Box<dyn CloneableAny> {
         Box::new(self.clone())
     }

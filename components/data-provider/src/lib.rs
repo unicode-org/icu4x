@@ -260,6 +260,9 @@ pub trait IterableDataProvider {
     ) -> Result<Box<dyn Iterator<Item = DataEntry>>, ResponseError>;
 }
 
+// TODO: Give this a better name
+pub trait Combined<'a, 'd>: DataProvider<'a, 'd> + IterableDataProvider {}
+
 /// A data provider that validates the type IDs returned by another data provider.
 pub struct DataProviderValidator<'a, 'b, 'd> {
     pub data_provider: &'b dyn DataProvider<'a, 'd>,

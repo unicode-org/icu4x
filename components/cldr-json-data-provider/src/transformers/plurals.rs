@@ -81,6 +81,8 @@ impl<'d> IterableDataProvider for CldrPluralsDataProvider<'d> {
     }
 }
 
+impl<'a, 'd> Combined<'a, 'd> for CldrPluralsDataProvider<'d> {}
+
 impl<'d> From<&LocalePluralRules<'d>> for PluralRuleStringsV1 {
     fn from(other: &LocalePluralRules) -> PluralRuleStringsV1 {
         fn convert(s: &str) -> Cow<'static, str> {

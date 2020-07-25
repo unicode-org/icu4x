@@ -1,0 +1,24 @@
+[package]
+name = "icu-data-exporter"
+description = "Tool that exports ICU4X data to a filesystem"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+icu-data-provider = { path = "../data-provider" }
+vfs = "0.2"
+erased-serde = "0.3"
+
+[dev-dependencies]
+icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
+serde_json = "1.0"
