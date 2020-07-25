@@ -4,8 +4,8 @@ use std::convert::TryFrom;
 use std::fs;
 
 use icu_cldr_json_data_provider::CldrPluralsDataProvider;
-use icu_data_provider::plurals::PluralRuleStringsV1;
-use icu_data_provider::*;
+use icu_data_provider::prelude::*;
+use icu_data_provider::structs::plurals::*;
 
 #[test]
 fn test_basic() {
@@ -14,9 +14,9 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider
-        .load(&Request {
+        .load(&data_provider::Request {
             data_key: DataKey {
-                category: Category::Plurals,
+                category: data_key::Category::Plurals,
                 sub_category: "cardinal".parse().unwrap(),
                 version: 1,
             },

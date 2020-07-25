@@ -2,8 +2,9 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 
 use crate::cldr_langid::CldrLanguage;
-use icu_data_provider::plurals::PluralRuleStringsV1;
-use icu_data_provider::*;
+use icu_data_provider::iter::DataEntryCollection;
+use icu_data_provider::prelude::*;
+use icu_data_provider::structs::plurals::*;
 use icu_locale::LanguageIdentifier;
 use serde::Deserialize;
 
@@ -44,7 +45,7 @@ impl<'d> TryFrom<&'d str> for CldrPluralsDataProvider<'d> {
 
 impl<'d> CldrPluralsDataProvider<'d> {
     fn get_rules_for(&self, data_key: &DataKey) -> Result<&Rules<'d>, ResponseError> {
-        if data_key.category != Category::Plurals {
+        if data_key.category != data_key::Category::Plurals {
             return Err((&data_key.category).into());
         }
         if data_key.version != 1 {
@@ -60,7 +61,10 @@ impl<'d> CldrPluralsDataProvider<'d> {
 }
 
 impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
-    fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError> {
+    fn load(
+        &'a self,
+        req: &data_provider::Request,
+    ) -> Result<data_provider::Response<'d>, ResponseError> {
         let cldr_rules = self.get_rules_for(&req.data_key)?;
         // TODO: Implement language fallback?
         // TODO: Avoid the clone
@@ -69,7 +73,7 @@ impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.data_entry.clone().into()),
         };
-        Ok(ResponseBuilder {
+        Ok(data_provider::ResponseBuilder {
             data_langid: req.data_entry.langid.clone(),
         }
         .with_owned_payload(PluralRuleStringsV1::from(r)))

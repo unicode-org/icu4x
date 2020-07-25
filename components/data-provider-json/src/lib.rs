@@ -1,22 +1,9 @@
-#![no_std]
-
-extern crate no_std_compat as std;
-
-use std::prelude::v1::*;
-
+use icu_data_provider::prelude::*;
+use icu_locale::LanguageIdentifier;
+use std::io::Read;
 use std::str::FromStr;
 
-use icu_data_provider::DataProvider;
-use icu_data_provider::Request;
-use icu_data_provider::Response;
-use icu_data_provider::ResponseBuilder;
-use icu_data_provider::ResponseError;
-use icu_locale::LanguageIdentifier;
-
 mod schema;
-
-#[cfg(feature = "std")]
-use std::io::Read;
 
 #[derive(Debug)]
 pub enum Error {
@@ -37,7 +24,6 @@ pub struct JsonDataProvider {
 
 impl JsonDataProvider {
     /// Create a JsonDataProvider from a file reader.
-    #[cfg(feature = "std")]
     pub fn from_reader<R: Read>(reader: R) -> Result<Self, Error> {
         let result: schema::JsonSchema = serde_json::from_reader(reader)?;
         Ok(JsonDataProvider { data: result })
@@ -63,8 +49,11 @@ impl FromStr for JsonDataProvider {
 
 impl<'a> DataProvider<'a, 'a> for JsonDataProvider {
     /// Loads JSON data. Returns borrowed data.
-    fn load(&'a self, _request: &Request) -> Result<Response<'a>, ResponseError> {
-        let response = ResponseBuilder {
+    fn load(
+        &'a self,
+        _request: &data_provider::Request,
+    ) -> Result<data_provider::Response<'a>, ResponseError> {
+        let response = data_provider::ResponseBuilder {
             data_langid: LanguageIdentifier::default(),
         }
         .with_borrowed_payload(&self.data.decimal.symbols_v1_a);
@@ -77,8 +66,6 @@ fn test_empty_str() {
     let result = JsonDataProvider::from_str("");
     assert!(result.is_err());
     let err = result.unwrap_err();
-    // Coverage for Debug trait:
-    println!("{:?}", err);
     // An unconditional let is possible here because it is a one-element enum.
     // If more cases are needed, see https://github.com/rust-lang/rfcs/pull/1303
     let Error::JsonError(json_err) = err;

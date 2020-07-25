@@ -1,9 +1,7 @@
 use std::fs::File;
 use std::io::BufReader;
 
-use icu_data_provider as datap;
-use icu_data_provider::icu_data_key;
-use icu_data_provider::DataProvider;
+use icu_data_provider::prelude::*;
 use icu_data_provider_json::JsonDataProvider;
 
 #[test]

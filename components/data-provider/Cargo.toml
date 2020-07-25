@@ -14,17 +14,12 @@ include = [
     "README.md"
 ]
 
-[features]
-default = ["std"]
-std = ["serde/std", "no-std-compat/std"]
-
 [dependencies]
 icu-locale = { path = "../locale" }
 tinystr = "0.3"
 
 [dependencies.smallstr]
-version = "0.2.0"
-default-features = false
+version = "0.2"
 features = ["serde"]
 
 [dependencies.downcast-rs]
@@ -32,9 +27,4 @@ version = "1.1"
 
 [dependencies.serde]
 version = "1.0"
-default-features = false
-features = ["derive", "alloc"]
-
-[dependencies.no-std-compat]
-version = "0.4.0"
-features = ["alloc"]
+features = ["derive"]

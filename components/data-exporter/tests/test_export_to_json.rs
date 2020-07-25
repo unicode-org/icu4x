@@ -5,7 +5,8 @@ use std::convert::TryFrom;
 use std::fs;
 
 use icu_cldr_json_data_provider::CldrPluralsDataProvider;
-use icu_data_provider::*;
+use icu_data_provider::icu_data_key;
+use icu_data_provider::structs;
 
 use std::path::PathBuf;
 
@@ -24,6 +25,8 @@ fn test_basic() {
     };
 
     data_exporter
-        .write_data_key::<plurals::PluralRuleStringsV1>(&icu_data_key!(plurals: cardinal@1))
+        .write_data_key::<structs::plurals::PluralRuleStringsV1>(
+            &icu_data_key!(plurals: cardinal@1),
+        )
         .unwrap();
 }

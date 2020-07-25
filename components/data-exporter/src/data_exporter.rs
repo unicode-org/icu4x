@@ -1,5 +1,6 @@
 use erased_serde::Serialize;
-use icu_data_provider::*;
+use icu_data_provider::iter::*;
+use icu_data_provider::prelude::*;
 use std::borrow::Borrow;
 use std::path::Path;
 use std::path::PathBuf;
@@ -25,7 +26,7 @@ impl<'a, 'd> DataExporter<'a, 'd> {
         data_key: &DataKey,
     ) -> Result<(), Error> {
         for data_entry in self.data_provider.iter_for_key(data_key)? {
-            let response = self.data_provider.load(&Request {
+            let response = self.data_provider.load(&data_provider::Request {
                 data_key: *data_key,
                 data_entry: data_entry.clone(),
             })?;

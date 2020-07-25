@@ -1,15 +1,15 @@
 // Decimal types
 
-use std::prelude::v1::*;
-
+use crate::data_key::Category;
+use crate::data_key::DataKey;
 use serde::{Deserialize, Serialize};
 use smallstr::SmallString;
 use std::any::TypeId;
 
 // TODO: Automatically delegate from subcategory to type object
 
-pub(crate) fn get_type_id(data_key: &crate::DataKey) -> Option<TypeId> {
-    if data_key.category != crate::Category::Decimal {
+pub(crate) fn get_type_id(data_key: &DataKey) -> Option<TypeId> {
+    if data_key.category != Category::Decimal {
         return None;
     }
     match data_key.sub_category.as_str() {
