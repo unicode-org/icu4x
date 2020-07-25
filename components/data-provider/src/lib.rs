@@ -91,7 +91,7 @@ fn test_data_key_macro(category: Category) {
         Category::PrivateUse(s) => icu_data_key!(Category::PrivateUse(s), foo, 1),
     };
     let data_key_2 = DataKey {
-        category: category,
+        category,
         sub_category: "foo".parse().unwrap(),
         version: 1,
     };

@@ -28,11 +28,17 @@ impl<'d> TryFrom<&'d str> for CldrPluralsDataProvider<'d> {
             // TODO: Avoid the clone
             rules.0.sort_by_key(|(l, _)| l.0.clone())
         }
-        resource.supplemental.plurals_type_cardinal.as_mut().map(sort);
-        resource.supplemental.plurals_type_ordinal.as_mut().map(sort);
-        Ok(CldrPluralsDataProvider {
-            resource: resource,
-        })
+        resource
+            .supplemental
+            .plurals_type_cardinal
+            .as_mut()
+            .map(sort);
+        resource
+            .supplemental
+            .plurals_type_ordinal
+            .as_mut()
+            .map(sort);
+        Ok(CldrPluralsDataProvider { resource })
     }
 }
 
@@ -49,7 +55,7 @@ impl<'d> CldrPluralsDataProvider<'d> {
             "ordinal" => self.resource.supplemental.plurals_type_ordinal.as_ref(),
             _ => return Err(data_key.into()),
         }
-        .ok_or(data_key.into())
+        .ok_or_else(|| data_key.into())
     }
 }
 
