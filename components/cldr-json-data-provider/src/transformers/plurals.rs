@@ -22,8 +22,16 @@ pub struct CldrPluralsDataProvider<'d> {
 impl<'d> TryFrom<&'d str> for CldrPluralsDataProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
+        let mut resource: Resource = serde_json::from_str(s)?;
+        // NOTE: We need to sort in order to put "root" -> "und" into place.
+        fn sort<'s>(rules: &mut Rules<'s>) {
+            // TODO: Avoid the clone
+            rules.0.sort_by_key(|(l, _)| l.0.clone())
+        }
+        resource.supplemental.plurals_type_cardinal.as_mut().map(sort);
+        resource.supplemental.plurals_type_ordinal.as_mut().map(sort);
         Ok(CldrPluralsDataProvider {
-            resource: serde_json::from_str(s)?,
+            resource: resource,
         })
     }
 }
@@ -41,7 +49,7 @@ impl<'d> CldrPluralsDataProvider<'d> {
             "ordinal" => self.resource.supplemental.plurals_type_ordinal.as_ref(),
             _ => return Err(data_key.into()),
         }
-        .ok_or(ResponseError::UnavailableEntryError)
+        .ok_or(data_key.into())
     }
 }
 
@@ -53,7 +61,7 @@ impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
         let cldr_langid = CldrLanguage(req.data_entry.langid.clone());
         let (_, r) = match cldr_rules.0.binary_search_by_key(&&cldr_langid, |(l, _)| l) {
             Ok(idx) => &cldr_rules.0[idx],
-            Err(_) => return Err(ResponseError::UnavailableEntryError),
+            Err(_) => return Err(req.data_entry.clone().into()),
         };
         Ok(ResponseBuilder {
             data_langid: req.data_entry.langid.clone(),
