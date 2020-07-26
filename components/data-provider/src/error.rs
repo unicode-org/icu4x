@@ -8,44 +8,55 @@ use std::fmt;
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum Error {
-    UnsupportedCategoryError(Category),
-    UnsupportedDataKeyError(DataKey),
+    /// The data provider does not support the requested category.
+    UnsupportedCategory(Category),
+
+    /// The data provider supports the category, but not the key (sub-category or version).
+    UnsupportedDataKey(DataKey),
+
+    /// The data provider supports the data key, but does not have data for the specific entry
+    /// (variant or language identifier).
+    UnavailableEntry(DataEntry),
+
+    /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
+        /// The actual TypeID of the payload.
         actual: TypeId,
+
+        /// The expected TypeID derived from the data key.
         data_key: Option<TypeId>,
+
+        /// The expected TypeID derived from the generic type parameter at the call site.
         generic: Option<TypeId>,
     },
-    UnavailableEntryError(DataEntry),
+
+    /// The data provider encountered some other error when loading the resource, such as I/O.
     ResourceError(Box<dyn std::error::Error>),
 }
 
 impl From<&DataKey> for Error {
     fn from(data_key: &DataKey) -> Self {
-        Error::UnsupportedDataKeyError(*data_key)
+        Error::UnsupportedDataKey(*data_key)
     }
 }
 
 impl From<&Category> for Error {
     fn from(category: &Category) -> Self {
-        Error::UnsupportedCategoryError(*category)
+        Error::UnsupportedCategory(*category)
     }
 }
 
 impl From<DataEntry> for Error {
     fn from(data_entry: DataEntry) -> Self {
-        Error::UnavailableEntryError(data_entry)
+        Error::UnavailableEntry(data_entry)
     }
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::UnsupportedCategoryError(category) => {
-                write!(f, "Unsupported category: {}", category)
-            }
-            Error::UnsupportedDataKeyError(data_key) => {
-                write!(f, "Unsupported data key: {}", data_key)
-            }
+            Error::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
+            Error::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
             Error::MismatchedType {
                 actual,
                 data_key,
@@ -60,8 +71,8 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
-            Error::UnavailableEntryError(data_entry) => {
-                write!(f, "Unsupported data entry: {}", data_entry)
+            Error::UnavailableEntry(data_entry) => {
+                write!(f, "Unavailable data entry: {}", data_entry)
             }
             Error::ResourceError(err) => write!(f, "Error while loading resource: {}", err),
         }
