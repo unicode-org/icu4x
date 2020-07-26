@@ -57,6 +57,48 @@ impl Region {
         }
     }
 
+    /// Deconstructs the `Region` into raw format to be consumed
+    /// by `from_raw_unchecked`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Region;
+    ///
+    /// let region = Region::from_bytes(b"us")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = region.into_raw();
+    /// let region = unsafe { Region::from_raw_unchecked(raw) };
+    /// assert_eq!(region, "US");
+    /// ```
+    pub fn into_raw(self) -> u32 {
+        self.0.into()
+    }
+
+    /// Constructor which takes a raw value returned by
+    /// `into_raw`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Region;
+    ///
+    /// let region = Region::from_bytes(b"us")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = region.into_raw();
+    /// let region = unsafe { Region::from_raw_unchecked(raw) };
+    /// assert_eq!(region, "US");
+    /// ```
+    /// # Safety
+    ///
+    /// This function accepts any u32 that is exected to be a valid
+    /// `TinyStr8` and a valid `Region` subtag.
+    pub const unsafe fn from_raw_unchecked(v: u32) -> Self {
+        Self(TinyStr4::new_unchecked(v))
+    }
+
     /// A helper function for displaying
     /// a `Region` subtag as a `&str`.
     ///

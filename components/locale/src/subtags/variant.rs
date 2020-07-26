@@ -58,6 +58,49 @@ impl Variant {
         Ok(Self(s.to_ascii_lowercase()))
     }
 
+    /// Deconstructs the `Variant` into raw format to be consumed
+    /// by `from_raw_unchecked`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Variant;
+    ///
+    /// let variant = Variant::from_bytes(b"posix")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = variant.into_raw();
+    /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
+    /// assert_eq!(variant, "posix");
+    /// ```
+    pub fn into_raw(self) -> u64 {
+        self.0.into()
+    }
+
+    /// Constructor which takes a raw value returned by
+    /// `into_raw`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Variant;
+    ///
+    /// let variant = Variant::from_bytes(b"posix")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = variant.into_raw();
+    /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
+    /// assert_eq!(variant, "posix");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// This function accepts any u64 that is exected to be a valid
+    /// `TinyStr16` and a valid `Variant` subtag.
+    pub const unsafe fn from_raw_unchecked(v: u64) -> Self {
+        Self(TinyStr8::new_unchecked(v))
+    }
+
     /// A helper function for displaying
     /// a `Variant` subtag as a `&str`.
     ///
