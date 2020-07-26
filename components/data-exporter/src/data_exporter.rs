@@ -39,12 +39,8 @@ impl<'a, 'd> DataExporter<'a, 'd> {
 
     fn path_for(&mut self, data_key: &DataKey, data_entry: &DataEntry) -> PathBuf {
         let mut path = PathBuf::new();
-        path.push(data_key.category.to_string());
-        path.push(format!(
-            "{}@{}",
-            data_key.sub_category.as_str(),
-            data_key.version
-        ));
+        data_key.append_path_to(&mut path);
+        // TODO: Move the following lines into DataEntry
         if let Some(variant) = &data_entry.variant {
             let variant_str: &str = variant.borrow();
             path.push(variant_str);

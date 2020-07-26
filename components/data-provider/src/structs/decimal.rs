@@ -8,7 +8,8 @@ use std::any::TypeId;
 
 // TODO: Automatically delegate from subcategory to type object
 
-pub(crate) fn get_type_id(data_key: &DataKey) -> Option<TypeId> {
+/// Gets the expected TypeID given a data key in this module's category.
+pub fn get_type_id(data_key: &DataKey) -> Option<TypeId> {
     if data_key.category != Category::Decimal {
         return None;
     }

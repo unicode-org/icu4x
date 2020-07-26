@@ -1,7 +1,8 @@
-use crate::structs;
-use std::any::TypeId;
 use std::fmt;
+use std::path::PathBuf;
 use tinystr::TinyStr16;
+use std::borrow::Cow;
+use std::borrow::Borrow;
 
 /// A top-level collection of related data keys.
 #[non_exhaustive]
@@ -12,23 +13,31 @@ pub enum Category {
     PrivateUse(TinyStr16),
 }
 
-impl fmt::Display for Category {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl Category {
+    pub fn as_str(&self) -> Cow<'static, str> {
         match self {
-            Category::Decimal => f.write_str("decimal")?,
-            Category::Plurals => f.write_str("plurals")?,
+            Category::Decimal => Cow::Borrowed("decimal"),
+            Category::Plurals => Cow::Borrowed("plurals"),
             Category::PrivateUse(id) => {
-                f.write_str("x-")?;
-                f.write_str(id)?;
+                let mut result = String::from("x-");
+                result.push_str(id.as_str());
+                Cow::Owned(result)
             }
         }
-        Ok(())
+    }
+}
+
+impl fmt::Display for Category {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(&self.as_str())
     }
 }
 
 /// A category, subcategory, and version, used for requesting data from a DataProvider.
 ///
-/// All of the fields in a DataKey should be resolved at build time.
+/// The fields in a DataKey should generally be known at compile time.
+///
+/// Use `icu_data_key!` as a shortcut to create data keys in code.
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub struct DataKey {
     pub category: Category,
@@ -88,21 +97,35 @@ fn test_all_data_key_macros() {
 
 impl fmt::Display for DataKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO: Evaluate the code size of this implementation
         write!(
             f,
-            "{}/{}/v{}",
-            self.category, self.sub_category, self.version
+            "{}/{}@{}",
+            &self.category.as_str(), self.sub_category, self.version
         )
     }
 }
 
 impl DataKey {
-    pub fn get_type_id(&self) -> Option<TypeId> {
-        match self.category {
-            Category::Decimal => structs::decimal::get_type_id(self),
-            Category::Plurals => structs::plurals::get_type_id(self),
-            Category::PrivateUse(_) => None,
-        }
+    /// Append standard path components for this data key to a PathBuf.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use std::path::PathBuf;
+    /// use icu_data_provider::prelude::*;
+    /// 
+    /// let data_key = icu_data_key!(plurals: cardinal@1);
+    /// let mut path_buf = PathBuf::new();
+    /// data_key.append_path_to(&mut path_buf);
+    /// 
+    /// let components: Vec<&str> = path_buf.iter().map(|c| c.to_str().unwrap()).collect();
+    ///
+    /// assert_eq!(["plurals", "cardinal@1"], &components[..]);
+    /// ```
+    pub fn append_path_to(&self, path_buf: &mut PathBuf) {
+        let category_cow = self.category.as_str();
+        let category_str: &str = category_cow.borrow();
+        path_buf.push(category_str);
+        path_buf.push(format!("{}@{}", self.sub_category.as_str(), self.version));
     }
 }

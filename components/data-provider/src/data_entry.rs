@@ -4,7 +4,7 @@ use std::fmt;
 
 /// A variant and language identifier, used for requesting data from a DataProvider.
 ///
-/// All of the fields in a DataEntry should be resolved at runtime.
+/// The fields in a DataEntry are not generally known until runtime.
 #[derive(PartialEq, Clone)]
 pub struct DataEntry {
     // TODO: Consider making this a list of variants
