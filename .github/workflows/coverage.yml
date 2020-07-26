@@ -37,26 +37,17 @@ jobs:
 
       ## Coverage steps
 
-      - uses:                   actions-rs/toolchain@v1
-        with:
-          profile:              minimal
-          toolchain:            nightly
-          override:             true
+      - name:                   Install Tarpaulin
+        run: |
+          cargo install cargo-tarpaulin
 
-      - uses:                   actions-rs/cargo@v1
-        with:
-          command:              test
-          args:                 --all-features --no-fail-fast
-        env:
-          CARGO_INCREMENTAL:    '0'
-          RUSTFLAGS:            '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
-          RUSTDOCFLAGS:         '-Cpanic=abort'
+      - name:                   Generate code coverage
+        run: |
+          cargo tarpaulin --verbose --all-features --workspace --timeout 120 --out Lcov --exclude-files tests/
 
-      - id:                     coverage
-        uses:                   actions-rs/grcov@v0.1
 
-      - name:                   Push grcov results to Coveralls via GitHub Action
+      - name:                   Push tarpaulin results to Coveralls via GitHub Action
         uses:                   coverallsapp/github-action@v1.0.1
         with:
           github-token:         ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov:         ${{ steps.coverage.outputs.report }}
+          path-to-lcov:         ./lcov.info
