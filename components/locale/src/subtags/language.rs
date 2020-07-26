@@ -67,6 +67,53 @@ impl Language {
         }
     }
 
+    /// Deconstructs the `Language` into raw format to be consumed
+    /// by `from_raw_unchecked`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Language;
+    ///
+    /// let lang = Language::from_bytes(b"en")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = lang.into_raw();
+    /// let lang = unsafe { Language::from_raw_unchecked(raw) };
+    /// assert_eq!(lang, "en");
+    /// ```
+    pub fn into_raw(self) -> Option<u64> {
+        self.0.map(|v| v.into())
+    }
+
+    /// Constructor which takes a raw value returned by
+    /// `into_raw`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Language;
+    ///
+    /// let lang = Language::from_bytes(b"en")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = lang.into_raw();
+    /// let lang = unsafe { Language::from_raw_unchecked(raw) };
+    /// assert_eq!(lang, "en");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// This function accepts any u64 that is exected to be a valid
+    /// `TinyStr8` and a valid `Language` subtag.
+    pub const unsafe fn from_raw_unchecked(v: Option<u64>) -> Self {
+        if let Some(v) = v {
+            Self(Some(TinyStr8::new_unchecked(v)))
+        } else {
+            Self(None)
+        }
+    }
+
     /// A helper function for displaying
     /// a `Language` subtag as a `&str`.
     ///
