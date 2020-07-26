@@ -20,3 +20,12 @@ impl fmt::Debug for DataEntry {
         }
     }
 }
+
+impl fmt::Display for DataEntry {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.variant {
+            Some(variant) => write!(f, "{}/{}", variant, self.langid),
+            None => write!(f, "{}", self.langid),
+        }
+    }
+}

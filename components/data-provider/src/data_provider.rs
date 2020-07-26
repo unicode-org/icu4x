@@ -1,8 +1,6 @@
 use crate::cloneable_any::CloneableAny;
 use crate::data_entry::DataEntry;
 use crate::data_key::DataKey;
-use crate::error::PayloadError;
-use crate::error::ResponseError;
 use icu_locale::LanguageIdentifier;
 use std::any::Any;
 use std::any::TypeId;
@@ -10,6 +8,9 @@ use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::fmt;
+
+// Re-export Error so it can be referenced by "data_provider::Error"
+pub use crate::error::Error;
 
 /// A struct to request a certain hunk of data from a data provider.
 #[derive(PartialEq, Clone, Debug)]
@@ -31,36 +32,52 @@ pub struct Response<'d> {
 impl<'d> Response<'d> {
     /// Get an immutable reference to the payload in a Response object.
     /// The payload may or may not be owned by the Response.
-    pub fn borrow_payload<T: 'static>(&self) -> Result<&T, PayloadError> {
+    pub fn borrow_payload<T: 'static>(&self) -> Result<&T, Error> {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed
             .as_any()
             .downcast_ref::<T>()
-            .ok_or_else(|| PayloadError::from(borrowed.as_any().type_id()))
+            .ok_or_else(|| Error::MismatchedType {
+                actual: borrowed.as_any().type_id(),
+                data_key: None,
+                generic: Some(TypeId::of::<T>()),
+            })
     }
 
     /// Get a mutable reference to the payload in a Response object.
     /// The payload may or may not be owned by the Response.
-    pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
+    pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, Error> {
         let borrowed_mut: &mut dyn CloneableAny = self.payload.to_mut().borrow_mut();
         // TODO: If I move this into the lambda, I get E0502. Why?
         let type_id = borrowed_mut.as_any().type_id();
         borrowed_mut
             .as_any_mut()
             .downcast_mut::<T>()
-            .ok_or_else(|| PayloadError::from(type_id))
+            .ok_or_else(|| Error::MismatchedType {
+                actual: type_id,
+                data_key: None,
+                generic: Some(TypeId::of::<T>()),
+            })
     }
 
     /// Take ownership of the payload from a Response object. Consumes the Response object.
-    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'d, T>, PayloadError> {
+    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'d, T>, Error> {
         match self.payload {
             Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
                 Some(v) => Ok(Cow::Borrowed(v)),
-                None => Err(PayloadError::from(borrowed.as_any().type_id())),
+                None => Err(Error::MismatchedType {
+                    actual: borrowed.as_any().type_id(),
+                    data_key: None,
+                    generic: Some(TypeId::of::<T>()),
+                }),
             },
             Cow::Owned(boxed) => match boxed.into_any().downcast::<T>() {
                 Ok(boxed_t) => Ok(Cow::Owned(*boxed_t)),
-                Err(boxed_any) => Err(PayloadError::from(boxed_any.type_id())),
+                Err(boxed_any) => Err(Error::MismatchedType {
+                    actual: boxed_any.type_id(),
+                    data_key: None,
+                    generic: Some(TypeId::of::<T>()),
+                }),
             },
         }
     }
@@ -112,5 +129,5 @@ impl ResponseBuilder {
 // TODO: Make this async
 // #[async_trait]
 pub trait DataProvider<'a, 'd> {
-    fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError>;
+    fn load(&'a self, req: &Request) -> Result<Response<'d>, Error>;
 }

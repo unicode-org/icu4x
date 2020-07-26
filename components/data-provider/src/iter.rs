@@ -1,7 +1,7 @@
 use crate::data_entry::DataEntry;
 use crate::data_key::DataKey;
 use crate::data_provider::DataProvider;
-use crate::error::ResponseError;
+use crate::error::Error;
 
 /// An object that exposes an iterable list of DataEntry instances.
 pub trait DataEntryCollection {
@@ -10,7 +10,7 @@ pub trait DataEntryCollection {
     fn iter_for_key(
         &self,
         data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, ResponseError>;
+    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, Error>;
 }
 
 /// A data provider that also exposes an iterable list of DataEntry instances.

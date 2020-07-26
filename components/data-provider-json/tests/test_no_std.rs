@@ -1,5 +1,3 @@
-extern crate icu_data_provider_json;
-
 use std::borrow::Cow;
 use std::prelude::v1::*;
 use std::str::FromStr;

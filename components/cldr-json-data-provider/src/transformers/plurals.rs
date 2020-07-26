@@ -44,7 +44,7 @@ impl<'d> TryFrom<&'d str> for CldrPluralsDataProvider<'d> {
 }
 
 impl<'d> CldrPluralsDataProvider<'d> {
-    fn get_rules_for(&self, data_key: &DataKey) -> Result<&Rules<'d>, ResponseError> {
+    fn get_rules_for(&self, data_key: &DataKey) -> Result<&Rules<'d>, data_provider::Error> {
         if data_key.category != data_key::Category::Plurals {
             return Err((&data_key.category).into());
         }
@@ -64,7 +64,7 @@ impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
     fn load(
         &'a self,
         req: &data_provider::Request,
-    ) -> Result<data_provider::Response<'d>, ResponseError> {
+    ) -> Result<data_provider::Response<'d>, data_provider::Error> {
         let cldr_rules = self.get_rules_for(&req.data_key)?;
         // TODO: Implement language fallback?
         // TODO: Avoid the clone
@@ -84,7 +84,7 @@ impl<'d> DataEntryCollection for CldrPluralsDataProvider<'d> {
     fn iter_for_key(
         &self,
         data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, ResponseError> {
+    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, data_provider::Error> {
         let cldr_rules = self.get_rules_for(data_key)?;
         let list: Vec<DataEntry> = cldr_rules
             .0

@@ -14,6 +14,4 @@ pub mod prelude {
     pub use crate::data_key::DataKey;
     pub use crate::data_provider;
     pub use crate::data_provider::DataProvider;
-    pub use crate::error::PayloadError;
-    pub use crate::error::ResponseError;
 }

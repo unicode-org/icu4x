@@ -52,7 +52,7 @@ impl<'a> DataProvider<'a, 'a> for JsonDataProvider {
     fn load(
         &'a self,
         _request: &data_provider::Request,
-    ) -> Result<data_provider::Response<'a>, ResponseError> {
+    ) -> Result<data_provider::Response<'a>, data_provider::Error> {
         let response = data_provider::ResponseBuilder {
             data_langid: LanguageIdentifier::default(),
         }

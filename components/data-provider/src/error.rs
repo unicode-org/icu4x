@@ -3,73 +3,75 @@ use crate::data_key::Category;
 use crate::data_key::DataKey;
 use core::ops::Deref;
 use std::any::TypeId;
-use std::error::Error;
-use std::fmt::{self, Debug, Display};
-
-#[non_exhaustive]
-#[derive(PartialEq, Debug)]
-pub enum PayloadError {
-    /// The type argument does not match the payload. The actual TypeId is provided.
-    TypeMismatchError(TypeId),
-}
-
-impl Display for PayloadError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO: should the Error Display be different from Debug?
-        Debug::fmt(self, f)
-    }
-}
-
-impl Error for PayloadError {}
-
-impl From<TypeId> for PayloadError {
-    fn from(type_id: TypeId) -> Self {
-        PayloadError::TypeMismatchError(type_id)
-    }
-}
+use std::fmt;
 
 #[non_exhaustive]
 #[derive(Debug)]
-pub enum ResponseError {
+pub enum Error {
     UnsupportedCategoryError(Category),
     UnsupportedDataKeyError(DataKey),
-    InvalidTypeError {
+    MismatchedType {
         actual: TypeId,
-        expected: Option<TypeId>,
+        data_key: Option<TypeId>,
+        generic: Option<TypeId>,
     },
     UnavailableEntryError(DataEntry),
-    ResourceError(Box<dyn Error>),
+    ResourceError(Box<dyn std::error::Error>),
 }
 
-impl From<&DataKey> for ResponseError {
+impl From<&DataKey> for Error {
     fn from(data_key: &DataKey) -> Self {
-        ResponseError::UnsupportedDataKeyError(*data_key)
+        Error::UnsupportedDataKeyError(*data_key)
     }
 }
 
-impl From<&Category> for ResponseError {
+impl From<&Category> for Error {
     fn from(category: &Category) -> Self {
-        ResponseError::UnsupportedCategoryError(*category)
+        Error::UnsupportedCategoryError(*category)
     }
 }
 
-impl From<DataEntry> for ResponseError {
+impl From<DataEntry> for Error {
     fn from(data_entry: DataEntry) -> Self {
-        ResponseError::UnavailableEntryError(data_entry)
+        Error::UnavailableEntryError(data_entry)
     }
 }
 
-impl Display for ResponseError {
+impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO: should the Error Display be different from Debug?
-        Debug::fmt(self, f)
+        match self {
+            Error::UnsupportedCategoryError(category) => {
+                write!(f, "Unsupported category: {}", category)
+            }
+            Error::UnsupportedDataKeyError(data_key) => {
+                write!(f, "Unsupported data key: {}", data_key)
+            }
+            Error::MismatchedType {
+                actual,
+                data_key,
+                generic,
+            } => {
+                write!(f, "Mismatched type: payload is {:?}", actual)?;
+                if let Some(type_id) = data_key {
+                    write!(f, " (expected from data key: {:?})", type_id)?;
+                }
+                if let Some(type_id) = generic {
+                    write!(f, " (expected from generic type parameter: {:?})", type_id)?;
+                }
+                Ok(())
+            }
+            Error::UnavailableEntryError(data_entry) => {
+                write!(f, "Unsupported data entry: {}", data_entry)
+            }
+            Error::ResourceError(err) => write!(f, "Error while loading resource: {}", err),
+        }
     }
 }
 
-impl Error for ResponseError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            ResponseError::ResourceError(error) => Some(error.deref()),
+            Error::ResourceError(error) => Some(error.deref()),
             _ => None,
         }
     }
