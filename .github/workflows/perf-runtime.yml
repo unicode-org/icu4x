@@ -45,6 +45,11 @@ jobs:
       # Some people who have a machine already with /usr/bin/perf may need to install
       # the corresponding linux tools package, ex: `sudo apt-get install linux-tools-5.2`.
 
+    # Ensure unprivileged users have access to run /usr/bin/perf on CPU/etc.
+    # This is okay only because GH Actions are run in a completely clean VM
+    - name: Enable permissions on system binary `perf`
+      run: sudo sysctl -w kernel.perf_event_paranoid=-1
+
     - name: Install flamegraph crate
       run: cargo install flamegraph
 
