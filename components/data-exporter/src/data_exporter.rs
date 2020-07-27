@@ -1,7 +1,6 @@
 use erased_serde::Serialize;
 use icu_data_provider::iter::*;
 use icu_data_provider::prelude::*;
-use std::borrow::Borrow;
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -40,12 +39,7 @@ impl<'a, 'd> DataExporter<'a, 'd> {
     fn path_for(&mut self, data_key: &DataKey, data_entry: &DataEntry) -> PathBuf {
         let mut path = PathBuf::new();
         data_key.append_path_to(&mut path);
-        // TODO: Move the following lines into DataEntry
-        if let Some(variant) = &data_entry.variant {
-            let variant_str: &str = variant.borrow();
-            path.push(variant_str);
-        }
-        path.push(format!("{}", data_entry.langid));
+        data_entry.append_path_to(&mut path);
         path
     }
 }

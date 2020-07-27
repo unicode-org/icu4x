@@ -1,8 +1,8 @@
+use std::borrow::Borrow;
+use std::borrow::Cow;
 use std::fmt;
 use std::path::PathBuf;
 use tinystr::TinyStr16;
-use std::borrow::Cow;
-use std::borrow::Borrow;
 
 /// A top-level collection of related data keys.
 #[non_exhaustive]
@@ -100,24 +100,26 @@ impl fmt::Display for DataKey {
         write!(
             f,
             "{}/{}@{}",
-            &self.category.as_str(), self.sub_category, self.version
+            &self.category.as_str(),
+            self.sub_category,
+            self.version
         )
     }
 }
 
 impl DataKey {
     /// Append standard path components for this data key to a PathBuf.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use std::path::PathBuf;
     /// use icu_data_provider::prelude::*;
-    /// 
+    ///
     /// let data_key = icu_data_key!(plurals: cardinal@1);
     /// let mut path_buf = PathBuf::new();
     /// data_key.append_path_to(&mut path_buf);
-    /// 
+    ///
     /// let components: Vec<&str> = path_buf.iter().map(|c| c.to_str().unwrap()).collect();
     ///
     /// assert_eq!(["plurals", "cardinal@1"], &components[..]);
