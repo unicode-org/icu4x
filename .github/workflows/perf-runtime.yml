@@ -41,7 +41,7 @@ jobs:
 
     # Linux dependencies for the flamegraph binary
     - name: Install flamegraph binary Linux deps
-      run: sudo apt install -y linux-tools-common linux-tools-generic
+      run: sudo apt-get update && sudo apt-get install -y linux-tools-common linux-tools-generic
       # Some people who have a machine already with /usr/bin/perf may need to install
       # the corresponding linux tools package, ex: `sudo apt-get install linux-tools-5.2`.
 
