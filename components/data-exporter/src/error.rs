@@ -3,6 +3,7 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     DataProviderError(icu_data_provider::error::Error),
+    SerdeJsonError(serde_json::error::Error),
     SerializerError(erased_serde::Error),
     IoError(std::io::Error),
 }
@@ -10,6 +11,12 @@ pub enum Error {
 impl From<icu_data_provider::error::Error> for Error {
     fn from(err: icu_data_provider::error::Error) -> Error {
         Error::DataProviderError(err)
+    }
+}
+
+impl From<serde_json::error::Error> for Error {
+    fn from(err: serde_json::error::Error) -> Error {
+        Error::SerdeJsonError(err)
     }
 }
 
@@ -36,6 +43,7 @@ impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Error::DataProviderError(error) => Some(error),
+            Error::SerdeJsonError(error) => Some(error),
             Error::SerializerError(error) => Some(error),
             Error::IoError(error) => Some(error),
         }

@@ -1,7 +1,9 @@
 // mod better_vfs;
+mod aliasing;
 mod data_exporter;
 mod error;
-mod json_exporter;
+
+pub mod json_exporter;
 
 pub use data_exporter::DataExporter;
 pub use data_exporter::FileWriter;

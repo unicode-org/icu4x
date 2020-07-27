@@ -1,0 +1,70 @@
+use std::collections::HashMap;
+use std::fmt;
+use std::fs;
+use std::hash::Hash;
+use std::io::Write;
+use std::path::PathBuf;
+
+// TODO: Make this work on Windows, too
+use std::os::unix;
+
+pub(crate) struct Options<'a> {
+    pub root: PathBuf,
+    pub symlink_file_extension: &'a str,
+    pub data_file_extension: &'a str,
+}
+
+pub(crate) struct AliasCollection<T> {
+    pub root: PathBuf,
+    symlink_file_extension: String,
+    data_file_extension: String,
+    map: HashMap<T, Vec<PathBuf>>,
+    flushed: bool,
+}
+
+impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
+    pub fn new(options: Options) -> Self {
+        AliasCollection {
+            root: options.root,
+            symlink_file_extension: options.symlink_file_extension.to_owned(),
+            data_file_extension: options.data_file_extension.to_owned(),
+            map: HashMap::new(),
+            flushed: false,
+        }
+    }
+
+    pub fn put(&mut self, mut path_buf: PathBuf, data_item: T) {
+        path_buf.set_extension(&self.symlink_file_extension);
+        self.map
+            .entry(data_item)
+            .or_insert_with(Vec::new)
+            .push(path_buf);
+    }
+
+    pub fn flush(&mut self) -> Result<(), std::io::Error> {
+        self.flushed = true;
+        // TODO: Make sure the directory is empty
+        let mut unique_data_items: Vec<(&T, &Vec<PathBuf>)> = self.map.iter().collect();
+        unique_data_items.sort(); // guarantee canonical order
+        for (i, (data_item, link_paths)) in unique_data_items.iter().enumerate() {
+            let mut data_filename = PathBuf::from(format!("data{}", i));
+            data_filename.set_extension(&self.data_file_extension);
+            let mut data_path = self.root.clone();
+            data_path.extend(&data_filename);
+            let mut data_file = fs::File::create(&data_path)?;
+            data_file.write_all(data_item.as_ref())?;
+            for link_path in link_paths.iter() {
+                unix::fs::symlink(&data_filename, link_path)?;
+            }
+        }
+        Ok(())
+    }
+}
+
+impl<T> Drop for AliasCollection<T> {
+    fn drop(&mut self) {
+        if !self.flushed {
+            panic!("Please call flush before dropping AliasCollection");
+        }
+    }
+}
