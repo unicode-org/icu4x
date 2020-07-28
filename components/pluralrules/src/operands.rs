@@ -54,7 +54,7 @@ use std::str::FromStr;
 ///    t: 45,
 /// }), PluralOperands::try_from(123.45))
 /// ```
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PluralOperands {
     /// Absolute value of input
     pub n: f64,

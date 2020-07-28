@@ -46,29 +46,6 @@ pub struct Rule {
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
-///
-/// ```text
-/// "i = 5"
-/// ```
-///
-/// Can be represented by the AST:
-///
-/// ```
-/// use icu_pluralrules::rules::ast::*;
-///
-/// Condition(Box::new([AndCondition(Box::new([Relation {
-///        expression: Expression {
-///            operand: Operand::I,
-///            modulus: None,
-///        },
-///        operator: Operator::Eq,
-///        range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
-///    }]))]));
-/// ```
-///
-/// Because they care complete representations, hand-written Conditions can be verified with the assert macro. No other AST nodes can be verified.
-///
 /// ```
 /// use icu_pluralrules::rules::ast::*;
 /// use icu_pluralrules::rules::parse;
@@ -232,17 +209,17 @@ pub struct Expression {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operand {
-    /// Absolute value of input
+    /// AST node for an absolute value of input
     N,
-    /// Integer value of input
+    /// AST node for an integer value of input
     I,
-    /// Number of visible fraction digits with trailing zeros
+    /// AST node for a number of visible fraction digits with trailing zeros
     V,
-    /// Number of visible fraction digits without trailing zeros
+    /// AST node for a number of visible fraction digits without trailing zeros
     W,
-    /// Visible fraction digits with trailing zeros
+    /// AST node or a visible fraction digits with trailing zeros
     F,
-    /// Visible fraction digits without trailing zeros
+    /// AST node for a visible fraction digits without trailing zeros
     T,
 }
 

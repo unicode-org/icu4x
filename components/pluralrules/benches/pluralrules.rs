@@ -43,8 +43,6 @@ fn plurals_bench(c: &mut Criterion) {
 
     #[cfg(feature = "io-json")]
     {
-        use std::convert::TryInto;
-
         use criterion::BenchmarkId;
         use icu_locale::LanguageIdentifier;
         use icu_pluralrules::data::io::json::DataProvider;
@@ -55,14 +53,29 @@ fn plurals_bench(c: &mut Criterion) {
         let num_data: fixtures::NumbersFixture =
             helpers::read_fixture(path).expect("Failed to read a fixture");
 
-        c.bench_function("plurals/select/json", |b| {
+        c.bench_function("plurals/convert+select/json", |b| {
             let loc: LanguageIdentifier = "pl".parse().unwrap();
             let dtp = DataProvider {};
             let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &dtp).unwrap();
             b.iter(|| {
-                for s in &num_data.isize {
-                    let op: PluralOperands = (*s).try_into().unwrap();
-                    let _ = pr.select(op);
+                for s in &num_data.usize {
+                    let _ = pr.select(*s);
+                }
+            })
+        });
+
+        c.bench_function("plurals/select/json", |b| {
+            let loc: LanguageIdentifier = "pl".parse().unwrap();
+            let dtp = DataProvider {};
+            let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &dtp).unwrap();
+            let operands: Vec<PluralOperands> = num_data
+                .usize
+                .iter()
+                .map(|d| (*d).into())
+                .collect();
+            b.iter(|| {
+                for op in &operands {
+                    let _ = pr.select((*op).clone());
                 }
             })
         });

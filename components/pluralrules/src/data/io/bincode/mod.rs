@@ -26,17 +26,24 @@ impl DataProviderType for DataProvider {
     }
 }
 
-pub fn get_resource(
+/// # Safety
+///
+/// This method operates on a static mutable data and is
+/// inherently single-threaded.
+///
+/// This is a temporary solution until we swap the whole data management
+/// to use DataProvider.
+pub unsafe fn get_resource(
     type_: PluralRuleType,
 ) -> Result<&'static Resource<'static>, DataProviderError> {
     let rules = match type_ {
-        PluralRuleType::Cardinal => unsafe { &mut ORDINALS },
-        PluralRuleType::Ordinal => unsafe { &mut CARDINALS },
+        PluralRuleType::Cardinal => &mut ORDINALS,
+        PluralRuleType::Ordinal => &mut CARDINALS,
     };
 
     let s = match type_ {
-        PluralRuleType::Cardinal => unsafe { &mut ORDINALS_STRING },
-        PluralRuleType::Ordinal => unsafe { &mut CARDINALS_STRING },
+        PluralRuleType::Cardinal => &mut ORDINALS_STRING,
+        PluralRuleType::Ordinal => &mut CARDINALS_STRING,
     };
 
     if rules.is_none() {
@@ -62,7 +69,7 @@ pub fn get_rules(
     locale: &LanguageIdentifier,
     type_: PluralRuleType,
 ) -> Result<Option<PluralRuleList>, DataProviderError> {
-    let res = get_resource(type_)?;
+    let res = unsafe { get_resource(type_)? };
 
     let rules = match type_ {
         PluralRuleType::Cardinal => res.supplemental.plurals_type_cardinal.as_ref().unwrap(),

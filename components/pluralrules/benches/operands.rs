@@ -6,10 +6,11 @@ use std::convert::TryInto;
 
 use icu_pluralrules::PluralOperands;
 
+const DATA_PATH: &str = "./benches/fixtures/numbers.json";
+
 fn operands(c: &mut Criterion) {
-    let path = "./benches/fixtures/numbers.json";
     let data: fixtures::NumbersFixture =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+        helpers::read_fixture(DATA_PATH).expect("Failed to read a fixture");
 
     c.bench_function("operands/create/usize", |b| {
         b.iter(|| {

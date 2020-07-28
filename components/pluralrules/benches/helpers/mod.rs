@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufReader, Error};
 
-pub fn read_fixture<T>(path: &str) -> Result<T, Error>
+pub(crate) fn read_fixture<T>(path: &str) -> Result<T, Error>
 where
     T: serde::de::DeserializeOwned,
 {

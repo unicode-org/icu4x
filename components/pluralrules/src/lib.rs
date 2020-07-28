@@ -89,6 +89,17 @@ pub use operands::PluralOperands;
 /// [`PluralRules`]: ./struct.PluralRules.html
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum PluralRuleType {
+    /// Cardinal plural forms express quantities of units such as time, currency or distance,
+    /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
+    ///
+    /// For example, English has two forms for cardinals:
+    ///
+    /// * [`One`]: `1 day`
+    /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+    ///
+    /// [`One`]: ./enum.PluralCategory.html#variant.One
+    /// [`Other`]: ./enum.PluralCategory.html#variant.Other
+    Cardinal,
     /// Ordinal plural forms denote the order of items in a set and are always integers.
     ///
     /// For example, English has four forms for ordinals:
@@ -101,17 +112,6 @@ pub enum PluralRuleType {
     /// [`One`]: ./enum.PluralCategory.html#variant.One
     /// [`Two`]: ./enum.PluralCategory.html#variant.Two
     /// [`Few`]: ./enum.PluralCategory.html#variant.Few
-    /// [`Other`]: ./enum.PluralCategory.html#variant.Other
-    Cardinal,
-    /// Cardinal plural forms express quantities of units such as time, currency or distance,
-    /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
-    ///
-    /// For example, English has two forms for cardinals:
-    ///
-    /// * [`One`]: `1 day`
-    /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
-    ///
-    /// [`One`]: ./enum.PluralCategory.html#variant.One
     /// [`Other`]: ./enum.PluralCategory.html#variant.Other
     Ordinal,
 }

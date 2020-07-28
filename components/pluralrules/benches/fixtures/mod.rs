@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub struct NumbersFixture {
+pub(crate) struct NumbersFixture {
     pub isize: Vec<i64>,
     pub usize: Vec<u64>,
     pub string: Vec<String>,
@@ -13,13 +13,13 @@ pub struct NumbersFixture {
 }
 
 #[derive(Deserialize)]
-pub struct PluralsFixture {
+pub(crate) struct PluralsFixture {
     pub rules: HashMap<String, LocalePluralRulesFixture>,
     pub langs: Vec<LanguageIdentifier>,
 }
 
 #[derive(Deserialize)]
-pub struct LocalePluralRulesFixture {
+pub(crate) struct LocalePluralRulesFixture {
     #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-zero"))]
     pub zero: Option<String>,
     #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-one"))]
@@ -34,7 +34,7 @@ pub struct LocalePluralRulesFixture {
 
 impl LocalePluralRulesFixture {
     #[allow(dead_code)]
-    pub fn get(&self, category: &PluralCategory) -> Option<&String> {
+    pub(crate) fn get(&self, category: &PluralCategory) -> Option<&String> {
         match category {
             PluralCategory::Zero => self.zero.as_ref(),
             PluralCategory::One => self.one.as_ref(),
