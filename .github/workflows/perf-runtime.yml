@@ -24,7 +24,7 @@ jobs:
       - run: pwd && ls -l && echo "ci-bench/runtime" && ls -l ci-bench/runtime
 
       - name: Store benchmark result
-        uses: rhysd/github-action-benchmark@v1
+        uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
           tool: 'cargo'
