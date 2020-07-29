@@ -1,7 +1,7 @@
 use std::borrow::Borrow;
 use std::borrow::Cow;
 use std::fmt;
-use std::path::PathBuf;
+use std::fmt::Write;
 use tinystr::TinyStr16;
 
 /// A top-level collection of related data keys.
@@ -14,6 +14,7 @@ pub enum Category {
 }
 
 impl Category {
+    /// Gets or builds a string form of this Category.
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
             Category::Decimal => Cow::Borrowed("decimal"),
@@ -38,7 +39,7 @@ impl fmt::Display for Category {
 /// The fields in a DataKey should generally be known at compile time.
 ///
 /// Use `icu_data_key!` as a shortcut to create data keys in code.
-#[derive(PartialEq, Copy, Clone, Debug)]
+#[derive(PartialEq, Copy, Clone)]
 pub struct DataKey {
     pub category: Category,
     pub sub_category: TinyStr16,
@@ -63,6 +64,13 @@ macro_rules! icu_data_key {
     (plurals: $sub_category:tt @ $version:tt) => {
         icu_data_key!($crate::data_key::Category::Plurals, $sub_category, $version)
     };
+    (x-$private_use:tt: $sub_category:tt @ $version:tt) => {
+        icu_data_key!(
+            $crate::data_key::Category::PrivateUse(stringify!($private_use).parse().unwrap()),
+            $sub_category,
+            $version
+        )
+    };
     ($category:expr, $sub_category:tt, $version:tt) => {
         $crate::data_key::DataKey {
             category: $category,
@@ -78,7 +86,7 @@ fn test_data_key_macro(category: Category) {
     let data_key_1 = match category {
         Category::Decimal => icu_data_key!(decimal: foo@1),
         Category::Plurals => icu_data_key!(plurals: foo@1),
-        Category::PrivateUse(s) => icu_data_key!(Category::PrivateUse(s), foo, 1),
+        Category::PrivateUse(_) => icu_data_key!(x-private: foo@1),
     };
     let data_key_2 = DataKey {
         category,
@@ -95,6 +103,15 @@ fn test_all_data_key_macros() {
     test_data_key_macro(Category::PrivateUse("private".parse().unwrap()));
 }
 
+impl fmt::Debug for DataKey {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str("DataKey{")?;
+        fmt::Display::fmt(self, f)?;
+        f.write_char('}')?;
+        Ok(())
+    }
+}
+
 impl fmt::Display for DataKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
@@ -108,26 +125,91 @@ impl fmt::Display for DataKey {
 }
 
 impl DataKey {
-    /// Append standard path components for this data key to a PathBuf.
+    /// Gets the standard path components of this DataKey. These components should be used when
+    /// persisting the DataKey on the filesystem or in structured data.
     ///
     /// # Example
     ///
     /// ```
-    /// use std::path::PathBuf;
     /// use icu_data_provider::prelude::*;
     ///
     /// let data_key = icu_data_key!(plurals: cardinal@1);
-    /// let mut path_buf = PathBuf::new();
-    /// data_key.append_path_to(&mut path_buf);
+    /// let components = data_key.get_components();
     ///
-    /// let components: Vec<&str> = path_buf.iter().map(|c| c.to_str().unwrap()).collect();
-    ///
-    /// assert_eq!(["plurals", "cardinal@1"], &components[..]);
+    /// assert_eq!(
+    ///     ["plurals", "cardinal@1"],
+    ///     components.iter().collect::<Vec<&str>>()[..]
+    /// );
     /// ```
-    pub fn append_path_to(&self, path_buf: &mut PathBuf) {
-        let category_cow = self.category.as_str();
-        let category_str: &str = category_cow.borrow();
-        path_buf.push(category_str);
-        path_buf.push(format!("{}@{}", self.sub_category.as_str(), self.version));
+    pub fn get_components(&self) -> DataKeyComponents {
+        self.into()
+    }
+}
+
+/// The standard components of a DataKey path.
+pub struct DataKeyComponents {
+    components: [Cow<'static, str>; 2],
+}
+
+impl DataKeyComponents {
+    pub fn iter(&self) -> impl Iterator<Item = &str> {
+        self.components.iter().map(|cow| cow.borrow())
+    }
+}
+
+impl From<&DataKey> for DataKeyComponents {
+    fn from(data_key: &DataKey) -> Self {
+        DataKeyComponents {
+            components: [
+                data_key.category.as_str(),
+                // TODO: Evalute the size penalty of this format!
+                Cow::Owned(format!(
+                    "{}@{}",
+                    data_key.sub_category.as_str(),
+                    data_key.version
+                )),
+            ],
+        }
+    }
+}
+
+#[test]
+fn test_to_string() {
+    struct TestCase {
+        pub data_key: DataKey,
+        pub expected: &'static str,
+    }
+    let cases = [
+        TestCase {
+            data_key: icu_data_key!(plurals: cardinal@1),
+            expected: "plurals/cardinal@1",
+        },
+        TestCase {
+            data_key: icu_data_key!(x-private: cardinal@1),
+            expected: "x-private/cardinal@1",
+        },
+        TestCase {
+            data_key: icu_data_key!(x-maxlengthprivate: cardinal@1),
+            expected: "x-maxlengthprivate/cardinal@1",
+        },
+        TestCase {
+            data_key: icu_data_key!(plurals: maxlengthsubcatg@1),
+            expected: "plurals/maxlengthsubcatg@1",
+        },
+        TestCase {
+            data_key: icu_data_key!(plurals: cardinal@2147483647),
+            expected: "plurals/cardinal@2147483647",
+        },
+    ];
+    for cas in cases.iter() {
+        assert_eq!(cas.expected, cas.data_key.to_string());
+        assert_eq!(
+            cas.expected,
+            cas.data_key
+                .get_components()
+                .iter()
+                .collect::<Vec<&str>>()
+                .join("/")
+        );
     }
 }

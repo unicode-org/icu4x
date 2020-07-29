@@ -1,8 +1,8 @@
 use icu_locale::LanguageIdentifier;
+use std::borrow::Borrow;
 use std::borrow::Cow;
 use std::fmt;
 use std::fmt::Write;
-use std::path::PathBuf;
 
 /// A variant and language identifier, used for requesting data from a DataProvider.
 ///
@@ -16,47 +16,118 @@ pub struct DataEntry {
 
 impl fmt::Debug for DataEntry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match &self.variant {
-            Some(variant) => write!(f, "DataEntry({}/{})", variant, self.langid),
-            None => write!(f, "DataEntry({})", self.langid),
-        }
+        f.write_str("DataEntry{")?;
+        fmt::Display::fmt(self, f)?;
+        f.write_char('}')?;
+        Ok(())
     }
 }
 
 impl fmt::Display for DataEntry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(variant) = &self.variant {
-            f.write_str(&variant)?;
+        for (i, s) in self.get_components().iter().enumerate() {
+            if i > 0 {
+                f.write_char('/')?;
+            }
+            f.write_str(s)?;
         }
-        f.write_char('/')?;
-        self.langid.fmt(f)?;
         Ok(())
     }
 }
 
 impl DataEntry {
-    /// Append standard path components for this data entry to a PathBuf.
+    /// Gets the standard path components of this DataEntry. These components should be used when
+    /// persisting the DataEntry on the filesystem or in structured data.
     ///
     /// # Example
     ///
     /// ```
-    /// use std::path::PathBuf;
+    /// use std::borrow::Cow;
     /// use icu_data_provider::prelude::*;
     ///
     /// let data_entry = DataEntry {
-    ///     variant: None,
+    ///     variant: Some(Cow::Borrowed("GBP")),
     ///     langid: "pt_BR".parse().unwrap(),
     /// };
-    /// let mut path_buf = PathBuf::new();
-    /// data_entry.append_path_to(&mut path_buf);
+    /// let components = data_entry.get_components();
     ///
-    /// assert_eq!(Some("pt-BR"), path_buf.to_str());
+    /// assert_eq!(
+    ///     ["GBP", "pt-BR"],
+    ///     components.iter().collect::<Vec<&str>>()[..]
+    /// );
     /// ```
-    pub fn append_path_to(&self, path_buf: &mut PathBuf) {
-        if let Some(variant) = &self.variant {
-            path_buf.push(&variant as &str);
+    pub fn get_components(&self) -> DataEntryComponents {
+        self.into()
+    }
+}
+
+/// The standard components of a DataEntry path.
+pub struct DataEntryComponents {
+    components: [Option<Cow<'static, str>>; 2],
+}
+
+impl DataEntryComponents {
+    pub fn iter(&self) -> impl Iterator<Item = &str> {
+        self.components
+            .iter()
+            .filter_map(|option| option.as_ref().map(|cow| cow.borrow()))
+    }
+}
+
+impl From<&DataEntry> for DataEntryComponents {
+    fn from(data_entry: &DataEntry) -> Self {
+        DataEntryComponents {
+            components: [
+                if let Some(variant) = &data_entry.variant {
+                    // Does not actually clone if the variant is borrowed
+                    Some(variant.clone())
+                } else {
+                    None
+                },
+                Some(Cow::Owned(data_entry.langid.to_string())),
+            ],
         }
-        // TODO: Is there a alloc-less way to append the langid to the PathBuf?
-        path_buf.push(self.langid.to_string());
+    }
+}
+
+#[test]
+fn test_to_string() {
+    struct TestCase {
+        pub data_entry: DataEntry,
+        pub expected: &'static str,
+    }
+    let cases = [
+        TestCase {
+            data_entry: DataEntry {
+                variant: None,
+                langid: "und".parse().unwrap(),
+            },
+            expected: "und",
+        },
+        TestCase {
+            data_entry: DataEntry {
+                variant: Some(Cow::Borrowed("GBP")),
+                langid: "und".parse().unwrap(),
+            },
+            expected: "GBP/und",
+        },
+        TestCase {
+            data_entry: DataEntry {
+                variant: Some(Cow::Borrowed("GBP")),
+                langid: "en-ZA".parse().unwrap(),
+            },
+            expected: "GBP/en-ZA",
+        },
+    ];
+    for cas in cases.iter() {
+        assert_eq!(cas.expected, cas.data_entry.to_string());
+        assert_eq!(
+            cas.expected,
+            cas.data_entry
+                .get_components()
+                .iter()
+                .collect::<Vec<&str>>()
+                .join("/")
+        );
     }
 }

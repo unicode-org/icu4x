@@ -38,8 +38,8 @@ impl<'a, 'd> DataExporter<'a, 'd> {
 
     fn path_for(&mut self, data_key: &DataKey, data_entry: &DataEntry) -> PathBuf {
         let mut path = PathBuf::new();
-        data_key.append_path_to(&mut path);
-        data_entry.append_path_to(&mut path);
+        path.extend(data_key.get_components().iter());
+        path.extend(data_entry.get_components().iter());
         path
     }
 }
