@@ -13,8 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - run: mkdir -p ci-bench/runtime
+
       - name: Run benchmark
         run: cargo bench | tee ci-bench/runtime/output.txt
+
+      - run: pwd && ls -l && echo "ci-bench/runtime" && ls -l ci-bench/runtime
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1
