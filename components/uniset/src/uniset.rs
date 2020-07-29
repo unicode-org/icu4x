@@ -30,7 +30,7 @@ impl UnicodeSet {
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
     ///
-    /// Example:
+    /// # Example:
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
@@ -84,7 +84,7 @@ impl UnicodeSet {
 
     /// Yields an iterator going through the character set in the UnicodeSet
     ///
-    /// Example:
+    /// # Example:
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
@@ -145,7 +145,7 @@ impl UnicodeSet {
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using `std` implementation
     ///
-    /// Example:
+    /// # Example:
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
@@ -164,7 +164,7 @@ impl UnicodeSet {
     /// in the set using `std::vec::Vec` implementation Only runs the search once on the `start`
     /// parameter, while the `end` parameter is checked in a single `O(1)` step
     ///
-    /// Example:
+    /// # Example:
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
@@ -178,7 +178,7 @@ impl UnicodeSet {
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return false if the Range contains them but the
     /// UnicodeSet does not.
     ///
-    /// Example:
+    /// # Example:
     ///
     /// ```
     /// use icu_unicodeset::UnicodeSet;
