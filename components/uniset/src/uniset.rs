@@ -1,7 +1,10 @@
-use std::{char, ops::RangeBounds};
+use std::{char, ops::RangeBounds, slice::Iter};
 
 use super::UnicodeSetError;
-use crate::utils::{deconstruct_range, is_valid};
+use crate::{
+    builder::UnicodeSetBuilder,
+    utils::{deconstruct_range, is_valid},
+};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0 , inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
@@ -65,6 +68,18 @@ impl UnicodeSet {
             inv_list: vec![0, BMP_MAX + 1],
             size: (BMP_MAX as usize) + 1,
         }
+    }
+
+    pub fn builder() -> UnicodeSetBuilder {
+        UnicodeSetBuilder::new()
+    }
+
+    pub fn ranges(&self) -> Iter<u32> {
+        self.inv_list.iter()
+    }
+
+    pub fn get_invlist(&self) -> Vec<u32> {
+        self.inv_list.to_vec()
     }
 
     /// Yields an iterator going through the character set in the UnicodeSet
