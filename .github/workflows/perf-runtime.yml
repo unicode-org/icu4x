@@ -7,55 +7,28 @@ on:
     branches: '*'
 
 jobs:
-  flamegraph:
-
-    strategy:
-      fail-fast: false
-
+  benchmark:
+    name: Runtime benchmark
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    ## Cache steps
-      
-    - name: Cache cargo registry
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+      - name: Run benchmark
+        run: cd examples/rust && cargo +nightly bench | tee output.txt
 
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
-
-    - name: Cache cargo build
-      uses: actions/cache@v1
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
-    
-    ## Flamegraph setup steps
-
-    # Linux dependencies for the flamegraph binary
-    - name: Install flamegraph binary Linux deps
-      run: sudo apt-get update && sudo apt-get install -y linux-tools-common linux-tools-generic
-      # Some people who have a machine already with /usr/bin/perf may need to install
-      # the corresponding linux tools package, ex: `sudo apt-get install linux-tools-5.2`.
-
-    # Ensure unprivileged users have access to run /usr/bin/perf on CPU/etc.
-    # This is okay only because GH Actions are run in a completely clean VM
-    - name: Enable permissions on system binary `perf`
-      run: sudo sysctl -w kernel.perf_event_paranoid=-1
-
-    - name: Install flamegraph crate
-      run: cargo install flamegraph
-
-    ## Generate the flamegraph
-
-    - name: Generate flamegraph
-      run: cargo flamegraph --bin test-drivers
+      - name: Store benchmark result
+        uses: rhysd/github-action-benchmark@v1
+        with:
+          name: Rust Benchmark
+          tool: 'cargo'
+          output-file-path: ci-bench/runtime/output.txt
+          # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
+          # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for commenting on the commit on alert
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'
+          comment-on-alert: true
+          fail-on-alert: true
+          alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
 
