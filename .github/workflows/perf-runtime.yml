@@ -24,7 +24,7 @@ jobs:
       - name: Run benchmark
         run: cargo +nightly bench | tee output.txt
 
-      #- run: pwd && ls -l && echo "ci-bench/runtime" && ls -l ci-bench/runtime
+      - run: pwd && ls -l && echo "component/locale" && ls -l component/locale
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1.8.1
