@@ -15,8 +15,11 @@ jobs:
 
       - run: mkdir -p ci-bench/runtime
 
+      - name: Use nightly cargo for bench command
+        run: rustup toolchain update nightly && rustup default nightly
+
       - name: Run benchmark
-        run: cargo bench | tee ci-bench/runtime/output.txt
+        run: cargo +nightly bench | tee ci-bench/runtime/output.txt
 
       - run: pwd && ls -l && echo "ci-bench/runtime" && ls -l ci-bench/runtime
 
