@@ -13,22 +13,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: mkdir -p ci-bench/runtime
+      #- run: mkdir -p ci-bench/runtime
 
       - name: Use nightly cargo for bench command
         run: rustup toolchain update nightly && rustup default nightly
 
-      - name: Run benchmark
-        run: cargo +nightly bench | tee ci-bench/runtime/output.txt
+      - name: Try on a particular component (`locale`)
+        run: cd components/locale
 
-      - run: pwd && ls -l && echo "ci-bench/runtime" && ls -l ci-bench/runtime
+      - name: Run benchmark
+        run: cargo +nightly bench | tee output.txt
+
+      #- run: pwd && ls -l && echo "ci-bench/runtime" && ls -l ci-bench/runtime
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
           tool: 'cargo'
-          output-file-path: ci-bench/runtime/output.txt
+          output-file-path: components/locale/output.txt
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
           # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for commenting on the commit on alert
           github-token: ${{ secrets.GITHUB_TOKEN }}
