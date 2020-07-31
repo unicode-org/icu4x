@@ -290,7 +290,10 @@ impl PluralRules {
         let selector = data_provider
             .get_selector(&locale, type_)?
             .ok_or(PluralRulesError::MissingData)?;
-        Ok(Self { _locale: locale, selector })
+        Ok(Self {
+            _locale: locale,
+            selector,
+        })
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.

@@ -9,13 +9,16 @@ use std::io::prelude::*;
 
 fn main() {
     {
-        let res = unsafe { get_resource(PluralRuleType::Cardinal).expect("Failed to retrieve resource.") };
+        let res = unsafe {
+            get_resource(PluralRuleType::Cardinal).expect("Failed to retrieve resource.")
+        };
         let encoded: Vec<u8> = bincode::serialize(&res).expect("Failed to serialize to bincode.");
         let mut buffer = File::create("./data/plurals.dat").expect("Opening file failed");
         buffer.write_all(&encoded).expect("Writing failed");
     }
     {
-        let res = unsafe { get_resource(PluralRuleType::Ordinal).expect("Failed to retrieve resource.") };
+        let res =
+            unsafe { get_resource(PluralRuleType::Ordinal).expect("Failed to retrieve resource.") };
         let encoded: Vec<u8> = bincode::serialize(&res).expect("Failed to serialize to bincode.");
         let mut buffer = File::create("./data/ordinals.dat").expect("Opening file failed");
         buffer.write_all(&encoded).expect("Writing failed");
