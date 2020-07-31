@@ -26,11 +26,6 @@ fn test_parsing_operands() {
             assert_eq!(operands, test.output.into());
         }
     }
-
-    for test in test_set.float {
-        let operands: PluralOperands = test.input.try_into().expect("Failed to parse to operands.");
-        assert_eq!(operands, test.output.into());
-    }
 }
 
 #[test]

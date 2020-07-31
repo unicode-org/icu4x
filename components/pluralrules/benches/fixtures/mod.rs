@@ -9,7 +9,6 @@ pub(crate) struct NumbersFixture {
     pub isize: Vec<i64>,
     pub usize: Vec<u64>,
     pub string: Vec<String>,
-    pub float: Vec<f64>,
 }
 
 #[derive(Deserialize)]

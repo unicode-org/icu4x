@@ -39,16 +39,6 @@ fn operands(c: &mut Criterion) {
             }
         })
     });
-
-    c.bench_function("operands/create/float", |b| {
-        b.iter(|| {
-            for s in &data.float {
-                let _: PluralOperands = black_box(*s)
-                    .try_into()
-                    .expect("Failed to parse a number into an operands.");
-            }
-        })
-    });
 }
 
 criterion_group!(benches, operands,);

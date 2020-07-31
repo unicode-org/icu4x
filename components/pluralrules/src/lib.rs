@@ -341,7 +341,7 @@ impl PluralRules {
     /// # let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
-    /// let operands = PluralOperands::try_from(-5.2)
+    /// let operands = PluralOperands::try_from(-5)
     ///     .expect("Failed to parse to operands.");
     /// let operands2: PluralOperands = "5.10".parse()
     ///     .expect("Failed to parse to operands.");

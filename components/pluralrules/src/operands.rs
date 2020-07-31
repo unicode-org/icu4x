@@ -1,5 +1,5 @@
 use std::convert::TryFrom;
-use std::io::{Error as IOError, Write};
+use std::io::Error as IOError;
 use std::isize;
 use std::num::ParseIntError;
 use std::str::FromStr;
@@ -52,7 +52,7 @@ use std::str::FromStr;
 ///    w: 2,
 ///    f: 45,
 ///    t: 45,
-/// }), PluralOperands::try_from(123.45))
+/// }), "123.45".parse())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PluralOperands {
@@ -198,78 +198,5 @@ macro_rules! impl_signed_integer_type {
     };
 }
 
-// This algorithms allows us to use the Rust's decimal to float parser
-// using on-stack buffer.
-//
-// Once we start relying on Ryu, we should consider swapping it to use that.
-fn get_dec_str_from_f64(absolute_value: f64, buffer: &mut [u8]) -> Result<&str, IOError> {
-    let mut slice = &mut buffer[..];
-    write!(slice, "{}", absolute_value)?;
-    let remaining_len = slice.len();
-    let written = buffer.len() - remaining_len;
-
-    let abs_str = &buffer[0..written];
-
-    let sep_idx = abs_str
-        .iter()
-        .position(|b| b == &b'.')
-        .expect("Failed to find a separator in f64.");
-
-    // # Safety
-    //
-    // We are dealing with ASCII digits.
-    Ok(unsafe { std::str::from_utf8_unchecked(&abs_str[(sep_idx + 1)..]) })
-}
-
-macro_rules! impl_float_type {
-    ($ty:ident) => {
-        impl TryFrom<$ty> for PluralOperands {
-            type Error = OperandsError;
-            fn try_from(input: $ty) -> Result<Self, Self::Error> {
-                let absolute_value = input.abs() as f64;
-
-                let (
-                    integer_digits,
-                    num_fraction_digits0,
-                    num_fraction_digits,
-                    fraction_digits0,
-                    fraction_digits,
-                ) = if (absolute_value.round() - absolute_value).abs() > f64::EPSILON {
-                    let mut buffer = [0u8; 32];
-                    let dec_str = get_dec_str_from_f64(absolute_value, &mut buffer)?;
-                    let num_fraction_digits = dec_str.len();
-
-                    let fraction_digits = u64::from_str(&dec_str)?;
-                    (
-                        absolute_value.trunc() as u64,
-                        num_fraction_digits,
-                        num_fraction_digits,
-                        fraction_digits,
-                        fraction_digits,
-                    )
-                } else {
-                    (
-                        absolute_value as u64,
-                        0,0,0,0,
-                    )
-                };
-
-                Ok(PluralOperands {
-                    n: absolute_value,
-                    i: integer_digits,
-                    v: num_fraction_digits0,
-                    w: num_fraction_digits,
-                    f: fraction_digits0,
-                    t: fraction_digits,
-                })
-            }
-        }
-    };
-    ($($ty:ident)+) => {
-        $(impl_float_type!($ty);)+
-    };
-}
-
 impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
-impl_float_type!(f32 f64);

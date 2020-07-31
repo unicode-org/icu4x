@@ -6,7 +6,6 @@ use std::convert::TryInto;
 pub struct OperandsTestSet {
     pub string: Vec<OperandsTest<String>>,
     pub int: Vec<OperandsTest<isize>>,
-    pub float: Vec<OperandsTest<f64>>,
 }
 
 #[derive(Clone, Deserialize)]
@@ -21,7 +20,8 @@ pub enum PluralOperandsInput {
         f: Option<u64>,
         t: Option<u64>,
     },
-    Number(f64),
+    String(String),
+    Number(isize),
 }
 
 impl From<PluralOperandsInput> for PluralOperands {
@@ -43,6 +43,9 @@ impl From<PluralOperandsInput> for PluralOperands {
                 f: f.unwrap_or(0),
                 t: t.unwrap_or(0),
             },
+            PluralOperandsInput::String(num) => num
+                .parse()
+                .expect("Failed to parse a number into operands."),
             PluralOperandsInput::Number(num) => num
                 .try_into()
                 .expect("Failed to parse a number into operands."),
