@@ -54,7 +54,8 @@
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
-//! let ast = parse(input.as_bytes()).unwrap();
+//! let ast = parse(input.as_bytes())
+//!     .expect("Parsing failed.");
 //! assert_eq!(ast, Condition(Box::new([
 //!     AndCondition(Box::new([
 //!         Relation {

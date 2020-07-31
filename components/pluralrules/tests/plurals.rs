@@ -11,8 +11,6 @@ fn test_plural_rules() {
     let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp).unwrap();
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
-
-    assert_eq!(pr.locale().to_string(), "en");
 }
 
 #[test]

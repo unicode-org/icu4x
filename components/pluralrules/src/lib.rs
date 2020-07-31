@@ -256,7 +256,7 @@ pub enum PluralRulesError {
 /// [`Plural Type`]: ./enum.PluralRuleType.html
 /// [`Plural Category`]: ./enum.PluralCategory.html
 pub struct PluralRules {
-    locale: LanguageIdentifier,
+    _locale: LanguageIdentifier,
     selector: data::RulesSelector,
 }
 
@@ -290,7 +290,7 @@ impl PluralRules {
         let selector = data_provider
             .get_selector(&locale, type_)?
             .ok_or(PluralRulesError::MissingData)?;
-        Ok(Self { locale, selector })
+        Ok(Self { _locale: locale, selector })
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
@@ -354,28 +354,5 @@ impl PluralRules {
     /// [`Plural Operands`]: ./operands/struct.PluralOperands.html
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
         self.selector.select(&input.into())
-    }
-
-    /// Returns the LanguageIdentifier associated with this struct.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locale::LanguageIdentifier;
-    /// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
-    /// use icu_pluralrules::data::provider::DummyDataProvider;
-    ///
-    /// let lang: LanguageIdentifier = "en".parse()
-    ///     .expect("Failed to parse a language identifier.");
-    ///
-    /// let dp = DummyDataProvider::default();
-    ///
-    /// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
-    ///     .expect("Failed to construct a PluralRules struct.");
-    ///
-    /// assert_eq!(&pr.locale().to_string(), "en");
-    /// ```
-    pub fn locale(&self) -> &LanguageIdentifier {
-        &self.locale
     }
 }

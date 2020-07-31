@@ -68,14 +68,11 @@ fn plurals_bench(c: &mut Criterion) {
             let loc: LanguageIdentifier = "pl".parse().unwrap();
             let dtp = DataProvider {};
             let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &dtp).unwrap();
-            let operands: Vec<PluralOperands> = num_data
-                .usize
-                .iter()
-                .map(|d| (*d).into())
-                .collect();
+            let operands: Vec<PluralOperands> =
+                num_data.usize.iter().map(|d| (*d).into()).collect();
             b.iter(|| {
                 for op in &operands {
-                    let _ = pr.select((*op).clone());
+                    let _ = pr.select(*op);
                 }
             })
         });

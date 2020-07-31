@@ -29,18 +29,41 @@ fn test_and_condition(condition: &ast::AndCondition, operands: &PluralOperands) 
 }
 
 fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
-    let exp = calculate_expression(&relation.expression, operands);
-    test_range(&relation.range_list, exp, &relation.operator)
+    calculate_expression(&relation.expression, operands)
+        .map(|exp| test_range(&relation.range_list, exp, &relation.operator))
+        .unwrap_or(false)
 }
 
-fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands) -> u64 {
-    match expression.operand {
-        ast::Operand::N => operands.n as u64,
+// At runtime CLDR only works with integer values.
+// If a rule is asking for `n` it will compare it to
+// a list of integers, and expect it to not match if
+// there is any fractional part.
+//
+// That allows us to play a trick - we already have an
+// integer portion of the number as operand `i`.
+//
+// This function returns `None` to indicate that the value should
+// not match anything which will happen if expression asks for operand `n`
+// which has a fractional part, or if it uses a modulus `0`.
+fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands) -> Option<u64> {
+    let value = match expression.operand {
+        ast::Operand::N => {
+            if operands.n.fract() < f64::EPSILON {
+                operands.i
+            } else {
+                return None;
+            }
+        }
         ast::Operand::I => operands.i,
         ast::Operand::F => operands.f,
         ast::Operand::V => operands.v as u64,
         ast::Operand::W => operands.w as u64,
         ast::Operand::T => operands.t,
+    };
+    if let Some(modulus) = &expression.modulus {
+        value.checked_rem_euclid(modulus.0)
+    } else {
+        Some(value)
     }
 }
 

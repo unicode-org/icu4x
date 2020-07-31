@@ -68,14 +68,16 @@ impl RulesSelector {
     pub fn select(&self, operands: &PluralOperands) -> PluralCategory {
         match self {
             Self::Function(ptr) => ptr(operands),
-            Self::Conditions(conditions) => {
-                for (category, rule) in conditions.iter() {
+            Self::Conditions(conditions) => conditions
+                .iter()
+                .find_map(|(category, rule)| {
                     if rules::test_condition(rule, operands) {
-                        return *category;
+                        Some(*category)
+                    } else {
+                        None
                     }
-                }
-                PluralCategory::Other
-            }
+                })
+                .unwrap_or(PluralCategory::Other),
         }
     }
 }

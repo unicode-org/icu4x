@@ -209,17 +209,17 @@ pub struct Expression {
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operand {
-    /// AST node for an absolute value of input
+    /// Absolute value of input
     N,
-    /// AST node for an integer value of input
+    /// An integer value of input with the fraction part truncated off
     I,
-    /// AST node for a number of visible fraction digits with trailing zeros
+    /// Number of visible fraction digits with trailing zeros
     V,
-    /// AST node for a number of visible fraction digits without trailing zeros
+    /// Number of visible fraction digits without trailing zeros
     W,
-    /// AST node or a visible fraction digits with trailing zeros
+    /// Visible fraction digits with trailing zeros
     F,
-    /// AST node for a visible fraction digits without trailing zeros
+    /// Visible fraction digits without trailing zeros
     T,
 }
 

@@ -61,7 +61,7 @@ pub unsafe fn get_resource(
         *rules = Some(res);
     }
 
-    Ok(rules.as_ref().unwrap())
+    Ok(rules.as_ref().expect("Rules were just populated."))
 }
 
 pub fn get_rules(
@@ -71,25 +71,29 @@ pub fn get_rules(
     let res = unsafe { get_resource(type_)? };
 
     let rules = match type_ {
-        PluralRuleType::Cardinal => res.supplemental.plurals_type_cardinal.as_ref().unwrap(),
-        PluralRuleType::Ordinal => res.supplemental.plurals_type_ordinal.as_ref().unwrap(),
+        PluralRuleType::Cardinal => res.supplemental.plurals_type_cardinal.as_ref(),
+        PluralRuleType::Ordinal => res.supplemental.plurals_type_ordinal.as_ref(),
     };
 
-    let lstr = locale.to_string();
+    if let Some(rules) = rules {
+        let lstr = locale.to_string();
 
-    let lang_idx = if let Ok(idx) = rules.0.binary_search_by_key(&lstr.as_str(), |(l, _)| &l) {
-        idx
+        let lang_idx = if let Ok(idx) = rules.0.binary_search_by_key(&lstr.as_str(), |(l, _)| &l) {
+            idx
+        } else {
+            return Ok(None);
+        };
+        let lang_rules = &rules.0[lang_idx].1;
+
+        let result = PluralCategory::all()
+            .filter_map(|pc| {
+                let input = lang_rules.get(pc)?;
+                Some(parse(input.as_bytes()).map(|ast| (*pc, ast)))
+            })
+            .collect::<Result<_, _>>()?;
+
+        Ok(Some(result))
     } else {
-        return Ok(None);
-    };
-    let lang_rules = &rules.0[lang_idx].1;
-
-    let result = PluralCategory::all()
-        .filter_map(|pc| {
-            let input = lang_rules.get(pc)?;
-            Some(parse(input.as_bytes()).map(|ast| (*pc, ast)))
-        })
-        .collect::<Result<_, _>>()?;
-
-    Ok(Some(result))
+        Ok(None)
+    }
 }

@@ -37,7 +37,7 @@ impl From<PluralOperandsInput> for PluralOperands {
             },
             PluralOperandsInput::Struct { n, i, v, w, f, t } => Self {
                 n: n.unwrap_or(0_f64),
-                i: i.unwrap_or(0),
+                i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
                 v: v.unwrap_or(0),
                 w: w.unwrap_or(0),
                 f: f.unwrap_or(0),
