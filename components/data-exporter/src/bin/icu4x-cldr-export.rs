@@ -7,14 +7,14 @@ use std::convert::TryFrom;
 use std::ffi::OsStr;
 use std::fs;
 
-use icu_cldr_json_data_provider::CldrPluralsDataProvider;
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
+use icu_cldr_json_data_provider::CldrPluralsDataProvider;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::structs;
 
-use std::path::PathBuf;
 use std::fmt;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 enum Error {
@@ -90,15 +90,14 @@ fn main() -> Result<(), Error> {
             Arg::with_name("ALL_KEYS")
                 .short("A")
                 .long("all-keys")
-                .help(
-                    "Include all keys known to ICU4X.",
-                ),
+                .help("Include all keys known to ICU4X."),
         )
-        .group(ArgGroup::with_name("KEYS")
-            .arg("KEY")
-            .arg("KEY_FILE")
-            .arg("ALL_KEYS")
-            .required(true)
+        .group(
+            ArgGroup::with_name("KEYS")
+                .arg("KEY")
+                .arg("KEY_FILE")
+                .arg("ALL_KEYS")
+                .required(true),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -118,9 +117,7 @@ fn main() -> Result<(), Error> {
     }
 
     // TODO: Build up this list from --keys and --key-file
-    let keys = [
-        icu_data_key!(plurals: cardinal@1),
-    ];
+    let keys = [icu_data_key!(plurals: cardinal@1)];
 
     let output_path = PathBuf::from(
         matches
@@ -146,10 +143,9 @@ fn main() -> Result<(), Error> {
         file_writer: &mut json_file_writer,
     };
 
-    data_exporter
-        .write_data_key::<structs::plurals::PluralRuleStringsV1>(
-            &icu_data_key!(plurals: cardinal@1),
-        )?;
+    data_exporter.write_data_key::<structs::plurals::PluralRuleStringsV1>(
+        &icu_data_key!(plurals: cardinal@1),
+    )?;
 
     json_file_writer.flush()?;
 

@@ -131,7 +131,7 @@ impl ResponseBuilder {
 pub trait DataProvider<'d> {
     /// Query the provider for data. Returns Ok if the request successfully loaded data. If data
     /// failed to load, returns an Error with more information.
-    fn load(&self, req: &Request) -> Result<Response<'d>, Error>;
+    fn load<'a>(&'a self, req: &Request) -> Result<Response<'d>, Error>;
 }
 
 impl<'d> dyn DataProvider<'d> + 'd {
@@ -144,8 +144,8 @@ impl<'d> dyn DataProvider<'d> + 'd {
             Err(err) => match err {
                 Error::UnsupportedCategory(_) => Ok(None),
                 Error::UnsupportedDataKey(_) => Ok(None),
-                _ => Err(err)
-            }
+                _ => Err(err),
+            },
         }
     }
 }
