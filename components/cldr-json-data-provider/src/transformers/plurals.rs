@@ -1,49 +1,34 @@
 use std::borrow::Cow;
-use std::borrow::ToOwned;
 use std::convert::TryFrom;
-use std::fs;
 use std::fs::File;
-use std::io::prelude::*;
 use std::io::BufReader;
+use std::marker::PhantomData;
 
 use crate::cldr_langid::CldrLanguage;
+use crate::transformers::DataKeySupport;
 use crate::CldrPaths;
 use crate::Error;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs::plurals::*;
-use icu_locale::LanguageIdentifier;
 use serde::Deserialize;
-
-// TODO: Make this non-pub
-#[derive(PartialEq, Debug)]
-pub struct LanguagePluralsPair {
-    langid: LanguageIdentifier,
-    rules: PluralRuleStringsV1,
-}
 
 #[derive(PartialEq, Debug)]
 pub struct CldrPluralsDataProvider<'d> {
-    resource: Resource<'d>,
-    owned_json: Option<Box<String>>,
+    resource: Resource,
+    // owned_json: Option<Pin<String>>,
+    _phantom: PhantomData<&'d ()>,
 }
 
 impl TryFrom<&CldrPaths> for CldrPluralsDataProvider<'_> {
     type Error = Error;
     fn try_from(cldr_paths: &CldrPaths) -> Result<Self, Self::Error> {
-        // let owned_json = Box::new(fs::read_to_string(cldr_paths.plurals_json()?)?);
-        // let mut resource: Resource = serde_json::from_str(owned_json)?;
-        // Ok(CldrPluralsDataProvider {
-        //     resource: resource.normalize(),
-        //     owned_json: Some(owned_json),
-        // })
-
         let file = File::open(cldr_paths.plurals_json()?)?;
         let reader = BufReader::new(file);
-        let mut resource: Resource = serde_json::from_reader(reader)?;
+        let resource: Resource = serde_json::from_reader(reader)?;
         Ok(CldrPluralsDataProvider {
             resource: resource.normalize(),
-            owned_json: None,
+            _phantom: PhantomData,
         })
     }
 }
@@ -54,19 +39,26 @@ impl<'d> TryFrom<&'d str> for CldrPluralsDataProvider<'d> {
         let resource: Resource = serde_json::from_str(s)?;
         Ok(CldrPluralsDataProvider {
             resource: resource.normalize(),
-            owned_json: None,
+            _phantom: PhantomData,
         })
     }
 }
 
-impl<'d> CldrPluralsDataProvider<'d> {
-    fn get_rules_for(&self, data_key: &DataKey) -> Result<&Rules<'d>, data_provider::Error> {
+impl<'d> DataKeySupport for CldrPluralsDataProvider<'d> {
+    fn supports_key(data_key: &DataKey) -> Result<(), data_provider::Error> {
         if data_key.category != data_key::Category::Plurals {
             return Err((&data_key.category).into());
         }
         if data_key.version != 1 {
             return Err(data_key.into());
         }
+        Ok(())
+    }
+}
+
+impl<'d> CldrPluralsDataProvider<'d> {
+    fn get_rules_for(&self, data_key: &DataKey) -> Result<&Rules, data_provider::Error> {
+        CldrPluralsDataProvider::supports_key(data_key)?;
         match data_key.sub_category.as_str() {
             "cardinal" => self.resource.supplemental.plurals_type_cardinal.as_ref(),
             "ordinal" => self.resource.supplemental.plurals_type_ordinal.as_ref(),
@@ -115,7 +107,7 @@ impl<'d> DataEntryCollection for CldrPluralsDataProvider<'d> {
     }
 }
 
-impl<'d> From<&LocalePluralRules<'d>> for PluralRuleStringsV1 {
+impl From<&LocalePluralRules> for PluralRuleStringsV1 {
     fn from(other: &LocalePluralRules) -> PluralRuleStringsV1 {
         fn convert<'s>(s: &Cow<'s, str>) -> Cow<'static, str> {
             Cow::Owned(s.to_string())
@@ -130,55 +122,43 @@ impl<'d> From<&LocalePluralRules<'d>> for PluralRuleStringsV1 {
     }
 }
 
+// TODO: Use Serde Borrow throughout these structs. Blocked by:
+// https://stackoverflow.com/q/63201624/1407170
+
 #[derive(PartialEq, Debug, Deserialize)]
-// TODO: Make this non-pub
-pub struct LocalePluralRules<'s> {
+struct LocalePluralRules {
     #[serde(rename = "pluralRule-count-zero")]
-    #[serde(borrow)]
-    pub zero: Option<Cow<'s, str>>,
+    pub zero: Option<Cow<'static, str>>,
     #[serde(rename = "pluralRule-count-one")]
-    #[serde(borrow)]
-    pub one: Option<Cow<'s, str>>,
+    pub one: Option<Cow<'static, str>>,
     #[serde(rename = "pluralRule-count-two")]
-    #[serde(borrow)]
-    pub two: Option<Cow<'s, str>>,
+    pub two: Option<Cow<'static, str>>,
     #[serde(rename = "pluralRule-count-few")]
-    #[serde(borrow)]
-    pub few: Option<Cow<'s, str>>,
+    pub few: Option<Cow<'static, str>>,
     #[serde(rename = "pluralRule-count-many")]
-    #[serde(borrow)]
-    pub many: Option<Cow<'s, str>>,
+    pub many: Option<Cow<'static, str>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-struct Rules<'s>(
-    #[serde(with = "tuple_vec_map")]
-    #[serde(borrow)]
-    pub Vec<(CldrLanguage, LocalePluralRules<'s>)>,
-);
+struct Rules(#[serde(with = "tuple_vec_map")] pub Vec<(CldrLanguage, LocalePluralRules)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-struct Supplemental<'s> {
+struct Supplemental {
     #[serde(rename = "plurals-type-cardinal")]
-    #[serde(borrow)]
-    pub plurals_type_cardinal: Option<Rules<'s>>,
+    pub plurals_type_cardinal: Option<Rules>,
     #[serde(rename = "plurals-type-ordinal")]
-    #[serde(borrow)]
-    pub plurals_type_ordinal: Option<Rules<'s>>,
+    pub plurals_type_ordinal: Option<Rules>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-struct Resource<'s> {
-    #[serde(borrow)]
-    pub supplemental: Supplemental<'s>,
-    // #[serde(borrow)]
-    // pub dummy: Cow<'s, str>,
+struct Resource {
+    pub supplemental: Supplemental,
 }
 
-impl<'s> Resource<'s> {
+impl Resource {
     pub fn normalize(mut self) -> Self {
         // NOTE: We need to sort in order to put "root" -> "und" into place.
-        fn sort<'s>(rules: &mut Rules<'s>) {
+        fn sort(rules: &mut Rules) {
             // TODO: Avoid the clone
             rules.0.sort_by_key(|(l, _)| l.0.clone())
         }

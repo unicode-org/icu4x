@@ -12,6 +12,7 @@ use std::path::PathBuf;
 pub enum AliasOption {
     NoAliases,
     Symlink,
+    // TODO: Alias based on a field in the JSON file
 }
 
 #[non_exhaustive]
@@ -70,7 +71,9 @@ impl JsonFileWriter {
 
         match options.overwrite {
             OverwriteOption::RemoveAndReplace => {
-                fs::remove_dir_all(&options.root)?;
+                if options.root.exists() {
+                    fs::remove_dir_all(&options.root)?;
+                }
             }
         };
         fs::create_dir_all(&options.root)?;
@@ -102,12 +105,11 @@ impl FileWriter for JsonFileWriter {
         path_buf.extend(path_without_extension);
         path_buf.set_extension("json");
 
-        if let Some(parent_dir) = path_buf.parent() {
-            fs::create_dir_all(&parent_dir)?;
-        }
-
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
+                if let Some(parent_dir) = path_buf.parent() {
+                    fs::create_dir_all(&parent_dir)?;
+                }
                 let file = fs::File::create(&path_buf)?;
                 let mut json = serde_json::Serializer::new(file);
                 obj.erased_serialize(&mut erased_serde::Serializer::erase(&mut json))?;

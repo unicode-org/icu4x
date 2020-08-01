@@ -44,6 +44,7 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
     pub fn flush(&mut self) -> Result<(), std::io::Error> {
         self.flushed = true;
         // TODO: Make sure the directory is empty
+        fs::create_dir_all(&self.root)?;
         let mut unique_data_items: Vec<(&T, &Vec<PathBuf>)> = self.map.iter().collect();
         unique_data_items.sort(); // guarantee canonical order
         for (i, (data_item, link_paths)) in unique_data_items.iter().enumerate() {

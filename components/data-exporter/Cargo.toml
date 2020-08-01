@@ -16,10 +16,11 @@ include = [
 
 [dependencies]
 icu-data-provider = { path = "../data-provider" }
+icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
 vfs = "0.2"
 erased-serde = "0.3"
 serde_json = "1.0"
 serde = "1.0"
+clap = "2.33"
 
 [dev-dependencies]
-icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
