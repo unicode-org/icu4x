@@ -5,7 +5,7 @@ use icu_data_exporter::JsonFileWriter;
 use std::convert::TryFrom;
 use std::fs;
 
-use icu_cldr_json_data_provider::CldrPluralsDataProvider;
+use icu_cldr_json_data_provider::transform::PluralsProvider;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::structs;
 
@@ -14,7 +14,7 @@ use std::path::PathBuf;
 #[test]
 fn test_basic() {
     let json_str = fs::read_to_string("tests/testdata/plurals.json").unwrap();
-    let provider = CldrPluralsDataProvider::try_from(json_str.as_str()).unwrap();
+    let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
 
     let mut json_options = json_exporter::Options::default();
     json_options.root = PathBuf::from("/tmp/icu4x_json");

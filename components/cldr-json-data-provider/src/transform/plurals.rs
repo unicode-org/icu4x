@@ -5,7 +5,7 @@ use std::io::BufReader;
 use std::marker::PhantomData;
 
 use crate::cldr_langid::CldrLanguage;
-use crate::transformers::DataKeySupport;
+use crate::support::DataKeySupport;
 use crate::CldrPaths;
 use crate::Error;
 use icu_data_provider::iter::DataEntryCollection;
@@ -14,13 +14,12 @@ use icu_data_provider::structs::plurals::*;
 use serde::Deserialize;
 
 #[derive(PartialEq, Debug)]
-pub struct CldrPluralsDataProvider<'d> {
+pub struct PluralsProvider<'d> {
     resource: Resource,
-    // owned_json: Option<Pin<String>>,
-    _phantom: PhantomData<&'d ()>,
+    _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&CldrPaths> for CldrPluralsDataProvider<'_> {
+impl TryFrom<&CldrPaths> for PluralsProvider<'_> {
     type Error = Error;
     fn try_from(cldr_paths: &CldrPaths) -> Result<Self, Self::Error> {
         let path = cldr_paths.plurals_json()?;
@@ -30,25 +29,25 @@ impl TryFrom<&CldrPaths> for CldrPluralsDataProvider<'_> {
         };
         let reader = BufReader::new(file);
         let resource: Resource = serde_json::from_reader(reader)?;
-        Ok(CldrPluralsDataProvider {
+        Ok(PluralsProvider {
             resource: resource.normalize(),
             _phantom: PhantomData,
         })
     }
 }
 
-impl<'d> TryFrom<&'d str> for CldrPluralsDataProvider<'d> {
+impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
         let resource: Resource = serde_json::from_str(s)?;
-        Ok(CldrPluralsDataProvider {
+        Ok(PluralsProvider {
             resource: resource.normalize(),
             _phantom: PhantomData,
         })
     }
 }
 
-impl<'d> DataKeySupport for CldrPluralsDataProvider<'d> {
+impl<'d> DataKeySupport for PluralsProvider<'d> {
     fn supports_key(data_key: &DataKey) -> Result<(), data_provider::Error> {
         if data_key.category != data_key::Category::Plurals {
             return Err((&data_key.category).into());
@@ -60,9 +59,9 @@ impl<'d> DataKeySupport for CldrPluralsDataProvider<'d> {
     }
 }
 
-impl<'d> CldrPluralsDataProvider<'d> {
+impl<'d> PluralsProvider<'d> {
     fn get_rules_for(&self, data_key: &DataKey) -> Result<&Rules, data_provider::Error> {
-        CldrPluralsDataProvider::supports_key(data_key)?;
+        PluralsProvider::supports_key(data_key)?;
         match data_key.sub_category.as_str() {
             "cardinal" => self.resource.supplemental.plurals_type_cardinal.as_ref(),
             "ordinal" => self.resource.supplemental.plurals_type_ordinal.as_ref(),
@@ -72,7 +71,7 @@ impl<'d> CldrPluralsDataProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d> for CldrPluralsDataProvider<'d> {
+impl<'d> DataProvider<'d> for PluralsProvider<'d> {
     fn load(
         &self,
         req: &data_provider::Request,
@@ -92,7 +91,7 @@ impl<'d> DataProvider<'d> for CldrPluralsDataProvider<'d> {
     }
 }
 
-impl<'d> DataEntryCollection for CldrPluralsDataProvider<'d> {
+impl<'d> DataEntryCollection for PluralsProvider<'d> {
     fn iter_for_key(
         &self,
         data_key: &DataKey,

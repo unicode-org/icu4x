@@ -18,6 +18,7 @@ pub enum AliasOption {
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum OverwriteOption {
+    CheckEmpty,
     RemoveAndReplace,
 }
 
@@ -40,7 +41,7 @@ impl Default for Options {
         Options {
             root: PathBuf::from("icu4x_data"),
             aliasing: AliasOption::NoAliases,
-            overwrite: OverwriteOption::RemoveAndReplace,
+            overwrite: OverwriteOption::CheckEmpty,
         }
     }
 }
@@ -70,7 +71,16 @@ impl JsonFileWriter {
         };
 
         match options.overwrite {
+            OverwriteOption::CheckEmpty => {
+                // If the directory doesn't exist, ignore.
+                // If it does exist, remove it safely (rmdir).
+                if options.root.exists() {
+                    fs::remove_dir(&options.root)?;
+                }
+            }
             OverwriteOption::RemoveAndReplace => {
+                // If the directory doesn't exist, ignore.
+                // If it does exist, remove it aggressively (rm -rf).
                 if options.root.exists() {
                     fs::remove_dir_all(&options.root)?;
                 }

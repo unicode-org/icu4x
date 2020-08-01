@@ -25,12 +25,6 @@ impl From<serde_json::error::Error> for Error {
     }
 }
 
-// impl From<std::io::Error> for Error {
-//     fn from(err: std::io::Error) -> Self {
-//         Self::IoError(err)
-//     }
-// }
-
 impl From<&MissingSourceError> for Error {
     fn from(err: &MissingSourceError) -> Self {
         Self::MissingSource(*err)
@@ -40,8 +34,8 @@ impl From<&MissingSourceError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::JsonError(err) => write!(f, "JSON error: {}", err),
-            Error::IoError(err, path) => write!(f, "IO error: {}: {}", err, path.to_string_lossy()),
+            Error::JsonError(err) => write!(f, "{}", err),
+            Error::IoError(err, path) => write!(f, "{}: {}", err, path.to_string_lossy()),
             Error::MissingSource(err) => err.fmt(f),
         }
     }

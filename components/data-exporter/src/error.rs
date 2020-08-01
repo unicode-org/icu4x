@@ -5,6 +5,7 @@ pub enum Error {
     DataProviderError(icu_data_provider::error::Error),
     SerdeJsonError(serde_json::error::Error),
     SerializerError(erased_serde::Error),
+    // TODO: Consider adding the path to IoError
     IoError(std::io::Error),
 }
 
@@ -34,8 +35,12 @@ impl From<std::io::Error> for Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO: should the Error Display be different from Debug?
-        fmt::Debug::fmt(self, f)
+        match self {
+            Error::DataProviderError(error) => write!(f, "{}", error),
+            Error::SerdeJsonError(error) => write!(f, "{}", error),
+            Error::SerializerError(error) => write!(f, "{}", error),
+            Error::IoError(error) => write!(f, "{}", error),
+        }
     }
 }
 

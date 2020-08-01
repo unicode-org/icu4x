@@ -9,18 +9,31 @@ use std::fs;
 
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
-use icu_cldr_json_data_provider::CldrPluralsDataProvider;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::structs;
 
 use std::fmt;
 use std::path::PathBuf;
 
-#[derive(Debug)]
+// #[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
-    CldrMissing(&'static str, String),
     ExportError(icu_data_exporter::Error),
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
+            Error::ExportError(error) => write!(f, "{}", error),
+        }
+    }
+}
+
+impl fmt::Debug for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        (self as &dyn fmt::Display).fmt(f)
+    }
 }
 
 impl From<icu_data_exporter::Error> for Error {
@@ -113,7 +126,7 @@ fn main() -> Result<(), Error> {
         .get_matches();
 
     if !matches.is_present("ALL_KEYS") {
-        panic!("Lists of keys are not yet supported (see #192)")
+        return Err(Error::Unsupported("Lists of keys are not yet supported (see #192)"));
     }
 
     // TODO: Build up this list from --keys and --key-file
@@ -136,7 +149,12 @@ fn main() -> Result<(), Error> {
     let mut json_options = json_exporter::Options::default();
     json_options.root = output_path;
     json_options.aliasing = json_exporter::AliasOption::Symlink;
-    let mut json_file_writer = JsonFileWriter::try_new(&json_options).unwrap();
+    json_options.overwrite = if matches.is_present("OVERWRITE") {
+        json_exporter::OverwriteOption::RemoveAndReplace
+    } else {
+        json_exporter::OverwriteOption::CheckEmpty
+    };
+    let mut json_file_writer = JsonFileWriter::try_new(&json_options)?;
 
     let mut data_exporter = DataExporter {
         data_provider: &provider,

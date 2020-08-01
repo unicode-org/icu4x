@@ -3,9 +3,10 @@
 mod cldr_langid;
 mod cldr_paths;
 mod error;
-mod transformers;
+mod support;
+
+pub mod transform;
 
 pub use cldr_paths::CldrPaths;
+pub use transform::CldrDataProvider;
 pub use error::Error;
-pub use transformers::CldrDataProvider;
-pub use transformers::CldrPluralsDataProvider;

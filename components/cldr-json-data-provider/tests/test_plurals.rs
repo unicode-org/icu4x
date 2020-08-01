@@ -3,14 +3,14 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fs;
 
-use icu_cldr_json_data_provider::CldrPluralsDataProvider;
+use icu_cldr_json_data_provider::transform::PluralsProvider;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs::plurals::*;
 
 #[test]
 fn test_basic() {
     let json_str = fs::read_to_string("tests/testdata/plurals.json").unwrap();
-    let provider = CldrPluralsDataProvider::try_from(json_str.as_str()).unwrap();
+    let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider
