@@ -34,17 +34,18 @@ fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
         .unwrap_or(false)
 }
 
-// At runtime CLDR only works with integer values.
-// If a rule is asking for `n` it will compare it to
-// a list of integers, and expect it to not match if
-// there is any fractional part.
+// UTS 35 Part 2 Section 5.1 specifies that CLDR rules contain only integer values.
+// See: https://unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax
 //
-// That allows us to play a trick - we already have an
-// integer portion of the number as operand `i`.
+// If a rule is asking for `n` it will compare it to a list of integers,
+// and expect it to not match if there is any fractional part.
 //
-// This function returns `None` to indicate that the value should
-// not match anything which will happen if expression asks for operand `n`
-// which has a fractional part, or if it uses a modulus `0`.
+// That allows us to play a trick - we already have an integer portion of the number as operand `i`.
+//
+// In result, if we are asked to calculate an operand `n` and it contains a fractional part,
+// we know that it will not match the value, which must be an integer without a fractional part.
+//
+// If that happens, we'll return `None`, and the matching will return `false`.
 fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands) -> Option<u64> {
     let value = match expression.operand {
         ast::Operand::N => {

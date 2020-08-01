@@ -143,47 +143,58 @@ pub enum PluralRuleType {
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum PluralCategory {
-    /// This category is used for message forms that are specific to cases
-    /// where the number is `0`.
+    /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
-    /// For example, English does not distinguish between `0 items` and `5 items`,
-    /// so both will fall into the `Other` category.
+    /// Examples of numbers having this category:
     ///
-    /// On the other hand Welsh does distinguish - `0 cwn`, `1 ci` and `6 chi`, so
-    /// the `Zero` category is being used separately from `Other`.
+    /// - 0 in Arabic (ar), Latvian (lv)
+    /// - 10~20, 30, 40, 50, ... in Latvian (lv)
     Zero,
-    /// This category is used for message forms that are specific to cases
-    /// where the number is `1`.
+    /// CLDR "one" plural category. Signifies the singular form in many languages.
     ///
-    /// In English `1 table`, `1 window` etc.
+    /// Examples of numbers having this category:
     ///
-    /// *Note*: It is important to recognize, that in some languages this category
-    /// is used for numbers different from `1`.
-    /// For example, in Russian, `1`, `21`, `101` and `1001` all use this category.
+    /// - 0 in French (fr), Portuguese (pt), ...
+    /// - 1 in English (en) and most other languages
+    /// - 2.1 in Filipino (fil), Croatian (hr), Latvian (lv), Serbian (sr)
+    /// - 2, 3, 5, 7, 8, ... in Filipino (fil)
     One,
-    /// This category is used for message forms that are specific to cases
-    /// where the number is `2`.
+    /// CLDR "two" plural category. Used in Arabic, Hebrew, and Slovenian, among others.
     ///
-    /// For example, in Breton `2 gi`, `22 gi`, `102 gi` all use this category.
+    /// Examples of numbers having this category:
+    ///
+    /// - 2 in Arabic (ar), Hebrew (iw), Slovenian (sl)
+    /// - 2.0 in Arabic (ar)
     Two,
-    /// This category is used for message forms that are specific to cases
-    /// where the number is more than `1 but less than `many`.
+    /// CLDR "few" plural category. Used in Romanian, Polish, Russian, and others.
     ///
-    /// If there is a specific `Two` category in a given language, this category will
-    /// follow that.
+    /// Examples of numbers having this category:
     ///
-    /// For example, in Serbian it covers `2-4`, `22-24`, `62`, `102` etc.
+    /// - 0 in Romanian (ro)
+    /// - 1.2 in Croatian (hr), Romanian (ro), Slovenian (sl), Serbian (sr)
+    /// - 2 in Polish (pl), Russian (ru), Czech (cs), ...
+    /// - 5 in Arabic (ar), Lithuanian (lt), Romanian (ro)
     Few,
-    /// This category is used for message forms that are specific to cases
-    /// where the number is higher than the previous category.
+    /// CLDR "many" plural category. Used in Polish, Russian, Ukrainian, and others.
     ///
-    /// For example, in Arabic it covers `11-26`, `111`, `1011`, `12.0` etc.
+    /// Examples of numbers having this category:
+    ///
+    /// - 0 in Polish (pl)
+    /// - 1.0 in Czech (cs), Slovak (sk)
+    /// - 1.1 in Czech (cs), Lithuanian (lt), Slovak (sk)
+    /// - 15 in Arabic (ar), Polish (pl), Russian (ru), Ukrainian (uk)
     Many,
-    /// This category is a catch-all used to handle all numbers not covered by any previous
-    /// category.
+    /// CLDR "other" plural category, used as a catch-all. Each language supports it, and it
+    /// is also used as a fail safe result for in case no better match can be identified.
     ///
-    /// Each language supports it and it is also used as a fail safe result for in case
-    /// no better match can be identified.
+    /// In some languages, such as Japanese, Chinese, Korean, and Thai, this is the only
+    /// plural category.
+    ///
+    /// Examples of numbers having this category:
+    ///
+    /// - 0 in English (en), German (de), Spanish (es), ...
+    /// - 1 in Japanese (ja), Korean (ko), Chinese (zh), Thai (th), ...
+    /// - 2 in English (en), German (de), Spanish (es), ...
     Other,
 }
 
