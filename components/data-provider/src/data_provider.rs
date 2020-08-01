@@ -128,17 +128,17 @@ impl ResponseBuilder {
 /// 2. The provider always returns owned data, not borrowed data
 // TODO: Make this async
 // #[async_trait]
-pub trait DataProvider<'a, 'd> {
+pub trait DataProvider<'d> {
     /// Query the provider for data. Returns Ok if the request successfully loaded data. If data
     /// failed to load, returns an Error with more information.
-    fn load(&'a self, req: &Request) -> Result<Response<'d>, Error>;
+    fn load(&self, req: &Request) -> Result<Response<'d>, Error>;
 }
 
-impl<'a, 'd> dyn DataProvider<'a, 'd> + 'd {
+impl<'d> dyn DataProvider<'d> + 'd {
     /// Query the provider for data. Returns Ok(Some) if the request successfully loaded data. If
     /// data failed to load due to the provider not supporting the requested category or data key,
     /// returns Ok(None). Otherwise, returns an Error.
-    pub fn load_graceful(&'a self, req: &Request) -> Result<Option<Response<'d>>, Error> {
+    pub fn load_graceful(&self, req: &Request) -> Result<Option<Response<'d>>, Error> {
         match self.load(req) {
             Ok(response) => Ok(Some(response)),
             Err(err) => match err {

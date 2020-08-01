@@ -23,7 +23,11 @@ pub struct CldrPluralsDataProvider<'d> {
 impl TryFrom<&CldrPaths> for CldrPluralsDataProvider<'_> {
     type Error = Error;
     fn try_from(cldr_paths: &CldrPaths) -> Result<Self, Self::Error> {
-        let file = File::open(cldr_paths.plurals_json()?)?;
+        let path = cldr_paths.plurals_json()?;
+        let file = match File::open(&path) {
+            Ok(file) => file,
+            Err(err) => return Err(Error::IoError(err, path)),
+        };
         let reader = BufReader::new(file);
         let resource: Resource = serde_json::from_reader(reader)?;
         Ok(CldrPluralsDataProvider {
@@ -68,9 +72,9 @@ impl<'d> CldrPluralsDataProvider<'d> {
     }
 }
 
-impl<'a, 'd> DataProvider<'a, 'd> for CldrPluralsDataProvider<'d> {
+impl<'d> DataProvider<'d> for CldrPluralsDataProvider<'d> {
     fn load(
-        &'a self,
+        &self,
         req: &data_provider::Request,
     ) -> Result<data_provider::Response<'d>, data_provider::Error> {
         let cldr_rules = self.get_rules_for(&req.data_key)?;

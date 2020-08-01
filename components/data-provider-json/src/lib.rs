@@ -47,12 +47,12 @@ impl FromStr for JsonDataProvider {
     }
 }
 
-impl<'a> DataProvider<'a, 'a> for JsonDataProvider {
+impl<'d> DataProvider<'d> for JsonDataProvider {
     /// Loads JSON data. Returns borrowed data.
     fn load(
-        &'a self,
+        &self,
         _request: &data_provider::Request,
-    ) -> Result<data_provider::Response<'a>, data_provider::Error> {
+    ) -> Result<data_provider::Response<'d>, data_provider::Error> {
         let response = data_provider::ResponseBuilder {
             data_langid: LanguageIdentifier::default(),
         }

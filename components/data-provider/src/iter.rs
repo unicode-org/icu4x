@@ -14,10 +14,10 @@ pub trait DataEntryCollection {
 }
 
 /// A data provider that also exposes an iterable list of DataEntry instances.
-pub trait IterableDataProvider<'a, 'd>: DataProvider<'a, 'd> + DataEntryCollection {
+pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {
 }
 
-impl<'a, 'd, T> IterableDataProvider<'a, 'd> for T where
-    T: DataProvider<'a, 'd> + DataEntryCollection
+impl<'d, T> IterableDataProvider<'d> for T where
+    T: DataProvider<'d> + DataEntryCollection
 {
 }

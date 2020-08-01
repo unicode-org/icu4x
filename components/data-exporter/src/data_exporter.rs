@@ -15,7 +15,7 @@ pub trait FileWriter {
 }
 
 pub struct DataExporter<'a, 'd> {
-    pub data_provider: &'a dyn IterableDataProvider<'a, 'd>,
+    pub data_provider: &'a dyn IterableDataProvider<'d>,
     pub file_writer: &'a mut dyn FileWriter,
 }
 

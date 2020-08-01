@@ -5,12 +5,12 @@ use crate::error::Error;
 use crate::structs::get_type_id;
 
 /// A data provider that validates the type IDs returned by another data provider.
-pub struct DataProviderValidator<'a, 'b, 'd> {
-    pub data_provider: &'b dyn DataProvider<'a, 'd>,
+pub struct DataProviderValidator<'b, 'd> {
+    pub data_provider: &'b dyn DataProvider<'d>,
 }
 
-impl<'a, 'b, 'd> DataProvider<'a, 'd> for DataProviderValidator<'a, 'b, 'd> {
-    fn load(&'a self, req: &Request) -> Result<Response<'d>, Error> {
+impl<'b, 'd> DataProvider<'d> for DataProviderValidator<'b, 'd> {
+    fn load(&self, req: &Request) -> Result<Response<'d>, Error> {
         match self.data_provider.load(req) {
             Ok(res) => {
                 let actual_type_id = res.get_payload_type_id();

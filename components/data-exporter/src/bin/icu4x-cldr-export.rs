@@ -8,24 +8,32 @@ use std::ffi::OsStr;
 use std::fs;
 
 use icu_cldr_json_data_provider::CldrPluralsDataProvider;
+use icu_cldr_json_data_provider::CldrDataProvider;
+use icu_cldr_json_data_provider::CldrPaths;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::structs;
 
 use std::path::PathBuf;
 use std::fmt;
 
+#[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
     CldrMissing(&'static str, String),
+    ExportError(icu_data_exporter::Error),
 }
 
-impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-
-        }
+impl From<icu_data_exporter::Error> for Error {
+    fn from(err: icu_data_exporter::Error) -> Error {
+        Error::ExportError(err)
     }
 }
+
+// impl fmt::Debug for Error {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         // TODO
+//     }
+// }
 
 fn main() -> Result<(), Error> {
     let matches = App::new("ICU4X Data Exporter")
@@ -120,10 +128,13 @@ fn main() -> Result<(), Error> {
             .unwrap_or(OsStr::new("/tmp/icu4x_json")),
     );
 
-    
+    let mut cldr_paths = CldrPaths::default();
 
-    let json_str = fs::read_to_string("tests/testdata/plurals.json").unwrap();
-    let provider = CldrPluralsDataProvider::try_from(json_str.as_str()).unwrap();
+    if let Some(path) = matches.value_of("CLDR_CORE") {
+        cldr_paths.cldr_core = Ok(path.into());
+    }
+
+    let provider = CldrDataProvider::new(&cldr_paths);
 
     let mut json_options = json_exporter::Options::default();
     json_options.root = output_path;
@@ -138,8 +149,9 @@ fn main() -> Result<(), Error> {
     data_exporter
         .write_data_key::<structs::plurals::PluralRuleStringsV1>(
             &icu_data_key!(plurals: cardinal@1),
-        )
-        .unwrap();
+        )?;
 
-    json_file_writer.flush().unwrap();
+    json_file_writer.flush()?;
+
+    Ok(())
 }
