@@ -10,7 +10,6 @@ use std::fs;
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
 use icu_data_provider::icu_data_key;
-use icu_data_provider::structs;
 
 use std::fmt;
 use std::path::PathBuf;
@@ -161,7 +160,7 @@ fn main() -> Result<(), Error> {
         file_writer: &mut json_file_writer,
     };
 
-    data_exporter.write_data_key::<structs::plurals::PluralRuleStringsV1>(
+    data_exporter.write_data_key(
         &icu_data_key!(plurals: cardinal@1),
     )?;
 

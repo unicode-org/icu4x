@@ -7,7 +7,6 @@ use std::fs;
 
 use icu_cldr_json_data_provider::transform::PluralsProvider;
 use icu_data_provider::icu_data_key;
-use icu_data_provider::structs;
 
 use std::path::PathBuf;
 
@@ -30,7 +29,7 @@ fn test_basic() {
     };
 
     data_exporter
-        .write_data_key::<structs::plurals::PluralRuleStringsV1>(
+        .write_data_key(
             &icu_data_key!(plurals: cardinal@1),
         )
         .unwrap();

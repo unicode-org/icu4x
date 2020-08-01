@@ -17,6 +17,7 @@ include = [
 [dependencies]
 icu-locale = { path = "../locale" }
 tinystr = "0.3"
+erased-serde = "0.3"
 
 [dependencies.smallstr]
 version = "0.2"

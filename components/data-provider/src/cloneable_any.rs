@@ -2,10 +2,15 @@ use downcast_rs::impl_downcast;
 use downcast_rs::Downcast;
 use std::fmt::Debug;
 
+#[cfg(feature = "erased-serde")]
+use erased_serde;
+
 // Please do not to make this trait public, because it is easy to use incorrectly. It is fine as
 // an internal auto-implemented trait.
-pub(super) trait CloneableAny: Debug + Downcast {
+pub(super) trait CloneableAny: Debug + Downcast + erased_serde::Serialize {
     fn clone_into_box(&self) -> Box<dyn CloneableAny>;
+
+    fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
 impl ToOwned for dyn CloneableAny {
@@ -17,9 +22,13 @@ impl ToOwned for dyn CloneableAny {
 }
 
 // Implement CloneableAny for all 'static types implementing Clone.
-impl<T: 'static + Clone + Debug> CloneableAny for T {
+impl<T: 'static + Clone + Debug + erased_serde::Serialize> CloneableAny for T {
     fn clone_into_box(&self) -> Box<dyn CloneableAny> {
         Box::new(self.clone())
+    }
+
+    fn as_serialize(&self) -> &dyn erased_serde::Serialize {
+        self
     }
 }
 

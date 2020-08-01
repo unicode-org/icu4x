@@ -8,6 +8,7 @@ use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::fmt;
+use erased_serde;
 
 // Re-export Error so it can be referenced by "data_provider::Error"
 pub use crate::error::Error;
@@ -42,6 +43,12 @@ impl<'d> Response<'d> {
                 data_key: None,
                 generic: Some(TypeId::of::<T>()),
             })
+    }
+
+    pub fn borrow_serialize(&self) -> &dyn erased_serde::Serialize {
+        let borrowed: &dyn CloneableAny = self.payload.borrow();
+        let serialize: &dyn erased_serde::Serialize = borrowed.as_serialize();
+        serialize
     }
 
     /// Get a mutable reference to the payload in a Response object.
@@ -98,7 +105,7 @@ impl ResponseBuilder {
     /// Construct a Response from the builder, with owned data.
     /// Consumes both the builder and the data.
     /// Returns the 'static lifetime since there is no borrowed data.
-    pub fn with_owned_payload<T: 'static + Clone + fmt::Debug>(self, t: T) -> Response<'static> {
+    pub fn with_owned_payload<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(self, t: T) -> Response<'static> {
         Response {
             data_langid: self.data_langid,
             payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
@@ -108,7 +115,7 @@ impl ResponseBuilder {
     /// Construct a Response from the builder, with borrowed data.
     /// Consumes the builder, but not the data.
     #[allow(clippy::needless_lifetimes)]
-    pub fn with_borrowed_payload<'d, T: 'static + Clone + fmt::Debug>(
+    pub fn with_borrowed_payload<'d, T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
         self,
         t: &'d T,
     ) -> Response<'d> {

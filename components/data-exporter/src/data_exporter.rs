@@ -20,7 +20,7 @@ pub struct DataExporter<'a, 'd> {
 }
 
 impl<'a, 'd> DataExporter<'a, 'd> {
-    pub fn write_data_key<T: 'static + Serialize>(
+    pub fn write_data_key(
         &mut self,
         data_key: &DataKey,
     ) -> Result<(), Error> {
@@ -29,7 +29,7 @@ impl<'a, 'd> DataExporter<'a, 'd> {
                 data_key: *data_key,
                 data_entry: data_entry.clone(),
             })?;
-            let payload = response.borrow_payload::<T>()?;
+            let payload = response.borrow_serialize();
             let path_buf = self.path_for(data_key, &data_entry);
             self.file_writer.write_to_path(&path_buf, payload)?;
         }
