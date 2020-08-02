@@ -1,6 +1,7 @@
 use std::error;
 use std::fmt;
 
+#[non_exhaustive]
 #[derive(Debug)]
 pub enum Error {
     JsonError(serde_json::error::Error),
@@ -8,7 +9,7 @@ pub enum Error {
     MissingSource(MissingSourceError),
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct MissingSourceError {
     pub src: &'static str,
 }
@@ -25,9 +26,9 @@ impl From<serde_json::error::Error> for Error {
     }
 }
 
-impl From<&MissingSourceError> for Error {
-    fn from(err: &MissingSourceError) -> Self {
-        Self::MissingSource(*err)
+impl From<MissingSourceError> for Error {
+    fn from(err: MissingSourceError) -> Self {
+        Self::MissingSource(err)
     }
 }
 

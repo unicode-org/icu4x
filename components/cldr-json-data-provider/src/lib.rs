@@ -3,6 +3,7 @@
 mod cldr_langid;
 mod cldr_paths;
 mod error;
+mod reader;
 mod support;
 
 pub mod transform;

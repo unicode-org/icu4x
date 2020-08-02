@@ -1,9 +1,14 @@
 use crate::error::MissingSourceError;
-use crate::Error;
 use std::default::Default;
 use std::path::PathBuf;
 
+/// Struct containing filesystem paths to the CLDR JSON resource directories.
+/// The fields should be Ok if present. They default to Err when not present.
+#[non_exhaustive]
+#[derive(Debug, PartialEq)]
 pub struct CldrPaths {
+    /// Path to checkout of cldr-core:
+    /// https://github.com/unicode-cldr/cldr-core
     pub cldr_core: Result<PathBuf, MissingSourceError>,
 }
 
@@ -12,21 +17,5 @@ impl Default for CldrPaths {
         CldrPaths {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
         }
-    }
-}
-
-impl CldrPaths {
-    pub fn plurals_json(&self) -> Result<PathBuf, Error> {
-        self.cldr_core
-            .clone()
-            .map(|p| p.join("supplemental").join("plurals.json"))
-            .map_err(|e| (&e).into())
-    }
-
-    pub fn ordinals_json(&self) -> Result<PathBuf, Error> {
-        self.cldr_core
-            .clone()
-            .map(|p| p.join("supplemental").join("ordinals.json"))
-            .map_err(|e| (&e).into())
     }
 }
