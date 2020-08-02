@@ -1,11 +1,13 @@
 use crate::aliasing::{self, AliasCollection};
 use crate::Error;
-use crate::FileWriter;
 use serde::{Deserialize, Serialize};
 
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
+
+use icu_data_provider::prelude::*;
+use icu_data_provider::iter::DataExporter;
 
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -34,6 +36,7 @@ pub struct Options {
     pub root: PathBuf,
     pub aliasing: AliasOption,
     pub overwrite: OverwriteOption,
+    pub verbose: bool,
 }
 
 impl Default for Options {
@@ -42,6 +45,7 @@ impl Default for Options {
             root: PathBuf::from("icu4x_data"),
             aliasing: AliasOption::NoAliases,
             overwrite: OverwriteOption::CheckEmpty,
+            verbose: false,
         }
     }
 }
@@ -50,6 +54,7 @@ pub struct JsonFileWriter {
     root: PathBuf,
     manifest: Manifest,
     alias_collection: Option<AliasCollection<Vec<u8>>>,
+    verbose: bool,
 }
 
 impl Drop for JsonFileWriter {
@@ -57,6 +62,18 @@ impl Drop for JsonFileWriter {
         if self.alias_collection.is_some() {
             panic!("Please call flush before dropping JsonFileWriter");
         }
+    }
+}
+
+impl DataExporter for JsonFileWriter {
+    fn put(
+        &mut self,
+        req: &data_provider::Request,
+        obj: &dyn erased_serde::Serialize,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let path_buf = self.path_for(req);
+        self.write_to_path(&path_buf, obj)?;
+        Ok(())
     }
 }
 
@@ -68,6 +85,7 @@ impl JsonFileWriter {
                 aliasing: options.aliasing,
             },
             alias_collection: None,
+            verbose: options.verbose,
         };
 
         match options.overwrite {
@@ -103,9 +121,14 @@ impl JsonFileWriter {
         }
         Ok(())
     }
-}
 
-impl FileWriter for JsonFileWriter {
+    fn path_for(&mut self, req: &data_provider::Request) -> PathBuf {
+        let mut path = PathBuf::new();
+        path.extend(req.data_key.get_components().iter());
+        path.extend(req.data_entry.get_components().iter());
+        path
+    }
+
     fn write_to_path(
         &mut self,
         path_without_extension: &Path,
@@ -113,10 +136,14 @@ impl FileWriter for JsonFileWriter {
     ) -> Result<(), Error> {
         let mut path_buf: std::path::PathBuf = self.root.clone();
         path_buf.extend(path_without_extension);
-        path_buf.set_extension("json");
+
+        if self.verbose {
+            println!("Initializing: {}", path_buf.to_string_lossy());
+        }
 
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
+                path_buf.set_extension("json");
                 if let Some(parent_dir) = path_buf.parent() {
                     fs::create_dir_all(&parent_dir)?;
                 }

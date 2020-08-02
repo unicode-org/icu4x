@@ -22,4 +22,11 @@ impl CldrPaths {
             .map(|p| p.join("supplemental").join("plurals.json"))
             .map_err(|e| (&e).into())
     }
+
+    pub fn ordinals_json(&self) -> Result<PathBuf, Error> {
+        self.cldr_core
+            .clone()
+            .map(|p| p.join("supplemental").join("ordinals.json"))
+            .map_err(|e| (&e).into())
+    }
 }

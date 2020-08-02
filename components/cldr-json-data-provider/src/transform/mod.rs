@@ -2,12 +2,11 @@ mod plurals;
 
 pub use plurals::PluralsProvider;
 
+use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
 use icu_data_provider::data_provider::DataProvider;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
-use crate::support::LazyCldrProvider;
-
 
 pub struct CldrDataProvider<'a, 'd> {
     pub cldr_paths: &'a CldrPaths,

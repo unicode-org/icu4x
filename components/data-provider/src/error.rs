@@ -1,6 +1,7 @@
 use crate::data_entry::DataEntry;
 use crate::data_key::Category;
 use crate::data_key::DataKey;
+use crate::data_provider::Request;
 use core::ops::Deref;
 use std::any::TypeId;
 use std::fmt;
@@ -16,7 +17,7 @@ pub enum Error {
 
     /// The data provider supports the data key, but does not have data for the specific entry
     /// (variant or language identifier).
-    UnavailableEntry(DataEntry),
+    UnavailableEntry(Request),
 
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
@@ -46,9 +47,15 @@ impl From<&Category> for Error {
     }
 }
 
-impl From<DataEntry> for Error {
-    fn from(data_entry: DataEntry) -> Self {
-        Error::UnavailableEntry(data_entry)
+impl From<Request> for Error {
+    fn from(req: Request) -> Self {
+        Error::UnavailableEntry(req)
+    }
+}
+
+impl From<Box<dyn std::error::Error>> for Error {
+    fn from(err: Box<dyn std::error::Error>) -> Self {
+        Error::ResourceError(err)
     }
 }
 
@@ -71,8 +78,8 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
-            Error::UnavailableEntry(data_entry) => {
-                write!(f, "Unavailable data entry: {}", data_entry)
+            Error::UnavailableEntry(request) => {
+                write!(f, "Unavailable data entry: {}", request)
             }
             Error::ResourceError(err) => write!(f, "Failed to load resource: {}", err),
         }

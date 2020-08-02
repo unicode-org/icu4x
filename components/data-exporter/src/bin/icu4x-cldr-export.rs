@@ -1,5 +1,4 @@
 use icu_data_exporter::json_exporter;
-use icu_data_exporter::DataExporter;
 use icu_data_exporter::JsonFileWriter;
 
 use clap::{App, Arg, ArgGroup};
@@ -10,6 +9,7 @@ use std::fs;
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
 use icu_data_provider::icu_data_key;
+use icu_data_provider::iter::IterableDataProvider;
 
 use std::fmt;
 use std::path::PathBuf;
@@ -18,6 +18,7 @@ use std::path::PathBuf;
 enum Error {
     Unsupported(&'static str),
     ExportError(icu_data_exporter::Error),
+    DataProviderError(icu_data_provider::error::Error),
 }
 
 impl fmt::Display for Error {
@@ -25,6 +26,7 @@ impl fmt::Display for Error {
         match self {
             Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
             Error::ExportError(error) => write!(f, "{}", error),
+            Error::DataProviderError(error) => write!(f, "{}", error),
         }
     }
 }
@@ -41,11 +43,11 @@ impl From<icu_data_exporter::Error> for Error {
     }
 }
 
-// impl fmt::Debug for Error {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         // TODO
-//     }
-// }
+impl From<icu_data_provider::error::Error> for Error {
+    fn from(err: icu_data_provider::error::Error) -> Error {
+        Error::DataProviderError(err)
+    }
+}
 
 fn main() -> Result<(), Error> {
     let matches = App::new("ICU4X Data Exporter")
@@ -53,16 +55,24 @@ fn main() -> Result<(), Error> {
         .author("The ICU4X Project Developers")
         .about("Export CLDR JSON into the ICU4X data schema")
         .arg(
-            Arg::with_name("VERBOSITY")
+            Arg::with_name("VERBOSE")
                 .short("v")
-                .multiple(true)
-                .help("Sets the level of verbosity."),
+                .long("verbose")
+                .help("Enable verbose logging."),
         )
         .arg(
             Arg::with_name("DRY_RUN")
                 .short("n")
                 .long("dry-run")
                 .help("Do not touch the filesystem (consider using with -v)."),
+        )
+        .arg(
+            Arg::with_name("ALIASING")
+                .long("aliasing")
+                .takes_value(true)
+                .possible_value("none")
+                .possible_value("symlink")
+                .help("Sets the aliasing mode of the output on the filesystem."),
         )
         .arg(
             Arg::with_name("OVERWRITE")
@@ -128,8 +138,15 @@ fn main() -> Result<(), Error> {
         return Err(Error::Unsupported("Lists of keys are not yet supported (see #192)"));
     }
 
+    if matches.is_present("DRY_RUN") {
+        return Err(Error::Unsupported("Dry-run is not yet supported"));
+    }
+
     // TODO: Build up this list from --keys and --key-file
-    let keys = [icu_data_key!(plurals: cardinal@1)];
+    let keys = [
+        icu_data_key!(plurals: cardinal@1),
+        icu_data_key!(plurals: ordinal@1),
+    ];
 
     let output_path = PathBuf::from(
         matches
@@ -147,24 +164,28 @@ fn main() -> Result<(), Error> {
 
     let mut json_options = json_exporter::Options::default();
     json_options.root = output_path;
-    json_options.aliasing = json_exporter::AliasOption::Symlink;
+    json_options.aliasing = match matches.value_of("ALIASING") {
+        Some(value) => match value {
+            "none" => json_exporter::AliasOption::NoAliases,
+            "symlink" => json_exporter::AliasOption::Symlink,
+            _ => unreachable!(),
+        }
+        None => json_exporter::AliasOption::NoAliases
+    };
     json_options.overwrite = if matches.is_present("OVERWRITE") {
         json_exporter::OverwriteOption::RemoveAndReplace
     } else {
         json_exporter::OverwriteOption::CheckEmpty
     };
+    json_options.verbose = matches.is_present("VERBOSE");
     let mut json_file_writer = JsonFileWriter::try_new(&json_options)?;
 
-    let mut data_exporter = DataExporter {
-        data_provider: &provider,
-        file_writer: &mut json_file_writer,
-    };
-
-    data_exporter.write_data_key(
-        &icu_data_key!(plurals: cardinal@1),
-    )?;
-
-    json_file_writer.flush()?;
+    for key in keys.iter() {
+        let result = provider.export_key(key, &mut json_file_writer);
+        // Ensure flush() is called, even when the result is an error
+        json_file_writer.flush()?;
+        result?;
+    }
 
     Ok(())
 }

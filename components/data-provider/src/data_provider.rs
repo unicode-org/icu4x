@@ -1,6 +1,7 @@
 use crate::cloneable_any::CloneableAny;
 use crate::data_entry::DataEntry;
 use crate::data_key::DataKey;
+use erased_serde;
 use icu_locale::LanguageIdentifier;
 use std::any::Any;
 use std::any::TypeId;
@@ -8,7 +9,6 @@ use std::borrow::Borrow;
 use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::fmt;
-use erased_serde;
 
 // Re-export Error so it can be referenced by "data_provider::Error"
 pub use crate::error::Error;
@@ -18,6 +18,12 @@ pub use crate::error::Error;
 pub struct Request {
     pub data_key: DataKey,
     pub data_entry: DataEntry,
+}
+
+impl fmt::Display for Request {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}/{}", self.data_key, self.data_entry)
+    }
 }
 
 /// A response object containing a data hunk ("payload").
@@ -45,10 +51,10 @@ impl<'d> Response<'d> {
             })
     }
 
-    pub fn borrow_serialize(&self) -> &dyn erased_serde::Serialize {
+    /// Get an immutable reference to the payload as an erased_serde::Serialize trait object.
+    pub fn borrow_as_serialize(&self) -> &dyn erased_serde::Serialize {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
-        let serialize: &dyn erased_serde::Serialize = borrowed.as_serialize();
-        serialize
+        borrowed.as_serialize()
     }
 
     /// Get a mutable reference to the payload in a Response object.
@@ -105,7 +111,10 @@ impl ResponseBuilder {
     /// Construct a Response from the builder, with owned data.
     /// Consumes both the builder and the data.
     /// Returns the 'static lifetime since there is no borrowed data.
-    pub fn with_owned_payload<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(self, t: T) -> Response<'static> {
+    pub fn with_owned_payload<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
+        self,
+        t: T,
+    ) -> Response<'static> {
         Response {
             data_langid: self.data_langid,
             payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),

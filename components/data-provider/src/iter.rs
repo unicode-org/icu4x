@@ -1,7 +1,6 @@
-use crate::data_entry::DataEntry;
-use crate::data_key::DataKey;
-use crate::data_provider::DataProvider;
 use crate::error::Error;
+use crate::prelude::*;
+use erased_serde;
 
 /// An object that exposes an iterable list of DataEntry instances.
 pub trait DataEntryCollection {
@@ -14,6 +13,34 @@ pub trait DataEntryCollection {
 }
 
 /// A data provider that also exposes an iterable list of DataEntry instances.
-pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {}
+pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {
+    /// Dump all data in this data provider for the specified key into the sink.
+    fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error>;
+}
 
-impl<'d, T> IterableDataProvider<'d> for T where T: DataProvider<'d> + DataEntryCollection {}
+/// Trait for objects capable of persisting serialized data hunks.
+pub trait DataExporter {
+    fn put(
+        &mut self,
+        req: &data_provider::Request,
+        obj: &dyn erased_serde::Serialize,
+    ) -> Result<(), Box<dyn std::error::Error>>;
+}
+
+impl<'d, T> IterableDataProvider<'d> for T
+where
+    T: DataProvider<'d> + DataEntryCollection,
+{
+    fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error> {
+        for data_entry in self.iter_for_key(data_key)? {
+            let req = data_provider::Request {
+                data_key: *data_key,
+                data_entry: data_entry.clone(),
+            };
+            let response = self.load(&req)?;
+            let payload = response.borrow_as_serialize();
+            sink.put(&req, &payload)?;
+        }
+        Ok(())
+    }
+}

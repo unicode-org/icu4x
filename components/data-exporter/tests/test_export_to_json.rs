@@ -1,5 +1,4 @@
 use icu_data_exporter::json_exporter;
-use icu_data_exporter::DataExporter;
 use icu_data_exporter::JsonFileWriter;
 
 use std::convert::TryFrom;

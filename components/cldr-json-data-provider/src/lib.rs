@@ -8,5 +8,5 @@ mod support;
 pub mod transform;
 
 pub use cldr_paths::CldrPaths;
-pub use transform::CldrDataProvider;
 pub use error::Error;
+pub use transform::CldrDataProvider;
