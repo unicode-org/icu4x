@@ -2,7 +2,7 @@
 mod aliasing;
 mod error;
 
-pub mod json_exporter;
+pub mod exporters;
+pub mod serializers;
 
 pub use error::Error;
-pub use json_exporter::JsonFileWriter;

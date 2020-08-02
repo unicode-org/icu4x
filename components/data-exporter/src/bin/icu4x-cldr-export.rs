@@ -1,16 +1,12 @@
-use icu_data_exporter::json_exporter;
-use icu_data_exporter::JsonFileWriter;
-
 use clap::{App, Arg, ArgGroup};
-use std::convert::TryFrom;
-use std::ffi::OsStr;
-use std::fs;
-
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
+use icu_data_exporter::exporters;
+use icu_data_exporter::exporters::filesystem::FilesystemExporter;
+use icu_data_exporter::serializers;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::iter::IterableDataProvider;
-
+use std::ffi::OsStr;
 use std::fmt;
 use std::path::PathBuf;
 
@@ -135,7 +131,9 @@ fn main() -> Result<(), Error> {
         .get_matches();
 
     if !matches.is_present("ALL_KEYS") {
-        return Err(Error::Unsupported("Lists of keys are not yet supported (see #192)"));
+        return Err(Error::Unsupported(
+            "Lists of keys are not yet supported (see #192)",
+        ));
     }
 
     if matches.is_present("DRY_RUN") {
@@ -162,23 +160,25 @@ fn main() -> Result<(), Error> {
 
     let provider = CldrDataProvider::new(&cldr_paths);
 
-    let mut json_options = json_exporter::Options::default();
-    json_options.root = output_path;
-    json_options.aliasing = match matches.value_of("ALIASING") {
+    let json_serializer = Box::new(serializers::JsonSerializer);
+
+    let mut exporter_options = exporters::filesystem::Options::default();
+    exporter_options.root = output_path;
+    exporter_options.aliasing = match matches.value_of("ALIASING") {
         Some(value) => match value {
-            "none" => json_exporter::AliasOption::NoAliases,
-            "symlink" => json_exporter::AliasOption::Symlink,
+            "none" => exporters::filesystem::AliasOption::NoAliases,
+            "symlink" => exporters::filesystem::AliasOption::Symlink,
             _ => unreachable!(),
-        }
-        None => json_exporter::AliasOption::NoAliases
+        },
+        None => exporters::filesystem::AliasOption::NoAliases,
     };
-    json_options.overwrite = if matches.is_present("OVERWRITE") {
-        json_exporter::OverwriteOption::RemoveAndReplace
+    exporter_options.overwrite = if matches.is_present("OVERWRITE") {
+        exporters::filesystem::OverwriteOption::RemoveAndReplace
     } else {
-        json_exporter::OverwriteOption::CheckEmpty
+        exporters::filesystem::OverwriteOption::CheckEmpty
     };
-    json_options.verbose = matches.is_present("VERBOSE");
-    let mut json_file_writer = JsonFileWriter::try_new(&json_options)?;
+    exporter_options.verbose = matches.is_present("VERBOSE");
+    let mut json_file_writer = FilesystemExporter::try_new(json_serializer, &exporter_options)?;
 
     for key in keys.iter() {
         let result = provider.export_key(key, &mut json_file_writer);
