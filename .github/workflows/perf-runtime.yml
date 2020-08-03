@@ -24,7 +24,7 @@ jobs:
       - name: Run benchmark
         run: cargo bench -- --output-format bencher | tee output.txt
 
-      - run: pwd && ls -l && echo "component/locale" && ls -l component/locale
+      #- run: pwd && ls -l && echo "component/locale" && ls -l component/locale
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1.8.1
