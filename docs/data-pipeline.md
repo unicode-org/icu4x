@@ -12,7 +12,7 @@ The following terms are used throughout this document.
 - **Format Version:** A version of the file format, abstracted away from the schema version and data version.  For example, Protobuf 2 and Protobuf 3 are format versions.
 - **Format:** How the data is stored on disk or provided from a service.  Examples of data formats: JSON, YAML, Memory-Mapped, Protobuf.  The format is internal to the data provider.
 - **Hunk:** A small piece of locale data relating to a specific task.  For example, the name of January might be a hunk, and a list of all month names could also be considered a hunk.  A data piece is expected to reflect a specific type.
-- **LangID:** A tuple of language, script, and region.  LangID is a request variable.  Subtags should be handled by the ICU4X code rather than the data provider.
+- **LangID:** A tuple of language, script, and region.  LangID is a request variable.  Unicode Locale Extensions should be handled by the ICU4X code rather than the data provider.
 - **Key:** An identifier corresponding to a specific hunk.
 - **Mapping:** A mechanism that a data provider should follow to read from the schema and serve a hunk that may have a different type.
 - **Request Variables:** Metadata that is sent along with a key when requesting data from a data provider.
@@ -64,9 +64,19 @@ A key is an integer from an enumeration.  Each key has a corresponding type, whi
 | CURR_LOCAL_CODE_V1 | 0x3001 | string | The locale's currency code |
 | CURR_LOCAL_SYM_V1 | 0x3002 | string | The symbol for that currency |
 
+*Note:* Above, `i8` and `i32` signify an 8-bit or 32-bit signed integer.  The exact types might differ based on the host language.
+
+*Note:* The keys above are for illustrative purposes only.  The actual data hunks will likely be on the larger side, such as "all number symbols for this locale and numbering system".
+
 *Open Question:* How do you map from an enum/integer to a type in a type-safe way in Rust?  In C++/Java, this would entail some sort of cast, which I imagine is possible in Rust but might require an unsafe block.  Main issue: [#8](https://github.com/unicode-org/omnicu/issues/8)
 
 *Open Question:* Due to ongoing developments in [wrapper-layer.md](wrapper-layer.md), the above list of example keys may be more fine-grained than we will need in the final product.  It may be better to have more coarse-grained hunks, like "all decimal format symbols" instead of "grouping separator" and "decimal separator".  Main issue: [#26](https://github.com/unicode-org/omnicu/issues/26)
+
+### Data Key Struct Definitions
+
+The actual data keys and the structs to which they correspond should be defined in a central location in the repository: [components/data-provider/src](https://github.com/unicode-org/icu4x/tree/master/components/data-provider/src).  Follow conventions of existing data provider struct definitions when adding a new one.
+
+There should generally be a 1-to-1 relationship between components (number formatter, plural rules, date format) and modules in the data provider crate.  However, this is not strictly enforced; use your best judgement.
 
 ### Request Variables
 
@@ -151,6 +161,8 @@ Along with the hunk, the data provider sends multiple *response variables*.  The
 
 The supported LangID is expected to be the most specific LangID that had any data whatsoever, even if it is just an alias.  For example, if en_GB is present but empty, and the data is actually loaded from en_001, the Supported LangID should still be en_GB.  In other words, the fallback mechanism is considered an internal detail.
 
+If the data provider is unable to return data based on a certain request, it may return an error in a form corresponding to the host language's convention.
+
 ### Data Version
 
 The data version is expected to be a well-defined, namespaced identifier for the origin of the data.  For example, when represented as a string, the following might be data versions:
@@ -160,3 +172,5 @@ The data version is expected to be a well-defined, namespaced identifier for the
 - `FOO_1_1` → Version 1.1 of data from a hypothetical data source named Foo
 
 The first data version subtag, or namespace, defines the syntax for the remainder of the identifier.  For example, the `CLDR` namespace might accept two or three subtags: major version (`37`), minor version (`alpha1`), and optional patch version (`goog2020a`).
+
+*Note:* The syntax for the data version is undefined at this time.  What is shown above is merely a strawman example.

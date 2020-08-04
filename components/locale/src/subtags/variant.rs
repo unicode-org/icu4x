@@ -8,7 +8,8 @@ use tinystr::TinyStr8;
 /// `Variant` represents a Unicode base language code conformat to the
 /// [`unicode_variant_id`] field of the Language and Locale Identifier.
 ///
-/// # Example
+/// # Examples
+///
 /// ```
 /// use icu_locale::subtags::Variant;
 ///
@@ -27,7 +28,7 @@ impl Variant {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `Variant`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Variant;
@@ -60,7 +61,7 @@ impl Variant {
     /// A helper function for displaying
     /// a `Variant` subtag as a `&str`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::subtags::Variant;

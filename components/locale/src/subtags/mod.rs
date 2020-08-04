@@ -16,7 +16,7 @@
 //! It is wrapped around to allow for sorting and deduplication of variants, which
 //! is one of the required steps of language identifier and locale canonicalization.
 //!
-//! # Example
+//! # Examples
 //!
 //! ```
 //! use icu_locale::subtags::{Language, Script, Region, Variant};

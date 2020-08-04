@@ -15,7 +15,7 @@ pub struct Subtags {
 }
 
 #[derive(Deserialize)]
-pub struct LangId {
+pub struct LocaleList {
     pub canonicalized: Vec<String>,
     pub casing: Vec<String>,
 }

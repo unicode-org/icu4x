@@ -6,7 +6,7 @@ use crate::subtags;
 
 /// `LanguageIdentifier` is a core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_locale::LanguageIdentifier;
@@ -18,6 +18,7 @@ use crate::subtags;
 /// assert_eq!(li.script, None);
 /// assert_eq!(li.region.unwrap(), "US");
 /// assert_eq!(li.variants.len(), 0);
+/// assert_eq!(li, "en-US");
 /// ```
 ///
 /// # Parsing
@@ -34,7 +35,7 @@ use crate::subtags;
 /// Any bogus subtags will cause the parsing to fail with an error.
 /// No subtag validation is performed.
 ///
-/// # Example:
+/// # Examples
 ///
 /// ```
 /// use icu_locale::LanguageIdentifier;
@@ -65,7 +66,7 @@ impl LanguageIdentifier {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `LanguageIdentifier`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::LanguageIdentifier;
@@ -82,7 +83,7 @@ impl LanguageIdentifier {
     /// A constructor which takes a utf8 slice which may contain extension keys,
     /// parses it and produces a well-formed `LanguageIdentifier`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::LanguageIdentifier;
@@ -104,7 +105,7 @@ impl LanguageIdentifier {
     /// At the moment the operation will normalize casing and the separator, but in the future
     /// it may also validate and update from deprecated subtags to canonical ones.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_locale::LanguageIdentifier;
