@@ -2,9 +2,8 @@
 
 members = [
     "components/cldr-json-data-provider",
-    "components/data-exporter",
     "components/data-provider",
-    "components/data-provider-json",
+    "components/fs-data-provider",
     "components/icu",
     "components/icu4x",
     "components/locale",

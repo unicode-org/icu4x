@@ -5,6 +5,9 @@ use std::str::FromStr;
 
 mod schema;
 
+#[cfg(feature = "export")]
+pub mod export;
+
 #[derive(Debug)]
 pub enum Error {
     JsonError(serde_json::error::Error),

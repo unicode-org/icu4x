@@ -1,5 +1,7 @@
 use std::fmt;
 
+// TODO: Merge this with the crate error??
+
 #[derive(Debug)]
 pub enum Error {
     DataProviderError(icu_data_provider::error::Error),

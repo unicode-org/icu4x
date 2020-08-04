@@ -1,6 +1,6 @@
-use crate::aliasing::{self, AliasCollection};
-use crate::serializers::Serializer;
-use crate::Error;
+use super::aliasing::{self, AliasCollection};
+use super::serializers::Serializer;
+use super::Error;
 use icu_data_provider::iter::DataExporter;
 use icu_data_provider::prelude::*;
 use serde::{Deserialize, Serialize};

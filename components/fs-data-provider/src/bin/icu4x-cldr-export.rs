@@ -1,9 +1,9 @@
 use clap::{App, Arg, ArgGroup};
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
-use icu_data_exporter::exporters;
-use icu_data_exporter::exporters::filesystem::FilesystemExporter;
-use icu_data_exporter::serializers;
+use icu_fs_data_provider::export::FilesystemExporter;
+use icu_fs_data_provider::export::fs_exporter;
+use icu_fs_data_provider::export::serializers;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::iter::IterableDataProvider;
 use std::ffi::OsStr;
@@ -13,7 +13,7 @@ use std::path::PathBuf;
 // #[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
-    ExportError(icu_data_exporter::Error),
+    ExportError(icu_fs_data_provider::export::Error),
     DataProviderError(icu_data_provider::error::Error),
 }
 
@@ -33,8 +33,8 @@ impl fmt::Debug for Error {
     }
 }
 
-impl From<icu_data_exporter::Error> for Error {
-    fn from(err: icu_data_exporter::Error) -> Error {
+impl From<icu_fs_data_provider::export::Error> for Error {
+    fn from(err: icu_fs_data_provider::export::Error) -> Error {
         Error::ExportError(err)
     }
 }
@@ -162,20 +162,20 @@ fn main() -> Result<(), Error> {
 
     let json_serializer = Box::new(serializers::JsonSerializer);
 
-    let mut exporter_options = exporters::filesystem::Options::default();
+    let mut exporter_options = fs_exporter::Options::default();
     exporter_options.root = output_path;
     exporter_options.aliasing = match matches.value_of("ALIASING") {
         Some(value) => match value {
-            "none" => exporters::filesystem::AliasOption::NoAliases,
-            "symlink" => exporters::filesystem::AliasOption::Symlink,
+            "none" => fs_exporter::AliasOption::NoAliases,
+            "symlink" => fs_exporter::AliasOption::Symlink,
             _ => unreachable!(),
         },
-        None => exporters::filesystem::AliasOption::NoAliases,
+        None => fs_exporter::AliasOption::NoAliases,
     };
     exporter_options.overwrite = if matches.is_present("OVERWRITE") {
-        exporters::filesystem::OverwriteOption::RemoveAndReplace
+        fs_exporter::OverwriteOption::RemoveAndReplace
     } else {
-        exporters::filesystem::OverwriteOption::CheckEmpty
+        fs_exporter::OverwriteOption::CheckEmpty
     };
     exporter_options.verbose = matches.is_present("VERBOSE");
     let mut json_file_writer = FilesystemExporter::try_new(json_serializer, &exporter_options)?;

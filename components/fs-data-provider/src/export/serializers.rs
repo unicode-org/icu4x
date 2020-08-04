@@ -1,4 +1,4 @@
-use crate::Error;
+use super::Error;
 use std::io;
 use erased_serde;
 
