@@ -1,11 +1,8 @@
-use std::{char, ops::RangeBounds, slice::Iter};
+use std::{char, ops::RangeBounds, slice::Chunks};
 
 use super::UnicodeSetError;
-use crate::{
-    builder::UnicodeSetBuilder,
-    utils::{deconstruct_range, is_valid},
-};
-/// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0 , inclusive
+use crate::utils::{deconstruct_range, is_valid};
+/// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
 /// UnicodeSet membership wrapper
@@ -70,16 +67,22 @@ impl UnicodeSet {
         }
     }
 
-    pub fn builder() -> UnicodeSetBuilder {
-        UnicodeSetBuilder::new()
-    }
-
-    pub fn ranges(&self) -> Iter<u32> {
-        self.inv_list.iter()
-    }
-
-    pub fn get_invlist(&self) -> Vec<u32> {
-        self.inv_list.to_vec()
+    /// Returns a [Chunks](https://doc.rust-lang.org/std/slice/struct.Chunks.html) of each interval
+    /// in the inversion list.
+    ///
+    /// # Example:
+    ///
+    /// ```
+    /// use icu_unicodeset::UnicodeSet;
+    /// let example_list = vec![65, 68, 69, 70];
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let mut example_ranges = example.ranges();
+    /// assert_eq!(&[65, 68], example_ranges.next().unwrap());
+    /// assert_eq!(&[69, 70], example_ranges.next().unwrap());
+    /// assert_eq!(None, example_ranges.next());
+    /// ```
+    pub fn ranges(&self) -> Chunks<u32> {
+        self.inv_list.chunks(2)
     }
 
     /// Yields an iterator going through the character set in the UnicodeSet
