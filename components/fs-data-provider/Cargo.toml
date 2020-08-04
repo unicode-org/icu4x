@@ -22,17 +22,15 @@ serde_json = "1.0"
 
 # Dependencies for the export module
 erased-serde = { version = "0.3", optional = true }
+
+# Dependencies for the binary
 clap = { version = "2.33", optional = true }
-icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
+icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", optional = true }
 
 [features]
-export = ["erased-serde", "clap"]
+export = ["erased-serde"]
+export-bin = ["export", "clap", "icu-cldr-json-data-provider"]
 
 [[bin]]
 name = "icu4x-cldr-export"
-required-features = [ "export" ]
-
-[[test]]
-name = "file_io"
-path = "tests/test_file_io.rs"
-required-features = ["std"]
+required-features = [ "export-bin" ]

@@ -5,7 +5,7 @@ use std::str::FromStr;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
-use icu_data_provider_json::JsonDataWarehouse;
+use icu_fs_data_provider::JsonDataWarehouse;
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
