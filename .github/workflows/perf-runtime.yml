@@ -42,11 +42,14 @@ jobs:
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
-      - name: Debug
+      - name: Debug - list branches
         run: echo "git branch" && git branch && pwd && ls -l
 
-      - name: Debug
-        run: echo "git co -b test-branch" && git co -b test-branch && pwd && ls -l && echo "dev" && ls -l dev
+      - name: Debug - create branch out of current detached head
+        run: echo "git checkout -b test-branch" && git checkout -b test-branch && pwd && ls -l && echo "dev" && ls -l dev
+
+      - name: Debug - checkout gh-pages branch
+        run: echo "git checkout gh-pages" && git checkout gh-pages && pwd && ls -l && echo "dev" && ls -l dev
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3
