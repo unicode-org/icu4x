@@ -43,7 +43,10 @@ jobs:
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
       - name: Debug
-        run: pwd && ls -l && echo "dev" && ls -l dev
+        run: echo "git branch" && git branch && pwd && ls -l
+
+      - name: Debug
+        run: echo "git co -b test-branch" && git co -b test-branch && pwd && ls -l && echo "dev" && ls -l dev
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3
