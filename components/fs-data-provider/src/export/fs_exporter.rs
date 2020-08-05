@@ -1,21 +1,14 @@
 use super::aliasing::{self, AliasCollection};
 use super::serializers::Serializer;
-use super::Error;
+use crate::manifest::AliasOption;
+use crate::manifest::Manifest;
+use crate::manifest::SyntaxOption;
+use crate::Error;
 use icu_data_provider::iter::DataExporter;
 use icu_data_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-
-#[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum AliasOption {
-    /// Do not de-duplicate data.
-    NoAliases,
-    /// De-duplicate data by using filesystem symlinks.
-    Symlink,
-    // TODO: Alias based on a field in the JSON file
-}
 
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -26,12 +19,6 @@ pub enum OverwriteOption {
     /// If the directory doesn't exist, create it.
     /// If it does exist, remove it aggressively (rm -rf) and re-create it.
     RemoveAndReplace,
-}
-
-#[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Manifest {
-    pub aliasing: AliasOption,
 }
 
 /// Options bag for initializing a FilesystemExporter.
@@ -98,6 +85,7 @@ impl FilesystemExporter {
             root: options.root.to_path_buf(),
             manifest: Manifest {
                 aliasing: options.aliasing,
+                syntax: SyntaxOption::Json,
             },
             alias_collection: None,
             verbose: options.verbose,

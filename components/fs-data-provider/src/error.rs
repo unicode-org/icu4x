@@ -1,11 +1,10 @@
 use std::fmt;
 
-// TODO: Merge this with the crate error??
-
 #[derive(Debug)]
 pub enum Error {
     DataProviderError(icu_data_provider::error::Error),
     SerdeJsonError(serde_json::error::Error),
+    #[cfg(feature = "export")]
     SerializerError(erased_serde::Error),
     // TODO: Consider adding the path to IoError
     IoError(std::io::Error),
@@ -23,6 +22,7 @@ impl From<serde_json::error::Error> for Error {
     }
 }
 
+#[cfg(feature = "export")]
 impl From<erased_serde::Error> for Error {
     fn from(err: erased_serde::Error) -> Error {
         Error::SerializerError(err)
@@ -40,6 +40,7 @@ impl fmt::Display for Error {
         match self {
             Error::DataProviderError(error) => write!(f, "{}", error),
             Error::SerdeJsonError(error) => write!(f, "{}", error),
+            #[cfg(feature = "export")]
             Error::SerializerError(error) => write!(f, "{}", error),
             Error::IoError(error) => write!(f, "{}", error),
         }
@@ -51,6 +52,7 @@ impl std::error::Error for Error {
         match self {
             Error::DataProviderError(error) => Some(error),
             Error::SerdeJsonError(error) => Some(error),
+            #[cfg(feature = "export")]
             Error::SerializerError(error) => Some(error),
             Error::IoError(error) => Some(error),
         }

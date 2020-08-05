@@ -1,6 +1,6 @@
-use super::Error;
-use std::io;
+use crate::Error;
 use erased_serde;
+use std::io;
 
 /// A simple serializer trait that works on whole objects.
 pub trait Serializer {

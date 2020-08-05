@@ -1,11 +1,12 @@
 use clap::{App, Arg, ArgGroup};
 use icu_cldr_json_data_provider::CldrDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
-use icu_fs_data_provider::export::FilesystemExporter;
-use icu_fs_data_provider::export::fs_exporter;
-use icu_fs_data_provider::export::serializers;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::iter::IterableDataProvider;
+use icu_fs_data_provider::export::fs_exporter;
+use icu_fs_data_provider::export::serializers;
+use icu_fs_data_provider::export::FilesystemExporter;
+use icu_fs_data_provider::manifest;
 use std::ffi::OsStr;
 use std::fmt;
 use std::path::PathBuf;
@@ -13,7 +14,7 @@ use std::path::PathBuf;
 // #[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
-    ExportError(icu_fs_data_provider::export::Error),
+    ExportError(icu_fs_data_provider::error::Error),
     DataProviderError(icu_data_provider::error::Error),
 }
 
@@ -33,8 +34,8 @@ impl fmt::Debug for Error {
     }
 }
 
-impl From<icu_fs_data_provider::export::Error> for Error {
-    fn from(err: icu_fs_data_provider::export::Error) -> Error {
+impl From<icu_fs_data_provider::error::Error> for Error {
+    fn from(err: icu_fs_data_provider::error::Error) -> Error {
         Error::ExportError(err)
     }
 }
@@ -166,11 +167,11 @@ fn main() -> Result<(), Error> {
     exporter_options.root = output_path;
     exporter_options.aliasing = match matches.value_of("ALIASING") {
         Some(value) => match value {
-            "none" => fs_exporter::AliasOption::NoAliases,
-            "symlink" => fs_exporter::AliasOption::Symlink,
+            "none" => manifest::AliasOption::NoAliases,
+            "symlink" => manifest::AliasOption::Symlink,
             _ => unreachable!(),
         },
-        None => fs_exporter::AliasOption::NoAliases,
+        None => manifest::AliasOption::NoAliases,
     };
     exporter_options.overwrite = if matches.is_present("OVERWRITE") {
         fs_exporter::OverwriteOption::RemoveAndReplace
