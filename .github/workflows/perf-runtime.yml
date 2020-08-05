@@ -69,4 +69,4 @@ jobs:
           publish_branch: gh-pages-${{ matrix.component }}
           publish_dir: ./dev/bench
           destination_dir: dev/${{ matrix.component }}/bench
-          commit_message: Benchmark Dashboard -> GH Pages
+          commit_message: Bench. Dash. (runtime, ${{ matrix.component }}) -> GH Pages
