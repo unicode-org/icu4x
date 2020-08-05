@@ -37,6 +37,8 @@ jobs:
           path: dev/${{ matrix.component }}/bench/cache
           key: ${{ runner.os }}-benchmark-${{ matrix.component }}
 
+      - run: mkdir -p dev
+
       - name: Debug cache info
         run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
       #- run: mkdir -p dev/${{ matrix.component }}/bench/cache
@@ -46,8 +48,6 @@ jobs:
 
       - name: Run benchmark
         run: cd components/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
-
-      - run: mkdir -p dev
 
       - name: Debug benchmark output dir
         run: echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }}
