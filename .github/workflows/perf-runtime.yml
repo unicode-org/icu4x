@@ -18,7 +18,9 @@ jobs:
           - num-util
           - uniset
       # Ensure that commits when pushing GH pages to external has linear commit
-      # history w/o merges (to keep things simpler). Do this via max-parallel=1
+      # history w/o merges (to keep things simpler). Do this via max-parallel=1.
+      # Also, necessary b/c can't figure out how to use component-specific branches
+      # and coordinate between the benchmark action step and the GH pages action step.
       max-parallel: 1
 
     runs-on: ubuntu-latest
@@ -45,7 +47,7 @@ jobs:
           comment-on-alert: true
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
-          gh-pages-branch: gh-pages-${{ matrix.component }}
+          gh-pages-branch: gh-pages
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0-6
@@ -66,7 +68,7 @@ jobs:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 #          external_repository: unicode-org/icu4x-docs
           external_repository: echeran/icu4x-docs
-          publish_branch: gh-pages-${{ matrix.component }}
+          publish_branch: gh-pages  # same as `gh-pages-branch` in previous step
           publish_dir: ./dev/bench
           destination_dir: dev/${{ matrix.component }}/bench
-          commit_message: Bench. Dash. (runtime, ${{ matrix.component }}) -> GH Pages
+          commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
