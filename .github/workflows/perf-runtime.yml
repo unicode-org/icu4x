@@ -68,4 +68,5 @@ jobs:
           external_repository: echeran/icu4x-docs
           publish_branch: gh-pages
           publish_dir: ./dev
+          destination_dir: dev
 
