@@ -180,4 +180,4 @@ jobs:
         external_repository: unicode-org/icu4x-docs
         publish_branch: gh-pages
         publish_dir: ./target/doc
-        custom_message: Rust doc -> GH Pages
+        commit_message: Rust doc -> GH Pages
