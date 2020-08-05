@@ -8,7 +8,17 @@ on:
 
 jobs:
   benchmark:
-    name: Runtime benchmark
+    #
+    # TODO: change `echeran/icu4x-docs` to `unicode-org/icu4x-docs`
+    # TODO: add condition to run action only for pushes to master
+    #
+
+    strategy:
+      matrix:
+        component:
+          - locale
+
+    name: Benchmark dashboard(s)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,21 +28,21 @@ jobs:
       # - name: Use nightly cargo for bench command
       #   run: rustup toolchain update nightly && rustup default nightly
 
-      - name: Try on a particular component (`locale`)
-        run: cd components/locale
+      - name: Try on a particular component
+        run: cd components/${{ os.component }}
 
       - name: Run benchmark
-        run: cd components/locale && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
+        run: cd components/${{ os.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
       - name: Debug
-        run: pwd && ls -l && echo "components/locale" && ls -l components/locale
+        run: pwd && ls -l && echo "components/${{ os.component }}" && ls -l components/${{ os.component }}
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
           tool: 'cargo'
-          output-file-path: components/locale/output.txt
+          output-file-path: components/${{ os.component }}/output.txt
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
           # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for commenting on the commit on alert
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -67,6 +77,6 @@ jobs:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           external_repository: echeran/icu4x-docs
           publish_branch: gh-pages
-          publish_dir: ./dev
-          destination_dir: dev
+          publish_dir: ./dev/bench
+          destination_dir: dev/${{ os.component }}/bench
           commit_message: Benchmark Dashboard -> GH Pages
