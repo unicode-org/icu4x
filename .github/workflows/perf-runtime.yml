@@ -69,4 +69,4 @@ jobs:
           publish_branch: gh-pages
           publish_dir: ./dev
           destination_dir: dev
-
+          custom_message: Benchmark Dashboard -> GH Pages
