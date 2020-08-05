@@ -22,9 +22,10 @@ jobs:
         run: cd components/locale
 
       - name: Run benchmark
-        run: cd components/locale && cargo bench -- --output-format bencher | tee output.txt
+        run: cd components/locale && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
-      #- run: pwd && ls -l && echo "component/locale" && ls -l component/locale
+      - name: Debug
+        run: pwd && ls -l && echo "component/locale" && ls -l component/locale
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -40,6 +41,9 @@ jobs:
           comment-on-alert: true
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
+
+      - name: Debug
+        run: pwd && ls -l && echo "dev" && ls -l dev
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3
