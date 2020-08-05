@@ -27,6 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Debug branches
+        run: echo "git branch" && git branch
+
       # Download previous benchmark result from cache (if exists)
       - name: Download previous benchmark data
         uses: actions/cache@v1
@@ -34,7 +37,9 @@ jobs:
           path: dev/${{ matrix.component }}/bench/cache
           key: ${{ runner.os }}-benchmark-${{ matrix.component }}
 
-      - run: mkdir -p dev/${{ matrix.component }}/bench/cache
+      - name: Debug cache info
+        run: echo "tree dev" && tree dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
+      #- run: mkdir -p dev/${{ matrix.component }}/bench/cache
 
       - name: Try on a particular component
         run: cd components/${{ matrix.component }}
@@ -42,8 +47,14 @@ jobs:
       - name: Run benchmark
         run: cd components/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
+      - name: Debug benchmark output dir
+        run: echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }}
+
       - name: Copy benchmark raw output to cache dir
         run: cp components/${{ matrix.component }}/output.txt dev/${{ matrix.component }}/bench/cache
+
+      - name: Debug cache info
+        run: echo "tree dev" && tree dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
       - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -60,6 +71,9 @@ jobs:
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
           gh-pages-branch: gh-pages
+
+      - name: Debug branches
+        run: echo "git branch" && git branch
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0-6  # this is a beta version to enable `destination_dir`
@@ -84,3 +98,9 @@ jobs:
           publish_dir: ./dev/bench
           destination_dir: dev/${{ matrix.component }}/bench
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
+
+      - name: Debug branches
+        run: echo "git branch" && git branch
+
+      - name: Debug gh-pages branch contents
+        run: echo "git checkout gh-pages && ls -l" && git checkout gh-pages && ls -l
