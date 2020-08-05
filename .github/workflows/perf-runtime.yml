@@ -52,7 +52,7 @@ jobs:
         run: echo "git checkout gh-pages" && git checkout gh-pages && pwd && ls -l
 
       - name: Dashboard -> Github Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3.7.0-6
         with:
           # Setup for publishing to an external repo using `deploy_key` option:
           #
