@@ -8,11 +8,6 @@ on:
 
 jobs:
   benchmark:
-    #
-    # TODO: change `echeran/icu4x-docs` to `unicode-org/icu4x-docs`
-    # TODO: add condition to run action only for pushes to master
-    #
-
     strategy:
       fail-fast: false
       # `matrix` creates a job matrix (Cartesian product of possible values for each var)
@@ -27,19 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      #- run: mkdir -p ci-bench/runtime
-
-      # - name: Use nightly cargo for bench command
-      #   run: rustup toolchain update nightly && rustup default nightly
-
       - name: Try on a particular component
         run: cd components/${{ matrix.component }}
 
       - name: Run benchmark
         run: cd components/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
-
-      - name: Debug
-        run: pwd && ls -l && echo "components/${{ matrix.component }}" && ls -l components/${{ matrix.component }}
 
       - name: Store benchmark result
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -56,17 +43,11 @@ jobs:
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
-      - name: Debug - list branches
-        run: echo "git branch" && git branch && pwd && ls -l
-
-      - name: Debug - create branch out of current detached head
-        run: echo "git checkout -b test-branch" && git checkout -b test-branch && pwd && ls -l
-
-      - name: Debug - checkout gh-pages branch
-        run: echo "git checkout gh-pages" && git checkout gh-pages && pwd && ls -l
-
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0-6
+        ## Only create docs for merges/pushes to master (skip PRs).
+        ## Multiple unfinished PRs should not clobber docs from approved code.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           # Setup for publishing to an external repo using `deploy_key` option:
           #
@@ -79,7 +60,7 @@ jobs:
           # target repo where the Github Pages will be copied to.
           # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          external_repository: echeran/icu4x-docs
+          external_repository: unicode-org/icu4x-docs
           publish_branch: gh-pages
           publish_dir: ./dev/bench
           destination_dir: dev/${{ matrix.component }}/bench
