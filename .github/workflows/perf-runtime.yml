@@ -31,7 +31,7 @@ jobs:
         run: echo "git branch" && git branch
 
       # Download previous benchmark result from cache (if exists)
-      - name: Download previous benchmark data
+      - name: Download/cache previous benchmark data
         uses: actions/cache@v1
         with:
           path: dev/${{ matrix.component }}/bench/cache
@@ -65,7 +65,7 @@ jobs:
           tool: 'cargo'
           output-file-path: components/${{ matrix.component }}/output.txt
           benchmark-data-dir-path: dev/${{ matrix.component }}/bench
-          external-data-json-path: dev/${{ matrix.component }}/bench/cache
+          external-data-json-path: dev/${{ matrix.component }}/bench/cache/benchmark-data.json
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
           # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for commenting on the commit on alert
           github-token: ${{ secrets.GITHUB_TOKEN }}
