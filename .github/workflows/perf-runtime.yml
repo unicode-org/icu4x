@@ -47,6 +47,8 @@ jobs:
       - name: Run benchmark
         run: cd components/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
+      - run: mkdir -p dev
+
       - name: Debug benchmark output dir
         run: echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }}
 
