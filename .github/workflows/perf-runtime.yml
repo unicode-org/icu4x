@@ -27,13 +27,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # Download previous benchmark result from cache (if exists)
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: dev/${{ matrix.component }}/bench/cache
+          key: ${{ runner.os }}-benchmark-${{ matrix.component }}
+
+      - run: mkdir - p dev/${{ matrix.component }}/bench/cache
+
       - name: Try on a particular component
         run: cd components/${{ matrix.component }}
 
       - name: Run benchmark
         run: cd components/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
-      - name: Store benchmark result
+      - name: Copy benchmark raw output to cache dir
+        run: cp components/${{ matrix.component }}/output.txt dev/${{ matrix.component }}/bench/cache
+
+      - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
@@ -50,7 +62,7 @@ jobs:
           gh-pages-branch: gh-pages
 
       - name: Dashboard -> Github Pages
-        uses: peaceiris/actions-gh-pages@v3.7.0-6
+        uses: peaceiris/actions-gh-pages@v3.7.0-6  # this is a beta version to enable `destination_dir`
         ## Only create docs for merges/pushes to master (skip PRs).
         ## Multiple unfinished PRs should not clobber docs from approved code.
 #        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
