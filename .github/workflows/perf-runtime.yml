@@ -17,6 +17,9 @@ jobs:
           - locale
           - num-util
           - uniset
+      # Ensure that commits when pushing GH pages to external has linear commit
+      # history w/o merges (to keep things simpler). Do this via max-parallel=1
+      max-parallel: 1
 
     runs-on: ubuntu-latest
     steps:
@@ -42,12 +45,13 @@ jobs:
           comment-on-alert: true
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
+          gh-pages-branch: gh-pages-${{ matrix.component }}
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0-6
         ## Only create docs for merges/pushes to master (skip PRs).
         ## Multiple unfinished PRs should not clobber docs from approved code.
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           # Setup for publishing to an external repo using `deploy_key` option:
           #
@@ -60,8 +64,9 @@ jobs:
           # target repo where the Github Pages will be copied to.
           # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          external_repository: unicode-org/icu4x-docs
-          publish_branch: gh-pages
+#          external_repository: unicode-org/icu4x-docs
+          external_repository: echeran/icu4x-docs
+          publish_branch: gh-pages-${{ matrix.component }}
           publish_dir: ./dev/bench
           destination_dir: dev/${{ matrix.component }}/bench
           commit_message: Benchmark Dashboard -> GH Pages
