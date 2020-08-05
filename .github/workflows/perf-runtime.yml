@@ -16,7 +16,11 @@ jobs:
     strategy:
       matrix:
         component:
+          - data-provider
+          - data-provider-json
           - locale
+          - num-util
+          - uniset
 
     name: Benchmark dashboard(s)
     runs-on: ubuntu-latest

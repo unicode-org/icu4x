@@ -20,9 +20,12 @@ static_assertions = "1.1"
 
 [dev-dependencies]
 rand = "0.7"
-criterion = "0.3"
+criterion = "0.3.3"
 rand_pcg = "0.2"
 rand_distr = "0.2"
+
+[lib]
+bench = false
 
 [[bench]]
 name = "fixed_decimal"
