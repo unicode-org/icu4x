@@ -14,15 +14,15 @@ jobs:
     #
 
     strategy:
+      fail-fast: false
+      # `matrix` creates a job matrix (Cartesian product of possible values for each var)
+      # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
       matrix:
         component:
-          - data-provider
-          - data-provider-json
           - locale
           - num-util
           - uniset
 
-    name: Benchmark dashboard(s)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
