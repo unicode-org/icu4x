@@ -82,8 +82,8 @@ jobs:
       - name: Debug cache info
         run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
-      - name: Debug cache info in gh-pages branch
-        run: echo "git checkout gh-pages" && git checkout gh-pages && echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
+      # - name: Debug cache info in gh-pages branch
+      #   run: echo "git checkout gh-pages" && git checkout gh-pages && echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0-6  # this is a beta version to enable `destination_dir`
