@@ -81,6 +81,18 @@ jobs:
       - name: Debug branches
         run: echo "git branch" && git branch
 
+
+      - name: Save current branch
+        run: git checkout -b temp-branch
+      
+      - name: Checkout gh-pages
+        run: git checkout gh-pages
+
+
+
+      - name: Debug branches
+        run: echo "git branch" && git branch
+
       - name: Debug Create dashboard step's output dirs to find HTML pages
         run: echo "ls -l" && ls -l && echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }} && echo "ls -l components/${{ matrix.component }}/output.txt" && ls -l components/${{ matrix.component }}/output.txt && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
 
