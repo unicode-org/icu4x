@@ -105,8 +105,9 @@ jobs:
 #          external_repository: unicode-org/icu4x-docs
           external_repository: echeran/icu4x-docs
           publish_branch: gh-pages  # same as `gh-pages-branch` in previous step
-          publish_dir: dev/${{ matrix.component }}/bench
-          destination_dir: dev/${{ matrix.component }}/bench
+#          publish_dir: dev/${{ matrix.component }}/bench
+          publish_dir: dev
+#          destination_dir: dev/${{ matrix.component }}/bench
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
 
       - name: Debug branches
