@@ -86,7 +86,7 @@ jobs:
       #   run: echo "git checkout gh-pages" && git checkout gh-pages && echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
       - name: Dashboard -> Github Pages
-        uses: peaceiris/actions-gh-pages@v3.7.0-6  # this is a beta version to enable `destination_dir`
+        uses: peaceiris/actions-gh-pages@v3.7.0-7  # this is a beta version to enable `destination_dir`
         ## Only create docs for merges/pushes to master (skip PRs).
         ## Multiple unfinished PRs should not clobber docs from approved code.
 #        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
