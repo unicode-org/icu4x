@@ -79,6 +79,12 @@ jobs:
       - name: Debug branches
         run: echo "git branch" && git branch
 
+      - name: Debug Create dashboard step's output dirs to find HTML pages
+        run: echo "ls -l" && ls -l && \
+             echo "ls -l components/${{ matrix.component }}/output.txt" && ls -l components/${{ matrix.component }}/output.txt && \
+             echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench && \
+             echo "ls -l dev/${{ matrix.component }}/bench/cache/benchmark-data.json" && ls -l dev/${{ matrix.component }}/bench/cache/benchmark-data.json
+
       - name: Debug cache info
         run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
