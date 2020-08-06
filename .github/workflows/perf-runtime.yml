@@ -82,6 +82,9 @@ jobs:
       - name: Debug cache info
         run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
+      - name: Move bench data and HTML into a folder suitable for copying to external repo
+        run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
+
       # - name: Debug cache info in gh-pages branch
       #   run: echo "git checkout gh-pages" && git checkout gh-pages && echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
@@ -106,7 +109,7 @@ jobs:
           external_repository: echeran/icu4x-docs
           publish_branch: gh-pages  # same as `gh-pages-branch` in previous step
 #          publish_dir: dev/${{ matrix.component }}/bench
-          publish_dir: dev
+          publish_dir: copy-to-ext-repo
 #          destination_dir: dev/${{ matrix.component }}/bench
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
 
