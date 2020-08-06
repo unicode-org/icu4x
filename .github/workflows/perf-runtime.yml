@@ -39,8 +39,10 @@ jobs:
 
       - run: mkdir -p dev/${{ matrix.component }}/bench/cache
 
-      - name: Debug cache info
-        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
+      - name: Debug bench info
+        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
+      # - name: Debug cache info
+      #   run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
       #- run: mkdir -p dev/${{ matrix.component }}/bench/cache
 
       - name: Try on a particular component
@@ -52,11 +54,11 @@ jobs:
       - name: Debug benchmark output dir
         run: echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }}
 
-      - name: Copy benchmark raw output to cache dir
-        run: cp components/${{ matrix.component }}/output.txt dev/${{ matrix.component }}/bench/cache
+      - name: Copy benchmark raw output to cached bench dir
+        run: cp components/${{ matrix.component }}/output.txt dev/${{ matrix.component }}/bench
 
-      - name: Debug cache info
-        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
+      - name: Debug cached bench info
+        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
 
       - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -65,7 +67,7 @@ jobs:
           tool: 'cargo'
           output-file-path: components/${{ matrix.component }}/output.txt
           benchmark-data-dir-path: dev/${{ matrix.component }}/bench
-          external-data-json-path: dev/${{ matrix.component }}/bench/cache/benchmark-data.json
+          #external-data-json-path: dev/${{ matrix.component }}/bench/cache/benchmark-data.json
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
           # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for commenting on the commit on alert
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -80,10 +82,10 @@ jobs:
         run: echo "git branch" && git branch
 
       - name: Debug Create dashboard step's output dirs to find HTML pages
-        run: echo "ls -l" && ls -l && echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }} && echo "ls -l components/${{ matrix.component }}/output.txt" && ls -l components/${{ matrix.component }}/output.txt && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench && echo "ls -l dev/${{ matrix.component }}/bench/cache/benchmark-data.json" && ls -l dev/${{ matrix.component }}/bench/cache/benchmark-data.json
+        run: echo "ls -l" && ls -l && echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }} && echo "ls -l components/${{ matrix.component }}/output.txt" && ls -l components/${{ matrix.component }}/output.txt && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
 
-      - name: Debug cache info
-        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
+      # - name: Debug cache info
+      #   run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
       - name: Move bench data and HTML into a folder suitable for copying to external repo
         run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
