@@ -84,8 +84,8 @@ jobs:
       - name: Debug Create dashboard step's output dirs to find HTML pages
         run: echo "ls -l" && ls -l && echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }} && echo "ls -l components/${{ matrix.component }}/output.txt" && ls -l components/${{ matrix.component }}/output.txt && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
 
-      - name: Debug default HTML output dir
-        run: echo "ls -l dev/bench" && ls -l dev/bench
+      - name: Find data.js
+        run: echo "find . -name data.js" && find . -name data.js
 
       # - name: Debug cache info
       #   run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
