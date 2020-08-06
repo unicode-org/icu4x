@@ -1,14 +1,13 @@
+use icu_locale::LanguageIdentifier;
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::prelude::v1::*;
 use std::str::FromStr;
-use serde::{Deserialize, Serialize};
-use icu_locale::LanguageIdentifier;
 
+use icu_data_provider::error::Error;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::prelude::*;
-use icu_data_provider::validator::DataProviderValidator;
 use icu_data_provider::structs;
-use icu_data_provider::error::Error;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
@@ -102,21 +101,6 @@ fn get_response(warehouse: &JsonDataWarehouse) -> data_provider::Response {
         .unwrap()
 }
 
-fn get_response_with_validator(warehouse: &JsonDataWarehouse) -> data_provider::Response {
-    let validation_provider = DataProviderValidator {
-        data_provider: &warehouse.provider(),
-    };
-    validation_provider
-        .load(&data_provider::Request {
-            data_key: icu_data_key!(decimal: symbols@1),
-            data_entry: DataEntry {
-                variant: None,
-                langid: "en-US".parse().unwrap(),
-            },
-        })
-        .unwrap()
-}
-
 fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
     assert_eq!(
         decimal_data,
@@ -132,14 +116,6 @@ fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
 fn test_read_string() {
     let warehouse = get_warehouse();
     let response = get_response(&warehouse);
-    let decimal_data: &structs::decimal::SymbolsV1 = response.borrow_payload().unwrap();
-    check_data(decimal_data);
-}
-
-#[test]
-fn test_validator() {
-    let warehouse = get_warehouse();
-    let response = get_response_with_validator(&warehouse);
     let decimal_data: &structs::decimal::SymbolsV1 = response.borrow_payload().unwrap();
     check_data(decimal_data);
 }

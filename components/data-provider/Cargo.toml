@@ -14,6 +14,10 @@ include = [
     "README.md"
 ]
 
+[features]
+# Enable InvariantDataProvider, a locale-agnostic data provider.
+invariant = []
+
 [dependencies]
 icu-locale = { path = "../locale" }
 tinystr = "0.3"

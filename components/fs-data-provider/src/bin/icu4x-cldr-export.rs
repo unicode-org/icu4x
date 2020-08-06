@@ -161,7 +161,7 @@ fn main() -> Result<(), Error> {
 
     let provider = CldrDataProvider::new(&cldr_paths);
 
-    let json_serializer = Box::new(serializers::JsonSerializer);
+    let json_serializer = Box::new(serializers::JsonSerializer::default());
 
     let mut exporter_options = fs_exporter::Options::default();
     exporter_options.root = output_path;
@@ -179,12 +179,12 @@ fn main() -> Result<(), Error> {
         fs_exporter::OverwriteOption::CheckEmpty
     };
     exporter_options.verbose = matches.is_present("VERBOSE");
-    let mut json_file_writer = FilesystemExporter::try_new(json_serializer, &exporter_options)?;
+    let mut exporter = FilesystemExporter::try_new(json_serializer, &exporter_options)?;
 
     for key in keys.iter() {
-        let result = provider.export_key(key, &mut json_file_writer);
+        let result = provider.export_key(key, &mut exporter);
         // Ensure flush() is called, even when the result is an error
-        json_file_writer.flush()?;
+        exporter.flush()?;
         result?;
     }
 

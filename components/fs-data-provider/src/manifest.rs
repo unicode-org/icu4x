@@ -11,15 +11,19 @@ pub enum AliasOption {
 }
 
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum SyntaxOption {
     /// Serialize using JavaScript Object Notation (JSON).
     Json,
+    // Future: Consider adding a custom format option here.
+    // Custom {
+    //     file_extension: String,
+    // }
 }
 
 impl SyntaxOption {
-    /// Gets the file extension normally associated with the given syntax
-    pub fn get_file_extension(&self) -> &'static str {
+    /// Gets the file extension associated with the given syntax.
+    pub fn get_file_extension(&self) -> &str {
         match self {
             SyntaxOption::Json => "json",
         }

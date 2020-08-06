@@ -4,6 +4,10 @@ pub mod data_provider;
 pub mod error;
 pub mod iter;
 pub mod structs;
+
+#[cfg(feature = "invariant")]
+pub mod invariant;
+#[cfg(feature = "invariant")]
 pub mod validator;
 
 mod cloneable_any;

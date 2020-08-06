@@ -6,18 +6,25 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
 
+/// A data provider that reads ICU4X data from a filesystem directory.
+#[derive(Debug, PartialEq)]
 pub struct FsDataProvider {
     root: PathBuf,
     manifest: Manifest,
 }
 
 impl FsDataProvider {
-    pub fn try_new(root: PathBuf) -> Result<Self, Error> {
-        let manifest_path = root.clone().join("manifest.json");
+    /// Create a new FsDataProvider given a filesystem directory.
+    pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, Error> {
+        let root_path_buf: PathBuf = root.into();
+        let manifest_path = root_path_buf.clone().join("manifest.json");
         let file = File::open(&manifest_path)?;
         let reader = BufReader::new(file);
         let manifest: Manifest = serde_json::from_reader(reader)?;
-        Ok(Self { root, manifest })
+        Ok(Self {
+            root: root_path_buf,
+            manifest,
+        })
     }
 }
 
@@ -51,6 +58,7 @@ impl DataProvider<'_> for FsDataProvider {
         // TODO: Eliminate this dispatch.
         // https://github.com/unicode-org/icu4x/issues/196
         if req.data_key.category == data_key::Category::Plurals {
+            // TODO: Pick deserializer based on manifest
             let obj: structs::plurals::PluralRuleStringsV1 = match serde_json::from_reader(reader) {
                 Ok(obj) => obj,
                 Err(err) => return Err(Error::ResourceError(Box::new(err))),

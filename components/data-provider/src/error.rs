@@ -77,9 +77,7 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
-            Error::UnavailableEntry(request) => {
-                write!(f, "Unavailable data entry: {}", request)
-            }
+            Error::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
             Error::ResourceError(err) => write!(f, "Failed to load resource: {}", err),
         }
     }

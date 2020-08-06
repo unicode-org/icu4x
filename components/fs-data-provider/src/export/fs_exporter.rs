@@ -129,7 +129,7 @@ impl FilesystemExporter {
         mut path_buf: PathBuf,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let file_extension = self.serializer.get_file_extension();
+        let file_extension = self.serializer.get_syntax().get_file_extension();
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
                 path_buf.set_extension(file_extension);

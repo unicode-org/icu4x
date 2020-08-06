@@ -1,3 +1,4 @@
+use crate::manifest::SyntaxOption;
 use crate::Error;
 use erased_serde;
 use std::io;
@@ -11,12 +12,18 @@ pub trait Serializer {
         sink: &mut dyn io::Write,
     ) -> Result<(), Error>;
 
-    /// Gets the file extension typically associated with the serialization format.
-    fn get_file_extension(&self) -> &'static str;
+    /// Gets syntax metadata associated with the Deserializer.
+    fn get_syntax(&self) -> &SyntaxOption;
 }
 
 /// A serializer for JavaScript Object Notation (JSON).
-pub struct JsonSerializer;
+pub struct JsonSerializer(SyntaxOption);
+
+impl Default for JsonSerializer {
+    fn default() -> Self {
+        JsonSerializer(SyntaxOption::Json)
+    }
+}
 
 impl Serializer for JsonSerializer {
     fn serialize(
@@ -29,7 +36,7 @@ impl Serializer for JsonSerializer {
         Ok(())
     }
 
-    fn get_file_extension(&self) -> &'static str {
-        "json"
+    fn get_syntax(&self) -> &SyntaxOption {
+        &self.0
     }
 }

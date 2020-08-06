@@ -28,7 +28,7 @@ clap = { version = "2.33", optional = true }
 icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", optional = true }
 
 [features]
-export = ["erased-serde"]
+export = ["erased-serde", "icu-data-provider/invariant"]
 export-bin = ["export", "clap", "icu-cldr-json-data-provider"]
 
 [[bin]]

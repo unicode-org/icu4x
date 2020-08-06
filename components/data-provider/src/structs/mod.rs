@@ -1,30 +1,32 @@
 pub mod decimal;
 pub mod plurals;
 
-use crate::data_key::DataKey;
-use std::any::TypeId;
-
-/// Gets the expected type given a certain data key. For example, if the data key is
-/// `plurals/cardinal@1`, the TypeId for PluralRuleStringsV1 will be returned.
+/// Gets a locale-invariant default struct given a data key in this module's category.
+/// For example, if the data key is `plurals/cardinal@1`, a Response with an object of type
+/// PluralRuleStringsV1 will be returned.
 ///
 /// # Example
 ///
 /// ```
-/// use icu_data_provider::icu_data_key;
-/// use icu_data_provider::structs::get_type_id;
+/// use icu_data_provider::prelude::*;
+/// use icu_data_provider::structs::get_invariant;
 /// use icu_data_provider::structs::plurals::PluralRuleStringsV1;
 /// use std::any::TypeId;
 ///
 /// assert_eq!(
-///     get_type_id(&icu_data_key!(plurals: cardinal@1)),
+///     get_invariant(&icu_data_key!(plurals: cardinal@1))
+///         .map(|response| response.get_payload_type_id()),
 ///     Some(TypeId::of::<PluralRuleStringsV1>())
 /// );
 /// ```
-pub fn get_type_id(data_key: &DataKey) -> Option<TypeId> {
-    if let Some(type_id) = decimal::get_type_id(data_key) {
-        Some(type_id)
-    } else if let Some(type_id) = plurals::get_type_id(data_key) {
-        Some(type_id)
+#[cfg(feature = "invariant")]
+pub fn get_invariant(
+    data_key: &crate::data_key::DataKey,
+) -> Option<crate::data_provider::Response<'static>> {
+    if let Some(response) = decimal::get_invariant(data_key) {
+        Some(response)
+    } else if let Some(response) = plurals::get_invariant(data_key) {
+        Some(response)
     } else {
         None
     }
