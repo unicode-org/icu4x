@@ -113,5 +113,5 @@ jobs:
       - name: Debug branches
         run: echo "git branch" && git branch
 
-      - name: Debug gh-pages branch contents
-        run: echo "git checkout gh-pages && ls -l" && git checkout gh-pages && ls -l
+      # - name: Debug gh-pages branch contents
+      #   run: echo "git checkout gh-pages && ls -l" && git checkout gh-pages && ls -l
