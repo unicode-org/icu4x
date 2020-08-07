@@ -14,7 +14,7 @@ use std::path::PathBuf;
 // #[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
-    ExportError(icu_fs_data_provider::error::Error),
+    ExportError(icu_fs_data_provider::FsDataError),
     DataProviderError(icu_data_provider::DataError),
 }
 
@@ -34,8 +34,8 @@ impl fmt::Debug for Error {
     }
 }
 
-impl From<icu_fs_data_provider::error::Error> for Error {
-    fn from(err: icu_fs_data_provider::error::Error) -> Error {
+impl From<icu_fs_data_provider::FsDataError> for Error {
+    fn from(err: icu_fs_data_provider::FsDataError) -> Error {
         Error::ExportError(err)
     }
 }

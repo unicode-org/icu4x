@@ -12,11 +12,11 @@
 //!     .expect_err("Specify a real directoroy in the line above");
 //! ```
 
-pub mod error;
+mod error;
 mod fs_data_provider;
 pub mod manifest;
 
-pub use error::Error;
+pub use error::Error as FsDataError;
 pub use fs_data_provider::FsDataProvider;
 
 #[cfg(feature = "export")]

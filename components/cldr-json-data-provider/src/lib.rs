@@ -9,5 +9,5 @@ mod support;
 pub mod transform;
 
 pub use cldr_paths::CldrPaths;
-pub use error::Error;
+pub use error::Error as CldrError;
 pub use transform::CldrJsonDataProvider;

@@ -1,9 +1,9 @@
 use super::aliasing::{self, AliasCollection};
 use super::serializers::Serializer;
+use crate::error::Error;
 use crate::manifest::AliasOption;
 use crate::manifest::Manifest;
 use crate::manifest::SyntaxOption;
-use crate::Error;
 use icu_data_provider::iter::DataExporter;
 use icu_data_provider::prelude::*;
 use serde::{Deserialize, Serialize};

@@ -1,5 +1,5 @@
+use crate::error::Error;
 use crate::manifest::Manifest;
-use crate::Error;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
 use std::fs::File;

@@ -2,7 +2,7 @@ use crate::cldr_langid::CldrLanguage;
 use crate::reader::open_reader;
 use crate::support::DataKeySupport;
 use crate::CldrPaths;
-use crate::Error;
+use crate::error::Error;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs::plurals::*;

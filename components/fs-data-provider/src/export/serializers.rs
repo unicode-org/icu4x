@@ -1,5 +1,5 @@
+use crate::error::Error;
 use crate::manifest::SyntaxOption;
-use crate::Error;
 use erased_serde;
 use std::io;
 

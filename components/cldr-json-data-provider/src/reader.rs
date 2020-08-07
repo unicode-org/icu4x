@@ -1,4 +1,4 @@
-use crate::Error;
+use crate::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
