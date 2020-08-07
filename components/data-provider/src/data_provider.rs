@@ -15,12 +15,12 @@ pub use crate::error::Error;
 
 /// A struct to request a certain hunk of data from a data provider.
 #[derive(PartialEq, Clone, Debug)]
-pub struct Request {
+pub struct DataRequest {
     pub data_key: DataKey,
     pub data_entry: DataEntry,
 }
 
-impl fmt::Display for Request {
+impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}/{}", self.data_key, self.data_entry)
     }
@@ -28,7 +28,7 @@ impl fmt::Display for Request {
 
 /// A response object containing a data hunk ("payload").
 #[derive(Debug, Clone)]
-pub struct Response<'d> {
+pub struct DataResponse<'d> {
     pub data_langid: LanguageIdentifier,
     payload: Cow<'d, dyn CloneableAny>,
     // source: Cow<'static, str>,
@@ -36,7 +36,7 @@ pub struct Response<'d> {
 
 // TODO: Should this be an implemention of std::borrow::Borrow?
 // TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
-impl<'d> Response<'d> {
+impl<'d> DataResponse<'d> {
     /// Get an immutable reference to the payload in a Response object.
     /// The payload may or may not be owned by the Response.
     pub fn borrow_payload<T: 'static>(&self) -> Result<&T, Error> {
@@ -46,7 +46,6 @@ impl<'d> Response<'d> {
             .downcast_ref::<T>()
             .ok_or_else(|| Error::MismatchedType {
                 actual: borrowed.as_any().type_id(),
-                data_key: None,
                 generic: Some(TypeId::of::<T>()),
             })
     }
@@ -68,7 +67,6 @@ impl<'d> Response<'d> {
             .downcast_mut::<T>()
             .ok_or_else(|| Error::MismatchedType {
                 actual: type_id,
-                data_key: None,
                 generic: Some(TypeId::of::<T>()),
             })
     }
@@ -80,7 +78,6 @@ impl<'d> Response<'d> {
                 Some(v) => Ok(Cow::Borrowed(v)),
                 None => Err(Error::MismatchedType {
                     actual: borrowed.as_any().type_id(),
-                    data_key: None,
                     generic: Some(TypeId::of::<T>()),
                 }),
             },
@@ -88,7 +85,6 @@ impl<'d> Response<'d> {
                 Ok(boxed_t) => Ok(Cow::Owned(*boxed_t)),
                 Err(boxed_any) => Err(Error::MismatchedType {
                     actual: boxed_any.type_id(),
-                    data_key: None,
                     generic: Some(TypeId::of::<T>()),
                 }),
             },
@@ -103,32 +99,32 @@ impl<'d> Response<'d> {
 }
 
 /// Builder class used to construct a Response.
-pub struct ResponseBuilder {
+pub struct DataResponseBuilder {
     pub data_langid: LanguageIdentifier,
 }
 
-impl ResponseBuilder {
-    /// Construct a Response from the builder, with owned data.
+impl DataResponseBuilder {
+    /// Construct a DataResponse from the builder, with owned data.
     /// Consumes both the builder and the data.
     /// Returns the 'static lifetime since there is no borrowed data.
     pub fn with_owned_payload<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
         self,
         t: T,
-    ) -> Response<'static> {
-        Response {
+    ) -> DataResponse<'static> {
+        DataResponse {
             data_langid: self.data_langid,
             payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
         }
     }
 
-    /// Construct a Response from the builder, with borrowed data.
+    /// Construct a DataResponse from the builder, with borrowed data.
     /// Consumes the builder, but not the data.
     #[allow(clippy::needless_lifetimes)]
     pub fn with_borrowed_payload<'d, T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
         self,
         t: &'d T,
-    ) -> Response<'d> {
-        Response {
+    ) -> DataResponse<'d> {
+        DataResponse {
             data_langid: self.data_langid,
             payload: Cow::Borrowed(t),
         }
@@ -147,14 +143,14 @@ impl ResponseBuilder {
 pub trait DataProvider<'d> {
     /// Query the provider for data. Returns Ok if the request successfully loaded data. If data
     /// failed to load, returns an Error with more information.
-    fn load<'a>(&'a self, req: &Request) -> Result<Response<'d>, Error>;
+    fn load<'a>(&'a self, req: &DataRequest) -> Result<DataResponse<'d>, Error>;
 }
 
 impl<'d> dyn DataProvider<'d> + 'd {
     /// Query the provider for data. Returns Ok(Some) if the request successfully loaded data. If
     /// data failed to load due to the provider not supporting the requested category or data key,
     /// returns Ok(None). Otherwise, returns an Error.
-    pub fn load_graceful(&self, req: &Request) -> Result<Option<Response<'d>>, Error> {
+    pub fn load_graceful(&self, req: &DataRequest) -> Result<Option<DataResponse<'d>>, Error> {
         match self.load(req) {
             Ok(response) => Ok(Some(response)),
             Err(err) => match err {

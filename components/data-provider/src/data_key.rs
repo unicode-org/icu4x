@@ -7,19 +7,19 @@ use tinystr::TinyStr16;
 /// A top-level collection of related data keys.
 #[non_exhaustive]
 #[derive(PartialEq, Copy, Clone, Debug)]
-pub enum Category {
+pub enum DataCategory {
     Decimal,
     Plurals,
     PrivateUse(TinyStr16),
 }
 
-impl Category {
-    /// Gets or builds a string form of this Category.
+impl DataCategory {
+    /// Gets or builds a string form of this DataCategory.
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
-            Category::Decimal => Cow::Borrowed("decimal"),
-            Category::Plurals => Cow::Borrowed("plurals"),
-            Category::PrivateUse(id) => {
+            DataCategory::Decimal => Cow::Borrowed("decimal"),
+            DataCategory::Plurals => Cow::Borrowed("plurals"),
+            DataCategory::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());
                 Cow::Owned(result)
@@ -28,7 +28,7 @@ impl Category {
     }
 }
 
-impl fmt::Display for Category {
+impl fmt::Display for DataCategory {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_str(&self.as_str())
     }
@@ -41,7 +41,7 @@ impl fmt::Display for Category {
 /// Use `icu_data_key!` as a shortcut to create data keys in code.
 #[derive(PartialEq, Copy, Clone)]
 pub struct DataKey {
-    pub category: Category,
+    pub category: DataCategory,
     pub sub_category: TinyStr16,
     pub version: u32,
 }
@@ -59,20 +59,28 @@ pub struct DataKey {
 #[macro_export]
 macro_rules! icu_data_key {
     (decimal: $sub_category:tt @ $version:tt) => {
-        icu_data_key!($crate::data_key::Category::Decimal, $sub_category, $version)
+        icu_data_key!(
+            $crate::DataCategory::Decimal,
+            $sub_category,
+            $version
+        )
     };
     (plurals: $sub_category:tt @ $version:tt) => {
-        icu_data_key!($crate::data_key::Category::Plurals, $sub_category, $version)
+        icu_data_key!(
+            $crate::DataCategory::Plurals,
+            $sub_category,
+            $version
+        )
     };
     (x-$private_use:tt: $sub_category:tt @ $version:tt) => {
         icu_data_key!(
-            $crate::data_key::Category::PrivateUse(stringify!($private_use).parse().unwrap()),
+            $crate::DataCategory::PrivateUse(stringify!($private_use).parse().unwrap()),
             $sub_category,
             $version
         )
     };
     ($category:expr, $sub_category:tt, $version:tt) => {
-        $crate::data_key::DataKey {
+        $crate::DataKey {
             category: $category,
             // TODO: Parse to TinyStr at compile time
             sub_category: stringify!($sub_category).parse().unwrap(),
@@ -82,11 +90,11 @@ macro_rules! icu_data_key {
 }
 
 #[cfg(test)]
-fn test_data_key_macro(category: Category) {
+fn test_data_key_macro(category: DataCategory) {
     let data_key_1 = match category {
-        Category::Decimal => icu_data_key!(decimal: foo@1),
-        Category::Plurals => icu_data_key!(plurals: foo@1),
-        Category::PrivateUse(_) => icu_data_key!(x-private: foo@1),
+        DataCategory::Decimal => icu_data_key!(decimal: foo@1),
+        DataCategory::Plurals => icu_data_key!(plurals: foo@1),
+        DataCategory::PrivateUse(_) => icu_data_key!(x-private: foo@1),
     };
     let data_key_2 = DataKey {
         category,
@@ -98,9 +106,9 @@ fn test_data_key_macro(category: Category) {
 
 #[test]
 fn test_all_data_key_macros() {
-    test_data_key_macro(Category::Decimal);
-    test_data_key_macro(Category::Plurals);
-    test_data_key_macro(Category::PrivateUse("private".parse().unwrap()));
+    test_data_key_macro(DataCategory::Decimal);
+    test_data_key_macro(DataCategory::Plurals);
+    test_data_key_macro(DataCategory::PrivateUse("private".parse().unwrap()));
 }
 
 impl fmt::Debug for DataKey {

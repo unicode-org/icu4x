@@ -22,7 +22,7 @@ pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {
 pub trait DataExporter {
     fn put(
         &mut self,
-        req: &data_provider::Request,
+        req: &DataRequest,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Box<dyn std::error::Error>>;
 }
@@ -33,7 +33,7 @@ where
 {
     fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error> {
         for data_entry in self.iter_for_key(data_key)? {
-            let req = data_provider::Request {
+            let req = DataRequest {
                 data_key: *data_key,
                 data_entry: data_entry.clone(),
             };

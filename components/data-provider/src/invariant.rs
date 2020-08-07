@@ -7,8 +7,8 @@ use std::fmt;
 
 pub(crate) fn make_inv_response<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
     t: T,
-) -> data_provider::Response<'static> {
-    data_provider::ResponseBuilder {
+) -> DataResponse<'static> {
+    DataResponseBuilder {
         data_langid: LanguageIdentifier::default(),
     }
     .with_owned_payload(t)
@@ -16,6 +16,9 @@ pub(crate) fn make_inv_response<T: 'static + Clone + erased_serde::Serialize + f
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
+///
+/// The objects returned by InvariantDataProvider are guaranteed to conform to the correct struct
+/// definition, so InvariantDataProvider can also be used to validate unknown data providers.
 ///
 /// # Example
 ///
@@ -38,10 +41,7 @@ pub(crate) fn make_inv_response<T: 'static + Clone + erased_serde::Serialize + f
 pub struct InvariantDataProvider;
 
 impl DataProvider<'static> for InvariantDataProvider {
-    fn load<'a>(
-        &'a self,
-        req: &data_provider::Request,
-    ) -> Result<data_provider::Response<'static>, Error> {
+    fn load<'a>(&'a self, req: &DataRequest) -> Result<DataResponse<'static>, Error> {
         structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))
     }
 }
@@ -64,7 +64,7 @@ impl DataEntryCollection for InvariantDataProvider {
 fn test_basic() {
     let provider = InvariantDataProvider;
     let response = provider
-        .load(&data_provider::Request {
+        .load(&DataRequest {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,

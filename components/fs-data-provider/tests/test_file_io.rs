@@ -7,7 +7,7 @@ use std::borrow::Cow;
 fn test_read_json() {
     let provider = FsDataProvider::try_new("tests/testdata/json_plurals_37").unwrap();
     let response = provider
-        .load(&data_provider::Request {
+        .load(&DataRequest {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,

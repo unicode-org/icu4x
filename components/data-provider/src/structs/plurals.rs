@@ -1,36 +1,15 @@
 // Plural types
-
-use crate::data_key::Category;
-use crate::data_key::DataKey;
 use serde::{Deserialize, Serialize};
-use std::any::TypeId;
 use std::borrow::Cow;
 
-/// Gets the expected TypeID given a data key in this module's category.
-pub fn get_type_id(data_key: &DataKey) -> Option<TypeId> {
-    if data_key.category != Category::Plurals {
-        return None;
-    }
-    match data_key.sub_category.as_str() {
-        "cardinal" => match data_key.version {
-            1 => Some(TypeId::of::<PluralRuleStringsV1>()),
-            _ => None,
-        },
-        "ordinal" => match data_key.version {
-            1 => Some(TypeId::of::<PluralRuleStringsV1>()),
-            _ => None,
-        },
-        _ => None,
-    }
-}
+#[cfg(feature = "invariant")]
+use crate::prelude::*;
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
 #[cfg(feature = "invariant")]
-pub fn get_invariant(
-    data_key: &crate::data_key::DataKey,
-) -> Option<crate::data_provider::Response<'static>> {
+pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
     use crate::invariant::make_inv_response;
-    if data_key.category != Category::Plurals {
+    if data_key.category != DataCategory::Plurals {
         return None;
     }
     match data_key.sub_category.as_str() {

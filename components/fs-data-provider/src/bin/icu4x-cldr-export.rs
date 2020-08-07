@@ -15,7 +15,7 @@ use std::path::PathBuf;
 enum Error {
     Unsupported(&'static str),
     ExportError(icu_fs_data_provider::error::Error),
-    DataProviderError(icu_data_provider::error::Error),
+    DataProviderError(icu_data_provider::DataError),
 }
 
 impl fmt::Display for Error {
@@ -40,8 +40,8 @@ impl From<icu_fs_data_provider::error::Error> for Error {
     }
 }
 
-impl From<icu_data_provider::error::Error> for Error {
-    fn from(err: icu_data_provider::error::Error) -> Error {
+impl From<icu_data_provider::DataError> for Error {
+    fn from(err: icu_data_provider::DataError) -> Error {
         Error::DataProviderError(err)
     }
 }

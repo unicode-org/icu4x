@@ -1,17 +1,17 @@
 // Decimal types
-
 use serde::{Deserialize, Serialize};
 use smallstr::SmallString;
+
+#[cfg(feature = "invariant")]
+use crate::prelude::*;
 
 // TODO: Automatically delegate from subcategory to type object
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
 #[cfg(feature = "invariant")]
-pub fn get_invariant(
-    data_key: &crate::data_key::DataKey,
-) -> Option<crate::data_provider::Response<'static>> {
+pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
     use crate::invariant::make_inv_response;
-    if data_key.category != crate::data_key::Category::Decimal {
+    if data_key.category != DataCategory::Decimal {
         return None;
     }
     match data_key.sub_category.as_str() {

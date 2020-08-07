@@ -7,7 +7,7 @@
 //!
 //! ```
 //! use icu_data_provider::prelude::*;
-//! use icu_data_provider::invariant::InvariantDataProvider;
+//! use icu_data_provider::InvariantDataProvider;
 //! use icu_data_provider::structs::plurals::PluralRuleStringsV1;
 //! use icu_data_provider::iter::IterableDataProvider;
 //! use icu_fs_data_provider::FsDataProvider;
@@ -37,7 +37,7 @@
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
-//! let req = data_provider::Request {
+//! let req = DataRequest {
 //!     data_key: DATA_KEY,
 //!     data_entry: DataEntry {
 //!         variant: None,

@@ -1,6 +1,4 @@
-use crate::data_key::Category;
-use crate::data_key::DataKey;
-use crate::data_provider::Request;
+use crate::prelude::*;
 use core::ops::Deref;
 use std::any::TypeId;
 use std::fmt;
@@ -9,22 +7,19 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     /// The data provider does not support the requested category.
-    UnsupportedCategory(Category),
+    UnsupportedCategory(DataCategory),
 
     /// The data provider supports the category, but not the key (sub-category or version).
     UnsupportedDataKey(DataKey),
 
     /// The data provider supports the data key, but does not have data for the specific entry
     /// (variant or language identifier).
-    UnavailableEntry(Request),
+    UnavailableEntry(DataRequest),
 
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
         /// The actual TypeID of the payload.
         actual: TypeId,
-
-        /// The expected TypeID derived from the data key.
-        data_key: Option<TypeId>,
 
         /// The expected TypeID derived from the generic type parameter at the call site.
         generic: Option<TypeId>,
@@ -40,14 +35,14 @@ impl From<&DataKey> for Error {
     }
 }
 
-impl From<&Category> for Error {
-    fn from(category: &Category) -> Self {
+impl From<&DataCategory> for Error {
+    fn from(category: &DataCategory) -> Self {
         Error::UnsupportedCategory(*category)
     }
 }
 
-impl From<Request> for Error {
-    fn from(req: Request) -> Self {
+impl From<DataRequest> for Error {
+    fn from(req: DataRequest) -> Self {
         Error::UnavailableEntry(req)
     }
 }
@@ -63,15 +58,8 @@ impl fmt::Display for Error {
         match self {
             Error::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
             Error::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
-            Error::MismatchedType {
-                actual,
-                data_key,
-                generic,
-            } => {
+            Error::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
-                if let Some(type_id) = data_key {
-                    write!(f, " (expected from data key: {:?})", type_id)?;
-                }
                 if let Some(type_id) = generic {
                     write!(f, " (expected from generic type parameter: {:?})", type_id)?;
                 }

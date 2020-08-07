@@ -5,7 +5,7 @@
 //! a [`Response`]:
 //!
 //! ```ignore
-//! fn load<'a>(&'a self, req: &Request) -> Result<Response<'d>, Error>;
+//! fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
 //! ```
 //!
 //! A Request contains a [`DataKey`] (a composition of a [`Category`] and sub-category, e.g.,
@@ -18,15 +18,15 @@
 //! use icu_data_provider::prelude::*;
 //! use std::any::TypeId;
 //!
-//! // Types included directly:
+//! // Types included:
+//! println!("{:?}", TypeId::of::<DataProvider>());
+//! println!("{:?}", TypeId::of::<DataError>());
 //! println!("{:?}", TypeId::of::<DataKey>());
 //! println!("{:?}", TypeId::of::<DataEntry>());
-//! println!("{:?}", TypeId::of::<DataProvider>());
-//!
-//! // Types included via module namespace:
-//! println!("{:?}", TypeId::of::<data_key::Category>());
-//! println!("{:?}", TypeId::of::<data_provider::Request>());
-//! println!("{:?}", TypeId::of::<data_provider::Response>());
+//! println!("{:?}", TypeId::of::<DataCategory>());
+//! println!("{:?}", TypeId::of::<DataRequest>());
+//! println!("{:?}", TypeId::of::<DataResponse>());
+//! println!("{:?}", TypeId::of::<DataResponseBuilder>());
 //!
 //! // Macros included:
 //! assert_eq!("plurals/cardinal@1", icu_data_key!(plurals: cardinal@1).to_string());
@@ -55,27 +55,31 @@
 //! returns fixed data that does not vary by locale. You must enable InvariantDataProvider via the
 //! `"invariant"` feature in your Cargo.toml file.
 
-pub mod data_entry;
-pub mod data_key;
-pub mod data_provider;
-pub mod error;
+mod cloneable_any;
+mod data_entry;
+mod data_key;
+mod data_provider;
+mod error;
 pub mod iter;
 pub mod structs;
 
 #[cfg(feature = "invariant")]
-pub(crate) mod invariant;
-#[cfg(feature = "invariant")]
-pub mod validator;
+mod invariant;
+
 #[cfg(feature = "invariant")]
 pub use invariant::InvariantDataProvider;
 
-mod cloneable_any;
-
 pub mod prelude {
     pub use crate::data_entry::DataEntry;
-    pub use crate::data_key;
+    pub use crate::error::Error as DataError;
+    pub use crate::data_key::DataCategory;
     pub use crate::data_key::DataKey;
-    pub use crate::data_provider;
     pub use crate::data_provider::DataProvider;
+    pub use crate::data_provider::DataRequest;
+    pub use crate::data_provider::DataResponse;
+    pub use crate::data_provider::DataResponseBuilder;
     pub use crate::icu_data_key;
 }
+
+// Also include the same symbols at the top level for selective inclusion
+pub use prelude::*;

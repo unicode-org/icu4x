@@ -4,8 +4,6 @@ use std::borrow::Cow;
 use std::prelude::v1::*;
 use std::str::FromStr;
 
-use icu_data_provider::error::Error;
-use icu_data_provider::icu_data_key;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
 
@@ -39,13 +37,13 @@ impl JsonDataWarehouse {
 }
 
 impl FromStr for JsonDataWarehouse {
-    type Err = Error;
+    type Err = DataError;
 
     /// Create a JsonDataProvider from a JSON string slice.
-    fn from_str(data: &str) -> Result<Self, Error> {
+    fn from_str(data: &str) -> Result<Self, DataError> {
         let data: JsonSchema = match serde_json::from_str(data) {
             Ok(data) => data,
-            Err(err) => return Err(Error::ResourceError(Box::new(err))),
+            Err(err) => return Err(DataError::ResourceError(Box::new(err))),
         };
         Ok(Self { data })
     }
@@ -61,11 +59,8 @@ impl<'d> From<&'d JsonDataWarehouse> for JsonDataProvider<'d> {
 
 impl<'d> DataProvider<'d> for JsonDataProvider<'d> {
     /// Loads JSON data. Returns borrowed data.
-    fn load(
-        &self,
-        _request: &data_provider::Request,
-    ) -> Result<data_provider::Response<'d>, data_provider::Error> {
-        let response = data_provider::ResponseBuilder {
+    fn load(&self, _request: &DataRequest) -> Result<DataResponse<'d>, DataError> {
+        let response = DataResponseBuilder {
             data_langid: LanguageIdentifier::default(),
         }
         .with_borrowed_payload(&self.borrowed_data.decimal.symbols_v1_a);
@@ -88,10 +83,10 @@ fn get_warehouse() -> JsonDataWarehouse {
     JsonDataWarehouse::from_str(DATA).unwrap()
 }
 
-fn get_response(warehouse: &JsonDataWarehouse) -> data_provider::Response {
+fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
     warehouse
         .provider()
-        .load(&data_provider::Request {
+        .load(&DataRequest {
             data_key: icu_data_key!(decimal: symbols@1),
             data_entry: DataEntry {
                 variant: None,

@@ -2,7 +2,7 @@ use std::fmt;
 
 #[derive(Debug)]
 pub enum Error {
-    DataProviderError(icu_data_provider::error::Error),
+    DataProviderError(icu_data_provider::DataError),
     SerdeJsonError(serde_json::error::Error),
     #[cfg(feature = "export")]
     SerializerError(erased_serde::Error),
@@ -10,8 +10,8 @@ pub enum Error {
     IoError(std::io::Error),
 }
 
-impl From<icu_data_provider::error::Error> for Error {
-    fn from(err: icu_data_provider::error::Error) -> Error {
+impl From<icu_data_provider::DataError> for Error {
+    fn from(err: icu_data_provider::DataError) -> Error {
         Error::DataProviderError(err)
     }
 }

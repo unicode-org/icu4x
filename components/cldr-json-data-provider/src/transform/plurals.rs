@@ -71,8 +71,8 @@ impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
 }
 
 impl<'d> DataKeySupport for PluralsProvider<'d> {
-    fn supports_key(data_key: &DataKey) -> Result<(), data_provider::Error> {
-        if data_key.category != data_key::Category::Plurals {
+    fn supports_key(data_key: &DataKey) -> Result<(), DataError> {
+        if data_key.category != DataCategory::Plurals {
             return Err((&data_key.category).into());
         }
         if data_key.version != 1 {
@@ -83,7 +83,7 @@ impl<'d> DataKeySupport for PluralsProvider<'d> {
 }
 
 impl<'d> PluralsProvider<'d> {
-    fn get_rules_for(&self, data_key: &DataKey) -> Result<&cldr_json::Rules, data_provider::Error> {
+    fn get_rules_for(&self, data_key: &DataKey) -> Result<&cldr_json::Rules, DataError> {
         PluralsProvider::supports_key(data_key)?;
         match data_key.sub_category.as_str() {
             "cardinal" => self.cardinal_rules.as_ref(),
@@ -95,10 +95,7 @@ impl<'d> PluralsProvider<'d> {
 }
 
 impl<'d> DataProvider<'d> for PluralsProvider<'d> {
-    fn load(
-        &self,
-        req: &data_provider::Request,
-    ) -> Result<data_provider::Response<'d>, data_provider::Error> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
         let cldr_rules = self.get_rules_for(&req.data_key)?;
         // TODO: Implement language fallback?
         // TODO: Avoid the clone
@@ -107,7 +104,7 @@ impl<'d> DataProvider<'d> for PluralsProvider<'d> {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
         };
-        Ok(data_provider::ResponseBuilder {
+        Ok(DataResponseBuilder {
             data_langid: req.data_entry.langid.clone(),
         }
         .with_owned_payload(PluralRuleStringsV1::from(r)))
@@ -118,7 +115,7 @@ impl<'d> DataEntryCollection for PluralsProvider<'d> {
     fn iter_for_key(
         &self,
         data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, data_provider::Error> {
+    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, DataError> {
         let cldr_rules = self.get_rules_for(data_key)?;
         let list: Vec<DataEntry> = cldr_rules
             .0
@@ -206,7 +203,7 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider
-        .load(&data_provider::Request {
+        .load(&DataRequest {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,

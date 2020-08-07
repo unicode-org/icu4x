@@ -66,7 +66,7 @@ impl Drop for FilesystemExporter {
 impl DataExporter for FilesystemExporter {
     fn put(
         &mut self,
-        req: &data_provider::Request,
+        req: &DataRequest,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut path_buf = self.root.clone();

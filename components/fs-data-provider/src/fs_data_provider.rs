@@ -29,11 +29,8 @@ impl FsDataProvider {
 }
 
 impl DataProvider<'_> for FsDataProvider {
-    fn load(
-        &self,
-        req: &data_provider::Request,
-    ) -> Result<data_provider::Response<'static>, data_provider::Error> {
-        type Error = data_provider::Error;
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<'static>, DataError> {
+        type Error = DataError;
         let mut path_buf = self.root.clone();
         path_buf.extend(req.data_key.get_components().iter());
         if !path_buf.exists() {
@@ -57,13 +54,13 @@ impl DataProvider<'_> for FsDataProvider {
         let reader = BufReader::new(file);
         // TODO: Eliminate this dispatch.
         // https://github.com/unicode-org/icu4x/issues/196
-        if req.data_key.category == data_key::Category::Plurals {
+        if req.data_key.category == DataCategory::Plurals {
             // TODO: Pick deserializer based on manifest
             let obj: structs::plurals::PluralRuleStringsV1 = match serde_json::from_reader(reader) {
                 Ok(obj) => obj,
                 Err(err) => return Err(Error::ResourceError(Box::new(err))),
             };
-            let response = data_provider::ResponseBuilder {
+            let response = DataResponseBuilder {
                 // TODO: Return the actual locale when fallbacks are implemented.
                 data_langid: req.data_entry.langid.clone(),
             }
