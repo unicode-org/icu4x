@@ -2,7 +2,7 @@ use crate::error::Error;
 use crate::prelude::*;
 use erased_serde;
 
-/// An object that exposes an iterable list of DataEntry instances.
+/// An object that exposes an iterable list of DataEntry instances for a certain DataKey.
 pub trait DataEntryCollection {
     // Note: This trait could have an associated type for the Iterator, but associated types
     // prevent the trait from being used as a type object. Instead, we return a Boxed Iterator.
@@ -12,7 +12,7 @@ pub trait DataEntryCollection {
     ) -> Result<Box<dyn Iterator<Item = DataEntry>>, Error>;
 }
 
-/// A data provider that also exposes an iterable list of DataEntry instances.
+/// Auto-implemented trait: A data provider that allows for iteration over DataEntry instances.
 pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {
     /// Dump all data in this data provider for the specified key into the sink.
     fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error>;

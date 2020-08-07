@@ -8,21 +8,21 @@ use icu_data_provider::data_provider::DataProvider;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 
-pub struct CldrDataProvider<'a, 'd> {
+pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a CldrPaths,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,
 }
 
-impl<'a, 'd> CldrDataProvider<'a, 'd> {
+impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     pub fn new(cldr_paths: &'a CldrPaths) -> Self {
-        CldrDataProvider {
+        CldrJsonDataProvider {
             cldr_paths,
             plurals: LazyCldrProvider::new(),
         }
     }
 }
 
-impl<'a, 'd> DataProvider<'d> for CldrDataProvider<'a, 'd> {
+impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load(
         &self,
         req: &data_provider::Request,
@@ -34,7 +34,7 @@ impl<'a, 'd> DataProvider<'d> for CldrDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd> DataEntryCollection for CldrDataProvider<'a, 'd> {
+impl<'a, 'd> DataEntryCollection for CldrJsonDataProvider<'a, 'd> {
     fn iter_for_key(
         &self,
         data_key: &DataKey,

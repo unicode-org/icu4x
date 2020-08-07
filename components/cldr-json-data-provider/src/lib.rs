@@ -10,4 +10,4 @@ pub mod transform;
 
 pub use cldr_paths::CldrPaths;
 pub use error::Error;
-pub use transform::CldrDataProvider;
+pub use transform::CldrJsonDataProvider;

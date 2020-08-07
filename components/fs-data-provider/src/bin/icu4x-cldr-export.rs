@@ -1,5 +1,5 @@
 use clap::{App, Arg, ArgGroup};
-use icu_cldr_json_data_provider::CldrDataProvider;
+use icu_cldr_json_data_provider::CldrJsonDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::iter::IterableDataProvider;
@@ -159,7 +159,7 @@ fn main() -> Result<(), Error> {
         cldr_paths.cldr_core = Ok(path.into());
     }
 
-    let provider = CldrDataProvider::new(&cldr_paths);
+    let provider = CldrJsonDataProvider::new(&cldr_paths);
 
     let json_serializer = Box::new(serializers::JsonSerializer::default());
 

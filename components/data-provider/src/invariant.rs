@@ -16,6 +16,25 @@ pub(crate) fn make_inv_response<T: 'static + Clone + erased_serde::Serialize + f
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
+///
+/// # Example
+///
+/// ```
+/// use icu_data_provider::prelude::*;
+/// use icu_data_provider::InvariantDataProvider;
+/// use icu_data_provider::iter::DataEntryCollection;
+///
+/// let provider = InvariantDataProvider;
+/// let expected_entries = vec![DataEntry {
+///     variant: None,
+///     langid: "und".parse().unwrap(),
+/// }];
+/// let actual_entries: Vec<DataEntry> = provider
+///     .iter_for_key(&icu_data_key!(plurals: cardinal@1))
+///     .unwrap()
+///     .collect();
+/// assert_eq!(&expected_entries, &actual_entries);
+/// ```
 pub struct InvariantDataProvider;
 
 impl DataProvider<'static> for InvariantDataProvider {
