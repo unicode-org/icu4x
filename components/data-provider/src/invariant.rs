@@ -1,0 +1,86 @@
+use crate::error::Error;
+use crate::iter::DataEntryCollection;
+use crate::prelude::*;
+use crate::structs;
+use icu_locale::LanguageIdentifier;
+use std::fmt;
+
+pub(crate) fn make_inv_response<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
+    t: T,
+) -> DataResponse<'static> {
+    DataResponseBuilder {
+        data_langid: LanguageIdentifier::default(),
+    }
+    .with_owned_payload(t)
+}
+
+/// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
+/// production environments.
+///
+/// The objects returned by InvariantDataProvider are guaranteed to conform to the correct struct
+/// definition, so InvariantDataProvider can also be used to validate unknown data providers.
+///
+/// # Example
+///
+/// ```
+/// use icu_data_provider::prelude::*;
+/// use icu_data_provider::InvariantDataProvider;
+/// use icu_data_provider::iter::DataEntryCollection;
+///
+/// let provider = InvariantDataProvider;
+/// let expected_entries = vec![DataEntry {
+///     variant: None,
+///     langid: "und".parse().unwrap(),
+/// }];
+/// let actual_entries: Vec<DataEntry> = provider
+///     .iter_for_key(&icu_data_key!(plurals: cardinal@1))
+///     .unwrap()
+///     .collect();
+/// assert_eq!(&expected_entries, &actual_entries);
+/// ```
+pub struct InvariantDataProvider;
+
+impl DataProvider<'static> for InvariantDataProvider {
+    fn load<'a>(&'a self, req: &DataRequest) -> Result<DataResponse<'static>, Error> {
+        structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))
+    }
+}
+
+impl DataEntryCollection for InvariantDataProvider {
+    fn iter_for_key(
+        &self,
+        data_key: &DataKey,
+    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, Error> {
+        structs::get_invariant(data_key).ok_or(Error::UnsupportedDataKey(*data_key))?;
+        let list: Vec<DataEntry> = vec![DataEntry {
+            variant: None,
+            langid: LanguageIdentifier::default(),
+        }];
+        Ok(Box::new(list.into_iter()))
+    }
+}
+
+#[test]
+fn test_basic() {
+    let provider = InvariantDataProvider;
+    let response = provider
+        .load(&DataRequest {
+            data_key: icu_data_key!(plurals: cardinal@1),
+            data_entry: DataEntry {
+                variant: None,
+                langid: LanguageIdentifier::default(),
+            },
+        })
+        .unwrap();
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response.borrow_payload().unwrap();
+    assert_eq!(
+        plurals_data,
+        &structs::plurals::PluralRuleStringsV1 {
+            zero: None,
+            one: None,
+            two: None,
+            few: None,
+            many: None,
+        }
+    );
+}
