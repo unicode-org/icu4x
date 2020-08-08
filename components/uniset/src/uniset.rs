@@ -1,6 +1,6 @@
-use std::{char, ops::RangeBounds};
+use std::{char, ops::RangeBounds, slice::Chunks};
 
-use super::UnicodeSetError;
+use super::{UnicodeSetError, UnicodeSetSpanCondition};
 use crate::utils::{deconstruct_range, is_valid};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0 , inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -125,6 +125,10 @@ impl UnicodeSet {
         }
     }
 
+    pub fn ranges(&self) -> Chunks<u32> {
+        self.inv_list.chunks(2)
+    }
+
     /// Checks to see the query is in the UnicodeSet
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
@@ -182,6 +186,62 @@ impl UnicodeSet {
             Some(pos) => (till) <= self.inv_list[pos + 1],
             None => false,
         }
+    }
+
+    /// Check if the UnicodeSet parameter is entirely in the calling UnicodeSet
+    ///
+    /// where U is the UnicodeSet calling the function and S is the
+    /// UnicodeSet in the argument position  
+    ///     Since we know S < U, for S ranges we need to call log_2(U) for O(Slog_2(U))
+    ///     If we decide a linear time, it becomes O(U)
+    ///     If S <<<< U then O(U) > O(Slog_2(U))
+    ///     If S <= U then O(U) < O(Slog_2(U))
+    pub fn contains_set(&self, set: &UnicodeSet) -> bool {
+        if set.size() > self.size() {
+            return false;
+        }
+        let s = set.size() as f32;
+        let u = self.size() as f32;
+        if s * u.log2() < u {
+            set.ranges().all(|range| {
+                self.contains_range(
+                    &(char::from_u32(range[0]).unwrap()..char::from_u32(range[1]).unwrap()),
+                )
+            })
+        } else {
+            let mut set_ranges: Chunks<u32> = set.ranges();
+            let mut check = set_ranges.next();
+            for range in self.ranges() {
+                match check {
+                    Some(r) => {
+                        if r[0] >= range[0] && r[1] <= range[1] {
+                            check = set_ranges.next();
+                        }
+                    }
+                    _ => break,
+                }
+            }
+            match set_ranges.next() {
+                Some(_) => false,
+                None => true,
+            }
+        }
+    }
+
+    pub fn span(&self, span_str: &str, contains: bool) -> usize {
+        span_str
+            .chars()
+            .take_while(|&x| self.contains(x) == contains)
+            .count()
+    }
+
+    pub fn span_back(&self, span_str: &str, contains: bool) -> usize {
+        span_str.len()
+            - span_str
+                .chars()
+                .rev()
+                .take_while(|&x| self.contains(x) == contains)
+                .count()
     }
 }
 
