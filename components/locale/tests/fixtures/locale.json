@@ -55,7 +55,7 @@
   {
     "input": {
       "type": "Locale",
-      "identifier": "en-US-u-hc-h23-ca-gregory"
+      "identifier": "en-US-u-hc-h23-ca-islamic-civil-ss-true"
     },
     "output": {
       "type": "Locale",
@@ -65,7 +65,8 @@
         "unicode": {
           "keywords": {
             "hc": "h23",
-            "ca": "gregory"
+            "ca": "islamic-civil",
+            "ss": "true"
           }
         }
       }
@@ -98,6 +99,43 @@
       "region": "US",
       "extensions": {
         "private": ["private", "foobar"]
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-t-h0-hybrid-k0-platform-s0-true"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "transform": {
+          "tfields": {
+            "h0": "hybrid",
+            "k0": "platform",
+            "s0": "true"
+          }
+        }
+      }
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-US-t-es-AR-x-foo"
+    },
+    "output": {
+      "type": "Locale",
+      "language": "en",
+      "region": "US",
+      "extensions": {
+        "transform": {
+          "tlang": "es-AR"
+        },
+        "private": ["foo"]
       }
     }
   },
