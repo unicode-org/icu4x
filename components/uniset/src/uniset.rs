@@ -1,4 +1,4 @@
-use std::{char, ops::RangeBounds, slice::Chunks};
+use std::{char, ops::RangeBounds};
 
 use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid};
@@ -67,22 +67,11 @@ impl UnicodeSet {
         }
     }
 
-    /// Returns a [Chunks](https://doc.rust-lang.org/std/slice/struct.Chunks.html) of each interval
-    /// in the inversion list.
+    /// Returns the inversion list as a slice
     ///
-    /// # Example:
-    ///
-    /// ```
-    /// use icu_unicodeset::UnicodeSet;
-    /// let example_list = vec![65, 68, 69, 70];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
-    /// let mut example_ranges = example.ranges();
-    /// assert_eq!(&[65, 68], example_ranges.next().unwrap());
-    /// assert_eq!(&[69, 70], example_ranges.next().unwrap());
-    /// assert_eq!(None, example_ranges.next());
-    /// ```
-    pub fn ranges(&self) -> Chunks<u32> {
-        self.inv_list.chunks(2)
+    /// Public only to the crate, not exposed to public
+    pub(crate) fn as_inversion_list(&self) -> &[u32] {
+        &self.inv_list
     }
 
     /// Yields an iterator going through the character set in the UnicodeSet

@@ -45,43 +45,43 @@ impl UnicodeSetBuilder {
         }
         if self.intervals.is_empty() {
             self.append(start, end);
-        } else {
-            let last_ind = self.intervals.len() - 1;
-            if self.intervals[last_ind - 1] <= start {
-                if self.intervals[last_ind] < start {
-                    self.append(start, end);
-                } else {
-                    self.intervals[last_ind] = cmp::max(end, self.intervals[last_ind]);
-                }
-            } else if end <= self.intervals[1] {
-                if end < self.intervals[0] {
-                    self.prepend(start, end);
-                } else {
-                    self.intervals[0] = cmp::min(self.intervals[0], start);
-                }
+            return;
+        }
+        let last_ind = self.intervals.len() - 1;
+        if self.intervals[last_ind - 1] <= start {
+            if self.intervals[last_ind] < start {
+                self.append(start, end);
             } else {
-                let s = self.intervals.binary_search(&start);
-                let e = self.intervals.binary_search(&end);
-                let mut s_index = s.unwrap_or_else(|x| x);
-                let mut e_index = e.unwrap_or_else(|x| x);
-                let s_even: bool = s_index % 2 == 0;
-                let e_even: bool = e_index % 2 == 0;
+                self.intervals[last_ind] = cmp::max(end, self.intervals[last_ind]);
+            }
+        } else if end <= self.intervals[1] {
+            if end < self.intervals[0] {
+                self.prepend(start, end);
+            } else {
+                self.intervals[0] = cmp::min(self.intervals[0], start);
+            }
+        } else {
+            let s = self.intervals.binary_search(&start);
+            let e = self.intervals.binary_search(&end);
+            let mut s_index = s.unwrap_or_else(|x| x);
+            let mut e_index = e.unwrap_or_else(|x| x);
+            let s_even: bool = s_index % 2 == 0;
+            let e_even: bool = e_index % 2 == 0;
+            let s_equals_e = s_index == e_index;
 
-                if s_even && e_even && s.is_err() && e.is_err() && s_index == e_index {
-                    self.intervals.splice(s_index..e_index, vec![start, end]);
-                } else {
-                    let s_equals_e = s_index != e_index;
-                    if s_even {
-                        self.intervals[s_index] = start;
-                        s_index += 1;
-                    }
-                    if e_even && s_equals_e {
-                        e_index -= 1;
-                        self.intervals[e_index] = end;
-                    }
-                    if s_index < e_index {
-                        self.intervals.drain((s_index)..(e_index));
-                    }
+            if s_equals_e && s_even && e.is_err() {
+                self.intervals.splice(s_index..e_index, vec![start, end]);
+            } else {
+                if s_even {
+                    self.intervals[s_index] = start;
+                    s_index += 1;
+                }
+                if e_even && !s_equals_e {
+                    e_index -= 1;
+                    self.intervals[e_index] = end;
+                }
+                if s_index < e_index {
+                    self.intervals.drain((s_index)..(e_index));
                 }
             }
         }
@@ -110,7 +110,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'Z'));
+    /// builder.add_range(&('A'..='Z'));
     /// let check = builder.build();
     /// assert_eq!(check.iter().next(), Some('A'));
     /// ```  
@@ -132,7 +132,7 @@ impl UnicodeSetBuilder {
     /// assert_eq!(check.iter().next(), Some('A'));
     /// ```
     pub fn add_set(&mut self, set: &UnicodeSet) {
-        for range in set.ranges() {
+        for range in set.as_inversion_list().chunks(2) {
             self.add(range[0], range[1]);
         }
     }
@@ -142,37 +142,38 @@ impl UnicodeSetBuilder {
     /// Performs binary search to find start and end affected intervals, then removes in an `O(N)` fashion
     /// where `N` is the number of endpoints, with in-place memory.
     fn remove(&mut self, start: u32, end: u32) {
-        if start < end && !self.intervals.is_empty() {
-            if start <= self.intervals[0] && end >= *self.intervals.last().unwrap() {
-                self.intervals = vec![];
-            } else {
-                let start_res = self.intervals.binary_search(&start);
-                let end_res = self.intervals.binary_search(&end);
-                let mut start_ind = start_res.unwrap_or_else(|x| x);
-                let mut end_ind = end_res.unwrap_or_else(|x| x);
-                let start_odd = start_ind % 2 != 0;
-                let end_odd = end_ind % 2 != 0;
-                if start_res.is_err() && end_res.is_err() && start_ind == end_ind && start_odd {
-                    self.intervals.splice(start_ind..end_ind, vec![start, end]);
-                } else {
-                    if start_odd {
-                        if start_res.is_err() {
-                            self.intervals[start_ind] = start;
-                        }
-                        start_ind += 1;
-                    }
-                    if end_odd {
-                        if end_res.is_err() {
-                            end_ind -= 1;
-                            self.intervals[end_ind] = end;
-                        } else {
-                            end_ind += 1;
-                        }
-                    }
-                    if start_ind < end_ind {
-                        self.intervals.drain(start_ind..end_ind);
-                    }
+        if start >= end || self.intervals.is_empty() {
+            return;
+        }
+        if start <= self.intervals[0] && end >= *self.intervals.last().unwrap() {
+            self.intervals.clear();
+            return;
+        }
+        let start_res = self.intervals.binary_search(&start);
+        let end_res = self.intervals.binary_search(&end);
+        let mut start_ind = start_res.unwrap_or_else(|x| x);
+        let mut end_ind = end_res.unwrap_or_else(|x| x);
+        let start_odd = start_ind % 2 != 0;
+        let end_odd = end_ind % 2 != 0;
+        if start_res.is_err() && end_res.is_err() && start_ind == end_ind && start_odd {
+            self.intervals.splice(start_ind..end_ind, vec![start, end]);
+        } else {
+            if start_odd {
+                if start_res.is_err() {
+                    self.intervals[start_ind] = start;
                 }
+                start_ind += 1;
+            }
+            if end_odd {
+                if end_res.is_err() {
+                    end_ind -= 1;
+                    self.intervals[end_ind] = end;
+                } else {
+                    end_ind += 1;
+                }
+            }
+            if start_ind < end_ind {
+                self.intervals.drain(start_ind..end_ind);
             }
         }
     }
@@ -184,7 +185,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'Z'));
+    /// builder.add_range(&('A'..='Z'));
     /// builder.remove_char('A');
     /// let check = builder.build();
     /// assert_eq!(check.iter().next(), Some('B'));
@@ -200,7 +201,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'Z'));
+    /// builder.add_range(&('A'..='Z'));
     /// builder.remove_range(&('A'..='C'));
     /// let check = builder.build();
     /// assert_eq!(check.iter().next(), Some('D'));
@@ -217,24 +218,14 @@ impl UnicodeSetBuilder {
     /// use icu_unicodeset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
-    /// builder.add_range(&('A'..'Z'));
-    /// builder.remove_set(&set); // rermoves 'A'..'F'
+    /// builder.add_range(&('A'..='Z'));
+    /// builder.remove_set(&set); // rermoves 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter().next(), Some('F'));
     pub fn remove_set(&mut self, set: &UnicodeSet) {
-        for range in set.ranges() {
+        for range in set.as_inversion_list().chunks(2) {
             self.remove(range[0], range[1]);
         }
-    }
-
-    /// Retain the elements in the UnicodeSetBuilder that are in the parameter
-    ///
-    /// Performs this in an `O(R)` amortized run-time, where `R` is the number of ranges
-    fn retain(&mut self, ret: Vec<u32>) {
-        let mut chunk = vec![0];
-        chunk.extend(ret);
-        chunk.push((char::MAX as u32) + 1);
-        chunk.chunks(2).for_each(|c| self.remove(c[0], c[1]));
     }
 
     /// Retain the specified character in the UnicodeSetBuilder if it exists
@@ -244,7 +235,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'Z'));
+    /// builder.add_range(&('A'..='Z'));
     /// builder.retain_char('A');
     /// let set = builder.build();
     /// let mut check = set.iter();
@@ -253,8 +244,8 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn retain_char(&mut self, c: char) {
         let code_point = c as u32;
-        let to_retain = vec![code_point, code_point + 1];
-        self.retain(to_retain);
+        self.remove(0, code_point);
+        self.remove(code_point + 1, (char::MAX as u32) + 1);
     }
 
     /// Retain the range of characters located within the UnicodeSetBuilder
@@ -264,7 +255,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'Z'));
+    /// builder.add_range(&('A'..='Z'));
     /// builder.retain_range(&('A'..='B'));
     /// let set = builder.build();
     /// let mut check = set.iter();
@@ -274,8 +265,8 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn retain_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
-        let to_retain = vec![start, end];
-        self.retain(to_retain);
+        self.remove(0, start);
+        self.remove(end, (char::MAX as u32) + 1);
     }
 
     /// Retain the elements in the specified set within the UnicodeSetBuilder
@@ -286,14 +277,19 @@ impl UnicodeSetBuilder {
     /// use icu_unicodeset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
-    /// builder.add_range(&('A'..'Z'));
-    /// builder.retain_set(&set); // retains 'A'..'F'
+    /// builder.add_range(&('A'..='Z'));
+    /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
     /// assert!(check.contains('A'));
     /// assert!(!check.contains('G'));
     /// ```
     pub fn retain_set(&mut self, set: &UnicodeSet) {
-        self.retain(set.ranges().collect::<Vec<&[u32]>>().concat());
+        let mut prev = 0;
+        for range in set.as_inversion_list().chunks(2) {
+            self.remove(prev, range[0]);
+            prev = range[1];
+        }
+        self.remove(prev, (char::MAX as u32) + 1);
     }
 
     /// Computes the complement of the argument, adding any elements that do not yet exist in the builder,
@@ -301,7 +297,7 @@ impl UnicodeSetBuilder {
     ///
     /// Performs in `O(B + S)`, where `B` is the number of endpoints in the Builder, and `S` is the number
     /// of endpoints in the argument.
-    fn complement_list(&mut self, set: Vec<u32>) {
+    fn complement_list(&mut self, set: &[u32]) {
         let mut res: Vec<u32> = vec![]; // not the biggest fan of having to allocate new memory
         let mut ai = self.intervals.iter();
         let mut bi = set.iter();
@@ -370,7 +366,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'D'));
+    /// builder.add_range(&('A'..='D'));
     /// builder.complement_char('A');
     /// builder.complement_char('E');
     /// let check = builder.build();
@@ -379,8 +375,8 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn complement_char(&mut self, c: char) {
         let code_point = c as u32;
-        let to_complement = vec![code_point, code_point + 1];
-        self.complement_list(to_complement);
+        let to_complement = [code_point, code_point + 1];
+        self.complement_list(&to_complement);
     }
 
     /// Complements the range in the builder, adding any elements in the range if not in the builder, and
@@ -391,7 +387,7 @@ impl UnicodeSetBuilder {
     /// ```
     /// use icu_unicodeset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
-    /// builder.add_range(&('A'..'D'));
+    /// builder.add_range(&('A'..='D'));
     /// builder.complement_range(&('C'..='F'));
     /// let check = builder.build();
     /// assert!(check.contains('F'));
@@ -399,8 +395,8 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn complement_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
-        let to_complement = vec![start, end];
-        self.complement_list(to_complement);
+        let to_complement = [start, end];
+        self.complement_list(&to_complement);
     }
 
     /// Complements the set in the builder, adding any elements in the set if not in the builder, and
@@ -412,14 +408,14 @@ impl UnicodeSetBuilder {
     /// use icu_unicodeset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70, 75, 90]).unwrap();
-    /// builder.add_range(&('C'..'N')); // 67 - 78
+    /// builder.add_range(&('C'..='N')); // 67 - 78
     /// builder.complement_set(&set);
     /// let check = builder.build();
     /// assert!(check.contains('Q')); // 81
-    /// assert!(!check.contains('M')); // 77
+    /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
-        self.complement_list(set.ranges().collect::<Vec<&[u32]>>().concat());
+        self.complement_list(set.as_inversion_list());
     }
 }
 
@@ -560,12 +556,36 @@ mod tests {
     }
 
     #[test]
+    fn test_add_aligned_front() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.add(5, 10);
+        let expected = vec![5, 20, 40, 50];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_add_aligned_back() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.add(50, 55);
+        let expected = vec![10, 20, 40, 55];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_add_aligned_middle() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.add(20, 25);
+        let expected = vec![10, 25, 40, 50];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
     fn test_add_unicodeset() {
-        let ex = vec![10, 20, 40, 50];
-        let check = UnicodeSet::from_inversion_list(ex.clone()).unwrap();
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        let check = UnicodeSet::from_inversion_list(vec![5, 10, 22, 33, 44, 51]).unwrap();
         builder.add_set(&check);
-        assert_eq!(builder.intervals, ex);
+        let expected = vec![5, 20, 22, 33, 40, 51];
+        assert_eq!(builder.intervals, expected);
     }
     #[test]
     fn test_add_char() {
@@ -595,6 +615,14 @@ mod tests {
     fn test_remove_empty() {
         let mut builder = UnicodeSetBuilder::new();
         builder.remove(0, 10);
+        let expected = vec![];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_remove_entire_builder() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.remove(10, 50);
         let expected = vec![];
         assert_eq!(builder.intervals, expected);
     }
@@ -681,14 +709,6 @@ mod tests {
     }
 
     #[test]
-    fn test_retain() {
-        let mut builder = generate_tester(vec![10, 20, 40, 50]);
-        builder.retain(vec![0, 15, 45, 100]);
-        let expected = vec![10, 15, 45, 50];
-        assert_eq!(builder.intervals, expected);
-    }
-
-    #[test]
     fn test_retain_char() {
         let mut builder = generate_tester(vec![65, 90]);
         builder.retain_char('A'); // 65
@@ -732,7 +752,7 @@ mod tests {
     #[test]
     fn test_complement_interior() {
         let mut builder = generate_tester(vec![10, 20, 40, 50]);
-        builder.complement_list(vec![15, 20]);
+        builder.complement_list(&[15, 20]);
         let expected = vec![10, 15, 40, 50];
         assert_eq!(builder.intervals, expected);
     }
@@ -740,7 +760,7 @@ mod tests {
     #[test]
     fn test_complement_exterior() {
         let mut builder = generate_tester(vec![10, 20, 40, 50]);
-        builder.complement_list(vec![25, 35]);
+        builder.complement_list(&[25, 35]);
         let expected = vec![10, 20, 25, 35, 40, 50];
         assert_eq!(builder.intervals, expected);
     }
@@ -748,8 +768,34 @@ mod tests {
     #[test]
     fn test_complement_larger_list() {
         let mut builder = generate_tester(vec![10, 20, 40, 50]);
-        builder.complement_list(vec![30, 55, 60, 70]);
+        builder.complement_list(&[30, 55, 60, 70]);
         let expected = vec![10, 20, 30, 40, 50, 55, 60, 70];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_complement_char() {
+        let mut builder = generate_tester(vec![65, 76]); // A - K
+        builder.complement_char('A');
+        builder.complement_char('L');
+        let expected = vec![66, 77];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_complement_range() {
+        let mut builder = generate_tester(vec![70, 76]); // F - K
+        builder.complement_range(&('A'..='Z'));
+        let expected = vec![65, 70, 76, 91];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_complement_set() {
+        let mut builder = generate_tester(vec![67, 78]);
+        let set = UnicodeSet::from_inversion_list(vec![65, 70, 75, 90]).unwrap();
+        builder.complement_set(&set);
+        let expected = vec![65, 67, 70, 75, 78, 90];
         assert_eq!(builder.intervals, expected);
     }
 }
