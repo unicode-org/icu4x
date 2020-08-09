@@ -144,8 +144,6 @@ impl UnicodeSet {
     }
 
     /// Returns the inversion list as a slice
-    ///
-    /// Public only to the crate, not exposed to public
     pub(crate) fn as_inversion_list(&self) -> &[u32] {
         &self.inv_list
     }
@@ -231,10 +229,7 @@ impl UnicodeSet {
                     _ => break,
                 }
             }
-            match check {
-                Some(_) => false,
-                None => true,
-            }
+            check.is_none()
         }
     }
 
