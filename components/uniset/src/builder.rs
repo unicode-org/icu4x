@@ -78,12 +78,11 @@ impl UnicodeSetBuilder {
                     s_index += 1;
                 }
                 if e_even && !s_equals_e {
-                    if e.is_err() {
-                        e_index -= 1;
-                    }
-                    self.intervals[e_index] = end;
                     if e.is_ok() {
                         e_index += 1;
+                    } else {
+                        e_index -= 1;
+                        self.intervals[e_index] = end;
                     }
                 }
                 if s_index < e_index {
