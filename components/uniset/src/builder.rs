@@ -21,16 +21,39 @@ impl UnicodeSetBuilder {
         UnicodeSet::from_inversion_list(self.intervals).unwrap()
     }
 
-    /// Adds the range to the end of the builder
-    fn append(&mut self, start: u32, end: u32) {
-        self.intervals.push(start);
-        self.intervals.push(end);
-    }
+    /// Abstraction for adding/removing a range from start..end
+    ///
+    /// If add is true add, else remove
+    fn add_remove_middle(&mut self, start: u32, end: u32, add: bool) {
+        let start_res = self.intervals.binary_search(&start);
+        let end_res = self.intervals.binary_search(&end);
+        let mut start_ind = start_res.unwrap_or_else(|x| x);
+        let mut end_ind = end_res.unwrap_or_else(|x| x);
+        let start_pos_check = (start_ind % 2 == 0) == add;
+        let end_pos_check = (end_ind % 2 == 0) == add;
+        let start_eq_end = start_ind == end_ind;
 
-    /// Adds the range to the beginning of the builder in a single memory move
-    fn prepend(&mut self, start: u32, end: u32) {
-        let front = &[start, end];
-        self.intervals.splice(0..0, front.iter().cloned());
+        if start_eq_end && start_pos_check && end_res.is_err() {
+            let ins = &[start, end];
+            self.intervals
+                .splice(start_ind..end_ind, ins.iter().copied());
+        } else {
+            if start_pos_check {
+                self.intervals[start_ind] = start;
+                start_ind += 1;
+            }
+            if end_pos_check {
+                if end_res.is_ok() {
+                    end_ind += 1;
+                } else {
+                    end_ind -= 1;
+                    self.intervals[end_ind] = end;
+                }
+            }
+            if start_ind < end_ind {
+                self.intervals.drain(start_ind..end_ind);
+            }
+        }
     }
 
     /// Add the range to the UnicodeSetBuilder
@@ -43,52 +66,24 @@ impl UnicodeSetBuilder {
             return;
         }
         if self.intervals.is_empty() {
-            self.append(start, end);
+            self.intervals.extend_from_slice(&[start, end]);
             return;
         }
         let last_ind = self.intervals.len() - 1;
         if self.intervals[last_ind - 1] <= start {
             if self.intervals[last_ind] < start {
-                self.append(start, end);
+                self.intervals.extend_from_slice(&[start, end]);
             } else {
                 self.intervals[last_ind] = cmp::max(end, self.intervals[last_ind]);
             }
         } else if end <= self.intervals[1] {
             if end < self.intervals[0] {
-                self.prepend(start, end);
+                self.intervals.splice(0..0, [start, end].iter().copied());
             } else {
                 self.intervals[0] = cmp::min(self.intervals[0], start);
             }
         } else {
-            let s = self.intervals.binary_search(&start);
-            let e = self.intervals.binary_search(&end);
-            let mut s_index = s.unwrap_or_else(|x| x);
-            let mut e_index = e.unwrap_or_else(|x| x);
-            let s_even: bool = s_index % 2 == 0;
-            let e_even: bool = e_index % 2 == 0;
-            let s_equals_e = s_index == e_index;
-
-            if s_equals_e && s_even && e.is_err() {
-                let insert = &[start, end];
-                self.intervals
-                    .splice(s_index..e_index, insert.iter().cloned());
-            } else {
-                if s_even {
-                    self.intervals[s_index] = start;
-                    s_index += 1;
-                }
-                if e_even && !s_equals_e {
-                    if e.is_ok() {
-                        e_index += 1;
-                    } else {
-                        e_index -= 1;
-                        self.intervals[e_index] = end;
-                    }
-                }
-                if s_index < e_index {
-                    self.intervals.drain((s_index)..(e_index));
-                }
-            }
+            self.add_remove_middle(start, end, true);
         }
     }
 
@@ -154,33 +149,7 @@ impl UnicodeSetBuilder {
             self.intervals.clear();
             return;
         }
-        let start_res = self.intervals.binary_search(&start);
-        let end_res = self.intervals.binary_search(&end);
-        let mut start_ind = start_res.unwrap_or_else(|x| x);
-        let mut end_ind = end_res.unwrap_or_else(|x| x);
-        let start_odd = start_ind % 2 != 0;
-        let end_odd = end_ind % 2 != 0;
-        if start_res.is_err() && end_res.is_err() && start_ind == end_ind && start_odd {
-            self.intervals.splice(start_ind..end_ind, vec![start, end]);
-        } else {
-            if start_odd {
-                if start_res.is_err() {
-                    self.intervals[start_ind] = start;
-                }
-                start_ind += 1;
-            }
-            if end_odd {
-                if end_res.is_err() {
-                    end_ind -= 1;
-                    self.intervals[end_ind] = end;
-                } else {
-                    end_ind += 1;
-                }
-            }
-            if start_ind < end_ind {
-                self.intervals.drain(start_ind..end_ind);
-            }
-        }
+        self.add_remove_middle(start, end, false);
     }
 
     /// Remove the character from the UnicodeSetBuilder
@@ -448,21 +417,6 @@ mod tests {
         builder.add(65, 66);
         let check: UnicodeSet = builder.build();
         assert_eq!(check.iter().next(), Some('A'));
-    }
-
-    #[test]
-    fn test_append() {
-        let mut ex = UnicodeSetBuilder::new();
-        ex.append(10, 20);
-        assert_eq!(ex.intervals, vec![10, 20]);
-    }
-
-    #[test]
-    fn test_prepend() {
-        let mut builder = generate_tester(vec![10, 20, 40, 50]);
-        builder.prepend(0, 5);
-        let check = vec![0, 5, 10, 20, 40, 50];
-        assert_eq!(builder.intervals, check);
     }
 
     #[test]
