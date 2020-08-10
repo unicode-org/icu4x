@@ -29,9 +29,8 @@ impl UnicodeSetBuilder {
 
     /// Adds the range to the beginning of the builder in a single memory move
     fn prepend(&mut self, start: u32, end: u32) {
-        let mut new = vec![start, end];
-        new.append(&mut self.intervals);
-        self.intervals = new;
+        let front = &[start, end];
+        self.intervals.splice(0..0, front.iter().cloned());
     }
 
     /// Add the range to the UnicodeSetBuilder
@@ -70,15 +69,22 @@ impl UnicodeSetBuilder {
             let s_equals_e = s_index == e_index;
 
             if s_equals_e && s_even && e.is_err() {
-                self.intervals.splice(s_index..e_index, vec![start, end]);
+                let insert = &[start, end];
+                self.intervals
+                    .splice(s_index..e_index, insert.iter().cloned());
             } else {
                 if s_even {
                     self.intervals[s_index] = start;
                     s_index += 1;
                 }
                 if e_even && !s_equals_e {
-                    e_index -= 1;
+                    if e.is_err() {
+                        e_index -= 1;
+                    }
                     self.intervals[e_index] = end;
+                    if e.is_ok() {
+                        e_index += 1;
+                    }
                 }
                 if s_index < e_index {
                     self.intervals.drain((s_index)..(e_index));
@@ -219,7 +225,7 @@ impl UnicodeSetBuilder {
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
-    /// builder.remove_set(&set); // rermoves 'A'..='E'
+    /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter().next(), Some('F'));
     pub fn remove_set(&mut self, set: &UnicodeSet) {
@@ -572,10 +578,34 @@ mod tests {
     }
 
     #[test]
-    fn test_add_aligned_middle() {
+    fn test_add_aligned_start_middle() {
         let mut builder = generate_tester(vec![10, 20, 40, 50]);
         builder.add(20, 25);
         let expected = vec![10, 25, 40, 50];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_add_aligned_end_middle() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.add(35, 40);
+        let expected = vec![10, 20, 35, 50];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_add_aligned_in_between_end() {
+        let mut builder = generate_tester(vec![10, 20, 30, 40, 50, 60]);
+        builder.add(15, 30);
+        let expected = vec![10, 40, 50, 60];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_add_aligned_in_between_start() {
+        let mut builder = generate_tester(vec![10, 20, 30, 40, 50, 60]);
+        builder.add(20, 35);
+        let expected = vec![10, 40, 50, 60];
         assert_eq!(builder.intervals, expected);
     }
 
