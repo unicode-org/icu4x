@@ -211,12 +211,12 @@ impl UnicodeSet {
         let s = set.as_inversion_list().len() as f32;
         let u = self.inv_list.len() as f32;
         if s * u.log2() < u {
-            set.inv_list.chunks(2).all(|range| {
-                match self.contains_query(range[0]){
+            set.inv_list
+                .chunks(2)
+                .all(|range| match self.contains_query(range[0]) {
                     Some(pos) => range[1] <= self.inv_list[pos + 1],
-                    None => false
-                }
-            })
+                    None => false,
+                })
         } else {
             let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
             let mut check = set_ranges.next();
