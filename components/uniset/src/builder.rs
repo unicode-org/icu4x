@@ -78,7 +78,7 @@ impl UnicodeSetBuilder {
             }
         } else if end <= self.intervals[1] {
             if end < self.intervals[0] {
-                self.intervals.splice(0..0, [start, end].iter().copied());
+                self.intervals.splice(..0, [start, end].iter().copied());
             } else {
                 self.intervals[0] = cmp::min(self.intervals[0], start);
             }
