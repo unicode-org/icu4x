@@ -189,7 +189,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Check if the calling Unicodeset contains all the characters of the given UnicodeSet
+    /// Check if the calling UnicodeSet contains all the characters of the given UnicodeSet
     ///
     /// # Example:
     ///
@@ -205,16 +205,17 @@ impl UnicodeSet {
     /// assert!(!example.contains_set(&r_to_x)); // contains some
     /// ```
     pub fn contains_set(&self, set: &UnicodeSet) -> bool {
-        if set.as_inversion_list().len() > self.inv_list.len() {
+        if set.size() > self.size() {
             return false;
         }
         let s = set.as_inversion_list().len() as f32;
         let u = self.inv_list.len() as f32;
         if s * u.log2() < u {
             set.inv_list.chunks(2).all(|range| {
-                self.contains_range(
-                    &(char::from_u32(range[0]).unwrap()..char::from_u32(range[1]).unwrap()),
-                )
+                match self.contains_query(range[0]){
+                    Some(pos) => range[1] <= self.inv_list[pos + 1],
+                    None => false
+                }
             })
         } else {
             let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
