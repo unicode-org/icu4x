@@ -18,7 +18,7 @@ more general and open to independent third party extensions.
 > The terminology proposed in [ICU4X Locale Data Pipeline][icudp] is used.  Any
 > inconsistent word use is a bug, and should be fixed.
 
-[cldr]: https://cldr.unicode.org
+[cldr]: http://cldr.unicode.org
 [dp]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
 [ff]: https://github.com/filmil
 [hunk]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
@@ -207,13 +207,14 @@ a platform-level localization clearinghouse (from the example above) to
 be a one-stop data provider for localization needs.
 
 For example, the [current proposal of the icu4x data provider for
-CLDR](https://github.com/unicode-org/icu4x/blob/master/components/data-provider/src/lib.rs%23L52) uses
-a 4-dimensional key space consisting of:
+CLDR][dpcldr] uses a 4-dimensional key space consisting of:
 
 - A Language identifier;
 - a Category;
 - a Key;
 - and a Payload.
+
+[dpcldr]: https://github.com/unicode-org/icu4x/blob/master/components/data-provider/src/lib.rs#L52
 
 This key space is intended to fit any CLDR resource according to the data
 mapping which is internally defined by CLDR rules.
