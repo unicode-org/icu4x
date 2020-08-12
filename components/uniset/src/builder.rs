@@ -684,7 +684,7 @@ mod tests {
         let expected = vec![10, 20, 42, 50];
         assert_eq!(builder.intervals, expected);
     }
- 
+
     #[test]
     fn test_remove_char() {
         let mut builder = generate_tester(vec![65, 70]);
