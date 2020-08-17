@@ -8,10 +8,10 @@ use crate::operands::PluralOperands;
 ///
 /// ```
 /// use icu_pluralrules::PluralOperands;
-/// use icu_pluralrules::rules::{parse, test_condition};
+/// use icu_pluralrules::rules::{parse_condition, test_condition};
 ///
 /// let operands = PluralOperands::from(5_usize);
-/// let condition = parse(b"i = 4..6")
+/// let condition = parse_condition(b"i = 4..6")
 ///     .expect("Failde to parse a rule.");
 ///
 /// assert_eq!(test_condition(&condition, &operands), true);

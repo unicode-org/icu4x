@@ -20,7 +20,7 @@
 //! use icu_pluralrules::rules::ast;
 //! use icu_locale::LanguageIdentifier;
 //!
-//! use icu_pluralrules::rules::parse;
+//! use icu_pluralrules::rules::parse_condition;
 //!
 //! struct MyDataProvider {}
 //!
@@ -39,7 +39,7 @@
 //!
 //!         let conditions: Vec<(PluralCategory, ast::Condition)> =
 //!             sources.iter().map(|(category, rule_str)| {
-//!                 let condition = parse(rule_str.as_bytes())
+//!                 let condition = parse_condition(rule_str.as_bytes())
 //!                     .expect("Failed to parse the plural rule.");
 //!                 (*category, condition)
 //!             }).collect();

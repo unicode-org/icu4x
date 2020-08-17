@@ -1,7 +1,7 @@
 mod fixtures;
 mod helpers;
 
-use icu_pluralrules::rules::{parse, test_condition, Lexer};
+use icu_pluralrules::rules::{parse_condition, test_condition, Lexer};
 use icu_pluralrules::PluralOperands;
 
 #[test]
@@ -15,7 +15,7 @@ fn test_parsing_operands() {
             fixtures::RuleTestOutput::Value(val) => {
                 let lex = Lexer::new(test.rule.as_bytes());
                 lex.count();
-                let ast = parse(test.rule.as_bytes()).expect("Failed to parse.");
+                let ast = parse_condition(test.rule.as_bytes()).expect("Failed to parse.");
                 let operands: PluralOperands = test.input.into();
 
                 if val {
@@ -25,7 +25,7 @@ fn test_parsing_operands() {
                 }
             }
             fixtures::RuleTestOutput::Error(val) => {
-                let err = parse(test.rule.as_bytes()).unwrap_err();
+                let err = parse_condition(test.rule.as_bytes()).unwrap_err();
                 assert_eq!(format!("{:?}", err), val);
             }
         }
@@ -47,7 +47,7 @@ fn test_parsing_all() {
             if let Some(rule) = rules.get(category) {
                 let lexer = Lexer::new(rule.as_bytes());
                 let _ = lexer.collect::<Vec<_>>();
-                let _ = parse(rule.as_bytes());
+                let _ = parse_condition(rule.as_bytes());
             }
         }
     }
@@ -61,7 +61,7 @@ fn test_parsing_all() {
             if let Some(rule) = rules.get(category) {
                 let lexer = Lexer::new(rule.as_bytes());
                 let _ = lexer.collect::<Vec<_>>();
-                let _ = parse(rule.as_bytes());
+                let _ = parse_condition(rule.as_bytes());
             }
         }
     }

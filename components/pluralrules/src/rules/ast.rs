@@ -5,12 +5,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu_pluralrules::rules::parse;
+//! use icu_pluralrules::rules::parse_condition;
 //! use icu_pluralrules::rules::ast::*;
 //!
 //! let input = "i = 1";
 //!
-//! let ast = parse(input.as_bytes())
+//! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
 //!
 //! assert_eq!(ast, Condition(Box::new([
@@ -48,7 +48,7 @@ pub struct Rule {
 ///
 /// ```
 /// use icu_pluralrules::rules::ast::*;
-/// use icu_pluralrules::rules::parse;
+/// use icu_pluralrules::rules::parse_condition;
 ///
 /// let condition = Condition(Box::new([
 ///     AndCondition(Box::new([Relation {
@@ -71,7 +71,7 @@ pub struct Rule {
 ///
 /// assert_eq!(
 ///     condition,
-///     parse(b"i = 5 or v = 2")
+///     parse_condition(b"i = 5 or v = 2")
 ///          .expect("Parsing failed")
 /// )
 /// ```

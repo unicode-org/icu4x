@@ -20,17 +20,17 @@ pub enum ParserError {
 /// # Examples
 ///
 /// ```
-/// use icu_pluralrules::rules::parse;
+/// use icu_pluralrules::rules::parse_condition;
 ///
 /// let input = b"i = 5";
-/// assert_eq!(parse(input).is_ok(), true);
+/// assert_eq!(parse_condition(input).is_ok(), true);
 /// ```
 ///
 /// [`AST`]: ../rules/ast/index.html
 /// [`resolver`]: ../rules/resolver/index.html
 /// [`PluralOperands`]: ../struct.PluralOperands.html
 /// [`PluralCategory`]: ../enum.PluralCategory.html
-pub fn parse(input: &[u8]) -> Result<ast::Condition, ParserError> {
+pub fn parse_condition(input: &[u8]) -> Result<ast::Condition, ParserError> {
     let parser = Parser::new(input);
     parser.parse()
 }
