@@ -141,7 +141,9 @@ pub mod ast;
 pub(crate) mod lexer;
 pub(crate) mod parser;
 pub(crate) mod resolver;
+pub(crate) mod serializer;
 
 pub use lexer::Lexer;
-pub use parser::parse_condition;
+pub use parser::{parse, parse_condition};
 pub use resolver::test_condition;
+pub use serializer::serialize;

@@ -1,7 +1,7 @@
 mod fixtures;
 mod helpers;
 
-use icu_pluralrules::rules::{parse_condition, test_condition, Lexer};
+use icu_pluralrules::rules::{parse, parse_condition, test_condition, Lexer};
 use icu_pluralrules::PluralOperands;
 
 #[test]
@@ -25,7 +25,7 @@ fn test_parsing_operands() {
                 }
             }
             fixtures::RuleTestOutput::Error(val) => {
-                let err = parse_condition(test.rule.as_bytes()).unwrap_err();
+                let err = parse(test.rule.as_bytes()).unwrap_err();
                 assert_eq!(format!("{:?}", err), val);
             }
         }
@@ -34,8 +34,9 @@ fn test_parsing_operands() {
 
 #[cfg(feature = "io-json")]
 #[test]
-fn test_parsing_all() {
+fn test_round_trip() {
     use icu_pluralrules::data::cldr_resource::Resource;
+    use icu_pluralrules::rules::serialize;
     use icu_pluralrules::PluralCategory;
 
     let path = "./data/plurals.json";
@@ -47,7 +48,10 @@ fn test_parsing_all() {
             if let Some(rule) = rules.get(category) {
                 let lexer = Lexer::new(rule.as_bytes());
                 let _ = lexer.collect::<Vec<_>>();
-                let _ = parse_condition(rule.as_bytes());
+                let ast = parse(rule.as_bytes()).expect("Parsing failed.");
+                let mut output = String::new();
+                serialize(&ast, &mut output).unwrap();
+                assert_eq!(rule, output);
             }
         }
     }
@@ -61,7 +65,10 @@ fn test_parsing_all() {
             if let Some(rule) = rules.get(category) {
                 let lexer = Lexer::new(rule.as_bytes());
                 let _ = lexer.collect::<Vec<_>>();
-                let _ = parse_condition(rule.as_bytes());
+                let ast = parse(rule.as_bytes()).expect("Parsing failed.");
+                let mut output = String::new();
+                serialize(&ast, &mut output).unwrap();
+                assert_eq!(rule, output);
             }
         }
     }

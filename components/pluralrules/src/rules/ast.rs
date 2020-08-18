@@ -36,13 +36,53 @@
 //! [`test_condition`]: ../fn.test_condition.html
 use std::ops::RangeInclusive;
 
+/// A complete AST representation of a plural rule.
+/// Comprises a vector of AndConditions and optionally a set of Samples.
+///
+/// # Examples
+///
+/// ```
+/// use icu_pluralrules::rules::ast::*;
+/// use icu_pluralrules::rules::{parse, parse_condition};
+///
+/// let condition = parse_condition(b"i = 5 or v = 2")
+///     .expect("Parsing failed.");
+///
+/// let samples = Samples {
+///     integer: Some(SampleList {
+///         sample_ranges: Box::new([SampleRange {
+///             lower_val: DecimalValue("2".to_string()),
+///             upper_val: None,
+///         }]),
+///         ellipsis: true
+///     }),
+///     decimal: Some(SampleList {
+///         sample_ranges: Box::new([SampleRange {
+///             lower_val: DecimalValue("2.5".to_string()),
+///             upper_val: None,
+///         }]),
+///         ellipsis: false
+///     }),
+/// };
+///
+/// let rule = Rule {
+///     condition,
+///     samples: Some(samples),
+/// };
+///
+/// assert_eq!(
+///     rule,
+///     parse("i = 5 or v = 2 @integer 2, … @decimal 2.5".as_bytes())
+///          .expect("Parsing failed")
+/// )
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct Rule {
     pub condition: Condition,
     pub samples: Option<Samples>,
 }
 
-/// A complete (and the only complete) AST representation of a plural rule. Comprises a vector of AndConditions.
+/// A complete AST representation of a plural rule's condition. Comprises a vector of AndConditions.
 ///
 /// # Examples
 ///
@@ -157,7 +197,7 @@ pub struct Relation {
 /// | Eq | "=" |
 /// | NotEq | "!=" |
 ///
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Operator {
     Eq,
     NotEq,
@@ -207,7 +247,7 @@ pub struct Expression {
 ///
 /// Operand::I;
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Operand {
     /// Absolute value of input
     N,
@@ -306,20 +346,14 @@ pub struct Value(pub u64);
 /// Samples {
 ///     integer: Some(SampleList {
 ///         sample_ranges: Box::new([SampleRange {
-///             lower_val: DecimalValue {
-///                 integer: Value(2),
-///                 decimal: None
-///             },
+///             lower_val: DecimalValue("2".to_string()),
 ///             upper_val: None,
 ///         }]),
 ///         ellipsis: true
 ///     }),
 ///     decimal: Some(SampleList {
 ///         sample_ranges: Box::new([SampleRange {
-///             lower_val: DecimalValue {
-///                 integer: Value(2),
-///                 decimal: Some(Value(5))
-///             },
+///             lower_val: DecimalValue("2.5".to_string()),
 ///             upper_val: None,
 ///         }]),
 ///         ellipsis: false
@@ -345,14 +379,8 @@ pub struct Samples {
 /// SampleList {
 ///     sample_ranges: Box::new([
 ///         SampleRange {
-///             lower_val: DecimalValue {
-///                 integer: Value(0),
-///                 decimal: Some(Value(0)),
-///             },
-///             upper_val: Some(DecimalValue {
-///                 integer: Value(1),
-///                 decimal: Some(Value(5)),
-///             }),
+///             lower_val: DecimalValue("0.0".to_string()),
+///             upper_val: Some(DecimalValue("1.5".to_string())),
 ///         }
 ///     ]),
 ///     ellipsis: true
@@ -375,14 +403,8 @@ pub struct SampleList {
 /// ```
 /// use icu_pluralrules::rules::ast::*;
 /// SampleRange {
-///     lower_val: DecimalValue {
-///         integer: Value(0),
-///         decimal: Some(Value(0)),
-///     },
-///     upper_val: Some(DecimalValue {
-///         integer: Value(1),
-///         decimal: Some(Value(5)),
-///     }),
+///     lower_val: DecimalValue("0.0".to_string()),
+///     upper_val: Some(DecimalValue("1.5".to_string())),
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
@@ -396,18 +418,12 @@ pub struct SampleRange {
 /// # Examples
 ///
 /// ```text
-/// 1.5
+/// 1.00
 /// ```
 ///
 /// ```
 /// use icu_pluralrules::rules::ast::*;
-/// DecimalValue {
-///     integer: Value(1),
-///     decimal: Some(Value(5)),
-/// };
+/// DecimalValue("1.00".to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct DecimalValue {
-    pub integer: Value,
-    pub decimal: Option<Value>,
-}
+pub struct DecimalValue(pub String);

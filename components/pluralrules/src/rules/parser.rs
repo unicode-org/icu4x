@@ -9,6 +9,43 @@ pub enum ParserError {
     ExpectedOperator,
     ExpectedOperand,
     ExpectedValue,
+    ExpectedSampleType,
+}
+
+/// Unicode Plural Rule parser converts an
+/// input string into a Rule [`AST`].
+///
+/// A single [`Rule`] contains a [`Condition`] and optionally a set of
+/// [`Samples`].
+///
+/// A [`Condition`] can be then used by the [`resolver`] to test
+/// against [`PluralOperands`], to find the appropriate [`PluralCategory`].
+///
+/// [`Samples`] are useful for tooling to help translators understand examples of numbers
+/// covered by the given [`Rule`].
+///
+/// At runtime, only the [`Condition`] is used and for that, consider using [`parse_condition`].
+///
+/// # Examples
+///
+/// ```
+/// use icu_pluralrules::rules::parse;
+///
+/// let input = b"i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
+/// assert_eq!(parse(input).is_ok(), true);
+/// ```
+///
+/// [`AST`]: ../rules/ast/index.html
+/// [`resolver`]: ../rules/resolver/index.html
+/// [`PluralOperands`]: ../struct.PluralOperands.html
+/// [`PluralCategory`]: ../enum.PluralCategory.html
+/// [`Rule`]: ../rules/ast/struct.Rule.html
+/// [`Samples`]: ../rules/ast/struct.Samples.html
+/// [`Condition`]:  ../rules/ast/struct.Condition.html
+/// [`parse_condition`]: ./fn.parse_condition.html
+pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
+    let parser = Parser::new(input);
+    parser.parse()
 }
 
 /// Unicode Plural Rule parser converts an
@@ -22,7 +59,7 @@ pub enum ParserError {
 /// ```
 /// use icu_pluralrules::rules::parse_condition;
 ///
-/// let input = b"i = 5";
+/// let input = b"i = 0 or n = 1";
 /// assert_eq!(parse_condition(input).is_ok(), true);
 /// ```
 ///
@@ -32,7 +69,7 @@ pub enum ParserError {
 /// [`PluralCategory`]: ../enum.PluralCategory.html
 pub fn parse_condition(input: &[u8]) -> Result<ast::Condition, ParserError> {
     let parser = Parser::new(input);
-    parser.parse()
+    parser.parse_condition()
 }
 
 struct Parser<'p> {
@@ -46,7 +83,22 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn parse(mut self) -> Result<ast::Condition, ParserError> {
+    pub fn parse(mut self) -> Result<ast::Rule, ParserError> {
+        self.get_rule()
+    }
+
+    pub fn parse_condition(mut self) -> Result<ast::Condition, ParserError> {
+        self.get_condition()
+    }
+
+    fn get_rule(&mut self) -> Result<ast::Rule, ParserError> {
+        Ok(ast::Rule {
+            condition: self.get_condition()?,
+            samples: self.get_samples()?,
+        })
+    }
+
+    fn get_condition(&mut self) -> Result<ast::Condition, ParserError> {
         let mut result = vec![];
 
         if let Some(cond) = self.get_and_condition()? {
@@ -101,11 +153,12 @@ impl<'p> Parser<'p> {
     }
 
     fn get_expression(&mut self) -> Result<Option<ast::Expression>, ParserError> {
-        let operand = match self.lexer.next() {
-            Some(Token::Operand(op)) => op,
+        let operand = match self.lexer.peek() {
+            Some(Token::Operand(op)) => *op,
             Some(Token::At) | None => return Ok(None),
             _ => return Err(ParserError::ExpectedOperand),
         };
+        self.lexer.next();
         let modulus = if self.take_if(Token::Modulo) {
             Some(self.get_value()?)
         } else {
@@ -145,10 +198,94 @@ impl<'p> Parser<'p> {
     }
 
     fn get_value(&mut self) -> Result<ast::Value, ParserError> {
-        if let Some(Token::Number(v)) = self.lexer.next() {
-            Ok(ast::Value(v as u64))
+        match self.lexer.next() {
+            Some(Token::Number(v)) => Ok(ast::Value(v as u64)),
+            Some(Token::Zero) => Ok(ast::Value(0)),
+            _ => Err(ParserError::ExpectedValue),
+        }
+    }
+
+    fn get_samples(&mut self) -> Result<Option<ast::Samples>, ParserError> {
+        let mut integer = None;
+        let mut decimal = None;
+
+        while self.take_if(Token::At) {
+            match self.lexer.next() {
+                Some(Token::Integer) => integer = Some(self.get_sample_list()?),
+                Some(Token::Decimal) => decimal = Some(self.get_sample_list()?),
+                _ => return Err(ParserError::ExpectedSampleType),
+            };
+        }
+        if integer.is_some() || decimal.is_some() {
+            Ok(Some(ast::Samples { integer, decimal }))
         } else {
+            Ok(None)
+        }
+    }
+
+    fn get_sample_list(&mut self) -> Result<ast::SampleList, ParserError> {
+        let mut ranges = vec![self.get_sample_range()?];
+        let mut ellipsis = false;
+
+        while self.take_if(Token::Comma) {
+            if self.take_if(Token::Ellipsis) {
+                ellipsis = true;
+                break;
+            }
+            ranges.push(self.get_sample_range()?);
+        }
+        Ok(ast::SampleList {
+            sample_ranges: ranges.into_boxed_slice(),
+            ellipsis,
+        })
+    }
+
+    fn get_sample_range(&mut self) -> Result<ast::SampleRange, ParserError> {
+        let lower_val = self.get_decimal_value()?;
+        let upper_val = if self.take_if(Token::Tilde) {
+            Some(self.get_decimal_value()?)
+        } else {
+            None
+        };
+        Ok(ast::SampleRange {
+            lower_val,
+            upper_val,
+        })
+    }
+
+    fn get_decimal_value(&mut self) -> Result<ast::DecimalValue, ParserError> {
+        let mut s = String::new();
+        loop {
+            match self.lexer.peek() {
+                Some(Token::Zero) => s.push('0'),
+                Some(Token::Number(v)) => {
+                    s.push_str(&v.to_string());
+                }
+                _ => {
+                    break;
+                }
+            }
+            self.lexer.next();
+        }
+        if self.take_if(Token::Dot) {
+            s.push('.');
+            loop {
+                match self.lexer.peek() {
+                    Some(Token::Zero) => s.push('0'),
+                    Some(Token::Number(v)) => {
+                        s.push_str(&v.to_string());
+                    }
+                    _ => {
+                        break;
+                    }
+                }
+                self.lexer.next();
+            }
+        }
+        if s.is_empty() {
             Err(ParserError::ExpectedValue)
+        } else {
+            Ok(ast::DecimalValue(s))
         }
     }
 }
