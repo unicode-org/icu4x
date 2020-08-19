@@ -1,7 +1,7 @@
 use crate::data::cldr_resource::Resource;
 use crate::data::provider::{DataProviderError, DataProviderType};
 use crate::data::{PluralRuleList, RulesSelector};
-use crate::rules::parse;
+use crate::rules::parse_condition;
 use crate::PluralCategory;
 use crate::PluralRuleType;
 use icu_locale::LanguageIdentifier;
@@ -88,7 +88,7 @@ pub fn get_rules(
         let result = PluralCategory::all()
             .filter_map(|pc| {
                 let input = lang_rules.get(pc)?;
-                Some(parse(input.as_bytes()).map(|ast| (*pc, ast)))
+                Some(parse_condition(input.as_bytes()).map(|ast| (*pc, ast)))
             })
             .collect::<Result<_, _>>()?;
 

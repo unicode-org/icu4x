@@ -6,7 +6,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_pluralrules::PluralCategory;
 
 fn plurals_bench(c: &mut Criterion) {
-    use icu_pluralrules::rules::{parse, Lexer};
+    use icu_pluralrules::rules::{parse_condition, Lexer};
 
     let path = "./benches/fixtures/plurals.json";
     let data: fixtures::PluralsFixture =
@@ -34,7 +34,7 @@ fn plurals_bench(c: &mut Criterion) {
     group.bench_function("parse", |b| {
         b.iter(|| {
             for val in &pl_data {
-                let _ = parse(black_box(val.as_bytes()));
+                let _ = parse_condition(black_box(val.as_bytes()));
             }
         })
     });

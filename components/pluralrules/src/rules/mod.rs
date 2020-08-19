@@ -49,12 +49,12 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu_pluralrules::rules::parse;
+//! use icu_pluralrules::rules::parse_condition;
 //! use icu_pluralrules::rules::ast::*;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
-//! let ast = parse(input.as_bytes())
+//! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
 //! assert_eq!(ast, Condition(Box::new([
 //!     AndCondition(Box::new([
@@ -91,14 +91,14 @@
 //! matches:
 //!
 //! ```
-//! use icu_pluralrules::rules::{test_condition, parse};
+//! use icu_pluralrules::rules::{test_condition, parse_condition};
 //! use icu_pluralrules::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
 //! let operands = PluralOperands::from(1_u32);
 //!
-//! let ast = parse(input.as_bytes())
+//! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
 //!
 //! assert!(test_condition(&ast, &operands));
@@ -141,7 +141,9 @@ pub mod ast;
 pub(crate) mod lexer;
 pub(crate) mod parser;
 pub(crate) mod resolver;
+pub(crate) mod serializer;
 
 pub use lexer::Lexer;
-pub use parser::parse;
+pub use parser::{parse, parse_condition};
 pub use resolver::test_condition;
+pub use serializer::serialize;

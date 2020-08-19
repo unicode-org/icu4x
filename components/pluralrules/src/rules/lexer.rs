@@ -5,9 +5,9 @@ pub enum Token {
     Operand(ast::Operand),
     Operator(ast::Operator),
     Number(u32),
+    Zero,
     Dot,
     DotDot,
-    DotDotDot,
     Comma,
     Or,
     And,
@@ -106,7 +106,9 @@ impl<'l> Lexer<'l> {
                     b'v' => Token::Operand(ast::Operand::V),
                     b'w' => Token::Operand(ast::Operand::W),
                     b'=' => Token::Operator(ast::Operator::Eq),
-                    b'0'..=b'9' => {
+                    // Zero is special, because we need to preserve it for Samples.
+                    b'0' => Token::Zero,
+                    b'1'..=b'9' => {
                         let start = self.ptr - 1;
 
                         while let Some(b'0'..=b'9') = self.chars.get(self.ptr) {
