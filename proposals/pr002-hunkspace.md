@@ -5,7 +5,7 @@
 Author: [filmil (Filip Filmar) · GitHub][ff]
 
 *tl;dr:* Generalize the [ICU4X Data Provider][dp] key space to include
-localized data from sources other than [CLDR][cldr] More detail is in the
+localized data from sources other than [CLDR.][cldr] More detail is in the
 [Detailed Proposal](#h.us1rqruwdp1h) section, after the proposal is motivated
 by a few use cases.
 
@@ -111,7 +111,7 @@ falls into the purview of the underlying software platform. In Fuchsia's case,
 that platform is the operating system.  One can imagine a centralized
 [localization] clearinghouse service, which takes care of the provision of
 localized assets, similar to how a software delivery framework (say
-[TUF](https://theupdateframework.io) provides packages and files.
+[TUF](https://theupdateframework.io)) provides packages and files.
 
 A data provider is a natural abstraction for a language pack.  A piece of
 software can request a hunk of data from the provider, such as a slice of CLDR.
@@ -125,7 +125,7 @@ common specification could go a long way towards a common solution that
 works well in many use cases.  Similarly to how the industry has mostly
 used the ICU library for handling internationalization matters.
 
-# Delegated localization
+## Delegated localization
 
 The language pack approach works reasonably well to support a known set
 of localizable resources.  There are use cases, however, for which a
@@ -212,7 +212,7 @@ CLDR][dpcldr] uses a 4-dimensional key space consisting of:
 - A Language identifier;
 - a Category;
 - a Key;
-- and a Payload.
+- a Payload.
 
 [dpcldr]: https://github.com/unicode-org/icu4x/blob/master/components/data-provider/src/lib.rs#L52
 
@@ -415,8 +415,6 @@ JSON encoding:
 }
 ```
 
-> The notations ended up being very similar, as was probably expected.
-
 ### Example 2: Localization
 
 Key:
@@ -435,10 +433,10 @@ JSON encoding:
 
 ```
 {
-  “@scheme”:         “fuchsia-l10n”,
-  “@source”:         “fuchsia.dev”,
-  “app”:         “program-name”,
-  “locale”:         “en-US”,
+  “@scheme”: “fuchsia-l10n”,
+  “@source”: “fuchsia.dev”,
+  “app”: “program-name”,
+  “locale”: “en-US”,
   “message_id”: “42”,
 }
 ```
