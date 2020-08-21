@@ -7,6 +7,7 @@ pub enum Error {
     JsonError(serde_json::error::Error),
     IoError(std::io::Error, std::path::PathBuf),
     MissingSource(MissingSourceError),
+    PoisonError,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -38,6 +39,7 @@ impl fmt::Display for Error {
             Error::JsonError(err) => write!(f, "{}", err),
             Error::IoError(err, path) => write!(f, "{}: {}", err, path.to_string_lossy()),
             Error::MissingSource(err) => err.fmt(f),
+            Error::PoisonError => write!(f, "poisoned lock on CLDR provider"),
         }
     }
 }

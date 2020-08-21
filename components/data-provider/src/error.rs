@@ -53,6 +53,15 @@ impl From<Box<dyn std::error::Error>> for Error {
     }
 }
 
+impl Error {
+    pub fn new_resc_error<T>(err: T) -> Self
+    where
+        T: 'static + std::error::Error,
+    {
+        Error::ResourceError(Box::new(err))
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
