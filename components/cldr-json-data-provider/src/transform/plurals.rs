@@ -1,4 +1,3 @@
-use crate::cldr_langid::CldrLanguage;
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::support::DataKeySupport;
@@ -28,9 +27,7 @@ impl TryFrom<&CldrPaths> for PluralsProvider<'_> {
                 .join("supplemental")
                 .join("plurals.json");
             let data: cldr_json::Resource = serde_json::from_reader(open_reader(path)?)?;
-            data.supplemental
-                .plurals_type_cardinal
-                .map(|r| r.normalize())
+            data.supplemental.plurals_type_cardinal
         };
         let ordinal_rules = {
             let path = cldr_paths
@@ -39,9 +36,7 @@ impl TryFrom<&CldrPaths> for PluralsProvider<'_> {
                 .join("supplemental")
                 .join("ordinals.json");
             let data: cldr_json::Resource = serde_json::from_reader(open_reader(path)?)?;
-            data.supplemental
-                .plurals_type_ordinal
-                .map(|r| r.normalize())
+            data.supplemental.plurals_type_ordinal
         };
         Ok(PluralsProvider {
             cardinal_rules,
@@ -57,14 +52,8 @@ impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
         let data: cldr_json::Resource = serde_json::from_str(s)?;
         Ok(PluralsProvider {
-            cardinal_rules: data
-                .supplemental
-                .plurals_type_cardinal
-                .map(|r| r.normalize()),
-            ordinal_rules: data
-                .supplemental
-                .plurals_type_ordinal
-                .map(|r| r.normalize()),
+            cardinal_rules: data.supplemental.plurals_type_cardinal,
+            ordinal_rules: data.supplemental.plurals_type_ordinal,
             _phantom: PhantomData,
         })
     }
@@ -86,6 +75,7 @@ impl<'d> PluralsProvider<'d> {
     fn get_rules_for(&self, data_key: &DataKey) -> Result<&cldr_json::Rules, DataError> {
         PluralsProvider::supports_key(data_key)?;
         match data_key.sub_category.as_str() {
+            // TODO(#212): Match on TinyStr
             "cardinal" => self.cardinal_rules.as_ref(),
             "ordinal" => self.ordinal_rules.as_ref(),
             _ => return Err(data_key.into()),
@@ -99,7 +89,7 @@ impl<'d> DataProvider<'d> for PluralsProvider<'d> {
         let cldr_rules = self.get_rules_for(&req.data_key)?;
         // TODO: Implement language fallback?
         // TODO: Avoid the clone
-        let cldr_langid = CldrLanguage(req.data_entry.langid.clone());
+        let cldr_langid = req.data_entry.langid.clone().into();
         let (_, r) = match cldr_rules.0.binary_search_by_key(&&cldr_langid, |(l, _)| l) {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
@@ -123,7 +113,7 @@ impl<'d> DataEntryCollection for PluralsProvider<'d> {
             .map(|(l, _)| DataEntry {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: l.0.clone(),
+                langid: l.langid.clone(),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
@@ -148,7 +138,7 @@ impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1 {
 
 /// Serde structs for the CLDR JSON plurals files.
 pub(self) mod cldr_json {
-    use crate::cldr_langid::CldrLanguage;
+    use crate::cldr_langid::CldrLangID;
     use serde::Deserialize;
     use std::borrow::Cow;
 
@@ -170,16 +160,9 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Rules(#[serde(with = "tuple_vec_map")] pub Vec<(CldrLanguage, LocalePluralRules)>);
-
-    impl Rules {
-        pub fn normalize(mut self) -> Self {
-            // NOTE: We need to sort in order to put "root" -> "und" into place.
-            // TODO: Avoid the clone
-            self.0.sort_by_key(|(l, _)| l.0.clone());
-            self
-        }
-    }
+    pub struct Rules(
+        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LocalePluralRules)>,
+    );
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Supplemental {

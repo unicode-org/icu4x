@@ -1,11 +1,56 @@
 use icu_locale::LanguageIdentifier;
 use serde::{Deserialize, Deserializer};
+use std::str::FromStr;
+use tinystr::TinyStr8;
 
-// TODO: Make this non-pub
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct CldrLanguage(pub LanguageIdentifier);
+/// A struct similar to LanguageIdentifier that supports "root"
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub(crate) struct CldrLangID {
+    /// CLDR LanguageIdentifier (root => "root")
+    cldr_language: TinyStr8,
 
-impl<'de> Deserialize<'de> for CldrLanguage {
+    /// Normalized LanguageIdentifier (root => "und")
+    pub langid: LanguageIdentifier,
+}
+
+impl CldrLangID {
+    /// Return the CldrLangID for "root"
+    pub fn root() -> Self {
+        // TODO: Use LanguageIdentifier::default()
+        Self {
+            cldr_language: "root".parse().unwrap(),
+            langid: "und".parse().unwrap(),
+        }
+    }
+}
+
+impl From<LanguageIdentifier> for CldrLangID {
+    /// Return a CldrLangID for a generic LanguageIdentifier. "und" becomes "root".
+    fn from(langid: LanguageIdentifier) -> Self {
+        if langid == LanguageIdentifier::from_str("und").unwrap() {
+            Self::root()
+        } else {
+            Self {
+                cldr_language: langid.language.as_str().parse().unwrap(),
+                langid,
+            }
+        }
+    }
+}
+
+impl FromStr for CldrLangID {
+    type Err = <LanguageIdentifier as FromStr>::Err;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "root" {
+            Ok(Self::root())
+        } else {
+            s.parse::<LanguageIdentifier>().map(|langid| langid.into())
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for CldrLangID {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -13,7 +58,7 @@ impl<'de> Deserialize<'de> for CldrLanguage {
         struct CldrLanguageVisitor;
 
         impl<'de> serde::de::Visitor<'de> for CldrLanguageVisitor {
-            type Value = CldrLanguage;
+            type Value = CldrLangID;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(formatter, "a valid Unicode Language Identifier or 'root'")
@@ -23,13 +68,7 @@ impl<'de> Deserialize<'de> for CldrLanguage {
             where
                 E: serde::de::Error,
             {
-                if s == "root" {
-                    Ok(CldrLanguage("und".parse().unwrap()))
-                } else {
-                    s.parse::<LanguageIdentifier>()
-                        .map(CldrLanguage)
-                        .map_err(serde::de::Error::custom)
-                }
+                s.parse().map_err(serde::de::Error::custom)
             }
         }
 
@@ -38,16 +77,34 @@ impl<'de> Deserialize<'de> for CldrLanguage {
 }
 
 #[test]
-fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
-    let fr = serde_json::from_str::<CldrLanguage>(r#""fr""#)?;
-    let en = serde_json::from_str::<CldrLanguage>(r#""en-US""#)?;
-    let root = serde_json::from_str::<CldrLanguage>(r#""root""#)?;
+fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    let fr = serde_json::from_str::<CldrLangID>(r#""fr""#)?;
+    let en = serde_json::from_str::<CldrLangID>(r#""en-US""#)?;
+    let root = serde_json::from_str::<CldrLangID>(r#""root""#)?;
 
-    assert_eq!(fr, CldrLanguage("fr".parse()?));
-    assert_eq!(en, CldrLanguage("en-US".parse()?));
-    assert_eq!(root, CldrLanguage("und".parse()?));
+    assert_eq!(
+        fr,
+        CldrLangID {
+            cldr_language: "fr".parse().unwrap(),
+            langid: "fr".parse()?
+        }
+    );
+    assert_eq!(
+        en,
+        CldrLangID {
+            cldr_language: "en".parse().unwrap(),
+            langid: "en-US".parse()?
+        }
+    );
+    assert_eq!(
+        root,
+        CldrLangID {
+            cldr_language: "root".parse().unwrap(),
+            langid: "und".parse()?
+        }
+    );
 
-    let failed = serde_json::from_str::<CldrLanguage>(r#""2Xs""#);
+    let failed = serde_json::from_str::<CldrLangID>(r#""2Xs""#);
     assert!(failed.is_err());
     let err = failed.unwrap_err();
     assert!(err.is_data());
@@ -57,4 +114,39 @@ fn deserialize() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     Ok(())
+}
+
+/// Assert that CLDR order matches Ord on CldrLangID
+#[test]
+fn test_order() {
+    let cldr_strings = [
+        "ar",    //
+        "ar-EG", //
+        "ars",   //
+        "ro",    //
+        "ro-RO", //
+        "rof",   //
+        "root",  //
+        "ru",    //
+        "zh-CN", //
+    ];
+    let mut cldr_strings_sorted: Vec<&str> = cldr_strings.iter().copied().collect();
+    cldr_strings_sorted.sort();
+    assert_eq!(cldr_strings[..], cldr_strings_sorted[..]);
+
+    let cldr_langids: Vec<CldrLangID> = cldr_strings.iter().map(|s| s.parse().unwrap()).collect();
+    let cldr_langids_sorted: Vec<CldrLangID> = cldr_langids.iter().map(|s| (*s).clone()).collect();
+    assert_eq!(cldr_langids, cldr_langids_sorted);
+}
+
+/// Assert that "root" and "und" are equivalent
+#[test]
+fn test_und_root() {
+    let und1 = CldrLangID::from_str("und").unwrap();
+    let und2 = CldrLangID::from(LanguageIdentifier::from_str("und").unwrap());
+    let root = CldrLangID::from_str("root").unwrap();
+
+    assert_eq!(und1, und2);
+    assert_eq!(und1, root);
+    assert_eq!(und2, root);
 }
