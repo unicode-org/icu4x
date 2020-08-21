@@ -5,13 +5,17 @@ use crate::structs;
 use icu_locale::LanguageIdentifier;
 use std::fmt;
 
-pub(crate) fn make_inv_response<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
-    t: T,
-) -> DataResponse<'static> {
-    DataResponseBuilder {
-        data_langid: LanguageIdentifier::default(),
-    }
-    .with_owned_payload(t)
+/// Package a data struct T implementing Default as a DataResponse.
+pub(crate) fn make_inv_response<T>() -> Option<DataResponse<'static>>
+where
+    T: 'static + Clone + erased_serde::Serialize + fmt::Debug + Default,
+{
+    Some(
+        DataResponseBuilder {
+            data_langid: LanguageIdentifier::default(),
+        }
+        .with_owned_payload(T::default()),
+    )
 }
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in

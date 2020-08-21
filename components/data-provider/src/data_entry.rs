@@ -16,20 +16,20 @@ pub struct DataEntry {
 
 impl fmt::Debug for DataEntry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("DataEntry{")?;
-        fmt::Display::fmt(self, f)?;
-        f.write_char('}')?;
-        Ok(())
+        write!(f, "DataEntry{{{}}}", self)
     }
 }
 
 impl fmt::Display for DataEntry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for (i, s) in self.get_components().iter().enumerate() {
-            if i > 0 {
-                f.write_char('/')?;
-            }
+        let components = self.get_components();
+        let mut it = components.iter();
+        if let Some(s) = it.next() {
             f.write_str(s)?;
+            for s in it {
+                f.write_char('/')?;
+                f.write_str(s)?;
+            }
         }
         Ok(())
     }

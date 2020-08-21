@@ -9,11 +9,7 @@ use crate::prelude::*;
 /// PluralRuleStringsV1 will be returned.
 #[cfg(feature = "invariant")]
 pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
-    if let Some(response) = decimal::get_invariant(data_key) {
-        Some(response)
-    } else if let Some(response) = plurals::get_invariant(data_key) {
-        Some(response)
-    } else {
-        None
-    }
+    None //
+        .or_else(|| decimal::get_invariant(data_key)) //
+        .or_else(|| plurals::get_invariant(data_key)) //
 }

@@ -12,15 +12,10 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
     if data_key.category != DataCategory::Plurals {
         return None;
     }
-    match data_key.sub_category.as_str() {
-        "cardinal" => match data_key.version {
-            1 => Some(make_inv_response(PluralRuleStringsV1::default())),
-            _ => None,
-        },
-        "ordinal" => match data_key.version {
-            1 => Some(make_inv_response(PluralRuleStringsV1::default())),
-            _ => None,
-        },
+    // TODO(#212): Match on TinyStr instead of &str
+    match (data_key.sub_category.as_str(), data_key.version) {
+        ("cardinal", 1) => make_inv_response::<PluralRuleStringsV1>(),
+        ("ordinal", 1) => make_inv_response::<PluralRuleStringsV1>(),
         _ => None,
     }
 }
