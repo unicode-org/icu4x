@@ -44,6 +44,9 @@ impl FromStr for CldrLangID {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "root" {
             Ok(Self::root())
+        } else if s == "und" {
+            // Reject "und" since we want a 1-to-1 mapping from strings to structs
+            Err(Self::Err::InvalidLanguage)
         } else {
             s.parse::<LanguageIdentifier>().map(|langid| langid.into())
         }
@@ -142,11 +145,9 @@ fn test_order() {
 /// Assert that "root" and "und" are equivalent
 #[test]
 fn test_und_root() {
-    let und1 = CldrLangID::from_str("und").unwrap();
+    CldrLangID::from_str("und").expect_err("und should not be allowed as a string");
+
     let und2 = CldrLangID::from(LanguageIdentifier::from_str("und").unwrap());
     let root = CldrLangID::from_str("root").unwrap();
-
-    assert_eq!(und1, und2);
-    assert_eq!(und1, root);
     assert_eq!(und2, root);
 }
