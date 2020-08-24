@@ -1,4 +1,4 @@
-use std::{char, cmp, cmp::Ordering, ops::RangeBounds};
+use std::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
 
@@ -69,22 +69,7 @@ impl UnicodeSetBuilder {
             self.intervals.extend_from_slice(&[start, end]);
             return;
         }
-        let last_ind = self.intervals.len() - 1;
-        if self.intervals[last_ind - 1] <= start {
-            if self.intervals[last_ind] < start {
-                self.intervals.extend_from_slice(&[start, end]);
-            } else {
-                self.intervals[last_ind] = cmp::max(end, self.intervals[last_ind]);
-            }
-        } else if end <= self.intervals[1] {
-            if end < self.intervals[0] {
-                self.intervals.splice(0..0, [start, end].iter().copied());
-            } else {
-                self.intervals[0] = cmp::min(self.intervals[0], start);
-            }
-        } else {
-            self.add_remove_middle(start, end, true);
-        }
+        self.add_remove_middle(start, end, true);
     }
 
     /// Add the character to the UnicodeSetBuilder
@@ -145,11 +130,13 @@ impl UnicodeSetBuilder {
         if start >= end || self.intervals.is_empty() {
             return;
         }
-        if start <= self.intervals[0] && end >= *self.intervals.last().unwrap() {
-            self.intervals.clear();
-            return;
+        if let Some(last) = self.intervals.last() {
+            if start <= self.intervals[0] && end >= *last {
+                self.intervals.clear();
+            } else {
+                self.add_remove_middle(start, end, false);
+            }
         }
-        self.add_remove_middle(start, end, false);
     }
 
     /// Remove the character from the UnicodeSetBuilder
