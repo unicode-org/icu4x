@@ -550,6 +550,16 @@ mod tests {
     }
 
     #[test]
+    fn test_add_adjacent_ranges() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.add(19, 20);
+        builder.add(20, 21);
+        builder.add(21, 22);
+        let expected = vec![10, 22, 40, 50];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
     fn test_add_unicodeset() {
         let mut builder = generate_tester(vec![10, 20, 40, 50]);
         let check = UnicodeSet::from_inversion_list(vec![5, 10, 22, 33, 44, 51]).unwrap();
@@ -652,6 +662,15 @@ mod tests {
         let expected = vec![10, 20, 70, 80];
         assert_eq!(builder.intervals, expected);
     }
+    #[test]
+    fn test_remove_adjacent_ranges() {
+        let mut builder = generate_tester(vec![10, 20, 40, 50]);
+        builder.remove(39, 40);
+        builder.remove(40, 41);
+        builder.remove(41, 42);
+        let expected = vec![10, 20, 42, 50];
+        assert_eq!(builder.intervals, expected);
+    }
 
     #[test]
     fn test_remove_char() {
@@ -691,6 +710,14 @@ mod tests {
         let mut builder = generate_tester(vec![65, 90]);
         builder.retain_range(&('C'..'F')); // 67 - 70
         let expected = vec![67, 70];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_retain_range_empty() {
+        let mut builder = generate_tester(vec![65, 70]);
+        builder.retain_range(&('F'..'Z'));
+        let expected = vec![];
         assert_eq!(builder.intervals, expected);
     }
 
