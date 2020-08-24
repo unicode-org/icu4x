@@ -208,30 +208,19 @@ impl UnicodeSet {
         if set.size() > self.size() {
             return false;
         }
-        let s = set.as_inversion_list().len() as f32;
-        let u = self.inv_list.len() as f32;
-        if s * u.log2() < u {
-            set.inv_list
-                .chunks(2)
-                .all(|range| match self.contains_query(range[0]) {
-                    Some(pos) => range[1] <= self.inv_list[pos + 1],
-                    None => false,
-                })
-        } else {
-            let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
-            let mut check = set_ranges.next();
-            for range in self.inv_list.chunks(2) {
-                match check {
-                    Some(r) => {
-                        if r[0] >= range[0] && r[1] <= range[1] {
-                            check = set_ranges.next();
-                        }
+        let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
+        let mut check = set_ranges.next();
+        for range in self.inv_list.chunks(2) {
+            match check {
+                Some(r) => {
+                    if r[0] >= range[0] && r[1] <= range[1] {
+                        check = set_ranges.next();
                     }
-                    _ => break,
                 }
+                _ => break,
             }
-            check.is_none()
         }
+        check.is_none()
     }
 
     /// Returns the end of the initial substring where the characters are either contained/not contained
@@ -357,28 +346,12 @@ mod tests {
         assert!(!check.contains_range(&('A'..'A')));
     }
     #[test]
-    fn test_unicodeset_contains_set_slogu() {
-        let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
-        let u = UnicodeSet::from_inversion_list(ex).unwrap();
-        let inside = vec![45, 49];
-        let s = UnicodeSet::from_inversion_list(inside).unwrap();
-        assert!(u.contains_set(&s));
-    }
-    #[test]
     fn test_unicodeset_contains_set_u() {
         let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
         let u = UnicodeSet::from_inversion_list(ex).unwrap();
         let inside = vec![15, 20, 44, 49, 70, 80, 100, 109];
         let s = UnicodeSet::from_inversion_list(inside).unwrap();
         assert!(u.contains_set(&s));
-    }
-    #[test]
-    fn test_unicodeset_contains_set_slogu_false() {
-        let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
-        let u = UnicodeSet::from_inversion_list(ex).unwrap();
-        let outside = vec![10, 24];
-        let s = UnicodeSet::from_inversion_list(outside).unwrap();
-        assert!(!u.contains_set(&s));
     }
     #[test]
     fn test_unicodeset_contains_set_u_false() {
