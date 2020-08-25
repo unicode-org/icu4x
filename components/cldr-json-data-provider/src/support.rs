@@ -12,6 +12,14 @@ pub(crate) struct LazyCldrProvider<T> {
     src: RwLock<Option<T>>,
 }
 
+impl<T> Default for LazyCldrProvider<T> {
+    fn default() -> Self {
+        LazyCldrProvider {
+            src: RwLock::new(None),
+        }
+    }
+}
+
 fn map_poison<E>(_err: E) -> DataError {
     // Can't return the PoisonError directly because it has lifetime parameters.
     DataError::new_resc_error(crate::error::Error::PoisonError)
@@ -23,12 +31,6 @@ where
     T: DataProvider<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b CldrPaths>,
     <T as TryFrom<&'b CldrPaths>>::Error: 'static + std::error::Error,
 {
-    pub fn new() -> Self {
-        Self {
-            src: RwLock::new(None),
-        }
-    }
-
     /// Call T::load, initializing T if necessary.
     pub fn try_load(
         &self,
@@ -45,11 +47,10 @@ where
         if src.is_none() {
             src.replace(T::try_from(cldr_paths).map_err(DataError::new_resc_error)?);
         }
-        // The RwLock is guaranteed to be populated at this point.
-        if let Some(data_provider) = src.as_ref() {
-            return data_provider.load(req).map(Some);
-        }
-        unreachable!();
+        let data_provider = src
+            .as_ref()
+            .expect("The RwLock must be populated at this point.");
+        data_provider.load(req).map(Some)
     }
 
     /// Call T::iter_for_key, initializing T if necessary.
@@ -68,10 +69,9 @@ where
         if src.is_none() {
             src.replace(T::try_from(cldr_paths).map_err(DataError::new_resc_error)?);
         }
-        // The RwLock is guaranteed to be populated at this point.
-        if let Some(data_provider) = src.as_ref() {
-            return data_provider.iter_for_key(data_key).map(Some);
-        }
-        unreachable!();
+        let data_provider = src
+            .as_ref()
+            .expect("The RwLock must be populated at this point.");
+        data_provider.iter_for_key(data_key).map(Some)
     }
 }

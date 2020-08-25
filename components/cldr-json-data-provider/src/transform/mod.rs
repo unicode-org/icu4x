@@ -16,17 +16,16 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     pub fn new(cldr_paths: &'a CldrPaths) -> Self {
         CldrJsonDataProvider {
             cldr_paths,
-            plurals: LazyCldrProvider::new(),
+            plurals: Default::default(),
         }
     }
 }
 
 impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        if let Some(resp) = self.plurals.try_load(req, &self.cldr_paths)? {
-            return Ok(resp);
-        }
-        Err(DataError::UnsupportedDataKey(req.data_key))
+        self.plurals
+            .try_load(req, &self.cldr_paths)?
+            .ok_or(DataError::UnsupportedDataKey(req.data_key))
     }
 }
 
