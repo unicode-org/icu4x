@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: dev/${{ matrix.component }}/bench
-          key: ${{ runner.os }}-bench-runtime
+          key: ${{ runner.os }}-bench-runtime-v2 # use new versions of cache keys to avoid stale cache problems
 
       - name: Debug bench info
         run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
