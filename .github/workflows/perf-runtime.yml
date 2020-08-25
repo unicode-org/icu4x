@@ -24,23 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Debug branches
-        run: echo "git branch" && git branch
-
       - run: mkdir -p dev/${{ matrix.component }}/bench/cache
-
-      # # Download previous benchmark result from cache (if exists)
-      # - name: Download/cache previous benchmark data
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: dev/${{ matrix.component }}/bench
-      #     key: ${{ runner.os }}-bench-runtime-v3 # use new versions of cache keys to avoid stale cache problems
-
-      - name: Debug bench info
-        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
-      # - name: Debug cache info
-      #   run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
-      #- run: mkdir -p dev/${{ matrix.component }}/bench/cache
 
       - name: Try on a particular component
         run: cd components/${{ matrix.component }}
@@ -48,14 +32,9 @@ jobs:
       - name: Run benchmark
         run: cd components/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
-      - name: Debug benchmark output dir
-        run: echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }}
 
       - name: Copy benchmark raw output to cached bench dir
         run: cp components/${{ matrix.component }}/output.txt dev/${{ matrix.component }}/bench
-
-      - name: Debug cached bench info
-        run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
 
       - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -76,38 +55,14 @@ jobs:
           gh-pages-branch: gh-pages
           auto-push: true
 
-      - name: Debug branches
-        run: echo "git branch" && git branch
-
-
       - name: Save current branch
         run: git checkout -b temp-branch
       
       - name: Checkout gh-pages
         run: git checkout gh-pages
 
-
-
-      - name: Debug branches
-        run: echo "git branch" && git branch
-
-      - name: Debug Create dashboard step's output dirs to find HTML pages
-        run: echo "ls -l" && ls -l && echo "ls -l components/${{ matrix.component }}" && ls -l components/${{ matrix.component }} && echo "ls -l components/${{ matrix.component }}/output.txt" && ls -l components/${{ matrix.component }}/output.txt && echo "ls -l dev/${{ matrix.component }}/bench" && ls -l dev/${{ matrix.component }}/bench
-
-      - name: Find data.js
-        run: echo "find . -name data.js" && find . -name data.js
-
-      # - name: Debug cache info
-      #   run: echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
-
       - name: Move bench data and HTML into a folder suitable for copying to external repo
         run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
-
-      - name: Debug contents of copy-to-ext-repo
-        run: find copy-to-ext-repo
-
-      # - name: Debug cache info in gh-pages branch
-      #   run: echo "git checkout gh-pages" && git checkout gh-pages && echo "ls -l dev" && ls -l dev && echo "ls -l dev/${{ matrix.component }}/bench/cache" && ls -l dev/${{ matrix.component }}/bench/cache
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0-7  # this is a beta version to enable `destination_dir`
