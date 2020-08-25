@@ -13,3 +13,9 @@ pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     InvalidRange(u32, u32),
 }
+
+#[derive(PartialEq)]
+pub enum UnicodeSetSpanCondition {
+    Contained,
+    NotContained,
+}

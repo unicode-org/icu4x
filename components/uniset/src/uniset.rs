@@ -1,4 +1,4 @@
-use std::{char, ops::RangeBounds};
+use std::{char, ops::RangeBounds, slice::Chunks};
 
 use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid};
@@ -143,6 +143,11 @@ impl UnicodeSet {
         self.contains_query(query as u32).is_some()
     }
 
+    /// Returns the inversion list as a slice
+    pub(crate) fn as_inversion_list(&self) -> &[u32] {
+        &self.inv_list
+    }
+
     /// Checks to see if the range is in the UnicodeSet, returns a Result
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
@@ -182,6 +187,83 @@ impl UnicodeSet {
             Some(pos) => (till) <= self.inv_list[pos + 1],
             None => false,
         }
+    }
+
+    /// Check if the calling UnicodeSet contains all the characters of the given UnicodeSet
+    ///
+    /// # Example:
+    ///
+    /// ```
+    /// use icu_unicodeset::UnicodeSet;
+    /// let example_list = vec![65, 70, 85, 91]; // A - E, U - Z
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let a_to_d = UnicodeSet::from_inversion_list(vec![65, 69]).unwrap();
+    /// let f_to_t = UnicodeSet::from_inversion_list(vec![70, 85]).unwrap();
+    /// let r_to_x = UnicodeSet::from_inversion_list(vec![82, 88]).unwrap();
+    /// assert!(example.contains_set(&a_to_d)); // contains all
+    /// assert!(!example.contains_set(&f_to_t)); // contains none
+    /// assert!(!example.contains_set(&r_to_x)); // contains some
+    /// ```
+    pub fn contains_set(&self, set: &UnicodeSet) -> bool {
+        if set.size() > self.size() {
+            return false;
+        }
+        let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
+        let mut check = set_ranges.next();
+        for range in self.inv_list.chunks(2) {
+            match check {
+                Some(r) => {
+                    if r[0] >= range[0] && r[1] <= range[1] {
+                        check = set_ranges.next();
+                    }
+                }
+                _ => break,
+            }
+        }
+        check.is_none()
+    }
+
+    /// Returns the end of the initial substring where the characters are either contained/not contained
+    /// in the set.
+    ///
+    /// # Example:
+    ///
+    /// ```
+    /// use icu_unicodeset::UnicodeSet;
+    /// let example_list = vec![65, 68]; // {A, B, C}
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// assert_eq!(example.span("CABXYZ", true), 3);
+    /// assert_eq!(example.span("XYZC", false), 3);
+    /// assert_eq!(example.span("XYZ", true), 0);
+    /// assert_eq!(example.span("ABC", false), 0);
+    /// ```
+    pub fn span(&self, span_str: &str, contained: bool) -> usize {
+        span_str
+            .chars()
+            .take_while(|&x| self.contains(x) == contained)
+            .count()
+    }
+
+    /// Returns the start of the trailing substring (starting from end of string) where the characters are
+    /// either contained/not contained in the set. Returns the length of the string if no valid return.
+    ///
+    /// # Example:
+    ///
+    /// ```
+    /// use icu_unicodeset::UnicodeSet;
+    /// let example_list = vec![65, 68]; // {A, B, C}
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// assert_eq!(example.span_back("XYZCAB", true), 3);
+    /// assert_eq!(example.span_back("ABCXYZ", true), 6);
+    /// assert_eq!(example.span_back("CABXYZ", false), 3);
+    /// ```
+    pub fn span_back(&self, span_str: &str, contained: bool) -> usize {
+        span_str.len()
+            - span_str
+                .chars()
+                .rev()
+                .take_while(|&x| self.contains(x) == contained)
+                .count()
     }
 }
 
@@ -264,6 +346,22 @@ mod tests {
         assert!(!check.contains_range(&('A'..'A')));
     }
     #[test]
+    fn test_unicodeset_contains_set_u() {
+        let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
+        let u = UnicodeSet::from_inversion_list(ex).unwrap();
+        let inside = vec![15, 20, 44, 49, 70, 80, 100, 109];
+        let s = UnicodeSet::from_inversion_list(inside).unwrap();
+        assert!(u.contains_set(&s));
+    }
+    #[test]
+    fn test_unicodeset_contains_set_u_false() {
+        let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
+        let u = UnicodeSet::from_inversion_list(ex).unwrap();
+        let outside = vec![0, 10, 22, 44, 50, 70, 79, 81, 109, 111];
+        let s = UnicodeSet::from_inversion_list(outside).unwrap();
+        assert!(!u.contains_set(&s));
+    }
+    #[test]
     fn test_unicodeset_size() {
         let ex = vec![2, 5, 10, 15];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
@@ -300,5 +398,33 @@ mod tests {
         assert_eq!(Some('C'), iter.next());
         assert_eq!(Some('E'), iter.next());
         assert_eq!(None, iter.next());
+    }
+    #[test]
+    fn test_unicodeset_span_contains() {
+        let ex = vec![65, 68, 70, 75]; // A - D, F - K
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(check.span("ABCDE", true), 3);
+        assert_eq!(check.span("E", true), 0);
+    }
+    #[test]
+    fn test_unicodeset_span_does_not_contain() {
+        let ex = vec![65, 68, 70, 75]; // A - D, F - K
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(check.span("DEF", false), 2);
+        assert_eq!(check.span("KLMA", false), 3);
+    }
+    #[test]
+    fn test_unicodeset_span_back_contains() {
+        let ex = vec![65, 68, 70, 75]; // A - D, F - K
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(check.span_back("XYZABFH", true), 3);
+        assert_eq!(check.span_back("ABCXYZ", true), 6);
+    }
+    #[test]
+    fn test_unicodeset_span_back_does_not_contain() {
+        let ex = vec![65, 68, 70, 75]; // A - D, F - K
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(check.span_back("ABCXYZ", false), 3);
+        assert_eq!(check.span_back("XYZABC", false), 6);
     }
 }
