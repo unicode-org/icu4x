@@ -33,8 +33,6 @@ pub struct DataResponse<'d> {
     // source: Cow<'static, str>,
 }
 
-// TODO: Should this be an implemention of std::borrow::Borrow?
-// TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
 impl<'d> DataResponse<'d> {
     /// Get an immutable reference to the payload in a Response object.
     /// The payload may or may not be owned by the Response.
