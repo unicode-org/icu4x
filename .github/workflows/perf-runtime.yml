@@ -18,6 +18,8 @@ jobs:
           - num-util
           - uniset
 
+    # example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/224144682/workflow
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -131,12 +133,3 @@ jobs:
           publish_dir: copy-to-ext-repo
 #          destination_dir: dev/${{ matrix.component }}/bench
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
-
-      - name: Debug branches
-        run: echo "git branch" && git branch
-
-      # - name: Debug gh-pages branch contents
-      #   run: echo "git checkout gh-pages && ls -l" && git checkout gh-pages && ls -l
-
-      # - name: Sleep to give time for Github to process cache save and external repo commit push
-      #   run: sleep 20
