@@ -150,11 +150,6 @@ impl UnicodeSet {
         self.contains_query(query as u32).is_some()
     }
 
-    /// Returns the inversion list as a slice
-    pub(crate) fn as_inversion_list(&self) -> &[u32] {
-        &self.inv_list
-    }
-
     /// Checks to see if the range is in the UnicodeSet, returns a Result
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
