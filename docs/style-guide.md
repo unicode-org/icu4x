@@ -37,11 +37,78 @@ Each component should have its own unique name in form `icu-{package}` which wil
 
 Within a single crate, exposure of structs and functions via their modules is up to the discretion of the author. As a rule of thumb, items that are required for common patterns should be available directly, while items needed only for a subset of use cases may be exposed via their modules.
 
-In the example below, since date and time skeletons aren't used in most common scenarios, they are exposed via the `skeleton` module. 
+In the example below, since date and time skeletons aren't used in most common scenarios, they are exposed via the `skeleton` module.
+
+### Naming Exported types :: suggested
+
+Follow the naming advice in [Naming - Rust API
+Guidelines](https://rust-lang.github.io/api-guidelines/naming.html) in general.
+
+The ICU4X project has adopted some internal conventions for naming exported
+types.  Note that the intention of the conventions is to have common guidelines
+that make ICU4X code look uniform.  It is not the intention to prescribe the
+one true way. As the discussion around naming in the broader Rust community is [still
+ongoing][namingd], we will use some conventions that have been popular in the
+current Rust code bases.
+
+[namingd]: https://internals.rust-lang.org/t/does-the-avoid-prefixing-the-type-with-the-name-of-the-module-style-rule-still-apply/12819
+
+#### Exported Type naming
+
+This concerns types that are available for public use outside of Rust.
+
+For similarly named types that serve analogous purposes in orthogonal APIs,
+prefer adopting slightly repetitive names as shown below:
+
+* **DO**: `pluralrules::PluralRulesOptions` and `listformat::ListFormatOptions`.
+* **DON'T**: `pluralrules::Options` and `listformat::Options`.
+* **Rationale**: The ICU4X team has a preference for importing types by name and not
+  using module names as disambiguators.  In the 'DO' case above, one would do:
+
+  ```rust
+  use {
+    pluralrules::PluralRulesOptions,
+	listformat::ListFormatOptions,
+  }
+
+  // ... later
+  let opt1 = PluralRulesOptions::new();  // vs pluralrules::Options::new()
+  let opt2 = ListFormatOptions::new();  // vx listofrmat::Options::new()
+  ```
+
+* **DO**: `pluralrules::PluralRulesError`
+* **DON'T**: `pluralrules::Error`
+* **Rationale**: In IDE and rustdoc, only an unqualified name  (`Error`)  appears,
+  leading to confusion about what the fully qualified error type is.
+
+#### Enums
+
+You can omit repetition in enum variants, as enums are usually qualified with
+their type.
+
+* **DO**:
+
+  ```rust
+  pub enum SomeError {
+    Argument,
+	InvalidData,
+  }
+  ```
+* **DON'T**:
+
+  ```rust
+  pub enum SomeError {
+    ArgumentError,
+	InvalidDataError,
+  }
+  ```
+* **Rationale**: In this case, as we will likely refer to the enum value by
+  `use SomeError` and then `SomeError::Argument`, additional repetition in the
+  name doesn't seem needed.
 
 #### Examples
 
-| Package | Crate | Standalone Import | ICU Meta-package | 
+| Package | Crate | Standalone Import | ICU Meta-package |
 |----|----|----|----|
 | locale | `icu-locale` | `use icu_locale::Locale` | `use icu::Locale` |
 | pluralrules | `icu-pluralrules` | `use icu_pluralrules::PluralRules` | `use icu::PluralRules` |
@@ -60,11 +127,11 @@ fn format() -> Result {
 
     let mut dt_ops = Default::default();
     dt_opts.date_style = DateTimeStyle::Long;
-    
+
     let dtf = DateTimeFormat::try_new(loc.clone(), dt_opts)?;
-    
+
     let lf = ListFormat::try_new(loc, Default::default())?;
-    
+
     assert_eq!(Skeleton::from_style(dt_opts.date_style).get(0), Some(SkeletonField::YYYY));
 }
 ```
@@ -150,7 +217,7 @@ fn main() {
         time_style: DateTimeStyle::Short,
         date_style: DateTimeStyle::Long,
     }
-  
+
     // Override
     opts.time_style = DateTimeStyle::Long;
 }
@@ -168,14 +235,14 @@ struct DateTimeOptions {
     meta: Option<TinyStr8>,
 }
 
-impl DateTimeOptions {    
+impl DateTimeOptions {
     pub fn get_meta(&self) -> Option<&str>;
     pub fn set_meta(&mut self, input: &str) -> Result;
 }
 
 fn main() {
     let mut opts = DateTimeOptions::default();
-  
+
     // Override
     opts.set_meta("foo")?;
 }

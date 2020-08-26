@@ -7,4 +7,5 @@ members = [
     "components/uniset",
     "components/locale",
     "components/num-util",
+    "components/pluralrules",
 ]
