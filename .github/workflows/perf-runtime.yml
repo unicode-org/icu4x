@@ -43,7 +43,7 @@ jobs:
           comment-on-alert: true
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
-          gh-pages-branch: gh-pages
+          gh-pages-branch: gh-pages  # requires one-time-only creation of `gh-pages` branch on remote repo
           auto-push: true
 
       - name: Save current branch
@@ -59,7 +59,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.6.4
         ## Only create docs for merges/pushes to master (skip PRs).
         ## Multiple unfinished PRs should not clobber docs from approved code.
-#        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           # Setup for publishing to an external repo using `deploy_key` option:
           #
@@ -72,8 +72,7 @@ jobs:
           # target repo where the Github Pages will be copied to.
           # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-#          external_repository: unicode-org/icu4x-docs
-          external_repository: echeran/icu4x-docs
+          external_repository: unicode-org/icu4x-docs
           publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
           publish_dir: copy-to-ext-repo
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
