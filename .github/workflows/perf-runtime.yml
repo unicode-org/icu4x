@@ -40,11 +40,11 @@ jobs:
           github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN_V2 }}  # this personal access token was added to ICU4X repo secrets with `repo` scope permissions
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'
-          comment-on-alert: true
+          #comment-on-alert: true
           fail-on-alert: true
-          alert-comment-cc-users: '@sffc @zbraniecki @echeran'
+          #alert-comment-cc-users: '@sffc @zbraniecki @echeran'
           gh-pages-branch: gh-pages  # requires one-time-only creation of `gh-pages` branch on remote repo
-          auto-push: true
+          auto-push: false
 
       - name: Save current branch
         run: git checkout -b temp-branch
