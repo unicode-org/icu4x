@@ -9,6 +9,7 @@ use icu_data_provider::iter::DataExporter;
 use icu_data_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::io::Write;
 use std::path::PathBuf;
 
 #[non_exhaustive]
@@ -113,9 +114,10 @@ impl FilesystemExporter {
 
         let mut manifest_path = result.root.to_path_buf();
         manifest_path.push(MANIFEST_FILE);
-        let manifest_file = fs::File::create(manifest_path)?;
-        let mut manifest_writer = serde_json::Serializer::pretty(manifest_file);
+        let mut manifest_file = fs::File::create(manifest_path)?;
+        let mut manifest_writer = serde_json::Serializer::pretty(&mut manifest_file);
         result.manifest.serialize(&mut manifest_writer)?;
+        writeln!(&mut manifest_file)?;
         Ok(result)
     }
 
