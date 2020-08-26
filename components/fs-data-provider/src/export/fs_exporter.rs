@@ -4,6 +4,7 @@ use crate::error::Error;
 use crate::manifest::AliasOption;
 use crate::manifest::Manifest;
 use crate::manifest::SyntaxOption;
+use crate::manifest::MANIFEST_FILE;
 use icu_data_provider::iter::DataExporter;
 use icu_data_provider::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -24,7 +25,7 @@ pub enum OverwriteOption {
 /// Options bag for initializing a FilesystemExporter.
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Options {
+pub struct ExporterOptions {
     /// Directory in the filesystem to write output.
     pub root: PathBuf,
     /// Strategy for de-duplicating locale data.
@@ -35,9 +36,9 @@ pub struct Options {
     pub verbose: bool,
 }
 
-impl Default for Options {
+impl Default for ExporterOptions {
     fn default() -> Self {
-        Options {
+        Self {
             root: PathBuf::from("icu4x_data"),
             aliasing: AliasOption::NoAliases,
             overwrite: OverwriteOption::CheckEmpty,
@@ -47,6 +48,7 @@ impl Default for Options {
 }
 
 /// A data exporter that writes data to a filesystem hierarchy.
+/// See the module-level docs for an example.
 pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
@@ -80,7 +82,10 @@ impl DataExporter for FilesystemExporter {
 }
 
 impl FilesystemExporter {
-    pub fn try_new(serializer: Box<dyn Serializer>, options: &Options) -> Result<Self, Error> {
+    pub fn try_new(
+        serializer: Box<dyn Serializer>,
+        options: &ExporterOptions,
+    ) -> Result<Self, Error> {
         let result = FilesystemExporter {
             root: options.root.to_path_buf(),
             manifest: Manifest {
@@ -107,16 +112,15 @@ impl FilesystemExporter {
         fs::create_dir_all(&options.root)?;
 
         let mut manifest_path = result.root.to_path_buf();
-        manifest_path.push("manifest");
-        // NOTE: Always use JSON for the manifest, even if the serializer isn't JSON.
-        // This way, we will always be able to start by reading manifest.json.
-        manifest_path.set_extension("json");
+        manifest_path.push(MANIFEST_FILE);
         let manifest_file = fs::File::create(manifest_path)?;
         let mut manifest_writer = serde_json::Serializer::pretty(manifest_file);
         result.manifest.serialize(&mut manifest_writer)?;
         Ok(result)
     }
 
+    /// This function must be called before the FilesystemExporter leaves scope.
+    /// It is recommended to flush after exporting each DataKey.
     pub fn flush(&mut self) -> Result<(), Error> {
         if let Some(mut alias_collection) = self.alias_collection.take() {
             alias_collection.flush()?;
@@ -129,7 +133,7 @@ impl FilesystemExporter {
         mut path_buf: PathBuf,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let file_extension = self.serializer.get_syntax().get_file_extension();
+        let file_extension = self.serializer.get_file_extension();
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
                 path_buf.set_extension(file_extension);
@@ -149,6 +153,7 @@ impl FilesystemExporter {
                         AliasCollection::new(aliasing::Options {
                             root: alias_root,
                             symlink_file_extension: "l",
+                            data_file_prefix: "data",
                             data_file_extension: file_extension,
                         })
                     })

@@ -5,17 +5,21 @@ use std::borrow::Cow;
 
 #[test]
 fn test_read_json() {
-    let provider = FsDataProvider::try_new("tests/testdata/json_plurals_37").unwrap();
+    let provider = FsDataProvider::try_new("tests/testdata/json_plurals_37")
+        .expect("Loading file from testdata directory");
     let response = provider
         .load(&DataRequest {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "sr".parse().unwrap(),
+                // TODO: Migrate to LanguageIdentifier macro
+                langid: "sr".parse().expect("Valid language tag"),
             },
         })
-        .unwrap();
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response.borrow_payload().unwrap();
+        .expect("The key should be present in the testdata");
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response
+        .borrow_payload()
+        .expect("The JSON should match the struct definition");
     assert_eq!(
         plurals_data,
         &structs::plurals::PluralRuleStringsV1 {

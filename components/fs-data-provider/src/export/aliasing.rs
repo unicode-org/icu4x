@@ -14,12 +14,14 @@ use std::os::windows::fs::symlink_file;
 pub(crate) struct Options<'a> {
     pub root: PathBuf,
     pub symlink_file_extension: &'a str,
+    pub data_file_prefix: &'a str,
     pub data_file_extension: &'a str,
 }
 
 pub(crate) struct AliasCollection<T> {
     pub root: PathBuf,
     symlink_file_extension: String,
+    data_file_prefix: String,
     data_file_extension: String,
     map: HashMap<T, Vec<PathBuf>>,
     flushed: bool,
@@ -30,6 +32,7 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
         AliasCollection {
             root: options.root,
             symlink_file_extension: options.symlink_file_extension.to_owned(),
+            data_file_prefix: options.data_file_prefix.to_owned(),
             data_file_extension: options.data_file_extension.to_owned(),
             map: HashMap::new(),
             flushed: false,
@@ -51,7 +54,7 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
         let mut unique_data_items: Vec<(&T, &Vec<PathBuf>)> = self.map.iter().collect();
         unique_data_items.sort(); // guarantee canonical order
         for (i, (data_item, link_paths)) in unique_data_items.iter().enumerate() {
-            let mut data_filename = PathBuf::from(format!("data{}", i));
+            let mut data_filename = PathBuf::from(format!("{}{}", self.data_file_prefix, i));
             data_filename.set_extension(&self.data_file_extension);
             let mut data_path = self.root.clone();
             data_path.extend(&data_filename);

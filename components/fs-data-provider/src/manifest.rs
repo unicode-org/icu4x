@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+/// File name of the manifest. The manifest always uses JSON, even if the serializer isn't JSON.
+pub const MANIFEST_FILE: &str = "manifest.json";
+
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum AliasOption {

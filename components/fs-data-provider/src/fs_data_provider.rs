@@ -1,7 +1,9 @@
 use crate::error::Error;
 use crate::manifest::Manifest;
+use crate::manifest::MANIFEST_FILE;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
+use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
@@ -9,7 +11,7 @@ use std::path::PathBuf;
 /// A data provider that reads ICU4X data from a filesystem directory.
 #[derive(Debug, PartialEq)]
 pub struct FsDataProvider {
-    root: PathBuf,
+    res_root: PathBuf,
     manifest: Manifest,
 }
 
@@ -17,12 +19,11 @@ impl FsDataProvider {
     /// Create a new FsDataProvider given a filesystem directory.
     pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, Error> {
         let root_path_buf: PathBuf = root.into();
-        let manifest_path = root_path_buf.join("manifest.json");
-        let file = File::open(&manifest_path)?;
-        let reader = BufReader::new(file);
-        let manifest: Manifest = serde_json::from_reader(reader)?;
+        let manifest_path = root_path_buf.join(MANIFEST_FILE);
+        let manifest_str = fs::read_to_string(&manifest_path)?;
+        let manifest: Manifest = serde_json::from_str(&manifest_str)?;
         Ok(Self {
-            root: root_path_buf,
+            res_root: root_path_buf,
             manifest,
         })
     }
@@ -31,7 +32,7 @@ impl FsDataProvider {
 impl DataProvider<'_> for FsDataProvider {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<'static>, DataError> {
         type Error = DataError;
-        let mut path_buf = self.root.clone();
+        let mut path_buf = self.res_root.clone();
         path_buf.extend(req.data_key.get_components().iter());
         if !path_buf.exists() {
             path_buf.pop();

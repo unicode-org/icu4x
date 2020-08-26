@@ -78,6 +78,14 @@ fn main() -> Result<(), Error> {
                 .help("Delete the output directory before writing data."),
         )
         .arg(
+            Arg::with_name("STYLE")
+                .long("style")
+                .takes_value(true)
+                .possible_value("compact")
+                .possible_value("pretty")
+                .help("JSON style when printing files."),
+        )
+        .arg(
             Arg::with_name("CLDR_CORE")
                 .long("cldr-core")
                 .value_name("PATH")
@@ -161,25 +169,30 @@ fn main() -> Result<(), Error> {
 
     let provider = CldrJsonDataProvider::new(&cldr_paths);
 
-    let json_serializer = Box::new(serializers::JsonSerializer::default());
+    let mut options = serializers::JsonSerializerOptions::default();
+    if let Some(value) = matches.value_of("STYLE") {
+        options.style = match value {
+            "compact" => serializers::StyleOption::Compact,
+            "pretty" => serializers::StyleOption::Pretty,
+            _ => unreachable!(),
+        };
+    }
+    let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
 
-    let mut exporter_options = fs_exporter::Options::default();
-    exporter_options.root = output_path;
-    exporter_options.aliasing = match matches.value_of("ALIASING") {
-        Some(value) => match value {
+    let mut options = fs_exporter::ExporterOptions::default();
+    options.root = output_path;
+    if let Some(value) = matches.value_of("ALIASING") {
+        options.aliasing = match value {
             "none" => manifest::AliasOption::NoAliases,
             "symlink" => manifest::AliasOption::Symlink,
             _ => unreachable!(),
-        },
-        None => manifest::AliasOption::NoAliases,
-    };
-    exporter_options.overwrite = if matches.is_present("OVERWRITE") {
-        fs_exporter::OverwriteOption::RemoveAndReplace
-    } else {
-        fs_exporter::OverwriteOption::CheckEmpty
-    };
-    exporter_options.verbose = matches.is_present("VERBOSE");
-    let mut exporter = FilesystemExporter::try_new(json_serializer, &exporter_options)?;
+        };
+    }
+    if matches.is_present("OVERWRITE") {
+        options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
+    }
+    options.verbose = matches.is_present("VERBOSE");
+    let mut exporter = FilesystemExporter::try_new(json_serializer, &options)?;
 
     for key in keys.iter() {
         let result = provider.export_key(key, &mut exporter);

@@ -12,15 +12,16 @@
 //! use icu_data_provider::iter::IterableDataProvider;
 //! use icu_fs_data_provider::FsDataProvider;
 //! use icu_fs_data_provider::export::fs_exporter;
-//! use icu_fs_data_provider::export::serializers::JsonSerializer;
+//! use icu_fs_data_provider::export::serializers;
 //! use std::path::PathBuf;
 //!
 //! let DEMO_PATH = std::env::temp_dir().join("icu4x_json_demo");
 //! let DATA_KEY = icu_data_key!(plurals: cardinal@1);
 //!
 //! // Set up the exporter
-//! let json_serializer = Box::new(JsonSerializer::default());
-//! let mut options = fs_exporter::Options::default();
+//! let mut options = serializers::JsonSerializerOptions::default();
+//! let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
+//! let mut options = fs_exporter::ExporterOptions::default();
 //! options.root = DEMO_PATH.clone();
 //! let mut exporter = fs_exporter::FilesystemExporter::try_new(json_serializer, &options)
 //!     .expect("Should successfully initialize data output directory");
