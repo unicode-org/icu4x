@@ -44,7 +44,7 @@ jobs:
           fail-on-alert: true
           alert-comment-cc-users: '@sffc @zbraniecki @echeran'
           gh-pages-branch: gh-pages  # requires one-time-only creation of `gh-pages` branch on remote repo
-          auto-push: true
+          #auto-push: true
 
       - name: Save current branch
         run: git checkout -b temp-branch
