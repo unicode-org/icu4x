@@ -18,7 +18,9 @@ jobs:
           - num-util
           - uniset
 
-    # example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/224144682/workflow
+    # If you are modifying and debugging is required, don't be afraid to get
+    # messy in a personal fork, if no better way to do it.
+    # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/224144682/workflow
 
     runs-on: ubuntu-latest
     steps:
@@ -33,10 +35,8 @@ jobs:
           name: Rust Benchmark
           tool: 'cargo'
           output-file-path: components/${{ matrix.component }}/output.txt
-          #benchmark-data-dir-path: dev/${{ matrix.component }}/bench
-          #external-data-json-path: dev/${{ matrix.component }}/bench/cache/benchmark-data.json
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
-          # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for commenting on the commit on alert
+          # Not using this action to push GH pages, so using GITHUB_TOKEN b/c it is just for making the comment-on-alert
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'
@@ -56,7 +56,7 @@ jobs:
         run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
 
       - name: Dashboard -> Github Pages
-        uses: peaceiris/actions-gh-pages@v3.7.0-7  # this is a beta version to enable `destination_dir`
+        uses: peaceiris/actions-gh-pages@v3.6.4
         ## Only create docs for merges/pushes to master (skip PRs).
         ## Multiple unfinished PRs should not clobber docs from approved code.
 #        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -74,8 +74,6 @@ jobs:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 #          external_repository: unicode-org/icu4x-docs
           external_repository: echeran/icu4x-docs
-          publish_branch: gh-pages  # same as `gh-pages-branch` in previous step
-#          publish_dir: dev/${{ matrix.component }}/bench
+          publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
           publish_dir: copy-to-ext-repo
-#          destination_dir: dev/${{ matrix.component }}/bench
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
