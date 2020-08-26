@@ -31,5 +31,5 @@ More information about the project can be found in [the docs subdirectory](docs/
 | Component | Runtime                                                               |
 |-----------|-----------------------------------------------------------------------|
 | locale    | [link](https://unicode-org.github.io/icu4x-docs/dev/locale/bench)     |
-| numutil   | [link](https://unicode-org.github.io/icu4x-docs/dev/numutil/bench)    |
+| num-util  | [link](https://unicode-org.github.io/icu4x-docs/dev/num-util/bench)   |
 | uniset    | [link](https://unicode-org.github.io/icu4x-docs/dev/uniset/bench)     |
