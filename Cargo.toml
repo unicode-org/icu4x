@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "components/cldr-json-data-provider",
     "components/data-provider",
     "components/icu",
     "components/icu4x",

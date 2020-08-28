@@ -1,0 +1,24 @@
+[package]
+name = "icu-cldr-json-data-provider"
+description = "Data provider that reads from a CLDR JSON data source"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+icu-data-provider = { path = "../data-provider" }
+icu-locale = { path = "../locale" }
+json = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde-tuple-vec-map = "1.0"
+tinystr = "0.3"

@@ -43,7 +43,7 @@ impl FromStr for JsonDataWarehouse {
     fn from_str(data: &str) -> Result<Self, DataError> {
         let data: JsonSchema = match serde_json::from_str(data) {
             Ok(data) => data,
-            Err(err) => return Err(DataError::ResourceError(Box::new(err))),
+            Err(err) => return Err(DataError::new_resc_error(err)),
         };
         Ok(Self { data })
     }
