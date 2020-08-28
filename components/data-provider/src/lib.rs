@@ -1,192 +1,85 @@
-#![no_std]
+//! `icu-data-provider` is one of the [`ICU4X`] components.
+//!
+//! It defines traits and structs for transmitting data through the ICU4X locale data pipeline.
+//! The primary trait is [`DataProvider`]. It has one method, which transforms a [`Request`] into
+//! a [`Response`]:
+//!
+//! ```ignore
+//! fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
+//! ```
+//!
+//! A Request contains a [`DataKey`] (a composition of a [`Category`] and sub-category, e.g.,
+//! "plurals/cardinal@1") and [`DataEntry`] (a language identifier and optional variant, e.g.,
+//! "fr") being requested. The Response contains the data payload corresponding to the Request.
+//!
+//! The most common types required for ICU4X DataProvider are included via the prelude:
+//!
+//! ```
+//! use icu_data_provider::prelude::*;
+//! use std::any::TypeId;
+//!
+//! // Types included:
+//! println!("{:?}", TypeId::of::<DataProvider>());
+//! println!("{:?}", TypeId::of::<DataError>());
+//! println!("{:?}", TypeId::of::<DataKey>());
+//! println!("{:?}", TypeId::of::<DataEntry>());
+//! println!("{:?}", TypeId::of::<DataCategory>());
+//! println!("{:?}", TypeId::of::<DataRequest>());
+//! println!("{:?}", TypeId::of::<DataResponse>());
+//! println!("{:?}", TypeId::of::<DataResponseBuilder>());
+//!
+//! // Macros included:
+//! assert_eq!("plurals/cardinal@1", icu_data_key!(plurals: cardinal@1).to_string());
+//! ```
+//!
+//! ## Types of Data Providers
+//!
+//! Any object implementing DataProvider can be used to supply ICU4X with locale data. ICU4X ships
+//! with some pre-built data providers:
+//!
+//! - [`FsDataProvider`][icu_fs_data_provider::FsDataProvider] reads structured data from the
+//!   filesystem. It can also write out that filesystem structure.
+//! - [`CldrJsonDataProvider`][icu_cldr_json_data_provider::CldrJsonDataProvider] reads structured
+//!   data directly from CLDR source files.
+//!
+//! ## Iterable Data Providers
+//!
+//! Data providers can implement [`DataEntryCollection`], allowing them to be used via the
+//! auto-implemented trait [`IterableDataProvider`]. This allows iteration over all DataEntry
+//! instances supported for a certain key in the data provider. This can be useful when
+//! transforming data between storage formats. For more information, see the [`iter`] module.
+//!
+//! ## InvariantDataProvider
+//!
+//! For testing or development purposes, this crate also offers [`InvariantDataProvider`], which
+//! returns fixed data that does not vary by locale. You must enable InvariantDataProvider via the
+//! `"invariant"` feature in your Cargo.toml file.
 
-extern crate no_std_compat as std;
+mod cloneable_any;
+mod data_entry;
+mod data_key;
+mod data_provider;
+mod error;
+pub mod iter;
+pub mod structs;
 
-pub mod decimal;
+#[cfg(feature = "invariant")]
+mod invariant;
 
-mod helpers;
+#[cfg(feature = "invariant")]
+pub use invariant::InvariantDataProvider;
 
-use core::ops::Deref;
-use helpers::CloneableAny;
-use std::any::Any;
-use std::any::TypeId;
-use std::borrow::Borrow;
-use std::borrow::BorrowMut;
-use std::borrow::Cow;
-use std::error::Error;
-use std::fmt::{self, Debug, Display};
-use std::prelude::v1::*;
-
-use icu_locale::LanguageIdentifier;
-
-/// A top-level collection of related data keys.
-#[derive(PartialEq, Copy, Clone, Debug)]
-pub enum Category {
-    Undefined,
-    Decimal,
-    PrivateUse,
+pub mod prelude {
+    pub use crate::data_entry::DataEntry;
+    pub use crate::data_key::DataCategory;
+    pub use crate::data_key::DataKey;
+    pub use crate::data_provider::DataProvider;
+    pub use crate::data_provider::DataRequest;
+    pub use crate::data_provider::DataResponse;
+    pub use crate::data_provider::DataResponseBuilder;
+    pub use crate::error::Error as DataError;
+    pub use crate::icu_data_key;
 }
 
-impl Display for Category {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Debug::fmt(self, f)
-    }
-}
-
-/// A specific key within a category.
-#[derive(PartialEq, Copy, Clone, Debug)]
-pub enum Key {
-    Undefined,
-    Decimal(decimal::Key),
-    PrivateUse(u32),
-}
-
-impl Display for Key {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Debug::fmt(self, f)
-    }
-}
-
-/// A struct to request a certain hunk of data from a data provider.
-#[derive(Debug, PartialEq, Clone)]
-pub struct Request {
-    pub langid: LanguageIdentifier,
-    pub category: Category,
-    pub key: Key,
-
-    // For now, the request payload is a string. If a more expressive type is needed in the
-    // future, it should implement PartialEq and Clone. Consider using a concrete type, rather
-    // than a detour through Any (like in Response), which complicates the code.
-    pub payload: Option<Cow<'static, str>>,
-}
-
-/// A response object containing a data hunk ("payload").
-#[derive(Debug, Clone)]
-pub struct Response<'d> {
-    pub data_langid: LanguageIdentifier,
-    payload: Cow<'d, dyn CloneableAny>,
-}
-
-#[derive(Debug)]
-pub enum PayloadError {
-    /// The type argument does not match the payload. The actual TypeId is provided.
-    TypeMismatchError(TypeId),
-}
-
-impl Display for PayloadError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO: should the Error Display be different from Debug?
-        Debug::fmt(self, f)
-    }
-}
-
-impl Error for PayloadError {}
-
-impl From<TypeId> for PayloadError {
-    fn from(type_id: TypeId) -> Self {
-        PayloadError::TypeMismatchError(type_id)
-    }
-}
-
-// TODO: Should this be an implemention of std::borrow::Borrow?
-// TODO: Should the error types be &dyn Any, like for Box<dyn Any>::downcast?
-impl<'d> Response<'d> {
-    /// Get an immutable reference to the payload in a Response object.
-    /// The payload may or may not be owned by the Response.
-    pub fn borrow_payload<T: 'static>(&self) -> Result<&T, PayloadError> {
-        let borrowed: &dyn CloneableAny = self.payload.borrow();
-        borrowed
-            .as_any()
-            .downcast_ref::<T>()
-            .ok_or_else(|| PayloadError::from(borrowed.as_any().type_id()))
-    }
-
-    /// Get a mutable reference to the payload in a Response object.
-    /// The payload may or may not be owned by the Response.
-    pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, PayloadError> {
-        let borrowed_mut: &mut dyn CloneableAny = self.payload.to_mut().borrow_mut();
-        // TODO: If I move this into the lambda, I get E0502. Why?
-        let type_id = borrowed_mut.as_any().type_id();
-        borrowed_mut
-            .as_any_mut()
-            .downcast_mut::<T>()
-            .ok_or_else(|| PayloadError::from(type_id))
-    }
-
-    /// Take ownership of the payload from a Response object. Consumes the Response object.
-    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'d, T>, PayloadError> {
-        match self.payload {
-            Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
-                Some(v) => Ok(Cow::Borrowed(v)),
-                None => Err(PayloadError::from(borrowed.as_any().type_id())),
-            },
-            Cow::Owned(boxed) => match boxed.into_any().downcast::<T>() {
-                Ok(boxed_t) => Ok(Cow::Owned(*boxed_t)),
-                Err(boxed_any) => Err(PayloadError::from(boxed_any.type_id())),
-            },
-        }
-    }
-}
-
-/// Builder class used to construct a Response.
-pub struct ResponseBuilder {
-    pub data_langid: LanguageIdentifier,
-}
-
-impl ResponseBuilder {
-    /// Construct a Response from the builder, with owned data.
-    /// Consumes both the builder and the data.
-    /// Returns the 'static lifetime since there is no borrowed data.
-    pub fn with_owned_payload<T: 'static + Clone + Debug>(self, t: T) -> Response<'static> {
-        Response {
-            data_langid: self.data_langid,
-            payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
-        }
-    }
-
-    /// Construct a Response from the builder, with borrowed data.
-    /// Consumes the builder, but not the data.
-    #[allow(clippy::needless_lifetimes)]
-    pub fn with_borrowed_payload<'d, T: 'static + Clone + Debug>(self, t: &'d T) -> Response<'d> {
-        Response {
-            data_langid: self.data_langid,
-            payload: Cow::Borrowed(t),
-        }
-    }
-}
-
-#[derive(Debug)]
-pub enum ResponseError {
-    UnsupportedCategoryError(Category),
-    UnsupportedKeyError(Category, Key),
-    ResourceError(Box<dyn Error>),
-}
-
-impl Display for ResponseError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // TODO: should the Error Display be different from Debug?
-        Debug::fmt(self, f)
-    }
-}
-
-impl Error for ResponseError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match self {
-            ResponseError::ResourceError(error) => Some(error.deref()),
-            _ => None,
-        }
-    }
-}
-
-/// An abstract data providewr that takes a request object and returns a response with a payload.
-/// Lifetimes:
-/// - 'a = lifetime of the DataProvider object
-/// - 'd = lifetime of the borrowed payload
-/// Note: 'd and 'a can be the same, but they do not need to be. For example, 'd = 'static if:
-/// 1. The provider always returns data that lives in static memory
-/// 2. The provider always returns owned data, not borrowed data
-// TODO: Make this async
-// #[async_trait]
-pub trait DataProvider<'a, 'd> {
-    fn load(&'a self, req: &Request) -> Result<Response<'d>, ResponseError>;
-}
+// Also include the same symbols at the top level for selective inclusion
+pub use prelude::*;
