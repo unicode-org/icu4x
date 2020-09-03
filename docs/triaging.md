@@ -4,7 +4,7 @@ Issue Triaging
 ICU4X uses GitHub for tracking feature requests and work items.
 
 - All issues should have a type label.
-    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3AT-invalid+-label%3AT-question+-label%3AT-task+-label%3AT-tests)
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid+)
 - All valid issues should have a component label.
     - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid+)
 - All *open* or *backlog* issues should have an assignee or **help wanted** label.
@@ -34,13 +34,7 @@ Labels starting with `T-` are *type* labels, indicating the type of deliverable 
 
 ### Component
 
-Labels starting with `C-` are *component* labels, indicating the functional component for the issue.  Every issue should have one:
-
-- **C-data** = related to data pipeline components.  Note: issues relating to data specific to a different component should use the more specific component.
-- **C-locale** = related to locale-related components.
-- **C-meta** = not specific to one specific component; affects ICU4X as a whole.
-- **C-process** = related to team processes, but not ICU4X code.
-- **C-test-infra** = related to integration test infrastructure components.  Note: issues relating to tests specific to a different component should use the more specific component (and can use the `T-tests` issue type).
+Labels starting with `C-` are *component* labels, indicating the functional component for the issue.  Every issue should have one.  Components may be added periodically; for the latest set of components, see the [label list](https://github.com/unicode-org/icu4x/labels?q=C-).
 
 ### Assignee
 
