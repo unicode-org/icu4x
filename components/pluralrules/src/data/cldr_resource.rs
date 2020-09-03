@@ -1,27 +1,27 @@
 use crate::PluralCategory;
 
-#[cfg(feature = "serde")]
+#[cfg(feature = "io")]
 use serde::{Deserialize, Serialize};
 
 #[derive(PartialEq, Debug)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "io", derive(Serialize, Deserialize))]
 pub struct Resource<'s> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "io", serde(borrow))]
     pub supplemental: Supplemental<'s>,
 }
 
 #[derive(PartialEq, Debug)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "io", derive(Serialize, Deserialize))]
 pub struct LocalePluralRules<'s> {
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-zero"))]
+    #[cfg_attr(feature = "io", serde(rename = "pluralRule-count-zero"))]
     pub zero: Option<&'s str>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-one"))]
+    #[cfg_attr(feature = "io", serde(rename = "pluralRule-count-one"))]
     pub one: Option<&'s str>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-two"))]
+    #[cfg_attr(feature = "io", serde(rename = "pluralRule-count-two"))]
     pub two: Option<&'s str>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-few"))]
+    #[cfg_attr(feature = "io", serde(rename = "pluralRule-count-few"))]
     pub few: Option<&'s str>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-many"))]
+    #[cfg_attr(feature = "io", serde(rename = "pluralRule-count-many"))]
     pub many: Option<&'s str>,
 }
 
@@ -40,20 +40,20 @@ impl<'s> LocalePluralRules<'s> {
 }
 
 #[derive(PartialEq, Debug)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "io", derive(Serialize, Deserialize))]
 pub struct Rules<'s>(
-    #[cfg_attr(feature = "serde", serde(with = "tuple_vec_map"))]
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "io", serde(with = "tuple_vec_map"))]
+    #[cfg_attr(feature = "io", serde(borrow))]
     pub Vec<(&'s str, LocalePluralRules<'s>)>,
 );
 
 #[derive(PartialEq, Debug)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "io", derive(Serialize, Deserialize))]
 pub struct Supplemental<'s> {
-    #[cfg_attr(feature = "serde", serde(rename = "plurals-type-cardinal"))]
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "io", serde(rename = "plurals-type-cardinal"))]
+    #[cfg_attr(feature = "io", serde(borrow))]
     pub plurals_type_cardinal: Option<Rules<'s>>,
-    #[cfg_attr(feature = "serde", serde(rename = "plurals-type-ordinal"))]
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "io", serde(rename = "plurals-type-ordinal"))]
+    #[cfg_attr(feature = "io", serde(borrow))]
     pub plurals_type_ordinal: Option<Rules<'s>>,
 }
