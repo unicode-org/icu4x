@@ -7,15 +7,14 @@ ICU4X uses GitHub for tracking feature requests and work items.
     - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3AT-invalid+-label%3AT-question+-label%3AT-task+-label%3AT-tests)
 - All valid issues should have a component label.
     - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid+)
-- All *open* or *backlog* issues should have an assignee or **help wanted** label.
+- All *open* issues should have an assignee or **help wanted** label.
     - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee)
-    - [Query: backlog issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+-label%3A%22help+wanted%22+no%3Aassignee)
 - All valid *closed* issues should have a resolution, linked pull request, or the **question** or **task** type.
-    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3Abacklog+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AT-question+-label%3AT-invalid+-label%3AT-task+)
-- If an issue is open, the issue should be actionable. Open issues should generally have an activity update once every 60 days.
-    - [Query: least recently updated open issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc)
-- If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and be closed.  The backlog should be checked periodically for issues that should be reopened.
-    - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+sort%3Aupdated-desc)
+    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AT-question+-label%3AT-invalid+-label%3AT-task+)
+- If an issue is open and not labeled **backlog**, the issue should be actionable. Open issues should be assigned to a milestone.
+    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Abacklog)
+- If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and remain open.  The backlog should be checked periodically for issues that should be re-prioritized.
+    - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+label%3Abacklog+sort%3Aupdated-desc+)
 
 ## Fields
 
@@ -44,11 +43,14 @@ For more on the difference between *responsible*, *accountable*, *consulted*, an
 
 An issue may have the **help wanted** label if there is no assignee.
 
+### Milestone
+
+All open issues, except for those with the **backlog** label, should be assigned to a milestone.  Milestones may be associated with a timeline (e.g., end of quarter) or release (e.g., version 0.1).  All milestones should have a due date, and milestones with approaching due dates will be viewed in the weekly meeting.
+
 ### Resolution
 
 All *closed* issues should have either (1) the "question" type, (2) a linked pull request, or (3) one of the following labels:
 
-- **backlog** = the issue is not fixed, but it could be revisited in the future.
 - **R-duplicate** = the issue is a duplicate of some other issue.
 - **R-needs-more-info** = the issue might be valid, but the subcommittee either does not understand the issue or was unable to reproduce it.  The reporter should provide more information.
 - **R-obsolete** = the issue is superseded or no longer relevant.
@@ -62,5 +64,6 @@ An issue may have one or more *area* labels, indicating subject areas that the i
 
 The following labels are optional and can be applied to an issue if appropriate:
 
+- **backlog** = the issue is not fixed, but it could be revisited in the future.
 - **good first issue** = this would be good for a new contributor.
 - **v1** = revisit this issue before launching ICU4X v1 stable.
