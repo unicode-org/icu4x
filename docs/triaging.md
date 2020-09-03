@@ -4,9 +4,9 @@ Issue Triaging
 ICU4X uses GitHub for tracking feature requests and work items.
 
 - All issues should have a type label.
-    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid+)
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3AT-invalid+-label%3AT-question+-label%3AT-task+-label%3AT-tests)
 - All valid issues should have a component label.
-    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid+)
+    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3AT-invalid+)
 - All *open* or *backlog* issues should have an assignee or **help wanted** label.
     - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee)
     - [Query: backlog issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+label%3Abacklog+-label%3A%22help+wanted%22+no%3Aassignee)
