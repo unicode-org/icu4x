@@ -10,7 +10,7 @@ ICU4X uses GitHub for tracking feature requests and work items.
 - All *open* issues should have an assignee or **help wanted** label.
     - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee)
 - All valid *closed* issues should have a resolution, linked pull request, or the **question** or **task** type.
-    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AT-question+-label%3AT-invalid+-label%3AT-task+)
+    - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3AR-as-designed+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AT-question+-label%3AT-invalid+-label%3AT-task+)
 - If an issue is open and not labeled **backlog**, the issue should be actionable. Open issues should be assigned to a milestone.
     - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Abacklog)
 - If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and remain open.  The backlog should be checked periodically for issues that should be re-prioritized.
@@ -54,7 +54,7 @@ All *closed* issues should have either (1) the "question" type, (2) a linked pul
 - **R-duplicate** = the issue is a duplicate of some other issue.
 - **R-needs-more-info** = the issue might be valid, but the subcommittee either does not understand the issue or was unable to reproduce it.  The reporter should provide more information.
 - **R-obsolete** = the issue is superseded or no longer relevant.
-- **R-working-as-designed** = the issue is valid, but the subcommittee has concluded that the library is working as intended.
+- **R-as-designed** = the issue is valid, but the subcommittee has concluded that the library is working as intended.
 
 ### Area
 
