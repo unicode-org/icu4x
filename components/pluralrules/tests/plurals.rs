@@ -1,10 +1,13 @@
+use icu_cldr_json_data_provider::{CldrJsonDataProvider, CldrPaths};
 use icu_locale::LanguageIdentifier;
-use icu_pluralrules::data::provider::DummyDataProvider;
 use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
 
 #[test]
 fn test_plural_rules() {
-    let dp = DummyDataProvider::default();
+    let mut paths = CldrPaths::default();
+    paths.cldr_core = Ok("./data/cldr-core".into());
+
+    let dp = CldrJsonDataProvider::new(&paths);
 
     let lang: LanguageIdentifier = "en".parse().unwrap();
 
@@ -15,7 +18,10 @@ fn test_plural_rules() {
 
 #[test]
 fn test_plural_rules_missing() {
-    let dp = DummyDataProvider::default();
+    let mut paths = CldrPaths::default();
+    paths.cldr_core = Ok("./data/cldr-core".into());
+
+    let dp = CldrJsonDataProvider::new(&paths);
 
     let lang: LanguageIdentifier = "xx".parse().unwrap();
 

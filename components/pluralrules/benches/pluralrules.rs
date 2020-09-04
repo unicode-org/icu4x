@@ -41,11 +41,11 @@ fn plurals_bench(c: &mut Criterion) {
 
     group.finish();
 
-    #[cfg(feature = "io-json")]
+    #[cfg(feature = "cldr-json")]
     {
         use criterion::BenchmarkId;
+        use icu_cldr_json_data_provider::{CldrJsonDataProvider, CldrPaths};
         use icu_locale::LanguageIdentifier;
-        use icu_pluralrules::data::io::json::DataProvider;
         use icu_pluralrules::PluralOperands;
         use icu_pluralrules::{PluralRuleType, PluralRules};
 
@@ -53,10 +53,14 @@ fn plurals_bench(c: &mut Criterion) {
         let num_data: fixtures::NumbersFixture =
             helpers::read_fixture(path).expect("Failed to read a fixture");
 
+        let loc: LanguageIdentifier = "pl".parse().unwrap();
+        let mut paths = CldrPaths::default();
+        paths.cldr_core = Ok("./data/cldr-core".into());
+
+        let dtp = CldrJsonDataProvider::new(&paths);
+
         c.bench_function("plurals/convert+select/json", |b| {
-            let loc: LanguageIdentifier = "pl".parse().unwrap();
-            let dtp = DataProvider {};
-            let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &dtp).unwrap();
+            let pr = PluralRules::try_new(loc.clone(), PluralRuleType::Cardinal, &dtp).unwrap();
             b.iter(|| {
                 for s in &num_data.usize {
                     let _ = pr.select(*s);
@@ -65,9 +69,7 @@ fn plurals_bench(c: &mut Criterion) {
         });
 
         c.bench_function("plurals/select/json", |b| {
-            let loc: LanguageIdentifier = "pl".parse().unwrap();
-            let dtp = DataProvider {};
-            let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &dtp).unwrap();
+            let pr = PluralRules::try_new(loc.clone(), PluralRuleType::Cardinal, &dtp).unwrap();
             let operands: Vec<PluralOperands> =
                 num_data.usize.iter().map(|d| (*d).into()).collect();
             b.iter(|| {
@@ -81,7 +83,6 @@ fn plurals_bench(c: &mut Criterion) {
             BenchmarkId::new("plurals/construct/json", data.langs.len()),
             &data.langs,
             |b, langs| {
-                let dtp = DataProvider {};
                 b.iter(|| {
                     for lang in langs {
                         PluralRules::try_new(lang.clone(), PluralRuleType::Ordinal, &dtp).unwrap();

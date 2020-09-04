@@ -281,6 +281,9 @@
         "pluralRule-count-one": "n = 1 @integer 1",
         "pluralRule-count-other": " @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …"
       },
+      "root": {
+        "pluralRule-count-other": " @integer 0~15, 100, 1000, 10000, 100000, 1000000, …"
+      },
       "ru": {
         "pluralRule-count-other": " @integer 0~15, 100, 1000, 10000, 100000, 1000000, …"
       },
