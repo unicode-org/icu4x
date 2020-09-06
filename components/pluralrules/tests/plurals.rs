@@ -1,13 +1,11 @@
-use icu_cldr_json_data_provider::{CldrJsonDataProvider, CldrPaths};
+use icu_fs_data_provider::FsDataProvider;
 use icu_locale::LanguageIdentifier;
 use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
 
 #[test]
 fn test_plural_rules() {
-    let mut paths = CldrPaths::default();
-    paths.cldr_core = Ok("./data/cldr-core".into());
-
-    let dp = CldrJsonDataProvider::new(&paths);
+    let dp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+        .expect("Loading file from testdata directory");
 
     let lang: LanguageIdentifier = "en".parse().unwrap();
 
@@ -18,10 +16,8 @@ fn test_plural_rules() {
 
 #[test]
 fn test_plural_rules_missing() {
-    let mut paths = CldrPaths::default();
-    paths.cldr_core = Ok("./data/cldr-core".into());
-
-    let dp = CldrJsonDataProvider::new(&paths);
+    let dp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+        .expect("Loading file from testdata directory");
 
     let lang: LanguageIdentifier = "xx".parse().unwrap();
 

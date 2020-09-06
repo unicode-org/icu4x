@@ -1,0 +1,1 @@
+{"zero":"n = 0 @integer 0 @decimal 0.0, 0.00, 0.000, 0.0000","one":"n = 1 @integer 1 @decimal 1.0, 1.00, 1.000, 1.0000","two":"n = 2 @integer 2 @decimal 2.0, 2.00, 2.000, 2.0000","few":"n = 3 @integer 3 @decimal 3.0, 3.00, 3.000, 3.0000","many":"n = 6 @integer 6 @decimal 6.0, 6.00, 6.000, 6.0000"}

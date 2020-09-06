@@ -1,0 +1,1 @@
+{"zero":null,"one":"i = 1 @integer 1","two":null,"few":null,"many":"i = 0 or i % 100 = 2..20,40,60,80 @integer 0, 2~16, 102, 1002, …"}

@@ -11,9 +11,8 @@
 //! use std::borrow::Cow;
 //! use std::convert::TryInto;
 //!
-//! // Dummy provider always returns data for "en"
-//! let langid: LanguageIdentifier = "en".parse()
-//!     .expect("Failed to parse a language identifier.");
+//! // Dummy provider always returns data for "und"
+//! let langid = LanguageIdentifier::default();
 //!
 //! // Dummy provider always returns data for cardinal
 //! let type_ = PluralRuleType::Cardinal;

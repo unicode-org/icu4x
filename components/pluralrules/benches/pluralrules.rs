@@ -41,10 +41,9 @@ fn plurals_bench(c: &mut Criterion) {
 
     group.finish();
 
-    #[cfg(feature = "cldr-json")]
     {
         use criterion::BenchmarkId;
-        use icu_cldr_json_data_provider::{CldrJsonDataProvider, CldrPaths};
+        use icu_fs_data_provider::FsDataProvider;
         use icu_locale::LanguageIdentifier;
         use icu_pluralrules::PluralOperands;
         use icu_pluralrules::{PluralRuleType, PluralRules};
@@ -54,12 +53,11 @@ fn plurals_bench(c: &mut Criterion) {
             helpers::read_fixture(path).expect("Failed to read a fixture");
 
         let loc: LanguageIdentifier = "pl".parse().unwrap();
-        let mut paths = CldrPaths::default();
-        paths.cldr_core = Ok("./data/cldr-core".into());
 
-        let dtp = CldrJsonDataProvider::new(&paths);
+        let dtp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+            .expect("Loading file from testdata directory");
 
-        c.bench_function("plurals/convert+select/json", |b| {
+        c.bench_function("plurals/convert+select/fs", |b| {
             let pr = PluralRules::try_new(loc.clone(), PluralRuleType::Cardinal, &dtp).unwrap();
             b.iter(|| {
                 for s in &num_data.usize {
@@ -68,7 +66,7 @@ fn plurals_bench(c: &mut Criterion) {
             })
         });
 
-        c.bench_function("plurals/select/json", |b| {
+        c.bench_function("plurals/select/fs", |b| {
             let pr = PluralRules::try_new(loc.clone(), PluralRuleType::Cardinal, &dtp).unwrap();
             let operands: Vec<PluralOperands> =
                 num_data.usize.iter().map(|d| (*d).into()).collect();
@@ -80,7 +78,7 @@ fn plurals_bench(c: &mut Criterion) {
         });
 
         c.bench_with_input(
-            BenchmarkId::new("plurals/construct/json", data.langs.len()),
+            BenchmarkId::new("plurals/construct/fs", data.langs.len()),
             &data.langs,
             |b, langs| {
                 b.iter(|| {

@@ -17,7 +17,6 @@ include = [
 [dependencies]
 icu-locale = { path = "../locale" }
 icu-data-provider = { path = "../data-provider" }
-icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -25,11 +24,10 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
 icu-locale = { path = "../locale", features = ["serde"] }
 icu-data-provider = { path = "../data-provider", features = ["invariant"] }
-icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
+icu-fs-data-provider = { path = "../fs-data-provider" }
 
 [features]
 default = []
-cldr-json = ["icu-cldr-json-data-provider"]
 
 [[bench]]
 name = "pluralrules"
