@@ -5,6 +5,7 @@ use crate::CldrPaths;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs::plurals::*;
+use icu_pluralrules::rules::{parse, serialize};
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
@@ -124,7 +125,11 @@ impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1 {
     fn from(other: &cldr_json::LocalePluralRules) -> PluralRuleStringsV1 {
         #[allow(clippy::ptr_arg)]
         fn convert(s: &Cow<'static, str>) -> Cow<'static, str> {
-            s.clone()
+            let mut ast = parse(s.as_bytes()).expect("Rule parsing failed.");
+            ast.samples = None;
+            let mut result = String::with_capacity(s.len());
+            serialize(&ast, &mut result).expect("Serialization failed.");
+            result.into()
         }
         PluralRuleStringsV1 {
             zero: other.zero.as_ref().map(convert),
@@ -200,16 +205,13 @@ fn test_basic() {
 
     assert_eq!(None, cs_rules.zero);
     assert_eq!(
-        Some("i = 1 and v = 0 @integer 1"),
+        Some("i = 1 and v = 0"),
         cs_rules.one.as_ref().map(|v| v.borrow())
     );
     assert_eq!(None, cs_rules.two);
     assert_eq!(
-        Some("i = 2..4 and v = 0 @integer 2~4"),
+        Some("i = 2..4 and v = 0"),
         cs_rules.few.as_ref().map(|v| v.borrow())
     );
-    assert_eq!(
-        Some("v != 0   @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …"),
-        cs_rules.many.as_ref().map(|v| v.borrow())
-    );
+    assert_eq!(Some("v != 0"), cs_rules.many.as_ref().map(|v| v.borrow()));
 }
