@@ -53,6 +53,7 @@ mod uniset;
 mod builder;
 mod conversions;
 mod utils;
+mod gen_properties;
 
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
