@@ -4,8 +4,7 @@ use std::iter::Iterator;
 use std::path::Path;
 use std::collections::{HashMap, HashSet};
 
-// use crate::UnicodeSet;
-use super::uniset::UnicodeSet;
+use icu_unicodeset::UnicodeSet;
 
 fn get_line_str_opt(line_result: Result<String, Error>) -> Option<String> {
     if let Ok(line) = line_result {

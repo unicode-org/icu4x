@@ -31,10 +31,8 @@ bench = []
 [[bench]]
 name = "inv_list"
 harness = false
-<<<<<<< HEAD
-=======
 
 [[bin]]
 name = "genprops"
-path = "src/gen_properties.rs"
->>>>>>> b391af9 (adds starter code (using plain file) for parsing PPUCD)
+path = "src/bin/gen_properties.rs"
+test = true
