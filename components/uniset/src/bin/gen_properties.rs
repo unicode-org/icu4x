@@ -8,7 +8,6 @@ use std::path::Path;
 
 use icu_unicodeset::UnicodeSet;
 
-
 //
 // Can run with command in root of icu_unicodeset crate:
 //   cargo run --bin genprops <ppucd-file>
@@ -93,6 +92,10 @@ fn get_defaults_prop_vals(line: &String) -> HashMap<String, String> {
     props_vals
 }
 
+fn is_block_line(line: &String) -> bool {
+    line.starts_with("block;")
+}
+
 fn get_block_range_prop_vals(line: &String) -> (UnicodeSet, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"block", &line_parts[0]);
@@ -119,6 +122,22 @@ fn get_block_range_prop_vals(line: &String) -> (UnicodeSet, HashMap<String, Stri
     return (range, props_vals);
 }
 
+fn is_code_point_line(line: &String) -> bool {
+    line.starts_with("cp;")
+}
+
+fn get_code_point_prop_vals(line: &String) -> (u32, HashMap<String, String>) {
+    let line_parts = split_line(&line);
+    assert_eq!(&"cp", &line_parts[0]);
+
+    let code_point_str = &line_parts[1];
+    let code_point: u32 = u32::from_str_radix(code_point_str, 16).unwrap();
+
+    let props_vals = get_data_line_prop_vals(&line_parts);
+
+    return (code_point, props_vals);
+}
+
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
     let file = File::open(filename)?;
@@ -139,11 +158,24 @@ fn main() {
         
         let mut defaults: HashMap<String, String> = HashMap::new();
 
+        // TODO: need advice - how should we not add Hash and Eq from UnicodeSet unless we need it?
+        let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
+
+        let mut code_point_overrides: HashMap<u32, HashMap<String, String>> = HashMap::new();
+
+        // let mut code_points: HashMap<u32, HashMap<String, String>> ;
+
         for line in parseable_lines {
             if is_property_line(&line) {
                 update_aliases(&mut prop_aliases, &line);
             } else if is_defaults_line(&line) {
                 defaults = get_defaults_prop_vals(&line);
+            } else if is_block_line(&line) {
+                let (range, prop_vals) = get_block_range_prop_vals(&line);
+                &blocks.insert(range, prop_vals);
+            } else if is_code_point_line(&line) {
+                let (code_point, prop_vals) = get_code_point_prop_vals(&line);
+                &code_point_overrides.insert(code_point, prop_vals);
             } else {
                 println!("{}", &line);
             }
@@ -273,6 +305,41 @@ mod test {
         let (range, prop_vals) = get_block_range_prop_vals(&line);
 
         assert_eq!(exp_range, range);
+        assert_eq!(exp_prop_vals, prop_vals);
+    }
+
+    #[test]
+    fn code_point_prop_vals_test() {
+        let line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
+
+        let mut exp_prop_vals: HashMap<String, String> = HashMap::new();
+        &exp_prop_vals.insert(
+            String::from("bc"),
+            String::from("WS"));
+        &exp_prop_vals.insert(
+            String::from("gc"),
+            String::from("Zs"));
+        &exp_prop_vals.insert(
+            String::from("lb"),
+            String::from("SP"));
+        &exp_prop_vals.insert(
+            String::from("na"),
+            String::from("SPACE"));
+        &exp_prop_vals.insert(
+            String::from("Name_Alias"),
+            String::from("abbreviation=SP"));
+        &exp_prop_vals.insert(
+            String::from("SB"),
+            String::from("SP"));
+        &exp_prop_vals.insert(
+            String::from("WB"),
+            String::from("WSegSpace"));
+
+        let exp_code_point: u32 = 32;
+
+        let (code_point, prop_vals) = get_code_point_prop_vals(&line);
+
+        assert_eq!(exp_code_point, code_point);
         assert_eq!(exp_prop_vals, prop_vals);
     }
 }
