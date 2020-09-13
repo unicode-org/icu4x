@@ -1,10 +1,17 @@
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{self, BufRead, Error};
+use std::u32;
 use std::iter::Iterator;
 use std::path::Path;
-use std::collections::{HashMap, HashSet};
 
 use icu_unicodeset::UnicodeSet;
+
+
+//
+// Can run with command in root of icu_unicodeset crate:
+//   cargo run --bin genprops
+//
 
 fn get_line_str_opt(line_result: Result<String, Error>) -> Option<String> {
     if let Ok(line) = line_result {
@@ -48,7 +55,7 @@ fn is_property_line(line: &String) -> bool {
 }
 
 fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &String) {
-    println!("{}", &line);
+    // println!("{}", &line);
 
     let mut line_parts = split_line(&line);
     assert_eq!(&"property", &line_parts[0]);
@@ -91,8 +98,8 @@ fn get_block_range_prop_vals(line: &String) -> (UnicodeSet, HashMap<String, Stri
 
     let range_str = &line_parts[1];
     let range_bound_strs = range_str.split("..").collect::<Vec<_>>();
-    let range_start: &u32 = &range_bound_strs[0].parse::<u32>().unwrap();
-    let range_end: &u32 = &range_bound_strs[1].parse::<u32>().unwrap(); // inclusive end val in PPUCD
+    let range_start: &u32 = &u32::from_str_radix(&range_bound_strs[0], 16).unwrap();
+    let range_end: &u32 = &u32::from_str_radix(&range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
     let inv_list_start: u32 = *range_start;
     let inv_list_end: u32 = *range_end + 1;
     let inv_list: Vec<u32> = vec![inv_list_start, inv_list_end];
@@ -138,7 +145,7 @@ fn main() {
             } else if is_defaults_line(&line) {
                 defaults = get_defaults_prop_vals(&line);
             } else {
-                // println!("{}", &line);
+                println!("{}", &line);
             }
         }
 
@@ -184,6 +191,7 @@ mod test {
     #[test]
     fn get_data_line_prop_vals_test() {
         let line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
+
         let mut exp_prop_vals: HashMap<String, String> = HashMap::new();
         &exp_prop_vals.insert(
             String::from("bc"),
@@ -232,5 +240,39 @@ mod test {
         &exp_prop_aliases.insert(String::from("Upper"), exp_aliases);
 
         assert_eq!(&exp_prop_aliases, &prop_aliases);
+    }
+
+    #[test]
+    fn block_range_prop_vals_test() {
+        let line = String::from("block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy");
+
+        let mut exp_prop_vals: HashMap<String, String> = HashMap::new();
+        &exp_prop_vals.insert(
+            String::from("age"),
+            String::from("1.1"));
+        &exp_prop_vals.insert(
+            String::from("blk"),
+            String::from("ASCII"));
+        &exp_prop_vals.insert(
+            String::from("ea"),
+            String::from("Na"));
+        &exp_prop_vals.insert(
+            String::from("gc"),
+            String::from("Cc"));
+        &exp_prop_vals.insert(
+            String::from("lb"),
+            String::from("AL"));
+        &exp_prop_vals.insert(
+            String::from("sc"),
+            String::from("Zyyy"));
+
+        let exp_range_inv_list: Vec<u32> = vec![0, 128]; // PPUCD: end val is inclusive;
+                                                         // inversion list: end val exclusive
+        let exp_range = UnicodeSet::from_inversion_list(exp_range_inv_list).unwrap();
+
+        let (range, prop_vals) = get_block_range_prop_vals(&line);
+
+        assert_eq!(exp_range, range);
+        assert_eq!(exp_prop_vals, prop_vals);
     }
 }
