@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::env;
 use std::fs::File;
 use std::io::{self, BufRead, Error};
 use std::u32;
@@ -10,7 +11,7 @@ use icu_unicodeset::UnicodeSet;
 
 //
 // Can run with command in root of icu_unicodeset crate:
-//   cargo run --bin genprops
+//   cargo run --bin genprops <ppucd-file>
 //
 
 fn get_line_str_opt(line_result: Result<String, Error>) -> Option<String> {
@@ -125,9 +126,8 @@ where P: AsRef<Path>, {
 }
 
 fn main() {
-    let filename = "ppucd-test.txt";
-
-    // println!("In file {}", filename);
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
 
     if let Ok(lines) = read_lines(filename) {
 
