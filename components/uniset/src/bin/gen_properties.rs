@@ -31,18 +31,18 @@ fn get_line_str_opt(line_result: Result<String, Error>) -> Option<String> {
     }
 }
 
-fn split_line(line: &String) -> Vec<&str> {
-    line.split(";").collect::<Vec<_>>()
+fn split_line(line: &str) -> Vec<&str> {
+    line.split(';').collect::<Vec<_>>()
 }
 
-fn get_data_line_prop_vals(data_line_parts: &Vec<&str>) -> HashMap<String, String> {
+fn get_data_line_prop_vals(data_line_parts: &[&str]) -> HashMap<String, String> {
     let mut m = HashMap::new();
     // idx 0 = line type identifier (property, value, defaults, blk, cp)
     // idx 1 = data line code point value or code point range
-    let mut line_parts = data_line_parts.clone();
+    let mut line_parts = data_line_parts.to_owned();
     line_parts.drain(0..2);
     for prop_str in line_parts {
-        let first_equals_idx = prop_str.find("=");
+        let first_equals_idx = prop_str.find('=');
         if let Some(idx) = first_equals_idx {
             // Properties with an "=" in their string have values associated
             // (ex: enumerated properties).
@@ -50,34 +50,34 @@ fn get_data_line_prop_vals(data_line_parts: &Vec<&str>) -> HashMap<String, Strin
             let key = String::from(prop_key_val.0);
             let mut val = String::from(prop_key_val.1);
             val.drain(0..1); // get rid of first "=" that we split on
-            &m.insert(key, val);
+            m.insert(key, val);
         } else {
             // For properties that don't take values, let their value in the map be the prop name itself
             // This applies to binary properties.
-            &m.insert(String::from(prop_str), String::from(prop_str));
+            m.insert(String::from(prop_str), String::from(prop_str));
         }
     }
     m
 }
 
-fn is_skip_ppucd_line(line: &String) -> bool {
-    line.starts_with("#") || line.starts_with("ucd") || line.trim().len() == 0
+fn is_skip_ppucd_line(line: &str) -> bool {
+    line.starts_with('#') || line.starts_with("ucd") || line.is_empty()
 }
 
-fn is_property_line(line: &String) -> bool {
+fn is_property_line(line: &str) -> bool {
     line.starts_with("property;")
 }
 
 /// For a property definition line, update the property aliases map.
 /// Only operate on binary properties, currently.
-fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &String) {
+fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &str) {
     // println!("{}", &line);
 
     let mut line_parts = split_line(&line);
     assert_eq!(&"property", &line_parts[0]);
     let prop_type = &line_parts[1];
     if prop_type == &"Binary" {
-        &line_parts.drain(0..2);
+        line_parts.drain(0..2);
 
         // TODO: ask Markus what to do with the property lines that appear to have
         // no canonical name
@@ -86,33 +86,32 @@ fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &St
         // property;Binary;;graph
         // property;Binary;;print
         // property;Binary;;xdigit
-        if &line_parts[0] == &"" {
-            &line_parts.drain(0..1);
+        if line_parts[0] == "" {
+            line_parts.drain(0..1);
         }
 
-        let canonical_name = String::from(*&line_parts[0]);
+        let canonical_name = String::from(line_parts[0]);
         let all_names: Vec<String> = line_parts.iter().map(|line| String::from(*line)).collect();
         let all_names_set: HashSet<String> = all_names.into_iter().collect();
-        &prop_aliases.insert(canonical_name, all_names_set);
+        prop_aliases.insert(canonical_name, all_names_set);
     }
 }
 
-fn is_defaults_line(line: &String) -> bool {
+fn is_defaults_line(line: &str) -> bool {
     line.starts_with("defaults;")
 }
 
-fn get_defaults_prop_vals(line: &String) -> HashMap<String, String> {
+fn get_defaults_prop_vals(line: &str) -> HashMap<String, String> {
     let line_parts = split_line(&line);
     assert_eq!(&"defaults", &line_parts[0]);
-    let props_vals = get_data_line_prop_vals(&line_parts);
-    props_vals
+    get_data_line_prop_vals(&line_parts)
 }
 
-fn is_block_line(line: &String) -> bool {
+fn is_block_line(line: &str) -> bool {
     line.starts_with("block;")
 }
 
-fn get_block_range_prop_vals(line: &String) -> (UnicodeSet, HashMap<String, String>) {
+fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"block", &line_parts[0]);
 
@@ -131,17 +130,16 @@ fn get_block_range_prop_vals(line: &String) -> (UnicodeSet, HashMap<String, Stri
         range
     } else {
         let inv_list: Vec<u32> = Vec::default();
-        let empty_range = UnicodeSet::from_inversion_list(inv_list).unwrap();
-        empty_range
+        UnicodeSet::from_inversion_list(inv_list).unwrap()
     };
-    return (range, props_vals);
+    (range, props_vals)
 }
 
-fn is_code_point_line(line: &String) -> bool {
+fn is_code_point_line(line: &str) -> bool {
     line.starts_with("cp;")
 }
 
-fn get_code_point_overrides(line: &String) -> (UnicodeSet, HashMap<String, String>) {
+fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"cp", &line_parts[0]);
 
@@ -167,10 +165,9 @@ fn get_code_point_overrides(line: &String) -> (UnicodeSet, HashMap<String, Strin
         range
     } else {
         let inv_list: Vec<u32> = Vec::default();
-        let empty_range = UnicodeSet::from_inversion_list(inv_list).unwrap();
-        empty_range
+        UnicodeSet::from_inversion_list(inv_list).unwrap()
     };
-    return (range, props_vals);
+    (range, props_vals)
 }
 
 fn get_code_point_prop_vals(
@@ -189,7 +186,7 @@ fn get_code_point_prop_vals(
     for (range, block_prop_vals) in blocks {
         if range.contains(char::from_u32(code_point).unwrap()) {
             let block_prop_vals_clone = block_prop_vals
-                .into_iter()
+                .iter()
                 .map(|(k, v)| (k.clone(), v.clone()));
             prop_vals.extend(block_prop_vals_clone);
         }
@@ -199,7 +196,7 @@ fn get_code_point_prop_vals(
     for (range, code_point_prop_vals) in code_point_overrides {
         if range.contains(char::from_u32(code_point).unwrap()) {
             let code_point_override_prop_vals_clone = code_point_prop_vals
-                .into_iter()
+                .iter()
                 .map(|(k, v)| (k.clone(), v.clone()));
             prop_vals.extend(code_point_override_prop_vals_clone);
         }
@@ -220,12 +217,12 @@ fn get_binary_prop_unisets(
             let code_point_prop_names: HashSet<String> =
                 code_point_prop_vals.keys().cloned().collect();
             if !all_names.is_disjoint(&code_point_prop_names) {
-                &uniset_builder.add_char(char::from_u32(*code_point).unwrap());
+                uniset_builder.add_char(char::from_u32(*code_point).unwrap());
             }
         }
         if !&uniset_builder.is_empty() {
             let uniset = uniset_builder.build();
-            &m.insert(canonical_name.clone(), uniset);
+            m.insert(canonical_name.clone(), uniset);
         }
     }
 
@@ -259,11 +256,11 @@ fn main() {
                 defaults = get_defaults_prop_vals(&line);
             } else if is_block_line(&line) {
                 let (range, prop_vals) = get_block_range_prop_vals(&line);
-                &blocks.insert(range, prop_vals);
+                blocks.insert(range, prop_vals);
             } else if is_code_point_line(&line) {
                 // record code point override vals directly from line
                 let (code_point_range, prop_vals) = get_code_point_overrides(&line);
-                &code_point_overrides.insert(code_point_range, prop_vals);
+                code_point_overrides.insert(code_point_range, prop_vals);
 
                 // compute final code point property vals after applying all
                 // levels of overrides
@@ -277,7 +274,7 @@ fn main() {
                         &blocks,
                         &defaults,
                     );
-                    &code_points.insert(code_point, code_point_prop_vals);
+                    code_points.insert(code_point, code_point_prop_vals);
                 }
             }
         }
