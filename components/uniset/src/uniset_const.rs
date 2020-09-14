@@ -1,6 +1,9 @@
+#![allow(clippy::unreadable_literal, dead_code)]
+
 use crate::uniset::UnicodeSet;
 
-pub fn Upper() -> UnicodeSet {
+/// Upper
+pub fn upper() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 192, 215, 216, 223, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267,
         268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285,
@@ -94,7 +97,8 @@ pub fn Upper() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Bidi_M() -> UnicodeSet {
+/// Bidi_M
+pub fn bidi_m() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         40, 42, 60, 61, 62, 63, 91, 92, 93, 94, 123, 124, 125, 126, 171, 172, 187, 188, 3898, 3902,
         5787, 5789, 8249, 8251, 8261, 8263, 8317, 8319, 8333, 8335, 8512, 8513, 8704, 8960, 8968,
@@ -107,14 +111,16 @@ pub fn Bidi_M() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn PCM() -> UnicodeSet {
+/// PCM
+pub fn pcm() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         1536, 1542, 1757, 1758, 1807, 1808, 2274, 2275, 69821, 69822, 69837, 69838,
     ])
     .unwrap()
 }
 
-pub fn Emoji() -> UnicodeSet {
+/// Emoji
+pub fn emoji() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         35, 36, 42, 43, 48, 58, 169, 170, 174, 175, 8252, 8253, 8265, 8266, 8482, 8483, 8505, 8506,
         8596, 8602, 8617, 8619, 8986, 8988, 9000, 9001, 9167, 9168, 9193, 9204, 9208, 9211, 9410,
@@ -138,7 +144,8 @@ pub fn Emoji() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Lower() -> UnicodeSet {
+/// lower
+pub fn lower() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         97, 123, 170, 171, 181, 182, 186, 187, 223, 247, 248, 256, 257, 258, 259, 260, 261, 262,
         263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280,
@@ -233,11 +240,13 @@ pub fn Lower() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn EMod() -> UnicodeSet {
+/// EMod
+pub fn emod() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![127995, 128000]).unwrap()
 }
 
-pub fn XIDS() -> UnicodeSet {
+/// XIDS
+pub fn xids() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 97, 123, 170, 171, 181, 182, 186, 187, 192, 215, 216, 247, 248, 706, 710, 722, 736,
         741, 748, 749, 750, 751, 880, 888, 890, 896, 900, 907, 908, 909, 910, 930, 931, 1328, 1329,
@@ -341,7 +350,8 @@ pub fn XIDS() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CWU() -> UnicodeSet {
+/// CWU
+pub fn cwu() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         97, 123, 181, 182, 223, 247, 248, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266,
         267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284,
@@ -429,7 +439,8 @@ pub fn CWU() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Pat_Syn() -> UnicodeSet {
+/// Pat_Syn
+pub fn pat_syn() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         33, 48, 58, 65, 91, 95, 96, 97, 123, 127, 161, 168, 169, 170, 171, 173, 174, 175, 176, 178,
         182, 183, 187, 188, 191, 192, 215, 216, 247, 248, 8192, 8293, 8294, 8304, 8592, 9255, 9280,
@@ -439,7 +450,8 @@ pub fn Pat_Syn() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Gr_Base() -> UnicodeSet {
+/// Gr_Base
+pub fn gr_base() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         0, 768, 880, 888, 890, 896, 900, 907, 908, 909, 910, 930, 931, 1328, 1329, 1367, 1369,
         1419, 1421, 1424, 1470, 1471, 1472, 1473, 1475, 1476, 1478, 1479, 1488, 1515, 1519, 1525,
@@ -557,7 +569,8 @@ pub fn Gr_Base() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CWCM() -> UnicodeSet {
+/// CWCM
+pub fn cwcm() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 97, 123, 181, 182, 192, 215, 216, 247, 248, 597, 598, 600, 601, 602, 603, 605, 608,
         610, 611, 612, 613, 615, 616, 621, 623, 624, 625, 627, 629, 630, 637, 638, 640, 641, 642,
@@ -576,7 +589,8 @@ pub fn CWCM() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn UIdeo() -> UnicodeSet {
+/// UIdeo
+pub fn uideo() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         13317, 13318, 13443, 13444, 14378, 14379, 15181, 15182, 19894, 19904, 19968, 19969, 19971,
         19972, 19975, 19976, 19977, 19978, 20061, 20062, 20108, 20109, 20116, 20117, 20118, 20119,
@@ -594,7 +608,8 @@ pub fn UIdeo() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CWT() -> UnicodeSet {
+/// cwt
+pub fn cwt() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         97, 123, 181, 182, 223, 247, 248, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266,
         267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284,
@@ -683,7 +698,8 @@ pub fn CWT() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Alpha() -> UnicodeSet {
+/// alpha
+pub fn alpha() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 97, 123, 170, 171, 181, 182, 186, 187, 192, 215, 216, 247, 248, 706, 710, 722, 736,
         741, 748, 749, 750, 751, 837, 838, 880, 888, 890, 896, 900, 907, 908, 909, 910, 930, 931,
@@ -791,7 +807,8 @@ pub fn Alpha() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Term() -> UnicodeSet {
+/// Term
+pub fn term() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         33, 34, 44, 45, 46, 47, 58, 60, 63, 64, 894, 895, 903, 904, 1417, 1418, 1475, 1476, 1548,
         1549, 1563, 1564, 1566, 1568, 1748, 1749, 1792, 1803, 1804, 1805, 2040, 2042, 2096, 2111,
@@ -812,11 +829,13 @@ pub fn Term() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn VS() -> UnicodeSet {
+/// VS
+pub fn vs() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![6155, 6158, 65024, 65040, 917760, 918000]).unwrap()
 }
 
-pub fn STerm() -> UnicodeSet {
+/// STerm
+pub fn sterm() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         33, 34, 46, 47, 63, 64, 1417, 1418, 1566, 1568, 1748, 1749, 1792, 1795, 2041, 2042, 2103,
         2104, 2105, 2106, 2109, 2111, 2404, 2406, 4170, 4172, 4962, 4963, 4967, 4969, 5742, 5743,
@@ -834,22 +853,26 @@ pub fn STerm() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Bidi_C() -> UnicodeSet {
+/// bidi_c
+pub fn bidi_c() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![1564, 1565, 8206, 8208, 8234, 8239, 8294, 8298]).unwrap()
 }
 
-pub fn Hex() -> UnicodeSet {
+/// Hex
+pub fn hex() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         48, 58, 65, 71, 97, 103, 65296, 65306, 65313, 65319, 65345, 65351,
     ])
     .unwrap()
 }
 
-pub fn AHex() -> UnicodeSet {
+/// AHex
+pub fn ahex() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![48, 58, 65, 71, 97, 103]).unwrap()
 }
 
-pub fn Math() -> UnicodeSet {
+/// math
+pub fn math() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         43, 44, 60, 63, 94, 95, 124, 125, 126, 127, 172, 173, 177, 178, 215, 216, 247, 248, 976,
         979, 981, 982, 1008, 1010, 1012, 1015, 1542, 1545, 8214, 8215, 8242, 8245, 8256, 8257,
@@ -874,19 +897,23 @@ pub fn Math() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn IDST() -> UnicodeSet {
+/// IDST
+pub fn idst() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![12274, 12276]).unwrap()
 }
 
-pub fn Pat_WS() -> UnicodeSet {
+/// Pat_WS
+pub fn pat_ws() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![9, 14, 32, 33, 133, 134, 8206, 8208, 8232, 8234]).unwrap()
 }
 
-pub fn IDSB() -> UnicodeSet {
+/// IDSB
+pub fn idsb() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![12272, 12284]).unwrap()
 }
 
-pub fn Gr_Ext() -> UnicodeSet {
+/// Gr_Ext
+pub fn gr_ext() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         768, 880, 1155, 1162, 1425, 1480, 1488, 1515, 1519, 1525, 1552, 1563, 1611, 1632, 1648,
         1649, 1750, 1757, 1759, 1765, 1767, 1769, 1770, 1774, 1809, 1810, 1840, 1867, 1958, 1969,
@@ -942,11 +969,13 @@ pub fn Gr_Ext() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Join_C() -> UnicodeSet {
+/// Join_C
+pub fn join_c() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![8204, 8206]).unwrap()
 }
 
-pub fn EComp() -> UnicodeSet {
+/// EComp
+pub fn ecomp() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         35, 36, 42, 43, 48, 58, 8205, 8206, 8419, 8420, 65039, 65040, 127462, 127488, 127995,
         128000, 129456, 129460, 917505, 917506, 917536, 917632,
@@ -954,7 +983,8 @@ pub fn EComp() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Dep() -> UnicodeSet {
+/// Dep
+pub fn dep() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         329, 330, 1651, 1652, 3959, 3960, 3961, 3962, 6051, 6053, 8298, 8304, 9001, 9003, 917505,
         917506,
@@ -962,7 +992,8 @@ pub fn Dep() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn ExtPict() -> UnicodeSet {
+/// ExtPict
+pub fn ext_pict() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         169, 170, 174, 175, 8252, 8253, 8265, 8266, 8482, 8483, 8505, 8506, 8596, 8602, 8617, 8619,
         8986, 8988, 9000, 9001, 9096, 9097, 9167, 9168, 9193, 9204, 9208, 9211, 9410, 9411, 9642,
@@ -982,7 +1013,8 @@ pub fn ExtPict() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn IDS() -> UnicodeSet {
+/// IDS
+pub fn ids() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 97, 123, 170, 171, 181, 182, 186, 187, 192, 215, 216, 247, 248, 706, 710, 722, 736,
         741, 748, 749, 750, 751, 880, 888, 890, 896, 900, 907, 908, 909, 910, 930, 931, 1328, 1329,
@@ -1086,7 +1118,8 @@ pub fn IDS() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CWL() -> UnicodeSet {
+/// CWL
+pub fn cwl() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 192, 215, 216, 223, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267,
         268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285,
@@ -1173,7 +1206,8 @@ pub fn CWL() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Ext() -> UnicodeSet {
+/// Ext
+pub fn ext() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         183, 184, 720, 722, 1600, 1601, 2042, 2043, 2901, 2902, 3654, 3655, 3782, 3783, 6154, 6155,
         6211, 6212, 6823, 6824, 7222, 7223, 7291, 7292, 12293, 12294, 12337, 12342, 12445, 12447,
@@ -1184,7 +1218,8 @@ pub fn Ext() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn WSpace() -> UnicodeSet {
+/// WSpace
+pub fn wspace() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287,
         8288, 12288, 12289,
@@ -1192,7 +1227,8 @@ pub fn WSpace() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Gr_Link() -> UnicodeSet {
+/// Gr_Link
+pub fn gr_link() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         2381, 2382, 2509, 2510, 2637, 2638, 2765, 2766, 2893, 2894, 3021, 3022, 3149, 3150, 3277,
         3278, 3387, 3389, 3405, 3406, 3530, 3531, 3642, 3643, 3770, 3771, 3972, 3973, 4153, 4155,
@@ -1206,7 +1242,8 @@ pub fn Gr_Link() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn EPres() -> UnicodeSet {
+/// EPres
+pub fn epres() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         8986, 8988, 9193, 9197, 9200, 9201, 9203, 9204, 9725, 9727, 9748, 9750, 9800, 9812, 9855,
         9856, 9875, 9876, 9889, 9890, 9898, 9900, 9917, 9919, 9924, 9926, 9934, 9935, 9940, 9941,
@@ -1222,7 +1259,8 @@ pub fn EPres() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn EBase() -> UnicodeSet {
+/// EBase
+pub fn ebase() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         9757, 9758, 9977, 9978, 9994, 9998, 127877, 127878, 127938, 127941, 127943, 127944, 127946,
         127949, 128066, 128068, 128070, 128081, 128102, 128121, 128124, 128125, 128129, 128132,
@@ -1235,14 +1273,16 @@ pub fn EBase() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn LOE() -> UnicodeSet {
+/// LOE
+pub fn loe() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         3648, 3653, 3776, 3781, 6581, 6584, 6586, 6587, 43701, 43703, 43705, 43706, 43707, 43709,
     ])
     .unwrap()
 }
 
-pub fn Dash() -> UnicodeSet {
+/// Dash
+pub fn dash() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         45, 46, 1418, 1419, 1470, 1471, 5120, 5121, 6150, 6151, 8208, 8214, 8275, 8276, 8315, 8316,
         8331, 8332, 8722, 8723, 11799, 11800, 11802, 11803, 11834, 11836, 11840, 11841, 12316,
@@ -1252,7 +1292,8 @@ pub fn Dash() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Comp_Ex() -> UnicodeSet {
+/// Comp_Ex
+pub fn comp_ex() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         832, 834, 835, 837, 884, 885, 894, 895, 903, 904, 2392, 2400, 2524, 2526, 2527, 2528, 2611,
         2612, 2614, 2615, 2649, 2652, 2654, 2655, 2908, 2910, 3907, 3908, 3917, 3918, 3922, 3923,
@@ -1268,7 +1309,8 @@ pub fn Comp_Ex() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CWCF() -> UnicodeSet {
+/// CWCF
+pub fn cwcf() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 181, 182, 192, 215, 216, 224, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265,
         266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283,
@@ -1356,7 +1398,8 @@ pub fn CWCF() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn QMark() -> UnicodeSet {
+/// QMark
+pub fn qmark() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         34, 35, 39, 40, 171, 172, 187, 188, 8216, 8224, 8249, 8251, 11842, 11843, 12300, 12304,
         12317, 12320, 65089, 65093, 65282, 65283, 65287, 65288, 65378, 65380,
@@ -1364,15 +1407,18 @@ pub fn QMark() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Radical() -> UnicodeSet {
+/// Radical
+pub fn radical() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![11904, 11930, 11931, 12020, 12032, 12246]).unwrap()
 }
 
-pub fn RI() -> UnicodeSet {
+/// RI
+pub fn ri() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![127462, 127488]).unwrap()
 }
 
-pub fn IDC() -> UnicodeSet {
+/// IDC
+pub fn idc() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         48, 58, 65, 91, 95, 96, 97, 123, 170, 171, 181, 182, 183, 184, 186, 187, 192, 215, 216,
         247, 248, 706, 710, 722, 736, 741, 748, 749, 750, 751, 768, 888, 890, 896, 900, 907, 908,
@@ -1482,7 +1528,8 @@ pub fn IDC() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn DI() -> UnicodeSet {
+/// DI
+pub fn di() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         173, 174, 847, 848, 1564, 1565, 4447, 4449, 6068, 6070, 6155, 6159, 8203, 8208, 8234, 8239,
         8288, 8293, 8294, 8304, 12644, 12645, 65024, 65040, 65279, 65280, 65440, 65441, 113824,
@@ -1491,7 +1538,8 @@ pub fn DI() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn SD() -> UnicodeSet {
+/// SD
+pub fn sd() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         105, 107, 303, 304, 585, 586, 616, 617, 669, 670, 690, 691, 1011, 1012, 1110, 1111, 1112,
         1113, 7522, 7523, 7574, 7575, 7588, 7589, 7592, 7593, 7725, 7726, 7883, 7884, 8305, 8306,
@@ -1502,7 +1550,8 @@ pub fn SD() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Dia() -> UnicodeSet {
+/// Dia
+pub fn dia() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         94, 95, 96, 97, 168, 169, 175, 176, 180, 181, 183, 185, 688, 880, 884, 886, 890, 891, 900,
         902, 1155, 1160, 1369, 1370, 1425, 1442, 1443, 1470, 1471, 1472, 1473, 1475, 1476, 1477,
@@ -1533,7 +1582,8 @@ pub fn Dia() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Hyphen() -> UnicodeSet {
+/// Hyphen
+pub fn hyphen() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         45, 46, 173, 174, 1418, 1419, 6150, 6151, 8208, 8210, 11799, 11800, 12539, 12540, 65123,
         65124, 65293, 65294, 65381, 65382,
@@ -1541,7 +1591,8 @@ pub fn Hyphen() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Ideo() -> UnicodeSet {
+/// Ideo
+pub fn ideo() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         12294, 12296, 12321, 12330, 12344, 12347, 13317, 13318, 13443, 13444, 14378, 14379, 15181,
         15182, 19894, 19904, 19968, 19969, 19971, 19972, 19975, 19976, 19977, 19978, 20061, 20062,
@@ -1560,7 +1611,8 @@ pub fn Ideo() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CWKCF() -> UnicodeSet {
+/// CWKCF
+pub fn cwkcf() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 160, 161, 168, 169, 170, 171, 173, 174, 175, 176, 178, 182, 184, 187, 188, 191,
         192, 215, 216, 224, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269,
@@ -1674,7 +1726,8 @@ pub fn CWKCF() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn XIDC() -> UnicodeSet {
+/// XIDC
+pub fn xidc() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         48, 58, 65, 91, 95, 96, 97, 123, 170, 171, 181, 182, 183, 184, 186, 187, 192, 215, 216,
         247, 248, 706, 710, 722, 736, 741, 748, 749, 750, 751, 768, 888, 890, 896, 900, 907, 908,
@@ -1784,7 +1837,8 @@ pub fn XIDC() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn CI() -> UnicodeSet {
+/// CI
+pub fn ci() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         39, 40, 46, 47, 58, 59, 94, 95, 96, 97, 168, 169, 173, 174, 175, 176, 180, 181, 183, 185,
         688, 880, 884, 886, 890, 891, 900, 902, 903, 904, 1155, 1162, 1369, 1370, 1375, 1376, 1425,
@@ -1848,7 +1902,8 @@ pub fn CI() -> UnicodeSet {
     .unwrap()
 }
 
-pub fn Cased() -> UnicodeSet {
+/// Cased
+pub fn cased() -> UnicodeSet {
     UnicodeSet::from_inversion_list(vec![
         65, 91, 97, 123, 170, 171, 181, 182, 186, 187, 192, 215, 216, 247, 248, 697, 704, 706, 736,
         741, 837, 838, 880, 888, 890, 896, 900, 907, 908, 909, 910, 930, 931, 1328, 1329, 1367,
