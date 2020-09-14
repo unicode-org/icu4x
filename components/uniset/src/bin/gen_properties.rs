@@ -126,7 +126,7 @@ fn is_code_point_line(line: &String) -> bool {
     line.starts_with("cp;")
 }
 
-fn get_code_point_prop_vals(line: &String) -> (u32, HashMap<String, String>) {
+fn get_code_point_overrides(line: &String) -> (u32, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"cp", &line_parts[0]);
 
@@ -136,6 +136,37 @@ fn get_code_point_prop_vals(line: &String) -> (u32, HashMap<String, String>) {
     let props_vals = get_data_line_prop_vals(&line_parts);
 
     return (code_point, props_vals);
+}
+
+fn get_code_point_prop_vals(
+    code_point: u32,
+    code_point_overrides: &HashMap<u32, HashMap<String, String>>,
+    blocks: &HashMap<UnicodeSet, HashMap<String, String>>,
+    defaults: &HashMap<String, String>)
+    -> HashMap<String, String> {
+
+        // create the map of applicable property values, and initialize it to
+        // defaults for the whole Unicode range
+        let mut prop_vals: HashMap<String, String> = HashMap::new();
+        prop_vals.clone_from(defaults);
+
+        // determine if this code point matches any of the block-wide defaults
+        // ("overrides")
+        for (range, block_prop_vals) in blocks {
+            if range.contains_int(code_point) {
+                let block_prop_vals_clone =
+                    block_prop_vals.into_iter().map(|(k, v)| (k.clone(), v.clone()));
+                prop_vals.extend(block_prop_vals_clone);
+            }
+        }
+
+        // finally, apply the overrides for this code point
+        let code_point_override_prop_vals_clone =
+            code_point_overrides.get(&code_point).unwrap()
+                .into_iter().map(|(k, v)| (k.clone(), v.clone()));
+        prop_vals.extend(code_point_override_prop_vals_clone);
+
+        prop_vals
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
@@ -163,7 +194,7 @@ fn main() {
 
         let mut code_point_overrides: HashMap<u32, HashMap<String, String>> = HashMap::new();
 
-        // let mut code_points: HashMap<u32, HashMap<String, String>> ;
+        let mut code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
 
         for line in parseable_lines {
             if is_property_line(&line) {
@@ -173,20 +204,20 @@ fn main() {
             } else if is_block_line(&line) {
                 let (range, prop_vals) = get_block_range_prop_vals(&line);
                 &blocks.insert(range, prop_vals);
+                // println!("BLOCK: &blocks = {:?}", blocks);
+                // println!("BLOCK: &blocks len = {:?}", blocks.len());
             } else if is_code_point_line(&line) {
-                let (code_point, prop_vals) = get_code_point_prop_vals(&line);
+                // record code point override vals directly from line
+                let (code_point, prop_vals) = get_code_point_overrides(&line);
                 &code_point_overrides.insert(code_point, prop_vals);
-            } else {
-                println!("{}", &line);
+                // compute final code point property vals after applying all
+                // levels of overrides
+                let code_point_prop_vals =
+                    get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
+                // println!("code point = [{}], property values map = {:?}", code_point, code_point_prop_vals);
+                &code_points.insert(code_point, code_point_prop_vals);
             }
         }
-
-        // let upper_aliases_opt: Option<&HashSet<String>> = prop_aliases.get("Upper");
-        // if let Some(upper_aliases) = upper_aliases_opt {
-        //     for alias in upper_aliases {
-        //         println!("Upper aka: {}", alias);
-        //     }   
-        // }
     }
 }
 
@@ -309,37 +340,141 @@ mod test {
     }
 
     #[test]
-    fn code_point_prop_vals_test() {
-        let line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
+    fn code_point_overrides_test() {
+        let defaults_line = String::from("defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX");
+        let block_line = String::from("block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy");
+        let code_point_line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
 
-        let mut exp_prop_vals: HashMap<String, String> = HashMap::new();
-        &exp_prop_vals.insert(
-            String::from("bc"),
-            String::from("WS"));
-        &exp_prop_vals.insert(
-            String::from("gc"),
-            String::from("Zs"));
-        &exp_prop_vals.insert(
-            String::from("lb"),
-            String::from("SP"));
-        &exp_prop_vals.insert(
-            String::from("na"),
-            String::from("SPACE"));
-        &exp_prop_vals.insert(
-            String::from("Name_Alias"),
-            String::from("abbreviation=SP"));
-        &exp_prop_vals.insert(
-            String::from("SB"),
-            String::from("SP"));
-        &exp_prop_vals.insert(
+        let mut exp_code_point_prop_vals: HashMap<String, String> = HashMap::new();
+        &exp_code_point_prop_vals.insert(
             String::from("WB"),
             String::from("WSegSpace"));
+        &exp_code_point_prop_vals.insert(
+            String::from("FC_NFKC"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("GCB"),
+            String::from("XX"));
+        &exp_code_point_prop_vals.insert(
+            String::from("gcm"),
+            String::from("Cn"));
+        &exp_code_point_prop_vals.insert(
+            String::from("scx"),
+            String::from("<script>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("bc"),
+            String::from("WS"));
+        &exp_code_point_prop_vals.insert(
+            String::from("lc"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("NFKC_CF"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("InPC"),
+            String::from("NA"));
+        &exp_code_point_prop_vals.insert(
+            String::from("lb"),
+            String::from("SP"));
+        &exp_code_point_prop_vals.insert(
+            String::from("NFC_QC"),
+            String::from("Y"));
+        &exp_code_point_prop_vals.insert(
+            String::from("SB"),
+            String::from("SP"));
+        &exp_code_point_prop_vals.insert(
+            String::from("Name_Alias"),
+            String::from("abbreviation=SP"));
+        &exp_code_point_prop_vals.insert(
+            String::from("dt"),
+            String::from("None"));
+        &exp_code_point_prop_vals.insert(
+            String::from("ea"),
+            String::from("Na"));
+        &exp_code_point_prop_vals.insert(
+            String::from("nt"),
+            String::from("None"));
+        &exp_code_point_prop_vals.insert(
+            String::from("InSC"),
+            String::from("Other"));
+        &exp_code_point_prop_vals.insert(
+            String::from("NFD_QC"),
+            String::from("Y"));
+        &exp_code_point_prop_vals.insert(
+            String::from("bpt"),
+            String::from("n"));
+        &exp_code_point_prop_vals.insert(
+            String::from("jg"),
+            String::from("No_Joining_Group"));
+        &exp_code_point_prop_vals.insert(
+            String::from("gc"),
+            String::from("Zs"));
+        &exp_code_point_prop_vals.insert(
+            String::from("vo"),
+            String::from("R"));
+        &exp_code_point_prop_vals.insert(
+            String::from("NFKD_QC"),
+            String::from("Y"));
+        &exp_code_point_prop_vals.insert(
+            String::from("NFKC_QC"),
+            String::from("Y"));
+        &exp_code_point_prop_vals.insert(
+            String::from("blk"),
+            String::from("ASCII"));
+        &exp_code_point_prop_vals.insert(
+            String::from("uc"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("suc"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("scf"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("slc"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("age"),
+            String::from("1.1"));
+        &exp_code_point_prop_vals.insert(
+            String::from("na"),
+            String::from("SPACE"));
+        &exp_code_point_prop_vals.insert(
+            String::from("cf"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("hst"),
+            String::from("NA"));
+        &exp_code_point_prop_vals.insert(
+            String::from("dm"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("sc"),
+            String::from("Zyyy"));
+        &exp_code_point_prop_vals.insert(
+            String::from("stc"),
+            String::from("<code point>"));
+        &exp_code_point_prop_vals.insert(
+            String::from("jt"),
+            String::from("U"));
+        &exp_code_point_prop_vals.insert(
+            String::from("tc"),
+            String::from("<code point>"));
 
-        let exp_code_point: u32 = 32;
+        let mut defaults: HashMap<String, String> = HashMap::new();
+        defaults = get_defaults_prop_vals(&defaults_line);
 
-        let (code_point, prop_vals) = get_code_point_prop_vals(&line);
+        let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
+        let (range, prop_vals) = get_block_range_prop_vals(&block_line);
+        &blocks.insert(range, prop_vals);
 
-        assert_eq!(exp_code_point, code_point);
-        assert_eq!(exp_prop_vals, prop_vals);
+        let mut code_point_overrides: HashMap<u32, HashMap<String, String>> = HashMap::new();
+        let (code_point, prop_vals) = get_code_point_overrides(&code_point_line);
+        &code_point_overrides.insert(code_point, prop_vals);
+
+        let code_point_prop_vals =
+            get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
+
+        assert_eq!(exp_code_point_prop_vals, code_point_prop_vals);
     }
 }
