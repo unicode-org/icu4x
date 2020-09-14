@@ -52,6 +52,7 @@
 mod uniset;
 mod builder;
 mod conversions;
+mod uniset_const;
 mod utils;
 
 pub use builder::UnicodeSetBuilder;
