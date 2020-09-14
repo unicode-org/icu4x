@@ -381,6 +381,14 @@ impl UnicodeSetBuilder {
     pub fn complement_set(&mut self, set: &UnicodeSet) {
         self.complement_list(set.as_inversion_list());
     }
+
+    /// Returns whether the build is empty.
+    /// 
+    /// Note: UnicodeSetBuilder panics when trying to build an empty builder.
+    /// 
+    pub fn is_empty(&mut self) -> bool {
+        self.intervals.is_empty()
+    }
 }
 
 #[cfg(test)]
@@ -797,5 +805,11 @@ mod tests {
         builder.complement_set(&set);
         let expected = vec![65, 67, 70, 75, 78, 90];
         assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let mut builder = UnicodeSetBuilder::new();
+        assert_eq!(true, builder.is_empty());
     }
 }
