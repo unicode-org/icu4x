@@ -39,6 +39,9 @@ fn get_data_line_prop_vals(data_line_parts: &Vec<&str>) -> HashMap<String, Strin
             let mut val = String::from(prop_key_val.1);
             val.drain(0..1); // get rid of first "=" that we split on
             &m.insert(key, val);
+        } else {
+            // for properties that don't take values, let their value in the map be the prop name itself
+            &m.insert(String::from(prop_str), String::from(prop_str));
         }
     }
     m
@@ -271,18 +274,18 @@ mod test {
         &exp_prop_vals.insert(
             String::from("Name_Alias"),
             String::from("abbreviation=SP"));
-        // &exp_prop_vals.insert(
-        //     String::from("Pat_WS"),
-        //     String::from("Pat_WS"),
+        &exp_prop_vals.insert(
+            String::from("Pat_WS"),
+            String::from("Pat_WS"));
         &exp_prop_vals.insert(
             String::from("SB"),
             String::from("SP"));
         &exp_prop_vals.insert(
             String::from("WB"),
             String::from("WSegSpace"));
-        // &exp_prop_vals.insert(
-        //     String::from("WSpace"),
-        //     String::from("WSpace"));
+        &exp_prop_vals.insert(
+            String::from("WSpace"),
+            String::from("WSpace"));
 
         let line_parts = split_line(&line);
         let act_props_vals = get_data_line_prop_vals(&line_parts);
@@ -322,6 +325,9 @@ mod test {
         &exp_prop_vals.insert(
             String::from("gc"),
             String::from("Cc"));
+        &exp_prop_vals.insert(
+            String::from("Gr_Base"),
+            String::from("Gr_Base"));
         &exp_prop_vals.insert(
             String::from("lb"),
             String::from("AL"));
@@ -460,7 +466,15 @@ mod test {
         &exp_code_point_prop_vals.insert(
             String::from("tc"),
             String::from("<code point>"));
-
+        &exp_code_point_prop_vals.insert(
+            String::from("Gr_Base"),
+            String::from("Gr_Base"));
+        &exp_code_point_prop_vals.insert(
+            String::from("WSpace"),
+            String::from("WSpace"));
+        &exp_code_point_prop_vals.insert(
+            String::from("Pat_WS"),
+            String::from("Pat_WS"));
         let mut defaults: HashMap<String, String> = HashMap::new();
         defaults = get_defaults_prop_vals(&defaults_line);
 
