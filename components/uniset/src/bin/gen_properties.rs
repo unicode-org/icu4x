@@ -185,9 +185,7 @@ fn get_code_point_prop_vals(
     // ("overrides")
     for (range, block_prop_vals) in blocks {
         if range.contains(char::from_u32(code_point).unwrap()) {
-            let block_prop_vals_clone = block_prop_vals
-                .iter()
-                .map(|(k, v)| (k.clone(), v.clone()));
+            let block_prop_vals_clone = block_prop_vals.iter().map(|(k, v)| (k.clone(), v.clone()));
             prop_vals.extend(block_prop_vals_clone);
         }
     }
