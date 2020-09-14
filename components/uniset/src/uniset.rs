@@ -156,24 +156,6 @@ impl UnicodeSet {
         self.contains_query(query as u32).is_some()
     }
 
-    /// Checks to see the query is in the UnicodeSet
-    ///
-    /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using `std` implementation
-    ///
-    /// # Example:
-    ///
-    /// ```
-    /// use icu_unicodeset::UnicodeSet;
-    /// let example_list = vec![65, 67, 68, 69];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
-    /// assert!(example.contains('A'));
-    /// assert!(!example.contains('C'));
-    /// ```
-    pub fn contains_int(&self, query: u32) -> bool {
-        self.contains_query(query).is_some()
-    }
-
     /// Checks to see if the range is in the UnicodeSet, returns a Result
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points

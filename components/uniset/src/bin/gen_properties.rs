@@ -13,6 +13,12 @@ use icu_unicodeset::UnicodeSet;
 //   cargo run --bin genprops <ppucd-file>
 //
 
+fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+where P: AsRef<Path>, {
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
+}
+
 fn get_line_str_opt(line_result: Result<String, Error>) -> Option<String> {
     if let Ok(line) = line_result {
         Some(line)
@@ -34,13 +40,16 @@ fn get_data_line_prop_vals(data_line_parts: &Vec<&str>) -> HashMap<String, Strin
     for prop_str in line_parts {
         let first_equals_idx = prop_str.find("=");
         if let Some(idx) = first_equals_idx {
+            // Properties with an "=" in their string have values associated
+            // (ex: enumerated properties).
             let prop_key_val = prop_str.split_at(idx);
             let key = String::from(prop_key_val.0);
             let mut val = String::from(prop_key_val.1);
             val.drain(0..1); // get rid of first "=" that we split on
             &m.insert(key, val);
         } else {
-            // for properties that don't take values, let their value in the map be the prop name itself
+            // For properties that don't take values, let their value in the map be the prop name itself
+            // This applies to binary properties.
             &m.insert(String::from(prop_str), String::from(prop_str));
         }
     }
@@ -57,6 +66,8 @@ fn is_property_line(line: &String) -> bool {
     line.starts_with("property;")
 }
 
+/// For a property definition line, update the property aliases map.
+/// Only operate on binary properties, currently.
 fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &String) {
     // println!("{}", &line);
 
@@ -172,11 +183,6 @@ fn get_code_point_prop_vals(
         prop_vals
 }
 
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
