@@ -14,7 +14,6 @@ const BMP_MAX: u32 = 0xFFFF;
 /// and predefined ranges.
 #[derive(Debug, PartialEq, Hash, Eq)]
 pub struct UnicodeSet {
-
     // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
 
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature

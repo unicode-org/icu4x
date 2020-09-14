@@ -383,9 +383,9 @@ impl UnicodeSetBuilder {
     }
 
     /// Returns whether the build is empty.
-    /// 
+    ///
     /// Note: UnicodeSetBuilder panics when trying to build an empty builder.
-    /// 
+    ///
     pub fn is_empty(&mut self) -> bool {
         self.intervals.is_empty()
     }
