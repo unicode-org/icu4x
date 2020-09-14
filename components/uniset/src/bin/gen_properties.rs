@@ -1,12 +1,14 @@
+use std::char;
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs::File;
 use std::io::{self, BufRead, Error};
-use std::u32;
 use std::iter::Iterator;
+use std::panic;
 use std::path::Path;
+use std::u32;
 
-use icu_unicodeset::UnicodeSet;
+use icu_unicodeset::{UnicodeSet, UnicodeSetBuilder};
 
 //
 // Can run with command in root of icu_unicodeset crate:
@@ -167,7 +169,7 @@ fn get_code_point_prop_vals(
         // determine if this code point matches any of the block-wide defaults
         // ("overrides")
         for (range, block_prop_vals) in blocks {
-            if range.contains_int(code_point) {
+            if range.contains(char::from_u32(code_point).unwrap()) {
                 let block_prop_vals_clone =
                     block_prop_vals.into_iter().map(|(k, v)| (k.clone(), v.clone()));
                 prop_vals.extend(block_prop_vals_clone);
@@ -183,6 +185,30 @@ fn get_code_point_prop_vals(
         prop_vals
 }
 
+fn get_binary_prop_unisets(
+    prop_aliases: &HashMap<String, HashSet<String>>,
+    code_points: &HashMap<u32, HashMap<String, String>>
+) -> HashMap<String, UnicodeSet> {
+
+    let mut m: HashMap<String, UnicodeSet> = HashMap::new();
+
+    for (canonical_name, all_names) in prop_aliases {
+        let mut uniset_builder = UnicodeSetBuilder::new();
+        for (code_point, code_point_prop_vals) in code_points {
+            let code_point_prop_names: HashSet<String> = 
+                code_point_prop_vals.keys().cloned().collect();
+            if !all_names.is_disjoint(&code_point_prop_names) {
+                &uniset_builder.add_char(char::from_u32(*code_point).unwrap());
+            }
+        }
+        if !&uniset_builder.is_empty() {
+            let uniset = uniset_builder.build();
+            &m.insert(canonical_name.clone(), uniset); 
+        }
+    }
+
+    m
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -213,8 +239,6 @@ fn main() {
             } else if is_block_line(&line) {
                 let (range, prop_vals) = get_block_range_prop_vals(&line);
                 &blocks.insert(range, prop_vals);
-                // println!("BLOCK: &blocks = {:?}", blocks);
-                // println!("BLOCK: &blocks len = {:?}", blocks.len());
             } else if is_code_point_line(&line) {
                 // record code point override vals directly from line
                 let (code_point, prop_vals) = get_code_point_overrides(&line);
@@ -223,9 +247,16 @@ fn main() {
                 // levels of overrides
                 let code_point_prop_vals =
                     get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
-                // println!("code point = [{}], property values map = {:?}", code_point, code_point_prop_vals);
                 &code_points.insert(code_point, code_point_prop_vals);
             }
+        }
+
+        let binary_prop_unisets: HashMap<String, UnicodeSet> =
+            get_binary_prop_unisets(&prop_aliases, &code_points);
+
+        for (canonical_name, uniset) in binary_prop_unisets {
+            println!("canonical name of binary property = [{}]", canonical_name);
+            println!("{:?}", uniset); // pretty print UnicodeSet
         }
     }
 }
