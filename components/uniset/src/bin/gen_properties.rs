@@ -142,21 +142,43 @@ fn is_code_point_line(line: &String) -> bool {
     line.starts_with("cp;")
 }
 
-fn get_code_point_overrides(line: &String) -> (u32, HashMap<String, String>) {
+fn get_code_point_overrides(line: &String) -> (UnicodeSet, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"cp", &line_parts[0]);
 
-    let code_point_str = &line_parts[1];
-    let code_point: u32 = u32::from_str_radix(code_point_str, 16).unwrap();
+    let range_str = &line_parts[1];
+    let range_bound_strs = &range_str.split("..").collect::<Vec<_>>();
+    let range_result =
+        if range_bound_strs.len() > 1 {
+            let range_start: &u32 = &u32::from_str_radix(&range_bound_strs[0], 16).unwrap();
+            let range_end: &u32 = &u32::from_str_radix(&range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
+            let inv_list_start: u32 = *range_start;
+            let inv_list_end: u32 = *range_end + 1;
+            let inv_list: Vec<u32> = vec![inv_list_start, inv_list_end];
+            UnicodeSet::from_inversion_list(inv_list)
+        } else {
+            let code_point_str = range_str;
+            let code_point: u32 = u32::from_str_radix(code_point_str, 16).unwrap();
+            let inv_list: Vec<u32> = vec![code_point, code_point+1];
+            UnicodeSet::from_inversion_list(inv_list)
+        };
 
     let props_vals = get_data_line_prop_vals(&line_parts);
 
-    return (code_point, props_vals);
+    let range =
+        if let Ok(range) = range_result {
+            range
+        } else {
+            let inv_list: Vec<u32> = Vec::default();
+            let empty_range = UnicodeSet::from_inversion_list(inv_list).unwrap();
+            empty_range
+        };
+    return (range, props_vals);
 }
 
 fn get_code_point_prop_vals(
     code_point: u32,
-    code_point_overrides: &HashMap<u32, HashMap<String, String>>,
+    code_point_overrides: &HashMap<UnicodeSet, HashMap<String, String>>,
     blocks: &HashMap<UnicodeSet, HashMap<String, String>>,
     defaults: &HashMap<String, String>)
     -> HashMap<String, String> {
@@ -177,10 +199,13 @@ fn get_code_point_prop_vals(
         }
 
         // finally, apply the overrides for this code point
-        let code_point_override_prop_vals_clone =
-            code_point_overrides.get(&code_point).unwrap()
-                .into_iter().map(|(k, v)| (k.clone(), v.clone()));
-        prop_vals.extend(code_point_override_prop_vals_clone);
+        for (range, code_point_prop_vals) in code_point_overrides {
+            if range.contains(char::from_u32(code_point).unwrap()) {
+                let code_point_override_prop_vals_clone =
+                    code_point_prop_vals.into_iter().map(|(k, v)| (k.clone(), v.clone()));
+                prop_vals.extend(code_point_override_prop_vals_clone);
+            }
+        }
 
         prop_vals
 }
@@ -227,7 +252,7 @@ fn main() {
         // TODO: need advice - how should we not add Hash and Eq from UnicodeSet unless we need it?
         let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
 
-        let mut code_point_overrides: HashMap<u32, HashMap<String, String>> = HashMap::new();
+        let mut code_point_overrides: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
 
         let mut code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
 
@@ -241,13 +266,19 @@ fn main() {
                 &blocks.insert(range, prop_vals);
             } else if is_code_point_line(&line) {
                 // record code point override vals directly from line
-                let (code_point, prop_vals) = get_code_point_overrides(&line);
-                &code_point_overrides.insert(code_point, prop_vals);
+                let (code_point_range, prop_vals) = get_code_point_overrides(&line);
+                &code_point_overrides.insert(code_point_range, prop_vals);
+
                 // compute final code point property vals after applying all
                 // levels of overrides
-                let code_point_prop_vals =
-                    get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
-                &code_points.insert(code_point, code_point_prop_vals);
+                // can't clone UnicodeSet, so recomputing code point range
+                let (code_point_range, _) = get_code_point_overrides(&line);
+                for code_point_char in code_point_range.iter() {
+                    let code_point = code_point_char as u32;
+                    let code_point_prop_vals =
+                        get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
+                    &code_points.insert(code_point, code_point_prop_vals);
+                }
             }
         }
 
@@ -388,6 +419,7 @@ mod test {
         let block_line = String::from("block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy");
         let code_point_line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
 
+        let exp_code_point: u32 = 32;
         let mut exp_code_point_prop_vals: HashMap<String, String> = HashMap::new();
         &exp_code_point_prop_vals.insert(
             String::from("WB"),
@@ -514,18 +546,26 @@ mod test {
             String::from("Pat_WS"));
         let mut defaults: HashMap<String, String> = HashMap::new();
         defaults = get_defaults_prop_vals(&defaults_line);
+        let mut exp_code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
+        &exp_code_points.insert(exp_code_point, exp_code_point_prop_vals);
 
         let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
         let (range, prop_vals) = get_block_range_prop_vals(&block_line);
         &blocks.insert(range, prop_vals);
 
-        let mut code_point_overrides: HashMap<u32, HashMap<String, String>> = HashMap::new();
-        let (code_point, prop_vals) = get_code_point_overrides(&code_point_line);
-        &code_point_overrides.insert(code_point, prop_vals);
+        let mut code_point_overrides: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
+        let (code_point_range, prop_vals) = get_code_point_overrides(&code_point_line);
+        &code_point_overrides.insert(code_point_range, prop_vals);
 
-        let code_point_prop_vals =
-            get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
+        let (code_point_range, _) = get_code_point_overrides(&code_point_line);
+        let mut code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
+        for code_point_char in code_point_range.iter() {
+            let code_point = code_point_char as u32;
+            let code_point_prop_vals =
+                get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
+            &code_points.insert(code_point, code_point_prop_vals);
+        }
 
-        assert_eq!(exp_code_point_prop_vals, code_point_prop_vals);
+        assert_eq!(&exp_code_points, &code_points);
     }
 }
