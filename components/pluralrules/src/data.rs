@@ -6,8 +6,8 @@
 //! use icu_locale::LanguageIdentifier;
 //! use icu_pluralrules::{PluralCategory, PluralRuleType, PluralOperands};
 //! use icu_pluralrules::data::{PluralRuleList, RulesSelector};
-//! use icu_data_provider::{DataProvider, InvariantDataProvider, structs, icu_data_key, DataRequest, DataEntry};
-//! use icu_data_provider::structs::plurals::PluralRuleStringsV1;
+//! use icu_data_provider::prelude::*;
+//! use icu_data_provider::{InvariantDataProvider, structs};
 //! use std::borrow::Cow;
 //! use std::convert::TryInto;
 //!
