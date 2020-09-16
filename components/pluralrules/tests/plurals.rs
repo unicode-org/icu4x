@@ -1,10 +1,11 @@
+use icu_fs_data_provider::FsDataProvider;
 use icu_locale::LanguageIdentifier;
-use icu_pluralrules::data::provider::DummyDataProvider;
 use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
 
 #[test]
 fn test_plural_rules() {
-    let dp = DummyDataProvider::default();
+    let dp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+        .expect("Loading file from testdata directory");
 
     let lang: LanguageIdentifier = "en".parse().unwrap();
 
@@ -15,7 +16,8 @@ fn test_plural_rules() {
 
 #[test]
 fn test_plural_rules_missing() {
-    let dp = DummyDataProvider::default();
+    let dp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+        .expect("Loading file from testdata directory");
 
     let lang: LanguageIdentifier = "xx".parse().unwrap();
 

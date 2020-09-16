@@ -22,17 +22,16 @@
 //! ```
 //! use icu_locale::LanguageIdentifier;
 //! use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
-//! use icu_pluralrules::data::provider::DummyDataProvider;
+//! use icu_data_provider::InvariantDataProvider;
 //!
 //! let lang: LanguageIdentifier = "en".parse()
 //!     .expect("Failed to parse a language identifier.");
 //!
-//! let dp = DummyDataProvider::default();
+//! let dp = InvariantDataProvider;
 //!
 //! let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
-//! assert_eq!(pr.select(1_usize), PluralCategory::One);
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
 //! ```
 //!
@@ -78,11 +77,16 @@
 //! [`CLDR`]: http://cldr.unicode.org/
 //! [`data`]: ./data/index.html
 pub mod data;
+mod error;
 mod operands;
 pub mod rules;
 
+pub use error::PluralRulesError;
+use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
 use icu_locale::LanguageIdentifier;
 pub use operands::PluralOperands;
+use std::borrow::Cow;
+use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 ///
@@ -128,17 +132,16 @@ pub enum PluralRuleType {
 /// ```
 /// use icu_locale::LanguageIdentifier;
 /// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_pluralrules::data::provider::DummyDataProvider;
+/// use icu_data_provider::InvariantDataProvider;
 ///
 /// let lang: LanguageIdentifier = "en".parse()
 ///     .expect("Failed to parse a language identifier.");
 ///
-/// let dp = DummyDataProvider::default();
+/// let dp = InvariantDataProvider;
 ///
 /// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
-/// assert_eq!(pr.select(1_usize), PluralCategory::One);
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -229,17 +232,6 @@ impl PluralCategory {
     }
 }
 
-/// A list of possible error outcomes for the [`PluralRules`] struct.
-///
-/// [`PluralRules`]: ./struct.PluralRules.html
-#[derive(Debug, PartialEq, Eq)]
-pub enum PluralRulesError {
-    /// The data for a requested language and type could not be found.
-    MissingData,
-    /// An error originating inside of the DataProvider
-    DataProvider(data::provider::DataProviderError),
-}
-
 /// `PluralRules` is a struct which provides an ability to retrieve an appropriate
 /// [`Plural Category`] for a given number.
 ///
@@ -248,17 +240,16 @@ pub enum PluralRulesError {
 /// ```
 /// use icu_locale::LanguageIdentifier;
 /// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_pluralrules::data::provider::DummyDataProvider;
+/// use icu_data_provider::InvariantDataProvider;
 ///
 /// let lang: LanguageIdentifier = "en".parse()
 ///     .expect("Failed to parse a language identifier.");
 ///
-/// let dp = DummyDataProvider::default();
+/// let dp = InvariantDataProvider;
 ///
 /// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
-/// assert_eq!(pr.select(1_usize), PluralCategory::One);
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
 /// ```
 ///
@@ -267,7 +258,7 @@ pub enum PluralRulesError {
 /// [`Plural Type`]: ./enum.PluralRuleType.html
 /// [`Plural Category`]: ./enum.PluralCategory.html
 pub struct PluralRules {
-    _locale: LanguageIdentifier,
+    _langid: LanguageIdentifier,
     selector: data::RulesSelector,
 }
 
@@ -281,29 +272,41 @@ impl PluralRules {
     /// ```
     /// use icu_locale::LanguageIdentifier;
     /// use icu_pluralrules::{PluralRules, PluralRuleType};
-    /// use icu_pluralrules::data::provider::DummyDataProvider;
+    /// use icu_data_provider::InvariantDataProvider;
     ///
     /// let lang: LanguageIdentifier = "en".parse()
     ///     .expect("Failed to parse a language identifier.");
     ///
-    /// let dp = DummyDataProvider::default();
+    /// let dp = InvariantDataProvider;
     ///
     /// let _ = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp);
     /// ```
     ///
     /// [`type`]: ./enum.PluralRuleType.html
     /// [`data provider`]: ./data/trait.DataProviderType.html
-    pub fn try_new<D: data::provider::DataProviderType>(
-        locale: LanguageIdentifier,
+    pub fn try_new<'d, D: DataProvider<'d>>(
+        langid: LanguageIdentifier,
         type_: PluralRuleType,
         data_provider: &D,
     ) -> Result<Self, PluralRulesError> {
-        let selector = data_provider
-            .get_selector(&locale, type_)?
-            .ok_or(PluralRulesError::MissingData)?;
+        let data_key = match type_ {
+            PluralRuleType::Cardinal => icu_data_key!(plurals: cardinal@1),
+            PluralRuleType::Ordinal => icu_data_key!(plurals: ordinal@1),
+        };
+        let response = data_provider.load(&DataRequest {
+            data_key,
+            data_entry: DataEntry {
+                variant: None,
+                langid: langid.clone(),
+            },
+        })?;
+        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.take_payload()?;
+
+        let list: data::PluralRuleList = (&*plurals_data).try_into()?;
+
         Ok(Self {
-            _locale: locale,
-            selector,
+            _langid: langid,
+            selector: list.into(),
         })
     }
 
@@ -314,12 +317,12 @@ impl PluralRules {
     /// ```
     /// use icu_locale::LanguageIdentifier;
     /// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
-    /// use icu_pluralrules::data::provider::DummyDataProvider;
+    /// use icu_data_provider::InvariantDataProvider;
     ///
     /// let lang: LanguageIdentifier = "en".parse()
     ///     .expect("Failed to parse a language identifier.");
     ///
-    /// let dp = DummyDataProvider::default();
+    /// let dp = InvariantDataProvider;
     ///
     /// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
     ///     .expect("Failed to construct a PluralRules struct.");
@@ -345,12 +348,12 @@ impl PluralRules {
     /// # use icu_locale::LanguageIdentifier;
     /// # use icu_pluralrules::{PluralRules, PluralRuleType};
     /// use icu_pluralrules::{PluralCategory, PluralOperands};
-    /// # use icu_pluralrules::data::provider::DummyDataProvider;
+    /// # use icu_data_provider::InvariantDataProvider;
     /// #
     /// # let lang: LanguageIdentifier = "en".parse()
     /// #     .expect("Failed to parse a language identifier.");
     /// #
-    /// # let dp = DummyDataProvider::default();
+    /// # let dp = InvariantDataProvider;
     /// #
     /// # let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
     /// #     .expect("Failed to construct a PluralRules struct.");

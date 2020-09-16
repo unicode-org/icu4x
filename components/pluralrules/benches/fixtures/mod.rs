@@ -11,23 +11,23 @@ pub(crate) struct NumbersFixture {
     pub string: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct PluralsFixture {
     pub rules: HashMap<String, LocalePluralRulesFixture>,
     pub langs: Vec<LanguageIdentifier>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct LocalePluralRulesFixture {
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-zero"))]
+    #[serde(rename = "pluralRule-count-zero")]
     pub zero: Option<String>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-one"))]
+    #[serde(rename = "pluralRule-count-one")]
     pub one: Option<String>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-two"))]
+    #[serde(rename = "pluralRule-count-two")]
     pub two: Option<String>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-few"))]
+    #[serde(rename = "pluralRule-count-few")]
     pub few: Option<String>,
-    #[cfg_attr(feature = "serde", serde(rename = "pluralRule-count-many"))]
+    #[serde(rename = "pluralRule-count-many")]
     pub many: Option<String>,
 }
 
