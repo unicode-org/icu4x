@@ -776,6 +776,19 @@ Most ICU4X code will not work in [no_std](https://rust-embedded.github.io/book/i
 
 However, when designing traits and interfaces, we should make them `no_std`-friendly, such that we can more easily expand in this direction more easily in the future.
 
+### When to add crate [features][features] :: suggested
+
+When adding enhancements to an ICU4X component, introduce features as a way for
+the end user to control the code size of their compilation as follows:
+
+1. If the enhancement adds a new crate dependency, it should be behind a
+   feature.
+2. If the enhancement contains code that is not considered best practice, for
+   example if it is mainly used for debugging diagnostics or development, then
+   it should be behind a feature.
+
+[features]: https://doc.rust-lang.org/cargo/reference/features.html
+
 ## Dependencies
 
 ### Avoid heavy dependencies :: suggested
