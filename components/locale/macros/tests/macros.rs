@@ -51,4 +51,7 @@ fn langid() {
     assert_eq!(langid.to_string(), "de-Arab-AT");
     assert_eq!(LANGID.to_string(), "de-Arab-AT");
     assert_eq!(langid, LANGID);
+
+    let langid_with_variant = langid!("de_Arab_aT-macOS");
+    assert_eq!(langid_with_variant.to_string(), "de-Arab-AT-macos");
 }

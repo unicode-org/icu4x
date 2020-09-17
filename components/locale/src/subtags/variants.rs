@@ -32,7 +32,7 @@ pub struct Variants(
     //
     // Once Rust supports boxed slices in const fn, we should remove the
     // wrapping `Option`.
-    Option<Box<[Variant]>>
+    Option<Box<[Variant]>>,
 );
 
 impl Variants {
