@@ -1,1 +1,1 @@
-{"zero":null,"one":"i = 1 and v = 0 @integer 1","two":null,"few":"v = 0 and i % 10 = 2..4 and i % 100 != 12..14 @integer 2~4, 22~24, 32~34, 42~44, 52~54, 62, 102, 1002, …","many":"v = 0 and i != 1 and i % 10 = 0..1 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 12..14 @integer 0, 5~19, 100, 1000, 10000, 100000, 1000000, …"}
+{"one":"i = 1 and v = 0","few":"v = 0 and i % 10 = 2..4 and i % 100 != 12..14","many":"v = 0 and i != 1 and i % 10 = 0..1 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 12..14"}
