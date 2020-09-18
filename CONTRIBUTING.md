@@ -133,19 +133,70 @@ If the PR author decides to make any substantial changes that go beyond of what 
 
 See the file called [LICENSE](LICENSE) for terms applying to your contribution.
 
+### New files
+
+When adding a new Rust file, please ensure that it starts with this precise text:
+
+```
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+```
+
+When adding a new TOML file, please ensure that it starts with this precise text:
+
+```
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+```
+
+For non-Rust/TOML files that support comments, please include a comment with the above content using the comment syntax of the applicable file format near the top of the file as practical for the file format and use case.
+
 ### Importing code
 
 When importing pre-existing code, please observe the following:
 
 #### Rust crates
 
-When importing existing (Apache-2.0 OR MIT)-licensed code, if the source files have license headers that refer to particular file locations that are no longer correct, add a comment under the license header saying that the licensing information has moved to the top-level LICENSE file. Copy incoming MIT license copyright notices from the imported code into the top-level LICENSE file.
+When importing existing (Apache-2.0 OR MIT)-licensed code with pre-existing license header, please add the following above the pre-existing license header (replacing `CRATE_NAME` with the name of the original crate):
+
+```
+// The following code started as an import from CRATE_NAME which carried
+// the following notice (the file locations have been superseded by the file
+// called LICENSE at the top level of the ICU4X source tree):
+```
+_(followed by the original Apache-2.0 OR MIT license boilerplate of the Rust file)_
+
+Also add the text from "New files" section at the very beginning of each Rust source file.
+
+Copy incoming MIT license copyright notices from the imported code into the top-level LICENSE file.
 
 Use the `license-file` key in `Cargo.toml` to refer to the LICENSE file.
 
 #### Code from ICU4C/J
 
-When porting code from ICU4C or ICU4J, indicate in source code comments that a piece of code is ported under its original license. If you port code that is under a [third-party license](https://github.com/unicode-org/icu/blob/d95621c57f2becc1efd1be1d5c914624a715dac0/icu4c/LICENSE#L78-L414) in ICU4C/J as of the linked revision of the ICU4C LICENSE file and whose license isn't yet in the ICU4X LICENSE file, add a note about the part of code and the third-party license to the exception list in the LICENSE file, include the third-party license at the end of the LICENSE file with the title of the license, and in the code use comments to indicate that the code is under the particular third-party license.
+When porting code from ICU4C or ICU4J, indicate in source code comments that a piece of code is ported under its original license using the following comment (replacing `ICU4C` with `ICU4J` as applicable):
+
+```
+// The following code started as a port from ICU4C which carried the
+// following notice:
+```
+_(followed the original boilerplate from the ICU4C/ICU4J source file)_
+
+Also add the text from "New files" section at the very beginning of each Rust source file.
+
+If you port code that is under a [third-party license](https://github.com/unicode-org/icu/blob/d95621c57f2becc1efd1be1d5c914624a715dac0/icu4c/LICENSE#L78-L414) in ICU4C/J as of the linked revision of the ICU4C LICENSE file and whose license isn't yet in the ICU4X LICENSE file, add a note about the part of code and the third-party license to the exception list in the LICENSE file, include the third-party license at the end of the LICENSE file with the title of the license, and in the code use comments to indicate that the code is under the particular third-party license.
+
+### Tables generated from Unicode data
+
+When tables included in Rust files are generated from Unicode data, please make the generator generate this comment above the tables:
+
+```
+// The following tables have been generated from Unicode data which carried
+// the following notice:
+```
+_(followed by the original boilerplate from Unicode data)_
 
 ### Other cases
 
