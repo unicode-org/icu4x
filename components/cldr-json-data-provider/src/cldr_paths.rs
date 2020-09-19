@@ -10,12 +10,14 @@ pub struct CldrPaths {
     /// Path to checkout of cldr-core:
     /// https://github.com/unicode-cldr/cldr-core
     pub cldr_core: Result<PathBuf, MissingSourceError>,
+    pub cldr_dates: Result<PathBuf, MissingSourceError>,
 }
 
 impl Default for CldrPaths {
     fn default() -> CldrPaths {
         CldrPaths {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
+            cldr_dates: Err(MissingSourceError { src: "cldr-dates" }),
         }
     }
 }
