@@ -77,6 +77,12 @@ pub struct Locale {
     pub extensions: extensions::Extensions,
 }
 
+#[cfg(feature="use-ecma402")]
+use ecma402_traits;
+
+#[cfg(feature="use-ecma402")]
+impl ecma402_traits::Locale for Locale {}
+
 impl Locale {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `Locale`.

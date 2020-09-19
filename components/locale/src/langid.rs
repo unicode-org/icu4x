@@ -62,6 +62,12 @@ pub struct LanguageIdentifier {
     pub variants: subtags::Variants,
 }
 
+#[cfg(feature="use-ecma402")]
+use ecma402_traits;
+
+#[cfg(feature="use-ecma402")]
+impl ecma402_traits::Locale for LanguageIdentifier {}
+
 impl LanguageIdentifier {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed `LanguageIdentifier`.
