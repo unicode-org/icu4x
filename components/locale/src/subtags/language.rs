@@ -83,7 +83,7 @@ impl Language {
     /// assert_eq!(lang, "en");
     /// ```
     pub fn into_raw(self) -> Option<TinyStr8> {
-        self.0.clone()
+        self.0
     }
 
     /// Constructor which takes a raw value returned by

@@ -88,9 +88,11 @@ impl IntoTokenStream for subtags::Variants {
 }
 
 impl<T> IntoTokenStream for Option<T>
-where T: IntoTokenStream {
+where
+    T: IntoTokenStream,
+{
     fn into_token_stream_string(self) -> String {
-         if let Some(v) = self {
+        if let Some(v) = self {
             format!("Some({})", v.into_token_stream_string())
         } else {
             "None".to_string()

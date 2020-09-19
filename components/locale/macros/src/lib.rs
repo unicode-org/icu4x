@@ -16,7 +16,7 @@ fn get_value_from_token_stream(input: TokenStream) -> String {
 
 /// A macro allowing for compile-time construction of valid [`Language`] subtag.
 ///
-/// The macro will perform canonicalization of the tag.
+/// The macro will perform syntax canonicalization of the tag.
 ///
 /// # Examples
 ///
@@ -47,7 +47,7 @@ pub fn language(input: TokenStream) -> TokenStream {
 
 /// A macro allowing for compile-time construction of valid [`Script`] subtag.
 ///
-/// The macro will perform canonicalization of the tag.
+/// The macro will perform syntax canonicalization of the tag.
 ///
 /// # Examples
 ///
@@ -78,7 +78,7 @@ pub fn script(input: TokenStream) -> TokenStream {
 
 /// A macro allowing for compile-time construction of valid [`Region`] subtag.
 ///
-/// The macro will perform canonicalization of the tag.
+/// The macro will perform syntax canonicalization of the tag.
 ///
 /// # Examples
 ///
@@ -109,7 +109,7 @@ pub fn region(input: TokenStream) -> TokenStream {
 
 /// A macro allowing for compile-time construction of valid [`Variant`] subtag.
 ///
-/// The macro will perform canonicalization of the tag.
+/// The macro will perform syntax canonicalization of the tag.
 ///
 /// # Examples
 ///
@@ -140,7 +140,7 @@ pub fn variant(input: TokenStream) -> TokenStream {
 
 /// A macro allowing for compile-time construction of valid [`LanguageIdentifier`].
 ///
-/// The macro will perform canonicalization of the tag.
+/// The macro will perform syntax canonicalization of the tag.
 ///
 /// # Examples
 ///
@@ -157,7 +157,7 @@ pub fn variant(input: TokenStream) -> TokenStream {
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: As of Rust 1.47, the the macro cannot produce language identifier
+/// *Note*: As of Rust 1.47, the macro cannot produce language identifier
 /// with variants in the const mode pending [`Heap Allocations in Constants`].
 ///
 /// [`LanguageIdentifier`]: ../icu_locale/struct.LanguageIdentifier.html
