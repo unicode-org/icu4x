@@ -1,6 +1,6 @@
-use icu_locale_macros::*;
 use icu_locale::subtags;
 use icu_locale::LanguageIdentifier;
+use icu_locale_macros::*;
 
 const LANG_PL: subtags::Language = language!("pL");
 const SCRIPT_LATN: subtags::Script = script!("lAtN");

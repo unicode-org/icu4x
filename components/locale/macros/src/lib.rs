@@ -1,6 +1,9 @@
+mod token_stream;
+
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
+use token_stream::IntoTokenStream;
 
 fn get_value_from_token_stream(input: TokenStream) -> String {
     let val = format!("{}", input);
@@ -9,43 +12,6 @@ fn get_value_from_token_stream(input: TokenStream) -> String {
     }
     let len = val.len();
     (&val[1..len - 1]).to_string()
-}
-
-fn language_output(input: Option<u64>) -> String {
-    let val = if let Some(raw) = input {
-        format!("Some({})", raw)
-    } else {
-        "None".to_string()
-    };
-    format!("unsafe {{ icu_locale::subtags::Language::from_raw_unchecked({}) }}", val)
-}
-
-fn script_output(input: u32) -> String {
-    format!("unsafe {{ icu_locale::subtags::Script::from_raw_unchecked({}) }}", input)
-}
-
-fn region_output(input: u32) -> String {
-    format!("unsafe {{ icu_locale::subtags::Region::from_raw_unchecked({}) }}", input)
-}
-
-fn variant_output(input: u64) -> String {
-    format!("unsafe {{ icu_locale::subtags::Variant::from_raw_unchecked({}) }}", input)
-}
-
-fn variants_output(input: Option<Box<[icu_locale::subtags::Variant]>>) -> String {
-    if let Some(variants) = input {
-        let v: Vec<_> = variants
-            .iter()
-            .map(|v| {
-                let variant: u64 = v.into_raw();
-                format!("unsafe {{ icu_locale::subtags::Variant::from_raw_unchecked({}) }}", variant)
-            })
-            .collect();
-        let variants = format!("Some(Box::new([{}]))", v.join(", "));
-        format!("icu_locale::subtags::Variants::from_raw_unchecked({})", variants)
-    } else {
-        format!("icu_locale::subtags::Variants::from_raw_unchecked(None)")
-    }
 }
 
 /// A macro allowing for compile-time construction of valid [`Language`] subtag.
@@ -74,9 +40,9 @@ pub fn language(input: TokenStream) -> TokenStream {
 
     let parsed: icu_locale::subtags::Language = val.parse().expect("Malformed Language Subtag");
 
-    let lang = language_output(parsed.into_raw());
-
-    lang.parse().unwrap()
+    parsed
+        .into_token_stream()
+        .expect("Failed to parse token stream.")
 }
 
 /// A macro allowing for compile-time construction of valid [`Script`] subtag.
@@ -105,9 +71,9 @@ pub fn script(input: TokenStream) -> TokenStream {
 
     let parsed: icu_locale::subtags::Script = val.parse().expect("Malformed Script Subtag");
 
-    let script = script_output(parsed.into_raw());
-
-    script.parse().unwrap()
+    parsed
+        .into_token_stream()
+        .expect("Failed to parse token stream.")
 }
 
 /// A macro allowing for compile-time construction of valid [`Region`] subtag.
@@ -136,9 +102,9 @@ pub fn region(input: TokenStream) -> TokenStream {
 
     let parsed: icu_locale::subtags::Region = val.parse().expect("Malformed Region Subtag");
 
-    let region = region_output(parsed.into_raw());
-
-    region.parse().unwrap()
+    parsed
+        .into_token_stream()
+        .expect("Failed to parse token stream.")
 }
 
 /// A macro allowing for compile-time construction of valid [`Variant`] subtag.
@@ -167,11 +133,10 @@ pub fn variant(input: TokenStream) -> TokenStream {
 
     let parsed: icu_locale::subtags::Variant = val.parse().expect("Malformed Variant Subtag");
 
-    let variant = variant_output(parsed.into_raw());
-
-    variant.parse().unwrap()
+    parsed
+        .into_token_stream()
+        .expect("Failed to parse token stream.")
 }
-
 
 /// A macro allowing for compile-time construction of valid [`LanguageIdentifier`].
 ///
@@ -201,31 +166,27 @@ pub fn variant(input: TokenStream) -> TokenStream {
 pub fn langid(input: TokenStream) -> TokenStream {
     let val = get_value_from_token_stream(input);
 
-    let langid: icu_locale::LanguageIdentifier = val.parse().expect("Malformed Language Identifier");
+    let langid: icu_locale::LanguageIdentifier =
+        val.parse().expect("Malformed Language Identifier");
 
-    let lang = language_output(langid.language.into_raw());
+    let lang = langid.language.into_token_stream_string();
 
-    let script = if let Some(script) = langid.script {
-        format!("Some({})", script_output(script.into_raw()))
-    } else {
-        "None".to_string()
-    };
-    let region = if let Some(region) = langid.region {
-        format!("Some({})", region_output(region.into_raw()))
-    } else {
-        "None".to_string()
-    };
+    let script = langid.script.into_token_stream_string();
+    let region = langid.region.into_token_stream_string();
 
-    let variants = variants_output(langid.variants.into_raw());
+    let variants = langid.variants.into_token_stream_string();
 
-    let output = format!(r#"
+    let output = format!(
+        r#"
 icu_locale::LanguageIdentifier {{
     language: {},
     script: {},
     region: {},
     variants: {},
 }}
-"#, lang, script, region, variants);
+"#,
+        lang, script, region, variants
+    );
 
     output.parse().unwrap()
 }

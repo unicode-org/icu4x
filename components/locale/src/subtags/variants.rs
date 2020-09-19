@@ -82,10 +82,10 @@ impl Variants {
     /// v.sort();
     /// v.dedup();
     ///
-    /// let variants = Variants::from_vec_unchecked(v);
+    /// let variants = unsafe { Variants::from_vec_unchecked(v) };
     ///
     /// let raw = variants.into_raw();
-    /// let variants = Variants::from_raw_unchecked(raw);
+    /// let variants = unsafe { Variants::from_raw_unchecked(raw) };
     /// assert_eq!(variants.len(), 2);
     /// ```
     pub fn into_raw(self) -> Option<Box<[Variant]>> {
@@ -108,16 +108,21 @@ impl Variants {
     /// v.sort();
     /// v.dedup();
     ///
-    /// let variants = Variants::from_vec_unchecked(v);
+    /// let variants = unsafe { Variants::from_vec_unchecked(v) };
     ///
     /// let raw = variants.into_raw();
-    /// let variants = Variants::from_raw_unchecked(raw);
+    /// let variants = unsafe { Variants::from_raw_unchecked(raw) };
     /// assert_eq!(variants.len(), 2);
     /// ```
     ///
     /// For performance and memory constraint environments, it is recommended
     /// for the caller to use `slice::binary_search` instead of `sort` and `dedup`.
-    pub const fn from_raw_unchecked(input: Option<Box<[Variant]>>) -> Self {
+    ///
+    /// # Safety
+    ///
+    /// This function accepts any `Box<[Variant]>` that is expected to be a
+    /// valid list of sorted variants.
+    pub const unsafe fn from_raw_unchecked(input: Option<Box<[Variant]>>) -> Self {
         Self(input)
     }
 

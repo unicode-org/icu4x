@@ -72,8 +72,8 @@ impl Region {
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
     /// assert_eq!(region, "US");
     /// ```
-    pub fn into_raw(self) -> u32 {
-        self.0.into()
+    pub fn into_raw(self) -> TinyStr4 {
+        self.0
     }
 
     /// Constructor which takes a raw value returned by
@@ -91,12 +91,13 @@ impl Region {
     /// let region = unsafe { Region::from_raw_unchecked(raw) };
     /// assert_eq!(region, "US");
     /// ```
+    ///
     /// # Safety
     ///
-    /// This function accepts any u32 that is exected to be a valid
-    /// `TinyStr8` and a valid `Region` subtag.
-    pub const unsafe fn from_raw_unchecked(v: u32) -> Self {
-        Self(TinyStr4::new_unchecked(v))
+    /// This function accepts any `TinyStr4` that is expected to be a
+    /// valid `Region` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: TinyStr4) -> Self {
+        Self(v)
     }
 
     /// A helper function for displaying

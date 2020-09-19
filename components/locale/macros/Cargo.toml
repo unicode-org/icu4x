@@ -19,3 +19,4 @@ proc_macro = true
 
 [dependencies]
 icu-locale = { version = "0.0.1", path = "../" }
+tinystr = "0.3"
