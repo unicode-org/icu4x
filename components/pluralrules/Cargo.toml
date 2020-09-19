@@ -7,7 +7,7 @@ edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "../../LICENSE"
-categories = ["internationalization"]
+categories = ["internationalization", "ecma402"]
 include = [
     "src/**/*",
     "Cargo.toml",
@@ -15,9 +15,9 @@ include = [
 ]
 
 [dependencies]
-icu-locale = { path = "../locale" }
-icu-data-provider = { path = "../data-provider" }
 ecma402_traits = { version = "0.2.0", optional = true }
+icu-data-provider = { path = "../data-provider" }
+icu-locale = { path = "../locale" }
 
 [dev-dependencies]
 criterion = "0.3"

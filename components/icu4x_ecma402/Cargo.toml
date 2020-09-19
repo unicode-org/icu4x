@@ -1,0 +1,22 @@
+[package]
+name = "icu4x_ecma402"
+version = "0.1.0"
+authors = ["Filip Filmar <fmil@google.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ecma402_traits = { version = "0.2.0" }
+icu-data-provider = { path = "../data-provider" }
+icu-locale = { path = "../locale" }
+icu-pluralrules = { path = "../pluralrules" }
+
+
+[dev-dependencies]
+criterion = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = {version = "1.0" }
+icu-locale = { path = "../locale", features = ["serde", "use-ecma402"] }
+icu-data-provider = { path = "../data-provider", features = ["invariant"] }
+icu-fs-data-provider = { path = "../fs-data-provider" }

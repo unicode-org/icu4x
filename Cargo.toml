@@ -6,6 +6,7 @@ members = [
     "components/fs-data-provider",
     "components/icu",
     "components/icu4x",
+    "components/icu4x_ecma402",
     "components/uniset",
     "components/locale",
     "components/num-util",
