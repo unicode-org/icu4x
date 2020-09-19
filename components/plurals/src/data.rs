@@ -61,7 +61,7 @@ pub type PluralRulesFn = fn(&PluralOperands) -> PluralCategory;
 ///
 /// [`PluralCategory`]: ../enum.PluralCategory.html
 /// [`ast::Condition`]: ../rules/ast/struct.Condition.html
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct PluralRuleList {
     zero: Option<ast::Condition>,
     one: Option<ast::Condition>,

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::ast;
 use super::lexer::{Lexer, Token};
+use std::fmt;
 use std::iter::Peekable;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -13,6 +14,22 @@ pub enum ParserError {
     ExpectedOperand,
     ExpectedValue,
     ExpectedSampleType,
+}
+
+impl std::error::Error for ParserError {}
+
+impl fmt::Display for ParserError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use ParserError::*;
+        match self {
+            ExpectedAndCondition => write!(f, "expected 'AND' condition"),
+            ExpectedRelation => write!(f, "expected relation"),
+            ExpectedOperator => write!(f, "expected operator"),
+            ExpectedOperand => write!(f, "expected operand"),
+            ExpectedValue => write!(f, "expected value"),
+            ExpectedSampleType => write!(f, "expected sample type"),
+        }
+    }
 }
 
 /// Unicode Plural Rule parser converts an

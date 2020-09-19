@@ -1,0 +1,28 @@
+[package]
+name = "icu4x_ecma402"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+ecma402_traits = { version = "0.2.0" }
+icu = { path = "../icu" }
+icu-data-provider = { path = "../data-provider", features = ["invariant"] }
+
+
+[dev-dependencies]
+criterion = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = {version = "1.0" }
+icu-locale = { path = "../locale", features = ["serde"] }
+icu-data-provider = { path = "../data-provider", features = ["invariant"] }
+icu-testdata = { path = "../../resources/testdata"  }
