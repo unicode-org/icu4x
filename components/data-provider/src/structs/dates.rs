@@ -1,0 +1,122 @@
+// Date
+#[cfg(feature = "invariant")]
+use crate::prelude::*;
+
+/// Gets a locale-invariant default struct given a data key in this module's category.
+#[cfg(feature = "invariant")]
+pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
+    use crate::invariant::make_inv_response;
+    if data_key.category != DataCategory::Dates {
+        return None;
+    }
+    match (data_key.sub_category.as_str(), data_key.version) {
+        ("gregory", 1) => make_inv_response::<gregory::DatesV1>(),
+        _ => None,
+    }
+}
+
+pub mod gregory {
+    use serde::{Deserialize, Serialize};
+    use std::borrow::Cow;
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+    pub struct DatesV1 {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub symbols: Option<DateSymbolsV1>,
+
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub patterns: Option<PatternsV1>,
+    }
+
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+    pub struct DateSymbolsV1 {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub months: Option<months::ContextsV1>,
+
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub weekdays: Option<weekdays::ContextsV1>,
+
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub day_periods: Option<day_periods::ContextsV1>,
+    }
+
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+    pub struct PatternsV1 {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub date: Option<patterns::StylePatternsV1>,
+
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub time: Option<patterns::StylePatternsV1>,
+
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub date_time: Option<patterns::StylePatternsV1>,
+
+        #[serde(skip_serializing_if = "Vec::is_empty")]
+        pub skeletons: Vec<(Cow<'static, str>, Cow<'static, str>)>,
+    }
+
+    macro_rules! symbols {
+        ($name: ident, $expr: ty) => {
+            pub mod $name {
+                use super::*;
+
+                #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+                pub struct SymbolsV1(pub $expr);
+
+                symbols!();
+            }
+        };
+        ($name: ident, $($element: ident: $ty: ty),*) => {
+            pub mod $name {
+                use super::*;
+
+                #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+                pub struct SymbolsV1 {
+                    $(pub $element: $ty),*
+                }
+                symbols!();
+            }
+        };
+        () => {
+            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+            pub struct WidthsV1 {
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub abbreviated: Option<SymbolsV1>,
+
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub narrow: Option<SymbolsV1>,
+
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub short: Option<SymbolsV1>,
+
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub wide: Option<SymbolsV1>,
+            }
+
+            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+            pub struct ContextsV1 {
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub format: Option<WidthsV1>,
+
+                #[serde(skip_serializing_if = "Option::is_none")]
+                pub stand_alone: Option<WidthsV1>,
+            }
+        };
+    }
+
+    symbols!(months, [Cow<'static, str>; 12]);
+
+    symbols!(weekdays, [Cow<'static, str>; 7]);
+
+    symbols!(day_periods, am: Cow<'static, str>, pm: Cow<'static, str>);
+
+    pub mod patterns {
+        use super::*;
+        #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+        pub struct StylePatternsV1 {
+            pub full: Cow<'static, str>,
+            pub long: Cow<'static, str>,
+            pub medium: Cow<'static, str>,
+            pub short: Cow<'static, str>,
+        }
+    }
+}
