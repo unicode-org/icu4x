@@ -31,14 +31,15 @@ fn filter_input(input: &str) -> String {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let (_input, _output) = if let Some(input) = args.get(1) {
-        (input.as_str(), filter_input(&input))
+    let input = if let Some(input) = args.get(1) {
+        input.as_str()
     } else {
-        (DEFAULT_INPUT, filter_input(DEFAULT_INPUT))
+        DEFAULT_INPUT
     };
+    let _output = filter_input(&input);
 
     #[cfg(debug_assertions)]
-    println!("\nInput: {}\nOutput: {}", _input, _output);
+    println!("\nInput: {}\nOutput: {}", input, _output);
 }
 
 #[cfg(test)]
