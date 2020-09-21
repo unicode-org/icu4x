@@ -20,38 +20,27 @@ pub mod gregory {
     use std::borrow::Cow;
     #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
     pub struct DatesV1 {
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub symbols: Option<DateSymbolsV1>,
+        pub symbols: DateSymbolsV1,
 
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub patterns: Option<PatternsV1>,
+        pub patterns: PatternsV1,
     }
 
     #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
     pub struct DateSymbolsV1 {
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub months: Option<months::ContextsV1>,
+        pub months: months::ContextsV1,
 
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub weekdays: Option<weekdays::ContextsV1>,
+        pub weekdays: weekdays::ContextsV1,
 
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub day_periods: Option<day_periods::ContextsV1>,
+        pub day_periods: day_periods::ContextsV1,
     }
 
     #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
     pub struct PatternsV1 {
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub date: Option<patterns::StylePatternsV1>,
+        pub date: patterns::StylePatternsV1,
 
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub time: Option<patterns::StylePatternsV1>,
+        pub time: patterns::StylePatternsV1,
 
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pub date_time: Option<patterns::StylePatternsV1>,
-
-        #[serde(skip_serializing_if = "Vec::is_empty")]
-        pub skeletons: Vec<(Cow<'static, str>, Cow<'static, str>)>,
+        pub date_time: patterns::StylePatternsV1,
     }
 
     macro_rules! symbols {
@@ -107,11 +96,15 @@ pub mod gregory {
 
     symbols!(weekdays, [Cow<'static, str>; 7]);
 
-    symbols!(day_periods, am: Cow<'static, str>, pm: Cow<'static, str>);
+    symbols!(
+        day_periods,
+        am: Cow<'static, str>,
+        pm: Cow<'static, str>
+    );
 
     pub mod patterns {
         use super::*;
-        #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+        #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
         pub struct StylePatternsV1 {
             pub full: Cow<'static, str>,
             pub long: Cow<'static, str>,
