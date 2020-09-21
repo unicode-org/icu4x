@@ -124,10 +124,18 @@ jobs:
     - name: Doc -> Github Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        # Setup for publishing to an external repo:
-        # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
+        # Setup for publishing to an external repo using `deploy_key` option:
+        #
+        # Step 1 - Create SSH key pair. Use your public key as a Github "Deploy Key" and your private
+        # key as a Github "Secret". Where to register these keys comes next.
         # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-create-ssh-deploy-key
+        #
+        # Step 2 - After creating public/private key pair, put the private key in the repo running the
+        # action as a Secret and call it "ACTIONS_DEPLOY_KEY". Put the public key as a Deploy Key in the
+        # target repo where the Github Pages will be copied to.
+        # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: unicode-org/icu4x-docs
         publish_branch: gh-pages
         publish_dir: ./target/doc
+        commit_message: Rust doc -> GH Pages
