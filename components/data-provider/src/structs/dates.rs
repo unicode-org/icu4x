@@ -72,6 +72,7 @@ pub mod gregory {
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
                 pub narrow: SymbolsV1,
+                #[serde(skip_serializing_if = "Option::is_none")]
                 pub short: Option<SymbolsV1>,
                 pub wide: SymbolsV1,
             }
