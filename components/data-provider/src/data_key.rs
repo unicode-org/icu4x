@@ -10,6 +10,7 @@ use tinystr::TinyStr16;
 pub enum DataCategory {
     Decimal,
     Plurals,
+    Dates,
     PrivateUse(TinyStr16),
 }
 
@@ -19,6 +20,7 @@ impl DataCategory {
         match self {
             DataCategory::Decimal => Cow::Borrowed("decimal"),
             DataCategory::Plurals => Cow::Borrowed("plurals"),
+            DataCategory::Dates => Cow::Borrowed("dates"),
             DataCategory::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());
@@ -64,6 +66,9 @@ macro_rules! icu_data_key {
     (plurals: $sub_category:tt @ $version:tt) => {
         icu_data_key!($crate::DataCategory::Plurals, $sub_category, $version)
     };
+    (dates: $sub_category:tt @ $version:tt) => {
+        icu_data_key!($crate::DataCategory::Dates, $sub_category, $version)
+    };
     (x-$private_use:tt: $sub_category:tt @ $version:tt) => {
         icu_data_key!(
             $crate::DataCategory::PrivateUse(stringify!($private_use).parse().unwrap()),
@@ -86,6 +91,7 @@ fn test_data_key_macro(category: DataCategory) {
     let data_key_1 = match category {
         DataCategory::Decimal => icu_data_key!(decimal: foo@1),
         DataCategory::Plurals => icu_data_key!(plurals: foo@1),
+        DataCategory::Dates => icu_data_key!(dates: foo@1),
         DataCategory::PrivateUse(_) => icu_data_key!(x-private: foo@1),
     };
     let data_key_2 = DataKey {
@@ -100,6 +106,7 @@ fn test_data_key_macro(category: DataCategory) {
 fn test_all_data_key_macros() {
     test_data_key_macro(DataCategory::Decimal);
     test_data_key_macro(DataCategory::Plurals);
+    test_data_key_macro(DataCategory::Dates);
     test_data_key_macro(DataCategory::PrivateUse("private".parse().unwrap()));
 }
 

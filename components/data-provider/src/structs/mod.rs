@@ -1,3 +1,4 @@
+pub mod dates;
 pub mod decimal;
 pub mod plurals;
 
@@ -12,4 +13,5 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
     None //
         .or_else(|| decimal::get_invariant(data_key)) //
         .or_else(|| plurals::get_invariant(data_key)) //
+        .or_else(|| dates::get_invariant(data_key)) //
 }
