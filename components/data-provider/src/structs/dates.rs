@@ -18,14 +18,14 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
 pub mod gregory {
     use serde::{Deserialize, Serialize};
     use std::borrow::Cow;
-    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
     pub struct DatesV1 {
         pub symbols: DateSymbolsV1,
 
         pub patterns: PatternsV1,
     }
 
-    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
     pub struct DateSymbolsV1 {
         pub months: months::ContextsV1,
 
@@ -66,8 +66,18 @@ pub mod gregory {
             }
         };
         () => {
+            // UTS35 specifies that `format` widths are mandatory
+            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+            pub struct FormatWidthsV1 {
+                pub abbreviated: SymbolsV1,
+                pub narrow: SymbolsV1,
+                pub short: SymbolsV1,
+                pub wide: SymbolsV1,
+            }
+
+            // UTS35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
-            pub struct WidthsV1 {
+            pub struct StandAloneWidthsV1 {
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub abbreviated: Option<SymbolsV1>,
 
@@ -81,12 +91,12 @@ pub mod gregory {
                 pub wide: Option<SymbolsV1>,
             }
 
-            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
+            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
             pub struct ContextsV1 {
-                pub format: WidthsV1,
+                pub format: FormatWidthsV1,
 
                 #[serde(skip_serializing_if = "Option::is_none")]
-                pub stand_alone: Option<WidthsV1>,
+                pub stand_alone: Option<StandAloneWidthsV1>,
             }
         };
     }
