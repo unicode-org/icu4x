@@ -1,0 +1,33 @@
+[package]
+name = "icu-datetime"
+description = "API for managing Unicode Language and Locale Identifiers"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+icu-locale = { path = "../locale" }
+icu-data-provider = { path = "../data-provider" }
+
+[dev-dependencies]
+criterion = "0.3"
+icu-data-provider = { path = "../data-provider", features = ["invariant"] }
+icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
+icu-fs-data-provider = { path = "../fs-data-provider" }
+
+[[bench]]
+name = "datetime"
+harness = false
+
+[[bench]]
+name = "pattern"
+harness = false
