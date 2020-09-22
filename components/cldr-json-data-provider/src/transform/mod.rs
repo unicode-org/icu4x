@@ -45,6 +45,9 @@ impl<'a, 'd> DataEntryCollection for CldrJsonDataProvider<'a, 'd> {
         if let Some(resp) = self.plurals.try_iter(data_key, &self.cldr_paths)? {
             return Ok(resp);
         }
+        if let Some(resp) = self.dates.try_iter(data_key, &self.cldr_paths)? {
+            return Ok(resp);
+        }
         Err(DataError::UnsupportedDataKey(*data_key))
     }
 }

@@ -154,7 +154,7 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name2]);
     };
     ([$name: ident, $name2: ident], { $($element: ident),* }) => {
-        impl From<&cldr_json::$name::Symbols> for gregory::$name::SymbolsV1 {
+        impl From<&cldr_json::$name::Symbols> for gregory::$name2::SymbolsV1 {
             fn from(other: &cldr_json::$name::Symbols) -> Self {
                 Self {
                     $(
@@ -166,34 +166,50 @@ macro_rules! symbols_from {
         symbols_from!([$name, $name]);
     };
     ([$name: ident, $name2: ident]) => {
+        impl cldr_json::$name::Symbols {
+            // Helper function which returns None if the two groups of symbols overlap.
+            pub fn get_unaliased(&self, other: &cldr_json::$name::Symbols) -> Option<Self> {
+                if self != other {
+                    Some(self.clone())
+                } else {
+                    None
+                }
+            }
+        }
+
         impl From<&cldr_json::$name::Contexts> for gregory::$name2::ContextsV1 {
             fn from(other: &cldr_json::$name::Contexts) -> Self {
                 Self {
                     format: (&other.format).into(),
                     stand_alone: other.stand_alone.as_ref().and_then(|stand_alone| {
-                        if other.format == *stand_alone {
-                            None
-                        } else {
-                            Some(stand_alone.into())
-                        }
-                    })
+                        stand_alone.get_unaliased(&other.format)
+                    }).map(|ref stand_alone| stand_alone.into())
                 }
             }
         }
 
-        impl PartialEq<cldr_json::$name::StandAloneWidths> for cldr_json::$name::FormatWidths {
-            fn eq(&self, other: &cldr_json::$name::StandAloneWidths) -> bool {
-                fn matches_width(w1: &cldr_json::$name::Symbols, w2: &Option<cldr_json::$name::Symbols>) -> bool {
-                    if let Some(w2) = w2 {
-                        w1 == w2
-                    } else {
-                        true
-                    }
+        impl cldr_json::$name::StandAloneWidths {
+            // Helper function which returns None if the two groups of symbols overlap.
+            pub fn get_unaliased(&self, other: &cldr_json::$name::FormatWidths) -> Option<Self> {
+                let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
+                let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));
+                let short = if self.short == other.short {
+                    None
+                } else {
+                    self.short.clone()
+                };
+                let wide = self.wide.as_ref().and_then(|v| v.get_unaliased(&other.wide));
+
+                if abbreviated.is_none() && narrow.is_none() && wide.is_none() && short.is_none() {
+                    None
+                } else {
+                    Some(Self {
+                        abbreviated,
+                        narrow,
+                        short,
+                        wide,
+                    })
                 }
-                matches_width(&self.abbreviated, &other.abbreviated) &&
-                matches_width(&self.narrow, &other.narrow) &&
-                matches_width(&self.wide, &other.wide) &&
-                self.short == other.short
             }
         }
 
@@ -293,6 +309,7 @@ pub(self) mod cldr_json {
             #[derive(Debug, PartialEq, Clone, Deserialize)]
             pub struct Contexts {
                 pub format: FormatWidths,
+                #[serde(rename = "stand-alone")]
                 pub stand_alone: Option<StandAloneWidths>,
             }
         }
@@ -395,7 +412,6 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    println!("{:#?}", cs_dates);
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
 
     assert_eq!(
@@ -404,4 +420,64 @@ fn test_basic() {
     );
 
     assert_eq!("d. M. y", cs_dates.patterns.date.medium);
+}
+
+#[test]
+fn unalias_contexts() {
+    use std::borrow::Cow;
+
+    let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
+    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+
+    let cs_dates: Cow<gregory::DatesV1> = provider
+        .load(&DataRequest {
+            data_key: icu_data_key!(dates: gregory@1),
+            data_entry: DataEntry {
+                variant: None,
+                langid: "cs".parse().unwrap(),
+            },
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    // Czech months are not unaliased because `wide` differs.
+    assert!(cs_dates.symbols.months.stand_alone.is_some());
+
+    // Czech months are not unaliased because `wide` differs.
+    assert!(cs_dates
+        .symbols
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .abbreviated
+        .is_none());
+    assert!(cs_dates
+        .symbols
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .short
+        .is_none());
+    assert!(cs_dates
+        .symbols
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .narrow
+        .is_none());
+    assert!(cs_dates
+        .symbols
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .wide
+        .is_some());
+
+    // Czech weekdays are unaliased because they completely overlap.
+    assert!(cs_dates.symbols.weekdays.stand_alone.is_none());
 }
