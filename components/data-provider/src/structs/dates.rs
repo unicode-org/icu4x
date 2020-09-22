@@ -83,8 +83,7 @@ pub mod gregory {
 
             #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
             pub struct ContextsV1 {
-                #[serde(skip_serializing_if = "Option::is_none")]
-                pub format: Option<WidthsV1>,
+                pub format: WidthsV1,
 
                 #[serde(skip_serializing_if = "Option::is_none")]
                 pub stand_alone: Option<WidthsV1>,
@@ -96,11 +95,7 @@ pub mod gregory {
 
     symbols!(weekdays, [Cow<'static, str>; 7]);
 
-    symbols!(
-        day_periods,
-        am: Cow<'static, str>,
-        pm: Cow<'static, str>
-    );
+    symbols!(day_periods, am: Cow<'static, str>, pm: Cow<'static, str>);
 
     pub mod patterns {
         use super::*;
