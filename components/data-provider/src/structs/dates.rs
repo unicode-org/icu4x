@@ -18,14 +18,14 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
 pub mod gregory {
     use serde::{Deserialize, Serialize};
     use std::borrow::Cow;
-    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
     pub struct DatesV1 {
         pub symbols: DateSymbolsV1,
 
         pub patterns: PatternsV1,
     }
 
-    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+    #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
     pub struct DateSymbolsV1 {
         pub months: months::ContextsV1,
 
@@ -48,7 +48,7 @@ pub mod gregory {
             pub mod $name {
                 use super::*;
 
-                #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+                #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
                 pub struct SymbolsV1(pub $expr);
 
                 symbols!();
@@ -58,7 +58,7 @@ pub mod gregory {
             pub mod $name {
                 use super::*;
 
-                #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+                #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
                 pub struct SymbolsV1 {
                     $(pub $element: $ty),*
                 }
@@ -68,7 +68,7 @@ pub mod gregory {
         () => {
             // UTS 35 specifies that `format` widths are mandatory
             // except of `short`.
-            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
                 pub narrow: SymbolsV1,
@@ -93,7 +93,7 @@ pub mod gregory {
                 pub wide: Option<SymbolsV1>,
             }
 
-            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
+            #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
             pub struct ContextsV1 {
                 pub format: FormatWidthsV1,
 
