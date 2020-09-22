@@ -1,6 +1,9 @@
 // A sample application which takes a comma separated list of language identifiers,
 // filters out identifiers with language subtags different than `en` and serializes
 // the list back into a comma separated list in canonical syntax.
+//
+// Note: This is an example of the API use, and is not a good base for language matching.
+// For language matching, please consider algorithms such as Locale Matcher.
 use std::env;
 
 use icu_locale::{subtags, LanguageIdentifier};
