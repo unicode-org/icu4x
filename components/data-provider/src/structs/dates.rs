@@ -66,16 +66,17 @@ pub mod gregory {
             }
         };
         () => {
-            // UTS35 specifies that `format` widths are mandatory
+            // UTS 35 specifies that `format` widths are mandatory
+            // except of `short`.
             #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
                 pub narrow: SymbolsV1,
-                pub short: SymbolsV1,
+                pub short: Option<SymbolsV1>,
                 pub wide: SymbolsV1,
             }
 
-            // UTS35 specifies that `stand_alone` widths are optional
+            // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
             pub struct StandAloneWidthsV1 {
                 #[serde(skip_serializing_if = "Option::is_none")]
