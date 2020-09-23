@@ -1,5 +1,7 @@
+mod dates;
 mod plurals;
 
+pub use dates::DatesProvider;
 pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
@@ -10,6 +12,7 @@ use icu_data_provider::prelude::*;
 pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a CldrPaths,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,
+    dates: LazyCldrProvider<DatesProvider<'d>>,
 }
 
 impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
@@ -17,15 +20,20 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
         CldrJsonDataProvider {
             cldr_paths,
             plurals: Default::default(),
+            dates: Default::default(),
         }
     }
 }
 
 impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        self.plurals
-            .try_load(req, &self.cldr_paths)?
-            .ok_or(DataError::UnsupportedDataKey(req.data_key))
+        if let Some(result) = self.plurals.try_load(req, &self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self.dates.try_load(req, &self.cldr_paths)? {
+            return Ok(result);
+        }
+        Err(DataError::UnsupportedDataKey(req.data_key))
     }
 }
 
@@ -35,6 +43,9 @@ impl<'a, 'd> DataEntryCollection for CldrJsonDataProvider<'a, 'd> {
         data_key: &DataKey,
     ) -> Result<Box<dyn Iterator<Item = DataEntry>>, DataError> {
         if let Some(resp) = self.plurals.try_iter(data_key, &self.cldr_paths)? {
+            return Ok(resp);
+        }
+        if let Some(resp) = self.dates.try_iter(data_key, &self.cldr_paths)? {
             return Ok(resp);
         }
         Err(DataError::UnsupportedDataKey(*data_key))
