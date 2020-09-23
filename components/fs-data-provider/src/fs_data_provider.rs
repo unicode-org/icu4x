@@ -67,6 +67,18 @@ impl DataProvider<'_> for FsDataProvider {
             }
             .with_owned_payload(obj);
             Ok(response)
+        } else if req.data_key.category == DataCategory::Dates {
+            // TODO: Pick deserializer based on manifest
+            let obj: structs::dates::gregory::DatesV1 = match serde_json::from_reader(reader) {
+                Ok(obj) => obj,
+                Err(err) => return Err(Error::ResourceError(Box::new(err))),
+            };
+            let response = DataResponseBuilder {
+                // TODO: Return the actual locale when fallbacks are implemented.
+                data_langid: req.data_entry.langid.clone(),
+            }
+            .with_owned_payload(obj);
+            Ok(response)
         } else {
             panic!("Don't know how to parse this data key, but it is on the filesystem");
         }

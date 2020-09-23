@@ -96,6 +96,16 @@ fn main() -> Result<(), Error> {
                 .takes_value(true),
         )
         .arg(
+            Arg::with_name("CLDR_DATES")
+                .long("cldr-dates")
+                .value_name("PATH")
+                .help(
+                    "Path to cldr-dates JSON: \
+                    https://github.com/unicode-cldr/cldr-dates",
+                )
+                .takes_value(true),
+        )
+        .arg(
             Arg::with_name("KEY")
                 .short("k")
                 .long("keys")
@@ -153,6 +163,7 @@ fn main() -> Result<(), Error> {
     let keys = [
         icu_data_key!(plurals: cardinal@1),
         icu_data_key!(plurals: ordinal@1),
+        icu_data_key!(dates: gregory@1),
     ];
 
     let output_path = PathBuf::from(
@@ -165,6 +176,10 @@ fn main() -> Result<(), Error> {
 
     if let Some(path) = matches.value_of("CLDR_CORE") {
         cldr_paths.cldr_core = Ok(path.into());
+    }
+
+    if let Some(path) = matches.value_of("CLDR_DATES") {
+        cldr_paths.cldr_dates = Ok(path.into());
     }
 
     let provider = CldrJsonDataProvider::new(&cldr_paths);
