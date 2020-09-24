@@ -124,7 +124,7 @@ impl UnicodeSet {
             }
             Err(pos) => {
                 if pos % 2 != 0 && pos < self.inv_list.len() {
-                    Some(pos)
+                    Some(pos - 1)
                 } else {
                     None
                 }
@@ -186,7 +186,11 @@ impl UnicodeSet {
             return false;
         }
         match self.contains_query(from) {
-            Some(pos) => (till) <= self.inv_list[pos + 1],
+            Some(pos) => {
+                println!("{:?}", self.inv_list);
+                println!("{}", pos);
+                return (till) <= self.inv_list[pos + 1];
+            }
             None => false,
         }
     }
@@ -308,6 +312,18 @@ mod tests {
 
     // UnicodeSet membership functions
     #[test]
+    fn test_unicodeset_contains_query() {
+        let ex = vec![65, 70, 75, 85];
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert!(check.contains_query(64).is_none());
+        assert_eq!(check.contains_query(65).unwrap(), 0);
+        assert_eq!(check.contains_query(68).unwrap(), 0);
+        assert!(check.contains_query(70).is_none());
+        assert_eq!(check.contains_query(76).unwrap(), 2);
+        assert!(check.contains_query(86).is_none());
+    }
+
+    #[test]
     fn test_unicodeset_contains() {
         let ex = vec![2, 5, 10, 15];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
@@ -331,7 +347,9 @@ mod tests {
         let ex = vec![65, 70, 75, 85];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(check.contains_range(&('A'..='E'))); // 65 - 69
-        assert!(check.contains_range(&('K'..'U'))); // 75 - 84
+        assert!(check.contains_range(&('C'..'D'))); // 65 - 69
+        assert!(check.contains_range(&('L'..'P'))); // 76 - 80
+        assert!(!check.contains_range(&('L'..='U'))); // 76 - 85
     }
     #[test]
     fn test_unicodeset_contains_range_false() {
