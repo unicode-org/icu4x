@@ -186,7 +186,7 @@ impl UnicodeSet {
             return false;
         }
         match self.contains_query(from) {
-            Some(pos) => (till) <= self.inv_list[pos + 1]
+            Some(pos) => (till) <= self.inv_list[pos + 1],
             None => false,
         }
     }
