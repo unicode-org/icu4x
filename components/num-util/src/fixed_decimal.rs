@@ -6,10 +6,13 @@ use std::fmt;
 use std::ops::RangeInclusive;
 
 use std::str::FromStr;
+
 use static_assertions::const_assert;
 
 use super::uint_iterator::IntIterator;
+
 use crate::Error;
+// extern crate Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
 const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
@@ -439,6 +442,18 @@ impl FromStr for FixedDecimal {
                 break;
             }
         }
+        // If the input only has 0 (like 000, 00.0, -00.000) we handle the situation here
+        // and return the correct FixedDecimal now and don't run the rest of the code
+        if left_zeros == no_dot_str_len {
+            let mut dec: FixedDecimal = 0.into();
+            dec.is_negative = is_negative;
+            dec.upper_magnitude = left_zeros as i16 - 1i16;
+            if has_dot {
+                dec.upper_magnitude -= no_dot_str_len as i16 - dot_index as i16;
+                dec.lower_magnitude -= no_dot_str_len as i16 - dot_index as i16;
+            }
+            return Ok(dec);
+        }
         let mut right_zeros = 0;
         for (_i, c) in no_dot_str.chars().rev().enumerate() {
             if c == '0' {
@@ -653,6 +668,18 @@ fn test_from_str() {
         TestCase {
             input: "009223372000.003685477580898230948203840239384000",
         },
+        TestCase {
+            input: "0",
+        },
+        TestCase {
+            input: "-0",
+        },
+        TestCase {
+            input: "000",
+        },
+        TestCase {
+            input: "-00.0",
+        },
     ];
     for cas in &cases {
         let dec: FixedDecimal = FixedDecimal::from_str(cas.input).unwrap();
@@ -661,19 +688,6 @@ fn test_from_str() {
     }
 }
 
-#[test]
-pub fn test_isize_limits() {
-    let dec_max: FixedDecimal = std::isize::MAX.into();
-    let input = dec_max.to_string();
-    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
-    assert_eq!(dec.to_string(), input);
-    assert_eq!(dec.write_len(), input.len());
-    let dec_min: FixedDecimal = std::isize::MIN.into();
-    let input = dec_min.to_string();
-    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
-    assert_eq!(dec.to_string(), input);
-    assert_eq!(dec.write_len(), input.len());
-}
 
 #[test]
 fn test_isize_limits() {
@@ -711,4 +725,32 @@ fn test_lower_magnitude_bounds() {
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+}
+
+#[test]
+fn test_from_str_isize_limits() {
+    let dec_max: FixedDecimal = std::isize::MAX.into();
+    let input = dec_max.to_string();
+    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
+    assert_eq!(dec.to_string(), input);
+    assert_eq!(dec.write_len(), input.len());
+    let dec_min: FixedDecimal = std::isize::MIN.into();
+    let input = dec_min.to_string();
+    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
+    assert_eq!(dec.to_string(), input);
+    assert_eq!(dec.write_len(), input.len());
+}
+
+#[test]
+fn test_from_str_u128_limits() {
+    let dec_max: FixedDecimal = std::u128::MAX.into();
+    let input = dec_max.to_string();
+    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
+    assert_eq!(dec.to_string(), input);
+    assert_eq!(dec.write_len(), input.len());
+    let dec_min: FixedDecimal = std::u128::MIN.into();
+    let input = dec_min.to_string();
+    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
+    assert_eq!(dec.to_string(), input);
+    assert_eq!(dec.write_len(), input.len());
 }
