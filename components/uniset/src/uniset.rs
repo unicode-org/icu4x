@@ -124,7 +124,7 @@ impl UnicodeSet {
             }
             Err(pos) => {
                 if pos % 2 != 0 && pos < self.inv_list.len() {
-                    Some(pos)
+                    Some(pos - 1)
                 } else {
                     None
                 }
@@ -308,6 +308,18 @@ mod tests {
 
     // UnicodeSet membership functions
     #[test]
+    fn test_unicodeset_contains_query() {
+        let ex = vec![65, 70, 75, 85];
+        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert!(check.contains_query(64).is_none());
+        assert_eq!(check.contains_query(65).unwrap(), 0);
+        assert_eq!(check.contains_query(68).unwrap(), 0);
+        assert!(check.contains_query(70).is_none());
+        assert_eq!(check.contains_query(76).unwrap(), 2);
+        assert!(check.contains_query(86).is_none());
+    }
+
+    #[test]
     fn test_unicodeset_contains() {
         let ex = vec![2, 5, 10, 15];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
@@ -331,7 +343,9 @@ mod tests {
         let ex = vec![65, 70, 75, 85];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(check.contains_range(&('A'..='E'))); // 65 - 69
-        assert!(check.contains_range(&('K'..'U'))); // 75 - 84
+        assert!(check.contains_range(&('C'..'D'))); // 67 - 67
+        assert!(check.contains_range(&('L'..'P'))); // 76 - 80
+        assert!(!check.contains_range(&('L'..='U'))); // 76 - 85
     }
     #[test]
     fn test_unicodeset_contains_range_false() {
@@ -339,13 +353,13 @@ mod tests {
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert!(!check.contains_range(&('!'..'A'))); // 33 - 65
         assert!(!check.contains_range(&('F'..'K'))); // 70 - 74
-        assert!(!check.contains_range(&('U'..)));
+        assert!(!check.contains_range(&('U'..))); // 85 - ..
     }
     #[test]
     fn test_unicodeset_contains_range_invalid() {
         let check = UnicodeSet::all();
         assert!(!check.contains_range(&('A'..'!'))); // 65 - 33
-        assert!(!check.contains_range(&('A'..'A')));
+        assert!(!check.contains_range(&('A'..'A'))); // 65 - 65
     }
     #[test]
     fn test_unicodeset_contains_set_u() {
