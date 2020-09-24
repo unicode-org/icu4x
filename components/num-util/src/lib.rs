@@ -56,4 +56,5 @@ pub enum Error {
     /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());
     /// ```
     Limit,
+    Syntax,
 }
