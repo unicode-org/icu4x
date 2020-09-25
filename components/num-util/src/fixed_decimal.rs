@@ -382,7 +382,7 @@ impl FromStr for FixedDecimal {
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
-        let no_sign_str:&str; 
+        let no_sign_str: &str;
         let mut is_negative = false;
         if &input_str[0..1] == "-" {
             is_negative = true;
@@ -403,22 +403,20 @@ impl FromStr for FixedDecimal {
         // Note: Input starting or ending with a dot is detected as syntax error here (Ex: .123, 123.)
         for (i, c) in no_sign_str.chars().enumerate() {
             if c == '.' {
-                match has_dot{
+                match has_dot {
                     false => {
-                        dot_index = i;    
+                        dot_index = i;
                         has_dot = true;
-                        if i == 0 || i == no_sign_str.len()-1{
+                        if i == 0 || i == no_sign_str.len() - 1 {
                             return Err(Error::Syntax);
                         }
-                    },
+                    }
                     true => {
                         return Err(Error::Syntax);
-                    },
+                    }
                 }
-            } else {
-                if !c.is_digit(10) {
-                    return Err(Error::Syntax)
-                }
+            } else if !c.is_digit(10) {
+                return Err(Error::Syntax);
             }
         }
         // no_dot_str: shows the string when the dot is removed from it
@@ -429,7 +427,7 @@ impl FromStr for FixedDecimal {
         // right_zeros: number of zeros at the right of no_dot_str
         // These are not necessarily leading or trailing zeros
         // Example:
-        //     input string     left_zeros      right_zeros        
+        //     input string     left_zeros      right_zeros
         //     00123000             2                3
         //     0.0123000            2               3
         //     001.23000            2               3
@@ -463,10 +461,10 @@ impl FromStr for FixedDecimal {
             }
         }
         // digits_str: the string after removing sign, dot, left zeros, and right zeros
-        let digits_str = &no_dot_str[left_zeros .. no_dot_str_len - right_zeros];
+        let digits_str = &no_dot_str[left_zeros..no_dot_str_len - right_zeros];
 
         // shift: number of digits after dot in the input_str, 0 if there is no dot
-        let mut shift:i16 = 0;
+        let mut shift: i16 = 0;
         if has_dot {
             shift = (no_sign_str_len - dot_index - 1) as i16;
         }
@@ -482,17 +480,17 @@ impl FromStr for FixedDecimal {
         }
         let v_len = v.len();
         dec.digits = v;
-        dec.magnitude = v_len as i16 -1;
+        dec.magnitude = v_len as i16 - 1;
         dec.upper_magnitude = v_len as i16 - 1;
         dec.lower_magnitude = 0;
-        
+
         // Adjusting magnitude, upper_magnitude, and lower_magnitud w.r.t. left_zeros, right_zeros, and shift
         // The computed upper_magnitude value computed below is always >= 0
         // The computed lower_magnitude value computed below is always <= 0
         // The order of negative terms and positive terms is intentional, to avoid overflow if possible
         dec.upper_magnitude += -shift + left_zeros as i16 + right_zeros as i16;
         dec.magnitude += -shift + right_zeros as i16;
-        dec.lower_magnitude = -1*shift;
+        dec.lower_magnitude = -1 * shift;
         dec.is_negative = is_negative;
 
         // Outputs for debugging:
@@ -503,11 +501,9 @@ impl FromStr for FixedDecimal {
         // println!("shift = {}", shift);
         // println!("final_dec = {}", dec);
         // println!("final_dec = {:?}", dec);
-        
-        Ok(dec)
-        
-    }
 
+        Ok(dec)
+    }
 }
 
 #[test]
@@ -626,39 +622,25 @@ fn test_from_str() {
         pub input: &'static str,
     };
     let cases = [
-        TestCase {
-            input: "-00123400",
-        },
-        TestCase {
-            input: "0.0123400",
-        },
+        TestCase { input: "-00123400" },
+        TestCase { input: "0.0123400" },
         TestCase {
             input: "-00.123400",
         },
-        TestCase {
-            input: "0012.3400",
-        },
+        TestCase { input: "0012.3400" },
         TestCase {
             input: "-0012340.0",
         },
-        TestCase {
-            input: "1234",
-        },
+        TestCase { input: "1234" },
         TestCase {
             input: "0.000000001",
         },
         TestCase {
             input: "0.0000000010",
         },
-        TestCase {
-            input: "1000000",
-        },
-        TestCase {
-            input: "10000001",
-        },
-        TestCase {
-            input: "123",
-        },
+        TestCase { input: "1000000" },
+        TestCase { input: "10000001" },
+        TestCase { input: "123" },
         TestCase {
             input: "922337203685477580898230948203840239384.9823094820384023938423424",
         },
@@ -668,18 +650,10 @@ fn test_from_str() {
         TestCase {
             input: "009223372000.003685477580898230948203840239384000",
         },
-        TestCase {
-            input: "0",
-        },
-        TestCase {
-            input: "-0",
-        },
-        TestCase {
-            input: "000",
-        },
-        TestCase {
-            input: "-00.0",
-        },
+        TestCase { input: "0" },
+        TestCase { input: "-0" },
+        TestCase { input: "000" },
+        TestCase { input: "-00.0" },
     ];
     for cas in &cases {
         let dec: FixedDecimal = FixedDecimal::from_str(cas.input).unwrap();
@@ -687,7 +661,6 @@ fn test_from_str() {
         assert_eq!(dec.write_len(), cas.input.len());
     }
 }
-
 
 #[test]
 fn test_isize_limits() {
