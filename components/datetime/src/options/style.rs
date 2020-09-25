@@ -1,10 +1,10 @@
-use super::components;
+use super::preferences;
 
 #[derive(Debug)]
 pub struct Bag {
     pub date: Date,
     pub time: Time,
-    pub hour_cycle: components::HourCycle,
+    pub preferences: Option<preferences::Bag>,
 }
 
 impl Default for Bag {
@@ -12,7 +12,7 @@ impl Default for Bag {
         Self {
             date: Date::Long,
             time: Time::Long,
-            hour_cycle: components::HourCycle::default(),
+            preferences: None,
         }
     }
 }

@@ -226,6 +226,12 @@ impl Hour {
     }
 }
 
+impl Default for Hour {
+    fn default() -> Self {
+        Self::Preferred
+    }
+}
+
 impl From<Hour> for FieldSymbol {
     fn from(input: Hour) -> Self {
         FieldSymbol::Hour(input)
