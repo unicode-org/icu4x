@@ -476,7 +476,8 @@ impl FromStr for FixedDecimal {
             if i > std::i16::MAX as usize {
                 return Err(Error::Limit);
             }
-            v.push(c as u8 - '0' as u8);
+            // ord('0') = 48
+            v.push(c as u8 - 48);
         }
         let v_len = v.len();
         dec.digits = v;
@@ -490,7 +491,7 @@ impl FromStr for FixedDecimal {
         // The order of negative terms and positive terms is intentional, to avoid overflow if possible
         dec.upper_magnitude += -shift + left_zeros as i16 + right_zeros as i16;
         dec.magnitude += -shift + right_zeros as i16;
-        dec.lower_magnitude = -1 * shift;
+        dec.lower_magnitude -= shift;
         dec.is_negative = is_negative;
 
         // Outputs for debugging:
