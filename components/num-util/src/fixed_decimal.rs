@@ -415,10 +415,8 @@ impl FromStr for FixedDecimal {
                         return Err(Error::Syntax);
                     }
                 }
-            } else {
-                if !c.is_digit(10) {
+            } else if !c.is_digit(10) {
                     return Err(Error::Syntax);
-                }
             }
         }
         // no_dot_str: shows the string when the dot is removed from it
