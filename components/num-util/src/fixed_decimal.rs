@@ -414,6 +414,13 @@ impl FromStr for FixedDecimal {
                     true => {
                         return Err(Error::Syntax);
                     }
+<<<<<<< HEAD
+=======
+                }
+            } else {
+                if !c.is_digit(10) {
+                    return Err(Error::Syntax);
+>>>>>>> develop
                 }
             } else if !c.is_digit(10) {
                 return Err(Error::Syntax);
