@@ -11,8 +11,9 @@ use static_assertions::const_assert;
 
 use super::uint_iterator::IntIterator;
 
+use std::convert::TryFrom;
+
 use crate::Error;
-// extern crate Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
 const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
@@ -382,6 +383,10 @@ impl FromStr for FixedDecimal {
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
+        // Check if the input string is "" or "-"
+        if input_str == "" || input_str == "-" {
+            return Err(Error::Syntax);
+        }
         let no_sign_str: &str;
         let mut is_negative = false;
         if &input_str[0..1] == "-" {
@@ -390,19 +395,21 @@ impl FromStr for FixedDecimal {
         } else {
             no_sign_str = input_str;
         }
+
         // Compute length of each string once and store it, so if you use that multiple times,
-        //  you don't compute it multiple times
+        // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
-        // dot_index: gives the index of dot (after removing the sign)
-        let no_sign_str_len = no_sign_str.chars().count();
+        // dot_index: gives the index of dot (after removing the sign) -- equal to lenght of
+        // the no_sign_str if there is no dot
+        let no_sign_str_len = no_sign_str.len();
         let mut has_dot = false;
         let mut dot_index = no_sign_str_len;
         // The following loop computes has_dot, dot_index, and also checks to see if all
         // characters are digits and if you have at most one dot
         // Note: Input of format 111_123 is detected as syntax error here
         // Note: Input starting or ending with a dot is detected as syntax error here (Ex: .123, 123.)
-        for (i, c) in no_sign_str.chars().enumerate() {
-            if c == '.' {
+        for (i, c) in no_sign_str.bytes().enumerate() {
+            if c == b'.' {
                 match has_dot {
                     false => {
                         dot_index = i;
@@ -415,94 +422,123 @@ impl FromStr for FixedDecimal {
                         return Err(Error::Syntax);
                     }
                 }
-            } else if !c.is_digit(10) {
+            } else if c < b'0' || c > b'9' {
                 return Err(Error::Syntax);
             }
         }
-        // no_dot_str: shows the string when the dot is removed from it
-        let no_dot_str = no_sign_str.replace(".", "");
-        let no_dot_str_len = no_dot_str.chars().count();
+
+        // defining the output dec here and set its sign
+        let mut dec: FixedDecimal = 0.into();
+        dec.is_negative = is_negative;
+
+        // no_dot_str_len: shows length of the string after removing the dot
+        let mut no_dot_str_len = no_sign_str_len;
+        if has_dot {
+            no_dot_str_len -= 1;
+        }
 
         // left_zeros: number of zeros at the left of no_dot_str
         // right_zeros: number of zeros at the right of no_dot_str
-        // These are not necessarily leading or trailing zeros
+        // leftmost_digit: index of the first non-zero digit
+        // leftmost_digit: index of the last non-zero digit
+        // left zeros and right zeros are not necessarily leading or trailing zeros
         // Example:
-        //     input string     left_zeros      right_zeros
-        //     00123000             2                3
-        //     0.0123000            2               3
-        //     001.23000            2               3
-        //     001230.00            2               3
+        //     input string     left_zeros      right_zeros    leftmost_digit     rightmost_digit
+        //     00123000             2               3                 2                  4
+        //     0.0123000            2               3                 2                  4
+        //     001.23000            2               3                 2                  4
+        //     001230.00            2               3                 2                  4
+        // Compute left_zeros and leftmost_digit
         let mut left_zeros = 0;
-        for (_i, c) in no_dot_str.chars().enumerate() {
-            if c == '0' {
+        let mut leftmost_digit = 0;
+        for (i, c) in no_sign_str.bytes().enumerate() {
+            if c == b'.' {
+                continue;
+            }
+            if c == b'0' {
                 left_zeros += 1;
             } else {
+                leftmost_digit = i;
                 break;
             }
         }
-        // If the input only has 0 (like 000, 00.0, -00.000) we handle the situation here
-        // and return the correct FixedDecimal now and don't run the rest of the code
+        // If the input only has zeros (like 000, 00.0, -00.000) we handle the situation here
+        // by returning the correct FixedDecimal and don't running the rest of the code
         if left_zeros == no_dot_str_len {
-            let mut dec: FixedDecimal = 0.into();
-            dec.is_negative = is_negative;
-            dec.upper_magnitude = left_zeros as i16 - 1i16;
-            if has_dot {
-                dec.upper_magnitude -= no_dot_str_len as i16 - dot_index as i16;
-                dec.lower_magnitude -= no_dot_str_len as i16 - dot_index as i16;
+            let temp_upper_magnitude = dot_index - 1;
+            if temp_upper_magnitude > i16::MAX as usize {
+                return Err(Error::Limit);
             }
+            dec.upper_magnitude = temp_upper_magnitude as i16;
+            let temp_lower_magnitude = no_dot_str_len - dot_index;
+            // Note: ((i16::MIN as u16) as usize) == 32768
+            if temp_lower_magnitude > (i16::MIN as u16) as usize {
+                return Err(Error::Limit);
+            }
+            dec.lower_magnitude = (temp_lower_magnitude as i16).wrapping_neg();
             return Ok(dec);
         }
+        // Compute right_zeros and rightmost_digit
         let mut right_zeros = 0;
-        for (_i, c) in no_dot_str.chars().rev().enumerate() {
-            if c == '0' {
+        let mut rightmost_digit = no_sign_str_len;
+        for (i, c) in no_sign_str.bytes().rev().enumerate() {
+            if c == b'.' {
+                continue;
+            }
+            if c == b'0' {
                 right_zeros += 1;
             } else {
+                rightmost_digit = no_sign_str_len - i;
                 break;
             }
         }
-        // digits_str: the string after removing sign, dot, left zeros, and right zeros
-        let digits_str = &no_dot_str[left_zeros..no_dot_str_len - right_zeros];
 
-        // shift: number of digits after dot in the input_str, 0 if there is no dot
-        let mut shift: i16 = 0;
-        if has_dot {
-            shift = (no_sign_str_len - dot_index - 1) as i16;
+        // let digits_str_len: shows the length of digits (Ex. 0012.8900 --> 4)
+        let mut digits_str_len = rightmost_digit - leftmost_digit;
+        if leftmost_digit < dot_index && dot_index < rightmost_digit {
+            digits_str_len -= 1;
         }
 
-        // Constructing DecimalFixed only using digits_str
-        let mut dec: FixedDecimal = 0.into();
-        let mut v = SmallVec::<[u8; 8]>::new();
-        for (i, c) in digits_str.chars().enumerate() {
+        // Constructing DecimalFixed.digits
+        let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
+        for (i, c) in no_sign_str[leftmost_digit..rightmost_digit]
+            .bytes()
+            .enumerate()
+        {
+            if c == b'.' {
+                continue;
+            }
             if i > std::i16::MAX as usize {
                 return Err(Error::Limit);
             }
-            // ord('0') = 48
-            v.push(c as u8 - 48);
+            v.push(c - b'0');
         }
         let v_len = v.len();
+        debug_assert_eq!(v_len, digits_str_len);
+        debug_assert_eq!(
+            no_sign_str_len,
+            left_zeros + right_zeros + v_len + has_dot as usize
+        );
         dec.digits = v;
-        dec.magnitude = v_len as i16 - 1;
-        dec.upper_magnitude = v_len as i16 - 1;
-        dec.lower_magnitude = 0;
 
-        // Adjusting magnitude, upper_magnitude, and lower_magnitud w.r.t. left_zeros, right_zeros, and shift
-        // The computed upper_magnitude value computed below is always >= 0
-        // The computed lower_magnitude value computed below is always <= 0
-        // The order of negative terms and positive terms is intentional, to avoid overflow if possible
-        dec.upper_magnitude += -shift + left_zeros as i16 + right_zeros as i16;
-        dec.magnitude += -shift + right_zeros as i16;
-        dec.lower_magnitude -= shift;
-        dec.is_negative = is_negative;
+        // Computing DecimalFixed.upper_magnitude
+        let temp_upper_magnitude = dot_index - 1;
+        if temp_upper_magnitude > i16::MAX as usize {
+            return Err(Error::Limit);
+        }
+        dec.upper_magnitude = temp_upper_magnitude as i16;
 
-        // Outputs for debugging:
-        // println!("digits_str = {}", digits_str);
-        // println!("dot_index = {}", dot_index);
-        // println!("right zeros = {}", right_zeros);
-        // println!("left zeros = {}", left_zeros);
-        // println!("shift = {}", shift);
-        // println!("final_dec = {}", dec);
-        // println!("final_dec = {:?}", dec);
+        // Computing DecimalFixed.lower_magnitude
+        // Note: ((i16::MIN as u16) as usize) == 32768
+        let temp_lower_magnitude = no_dot_str_len - dot_index;
+        if temp_lower_magnitude > (i16::MIN as u16) as usize {
+            return Err(Error::Limit);
+        }
+        dec.lower_magnitude = (temp_lower_magnitude as i16).wrapping_neg();
 
+        // Computing DecimalFixed.magnitude
+        // We can cast with "as" here because lower and upper magnitude are in range
+        dec.magnitude = ((dot_index as i32) - (left_zeros as i32) - 1i32) as i16;
         Ok(dec)
     }
 }
@@ -669,40 +705,6 @@ fn test_isize_limits() {
     assert_eq!(std::isize::MAX.to_string(), dec_max.to_string());
     let dec_min: FixedDecimal = std::isize::MIN.into();
     assert_eq!(std::isize::MIN.to_string(), dec_min.to_string());
-}
-
-#[test]
-fn test_ui128_limits() {
-    let udec_max: FixedDecimal = std::u128::MAX.into();
-    assert_eq!(std::u128::MAX.to_string(), udec_max.to_string());
-    let idec_min: FixedDecimal = std::i128::MIN.into();
-    assert_eq!(std::i128::MIN.to_string(), idec_min.to_string());
-}
-
-#[test]
-fn test_upper_magnitude_bounds() {
-    let mut dec: FixedDecimal = 98765.into();
-    assert_eq!(dec.upper_magnitude, 4);
-    dec.multiply_pow10(32763).unwrap();
-    assert_eq!(dec.upper_magnitude, std::i16::MAX);
-    let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
-    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
-}
-
-#[test]
-fn test_lower_magnitude_bounds() {
-    let mut dec: FixedDecimal = 98765.into();
-    assert_eq!(dec.lower_magnitude, 0);
-    dec.multiply_pow10(-32768).unwrap();
-    assert_eq!(dec.lower_magnitude, std::i16::MIN);
-    let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
-    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
-}
-
-#[test]
-fn test_from_str_isize_limits() {
     let dec_max: FixedDecimal = std::isize::MAX.into();
     let input = dec_max.to_string();
     let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
@@ -716,7 +718,11 @@ fn test_from_str_isize_limits() {
 }
 
 #[test]
-fn test_from_str_u128_limits() {
+fn test_ui128_limits() {
+    let udec_max: FixedDecimal = std::u128::MAX.into();
+    assert_eq!(std::u128::MAX.to_string(), udec_max.to_string());
+    let idec_min: FixedDecimal = std::i128::MIN.into();
+    assert_eq!(std::i128::MIN.to_string(), idec_min.to_string());
     let dec_max: FixedDecimal = std::u128::MAX.into();
     let input = dec_max.to_string();
     let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
@@ -727,4 +733,105 @@ fn test_from_str_u128_limits() {
     let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
     assert_eq!(dec.to_string(), input);
     assert_eq!(dec.write_len(), input.len());
+}
+
+#[test]
+fn test_upper_magnitude_bounds() {
+    let mut dec: FixedDecimal = 98765.into();
+    assert_eq!(dec.upper_magnitude, 4);
+    dec.multiply_pow10(32763).unwrap();
+    assert_eq!(dec.upper_magnitude, std::i16::MAX);
+    let dec_backup = dec.clone();
+    assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
+    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+
+    // Checking from_str for dec (which is valid)
+    let input = dec.to_string();
+    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
+    assert_eq!(dec.to_string(), input);
+    assert_eq!(dec.write_len(), input.len());
+}
+
+#[test]
+fn test_lower_magnitude_bounds() {
+    let mut dec: FixedDecimal = 98765.into();
+    assert_eq!(dec.lower_magnitude, 0);
+    dec.multiply_pow10(-32768).unwrap();
+    assert_eq!(dec.lower_magnitude, std::i16::MIN);
+    let dec_backup = dec.clone();
+    assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
+    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+
+    // Checking from_str for dec (which is valid)
+    let input = dec.to_string();
+    let dec: FixedDecimal = FixedDecimal::from_str(&input).unwrap();
+    assert_eq!(dec.to_string(), input);
+    assert_eq!(dec.write_len(), input.len());
+
+    // The following tests are for testing strings that have sligthly less, sligthtly more, or exactly the extreme
+    // possible length (i16::MAX).
+    // Exactly i16::MAX zeros (no dot)
+    let alignment = 32768;
+    let input_str = format!("{:0fill$}", 0, fill = alignment);
+    let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
+    assert_eq!(dec.to_string(), input_str);
+    assert_eq!(dec.write_len(), input_str.len());
+
+    // Slightly less than i16::MAX zeros (no dot)
+    let alignment = 32767;
+    let input_str = format!("{:0fill$}", 0, fill = alignment);
+    let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
+    assert_eq!(dec.to_string(), input_str);
+    assert_eq!(dec.write_len(), input_str.len());
+
+    // Slightly more than i16::MAX zeros (no dot)
+    // must generate Error::Limit
+    let alignment = 32769;
+    let input_str = format!("{:0fill$}", 0, fill = alignment);
+    let dec_err = FixedDecimal::from_str(&input_str).unwrap_err();
+    assert_eq!(Error::Limit, dec_err);
+
+    // Exaclty i16::MAX zeros before dot and exactly i16::MAX zeros after it
+    let alignment = 32768;
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment);
+    input_str.push_str(dot);
+    input_str.push_str(after_dot);
+    let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
+    assert_eq!(dec.to_string(), input_str);
+    assert_eq!(dec.write_len(), input_str.len());
+
+    // Slightly less than i16::MAX zeros before dot and slightly less than i16::MAX zeros after it
+    let alignment = 32767;
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment);
+    input_str.push_str(dot);
+    input_str.push_str(after_dot);
+    let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
+    assert_eq!(dec.to_string(), input_str);
+    assert_eq!(dec.write_len(), input_str.len());
+
+    // Exactly i16::MAX zeros before dot and slightly more than i16::MAX zeros after it
+    // must generate Error::Limit
+    let alignment = 32768;
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment + 1);
+    input_str.push_str(dot);
+    input_str.push_str(after_dot);
+    let dec_err = FixedDecimal::from_str(&input_str).unwrap_err();
+    assert_eq!(Error::Limit, dec_err);
+
+    // Slightly more than i16::MAX zeros before dot and exactly i16::MAX zeros after it
+    // must generate Error::Limit
+    let alignment = 32768;
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment + 1).to_owned();
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment);
+    input_str.push_str(dot);
+    input_str.push_str(after_dot);
+    let dec_err = FixedDecimal::from_str(&input_str).unwrap_err();
+    assert_eq!(Error::Limit, dec_err);
 }
