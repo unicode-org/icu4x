@@ -65,12 +65,5 @@ pub enum Error {
     ///
     /// # Example
     ///
-    /// ```
-    /// use icu_num_util::FixedDecimal;
-    /// use icu_num_util::Syntax;
-    ///
-    /// let mut dec1 = FixedDecimal::from_str("123a45");
-    /// assert_eq!(Error::Syntax, FixedDecimal::from_str("123a45").unwrap_err());
-    /// ```
     Syntax,
 }
