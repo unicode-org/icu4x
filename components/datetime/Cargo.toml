@@ -23,6 +23,8 @@ criterion = "0.3"
 icu-data-provider = { path = "../data-provider", features = ["invariant"] }
 icu-cldr-json-data-provider = { path = "../cldr-json-data-provider" }
 icu-fs-data-provider = { path = "../fs-data-provider" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
 [[bench]]
 name = "datetime"

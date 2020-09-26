@@ -195,7 +195,9 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             _ => unimplemented!(),
         };
         let symbols = match length {
-            fields::FieldLength::Abbreviated => &widths.abbreviated,
+            fields::FieldLength::One
+            | fields::FieldLength::TwoDigit
+            | fields::FieldLength::Abbreviated => &widths.abbreviated,
             fields::FieldLength::Wide => &widths.wide,
             fields::FieldLength::Narrow => &widths.narrow,
             _ => unreachable!(),

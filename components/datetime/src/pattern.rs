@@ -1,6 +1,5 @@
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use std::iter::FromIterator;
-use std::str;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum PatternItem {
@@ -140,5 +139,39 @@ impl FromIterator<PatternItem> for Pattern {
     fn from_iter<I: IntoIterator<Item = PatternItem>>(iter: I) -> Self {
         let items: Vec<PatternItem> = iter.into_iter().collect();
         Self(items)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pattern_parse() {
+        assert_eq!(
+            Pattern::from_bytes(b"dd/MM/y").unwrap(),
+            vec![
+                (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
+                "/".into(),
+                (fields::Month::Format.into(), FieldLength::TwoDigit).into(),
+                "/".into(),
+                (fields::Year::Calendar.into(), FieldLength::One).into(),
+            ]
+            .into_iter()
+            .collect()
+        );
+
+        assert_eq!(
+            Pattern::from_bytes(b"HH:mm:ss").unwrap(),
+            vec![
+                (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                ":".into(),
+                (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
+                ":".into(),
+                (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+            ]
+            .into_iter()
+            .collect()
+        );
     }
 }

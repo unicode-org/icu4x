@@ -1,4 +1,4 @@
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct DateTime {
     pub year: usize,
     pub month: usize,
@@ -6,18 +6,18 @@ pub struct DateTime {
     pub hour: usize,
     pub minute: usize,
     pub second: usize,
-    pub milliseconds: usize,
+    pub millisecond: usize,
 }
 
 impl DateTime {
     pub fn new(
-        year: usize,
-        month: usize,
-        day: usize,
-        hour: usize,
-        minute: usize,
-        second: usize,
-        milliseconds: usize,
+        year: usize,        // 0-
+        month: usize,       // 0-11
+        day: usize,         // 0-31
+        hour: usize,        // 0-23
+        minute: usize,      // 0-60
+        second: usize,      // 0-60
+        millisecond: usize, // 0-999
     ) -> Self {
         Self {
             year,
@@ -26,7 +26,7 @@ impl DateTime {
             hour,
             minute,
             second,
-            milliseconds,
+            millisecond,
         }
     }
 }

@@ -1,6 +1,6 @@
 pub mod components;
-pub mod style;
 pub mod preferences;
+pub mod style;
 
 #[derive(Debug)]
 pub enum DateTimeFormatOptions {

@@ -12,7 +12,7 @@ use format::write_pattern;
 pub use format::FormattedDateTime;
 use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
 use icu_locale::LanguageIdentifier;
-use options::DateTimeFormatOptions;
+pub use options::DateTimeFormatOptions;
 use pattern::Pattern;
 use provider::DateTimeDates;
 use std::borrow::Cow;
@@ -62,15 +62,15 @@ impl<'d> DateTimeFormat<'d> {
 
     pub fn format_to_write(
         &self,
-        value: &DateTime,
         w: &mut impl std::fmt::Write,
+        value: &DateTime,
     ) -> std::fmt::Result {
         write_pattern(&self.pattern, &self.data, value, w)
     }
 
     pub fn format_to_string(&self, value: &DateTime) -> String {
         let mut s = String::new();
-        self.format_to_write(value, &mut s)
+        self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");
         s
     }
