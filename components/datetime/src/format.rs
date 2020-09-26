@@ -1,4 +1,5 @@
-use super::date::DateTimeType;
+use crate::date::DateTimeType;
+use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider::DateTimeDates;
@@ -46,7 +47,7 @@ where
     T: DateTimeType,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.pattern, self.data, self.date_time, f)
+        write_pattern(self.pattern, self.data, self.date_time, f).map_err(|_| std::fmt::Error)
     }
 }
 // Temporary formatting number with length.
@@ -70,7 +71,7 @@ pub fn write_pattern<T>(
     data: &structs::dates::gregory::DatesV1,
     date_time: &T,
     w: &mut impl fmt::Write,
-) -> std::fmt::Result
+) -> Result<(), DateTimeFormatError>
 where
     T: DateTimeType,
 {
@@ -83,19 +84,13 @@ where
                         format_number(w, date_time.month() + 1, &field.length)?
                     }
                     length => {
-                        let symbol = data
-                            .get_symbol_for_month(month, length, date_time.month())
-                            .unwrap()
-                            .unwrap();
+                        let symbol = data.get_symbol_for_month(month, length, date_time.month())?;
                         w.write_str(symbol)?
                     }
                 },
                 FieldSymbol::Weekday(weekday) => {
                     let dow = get_day_of_week(date_time.year(), date_time.month(), date_time.day());
-                    let symbol = data
-                        .get_symbol_for_weekday(weekday, field.length, dow)
-                        .unwrap()
-                        .unwrap();
+                    let symbol = data.get_symbol_for_weekday(weekday, field.length, dow)?;
                     w.write_str(symbol)?
                 }
                 FieldSymbol::Day(..) => format_number(w, date_time.day() + 1, &field.length)?,
@@ -126,10 +121,8 @@ where
                 FieldSymbol::Second(..) => format_number(w, date_time.second(), &field.length)?,
                 FieldSymbol::Period(period) => match period {
                     fields::Period::AmPm => {
-                        let symbol = data
-                            .get_symbol_for_day_period(period, field.length, date_time.hour())
-                            .unwrap()
-                            .unwrap();
+                        let symbol =
+                            data.get_symbol_for_day_period(period, field.length, date_time.hour());
                         w.write_str(symbol)?
                     }
                     _ => unimplemented!(),

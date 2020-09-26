@@ -134,15 +134,13 @@ impl<'d> DateTimeFormat<'d> {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
         let data_key = icu_data_key!(dates: gregory@1);
-        let response = data_provider
-            .load(&DataRequest {
-                data_key,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: langid.clone(),
-                },
-            })
-            .unwrap();
+        let response = data_provider.load(&DataRequest {
+            data_key,
+            data_entry: DataEntry {
+                variant: None,
+                langid: langid.clone(),
+            },
+        })?;
         let data: Cow<structs::dates::gregory::DatesV1> = response.take_payload()?;
 
         let pattern = data
@@ -223,7 +221,7 @@ impl<'d> DateTimeFormat<'d> {
     where
         T: DateTimeType,
     {
-        write_pattern(&self.pattern, &self.data, value, w)
+        write_pattern(&self.pattern, &self.data, value, w).map_err(|_| std::fmt::Error)
     }
 
     /// `format_to_string` takes a `DateTime` value and returns it formatted

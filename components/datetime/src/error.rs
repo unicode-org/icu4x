@@ -10,6 +10,8 @@ pub enum DateTimeFormatError {
     Pattern(pattern::Error),
     /// An error indicating that data could not be retrieved
     MissingData,
+    /// An error originating from fmt::Write trait
+    Format,
     /// An error originating inside of the DataProvider
     DataProvider(DataError),
 }
@@ -23,5 +25,11 @@ impl From<DataError> for DateTimeFormatError {
 impl From<pattern::Error> for DateTimeFormatError {
     fn from(err: pattern::Error) -> Self {
         Self::Pattern(err)
+    }
+}
+
+impl From<std::fmt::Error> for DateTimeFormatError {
+    fn from(_: std::fmt::Error) -> Self {
+        Self::Format
     }
 }

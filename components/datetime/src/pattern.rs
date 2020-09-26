@@ -149,7 +149,7 @@ mod tests {
     #[test]
     fn pattern_parse() {
         assert_eq!(
-            Pattern::from_bytes(b"dd/MM/y").unwrap(),
+            Pattern::from_bytes(b"dd/MM/y").expect("Parsing pattern failed."),
             vec![
                 (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
                 "/".into(),
@@ -162,7 +162,7 @@ mod tests {
         );
 
         assert_eq!(
-            Pattern::from_bytes(b"HH:mm:ss").unwrap(),
+            Pattern::from_bytes(b"HH:mm:ss").expect("Parsing pattern failed."),
             vec![
                 (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
                 ":".into(),

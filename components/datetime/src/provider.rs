@@ -23,19 +23,19 @@ pub trait DateTimeDates {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> Result<Option<&Cow<str>>>;
+    ) -> Result<&Cow<str>>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: usize,
-    ) -> Result<Option<&Cow<str>>>;
+    ) -> Result<&Cow<str>>;
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::Period,
         length: fields::FieldLength,
         hour: usize,
-    ) -> Result<Option<&Cow<str>>>;
+    ) -> &Cow<str>;
 }
 
 impl DateTimeDates for structs::dates::gregory::DatesV1 {
@@ -104,7 +104,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: usize,
-    ) -> Result<Option<&Cow<str>>> {
+    ) -> Result<&Cow<str>> {
         let widths = match weekday {
             fields::Weekday::Format => &self.symbols.weekdays.format,
             fields::Weekday::StandAlone => {
@@ -119,7 +119,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return Ok(symbols.0.get(day));
+                        return symbols.0.get(day).ok_or(DateTimeFormatError::MissingData);
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -135,7 +135,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Six => widths.short.as_ref().unwrap_or(&widths.abbreviated),
             _ => &widths.abbreviated,
         };
-        Ok(symbols.0.get(day))
+        symbols.0.get(day).ok_or(DateTimeFormatError::MissingData)
     }
 
     fn get_symbol_for_month(
@@ -143,7 +143,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> Result<Option<&Cow<str>>> {
+    ) -> Result<&Cow<str>> {
         let widths = match month {
             fields::Month::Format => &self.symbols.months.format,
             fields::Month::StandAlone => {
@@ -155,7 +155,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => unreachable!(),
                     };
                     if let Some(symbols) = symbols {
-                        return Ok(symbols.0.get(num));
+                        return symbols.0.get(num).ok_or(DateTimeFormatError::MissingData);
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -170,7 +170,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Narrow => &widths.narrow,
             _ => unreachable!(),
         };
-        Ok(symbols.0.get(num))
+        symbols.0.get(num).ok_or(DateTimeFormatError::MissingData)
     }
 
     fn get_symbol_for_day_period(
@@ -178,7 +178,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         day_period: fields::Period,
         length: fields::FieldLength,
         hour: usize,
-    ) -> Result<Option<&Cow<str>>> {
+    ) -> &Cow<str> {
         let widths = match day_period {
             fields::Period::AmPm => &self.symbols.day_periods.format,
             _ => unimplemented!(),
@@ -192,9 +192,9 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             _ => unreachable!(),
         };
         if hour < 12 {
-            Ok(Some(&symbols.am))
+            &symbols.am
         } else {
-            Ok(Some(&symbols.pm))
+            &symbols.pm
         }
     }
 }
