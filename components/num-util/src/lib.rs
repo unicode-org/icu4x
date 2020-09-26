@@ -62,8 +62,5 @@ pub enum Error {
     /// Strings of form "12_345_678" are not accepted, the accepted format is "12345678".
     /// Also '.' shouldn't be first or the last characters, i. e. .123 and 123. are not accepted, and instead 0.123 and
     /// 123 (or 123.0) must be used.
-    ///
-    /// # Example
-    ///
     Syntax,
 }

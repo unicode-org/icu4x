@@ -11,8 +11,6 @@ use static_assertions::const_assert;
 
 use super::uint_iterator::IntIterator;
 
-use std::convert::TryFrom;
-
 use crate::Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
