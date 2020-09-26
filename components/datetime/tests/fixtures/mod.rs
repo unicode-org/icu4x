@@ -3,7 +3,6 @@ pub mod structs;
 use icu_datetime::options::style;
 use icu_datetime::DateTimeFormatOptions;
 use icu_datetime::DummyDateTime;
-use serde_json;
 use std::fs::File;
 use std::io::BufReader;
 
