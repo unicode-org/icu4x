@@ -543,8 +543,8 @@ impl FromStr for FixedDecimal {
     }
 }
 
-// #[test]
-pub fn test_basic() {
+#[test]
+fn test_basic() {
     #[derive(Debug)]
     struct TestCase {
         pub input: isize,
@@ -652,7 +652,8 @@ pub fn test_basic() {
     }
 }
 
-pub fn test_from_str() {
+#[test]
+fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input: &'static str,
@@ -698,8 +699,8 @@ pub fn test_from_str() {
     }
 }
 
-// #[test]
-pub fn test_isize_limits() {
+#[test]
+fn test_isize_limits() {
     let dec_max: FixedDecimal = std::isize::MAX.into();
     assert_eq!(std::isize::MAX.to_string(), dec_max.to_string());
     let dec_min: FixedDecimal = std::isize::MIN.into();
@@ -716,8 +717,8 @@ pub fn test_isize_limits() {
     assert_eq!(dec.write_len(), input.len());
 }
 
-// #[test]
-pub fn test_ui128_limits() {
+#[test]
+fn test_ui128_limits() {
     let udec_max: FixedDecimal = std::u128::MAX.into();
     assert_eq!(std::u128::MAX.to_string(), udec_max.to_string());
     let idec_min: FixedDecimal = std::i128::MIN.into();
@@ -734,8 +735,8 @@ pub fn test_ui128_limits() {
     assert_eq!(dec.write_len(), input.len());
 }
 
-// #[test]
-pub fn test_upper_magnitude_bounds() {
+#[test]
+fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
     dec.multiply_pow10(32763).unwrap();
@@ -751,8 +752,8 @@ pub fn test_upper_magnitude_bounds() {
     assert_eq!(dec.write_len(), input.len());
 }
 
-// #[test]
-pub fn test_lower_magnitude_bounds() {
+#[test]
+fn test_lower_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.lower_magnitude, 0);
     dec.multiply_pow10(-32768).unwrap();
@@ -770,14 +771,14 @@ pub fn test_lower_magnitude_bounds() {
     // The following tests are for testing strings that have sligthly less, sligthtly more, or exactly the extreme
     // possible length (i16::MAX).
     // Exactly i16::MAX zeros (no dot)
-    let mut alignment = 32768;
+    let alignment = 32768;
     let input_str = format!("{:0fill$}", 0, fill = alignment);
     let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
     assert_eq!(dec.to_string(), input_str);
     assert_eq!(dec.write_len(), input_str.len());
 
     // Slightly less than i16::MAX zeros (no dot)
-    let mut alignment = 32767;
+    let alignment = 32767;
     let input_str = format!("{:0fill$}", 0, fill = alignment);
     let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
     assert_eq!(dec.to_string(), input_str);
@@ -785,16 +786,16 @@ pub fn test_lower_magnitude_bounds() {
 
     // Slightly more than i16::MAX zeros (no dot)
     // must generate Error::Limit
-    let mut alignment = 32769;
+    let alignment = 32769;
     let input_str = format!("{:0fill$}", 0, fill = alignment);
     let dec_err = FixedDecimal::from_str(&input_str).unwrap_err();
     assert_eq!(Error::Limit, dec_err);
 
     // Exaclty i16::MAX zeros before dot and exactly i16::MAX zeros after it
-    let mut alignment = 32768;
+    let alignment = 32768;
     let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
-    let mut dot = ".";
-    let mut after_dot = &format!("{:0fill$}", 0, fill = alignment);
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment);
     input_str.push_str(dot);
     input_str.push_str(after_dot);
     let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
@@ -802,10 +803,10 @@ pub fn test_lower_magnitude_bounds() {
     assert_eq!(dec.write_len(), input_str.len());
 
     // Slightly less than i16::MAX zeros before dot and slightly less than i16::MAX zeros after it
-    let mut alignment = 32767;
+    let alignment = 32767;
     let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
-    let mut dot = ".";
-    let mut after_dot = &format!("{:0fill$}", 0, fill = alignment);
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment);
     input_str.push_str(dot);
     input_str.push_str(after_dot);
     let dec: FixedDecimal = FixedDecimal::from_str(&input_str).unwrap();
@@ -814,10 +815,10 @@ pub fn test_lower_magnitude_bounds() {
 
     // Exactly i16::MAX zeros before dot and slightly more than i16::MAX zeros after it
     // must generate Error::Limit
-    let mut alignment = 32768;
+    let alignment = 32768;
     let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
-    let mut dot = ".";
-    let mut after_dot = &format!("{:0fill$}", 0, fill = alignment + 1);
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment + 1);
     input_str.push_str(dot);
     input_str.push_str(after_dot);
     let dec_err = FixedDecimal::from_str(&input_str).unwrap_err();
@@ -825,10 +826,10 @@ pub fn test_lower_magnitude_bounds() {
 
     // Slightly more than i16::MAX zeros before dot and exactly i16::MAX zeros after it
     // must generate Error::Limit
-    let mut alignment = 32768;
+    let alignment = 32768;
     let mut input_str = format!("{:0fill$}", 0, fill = alignment + 1).to_owned();
-    let mut dot = ".";
-    let mut after_dot = &format!("{:0fill$}", 0, fill = alignment);
+    let dot = ".";
+    let after_dot = &format!("{:0fill$}", 0, fill = alignment);
     input_str.push_str(dot);
     input_str.push_str(after_dot);
     let dec_err = FixedDecimal::from_str(&input_str).unwrap_err();
