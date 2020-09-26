@@ -39,6 +39,4 @@ pub enum TestStyleWidth {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PatternsFixture(
-    pub Vec<String>
-);
+pub struct PatternsFixture(pub Vec<String>);

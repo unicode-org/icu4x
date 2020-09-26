@@ -10,14 +10,14 @@ type Result<T> = std::result::Result<T, DateTimeFormatError>;
 pub trait DateTimeDates {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>>;
     fn get_pattern_for_style_bag(&self, style: &style::Bag) -> Result<Option<Pattern>>;
-    fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Option<Pattern>>;
-    fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Option<Pattern>>;
+    fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Pattern>;
+    fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Pattern>;
     fn get_pattern_for_date_time_style(
         &self,
         style: style::Date,
         date: Pattern,
         time: Pattern,
-    ) -> Result<Option<Pattern>>;
+    ) -> Result<Pattern>;
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
@@ -48,30 +48,28 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
 
     fn get_pattern_for_style_bag(&self, style: &style::Bag) -> Result<Option<Pattern>> {
         match (style.date, style.time) {
-            (style::Date::None, style::Time::None) => Ok(None),
-            (style::Date::None, time_style) => self.get_pattern_for_time_style(time_style),
-            (date_style, style::Time::None) => self.get_pattern_for_date_style(date_style),
-            (date_style, time_style) => {
-                let time = self.get_pattern_for_time_style(time_style)?.unwrap();
-                let date = self.get_pattern_for_date_style(date_style)?.unwrap();
+            (None, None) => Ok(None),
+            (None, Some(time_style)) => self.get_pattern_for_time_style(time_style).map(Some),
+            (Some(date_style), None) => self.get_pattern_for_date_style(date_style).map(Some),
+            (Some(date_style), Some(time_style)) => {
+                let time = self.get_pattern_for_time_style(time_style)?;
+                let date = self.get_pattern_for_date_style(date_style)?;
 
                 self.get_pattern_for_date_time_style(date_style, date, time)
+                    .map(Some)
             }
         }
     }
 
-    fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Option<Pattern>> {
+    fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Pattern> {
         let date = &self.patterns.date;
         let s = match style {
             style::Date::Full => &date.full,
             style::Date::Long => &date.long,
             style::Date::Medium => &date.medium,
             style::Date::Short => &date.short,
-            style::Date::None => {
-                return Ok(None);
-            }
         };
-        Ok(Some(Pattern::from_bytes(s.as_bytes())?))
+        Ok(Pattern::from_bytes(s.as_bytes())?)
     }
 
     fn get_pattern_for_date_time_style(
@@ -79,36 +77,26 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         style: style::Date,
         date: Pattern,
         time: Pattern,
-    ) -> Result<Option<Pattern>> {
+    ) -> Result<Pattern> {
         let date_time = &self.patterns.date_time;
         let s = match style {
             style::Date::Full => &date_time.full,
             style::Date::Long => &date_time.long,
             style::Date::Medium => &date_time.medium,
             style::Date::Short => &date_time.short,
-            style::Date::None => {
-                return Ok(None);
-            }
         };
-        Ok(Some(Pattern::from_bytes_combination(
-            s.as_bytes(),
-            date,
-            time,
-        )?))
+        Ok(Pattern::from_bytes_combination(s.as_bytes(), date, time)?)
     }
 
-    fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Option<Pattern>> {
+    fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Pattern> {
         let time = &self.patterns.time;
         let s = match style {
             style::Time::Full => &time.full,
             style::Time::Long => &time.long,
             style::Time::Medium => &time.medium,
             style::Time::Short => &time.short,
-            style::Time::None => {
-                return Ok(None);
-            }
         };
-        Ok(Some(Pattern::from_bytes(s.as_bytes())?))
+        Ok(Pattern::from_bytes(s.as_bytes())?)
     }
 
     fn get_symbol_for_weekday(

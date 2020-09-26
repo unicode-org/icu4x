@@ -1,8 +1,8 @@
 pub mod structs;
 
-use icu_datetime::date::DateTime;
-use icu_datetime::options;
+use icu_datetime::options::style;
 use icu_datetime::DateTimeFormatOptions;
+use icu_datetime::DummyDateTime;
 use serde_json;
 use std::fs::File;
 use std::io::BufReader;
@@ -15,27 +15,25 @@ pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
 }
 
 pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
-    let style = options::style::Bag {
-        date: match input.style.date {
-            Some(structs::TestStyleWidth::Full) => options::style::Date::Full,
-            Some(structs::TestStyleWidth::Long) => options::style::Date::Long,
-            Some(structs::TestStyleWidth::Medium) => options::style::Date::Medium,
-            Some(structs::TestStyleWidth::Short) => options::style::Date::Short,
-            None => options::style::Date::None,
-        },
-        time: match input.style.time {
-            Some(structs::TestStyleWidth::Full) => options::style::Time::Full,
-            Some(structs::TestStyleWidth::Long) => options::style::Time::Long,
-            Some(structs::TestStyleWidth::Medium) => options::style::Time::Medium,
-            Some(structs::TestStyleWidth::Short) => options::style::Time::Short,
-            None => options::style::Time::None,
-        },
+    let style = style::Bag {
+        date: input.style.date.as_ref().map(|date| match date {
+            structs::TestStyleWidth::Full => style::Date::Full,
+            structs::TestStyleWidth::Long => style::Date::Long,
+            structs::TestStyleWidth::Medium => style::Date::Medium,
+            structs::TestStyleWidth::Short => style::Date::Short,
+        }),
+        time: input.style.time.as_ref().map(|time| match time {
+            structs::TestStyleWidth::Full => style::Time::Full,
+            structs::TestStyleWidth::Long => style::Time::Long,
+            structs::TestStyleWidth::Medium => style::Time::Medium,
+            structs::TestStyleWidth::Short => style::Time::Short,
+        }),
         ..Default::default()
     };
-    DateTimeFormatOptions::Style(style)
+    style.into()
 }
 
-pub fn parse_date(input: &str) -> Result<DateTime, std::num::ParseIntError> {
+pub fn parse_date(input: &str) -> Result<DummyDateTime, std::num::ParseIntError> {
     let year: usize = input[0..4].parse()?;
     let month: usize = input[5..7].parse()?;
     let day: usize = input[8..10].parse()?;
@@ -43,7 +41,7 @@ pub fn parse_date(input: &str) -> Result<DateTime, std::num::ParseIntError> {
     let minute: usize = input[14..16].parse()?;
     let second: usize = input[17..19].parse()?;
     let millisecond: usize = input[20..23].parse()?;
-    Ok(DateTime {
+    Ok(DummyDateTime {
         year,
         month: month - 1,
         day: day - 1,

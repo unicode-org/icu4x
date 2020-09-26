@@ -1,5 +1,3 @@
-use std::fmt;
-
 #[derive(Debug)]
 pub enum Error {
     Unknown,
@@ -44,20 +42,6 @@ pub enum FieldSymbol {
 }
 
 impl FieldSymbol {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        match self {
-            Self::Era => w.write_char('G'),
-            Self::Year(year) => year.write(w),
-            Self::Month(month) => month.write(w),
-            Self::Day(day) => day.write(w),
-            Self::Weekday(weekday) => weekday.write(w),
-            Self::Period(period) => period.write(w),
-            Self::Hour(hour) => hour.write(w),
-            Self::Minute => w.write_char('m'),
-            Self::Second(second) => second.write(w),
-        }
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'G' => Ok(Self::Era),
@@ -74,21 +58,7 @@ impl FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum FieldType {
-    Era,
-    Year,
-    Month,
-    Day,
-    Hour,
-}
-
-impl FieldType {
-    pub fn iter() -> impl Iterator<Item = &'static Self> {
-        [Self::Era, Self::Year, Self::Month, Self::Day].iter()
-    }
-}
-
+#[allow(dead_code)]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Year {
     Calendar,
@@ -99,16 +69,6 @@ pub enum Year {
 }
 
 impl Year {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::Calendar => 'y',
-            Self::WeekOf => 'Y',
-            Self::Extended => 'u',
-            Self::Cyclic => 'U',
-            Self::RelatedGregorian => 'r',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'y' => Ok(Self::Calendar),
@@ -131,13 +91,6 @@ pub enum Month {
 }
 
 impl Month {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::Format => 'M',
-            Self::StandAlone => 'L',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'M' => Ok(Self::Format),
@@ -162,15 +115,6 @@ pub enum Day {
 }
 
 impl Day {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::DayOfMonth => 'd',
-            Self::DayOfYear => 'D',
-            Self::DayOfWeekInMonth => 'F',
-            Self::ModifiedJulianDay => 'g',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'd' => Ok(Self::DayOfMonth),
@@ -200,18 +144,6 @@ pub enum Hour {
 }
 
 impl Hour {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::H11 => 'K',
-            Self::H12 => 'h',
-            Self::H23 => 'H',
-            Self::H24 => 'k',
-            Self::Preferred => 'j',
-            Self::PreferredNoDayPeriod => 'J',
-            Self::PreferredFlexibleDayPeriod => 'C',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'K' => Ok(Self::H11),
@@ -246,14 +178,6 @@ pub enum Second {
 }
 
 impl Second {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::Second => 's',
-            Self::FractionalSecond => 'S',
-            Self::Millisecond => 'A',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b's' => Ok(Self::Second),
@@ -278,14 +202,6 @@ pub enum Weekday {
 }
 
 impl Weekday {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::Format => 'E',
-            Self::Local => 'e',
-            Self::StandAlone => 'c',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'E' => Ok(Self::Format),
@@ -310,14 +226,6 @@ pub enum Period {
 }
 
 impl Period {
-    pub fn write(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        w.write_char(match self {
-            Self::AmPm => 'a',
-            Self::NoonMidnight => 'b',
-            Self::Flexible => 'B',
-        })
-    }
-
     pub fn from_byte(b: u8) -> Result<Self, Error> {
         match b {
             b'a' => Ok(Self::AmPm),
@@ -340,14 +248,7 @@ pub struct Field {
     pub length: FieldLength,
 }
 
-impl Field {
-    pub fn write_pattern(&self, w: &mut impl fmt::Write) -> fmt::Result {
-        for _ in 0..(self.length as u8) {
-            self.symbol.write(w)?;
-        }
-        Ok(())
-    }
-}
+impl Field {}
 
 impl From<(FieldSymbol, FieldLength)> for Field {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {

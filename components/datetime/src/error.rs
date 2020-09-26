@@ -6,7 +6,9 @@ use icu_data_provider::prelude::DataError;
 /// [`DateTimeFormat`]: ./struct.DateTimeFormat.html
 #[derive(Debug)]
 pub enum DateTimeFormatError {
+    /// An error coming from a pattern parsing
     Pattern(pattern::Error),
+    /// An error indicating that data could not be retrieved
     MissingData,
     /// An error originating inside of the DataProvider
     DataProvider(DataError),
