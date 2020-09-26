@@ -791,7 +791,7 @@ fn test_lower_magnitude_bounds() {
 
     // Exaclty i16::MAX zeros before dot and exactly i16::MAX zeros after it
     let alignment = 32768;
-    let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment);
     let dot = ".";
     let after_dot = &format!("{:0fill$}", 0, fill = alignment);
     input_str.push_str(dot);
@@ -802,7 +802,7 @@ fn test_lower_magnitude_bounds() {
 
     // Slightly less than i16::MAX zeros before dot and slightly less than i16::MAX zeros after it
     let alignment = 32767;
-    let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment);
     let dot = ".";
     let after_dot = &format!("{:0fill$}", 0, fill = alignment);
     input_str.push_str(dot);
@@ -814,7 +814,7 @@ fn test_lower_magnitude_bounds() {
     // Exactly i16::MAX zeros before dot and slightly more than i16::MAX zeros after it
     // must generate Error::Limit
     let alignment = 32768;
-    let mut input_str = format!("{:0fill$}", 0, fill = alignment).to_owned();
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment);
     let dot = ".";
     let after_dot = &format!("{:0fill$}", 0, fill = alignment + 1);
     input_str.push_str(dot);
@@ -825,7 +825,7 @@ fn test_lower_magnitude_bounds() {
     // Slightly more than i16::MAX zeros before dot and exactly i16::MAX zeros after it
     // must generate Error::Limit
     let alignment = 32768;
-    let mut input_str = format!("{:0fill$}", 0, fill = alignment + 1).to_owned();
+    let mut input_str = format!("{:0fill$}", 0, fill = alignment + 1);
     let dot = ".";
     let after_dot = &format!("{:0fill$}", 0, fill = alignment);
     input_str.push_str(dot);
