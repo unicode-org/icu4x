@@ -56,5 +56,21 @@ pub enum Error {
     /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());
     /// ```
     Limit,
+    /// The input of a string that is supposed to be converted to FixedDecimal is not accepted.
+    /// Any string with non-digit characters (except for one '.' and one '-' at the beginning of the string) is not accepted.
+    /// Also, empty string ("") and its negation ("-") are not accepted.
+    /// Strings of form "12_345_678" are not accepted, the accepted format is "12345678".
+    /// Also '.' shouldn't be first or the last characters, i. e. .123 and 123. are not accepted, and instead 0.123 and
+    /// 123 (or 123.0) must be used.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_num_util::FixedDecimal;
+    /// use icu_num_util::Syntax;
+    ///
+    /// let mut dec1 = FixedDecimal::from_str("123a45");
+    /// assert_eq!(Error::Syntax, FixedDecimal::from_str("123a45").unwrap_err());
+    /// ```
     Syntax,
 }
