@@ -57,6 +57,7 @@ pub enum Error {
     /// ```
     Limit,
     /// The input of a string that is supposed to be converted to FixedDecimal is not accepted.
+    ///
     /// Any string with non-digit characters (except for one '.' and one '-' at the beginning of the string) is not accepted.
     /// Also, empty string ("") and its negation ("-") are not accepted.
     /// Strings of form "12_345_678" are not accepted, the accepted format is "12345678".
