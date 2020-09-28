@@ -49,141 +49,6 @@ fn test_parsing_operand_errors() {
 }
 
 #[test]
-fn test_operand_eq() {
-    #[derive(Debug)]
-    struct TestCase {
-        o1: PluralOperands,
-        o2: PluralOperands,
-        expected: bool,
-    };
-    let tests = vec![
-        TestCase {
-            o1: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            o2: PluralOperands {
-                // Loss of precision should be ok.
-                n: 25.000001,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            expected: true,
-        },
-        TestCase {
-            o1: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            o2: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            expected: true,
-        },
-        TestCase {
-            o1: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 3,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            o2: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            expected: false,
-        },
-        TestCase {
-            o1: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 1,
-                f: 0,
-                t: 0,
-            },
-            o2: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            expected: false,
-        },
-        TestCase {
-            o1: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 1,
-                t: 0,
-            },
-            o2: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            expected: false,
-        },
-        TestCase {
-            o1: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 1,
-            },
-            o2: PluralOperands {
-                n: 25.0,
-                i: 25,
-                v: 2,
-                w: 0,
-                f: 0,
-                t: 0,
-            },
-            expected: false,
-        },
-    ];
-    for test in tests {
-        let actual = test.o1 == test.o2;
-        assert_eq!(
-            test.expected, actual,
-            "\n\t(expected==left; actual==right)\n\t\t{:?}",
-            &test
-        );
-    }
-}
-
-#[test]
 fn test_from_fixed_decimals() {
     #[derive(Debug)]
     struct TestCase {
@@ -194,7 +59,6 @@ fn test_from_fixed_decimals() {
         TestCase {
             input: FixedDecimal::from(2500).multiplied_pow10(-2).unwrap(),
             expected: PluralOperands {
-                n: 25.0,
                 i: 25,
                 v: 2,
                 w: 0,
@@ -205,7 +69,6 @@ fn test_from_fixed_decimals() {
         TestCase {
             input: FixedDecimal::from(2500),
             expected: PluralOperands {
-                n: 2500.0,
                 i: 2500,
                 v: 0,
                 w: 0,
@@ -216,7 +79,6 @@ fn test_from_fixed_decimals() {
         TestCase {
             input: FixedDecimal::from(-123450).multiplied_pow10(-4).unwrap(),
             expected: PluralOperands {
-                n: 12.345,
                 i: 12,
                 v: 4,
                 w: 3,
@@ -227,7 +89,6 @@ fn test_from_fixed_decimals() {
         TestCase {
             input: FixedDecimal::from(123450).multiplied_pow10(-4).unwrap(),
             expected: PluralOperands {
-                n: 12.345,
                 i: 12,
                 v: 4,
                 w: 3,
@@ -238,7 +99,6 @@ fn test_from_fixed_decimals() {
         TestCase {
             input: FixedDecimal::from(1).multiplied_pow10(-2).unwrap(),
             expected: PluralOperands {
-                n: 0.01,
                 i: 0,
                 v: 2,
                 w: 2,
@@ -249,7 +109,6 @@ fn test_from_fixed_decimals() {
         TestCase {
             input: FixedDecimal::from(123450).multiplied_pow10(-7).unwrap(),
             expected: PluralOperands {
-                n: 0.012345,
                 i: 0,
                 v: 7,
                 w: 6,
