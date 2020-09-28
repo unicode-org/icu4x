@@ -1,3 +1,4 @@
+use icu_num_util::FixedDecimal;
 use std::convert::TryFrom;
 use std::io::Error as IOError;
 use std::isize;
@@ -51,7 +52,7 @@ use std::str::FromStr;
 ///    t: 45,
 /// }), "123.45".parse())
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy)]
 pub struct PluralOperands {
     /// Integer value of input
     pub i: u64,
@@ -198,3 +199,56 @@ macro_rules! impl_signed_integer_type {
 
 impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
+
+impl From<&FixedDecimal> for PluralOperands {
+    /// Converts a [icu_num_util::FixedDecimal] to [PluralOperands]
+    fn from(f: &FixedDecimal) -> Self {
+        let mag_range = f.magnitude_range();
+        let mag_end = *mag_range.end();
+        let integer_range = 0..=mag_end;
+        let mag_start = *mag_range.start();
+        let fractional_range = mag_start..=-1;
+
+        let mut integer_part: u64 = 0;
+        for magnitude in integer_range.rev() {
+            integer_part *= 10;
+            integer_part += f.digit_at(magnitude) as u64;
+        }
+
+        let mut trailing_zeros_part = true;
+        let mut fraction_part_full: u64 = 0;
+        let mut fraction_part_nozeros: u64 = 0;
+        let mut num_digits_full = 0;
+        let mut num_digits_nozeros = 0;
+        let mut fraction_part = 0.0;
+        let mut weight = 1;
+        let mut weight_nozeros = 1;
+        for magnitude in fractional_range {
+            let digit = f.digit_at(magnitude);
+            if digit != 0 {
+                trailing_zeros_part = false;
+            }
+            fraction_part_full = digit as u64 * weight + fraction_part_full;
+            num_digits_full += 1;
+            fraction_part += digit as f64;
+            fraction_part = fraction_part / 10.0;
+
+            if !trailing_zeros_part {
+                fraction_part_nozeros = digit as u64 * weight_nozeros + fraction_part_nozeros;
+                num_digits_nozeros += 1;
+                weight_nozeros *= 10;
+            }
+            weight *= 10;
+        }
+        let value = integer_part as f64 + fraction_part;
+
+        PluralOperands {
+            n: value,
+            i: integer_part,
+            v: num_digits_full,
+            w: num_digits_nozeros,
+            f: fraction_part_full,
+            t: fraction_part_nozeros,
+        }
+    }
+}

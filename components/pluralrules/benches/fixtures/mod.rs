@@ -9,12 +9,21 @@ pub(crate) struct NumbersFixture {
     pub isize: Vec<i64>,
     pub usize: Vec<u64>,
     pub string: Vec<String>,
+    pub fixed_decimals: Vec<FromFixedDecimals>,
 }
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct PluralsFixture {
     pub rules: HashMap<String, LocalePluralRulesFixture>,
     pub langs: Vec<LanguageIdentifier>,
+}
+
+/// Describes a number to construct from plural operands, as `value * 10^(exponent)`.  Construction
+/// from value and exponent is because sometimes we want to preserve trailing zeros.
+#[derive(Deserialize)]
+pub(crate) struct FromFixedDecimals {
+    pub value: i64,
+    pub exponent: i16,
 }
 
 #[derive(Debug, Deserialize)]
