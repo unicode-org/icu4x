@@ -42,6 +42,7 @@ where
     pub(crate) date_time: &'l T,
 }
 
+// TODO(#181): Implement Writeable instead of fmt::Display
 impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
 where
     T: DateTimeType,
@@ -56,6 +57,7 @@ fn format_number(
     num: usize,
     length: &FieldLength,
 ) -> Result<(), std::fmt::Error> {
+    debug_assert!((*length as u8) < 3);
     write!(result, "{:0>width$}", num, width = (*length as u8) as usize)
 }
 
@@ -84,13 +86,13 @@ where
                         format_number(w, date_time.month() + 1, &field.length)?
                     }
                     length => {
-                        let symbol = data.get_symbol_for_month(month, length, date_time.month())?;
+                        let symbol = data.get_symbol_for_month(month, length, date_time.month());
                         w.write_str(symbol)?
                     }
                 },
                 FieldSymbol::Weekday(weekday) => {
                     let dow = get_day_of_week(date_time.year(), date_time.month(), date_time.day());
-                    let symbol = data.get_symbol_for_weekday(weekday, field.length, dow)?;
+                    let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
                     w.write_str(symbol)?
                 }
                 FieldSymbol::Day(..) => format_number(w, date_time.day() + 1, &field.length)?,
@@ -113,14 +115,13 @@ where
                                 date_time.hour()
                             }
                         }
-                        _ => unimplemented!(),
                     };
                     format_number(w, value, &field.length)?
                 }
                 FieldSymbol::Minute => format_number(w, date_time.minute(), &field.length)?,
                 FieldSymbol::Second(..) => format_number(w, date_time.second(), &field.length)?,
-                FieldSymbol::Period(period) => match period {
-                    fields::Period::AmPm => {
+                FieldSymbol::DayPeriod(period) => match period {
+                    fields::DayPeriod::AmPm => {
                         let symbol =
                             data.get_symbol_for_day_period(period, field.length, date_time.hour());
                         w.write_str(symbol)?

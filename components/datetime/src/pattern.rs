@@ -1,4 +1,5 @@
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use std::convert::TryFrom;
 use std::iter::FromIterator;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -29,7 +30,7 @@ impl<'p> From<&str> for PatternItem {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct Pattern(pub Vec<PatternItem>);
 
 #[derive(Debug)]
@@ -62,7 +63,7 @@ impl Pattern {
                 let length = FieldLength::try_from(len)?;
                 result.push(Field { symbol: s, length }.into());
             }
-            if let Ok(symb) = FieldSymbol::from_byte(*byte) {
+            if let Ok(symb) = FieldSymbol::try_from(*byte) {
                 if let Some((None, token_start_idx)) = symbol {
                     result.push(PatternItem::Literal(
                         String::from_utf8_lossy(&input[token_start_idx..idx]).to_string(),
@@ -89,6 +90,7 @@ impl Pattern {
         Ok(Self(result))
     }
 
+    // TODO(#277): This should be turned into a utility for all ICU4X.
     pub fn from_bytes_combination(
         input: &[u8],
         mut date: Pattern,

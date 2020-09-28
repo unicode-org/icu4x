@@ -1,6 +1,9 @@
 /// Temporary trait used to represent the input data for `DateTimeFormat`.
 ///
 /// This type represents all data that the formatted needs in order to produced formatted string.
+///
+/// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
+/// other calendars in the upcoming releases.
 pub trait DateTimeType {
     fn year(&self) -> usize;
     fn month(&self) -> usize;

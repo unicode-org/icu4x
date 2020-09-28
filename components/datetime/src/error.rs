@@ -8,10 +8,8 @@ use icu_data_provider::prelude::DataError;
 pub enum DateTimeFormatError {
     /// An error coming from a pattern parsing
     Pattern(pattern::Error),
-    /// An error indicating that data could not be retrieved
-    MissingData,
     /// An error originating from fmt::Write trait
-    Format,
+    Format(std::fmt::Error),
     /// An error originating inside of the DataProvider
     DataProvider(DataError),
 }
@@ -29,7 +27,7 @@ impl From<pattern::Error> for DateTimeFormatError {
 }
 
 impl From<std::fmt::Error> for DateTimeFormatError {
-    fn from(_: std::fmt::Error) -> Self {
-        Self::Format
+    fn from(err: std::fmt::Error) -> Self {
+        Self::Format(err)
     }
 }

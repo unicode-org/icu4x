@@ -2,7 +2,7 @@
     {
         "input": {
             "locale": "en",
-            "value": "2020-01-21 08:25:07.000",
+            "value": "2020-01-21T08:25:07.000",
             "options": {
                 "style": {
                     "time": "full",
@@ -17,7 +17,7 @@
     {
         "input": {
             "locale": "en",
-            "value": "2020-09-10 13:34:59.000",
+            "value": "2020-09-10T13:34:59.000",
             "options": {
                 "style": {
                     "time": "long",
@@ -32,7 +32,7 @@
     {
         "input": {
             "locale": "en",
-            "value": "2020-02-20 00:12:00.000",
+            "value": "2020-02-20T00:12:00.000",
             "options": {
                 "style": {
                     "time": "medium",
@@ -47,7 +47,7 @@
     {
         "input": {
             "locale": "en",
-            "value": "2000-01-30 22:15:11.000",
+            "value": "2000-01-30T22:15:11.000",
             "options": {
                 "style": {
                     "time": "short",
@@ -62,7 +62,7 @@
     {
         "input": {
             "locale": "en",
-            "value": "2045-02-01 18:45:10.000",
+            "value": "2045-02-01T18:45:10.000",
             "options": {
                 "style": {
                     "time": null,
@@ -77,7 +77,7 @@
     {
         "input": {
             "locale": "en",
-            "value": "2045-02-01 18:45:10.000",
+            "value": "2045-02-01T18:45:10.000",
             "options": {
                 "style": {
                     "time": "medium",
@@ -92,7 +92,7 @@
     {
         "input": {
             "locale": "pl",
-            "value": "2020-03-21 08:25:07.000",
+            "value": "2020-03-21T08:25:07.000",
             "options": {
                 "style": {
                     "time": "full",

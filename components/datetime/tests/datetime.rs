@@ -1,16 +1,13 @@
 mod fixtures;
 
-use icu_cldr_json_data_provider::{CldrJsonDataProvider, CldrPaths};
 use icu_datetime::DateTimeFormat;
+use icu_fs_data_provider::FsDataProvider;
 use std::fmt::Write;
 
 #[test]
 fn test_fixtures() {
-    let mut cldr_paths = CldrPaths::default();
-
-    cldr_paths.cldr_dates = Ok("./tests/fixtures/data/cldr/cldr-dates-modern".into());
-
-    let provider = CldrJsonDataProvider::new(&cldr_paths);
+    let provider = FsDataProvider::try_new("./tests/fixtures/data/icu4x")
+        .expect("Loading file from testdata directory");
 
     for fx in fixtures::get_fixture("styles").unwrap().0 {
         let langid = fx.input.locale.parse().unwrap();

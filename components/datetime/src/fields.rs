@@ -1,3 +1,5 @@
+use std::convert::TryFrom;
+
 #[derive(Debug)]
 pub enum Error {
     Unknown,
@@ -35,41 +37,39 @@ pub enum FieldSymbol {
     Month(Month),
     Day(Day),
     Weekday(Weekday),
-    Period(Period),
+    DayPeriod(DayPeriod),
     Hour(Hour),
     Minute,
     Second(Second),
 }
 
-impl FieldSymbol {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for FieldSymbol {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'G' => Ok(Self::Era),
             b'm' => Ok(Self::Minute),
-            _ => Year::from_byte(b)
+            _ => Year::try_from(b)
                 .map(Self::Year)
-                .or_else(|_| Month::from_byte(b).map(Self::Month))
-                .or_else(|_| Day::from_byte(b).map(Self::Day))
-                .or_else(|_| Weekday::from_byte(b).map(Self::Weekday))
-                .or_else(|_| Period::from_byte(b).map(Self::Period))
-                .or_else(|_| Hour::from_byte(b).map(Self::Hour))
-                .or_else(|_| Second::from_byte(b).map(Self::Second)),
+                .or_else(|_| Month::try_from(b).map(Self::Month))
+                .or_else(|_| Day::try_from(b).map(Self::Day))
+                .or_else(|_| Weekday::try_from(b).map(Self::Weekday))
+                .or_else(|_| DayPeriod::try_from(b).map(Self::DayPeriod))
+                .or_else(|_| Hour::try_from(b).map(Self::Hour))
+                .or_else(|_| Second::try_from(b).map(Self::Second)),
         }
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Year {
     Calendar,
     WeekOf,
-    Extended,
-    Cyclic,
-    RelatedGregorian,
 }
 
-impl Year {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for Year {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'y' => Ok(Self::Calendar),
             b'Y' => Ok(Self::WeekOf),
@@ -90,8 +90,9 @@ pub enum Month {
     StandAlone,
 }
 
-impl Month {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for Month {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'M' => Ok(Self::Format),
             b'L' => Ok(Self::StandAlone),
@@ -114,8 +115,9 @@ pub enum Day {
     ModifiedJulianDay,
 }
 
-impl Day {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for Day {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'd' => Ok(Self::DayOfMonth),
             b'D' => Ok(Self::DayOfYear),
@@ -138,29 +140,18 @@ pub enum Hour {
     H12,
     H23,
     H24,
-    Preferred,
-    PreferredNoDayPeriod,
-    PreferredFlexibleDayPeriod,
 }
 
-impl Hour {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for Hour {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'K' => Ok(Self::H11),
             b'h' => Ok(Self::H12),
             b'H' => Ok(Self::H23),
             b'k' => Ok(Self::H24),
-            b'j' => Ok(Self::Preferred),
-            b'J' => Ok(Self::PreferredNoDayPeriod),
-            b'C' => Ok(Self::PreferredFlexibleDayPeriod),
             _ => Err(Error::Unknown),
         }
-    }
-}
-
-impl Default for Hour {
-    fn default() -> Self {
-        Self::Preferred
     }
 }
 
@@ -177,8 +168,9 @@ pub enum Second {
     Millisecond,
 }
 
-impl Second {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for Second {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b's' => Ok(Self::Second),
             b'S' => Ok(Self::FractionalSecond),
@@ -201,8 +193,9 @@ pub enum Weekday {
     StandAlone,
 }
 
-impl Weekday {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for Weekday {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'E' => Ok(Self::Format),
             b'e' => Ok(Self::Local),
@@ -219,14 +212,15 @@ impl From<Weekday> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum Period {
+pub enum DayPeriod {
     AmPm,
     NoonMidnight,
     Flexible,
 }
 
-impl Period {
-    pub fn from_byte(b: u8) -> Result<Self, Error> {
+impl TryFrom<u8> for DayPeriod {
+    type Error = Error;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'a' => Ok(Self::AmPm),
             b'b' => Ok(Self::NoonMidnight),
@@ -236,9 +230,9 @@ impl Period {
     }
 }
 
-impl From<Period> for FieldSymbol {
-    fn from(input: Period) -> Self {
-        FieldSymbol::Period(input)
+impl From<DayPeriod> for FieldSymbol {
+    fn from(input: DayPeriod) -> Self {
+        FieldSymbol::DayPeriod(input)
     }
 }
 

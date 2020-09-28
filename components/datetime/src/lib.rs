@@ -143,9 +143,7 @@ impl<'d> DateTimeFormat<'d> {
         })?;
         let data: Cow<structs::dates::gregory::DatesV1> = response.take_payload()?;
 
-        let pattern = data
-            .get_pattern_for_options(options)?
-            .ok_or(error::DateTimeFormatError::MissingData)?;
+        let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 
         Ok(Self {
             _langid: langid,

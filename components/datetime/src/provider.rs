@@ -23,16 +23,16 @@ pub trait DateTimeDates {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> Result<&Cow<str>>;
+    ) -> &Cow<str>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: usize,
-    ) -> Result<&Cow<str>>;
+    ) -> &Cow<str>;
     fn get_symbol_for_day_period(
         &self,
-        day_period: fields::Period,
+        day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: usize,
     ) -> &Cow<str>;
@@ -104,7 +104,8 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         weekday: fields::Weekday,
         length: fields::FieldLength,
         day: usize,
-    ) -> Result<&Cow<str>> {
+    ) -> &Cow<str> {
+        debug_assert!(day < 7);
         let widths = match weekday {
             fields::Weekday::Format => &self.symbols.weekdays.format,
             fields::Weekday::StandAlone => {
@@ -119,7 +120,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return symbols.0.get(day).ok_or(DateTimeFormatError::MissingData);
+                        return &symbols.0[day];
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -135,7 +136,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Six => widths.short.as_ref().unwrap_or(&widths.abbreviated),
             _ => &widths.abbreviated,
         };
-        symbols.0.get(day).ok_or(DateTimeFormatError::MissingData)
+        &symbols.0[day]
     }
 
     fn get_symbol_for_month(
@@ -143,19 +144,19 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         month: fields::Month,
         length: fields::FieldLength,
         num: usize,
-    ) -> Result<&Cow<str>> {
+    ) -> &Cow<str> {
+        debug_assert!(num < 12);
         let widths = match month {
             fields::Month::Format => &self.symbols.months.format,
             fields::Month::StandAlone => {
                 if let Some(ref widths) = self.symbols.months.stand_alone {
                     let symbols = match length {
-                        fields::FieldLength::Abbreviated => widths.abbreviated.as_ref(),
                         fields::FieldLength::Wide => widths.wide.as_ref(),
                         fields::FieldLength::Narrow => widths.narrow.as_ref(),
-                        _ => unreachable!(),
+                        _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return symbols.0.get(num).ok_or(DateTimeFormatError::MissingData);
+                        return &symbols.0[num];
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -165,32 +166,31 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             }
         };
         let symbols = match length {
-            fields::FieldLength::Abbreviated => &widths.abbreviated,
             fields::FieldLength::Wide => &widths.wide,
             fields::FieldLength::Narrow => &widths.narrow,
-            _ => unreachable!(),
+            _ => &widths.abbreviated,
         };
-        symbols.0.get(num).ok_or(DateTimeFormatError::MissingData)
+        &symbols.0[num]
     }
 
     fn get_symbol_for_day_period(
         &self,
-        day_period: fields::Period,
+        day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: usize,
     ) -> &Cow<str> {
         let widths = match day_period {
-            fields::Period::AmPm => &self.symbols.day_periods.format,
+            fields::DayPeriod::AmPm => &self.symbols.day_periods.format,
             _ => unimplemented!(),
         };
         let symbols = match length {
-            fields::FieldLength::One
-            | fields::FieldLength::TwoDigit
-            | fields::FieldLength::Abbreviated => &widths.abbreviated,
             fields::FieldLength::Wide => &widths.wide,
             fields::FieldLength::Narrow => &widths.narrow,
-            _ => unreachable!(),
+            _ => &widths.abbreviated,
         };
+
+        //TODO: Once we have more dayperiod types, we'll need to handle
+        //      this logic in the right location.
         if hour < 12 {
             &symbols.am
         } else {
