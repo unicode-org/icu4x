@@ -49,6 +49,141 @@ fn test_parsing_operand_errors() {
 }
 
 #[test]
+fn test_operand_eq() {
+    #[derive(Debug)]
+    struct TestCase {
+        o1: PluralOperands,
+        o2: PluralOperands,
+        expected: bool,
+    };
+    let tests = vec![
+        TestCase {
+            o1: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            o2: PluralOperands {
+                // Loss of precision should be ok.
+                n: 25.000001,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            expected: true,
+        },
+        TestCase {
+            o1: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            o2: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            expected: true,
+        },
+        TestCase {
+            o1: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 3,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            o2: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            expected: false,
+        },
+        TestCase {
+            o1: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 1,
+                f: 0,
+                t: 0,
+            },
+            o2: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            expected: false,
+        },
+        TestCase {
+            o1: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 1,
+                t: 0,
+            },
+            o2: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            expected: false,
+        },
+        TestCase {
+            o1: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 1,
+            },
+            o2: PluralOperands {
+                n: 25.0,
+                i: 25,
+                v: 2,
+                w: 0,
+                f: 0,
+                t: 0,
+            },
+            expected: false,
+        },
+    ];
+    for test in tests {
+        let actual = test.o1 == test.o2;
+        assert_eq!(
+            test.expected, actual,
+            "\n\t(expected==left; actual==right)\n\t\t{:?}",
+            &test
+        );
+    }
+}
+
+#[test]
 fn test_from_fixed_decimals() {
     #[derive(Debug)]
     struct TestCase {
