@@ -52,7 +52,7 @@ use std::str::FromStr;
 ///    t: 45,
 /// }), "123.45".parse())
 /// ```
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PluralOperands {
     /// Integer value of input
     pub i: u64,
@@ -232,18 +232,16 @@ impl From<&FixedDecimal> for PluralOperands {
             num_digits_full += 1;
             fraction_part += digit as f64;
             fraction_part = fraction_part / 10.0;
+            weight *= 10;
 
             if !trailing_zeros_part {
                 fraction_part_nozeros = digit as u64 * weight_nozeros + fraction_part_nozeros;
                 num_digits_nozeros += 1;
                 weight_nozeros *= 10;
             }
-            weight *= 10;
         }
-        let value = integer_part as f64 + fraction_part;
 
         PluralOperands {
-            n: value,
             i: integer_part,
             v: num_digits_full,
             w: num_digits_nozeros,
