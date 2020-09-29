@@ -16,19 +16,28 @@ pub enum FieldLength {
     Six = 6,
 }
 
-impl FieldLength {
-    pub fn try_from(idx: usize) -> Result<Self, Error> {
-        Ok(match idx {
-            1 => Self::One,
-            2 => Self::TwoDigit,
-            3 => Self::Abbreviated,
-            4 => Self::Wide,
-            5 => Self::Narrow,
-            6 => Self::Six,
-            _ => return Err(Error::TooLong),
-        })
-    }
+macro_rules! try_field_length {
+    ($i:ty) => {
+        impl TryFrom<$i> for FieldLength {
+            type Error = Error;
+
+            fn try_from(input: $i) -> Result<Self, Self::Error> {
+                Ok(match input {
+                    1 => Self::One,
+                    2 => Self::TwoDigit,
+                    3 => Self::Abbreviated,
+                    4 => Self::Wide,
+                    5 => Self::Narrow,
+                    6 => Self::Six,
+                    _ => return Err(Error::TooLong),
+                })
+            }
+        }
+    };
 }
+
+try_field_length!(u8);
+try_field_length!(usize);
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum FieldSymbol {

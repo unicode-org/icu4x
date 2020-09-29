@@ -1,11 +1,21 @@
 use std::convert::{TryFrom, TryInto};
+use std::fmt;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
 
 #[derive(Debug)]
 pub enum DateTimeError {
     Parse(std::num::ParseIntError),
-    Overflow(&'static str),
+    Overflow { field: &'static str, max: usize },
+}
+
+impl fmt::Display for DateTimeError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Parse(err) => write!(f, "{}", err),
+            Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
+        }
+    }
 }
 
 impl From<std::num::ParseIntError> for DateTimeError {
@@ -157,7 +167,10 @@ macro_rules! dt_unit {
             fn from_str(input: &str) -> Result<Self, Self::Err> {
                 let val: u8 = input.parse()?;
                 if val > $value {
-                    Err(DateTimeError::Overflow("$name must be between 0-$value"))
+                    Err(DateTimeError::Overflow {
+                        field: "$name",
+                        max: $value,
+                    })
                 } else {
                     Ok(Self(val))
                 }
@@ -169,7 +182,10 @@ macro_rules! dt_unit {
 
             fn try_from(input: u8) -> Result<Self, Self::Error> {
                 if input > $value {
-                    Err(DateTimeError::Overflow("$name must be between 0-$value"))
+                    Err(DateTimeError::Overflow {
+                        field: "$name",
+                        max: $value,
+                    })
                 } else {
                     Ok(Self(input))
                 }
@@ -181,7 +197,10 @@ macro_rules! dt_unit {
 
             fn try_from(input: usize) -> Result<Self, Self::Error> {
                 if input > $value {
-                    Err(DateTimeError::Overflow("$name must be between 0-$value"))
+                    Err(DateTimeError::Overflow {
+                        field: "$name",
+                        max: $value,
+                    })
                 } else {
                     Ok(Self(input as u8))
                 }
