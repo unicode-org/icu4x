@@ -204,11 +204,11 @@ impl From<&FixedDecimal> for PluralOperands {
     /// Converts a [icu_num_util::FixedDecimal] to [PluralOperands]
     fn from(f: &FixedDecimal) -> Self {
         let mag_range = f.magnitude_range();
-        let mag_end = *mag_range.end();
-        let integer_range = 0..=mag_end;
-        let mag_start = *mag_range.start();
+        let mag_high = *mag_range.end();
+        let mag_low = *mag_range.start();
 
         let mut integer_part: u64 = 0;
+        let integer_range = 0..=mag_high;
         for magnitude in integer_range.rev() {
             integer_part *= 10;
             integer_part += f.digit_at(magnitude) as u64;
@@ -220,12 +220,10 @@ impl From<&FixedDecimal> for PluralOperands {
         // A running total of the number of trailing zeros seen in the fractional part of the
         // number.
         let mut num_trailing_zeros = 0;
-        let mut num_fractional_digits = 0;
         // 10^num_trailing_zeros.
         let mut weight_trailing_zeros = 1;
-        let fractional_magnitude_range = mag_start..=-1;
+        let fractional_magnitude_range = mag_low..=-1;
         for magnitude in fractional_magnitude_range.rev() {
-            num_fractional_digits += 1;
             let digit = f.digit_at(magnitude);
             if digit == 0 {
                 num_trailing_zeros += 1;
@@ -238,6 +236,7 @@ impl From<&FixedDecimal> for PluralOperands {
             fraction_part_full += digit as u64;
         }
         let fraction_part_nozeros = fraction_part_full / weight_trailing_zeros;
+        let num_fractional_digits = (-std::cmp::min(0, mag_low)) as usize;
 
         PluralOperands {
             i: integer_part,
