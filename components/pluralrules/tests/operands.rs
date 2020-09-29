@@ -125,6 +125,4 @@ fn test_from_fixed_decimals() {
             &test
         );
     }
-
-    assert!(true);
 }
