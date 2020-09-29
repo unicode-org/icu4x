@@ -43,28 +43,28 @@ fn operands(c: &mut Criterion) {
 
     c.bench_function("operands/eq/mostly_unequal", |b| {
         let p: PluralOperands = "1".parse().expect("Parse successful");
-        for s in &data.isize {
-            let q: PluralOperands = black_box(*s)
-                .try_into()
-                .expect("Failed to parse a number into an operands.");
-            b.iter(|| {
+        b.iter(|| {
+            for s in &data.isize {
+                let q: PluralOperands = black_box(*s)
+                    .try_into()
+                    .expect("Failed to parse a number into operands.");
                 let _ = black_box(black_box(p) == black_box(q));
-            })
-        }
+            }
+        })
     });
 
     c.bench_function("operands/eq/mostly_equal", |b| {
-        for s in &data.isize {
-            let p: PluralOperands = black_box(*s)
-                .try_into()
-                .expect("Failed to parse a number into an operands.");
-            let q: PluralOperands = black_box(*s)
-                .try_into()
-                .expect("Failed to parse a number into an operands.");
-            b.iter(|| {
+        b.iter(|| {
+            for s in &data.isize {
+                let p: PluralOperands = black_box(*s)
+                    .try_into()
+                    .expect("Failed to parse a number into operands.");
+                let q: PluralOperands = black_box(*s)
+                    .try_into()
+                    .expect("Failed to parse a number into operands.");
                 let _ = black_box(black_box(p) == black_box(q));
-            })
-        }
+            }
+        })
     });
 
     c.bench_function("operands/create/from_fixed_decimal", |b| {
