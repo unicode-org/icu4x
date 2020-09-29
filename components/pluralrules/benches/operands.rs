@@ -68,14 +68,14 @@ fn operands(c: &mut Criterion) {
     });
 
     c.bench_function("operands/create/from_fixed_decimal", |b| {
-        for s in &data.fixed_decimals {
-            let f: FixedDecimal = FixedDecimal::from(s.value)
-                .multiplied_pow10(s.exponent)
-                .unwrap();
-            b.iter(|| {
+        b.iter(|| {
+            for s in &data.fixed_decimals {
+                let f: FixedDecimal = FixedDecimal::from(s.value)
+                    .multiplied_pow10(s.exponent)
+                    .unwrap();
                 let _: PluralOperands = PluralOperands::from(black_box(&f));
-            });
-        }
+            }
+        });
     });
 }
 
