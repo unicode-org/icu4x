@@ -207,7 +207,6 @@ impl From<&FixedDecimal> for PluralOperands {
         let mag_end = *mag_range.end();
         let integer_range = 0..=mag_end;
         let mag_start = *mag_range.start();
-        let fractional_range = mag_start..=-1;
 
         let mut integer_part: u64 = 0;
         for magnitude in integer_range.rev() {
@@ -215,36 +214,31 @@ impl From<&FixedDecimal> for PluralOperands {
             integer_part += f.digit_at(magnitude) as u64;
         }
 
-        let mut trailing_zeros_part = true;
         let mut fraction_part_full: u64 = 0;
-        let mut fraction_part_nozeros: u64 = 0;
-        let mut num_digits_full = 0;
-        let mut num_digits_nozeros = 0;
-        let mut fraction_part = 0.0;
-        let mut weight = 1;
-        let mut weight_nozeros = 1;
-        for magnitude in fractional_range {
-            let digit = f.digit_at(magnitude);
-            if digit != 0 {
-                trailing_zeros_part = false;
-            }
-            fraction_part_full = digit as u64 * weight + fraction_part_full;
-            num_digits_full += 1;
-            fraction_part += digit as f64;
-            fraction_part = fraction_part / 10.0;
-            weight *= 10;
 
-            if !trailing_zeros_part {
-                fraction_part_nozeros = digit as u64 * weight_nozeros + fraction_part_nozeros;
-                num_digits_nozeros += 1;
-                weight_nozeros *= 10;
+        let fractional_range = mag_start..=-1;
+        let mut num_trailing_zeros = 0;
+        let mut num_fractional_digits = 0;
+        let mut weight_trailing_zeros = 1;
+        for magnitude in fractional_range.rev() {
+            num_fractional_digits += 1;
+            let digit = f.digit_at(magnitude);
+            if digit == 0 {
+                num_trailing_zeros += 1;
+                weight_trailing_zeros *= 10;
+            } else {
+                num_trailing_zeros = 0;
+                weight_trailing_zeros = 1;
             }
+            fraction_part_full *= 10;
+            fraction_part_full += digit as u64;
         }
+        let fraction_part_nozeros = fraction_part_full / weight_trailing_zeros;
 
         PluralOperands {
             i: integer_part,
-            v: num_digits_full,
-            w: num_digits_nozeros,
+            v: num_fractional_digits,
+            w: num_fractional_digits - num_trailing_zeros,
             f: fraction_part_full,
             t: fraction_part_nozeros,
         }
