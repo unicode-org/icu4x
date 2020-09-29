@@ -214,13 +214,17 @@ impl From<&FixedDecimal> for PluralOperands {
             integer_part += f.digit_at(magnitude) as u64;
         }
 
+        // The fractional part of the number, expressed as an integer to preserve trailing zeroes.
+        // For example, could be "100" if the stored number is "0.100".
         let mut fraction_part_full: u64 = 0;
-
-        let fractional_range = mag_start..=-1;
+        // A running total of the number of trailing zeros seen in the fractional part of the
+        // number.
         let mut num_trailing_zeros = 0;
         let mut num_fractional_digits = 0;
+        // 10^num_trailing_zeros.
         let mut weight_trailing_zeros = 1;
-        for magnitude in fractional_range.rev() {
+        let fractional_magnitude_range = mag_start..=-1;
+        for magnitude in fractional_magnitude_range.rev() {
             num_fractional_digits += 1;
             let digit = f.digit_at(magnitude);
             if digit == 0 {
