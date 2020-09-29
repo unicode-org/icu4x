@@ -1,12 +1,42 @@
 use icu_pluralrules::PluralOperands;
 use serde::Deserialize;
 use std::convert::TryInto;
+use icu_num_util::FixedDecimal;
 
+/// Defines the data-driven test sets for the operands.
 #[derive(Deserialize)]
 pub struct OperandsTestSet {
     pub string: Vec<OperandsTest<String>>,
     pub int: Vec<OperandsTest<isize>>,
     pub floats: Vec<OperandsTest<f64>>,
+    pub from_test: Vec<FromTestCase>,
+}
+
+/// A single test case verifying the conversion from [FixedDecimal] into
+/// [PluralOperands].
+#[derive(Debug, Deserialize)]
+pub struct FromTestCase {
+    /// The [FixedDecimal] input
+    pub input: FixedDecimalInput,
+    /// The expected value after conversion.
+    pub expected: PluralOperandsInput,
+}
+
+/// A serialized representation of [FixedDecimal] in the data driven tests.
+///
+/// Use the `From` trait to convert into [FixedDecimal] in tests.
+#[derive(Debug, Deserialize)]
+pub struct FixedDecimalInput {
+    /// Value supplied to [FixedDecimal::from] when constructing.
+    from: i64,
+    /// Value supplied to [FixedDecimal::multiplied_pow10] when constructing.
+    pow10: i16,
+}
+
+impl From<&FixedDecimalInput> for FixedDecimal {
+    fn from(f: &FixedDecimalInput) -> Self {
+        FixedDecimal::from(f.from).multiplied_pow10(f.pow10).unwrap()
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
