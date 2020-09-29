@@ -28,7 +28,8 @@
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
-//! let date_time = DummyDateTime::new(2020, 9, 1, 12, 34, 28, 0);
+//! let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+//!     .expect("Failed to construct DateTime.");
 //!
 //! let value = dtf.format_to_string(&date_time);
 //! ```
@@ -42,7 +43,7 @@
 //!
 //! [`DateTimeFormat`]: ./struct.DateTimeFormat.html
 //! [`ICU4X`]: https://github.com/unicode-org/icu4x
-mod date;
+pub mod date;
 mod error;
 mod fields;
 mod format;
@@ -92,7 +93,8 @@ use std::borrow::Cow;
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
-/// let date_time = DummyDateTime::new(2020, 9, 1, 12, 34, 28, 0);
+/// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct DateTime.");
 ///
 /// let value = dtf.format_to_string(&date_time);
 /// ```
@@ -169,7 +171,8 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(langid, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = DummyDateTime::new(2020, 9, 1, 12, 34, 28, 0);
+    /// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
     ///
     /// let formatted_date = dtf.format(&date_time);
     ///
@@ -207,7 +210,8 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = DummyDateTime::new(2020, 9, 1, 12, 34, 28, 0);
+    /// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
     ///
     /// let mut buffer = String::new();
     /// dtf.format_to_write(&mut buffer, &date_time)
@@ -239,7 +243,8 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = DummyDateTime::new(2020, 9, 1, 12, 34, 28, 0);
+    /// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
     ///
     /// let _ = dtf.format_to_string(&date_time);
     /// ```

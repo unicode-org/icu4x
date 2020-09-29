@@ -32,7 +32,6 @@ impl FieldLength {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum FieldSymbol {
-    Era,
     Year(Year),
     Month(Month),
     Day(Day),
@@ -47,7 +46,6 @@ impl TryFrom<u8> for FieldSymbol {
     type Error = Error;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
-            b'G' => Ok(Self::Era),
             b'm' => Ok(Self::Minute),
             _ => Year::try_from(b)
                 .map(Self::Year)
@@ -214,8 +212,6 @@ impl From<Weekday> for FieldSymbol {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum DayPeriod {
     AmPm,
-    NoonMidnight,
-    Flexible,
 }
 
 impl TryFrom<u8> for DayPeriod {
@@ -223,8 +219,6 @@ impl TryFrom<u8> for DayPeriod {
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'a' => Ok(Self::AmPm),
-            b'b' => Ok(Self::NoonMidnight),
-            b'B' => Ok(Self::Flexible),
             _ => Err(Error::Unknown),
         }
     }

@@ -1,3 +1,4 @@
+use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{style, DateTimeFormatOptions};
@@ -22,19 +23,19 @@ pub trait DateTimeDates {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: usize,
+        num: date::Month,
     ) -> &Cow<str>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: usize,
+        day: date::WeekDay,
     ) -> &Cow<str>;
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: usize,
+        hour: date::Hour,
     ) -> &Cow<str>;
 }
 
@@ -103,9 +104,8 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: usize,
+        day: date::WeekDay,
     ) -> &Cow<str> {
-        debug_assert!(day < 7);
         let widths = match weekday {
             fields::Weekday::Format => &self.symbols.weekdays.format,
             fields::Weekday::StandAlone => {
@@ -120,7 +120,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[day];
+                        return &symbols.0[usize::from(day)];
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -136,16 +136,15 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Six => widths.short.as_ref().unwrap_or(&widths.abbreviated),
             _ => &widths.abbreviated,
         };
-        &symbols.0[day]
+        &symbols.0[usize::from(day)]
     }
 
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: usize,
+        num: date::Month,
     ) -> &Cow<str> {
-        debug_assert!(num < 12);
         let widths = match month {
             fields::Month::Format => &self.symbols.months.format,
             fields::Month::StandAlone => {
@@ -156,7 +155,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[num];
+                        return &symbols.0[usize::from(num)];
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -170,18 +169,17 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-        &symbols.0[num]
+        &symbols.0[usize::from(num)]
     }
 
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: usize,
+        hour: date::Hour,
     ) -> &Cow<str> {
         let widths = match day_period {
             fields::DayPeriod::AmPm => &self.symbols.day_periods.format,
-            _ => unimplemented!(),
         };
         let symbols = match length {
             fields::FieldLength::Wide => &widths.wide,
@@ -191,7 +189,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
 
         //TODO: Once we have more dayperiod types, we'll need to handle
         //      this logic in the right location.
-        if hour < 12 {
+        if u8::from(hour) < 12 {
             &symbols.am
         } else {
             &symbols.pm

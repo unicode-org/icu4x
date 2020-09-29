@@ -4,6 +4,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
 use icu_datetime::DateTimeFormat;
+use icu_datetime::DummyDateTime;
 use icu_fs_data_provider::FsDataProvider;
 
 fn datetime_benches(c: &mut Criterion) {
@@ -18,10 +19,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("DateTimeFormat/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<_> = fx
+                    let datetimes: Vec<DummyDateTime> = fx
                         .values
                         .iter()
-                        .map(|value| fixtures::parse_date(value).unwrap())
+                        .map(|value| value.parse().unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -43,10 +44,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("DateTimeFormat/format_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<_> = fx
+                    let datetimes: Vec<DummyDateTime> = fx
                         .values
                         .iter()
-                        .map(|value| fixtures::parse_date(value).unwrap())
+                        .map(|value| value.parse().unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -65,10 +66,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedDateTime/format", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<_> = fx
+                    let datetimes: Vec<DummyDateTime> = fx
                         .values
                         .iter()
-                        .map(|value| fixtures::parse_date(value).unwrap())
+                        .map(|value| value.parse().unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -91,10 +92,10 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedDateTime/to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<_> = fx
+                    let datetimes: Vec<DummyDateTime> = fx
                         .values
                         .iter()
-                        .map(|value| fixtures::parse_date(value).unwrap())
+                        .map(|value| value.parse().unwrap())
                         .collect();
 
                     for setup in &fx.setups {

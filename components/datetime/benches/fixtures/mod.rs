@@ -1,7 +1,6 @@
 pub mod structs;
 
 use icu_datetime::options::{style, DateTimeFormatOptions};
-use icu_datetime::DummyDateTime;
 use std::fs::File;
 use std::io::BufReader;
 
@@ -39,24 +38,4 @@ pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
         ..Default::default()
     };
     style.into()
-}
-
-#[allow(dead_code)]
-pub fn parse_date(input: &str) -> Result<DummyDateTime, std::num::ParseIntError> {
-    let year: usize = input[0..4].parse()?;
-    let month: usize = input[5..7].parse()?;
-    let day: usize = input[8..10].parse()?;
-    let hour: usize = input[11..13].parse()?;
-    let minute: usize = input[14..16].parse()?;
-    let second: usize = input[17..19].parse()?;
-    let millisecond: usize = input[20..23].parse()?;
-    Ok(DummyDateTime {
-        year,
-        month: month - 1,
-        day: day - 1,
-        hour,
-        minute,
-        second,
-        millisecond,
-    })
 }
