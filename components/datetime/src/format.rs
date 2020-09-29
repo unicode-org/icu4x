@@ -52,14 +52,26 @@ where
         write_pattern(self.pattern, self.data, self.date_time, f).map_err(|_| std::fmt::Error)
     }
 }
+
 // Temporary formatting number with length.
 fn format_number(
     result: &mut impl fmt::Write,
     num: usize,
     length: &FieldLength,
 ) -> Result<(), std::fmt::Error> {
-    debug_assert!((*length as u8) < 3);
-    write!(result, "{:0>width$}", num, width = (*length as u8) as usize)
+    match length {
+        FieldLength::One => write!(result, "{}", num),
+        FieldLength::TwoDigit => {
+            if num < 100 {
+                write!(result, "{:0>width$}", num, width = 2)
+            } else {
+                let buffer = num.to_string();
+                let len = buffer.len();
+                result.write_str(&buffer[len - 2..])
+            }
+        }
+        length => write!(result, "{:0>width$}", num, width = *length as usize),
+    }
 }
 
 // Temporary simplified function to get the day of the week
@@ -90,8 +102,7 @@ where
                         format_number(w, usize::from(date_time.month()) + 1, &field.length)?
                     }
                     length => {
-                        let symbol =
-                            data.get_symbol_for_month(month, length, date_time.month().into());
+                        let symbol = data.get_symbol_for_month(month, length, date_time.month());
                         w.write_str(symbol)?
                     }
                 },
@@ -142,4 +153,30 @@ where
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_format_numer() {
+        let values = &[2, 20, 201, 2017, 20173];
+        let samples = &[
+            (FieldLength::One, ["2", "20", "201", "2017", "20173"]),
+            (FieldLength::TwoDigit, ["02", "20", "01", "17", "73"]),
+            (
+                FieldLength::Abbreviated,
+                ["002", "020", "201", "2017", "20173"],
+            ),
+            (FieldLength::Wide, ["0002", "0020", "0201", "2017", "20173"]),
+        ];
+        for (length, expected) in samples {
+            for (value, expected) in values.iter().zip(expected) {
+                let mut s = String::new();
+                format_number(&mut s, *value, length).unwrap();
+                assert_eq!(s, *expected);
+            }
+        }
+    }
 }
