@@ -5,6 +5,7 @@ use rand_pcg::Lcg64Xsh32;
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
 use icu_num_util::FixedDecimal;
+use std::str::FromStr;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
     // Use Lcg64Xsh32, a small, fast PRNG.
@@ -87,10 +88,41 @@ fn to_string_benches(c: &mut Criterion) {
     }
 }
 
+fn from_string_benches(c: &mut Criterion) {
+    let objects = [
+        "0012.3400",
+        "00.0012216734340",
+        "00002342561123400.0",
+        "-00123400",
+        "922337203685477580898230948203840239384.9823094820384023938423424",
+        "0.000000001",
+        "1000000001",
+        &{
+            let mut x = format!("{:0fill$}", 0, fill = 32768);
+            x.push_str(".");
+            x.push_str(&format!("{:0fill$}", 0, fill = 32768));
+            x
+        },
+    ];
+
+    {
+        let mut group = c.benchmark_group("from_string");
+        for object in objects.iter() {
+            group.bench_with_input(
+                BenchmarkId::from_parameter(object.to_string()),
+                object,
+                |b, object| b.iter(|| FixedDecimal::from_str(object).unwrap()),
+            );
+        }
+        group.finish();
+    }
+}
+
 criterion_group!(
     benches,
     smaller_isize_benches,
     larger_isize_benches,
-    to_string_benches
+    to_string_benches,
+    from_string_benches
 );
 criterion_main!(benches);

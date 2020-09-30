@@ -504,10 +504,7 @@ impl FromStr for FixedDecimal {
 
         // Constructing DecimalFixed.digits
         let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
-        for (i, c) in no_sign_str[leftmost_digit..rightmost_digit]
-            .bytes()
-            .enumerate()
-        {
+        for c in no_sign_str[leftmost_digit..rightmost_digit].bytes() {
             if c == b'.' {
                 continue;
             }
