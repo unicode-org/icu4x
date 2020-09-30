@@ -511,9 +511,6 @@ impl FromStr for FixedDecimal {
             if c == b'.' {
                 continue;
             }
-            if i > std::i16::MAX as usize {
-                return Err(Error::Limit);
-            }
             v.push(c - b'0');
         }
         let v_len = v.len();
