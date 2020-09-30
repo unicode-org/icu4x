@@ -70,7 +70,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             style::Date::Medium => &date.medium,
             style::Date::Short => &date.short,
         };
-        Ok(Pattern::from_bytes(s.as_bytes())?)
+        Ok(Pattern::from_bytes(s)?)
     }
 
     fn get_pattern_for_date_time_style(
@@ -86,7 +86,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             style::Date::Medium => &date_time.medium,
             style::Date::Short => &date_time.short,
         };
-        Ok(Pattern::from_bytes_combination(s.as_bytes(), date, time)?)
+        Ok(Pattern::from_bytes_combination(s, date, time)?)
     }
 
     fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Pattern> {
@@ -97,7 +97,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             style::Time::Medium => &time.medium,
             style::Time::Short => &time.short,
         };
-        Ok(Pattern::from_bytes(s.as_bytes())?)
+        Ok(Pattern::from_bytes(s)?)
     }
 
     fn get_symbol_for_weekday(

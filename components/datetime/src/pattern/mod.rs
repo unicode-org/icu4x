@@ -38,17 +38,19 @@ impl<'p> From<&str> for PatternItem {
 pub struct Pattern(pub Vec<PatternItem>);
 
 impl Pattern {
-    pub fn from_bytes(input: &[u8]) -> Result<Self, Error> {
+    pub fn from_bytes(input: &str) -> Result<Self, Error> {
         Parser::new(input).parse().map(Pattern)
     }
 
     // TODO(#277): This should be turned into a utility for all ICU4X.
     pub fn from_bytes_combination(
-        input: &[u8],
+        input: &str,
         date: Pattern,
         time: Pattern,
     ) -> Result<Self, Error> {
-        Parser::new(input).parse_placeholders(vec![time, date]).map(Pattern)
+        Parser::new(input)
+            .parse_placeholders(vec![time, date])
+            .map(Pattern)
     }
 }
 
@@ -66,7 +68,7 @@ mod tests {
     #[test]
     fn pattern_parse() {
         assert_eq!(
-            Pattern::from_bytes(b"dd/MM/y").expect("Parsing pattern failed."),
+            Pattern::from_bytes("dd/MM/y").expect("Parsing pattern failed."),
             vec![
                 (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
                 "/".into(),
@@ -79,7 +81,7 @@ mod tests {
         );
 
         assert_eq!(
-            Pattern::from_bytes(b"HH:mm:ss").expect("Parsing pattern failed."),
+            Pattern::from_bytes("HH:mm:ss").expect("Parsing pattern failed."),
             vec![
                 (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
                 ":".into(),

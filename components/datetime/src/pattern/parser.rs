@@ -3,88 +3,82 @@ use super::{Pattern, PatternItem};
 use crate::fields::{Field, FieldLength, FieldSymbol};
 use std::convert::TryFrom;
 
-enum State {
-    Symbol {
-        symbol: FieldSymbol,
-        byte: u8,
-        start_idx: usize,
-    },
-    Literal {
-        start_idx: usize,
-    },
+enum Segment {
+    Symbol { symbol: FieldSymbol, byte: u8 },
+    Literal,
+}
+
+struct State {
+    segment: Segment,
+    start_idx: usize,
 }
 
 pub struct Parser<'p> {
-    source: &'p [u8],
+    source: &'p str,
     state: State,
     items: Vec<PatternItem>,
-    ptr: usize,
 }
 
 impl<'p> Parser<'p> {
-    pub fn new(source: &'p [u8]) -> Self {
+    pub fn new(source: &'p str) -> Self {
         Self {
             source,
-            state: State::Literal { start_idx: 0 },
+            state: State {
+                segment: Segment::Literal,
+                start_idx: 0,
+            },
             items: Vec::with_capacity(source.len()),
-            ptr: 0,
         }
     }
 
-    fn collect_item(&mut self) -> Result<(), Error> {
-        match self.state {
-            State::Symbol {
-                symbol, start_idx, ..
-            } => self.collect_symbol(symbol, start_idx)?,
-            State::Literal { start_idx } => self.collect_literal(start_idx),
+    fn collect_item(&mut self, idx: usize) -> Result<(), Error> {
+        match self.state.segment {
+            Segment::Symbol { symbol, .. } => {
+                self.collect_symbol(symbol, idx)?
+            }
+            Segment::Literal => self.collect_literal(idx),
         }
         Ok(())
     }
 
-    fn collect_symbol(&mut self, symbol: FieldSymbol, start_idx: usize) -> Result<(), Error> {
-        let len = self.ptr - start_idx;
-        let length = FieldLength::try_from(len)?;
+    fn collect_symbol(&mut self, symbol: FieldSymbol, idx: usize) -> Result<(), Error> {
+        let length = FieldLength::try_from(idx - self.state.start_idx)?;
         self.items.push(Field { symbol, length }.into());
         Ok(())
     }
 
-    fn collect_literal(&mut self, start_idx: usize) {
-        if start_idx < self.ptr {
-            let slice = &self.source[start_idx..self.ptr];
-            let item =
-                PatternItem::Literal(unsafe { String::from_utf8_unchecked(slice.to_owned()) });
+    fn collect_literal(&mut self, idx: usize) {
+        let slice = &self.source[self.state.start_idx..idx];
+        if !slice.is_empty() {
+            let item = PatternItem::Literal(slice.to_string());
             self.items.push(item);
         }
     }
 
     pub fn parse(mut self) -> Result<Vec<PatternItem>, Error> {
-        while let Some(b) = self.source.get(self.ptr) {
-            if let State::Symbol { byte, .. } = &self.state {
-                if byte == b {
-                    self.ptr += 1;
+        for (idx, b) in self.source.bytes().enumerate() {
+            if let Segment::Symbol { byte, .. } = self.state.segment {
+                if b == byte {
                     continue;
                 }
             }
 
-            if let Ok(symbol) = FieldSymbol::try_from(*b) {
-                self.collect_item()?;
-                self.state = State::Symbol {
-                    symbol,
-                    byte: *b,
-                    start_idx: self.ptr,
+            if let Ok(symbol) = FieldSymbol::try_from(b) {
+                self.collect_item(idx)?;
+                self.state = State {
+                    segment: Segment::Symbol { symbol, byte: b },
+                    start_idx: idx,
                 };
-            } else if let State::Symbol {
-                symbol, start_idx, ..
-            } = self.state
+            } else if let Segment::Symbol { symbol, .. } = self.state.segment
             {
-                self.collect_symbol(symbol, start_idx)?;
-                self.state = State::Literal {
-                    start_idx: self.ptr,
+                self.collect_symbol(symbol, idx)?;
+                self.state = State {
+                    segment: Segment::Literal,
+                    start_idx: idx,
                 };
             }
-            self.ptr += 1;
         }
-        self.collect_item()?;
+        self.collect_item(self.source.len())?;
         Ok(self.items)
     }
 
@@ -92,27 +86,25 @@ impl<'p> Parser<'p> {
         mut self,
         mut replacements: Vec<Pattern>,
     ) -> Result<Vec<PatternItem>, Error> {
-        while let Some(b) = self.source.get(self.ptr) {
-            if *b == b'{' {
-                if let State::Literal { start_idx } = self.state {
-                    self.collect_literal(start_idx);
+        let mut bytes = self.source.bytes().enumerate();
+        while let Some((idx, b)) = bytes.next() {
+            if b == b'{' {
+                if let Segment::Literal = self.state.segment {
+                    self.collect_literal(idx);
                 }
-                self.ptr += 1;
-                let b = self.source.get(self.ptr).ok_or(Error::Unknown)?;
-                let idx: usize = *b as usize - 48;
+                let (_, b) = bytes.next().ok_or(Error::Unknown)?;
                 let replacement = replacements
-                    .get_mut(idx)
-                    .ok_or(Error::UnknownSubstitution(*b))?;
+                    .get_mut(b as usize - 48)
+                    .ok_or(Error::UnknownSubstitution(b))?;
                 self.items.append(&mut replacement.0);
-                self.ptr += 2;
-                self.state = State::Literal {
-                    start_idx: self.ptr,
+                bytes.next().ok_or(Error::Unknown)?;
+                self.state = State {
+                    segment: Segment::Literal,
+                    start_idx: idx + 3
                 };
-            } else {
-                self.ptr += 1;
             }
         }
-        self.collect_item()?;
+        self.collect_item(self.source.len())?;
         Ok(self.items)
     }
 }

@@ -13,7 +13,7 @@ fn pattern_benches(c: &mut Criterion) {
         group.bench_function("parse", |b| {
             b.iter(|| {
                 for input in &patterns {
-                    let _ = Pattern::from_bytes(input.as_bytes()).unwrap();
+                    let _ = Pattern::from_bytes(input).unwrap();
                 }
             })
         });
