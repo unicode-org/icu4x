@@ -1,7 +1,7 @@
+use icu_num_util::FixedDecimal;
 use icu_pluralrules::PluralOperands;
 use serde::Deserialize;
 use std::convert::TryInto;
-use icu_num_util::FixedDecimal;
 
 /// Defines the data-driven test sets for the operands.
 #[derive(Deserialize)]
@@ -35,7 +35,9 @@ pub struct FixedDecimalInput {
 
 impl From<&FixedDecimalInput> for FixedDecimal {
     fn from(f: &FixedDecimalInput) -> Self {
-        FixedDecimal::from(f.from).multiplied_pow10(f.pow10).unwrap()
+        FixedDecimal::from(f.from)
+            .multiplied_pow10(f.pow10)
+            .unwrap()
     }
 }
 
