@@ -16,7 +16,6 @@ use std::str::FromStr;
 /// ```
 /// use icu_pluralrules::PluralOperands;
 /// assert_eq!(PluralOperands {
-///    n: 2_f64,
 ///    i: 2,
 ///    v: 0,
 ///    w: 0,
@@ -31,7 +30,6 @@ use std::str::FromStr;
 /// use std::str::FromStr;
 /// use icu_pluralrules::PluralOperands;
 /// assert_eq!(Ok(PluralOperands {
-///    n: 1234.567_f64,
 ///    i: 1234,
 ///    v: 3,
 ///    w: 3,
@@ -46,7 +44,6 @@ use std::str::FromStr;
 /// use std::convert::TryFrom;
 /// use icu_pluralrules::PluralOperands;
 /// assert_eq!(Ok(PluralOperands {
-///    n: 123.45_f64,
 ///    i: 123,
 ///    v: 2,
 ///    w: 2,
@@ -56,8 +53,6 @@ use std::str::FromStr;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PluralOperands {
-    /// Absolute value of input
-    pub n: f64,
     /// Integer value of input
     pub i: u64,
     /// Number of visible fraction digits with trailing zeros
@@ -68,6 +63,17 @@ pub struct PluralOperands {
     pub f: u64,
     /// Visible fraction digits without trailing zeros
     pub t: u64,
+}
+
+impl PluralOperands {
+    /// Returns the number represented by this [PluralOperands] as floating point.
+    /// The precision of the number returned is up to the representation accuracy
+    /// of a double.
+    pub fn n(&self) -> f64 {
+        let fraction = self.t as f64 / 10_f64.powi(self.v as i32);
+        let result = self.i as f64 + fraction;
+        result
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -105,7 +111,6 @@ impl FromStr for PluralOperands {
         };
 
         let (
-            absolute_value,
             integer_digits,
             num_fraction_digits0,
             num_fraction_digits,
@@ -130,10 +135,7 @@ impl FromStr for PluralOperands {
                     u64::from_str(&dec_str_no_zeros)?
                 };
 
-            let fraction: f64 = (fraction_digits as f64) / 10_f64.powi(num_fraction_digits as i32);
-
             (
-                integer_digits as f64 + fraction,
                 integer_digits,
                 num_fraction_digits0,
                 num_fraction_digits,
@@ -142,11 +144,10 @@ impl FromStr for PluralOperands {
             )
         } else {
             let integer_digits = u64::from_str(&abs_str)?;
-            (integer_digits as f64, integer_digits, 0, 0, 0, 0)
+            (integer_digits, 0, 0, 0, 0)
         };
 
         Ok(PluralOperands {
-            n: absolute_value,
             i: integer_digits,
             v: num_fraction_digits0,
             w: num_fraction_digits,
@@ -161,7 +162,6 @@ macro_rules! impl_integer_type {
         impl From<$ty> for PluralOperands {
             fn from(input: $ty) -> Self {
                 PluralOperands {
-                    n: input as f64,
                     i: input as u64,
                     v: 0,
                     w: 0,
@@ -183,7 +183,6 @@ macro_rules! impl_signed_integer_type {
             fn try_from(input: $ty) -> Result<Self, Self::Error> {
                 let x = input.checked_abs().ok_or(OperandsError::Invalid)?;
                 Ok(PluralOperands {
-                    n: x as f64,
                     i: x as u64,
                     v: 0,
                     w: 0,

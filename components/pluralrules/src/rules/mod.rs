@@ -26,7 +26,6 @@
 //! ```
 //! use icu_pluralrules::PluralOperands;
 //! PluralOperands {
-//!     n: 1_f64,
 //!     i: 1,
 //!     v: 0,
 //!     w: 0,

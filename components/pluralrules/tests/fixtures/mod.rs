@@ -6,9 +6,10 @@ use std::convert::TryInto;
 pub struct OperandsTestSet {
     pub string: Vec<OperandsTest<String>>,
     pub int: Vec<OperandsTest<isize>>,
+    pub floats: Vec<OperandsTest<f64>>,
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum PluralOperandsInput {
     List((f64, u64, usize, usize, u64, u64)),
@@ -28,7 +29,6 @@ impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
         match input {
             PluralOperandsInput::List(operands) => Self {
-                n: operands.0,
                 i: operands.1,
                 v: operands.2,
                 w: operands.3,
@@ -36,7 +36,6 @@ impl From<PluralOperandsInput> for PluralOperands {
                 t: operands.5,
             },
             PluralOperandsInput::Struct { n, i, v, w, f, t } => Self {
-                n: n.unwrap_or(0_f64),
                 i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
                 v: v.unwrap_or(0),
                 w: w.unwrap_or(0),
@@ -53,7 +52,7 @@ impl From<PluralOperandsInput> for PluralOperands {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct OperandsTest<T> {
     pub input: T,
     pub output: PluralOperandsInput,
