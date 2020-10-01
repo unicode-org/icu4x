@@ -5,9 +5,12 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops::RangeInclusive;
 
+use std::str::FromStr;
+
 use static_assertions::const_assert;
 
 use super::uint_iterator::IntIterator;
+
 use crate::Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
@@ -373,6 +376,148 @@ impl fmt::Display for FixedDecimal {
     }
 }
 
+impl FromStr for FixedDecimal {
+    type Err = Error;
+    fn from_str(input_str: &str) -> Result<Self, Self::Err> {
+        // input_str: the input string
+        // no_sign_str: the input string when the sign is removed from it
+        // Check if the input string is "" or "-"
+        if input_str == "" || input_str == "-" {
+            return Err(Error::Syntax);
+        }
+        let no_sign_str: &str;
+        let mut is_negative = false;
+        if &input_str[0..1] == "-" {
+            is_negative = true;
+            no_sign_str = &input_str[1..];
+        } else {
+            no_sign_str = input_str;
+        }
+
+        // Compute length of each string once and store it, so if you use that multiple times,
+        // you don't compute it multiple times
+        // has_dot: shows if your input has dot in it
+        // dot_index: gives the index of dot (after removing the sign) -- equal to lenght of
+        // the no_sign_str if there is no dot
+        let no_sign_str_len = no_sign_str.len();
+        let mut has_dot = false;
+        let mut dot_index = no_sign_str_len;
+        // The following loop computes has_dot, dot_index, and also checks to see if all
+        // characters are digits and if you have at most one dot
+        // Note: Input of format 111_123 is detected as syntax error here
+        // Note: Input starting or ending with a dot is detected as syntax error here (Ex: .123, 123.)
+        for (i, c) in no_sign_str.bytes().enumerate() {
+            if c == b'.' {
+                match has_dot {
+                    false => {
+                        dot_index = i;
+                        has_dot = true;
+                        if i == 0 || i == no_sign_str.len() - 1 {
+                            return Err(Error::Syntax);
+                        }
+                    }
+                    true => {
+                        return Err(Error::Syntax);
+                    }
+                }
+            } else if c < b'0' || c > b'9' {
+                return Err(Error::Syntax);
+            }
+        }
+
+        // defining the output dec here and set its sign
+        let mut dec: FixedDecimal = 0.into();
+        dec.is_negative = is_negative;
+
+        // no_dot_str_len: shows length of the string after removing the dot
+        let mut no_dot_str_len = no_sign_str_len;
+        if has_dot {
+            no_dot_str_len -= 1;
+        }
+
+        // Computing DecimalFixed.upper_magnitude
+        let temp_upper_magnitude = dot_index - 1;
+        if temp_upper_magnitude > i16::MAX as usize {
+            return Err(Error::Limit);
+        }
+        dec.upper_magnitude = temp_upper_magnitude as i16;
+
+        // Computing DecimalFixed.lower_magnitude
+        // Note: ((i16::MIN as u16) as usize) == 32768
+        let temp_lower_magnitude = no_dot_str_len - dot_index;
+        if temp_lower_magnitude > (i16::MIN as u16) as usize {
+            return Err(Error::Limit);
+        }
+        dec.lower_magnitude = (temp_lower_magnitude as i16).wrapping_neg();
+
+        // leftmost_digit: index of the first non-zero digit
+        // rightmost_digit: index of the first element after the last non-zero digit
+        // Example:
+        //     input string    leftmost_digit     rightmost_digit
+        //     00123000              2                  5
+        //     0.0123000             3                  6
+        //     001.23000             2                  6
+        //     001230.00             2                  5
+        // Compute leftmost_digit
+        let mut leftmost_digit = no_sign_str_len;
+        for (i, c) in no_sign_str.bytes().enumerate() {
+            if c == b'.' {
+                continue;
+            }
+            if c != b'0' {
+                leftmost_digit = i;
+                break;
+            }
+        }
+
+        // If the input only has zeros (like 000, 00.0, -00.000) we handle the situation here
+        // by returning the dec and don't running the rest of the code
+        if leftmost_digit == no_sign_str_len {
+            return Ok(dec);
+        }
+
+        // Else if the input is not all zeros, we compute its magnitude:
+        // Note that we can cast with "as" here because lower and upper magnitude have been checked already
+        let mut temp_magnitude = ((dot_index as i32) - (leftmost_digit as i32) - 1i32) as i16;
+        if dot_index < leftmost_digit {
+            temp_magnitude += 1;
+        }
+        dec.magnitude = temp_magnitude;
+
+        // Compute rightmost_digit
+        let mut rightmost_digit = no_sign_str_len;
+        for (i, c) in no_sign_str.bytes().rev().enumerate() {
+            if c == b'.' {
+                continue;
+            }
+            if c != b'0' {
+                rightmost_digit = no_sign_str_len - i;
+                break;
+            }
+        }
+
+        // digits_str_len: shows the length of digits (Ex. 0012.8900 --> 4)
+        let mut digits_str_len = rightmost_digit - leftmost_digit;
+        if leftmost_digit < dot_index && dot_index < rightmost_digit {
+            digits_str_len -= 1;
+        }
+
+        // Constructing DecimalFixed.digits
+        let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
+        for c in no_sign_str[leftmost_digit..rightmost_digit].bytes() {
+            if c == b'.' {
+                continue;
+            }
+            v.push(c - b'0');
+        }
+        let v_len = v.len();
+        debug_assert_eq!(v_len, digits_str_len);
+        dec.digits = v;
+
+        Ok(dec)
+    }
+}
+
 #[test]
 fn test_basic() {
     #[derive(Debug)]
@@ -475,6 +620,7 @@ fn test_basic() {
     ];
     for cas in &cases {
         let mut dec: FixedDecimal = cas.input.into();
+        // println!("{}", cas.input + 0.01);
         dec.multiply_pow10(cas.delta).unwrap();
         let string = dec.to_string();
         assert_eq!(cas.expected, string, "{:?}", cas);
@@ -483,19 +629,88 @@ fn test_basic() {
 }
 
 #[test]
+fn test_from_str() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input_str: &'static str,
+    };
+    let cases = [
+        TestCase {
+            input_str: "-00123400",
+        },
+        TestCase {
+            input_str: "0.0123400",
+        },
+        TestCase {
+            input_str: "-00.123400",
+        },
+        TestCase {
+            input_str: "0012.3400",
+        },
+        TestCase {
+            input_str: "-0012340.0",
+        },
+        TestCase { input_str: "1234" },
+        TestCase {
+            input_str: "0.000000001",
+        },
+        TestCase {
+            input_str: "0.0000000010",
+        },
+        TestCase {
+            input_str: "1000000",
+        },
+        TestCase {
+            input_str: "10000001",
+        },
+        TestCase { input_str: "123" },
+        TestCase {
+            input_str: "922337203685477580898230948203840239384.9823094820384023938423424",
+        },
+        TestCase {
+            input_str: "009223372000.003685477580898230948203840239384000",
+        },
+        TestCase {
+            input_str: "009223372000.003685477580898230948203840239384000",
+        },
+        TestCase { input_str: "0" },
+        TestCase { input_str: "-0" },
+        TestCase { input_str: "000" },
+        TestCase { input_str: "-00.0" },
+    ];
+    for cas in &cases {
+        let input_str_roundtrip = FixedDecimal::from_str(cas.input_str).unwrap().to_string();
+        assert_eq!(cas.input_str, input_str_roundtrip);
+    }
+}
+
+#[test]
 fn test_isize_limits() {
-    let dec_max: FixedDecimal = std::isize::MAX.into();
-    assert_eq!(std::isize::MAX.to_string(), dec_max.to_string());
-    let dec_min: FixedDecimal = std::isize::MIN.into();
-    assert_eq!(std::isize::MIN.to_string(), dec_min.to_string());
+    for num in &[std::isize::MAX, std::isize::MIN] {
+        let dec: FixedDecimal = (*num).into();
+        let dec_str = dec.to_string();
+        assert_eq!(num.to_string(), dec_str);
+        assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
+        assert_eq!(dec.write_len(), dec_str.len());
+    }
 }
 
 #[test]
 fn test_ui128_limits() {
-    let udec_max: FixedDecimal = std::u128::MAX.into();
-    assert_eq!(std::u128::MAX.to_string(), udec_max.to_string());
-    let idec_min: FixedDecimal = std::i128::MIN.into();
-    assert_eq!(std::i128::MIN.to_string(), idec_min.to_string());
+    for num in &[std::i128::MAX, std::i128::MIN] {
+        let dec: FixedDecimal = (*num).into();
+        let dec_str = dec.to_string();
+        assert_eq!(num.to_string(), dec_str);
+        assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
+        assert_eq!(dec.write_len(), dec_str.len());
+    }
+    for num in &[std::u128::MAX, std::u128::MIN] {
+        let dec: FixedDecimal = (*num).into();
+        let dec_str = dec.to_string();
+        assert_eq!(num.to_string(), dec_str);
+        assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
+        assert_eq!(dec.write_len(), dec_str.len());
+    }
 }
 
 #[test]
@@ -507,6 +722,10 @@ fn test_upper_magnitude_bounds() {
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+
+    // Checking from_str for dec (which is valid)
+    let dec_roundtrip = FixedDecimal::from_str(&dec.to_string()).unwrap();
+    assert_eq!(dec, dec_roundtrip);
 }
 
 #[test]
@@ -518,4 +737,165 @@ fn test_lower_magnitude_bounds() {
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+
+    // Checking from_str for dec (which is valid)
+    let dec_roundtrip = FixedDecimal::from_str(&dec.to_string()).unwrap();
+    assert_eq!(dec, dec_roundtrip);
+}
+
+#[test]
+fn test_zero_str_bounds() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub zeros_before_dot: usize,
+        pub zeros_after_dot: usize,
+        pub expected_err: Option<Error>,
+    };
+    // Note that std::i16::MAX = 32768
+    let cases = [
+        TestCase {
+            zeros_before_dot: 32768,
+            zeros_after_dot: 0,
+            expected_err: None,
+        },
+        TestCase {
+            zeros_before_dot: 32767,
+            zeros_after_dot: 0,
+            expected_err: None,
+        },
+        TestCase {
+            zeros_before_dot: 32769,
+            zeros_after_dot: 0,
+            expected_err: Some(Error::Limit),
+        },
+        TestCase {
+            zeros_before_dot: 0,
+            zeros_after_dot: 32769,
+            expected_err: Some(Error::Limit),
+        },
+        TestCase {
+            zeros_before_dot: 32768,
+            zeros_after_dot: 32768,
+            expected_err: None,
+        },
+        TestCase {
+            zeros_before_dot: 32769,
+            zeros_after_dot: 32768,
+            expected_err: Some(Error::Limit),
+        },
+        TestCase {
+            zeros_before_dot: 32768,
+            zeros_after_dot: 32769,
+            expected_err: Some(Error::Limit),
+        },
+        TestCase {
+            zeros_before_dot: 32767,
+            zeros_after_dot: 32769,
+            expected_err: Some(Error::Limit),
+        },
+        TestCase {
+            zeros_before_dot: 32767,
+            zeros_after_dot: 32767,
+            expected_err: None,
+        },
+        TestCase {
+            zeros_before_dot: 32768,
+            zeros_after_dot: 32767,
+            expected_err: None,
+        },
+    ];
+    for cas in &cases {
+        let mut input_str = format!("{:0fill$}", 0, fill = cas.zeros_before_dot);
+        if cas.zeros_after_dot > 0 {
+            input_str.push_str(".");
+            input_str.push_str(&format!("{:0fill$}", 0, fill = cas.zeros_after_dot));
+        }
+        match FixedDecimal::from_str(&input_str) {
+            Ok(dec) => {
+                assert_eq!(cas.expected_err, None, "{:?}", cas);
+                assert_eq!(input_str, dec.to_string(), "{:?}", cas);
+            }
+            Err(err) => {
+                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+            }
+        }
+    }
+}
+
+#[test]
+fn test_syntax_error() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input_str: &'static str,
+        pub expected_err: Option<Error>,
+    };
+    let cases = [
+        TestCase {
+            input_str: "-12a34",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "0.0123√400",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "0.012.3400",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-0-0123400",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "0-0123400",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-.00123400",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-0.00123400",
+            expected_err: None,
+        },
+        TestCase {
+            input_str: ".00123400",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "00123400.",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "00123400.0",
+            expected_err: None,
+        },
+        TestCase {
+            input_str: "123_456",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-1",
+            expected_err: None,
+        },
+    ];
+    for cas in &cases {
+        match FixedDecimal::from_str(cas.input_str) {
+            Ok(dec) => {
+                assert_eq!(cas.expected_err, None, "{:?}", cas);
+                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+            }
+            Err(err) => {
+                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+            }
+        }
+    }
 }
