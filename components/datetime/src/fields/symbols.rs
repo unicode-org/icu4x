@@ -1,43 +1,9 @@
 use std::convert::TryFrom;
 
 #[derive(Debug)]
-pub enum Error {
-    Unknown,
-    TooLong,
+pub enum SymbolError {
+    Unknown(u8),
 }
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum FieldLength {
-    One = 1,
-    TwoDigit = 2,
-    Abbreviated = 3,
-    Wide = 4,
-    Narrow = 5,
-    Six = 6,
-}
-
-macro_rules! try_field_length {
-    ($i:ty) => {
-        impl TryFrom<$i> for FieldLength {
-            type Error = Error;
-
-            fn try_from(input: $i) -> Result<Self, Self::Error> {
-                Ok(match input {
-                    1 => Self::One,
-                    2 => Self::TwoDigit,
-                    3 => Self::Abbreviated,
-                    4 => Self::Wide,
-                    5 => Self::Narrow,
-                    6 => Self::Six,
-                    _ => return Err(Error::TooLong),
-                })
-            }
-        }
-    };
-}
-
-try_field_length!(u8);
-try_field_length!(usize);
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum FieldSymbol {
@@ -52,7 +18,7 @@ pub enum FieldSymbol {
 }
 
 impl TryFrom<u8> for FieldSymbol {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'm' => Ok(Self::Minute),
@@ -75,12 +41,12 @@ pub enum Year {
 }
 
 impl TryFrom<u8> for Year {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'y' => Ok(Self::Calendar),
             b'Y' => Ok(Self::WeekOf),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -98,12 +64,12 @@ pub enum Month {
 }
 
 impl TryFrom<u8> for Month {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'M' => Ok(Self::Format),
             b'L' => Ok(Self::StandAlone),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -123,14 +89,14 @@ pub enum Day {
 }
 
 impl TryFrom<u8> for Day {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'd' => Ok(Self::DayOfMonth),
             b'D' => Ok(Self::DayOfYear),
             b'F' => Ok(Self::DayOfWeekInMonth),
             b'g' => Ok(Self::ModifiedJulianDay),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -150,14 +116,14 @@ pub enum Hour {
 }
 
 impl TryFrom<u8> for Hour {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'K' => Ok(Self::H11),
             b'h' => Ok(Self::H12),
             b'H' => Ok(Self::H23),
             b'k' => Ok(Self::H24),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -176,13 +142,13 @@ pub enum Second {
 }
 
 impl TryFrom<u8> for Second {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b's' => Ok(Self::Second),
             b'S' => Ok(Self::FractionalSecond),
             b'A' => Ok(Self::Millisecond),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -201,13 +167,13 @@ pub enum Weekday {
 }
 
 impl TryFrom<u8> for Weekday {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'E' => Ok(Self::Format),
             b'e' => Ok(Self::Local),
             b'c' => Ok(Self::StandAlone),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -224,11 +190,11 @@ pub enum DayPeriod {
 }
 
 impl TryFrom<u8> for DayPeriod {
-    type Error = Error;
+    type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'a' => Ok(Self::AmPm),
-            _ => Err(Error::Unknown),
+            b => Err(SymbolError::Unknown(b)),
         }
     }
 }
@@ -236,22 +202,5 @@ impl TryFrom<u8> for DayPeriod {
 impl From<DayPeriod> for FieldSymbol {
     fn from(input: DayPeriod) -> Self {
         FieldSymbol::DayPeriod(input)
-    }
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Field {
-    pub symbol: FieldSymbol,
-    pub length: FieldLength,
-}
-
-impl Field {}
-
-impl From<(FieldSymbol, FieldLength)> for Field {
-    fn from(input: (FieldSymbol, FieldLength)) -> Self {
-        Field {
-            symbol: input.0,
-            length: input.1,
-        }
     }
 }

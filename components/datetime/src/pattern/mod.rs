@@ -92,5 +92,19 @@ mod tests {
             .into_iter()
             .collect()
         );
+
+        assert_eq!(
+            Pattern::from_bytes("y年M月d日").expect("Parsing pattern failed."),
+            vec![
+                (fields::Year::Calendar.into(), FieldLength::One).into(),
+                "年".into(),
+                (fields::Month::Format.into(), FieldLength::One).into(),
+                "月".into(),
+                (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
+                "日".into(),
+            ]
+            .into_iter()
+            .collect()
+        );
     }
 }

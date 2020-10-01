@@ -20,5 +20,10 @@
     "E, dd/MM",
     "LLL",
     "E, d MMM y",
-    "E, dd/MM/y"
+    "E, dd/MM/y",
+    "y年M月d日",
+    "y年M月d日EEEE",
+    "d בMMM y",
+    "H นาฬิกา mm นาที ss วินาที zzzz",
+    "H時mm分ss秒 zzzz"
 ]

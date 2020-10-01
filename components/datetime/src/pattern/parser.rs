@@ -1,7 +1,7 @@
 use super::error::Error;
 use super::{Pattern, PatternItem};
-use crate::fields::{Field, FieldLength, FieldSymbol};
-use std::convert::TryFrom;
+use crate::fields::{Field, FieldSymbol};
+use std::convert::{TryFrom, TryInto};
 
 enum Segment {
     Symbol { symbol: FieldSymbol, byte: u8 },
@@ -33,23 +33,21 @@ impl<'p> Parser<'p> {
 
     fn collect_item(&mut self, idx: usize) -> Result<(), Error> {
         match self.state.segment {
-            Segment::Symbol { symbol, .. } => {
-                self.collect_symbol(symbol, idx)?
-            }
+            Segment::Symbol { symbol, .. } => self.collect_symbol(symbol, idx)?,
             Segment::Literal => self.collect_literal(idx),
         }
         Ok(())
     }
 
     fn collect_symbol(&mut self, symbol: FieldSymbol, idx: usize) -> Result<(), Error> {
-        let length = FieldLength::try_from(idx - self.state.start_idx)?;
-        self.items.push(Field { symbol, length }.into());
+        let field: Field = (symbol, idx - self.state.start_idx).try_into()?;
+        self.items.push(field.into());
         Ok(())
     }
 
     fn collect_literal(&mut self, idx: usize) {
-        let slice = &self.source[self.state.start_idx..idx];
-        if !slice.is_empty() {
+        if idx > self.state.start_idx {
+            let slice = &self.source[self.state.start_idx..idx];
             let item = PatternItem::Literal(slice.to_string());
             self.items.push(item);
         }
@@ -69,8 +67,7 @@ impl<'p> Parser<'p> {
                     segment: Segment::Symbol { symbol, byte: b },
                     start_idx: idx,
                 };
-            } else if let Segment::Symbol { symbol, .. } = self.state.segment
-            {
+            } else if let Segment::Symbol { symbol, .. } = self.state.segment {
                 self.collect_symbol(symbol, idx)?;
                 self.state = State {
                     segment: Segment::Literal,
@@ -100,7 +97,7 @@ impl<'p> Parser<'p> {
                 bytes.next().ok_or(Error::Unknown)?;
                 self.state = State {
                     segment: Segment::Literal,
-                    start_idx: idx + 3
+                    start_idx: idx + 3,
                 };
             }
         }
