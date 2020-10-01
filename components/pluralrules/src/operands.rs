@@ -71,8 +71,7 @@ impl PluralOperands {
     /// of a double.
     pub fn n(&self) -> f64 {
         let fraction = self.t as f64 / 10_f64.powi(self.v as i32);
-        let result = self.i as f64 + fraction;
-        result
+        self.i as f64 + fraction
     }
 }
 

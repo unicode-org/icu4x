@@ -49,7 +49,7 @@ fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
 fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands) -> Option<u64> {
     let value = match expression.operand {
         ast::Operand::N => {
-            if operands.n().fract() < f64::EPSILON {
+            if operands.w == 0 {
                 operands.i
             } else {
                 return None;
