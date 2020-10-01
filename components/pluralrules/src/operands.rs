@@ -1,3 +1,4 @@
+use icu_num_util::FixedDecimal;
 use std::convert::TryFrom;
 use std::io::Error as IOError;
 use std::isize;
@@ -198,3 +199,51 @@ macro_rules! impl_signed_integer_type {
 
 impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
+
+impl From<&FixedDecimal> for PluralOperands {
+    /// Converts a [icu_num_util::FixedDecimal] to [PluralOperands]
+    fn from(f: &FixedDecimal) -> Self {
+        let mag_range = f.magnitude_range();
+        let mag_high = *mag_range.end();
+        let mag_low = *mag_range.start();
+
+        let mut integer_part: u64 = 0;
+        let integer_range = 0..=mag_high;
+        for magnitude in integer_range.rev() {
+            integer_part *= 10;
+            integer_part += f.digit_at(magnitude) as u64;
+        }
+
+        // The fractional part of the number, expressed as an integer to preserve trailing zeroes.
+        // For example, could be "100" if the stored number is "0.100".
+        let mut fraction_part_full: u64 = 0;
+        // A running total of the number of trailing zeros seen in the fractional part of the
+        // number.
+        let mut num_trailing_zeros = 0;
+        // 10^num_trailing_zeros.
+        let mut weight_trailing_zeros = 1;
+        let fractional_magnitude_range = mag_low..=-1;
+        for magnitude in fractional_magnitude_range.rev() {
+            let digit = f.digit_at(magnitude);
+            if digit == 0 {
+                num_trailing_zeros += 1;
+                weight_trailing_zeros *= 10;
+            } else {
+                num_trailing_zeros = 0;
+                weight_trailing_zeros = 1;
+            }
+            fraction_part_full *= 10;
+            fraction_part_full += digit as u64;
+        }
+        let fraction_part_nozeros = fraction_part_full / weight_trailing_zeros;
+        let num_fractional_digits = (-std::cmp::min(0, mag_low)) as usize;
+
+        PluralOperands {
+            i: integer_part,
+            v: num_fractional_digits,
+            w: num_fractional_digits - num_trailing_zeros,
+            f: fraction_part_full,
+            t: fraction_part_nozeros,
+        }
+    }
+}

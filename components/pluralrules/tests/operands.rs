@@ -3,6 +3,7 @@ mod helpers;
 
 use std::convert::TryInto;
 
+use icu_num_util::FixedDecimal;
 use icu_pluralrules::PluralOperands;
 
 #[test]
@@ -45,4 +46,21 @@ fn test_parsing_operands() {
 fn test_parsing_operand_errors() {
     let operands: Result<PluralOperands, _> = "".parse();
     assert!(operands.is_err());
+}
+
+#[test]
+fn test_from_fixed_decimals() {
+    let path = "./tests/fixtures/operands.json";
+    let test_set: fixtures::OperandsTestSet =
+        helpers::read_fixture(path).expect("Failed to read a fixture");
+    for test in test_set.from_test {
+        let input: FixedDecimal = FixedDecimal::from(&test.input);
+        let actual: PluralOperands = PluralOperands::from(&input);
+        let expected: PluralOperands = PluralOperands::from(test.expected.clone());
+        assert_eq!(
+            expected, actual,
+            "\n\t(expected==left; actual==right)\n\t\t{:?}",
+            &test
+        );
+    }
 }
