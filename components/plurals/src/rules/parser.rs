@@ -7,9 +7,9 @@ use super::lexer::{Lexer, Token};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
-use alloc::vec::Vec;
 use core::iter::Peekable;
 use displaydoc::Display;
+use smallvec::smallvec;
 
 #[derive(Display, Debug, PartialEq, Eq)]
 #[allow(clippy::enum_variant_names)]
@@ -118,12 +118,12 @@ impl<'p> Parser<'p> {
     }
 
     fn get_condition(&mut self) -> Result<ast::Condition, ParserError> {
-        let mut result = vec![];
+        let mut result = smallvec![];
 
         if let Some(cond) = self.get_and_condition()? {
             result.push(cond);
         } else {
-            return Ok(ast::Condition(result.into_boxed_slice()));
+            return Ok(ast::Condition(result));
         }
 
         while self.take_if(Token::Or) {
@@ -134,12 +134,12 @@ impl<'p> Parser<'p> {
             }
         }
         // If lexer is not done, error?
-        Ok(ast::Condition(result.into_boxed_slice()))
+        Ok(ast::Condition(result))
     }
 
     fn get_and_condition(&mut self) -> Result<Option<ast::AndCondition>, ParserError> {
         if let Some(relation) = self.get_relation()? {
-            let mut rel = vec![relation];
+            let mut rel = smallvec![relation];
 
             while self.take_if(Token::And) {
                 if let Some(relation) = self.get_relation()? {
@@ -148,7 +148,7 @@ impl<'p> Parser<'p> {
                     return Err(ParserError::ExpectedRelation);
                 }
             }
-            Ok(Some(ast::AndCondition(rel.into_boxed_slice())))
+            Ok(Some(ast::AndCondition(rel)))
         } else {
             Ok(None)
         }
@@ -188,14 +188,14 @@ impl<'p> Parser<'p> {
     }
 
     fn get_range_list(&mut self) -> Result<ast::RangeList, ParserError> {
-        let mut range_list = Vec::with_capacity(1);
+        let mut range_list = smallvec![];
         loop {
             range_list.push(self.get_range_list_item()?);
             if !self.take_if(Token::Comma) {
                 break;
             }
         }
-        Ok(ast::RangeList(range_list.into_boxed_slice()))
+        Ok(ast::RangeList(range_list))
     }
 
     fn take_if(&mut self, token: Token) -> bool {

@@ -57,24 +57,25 @@
 //! ```
 //! use icu::plurals::rules::parse_condition;
 //! use icu::plurals::rules::ast::*;
+//! use smallvec::{SmallVec,smallvec};
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
 //! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
-//! assert_eq!(ast, Condition(Box::new([
-//!     AndCondition(Box::new([
+//! assert_eq!(ast, Condition(smallvec![
+//!     AndCondition(smallvec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(smallvec![
 //!                 RangeListItem::Value(
 //!                     Value(1)
 //!                 )
-//!             ]))
+//!             ])
 //!         },
 //!         Relation {
 //!             expression: Expression {
@@ -82,14 +83,14 @@
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(smallvec![
 //!                 RangeListItem::Value(
 //!                     Value(0)
 //!                 )
-//!             ]))
-//!         },
-//!     ])),
-//! ])));
+//!             ])
+//!         }
+//!     ]),
+//! ]));
 //! ```
 //!
 //! Finally, we can pass this [`AST`] (in fact, just the [`Condition`] node),

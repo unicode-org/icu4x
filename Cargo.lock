@@ -1169,6 +1169,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
+ "smallvec",
 ]
 
 [[package]]

@@ -11,28 +11,29 @@
 //! ```
 //! use icu::plurals::rules::parse_condition;
 //! use icu::plurals::rules::ast::*;
+//! use smallvec::{SmallVec,smallvec};
 //!
 //! let input = "i = 1";
 //!
 //! let ast = parse_condition(input.as_bytes())
 //!     .expect("Parsing failed.");
 //!
-//! assert_eq!(ast, Condition(Box::new([
-//!     AndCondition(Box::new([
+//! assert_eq!(ast, Condition(smallvec![
+//!     AndCondition(smallvec![
 //!         Relation {
 //!             expression: Expression {
 //!                 operand: Operand::I,
 //!                 modulus: None,
 //!             },
 //!             operator: Operator::Eq,
-//!             range_list: RangeList(Box::new([
+//!             range_list: RangeList(smallvec![
 //!                 RangeListItem::Value(
 //!                     Value(1)
 //!                 )
-//!             ]))
+//!             ])
 //!         }
-//!     ]))
-//! ])));
+//!     ])
+//! ]));
 //! ```
 //!
 //! [`PluralCategory`]: crate::PluralCategory
@@ -41,6 +42,7 @@
 use alloc::boxed::Box;
 use alloc::string::String;
 use core::ops::RangeInclusive;
+use smallvec::SmallVec;
 
 /// A complete AST representation of a plural rule.
 /// Comprises a vector of [`AndConditions`] and optionally a set of [`Samples`].
@@ -98,25 +100,26 @@ pub struct Rule {
 /// ```
 /// use icu::plurals::rules::ast::*;
 /// use icu::plurals::rules::parse_condition;
+/// use smallvec::{SmallVec,smallvec};
 ///
-/// let condition = Condition(Box::new([
-///     AndCondition(Box::new([Relation {
+/// let condition = Condition(smallvec![
+///     AndCondition(smallvec![Relation {
 ///         expression: Expression {
 ///             operand: Operand::I,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
-///     }])),
-///     AndCondition(Box::new([Relation {
+///         range_list: RangeList(smallvec![RangeListItem::Value(Value(5))]),
+///     }]),
+///     AndCondition(smallvec![Relation {
 ///         expression: Expression {
 ///             operand: Operand::V,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(2))])),
-///     }])),
-/// ]));
+///         range_list: RangeList(smallvec![RangeListItem::Value(Value(2))]),
+///     }]),
+/// ]);
 ///
 /// assert_eq!(
 ///     condition,
@@ -127,7 +130,7 @@ pub struct Rule {
 ///
 /// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
-pub struct Condition(pub Box<[AndCondition]>);
+pub struct Condition(pub SmallVec<[AndCondition; 2]>);
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
 ///
@@ -143,16 +146,17 @@ pub struct Condition(pub Box<[AndCondition]>);
 /// Can be represented by the AST:
 ///
 /// ```
-/// use icu::plurals::rules::ast::*;
+/// use icu_plurals::rules::ast::*;
+/// use smallvec::{SmallVec,smallvec};
 ///
-/// AndCondition(Box::new([
+/// AndCondition(smallvec![
 ///     Relation {
 ///         expression: Expression {
 ///             operand: Operand::I,
 ///             modulus: None,
 ///         },
 ///         operator: Operator::Eq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(5))])),
+///         range_list: RangeList(smallvec![RangeListItem::Value(Value(5))]),
 ///     },
 ///     Relation {
 ///         expression: Expression {
@@ -160,15 +164,15 @@ pub struct Condition(pub Box<[AndCondition]>);
 ///             modulus: None,
 ///         },
 ///         operator: Operator::NotEq,
-///         range_list: RangeList(Box::new([RangeListItem::Value(Value(2))])),
+///         range_list: RangeList(smallvec![RangeListItem::Value(Value(2))]),
 ///     },
-/// ]));
+/// ]);
 ///
 /// ```
 ///
 /// [`Relations`]: Relation
 #[derive(Debug, Clone, PartialEq)]
-pub struct AndCondition(pub Box<[Relation]>);
+pub struct AndCondition(pub SmallVec<[Relation; 2]>);
 
 /// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
 ///
@@ -185,6 +189,7 @@ pub struct AndCondition(pub Box<[Relation]>);
 ///
 /// ```
 /// use icu::plurals::rules::ast::*;
+/// use smallvec::{SmallVec,smallvec};
 ///
 /// Relation {
 ///     expression: Expression {
@@ -192,7 +197,7 @@ pub struct AndCondition(pub Box<[Relation]>);
 ///         modulus: None,
 ///     },
 ///     operator: Operator::Eq,
-///     range_list: RangeList(Box::new([RangeListItem::Value(Value(3))])),
+///     range_list: RangeList(smallvec![RangeListItem::Value(Value(3))]),
 /// };
 ///
 /// ```
@@ -304,17 +309,18 @@ pub enum Operand {
 ///
 /// ```
 /// use icu::plurals::rules::ast::*;
+/// use smallvec::{SmallVec,smallvec};
 ///
-/// RangeList(Box::new([
+/// RangeList(smallvec![
 ///     RangeListItem::Value(Value(5)),
 ///     RangeListItem::Value(Value(7)),
 ///     RangeListItem::Value(Value(9)),
-/// ]));
+/// ]);
 /// ```
 ///
 /// [`RangeListItems`]: RangeListItem
 #[derive(Debug, Clone, PartialEq)]
-pub struct RangeList(pub Box<[RangeListItem]>);
+pub struct RangeList(pub SmallVec<[RangeListItem; 2]>);
 
 /// An enum of items that appear in a [`RangeList`]: `Range` or a `Value`.
 ///
@@ -408,6 +414,8 @@ pub struct Samples {
 ///
 /// ```
 /// use icu::plurals::rules::ast::*;
+/// use smallvec::{SmallVec,smallvec};
+///
 /// SampleList {
 ///     sample_ranges: Box::new([
 ///         SampleRange {
