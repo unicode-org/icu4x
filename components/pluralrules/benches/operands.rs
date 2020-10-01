@@ -1,7 +1,7 @@
 mod fixtures;
 mod helpers;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use std::convert::TryInto;
 
 use icu_num_util::FixedDecimal;
@@ -41,6 +41,28 @@ fn operands(c: &mut Criterion) {
         })
     });
 
+    {
+        let samples = [
+            "0",
+            "10",
+            "200",
+            "3000",
+            "40000",
+            "500000",
+            "6000000",
+            "70000000",
+            "0012.3400",
+            "00.0012216734340",
+        ];
+        let mut group = c.benchmark_group("operands/create/string/samples");
+        for s in samples.iter() {
+            group.bench_with_input(BenchmarkId::from_parameter(s), s, |b, s| {
+                b.iter(|| {
+                    let _: PluralOperands = black_box(s).parse().unwrap();
+                })
+            });
+        }
+    }
     c.bench_function("operands/eq/mostly_unequal", |b| {
         let p: PluralOperands = "1".parse().expect("Parse successful");
         b.iter(|| {
@@ -77,6 +99,22 @@ fn operands(c: &mut Criterion) {
             }
         });
     });
+
+    {
+        let samples = [
+            FixedDecimal::from(1).multiplied_pow10(0).unwrap(),
+            FixedDecimal::from(123450).multiplied_pow10(-4).unwrap(),
+            FixedDecimal::from(2500).multiplied_pow10(-2).unwrap(),
+        ];
+        let mut group = c.benchmark_group("operands/create/from_fixed_decimal/samples");
+        for s in samples.iter() {
+            group.bench_with_input(
+                BenchmarkId::from_parameter(format!("{:?}", &s)),
+                s,
+                |b, f| b.iter(|| PluralOperands::from(black_box(f))),
+            );
+        }
+    }
 }
 
 criterion_group!(benches, operands,);
