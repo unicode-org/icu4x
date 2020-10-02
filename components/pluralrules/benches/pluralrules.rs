@@ -25,7 +25,7 @@ fn plurals_bench(c: &mut Criterion) {
 
     let loc: LanguageIdentifier = "pl".parse().unwrap();
     let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &provider).unwrap();
-    c.bench_function("plurals/select/fs", |b| {
+    c.bench_function("pluralrules/select/fs", |b| {
         b.iter(|| {
             for s in &numbers_data.usize {
                 let _ = pr.select(black_box(*s));
