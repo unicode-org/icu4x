@@ -7,11 +7,8 @@ use std::convert::TryInto;
 use icu_num_util::FixedDecimal;
 use icu_pluralrules::PluralOperands;
 
-const DATA_PATH: &str = "./benches/fixtures/numbers.json";
-
 fn operands(c: &mut Criterion) {
-    let data: fixtures::NumbersFixture =
-        helpers::read_fixture(DATA_PATH).expect("Failed to read a fixture");
+    let data = helpers::get_numbers_data();
 
     c.bench_function("operands/create/usize", |b| {
         b.iter(|| {
@@ -42,20 +39,8 @@ fn operands(c: &mut Criterion) {
     });
 
     {
-        let samples = [
-            "0",
-            "10",
-            "200",
-            "3000",
-            "40000",
-            "500000",
-            "6000000",
-            "70000000",
-            "0012.3400",
-            "00.0012216734340",
-        ];
         let mut group = c.benchmark_group("operands/create/string/samples");
-        for s in samples.iter() {
+        for s in &data.string_samples {
             group.bench_with_input(BenchmarkId::from_parameter(s), s, |b, s| {
                 b.iter(|| {
                     let _: PluralOperands = black_box(s).parse().unwrap();
