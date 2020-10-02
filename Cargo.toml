@@ -10,4 +10,5 @@ members = [
     "components/locale",
     "components/num-util",
     "components/pluralrules",
+    "components/datetime",
 ]
