@@ -385,13 +385,13 @@ impl FromStr for FixedDecimal {
         if input_str == "" || input_str == "-" {
             return Err(Error::Syntax);
         }
-        let mut is_negative = false;
         let input_str = input_str.as_bytes();
-        let mut no_sign_str = input_str;
-        if input_str[0] == b'-' {
-            is_negative = true;
-            no_sign_str = &input_str[1..];
-        }
+        let is_negative = input_str[0] == b'-';
+        let no_sign_str = if is_negative {
+            &input_str[1..]
+        } else {
+            input_str
+        };
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
