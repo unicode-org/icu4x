@@ -392,7 +392,6 @@ impl FromStr for FixedDecimal {
             is_negative = true;
             no_sign_str = &input_str[1..];
         }
-        let no_sign_str = no_sign_str;
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
