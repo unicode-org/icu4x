@@ -30,10 +30,26 @@ icu-fs-data-provider = { path = "../fs-data-provider" }
 [features]
 default = []
 
+bench = ["bench-operands", "bench-parser", "bench-pluralrules"]
+bench-operands = []
+bench-parser = []
+bench-pluralrules = []
+
 [[bench]]
-name = "pluralrules"
+name = "plurals"
 harness = false
 
 [[bench]]
 name = "operands"
 harness = false
+required-features = ["bench-operands"]
+
+[[bench]]
+name = "parser"
+harness = false
+required-features = ["bench-parser"]
+
+[[bench]]
+name = "pluralrules"
+harness = false
+required-features = ["bench-pluralrules"]
