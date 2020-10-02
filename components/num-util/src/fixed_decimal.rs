@@ -385,15 +385,13 @@ impl FromStr for FixedDecimal {
         if input_str == "" || input_str == "-" {
             return Err(Error::Syntax);
         }
-        let no_sign_str: &str;
-        let mut is_negative = false;
-        if &input_str[0..1] == "-" {
-            is_negative = true;
-            no_sign_str = &input_str[1..];
+        let input_str = input_str.as_bytes();
+        let is_negative = input_str[0] == b'-';
+        let no_sign_str = if is_negative {
+            &input_str[1..]
         } else {
-            no_sign_str = input_str;
-        }
-
+            input_str
+        };
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
@@ -406,8 +404,8 @@ impl FromStr for FixedDecimal {
         // characters are digits and if you have at most one dot
         // Note: Input of format 111_123 is detected as syntax error here
         // Note: Input starting or ending with a dot is detected as syntax error here (Ex: .123, 123.)
-        for (i, c) in no_sign_str.bytes().enumerate() {
-            if c == b'.' {
+        for (i, c) in no_sign_str.iter().enumerate() {
+            if *c == b'.' {
                 match has_dot {
                     false => {
                         dot_index = i;
@@ -420,13 +418,13 @@ impl FromStr for FixedDecimal {
                         return Err(Error::Syntax);
                     }
                 }
-            } else if c < b'0' || c > b'9' {
+            } else if *c < b'0' || *c > b'9' {
                 return Err(Error::Syntax);
             }
         }
 
         // defining the output dec here and set its sign
-        let mut dec: FixedDecimal = 0.into();
+        let mut dec: FixedDecimal = FixedDecimal::default();
         dec.is_negative = is_negative;
 
         // no_dot_str_len: shows length of the string after removing the dot
@@ -460,11 +458,11 @@ impl FromStr for FixedDecimal {
         //     001230.00             2                  5
         // Compute leftmost_digit
         let mut leftmost_digit = no_sign_str_len;
-        for (i, c) in no_sign_str.bytes().enumerate() {
-            if c == b'.' {
+        for (i, c) in no_sign_str.iter().enumerate() {
+            if *c == b'.' {
                 continue;
             }
-            if c != b'0' {
+            if *c != b'0' {
                 leftmost_digit = i;
                 break;
             }
@@ -486,11 +484,11 @@ impl FromStr for FixedDecimal {
 
         // Compute rightmost_digit
         let mut rightmost_digit = no_sign_str_len;
-        for (i, c) in no_sign_str.bytes().rev().enumerate() {
-            if c == b'.' {
+        for (i, c) in no_sign_str.iter().rev().enumerate() {
+            if *c == b'.' {
                 continue;
             }
-            if c != b'0' {
+            if *c != b'0' {
                 rightmost_digit = no_sign_str_len - i;
                 break;
             }
@@ -504,8 +502,8 @@ impl FromStr for FixedDecimal {
 
         // Constructing DecimalFixed.digits
         let mut v: SmallVec<[u8; 8]> = SmallVec::with_capacity(digits_str_len);
-        for c in no_sign_str[leftmost_digit..rightmost_digit].bytes() {
-            if c == b'.' {
+        for c in no_sign_str[leftmost_digit..rightmost_digit].iter() {
+            if *c == b'.' {
                 continue;
             }
             v.push(c - b'0');
