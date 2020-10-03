@@ -1,0 +1,126 @@
+{
+  "symbols": {
+    "months": {
+      "format": {
+        "abbreviated": [
+          "janv.",
+          "févr.",
+          "mars",
+          "avr.",
+          "mai",
+          "juin",
+          "juil.",
+          "août",
+          "sept.",
+          "oct.",
+          "nov.",
+          "déc."
+        ],
+        "narrow": [
+          "J",
+          "F",
+          "M",
+          "A",
+          "M",
+          "J",
+          "J",
+          "A",
+          "S",
+          "O",
+          "N",
+          "D"
+        ],
+        "wide": [
+          "janvier",
+          "février",
+          "mars",
+          "avril",
+          "mai",
+          "juin",
+          "juillet",
+          "août",
+          "septembre",
+          "octobre",
+          "novembre",
+          "décembre"
+        ]
+      }
+    },
+    "weekdays": {
+      "format": {
+        "abbreviated": [
+          "dim.",
+          "lun.",
+          "mar.",
+          "mer.",
+          "jeu.",
+          "ven.",
+          "sam."
+        ],
+        "narrow": [
+          "D",
+          "L",
+          "M",
+          "M",
+          "J",
+          "V",
+          "S"
+        ],
+        "short": [
+          "di",
+          "lu",
+          "ma",
+          "me",
+          "je",
+          "ve",
+          "sa"
+        ],
+        "wide": [
+          "dimanche",
+          "lundi",
+          "mardi",
+          "mercredi",
+          "jeudi",
+          "vendredi",
+          "samedi"
+        ]
+      }
+    },
+    "day_periods": {
+      "format": {
+        "abbreviated": {
+          "am": "AM",
+          "pm": "PM"
+        },
+        "narrow": {
+          "am": "AM",
+          "pm": "PM"
+        },
+        "wide": {
+          "am": "AM",
+          "pm": "PM"
+        }
+      }
+    }
+  },
+  "patterns": {
+    "date": {
+      "full": "EEEE d MMMM y",
+      "long": "d MMMM y",
+      "medium": "d MMM y",
+      "short": "dd/MM/y"
+    },
+    "time": {
+      "full": "HH:mm:ss zzzz",
+      "long": "HH:mm:ss z",
+      "medium": "HH:mm:ss",
+      "short": "HH:mm"
+    },
+    "date_time": {
+      "full": "{1} 'à' {0}",
+      "long": "{1} 'à' {0}",
+      "medium": "{1} 'à' {0}",
+      "short": "{1} {0}"
+    }
+  }
+}

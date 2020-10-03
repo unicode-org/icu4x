@@ -4,8 +4,13 @@ use std::path::PathBuf;
 
 /// Trait returning filesystem paths to CLDR JSON resource directories.
 /// The fields should be Ok if present. They default to Err when not present.
-pub trait CldrPaths {
+pub trait CldrPaths: std::fmt::Debug {
+    /// Path to checkout of cldr-core:
+    /// https://github.com/unicode-cldr/cldr-core
     fn cldr_core(&self) -> Result<PathBuf, Error>;
+
+    /// Path to checkout of cldr-dates:
+    /// https://github.com/unicode-cldr/cldr-dates-full
     fn cldr_dates(&self) -> Result<PathBuf, Error>;
 }
 
@@ -27,8 +32,6 @@ pub trait CldrPaths {
 #[non_exhaustive]
 #[derive(Debug, PartialEq)]
 pub struct CldrPathsLocal {
-    /// Path to checkout of cldr-core:
-    /// https://github.com/unicode-cldr/cldr-core
     pub cldr_core: Result<PathBuf, MissingSourceError>,
     pub cldr_dates: Result<PathBuf, MissingSourceError>,
 }

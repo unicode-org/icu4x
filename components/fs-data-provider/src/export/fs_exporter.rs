@@ -75,7 +75,7 @@ impl DataExporter for FilesystemExporter {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.data_key.get_components().iter());
         path_buf.extend(req.data_entry.get_components().iter());
-        log::trace!("Initializing: {}", path_buf.to_string_lossy());
+        log::trace!("Writing: {}", req);
         self.write_to_path(path_buf, obj)
     }
 

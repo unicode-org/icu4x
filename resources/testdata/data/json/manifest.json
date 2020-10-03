@@ -1,0 +1,19 @@
+{
+  "aliasing": "NoAliases",
+  "locales": {
+    "IncludeList": [
+      "be",
+      "bn",
+      "ccp",
+      "en",
+      "en-US-posix",
+      "en-ZA",
+      "fa",
+      "fr",
+      "und",
+      "zh",
+      "zh-Hant"
+    ]
+  },
+  "syntax": "Json"
+}

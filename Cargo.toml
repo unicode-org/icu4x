@@ -10,5 +10,6 @@ members = [
     "components/locale",
     "components/pluralrules",
     "components/datetime",
+    "resources/testdata",
     "utils/fixed-decimal",
 ]
