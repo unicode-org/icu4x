@@ -1,6 +1,8 @@
 use clap::{App, Arg, ArgGroup};
+use icu_cldr_json_data_provider::download::CldrPathsDownload;
 use icu_cldr_json_data_provider::CldrJsonDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
+use icu_cldr_json_data_provider::CldrPathsLocal;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::iter::IterableDataProvider;
 use icu_fs_data_provider::export::fs_exporter;
@@ -10,8 +12,8 @@ use icu_fs_data_provider::manifest;
 use std::ffi::OsStr;
 use std::fmt;
 use std::path::PathBuf;
+use simple_logger::SimpleLogger;
 
-// #[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
     Export(icu_fs_data_provider::FsDataError),
@@ -55,7 +57,8 @@ fn main() -> Result<(), Error> {
             Arg::with_name("VERBOSE")
                 .short("v")
                 .long("verbose")
-                .help("Enable verbose logging."),
+                .multiple(true)
+                .help("Sets the level of verbosity (-v or -vv)"),
         )
         .arg(
             Arg::with_name("DRY_RUN")
@@ -78,19 +81,27 @@ fn main() -> Result<(), Error> {
                 .help("Delete the output directory before writing data."),
         )
         .arg(
-            Arg::with_name("STYLE")
-                .long("style")
-                .takes_value(true)
-                .possible_value("compact")
-                .possible_value("pretty")
-                .help("JSON style when printing files."),
+            Arg::with_name("PRETTY")
+                .short("p")
+                .long("pretty")
+                .help("Whether to pretty-print the output JSON files."),
+        )
+        .arg(
+            Arg::with_name("CLDR_TAG")
+                .long("cldr-tag")
+                .value_name("TAG")
+                .help(
+                    "Download CLDR JSON data from this GitHub tag: \n\
+                    https://github.com/unicode-cldr/cldr-core/tags",
+                )
+                .takes_value(true),
         )
         .arg(
             Arg::with_name("CLDR_CORE")
                 .long("cldr-core")
                 .value_name("PATH")
                 .help(
-                    "Path to cldr-core JSON: \
+                    "Path to cldr-core. Ignored if '--cldr-tag' is present. \n\
                     https://github.com/unicode-cldr/cldr-core",
                 )
                 .takes_value(true),
@@ -100,8 +111,8 @@ fn main() -> Result<(), Error> {
                 .long("cldr-dates")
                 .value_name("PATH")
                 .help(
-                    "Path to cldr-dates JSON: \
-                    https://github.com/unicode-cldr/cldr-dates",
+                    "Path to cldr-dates. Ignored if '--cldr-tag' is present. \n\
+                    https://github.com/unicode-cldr/cldr-dates-modern",
                 )
                 .takes_value(true),
         )
@@ -149,6 +160,13 @@ fn main() -> Result<(), Error> {
         )
         .get_matches();
 
+    match matches.occurrences_of("VERBOSE") {
+        0 => SimpleLogger::from_env().init().unwrap(),
+        1 => SimpleLogger::new().with_level(log::LevelFilter::Info).init().unwrap(),
+        2 => SimpleLogger::new().with_level(log::LevelFilter::Trace).init().unwrap(),
+        _ => return Err(Error::Unsupported("Only -v and -vv are supported"))
+    }
+
     if !matches.is_present("ALL_KEYS") {
         return Err(Error::Unsupported(
             "Lists of keys are not yet supported (see #192)",
@@ -172,25 +190,24 @@ fn main() -> Result<(), Error> {
             .unwrap_or_else(|| OsStr::new("/tmp/icu4x_json")),
     );
 
-    let mut cldr_paths = CldrPaths::default();
+    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
+        Box::new(CldrPathsDownload::from_github_tag(tag))
+    } else {
+        let mut cldr_paths_local = CldrPathsLocal::default();
+        if let Some(path) = matches.value_of("CLDR_CORE") {
+            cldr_paths_local.cldr_core = Ok(path.into());
+        }
+        if let Some(path) = matches.value_of("CLDR_DATES") {
+            cldr_paths_local.cldr_dates = Ok(path.into());
+        }
+        Box::new(cldr_paths_local)
+    };
 
-    if let Some(path) = matches.value_of("CLDR_CORE") {
-        cldr_paths.cldr_core = Ok(path.into());
-    }
-
-    if let Some(path) = matches.value_of("CLDR_DATES") {
-        cldr_paths.cldr_dates = Ok(path.into());
-    }
-
-    let provider = CldrJsonDataProvider::new(&cldr_paths);
+    let provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
 
     let mut options = serializers::JsonSerializerOptions::default();
-    if let Some(value) = matches.value_of("STYLE") {
-        options.style = match value {
-            "compact" => serializers::StyleOption::Compact,
-            "pretty" => serializers::StyleOption::Pretty,
-            _ => unreachable!(),
-        };
+    if matches.is_present("PRETTY") {
+        options.style = serializers::StyleOption::Pretty;
     }
     let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
 
@@ -206,7 +223,6 @@ fn main() -> Result<(), Error> {
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
-    options.verbose = matches.is_present("VERBOSE");
     let mut exporter = FilesystemExporter::try_new(json_serializer, &options)?;
 
     for key in keys.iter() {

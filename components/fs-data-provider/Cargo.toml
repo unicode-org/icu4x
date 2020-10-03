@@ -22,14 +22,16 @@ serde_json = "1.0"
 
 # Dependencies for the export module
 erased-serde = { version = "0.3", optional = true }
+log = { version = "0.4", optional = true }
 
 # Dependencies for the binary
 clap = { version = "2.33", optional = true }
-icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", optional = true }
+icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", features = ["download"], optional = true }
+simple_logger = { version = "1.10", optional = true }
 
 [features]
-export = ["erased-serde", "icu-data-provider/invariant"]
-export-bin = ["export", "clap", "icu-cldr-json-data-provider"]
+export = ["erased-serde", "icu-data-provider/invariant", "log"]
+export-bin = ["export", "clap", "icu-cldr-json-data-provider", "simple_logger"]
 
 [[bin]]
 name = "icu4x-cldr-export"

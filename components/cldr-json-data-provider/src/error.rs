@@ -1,12 +1,16 @@
 use std::error;
 use std::fmt;
 
+#[cfg(feature = "download")]
+use crate::download::error::Error as DownloadError;
+
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum Error {
     JsonError(serde_json::error::Error),
     IoError(std::io::Error, std::path::PathBuf),
     MissingSource(MissingSourceError),
+    Download(Box<dyn error::Error>),
     PoisonError,
 }
 
@@ -33,12 +37,23 @@ impl From<MissingSourceError> for Error {
     }
 }
 
+#[cfg(feature = "download")]
+impl From<DownloadError> for Error {
+    fn from(err: DownloadError) -> Error {
+        match err {
+            DownloadError::Io(err, path) => Error::IoError(err, path),
+            _ => Error::Download(Box::new(err)),
+        }
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::JsonError(err) => write!(f, "{}", err),
             Error::IoError(err, path) => write!(f, "{}: {}", err, path.to_string_lossy()),
             Error::MissingSource(err) => err.fmt(f),
+            Error::Download(err) => err.fmt(f),
             Error::PoisonError => write!(f, "poisoned lock on CLDR provider"),
         }
     }
@@ -49,6 +64,7 @@ impl error::Error for Error {
         match self {
             Error::JsonError(err) => Some(err),
             Error::IoError(err, _) => Some(err),
+            Error::Download(err) => Some(err.as_ref()),
             _ => None,
         }
     }

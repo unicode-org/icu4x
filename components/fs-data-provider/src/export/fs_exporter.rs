@@ -33,8 +33,6 @@ pub struct ExporterOptions {
     pub aliasing: AliasOption,
     /// Option for initializing the output directory.
     pub overwrite: OverwriteOption,
-    /// Whether to print progress to stdout.
-    pub verbose: bool,
 }
 
 impl Default for ExporterOptions {
@@ -43,7 +41,6 @@ impl Default for ExporterOptions {
             root: PathBuf::from("icu4x_data"),
             aliasing: AliasOption::NoAliases,
             overwrite: OverwriteOption::CheckEmpty,
-            verbose: false,
         }
     }
 }
@@ -54,7 +51,6 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     alias_collection: Option<AliasCollection<Vec<u8>>>,
-    verbose: bool,
     serializer: Box<dyn Serializer>,
 }
 
@@ -75,9 +71,7 @@ impl DataExporter for FilesystemExporter {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.data_key.get_components().iter());
         path_buf.extend(req.data_entry.get_components().iter());
-        if self.verbose {
-            println!("Initializing: {}", path_buf.to_string_lossy());
-        }
+        log::trace!("Initializing: {}", path_buf.to_string_lossy());
         self.write_to_path(path_buf, obj)
     }
 }
@@ -94,7 +88,6 @@ impl FilesystemExporter {
                 syntax: SyntaxOption::Json,
             },
             alias_collection: None,
-            verbose: options.verbose,
             serializer,
         };
 
