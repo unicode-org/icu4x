@@ -1,6 +1,5 @@
 use icu_locale::LanguageIdentifier;
 use icu_pluralrules::PluralCategory;
-use std::collections::HashMap;
 
 use serde::Deserialize;
 
@@ -15,7 +14,6 @@ pub struct NumbersFixture {
 
 #[derive(Debug, Deserialize)]
 pub struct PluralsFixture {
-    pub rules: HashMap<String, LocalePluralRulesFixture>,
     pub langs: Vec<LanguageIdentifier>,
 }
 
