@@ -50,7 +50,7 @@ use crate::subtags;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct LanguageIdentifier {
     /// Language subtag of the LanguageIdentifier
     pub language: subtags::Language,
@@ -118,6 +118,12 @@ impl LanguageIdentifier {
     }
 }
 
+impl std::fmt::Debug for LanguageIdentifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+
 impl FromStr for LanguageIdentifier {
     type Err = ParserError;
 
@@ -128,18 +134,18 @@ impl FromStr for LanguageIdentifier {
 
 impl std::fmt::Display for LanguageIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        self.language.fmt(f)?;
+        std::fmt::Display::fmt(&self.language, f)?;
         if let Some(ref script) = self.script {
             f.write_char('-')?;
-            script.fmt(f)?;
+            std::fmt::Display::fmt(&script, f)?;
         }
         if let Some(ref region) = self.region {
             f.write_char('-')?;
-            region.fmt(f)?;
+            std::fmt::Display::fmt(&region, f)?;
         }
         if !self.variants.is_empty() {
             f.write_char('-')?;
-            self.variants.fmt(f)?;
+            std::fmt::Display::fmt(&self.variants, f)?;
         }
         Ok(())
     }

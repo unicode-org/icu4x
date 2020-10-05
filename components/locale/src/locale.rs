@@ -63,7 +63,7 @@ use std::str::FromStr;
 /// assert_eq!(loc.variants.get(0).unwrap(), "valencia");
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Locale {
     /// Language subtag of the Locale
     pub language: subtags::Language,
@@ -144,22 +144,28 @@ impl From<Locale> for LanguageIdentifier {
     }
 }
 
+impl std::fmt::Debug for Locale {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+
 impl std::fmt::Display for Locale {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         self.language.fmt(f)?;
         if let Some(ref script) = self.script {
             f.write_char('-')?;
-            script.fmt(f)?;
+            std::fmt::Display::fmt(&script, f)?;
         }
         if let Some(ref region) = self.region {
             f.write_char('-')?;
-            region.fmt(f)?;
+            std::fmt::Display::fmt(&region, f)?;
         }
         if !self.variants.is_empty() {
             f.write_char('-')?;
-            self.variants.fmt(f)?;
+            std::fmt::Display::fmt(&self.variants, f)?;
         }
-        self.extensions.fmt(f)?;
+        std::fmt::Display::fmt(&self.extensions, f)?;
         Ok(())
     }
 }
