@@ -2,7 +2,7 @@ use std::error;
 use std::fmt;
 
 #[cfg(feature = "download")]
-use crate::download::error::Error as DownloadError;
+use crate::download::DownloadError;
 
 #[non_exhaustive]
 #[derive(Debug)]

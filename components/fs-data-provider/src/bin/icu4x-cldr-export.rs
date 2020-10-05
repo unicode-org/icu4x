@@ -22,6 +22,7 @@ enum Error {
     Export(icu_fs_data_provider::FsDataError),
     DataProvider(icu_data_provider::DataError),
     LocaleParser(icu_locale::ParserError, String),
+    Setup(Box<dyn std::error::Error>),
 }
 
 impl fmt::Display for Error {
@@ -31,6 +32,7 @@ impl fmt::Display for Error {
             Error::Export(error) => write!(f, "{}", error),
             Error::DataProvider(error) => write!(f, "{}", error),
             Error::LocaleParser(error, s) => write!(f, "{}: {}", error, s),
+            Error::Setup(error) => write!(f, "{}", error),
         }
     }
 }
@@ -50,6 +52,12 @@ impl From<icu_fs_data_provider::FsDataError> for Error {
 impl From<icu_data_provider::DataError> for Error {
     fn from(err: icu_data_provider::DataError) -> Error {
         Error::DataProvider(err)
+    }
+}
+
+impl From<icu_cldr_json_data_provider::download::DownloadError> for Error {
+    fn from(err: icu_cldr_json_data_provider::download::DownloadError) -> Error {
+        Error::Setup(Box::from(err))
     }
 }
 
@@ -216,7 +224,7 @@ fn main() -> Result<(), Error> {
     );
 
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrPathsDownload::from_github_tag(tag))
+        Box::new(CldrPathsDownload::try_from_github_tag(tag)?)
     } else {
         let mut cldr_paths_local = CldrPathsLocal::default();
         if let Some(path) = matches.value_of("CLDR_CORE") {

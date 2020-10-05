@@ -1,9 +1,12 @@
+use super::error::DownloadError;
 use super::io_util;
 use crate::error::Error;
 use crate::CldrPaths;
 use std::path::PathBuf;
 
 /// Implementation of CldrPaths that downloads CLDR data directories on demand.
+/// The download artifacts are saved in the user's cache directory; see
+/// https://docs.rs/dirs/3.0.0/dirs/fn.cache_dir.html
 ///
 /// # Example
 ///
@@ -12,7 +15,8 @@ use std::path::PathBuf;
 /// use icu_cldr_json_data_provider::CldrJsonDataProvider;
 /// use std::path::PathBuf;
 ///
-/// let paths = CldrPathsDownload::from_github_tag("36.0.0");
+/// let paths = CldrPathsDownload::try_from_github_tag("36.0.0")
+///     .expect("Cache directory not found");
 ///
 /// let data_provider = CldrJsonDataProvider::new(&paths);
 ///
@@ -62,9 +66,12 @@ impl CldrPathsDownload {
     ///
     /// github_tag should be a tag in the CLDR JSON repositories, such as "36.0.0":
     /// https://github.com/unicode-cldr/cldr-core/tags
-    pub fn from_github_tag(github_tag: &str) -> Self {
-        Self {
-            cache_dir: dirs::cache_dir().unwrap().join("icu4x").join("cldr"),
+    pub fn try_from_github_tag(github_tag: &str) -> Result<Self, DownloadError> {
+        Ok(Self {
+            cache_dir: dirs::cache_dir()
+                .ok_or(DownloadError::NoCacheDir)?
+                .join("icu4x")
+                .join("cldr"),
             cldr_core: CldrZipFileInfo {
                 url: format!(
                     "https://github.com/unicode-cldr/cldr-core/archive/{}.zip",
@@ -79,7 +86,7 @@ impl CldrPathsDownload {
                 ),
                 top_dir: format!("cldr-dates-modern-{}", github_tag),
             },
-        }
+        })
     }
 }
 

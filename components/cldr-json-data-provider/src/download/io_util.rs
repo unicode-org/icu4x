@@ -1,4 +1,4 @@
-use super::error::Error;
+use super::error::DownloadError;
 use std::fs::{self, File};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
@@ -6,7 +6,7 @@ use unzip::Unzipper;
 
 macro_rules! map_io_err {
     ($path_ref:ident) => {
-        |err| Error::Io(err, $path_ref.to_owned())
+        |err| DownloadError::Io(err, $path_ref.to_owned())
     };
 }
 
@@ -28,12 +28,15 @@ fn assert_files_eq(expected_file_path: &Path, actual_file_path: &Path) {
 
 // Synchronously download url and save it to destination.
 // TODO(#297): Implement this async.
-fn download_sync(url: &str, destination: &Path) -> Result<(), Error> {
+fn download_sync(url: &str, destination: &Path) -> Result<(), DownloadError> {
     log::info!("Downloading: {}", url);
     let start = Instant::now();
     let mut response = reqwest::blocking::get(url)?;
     if !response.status().is_success() {
-        return Err(Error::HttpStatus(response.status(), url.to_string()));
+        return Err(DownloadError::HttpStatus(
+            response.status(),
+            url.to_string(),
+        ));
     }
     log::info!("Status: {}", response.status());
     let mut file = File::create(destination).map_err(map_io_err!(destination))?;
@@ -43,7 +46,7 @@ fn download_sync(url: &str, destination: &Path) -> Result<(), Error> {
 }
 
 #[test]
-fn test_download_sync() -> Result<(), Error> {
+fn test_download_sync() -> Result<(), DownloadError> {
     let temp_file = mktemp::Temp::new_file()?;
     download_sync(
         "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
@@ -55,7 +58,7 @@ fn test_download_sync() -> Result<(), Error> {
 
 /// Synchronously unpack a zip file into a destination directory.
 // TODO(#297): Implement this async.
-fn unzip_sync(zip_path: &Path, dir_path: &Path) -> Result<(), Error> {
+fn unzip_sync(zip_path: &Path, dir_path: &Path) -> Result<(), DownloadError> {
     let reader = File::open(zip_path).map_err(map_io_err!(zip_path))?;
     log::info!("Unzipping...");
     let start = Instant::now();
@@ -67,7 +70,7 @@ fn unzip_sync(zip_path: &Path, dir_path: &Path) -> Result<(), Error> {
 }
 
 #[test]
-fn test_unzip_sync() -> Result<(), Error> {
+fn test_unzip_sync() -> Result<(), DownloadError> {
     let temp_dir = mktemp::Temp::new_dir()?;
     unzip_sync(&PathBuf::from("./tests/testdata/dummy.zip"), &temp_dir)?;
     assert_files_eq(
@@ -81,7 +84,7 @@ fn test_unzip_sync() -> Result<(), Error> {
 ///
 /// `cache_dir` is a directory where both the zip file and the unpacked directory will be
 /// saved. If the zip file has already been downloaded, it will not be downloaded again.
-pub fn download_and_unzip(zip_file_url: &str, cache_dir: &Path) -> Result<PathBuf, Error> {
+pub fn download_and_unzip(zip_file_url: &str, cache_dir: &Path) -> Result<PathBuf, DownloadError> {
     fs::create_dir_all(cache_dir).map_err(map_io_err!(cache_dir))?;
 
     let zip_dir = cache_dir.to_path_buf().join("zips");
