@@ -1,3 +1,4 @@
+use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_cldr_json_data_provider::download::CldrPathsDownload;
 use icu_cldr_json_data_provider::CldrJsonDataProvider;
@@ -9,15 +10,18 @@ use icu_fs_data_provider::export::fs_exporter;
 use icu_fs_data_provider::export::serializers;
 use icu_fs_data_provider::export::FilesystemExporter;
 use icu_fs_data_provider::manifest;
+use icu_locale::LanguageIdentifier;
+use simple_logger::SimpleLogger;
 use std::ffi::OsStr;
 use std::fmt;
 use std::path::PathBuf;
-use simple_logger::SimpleLogger;
+use std::str::FromStr;
 
 enum Error {
     Unsupported(&'static str),
     Export(icu_fs_data_provider::FsDataError),
     DataProvider(icu_data_provider::DataError),
+    LocaleParser(icu_locale::ParserError, String),
 }
 
 impl fmt::Display for Error {
@@ -26,6 +30,7 @@ impl fmt::Display for Error {
             Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
             Error::Export(error) => write!(f, "{}", error),
             Error::DataProvider(error) => write!(f, "{}", error),
+            Error::LocaleParser(error, s) => write!(f, "{}: {}", error, s),
         }
     }
 }
@@ -117,12 +122,15 @@ fn main() -> Result<(), Error> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("KEY")
+            Arg::with_name("KEYS")
                 .short("k")
                 .long("keys")
                 .multiple(true)
                 .takes_value(true)
-                .help("Include this data key in the output. Also see --key-file."),
+                .help(
+                    "Include this data key in the output. Accepts multiple arguments. \
+                Also see --key-file.",
+                ),
         )
         .arg(
             Arg::with_name("KEY_FILE")
@@ -141,11 +149,22 @@ fn main() -> Result<(), Error> {
                 .help("Include all keys known to ICU4X."),
         )
         .group(
-            ArgGroup::with_name("KEYS")
-                .arg("KEY")
+            ArgGroup::with_name("KEY_MODE")
+                .arg("KEYS")
                 .arg("KEY_FILE")
                 .arg("ALL_KEYS")
                 .required(true),
+        )
+        .arg(
+            Arg::with_name("LOCALES")
+                .short("l")
+                .long("locales")
+                .multiple(true)
+                .takes_value(true)
+                .help(
+                    "Include this locale in the output. Accepts multiple arguments. \
+                    Omit this option to include all locales.",
+                ),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -162,9 +181,15 @@ fn main() -> Result<(), Error> {
 
     match matches.occurrences_of("VERBOSE") {
         0 => SimpleLogger::from_env().init().unwrap(),
-        1 => SimpleLogger::new().with_level(log::LevelFilter::Info).init().unwrap(),
-        2 => SimpleLogger::new().with_level(log::LevelFilter::Trace).init().unwrap(),
-        _ => return Err(Error::Unsupported("Only -v and -vv are supported"))
+        1 => SimpleLogger::new()
+            .with_level(log::LevelFilter::Info)
+            .init()
+            .unwrap(),
+        2 => SimpleLogger::new()
+            .with_level(log::LevelFilter::Trace)
+            .init()
+            .unwrap(),
+        _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
     }
 
     if !matches.is_present("ALL_KEYS") {
@@ -223,7 +248,15 @@ fn main() -> Result<(), Error> {
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
-    let mut exporter = FilesystemExporter::try_new(json_serializer, &options)?;
+    if let Some(locale_strs) = matches.values_of("LOCALES") {
+        let locales_vec = locale_strs
+            .map(|s| {
+                LanguageIdentifier::from_str(s).map_err(|e| Error::LocaleParser(e, s.to_string()))
+            })
+            .collect::<Result<Vec<LanguageIdentifier>, Error>>()?;
+        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
+    }
+    let mut exporter = FilesystemExporter::try_new(json_serializer, options)?;
 
     for key in keys.iter() {
         let result = provider.export_key(key, &mut exporter);

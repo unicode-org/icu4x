@@ -2,6 +2,7 @@ use super::aliasing::{self, AliasCollection};
 use super::serializers::Serializer;
 use crate::error::Error;
 use crate::manifest::AliasOption;
+use crate::manifest::LocalesOption;
 use crate::manifest::Manifest;
 use crate::manifest::SyntaxOption;
 use crate::manifest::MANIFEST_FILE;
@@ -29,6 +30,8 @@ pub enum OverwriteOption {
 pub struct ExporterOptions {
     /// Directory in the filesystem to write output.
     pub root: PathBuf,
+    /// Strategy for including locales.
+    pub locales: LocalesOption,
     /// Strategy for de-duplicating locale data.
     pub aliasing: AliasOption,
     /// Option for initializing the output directory.
@@ -39,6 +42,7 @@ impl Default for ExporterOptions {
     fn default() -> Self {
         Self {
             root: PathBuf::from("icu4x_data"),
+            locales: LocalesOption::IncludeAll,
             aliasing: AliasOption::NoAliases,
             overwrite: OverwriteOption::CheckEmpty,
         }
@@ -74,17 +78,25 @@ impl DataExporter for FilesystemExporter {
         log::trace!("Initializing: {}", path_buf.to_string_lossy());
         self.write_to_path(path_buf, obj)
     }
+
+    fn includes(&self, data_entry: &DataEntry) -> bool {
+        match self.manifest.locales {
+            LocalesOption::IncludeAll => true,
+            LocalesOption::IncludeList(ref list) => list.contains(&data_entry.langid),
+        }
+    }
 }
 
 impl FilesystemExporter {
     pub fn try_new(
         serializer: Box<dyn Serializer>,
-        options: &ExporterOptions,
+        options: ExporterOptions,
     ) -> Result<Self, Error> {
         let result = FilesystemExporter {
-            root: options.root.to_path_buf(),
+            root: options.root,
             manifest: Manifest {
                 aliasing: options.aliasing,
+                locales: options.locales,
                 syntax: SyntaxOption::Json,
             },
             alias_collection: None,
@@ -93,17 +105,17 @@ impl FilesystemExporter {
 
         match options.overwrite {
             OverwriteOption::CheckEmpty => {
-                if options.root.exists() {
-                    fs::remove_dir(&options.root)?;
+                if result.root.exists() {
+                    fs::remove_dir(&result.root)?;
                 }
             }
             OverwriteOption::RemoveAndReplace => {
-                if options.root.exists() {
-                    fs::remove_dir_all(&options.root)?;
+                if result.root.exists() {
+                    fs::remove_dir_all(&result.root)?;
                 }
             }
         };
-        fs::create_dir_all(&options.root)?;
+        fs::create_dir_all(&result.root)?;
 
         let mut manifest_path = result.root.to_path_buf();
         manifest_path.push(MANIFEST_FILE);
