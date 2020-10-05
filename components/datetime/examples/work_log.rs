@@ -1,6 +1,6 @@
 // An example application which uses icu_datetime to format entries
 // from a work log into human readable dates and times.
-use icu_datetime::date::DummyDateTime;
+use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
 use icu_fs_data_provider::FsDataProvider;
 use icu_locale::LanguageIdentifier;
@@ -36,7 +36,7 @@ fn main() {
     let dates = DATES_ISO
         .iter()
         .map(|date| date.parse())
-        .collect::<Result<Vec<DummyDateTime>, _>>()
+        .collect::<Result<Vec<MockDateTime>, _>>()
         .expect("Failed to parse dates.");
 
     let options = style::Bag {

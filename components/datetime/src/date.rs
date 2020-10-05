@@ -45,13 +45,13 @@ pub trait DateTimeType: FromStr {
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::DummyDateTime;
+/// use icu_datetime::MockDateTime;
 ///
-/// let dt = DummyDateTime::try_new(2020, 9, 24, 13, 21, 0)
+/// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
 ///     .expect("Failed to construct DateTime.");
 /// ```
 #[derive(Debug, Default)]
-pub struct DummyDateTime {
+pub struct MockDateTime {
     pub year: usize,
     pub month: Month,
     pub day: Day,
@@ -60,7 +60,7 @@ pub struct DummyDateTime {
     pub second: Second,
 }
 
-impl DummyDateTime {
+impl MockDateTime {
     pub fn new(
         year: usize,
         month: Month,
@@ -79,14 +79,14 @@ impl DummyDateTime {
         }
     }
 
-    /// Constructor for the `DummyDateTime`.
+    /// Constructor for the `MockDateTime`.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::DummyDateTime;
+    /// use icu_datetime::MockDateTime;
     ///
-    /// let dt = DummyDateTime::try_new(2020, 9, 24, 13, 21, 0)
+    /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
     ///     .expect("Failed to construct a DateTime");
     /// ```
     pub fn try_new(
@@ -108,7 +108,7 @@ impl DummyDateTime {
     }
 }
 
-impl DateTimeType for DummyDateTime {
+impl DateTimeType for MockDateTime {
     fn year(&self) -> usize {
         self.year
     }
@@ -129,7 +129,7 @@ impl DateTimeType for DummyDateTime {
     }
 }
 
-impl FromStr for DummyDateTime {
+impl FromStr for MockDateTime {
     type Err = DateTimeError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
@@ -139,7 +139,7 @@ impl FromStr for DummyDateTime {
         let hour: Hour = input[11..13].parse()?;
         let minute: Minute = input[14..16].parse()?;
         let second: Second = input[17..19].parse()?;
-        Ok(DummyDateTime {
+        Ok(MockDateTime {
             year,
             month: month - 1,
             day: day - 1,

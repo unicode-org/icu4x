@@ -11,7 +11,7 @@
 //! ```
 //! use icu_locale::LanguageIdentifier;
 //! use icu_datetime::{DateTimeFormat, options::style};
-//! use icu_datetime::DummyDateTime;
+//! use icu_datetime::MockDateTime;
 //! use icu_data_provider::InvariantDataProvider;
 //!
 //! let langid: LanguageIdentifier = "en".parse()
@@ -28,7 +28,7 @@
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
-//! let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+//! let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
 //!     .expect("Failed to construct DateTime.");
 //!
 //! let value = dtf.format_to_string(&date_time);
@@ -38,7 +38,7 @@
 //! we expect to add more ways to customize the output, like skeletons, and components.
 //!
 //! *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-//! `date::DummyDateTime` as a reference example of the data necessary for ICU DateTimeFormat to work, and
+//! `date::MockDateTime` as a reference example of the data necessary for ICU DateTimeFormat to work, and
 //! we hope to work with the community to develop core date and time APIs that will work as an input for this component.
 //!
 //! [`DateTimeFormat`]: ./struct.DateTimeFormat.html
@@ -52,7 +52,7 @@ pub mod options;
 pub mod pattern;
 mod provider;
 
-pub use date::{DateTimeType, DummyDateTime};
+pub use date::{DateTimeType, MockDateTime};
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
@@ -76,7 +76,7 @@ use std::borrow::Cow;
 /// ```
 /// use icu_locale::LanguageIdentifier;
 /// use icu_datetime::{DateTimeFormat, options::style};
-/// use icu_datetime::DummyDateTime;
+/// use icu_datetime::MockDateTime;
 /// use icu_data_provider::InvariantDataProvider;
 ///
 /// let langid: LanguageIdentifier = "en".parse()
@@ -93,7 +93,7 @@ use std::borrow::Cow;
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
-/// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let value = dtf.format_to_string(&date_time);
@@ -116,7 +116,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// use icu_locale::LanguageIdentifier;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_datetime::DummyDateTime;
+    /// use icu_datetime::MockDateTime;
     /// use icu_data_provider::InvariantDataProvider;
     ///
     /// let langid: LanguageIdentifier = "en".parse()
@@ -162,7 +162,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locale::LanguageIdentifier;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::DummyDateTime;
+    /// # use icu_datetime::MockDateTime;
     /// # use icu_data_provider::InvariantDataProvider;
     /// # let langid: LanguageIdentifier = "en".parse()
     /// #     .expect("Failed to parse a language identifier.");
@@ -171,7 +171,7 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(langid, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let formatted_date = dtf.format(&date_time);
@@ -201,7 +201,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locale::LanguageIdentifier;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::DummyDateTime;
+    /// # use icu_datetime::MockDateTime;
     /// # use icu_data_provider::InvariantDataProvider;
     /// # let langid: LanguageIdentifier = "en".parse()
     /// #     .expect("Failed to parse a language identifier.");
@@ -210,7 +210,7 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let mut buffer = String::new();
@@ -234,7 +234,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locale::LanguageIdentifier;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::DummyDateTime;
+    /// # use icu_datetime::MockDateTime;
     /// # use icu_data_provider::InvariantDataProvider;
     /// # let langid: LanguageIdentifier = "en".parse()
     /// #     .expect("Failed to parse a language identifier.");
@@ -243,7 +243,7 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let _ = dtf.format_to_string(&date_time);

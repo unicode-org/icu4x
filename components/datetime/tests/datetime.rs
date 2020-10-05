@@ -1,7 +1,7 @@
 mod fixtures;
 
 use icu_datetime::DateTimeFormat;
-use icu_datetime::DummyDateTime;
+use icu_datetime::MockDateTime;
 use icu_fs_data_provider::FsDataProvider;
 use std::fmt::Write;
 
@@ -15,7 +15,7 @@ fn test_fixtures() {
         let options = fixtures::get_options(&fx.input.options);
         let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
 
-        let value: DummyDateTime = fx.input.value.parse().unwrap();
+        let value: MockDateTime = fx.input.value.parse().unwrap();
 
         let result = dtf.format_to_string(&value);
         assert_eq!(result, fx.output.value);
