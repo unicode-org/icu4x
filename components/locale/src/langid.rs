@@ -120,7 +120,7 @@ impl LanguageIdentifier {
 
 impl std::fmt::Debug for LanguageIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.to_string())
+        std::fmt::Display::fmt(&self, f)
     }
 }
 
