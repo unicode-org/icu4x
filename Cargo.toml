@@ -8,7 +8,7 @@ members = [
     "components/icu4x",
     "components/uniset",
     "components/locale",
-    "components/num-util",
     "components/pluralrules",
     "components/datetime",
+    "utils/fixed-decimal",
 ]

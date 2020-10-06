@@ -2,7 +2,7 @@
 // (one permyriad) of a monetary unit. FixedDecimal enables a cheap representation of these
 // amounts, also while retaining trailing zeros.
 
-use icu_num_util::FixedDecimal;
+use fixed_decimal::FixedDecimal;
 
 fn main() {
     let monetary_int = 19_9500;

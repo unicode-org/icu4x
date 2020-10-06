@@ -1,4 +1,4 @@
-//! `icu-num-util` is one of the [`ICU4X`] components.
+//! `fixed-decimal` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
 //! appropriate for formatting and plural rule selection. It is optimized for operations involving
@@ -7,7 +7,7 @@
 //! # Example
 //!
 //! ```
-//! use icu_num_util::FixedDecimal;
+//! use fixed_decimal::FixedDecimal;
 //!
 //! let dec = FixedDecimal::from(250)
 //!     .multiplied_pow10(-2)
@@ -35,10 +35,10 @@
 //! [`FixedDecimal`]: ./struct.FixedDecimal.html
 //! [`ICU4X`]: https://github.com/unicode-org/icu4x
 
-pub mod fixed_decimal;
+pub mod decimal;
 mod uint_iterator;
 
-pub use fixed_decimal::FixedDecimal;
+pub use decimal::FixedDecimal;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -49,8 +49,8 @@ pub enum Error {
     /// # Example
     ///
     /// ```
-    /// use icu_num_util::FixedDecimal;
-    /// use icu_num_util::Error;
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Error;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
     /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());

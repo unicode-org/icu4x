@@ -1,6 +1,6 @@
 [package]
-name = "icu-num-util"
-description = "Low-level tools for dealing with numbers"
+name = "fixed-decimal"
+description = "An API for representing numbers in a human-readable form"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
