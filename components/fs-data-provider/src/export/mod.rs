@@ -23,7 +23,7 @@
 //! let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
 //! let mut options = fs_exporter::ExporterOptions::default();
 //! options.root = DEMO_PATH.clone();
-//! let mut exporter = fs_exporter::FilesystemExporter::try_new(json_serializer, &options)
+//! let mut exporter = fs_exporter::FilesystemExporter::try_new(json_serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export a key

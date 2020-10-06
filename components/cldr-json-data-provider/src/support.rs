@@ -28,14 +28,14 @@ fn map_poison<E>(_err: E) -> DataError {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, 'd, T> LazyCldrProvider<T>
 where
-    T: DataProvider<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b CldrPaths>,
-    <T as TryFrom<&'b CldrPaths>>::Error: 'static + std::error::Error,
+    T: DataProvider<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b dyn CldrPaths>,
+    <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
 {
     /// Call T::load, initializing T if necessary.
     pub fn try_load(
         &self,
         req: &DataRequest,
-        cldr_paths: &'b CldrPaths,
+        cldr_paths: &'b dyn CldrPaths,
     ) -> Result<Option<DataResponse<'d>>, DataError> {
         if T::supports_key(&req.data_key).is_err() {
             return Ok(None);
@@ -57,7 +57,7 @@ where
     pub fn try_iter(
         &self,
         data_key: &DataKey,
-        cldr_paths: &'b CldrPaths,
+        cldr_paths: &'b dyn CldrPaths,
     ) -> Result<Option<Box<dyn Iterator<Item = DataEntry>>>, DataError> {
         if T::supports_key(data_key).is_err() {
             return Ok(None);

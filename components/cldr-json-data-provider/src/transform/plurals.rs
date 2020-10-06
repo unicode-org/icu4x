@@ -18,13 +18,12 @@ pub struct PluralsProvider<'d> {
     _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&CldrPaths> for PluralsProvider<'_> {
+impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
     type Error = Error;
-    fn try_from(cldr_paths: &CldrPaths) -> Result<Self, Self::Error> {
+    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let cardinal_rules = {
             let path = cldr_paths
-                .cldr_core
-                .clone()?
+                .cldr_core()?
                 .join("supplemental")
                 .join("plurals.json");
             let data: cldr_json::Resource = serde_json::from_reader(open_reader(path)?)?;
@@ -32,8 +31,7 @@ impl TryFrom<&CldrPaths> for PluralsProvider<'_> {
         };
         let ordinal_rules = {
             let path = cldr_paths
-                .cldr_core
-                .clone()?
+                .cldr_core()?
                 .join("supplemental")
                 .join("ordinals.json");
             let data: cldr_json::Resource = serde_json::from_reader(open_reader(path)?)?;

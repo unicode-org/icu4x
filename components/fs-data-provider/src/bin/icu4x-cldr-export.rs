@@ -1,21 +1,28 @@
+use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
+use icu_cldr_json_data_provider::download::CldrPathsDownload;
 use icu_cldr_json_data_provider::CldrJsonDataProvider;
 use icu_cldr_json_data_provider::CldrPaths;
+use icu_cldr_json_data_provider::CldrPathsLocal;
 use icu_data_provider::icu_data_key;
 use icu_data_provider::iter::IterableDataProvider;
 use icu_fs_data_provider::export::fs_exporter;
 use icu_fs_data_provider::export::serializers;
 use icu_fs_data_provider::export::FilesystemExporter;
 use icu_fs_data_provider::manifest;
+use icu_locale::LanguageIdentifier;
+use simple_logger::SimpleLogger;
 use std::ffi::OsStr;
 use std::fmt;
 use std::path::PathBuf;
+use std::str::FromStr;
 
-// #[derive(Debug)]
 enum Error {
     Unsupported(&'static str),
     Export(icu_fs_data_provider::FsDataError),
     DataProvider(icu_data_provider::DataError),
+    LocaleParser(icu_locale::ParserError, String),
+    Setup(Box<dyn std::error::Error>),
 }
 
 impl fmt::Display for Error {
@@ -24,6 +31,8 @@ impl fmt::Display for Error {
             Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
             Error::Export(error) => write!(f, "{}", error),
             Error::DataProvider(error) => write!(f, "{}", error),
+            Error::LocaleParser(error, s) => write!(f, "{}: {}", error, s),
+            Error::Setup(error) => write!(f, "{}", error),
         }
     }
 }
@@ -46,6 +55,12 @@ impl From<icu_data_provider::DataError> for Error {
     }
 }
 
+impl From<icu_cldr_json_data_provider::download::DownloadError> for Error {
+    fn from(err: icu_cldr_json_data_provider::download::DownloadError) -> Error {
+        Error::Setup(Box::from(err))
+    }
+}
+
 fn main() -> Result<(), Error> {
     let matches = App::new("ICU4X Data Exporter")
         .version("0.0.1")
@@ -55,7 +70,8 @@ fn main() -> Result<(), Error> {
             Arg::with_name("VERBOSE")
                 .short("v")
                 .long("verbose")
-                .help("Enable verbose logging."),
+                .multiple(true)
+                .help("Sets the level of verbosity (-v or -vv)"),
         )
         .arg(
             Arg::with_name("DRY_RUN")
@@ -78,19 +94,27 @@ fn main() -> Result<(), Error> {
                 .help("Delete the output directory before writing data."),
         )
         .arg(
-            Arg::with_name("STYLE")
-                .long("style")
-                .takes_value(true)
-                .possible_value("compact")
-                .possible_value("pretty")
-                .help("JSON style when printing files."),
+            Arg::with_name("PRETTY")
+                .short("p")
+                .long("pretty")
+                .help("Whether to pretty-print the output JSON files."),
+        )
+        .arg(
+            Arg::with_name("CLDR_TAG")
+                .long("cldr-tag")
+                .value_name("TAG")
+                .help(
+                    "Download CLDR JSON data from this GitHub tag: \n\
+                    https://github.com/unicode-cldr/cldr-core/tags",
+                )
+                .takes_value(true),
         )
         .arg(
             Arg::with_name("CLDR_CORE")
                 .long("cldr-core")
                 .value_name("PATH")
                 .help(
-                    "Path to cldr-core JSON: \
+                    "Path to cldr-core. Ignored if '--cldr-tag' is present. \n\
                     https://github.com/unicode-cldr/cldr-core",
                 )
                 .takes_value(true),
@@ -100,18 +124,21 @@ fn main() -> Result<(), Error> {
                 .long("cldr-dates")
                 .value_name("PATH")
                 .help(
-                    "Path to cldr-dates JSON: \
-                    https://github.com/unicode-cldr/cldr-dates",
+                    "Path to cldr-dates. Ignored if '--cldr-tag' is present. \n\
+                    https://github.com/unicode-cldr/cldr-dates-modern",
                 )
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("KEY")
+            Arg::with_name("KEYS")
                 .short("k")
                 .long("keys")
                 .multiple(true)
                 .takes_value(true)
-                .help("Include this data key in the output. Also see --key-file."),
+                .help(
+                    "Include this data key in the output. Accepts multiple arguments. \
+                Also see --key-file.",
+                ),
         )
         .arg(
             Arg::with_name("KEY_FILE")
@@ -130,11 +157,22 @@ fn main() -> Result<(), Error> {
                 .help("Include all keys known to ICU4X."),
         )
         .group(
-            ArgGroup::with_name("KEYS")
-                .arg("KEY")
+            ArgGroup::with_name("KEY_MODE")
+                .arg("KEYS")
                 .arg("KEY_FILE")
                 .arg("ALL_KEYS")
                 .required(true),
+        )
+        .arg(
+            Arg::with_name("LOCALES")
+                .short("l")
+                .long("locales")
+                .multiple(true)
+                .takes_value(true)
+                .help(
+                    "Include this locale in the output. Accepts multiple arguments. \
+                    Omit this option to include all locales.",
+                ),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -148,6 +186,19 @@ fn main() -> Result<(), Error> {
                 .required(true),
         )
         .get_matches();
+
+    match matches.occurrences_of("VERBOSE") {
+        0 => SimpleLogger::from_env().init().unwrap(),
+        1 => SimpleLogger::new()
+            .with_level(log::LevelFilter::Info)
+            .init()
+            .unwrap(),
+        2 => SimpleLogger::new()
+            .with_level(log::LevelFilter::Trace)
+            .init()
+            .unwrap(),
+        _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
+    }
 
     if !matches.is_present("ALL_KEYS") {
         return Err(Error::Unsupported(
@@ -172,25 +223,24 @@ fn main() -> Result<(), Error> {
             .unwrap_or_else(|| OsStr::new("/tmp/icu4x_json")),
     );
 
-    let mut cldr_paths = CldrPaths::default();
+    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
+        Box::new(CldrPathsDownload::try_from_github_tag(tag)?)
+    } else {
+        let mut cldr_paths_local = CldrPathsLocal::default();
+        if let Some(path) = matches.value_of("CLDR_CORE") {
+            cldr_paths_local.cldr_core = Ok(path.into());
+        }
+        if let Some(path) = matches.value_of("CLDR_DATES") {
+            cldr_paths_local.cldr_dates = Ok(path.into());
+        }
+        Box::new(cldr_paths_local)
+    };
 
-    if let Some(path) = matches.value_of("CLDR_CORE") {
-        cldr_paths.cldr_core = Ok(path.into());
-    }
-
-    if let Some(path) = matches.value_of("CLDR_DATES") {
-        cldr_paths.cldr_dates = Ok(path.into());
-    }
-
-    let provider = CldrJsonDataProvider::new(&cldr_paths);
+    let provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
 
     let mut options = serializers::JsonSerializerOptions::default();
-    if let Some(value) = matches.value_of("STYLE") {
-        options.style = match value {
-            "compact" => serializers::StyleOption::Compact,
-            "pretty" => serializers::StyleOption::Pretty,
-            _ => unreachable!(),
-        };
+    if matches.is_present("PRETTY") {
+        options.style = serializers::StyleOption::Pretty;
     }
     let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
 
@@ -206,8 +256,15 @@ fn main() -> Result<(), Error> {
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
-    options.verbose = matches.is_present("VERBOSE");
-    let mut exporter = FilesystemExporter::try_new(json_serializer, &options)?;
+    if let Some(locale_strs) = matches.values_of("LOCALES") {
+        let locales_vec = locale_strs
+            .map(|s| {
+                LanguageIdentifier::from_str(s).map_err(|e| Error::LocaleParser(e, s.to_string()))
+            })
+            .collect::<Result<Vec<LanguageIdentifier>, Error>>()?;
+        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
+    }
+    let mut exporter = FilesystemExporter::try_new(json_serializer, options)?;
 
     for key in keys.iter() {
         let result = provider.export_key(key, &mut exporter);

@@ -16,12 +16,12 @@ pub struct DatesProvider<'d> {
     _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
-impl TryFrom<&CldrPaths> for DatesProvider<'_> {
+impl TryFrom<&dyn CldrPaths> for DatesProvider<'_> {
     type Error = Error;
-    fn try_from(cldr_paths: &CldrPaths) -> Result<Self, Self::Error> {
+    fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         let mut data = vec![];
 
-        let path = cldr_paths.cldr_dates.clone()?.join("main");
+        let path = cldr_paths.cldr_dates()?.join("main");
 
         let locale_dirs = get_subdirectories(&path)?;
 
