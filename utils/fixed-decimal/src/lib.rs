@@ -1,4 +1,4 @@
-//! `fixed-decimal` is an utility crate of the [`ICU4X`] project.
+//! `fixed-decimal` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
 //! appropriate for formatting and plural rule selection. It is optimized for operations involving
