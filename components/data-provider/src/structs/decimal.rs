@@ -1,9 +1,11 @@
 // Decimal types
+use crate::prelude::*;
 use serde::{Deserialize, Serialize};
 use smallstr::SmallString;
 
-#[cfg(feature = "invariant")]
-use crate::prelude::*;
+pub const KNOWN_KEYS: [DataKey; 1] = [
+    icu_data_key!(decimal: symbols@1)
+];
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
 #[cfg(feature = "invariant")]

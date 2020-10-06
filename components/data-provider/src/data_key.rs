@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use std::fmt;
 use std::fmt::Write;
 use tinystr::TinyStr16;
+use tinystr_macros::tinystr16;
 
 /// A top-level collection of related data keys.
 #[non_exhaustive]
@@ -79,8 +80,7 @@ macro_rules! icu_data_key {
     ($category:expr, $sub_category:tt, $version:tt) => {
         $crate::DataKey {
             category: $category,
-            // TODO: Parse to TinyStr at compile time
-            sub_category: stringify!($sub_category).parse().unwrap(),
+            sub_category: tinystr_macros::tinystr16!(stringify!($sub_category)),
             version: $version,
         }
     };

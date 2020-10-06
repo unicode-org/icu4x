@@ -21,6 +21,7 @@ invariant = []
 [dependencies]
 icu-locale = { path = "../locale" }
 tinystr = "0.3"
+tinystr-macros = "0.1"
 erased-serde = "0.3"
 smallstr = { version = "0.2", features = ["serde"] }
 downcast-rs = "1.2"
