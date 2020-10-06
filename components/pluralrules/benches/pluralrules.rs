@@ -16,7 +16,7 @@ fn pluralrules(c: &mut Criterion) {
     c.bench_function("pluralrules/overview", |b| {
         b.iter(|| {
             for lang in &plurals_data.langs {
-                let pr = PluralRules::try_new(lang.clone(), PluralRuleType::Cardinal, &provider)
+                let pr = PluralRules::try_new(lang.clone(), &provider, PluralRuleType::Cardinal)
                     .unwrap();
                 for s in &numbers_data.usize {
                     let _ = pr.select(*s);
@@ -33,15 +33,15 @@ fn pluralrules(c: &mut Criterion) {
         c.bench_function("pluralrules/construct/fs", |b| {
             b.iter(|| {
                 for lang in &plurals_data.langs {
-                    PluralRules::try_new(lang.clone(), PluralRuleType::Ordinal, &provider).unwrap();
-                    PluralRules::try_new(lang.clone(), PluralRuleType::Cardinal, &provider)
+                    PluralRules::try_new(lang.clone(), &provider, PluralRuleType::Ordinal).unwrap();
+                    PluralRules::try_new(lang.clone(), &provider, PluralRuleType::Cardinal)
                         .unwrap();
                 }
             });
         });
 
         let loc: LanguageIdentifier = "pl".parse().unwrap();
-        let pr = PluralRules::try_new(loc, PluralRuleType::Cardinal, &provider).unwrap();
+        let pr = PluralRules::try_new(loc, &provider, PluralRuleType::Cardinal).unwrap();
         c.bench_function("plurals/select/fs", |b| {
             b.iter(|| {
                 for s in &numbers_data.usize {

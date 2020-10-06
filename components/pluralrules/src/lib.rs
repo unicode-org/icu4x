@@ -29,7 +29,7 @@
 //!
 //! let dp = InvariantDataProvider;
 //!
-//! let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
+//! let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -139,7 +139,7 @@ pub enum PluralRuleType {
 ///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
+/// let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -247,7 +247,7 @@ impl PluralCategory {
 ///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
+/// let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -279,15 +279,15 @@ impl PluralRules {
     ///
     /// let dp = InvariantDataProvider;
     ///
-    /// let _ = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp);
+    /// let _ = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal);
     /// ```
     ///
     /// [`type`]: ./enum.PluralRuleType.html
     /// [`data provider`]: ./data/trait.DataProviderType.html
     pub fn try_new<'d, D: DataProvider<'d>>(
         langid: LanguageIdentifier,
-        type_: PluralRuleType,
         data_provider: &D,
+        type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
         let data_key = match type_ {
             PluralRuleType::Cardinal => icu_data_key!(plurals: cardinal@1),
@@ -324,7 +324,7 @@ impl PluralRules {
     ///
     /// let dp = InvariantDataProvider;
     ///
-    /// let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
+    /// let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// match pr.select(1_usize) {
@@ -355,7 +355,7 @@ impl PluralRules {
     /// #
     /// # let dp = InvariantDataProvider;
     /// #
-    /// # let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp)
+    /// # let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let operands = PluralOperands::try_from(-5)

@@ -9,7 +9,7 @@ fn test_plural_rules() {
 
     let lang: LanguageIdentifier = "en".parse().unwrap();
 
-    let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp).unwrap();
+    let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal).unwrap();
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
 }
@@ -21,7 +21,7 @@ fn test_plural_rules_missing() {
 
     let lang: LanguageIdentifier = "xx".parse().unwrap();
 
-    let pr = PluralRules::try_new(lang, PluralRuleType::Cardinal, &dp);
+    let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal);
 
     assert!(pr.is_err());
 }
