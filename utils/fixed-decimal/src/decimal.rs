@@ -26,7 +26,7 @@ const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
 /// # Examples
 ///
 /// ```
-/// use icu_utils_num::FixedDecimal;
+/// use fixed_decimal::FixedDecimal;
 ///
 /// let mut dec = FixedDecimal::from(250);
 /// assert_eq!("250", dec.to_string());
@@ -70,7 +70,7 @@ pub struct FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut dec: FixedDecimal = Default::default();
     /// dec.is_negative = true;
@@ -190,7 +190,7 @@ impl FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(945);
     /// assert_eq!(0, dec.digit_at(-1));
@@ -221,7 +221,7 @@ impl FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut dec = FixedDecimal::from(120);
     /// assert_eq!(0..=2, dec.magnitude_range());
@@ -241,7 +241,7 @@ impl FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
@@ -288,7 +288,7 @@ impl FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(42).multiplied_pow10(3).expect("Bounds are small");
     /// assert_eq!("42000", dec.to_string());
@@ -305,7 +305,7 @@ impl FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(42);
     /// let mut result = String::with_capacity(dec.write_len());
@@ -332,7 +332,7 @@ impl FixedDecimal {
     /// # Example
     ///
     /// ```
-    /// use icu_utils_num::FixedDecimal;
+    /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
     /// let mut result = String::with_capacity(dec.write_len());

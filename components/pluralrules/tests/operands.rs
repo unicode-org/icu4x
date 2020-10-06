@@ -3,7 +3,7 @@ mod helpers;
 
 use std::convert::TryInto;
 
-use icu_utils_num::FixedDecimal;
+use fixed_decimal::FixedDecimal;
 use icu_pluralrules::PluralOperands;
 
 #[test]

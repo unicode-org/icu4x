@@ -16,7 +16,7 @@ jobs:
         component:
           - components/locale
           - components/uniset
-          - utils/num
+          - utils/fixed-decimal
 
     # If you are modifying and debugging is required, don't be afraid to get
     # messy in a personal fork, if no better way to do it.
