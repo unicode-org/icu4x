@@ -146,7 +146,7 @@ impl From<Locale> for LanguageIdentifier {
 
 impl std::fmt::Debug for Locale {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.to_string())
+        f.write_str(&self.to_string())
     }
 }
 
@@ -155,17 +155,17 @@ impl std::fmt::Display for Locale {
         self.language.fmt(f)?;
         if let Some(ref script) = self.script {
             f.write_char('-')?;
-            std::fmt::Display::fmt(&script, f)?;
+            script.fmt(f)?;
         }
         if let Some(ref region) = self.region {
             f.write_char('-')?;
-            std::fmt::Display::fmt(&region, f)?;
+            region.fmt(f)?;
         }
         if !self.variants.is_empty() {
             f.write_char('-')?;
-            std::fmt::Display::fmt(&self.variants, f)?;
+            self.variants.fmt(f)?;
         }
-        std::fmt::Display::fmt(&self.extensions, f)?;
+        self.extensions.fmt(f)?;
         Ok(())
     }
 }

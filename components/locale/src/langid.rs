@@ -120,7 +120,7 @@ impl LanguageIdentifier {
 
 impl std::fmt::Debug for LanguageIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.to_string())
+        f.write_str(&self.to_string())
     }
 }
 
@@ -134,18 +134,18 @@ impl FromStr for LanguageIdentifier {
 
 impl std::fmt::Display for LanguageIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        std::fmt::Display::fmt(&self.language, f)?;
+        self.language.fmt(f)?;
         if let Some(ref script) = self.script {
             f.write_char('-')?;
-            std::fmt::Display::fmt(&script, f)?;
+            script.fmt(f)?;
         }
         if let Some(ref region) = self.region {
             f.write_char('-')?;
-            std::fmt::Display::fmt(&region, f)?;
+            region.fmt(f)?;
         }
         if !self.variants.is_empty() {
             f.write_char('-')?;
-            std::fmt::Display::fmt(&self.variants, f)?;
+            self.variants.fmt(f)?;
         }
         Ok(())
     }
