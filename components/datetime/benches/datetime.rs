@@ -4,7 +4,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
 use icu_datetime::DateTimeFormat;
-use icu_datetime::DummyDateTime;
+use icu_datetime::MockDateTime;
 use icu_fs_data_provider::FsDataProvider;
 
 fn datetime_benches(c: &mut Criterion) {
@@ -19,7 +19,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("DateTimeFormat/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<DummyDateTime> = fx
+                    let datetimes: Vec<MockDateTime> = fx
                         .values
                         .iter()
                         .map(|value| value.parse().unwrap())
@@ -44,7 +44,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("DateTimeFormat/format_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<DummyDateTime> = fx
+                    let datetimes: Vec<MockDateTime> = fx
                         .values
                         .iter()
                         .map(|value| value.parse().unwrap())
@@ -66,7 +66,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedDateTime/format", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<DummyDateTime> = fx
+                    let datetimes: Vec<MockDateTime> = fx
                         .values
                         .iter()
                         .map(|value| value.parse().unwrap())
@@ -92,7 +92,7 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedDateTime/to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<DummyDateTime> = fx
+                    let datetimes: Vec<MockDateTime> = fx
                         .values
                         .iter()
                         .map(|value| value.parse().unwrap())

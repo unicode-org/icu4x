@@ -18,7 +18,7 @@ use std::fmt;
 /// ```
 /// # use icu_locale::LanguageIdentifier;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// # use icu_datetime::DummyDateTime;
+/// # use icu_datetime::MockDateTime;
 /// # use icu_data_provider::InvariantDataProvider;
 /// # let langid: LanguageIdentifier = "en".parse()
 /// #     .expect("Failed to parse a language identifier.");
@@ -27,7 +27,7 @@ use std::fmt;
 /// let dtf = DateTimeFormat::try_new(langid, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let date_time = DummyDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let formatted_date = dtf.format(&date_time);
