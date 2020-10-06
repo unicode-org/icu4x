@@ -201,11 +201,12 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl From<&FixedDecimal> for PluralOperands {
-    /// Converts a [icu_num_util::FixedDecimal] to [PluralOperands]
+    /// Converts a [icu_num_util::FixedDecimal] to [PluralOperands]. Retains at most 18
+    /// digits each from the integer and fraction parts.
     fn from(dec: &FixedDecimal) -> Self {
         let mag_range = dec.magnitude_range();
-        let mag_high = *mag_range.end();
-        let mag_low = *mag_range.start();
+        let mag_high = std::cmp::min(17, *mag_range.end());
+        let mag_low = std::cmp::max(-18, *mag_range.start());
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
