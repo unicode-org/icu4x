@@ -17,7 +17,7 @@ include = [
 [dependencies]
 icu-locale = { path = "../locale" }
 icu-data-provider = { path = "../data-provider" }
-icu-num-util = { path = "../num-util" }
+icu-utils-num = { path = "../../utils/num" }
 
 [dev-dependencies]
 criterion = "0.3"

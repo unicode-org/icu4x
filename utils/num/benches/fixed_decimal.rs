@@ -4,7 +4,7 @@ use rand_pcg::Lcg64Xsh32;
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
-use icu_num_util::FixedDecimal;
+use icu_utils_num::FixedDecimal;
 use std::str::FromStr;
 
 fn triangular_nums(range: f64) -> Vec<isize> {

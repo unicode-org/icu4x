@@ -2,7 +2,7 @@ mod fixtures;
 mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use icu_num_util::FixedDecimal;
+use icu_utils_num::FixedDecimal;
 use icu_pluralrules::PluralOperands;
 use std::convert::TryInto;
 

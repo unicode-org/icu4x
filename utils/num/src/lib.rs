@@ -7,7 +7,7 @@
 //! # Example
 //!
 //! ```
-//! use icu_num_util::FixedDecimal;
+//! use icu_utils_num::FixedDecimal;
 //!
 //! let dec = FixedDecimal::from(250)
 //!     .multiplied_pow10(-2)
@@ -49,8 +49,8 @@ pub enum Error {
     /// # Example
     ///
     /// ```
-    /// use icu_num_util::FixedDecimal;
-    /// use icu_num_util::Error;
+    /// use icu_utils_num::FixedDecimal;
+    /// use icu_utils_num::Error;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
     /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());

@@ -1,4 +1,4 @@
-use icu_num_util::FixedDecimal;
+use icu_utils_num::FixedDecimal;
 use icu_pluralrules::PluralOperands;
 use serde::Deserialize;
 use std::convert::TryInto;

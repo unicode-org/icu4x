@@ -1,5 +1,5 @@
 [package]
-name = "icu-num-util"
+name = "icu-utils-num"
 description = "Low-level tools for dealing with numbers"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]

@@ -1,4 +1,4 @@
-use icu_num_util::FixedDecimal;
+use icu_utils_num::FixedDecimal;
 use std::convert::TryFrom;
 use std::io::Error as IOError;
 use std::isize;
@@ -201,7 +201,7 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl From<&FixedDecimal> for PluralOperands {
-    /// Converts a [icu_num_util::FixedDecimal] to [PluralOperands]. Retains at most 18
+    /// Converts a [icu_utils_num::FixedDecimal] to [PluralOperands]. Retains at most 18
     /// digits each from the integer and fraction parts.
     fn from(dec: &FixedDecimal) -> Self {
         let mag_range = dec.magnitude_range();
