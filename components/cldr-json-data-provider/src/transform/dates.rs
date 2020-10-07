@@ -28,7 +28,8 @@ impl TryFrom<&dyn CldrPaths> for DatesProvider<'_> {
         for dir in locale_dirs {
             let path = dir.join("ca-gregorian.json");
 
-            let mut resource: cldr_json::Resource = serde_json::from_reader(open_reader(path)?)?;
+            let mut resource: cldr_json::Resource =
+                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, Some(path)))?;
             data.append(&mut resource.main.0);
         }
 
@@ -44,7 +45,8 @@ impl TryFrom<&str> for DatesProvider<'_> {
     fn try_from(input: &str) -> Result<Self, Self::Error> {
         let mut data = vec![];
 
-        let mut resource: cldr_json::Resource = serde_json::from_str(input)?;
+        let mut resource: cldr_json::Resource =
+            serde_json::from_str(input).map_err(|e| (e, None))?;
         data.append(&mut resource.main.0);
 
         Ok(Self {
@@ -114,11 +116,12 @@ impl<'d> DataEntryCollection for DatesProvider<'d> {
 
 impl From<&cldr_json::StylePatterns> for gregory::patterns::StylePatternsV1 {
     fn from(other: &cldr_json::StylePatterns) -> Self {
+        // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            full: other.full.clone(),
-            long: other.long.clone(),
-            medium: other.medium.clone(),
-            short: other.short.clone(),
+            full: other.full.get_pattern().clone(),
+            long: other.long.get_pattern().clone(),
+            medium: other.medium.get_pattern().clone(),
+            short: other.short.get_pattern().clone(),
         }
     }
 }
@@ -349,11 +352,33 @@ pub(self) mod cldr_json {
     );
 
     #[derive(PartialEq, Debug, Deserialize)]
+    #[serde(untagged)]
+    pub enum StylePattern {
+        Plain(Cow<'static, str>),
+        WithNumberingSystems {
+            #[serde(rename = "_value")]
+            pattern: Cow<'static, str>,
+            #[serde(rename = "_numbers")]
+            numbering_systems: Cow<'static, str>,
+        },
+    }
+
+    impl StylePattern {
+        /// Get the pattern, dropping the numbering system if present.
+        pub fn get_pattern(&self) -> &Cow<'static, str> {
+            match self {
+                Self::Plain(pattern) => pattern,
+                Self::WithNumberingSystems { pattern, .. } => pattern,
+            }
+        }
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
     pub struct StylePatterns {
-        pub full: Cow<'static, str>,
-        pub long: Cow<'static, str>,
-        pub medium: Cow<'static, str>,
-        pub short: Cow<'static, str>,
+        pub full: StylePattern,
+        pub long: StylePattern,
+        pub medium: StylePattern,
+        pub short: StylePattern,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
@@ -420,6 +445,30 @@ fn test_basic() {
     );
 
     assert_eq!("d. M. y", cs_dates.patterns.date.medium);
+}
+
+#[test]
+fn test_with_numbering_system() {
+    use std::borrow::Cow;
+
+    let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
+    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+
+    let cs_dates: Cow<gregory::DatesV1> = provider
+        .load(&DataRequest {
+            data_key: icu_data_key!(dates: gregory@1),
+            data_entry: DataEntry {
+                variant: None,
+                langid: "haw".parse().unwrap(),
+            },
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    assert_eq!("d MMM y", cs_dates.patterns.date.medium);
+    // TODO(#308): Support numbering system variations. We currently throw them away.
+    assert_eq!("d/M/yy", cs_dates.patterns.date.short);
 }
 
 #[test]

@@ -81,10 +81,10 @@ impl CldrPathsDownload {
             },
             cldr_dates: CldrZipFileInfo {
                 url: format!(
-                    "https://github.com/unicode-cldr/cldr-dates-modern/archive/{}.zip",
+                    "https://github.com/unicode-cldr/cldr-dates-full/archive/{}.zip",
                     github_tag
                 ),
-                top_dir: format!("cldr-dates-modern-{}", github_tag),
+                top_dir: format!("cldr-dates-full-{}", github_tag),
             },
         })
     }

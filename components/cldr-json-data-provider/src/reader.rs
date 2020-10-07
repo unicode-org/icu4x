@@ -5,10 +5,10 @@ use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
 /// Helper function to open a file and return failures as a crate error.
-pub fn open_reader(path: PathBuf) -> Result<BufReader<File>, Error> {
+pub fn open_reader(path: &Path) -> Result<BufReader<File>, Error> {
     File::open(&path)
         .map(BufReader::new)
-        .map_err(|e| Error::IoError(e, path))
+        .map_err(|e| Error::IoError(e, path.to_path_buf()))
 }
 
 /// Helper function which returns a sorted list of subdirectories.
