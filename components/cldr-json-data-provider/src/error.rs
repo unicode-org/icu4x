@@ -1,5 +1,6 @@
 use std::error;
 use std::fmt;
+use std::path::PathBuf;
 
 #[cfg(feature = "download")]
 use crate::download::DownloadError;
@@ -7,7 +8,7 @@ use crate::download::DownloadError;
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum Error {
-    JsonError(serde_json::error::Error),
+    JsonError(serde_json::error::Error, Option<PathBuf>),
     IoError(std::io::Error, std::path::PathBuf),
     MissingSource(MissingSourceError),
     #[cfg(feature = "download")]
@@ -26,9 +27,9 @@ impl fmt::Display for MissingSourceError {
     }
 }
 
-impl From<serde_json::error::Error> for Error {
-    fn from(err: serde_json::error::Error) -> Self {
-        Self::JsonError(err)
+impl From<(serde_json::error::Error, Option<PathBuf>)> for Error {
+    fn from(pieces: (serde_json::error::Error, Option<PathBuf>)) -> Self {
+        Self::JsonError(pieces.0, pieces.1)
     }
 }
 
@@ -51,7 +52,10 @@ impl From<DownloadError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::JsonError(err) => write!(f, "{}", err),
+            Error::JsonError(err, Some(filename)) => {
+                write!(f, "JSON parse error: {}: {:?}", err, filename)
+            }
+            Error::JsonError(err, None) => write!(f, "JSON parse error: {}", err),
             Error::IoError(err, path) => write!(f, "{}: {}", err, path.to_string_lossy()),
             Error::MissingSource(err) => err.fmt(f),
             #[cfg(feature = "download")]
@@ -64,7 +68,7 @@ impl fmt::Display for Error {
 impl error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            Error::JsonError(err) => Some(err),
+            Error::JsonError(err, _) => Some(err),
             Error::IoError(err, _) => Some(err),
             #[cfg(feature = "download")]
             Error::Download(err) => Some(err),

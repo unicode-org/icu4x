@@ -125,7 +125,7 @@ fn main() -> Result<(), Error> {
                 .value_name("PATH")
                 .help(
                     "Path to cldr-dates. Ignored if '--cldr-tag' is present. \n\
-                    https://github.com/unicode-cldr/cldr-dates-modern",
+                    https://github.com/unicode-cldr/cldr-dates-full",
                 )
                 .takes_value(true),
         )
