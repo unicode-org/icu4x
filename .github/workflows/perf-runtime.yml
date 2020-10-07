@@ -74,8 +74,8 @@ jobs:
       - name: debug current branch(es)
         run: git branch
 
-      - name: Checkout gh-pages
-        run: git checkout gh-pages
+      # - name: Checkout gh-pages
+      #   run: git checkout gh-pages
 
       - name: Move bench data and HTML into a folder suitable for copying to external repo
         run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
