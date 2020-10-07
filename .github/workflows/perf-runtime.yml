@@ -56,6 +56,9 @@ jobs:
     needs: [ benchmark ]
 
     steps:
+      - name: debug workflow job dependency
+        run: echo "the component value from the previous job in WF = " && echo "[ ${{ matrix.component }} ]"
+
       - name: Checkout gh-pages
         run: git checkout gh-pages
 
