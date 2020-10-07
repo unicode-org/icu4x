@@ -26,6 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Create output dir
+        run: mkdir -p ./dev/${{ matrix.component }}
+
       - name: Run benchmark
         run: cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
