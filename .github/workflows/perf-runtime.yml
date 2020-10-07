@@ -50,6 +50,12 @@ jobs:
           #comment-on-alert: true
           #alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
+      - name: Debug post-bench git repo status
+        run: git status
+
+      - name: Debug post-bench git repo status #2
+        run: git log | head
+
       - name: Save current branch
         run: git checkout -b temp-branch
 
