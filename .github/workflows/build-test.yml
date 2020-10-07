@@ -83,9 +83,17 @@ jobs:
 
     needs: [build, format]
 
+
+
+
+
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+
+
 
     steps:
     - uses: actions/checkout@v2

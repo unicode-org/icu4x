@@ -84,6 +84,8 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.6.4
 
 
+
+
         ## Only create docs for merges/pushes to master (skip PRs).
         ## Multiple unfinished PRs should not clobber docs from approved code.
         # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -103,14 +105,7 @@ jobs:
           # target repo where the Github Pages will be copied to.
           # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-
-
           external_repository: echeran/icu4x-docs
-
-
           publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
-          # publish_branch: temp-branch
-
-
           publish_dir: copy-to-ext-repo
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
