@@ -61,6 +61,9 @@ jobs:
     steps:
       - name: debug workflow job dependency
         run: echo "the component value from the previous job in WF = " && echo "[ ${{ matrix.component }} ]"
+      
+      - name: debug current branch(es)
+        run: git branch
 
       - name: Checkout gh-pages
         run: git checkout gh-pages
