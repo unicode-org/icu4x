@@ -1,0 +1,91 @@
+name: Perf - Runtime
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: '*'
+
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      # `matrix` creates a job matrix (Cartesian product of possible values for each var)
+      # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+      matrix:
+        component:
+          - components/locale
+          - components/uniset
+          - utils/fixed-decimal
+
+    # If you are modifying and debugging is required, don't be afraid to get
+    # messy in a personal fork, if no better way to do it.
+    # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/224144682/workflow
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run benchmark
+        run: cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
+
+      - name: Store benchmark result (create dashboard)
+        uses: rhysd/github-action-benchmark@v1.8.1
+        with:
+          name: Rust Benchmark
+          tool: 'cargo'
+          output-file-path: ./dev/${{ matrix.component }}/output.txt
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'
+          fail-on-alert: true
+          gh-pages-branch: gh-pages  # requires one-time-only creation of `gh-pages` branch on remote repo
+          auto-push: false
+          # TODO: get Github token to recognize personal access token, then enable comment-on-alert
+          # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
+          # How to create personal access token: https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#permissions-for-the-github_token
+          #github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN_V2 }}  # this personal access token was added to ICU4X repo secrets with `repo` scope permissions
+          #comment-on-alert: true
+          #alert-comment-cc-users: '@sffc @zbraniecki @echeran'
+
+      - name: Save current branch
+        run: git checkout -b temp-branch
+  
+  ghpages:
+    runs-on: ubuntu-latest
+
+    needs: [ benchmark ]
+    
+    steps:
+      - name: Checkout gh-pages
+        run: git checkout gh-pages
+
+      - name: Move bench data and HTML into a folder suitable for copying to external repo
+        run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
+
+      - name: Dashboard -> Github Pages
+        uses: peaceiris/actions-gh-pages@v3.6.4
+
+
+        ## Only create docs for merges/pushes to master (skip PRs).
+        ## Multiple unfinished PRs should not clobber docs from approved code.
+        # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+
+
+
+        with:
+          # Setup for publishing to an external repo using `deploy_key` option:
+          #
+          # Step 1 - Create SSH key pair. Use your public key as a Github "Deploy Key" and your private
+          # key as a Github "Secret". Where to register these keys comes next.
+          # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-create-ssh-deploy-key
+          #
+          # Step 2 - After creating public/private key pair, put the private key in the repo running the
+          # action as a Secret and call it "ACTIONS_DEPLOY_KEY". Put the public key as a Deploy Key in the
+          # target repo where the Github Pages will be copied to.
+          # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: unicode-org/icu4x-docs
+          publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
+          publish_dir: copy-to-ext-repo
+          commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
