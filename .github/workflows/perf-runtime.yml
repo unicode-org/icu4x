@@ -54,18 +54,19 @@ jobs:
         run: git status
 
       - name: Debug post-bench git repo status #2
-        run: git log | head
+        run: git log | head -n 20
 
       - name: Save current branch
         run: git checkout -b temp-branch
 
-  ghpages:
-    runs-on: ubuntu-latest
+  # ghpages:
+  #   runs-on: ubuntu-latest
 
-    needs: [ benchmark ]
+  #   needs: [ benchmark ]
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+
+      # - uses: actions/checkout@v2
 
       - name: debug workflow job dependency
         run: echo "the component value from the previous job in WF = " && echo "[ ${{ matrix.component }} ]"
