@@ -59,6 +59,8 @@ jobs:
     needs: [ benchmark ]
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: debug workflow job dependency
         run: echo "the component value from the previous job in WF = " && echo "[ ${{ matrix.component }} ]"
       
