@@ -32,12 +32,25 @@ jobs:
       - name: Run benchmark
         run: cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
+      - name: Debug output dir
+        run: pwd; ls -l .
+
+      - name: Download previous benchmark data
+        uses: actions/cache@v1
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-${{ matrix.component }}-benchmark
+
+      - name: Debug output dir
+        run: pwd; ls -l .
+
       - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
           tool: 'cargo'
           output-file-path: ./dev/${{ matrix.component }}/output.txt
+          benchmark-data-dir-path: ./dev/${{ matrix.component }}/data.js
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'
           fail-on-alert: true
@@ -49,6 +62,9 @@ jobs:
           #github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN_V2 }}  # this personal access token was added to ICU4X repo secrets with `repo` scope permissions
           #comment-on-alert: true
           #alert-comment-cc-users: '@sffc @zbraniecki @echeran'
+
+      - name: Debug output dir
+        run: pwd; ls -l .
 
       - name: Debug post-bench git repo status
         run: git status
