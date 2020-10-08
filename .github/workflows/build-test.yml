@@ -100,6 +100,12 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
+    - name: Download previous content destined for GH pages
+      uses: actions/cache@v1
+      with:
+        path: ./copy-to-ext-repo
+        key: ${{ runner.os }}-copy-to-ext-repo
+
     # Doc-GH-Pages job > Generate `cargo doc` step
 
     - name: Cargo doc
@@ -126,6 +132,12 @@ jobs:
           </body>
         </html>
         EOL
+    
+    - name: Create (ensure existence of) folder suitable for copying to external repo
+      run: mkdir -p copy-to-ext-repo
+
+    - name: Update API docs folder in cache dir
+      run: rm -rf ./copy-to-ext-repo/doc; cp -v -r target/doc ./copy-to-ext-repo
 
     # Doc-GH-Pages job > Commit docs on GH Pages branch step
 
