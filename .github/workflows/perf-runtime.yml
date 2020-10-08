@@ -42,7 +42,7 @@ jobs:
       - name: Download previous benchmark data
         uses: actions/cache@v1
         with:
-          path: ./cache
+          path: ./dev
           key: ${{ runner.os }}-benchmark-perf
 
       - name: Debug output dir
@@ -98,7 +98,10 @@ jobs:
       #   run: git checkout gh-pages
 
       - name: Move bench data and HTML into a folder suitable for copying to external repo
-        run: mkdir -p copy-to-ext-repo && cp -r dev ./copy-to-ext-repo
+        run: mkdir -p copy-to-ext-repo && cp -v -r dev ./copy-to-ext-repo
+
+      - name: Debug copy-to-ext-repo dir
+        run: ls -l ./copy-to-ext-repo
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.6.4
