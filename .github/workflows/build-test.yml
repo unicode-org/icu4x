@@ -159,7 +159,7 @@ jobs:
         run: git branch
       
       - name: Upload updated benchmark data
-        uses: actions/update-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           path: ./dev
           name: benchmark-perf
