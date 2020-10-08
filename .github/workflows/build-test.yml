@@ -277,6 +277,9 @@ jobs:
     - name: Create (ensure existence of) folder suitable for copying to external repo
       run: mkdir -p copy-to-ext-repo
 
+    - name: Debug copy-to-ext-repo dir
+      run: ls -l ./copy-to-ext-repo
+
     # Doc-GH-Pages job > Generate `cargo doc` step
 
     - name: Cargo doc
@@ -289,7 +292,7 @@ jobs:
 
     - name: Create doc /index.html
       run: |
-        mkdir -p target/doc
+        mkdir -p copy-to-ext-repo
         cat > copy-to-ext-repo/index.html <<EOL
         <!doctype html>
         <html>
@@ -306,6 +309,9 @@ jobs:
 
     - name: Update API docs folder in cache dir
       run: rm -rf ./copy-to-ext-repo/doc; cp -v -r target/doc ./copy-to-ext-repo
+    
+    - name: Debug copy-to-ext-repo dir
+      run: ls -l ./copy-to-ext-repo
 
     # Doc-GH-Pages job > Commit docs on GH Pages branch step
 
