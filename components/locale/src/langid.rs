@@ -50,7 +50,7 @@ use crate::subtags;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct LanguageIdentifier {
     /// Language subtag of the LanguageIdentifier
     pub language: subtags::Language,
@@ -115,6 +115,12 @@ impl LanguageIdentifier {
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
         let lang_id = Self::from_bytes(input.as_ref())?;
         Ok(lang_id.to_string())
+    }
+}
+
+impl std::fmt::Debug for LanguageIdentifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        std::fmt::Display::fmt(&self, f)
     }
 }
 

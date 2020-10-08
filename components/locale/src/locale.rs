@@ -63,7 +63,7 @@ use std::str::FromStr;
 /// assert_eq!(loc.variants.get(0).unwrap(), "valencia");
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Locale {
     /// Language subtag of the Locale
     pub language: subtags::Language,
@@ -141,6 +141,12 @@ impl From<Locale> for LanguageIdentifier {
             region: loc.region,
             variants: loc.variants,
         }
+    }
+}
+
+impl std::fmt::Debug for Locale {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        std::fmt::Display::fmt(&self, f)
     }
 }
 
