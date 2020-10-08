@@ -274,6 +274,9 @@ jobs:
         path: ./copy-to-ext-repo
         key: ${{ runner.os }}-copy-to-ext-repo
 
+    - name: Create (ensure existence of) folder suitable for copying to external repo
+      run: mkdir -p copy-to-ext-repo
+
     # Doc-GH-Pages job > Generate `cargo doc` step
 
     - name: Cargo doc
@@ -287,7 +290,7 @@ jobs:
     - name: Create doc /index.html
       run: |
         mkdir -p target/doc
-        cat > target/doc/index.html <<EOL
+        cat > copy-to-ext-repo/index.html <<EOL
         <!doctype html>
         <html>
           <head>
@@ -296,13 +299,10 @@ jobs:
             <title>ICU4X Developer Docs</title>
           </head>
           <body>
-            <p><a href="./icu4x">Redirect to icu4x crate doc</a></p>
+            <p><a href="./doc/icu4x">Redirect to icu4x crate doc</a></p>
           </body>
         </html>
         EOL
-    
-    - name: Create (ensure existence of) folder suitable for copying to external repo
-      run: mkdir -p copy-to-ext-repo
 
     - name: Update API docs folder in cache dir
       run: rm -rf ./copy-to-ext-repo/doc; cp -v -r target/doc ./copy-to-ext-repo
@@ -330,5 +330,5 @@ jobs:
 
 
         publish_branch: gh-pages
-        publish_dir: ./target/doc
+        publish_dir: copy-to-ext-repo
         commit_message: Rust doc -> GH Pages
