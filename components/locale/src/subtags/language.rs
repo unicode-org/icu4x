@@ -67,6 +67,49 @@ impl Language {
         }
     }
 
+    /// Deconstructs the `Language` into raw format to be consumed
+    /// by `from_raw_unchecked`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Language;
+    ///
+    /// let lang = Language::from_bytes(b"en")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = lang.into_raw();
+    /// let lang = unsafe { Language::from_raw_unchecked(raw) };
+    /// assert_eq!(lang, "en");
+    /// ```
+    pub fn into_raw(self) -> Option<TinyStr8> {
+        self.0
+    }
+
+    /// Constructor which takes a raw value returned by
+    /// `into_raw`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Language;
+    ///
+    /// let lang = Language::from_bytes(b"en")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = lang.into_raw();
+    /// let lang = unsafe { Language::from_raw_unchecked(raw) };
+    /// assert_eq!(lang, "en");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// This function accepts any `TinyStr8` that is expected to be a
+    /// valid `Language` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: Option<TinyStr8>) -> Self {
+        Self(v)
+    }
+
     /// A helper function for displaying
     /// a `Language` subtag as a `&str`.
     ///

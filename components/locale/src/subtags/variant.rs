@@ -58,6 +58,49 @@ impl Variant {
         Ok(Self(s.to_ascii_lowercase()))
     }
 
+    /// Deconstructs the `Variant` into raw format to be consumed
+    /// by `from_raw_unchecked`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Variant;
+    ///
+    /// let variant = Variant::from_bytes(b"posix")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = variant.into_raw();
+    /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
+    /// assert_eq!(variant, "posix");
+    /// ```
+    pub fn into_raw(self) -> TinyStr8 {
+        self.0
+    }
+
+    /// Constructor which takes a raw value returned by
+    /// `into_raw`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Variant;
+    ///
+    /// let variant = Variant::from_bytes(b"posix")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = variant.into_raw();
+    /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
+    /// assert_eq!(variant, "posix");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// This function accepts any `TinyStr8` that is expected to be a
+    /// valid `Variant` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: TinyStr8) -> Self {
+        Self(v)
+    }
+
     /// A helper function for displaying
     /// a `Variant` subtag as a `&str`.
     ///

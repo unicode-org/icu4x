@@ -8,13 +8,13 @@
 //! * [`Variants`] is a list of optional [`Variant`] subtags containing information about the
 //!                variant adjustments used by the locale.
 //!
-//! Subtags can be used in isolation, and all basic operations such as parsing, canonicalization
+//! Subtags can be used in isolation, and all basic operations such as parsing, syntax canonicalization
 //! and serialization are supported on each individual subtag, but most commonly
 //! they are used to construct a [`LanguageIdentifier`] instance.
 //!
 //! [`Variants`] is a special structure which contains a list of [`Variant`] subtags.
 //! It is wrapped around to allow for sorting and deduplication of variants, which
-//! is one of the required steps of language identifier and locale canonicalization.
+//! is one of the required steps of language identifier and locale syntax canonicalization.
 //!
 //! # Examples
 //!

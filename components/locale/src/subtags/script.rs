@@ -48,6 +48,49 @@ impl Script {
         Ok(Self(s.to_ascii_titlecase()))
     }
 
+    /// Deconstructs the `Script` into raw format to be consumed
+    /// by `from_raw_unchecked`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Script;
+    ///
+    /// let script = Script::from_bytes(b"Latn")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = script.into_raw();
+    /// let script = unsafe { Script::from_raw_unchecked(raw) };
+    /// assert_eq!(script, "Latn");
+    /// ```
+    pub fn into_raw(self) -> TinyStr4 {
+        self.0
+    }
+
+    /// Constructor which takes a raw value returned by
+    /// `into_raw`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locale::subtags::Script;
+    ///
+    /// let script = Script::from_bytes(b"Latn")
+    ///     .expect("Parsing failed.");
+    ///
+    /// let raw = script.into_raw();
+    /// let script = unsafe { Script::from_raw_unchecked(raw) };
+    /// assert_eq!(script, "Latn");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// This function accepts any `TinyStr4` that is expected to be a
+    /// valid `Script` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: TinyStr4) -> Self {
+        Self(v)
+    }
+
     /// A helper function for displaying
     /// a `Script` subtag as a `&str`.
     ///
