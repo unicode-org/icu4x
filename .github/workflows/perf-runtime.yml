@@ -70,7 +70,16 @@ jobs:
       - name: Debug output dir
         run: ls -l ./dev/${{ matrix.component }}
 
-      - name: Debug post-bench git repo status
+      - name: Debug post-bench branch
+        run: git branch
+      
+      - name: Switch branch to gh-pages to get result of benchmark pages output
+        run: git checkout gh-pages
+
+      - name: Debug output dir
+        run: ls -l ./dev/${{ matrix.component }}
+
+      - name: Debug post-switch branch
         run: git status
 
       - name: Debug post-bench git repo status #2
