@@ -120,6 +120,7 @@ jobs:
         with:
           path: ./dev
           name: benchmark-perf
+        if-no-files-found: warn
 
       - name: Debug output dir
         run: ls -l ./dev/${{ matrix.component }}
@@ -196,6 +197,7 @@ jobs:
         with:
           path: ./copy-to-ext-repo
           name: copy-to-ext-repo
+        if-no-files-found: warn
 
       - name: Debug copy-to-ext-repo dir # ./copy-to-ext-repo should exist, except for the very first time, due to cache
         run: ls -l .
