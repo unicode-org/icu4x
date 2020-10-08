@@ -28,8 +28,9 @@ More information about the project can be found in [the docs subdirectory](docs/
 
 ### Benchmark dashboards
 
-| Component | Runtime                                                               |
-|-----------|-----------------------------------------------------------------------|
-| locale    | [link](https://unicode-org.github.io/icu4x-docs/dev/locale/bench)     |
-| num-util  | [link](https://unicode-org.github.io/icu4x-docs/dev/num-util/bench)   |
-| uniset    | [link](https://unicode-org.github.io/icu4x-docs/dev/uniset/bench)     |
+| Component     | Runtime                                                                  |
+|---------------|--------------------------------------------------------------------------|
+| locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/locale)   |
+| num-util      | [link](https://unicode-org.github.io/icu4x-docs/dev/components/num-util) |
+| uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
+| fixed-decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed-decimal) |

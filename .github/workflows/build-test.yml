@@ -89,6 +89,7 @@ jobs:
           - components/locale
 
 
+          # - components/num-util
           # - components/uniset
           # - utils/fixed-decimal
 
