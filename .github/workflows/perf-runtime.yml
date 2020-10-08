@@ -110,8 +110,8 @@ jobs:
       # - name: Checkout gh-pages
       #   run: git checkout gh-pages
 
-      - name: Debug copy-to-ext-repo dir
-        run: ls -l ./copy-to-ext-repo
+      - name: Debug current dir # does ./copy-to-ext-repo exist? it shouldn't, yet
+        run: ls -l .
 
       - name: Download previous content destined for GH pages
         uses: actions/cache@v1
