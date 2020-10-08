@@ -9,6 +9,7 @@ on:
 jobs:
   benchmark:
     strategy:
+      max-parallel: 1
       fail-fast: false
       # `matrix` creates a job matrix (Cartesian product of possible values for each var)
       # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
@@ -42,7 +43,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ./cache
-          key: ${{ runner.os }}-${{ matrix.component }}-benchmark
+          key: ${{ runner.os }}-benchmark-perf
 
       - name: Debug output dir
         run: ls -l ./dev/${{ matrix.component }}
@@ -53,7 +54,7 @@ jobs:
           name: Rust Benchmark
           tool: 'cargo'
           output-file-path: ./dev/${{ matrix.component }}/output.txt
-          benchmark-data-dir-path: ./dev/${{ matrix.component }}/data.js
+          benchmark-data-dir-path: ./dev/${{ matrix.component }}
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'
           fail-on-alert: true
