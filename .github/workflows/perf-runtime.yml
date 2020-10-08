@@ -29,11 +29,14 @@ jobs:
       - name: Create output dir
         run: mkdir -p ./dev/${{ matrix.component }}
 
+      - name: Debug output dir
+        run: ls -l ./dev/${{ matrix.component }}
+
       - name: Run benchmark
         run: cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && cd ../..
 
       - name: Debug output dir
-        run: pwd; ls -l .
+        run: ls -l ./dev/${{ matrix.component }}
 
       - name: Download previous benchmark data
         uses: actions/cache@v1
@@ -42,7 +45,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.component }}-benchmark
 
       - name: Debug output dir
-        run: pwd; ls -l .
+        run: ls -l ./dev/${{ matrix.component }}
 
       - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -64,7 +67,7 @@ jobs:
           #alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
       - name: Debug output dir
-        run: pwd; ls -l .
+        run: ls -l ./dev/${{ matrix.component }}
 
       - name: Debug post-bench git repo status
         run: git status
