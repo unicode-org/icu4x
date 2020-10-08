@@ -193,8 +193,14 @@ jobs:
       - name: Debug copy-to-ext-repo dir # ./copy-to-ext-repo should exist, except for the very first time, due to cache
         run: ls -l .
 
+      - name: Create folder suitable for copying to external repo
+        run: mkdir -p copy-to-ext-repo 
+
+      - name: Debug copy-to-ext-repo dir
+        run: ls -l ./copy-to-ext-repo
+
       - name: Move bench data and HTML into a folder suitable for copying to external repo
-        run: mkdir -p copy-to-ext-repo && cp -v -r dev ./copy-to-ext-repo
+        run: cp -v -r dev ./copy-to-ext-repo
 
       - name: Debug copy-to-ext-repo dir
         run: ls -l ./copy-to-ext-repo
@@ -233,6 +239,9 @@ jobs:
           publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
           publish_dir: copy-to-ext-repo
           commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
+
+
+
 
 
   # Doc-GH-Pages job
