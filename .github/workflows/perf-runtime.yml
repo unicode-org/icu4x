@@ -16,8 +16,12 @@ jobs:
       matrix:
         component:
           - components/locale
-          - components/uniset
-          - utils/fixed-decimal
+
+
+          # - components/uniset
+          # - utils/fixed-decimal
+
+
 
     # If you are modifying and debugging is required, don't be afraid to get
     # messy in a personal fork, if no better way to do it.
@@ -80,7 +84,7 @@ jobs:
         run: ls -l ./dev/${{ matrix.component }}
 
       - name: Debug post-switch branch
-        run: git status
+        run: git branch
 
       - name: Debug post-bench git repo status #2
         run: git log | head -n 20
@@ -105,6 +109,18 @@ jobs:
 
       # - name: Checkout gh-pages
       #   run: git checkout gh-pages
+
+      - name: Debug copy-to-ext-repo dir
+        run: ls -l ./copy-to-ext-repo
+
+      - name: Download previous content destined for GH pages
+        uses: actions/cache@v1
+        with:
+          path: ./copy-to-ext-repo
+          key: ${{ runner.os }}-copy-to-ext-repo
+
+      - name: Debug copy-to-ext-repo dir
+        run: ls -l ./copy-to-ext-repo
 
       - name: Move bench data and HTML into a folder suitable for copying to external repo
         run: mkdir -p copy-to-ext-repo && cp -v -r dev ./copy-to-ext-repo
