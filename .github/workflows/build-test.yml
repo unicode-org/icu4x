@@ -140,7 +140,13 @@ jobs:
           # TODO: get Github token to recognize personal access token, then enable comment-on-alert
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
           # How to create personal access token: https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#permissions-for-the-github_token
-          #github-token: ${{ secrets.PERSONAL_GITHUB_TOKEN_V2 }}  # this personal access token was added to ICU4X repo secrets with `repo` scope permissions
+
+
+
+          github-token: ${{ secrets.GITHUB_TOKEN }}  # this personal access token was added to ICU4X repo secrets with `repo` scope permissions
+
+
+
           #comment-on-alert: true
           #alert-comment-cc-users: '@sffc @zbraniecki @echeran'
 
