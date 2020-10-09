@@ -1,0 +1,2 @@
+[alias]
+gen-testdata = "run --features=icu4x-gen-testdata --"

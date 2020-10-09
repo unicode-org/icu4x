@@ -9,6 +9,7 @@ use crate::CldrPaths;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 
+#[derive(Debug)]
 pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a dyn CldrPaths,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,

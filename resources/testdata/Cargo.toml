@@ -1,0 +1,93 @@
+[package]
+name = "icu-testdata"
+description = "Test data for ICU4X, generated from CLDR."
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+# icu4x_testdata metadata: schema defined in ./src/metadata.rs
+[package.metadata.icu4x_testdata]
+
+# Locales to include in testdata. Keep this list somewhat short, but cover all features.
+locales = [
+    # Belarusian:
+    # - Cyrillic script
+    # - Interesting plural rules
+    "be",
+
+    # Bangla:
+    # - Uses non-Latin numerals
+    "bn",
+
+    # Chakma:
+    # - High-coverage language that uses non-BMP code points
+    "ccp",
+
+    # English:
+    # - Widely understood language in software engineering
+    # - Includes regional variants to test similar-data fallbacks
+    "en",
+    "en-US-posix",
+    "en-ZA",
+
+    # Farsi:
+    # - Good example for RTL
+    "fa",
+
+    # French:
+    # - Often the first non-English locale to receive new data in CLDR
+    "fr",
+
+    # Root data
+    "und",
+
+    # Chinese:
+    # - The default "zh" uses Simplified Chinese
+    # - Also include Traditional Chinese to test script variants
+    "zh",
+    "zh-Hant",
+]
+
+# Git tag or sha1 for the CLDR data used to generate the testdata
+gitref = "36.0.0"
+
+[dependencies]
+icu-data-provider = { path = "../../components/data-provider" }
+icu-fs-data-provider = { path = "../../components/fs-data-provider" }
+icu-locale = { path = "../../components/locale" }
+
+# Dependencies for the "metadata" feature
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+
+# Dependencies for the binary
+cargo_metadata = { version = "0.11.3", optional = true }
+clap = { version = "2.33", optional = true }
+icu-cldr-json-data-provider = { path = "../../components/cldr-json-data-provider", optional = true, features = ["download"] }
+log = { version = "0.4", optional = true }
+simple_logger = { version = "1.10", optional = true }
+
+[features]
+metadata = ["serde", "serde_json", "icu-locale/serde"]
+icu4x-gen-testdata = [
+    "cargo_metadata",
+    "clap",
+    "icu-cldr-json-data-provider",
+    "log",
+    "simple_logger",
+    "icu-fs-data-provider/export",
+    "metadata",
+]
+
+[[bin]]
+name = "icu4x-gen-testdata"
+required-features = ["icu4x-gen-testdata"]

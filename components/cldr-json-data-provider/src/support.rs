@@ -8,6 +8,7 @@ pub(crate) trait DataKeySupport {
     fn supports_key(data_key: &DataKey) -> Result<(), DataError>;
 }
 
+#[derive(Debug)]
 pub(crate) struct LazyCldrProvider<T> {
     src: RwLock<Option<T>>,
 }

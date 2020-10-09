@@ -42,6 +42,7 @@ use std::path::PathBuf;
 /// // Calling demo(&data_provider) will cause the data to actually get downloaded.
 /// //demo(&data_provider);
 /// ```
+#[derive(Debug)]
 pub struct CldrPathsDownload {
     /// Directory where downloaded files are stored.
     pub cache_dir: PathBuf,
@@ -90,6 +91,7 @@ impl CldrPathsDownload {
     }
 }
 
+#[derive(Debug)]
 pub struct CldrZipFileInfo {
     /// The URL to the remote zip file
     pub url: String,
