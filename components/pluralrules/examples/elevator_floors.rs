@@ -1,6 +1,5 @@
 // An example application which uses icu_pluralrules to construct a correct
 // sentence for English based on the numerical value in Ordinal category.
-use icu_fs_data_provider::FsDataProvider;
 use icu_locale::LanguageIdentifier;
 use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
 
@@ -17,12 +16,12 @@ fn print(_input: &str, _value: Option<usize>) {
 
 fn main() {
     let langid: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
-    let dtp = FsDataProvider::try_new("../../resources/testdata/data/json")
-        .expect("Loading file from testdata directory");
+
+    let provider = icu_testdata::get_provider();
 
     {
         print("\n====== Elevator Floor (en) example ============", None);
-        let pr = PluralRules::try_new(langid, &dtp, PluralRuleType::Ordinal)
+        let pr = PluralRules::try_new(langid, &provider, PluralRuleType::Ordinal)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {

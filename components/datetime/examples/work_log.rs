@@ -2,7 +2,6 @@
 // from a work log into human readable dates and times.
 use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
-use icu_fs_data_provider::FsDataProvider;
 use icu_locale::LanguageIdentifier;
 
 const DATES_ISO: &[&str] = &[
@@ -30,8 +29,7 @@ fn print(_input: &str, _value: Option<usize>) {
 fn main() {
     let langid: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
 
-    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
-        .expect("Loading file from testdata directory");
+    let provider = icu_testdata::get_provider();
 
     let dates = DATES_ISO
         .iter()

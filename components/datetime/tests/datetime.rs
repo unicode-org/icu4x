@@ -2,13 +2,11 @@ mod fixtures;
 
 use icu_datetime::DateTimeFormat;
 use icu_datetime::MockDateTime;
-use icu_fs_data_provider::FsDataProvider;
 use std::fmt::Write;
 
 #[test]
 fn test_fixtures() {
-    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
-        .expect("Loading file from testdata directory");
+    let provider = icu_testdata::get_provider();
 
     for fx in fixtures::get_fixture("styles").unwrap().0 {
         let langid = fx.input.locale.parse().unwrap();

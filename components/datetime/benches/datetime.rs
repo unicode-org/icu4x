@@ -5,13 +5,11 @@ use std::fmt::Write;
 
 use icu_datetime::DateTimeFormat;
 use icu_datetime::MockDateTime;
-use icu_fs_data_provider::FsDataProvider;
 
 fn datetime_benches(c: &mut Criterion) {
     let fxs = fixtures::get_fixture("styles").unwrap();
 
-    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
-        .expect("Loading file from testdata directory");
+    let provider = icu_testdata::get_provider();
 
     {
         let mut group = c.benchmark_group("datetime");

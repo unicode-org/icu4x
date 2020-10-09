@@ -33,10 +33,8 @@
 //! ```
 //! use icu::locale::LanguageIdentifier;
 //! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
-//! use icu_fs_data_provider::FsDataProvider;
 //!
-//! let provider = FsDataProvider::try_new("./tests/fixtures/data/icu4x")
-//!     .expect("Loading file from testdata directory");
+//! let provider = icu_testdata::get_provider();
 //!
 //! let langid: LanguageIdentifier = "en".parse()
 //!     .expect("Failed to parse a Language Identifier.");
