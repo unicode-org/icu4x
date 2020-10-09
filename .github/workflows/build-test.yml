@@ -80,7 +80,7 @@ jobs:
 
   benchmark:
     strategy:
-      max-parallel: 1
+      # max-parallel: 1
       fail-fast: false
       # `matrix` creates a job matrix (Cartesian product of possible values for each var)
       # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
