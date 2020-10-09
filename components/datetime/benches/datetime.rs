@@ -10,7 +10,7 @@ use icu_fs_data_provider::FsDataProvider;
 fn datetime_benches(c: &mut Criterion) {
     let fxs = fixtures::get_fixture("styles").unwrap();
 
-    let provider = FsDataProvider::try_new("./tests/fixtures/data/icu4x")
+    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     {

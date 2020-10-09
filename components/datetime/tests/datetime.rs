@@ -7,7 +7,7 @@ use std::fmt::Write;
 
 #[test]
 fn test_fixtures() {
-    let provider = FsDataProvider::try_new("./tests/fixtures/data/icu4x")
+    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     for fx in fixtures::get_fixture("styles").unwrap().0 {

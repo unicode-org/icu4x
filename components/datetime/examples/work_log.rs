@@ -30,7 +30,7 @@ fn print(_input: &str, _value: Option<usize>) {
 fn main() {
     let langid: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
 
-    let provider = FsDataProvider::try_new("./tests/fixtures/data/icu4x")
+    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     let dates = DATES_ISO

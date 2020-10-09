@@ -4,7 +4,7 @@ use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
 
 #[test]
 fn test_plural_rules() {
-    let dp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+    let dp = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     let lang: LanguageIdentifier = "en".parse().unwrap();
@@ -16,7 +16,7 @@ fn test_plural_rules() {
 
 #[test]
 fn test_plural_rules_missing() {
-    let dp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+    let dp = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     let lang: LanguageIdentifier = "xx".parse().unwrap();

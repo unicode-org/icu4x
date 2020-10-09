@@ -17,7 +17,7 @@ fn print(_input: &str, _value: Option<usize>) {
 
 fn main() {
     let langid: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
-    let dtp = FsDataProvider::try_new("./tests/data/json_plurals_37")
+    let dtp = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     {

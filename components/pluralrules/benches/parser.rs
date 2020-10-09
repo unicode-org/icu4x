@@ -12,7 +12,7 @@ fn parser(c: &mut Criterion) {
 
     let plurals_data = helpers::get_plurals_data();
 
-    let provider = FsDataProvider::try_new("./tests/data/json_plurals_37")
+    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     let mut rules = vec![];
