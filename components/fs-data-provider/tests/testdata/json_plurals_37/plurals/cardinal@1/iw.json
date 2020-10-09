@@ -1,7 +1,0 @@
-{
-  "zero": null,
-  "one": "i = 1 and v = 0 @integer 1",
-  "two": "i = 2 and v = 0 @integer 2",
-  "few": null,
-  "many": "v = 0 and n != 0..10 and n % 10 = 0 @integer 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000, 10000, 100000, 1000000, …"
-}

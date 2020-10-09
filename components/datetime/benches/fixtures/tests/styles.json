@@ -2,7 +2,7 @@
     {
         "setups": [
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "full",
@@ -11,7 +11,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "long",
@@ -20,7 +20,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "medium",
@@ -29,7 +29,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "short",
@@ -38,7 +38,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": null,
@@ -47,7 +47,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": null,
@@ -56,7 +56,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": null,
@@ -65,7 +65,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": null,
@@ -74,7 +74,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "full",
@@ -83,7 +83,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "long",
@@ -92,7 +92,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "medium",
@@ -101,7 +101,7 @@
                 }
             },
             {
-                "locale": "pl",
+                "locale": "be",
                 "options": {
                     "style": {
                         "date": "short",

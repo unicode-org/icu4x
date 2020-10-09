@@ -3,15 +3,13 @@ mod helpers;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use icu_fs_data_provider::FsDataProvider;
 use icu_pluralrules::{PluralRuleType, PluralRules};
 
 fn pluralrules(c: &mut Criterion) {
     let plurals_data = helpers::get_plurals_data();
     let numbers_data = helpers::get_numbers_data();
 
-    let provider = FsDataProvider::try_new("./tests/data/json_plurals_37")
-        .expect("Loading file from testdata directory");
+    let provider = icu_testdata::get_provider();
 
     c.bench_function("pluralrules/overview", |b| {
         b.iter(|| {

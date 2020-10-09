@@ -91,7 +91,7 @@
     },
     {
         "input": {
-            "locale": "pl",
+            "locale": "be",
             "value": "2020-03-21T08:25:07.000",
             "options": {
                 "style": {
@@ -101,7 +101,7 @@
             }
         },
         "output": {
-            "value": "sobota, 21 marca 2020 08:25:07 zzzz"
+            "value": "субота, 21 сакавіка 2020 'г'. 'у' 08:25:07, zzzz"
         }
     }
 ]

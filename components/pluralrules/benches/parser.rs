@@ -4,7 +4,6 @@ mod helpers;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
-use icu_fs_data_provider::FsDataProvider;
 use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {
@@ -12,8 +11,7 @@ fn parser(c: &mut Criterion) {
 
     let plurals_data = helpers::get_plurals_data();
 
-    let provider = FsDataProvider::try_new("./tests/data/json_plurals_37")
-        .expect("Loading file from testdata directory");
+    let provider = icu_testdata::get_provider();
 
     let mut rules = vec![];
 
