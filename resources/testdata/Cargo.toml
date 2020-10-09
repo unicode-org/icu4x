@@ -21,6 +21,12 @@ include = [
 # We use 10 base languages with a small number of variants to allow for 10 languages to be
 # used in microbenchmarks.
 locales = [
+    # Arabic:
+    # - Good example for RTL
+    # - Non-latin numerals in Egypt
+    "ar",
+    "ar-EG",
+
     # Belarusian:
     # - Cyrillic script
     # - Interesting plural rules
@@ -33,11 +39,6 @@ locales = [
     # Chakma:
     # - High-coverage language that uses non-BMP code points
     "ccp",
-
-    # Greek:
-    # - Non-Latin alphabet
-    # - Southern European language
-    "el",
 
     # English:
     # - Widely understood language in software engineering
@@ -52,21 +53,25 @@ locales = [
     "es",
     "es-AR",
 
-    # Farsi:
-    # - Good example for RTL
-    "fa",
-
     # French:
     # - Often the first non-English locale to receive new data in CLDR
     "fr",
 
+    # Hebrew:
+    # - Non-Latin alphabet
+    # - Right to Left
+    "he",
+
+    # Serbian:
+    # - Multiple scripts
+    # - Southern Europe
+    "sr",
+    "sr-Cyrl",
+    "sr-Latn",
+
     # Thai:
     # - Complex word breaking
     "th",
-
-    # Turkish:
-    # - Interesting case-mappings
-    "tr",
 
     # Root data
     "und",
