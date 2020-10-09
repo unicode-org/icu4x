@@ -111,7 +111,7 @@ jobs:
 
       - name: Store benchmark result & create dashboard (unmerged PR only)
         uses: rhysd/github-action-benchmark@v1.8.1
-        if: {{ github.event_name != 'push') || github.ref != 'refs/heads/master' }} # any action that is not a merge to master implies unfinished PR
+        if: {{ github.event_name != 'push' || github.ref != 'refs/heads/master' }} # any action that is not a merge to master implies unfinished PR
         with:
           name: Rust Benchmark
           tool: 'cargo'
