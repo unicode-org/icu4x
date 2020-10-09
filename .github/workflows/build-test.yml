@@ -115,12 +115,12 @@ jobs:
       - name: Debug output dir
         run: ls -l ./dev/${{ matrix.component }}
 
-      - name: Download previous benchmark data
-        uses: actions/download-artifact@v2
-        with:
-          path: ./dev
-          name: benchmark-perf
-        if-no-files-found: warn
+      # - name: Download previous benchmark data
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     path: ./dev
+      #     name: benchmark-perf
+      #   if-no-files-found: warn
 
       - name: Debug output dir
         run: ls -l ./dev/${{ matrix.component }}
@@ -192,12 +192,12 @@ jobs:
       - name: Debug current dir # does ./copy-to-ext-repo exist? it shouldn't, yet
         run: ls -l .
 
-      - name: Download previous content destined for GH pages
-        uses: actions/download-artifact@v2
-        with:
-          path: ./copy-to-ext-repo
-          name: copy-to-ext-repo
-        if-no-files-found: warn
+      # - name: Download previous content destined for GH pages
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     path: ./copy-to-ext-repo
+      #     name: copy-to-ext-repo
+      #   if-no-files-found: warn
 
       - name: Debug copy-to-ext-repo dir # ./copy-to-ext-repo should exist, except for the very first time, due to cache
         run: ls -l .
@@ -214,11 +214,11 @@ jobs:
       - name: Debug copy-to-ext-repo dir
         run: ls -l ./copy-to-ext-repo
 
-      - name: Uploade new content destined for GH pages
-        uses: actions/upload-artifact@v2
-        with:
-          path: ./copy-to-ext-repo
-          name: copy-to-ext-repo
+      # - name: Upload new content destined for GH pages
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     path: ./copy-to-ext-repo
+      #     name: copy-to-ext-repo
 
       - name: Dashboard -> Github Pages
         uses: peaceiris/actions-gh-pages@v3.7.0
@@ -283,17 +283,24 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
-    - name: Download previous content destined for GH pages
-      uses: actions/cache@v1
-      with:
-        path: ./copy-to-ext-repo
-        key: ${{ runner.os }}-copy-to-ext-repo
-
     - name: Create (ensure existence of) folder suitable for copying to external repo
       run: mkdir -p copy-to-ext-repo
 
     - name: Debug copy-to-ext-repo dir
       run: ls -l ./copy-to-ext-repo
+
+    # - name: Download previous content destined for GH pages
+    #   uses: actions/cache@v1
+    #   with:
+    #     path: ./copy-to-ext-repo
+    #     key: ${{ runner.os }}-copy-to-ext-repo
+
+
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
+      with:
+        path: ./copy-to-ext-repo/dev
+        name: benchmark-perf
 
     # Doc-GH-Pages job > Generate `cargo doc` step
 
