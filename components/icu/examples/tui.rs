@@ -4,7 +4,6 @@ use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
 use icu::locale::LanguageIdentifier;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu::uniset::UnicodeSetBuilder;
-use icu_fs_data_provider::FsDataProvider;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -13,8 +12,7 @@ fn print<T: AsRef<str>>(_input: T) {
 }
 
 fn main() {
-    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
-        .expect("Loading file from testdata directory");
+    let provider = icu_testdata::get_provider();
 
     let args: Vec<String> = env::args().collect();
 

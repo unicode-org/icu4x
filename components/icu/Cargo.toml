@@ -21,4 +21,4 @@ icu-pluralrules = { path = "../pluralrules" }
 icu-unicodeset = { path = "../uniset" }
 
 [dev-dependencies]
-icu-fs-data-provider = { path = "../fs-data-provider" }
+icu-testdata = { path = "../../resources/testdata" }
