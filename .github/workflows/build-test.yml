@@ -110,8 +110,9 @@ jobs:
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
       - name: Store benchmark result & create dashboard (unmerged PR only)
+        # any action that is not a merge to master implies unfinished PR
+        if: {{ github.event_name != 'push' || github.ref != 'refs/heads/master' }}
         uses: rhysd/github-action-benchmark@v1.8.1
-        if: {{ github.event_name != 'push' || github.ref != 'refs/heads/master' }} # any action that is not a merge to master implies unfinished PR
         with:
           name: Rust Benchmark
           tool: 'cargo'
@@ -131,7 +132,8 @@ jobs:
 
       - name: Store benchmark result & create dashboard (merge to master only)
         uses: rhysd/github-action-benchmark@v1.8.1
-        if: {{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}  # only merges to master (implies PR is finished and approved by this point)
+        # only merges to master (implies PR is finished and approved by this point)
+        if: {{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         with:
           name: Rust Benchmark
           tool: 'cargo'
