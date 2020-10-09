@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602269983933,
+  "lastUpdate": 1602274742493,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -107,6 +107,60 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f9af945d26a668ff3898b44db74a35fa44a1280",
+          "message": "Use testdata everywhere (#311)\n\n* Use testdata everywhere\r\n\r\n* Use icu_testdata\r\n\r\n* Apply feedback\r\n\r\n* Fix missing semicolon\r\n\r\n* Fix fs-data-provider test",
+          "timestamp": "2020-10-09T13:10:47-07:00",
+          "tree_id": "c2a3953a0a719bee0d4c840804618a9febff96f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f9af945d26a668ff3898b44db74a35fa44a1280"
+        },
+        "date": 1602274741960,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "isize/smaller",
+            "value": 33934,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 80498,
+            "range": "± 1464",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/908070605040302010",
+            "value": 293,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "write_to/908070605040302010",
+            "value": 142,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 91,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
