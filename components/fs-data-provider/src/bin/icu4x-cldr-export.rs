@@ -55,8 +55,8 @@ impl From<icu_data_provider::DataError> for Error {
     }
 }
 
-impl From<icu_cldr_json_data_provider::download::DownloadError> for Error {
-    fn from(err: icu_cldr_json_data_provider::download::DownloadError) -> Error {
+impl From<icu_cldr_json_data_provider::download::Error> for Error {
+    fn from(err: icu_cldr_json_data_provider::download::Error) -> Error {
         Error::Setup(Box::from(err))
     }
 }

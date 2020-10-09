@@ -1,3 +1,4 @@
+use crate::error::Error;
 use std::collections::HashMap;
 use std::fmt;
 use std::fs;
@@ -47,10 +48,10 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
             .push(path_buf);
     }
 
-    pub fn flush(&mut self) -> Result<(), std::io::Error> {
+    pub fn flush(&mut self) -> Result<(), Error> {
         self.flushed = true;
         // TODO: Make sure the directory is empty
-        fs::create_dir_all(&self.root)?;
+        fs::create_dir_all(&self.root).map_err(|e| (e, &self.root))?;
         let mut unique_data_items: Vec<(&T, &Vec<PathBuf>)> = self.map.iter().collect();
         unique_data_items.sort(); // guarantee canonical order
         for (i, (data_item, link_paths)) in unique_data_items.iter().enumerate() {
@@ -58,10 +59,12 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
             data_filename.set_extension(&self.data_file_extension);
             let mut data_path = self.root.clone();
             data_path.extend(&data_filename);
-            let mut data_file = fs::File::create(&data_path)?;
-            data_file.write_all(data_item.as_ref())?;
+            let mut data_file = fs::File::create(&data_path).map_err(|e| (e, &data_path))?;
+            data_file
+                .write_all(data_item.as_ref())
+                .map_err(|e| (e, &data_path))?;
             for link_path in link_paths.iter() {
-                symlink_file(&data_filename, link_path)?;
+                symlink_file(&data_filename, link_path).map_err(|e| (e, link_path))?;
             }
         }
         Ok(())

@@ -1,6 +1,5 @@
-use super::error::DownloadError;
+use super::error::Error;
 use super::io_util;
-use crate::error::Error;
 use crate::CldrPaths;
 use std::path::PathBuf;
 
@@ -53,10 +52,10 @@ pub struct CldrPathsDownload {
 
 // TODO(#297): Implement this async.
 impl CldrPaths for CldrPathsDownload {
-    fn cldr_core(&self) -> Result<PathBuf, Error> {
+    fn cldr_core(&self) -> Result<PathBuf, crate::error::Error> {
         self.cldr_core.download_and_unzip(&self)
     }
-    fn cldr_dates(&self) -> Result<PathBuf, Error> {
+    fn cldr_dates(&self) -> Result<PathBuf, crate::error::Error> {
         self.cldr_dates.download_and_unzip(&self)
     }
 }
@@ -67,10 +66,10 @@ impl CldrPathsDownload {
     ///
     /// github_tag should be a tag in the CLDR JSON repositories, such as "36.0.0":
     /// https://github.com/unicode-cldr/cldr-core/tags
-    pub fn try_from_github_tag(github_tag: &str) -> Result<Self, DownloadError> {
+    pub fn try_from_github_tag(github_tag: &str) -> Result<Self, Error> {
         Ok(Self {
             cache_dir: dirs::cache_dir()
-                .ok_or(DownloadError::NoCacheDir)?
+                .ok_or(Error::NoCacheDir)?
                 .join("icu4x")
                 .join("cldr"),
             cldr_core: CldrZipFileInfo {
@@ -100,7 +99,10 @@ pub struct CldrZipFileInfo {
 }
 
 impl CldrZipFileInfo {
-    fn download_and_unzip(&self, parent: &CldrPathsDownload) -> Result<PathBuf, Error> {
+    fn download_and_unzip(
+        &self,
+        parent: &CldrPathsDownload,
+    ) -> Result<PathBuf, crate::error::Error> {
         io_util::download_and_unzip(&self.url, &parent.cache_dir)
             .map(|p| p.join(&self.top_dir))
             .map_err(|e| e.into())

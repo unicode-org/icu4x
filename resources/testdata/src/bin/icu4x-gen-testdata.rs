@@ -16,7 +16,7 @@ enum Error {
     Export(icu_fs_data_provider::FsDataError),
     DataProvider(icu_data_provider::DataError),
     Metadata(icu_testdata::metadata::Error),
-    Download(icu_cldr_json_data_provider::download::DownloadError),
+    Download(icu_cldr_json_data_provider::download::Error),
 }
 
 impl fmt::Display for Error {
@@ -55,8 +55,8 @@ impl From<icu_testdata::metadata::Error> for Error {
     }
 }
 
-impl From<icu_cldr_json_data_provider::download::DownloadError> for Error {
-    fn from(err: icu_cldr_json_data_provider::download::DownloadError) -> Error {
+impl From<icu_cldr_json_data_provider::download::Error> for Error {
+    fn from(err: icu_cldr_json_data_provider::download::Error) -> Error {
         Error::Download(err)
     }
 }

@@ -20,8 +20,9 @@ impl FsDataProvider {
     pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, Error> {
         let root_path_buf: PathBuf = root.into();
         let manifest_path = root_path_buf.join(MANIFEST_FILE);
-        let manifest_str = fs::read_to_string(&manifest_path)?;
-        let manifest: Manifest = serde_json::from_str(&manifest_str)?;
+        let manifest_str = fs::read_to_string(&manifest_path).map_err(|e| (e, &manifest_path))?;
+        let manifest: Manifest =
+            serde_json::from_str(&manifest_str).map_err(|e| (e, &manifest_path))?;
         Ok(Self {
             res_root: root_path_buf,
             manifest,

@@ -29,7 +29,7 @@ impl TryFrom<&dyn CldrPaths> for DatesProvider<'_> {
             let path = dir.join("ca-gregorian.json");
 
             let mut resource: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, Some(path)))?;
+                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.append(&mut resource.main.0);
         }
 
@@ -46,7 +46,7 @@ impl TryFrom<&str> for DatesProvider<'_> {
         let mut data = vec![];
 
         let mut resource: cldr_json::Resource =
-            serde_json::from_str(input).map_err(|e| (e, None))?;
+            serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
         data.append(&mut resource.main.0);
 
         Ok(Self {

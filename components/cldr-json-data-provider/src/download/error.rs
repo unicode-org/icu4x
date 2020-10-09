@@ -1,33 +1,35 @@
 use std::error;
 use std::fmt;
 use std::io;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
-pub enum DownloadError {
-    Io(io::Error, PathBuf),
+pub enum Error {
+    Io(io::Error, Option<PathBuf>),
     Reqwest(reqwest::Error),
     HttpStatus(reqwest::StatusCode, String),
     NoCacheDir,
 }
 
-impl From<io::Error> for DownloadError {
-    /// Note: Prefer adding the path to Error::Io instead of using this conversion.
-    fn from(err: io::Error) -> Self {
-        Self::Io(err, PathBuf::new())
+/// To help with debugging, I/O errors should be paired with a file path.
+/// If a path is unavailable, create the error directly: Error::Io(err, None)
+impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
+    fn from(pieces: (std::io::Error, P)) -> Self {
+        Self::Io(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
     }
 }
 
-impl From<reqwest::Error> for DownloadError {
+impl From<reqwest::Error> for Error {
     fn from(err: reqwest::Error) -> Self {
         Self::Reqwest(err)
     }
 }
 
-impl fmt::Display for DownloadError {
+impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::Io(err, path) => write!(f, "{}: {}", err, path.to_string_lossy()),
+            Self::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
+            Self::Io(err, None) => err.fmt(f),
             Self::Reqwest(err) => err.fmt(f),
             Self::HttpStatus(status, url) => write!(f, "HTTP request failed: {}: {}", status, url),
             Self::NoCacheDir => write!(f, "dirs::cache_dir() returned None"),
@@ -35,7 +37,7 @@ impl fmt::Display for DownloadError {
     }
 }
 
-impl error::Error for DownloadError {
+impl error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Self::Io(err, _) => Some(err),
