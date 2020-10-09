@@ -1,4 +1,4 @@
-name: Build & Test
+name: Build and Test
 
 on:
   push:
@@ -76,12 +76,109 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-targets --all-features -- -D warnings
 
+  # Benchmarking & dashboards job
+
+  benchmark:
+    strategy:
+      # max-parallel: 1
+      fail-fast: false
+      # `matrix` creates a job matrix (Cartesian product of possible values for each var)
+      # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+      matrix:
+        component:
+          - components/locale
+          - components/num-util
+          - components/uniset
+          - utils/fixed-decimal
+
+    # If you are modifying and debugging is required, don't be afraid to get
+    # messy in a personal fork, if no better way to do it.
+    # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/296714990
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create output dir
+        run: mkdir -p ./dev/${{ matrix.component }}
+
+      # Benchmarking & dashboards job > Run benchmark.
+
+      - name: Run benchmark
+        run: pushd $PWD && cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && popd
+
+      # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
+      # If it doesn't already exist, it should be created by someone with push permissions, like so:
+      #   # Create a local branch
+      #   $ git checkout --orphan gh-pages
+      #   $ git commit --allow-empty -m "root commit"
+      #   # Push it to create a remote branch
+      #   $ git push origin gh-pages:gh-pages
+
+      # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result & create dashboard (unmerged PR only)
+        # any action that is not a merge to master implies unfinished PR
+        if: github.event_name != 'push' || github.ref != 'refs/heads/master'
+        uses: rhysd/github-action-benchmark@v1.8.1
+        with:
+          name: Rust Benchmark
+          tool: 'cargo'
+          output-file-path: ./dev/${{ matrix.component }}/output.txt
+          benchmark-data-dir-path: ./dev/${{ matrix.component }}
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+          fail-on-alert: true
+          gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
+                                                   # We could use another branch besides `gh-pages` to store this historical benchmark info.
+          auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure 
+                            # that the branch in `gh-pages-branch` is different from the branch used for merges to master/main branch.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+      # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result & create dashboard (merge to master only)
+        # only merges to master (implies PR is finished and approved by this point)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: rhysd/github-action-benchmark@v1.8.1
+        with:
+          name: Rust Benchmark
+          tool: 'cargo'
+          output-file-path: ./dev/${{ matrix.component }}/output.txt
+          benchmark-data-dir-path: ./dev/${{ matrix.component }}
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+          fail-on-alert: true
+          gh-pages-branch: gh-pages  # Requires one-time-only creation of this branch on remote repo.
+                                     # We could use another branch besides `gh-pages` to store this historical benchmark info.
+          auto-push: true  # Use the branch at `gh-pages-branch` to store historical info of benchmark data.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+      # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the files across jobs within the same workflow.
+
+      - name: Switch branch to get result of benchmark pages output (merge to master only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: git checkout gh-pages
+
+      - name: Upload updated benchmark data (merge to master only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
+          name: benchmark-perf
+
   # Doc-GH-Pages job
 
   doc_gh_pages:
+    name: Copy GH pages to docs repo (merge to master only)
+
     runs-on: ubuntu-latest
 
-    needs: [build, format]
+    needs: [build, format, benchmark]
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
@@ -92,6 +189,20 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
+    - name: Create (ensure existence of) folder suitable for copying to external repo
+      run: mkdir -p copy-to-ext-repo
+
+    - name: Create (ensure existence of) folder for benchmark data to copy
+      run: mkdir -p copy-to-ext-repo/dev
+
+    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
+
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
+      with:
+        path: ./copy-to-ext-repo/dev
+        name: benchmark-perf
+
     # Doc-GH-Pages job > Generate `cargo doc` step
 
     - name: Cargo doc
@@ -100,29 +211,34 @@ jobs:
         command: doc
         args: --workspace --release --all-features --no-deps
 
-    # Doc-GH-Pages job > Generate dummy root index.html to redirect to `icu4x` crate
+    # Doc-GH-Pages job > Generate placeholder root index.html to redirect to `icu4x` crate
 
     - name: Create doc /index.html
       run: |
-        mkdir -p target/doc
-        cat > target/doc/index.html <<EOL
+        mkdir -p copy-to-ext-repo
+        cat > copy-to-ext-repo/index.html <<EOL
         <!doctype html>
         <html>
           <head>
             <meta charset="utf-8">
-            <meta http-equiv="refresh" content="0;url=./icu4x" />
+            <meta http-equiv="refresh" content="0;url=./doc/icu4x" />
             <title>ICU4X Developer Docs</title>
           </head>
           <body>
-            <p><a href="./icu4x">Redirect to icu4x crate doc</a></p>
+            <p><a href="./doc/icu4x">Redirect to icu4x crate doc</a></p>
           </body>
         </html>
         EOL
 
-    # Doc-GH-Pages job > Commit docs on GH Pages branch step
+    # Doc-GH-Pages job > Collect API docs files in folder of files to copy to remote docs repo
+
+    - name: Update API docs folder in cache dir
+      run: rm -rf ./copy-to-ext-repo/doc; cp -v -r target/doc ./copy-to-ext-repo
+
+    # Doc-GH-Pages job > Copy docs (+ bench dashboard HTML) to remote docs repo's GH pages branch step
 
     - name: Doc -> Github Pages
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v3.7.0
       with:
         # Setup for publishing to an external repo using `deploy_key` option:
         #
@@ -137,5 +253,5 @@ jobs:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         external_repository: unicode-org/icu4x-docs
         publish_branch: gh-pages
-        publish_dir: ./target/doc
-        commit_message: Rust doc -> GH Pages
+        publish_dir: copy-to-ext-repo
+        commit_message: Rust API docs + benchmark dashboards -> GH Pages

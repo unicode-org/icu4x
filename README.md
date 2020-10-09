@@ -24,12 +24,13 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 
 ## Documentation
 
-More information about the project can be found in [the docs subdirectory](docs/index.md).  To see technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/icu_locale/index.html).
+More information about the project can be found in [the docs subdirectory](docs/index.md).  To see technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu_locale/index.html).
 
 ### Benchmark dashboards
 
-| Component | Runtime                                                               |
-|-----------|-----------------------------------------------------------------------|
-| locale    | [link](https://unicode-org.github.io/icu4x-docs/dev/locale/bench)     |
-| num-util  | [link](https://unicode-org.github.io/icu4x-docs/dev/num-util/bench)   |
-| uniset    | [link](https://unicode-org.github.io/icu4x-docs/dev/uniset/bench)     |
+| Component     | Runtime                                                                  |
+|---------------|--------------------------------------------------------------------------|
+| locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/locale)   |
+| num-util      | [link](https://unicode-org.github.io/icu4x-docs/dev/components/num-util) |
+| uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
+| fixed-decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed-decimal) |
