@@ -107,6 +107,14 @@ jobs:
       - name: Run benchmark
         run: pushd $PWD && cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && popd
 
+      # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
+      # If it doesn't already exist, it should be created by someone with push permissions, like so:
+      #   # Create a local branch
+      #   $ git checkout --orphan gh-pages
+      #   $ git commit --allow-empty -m "root commit"
+      #   # Push it to create a remote branch
+      #   $ git push origin gh-pages:gh-pages
+
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
       - name: Store benchmark result & create dashboard (unmerged PR only)
