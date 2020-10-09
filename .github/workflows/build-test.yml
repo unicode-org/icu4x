@@ -111,10 +111,41 @@ jobs:
       - name: Run benchmark
         run: pushd $PWD && cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && popd
 
-      # Benchmarking & dashboards job > Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+      # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
       - name: Store benchmark result (create dashboard)
         uses: rhysd/github-action-benchmark@v1.8.1
+
+
+        # if: !(github.event_name == 'push' && github.ref == 'refs/heads/master')
+        if: false
+
+
+        with:
+          name: Rust Benchmark
+          tool: 'cargo'
+          output-file-path: ./dev/${{ matrix.component }}/output.txt
+          benchmark-data-dir-path: ./dev/${{ matrix.component }}
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+          fail-on-alert: true
+          gh-pages-branch: gh-pages  # Requires one-time-only creation of this branch on remote repo.
+                                     # We could use another branch besides `gh-pages` to store this historical benchmark info.
+          auto-push: false  # Do not store historical benchmark info of unfinished PRs.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+      # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result (create dashboard)
+        uses: rhysd/github-action-benchmark@v1.8.1
+
+
+        # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: true
+
+
         with:
           name: Rust Benchmark
           tool: 'cargo'
