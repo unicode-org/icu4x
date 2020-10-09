@@ -2,7 +2,7 @@
 
 ICU4X is a set of internationalization components for Unicode.
 
-# Status [![crates.io](http://meritbadge.herokuapp.com/icu-locale)](https://crates.io/crates/icu-locale)
+# Status [![crates.io](http://meritbadge.herokuapp.com/icu_locale)](https://crates.io/crates/icu_locale)
 
 The project is in an incubation period.
 

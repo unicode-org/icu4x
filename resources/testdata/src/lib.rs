@@ -1,4 +1,4 @@
-//! `icu-testdata` is a unit testing package for [`ICU4X`].
+//! `icu_testdata` is a unit testing package for [`ICU4X`].
 //!
 //! The package exposes a DataProvider with stable data useful for unit testing. The data is
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.

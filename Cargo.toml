@@ -1,16 +1,16 @@
 [workspace]
 
 members = [
-    "components/cldr-json-data-provider",
-    "components/data-provider",
-    "components/fs-data-provider",
+    "components/cldr_json_data_provider",
+    "components/data_provider",
+    "components/fs_data_provider",
     "components/icu",
     "components/icu4x",
     "components/uniset",
     "components/locale",
     "components/locale/macros",
-    "components/pluralrules",
+    "components/plurals",
     "components/datetime",
     "resources/testdata",
-    "utils/fixed-decimal",
+    "utils/fixed_decimal",
 ]

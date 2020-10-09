@@ -1,6 +1,6 @@
 [package]
-name = "icu_uniset"
-description = "API for managing Unicode Language and Locale Identifiers"
+name = "fixed_decimal"
+description = "An API for representing numbers in a human-readable form"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -11,14 +11,22 @@ categories = ["internationalization"]
 include = [
     "src/**/*",
     "Cargo.toml",
+    "README.md"
 ]
 
+[dependencies]
+smallvec = "1.4"
+static_assertions = "1.1"
+
 [dev-dependencies]
+rand = "0.7"
 criterion = "0.3.3"
+rand_pcg = "0.2"
+rand_distr = "0.2"
 
 [lib]
 bench = false
 
 [[bench]]
-name = "inv_list"
+name = "fixed_decimal"
 harness = false

@@ -1,4 +1,4 @@
-//! `icu-locale` is one of the [`ICU4X`] components.
+//! `icu_locale` is one of the [`ICU4X`] components.
 //!
 //! It is a core API for parsing, manipulating, and serializing Unicode Language
 //! and Locale Identifiers.

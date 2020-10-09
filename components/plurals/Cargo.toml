@@ -1,6 +1,6 @@
 [package]
-name = "icu_datetime"
-description = "API for managing Unicode Language and Locale Identifiers"
+name = "icu_plurals"
+description = "Unicode Plural Rules categorizer for numeric input."
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -17,18 +17,29 @@ include = [
 [dependencies]
 icu_locale = { path = "../locale" }
 icu_data_provider = { path = "../data_provider" }
+fixed_decimal = { path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = {version = "1.0" }
+icu_locale = { path = "../locale", features = ["serde"] }
 icu_data_provider = { path = "../data_provider", features = ["invariant"] }
 icu_testdata = { path = "../../resources/testdata" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+
+[features]
+default = []
+
+bench = []
 
 [[bench]]
-name = "datetime"
+name = "operands"
 harness = false
 
 [[bench]]
-name = "pattern"
+name = "parser"
+harness = false
+
+[[bench]]
+name = "pluralrules"
 harness = false

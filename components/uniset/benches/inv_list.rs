@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_unicodeset::UnicodeSet;
+use icu_uniset::UnicodeSet;
 use std::char;
 
 fn contains_bench(c: &mut Criterion) {

@@ -1,0 +1,38 @@
+[package]
+name = "icu_fs_data_provider"
+description = "ICU4X data provider that reads from structured data files"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+icu_data_provider = { path = "../data_provider" }
+icu_locale = { path = "../locale", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Dependencies for the export module
+erased-serde = { version = "0.3", optional = true }
+log = { version = "0.4", optional = true }
+
+# Dependencies for the binary
+clap = { version = "2.33", optional = true }
+icu_cldr_json_data_provider = { path = "../cldr_json_data_provider", features = ["download"], optional = true }
+simple_logger = { version = "1.10", optional = true }
+
+[features]
+export = ["erased-serde", "icu_data_provider/invariant", "log"]
+export-bin = ["export", "clap", "icu_cldr_json_data_provider", "simple_logger"]
+
+[[bin]]
+name = "icu4x-cldr-export"
+required-features = [ "export-bin" ]

@@ -1,6 +1,6 @@
 [package]
-name = "icu-locale-macros"
-description = "proc-macros for icu-locale"
+name = "icu_locale_macros"
+description = "proc-macros for icu_locale"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -18,5 +18,5 @@ include = [
 proc_macro = true
 
 [dependencies]
-icu-locale = { version = "0.0.1", path = "../" }
+icu_locale = { version = "0.0.1", path = "../" }
 tinystr = "0.3"

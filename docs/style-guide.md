@@ -33,7 +33,7 @@ Follow the naming advice in [Naming - Rust API Guidelines](https://rust-lang.git
 
 This should result in Crate names always being unambiguously mappable to/from package names (e.g. the Crate "foo_bar" relates to the package "foo-bar").
 
-Each component should have its own unique name in form `icu-{package}` which will be used for its releases. When released as part of the meta `icu` package, it will be re-exported as `icu::{package}::{struct}` and for core structures it may also be re-exported as `icu::{struct}}`.
+Each component should have its own unique name in form `icu_{package}` which will be used for its releases. When released as part of the meta `icu` package, it will be re-exported as `icu::{package}::{struct}` and for core structures it may also be re-exported as `icu::{struct}}`.
 
 Within a single crate, exposure of structs and functions via their modules is up to the discretion of the author. As a rule of thumb, items that are required for common patterns should be available directly, while items needed only for a subset of use cases may be exposed via their modules.
 
@@ -60,24 +60,24 @@ This concerns types that are available for public use outside of Rust.
 For similarly named types that serve analogous purposes in orthogonal APIs,
 prefer adopting slightly repetitive names as shown below:
 
-* **DO**: `pluralrules::PluralRulesOptions` and `listformat::ListFormatOptions`.
-* **DON'T**: `pluralrules::Options` and `listformat::Options`.
+* **DO**: `plurals::PluralRulesOptions` and `listformat::ListFormatOptions`.
+* **DON'T**: `plurals::Options` and `listformat::Options`.
 * **Rationale**: The ICU4X team has a preference for importing types by name and not
   using module names as disambiguators.  In the 'DO' case above, one would do:
 
   ```rust
   use {
-    pluralrules::PluralRulesOptions,
-	listformat::ListFormatOptions,
+      plurals::PluralRulesOptions,
+      listformat::ListFormatOptions,
   }
 
   // ... later
-  let opt1 = PluralRulesOptions::new();  // vs pluralrules::Options::new()
+  let opt1 = PluralRulesOptions::new();  // vs plurals::Options::new()
   let opt2 = ListFormatOptions::new();  // vx listofrmat::Options::new()
   ```
 
-* **DO**: `pluralrules::PluralRulesError`
-* **DON'T**: `pluralrules::Error`
+* **DO**: `plurals::PluralRulesError`
+* **DON'T**: `plurals::Error`
 * **Rationale**: In IDE and rustdoc, only an unqualified name  (`Error`)  appears,
   leading to confusion about what the fully qualified error type is.
 
@@ -110,10 +110,10 @@ their type.
 
 | Package | Crate | Standalone Import | ICU Meta-package |
 |----|----|----|----|
-| locale | `icu-locale` | `use icu_locale::Locale` | `use icu::Locale` |
-| pluralrules | `icu-pluralrules` | `use icu_pluralrules::PluralRules` | `use icu::PluralRules` |
-| datetime | `icu-datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
-| datetime | `icu-datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
+| locale | `icu_locale` | `use icu_locale::Locale` | `use icu::Locale` |
+| plurals | `icu_plurals` | `use icu_plurals::PluralRules` | `use icu::PluralRules` |
+| datetime | `icu_datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
+| datetime | `icu_datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
 
 While the scheme may feel repetitive when looking at the import lines, it pays off in being unambigous without aliasing when multiple structs from different components get used together:
 

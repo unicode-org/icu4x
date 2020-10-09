@@ -15,10 +15,10 @@ include = [
 ]
 
 [dependencies]
-icu-datetime = { path = "../datetime" }
-icu-locale = { path = "../locale" }
-icu-pluralrules = { path = "../pluralrules" }
-icu-unicodeset = { path = "../uniset" }
+icu_datetime = { path = "../datetime" }
+icu_locale = { path = "../locale" }
+icu_plurals = { path = "../plurals" }
+icu_uniset = { path = "../uniset" }
 
 [dev-dependencies]
-icu-testdata = { path = "../../resources/testdata" }
+icu_testdata = { path = "../../resources/testdata" }
