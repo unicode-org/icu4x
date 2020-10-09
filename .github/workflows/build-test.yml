@@ -125,45 +125,26 @@ jobs:
           fail-on-alert: true
           gh-pages-branch: gh-pages  # Requires one-time-only creation of this branch on remote repo.
                                      # We could use another branch besides `gh-pages` to store this historical benchmark info.
-          auto-push: false  # Use the branch at `gh-pages-branch` to store historical info of benchmark data, but do so manually.
+          auto-push: true  # Use the branch at `gh-pages-branch` to store historical info of benchmark data.
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
           alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
-      # Benchmarking & dashboards job > Store output dashboard HTML and upload output dashboard HTML.
-
-      # By "store output", we mean push commit to repo.
-      # By "upload", we mean to "persist" the files across jobs within the same workflow.
+      # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the files across jobs within the same workflow.
 
       - name: Switch branch to gh-pages to get result of benchmark pages output
         run: git checkout gh-pages
 
-      # This is the manual push of the commit to the repo that contains the benchmark action's output dashboard files.
-      # The branch notation in the `git push` command below should match the branch supplied in the benchmark action under `gh-pages-branch`.
-      # The push is from the PR's temporary speculative merge commit within the GH action's VM's checked-out repo working tree, and the destination is the main repo.
-      - name: Store dashboard output files commit in main repo (master branch only)
-        run: git push 'https://${{ env.GITHUB_ACTOR }}:${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/unicode-org/icu4x.git' gh-pages:gh-pages
-
-
-        # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-
-
-      - name: Upload updated benchmark data (master branch only)
+      - name: Upload updated benchmark data
         uses: actions/upload-artifact@v2
         with:
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
 
 
-        # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-
   # Doc-GH-Pages job
 
   doc_gh_pages:
-    name: Copy GH pages to docs repo (master branch only)
-
     runs-on: ubuntu-latest
 
     needs: [build, format, benchmark]
