@@ -1,0 +1,15 @@
+# based on and taken from https://github.com/boa-dev/criterion-compare-action
+
+on: [pull_request]
+name: compare PR vs. master/main benchmarks
+jobs:
+  runBenchmark:
+    name: run benchmark comparison
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: jasonwilliams/criterion-compare-action@move_to_actions
+        with:
+          # cwd: "subDirectory (optional)"
+          # benchName: "example-bench-target" # Optional. Compare only this benchmark target
+          token: ${{ secrets.GITHUB_TOKEN }}
