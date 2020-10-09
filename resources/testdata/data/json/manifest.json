@@ -13,14 +13,13 @@
       "es",
       "es-AR",
       "fr",
-      "he",
+      "ja",
       "sr",
       "sr-Cyrl",
       "sr-Latn",
       "th",
-      "und",
-      "zh",
-      "zh-Hant"
+      "tr",
+      "und"
     ]
   },
   "syntax": "Json"

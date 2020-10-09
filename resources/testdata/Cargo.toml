@@ -57,10 +57,10 @@ locales = [
     # - Often the first non-English locale to receive new data in CLDR
     "fr",
 
-    # Hebrew:
-    # - Non-Latin alphabet
-    # - Right to Left
-    "he",
+    # Japanese:
+    # - Four scripts
+    # - Complex date patterns
+    "ja",
 
     # Serbian:
     # - Multiple scripts
@@ -73,14 +73,12 @@ locales = [
     # - Complex word breaking
     "th",
 
+    # Turkish:
+    # - Interesting case-mappings
+    "tr",
+
     # Root data
     "und",
-
-    # Chinese:
-    # - The default "zh" uses Simplified Chinese
-    # - Also include Traditional Chinese to test script variants
-    "zh",
-    "zh-Hant",
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata
