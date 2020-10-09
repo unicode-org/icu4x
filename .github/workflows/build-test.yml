@@ -142,7 +142,7 @@ jobs:
       # The branch notation in the `git push` command below should match the branch supplied in the benchmark action under `gh-pages-branch`.
       # The push is from the PR's temporary speculative merge commit within the GH action's VM's checked-out repo working tree, and the destination is the main repo.
       - name: Store dashboard output files commit in main repo (master branch only)
-        run: git push 'https://${{ GITHUB_ACTOR }}:${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/unicode-org/icu4x.git' gh-pages:gh-pages
+        run: git push 'https://${{ env.GITHUB_ACTOR }}:${{ secrets.PERSONAL_GITHUB_TOKEN }}@github.com/unicode-org/icu4x.git' gh-pages:gh-pages
 
 
         # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
