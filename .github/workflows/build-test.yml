@@ -113,8 +113,8 @@ jobs:
         # any action that is not a merge to master implies unfinished PR
 
 
-        # if: {{ github.event_name != 'push' || github.ref != 'refs/heads/master' }}
-        if: false
+        if: github.event_name != 'push' || github.ref != 'refs/heads/master'
+        # if: false
 
 
         uses: rhysd/github-action-benchmark@v1.8.1
@@ -140,8 +140,8 @@ jobs:
         # only merges to master (implies PR is finished and approved by this point)
 
 
-        # if: {{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-        if: true
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        # if: true
 
 
         with:
