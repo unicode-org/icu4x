@@ -18,7 +18,15 @@ include = [
 [package.metadata.icu4x_testdata]
 
 # Locales to include in testdata. Keep this list somewhat short, but cover all features.
+# We use 10 base languages with a small number of variants to allow for 10 languages to be
+# used in microbenchmarks.
 locales = [
+    # Arabic:
+    # - Good example for RTL
+    # - Non-latin numerals in Egypt
+    "ar",
+    "ar-EG",
+
     # Belarusian:
     # - Cyrillic script
     # - Interesting plural rules
@@ -39,22 +47,38 @@ locales = [
     "en-US-posix",
     "en-ZA",
 
-    # Farsi:
-    # - Good example for RTL
-    "fa",
+    # Spanish:
+    #  - Most popular Romance language
+    #  - South American dialect
+    "es",
+    "es-AR",
 
     # French:
     # - Often the first non-English locale to receive new data in CLDR
     "fr",
 
+    # Japanese:
+    # - Four scripts
+    # - Complex date patterns
+    "ja",
+
+    # Serbian:
+    # - Multiple scripts
+    # - Southern Europe
+    "sr",
+    "sr-Cyrl",
+    "sr-Latn",
+
+    # Thai:
+    # - Complex word breaking
+    "th",
+
+    # Turkish:
+    # - Interesting case-mappings
+    "tr",
+
     # Root data
     "und",
-
-    # Chinese:
-    # - The default "zh" uses Simplified Chinese
-    # - Also include Traditional Chinese to test script variants
-    "zh",
-    "zh-Hant",
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata
