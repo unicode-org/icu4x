@@ -13,3 +13,12 @@ include = [
     "Cargo.toml",
     "README.md"
 ]
+
+[dependencies]
+icu-datetime = { path = "../datetime" }
+icu-locale = { path = "../locale" }
+icu-pluralrules = { path = "../pluralrules" }
+icu-unicodeset = { path = "../uniset" }
+
+[dev-dependencies]
+icu-testdata = { path = "../../resources/testdata" }
