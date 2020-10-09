@@ -13,7 +13,7 @@ fn print<T: AsRef<str>>(_input: T) {
 }
 
 fn main() {
-    let provider = FsDataProvider::try_new("./tests/fixtures/data/icu4x")
+    let provider = FsDataProvider::try_new("../../resources/testdata/data/json")
         .expect("Loading file from testdata directory");
 
     let args: Vec<String> = env::args().collect();
@@ -62,7 +62,7 @@ fn main() {
 
     {
         let en: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
-        let pr = PluralRules::try_new(en, PluralRuleType::Cardinal, &provider)
+        let pr = PluralRules::try_new(en, &provider, PluralRuleType::Cardinal)
             .expect("Failed to create PluralRules.");
 
         match pr.select(email_count) {
