@@ -162,7 +162,7 @@ jobs:
       - name: Upload updated benchmark data
         uses: actions/upload-artifact@v2
         with:
-          path: ./dev
+          path: ./dev/${{ matrix.component }}
           name: benchmark-perf
 
       - name: Debug post-bench git repo status #2
@@ -289,6 +289,12 @@ jobs:
     - name: Debug copy-to-ext-repo dir
       run: ls -l ./copy-to-ext-repo
 
+    - name: Create (ensure existence of) folder for benchmark data to copy
+      run: mkdir -p copy-to-ext-repo/dev
+
+    - name: Debug benchmark data
+      run: ls -l ./copy-to-ext-repo/dev/
+
     # - name: Download previous content destined for GH pages
     #   uses: actions/cache@v1
     #   with:
@@ -301,6 +307,16 @@ jobs:
       with:
         path: ./copy-to-ext-repo/dev
         name: benchmark-perf
+
+    - name: Debug benchmark data 1
+      run: ls -l ./copy-to-ext-repo/dev/
+
+    - name: Debug benchmark data 2
+      run: ls -l ./copy-to-ext-repo/dev/components
+
+    - name: Debug benchmark data 3
+      run: ls -l ./copy-to-ext-repo/dev/components/locale
+
 
     # Doc-GH-Pages job > Generate `cargo doc` step
 
