@@ -1,4 +1,4 @@
-name: Build & Test
+name: Build and Test
 
 on:
   push:
@@ -111,7 +111,7 @@ jobs:
 
       - name: Store benchmark result & create dashboard (unmerged PR only)
         uses: rhysd/github-action-benchmark@v1.8.1
-        if: !(github.event_name == 'push' && github.ref == 'refs/heads/master')  # any action that is not a merge to master implies unfinished PR
+        if: {{ !(github.event_name == 'push' && github.ref == 'refs/heads/master') }} # any action that is not a merge to master implies unfinished PR
         with:
           name: Rust Benchmark
           tool: 'cargo'
@@ -131,7 +131,7 @@ jobs:
 
       - name: Store benchmark result & create dashboard (merge to master only)
         uses: rhysd/github-action-benchmark@v1.8.1
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'  # only merges to master (implies PR is finished and approved by this point)
+        if: {{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}  # only merges to master (implies PR is finished and approved by this point)
         with:
           name: Rust Benchmark
           tool: 'cargo'
@@ -169,7 +169,7 @@ jobs:
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: {{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
     steps:
     - uses: actions/checkout@v2
