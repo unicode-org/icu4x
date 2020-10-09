@@ -162,7 +162,7 @@ jobs:
       - name: Upload updated benchmark data
         uses: actions/upload-artifact@v2
         with:
-          path: ./dev/${{ matrix.component }}
+          path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
 
       - name: Debug post-bench git repo status #2
