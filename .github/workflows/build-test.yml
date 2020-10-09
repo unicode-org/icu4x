@@ -87,13 +87,9 @@ jobs:
       matrix:
         component:
           - components/locale
-
-
-          # - components/num-util
-          # - components/uniset
-          # - utils/fixed-decimal
-
-
+          - components/num-util
+          - components/uniset
+          - utils/fixed-decimal
 
     # If you are modifying and debugging is required, don't be afraid to get
     # messy in a personal fork, if no better way to do it.
@@ -113,14 +109,9 @@ jobs:
 
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
-      - name: Store benchmark result (create dashboard)
+      - name: Store benchmark result & create dashboard (unmerged PR only)
         uses: rhysd/github-action-benchmark@v1.8.1
-
-
-        # if: !(github.event_name == 'push' && github.ref == 'refs/heads/master')
-        if: false
-
-
+        if: !(github.event_name == 'push' && github.ref == 'refs/heads/master')  # any action that is not a merge to master implies unfinished PR
         with:
           name: Rust Benchmark
           tool: 'cargo'
@@ -138,14 +129,9 @@ jobs:
 
       # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
-      - name: Store benchmark result (create dashboard)
+      - name: Store benchmark result & create dashboard (merge to master only)
         uses: rhysd/github-action-benchmark@v1.8.1
-
-
-        # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        if: true
-
-
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'  # only merges to master (implies PR is finished and approved by this point)
         with:
           name: Rust Benchmark
           tool: 'cargo'
@@ -172,23 +158,18 @@ jobs:
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
 
-
   # Doc-GH-Pages job
 
   doc_gh_pages:
+    name: Copy GH pages to docs repo (merge to master only)
+
     runs-on: ubuntu-latest
 
     needs: [build, format, benchmark]
 
-
-
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
-
-    # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
     - uses: actions/checkout@v2
@@ -201,7 +182,7 @@ jobs:
     - name: Create (ensure existence of) folder for benchmark data to copy
       run: mkdir -p copy-to-ext-repo/dev
 
-    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remot erepo
+    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
 
     - name: Download previous content destined for GH pages
       uses: actions/download-artifact@v2
@@ -257,12 +238,7 @@ jobs:
         # target repo where the Github Pages will be copied to.
         # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-
-
-        # external_repository: unicode-org/icu4x-docs
-        external_repository: echeran/icu4x-docs
-
-
+        external_repository: unicode-org/icu4x-docs
         publish_branch: gh-pages
         publish_dir: copy-to-ext-repo
         commit_message: Rust API docs + benchmark dashboards -> GH Pages
