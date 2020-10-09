@@ -171,15 +171,6 @@ jobs:
       # - name: Save current branch
       #   run: git checkout -b temp-branch
 
-  # ghpages:
-  #   runs-on: ubuntu-latest
-
-  #   needs: [ benchmark ]
-
-  #   steps:
-
-      # - uses: actions/checkout@v2
-
       - name: debug workflow job dependency
         run: echo "the component value from the previous job in WF = " && echo "[ ${{ matrix.component }} ]"
       
@@ -220,40 +211,38 @@ jobs:
       #     path: ./copy-to-ext-repo
       #     name: copy-to-ext-repo
 
-      - name: Dashboard -> Github Pages
-        uses: peaceiris/actions-gh-pages@v3.7.0
 
 
+      # - name: Dashboard -> Github Pages
+      #   uses: peaceiris/actions-gh-pages@v3.7.0
 
 
-        ## Only create docs for merges/pushes to master (skip PRs).
-        ## Multiple unfinished PRs should not clobber docs from approved code.
-        # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      #   ## Only create docs for merges/pushes to master (skip PRs).
+      #   ## Multiple unfinished PRs should not clobber docs from approved code.
+      #   # if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
 
+      #   with:
+      #     # Setup for publishing to an external repo using `deploy_key` option:
+      #     #
+      #     # Step 1 - Create SSH key pair. Use your public key as a Github "Deploy Key" and your private
+      #     # key as a Github "Secret". Where to register these keys comes next.
+      #     # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-create-ssh-deploy-key
+      #     #
+      #     # Step 2 - After creating public/private key pair, put the private key in the repo running the
+      #     # action as a Secret and call it "ACTIONS_DEPLOY_KEY". Put the public key as a Deploy Key in the
+      #     # target repo where the Github Pages will be copied to.
+      #     # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
+      #     deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 
 
-        with:
-          # Setup for publishing to an external repo using `deploy_key` option:
-          #
-          # Step 1 - Create SSH key pair. Use your public key as a Github "Deploy Key" and your private
-          # key as a Github "Secret". Where to register these keys comes next.
-          # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-create-ssh-deploy-key
-          #
-          # Step 2 - After creating public/private key pair, put the private key in the repo running the
-          # action as a Secret and call it "ACTIONS_DEPLOY_KEY". Put the public key as a Deploy Key in the
-          # target repo where the Github Pages will be copied to.
-          # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-
-
-          external_repository: echeran/icu4x-docs
+      #     external_repository: echeran/icu4x-docs
 
 
           
-          publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
-          publish_dir: copy-to-ext-repo
-          commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
+      #     publish_branch: gh-pages  # same as `gh-pages-branch` in benchmark action step
+      #     publish_dir: copy-to-ext-repo
+      #     commit_message: Bench Dash (runtime, ${{ matrix.component }}) -> GH Pages
 
 
 
