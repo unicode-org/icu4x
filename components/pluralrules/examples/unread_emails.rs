@@ -22,7 +22,7 @@ fn main() {
 
     {
         print("\n====== Unread Emails (en) example ============", None);
-        let pr = PluralRules::try_new(langid, PluralRuleType::Cardinal, &dtp)
+        let pr = PluralRules::try_new(langid, &dtp, PluralRuleType::Cardinal)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {

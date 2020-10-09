@@ -22,7 +22,7 @@ fn main() {
 
     {
         print("\n====== Elevator Floor (en) example ============", None);
-        let pr = PluralRules::try_new(langid, PluralRuleType::Ordinal, &dtp)
+        let pr = PluralRules::try_new(langid, &dtp, PluralRuleType::Ordinal)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {
