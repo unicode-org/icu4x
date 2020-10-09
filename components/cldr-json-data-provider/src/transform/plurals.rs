@@ -27,7 +27,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
                 .join("supplemental")
                 .join("plurals.json");
             let data: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, Some(path)))?;
+                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.supplemental.plurals_type_cardinal
         };
         let ordinal_rules = {
@@ -36,7 +36,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
                 .join("supplemental")
                 .join("ordinals.json");
             let data: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, Some(path)))?;
+                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.supplemental.plurals_type_ordinal
         };
         Ok(PluralsProvider {

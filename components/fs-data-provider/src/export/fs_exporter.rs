@@ -76,7 +76,8 @@ impl DataExporter for FilesystemExporter {
         path_buf.extend(req.data_key.get_components().iter());
         path_buf.extend(req.data_entry.get_components().iter());
         log::trace!("Writing: {}", req);
-        self.write_to_path(path_buf, obj)
+        self.write_to_path(path_buf, obj)?;
+        Ok(())
     }
 
     fn includes(&self, data_entry: &DataEntry) -> bool {
@@ -106,23 +107,27 @@ impl FilesystemExporter {
         match options.overwrite {
             OverwriteOption::CheckEmpty => {
                 if result.root.exists() {
-                    fs::remove_dir(&result.root)?;
+                    fs::remove_dir(&result.root).map_err(|e| (e, &result.root))?;
                 }
             }
             OverwriteOption::RemoveAndReplace => {
                 if result.root.exists() {
-                    fs::remove_dir_all(&result.root)?;
+                    fs::remove_dir_all(&result.root).map_err(|e| (e, &result.root))?;
                 }
             }
         };
-        fs::create_dir_all(&result.root)?;
+        fs::create_dir_all(&result.root).map_err(|e| (e, &result.root))?;
 
         let mut manifest_path = result.root.to_path_buf();
         manifest_path.push(MANIFEST_FILE);
-        let mut manifest_file = fs::File::create(manifest_path)?;
+        let mut manifest_file =
+            fs::File::create(&manifest_path).map_err(|e| (e, &manifest_path))?;
         let mut manifest_writer = serde_json::Serializer::pretty(&mut manifest_file);
-        result.manifest.serialize(&mut manifest_writer)?;
-        writeln!(&mut manifest_file)?;
+        result
+            .manifest
+            .serialize(&mut manifest_writer)
+            .map_err(|e| (e, &manifest_path))?;
+        writeln!(&mut manifest_file).map_err(|e| (e, &manifest_path))?;
         Ok(result)
     }
 
@@ -139,20 +144,24 @@ impl FilesystemExporter {
         &mut self,
         mut path_buf: PathBuf,
         obj: &dyn erased_serde::Serialize,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Error> {
         let file_extension = self.serializer.get_file_extension();
         match self.manifest.aliasing {
             AliasOption::NoAliases => {
                 path_buf.set_extension(file_extension);
                 if let Some(parent_dir) = path_buf.parent() {
-                    fs::create_dir_all(&parent_dir)?;
+                    fs::create_dir_all(&parent_dir).map_err(|e| (e, parent_dir))?;
                 }
-                let mut file = fs::File::create(&path_buf)?;
-                self.serializer.serialize(obj, &mut file)?;
+                let mut file = fs::File::create(&path_buf).map_err(|e| (e, &path_buf))?;
+                self.serializer
+                    .serialize(obj, &mut file)
+                    .map_err(|e| (e, &path_buf))?;
             }
             AliasOption::Symlink => {
                 let mut buf: Vec<u8> = Vec::new();
-                self.serializer.serialize(obj, &mut buf)?;
+                self.serializer
+                    .serialize(obj, &mut buf)
+                    .map_err(Error::from_serializers_error)?;
                 let mut alias_root = path_buf.clone();
                 assert!(alias_root.pop());
                 self.alias_collection

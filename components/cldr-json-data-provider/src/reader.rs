@@ -10,14 +10,14 @@ pub fn open_reader(path: &Path) -> Result<BufReader<File>, Error> {
     log::trace!("Reading: {:?}", path);
     File::open(&path)
         .map(BufReader::new)
-        .map_err(|e| Error::IoError(e, path.to_path_buf()))
+        .map_err(|e| (e, path).into())
 }
 
 /// Helper function which returns a sorted list of subdirectories.
 pub fn get_subdirectories(root: &Path) -> Result<Vec<PathBuf>, Error> {
     let mut result = vec![];
-    for entry in fs::read_dir(root).map_err(|e| Error::IoError(e, root.to_path_buf()))? {
-        let entry = entry.map_err(|e| Error::IoError(e, root.to_path_buf()))?;
+    for entry in fs::read_dir(root).map_err(|e| (e, root))? {
+        let entry = entry.map_err(|e| (e, root))?;
         let path = entry.path();
         result.push(path);
     }
