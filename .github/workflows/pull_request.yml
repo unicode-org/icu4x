@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: jasonwilliams/criterion-compare-action@2.0.0
+      - uses: jasonwilliams/criterion-compare-action@v2.0.0
         with:
           # cwd: "subDirectory (optional)"
           # benchName: "example-bench-target" # Optional. Compare only this benchmark target
