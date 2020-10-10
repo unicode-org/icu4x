@@ -3,7 +3,7 @@ mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
-use icu_pluralrules::PluralOperands;
+use icu_plurals::PluralOperands;
 use std::convert::TryInto;
 
 fn operands(c: &mut Criterion) {

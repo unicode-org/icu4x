@@ -1,5 +1,5 @@
 [package]
-name = "icu-pluralrules"
+name = "icu-plurals"
 description = "Unicode Plural Rules categorizer for numeric input."
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]

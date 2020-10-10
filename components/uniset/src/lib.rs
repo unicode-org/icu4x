@@ -18,12 +18,12 @@
 //! the [`UnicodeSetBuilder`](struct.UnicodeSetBuilder.html), or from the TBA Properties API.
 //!
 //! ```
-//! use icu_unicodeset::UnicodeSet;
+//! use icu_uniset::UnicodeSet;
 //! let inv_list = vec![65, 70]; // 'A'..'F'
 //! let set = UnicodeSet::from_inversion_list(inv_list);
 //! assert!(set.is_ok());
 //!
-//! use icu_unicodeset::UnicodeSetBuilder;
+//! use icu_uniset::UnicodeSetBuilder;
 //! let mut builder = UnicodeSetBuilder::new();
 //! builder.add_range(&('A'..'Z'));
 //! let set: UnicodeSet = builder.build();
@@ -35,7 +35,7 @@
 //! Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
 //!
 //! ```
-//! use icu_unicodeset::UnicodeSet;
+//! use icu_uniset::UnicodeSet;
 //! let inv_list = vec![65, 70];  // 'A'..'F'
 //! let set = UnicodeSet::from_inversion_list(inv_list).unwrap();
 //! assert!(set.contains('A'));

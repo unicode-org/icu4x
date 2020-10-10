@@ -9,7 +9,7 @@ members = [
     "components/uniset",
     "components/locale",
     "components/locale/macros",
-    "components/pluralrules",
+    "components/plurals",
     "components/datetime",
     "resources/testdata",
     "utils/fixed-decimal",

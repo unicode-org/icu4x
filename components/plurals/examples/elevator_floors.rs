@@ -1,7 +1,7 @@
-// An example application which uses icu_pluralrules to construct a correct
+// An example application which uses icu_plurals to construct a correct
 // sentence for English based on the numerical value in Ordinal category.
 use icu_locale::LanguageIdentifier;
-use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
+use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
 

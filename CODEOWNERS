@@ -8,6 +8,6 @@
 # List of components with at least two owners as specified in docs/crate-ownership.
 
 components/locale/               @zbraniecki @nciric
-components/pluralrules           @zbraniecki @sffc
+components/plurals/              @zbraniecki @sffc
 components/data-provider/        @sffc
 components/data-provider-json/   @sffc

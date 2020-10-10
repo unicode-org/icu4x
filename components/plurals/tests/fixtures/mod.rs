@@ -1,5 +1,5 @@
 use fixed_decimal::FixedDecimal;
-use icu_pluralrules::PluralOperands;
+use icu_plurals::PluralOperands;
 use serde::Deserialize;
 use std::convert::TryInto;
 

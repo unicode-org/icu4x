@@ -3,7 +3,7 @@ mod helpers;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use icu_pluralrules::{PluralRuleType, PluralRules};
+use icu_plurals::{PluralRuleType, PluralRules};
 
 fn pluralrules(c: &mut Criterion) {
     let plurals_data = helpers::get_plurals_data();

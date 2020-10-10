@@ -7,8 +7,8 @@ use crate::operands::PluralOperands;
 /// # Examples
 ///
 /// ```
-/// use icu_pluralrules::PluralOperands;
-/// use icu_pluralrules::rules::{parse_condition, test_condition};
+/// use icu_plurals::PluralOperands;
+/// use icu_plurals::rules::{parse_condition, test_condition};
 ///
 /// let operands = PluralOperands::from(5_usize);
 /// let condition = parse_condition(b"i = 4..6")

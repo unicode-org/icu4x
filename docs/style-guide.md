@@ -111,7 +111,7 @@ their type.
 | Package | Crate | Standalone Import | ICU Meta-package |
 |----|----|----|----|
 | locale | `icu-locale` | `use icu_locale::Locale` | `use icu::Locale` |
-| pluralrules | `icu-pluralrules` | `use icu_pluralrules::PluralRules` | `use icu::PluralRules` |
+| plurals | `icu-plurals` | `use icu_plurals::PluralRules` | `use icu::PluralRules` |
 | datetime | `icu-datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
 | datetime | `icu-datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
 

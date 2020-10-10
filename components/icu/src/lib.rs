@@ -62,6 +62,6 @@ pub use icu_datetime as datetime;
 #[doc(inline)]
 pub use icu_locale as locale;
 #[doc(inline)]
-pub use icu_pluralrules as plurals;
+pub use icu_plurals as plurals;
 #[doc(inline)]
-pub use icu_unicodeset as uniset;
+pub use icu_uniset as uniset;
