@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602274739416,
+  "lastUpdate": 1602372388310,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -161,6 +161,60 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 96,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3cfe0076e1090be65c1d45f9828945e3d14b6fb",
+          "message": "Rename icu-pluralrules -> icu-plurals and icu-unicodeset -> icu-uniset (#323)",
+          "timestamp": "2020-10-10T16:18:26-07:00",
+          "tree_id": "33247e15156fabf01a869386f41e2b7c604ea977",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3cfe0076e1090be65c1d45f9828945e3d14b6fb"
+        },
+        "date": 1602372386220,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "isize/smaller",
+            "value": 34427,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 83116,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/908070605040302010",
+            "value": 314,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "write_to/908070605040302010",
+            "value": 149,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 94,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
