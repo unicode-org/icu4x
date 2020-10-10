@@ -1,0 +1,5 @@
+{
+  "aliasing": "NoAliases",
+  "locales": "IncludeAll",
+  "syntax": "Bincode"
+}

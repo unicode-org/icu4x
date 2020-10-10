@@ -12,7 +12,6 @@ use icu_fs_data_provider::export::FilesystemExporter;
 use icu_fs_data_provider::manifest;
 use icu_locale::LanguageIdentifier;
 use simple_logger::SimpleLogger;
-use std::ffi::OsStr;
 use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -94,10 +93,19 @@ fn main() -> Result<(), Error> {
                 .help("Delete the output directory before writing data."),
         )
         .arg(
+            Arg::with_name("SYNTAX")
+                .short("s")
+                .long("syntax")
+                .takes_value(true)
+                .possible_value("json")
+                .possible_value("bincode")
+                .help("File format syntax for data files (defaults to JSON)."),
+        )
+        .arg(
             Arg::with_name("PRETTY")
                 .short("p")
                 .long("pretty")
-                .help("Whether to pretty-print the output JSON files."),
+                .help("Whether to pretty-print the output JSON files. Ignored for Bincode."),
         )
         .arg(
             Arg::with_name("CLDR_TAG")
@@ -220,7 +228,7 @@ fn main() -> Result<(), Error> {
     let output_path = PathBuf::from(
         matches
             .value_of_os("OUTPUT")
-            .unwrap_or_else(|| OsStr::new("/tmp/icu4x_json")),
+            .expect("--out is a required option"),
     );
 
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
@@ -238,11 +246,20 @@ fn main() -> Result<(), Error> {
 
     let provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
 
-    let mut options = serializers::JsonSerializerOptions::default();
-    if matches.is_present("PRETTY") {
-        options.style = serializers::StyleOption::Pretty;
-    }
-    let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
+    let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
+        Some("json") | None => {
+            let mut options = serializers::json::Options::default();
+            if matches.is_present("PRETTY") {
+                options.style = serializers::json::StyleOption::Pretty;
+            }
+            Box::new(serializers::json::Serializer::new(options))
+        }
+        Some("bincode") => {
+            let options = serializers::bincode::Options::default();
+            Box::new(serializers::bincode::Serializer::new(options))
+        }
+        _ => unreachable!(),
+    };
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
@@ -264,7 +281,7 @@ fn main() -> Result<(), Error> {
             .collect::<Result<Vec<LanguageIdentifier>, Error>>()?;
         options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
     }
-    let mut exporter = FilesystemExporter::try_new(json_serializer, options)?;
+    let mut exporter = FilesystemExporter::try_new(serializer, options)?;
 
     for key in keys.iter() {
         let result = provider.export_key(key, &mut exporter);

@@ -28,6 +28,8 @@ pub enum LocalesOption {
 pub enum SyntaxOption {
     /// Serialize using JavaScript Object Notation (JSON).
     Json,
+    /// Serialize using Bincode.
+    Bincode,
     // Future: Consider adding a custom format option here.
     // Custom {
     //     file_extension: String,
@@ -39,6 +41,7 @@ impl SyntaxOption {
     pub fn get_file_extension(&self) -> &str {
         match self {
             SyntaxOption::Json => "json",
+            SyntaxOption::Bincode => "bincode",
         }
     }
 }

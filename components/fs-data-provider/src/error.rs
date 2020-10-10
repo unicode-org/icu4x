@@ -1,13 +1,15 @@
+use crate::manifest::SyntaxOption;
 use std::fmt;
 use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub enum Error {
     Io(std::io::Error, Option<PathBuf>),
-    Json(serde_json::error::Error, Option<PathBuf>),
     DataProvider(icu_data_provider::DataError),
+    Deserializer(Box<dyn std::error::Error>, Option<PathBuf>),
     #[cfg(feature = "export")]
     Serializer(erased_serde::Error, Option<PathBuf>),
+    UnknownSyntax(SyntaxOption),
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
@@ -22,7 +24,7 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 /// If a path is unavailable, create the error directly: Error::Json(err, None)
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
-        Self::Json(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
+        Self::Deserializer(Box::new(pieces.0), Some(pieces.1.as_ref().to_path_buf()))
     }
 }
 
@@ -61,17 +63,22 @@ impl fmt::Display for Error {
         match self {
             Error::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
             Error::Io(err, None) => err.fmt(f),
-            Error::Json(err, Some(filename)) => {
-                write!(f, "JSON parse error: {}: {:?}", err, filename)
-            }
-            Error::Json(err, None) => write!(f, "JSON parse error: {}", err),
             Error::DataProvider(err) => err.fmt(f),
+            Error::Deserializer(err, Some(filename)) => {
+                write!(f, "Deserializer error: {}: {:?}", err, filename)
+            }
+            Error::Deserializer(err, None) => write!(f, "Deserializer error: {}", err),
             #[cfg(feature = "export")]
             Error::Serializer(err, Some(filename)) => {
                 write!(f, "Serializer error: {}: {:?}", err, filename)
             }
             #[cfg(feature = "export")]
             Error::Serializer(err, None) => write!(f, "Serializer error: {}", err),
+            Error::UnknownSyntax(syntax_option) => write!(
+                f,
+                "Unknown syntax {:?}. Do you need to enable a feature?",
+                syntax_option
+            ),
         }
     }
 }
@@ -80,10 +87,11 @@ impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Error::Io(err, _) => Some(err),
-            Error::Json(err, _) => Some(err),
             Error::DataProvider(err) => Some(err),
+            Error::Deserializer(err, _) => Some(err.as_ref()),
             #[cfg(feature = "export")]
             Error::Serializer(err, _) => Some(err),
+            _ => None,
         }
     }
 }
