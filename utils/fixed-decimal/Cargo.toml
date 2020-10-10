@@ -24,8 +24,10 @@ criterion = "0.3.3"
 rand_pcg = "0.2"
 rand_distr = "0.2"
 
-[lib]
-bench = false
+[features]
+default = []
+
+bench = []
 
 [[bench]]
 name = "fixed_decimal"

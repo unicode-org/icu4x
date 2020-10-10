@@ -43,7 +43,7 @@ fn parser(c: &mut Criterion) {
         }
     }
 
-    c.bench_function("parser/overview", |b| {
+    c.bench_function("plurals/parser/overview", |b| {
         b.iter(|| {
             for rule in &rules {
                 let _ = parse_condition(black_box(rule.as_bytes()));
@@ -52,7 +52,7 @@ fn parser(c: &mut Criterion) {
     });
 
     #[cfg(feature = "bench")]
-    c.bench_function("parser/lex", |b| {
+    c.bench_function("plurals/parser/lex", |b| {
         use icu_plurals::rules::Lexer;
         b.iter(|| {
             for rule in &rules {

@@ -9,7 +9,7 @@ use std::convert::TryInto;
 fn operands(c: &mut Criterion) {
     let data = helpers::get_numbers_data();
 
-    c.bench_function("operands/overview", |b| {
+    c.bench_function("plurals/operands/overview", |b| {
         b.iter(|| {
             for s in &data.usize {
                 let _: PluralOperands = black_box(*s).into();
@@ -37,7 +37,7 @@ fn operands(c: &mut Criterion) {
     {
         use criterion::BenchmarkId;
 
-        c.bench_function("operands/create/usize", |b| {
+        c.bench_function("plurals/operands/create/usize", |b| {
             b.iter(|| {
                 for s in &data.usize {
                     let _: PluralOperands = black_box(*s).into();
@@ -45,7 +45,7 @@ fn operands(c: &mut Criterion) {
             })
         });
 
-        c.bench_function("operands/create/isize", |b| {
+        c.bench_function("plurals/operands/create/isize", |b| {
             b.iter(|| {
                 for s in &data.isize {
                     let _: PluralOperands = black_box(*s)
@@ -55,7 +55,7 @@ fn operands(c: &mut Criterion) {
             })
         });
 
-        c.bench_function("operands/create/string", |b| {
+        c.bench_function("plurals/operands/create/string", |b| {
             b.iter(|| {
                 for s in &data.string {
                     let _: PluralOperands = black_box(s)
@@ -66,7 +66,7 @@ fn operands(c: &mut Criterion) {
         });
 
         {
-            let mut group = c.benchmark_group("operands/create/string/samples");
+            let mut group = c.benchmark_group("plurals/operands/create/string/samples");
             for s in &data.string_samples {
                 group.bench_with_input(BenchmarkId::from_parameter(s), s, |b, s| {
                     b.iter(|| {
@@ -75,7 +75,7 @@ fn operands(c: &mut Criterion) {
                 });
             }
         }
-        c.bench_function("operands/eq/mostly_unequal", |b| {
+        c.bench_function("plurals/operands/eq/mostly_unequal", |b| {
             let p: PluralOperands = "1".parse().expect("Parse successful");
             b.iter(|| {
                 for s in &data.isize {
@@ -87,7 +87,7 @@ fn operands(c: &mut Criterion) {
             })
         });
 
-        c.bench_function("operands/eq/mostly_equal", |b| {
+        c.bench_function("plurals/operands/eq/mostly_equal", |b| {
             b.iter(|| {
                 for s in &data.isize {
                     let p: PluralOperands = black_box(*s)
@@ -101,7 +101,7 @@ fn operands(c: &mut Criterion) {
             })
         });
 
-        c.bench_function("operands/create/from_fixed_decimal", |b| {
+        c.bench_function("plurals/operands/create/from_fixed_decimal", |b| {
             b.iter(|| {
                 for s in &data.fixed_decimals {
                     let f: FixedDecimal = FixedDecimal::from(s.value)
@@ -118,7 +118,7 @@ fn operands(c: &mut Criterion) {
                 FixedDecimal::from(123450).multiplied_pow10(-4).unwrap(),
                 FixedDecimal::from(2500).multiplied_pow10(-2).unwrap(),
             ];
-            let mut group = c.benchmark_group("operands/create/from_fixed_decimal/samples");
+            let mut group = c.benchmark_group("plurals/operands/create/from_fixed_decimal/samples");
             for s in samples.iter() {
                 group.bench_with_input(
                     BenchmarkId::from_parameter(format!("{:?}", &s)),

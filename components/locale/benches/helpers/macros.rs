@@ -1,4 +1,25 @@
 #[macro_export]
+macro_rules! overview {
+    ($c:expr, $struct:ident, $data_str:expr, $compare:expr) => {
+        $c.bench_function("overview", |b| {
+            b.iter(|| {
+                let mut values = vec![];
+                for s in $data_str {
+                    let value: Result<$struct, _> = black_box(s).parse();
+                    values.push(value.expect("Parsing failed"));
+                }
+                let _ = values.iter().filter(|v| *v == $compare).count();
+
+                let mut strings = vec![];
+                for value in &values {
+                    strings.push(value.to_string());
+                }
+            })
+        });
+    };
+}
+
+#[macro_export]
 macro_rules! construct {
     ($c:expr, $struct:ident, $struct_name:expr, $data_str:expr) => {
         $c.bench_function($struct_name, |b| {

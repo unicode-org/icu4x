@@ -156,3 +156,9 @@ impl PartialEq<&str> for LanguageIdentifier {
         self.to_string().eq(*other)
     }
 }
+
+impl PartialEq<str> for LanguageIdentifier {
+    fn eq(&self, other: &str) -> bool {
+        self.to_string().eq(other)
+    }
+}

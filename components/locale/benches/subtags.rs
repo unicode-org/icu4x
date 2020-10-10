@@ -8,7 +8,7 @@ use icu_locale::ParserError;
 
 macro_rules! subtag_bench {
     ($c:expr, $name:expr, $subtag:ident, $data:expr) => {
-        $c.bench_function(&format!("{}_subtag_parse", $name), |b| {
+        $c.bench_function(&format!("subtags/{}/parse", $name), |b| {
             b.iter(|| {
                 for s in &$data.valid {
                     let _: $subtag = black_box(s).parse().unwrap();

@@ -11,7 +11,7 @@ fn pluralrules(c: &mut Criterion) {
 
     let provider = icu_testdata::get_provider();
 
-    c.bench_function("pluralrules/overview", |b| {
+    c.bench_function("plurals/pluralrules/overview", |b| {
         b.iter(|| {
             for lang in &plurals_data.langs {
                 let pr = PluralRules::try_new(lang.clone(), &provider, PluralRuleType::Cardinal)
@@ -28,7 +28,7 @@ fn pluralrules(c: &mut Criterion) {
         use criterion::black_box;
         use icu_locale::LanguageIdentifier;
 
-        c.bench_function("pluralrules/construct/fs", |b| {
+        c.bench_function("plurals/pluralrules/construct/fs", |b| {
             b.iter(|| {
                 for lang in &plurals_data.langs {
                     PluralRules::try_new(lang.clone(), &provider, PluralRuleType::Ordinal).unwrap();
@@ -40,7 +40,7 @@ fn pluralrules(c: &mut Criterion) {
 
         let loc: LanguageIdentifier = "pl".parse().unwrap();
         let pr = PluralRules::try_new(loc, &provider, PluralRuleType::Cardinal).unwrap();
-        c.bench_function("plurals/select/fs", |b| {
+        c.bench_function("plurals/pluralrules/select/fs", |b| {
             b.iter(|| {
                 for s in &numbers_data.usize {
                     let _ = pr.select(black_box(*s));
