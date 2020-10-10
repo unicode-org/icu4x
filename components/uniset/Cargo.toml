@@ -16,8 +16,10 @@ include = [
 [dev-dependencies]
 criterion = "0.3.3"
 
-[lib]
-bench = false
+[features]
+default = []
+
+bench = []
 
 [[bench]]
 name = "inv_list"

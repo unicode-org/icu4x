@@ -175,3 +175,9 @@ impl PartialEq<&str> for Locale {
         self.to_string().eq(*other)
     }
 }
+
+impl PartialEq<str> for Locale {
+    fn eq(&self, other: &str) -> bool {
+        self.to_string().eq(other)
+    }
+}
