@@ -50,12 +50,8 @@ where
     match syntax_option {
         SyntaxOption::Json => serde_json::from_reader(rdr).map_err(|e| e.into()),
         #[cfg(feature = "bincode")]
-        SyntaxOption::Bincode => {
-            bincode::deserialize_from(rdr).map_err(|e| e.into())
-        },
+        SyntaxOption::Bincode => bincode::deserialize_from(rdr).map_err(|e| e.into()),
         #[cfg(not(feature = "bincode"))]
-        SyntaxOption::Bincode => {
-            Err(Error::UnknownSyntax(syntax_option.clone()))
-        },
+        SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
     }
 }
