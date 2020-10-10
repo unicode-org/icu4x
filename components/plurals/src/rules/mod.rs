@@ -24,7 +24,7 @@
 //! That value expanded into [`PluralOperands`] looks like this:
 //!
 //! ```
-//! use icu_pluralrules::PluralOperands;
+//! use icu_plurals::PluralOperands;
 //! PluralOperands {
 //!     i: 1,
 //!     v: 0,
@@ -48,8 +48,8 @@
 //! When parsed, the resulting [`AST`] will look like this:
 //!
 //! ```
-//! use icu_pluralrules::rules::parse_condition;
-//! use icu_pluralrules::rules::ast::*;
+//! use icu_plurals::rules::parse_condition;
+//! use icu_plurals::rules::ast::*;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!
@@ -90,8 +90,8 @@
 //! matches:
 //!
 //! ```
-//! use icu_pluralrules::rules::{test_condition, parse_condition};
-//! use icu_pluralrules::PluralOperands;
+//! use icu_plurals::rules::{test_condition, parse_condition};
+//! use icu_plurals::PluralOperands;
 //!
 //! let input = "i = 1 and v = 0 @integer 1";
 //!

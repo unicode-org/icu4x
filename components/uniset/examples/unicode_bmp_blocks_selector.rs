@@ -7,7 +7,7 @@
 //
 // This is a simple example of the API use and is severely oversimplified
 // compared to real Unicode block selection.
-use icu_unicodeset::{UnicodeSet, UnicodeSetBuilder};
+use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 fn get_basic_latin_block() -> UnicodeSet {
     let mut builder = UnicodeSetBuilder::new();

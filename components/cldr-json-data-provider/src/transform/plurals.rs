@@ -5,7 +5,7 @@ use crate::CldrPaths;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs::plurals::*;
-use icu_pluralrules::rules::{parse, serialize};
+use icu_plurals::rules::{parse, serialize};
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;

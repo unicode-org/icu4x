@@ -4,7 +4,7 @@ mod helpers;
 use std::convert::TryInto;
 
 use fixed_decimal::FixedDecimal;
-use icu_pluralrules::PluralOperands;
+use icu_plurals::PluralOperands;
 
 #[test]
 fn test_parsing_operands() {

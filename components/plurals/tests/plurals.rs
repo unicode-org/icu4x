@@ -1,5 +1,5 @@
 use icu_locale::LanguageIdentifier;
-use icu_pluralrules::{PluralCategory, PluralRuleType, PluralRules};
+use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 #[test]
 fn test_plural_rules() {

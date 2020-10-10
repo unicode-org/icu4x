@@ -17,7 +17,7 @@ include = [
 [dependencies]
 icu-data-provider = { path = "../data-provider" }
 icu-locale = { path = "../locale" }
-icu-pluralrules = { path = "../pluralrules" }
+icu-plurals = { path = "../plurals" }
 json = "0.12"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

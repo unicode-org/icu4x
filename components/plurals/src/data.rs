@@ -4,8 +4,8 @@
 //!
 //! ```
 //! use icu_locale::LanguageIdentifier;
-//! use icu_pluralrules::{PluralCategory, PluralRuleType, PluralOperands};
-//! use icu_pluralrules::data::{PluralRuleList, RulesSelector};
+//! use icu_plurals::{PluralCategory, PluralRuleType, PluralOperands};
+//! use icu_plurals::data::{PluralRuleList, RulesSelector};
 //! use icu_data_provider::prelude::*;
 //! use icu_data_provider::{InvariantDataProvider, structs};
 //! use std::borrow::Cow;

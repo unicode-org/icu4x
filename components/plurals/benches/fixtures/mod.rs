@@ -1,5 +1,5 @@
 use icu_locale::LanguageIdentifier;
-use icu_pluralrules::PluralCategory;
+use icu_plurals::PluralCategory;
 
 use serde::Deserialize;
 

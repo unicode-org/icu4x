@@ -7,7 +7,7 @@ use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequ
 use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {
-    use icu_pluralrules::rules::parse_condition;
+    use icu_plurals::rules::parse_condition;
 
     let plurals_data = helpers::get_plurals_data();
 
@@ -53,7 +53,7 @@ fn parser(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     c.bench_function("parser/lex", |b| {
-        use icu_pluralrules::rules::Lexer;
+        use icu_plurals::rules::Lexer;
         b.iter(|| {
             for rule in &rules {
                 let _ = Lexer::new(black_box(rule.as_bytes())).count();

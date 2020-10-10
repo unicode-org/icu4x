@@ -1,8 +1,8 @@
 mod fixtures;
 mod helpers;
 
-use icu_pluralrules::rules::{parse, parse_condition, test_condition, Lexer};
-use icu_pluralrules::PluralOperands;
+use icu_plurals::rules::{parse, parse_condition, test_condition, Lexer};
+use icu_plurals::PluralOperands;
 
 #[test]
 fn test_parsing_operands() {

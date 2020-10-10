@@ -1,4 +1,4 @@
-//! `icu-pluralrules` is one of the [`ICU4X`] components.
+//! `icu-plurals` is one of the [`ICU4X`] components.
 //!
 //! This API provides functionality to determine the plural category
 //! appropriate for a given number in a given language.
@@ -21,7 +21,7 @@
 //!
 //! ```
 //! use icu_locale::LanguageIdentifier;
-//! use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
+//! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 //! use icu_data_provider::InvariantDataProvider;
 //!
 //! let lang: LanguageIdentifier = "en".parse()
@@ -131,7 +131,7 @@ pub enum PluralRuleType {
 ///
 /// ```
 /// use icu_locale::LanguageIdentifier;
-/// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
+/// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_data_provider::InvariantDataProvider;
 ///
 /// let lang: LanguageIdentifier = "en".parse()
@@ -207,7 +207,7 @@ impl PluralCategory {
     /// # Examples
     ///
     /// ```
-    /// use icu_pluralrules::PluralCategory;
+    /// use icu_plurals::PluralCategory;
     ///
     /// let mut categories = PluralCategory::all();
     ///
@@ -239,7 +239,7 @@ impl PluralCategory {
 ///
 /// ```
 /// use icu_locale::LanguageIdentifier;
-/// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
+/// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_data_provider::InvariantDataProvider;
 ///
 /// let lang: LanguageIdentifier = "en".parse()
@@ -271,7 +271,7 @@ impl PluralRules {
     ///
     /// ```
     /// use icu_locale::LanguageIdentifier;
-    /// use icu_pluralrules::{PluralRules, PluralRuleType};
+    /// use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_data_provider::InvariantDataProvider;
     ///
     /// let lang: LanguageIdentifier = "en".parse()
@@ -316,7 +316,7 @@ impl PluralRules {
     ///
     /// ```
     /// use icu_locale::LanguageIdentifier;
-    /// use icu_pluralrules::{PluralRules, PluralRuleType, PluralCategory};
+    /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_data_provider::InvariantDataProvider;
     ///
     /// let lang: LanguageIdentifier = "en".parse()
@@ -346,8 +346,8 @@ impl PluralRules {
     /// ```
     /// # use std::convert::TryFrom;
     /// # use icu_locale::LanguageIdentifier;
-    /// # use icu_pluralrules::{PluralRules, PluralRuleType};
-    /// use icu_pluralrules::{PluralCategory, PluralOperands};
+    /// # use icu_plurals::{PluralRules, PluralRuleType};
+    /// use icu_plurals::{PluralCategory, PluralOperands};
     /// # use icu_data_provider::InvariantDataProvider;
     /// #
     /// # let lang: LanguageIdentifier = "en".parse()
