@@ -31,6 +31,5 @@ More information about the project can be found on our [wiki](https://github.com
 | Component     | Runtime                                                                  |
 |---------------|--------------------------------------------------------------------------|
 | locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/locale)   |
-| num-util      | [link](https://unicode-org.github.io/icu4x-docs/dev/components/num-util) |
 | uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
 | fixed-decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed-decimal) |
