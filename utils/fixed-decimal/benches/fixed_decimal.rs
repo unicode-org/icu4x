@@ -22,25 +22,22 @@ fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e4);
     let values: Vec<_> = nums.iter().map(|n| n.to_string()).collect();
     c.bench_function("fixed-decimal/overview", |b| {
+        #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark focuses on short numbers and performs:
             // * Construction of FixedDecimals from isize
             // * Construction of FixedDecimals from strings
             // * Serialization of FixedDecimal to string
-            #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
                 .map(FixedDecimal::from)
                 .count();
             let fds: Vec<_> = values
                 .iter()
-                .map(|v| black_box(v))
+                .map(black_box)
                 .map(|v| FixedDecimal::from_str(&v).expect("Failed to parse"))
                 .collect();
-            fds.iter()
-                .map(|v| black_box(v))
-                .map(|v| v.to_string())
-                .count();
+            fds.iter().map(black_box).map(|v| v.to_string()).count();
         });
     });
 

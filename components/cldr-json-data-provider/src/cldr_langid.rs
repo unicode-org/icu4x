@@ -134,7 +134,7 @@ fn test_order() {
         "zh-CN", //
     ];
     let mut cldr_strings_sorted: Vec<&str> = cldr_strings.iter().copied().collect();
-    cldr_strings_sorted.sort();
+    cldr_strings_sorted.sort_unstable();
     assert_eq!(cldr_strings[..], cldr_strings_sorted[..]);
 
     let cldr_langids: Vec<CldrLangID> = cldr_strings.iter().map(|s| s.parse().unwrap()).collect();

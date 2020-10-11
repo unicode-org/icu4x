@@ -9,6 +9,7 @@ fn uniset_bench(c: &mut Criterion) {
     let worst_sample = UnicodeSet::from_inversion_list(worst_ex).unwrap();
 
     c.bench_function("uniset/overview", |b| {
+        #[allow(clippy::suspicious_map)]
         b.iter(|| {
             best_sample
                 .iter()
