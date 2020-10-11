@@ -89,8 +89,11 @@ jobs:
       # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
       matrix:
         component:
+          - components/fs-data-provider
+          - components/cldr-json-data-provider
+          - components/datetime
           - components/locale
-          - components/num-util
+          - components/pluralrules
           - components/uniset
           - utils/fixed-decimal
 
