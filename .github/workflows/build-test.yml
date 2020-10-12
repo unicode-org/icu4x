@@ -116,7 +116,7 @@ jobs:
           mkdir -p $REL_OUTPUT_PATH;
           export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
           export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
-          cargo bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt
+          cargo bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
           popd
 
       # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
