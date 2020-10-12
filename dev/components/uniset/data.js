@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602372435598,
+  "lastUpdate": 1602530414805,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -215,6 +215,36 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b8b68b61b3372debda6911547f8fafd5bfcc08e2",
+          "message": "Run CI bench command per component (#328)",
+          "timestamp": "2020-10-12T12:16:42-07:00",
+          "tree_id": "1c1a87a7f25c4274b33bb9240b355444586557db",
+          "url": "https://github.com/unicode-org/icu4x/commit/b8b68b61b3372debda6911547f8fafd5bfcc08e2"
+        },
+        "date": 1602530414410,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36909455,
+            "range": "± 1075061",
             "unit": "ns/iter"
           }
         ]
