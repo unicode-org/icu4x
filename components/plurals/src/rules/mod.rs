@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! A single Plural Rule is an expression which tests the value of [`PluralOperands`]
 //! against a condition. If the condition is truthful, then the [`PluralCategory`]
 //! to which the Rule is assigned should be used.

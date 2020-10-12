@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! `icu-datetime` is one of the [`ICU4X`] components.
 //!
 //! It is a core API for formatting date and time to user readable textual representation.
