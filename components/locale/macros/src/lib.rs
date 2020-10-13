@@ -12,12 +12,10 @@ use token_stream::IntoTokenStream;
 fn get_crate_name() -> String {
     if let Ok(name) = crate_name("icu") {
         format!("{}::locale", name)
+    } else if let Ok(name) = crate_name("icu_locale") {
+        name
     } else {
-        if let Ok(name) = crate_name("icu_locale") {
-            name.to_string()
-        } else {
-            "icu_locale".to_string()
-        }
+        "icu_locale".to_string()
     }
 }
 
