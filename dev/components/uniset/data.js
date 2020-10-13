@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602623369897,
+  "lastUpdate": 1602632825962,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -665,6 +665,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35538389,
             "range": "± 776198",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "764c9695a018fdfba767c03d0a8426384b93ba1b",
+          "message": "Replace icu_data_provider and friends with icu_provider (#347)",
+          "timestamp": "2020-10-13T18:43:15-05:00",
+          "tree_id": "a47e616ac505743a8abda324438826b409f02739",
+          "url": "https://github.com/unicode-org/icu4x/commit/764c9695a018fdfba767c03d0a8426384b93ba1b"
+        },
+        "date": 1602632825227,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33020873,
+            "range": "± 1962672",
             "unit": "ns/iter"
           }
         ]
