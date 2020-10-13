@@ -41,6 +41,7 @@ fn test_read_json() {
 }
 
 #[test]
+#[cfg(feature = "bincode")]
 fn test_read_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
