@@ -1,0 +1,43 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+[package]
+name = "icu_provider_cldr"
+description = "Data provider that reads from a CLDR JSON data source"
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+icu_provider = { path = "../provider" }
+icu_locid = { path = "../locid" }
+icu_plurals = { path = "../plurals" }
+json = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde-tuple-vec-map = "1.0"
+tinystr = "0.3"
+
+# Dependencies for the download feature
+urlencoding = { version = "1.1", optional = true }
+reqwest = { version = "0.10.8", features = ["blocking"], optional = true }
+unzip = { version = "0.1.0", optional = true }
+dirs = { version = "3.0", optional = true }
+log = { version = "0.4", optional = true }
+
+[dev-dependencies]
+mktemp = "0.4"
+icu_locid_macros = { path = "../locid/macros" }
+
+[features]
+# Automatically download CLDR data from a host
+download = ["urlencoding", "reqwest", "unzip", "dirs", "log"]

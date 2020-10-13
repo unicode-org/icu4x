@@ -16,7 +16,7 @@ include = [
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
 icu = { path = "../icu" }
-icu_data_provider = { path = "../data_provider", features = ["invariant"] }
+icu_provider = { path = "../provider", features = ["invariant"] }
 
 
 [dev-dependencies]
@@ -24,5 +24,5 @@ criterion = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
 icu_locid = { path = "../locid", features = ["serde"] }
-icu_data_provider = { path = "../data_provider", features = ["invariant"] }
+icu_provider = { path = "../provider", features = ["invariant"] }
 icu_testdata = { path = "../../resources/testdata"  }

@@ -6,7 +6,7 @@ use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{style, DateTimeFormatOptions};
 use crate::pattern::Pattern;
-use icu_data_provider::structs;
+use icu_provider::structs;
 use std::borrow::Cow;
 
 type Result<T> = std::result::Result<T, DateTimeFormatError>;

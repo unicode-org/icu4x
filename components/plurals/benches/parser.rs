@@ -6,7 +6,7 @@ mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
+use icu_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
 use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {

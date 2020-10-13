@@ -19,11 +19,11 @@ include = [
 
 [dependencies]
 icu_locid = { path = "../locid" }
-icu_data_provider = { path = "../data_provider" }
+icu_provider = { path = "../provider" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu_data_provider = { path = "../data_provider", features = ["invariant"] }
+icu_provider = { path = "../provider", features = ["invariant"] }
 icu_testdata = { path = "../../resources/testdata" }
 icu_locid_macros = { path = "../locid/macros" }
 serde = { version = "1.0", features = ["derive"] }

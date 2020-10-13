@@ -6,7 +6,7 @@ use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider::DateTimeDates;
-use icu_data_provider::structs;
+use icu_provider::structs;
 use std::fmt;
 
 /// `FormattedDateTime` is a intermediate structure which can be retrieved as
@@ -22,7 +22,7 @@ use std::fmt;
 /// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::MockDateTime;
-/// # use icu_data_provider::InvariantDataProvider;
+/// # use icu_provider::InvariantDataProvider;
 /// # let lid = langid!("en");
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();

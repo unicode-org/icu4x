@@ -25,7 +25,7 @@
 //! ```
 //! use icu_locid_macros::langid;
 //! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-//! use icu_data_provider::InvariantDataProvider;
+//! use icu_provider::InvariantDataProvider;
 //!
 //! let lid = langid!("en");
 //!
@@ -84,8 +84,8 @@ mod operands;
 pub mod rules;
 
 pub use error::PluralRulesError;
-use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
 use icu_locid::LanguageIdentifier;
+use icu_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
 pub use operands::PluralOperands;
 use std::borrow::Cow;
 use std::convert::TryInto;
@@ -134,7 +134,7 @@ pub enum PluralRuleType {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_data_provider::InvariantDataProvider;
+/// use icu_provider::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -241,7 +241,7 @@ impl PluralCategory {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_data_provider::InvariantDataProvider;
+/// use icu_provider::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -272,7 +272,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType};
-    /// use icu_data_provider::InvariantDataProvider;
+    /// use icu_provider::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -316,7 +316,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-    /// use icu_data_provider::InvariantDataProvider;
+    /// use icu_provider::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -346,7 +346,7 @@ impl PluralRules {
     /// # use icu_locid_macros::langid;
     /// # use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_plurals::{PluralCategory, PluralOperands};
-    /// # use icu_data_provider::InvariantDataProvider;
+    /// # use icu_provider::InvariantDataProvider;
     /// #
     /// # let lid = langid!("en");
     /// #

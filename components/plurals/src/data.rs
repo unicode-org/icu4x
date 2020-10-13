@@ -9,8 +9,8 @@
 //! use icu_locid::LanguageIdentifier;
 //! use icu_plurals::{PluralCategory, PluralRuleType, PluralOperands};
 //! use icu_plurals::data::{PluralRuleList, RulesSelector};
-//! use icu_data_provider::prelude::*;
-//! use icu_data_provider::{InvariantDataProvider, structs};
+//! use icu_provider::prelude::*;
+//! use icu_provider::{InvariantDataProvider, structs};
 //! use std::borrow::Cow;
 //! use std::convert::TryInto;
 //!
@@ -50,7 +50,7 @@ use crate::operands::PluralOperands;
 use crate::rules;
 use crate::rules::ast;
 use crate::{PluralCategory, PluralRulesError};
-use icu_data_provider::structs::plurals::PluralRuleStringsV1;
+use icu_provider::structs::plurals::PluralRuleStringsV1;
 use std::borrow::Cow;
 use std::convert::TryInto;
 

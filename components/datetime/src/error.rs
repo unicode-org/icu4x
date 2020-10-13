@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::pattern;
-use icu_data_provider::prelude::DataError;
+use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`] struct.
 ///

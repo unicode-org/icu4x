@@ -9,5 +9,6 @@
 
 components/locid/               @zbraniecki @nciric
 components/plurals/              @zbraniecki @sffc
-components/data_provider/        @sffc
-components/data_provider-json/   @sffc
+components/provider/        @sffc
+components/provider_cldr/   @sffc
+components/provider_fs/     @sffc
