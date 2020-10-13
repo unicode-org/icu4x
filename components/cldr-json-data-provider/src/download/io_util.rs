@@ -39,7 +39,9 @@ fn download_sync(url: &str, destination: &Path) -> Result<(), Error> {
     Ok(())
 }
 
+// TODO(#333): re-enable with caching to prevent flakiness
 #[test]
+#[ignore]
 fn test_download_sync() -> Result<(), Error> {
     let temp_file = mktemp::Temp::new_file().map_err(|e| Error::Io(e, None))?;
     download_sync(
