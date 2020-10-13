@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602530446178,
+  "lastUpdate": 1602607595751,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -251,6 +251,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9766,
             "range": "± 449",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cc50a71267baf23db4b636b2f9fcc147dcc8eb38",
+          "message": "Fix locale macros to remove dependency on TinyStr (#337)",
+          "timestamp": "2020-10-13T11:42:33-05:00",
+          "tree_id": "e635af6a44159c7986364c1b293856de5518ec7a",
+          "url": "https://github.com/unicode-org/icu4x/commit/cc50a71267baf23db4b636b2f9fcc147dcc8eb38"
+        },
+        "date": 1602607595344,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 6107,
+            "range": "± 701",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 10376,
+            "range": "± 236",
             "unit": "ns/iter"
           }
         ]
