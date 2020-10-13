@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602620572202,
+  "lastUpdate": 1602621307531,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -575,6 +575,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9564,
             "range": "± 147",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "99b68b1b9d1e086b515026473adb457299050b6d",
+          "message": "Initial commit with bincode support (#321)\n\n* Initial commit with bincode support\r\n\r\n* Running cargo fmt\r\n\r\n* Fixing bincode errors.",
+          "timestamp": "2020-10-13T13:30:42-07:00",
+          "tree_id": "5a4498c6922aa1ce18230540b03394bfac8d392d",
+          "url": "https://github.com/unicode-org/icu4x/commit/99b68b1b9d1e086b515026473adb457299050b6d"
+        },
+        "date": 1602621305403,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5454,
+            "range": "± 208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 12897,
+            "range": "± 893",
             "unit": "ns/iter"
           }
         ]
