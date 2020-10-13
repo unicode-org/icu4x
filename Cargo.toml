@@ -4,16 +4,16 @@
 [workspace]
 
 members = [
-    "components/cldr_json_data_provider",
-    "components/data_provider",
     "components/datetime",
     "components/ecma402",
-    "components/fs_data_provider",
     "components/icu",
     "components/icu4x",
     "components/locid",
     "components/locid/macros",
     "components/plurals",
+    "components/provider_cldr",
+    "components/provider_fs",
+    "components/provider",
     "components/uniset",
     "resources/testdata",
     "utils/fixed_decimal",

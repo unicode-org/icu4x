@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use crate::rules::parser::ParserError;
-use icu_data_provider::prelude::DataError;
+use icu_provider::prelude::DataError;
 use std::fmt;
 
 /// A list of possible error outcomes for the [`PluralRules`] struct.

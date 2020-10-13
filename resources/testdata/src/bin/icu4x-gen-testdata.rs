@@ -2,24 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use clap::{App, Arg};
-use icu_cldr_json_data_provider::download::CldrPathsDownload;
-use icu_cldr_json_data_provider::CldrJsonDataProvider;
-use icu_data_provider::icu_data_key;
-use icu_data_provider::iter::IterableDataProvider;
-use icu_fs_data_provider::export::fs_exporter;
-use icu_fs_data_provider::export::serializers;
-use icu_fs_data_provider::export::FilesystemExporter;
-use icu_fs_data_provider::manifest;
+use icu_provider::icu_data_key;
+use icu_provider::iter::IterableDataProvider;
+use icu_provider_cldr::download::CldrPathsDownload;
+use icu_provider_cldr::CldrJsonDataProvider;
+use icu_provider_fs::export::fs_exporter;
+use icu_provider_fs::export::serializers;
+use icu_provider_fs::export::FilesystemExporter;
+use icu_provider_fs::manifest;
 use simple_logger::SimpleLogger;
 use std::fmt;
 use std::path::PathBuf;
 
 enum Error {
     Unsupported(&'static str),
-    Export(icu_fs_data_provider::FsDataError),
-    DataProvider(icu_data_provider::DataError),
+    Export(icu_provider_fs::FsDataError),
+    DataProvider(icu_provider::DataError),
     Metadata(icu_testdata::metadata::Error),
-    Download(icu_cldr_json_data_provider::download::Error),
+    Download(icu_provider_cldr::download::Error),
 }
 
 impl fmt::Display for Error {
@@ -40,14 +40,14 @@ impl fmt::Debug for Error {
     }
 }
 
-impl From<icu_fs_data_provider::FsDataError> for Error {
-    fn from(err: icu_fs_data_provider::FsDataError) -> Error {
+impl From<icu_provider_fs::FsDataError> for Error {
+    fn from(err: icu_provider_fs::FsDataError) -> Error {
         Error::Export(err)
     }
 }
 
-impl From<icu_data_provider::DataError> for Error {
-    fn from(err: icu_data_provider::DataError) -> Error {
+impl From<icu_provider::DataError> for Error {
+    fn from(err: icu_provider::DataError) -> Error {
         Error::DataProvider(err)
     }
 }
@@ -58,8 +58,8 @@ impl From<icu_testdata::metadata::Error> for Error {
     }
 }
 
-impl From<icu_cldr_json_data_provider::download::Error> for Error {
-    fn from(err: icu_cldr_json_data_provider::download::Error) -> Error {
+impl From<icu_provider_cldr::download::Error> for Error {
+    fn from(err: icu_provider_cldr::download::Error) -> Error {
         Error::Download(err)
     }
 }
