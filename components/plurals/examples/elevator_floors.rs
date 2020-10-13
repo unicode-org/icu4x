@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // An example application which uses icu_plurals to construct a correct
 // sentence for English based on the numerical value in Ordinal category.
-use icu_locale::LanguageIdentifier;
+use icu_locale_macros::langid;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 const VALUES: &[usize] = &[0, 2, 25, 1, 3, 2, 4, 10, 7, 0];
@@ -18,13 +18,13 @@ fn print(_input: &str, _value: Option<usize>) {
 }
 
 fn main() {
-    let langid: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
+    let lid = langid!("en");
 
     let provider = icu_testdata::get_provider();
 
     {
         print("\n====== Elevator Floor (en) example ============", None);
-        let pr = PluralRules::try_new(langid, &provider, PluralRuleType::Ordinal)
+        let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Ordinal)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {

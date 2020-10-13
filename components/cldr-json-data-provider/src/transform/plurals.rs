@@ -188,6 +188,7 @@ pub(self) mod cldr_json {
 
 #[test]
 fn test_basic() {
+    use icu_locale_macros::langid;
     use std::borrow::Borrow;
 
     let json_str = std::fs::read_to_string("tests/testdata/plurals.json").unwrap();
@@ -199,7 +200,7 @@ fn test_basic() {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "cs".parse().unwrap(),
+                langid: langid!("cs"),
             },
         })
         .unwrap()

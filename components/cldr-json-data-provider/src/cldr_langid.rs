@@ -22,7 +22,7 @@ impl CldrLangID {
         // TODO: Use LanguageIdentifier::default()
         Self {
             cldr_language: "root".parse().unwrap(),
-            langid: "und".parse().unwrap(),
+            langid: LanguageIdentifier::default(),
         }
     }
 }
@@ -84,6 +84,8 @@ impl<'de> Deserialize<'de> for CldrLangID {
 
 #[test]
 fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    use icu_locale_macros::langid;
+
     let fr = serde_json::from_str::<CldrLangID>(r#""fr""#)?;
     let en = serde_json::from_str::<CldrLangID>(r#""en-US""#)?;
     let root = serde_json::from_str::<CldrLangID>(r#""root""#)?;
@@ -92,21 +94,21 @@ fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
         fr,
         CldrLangID {
             cldr_language: "fr".parse().unwrap(),
-            langid: "fr".parse()?
+            langid: langid!("fr"),
         }
     );
     assert_eq!(
         en,
         CldrLangID {
             cldr_language: "en".parse().unwrap(),
-            langid: "en-US".parse()?
+            langid: langid!("en-US"),
         }
     );
     assert_eq!(
         root,
         CldrLangID {
             cldr_language: "root".parse().unwrap(),
-            langid: "und".parse()?
+            langid: langid!("und"),
         }
     );
 
@@ -150,7 +152,7 @@ fn test_order() {
 fn test_und_root() {
     CldrLangID::from_str("und").expect_err("und should not be allowed as a string");
 
-    let und2 = CldrLangID::from(LanguageIdentifier::from_str("und").unwrap());
+    let und = CldrLangID::from(LanguageIdentifier::default());
     let root = CldrLangID::from_str("root").unwrap();
-    assert_eq!(und2, root);
+    assert_eq!(und, root);
 }

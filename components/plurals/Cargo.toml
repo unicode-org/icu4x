@@ -27,6 +27,7 @@ criterion = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
 icu-locale = { path = "../locale", features = ["serde"] }
+icu-locale-macros = { path = "../locale/macros" }
 icu-data-provider = { path = "../data-provider", features = ["invariant"] }
 icu-testdata = { path = "../../resources/testdata" }
 

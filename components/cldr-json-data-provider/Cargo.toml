@@ -36,6 +36,7 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
+icu-locale-macros = { path = "../locale/macros" }
 
 [features]
 # Automatically download CLDR data from a host

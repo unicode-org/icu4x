@@ -5,7 +5,7 @@
 // from a work log into human readable dates and times.
 use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
-use icu_locale::LanguageIdentifier;
+use icu_locale_macros::langid;
 
 const DATES_ISO: &[&str] = &[
     "2001-09-08T18:46:40:000",
@@ -30,7 +30,7 @@ fn print(_input: &str, _value: Option<usize>) {
 }
 
 fn main() {
-    let langid: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
+    let lid = langid!("en");
 
     let provider = icu_testdata::get_provider();
 
@@ -46,7 +46,7 @@ fn main() {
         ..Default::default()
     };
 
-    let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+    let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
         .expect("Failed to create DateTimeFormat instance.");
     {
         print("\n====== Work Log (en) example ============", None);

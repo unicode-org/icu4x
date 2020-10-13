@@ -14,13 +14,14 @@
 //! use std::borrow::Cow;
 //! use icu_data_provider::prelude::*;
 //! use icu_data_provider::structs::plurals::PluralRuleStringsV1;
+//! use icu_locale_macros::langid;
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
 //! let data: Cow<PluralRuleStringsV1> = data_provider
 //!     .load(&DataRequest {
 //!         data_entry: DataEntry {
-//!             langid: "be".parse().unwrap(),
+//!             langid: langid!("be"),
 //!             variant: None,
 //!         },
 //!         data_key: icu_data_key!(plurals: cardinal@1),

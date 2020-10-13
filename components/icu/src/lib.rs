@@ -34,13 +34,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::LanguageIdentifier;
+//! use icu::locale::macros::langid;
 //! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let langid: LanguageIdentifier = "en".parse()
-//!     .expect("Failed to parse a Language Identifier.");
+//! let lid = langid!("en");
 //!
 //! let options = style::Bag {
 //!     date: Some(style::Date::Long),
@@ -48,7 +47,7 @@
 //!     ..Default::default()
 //! };
 //!
-//! let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+//! let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //! let date: MockDateTime = "2020-09-12T12:35:00".parse()

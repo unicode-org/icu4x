@@ -33,11 +33,12 @@ where
 /// use icu_data_provider::prelude::*;
 /// use icu_data_provider::InvariantDataProvider;
 /// use icu_data_provider::iter::DataEntryCollection;
+/// use icu_locale_macros::langid;
 ///
 /// let provider = InvariantDataProvider;
 /// let expected_entries = vec![DataEntry {
 ///     variant: None,
-///     langid: "und".parse().unwrap(),
+///     langid: langid!("und"),
 /// }];
 /// let actual_entries: Vec<DataEntry> = provider
 ///     .iter_for_key(&icu_data_key!(plurals: cardinal@1))

@@ -45,7 +45,7 @@
 //!     data_key: DATA_KEY,
 //!     data_entry: DataEntry {
 //!         variant: None,
-//!         langid: "und".parse().unwrap(),
+//!         langid: Default::default(),
 //!     }
 //! };
 //! let inv_response = inv_provider.load(&req).unwrap();
