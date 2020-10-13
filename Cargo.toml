@@ -6,14 +6,15 @@
 members = [
     "components/cldr-json-data-provider",
     "components/data-provider",
+    "components/datetime",
+    "components/ecma402",
     "components/fs-data-provider",
     "components/icu",
     "components/icu4x",
-    "components/uniset",
     "components/locale",
     "components/locale/macros",
     "components/plurals",
-    "components/datetime",
+    "components/uniset",
     "resources/testdata",
     "utils/fixed-decimal",
 ]
