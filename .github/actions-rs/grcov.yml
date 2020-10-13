@@ -5,4 +5,7 @@ ignore:
   - "/*"
   - "C:/*"
   - "../*"
-  - "components/pluralrules/src/data/*"
+  - "components/locale/macros"
+  - "**/tests/**"
+  - "**/benches/**"
+  - "**/examples/**"
