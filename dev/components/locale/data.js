@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602607595751,
+  "lastUpdate": 1602608711979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -287,6 +287,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 10376,
             "range": "± 236",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dabd9f259ce3f9cddc0407ebbdaa721098d36238",
+          "message": "Use proc-macro-crate to handle icu vs icu_locale (#338)",
+          "timestamp": "2020-10-13T10:00:42-07:00",
+          "tree_id": "698bee642e47433193a1a86757f0141699f13a49",
+          "url": "https://github.com/unicode-org/icu4x/commit/dabd9f259ce3f9cddc0407ebbdaa721098d36238"
+        },
+        "date": 1602608711520,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5009,
+            "range": "± 289",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9812,
+            "range": "± 375",
             "unit": "ns/iter"
           }
         ]
