@@ -14,7 +14,7 @@
 //! use std::borrow::Cow;
 //! use icu_data_provider::prelude::*;
 //! use icu_data_provider::structs::plurals::PluralRuleStringsV1;
-//! use icu_locale_macros::langid;
+//! use icu_locid_macros::langid;
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!

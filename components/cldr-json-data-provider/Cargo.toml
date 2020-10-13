@@ -19,7 +19,7 @@ include = [
 
 [dependencies]
 icu-data-provider = { path = "../data-provider" }
-icu-locale = { path = "../locale" }
+icu-locid = { path = "../locid" }
 icu-plurals = { path = "../plurals" }
 json = "0.12"
 serde = { version = "1.0", features = ["derive"] }
@@ -36,7 +36,7 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
-icu-locale-macros = { path = "../locale/macros" }
+icu-locid-macros = { path = "../locid/macros" }
 
 [features]
 # Automatically download CLDR data from a host

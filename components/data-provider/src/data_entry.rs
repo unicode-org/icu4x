@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use icu_locale::LanguageIdentifier;
+use icu_locid::LanguageIdentifier;
 use std::borrow::Borrow;
 use std::borrow::Cow;
 use std::fmt;
@@ -47,7 +47,7 @@ impl DataEntry {
     /// ```
     /// use std::borrow::Cow;
     /// use icu_data_provider::prelude::*;
-    /// use icu_locale_macros::langid;
+    /// use icu_locid_macros::langid;
     ///
     /// let data_entry = DataEntry {
     ///     variant: Some(Cow::Borrowed("GBP")),
@@ -96,7 +96,7 @@ impl From<&DataEntry> for DataEntryComponents {
 
 #[test]
 fn test_to_string() {
-    use icu_locale_macros::langid;
+    use icu_locid_macros::langid;
 
     struct TestCase {
         pub data_entry: DataEntry,

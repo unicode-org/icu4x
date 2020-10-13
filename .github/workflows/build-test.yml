@@ -89,7 +89,7 @@ jobs:
       # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
       matrix:
         component:
-          - components/locale
+          - componen../locid
           - components/uniset
 
           # TODO(#320): re-enable

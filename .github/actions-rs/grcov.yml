@@ -5,7 +5,7 @@ ignore:
   - "/*"
   - "C:/*"
   - "../*"
-  - "components/locale/macros"
+  - "components/locid/macros"
   - "**/tests/**"
   - "**/benches/**"
   - "**/examples/**"

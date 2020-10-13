@@ -423,7 +423,7 @@ pub(self) mod cldr_json {
 
 #[test]
 fn test_basic() {
-    use icu_locale_macros::langid;
+    use icu_locid_macros::langid;
     use std::borrow::Cow;
 
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
@@ -453,7 +453,7 @@ fn test_basic() {
 
 #[test]
 fn test_with_numbering_system() {
-    use icu_locale_macros::langid;
+    use icu_locid_macros::langid;
     use std::borrow::Cow;
 
     let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
@@ -478,7 +478,7 @@ fn test_with_numbering_system() {
 
 #[test]
 fn unalias_contexts() {
-    use icu_locale_macros::langid;
+    use icu_locid_macros::langid;
     use std::borrow::Cow;
 
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();

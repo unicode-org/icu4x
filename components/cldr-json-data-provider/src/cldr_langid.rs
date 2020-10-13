@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use icu_locale::LanguageIdentifier;
+use icu_locid::LanguageIdentifier;
 use serde::{Deserialize, Deserializer};
 use std::str::FromStr;
 use tinystr::TinyStr8;
@@ -84,7 +84,7 @@ impl<'de> Deserialize<'de> for CldrLangID {
 
 #[test]
 fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
-    use icu_locale_macros::langid;
+    use icu_locid_macros::langid;
 
     let fr = serde_json::from_str::<CldrLangID>(r#""fr""#)?;
     let en = serde_json::from_str::<CldrLangID>(r#""en-US""#)?;

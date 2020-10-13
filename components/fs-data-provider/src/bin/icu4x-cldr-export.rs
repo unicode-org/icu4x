@@ -13,7 +13,7 @@ use icu_fs_data_provider::export::fs_exporter;
 use icu_fs_data_provider::export::serializers;
 use icu_fs_data_provider::export::FilesystemExporter;
 use icu_fs_data_provider::manifest;
-use icu_locale::LanguageIdentifier;
+use icu_locid::LanguageIdentifier;
 use simple_logger::SimpleLogger;
 use std::fmt;
 use std::path::PathBuf;
@@ -23,7 +23,7 @@ enum Error {
     Unsupported(&'static str),
     Export(icu_fs_data_provider::FsDataError),
     DataProvider(icu_data_provider::DataError),
-    LocaleParser(icu_locale::ParserError, String),
+    LocaleParser(icu_locid::ParserError, String),
     Setup(Box<dyn std::error::Error>),
 }
 

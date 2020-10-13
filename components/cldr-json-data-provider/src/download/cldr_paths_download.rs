@@ -15,7 +15,7 @@ use std::path::PathBuf;
 /// ```
 /// use icu_cldr_json_data_provider::download::CldrPathsDownload;
 /// use icu_cldr_json_data_provider::CldrJsonDataProvider;
-/// use icu_locale_macros::langid;
+/// use icu_locid_macros::langid;
 /// use std::path::PathBuf;
 ///
 /// let paths = CldrPathsDownload::try_from_github_tag("36.0.0")

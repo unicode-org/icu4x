@@ -63,10 +63,10 @@
 pub use icu_datetime as datetime;
 
 pub mod locale {
-    pub use icu_locale::*;
+    pub use icu_locid::*;
 
     pub mod macros {
-        pub use icu_locale_macros::*;
+        pub use icu_locid_macros::*;
     }
 }
 

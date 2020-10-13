@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locale::LanguageIdentifier;
+//! use icu_locid::LanguageIdentifier;
 //! use icu_plurals::{PluralCategory, PluralRuleType, PluralOperands};
 //! use icu_plurals::data::{PluralRuleList, RulesSelector};
 //! use icu_data_provider::prelude::*;

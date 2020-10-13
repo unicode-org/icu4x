@@ -19,7 +19,7 @@ include = [
 
 [dependencies]
 icu-data-provider = { path = "../data-provider" }
-icu-locale = { path = "../locale", features = ["serde"] }
+icu-locid = { path = "../locid", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 
 # Serializers
@@ -38,7 +38,7 @@ icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", features = 
 simple_logger = { version = "1.10", optional = true }
 
 [dev-dependencies]
-icu-locale-macros = { path = "../locale/macros" }
+icu-locid-macros = { path = "../locid/macros" }
 
 [features]
 export = ["erased-serde", "icu-data-provider/invariant", "static_assertions", "log"]

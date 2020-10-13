@@ -90,7 +90,7 @@ gitref = "36.0.0"
 [dependencies]
 icu-data-provider = { path = "../../components/data-provider" }
 icu-fs-data-provider = { path = "../../components/fs-data-provider" }
-icu-locale = { path = "../../components/locale" }
+icu-locid = { path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature
 serde = { version = "1.0", features = ["derive"], optional = true }
@@ -104,10 +104,10 @@ log = { version = "0.4", optional = true }
 simple_logger = { version = "1.10", optional = true }
 
 [dev-dependencies]
-icu-locale-macros = { path = "../../components/locale/macros" }
+icu-locid-macros = { path = "../../components/locid/macros" }
 
 [features]
-metadata = ["serde", "serde_json", "icu-locale/serde"]
+metadata = ["serde", "serde_json", "icu-locid/serde"]
 icu4x-gen-testdata = [
     "cargo_metadata",
     "clap",

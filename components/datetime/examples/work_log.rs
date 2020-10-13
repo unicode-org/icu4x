@@ -5,7 +5,7 @@
 // from a work log into human readable dates and times.
 use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
-use icu_locale_macros::langid;
+use icu_locid_macros::langid;
 
 const DATES_ISO: &[&str] = &[
     "2001-09-08T18:46:40:000",

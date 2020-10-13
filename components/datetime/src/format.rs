@@ -19,7 +19,7 @@ use std::fmt;
 /// # Examples
 ///
 /// ```
-/// # use icu_locale_macros::langid;
+/// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::MockDateTime;
 /// # use icu_data_provider::InvariantDataProvider;

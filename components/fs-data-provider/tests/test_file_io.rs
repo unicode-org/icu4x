@@ -4,7 +4,7 @@
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
 use icu_fs_data_provider::FsDataProvider;
-use icu_locale_macros::langid;
+use icu_locid_macros::langid;
 use std::borrow::Cow;
 
 #[test]

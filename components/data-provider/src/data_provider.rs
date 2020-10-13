@@ -4,7 +4,7 @@
 use crate::cloneable_any::CloneableAny;
 use crate::data_entry::DataEntry;
 use crate::data_key::DataKey;
-use icu_locale::LanguageIdentifier;
+use icu_locid::LanguageIdentifier;
 use std::any::Any;
 use std::any::TypeId;
 use std::borrow::Borrow;

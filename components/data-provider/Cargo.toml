@@ -24,7 +24,7 @@ invariant = []
 serialize_none = []
 
 [dependencies]
-icu-locale = { path = "../locale" }
+icu-locid = { path = "../locid" }
 tinystr = "0.3"
 erased-serde = "0.3"
 smallstr = { version = "0.2", features = ["serde"] }
@@ -33,4 +33,4 @@ serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 serde_json = "1.0"
-icu-locale-macros = { path = "../locale/macros" }
+icu-locid-macros = { path = "../locid/macros" }

@@ -24,7 +24,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locale_macros::langid;
+//! use icu_locid_macros::langid;
 //! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 //! use icu_data_provider::InvariantDataProvider;
 //!
@@ -86,7 +86,7 @@ pub mod rules;
 
 pub use error::PluralRulesError;
 use icu_data_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
-use icu_locale::LanguageIdentifier;
+use icu_locid::LanguageIdentifier;
 pub use operands::PluralOperands;
 use std::borrow::Cow;
 use std::convert::TryInto;
@@ -133,7 +133,7 @@ pub enum PluralRuleType {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_macros::langid;
+/// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_data_provider::InvariantDataProvider;
 ///
@@ -240,7 +240,7 @@ impl PluralCategory {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_macros::langid;
+/// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_data_provider::InvariantDataProvider;
 ///
@@ -271,7 +271,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_macros::langid;
+    /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_data_provider::InvariantDataProvider;
     ///
@@ -315,7 +315,7 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_macros::langid;
+    /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_data_provider::InvariantDataProvider;
     ///
@@ -344,7 +344,7 @@ impl PluralRules {
     ///
     /// ```
     /// # use std::convert::TryFrom;
-    /// # use icu_locale_macros::langid;
+    /// # use icu_locid_macros::langid;
     /// # use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_plurals::{PluralCategory, PluralOperands};
     /// # use icu_data_provider::InvariantDataProvider;

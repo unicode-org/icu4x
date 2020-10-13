@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use cargo_metadata::{self, MetadataCommand};
-use icu_locale::LanguageIdentifier;
+use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::fmt;
 use std::path::PathBuf;
@@ -86,7 +86,7 @@ pub fn load() -> Result<PackageInfo, Error> {
 
 #[test]
 fn test_metadata() {
-    use icu_locale_macros::langid;
+    use icu_locid_macros::langid;
     let package_info = load().expect("Failed to load metadata");
     assert!(package_info
         .package_metadata

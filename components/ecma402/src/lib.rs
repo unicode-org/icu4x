@@ -9,7 +9,7 @@ use icu::locale::LanguageIdentifier;
 /// [link]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRulres/PluralRules
 pub mod pluralrules;
 
-/// An adapter between `icu_locale` and `ecma402_traits`.
+/// An adapter between `icu_locid` and `ecma402_traits`.
 ///
 /// Specifically, adds an implementation of [ecma402_traits::Locale], which is
 /// rudimentary at the moment.
@@ -17,7 +17,7 @@ pub mod pluralrules;
 pub enum Locale {
     /// An ECMA402 compatible [Locale] created from icu4x [LanguageIdentifier].
     FromLangid(LanguageIdentifier),
-    /// An ECMA402 [Locale] created from icu4x [icu_locale::Locale].
+    /// An ECMA402 [Locale] created from icu4x [icu_locid::Locale].
     FromLocale(icu::locale::Locale),
 }
 
