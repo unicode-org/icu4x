@@ -76,8 +76,8 @@ impl Variant {
     /// let variant = unsafe { Variant::from_raw_unchecked(raw) };
     /// assert_eq!(variant, "posix");
     /// ```
-    pub fn into_raw(self) -> TinyStr8 {
-        self.0
+    pub fn into_raw(self) -> u64 {
+        self.0.into()
     }
 
     /// Constructor which takes a raw value returned by
@@ -98,10 +98,10 @@ impl Variant {
     ///
     /// # Safety
     ///
-    /// This function accepts any `TinyStr8` that is expected to be a
-    /// valid `Variant` subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: TinyStr8) -> Self {
-        Self(v)
+    /// This function accepts a `u64` that is expected to be a valid `TinyStr8`
+    /// representing a `Variant` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: u64) -> Self {
+        Self(TinyStr8::new_unchecked(v))
     }
 
     /// A helper function for displaying

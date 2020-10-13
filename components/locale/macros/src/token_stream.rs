@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use icu_locale::subtags;
-use tinystr::{TinyStr4, TinyStr8};
 
 extern crate proc_macro;
 
@@ -18,21 +17,15 @@ pub(crate) trait IntoTokenStream {
     }
 }
 
-impl IntoTokenStream for TinyStr8 {
+impl IntoTokenStream for u32 {
     fn into_token_stream_string(self) -> String {
-        format!(
-            "tinystr::TinyStr8::new_unchecked({})",
-            Into::<u64>::into(self)
-        )
+        format!("{}", self)
     }
 }
 
-impl IntoTokenStream for TinyStr4 {
+impl IntoTokenStream for u64 {
     fn into_token_stream_string(self) -> String {
-        format!(
-            "tinystr::TinyStr4::new_unchecked({})",
-            Into::<u32>::into(self)
-        )
+        format!("{}", self)
     }
 }
 
