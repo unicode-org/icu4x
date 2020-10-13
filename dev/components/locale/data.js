@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602618880587,
+  "lastUpdate": 1602620572202,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -539,6 +539,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 10380,
             "range": "± 744",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "filmil@gmail.com",
+            "name": "Filip Filmar",
+            "username": "filmil"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "04478b52eaf8b68bd1c901bfeb74ef1f8efb49c7",
+          "message": "Implements ecma402_traits with icu4x. (#271)\n\nThis allows (almost) seamless switching between `rust_icu` and\r\nicu4x for plural formatting.\r\n\r\nThe API surface is a bit different with ecma402 than icu4x, which\r\nmay be a necessary concession to API uniformity.\r\n\r\nFor the time being, the significant digits in the formatted number\r\nare not handled completely, so, for example, excessive precision will\r\nnot be handled correctly.\r\n\r\nAlso for the time being, no other APIs defined in `ecma402_traits` have\r\na icu4x implementation.  Plural rules formatting was chosen as an easy\r\ndemo of the common ECMA402 API.",
+          "timestamp": "2020-10-13T13:19:05-07:00",
+          "tree_id": "3f58fd776d2526c5384ac9bb4ed7a072062165d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/04478b52eaf8b68bd1c901bfeb74ef1f8efb49c7"
+        },
+        "date": 1602620571762,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5586,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9564,
+            "range": "± 147",
             "unit": "ns/iter"
           }
         ]
