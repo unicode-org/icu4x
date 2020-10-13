@@ -37,6 +37,12 @@ impl<'p> From<&str> for PatternItem {
     }
 }
 
+impl<'p> From<String> for PatternItem {
+    fn from(input: String) -> Self {
+        Self::Literal(input)
+    }
+}
+
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct Pattern(pub Vec<PatternItem>);
 
@@ -105,6 +111,44 @@ mod tests {
                 "月".into(),
                 (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
                 "日".into(),
+            ]
+            .into_iter()
+            .collect()
+        );
+
+        assert_eq!(
+            Pattern::from_bytes("y'My'M").expect("Parsing pattern failed."),
+            vec![
+                (fields::Year::Calendar.into(), FieldLength::One).into(),
+                "My".into(),
+                (fields::Month::Format.into(), FieldLength::One).into(),
+            ]
+            .into_iter()
+            .collect()
+        );
+
+        assert_eq!(
+            Pattern::from_bytes("y 'My' M").expect("Parsing pattern failed."),
+            vec![
+                (fields::Year::Calendar.into(), FieldLength::One).into(),
+                " My ".into(),
+                (fields::Month::Format.into(), FieldLength::One).into(),
+            ]
+            .into_iter()
+            .collect()
+        );
+
+        assert_eq!(
+            Pattern::from_bytes(" 'r'. 'y'. ").expect("Parsing pattern failed."),
+            vec![" r. y. ".into(),].into_iter().collect()
+        );
+
+        assert_eq!(
+            Pattern::from_bytes("hh 'o''clock' a").expect("Parsing pattern failed."),
+            vec![
+                (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                " o'clock ".into(),
+                (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
             ]
             .into_iter()
             .collect()

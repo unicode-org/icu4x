@@ -5,9 +5,11 @@ use crate::fields;
 
 #[derive(Debug)]
 pub enum Error {
-    Unknown,
     FieldTooLong(fields::FieldSymbol),
     UnknownSubstitution(u8),
+    IllegalCharacter(char),
+    UnclosedLiteral,
+    UnclosedPlaceholder,
 }
 
 impl From<fields::Error> for Error {
