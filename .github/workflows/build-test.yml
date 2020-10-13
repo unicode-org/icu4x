@@ -91,7 +91,10 @@ jobs:
         component:
           - components/locale
           - components/uniset
-          - utils/fixed-decimal
+
+          # TODO(#320): re-enable
+          # - utils/fixed-decimal
+
 
     # If you are modifying and debugging is required, don't be afraid to get
     # messy in a personal fork, if no better way to do it.
