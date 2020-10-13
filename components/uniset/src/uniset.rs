@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::{char, ops::RangeBounds, slice::Chunks};
 
 use super::UnicodeSetError;
@@ -30,8 +33,8 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
-    /// use icu_unicodeset::UnicodeSetError;
+    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::UnicodeSetError;
     /// let empty: Vec<u32> = vec![];
     /// assert_eq!(UnicodeSet::from_inversion_list(empty.clone()), Err(UnicodeSetError::InvalidSet(empty.clone())))
     /// ```
@@ -79,7 +82,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 68, 69, 70];
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// let mut example_iter = example.iter();
@@ -140,7 +143,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 67, 68, 69];
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert!(example.contains('A'));
@@ -159,7 +162,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 67, 68, 69];
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert!(example.contains_range(&('A'..'C')));
@@ -173,7 +176,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// use std::char;
     /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
     /// let example_list = vec![0xD7FE, 0xD7FF, 0xE000, 0xE001];
@@ -196,7 +199,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 70, 85, 91]; // A - E, U - Z
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// let a_to_d = UnicodeSet::from_inversion_list(vec![65, 69]).unwrap();
@@ -231,7 +234,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 68]; // {A, B, C}
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert_eq!(example.span("CABXYZ", true), 3);
@@ -252,7 +255,7 @@ impl UnicodeSet {
     /// # Example:
     ///
     /// ```
-    /// use icu_unicodeset::UnicodeSet;
+    /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 68]; // {A, B, C}
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// assert_eq!(example.span_back("XYZCAB", true), 3);

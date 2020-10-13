@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
@@ -420,6 +423,7 @@ pub(self) mod cldr_json {
 
 #[test]
 fn test_basic() {
+    use icu_locale_macros::langid;
     use std::borrow::Cow;
 
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
@@ -430,7 +434,7 @@ fn test_basic() {
             data_key: icu_data_key!(dates: gregory@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "cs".parse().unwrap(),
+                langid: langid!("cs"),
             },
         })
         .unwrap()
@@ -449,6 +453,7 @@ fn test_basic() {
 
 #[test]
 fn test_with_numbering_system() {
+    use icu_locale_macros::langid;
     use std::borrow::Cow;
 
     let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
@@ -459,7 +464,7 @@ fn test_with_numbering_system() {
             data_key: icu_data_key!(dates: gregory@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "haw".parse().unwrap(),
+                langid: langid!("haw"),
             },
         })
         .unwrap()
@@ -473,6 +478,7 @@ fn test_with_numbering_system() {
 
 #[test]
 fn unalias_contexts() {
+    use icu_locale_macros::langid;
     use std::borrow::Cow;
 
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
@@ -483,7 +489,7 @@ fn unalias_contexts() {
             data_key: icu_data_key!(dates: gregory@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "cs".parse().unwrap(),
+                langid: langid!("cs"),
             },
         })
         .unwrap()

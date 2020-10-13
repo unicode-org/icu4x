@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [workspace]
 
 members = [
@@ -9,7 +12,7 @@ members = [
     "components/uniset",
     "components/locale",
     "components/locale/macros",
-    "components/pluralrules",
+    "components/plurals",
     "components/datetime",
     "resources/testdata",
     "utils/fixed-decimal",

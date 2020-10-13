@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu"
 description = "International Components for Unicode"
@@ -17,8 +20,9 @@ include = [
 [dependencies]
 icu-datetime = { path = "../datetime" }
 icu-locale = { path = "../locale" }
-icu-pluralrules = { path = "../pluralrules" }
-icu-unicodeset = { path = "../uniset" }
+icu-locale-macros = { path = "../locale/macros" }
+icu-plurals = { path = "../plurals" }
+icu-uniset = { path = "../uniset" }
 
 [dev-dependencies]
 icu-testdata = { path = "../../resources/testdata" }

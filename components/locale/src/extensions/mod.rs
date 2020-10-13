@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! Unicode Extensions provide a mechanism to extend the [`LanguageIdentifier`] with
 //! additional bits of information - a combination of a [`LanguageIdentifier`] and `Extensions`
 //! is called [`Locale`].

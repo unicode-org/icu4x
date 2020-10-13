@@ -1,11 +1,14 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use rand::SeedableRng;
 use rand_distr::{Distribution, Triangular};
 use rand_pcg::Lcg64Xsh32;
+use std::str::FromStr;
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use fixed_decimal::FixedDecimal;
-use std::str::FromStr;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
     // Use Lcg64Xsh32, a small, fast PRNG.
@@ -18,6 +21,39 @@ fn triangular_nums(range: f64) -> Vec<isize> {
         .collect()
 }
 
+fn overview_bench(c: &mut Criterion) {
+    let nums = triangular_nums(1e4);
+    let values: Vec<_> = nums.iter().map(|n| n.to_string()).collect();
+    c.bench_function("fixed-decimal/overview", |b| {
+        #[allow(clippy::suspicious_map)]
+        b.iter(|| {
+            // This benchmark focuses on short numbers and performs:
+            // * Construction of FixedDecimals from isize
+            // * Construction of FixedDecimals from strings
+            // * Serialization of FixedDecimal to string
+            nums.iter()
+                .map(|v| black_box(*v))
+                .map(FixedDecimal::from)
+                .count();
+            let fds: Vec<_> = values
+                .iter()
+                .map(black_box)
+                .map(|v| FixedDecimal::from_str(&v).expect("Failed to parse"))
+                .collect();
+            fds.iter().map(black_box).map(|v| v.to_string()).count();
+        });
+    });
+
+    #[cfg(feature = "bench")]
+    {
+        smaller_isize_benches(c);
+        larger_isize_benches(c);
+        to_string_benches(c);
+        from_string_benches(c);
+    }
+}
+
+#[cfg(feature = "bench")]
 fn smaller_isize_benches(c: &mut Criterion) {
     // Smaller nums: -1e4 to 1e4
     let nums = triangular_nums(1e4);
@@ -35,6 +71,7 @@ fn smaller_isize_benches(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn larger_isize_benches(c: &mut Criterion) {
     // Larger nums: -1e16 to 1e16
     let nums = triangular_nums(1e16);
@@ -52,7 +89,10 @@ fn larger_isize_benches(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn to_string_benches(c: &mut Criterion) {
+    use criterion::BenchmarkId;
+
     let objects = [
         FixedDecimal::from(2250).multiplied_pow10(-2).unwrap(),
         FixedDecimal::from(908070605040302010u128),
@@ -88,7 +128,10 @@ fn to_string_benches(c: &mut Criterion) {
     }
 }
 
+#[cfg(feature = "bench")]
 fn from_string_benches(c: &mut Criterion) {
+    use criterion::BenchmarkId;
+
     let objects = [
         "0012.3400",
         "00.0012216734340",
@@ -118,11 +161,5 @@ fn from_string_benches(c: &mut Criterion) {
     }
 }
 
-criterion_group!(
-    benches,
-    smaller_isize_benches,
-    larger_isize_benches,
-    to_string_benches,
-    from_string_benches
-);
+criterion_group!(benches, overview_bench,);
 criterion_main!(benches);

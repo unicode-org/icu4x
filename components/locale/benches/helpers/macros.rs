@@ -1,3 +1,27 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+#[macro_export]
+macro_rules! overview {
+    ($c:expr, $struct:ident, $data_str:expr, $compare:expr) => {
+        $c.bench_function("overview", |b| {
+            b.iter(|| {
+                let mut values = vec![];
+                for s in $data_str {
+                    let value: Result<$struct, _> = black_box(s).parse();
+                    values.push(value.expect("Parsing failed"));
+                }
+                let _ = values.iter().filter(|v| *v == $compare).count();
+
+                let mut strings = vec![];
+                for value in &values {
+                    strings.push(value.to_string());
+                }
+            })
+        });
+    };
+}
+
 #[macro_export]
 macro_rules! construct {
     ($c:expr, $struct:ident, $struct_name:expr, $data_str:expr) => {

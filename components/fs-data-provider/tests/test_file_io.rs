@@ -1,6 +1,10 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
 use icu_fs_data_provider::FsDataProvider;
+use icu_locale_macros::langid;
 use std::borrow::Cow;
 
 #[test]
@@ -13,8 +17,7 @@ fn test_read_json() {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,
-                // TODO: Migrate to LanguageIdentifier macro
-                langid: "ru".parse().expect("Valid language tag"),
+                langid: langid!("ru"),
             },
         })
         .expect("The key should be present in the testdata");
@@ -47,8 +50,7 @@ fn test_read_bincode() {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,
-                // TODO: Migrate to LanguageIdentifier macro
-                langid: "sr".parse().expect("Valid language tag"),
+                langid: langid!("sr"),
             },
         })
         .expect("The key should be present in the testdata");

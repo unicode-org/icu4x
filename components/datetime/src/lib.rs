@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! `icu-datetime` is one of the [`ICU4X`] components.
 //!
 //! It is a core API for formatting date and time to user readable textual representation.
@@ -9,13 +12,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locale::LanguageIdentifier;
+//! use icu_locale_macros::langid;
 //! use icu_datetime::{DateTimeFormat, options::style};
 //! use icu_datetime::MockDateTime;
 //! use icu_data_provider::InvariantDataProvider;
 //!
-//! let langid: LanguageIdentifier = "en".parse()
-//!     .expect("Failed to parse a language identifier.");
+//! let lid = langid!("en");
 //!
 //! let provider = InvariantDataProvider;
 //!
@@ -24,7 +26,7 @@
 //!     time: Some(style::Time::Short),
 //!     ..Default::default()
 //! };
-//! let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+//! let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
@@ -74,13 +76,12 @@ use std::borrow::Cow;
 /// # Examples
 ///
 /// ```
-/// use icu_locale::LanguageIdentifier;
+/// use icu_locale_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
 /// use icu_datetime::MockDateTime;
 /// use icu_data_provider::InvariantDataProvider;
 ///
-/// let langid: LanguageIdentifier = "en".parse()
-///     .expect("Failed to parse a language identifier.");
+/// let lid = langid!("en");
 ///
 /// let provider = InvariantDataProvider;
 ///
@@ -89,7 +90,7 @@ use std::borrow::Cow;
 ///     time: Some(style::Time::Short),
 ///     ..Default::default()
 /// };
-/// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+/// let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -114,19 +115,18 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale::LanguageIdentifier;
+    /// use icu_locale_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_datetime::MockDateTime;
     /// use icu_data_provider::InvariantDataProvider;
     ///
-    /// let langid: LanguageIdentifier = "en".parse()
-    ///     .expect("Failed to parse a language identifier.");
+    /// let lid = langid!("en");
     ///
     /// let provider = InvariantDataProvider;
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let dtf = DateTimeFormat::try_new(langid, &provider, &options);
+    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options);
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
@@ -160,15 +160,14 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locale::LanguageIdentifier;
+    /// # use icu_locale_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::MockDateTime;
     /// # use icu_data_provider::InvariantDataProvider;
-    /// # let langid: LanguageIdentifier = "en".parse()
-    /// #     .expect("Failed to parse a language identifier.");
+    /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(langid, &provider, &options)
+    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
@@ -199,15 +198,14 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locale::LanguageIdentifier;
+    /// # use icu_locale_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::MockDateTime;
     /// # use icu_data_provider::InvariantDataProvider;
-    /// # let langid: LanguageIdentifier = "en".parse()
-    /// #     .expect("Failed to parse a language identifier.");
+    /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
@@ -232,15 +230,14 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locale::LanguageIdentifier;
+    /// # use icu_locale_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::MockDateTime;
     /// # use icu_data_provider::InvariantDataProvider;
-    /// # let langid: LanguageIdentifier = "en".parse()
-    /// #     .expect("Failed to parse a language identifier.");
+    /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)

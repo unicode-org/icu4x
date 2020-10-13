@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::parser::errors::ParserError;
 use std::str::FromStr;
 use tinystr::TinyStr4;
@@ -63,8 +66,8 @@ impl Script {
     /// let script = unsafe { Script::from_raw_unchecked(raw) };
     /// assert_eq!(script, "Latn");
     /// ```
-    pub fn into_raw(self) -> TinyStr4 {
-        self.0
+    pub fn into_raw(self) -> u32 {
+        self.0.into()
     }
 
     /// Constructor which takes a raw value returned by
@@ -85,10 +88,10 @@ impl Script {
     ///
     /// # Safety
     ///
-    /// This function accepts any `TinyStr4` that is expected to be a
-    /// valid `Script` subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: TinyStr4) -> Self {
-        Self(v)
+    /// This function accepts a `u32` that is expected to be a valid `TinyStr4`
+    /// representing a `Script` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: u32) -> Self {
+        Self(TinyStr4::new_unchecked(v))
     }
 
     /// A helper function for displaying

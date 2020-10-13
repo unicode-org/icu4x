@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::error::Error;
 use crate::iter::DataEntryCollection;
 use crate::prelude::*;
@@ -30,11 +33,12 @@ where
 /// use icu_data_provider::prelude::*;
 /// use icu_data_provider::InvariantDataProvider;
 /// use icu_data_provider::iter::DataEntryCollection;
+/// use icu_locale_macros::langid;
 ///
 /// let provider = InvariantDataProvider;
 /// let expected_entries = vec![DataEntry {
 ///     variant: None,
-///     langid: "und".parse().unwrap(),
+///     langid: langid!("und"),
 /// }];
 /// let actual_entries: Vec<DataEntry> = provider
 ///     .iter_for_key(&icu_data_key!(plurals: cardinal@1))

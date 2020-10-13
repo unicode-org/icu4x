@@ -1,4 +1,8 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use icu_locale::LanguageIdentifier;
+use icu_locale_macros::langid;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::prelude::v1::*;
@@ -90,7 +94,7 @@ fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
             data_key: icu_data_key!(decimal: symbols@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "en-US".parse().unwrap(),
+                langid: langid!("en-US"),
             },
         })
         .unwrap()

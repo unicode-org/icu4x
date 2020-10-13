@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! # UnicodeSet
 //! This crate is the [ICU4X](https://github.com/unicode-org/icu4x) implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!
@@ -18,12 +21,12 @@
 //! the [`UnicodeSetBuilder`](struct.UnicodeSetBuilder.html), or from the TBA Properties API.
 //!
 //! ```
-//! use icu_unicodeset::UnicodeSet;
+//! use icu_uniset::UnicodeSet;
 //! let inv_list = vec![65, 70]; // 'A'..'F'
 //! let set = UnicodeSet::from_inversion_list(inv_list);
 //! assert!(set.is_ok());
 //!
-//! use icu_unicodeset::UnicodeSetBuilder;
+//! use icu_uniset::UnicodeSetBuilder;
 //! let mut builder = UnicodeSetBuilder::new();
 //! builder.add_range(&('A'..'Z'));
 //! let set: UnicodeSet = builder.build();
@@ -35,7 +38,7 @@
 //! Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
 //!
 //! ```
-//! use icu_unicodeset::UnicodeSet;
+//! use icu_uniset::UnicodeSet;
 //! let inv_list = vec![65, 70];  // 'A'..'F'
 //! let set = UnicodeSet::from_inversion_list(inv_list).unwrap();
 //! assert!(set.contains('A'));

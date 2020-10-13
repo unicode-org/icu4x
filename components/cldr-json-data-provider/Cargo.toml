@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu-cldr-json-data-provider"
 description = "Data provider that reads from a CLDR JSON data source"
@@ -17,7 +20,7 @@ include = [
 [dependencies]
 icu-data-provider = { path = "../data-provider" }
 icu-locale = { path = "../locale" }
-icu-pluralrules = { path = "../pluralrules" }
+icu-plurals = { path = "../plurals" }
 json = "0.12"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -33,6 +36,7 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
+icu-locale-macros = { path = "../locale/macros" }
 
 [features]
 # Automatically download CLDR data from a host

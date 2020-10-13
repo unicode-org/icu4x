@@ -1,0 +1,52 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+[package]
+name = "icu-plurals"
+description = "Unicode Plural Rules categorizer for numeric input."
+version = "0.0.1"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+icu-locale = { path = "../locale" }
+icu-data-provider = { path = "../data-provider" }
+fixed-decimal = { path = "../../utils/fixed-decimal" }
+
+[dev-dependencies]
+criterion = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = {version = "1.0" }
+icu-locale = { path = "../locale", features = ["serde"] }
+icu-locale-macros = { path = "../locale/macros" }
+icu-data-provider = { path = "../data-provider", features = ["invariant"] }
+icu-testdata = { path = "../../resources/testdata" }
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+
+[features]
+default = []
+
+bench = []
+
+[[bench]]
+name = "operands"
+harness = false
+
+[[bench]]
+name = "parser"
+harness = false
+
+[[bench]]
+name = "pluralrules"
+harness = false

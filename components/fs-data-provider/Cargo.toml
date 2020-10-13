@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu-fs-data-provider"
 description = "ICU4X data provider that reads from structured data files"
@@ -33,6 +36,9 @@ static_assertions = { version = "1.1", optional = true }
 clap = { version = "2.33", optional = true }
 icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", features = ["download"], optional = true }
 simple_logger = { version = "1.10", optional = true }
+
+[dev-dependencies]
+icu-locale-macros = { path = "../locale/macros" }
 
 [features]
 export = ["erased-serde", "icu-data-provider/invariant", "static_assertions", "log"]

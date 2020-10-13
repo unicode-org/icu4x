@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 name: Build and Test
 
 on:
@@ -87,9 +90,11 @@ jobs:
       matrix:
         component:
           - components/locale
-          - components/num-util
           - components/uniset
-          - utils/fixed-decimal
+
+          # TODO(#320): re-enable
+          # - utils/fixed-decimal
+
 
     # If you are modifying and debugging is required, don't be afraid to get
     # messy in a personal fork, if no better way to do it.
@@ -105,7 +110,14 @@ jobs:
       # Benchmarking & dashboards job > Run benchmark.
 
       - name: Run benchmark
-        run: pushd $PWD && cd ./dev/${{ matrix.component }} && (cargo bench -- --output-format bencher | tee output.txt) && popd
+        run: |
+          pushd $PWD && cd ${{ matrix.component }};
+          export REL_OUTPUT_PATH="`dirs +1`/dev/${{ matrix.component }}";
+          mkdir -p $REL_OUTPUT_PATH;
+          export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
+          export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
+          cargo bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt
+          popd
 
       # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
       # If it doesn't already exist, it should be created by someone with push permissions, like so:

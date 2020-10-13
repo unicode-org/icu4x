@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::support::DataKeySupport;
@@ -5,7 +8,7 @@ use crate::CldrPaths;
 use icu_data_provider::iter::DataEntryCollection;
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs::plurals::*;
-use icu_pluralrules::rules::{parse, serialize};
+use icu_plurals::rules::{parse, serialize};
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
@@ -185,6 +188,7 @@ pub(self) mod cldr_json {
 
 #[test]
 fn test_basic() {
+    use icu_locale_macros::langid;
     use std::borrow::Borrow;
 
     let json_str = std::fs::read_to_string("tests/testdata/plurals.json").unwrap();
@@ -196,7 +200,7 @@ fn test_basic() {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,
-                langid: "cs".parse().unwrap(),
+                langid: langid!("cs"),
             },
         })
         .unwrap()

@@ -1,7 +1,10 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
-use icu::locale::LanguageIdentifier;
+use icu::locale::{macros::langid, LanguageIdentifier};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu::uniset::UnicodeSetBuilder;
 use std::env;
@@ -18,9 +21,8 @@ fn main() {
 
     let langid: LanguageIdentifier = args
         .get(1)
-        .unwrap_or(&"en".to_string())
-        .parse()
-        .expect("Failed to parse language identifier.");
+        .map(|s| s.parse().expect("Failed to parse language identifier"))
+        .unwrap_or(langid!("en"));
 
     let user_name = args.get(2).cloned().unwrap_or_else(|| "John".to_string());
 
@@ -59,7 +61,7 @@ fn main() {
     }
 
     {
-        let en: LanguageIdentifier = "en".parse().expect("Failed to parse Language Identifier.");
+        let en = langid!("en");
         let pr = PluralRules::try_new(en, &provider, PluralRuleType::Cardinal)
             .expect("Failed to create PluralRules.");
 

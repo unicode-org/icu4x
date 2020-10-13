@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu-testdata"
 description = "Test data for ICU4X, generated from CLDR."
@@ -99,6 +102,9 @@ clap = { version = "2.33", optional = true }
 icu-cldr-json-data-provider = { path = "../../components/cldr-json-data-provider", optional = true, features = ["download"] }
 log = { version = "0.4", optional = true }
 simple_logger = { version = "1.10", optional = true }
+
+[dev-dependencies]
+icu-locale-macros = { path = "../../components/locale/macros" }
 
 [features]
 metadata = ["serde", "serde_json", "icu-locale/serde"]

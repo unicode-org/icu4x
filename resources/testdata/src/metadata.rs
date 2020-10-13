@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use cargo_metadata::{self, MetadataCommand};
 use icu_locale::LanguageIdentifier;
 use serde::Deserialize;
@@ -83,10 +86,11 @@ pub fn load() -> Result<PackageInfo, Error> {
 
 #[test]
 fn test_metadata() {
+    use icu_locale_macros::langid;
     let package_info = load().expect("Failed to load metadata");
     assert!(package_info
         .package_metadata
         .locales
-        .contains(&("und".parse().unwrap())));
+        .contains(&(langid!("und"))));
     assert!(package_info.package_metadata.locales.len() > 10);
 }

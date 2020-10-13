@@ -1,7 +1,10 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 mod fixtures;
 mod helpers;
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locale::Locale;
 
@@ -9,59 +12,73 @@ fn locale_benches(c: &mut Criterion) {
     let path = "./benches/fixtures/locale.json";
     let data: fixtures::LocaleList = helpers::read_fixture(path).expect("Failed to read a fixture");
 
-    // Construct
+    // Overview
     {
-        let mut group = c.benchmark_group("locale/construct");
+        let mut group = c.benchmark_group("locale");
 
-        construct!(group, Locale, "locale", &data.canonicalized);
+        overview!(group, Locale, &data.canonicalized, "en-US");
 
         group.finish();
     }
 
-    // Stringify
+    #[cfg(feature = "bench")]
     {
-        let mut group = c.benchmark_group("locale/to_string");
+        use criterion::BenchmarkId;
 
-        let locales: Vec<Locale> = data
-            .canonicalized
-            .iter()
-            .map(|s| s.parse().unwrap())
-            .collect();
+        // Construct
+        {
+            let mut group = c.benchmark_group("locale/construct");
 
-        to_string!(group, Locale, "locale", &locales);
+            construct!(group, Locale, "locale", &data.canonicalized);
 
-        group.finish();
-    }
+            group.finish();
+        }
 
-    // Compare
-    {
-        let mut group = c.benchmark_group("locale/compare");
+        // Stringify
+        {
+            let mut group = c.benchmark_group("locale/to_string");
 
-        let locales: Vec<Locale> = data
-            .canonicalized
-            .iter()
-            .map(|s| s.parse().unwrap())
-            .collect();
-        let locales2: Vec<Locale> = data
-            .canonicalized
-            .iter()
-            .map(|s| s.parse().unwrap())
-            .collect();
+            let locales: Vec<Locale> = data
+                .canonicalized
+                .iter()
+                .map(|s| s.parse().unwrap())
+                .collect();
 
-        compare_struct!(group, Locale, "locale", &locales, &locales2);
+            to_string!(group, Locale, "locale", &locales);
 
-        compare_str!(group, Locale, "locale", &locales, &data.canonicalized);
+            group.finish();
+        }
 
-        group.finish();
-    }
+        // Compare
+        {
+            let mut group = c.benchmark_group("locale/compare");
 
-    // Canonicalize
-    {
-        let mut group = c.benchmark_group("locale/canonicalize");
+            let locales: Vec<Locale> = data
+                .canonicalized
+                .iter()
+                .map(|s| s.parse().unwrap())
+                .collect();
+            let locales2: Vec<Locale> = data
+                .canonicalized
+                .iter()
+                .map(|s| s.parse().unwrap())
+                .collect();
 
-        canonicalize!(group, Locale, "locale", &data.casing);
+            compare_struct!(group, Locale, "locale", &locales, &locales2);
 
-        group.finish();
+            compare_str!(group, Locale, "locale", &locales, &data.canonicalized);
+
+            group.finish();
+        }
+
+        // Canonicalize
+        {
+            let mut group = c.benchmark_group("locale/canonicalize");
+
+            canonicalize!(group, Locale, "locale", &data.casing);
+
+            group.finish();
+        }
     }
 }
 

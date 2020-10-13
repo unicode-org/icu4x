@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::script::SCRIPT_LENGTH;
 use crate::parser::errors::ParserError;
 use std::ops::RangeInclusive;
@@ -82,8 +85,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<TinyStr8> {
-        self.0
+    pub fn into_raw(self) -> Option<u64> {
+        self.0.map(Into::<u64>::into)
     }
 
     /// Constructor which takes a raw value returned by
@@ -104,10 +107,13 @@ impl Language {
     ///
     /// # Safety
     ///
-    /// This function accepts any `TinyStr8` that is expected to be a
-    /// valid `Language` subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<TinyStr8>) -> Self {
-        Self(v)
+    /// This function accepts a `u64` that is expected to be a valid `TinyStr8`
+    /// representing a `Language` subtag in canonical syntax.
+    pub const unsafe fn from_raw_unchecked(v: Option<u64>) -> Self {
+        Self(match v {
+            Some(v) => Some(TinyStr8::new_unchecked(v)),
+            None => None,
+        })
     }
 
     /// A helper function for displaying

@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! `ICU` is the main meta-package of the `ICU4X` project.
 //!
 //! It provides a comperhensive selection of Unicode Internationalization Components
@@ -31,13 +34,12 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::LanguageIdentifier;
+//! use icu::locale::macros::langid;
 //! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let langid: LanguageIdentifier = "en".parse()
-//!     .expect("Failed to parse a Language Identifier.");
+//! let lid = langid!("en");
 //!
 //! let options = style::Bag {
 //!     date: Some(style::Date::Long),
@@ -45,7 +47,7 @@
 //!     ..Default::default()
 //! };
 //!
-//! let dtf = DateTimeFormat::try_new(langid, &provider, &options.into())
+//! let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //! let date: MockDateTime = "2020-09-12T12:35:00".parse()
@@ -59,9 +61,16 @@
 //! [`FsDataProvider`]: ../icu_fs_data_provider/struct.FsDataProvider.html
 #[doc(inline)]
 pub use icu_datetime as datetime;
+
+pub mod locale {
+    pub use icu_locale::*;
+
+    pub mod macros {
+        pub use icu_locale_macros::*;
+    }
+}
+
 #[doc(inline)]
-pub use icu_locale as locale;
+pub use icu_plurals as plurals;
 #[doc(inline)]
-pub use icu_pluralrules as plurals;
-#[doc(inline)]
-pub use icu_unicodeset as uniset;
+pub use icu_uniset as uniset;

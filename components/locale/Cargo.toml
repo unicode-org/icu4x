@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu-locale"
 description = "API for managing Unicode Language and Locale Identifiers"
@@ -24,11 +27,17 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 [lib]
-bench = false
+bench = false  # This option is required for Benchmark CI
+
+[features]
+default = []
+
+bench = []
 
 [[bench]]
 name = "subtags"
 harness = false
+required-features = ["bench"]
 
 [[bench]]
 name = "langid"

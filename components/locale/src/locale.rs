@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::parser::{parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use std::fmt::Write;
@@ -173,5 +176,11 @@ impl std::fmt::Display for Locale {
 impl PartialEq<&str> for Locale {
     fn eq(&self, other: &&str) -> bool {
         self.to_string().eq(*other)
+    }
+}
+
+impl PartialEq<str> for Locale {
+    fn eq(&self, other: &str) -> bool {
+        self.to_string().eq(other)
     }
 }

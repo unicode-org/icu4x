@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! Transform Extensions provide information on content transformations in a given locale.
 //!
 //! The main struct for this extension is [`Transform`] which contains [`Fields`] and an

@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use icu_locale::LanguageIdentifier;
 use serde::{Deserialize, Deserializer};
 use std::str::FromStr;
@@ -19,7 +22,7 @@ impl CldrLangID {
         // TODO: Use LanguageIdentifier::default()
         Self {
             cldr_language: "root".parse().unwrap(),
-            langid: "und".parse().unwrap(),
+            langid: LanguageIdentifier::default(),
         }
     }
 }
@@ -81,6 +84,8 @@ impl<'de> Deserialize<'de> for CldrLangID {
 
 #[test]
 fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
+    use icu_locale_macros::langid;
+
     let fr = serde_json::from_str::<CldrLangID>(r#""fr""#)?;
     let en = serde_json::from_str::<CldrLangID>(r#""en-US""#)?;
     let root = serde_json::from_str::<CldrLangID>(r#""root""#)?;
@@ -89,21 +94,21 @@ fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
         fr,
         CldrLangID {
             cldr_language: "fr".parse().unwrap(),
-            langid: "fr".parse()?
+            langid: langid!("fr"),
         }
     );
     assert_eq!(
         en,
         CldrLangID {
             cldr_language: "en".parse().unwrap(),
-            langid: "en-US".parse()?
+            langid: langid!("en-US"),
         }
     );
     assert_eq!(
         root,
         CldrLangID {
             cldr_language: "root".parse().unwrap(),
-            langid: "und".parse()?
+            langid: langid!("und"),
         }
     );
 
@@ -134,7 +139,7 @@ fn test_order() {
         "zh-CN", //
     ];
     let mut cldr_strings_sorted: Vec<&str> = cldr_strings.iter().copied().collect();
-    cldr_strings_sorted.sort();
+    cldr_strings_sorted.sort_unstable();
     assert_eq!(cldr_strings[..], cldr_strings_sorted[..]);
 
     let cldr_langids: Vec<CldrLangID> = cldr_strings.iter().map(|s| s.parse().unwrap()).collect();
@@ -147,7 +152,7 @@ fn test_order() {
 fn test_und_root() {
     CldrLangID::from_str("und").expect_err("und should not be allowed as a string");
 
-    let und2 = CldrLangID::from(LanguageIdentifier::from_str("und").unwrap());
+    let und = CldrLangID::from(LanguageIdentifier::default());
     let root = CldrLangID::from_str("root").unwrap();
-    assert_eq!(und2, root);
+    assert_eq!(und, root);
 }

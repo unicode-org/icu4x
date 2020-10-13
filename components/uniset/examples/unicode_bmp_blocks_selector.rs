@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // An example application which uses icu_uniset to test what blocks of
 // Basic Multilingual Plane a character belongs to.
 //
@@ -7,7 +10,7 @@
 //
 // This is a simple example of the API use and is severely oversimplified
 // compared to real Unicode block selection.
-use icu_unicodeset::{UnicodeSet, UnicodeSetBuilder};
+use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 fn get_basic_latin_block() -> UnicodeSet {
     let mut builder = UnicodeSetBuilder::new();

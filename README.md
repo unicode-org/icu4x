@@ -3,7 +3,7 @@ ICU4X
 
 Welcome to the home page for the ICU4X-SC.  We are a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.  See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
 
-Please subscribe to this repository to participate in discussions.  If you want to contribute, see our list of [Help Wanted](https://github.com/unicode-org/icu4x/issues?q=label%3A%22help+wanted%22) issues!
+Please subscribe to this repository to participate in discussions.  If you want to contribute, see our [contributing.md](CONTRIBUTING.md).
 
 [![Build Status](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=master)](https://coveralls.io/github/unicode-org/icu4x?branch=master)
 
@@ -24,13 +24,12 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 
 ## Documentation
 
-More information about the project can be found in [the docs subdirectory](docs/index.md).  To see technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu_locale/index.html).
+More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).  To see technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu_locale/index.html).
 
 ### Benchmark dashboards
 
 | Component     | Runtime                                                                  |
 |---------------|--------------------------------------------------------------------------|
 | locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/locale)   |
-| num-util      | [link](https://unicode-org.github.io/icu4x-docs/dev/components/num-util) |
 | uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
 | fixed-decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed-decimal) |
