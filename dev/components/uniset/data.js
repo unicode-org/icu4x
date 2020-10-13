@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602616948708,
+  "lastUpdate": 1602617637490,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -425,6 +425,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34875478,
             "range": "± 3585160",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9bd2b9ff50247c760e7bf99d6ccaca70277a0021",
+          "message": "Fix coverage CI (#343)",
+          "timestamp": "2020-10-13T12:30:02-07:00",
+          "tree_id": "c69bf53421e6a78f41381c065983a45cdc20261a",
+          "url": "https://github.com/unicode-org/icu4x/commit/9bd2b9ff50247c760e7bf99d6ccaca70277a0021"
+        },
+        "date": 1602617637004,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33492127,
+            "range": "± 1036892",
             "unit": "ns/iter"
           }
         ]
