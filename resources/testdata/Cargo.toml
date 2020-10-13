@@ -103,6 +103,9 @@ icu-cldr-json-data-provider = { path = "../../components/cldr-json-data-provider
 log = { version = "0.4", optional = true }
 simple_logger = { version = "1.10", optional = true }
 
+[dev-dependencies]
+icu-locale-macros = { path = "../../components/locale/macros" }
+
 [features]
 metadata = ["serde", "serde_json", "icu-locale/serde"]
 icu4x-gen-testdata = [

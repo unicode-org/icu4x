@@ -4,6 +4,7 @@
 use icu_data_provider::prelude::*;
 use icu_data_provider::structs;
 use icu_fs_data_provider::FsDataProvider;
+use icu_locale_macros::langid;
 use std::borrow::Cow;
 
 #[test]
@@ -16,8 +17,7 @@ fn test_read_json() {
             data_key: icu_data_key!(plurals: cardinal@1),
             data_entry: DataEntry {
                 variant: None,
-                // TODO: Migrate to LanguageIdentifier macro
-                langid: "sr".parse().expect("Valid language tag"),
+                langid: langid!("sr"),
             },
         })
         .expect("The key should be present in the testdata");

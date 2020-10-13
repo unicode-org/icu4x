@@ -47,10 +47,11 @@ impl DataEntry {
     /// ```
     /// use std::borrow::Cow;
     /// use icu_data_provider::prelude::*;
+    /// use icu_locale_macros::langid;
     ///
     /// let data_entry = DataEntry {
     ///     variant: Some(Cow::Borrowed("GBP")),
-    ///     langid: "pt_BR".parse().unwrap(),
+    ///     langid: langid!("pt_BR"),
     /// };
     /// let components = data_entry.get_components();
     ///
@@ -95,6 +96,8 @@ impl From<&DataEntry> for DataEntryComponents {
 
 #[test]
 fn test_to_string() {
+    use icu_locale_macros::langid;
+
     struct TestCase {
         pub data_entry: DataEntry,
         pub expected: &'static str,
@@ -103,21 +106,21 @@ fn test_to_string() {
         TestCase {
             data_entry: DataEntry {
                 variant: None,
-                langid: "und".parse().unwrap(),
+                langid: LanguageIdentifier::default(),
             },
             expected: "und",
         },
         TestCase {
             data_entry: DataEntry {
                 variant: Some(Cow::Borrowed("GBP")),
-                langid: "und".parse().unwrap(),
+                langid: LanguageIdentifier::default(),
             },
             expected: "GBP/und",
         },
         TestCase {
             data_entry: DataEntry {
                 variant: Some(Cow::Borrowed("GBP")),
-                langid: "en-ZA".parse().unwrap(),
+                langid: langid!("en-ZA"),
             },
             expected: "GBP/en-ZA",
         },

@@ -15,6 +15,7 @@ use std::path::PathBuf;
 /// ```
 /// use icu_cldr_json_data_provider::download::CldrPathsDownload;
 /// use icu_cldr_json_data_provider::CldrJsonDataProvider;
+/// use icu_locale_macros::langid;
 /// use std::path::PathBuf;
 ///
 /// let paths = CldrPathsDownload::try_from_github_tag("36.0.0")
@@ -30,7 +31,7 @@ use std::path::PathBuf;
 ///     let data: Cow<PluralRuleStringsV1> = data_provider
 ///         .load(&DataRequest {
 ///             data_entry: DataEntry {
-///                 langid: "uk".parse().unwrap(),
+///                 langid: langid!("uk"),
 ///                 variant: None,
 ///             },
 ///             data_key: icu_data_key!(plurals: ordinal@1),

@@ -29,7 +29,7 @@ fn pluralrules(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         use criterion::black_box;
-        use icu_locale::LanguageIdentifier;
+        use icu_locale_macros::langid;
 
         c.bench_function("plurals/pluralrules/construct/fs", |b| {
             b.iter(|| {
@@ -41,8 +41,8 @@ fn pluralrules(c: &mut Criterion) {
             });
         });
 
-        let loc: LanguageIdentifier = "pl".parse().unwrap();
-        let pr = PluralRules::try_new(loc, &provider, PluralRuleType::Cardinal).unwrap();
+        let lid = langid!("pl");
+        let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
         c.bench_function("plurals/pluralrules/select/fs", |b| {
             b.iter(|| {
                 for s in &numbers_data.usize {

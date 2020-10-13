@@ -32,6 +32,9 @@ clap = { version = "2.33", optional = true }
 icu-cldr-json-data-provider = { path = "../cldr-json-data-provider", features = ["download"], optional = true }
 simple_logger = { version = "1.10", optional = true }
 
+[dev-dependencies]
+icu-locale-macros = { path = "../locale/macros" }
+
 [features]
 export = ["erased-serde", "icu-data-provider/invariant", "log"]
 export-bin = ["export", "clap", "icu-cldr-json-data-provider", "simple_logger"]

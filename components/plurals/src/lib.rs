@@ -24,16 +24,15 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locale::LanguageIdentifier;
+//! use icu_locale_macros::langid;
 //! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 //! use icu_data_provider::InvariantDataProvider;
 //!
-//! let lang: LanguageIdentifier = "en".parse()
-//!     .expect("Failed to parse a language identifier.");
+//! let lid = langid!("en");
 //!
 //! let dp = InvariantDataProvider;
 //!
-//! let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
+//! let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -134,16 +133,15 @@ pub enum PluralRuleType {
 /// # Examples
 ///
 /// ```
-/// use icu_locale::LanguageIdentifier;
+/// use icu_locale_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_data_provider::InvariantDataProvider;
 ///
-/// let lang: LanguageIdentifier = "en".parse()
-///     .expect("Failed to parse a language identifier.");
+/// let lid = langid!("en");
 ///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -242,16 +240,15 @@ impl PluralCategory {
 /// # Examples
 ///
 /// ```
-/// use icu_locale::LanguageIdentifier;
+/// use icu_locale_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 /// use icu_data_provider::InvariantDataProvider;
 ///
-/// let lang: LanguageIdentifier = "en".parse()
-///     .expect("Failed to parse a language identifier.");
+/// let lid = langid!("en");
 ///
 /// let dp = InvariantDataProvider;
 ///
-/// let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -274,16 +271,15 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale::LanguageIdentifier;
+    /// use icu_locale_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_data_provider::InvariantDataProvider;
     ///
-    /// let lang: LanguageIdentifier = "en".parse()
-    ///     .expect("Failed to parse a language identifier.");
+    /// let lid = langid!("en");
     ///
     /// let dp = InvariantDataProvider;
     ///
-    /// let _ = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal);
+    /// let _ = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal);
     /// ```
     ///
     /// [`type`]: ./enum.PluralRuleType.html
@@ -319,16 +315,15 @@ impl PluralRules {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale::LanguageIdentifier;
+    /// use icu_locale_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_data_provider::InvariantDataProvider;
     ///
-    /// let lang: LanguageIdentifier = "en".parse()
-    ///     .expect("Failed to parse a language identifier.");
+    /// let lid = langid!("en");
     ///
     /// let dp = InvariantDataProvider;
     ///
-    /// let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// match pr.select(1_usize) {
@@ -349,17 +344,16 @@ impl PluralRules {
     ///
     /// ```
     /// # use std::convert::TryFrom;
-    /// # use icu_locale::LanguageIdentifier;
+    /// # use icu_locale_macros::langid;
     /// # use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_plurals::{PluralCategory, PluralOperands};
     /// # use icu_data_provider::InvariantDataProvider;
     /// #
-    /// # let lang: LanguageIdentifier = "en".parse()
-    /// #     .expect("Failed to parse a language identifier.");
+    /// # let lid = langid!("en");
     /// #
     /// # let dp = InvariantDataProvider;
     /// #
-    /// # let pr = PluralRules::try_new(lang, &dp, PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let operands = PluralOperands::try_from(-5)
