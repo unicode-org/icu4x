@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602616239539,
+  "lastUpdate": 1602616948708,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -395,6 +395,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34270426,
             "range": "± 1600228",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "88d531bf2d28ff57e2229fa177d68f03a41a161d",
+          "message": "temporarily disable benchmark test for utils/fixed-decimal (#344)",
+          "timestamp": "2020-10-13T12:17:48-07:00",
+          "tree_id": "838a6a93cba406411330ccb2db23ea3141a82b0d",
+          "url": "https://github.com/unicode-org/icu4x/commit/88d531bf2d28ff57e2229fa177d68f03a41a161d"
+        },
+        "date": 1602616944511,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34875478,
+            "range": "± 3585160",
             "unit": "ns/iter"
           }
         ]
