@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602608631336,
+  "lastUpdate": 1602610473047,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -305,6 +305,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28785664,
             "range": "± 1395091",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "24b22c9992e3ac8666bf6c267a07d5711d058b78",
+          "message": "remove cache step in coverage check in CI (#331)",
+          "timestamp": "2020-10-13T10:31:25-07:00",
+          "tree_id": "3698779d37499e0588c3c551ef4687511a2d242d",
+          "url": "https://github.com/unicode-org/icu4x/commit/24b22c9992e3ac8666bf6c267a07d5711d058b78"
+        },
+        "date": 1602610472589,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30059995,
+            "range": "± 1759078",
             "unit": "ns/iter"
           }
         ]
