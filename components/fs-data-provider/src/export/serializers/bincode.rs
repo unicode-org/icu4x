@@ -1,31 +1,33 @@
 use super::AbstractSerializer;
 use super::Error;
 use crate::manifest::SyntaxOption;
+use bincode::config::Options as _;
 use std::io;
 use std::ops::Deref;
 
+// See https://github.com/unicode-org/icu4x/issues/335
+static_assertions::assert_cfg!(
+    feature = "serialize_none",
+    "The serialize_none feature must be enabled when exporting to bincode. See #335"
+);
+
 /// A serializer for Bincode.
-pub struct Serializer<T: bincode::config::Options + Clone> {
+pub struct Serializer {
     syntax: SyntaxOption,
-    bincode_options: T,
 }
 
 /// Options bag for initializing a bincode::Serializer.
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct Options<T: bincode::config::Options> {
-    pub bincode_options: T,
-}
+pub struct Options {}
 
-impl Default for Options<bincode::config::DefaultOptions> {
+impl Default for Options {
     fn default() -> Self {
-        Self {
-            bincode_options: bincode::config::DefaultOptions::new(),
-        }
+        Self {}
     }
 }
 
-impl<T: bincode::config::Options + Clone> Deref for Serializer<T> {
+impl Deref for Serializer {
     type Target = SyntaxOption;
 
     fn deref(&self) -> &Self::Target {
@@ -33,24 +35,26 @@ impl<T: bincode::config::Options + Clone> Deref for Serializer<T> {
     }
 }
 
-impl<T: bincode::config::Options + Clone> AbstractSerializer for Serializer<T> {
+impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
         obj: &dyn erased_serde::Serialize,
         mut sink: &mut dyn io::Write,
     ) -> Result<(), Error> {
         obj.erased_serialize(&mut erased_serde::Serializer::erase(
-            &mut bincode::Serializer::new(&mut sink, self.bincode_options.clone()),
+            &mut bincode::Serializer::new(
+                &mut sink,
+                bincode::config::DefaultOptions::new().with_fixint_encoding(),
+            ),
         ))?;
         Ok(())
     }
 }
 
-impl<T: bincode::config::Options + Clone> Serializer<T> {
-    pub fn new(options: Options<T>) -> Self {
+impl Serializer {
+    pub fn new(_options: Options) -> Self {
         Self {
             syntax: SyntaxOption::Bincode,
-            bincode_options: options.bincode_options,
         }
     }
 }

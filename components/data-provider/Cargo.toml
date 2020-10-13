@@ -17,6 +17,8 @@ include = [
 [features]
 # Enable InvariantDataProvider, a locale-agnostic data provider.
 invariant = []
+# Serialize None values when exporting. Required for Bincode.
+serialize_none = []
 
 [dependencies]
 icu-locale = { path = "../locale" }

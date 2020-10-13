@@ -126,9 +126,9 @@ fn main() -> Result<(), Error> {
     let cldr_paths = CldrPathsDownload::try_from_github_tag(&metadata.package_metadata.gitref)?;
     let provider = CldrJsonDataProvider::new(&cldr_paths);
 
-    let mut options = serializers::JsonSerializerOptions::default();
-    options.style = serializers::StyleOption::Pretty;
-    let json_serializer = Box::new(serializers::JsonSerializer::new(&options));
+    let mut options = serializers::json::Options::default();
+    options.style = serializers::json::StyleOption::Pretty;
+    let json_serializer = Box::new(serializers::json::Serializer::new(options));
 
     let mut options = fs_exporter::ExporterOptions::default();
     options.root = output_path;
