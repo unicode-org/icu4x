@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! `icu-datetime` is one of the [`ICU4X`] components.
+//! `icu_datetime` is one of the [`ICU4X`] components.
 //!
 //! It is a core API for formatting date and time to user readable textual representation.
 //!
@@ -66,7 +66,7 @@ use pattern::Pattern;
 use provider::DateTimeDates;
 use std::borrow::Cow;
 
-/// `DateTimeFormat` is the main structure of the `icu-datetime` component.
+/// `DateTimeFormat` is the main structure of the `icu_datetime` component.
 /// When constructed, it uses data from the `DataProvider`, selected `LanguageIdentifier` and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///

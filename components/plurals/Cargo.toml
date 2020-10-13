@@ -2,7 +2,7 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
-name = "icu-plurals"
+name = "icu_plurals"
 description = "Unicode Plural Rules categorizer for numeric input."
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
@@ -18,16 +18,16 @@ include = [
 ]
 
 [dependencies]
-fixed-decimal = { path = "../../utils/fixed-decimal" }
-icu-data-provider = { path = "../data-provider" }
-icu-locid = { path = "../locid" }
+fixed_decimal = { path = "../../utils/fixed_decimal" }
+icu_data_provider = { path = "../data_provider" }
+icu_locid = { path = "../locid" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu-data-provider = { path = "../data-provider", features = ["invariant"] }
-icu-locid = { path = "../locid", features = ["serde"] }
-icu-locid-macros = { path = "../locid/macros" }
-icu-testdata = { path = "../../resources/testdata" }
+icu_data_provider = { path = "../data_provider", features = ["invariant"] }
+icu_locid = { path = "../locid", features = ["serde"] }
+icu_locid_macros = { path = "../locid/macros" }
+icu_testdata = { path = "../../resources/testdata" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
 

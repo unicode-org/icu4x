@@ -18,11 +18,11 @@ include = [
 ]
 
 [dependencies]
-icu-datetime = { path = "../datetime" }
-icu-locid = { path = "../locid" }
-icu-locid-macros = { path = "../locid/macros" }
-icu-plurals = { path = "../plurals" }
-icu-uniset = { path = "../uniset" }
+icu_datetime = { path = "../datetime" }
+icu_locid = { path = "../locid" }
+icu_locid_macros = { path = "../locid/macros" }
+icu_plurals = { path = "../plurals" }
+icu_uniset = { path = "../uniset" }
 
 [dev-dependencies]
-icu-testdata = { path = "../../resources/testdata" }
+icu_testdata = { path = "../../resources/testdata" }

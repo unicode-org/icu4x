@@ -24,7 +24,7 @@ fn triangular_nums(range: f64) -> Vec<isize> {
 fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e4);
     let values: Vec<_> = nums.iter().map(|n| n.to_string()).collect();
-    c.bench_function("fixed-decimal/overview", |b| {
+    c.bench_function("fixed_decimal/overview", |b| {
         #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark focuses on short numbers and performs:

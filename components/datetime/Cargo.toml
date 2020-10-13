@@ -2,7 +2,7 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
-name = "icu-datetime"
+name = "icu_datetime"
 description = "API for managing Unicode Language and Locale Identifiers"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
@@ -18,14 +18,14 @@ include = [
 ]
 
 [dependencies]
-icu-locid = { path = "../locid" }
-icu-data-provider = { path = "../data-provider" }
+icu_locid = { path = "../locid" }
+icu_data_provider = { path = "../data_provider" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu-data-provider = { path = "../data-provider", features = ["invariant"] }
-icu-testdata = { path = "../../resources/testdata" }
-icu-locid-macros = { path = "../locid/macros" }
+icu_data_provider = { path = "../data_provider", features = ["invariant"] }
+icu_testdata = { path = "../../resources/testdata" }
+icu_locid_macros = { path = "../locid/macros" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 

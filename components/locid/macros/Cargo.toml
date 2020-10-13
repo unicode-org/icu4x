@@ -2,8 +2,8 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
-name = "icu-locid-macros"
-description = "proc-macros for icu-locid"
+name = "icu_locid_macros"
+description = "proc-macros for icu_locid"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -22,5 +22,5 @@ proc_macro = true
 
 [dependencies]
 proc-macro-crate = "0.1.5"
-icu-locid = { version = "0.0.1", path = "../" }
+icu_locid = { version = "0.0.1", path = "../" }
 tinystr = "0.3"

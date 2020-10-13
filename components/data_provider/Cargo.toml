@@ -2,7 +2,7 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
-name = "icu-data-provider"
+name = "icu_data_provider"
 description = "Trait and struct definitions for the ICU data provider"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
@@ -24,7 +24,7 @@ invariant = []
 serialize_none = []
 
 [dependencies]
-icu-locid = { path = "../locid" }
+icu_locid = { path = "../locid" }
 tinystr = "0.3"
 erased-serde = "0.3"
 smallstr = { version = "0.2", features = ["serde"] }
@@ -33,4 +33,4 @@ serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 serde_json = "1.0"
-icu-locid-macros = { path = "../locid/macros" }
+icu_locid_macros = { path = "../locid/macros" }

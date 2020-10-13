@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! `fixed-decimal` is a utility crate of the [`ICU4X`] project.
+//! `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
 //! appropriate for formatting and plural rule selection. It is optimized for operations involving

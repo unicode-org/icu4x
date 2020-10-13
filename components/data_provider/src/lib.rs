@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! `icu-data-provider` is one of the [`ICU4X`] components.
+//! `icu_data_provider` is one of the [`ICU4X`] components.
 //!
 //! It defines traits and structs for transmitting data through the ICU4X locale data pipeline.
 //! The primary trait is [`DataProvider`]. It has one method, which transforms a [`Request`] into

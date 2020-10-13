@@ -32,4 +32,4 @@ More information about the project can be found on our [wiki](https://github.com
 |---------------|--------------------------------------------------------------------------|
 | locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/componennts/locid)   |
 | uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
-| fixed-decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed-decimal) |
+| fixed_decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed_decimal) |

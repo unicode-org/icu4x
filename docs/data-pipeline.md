@@ -74,7 +74,7 @@ A key is an integer from an enumeration.  Each key has a corresponding type, whi
 
 ### Data Key Struct Definitions
 
-The actual data keys and the structs to which they correspond should be defined in a central location in the repository: [components/data-provider/src](https://github.com/unicode-org/icu4x/tree/master/components/data-provider/src).  Follow conventions of existing data provider struct definitions when adding a new one.
+The actual data keys and the structs to which they correspond should be defined in a central location in the repository: [components/data_provider/src](https://github.com/unicode-org/icu4x/tree/master/components/data_provider/src).  Follow conventions of existing data provider struct definitions when adding a new one.
 
 There should generally be a 1-to-1 relationship between components (number formatter, plural rules, date format) and modules in the data provider crate.  However, this is not strictly enforced; use your best judgement.
 

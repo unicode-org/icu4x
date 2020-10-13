@@ -93,7 +93,7 @@ jobs:
           - components/uniset
 
           # TODO(#320): re-enable
-          # - utils/fixed-decimal
+          # - utils/fixed_decimal
 
 
     # If you are modifying and debugging is required, don't be afraid to get
