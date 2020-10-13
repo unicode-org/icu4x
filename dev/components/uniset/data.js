@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602622551346,
+  "lastUpdate": 1602623369897,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -635,6 +635,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33755331,
             "range": "± 1006799",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "28674c5a4a27ffba89ef4f195bdc5c4d64df4c98",
+          "message": "Replace - with _ in crate and directory names",
+          "timestamp": "2020-10-13T14:05:47-07:00",
+          "tree_id": "f6994abc00a3c1148b74a74916da5d41dc8b874f",
+          "url": "https://github.com/unicode-org/icu4x/commit/28674c5a4a27ffba89ef4f195bdc5c4d64df4c98"
+        },
+        "date": 1602623367716,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35538389,
+            "range": "± 776198",
             "unit": "ns/iter"
           }
         ]
