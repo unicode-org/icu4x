@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602617637490,
+  "lastUpdate": 1602618837215,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -455,6 +455,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33492127,
             "range": "± 1036892",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b0f9de3c1d255650db5c0273c727d9def978b26c",
+          "message": "temporarily disable flaky unit test (#345)",
+          "timestamp": "2020-10-13T12:50:28-07:00",
+          "tree_id": "d5ee40a306f3767cbc1d03bf5044d4b53378bc89",
+          "url": "https://github.com/unicode-org/icu4x/commit/b0f9de3c1d255650db5c0273c727d9def978b26c"
+        },
+        "date": 1602618836790,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36420917,
+            "range": "± 130500",
             "unit": "ns/iter"
           }
         ]
