@@ -15,6 +15,7 @@
 //!     .expect_err("Specify a real directoroy in the line above");
 //! ```
 
+mod deserializer;
 mod error;
 mod fs_data_provider;
 pub mod manifest;

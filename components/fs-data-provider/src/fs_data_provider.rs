@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+use crate::deserializer;
 use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
@@ -61,10 +62,11 @@ impl DataProvider<'_> for FsDataProvider {
         // https://github.com/unicode-org/icu4x/issues/196
         if req.data_key.category == DataCategory::Plurals {
             // TODO: Pick deserializer based on manifest
-            let obj: structs::plurals::PluralRuleStringsV1 = match serde_json::from_reader(reader) {
-                Ok(obj) => obj,
-                Err(err) => return Err(Error::ResourceError(Box::new(err))),
-            };
+            let obj: structs::plurals::PluralRuleStringsV1 =
+                match deserializer::deserialize_from_reader(reader, &self.manifest.syntax) {
+                    Ok(obj) => obj,
+                    Err(err) => return Err(err.into_resource_error(&path_buf)),
+                };
             let response = DataResponseBuilder {
                 // TODO: Return the actual locale when fallbacks are implemented.
                 data_langid: req.data_entry.langid.clone(),
@@ -73,10 +75,11 @@ impl DataProvider<'_> for FsDataProvider {
             Ok(response)
         } else if req.data_key.category == DataCategory::Dates {
             // TODO: Pick deserializer based on manifest
-            let obj: structs::dates::gregory::DatesV1 = match serde_json::from_reader(reader) {
-                Ok(obj) => obj,
-                Err(err) => return Err(Error::ResourceError(Box::new(err))),
-            };
+            let obj: structs::dates::gregory::DatesV1 =
+                match deserializer::deserialize_from_reader(reader, &self.manifest.syntax) {
+                    Ok(obj) => obj,
+                    Err(err) => return Err(err.into_resource_error(&path_buf)),
+                };
             let response = DataResponseBuilder {
                 // TODO: Return the actual locale when fallbacks are implemented.
                 data_langid: req.data_entry.langid.clone(),

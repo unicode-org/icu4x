@@ -2,12 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::aliasing::{self, AliasCollection};
-use super::serializers::Serializer;
+use super::serializers::AbstractSerializer;
 use crate::error::Error;
 use crate::manifest::AliasOption;
 use crate::manifest::LocalesOption;
 use crate::manifest::Manifest;
-use crate::manifest::SyntaxOption;
 use crate::manifest::MANIFEST_FILE;
 use icu_data_provider::iter::DataExporter;
 use icu_data_provider::prelude::*;
@@ -58,7 +57,7 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     alias_collection: Option<AliasCollection<Vec<u8>>>,
-    serializer: Box<dyn Serializer>,
+    serializer: Box<dyn AbstractSerializer>,
 }
 
 impl Drop for FilesystemExporter {
@@ -93,7 +92,7 @@ impl DataExporter for FilesystemExporter {
 
 impl FilesystemExporter {
     pub fn try_new(
-        serializer: Box<dyn Serializer>,
+        serializer: Box<dyn AbstractSerializer>,
         options: ExporterOptions,
     ) -> Result<Self, Error> {
         let result = FilesystemExporter {
@@ -101,7 +100,7 @@ impl FilesystemExporter {
             manifest: Manifest {
                 aliasing: options.aliasing,
                 locales: options.locales,
-                syntax: SyntaxOption::Json,
+                syntax: serializer.deref().clone(),
             },
             alias_collection: None,
             serializer,

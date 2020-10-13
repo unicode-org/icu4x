@@ -30,14 +30,29 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[cfg_attr(feature = "invariant", derive(Default))]
 pub struct PluralRuleStringsV1 {
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(
+        not(feature = "serialize_none"),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
     pub zero: Option<Cow<'static, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(
+        not(feature = "serialize_none"),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
     pub one: Option<Cow<'static, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(
+        not(feature = "serialize_none"),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
     pub two: Option<Cow<'static, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(
+        not(feature = "serialize_none"),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
     pub few: Option<Cow<'static, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(
+        not(feature = "serialize_none"),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
     pub many: Option<Cow<'static, str>>,
 }

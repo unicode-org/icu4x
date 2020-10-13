@@ -75,7 +75,7 @@ pub mod gregory {
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
                 pub narrow: SymbolsV1,
-                #[serde(skip_serializing_if = "Option::is_none")]
+                #[cfg_attr(not(feature="serialize_none"), serde(skip_serializing_if = "Option::is_none"))]
                 pub short: Option<SymbolsV1>,
                 pub wide: SymbolsV1,
             }
@@ -83,16 +83,16 @@ pub mod gregory {
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
             pub struct StandAloneWidthsV1 {
-                #[serde(skip_serializing_if = "Option::is_none")]
+                #[cfg_attr(not(feature="serialize_none"), serde(skip_serializing_if = "Option::is_none"))]
                 pub abbreviated: Option<SymbolsV1>,
 
-                #[serde(skip_serializing_if = "Option::is_none")]
+                #[cfg_attr(not(feature="serialize_none"), serde(skip_serializing_if = "Option::is_none"))]
                 pub narrow: Option<SymbolsV1>,
 
-                #[serde(skip_serializing_if = "Option::is_none")]
+                #[cfg_attr(not(feature="serialize_none"), serde(skip_serializing_if = "Option::is_none"))]
                 pub short: Option<SymbolsV1>,
 
-                #[serde(skip_serializing_if = "Option::is_none")]
+                #[cfg_attr(not(feature="serialize_none"), serde(skip_serializing_if = "Option::is_none"))]
                 pub wide: Option<SymbolsV1>,
             }
 
@@ -100,7 +100,7 @@ pub mod gregory {
             pub struct ContextsV1 {
                 pub format: FormatWidthsV1,
 
-                #[serde(skip_serializing_if = "Option::is_none")]
+                #[cfg_attr(not(feature="serialize_none"), serde(skip_serializing_if = "Option::is_none"))]
                 pub stand_alone: Option<StandAloneWidthsV1>,
             }
         };

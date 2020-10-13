@@ -1,37 +1,11 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+use super::AbstractSerializer;
+use super::Error;
 use crate::manifest::SyntaxOption;
 use std::io;
 use std::ops::Deref;
-
-/// An Error type specifically for the Serializer that doesn't carry filenames
-pub enum Error {
-    Io(io::Error),
-    Serializer(erased_serde::Error),
-}
-
-impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Self {
-        Self::Io(err)
-    }
-}
-
-impl From<erased_serde::Error> for Error {
-    fn from(err: erased_serde::Error) -> Self {
-        Self::Serializer(err)
-    }
-}
-
-/// A simple serializer trait that works on whole objects.
-pub trait Serializer: Deref<Target = SyntaxOption> {
-    /// Serializes an object to a sink.
-    fn serialize(
-        &self,
-        obj: &dyn erased_serde::Serialize,
-        sink: &mut dyn io::Write,
-    ) -> Result<(), Error>;
-}
 
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -43,20 +17,20 @@ pub enum StyleOption {
 }
 
 /// A serializer for JavaScript Object Notation (JSON).
-pub struct JsonSerializer {
+pub struct Serializer {
     syntax: SyntaxOption,
     style: StyleOption,
 }
 
-/// Options bag for initializing a JsonSerializer.
+/// Options bag for initializing a json::Serializer.
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct JsonSerializerOptions {
+pub struct Options {
     /// Format style to use when dumping output.
     pub style: StyleOption,
 }
 
-impl Default for JsonSerializerOptions {
+impl Default for Options {
     fn default() -> Self {
         Self {
             style: StyleOption::Compact,
@@ -64,7 +38,7 @@ impl Default for JsonSerializerOptions {
     }
 }
 
-impl Deref for JsonSerializer {
+impl Deref for Serializer {
     type Target = SyntaxOption;
 
     fn deref(&self) -> &Self::Target {
@@ -72,7 +46,7 @@ impl Deref for JsonSerializer {
     }
 }
 
-impl Serializer for JsonSerializer {
+impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
         obj: &dyn erased_serde::Serialize,
@@ -96,8 +70,8 @@ impl Serializer for JsonSerializer {
     }
 }
 
-impl JsonSerializer {
-    pub fn new(options: &JsonSerializerOptions) -> Self {
+impl Serializer {
+    pub fn new(options: Options) -> Self {
         Self {
             syntax: SyntaxOption::Json,
             style: options.style,
