@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602613511338,
+  "lastUpdate": 1602616239539,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -365,6 +365,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34188674,
             "range": "± 1555026",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f05a276e1126f330deaa014e298f9771da90696c",
+          "message": "Use langid macros everywhere. (#341)",
+          "timestamp": "2020-10-13T12:06:42-07:00",
+          "tree_id": "fe77378dc2aca94cca1d5ff1a3d2064cfac61c26",
+          "url": "https://github.com/unicode-org/icu4x/commit/f05a276e1126f330deaa014e298f9771da90696c"
+        },
+        "date": 1602616238817,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34270426,
+            "range": "± 1600228",
             "unit": "ns/iter"
           }
         ]
