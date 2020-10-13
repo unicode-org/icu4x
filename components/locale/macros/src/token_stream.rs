@@ -5,6 +5,7 @@ use icu_locale::subtags;
 
 extern crate proc_macro;
 
+use super::get_crate_name;
 use proc_macro::TokenStream;
 
 pub(crate) trait IntoTokenStream {
@@ -32,7 +33,8 @@ impl IntoTokenStream for u64 {
 impl IntoTokenStream for subtags::Language {
     fn into_token_stream_string(self) -> String {
         format!(
-            "unsafe {{ icu_locale::subtags::Language::from_raw_unchecked({}) }}",
+            "unsafe {{ {}::subtags::Language::from_raw_unchecked({}) }}",
+            get_crate_name(),
             self.into_raw().into_token_stream_string()
         )
     }
@@ -41,7 +43,8 @@ impl IntoTokenStream for subtags::Language {
 impl IntoTokenStream for subtags::Script {
     fn into_token_stream_string(self) -> String {
         format!(
-            "unsafe {{ icu_locale::subtags::Script::from_raw_unchecked({}) }}",
+            "unsafe {{ {}::subtags::Script::from_raw_unchecked({}) }}",
+            get_crate_name(),
             self.into_raw().into_token_stream_string()
         )
     }
@@ -50,7 +53,8 @@ impl IntoTokenStream for subtags::Script {
 impl IntoTokenStream for subtags::Region {
     fn into_token_stream_string(self) -> String {
         format!(
-            "unsafe {{ icu_locale::subtags::Region::from_raw_unchecked({}) }}",
+            "unsafe {{ {}::subtags::Region::from_raw_unchecked({}) }}",
+            get_crate_name(),
             self.into_raw().into_token_stream_string()
         )
     }
@@ -59,7 +63,8 @@ impl IntoTokenStream for subtags::Region {
 impl IntoTokenStream for subtags::Variant {
     fn into_token_stream_string(self) -> String {
         format!(
-            "unsafe {{ icu_locale::subtags::Variant::from_raw_unchecked({}) }}",
+            "unsafe {{ {}::subtags::Variant::from_raw_unchecked({}) }}",
+            get_crate_name(),
             self.into_raw().into_token_stream_string()
         )
     }
@@ -77,7 +82,8 @@ impl IntoTokenStream for subtags::Variants {
             "None".to_string()
         };
         format!(
-            "unsafe {{ icu_locale::subtags::Variants::from_raw_unchecked({}) }}",
+            "unsafe {{ {}::subtags::Variants::from_raw_unchecked({}) }}",
+            get_crate_name(),
             variants
         )
     }

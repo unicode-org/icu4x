@@ -6,7 +6,20 @@ mod token_stream;
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
+use proc_macro_crate::crate_name;
 use token_stream::IntoTokenStream;
+
+fn get_crate_name() -> String {
+    if let Ok(name) = crate_name("icu") {
+        format!("{}::locale", name)
+    } else {
+        if let Ok(name) = crate_name("icu_locale") {
+            name.to_string()
+        } else {
+            "icu_locale".to_string()
+        }
+    }
+}
 
 fn get_value_from_token_stream(input: TokenStream) -> String {
     let val = format!("{}", input);
@@ -181,14 +194,18 @@ pub fn langid(input: TokenStream) -> TokenStream {
 
     let output = format!(
         r#"
-icu_locale::LanguageIdentifier {{
+{}::LanguageIdentifier {{
     language: {},
     script: {},
     region: {},
     variants: {},
 }}
 "#,
-        lang, script, region, variants
+        get_crate_name(),
+        lang,
+        script,
+        region,
+        variants
     );
 
     output.parse().unwrap()

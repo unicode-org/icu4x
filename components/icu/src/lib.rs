@@ -62,8 +62,15 @@
 //! [`FsDataProvider`]: ../icu_fs_data_provider/struct.FsDataProvider.html
 #[doc(inline)]
 pub use icu_datetime as datetime;
-#[doc(inline)]
-pub use icu_locale as locale;
+
+pub mod locale {
+    pub use icu_locale::*;
+
+    pub mod macros {
+        pub use icu_locale_macros::*;
+    }
+}
+
 #[doc(inline)]
 pub use icu_plurals as plurals;
 #[doc(inline)]
