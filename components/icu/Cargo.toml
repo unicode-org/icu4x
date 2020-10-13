@@ -20,6 +20,7 @@ include = [
 [dependencies]
 icu-datetime = { path = "../datetime" }
 icu-locale = { path = "../locale" }
+icu-locale-macros = { path = "../locale/macros" }
 icu-plurals = { path = "../plurals" }
 icu-uniset = { path = "../uniset" }
 

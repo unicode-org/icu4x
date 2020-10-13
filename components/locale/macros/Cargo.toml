@@ -21,5 +21,6 @@ include = [
 proc_macro = true
 
 [dependencies]
+proc-macro-crate = "0.1.5"
 icu-locale = { version = "0.0.1", path = "../" }
 tinystr = "0.3"
