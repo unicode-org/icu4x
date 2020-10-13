@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602621307531,
+  "lastUpdate": 1602621336016,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -611,6 +611,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 12897,
             "range": "± 893",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "f8de2adf11e3dd8964bc3b536811f2b0883a5e38",
+          "message": "Fix fs-data-provider bincode",
+          "timestamp": "2020-10-13T13:31:35-07:00",
+          "tree_id": "c2fc0dae9ff48c49a12ad2a7418eb449c11b5eb0",
+          "url": "https://github.com/unicode-org/icu4x/commit/f8de2adf11e3dd8964bc3b536811f2b0883a5e38"
+        },
+        "date": 1602621335589,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5588,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9745,
+            "range": "± 16",
             "unit": "ns/iter"
           }
         ]
