@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602632831029,
+  "lastUpdate": 1602637750820,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -89,6 +89,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 5010,
             "range": "± 484",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "8725ff5a766fb406619601115d1eaf7816caf9c0",
+          "message": "Rename icu::locale to icu::locid",
+          "timestamp": "2020-10-13T18:05:20-07:00",
+          "tree_id": "bdbe2c5b62df9626384dc180c7863049492aa722",
+          "url": "https://github.com/unicode-org/icu4x/commit/8725ff5a766fb406619601115d1eaf7816caf9c0"
+        },
+        "date": 1602637748586,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4948,
+            "range": "± 766",
             "unit": "ns/iter"
           }
         ]
