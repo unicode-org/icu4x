@@ -4,7 +4,7 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
-use icu::locale::{macros::langid, LanguageIdentifier};
+use icu::locid::{macros::langid, LanguageIdentifier};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu::uniset::UnicodeSetBuilder;
 use std::env;

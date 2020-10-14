@@ -265,7 +265,7 @@ impl PluralRules {
         Self: Sized,
     {
         let locale: String = format!("{}", l);
-        let locale: icu::locale::Locale = locale
+        let locale: icu::locid::Locale = locale
             .parse()
             .expect("Converting from locale string to locale should always succeed");
         let rule_type = internal::to_icu4x_type(&opts.in_type);
@@ -280,7 +280,7 @@ impl PluralRules {
 mod testing {
     use ecma402_traits::pluralrules;
     use ecma402_traits::pluralrules::PluralRules;
-    use icu::locale::Locale;
+    use icu::locid::Locale;
     use icu::plurals::PluralRulesError;
 
     #[test]

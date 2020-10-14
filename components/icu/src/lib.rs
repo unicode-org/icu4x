@@ -34,7 +34,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::macros::langid;
+//! use icu::locid::macros::langid;
 //! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
@@ -62,7 +62,7 @@
 #[doc(inline)]
 pub use icu_datetime as datetime;
 
-pub mod locale {
+pub mod locid {
     pub use icu_locid::*;
 
     pub mod macros {

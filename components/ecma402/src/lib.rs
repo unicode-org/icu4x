@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE )
 
-use icu::locale::LanguageIdentifier;
+use icu::locid::LanguageIdentifier;
 
 /// Implements ECMA-402 [`Intl.PluralRules`][link].
 ///
@@ -18,7 +18,7 @@ pub enum Locale {
     /// An ECMA402 compatible [Locale] created from icu4x [LanguageIdentifier].
     FromLangid(LanguageIdentifier),
     /// An ECMA402 [Locale] created from icu4x [icu_locid::Locale].
-    FromLocale(icu::locale::Locale),
+    FromLocale(icu::locid::Locale),
 }
 
 impl ecma402_traits::Locale for crate::Locale {}
