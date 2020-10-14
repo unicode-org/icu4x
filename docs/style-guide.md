@@ -90,16 +90,16 @@ their type.
 
   ```rust
   pub enum SomeError {
-    Argument,
-	InvalidData,
+      Argument,
+      InvalidData,
   }
   ```
 * **DON'T**:
 
   ```rust
   pub enum SomeError {
-    ArgumentError,
-	InvalidDataError,
+      ArgumentError,
+      InvalidDataError,
   }
   ```
 * **Rationale**: In this case, as we will likely refer to the enum value by
@@ -621,8 +621,8 @@ While it's still an open question in the Rust community as to what the best way 
 ```rust
 // Nesting semantically interesting error information inside the generic error type.
 enum IcuError {
-    ParserError(parser::ParserError),
-    RuntimeError(...)
+    Parser(parser::ParserError),
+    Runtime(...)
 }
 ```
 

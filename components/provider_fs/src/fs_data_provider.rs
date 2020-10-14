@@ -55,7 +55,7 @@ impl DataProvider<'_> for FsDataProvider {
         }
         let file = match File::open(&path_buf) {
             Ok(file) => file,
-            Err(err) => return Err(Error::ResourceError(Box::new(err))),
+            Err(err) => return Err(Error::Resource(Box::new(err))),
         };
         let reader = BufReader::new(file);
         // TODO: Eliminate this dispatch.

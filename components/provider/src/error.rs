@@ -29,7 +29,7 @@ pub enum Error {
     },
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
-    ResourceError(Box<dyn std::error::Error>),
+    Resource(Box<dyn std::error::Error>),
 }
 
 impl From<&DataKey> for Error {
@@ -52,7 +52,7 @@ impl From<DataRequest> for Error {
 
 impl From<Box<dyn std::error::Error>> for Error {
     fn from(err: Box<dyn std::error::Error>) -> Self {
-        Self::ResourceError(err)
+        Self::Resource(err)
     }
 }
 
@@ -61,7 +61,7 @@ impl Error {
     where
         T: 'static + std::error::Error,
     {
-        Self::ResourceError(Box::new(err))
+        Self::Resource(Box::new(err))
     }
 }
 
@@ -78,7 +78,7 @@ impl fmt::Display for Error {
                 Ok(())
             }
             Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
-            Self::ResourceError(err) => write!(f, "Failed to load resource: {}", err),
+            Self::Resource(err) => write!(f, "Failed to load resource: {}", err),
         }
     }
 }
@@ -86,7 +86,7 @@ impl fmt::Display for Error {
 impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            Self::ResourceError(error) => Some(error.deref()),
+            Self::Resource(error) => Some(error.deref()),
             _ => None,
         }
     }
