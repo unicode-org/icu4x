@@ -24,7 +24,7 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 
 ## Documentation
 
-More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).  To see technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu_locale/index.html).
+More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).  To see technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
 
 ### Benchmark dashboards
 
