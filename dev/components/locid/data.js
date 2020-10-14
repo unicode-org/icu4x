@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602697240185,
+  "lastUpdate": 1602698034982,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -239,6 +239,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 5673,
             "range": "± 230",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "4025a90052299ee6fa8f35465611ccf3f63fe9ae",
+          "message": "Hot-fix to benchmark",
+          "timestamp": "2020-10-14T10:50:09-07:00",
+          "tree_id": "c7cd05cbb8a9b5488ecf0ace78dcf605e6508ce3",
+          "url": "https://github.com/unicode-org/icu4x/commit/4025a90052299ee6fa8f35465611ccf3f63fe9ae"
+        },
+        "date": 1602698034567,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5614,
+            "range": "± 154",
             "unit": "ns/iter"
           }
         ]
