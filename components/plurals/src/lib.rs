@@ -25,13 +25,12 @@
 //! ```
 //! use icu_locid_macros::langid;
 //! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-//! use icu_provider::InvariantDataProvider;
 //!
 //! let lid = langid!("en");
 //!
-//! let dp = InvariantDataProvider;
+//! let provider = icu_testdata::get_provider();
 //!
-//! let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+//! let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -70,15 +69,14 @@
 //!
 //! All of the content of the [`data`] module is heavily experimental and subject to change.
 //!
-//! [`ICU4X`]: https://github.com/unicode-org/icu4x
-//! [`PluralRules`]: ./struct.PluralRules.html
+//! [`ICU4X`]: ../icu/index.html
 //! [`PluralRules`]: ./struct.PluralRules.html
 //! [`Plural Type`]: ./enum.PluralRuleType.html
 //! [`Plural Category`]: ./enum.PluralCategory.html
 //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 //! [`CLDR`]: http://cldr.unicode.org/
 //! [`data`]: ./data/index.html
-pub mod data;
+mod data;
 mod error;
 mod operands;
 pub mod rules;

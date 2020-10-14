@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+//! APIs for Date and Time handling
 use std::convert::{TryFrom, TryInto};
 use std::fmt;
 use std::ops::{Add, Sub};
@@ -27,12 +28,14 @@ impl From<std::num::ParseIntError> for DateTimeError {
     }
 }
 
-/// Temporary trait used to represent the input data for `DateTimeFormat`.
+/// Temporary trait used to represent the input data for [`DateTimeFormat`].
 ///
 /// This type represents all data that the formatted needs in order to produced formatted string.
 ///
 /// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
 /// other calendars in the upcoming releases.
+///
+/// [`DateTimeFormat`]: ../struct.DateTimeFormat.html
 pub trait DateTimeType: FromStr {
     fn year(&self) -> usize;
     fn month(&self) -> Month;
@@ -42,17 +45,18 @@ pub trait DateTimeType: FromStr {
     fn second(&self) -> Second;
 }
 
-/// Temporary implementation of `DateTimeType`,
+/// Temporary implementation of [`DateTimeType`],
 /// which is used in tests, benchmarks and examples of this component.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::MockDateTime;
+/// use icu_datetime::date::MockDateTime;
 ///
 /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
 ///     .expect("Failed to construct DateTime.");
 /// ```
+/// [`DateTimeType`]: ./trait.DateTimeType.html
 #[derive(Debug, Default)]
 pub struct MockDateTime {
     pub year: usize,
@@ -87,7 +91,7 @@ impl MockDateTime {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::MockDateTime;
+    /// use icu_datetime::date::MockDateTime;
     ///
     /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
     ///     .expect("Failed to construct a DateTime");

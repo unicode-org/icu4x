@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 mod fixtures;
 
+use icu_datetime::date::MockDateTime;
 use icu_datetime::DateTimeFormat;
-use icu_datetime::MockDateTime;
 use std::fmt::Write;
 
 #[test]

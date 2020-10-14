@@ -1,51 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! Module with data used by [`PluralRules`].
-//!
-//! # Examples
-//!
-//! ```
-//! use icu_locid::LanguageIdentifier;
-//! use icu_plurals::{PluralCategory, PluralRuleType, PluralOperands};
-//! use icu_plurals::data::{PluralRuleList, RulesSelector};
-//! use icu_provider::prelude::*;
-//! use icu_provider::{InvariantDataProvider, structs};
-//! use std::borrow::Cow;
-//! use std::convert::TryInto;
-//!
-//! // Dummy provider always returns data for "und"
-//! let langid = LanguageIdentifier::default();
-//!
-//! // Dummy provider always returns data for cardinal
-//! let type_ = PluralRuleType::Cardinal;
-//!
-//! let data_provider = InvariantDataProvider;
-//! let data_key = match type_ {
-//!     PluralRuleType::Cardinal => icu_data_key!(plurals: cardinal@1),
-//!     PluralRuleType::Ordinal => icu_data_key!(plurals: ordinal@1),
-//! };
-//! let response = data_provider
-//!     .load(&DataRequest {
-//!         data_key,
-//!         data_entry: DataEntry {
-//!             variant: None,
-//!             langid: langid.clone(),
-//!         },
-//!     })
-//!     .expect("Failed to get a response");
-//!
-//! let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.take_payload()
-//!     .expect("Failed to extract payload.");
-//! let list: PluralRuleList = (&*plurals_data).try_into()
-//!     .expect("Failed to parse plural rules.");
-//! let selector: RulesSelector = list.into();
-//!
-//! let operands: PluralOperands = 3_usize.into();
-//!
-//! assert_eq!(selector.select(&operands), PluralCategory::Other);
-//! ```
-
 use crate::operands::PluralOperands;
 use crate::rules;
 use crate::rules::ast;
@@ -55,7 +10,7 @@ use std::borrow::Cow;
 use std::convert::TryInto;
 
 /// A raw function pointer to a [`PluralRulesFn`](./type.PluralRulesFn.html)
-pub type PluralRulesFn = fn(&PluralOperands) -> PluralCategory;
+// pub type PluralRulesFn = fn(&PluralOperands) -> PluralCategory;
 
 /// A structure holding a list of [`ast::Condition`] for a given locale and type.
 ///
@@ -112,7 +67,7 @@ pub enum RulesSelector {
     /// A raw function pointer to a [`PluralRulesFn`](./type.PluralRulesFn.html)
     ///
     /// This variant is used by providers which store rules as native Rust functions.
-    Function(PluralRulesFn),
+    // Function(PluralRulesFn),
     /// A list of tuples of ([`PluralCategory`]-[`ast::Condition`]) pairs.
     ///
     /// This variant is used by providers which parse the list of conditions out
@@ -126,7 +81,7 @@ pub enum RulesSelector {
 impl RulesSelector {
     pub fn select(&self, operands: &PluralOperands) -> PluralCategory {
         match self {
-            Self::Function(ptr) => ptr(operands),
+            // Self::Function(ptr) => ptr(operands),
             Self::Conditions(conditions) => PluralCategory::all()
                 .find_map(|category| {
                     conditions

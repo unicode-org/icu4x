@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! `icu_locid` is one of the [`ICU4X`] components.
 //!
-//! It is a core API for parsing, manipulating, and serializing Unicode Language
+//! This API provides necessary functionality for parsing, manipulating, and serializing Unicode Language
 //! and Locale Identifiers.
 //!
 //! The crate provides algorithms for parsing a string into a well-formed language or locale identifier
