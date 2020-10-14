@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602637750820,
+  "lastUpdate": 1602638251817,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -119,6 +119,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 4948,
             "range": "± 766",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "33ef9644f0cde5f7a44ea2b0de43d19a41750e81",
+          "message": "Hot-fix for a proc macro",
+          "timestamp": "2020-10-13T18:12:55-07:00",
+          "tree_id": "6bf5822bf7a2d9bc2543a0c5d6c81fdab0d64de7",
+          "url": "https://github.com/unicode-org/icu4x/commit/33ef9644f0cde5f7a44ea2b0de43d19a41750e81"
+        },
+        "date": 1602638251410,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5256,
+            "range": "± 151",
             "unit": "ns/iter"
           }
         ]
