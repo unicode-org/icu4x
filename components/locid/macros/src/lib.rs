@@ -11,7 +11,7 @@ use token_stream::IntoTokenStream;
 
 fn get_crate_name() -> String {
     if let Ok(name) = crate_name("icu") {
-        format!("{}::locale", name)
+        format!("{}::locid", name)
     } else if let Ok(name) = crate_name("icu_locid") {
         name
     } else {
