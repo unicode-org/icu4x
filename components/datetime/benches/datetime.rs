@@ -6,8 +6,8 @@ mod fixtures;
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
-use icu_datetime::DateTimeFormat;
 use icu_datetime::date::MockDateTime;
+use icu_datetime::DateTimeFormat;
 
 fn datetime_benches(c: &mut Criterion) {
     let fxs = fixtures::get_fixture("styles").unwrap();

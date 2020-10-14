@@ -13,6 +13,15 @@ use std::io::BufReader;
 use std::path::PathBuf;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider_fs::FsDataProvider;
+///
+/// let provider = FsDataProvider::try_new("/path/to/data/directory")
+///     .expect_err("Specify a real directory in the line above");
+/// ```
 #[derive(Debug, PartialEq)]
 pub struct FsDataProvider {
     res_root: PathBuf,
@@ -21,6 +30,15 @@ pub struct FsDataProvider {
 
 impl FsDataProvider {
     /// Create a new `FsDataProvider` given a filesystem directory.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider_fs::FsDataProvider;
+    ///
+    /// let provider = FsDataProvider::try_new("/path/to/data/directory")
+    ///     .expect_err("Specify a real directory in the line above");
+    /// ```
     pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, Error> {
         let root_path_buf: PathBuf = root.into();
         let manifest_path = root_path_buf.join(MANIFEST_FILE);

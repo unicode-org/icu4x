@@ -251,7 +251,7 @@ impl PluralCategory {
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
 /// ```
 ///
-/// [`ICU4X`]: https://github.com/unicode-org/icu4x
+/// [`ICU4X`]: ../icu/index.html
 /// [`PluralRules`]: ./struct.PluralRules.html
 /// [`Plural Type`]: ./enum.PluralRuleType.html
 /// [`Plural Category`]: ./enum.PluralCategory.html

@@ -4,9 +4,9 @@
 //! `icu_provider_cldr` is one of the [`ICU4X`] components.
 //!
 //! It contains implementations of the [`DataProvider`] interface based on the JSON files
-//! shipped by CLDR. You create a `CldrPaths` and then pass it into `CldrJsonDataProvider`.
+//! shipped by CLDR. You create a [`CldrPaths`] and then pass it into `CldrJsonDataProvider`.
 //!
-//! This crate contains two implementations of `CldrPaths`:
+//! This crate contains two implementations of [`CldrPaths`]:
 //!
 //! - `CldrPathsLocal` points to local copies of the CLDR JSON repositories.
 //! - `CldrPathsDownload` downloads and caches the CLDR JSON repositories. Requires the
@@ -15,7 +15,10 @@
 //! **Important:** This data provider implementation is not optimized for production use.
 //! It is much more efficient if you use [`FsDataProvider`] instead.
 //!
-//! [`ICU4X`]: https://github.com/unicode-org/icu4x
+//! [`ICU4X`]: ../icu/index.html
+//! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
+//! [`CldrPaths`]: ./trait.CldrPaths.html
+//! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 
 mod cldr_langid;
 mod cldr_paths;

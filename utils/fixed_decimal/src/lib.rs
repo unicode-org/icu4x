@@ -36,7 +36,7 @@
 //! ```
 //!
 //! [`FixedDecimal`]: ./struct.FixedDecimal.html
-//! [`ICU4X`]: https://github.com/unicode-org/icu4x
+//! [`ICU4X`]: ../icu/index.html
 
 pub mod decimal;
 mod uint_iterator;

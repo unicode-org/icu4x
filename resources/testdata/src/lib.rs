@@ -32,7 +32,7 @@
 //! assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 2..4 and n % 100 != 12..14")));
 //! ```
 //!
-//! [`ICU4X`]: https://github.com/unicode-org/icu4x
+//! [`ICU4X`]: ../icu/index.html
 
 #[cfg(feature = "metadata")]
 pub mod metadata;

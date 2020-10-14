@@ -12,8 +12,50 @@
 //! use icu_provider_fs::FsDataProvider;
 //!
 //! let provider = FsDataProvider::try_new("/path/to/data/directory")
-//!     .expect_err("Specify a real directoroy in the line above");
+//!     .expect_err("Specify a real directory in the line above");
 //! ```
+//!
+//! # Resource Formats
+//!
+//! `ICU4X` data can be stored in different formats. At the moment there are:
+//!
+//! * JSON - Textual format, easy to read
+//! * Bincode - Binary, fast resource format
+//!
+//! The directory passed to the [`FsDataProvider`] constructor may contain either of them.
+//!
+//! # Exporting data
+//!
+//! To generate the data required for [`FsDataProvider`], use the following script:
+//!
+//! ```text
+//! cargo run
+//!   --features export-bin
+//!   --
+//!   --cldr-tag 37.0.0
+//!   --out ./icu4x-data
+//!   --all-keys
+//! ```
+//!
+//! To export `bincode` format, use
+//!
+//! ```text
+//! cargo run
+//!   --features export-bin
+//!   --featuers bincode
+//!   --features serialize_none
+//!   --
+//!   --cldr-tag 37.0.0
+//!   --out ./icu4x-data
+//!   --all-keys
+//!   -s bincode
+//! ```
+//!
+//! *Notice:* In order to use `bincode` encoded data in production, `icu_provider_fs` has to be
+//! added with `bincode` feature.
+//!
+//! [`ICU4X`]: ../icu/index.html
+//! [`FsDataProvider`]: ./struct.FsDataProvider.html
 
 mod deserializer;
 mod error;
