@@ -18,13 +18,13 @@ pub enum DataCategory {
 }
 
 impl DataCategory {
-    /// Gets or builds a string form of this DataCategory.
+    /// Gets or builds a string form of this `DataCategory`.
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
-            DataCategory::Decimal => Cow::Borrowed("decimal"),
-            DataCategory::Plurals => Cow::Borrowed("plurals"),
-            DataCategory::Dates => Cow::Borrowed("dates"),
-            DataCategory::PrivateUse(id) => {
+            Self::Decimal => Cow::Borrowed("decimal"),
+            Self::Plurals => Cow::Borrowed("plurals"),
+            Self::Dates => Cow::Borrowed("dates"),
+            Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());
                 Cow::Owned(result)
@@ -39,9 +39,9 @@ impl fmt::Display for DataCategory {
     }
 }
 
-/// A category, subcategory, and version, used for requesting data from a DataProvider.
+/// A category, subcategory, and version, used for requesting data from a `DataProvider`.
 ///
-/// The fields in a DataKey should generally be known at compile time.
+/// The fields in a `DataKey` should generally be known at compile time.
 ///
 /// Use `icu_data_key!` as a shortcut to create data keys in code.
 #[derive(PartialEq, Copy, Clone)]
@@ -135,8 +135,8 @@ impl fmt::Display for DataKey {
 }
 
 impl DataKey {
-    /// Gets the standard path components of this DataKey. These components should be used when
-    /// persisting the DataKey on the filesystem or in structured data.
+    /// Gets the standard path components of this `DataKey`. These components should be used when
+    /// persisting the `DataKey` on the filesystem or in structured data.
     ///
     /// # Example
     ///
@@ -156,7 +156,7 @@ impl DataKey {
     }
 }
 
-/// The standard components of a DataKey path.
+/// The standard components of a `DataKey` path.
 pub struct DataKeyComponents {
     components: [Cow<'static, str>; 2],
 }
@@ -169,7 +169,7 @@ impl DataKeyComponents {
 
 impl From<&DataKey> for DataKeyComponents {
     fn from(data_key: &DataKey) -> Self {
-        DataKeyComponents {
+        Self {
             components: [
                 data_key.category.as_str(),
                 // TODO: Evalute the size penalty of this format!

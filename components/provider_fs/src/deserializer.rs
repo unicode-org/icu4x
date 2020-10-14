@@ -29,14 +29,14 @@ impl Error {
     pub fn into_resource_error<P: AsRef<Path>>(self, path: P) -> DataError {
         use crate::error::Error as CrateError;
         let crate_error = match self {
-            Error::Json(err) => {
+            Self::Json(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
             #[cfg(feature = "bincode")]
-            Error::Bincode(err) => {
+            Self::Bincode(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
-            Error::UnknownSyntax(v) => CrateError::UnknownSyntax(v),
+            Self::UnknownSyntax(v) => CrateError::UnknownSyntax(v),
         };
         DataError::ResourceError(Box::new(crate_error))
     }

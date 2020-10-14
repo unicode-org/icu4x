@@ -37,7 +37,7 @@ use tinystr::TinyStr8;
 pub struct Language(Option<TinyStr8>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=8;
-const UND_VALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(6_581_877u64) }; // "und"
+const UND_VALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(6_581_877_u64) }; // "und"
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and

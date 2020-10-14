@@ -15,7 +15,7 @@
 //! "plurals/cardinal@1") and [`DataEntry`] (a language identifier and optional variant, e.g.,
 //! "fr") being requested. The Response contains the data payload corresponding to the Request.
 //!
-//! The most common types required for ICU4X DataProvider are included via the prelude:
+//! The most common types required for ICU4X `DataProvider` are included via the prelude:
 //!
 //! ```
 //! use icu_provider::prelude::*;
@@ -37,25 +37,25 @@
 //!
 //! ## Types of Data Providers
 //!
-//! Any object implementing DataProvider can be used to supply ICU4X with locale data. ICU4X ships
+//! Any object implementing `DataProvider` can be used to supply ICU4X with locale data. ICU4X ships
 //! with some pre-built data providers:
 //!
-//! - [`FsDataProvider`][icu_provider_fs::FsDataProvider] reads structured data from the
+//! - [`FsDataProvider`](icu_provider_fs::FsDataProvider) reads structured data from the
 //!   filesystem. It can also write out that filesystem structure.
-//! - [`CldrJsonDataProvider`][icu_provider_cldr::CldrJsonDataProvider] reads structured
+//! - [`CldrJsonDataProvider`](icu_provider_cldr::CldrJsonDataProvider) reads structured
 //!   data directly from CLDR source files.
 //!
 //! ## Iterable Data Providers
 //!
 //! Data providers can implement [`DataEntryCollection`], allowing them to be used via the
-//! auto-implemented trait [`IterableDataProvider`]. This allows iteration over all DataEntry
+//! auto-implemented trait [`IterableDataProvider`]. This allows iteration over all `DataEntry`
 //! instances supported for a certain key in the data provider. This can be useful when
 //! transforming data between storage formats. For more information, see the [`iter`] module.
 //!
-//! ## InvariantDataProvider
+//! ## `InvariantDataProvider`
 //!
 //! For testing or development purposes, this crate also offers [`InvariantDataProvider`], which
-//! returns fixed data that does not vary by locale. You must enable InvariantDataProvider via the
+//! returns fixed data that does not vary by locale. You must enable `InvariantDataProvider` via the
 //! `"invariant"` feature in your Cargo.toml file.
 
 mod cloneable_any;

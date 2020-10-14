@@ -40,7 +40,7 @@
 use std::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
-/// Comprises a vector of AndConditions and optionally a set of Samples.
+/// Comprises a vector of `AndConditions` and optionally a set of Samples.
 ///
 /// # Examples
 ///
@@ -85,7 +85,7 @@ pub struct Rule {
     pub samples: Option<Samples>,
 }
 
-/// A complete AST representation of a plural rule's condition. Comprises a vector of AndConditions.
+/// A complete AST representation of a plural rule's condition. Comprises a vector of `AndConditions`.
 ///
 /// # Examples
 ///
@@ -125,7 +125,7 @@ pub struct Condition(pub Box<[AndCondition]>);
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
 ///
 /// ```text
 /// "i = 3 and v = 0"
@@ -159,11 +159,11 @@ pub struct Condition(pub Box<[AndCondition]>);
 #[derive(Debug, Clone, PartialEq)]
 pub struct AndCondition(pub Box<[Relation]>);
 
-/// An incomplete AST representation of a plural rule. Comprises an Expression, an Operator, and a RangeList.
+/// An incomplete AST representation of a plural rule. Comprises an `Expression`, an `Operator`, and a `RangeList`.
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
 ///
 /// ```text
 /// "i = 3"
@@ -197,8 +197,8 @@ pub struct Relation {
 ///
 /// | Enum Operator | Symbolic Operator |
 /// | - | - |
-/// | Eq | "=" |
-/// | NotEq | "!=" |
+/// | `Eq` | "=" |
+/// | `NotEq` | "!=" |
 ///
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Operator {
@@ -210,7 +210,7 @@ pub enum Operator {
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
 ///
 /// ```text
 /// "i % 100"
@@ -237,7 +237,7 @@ pub struct Expression {
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
 ///
 /// ```text
 /// "i"
@@ -266,11 +266,11 @@ pub enum Operand {
     T,
 }
 
-/// An incomplete AST representation of a plural rule. Comprises a vector of RangeListItems.
+/// An incomplete AST representation of a plural rule. Comprises a vector of `RangeListItems`.
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
 ///
 /// ```text
 /// "5, 7, 9"
@@ -290,7 +290,7 @@ pub enum Operand {
 #[derive(Debug, Clone, PartialEq)]
 pub struct RangeList(pub Box<[RangeListItem]>);
 
-/// An enum of items that appear in a RangeList: Range or a Value.
+/// An enum of items that appear in a `RangeList`: `Range` or a `Value`.
 ///
 /// See Range and Value for additional details.
 /// A range comprises two Values: an inclusive lower and upper limit.
@@ -320,7 +320,7 @@ pub enum RangeListItem {
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the parse_plural_rule function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
 ///
 /// ```text
 /// "99"

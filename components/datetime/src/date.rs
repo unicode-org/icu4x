@@ -64,7 +64,7 @@ pub struct MockDateTime {
 }
 
 impl MockDateTime {
-    pub fn new(
+    pub const fn new(
         year: usize,
         month: Month,
         day: Day,
@@ -142,7 +142,7 @@ impl FromStr for MockDateTime {
         let hour: Hour = input[11..13].parse()?;
         let minute: Minute = input[14..16].parse()?;
         let second: Second = input[17..19].parse()?;
-        Ok(MockDateTime {
+        Ok(Self {
             year,
             month: month - 1,
             day: day - 1,
@@ -159,7 +159,7 @@ macro_rules! dt_unit {
         pub struct $name(u8);
 
         impl $name {
-            pub fn new_unchecked(input: u8) -> Self {
+            pub const fn new_unchecked(input: u8) -> Self {
                 Self(input)
             }
         }
@@ -211,14 +211,14 @@ macro_rules! dt_unit {
         }
 
         impl From<$name> for u8 {
-            fn from(input: $name) -> u8 {
+            fn from(input: $name) -> Self {
                 input.0
             }
         }
 
         impl From<$name> for usize {
-            fn from(input: $name) -> usize {
-                input.0 as usize
+            fn from(input: $name) -> Self {
+                input.0 as Self
             }
         }
 

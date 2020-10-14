@@ -20,7 +20,7 @@ pub struct FsDataProvider {
 }
 
 impl FsDataProvider {
-    /// Create a new FsDataProvider given a filesystem directory.
+    /// Create a new `FsDataProvider` given a filesystem directory.
     pub fn try_new<T: Into<PathBuf>>(root: T) -> Result<Self, Error> {
         let root_path_buf: PathBuf = root.into();
         let manifest_path = root_path_buf.join(MANIFEST_FILE);
@@ -41,10 +41,10 @@ impl DataProvider<'_> for FsDataProvider {
         path_buf.extend(req.data_key.get_components().iter());
         if !path_buf.exists() {
             path_buf.pop();
-            if !path_buf.exists() {
-                return Err(Error::UnsupportedCategory(req.data_key.category));
-            } else {
+            if path_buf.exists() {
                 return Err(Error::UnsupportedDataKey(req.data_key));
+            } else {
+                return Err(Error::UnsupportedCategory(req.data_key.category));
             }
         }
         // TODO: Implement proper locale fallback

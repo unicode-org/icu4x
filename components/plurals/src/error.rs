@@ -31,8 +31,8 @@ impl From<ParserError> for PluralRulesError {
 impl fmt::Display for PluralRulesError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            PluralRulesError::Parser(error) => write!(f, "Parser error: {}", error),
-            PluralRulesError::DataProvider(error) => write!(f, "Data provider error: {}", error),
+            Self::Parser(error) => write!(f, "Parser error: {}", error),
+            Self::DataProvider(error) => write!(f, "Data provider error: {}", error),
         }
     }
 }
@@ -40,8 +40,8 @@ impl fmt::Display for PluralRulesError {
 impl std::error::Error for PluralRulesError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            PluralRulesError::Parser(error) => Some(error),
-            PluralRulesError::DataProvider(error) => Some(error),
+            Self::Parser(error) => Some(error),
+            Self::DataProvider(error) => Some(error),
         }
     }
 }

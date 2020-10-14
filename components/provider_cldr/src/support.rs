@@ -7,26 +7,26 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
-pub(crate) trait DataKeySupport {
+pub trait DataKeySupport {
     fn supports_key(data_key: &DataKey) -> Result<(), DataError>;
 }
 
 #[derive(Debug)]
-pub(crate) struct LazyCldrProvider<T> {
+pub struct LazyCldrProvider<T> {
     src: RwLock<Option<T>>,
 }
 
 impl<T> Default for LazyCldrProvider<T> {
     fn default() -> Self {
-        LazyCldrProvider {
+        Self {
             src: RwLock::new(None),
         }
     }
 }
 
 fn map_poison<E>(_err: E) -> DataError {
-    // Can't return the PoisonError directly because it has lifetime parameters.
-    DataError::new_resc_error(crate::error::Error::PoisonError)
+    // Can't return the Poison directly because it has lifetime parameters.
+    DataError::new_resc_error(crate::error::Error::Poison)
 }
 
 /// A lazy-initialized CLDR JSON data provider.
@@ -35,7 +35,7 @@ where
     T: DataProvider<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b dyn CldrPaths>,
     <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
 {
-    /// Call T::load, initializing T if necessary.
+    /// Call `T::load`, initializing T if necessary.
     pub fn try_load(
         &self,
         req: &DataRequest,
@@ -57,7 +57,7 @@ where
         data_provider.load(req).map(Some)
     }
 
-    /// Call T::iter_for_key, initializing T if necessary.
+    /// Call `T::iter_for_key`, initializing T if necessary.
     pub fn try_iter(
         &self,
         data_key: &DataKey,

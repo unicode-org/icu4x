@@ -4,7 +4,7 @@
 use icu_provider_fs::FsDataProvider;
 use std::path::PathBuf;
 
-/// Get a DataProvider loading from test data. Panics if unable to load the data.
+/// Get a `DataProvider` loading from test data. Panics if unable to load the data.
 pub fn get_provider() -> FsDataProvider {
     FsDataProvider::try_new(
         PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))

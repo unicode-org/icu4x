@@ -23,7 +23,7 @@ use tinystr::TinyStr4;
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub struct Script(TinyStr4);
 
-pub(crate) const SCRIPT_LENGTH: usize = 4;
+pub const SCRIPT_LENGTH: usize = 4;
 
 impl Script {
     /// A constructor which takes a utf8 slice, parses it and

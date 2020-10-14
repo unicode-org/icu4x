@@ -56,7 +56,7 @@ impl TryFrom<u8> for Year {
 
 impl From<Year> for FieldSymbol {
     fn from(input: Year) -> Self {
-        FieldSymbol::Year(input)
+        Self::Year(input)
     }
 }
 
@@ -79,7 +79,7 @@ impl TryFrom<u8> for Month {
 
 impl From<Month> for FieldSymbol {
     fn from(input: Month) -> Self {
-        FieldSymbol::Month(input)
+        Self::Month(input)
     }
 }
 
@@ -106,7 +106,7 @@ impl TryFrom<u8> for Day {
 
 impl From<Day> for FieldSymbol {
     fn from(input: Day) -> Self {
-        FieldSymbol::Day(input)
+        Self::Day(input)
     }
 }
 
@@ -133,7 +133,7 @@ impl TryFrom<u8> for Hour {
 
 impl From<Hour> for FieldSymbol {
     fn from(input: Hour) -> Self {
-        FieldSymbol::Hour(input)
+        Self::Hour(input)
     }
 }
 
@@ -158,7 +158,7 @@ impl TryFrom<u8> for Second {
 
 impl From<Second> for FieldSymbol {
     fn from(input: Second) -> Self {
-        FieldSymbol::Second(input)
+        Self::Second(input)
     }
 }
 
@@ -183,7 +183,7 @@ impl TryFrom<u8> for Weekday {
 
 impl From<Weekday> for FieldSymbol {
     fn from(input: Weekday) -> Self {
-        FieldSymbol::Weekday(input)
+        Self::Weekday(input)
     }
 }
 
@@ -204,6 +204,6 @@ impl TryFrom<u8> for DayPeriod {
 
 impl From<DayPeriod> for FieldSymbol {
     fn from(input: DayPeriod) -> Self {
-        FieldSymbol::DayPeriod(input)
+        Self::DayPeriod(input)
     }
 }

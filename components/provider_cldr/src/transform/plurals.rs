@@ -8,7 +8,7 @@ use crate::CldrPaths;
 use icu_plurals::rules::{parse, serialize};
 use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
-use icu_provider::structs::plurals::*;
+use icu_provider::structs::plurals::PluralRuleStringsV1;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
@@ -125,7 +125,7 @@ impl<'d> DataEntryCollection for PluralsProvider<'d> {
 }
 
 impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1 {
-    fn from(other: &cldr_json::LocalePluralRules) -> PluralRuleStringsV1 {
+    fn from(other: &cldr_json::LocalePluralRules) -> Self {
         #[allow(clippy::ptr_arg)]
         fn convert(s: &Cow<'static, str>) -> Cow<'static, str> {
             let mut ast = parse(s.as_bytes()).expect("Rule parsing failed.");
@@ -134,7 +134,7 @@ impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1 {
             serialize(&ast, &mut result).expect("Serialization failed.");
             result.into()
         }
-        PluralRuleStringsV1 {
+        Self {
             zero: other.zero.as_ref().map(convert),
             one: other.one.as_ref().map(convert),
             two: other.two.as_ref().map(convert),

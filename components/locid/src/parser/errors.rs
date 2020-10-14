@@ -61,9 +61,9 @@ impl Error for ParserError {}
 impl Display for ParserError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let value = match self {
-            ParserError::InvalidLanguage => "The given language subtag is invalid",
-            ParserError::InvalidSubtag => "Invalid subtag",
-            ParserError::InvalidExtension => "Invalid extension",
+            Self::InvalidLanguage => "The given language subtag is invalid",
+            Self::InvalidSubtag => "Invalid subtag",
+            Self::InvalidExtension => "Invalid extension",
         };
         f.write_str(value)
     }

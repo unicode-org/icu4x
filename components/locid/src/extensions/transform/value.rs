@@ -10,7 +10,7 @@ use tinystr::TinyStr8;
 pub struct Value(Box<[TinyStr8]>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_TVALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828u64) }; // "true"
+const TRUE_TVALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828_u64) }; // "true"
 
 /// A value used in a list of [`Fields`].
 ///

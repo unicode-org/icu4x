@@ -32,7 +32,7 @@ use tinystr::TinyStr8;
 pub struct Value(Box<[TinyStr8]>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_VALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828u64) }; // "true"
+const TRUE_VALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828_u64) }; // "true"
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
@@ -63,7 +63,7 @@ impl Value {
                 }
             }
         }
-        Ok(Value(v.into_boxed_slice()))
+        Ok(Self(v.into_boxed_slice()))
     }
 
     pub(crate) fn from_vec_unchecked(input: Vec<TinyStr8>) -> Self {

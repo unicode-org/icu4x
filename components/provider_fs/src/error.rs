@@ -16,7 +16,7 @@ pub enum Error {
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: Error::Io(err, None)
+/// If a path is unavailable, create the error directly: `Error::Io(err, None)`
 impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
     fn from(pieces: (std::io::Error, P)) -> Self {
         Self::Io(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
@@ -24,7 +24,7 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 }
 
 /// To help with debugging, JSON errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: Error::Json(err, None)
+/// If a path is unavailable, create the error directly: `Error::Json(err, None)`
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
         Self::Deserializer(Box::new(pieces.0), Some(pieces.1.as_ref().to_path_buf()))
@@ -64,20 +64,20 @@ impl Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
-            Error::Io(err, None) => err.fmt(f),
-            Error::DataProvider(err) => err.fmt(f),
-            Error::Deserializer(err, Some(filename)) => {
+            Self::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
+            Self::Io(err, None) => err.fmt(f),
+            Self::DataProvider(err) => err.fmt(f),
+            Self::Deserializer(err, Some(filename)) => {
                 write!(f, "Deserializer error: {}: {:?}", err, filename)
             }
-            Error::Deserializer(err, None) => write!(f, "Deserializer error: {}", err),
+            Self::Deserializer(err, None) => write!(f, "Deserializer error: {}", err),
             #[cfg(feature = "export")]
-            Error::Serializer(err, Some(filename)) => {
+            Self::Serializer(err, Some(filename)) => {
                 write!(f, "Serializer error: {}: {:?}", err, filename)
             }
             #[cfg(feature = "export")]
-            Error::Serializer(err, None) => write!(f, "Serializer error: {}", err),
-            Error::UnknownSyntax(syntax_option) => write!(
+            Self::Serializer(err, None) => write!(f, "Serializer error: {}", err),
+            Self::UnknownSyntax(syntax_option) => write!(
                 f,
                 "Unknown syntax {:?}. Do you need to enable a feature?",
                 syntax_option
@@ -89,11 +89,11 @@ impl fmt::Display for Error {
 impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            Error::Io(err, _) => Some(err),
-            Error::DataProvider(err) => Some(err),
-            Error::Deserializer(err, _) => Some(err.as_ref()),
+            Self::Io(err, _) => Some(err),
+            Self::DataProvider(err) => Some(err),
+            Self::Deserializer(err, _) => Some(err.as_ref()),
             #[cfg(feature = "export")]
-            Error::Serializer(err, _) => Some(err),
+            Self::Serializer(err, _) => Some(err),
             _ => None,
         }
     }

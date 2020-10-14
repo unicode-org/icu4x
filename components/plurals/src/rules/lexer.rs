@@ -70,7 +70,7 @@ impl<'l> Lexer<'l> {
     }
 
     fn take_if(&mut self, c: u8) -> bool {
-        if self.chars.get(self.ptr) == Some(&&c) {
+        if self.chars.get(self.ptr) == Some(&c) {
             self.ptr += 1;
             true
         } else {
@@ -121,7 +121,7 @@ impl<'l> Lexer<'l> {
 
                         let mut value = 0;
                         for ptr in start..end {
-                            let mul = 10u32.pow((end - ptr - 1) as u32);
+                            let mul = 10_u32.pow((end - ptr - 1) as u32);
                             value += ((self.chars[ptr] - b'0') as u32) * mul;
                         }
                         Token::Number(value)

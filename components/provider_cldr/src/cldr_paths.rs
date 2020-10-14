@@ -17,7 +17,7 @@ pub trait CldrPaths: std::fmt::Debug {
     fn cldr_dates(&self) -> Result<PathBuf, Error>;
 }
 
-/// Implementation of CldrPaths for data directories already downloaded.
+/// Implementation of `CldrPaths` for data directories already downloaded.
 ///
 /// # Example
 ///
@@ -49,8 +49,8 @@ impl CldrPaths for CldrPathsLocal {
 }
 
 impl Default for CldrPathsLocal {
-    fn default() -> CldrPathsLocal {
-        CldrPathsLocal {
+    fn default() -> Self {
+        Self {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
             cldr_dates: Err(MissingSourceError { src: "cldr-dates" }),
         }

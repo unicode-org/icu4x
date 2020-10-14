@@ -8,7 +8,7 @@ extern crate proc_macro;
 use super::get_crate_name;
 use proc_macro::TokenStream;
 
-pub(crate) trait IntoTokenStream {
+pub trait IntoTokenStream {
     fn into_token_stream_string(self) -> String;
     fn into_token_stream(self) -> Result<TokenStream, proc_macro::LexError>
     where
@@ -20,13 +20,13 @@ pub(crate) trait IntoTokenStream {
 
 impl IntoTokenStream for u32 {
     fn into_token_stream_string(self) -> String {
-        format!("{}", self)
+        self.to_string()
     }
 }
 
 impl IntoTokenStream for u64 {
     fn into_token_stream_string(self) -> String {
-        format!("{}", self)
+        self.to_string()
     }
 }
 

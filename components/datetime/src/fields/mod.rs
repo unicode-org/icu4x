@@ -24,7 +24,7 @@ impl Field {}
 
 impl From<(FieldSymbol, FieldLength)> for Field {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {
-        Field {
+        Self {
             symbol: input.0,
             length: input.1,
         }
@@ -41,6 +41,6 @@ impl TryFrom<(FieldSymbol, usize)> for Field {
                 .try_into()
                 .map_err(|_| Self::Error::TooLong(input.0))?,
         );
-        Ok(Field { symbol, length })
+        Ok(Self { symbol, length })
     }
 }

@@ -11,7 +11,7 @@ pub mod pluralrules;
 
 /// An adapter between `icu_locid` and `ecma402_traits`.
 ///
-/// Specifically, adds an implementation of [ecma402_traits::Locale], which is
+/// Specifically, adds an implementation of [`ecma402_traits::Locale`], which is
 /// rudimentary at the moment.
 #[derive(Debug, Hash, Clone, PartialEq)]
 pub enum Locale {
@@ -28,8 +28,8 @@ impl std::fmt::Display for crate::Locale {
     /// without any custom additions.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Locale::FromLangid(ref l) => write!(f, "{}", l),
-            Locale::FromLocale(ref l) => write!(f, "{}", l),
+            Self::FromLangid(ref l) => write!(f, "{}", l),
+            Self::FromLocale(ref l) => write!(f, "{}", l),
         }
     }
 }

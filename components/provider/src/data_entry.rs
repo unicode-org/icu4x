@@ -7,9 +7,9 @@ use std::borrow::Cow;
 use std::fmt;
 use std::fmt::Write;
 
-/// A variant and language identifier, used for requesting data from a DataProvider.
+/// A variant and language identifier, used for requesting data from a `DataProvider`.
 ///
-/// The fields in a DataEntry are not generally known until runtime.
+/// The fields in a `DataEntry` are not generally known until runtime.
 #[derive(PartialEq, Clone)]
 pub struct DataEntry {
     // TODO: Consider making this a list of variants
@@ -39,8 +39,8 @@ impl fmt::Display for DataEntry {
 }
 
 impl DataEntry {
-    /// Gets the standard path components of this DataEntry. These components should be used when
-    /// persisting the DataEntry on the filesystem or in structured data.
+    /// Gets the standard path components of this `DataEntry`. These components should be used when
+    /// persisting the `DataEntry` on the filesystem or in structured data.
     ///
     /// # Example
     ///
@@ -80,7 +80,7 @@ impl DataEntryComponents {
 
 impl From<&DataEntry> for DataEntryComponents {
     fn from(data_entry: &DataEntry) -> Self {
-        DataEntryComponents {
+        Self {
             components: [
                 if let Some(variant) = &data_entry.variant {
                     // Does not actually clone if the variant is borrowed

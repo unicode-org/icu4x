@@ -8,8 +8,8 @@ use crate::structs;
 use icu_locid::LanguageIdentifier;
 use std::fmt;
 
-/// Package a data struct T implementing Default as a DataResponse.
-pub(crate) fn make_inv_response<T>() -> Option<DataResponse<'static>>
+/// Package a data struct T implementing `Default` as a `DataResponse`.
+pub fn make_inv_response<T>() -> Option<DataResponse<'static>>
 where
     T: 'static + Clone + erased_serde::Serialize + fmt::Debug + Default,
 {
@@ -24,8 +24,8 @@ where
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
 ///
-/// The objects returned by InvariantDataProvider are guaranteed to conform to the correct struct
-/// definition, so InvariantDataProvider can also be used to validate unknown data providers.
+/// The objects returned by `InvariantDataProvider` are guaranteed to conform to the correct struct
+/// definition, so `InvariantDataProvider` can also be used to validate unknown data providers.
 ///
 /// # Example
 ///

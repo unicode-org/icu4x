@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE )
 
-//! Implements the traits found in [ecma402_traits::pluralrules].
+//! Implements the traits found in [`ecma402_traits::pluralrules`].
 
 use icu::plurals as ipr;
 use icu::plurals::PluralRulesError;
@@ -115,7 +115,7 @@ pub(crate) mod internal {
         ret
     }
 
-    /// Expresses the [PluralCategory] as a `str`.
+    /// Expresses the [`PluralCategory`] as a `str`.
     pub fn as_str(c: PluralCategory) -> &'static str {
         match c {
             PluralCategory::Few => "few",
@@ -239,7 +239,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     {
         // TODO: introduce a global data provider here.
         let dp = icu_provider::InvariantDataProvider;
-        PluralRules::try_new_with_provider(l, opts, &dp)
+        Self::try_new_with_provider(l, opts, &dp)
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result
@@ -253,7 +253,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
 }
 
 impl PluralRules {
-    /// Creates a new [PluralRules], using the specified data provider.
+    /// Creates a new [`PluralRules`], using the specified data provider.
     pub fn try_new_with_provider<L, P>(
         l: L,
         opts: ecma402_traits::pluralrules::Options,
@@ -272,7 +272,7 @@ impl PluralRules {
 
         // Oops, there is no slot in the ECMA 402 APIs to add the data provider.  What to do?
         let rep = ipr::PluralRules::try_new(locale.into(), provider, rule_type)?;
-        Ok(PluralRules { opts, rep })
+        Ok(Self { opts, rep })
     }
 }
 

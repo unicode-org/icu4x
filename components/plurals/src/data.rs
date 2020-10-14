@@ -71,7 +71,7 @@ pub struct PluralRuleList {
 }
 
 impl PluralRuleList {
-    fn get(&self, category: &PluralCategory) -> Option<&ast::Condition> {
+    fn get(&self, category: PluralCategory) -> Option<&ast::Condition> {
         match category {
             PluralCategory::Zero => self.zero.as_ref(),
             PluralCategory::One => self.one.as_ref(),
@@ -87,7 +87,7 @@ fn parse_rule<'s>(
     input: &Option<Cow<'s, str>>,
 ) -> Result<Option<ast::Condition>, PluralRulesError> {
     Ok(if let Some(input) = input {
-        Some(rules::parse_condition((&input).as_bytes())?)
+        Some(rules::parse_condition((input).as_bytes())?)
     } else {
         None
     })
@@ -130,7 +130,7 @@ impl RulesSelector {
             Self::Conditions(conditions) => PluralCategory::all()
                 .find_map(|category| {
                     conditions
-                        .get(category)
+                        .get(*category)
                         .filter(|cond| rules::test_condition(cond, operands))
                         .map(|_| *category)
                 })

@@ -40,7 +40,7 @@
 //! we expect to add more ways to customize the output, like skeletons, and components.
 //!
 //! *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-//! `date::MockDateTime` as a reference example of the data necessary for ICU DateTimeFormat to work, and
+//! `date::MockDateTime` as a reference example of the data necessary for ICU `DateTimeFormat` to work, and
 //! we hope to work with the community to develop core date and time APIs that will work as an input for this component.
 //!
 //! [`DateTimeFormat`]: ./struct.DateTimeFormat.html

@@ -23,8 +23,8 @@ const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, used for formatting and plural selection.
 ///
-/// You can create a FixedDecimal from a standard integer type. To represent fraction digits,
-/// call `.multiply_pow10()` after creating your FixedDecimal.
+/// You can create a `FixedDecimal` from a standard integer type. To represent fraction digits,
+/// call `.multiply_pow10()` after creating your `FixedDecimal`.
 ///
 /// # Examples
 ///
@@ -83,9 +83,9 @@ pub struct FixedDecimal {
 }
 
 impl Default for FixedDecimal {
-    /// Returns a FixedDecimal representing zero.
+    /// Returns a `FixedDecimal` representing zero.
     fn default() -> Self {
-        FixedDecimal {
+        Self {
             digits: SmallVec::new(),
             magnitude: 0,
             upper_magnitude: 0,
@@ -101,7 +101,7 @@ macro_rules! impl_from_signed_integer_type {
             fn from(value: $itype) -> Self {
                 let int_iterator: IntIterator<$utype> = value.into();
                 let is_negative = int_iterator.is_negative;
-                let mut result = FixedDecimal::from_ascending(int_iterator)
+                let mut result = Self::from_ascending(int_iterator)
                     .expect("All built-in integer types should fit");
                 result.is_negative = is_negative;
                 result
@@ -115,8 +115,7 @@ macro_rules! impl_from_unsigned_integer_type {
         impl From<$utype> for FixedDecimal {
             fn from(value: $utype) -> Self {
                 let int_iterator: IntIterator<$utype> = value.into();
-                FixedDecimal::from_ascending(int_iterator)
-                    .expect("All built-in integer types should fit")
+                Self::from_ascending(int_iterator).expect("All built-in integer types should fit")
             }
         }
     };
@@ -137,10 +136,10 @@ impl_from_unsigned_integer_type!(u16);
 impl_from_unsigned_integer_type!(u8);
 
 impl FixedDecimal {
-    /// Initialize a FixedDecimal with an iterator of digits in ascending
+    /// Initialize a `FixedDecimal` with an iterator of digits in ascending
     /// order of magnitude, starting with the digit at magnitude 0.
     ///
-    /// This method is not public; use TryFrom::<isize> instead.
+    /// This method is not public; use `TryFrom::<isize>` instead.
     fn from_ascending<T>(digits_iter: T) -> Result<Self, Error>
     where
         T: Iterator<Item = u8>,
@@ -229,7 +228,7 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(120);
     /// assert_eq!(0..=2, dec.magnitude_range());
     /// ```
-    pub fn magnitude_range(&self) -> RangeInclusive<i16> {
+    pub const fn magnitude_range(&self) -> RangeInclusive<i16> {
         self.lower_magnitude..=self.upper_magnitude
     }
 
@@ -303,7 +302,7 @@ impl FixedDecimal {
         }
     }
 
-    /// Render the FixedDecimal as a string of ASCII digits with a possible decimal point.
+    /// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
     ///
     /// # Example
     ///
@@ -329,7 +328,7 @@ impl FixedDecimal {
         Ok(())
     }
 
-    /// The number of bytes that will be written by FixedDecimal::write_to. Use this function to
+    /// The number of bytes that will be written by `FixedDecimal::write_to`. Use this function to
     /// pre-allocate capacity in the destination buffer.
     ///
     /// # Example
@@ -343,7 +342,7 @@ impl FixedDecimal {
     /// assert_eq!("-50.00", result);
     /// assert_eq!(6, dec.write_len());
     /// ```
-    pub fn write_len(&self) -> usize {
+    pub const fn write_len(&self) -> usize {
         let num_digits = 1 + (self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize;
         num_digits
             + (if self.is_negative { 1 } else { 0 })
@@ -372,7 +371,7 @@ impl FixedDecimal {
     }
 }
 
-/// Renders the FixedDecimal according to the syntax documented in FixedDecimal::write_to.
+/// Renders the `FixedDecimal` according to the syntax documented in `FixedDecimal::write_to`.
 impl fmt::Display for FixedDecimal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.write_to(f)
@@ -427,7 +426,7 @@ impl FromStr for FixedDecimal {
         }
 
         // defining the output dec here and set its sign
-        let mut dec: FixedDecimal = FixedDecimal::default();
+        let mut dec: Self = Self::default();
         dec.is_negative = is_negative;
 
         // no_dot_str_len: shows length of the string after removing the dot

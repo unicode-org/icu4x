@@ -70,7 +70,7 @@ pub struct PluralOperands {
 }
 
 impl PluralOperands {
-    /// Returns the number represented by this [PluralOperands] as floating point.
+    /// Returns the number represented by this [`PluralOperands`] as floating point.
     /// The precision of the number returned is up to the representation accuracy
     /// of a double.
     pub fn n(&self) -> f64 {
@@ -123,19 +123,19 @@ impl FromStr for PluralOperands {
             let int_str = &abs_str[..sep_idx];
             let dec_str = &abs_str[(sep_idx + 1)..];
 
-            let integer_digits = u64::from_str(&int_str)?;
+            let integer_digits = u64::from_str(int_str)?;
 
             let dec_str_no_zeros = dec_str.trim_end_matches('0');
 
             let num_fraction_digits0 = dec_str.len() as usize;
             let num_fraction_digits = dec_str_no_zeros.len() as usize;
 
-            let fraction_digits0 = u64::from_str(&dec_str)?;
+            let fraction_digits0 = u64::from_str(dec_str)?;
             let fraction_digits =
                 if num_fraction_digits == 0 || num_fraction_digits == num_fraction_digits0 {
                     fraction_digits0
                 } else {
-                    u64::from_str(&dec_str_no_zeros)?
+                    u64::from_str(dec_str_no_zeros)?
                 };
 
             (
@@ -146,11 +146,11 @@ impl FromStr for PluralOperands {
                 fraction_digits,
             )
         } else {
-            let integer_digits = u64::from_str(&abs_str)?;
+            let integer_digits = u64::from_str(abs_str)?;
             (integer_digits, 0, 0, 0, 0)
         };
 
-        Ok(PluralOperands {
+        Ok(Self {
             i: integer_digits,
             v: num_fraction_digits0,
             w: num_fraction_digits,
@@ -164,7 +164,7 @@ macro_rules! impl_integer_type {
     ($ty:ident) => {
         impl From<$ty> for PluralOperands {
             fn from(input: $ty) -> Self {
-                PluralOperands {
+                Self {
                     i: input as u64,
                     v: 0,
                     w: 0,
@@ -185,7 +185,7 @@ macro_rules! impl_signed_integer_type {
             type Error = OperandsError;
             fn try_from(input: $ty) -> Result<Self, Self::Error> {
                 let x = input.checked_abs().ok_or(OperandsError::Invalid)?;
-                Ok(PluralOperands {
+                Ok(Self {
                     i: x as u64,
                     v: 0,
                     w: 0,
@@ -204,7 +204,7 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl From<&FixedDecimal> for PluralOperands {
-    /// Converts a [fixed_decimal::FixedDecimal] to [PluralOperands]. Retains at most 18
+    /// Converts a `fixed_decimal::FixedDecimal` to `PluralOperands`. Retains at most 18
     /// digits each from the integer and fraction parts.
     fn from(dec: &FixedDecimal) -> Self {
         let mag_range = dec.magnitude_range();
@@ -230,7 +230,7 @@ impl From<&FixedDecimal> for PluralOperands {
             }
         }
 
-        PluralOperands {
+        Self {
             i,
             v: (-mag_low) as usize,
             w,

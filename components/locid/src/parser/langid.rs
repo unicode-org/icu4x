@@ -7,14 +7,14 @@ pub use super::errors::ParserError;
 use crate::subtags;
 use crate::LanguageIdentifier;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum ParserMode {
     LanguageIdentifier,
     Locale,
     Partial,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 enum ParserPosition {
     Script,
     Region,
@@ -55,10 +55,10 @@ pub fn parse_language_identifier_from_iter<'a>(
                     variants.insert(idx, v);
                 }
                 position = ParserPosition::Variant;
-            } else if mode != ParserMode::Partial {
-                return Err(ParserError::InvalidSubtag);
-            } else {
+            } else if mode == ParserMode::Partial {
                 break;
+            } else {
+                return Err(ParserError::InvalidSubtag);
             }
         } else if position == ParserPosition::Region {
             if let Ok(s) = subtags::Region::from_bytes(subtag) {
@@ -69,19 +69,19 @@ pub fn parse_language_identifier_from_iter<'a>(
                     variants.insert(idx, v);
                 }
                 position = ParserPosition::Variant;
-            } else if mode != ParserMode::Partial {
-                return Err(ParserError::InvalidSubtag);
-            } else {
+            } else if mode == ParserMode::Partial {
                 break;
+            } else {
+                return Err(ParserError::InvalidSubtag);
             }
         } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
             if let Err(idx) = variants.binary_search(&v) {
                 variants.insert(idx, v);
             }
-        } else if mode != ParserMode::Partial {
-            return Err(ParserError::InvalidSubtag);
-        } else {
+        } else if mode == ParserMode::Partial {
             break;
+        } else {
+            return Err(ParserError::InvalidSubtag);
         }
         iter.next();
     }

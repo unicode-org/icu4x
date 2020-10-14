@@ -111,7 +111,7 @@ impl Locale {
     /// assert_eq!(Locale::canonicalize("pL_latn_pl-U-HC-H12"), Ok("pl-Latn-PL-u-hc-h12".to_string()));
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let locale = Locale::from_bytes(input.as_ref())?;
+        let locale = Self::from_bytes(input.as_ref())?;
         Ok(locale.to_string())
     }
 }
@@ -126,7 +126,7 @@ impl FromStr for Locale {
 
 impl From<LanguageIdentifier> for Locale {
     fn from(id: LanguageIdentifier) -> Self {
-        Locale {
+        Self {
             language: id.language,
             script: id.script,
             region: id.region,

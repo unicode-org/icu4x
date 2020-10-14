@@ -32,9 +32,9 @@ fn test_and_condition(condition: &ast::AndCondition, operands: &PluralOperands) 
 }
 
 fn test_relation(relation: &ast::Relation, operands: &PluralOperands) -> bool {
-    calculate_expression(&relation.expression, operands)
-        .map(|exp| test_range(&relation.range_list, exp, &relation.operator))
-        .unwrap_or(false)
+    calculate_expression(&relation.expression, operands).map_or(false, |exp| {
+        test_range(&relation.range_list, exp, relation.operator)
+    })
 }
 
 // UTS 35 Part 2 Section 5.1 specifies that CLDR rules contain only integer values.
@@ -71,14 +71,14 @@ fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands)
     }
 }
 
-fn test_range(range: &ast::RangeList, value: u64, operator: &ast::Operator) -> bool {
+fn test_range(range: &ast::RangeList, value: u64, operator: ast::Operator) -> bool {
     range
         .0
         .iter()
         .any(|item| test_range_item(item, value, operator))
 }
 
-fn test_range_item(item: &ast::RangeListItem, value: u64, operator: &ast::Operator) -> bool {
+fn test_range_item(item: &ast::RangeListItem, value: u64, operator: ast::Operator) -> bool {
     let value = match item {
         ast::RangeListItem::Value(n) => n.0 == value,
         ast::RangeListItem::Range(range) => range.contains(&ast::Value(value)),

@@ -30,7 +30,7 @@
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use super::preferences;
-/// `style::Bag` is a structure to represent the set of styles in which the DateTime should
+/// `style::Bag` is a structure to represent the set of styles in which the `DateTime` should
 /// be formatted to.
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].

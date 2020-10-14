@@ -40,7 +40,7 @@ impl TryFrom<&RangeFull> for UnicodeSet {
     type Error = UnicodeSetError;
 
     fn try_from(_: &RangeFull) -> Result<Self, Self::Error> {
-        Ok(UnicodeSet::all())
+        Ok(Self::all())
     }
 }
 

@@ -43,8 +43,8 @@ impl SyntaxOption {
     /// Gets the file extension associated with the given syntax.
     pub fn get_file_extension(&self) -> &str {
         match self {
-            SyntaxOption::Json => "json",
-            SyntaxOption::Bincode => "bincode",
+            Self::Json => "json",
+            Self::Bincode => "bincode",
         }
     }
 }

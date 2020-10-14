@@ -5,21 +5,21 @@ use std::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
 
-/// UnicodeSet builder wrapper
+/// `UnicodeSet` builder wrapper
 ///
-/// Provides exposure to builder functions and conversion to UnicodeSet
+/// Provides exposure to builder functions and conversion to `UnicodeSet`
 #[derive(Default)]
 pub struct UnicodeSetBuilder {
     intervals: Vec<u32>,
 }
 
 impl UnicodeSetBuilder {
-    /// Returns empty UnicodeSetBuilder
-    pub fn new() -> UnicodeSetBuilder {
-        UnicodeSetBuilder { intervals: vec![] }
+    /// Returns empty `UnicodeSetBuilder`
+    pub const fn new() -> Self {
+        Self { intervals: vec![] }
     }
 
-    /// Returns a UnicodeSet and consumes the UnicodeSetBuilder
+    /// Returns a UnicodeSet and consumes the `UnicodeSetBuilder`
     pub fn build(self) -> UnicodeSet {
         UnicodeSet::from_inversion_list(self.intervals).unwrap()
     }
@@ -59,7 +59,7 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Add the range to the UnicodeSetBuilder
+    /// Add the range to the `UnicodeSetBuilder`
     ///
     /// Accomplishes this through binary search for the start and end indices and merges intervals
     /// in between with inplace memory. Performs `O(1)` operation if adding to end of list, and `O(N)` otherwise,
@@ -75,7 +75,7 @@ impl UnicodeSetBuilder {
         self.add_remove_middle(start, end, true);
     }
 
-    /// Add the character to the UnicodeSetBuilder
+    /// Add the character to the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -91,7 +91,7 @@ impl UnicodeSetBuilder {
         self.add(to_add, to_add + 1);
     }
 
-    /// Add the range of characters to the UnicodeSetBuilder
+    /// Add the range of characters to the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -107,7 +107,7 @@ impl UnicodeSetBuilder {
         self.add(start, end);
     }
 
-    /// Add the UnicodeSet reference to the UnicodeSetBuilder
+    /// Add the UnicodeSet reference to the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -125,7 +125,7 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Removes the range from the UnicodeSetBuilder
+    /// Removes the range from the `UnicodeSetBuilder`
     ///
     /// Performs binary search to find start and end affected intervals, then removes in an `O(N)` fashion
     /// where `N` is the number of endpoints, with in-place memory.
@@ -142,7 +142,7 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Remove the character from the UnicodeSetBuilder
+    /// Remove the character from the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -158,7 +158,7 @@ impl UnicodeSetBuilder {
         self.remove(to_remove, to_remove + 1);
     }
 
-    /// Remove the range of characters from the UnicodeSetBuilder
+    /// Remove the range of characters from the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -174,7 +174,7 @@ impl UnicodeSetBuilder {
         self.remove(start, end);
     }
 
-    /// Remove the UnicodeSet from the UnicodeSetBuilder
+    /// Remove the `UnicodeSet` from the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -192,7 +192,7 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Retain the specified character in the UnicodeSetBuilder if it exists
+    /// Retain the specified character in the `UnicodeSetBuilder` if it exists
     ///
     /// # Example:
     ///
@@ -212,7 +212,7 @@ impl UnicodeSetBuilder {
         self.remove(code_point + 1, (char::MAX as u32) + 1);
     }
 
-    /// Retain the range of characters located within the UnicodeSetBuilder
+    /// Retain the range of characters located within the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -233,7 +233,7 @@ impl UnicodeSetBuilder {
         self.remove(end, (char::MAX as u32) + 1);
     }
 
-    /// Retain the elements in the specified set within the UnicodeSetBuilder
+    /// Retain the elements in the specified set within the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///
@@ -268,7 +268,7 @@ impl UnicodeSetBuilder {
         let mut a = ai.next();
         let mut b = bi.next();
         while let (Some(c), Some(d)) = (a, b) {
-            match c.cmp(&d) {
+            match c.cmp(d) {
                 Ordering::Less => {
                     res.push(*c);
                     a = ai.next();

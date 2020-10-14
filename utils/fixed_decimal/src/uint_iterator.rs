@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 /// An iterator over the decimal digits of an integer, from least to most significant
-pub(crate) struct IntIterator<T> {
+pub struct IntIterator<T> {
     /// Digits remaining to be returned from the iterator
     unum: T,
     /// Whether the number is negative
@@ -31,7 +31,7 @@ macro_rules! impl_from_signed_integer_type {
     ($itype:ident, $utype:ident) => {
         impl From<$itype> for IntIterator<$utype> {
             fn from(value: $itype) -> Self {
-                IntIterator {
+                Self {
                     unum: {
                         if value == std::$itype::MIN {
                             std::$itype::MAX as $utype + 1
@@ -50,7 +50,7 @@ macro_rules! impl_from_unsigned_integer_type {
     ($utype:ident) => {
         impl From<$utype> for IntIterator<$utype> {
             fn from(value: $utype) -> Self {
-                IntIterator {
+                Self {
                     unum: value,
                     is_negative: false,
                 }

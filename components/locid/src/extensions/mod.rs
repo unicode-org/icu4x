@@ -70,9 +70,9 @@ impl ExtensionType {
     pub fn from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
-            b'u' => Ok(ExtensionType::Unicode),
-            b't' => Ok(ExtensionType::Transform),
-            b'x' => Ok(ExtensionType::Private),
+            b'u' => Ok(Self::Unicode),
+            b't' => Ok(Self::Transform),
+            b'x' => Ok(Self::Private),
             _ => Err(ParserError::InvalidExtension),
         }
     }

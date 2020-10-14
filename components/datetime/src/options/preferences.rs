@@ -86,7 +86,7 @@ pub enum HourCycle {
 }
 
 impl HourCycle {
-    pub fn field(&self) -> fields::Hour {
+    pub fn field(self) -> fields::Hour {
         match self {
             Self::H11 => fields::Hour::H11,
             Self::H12 => fields::Hour::H12,

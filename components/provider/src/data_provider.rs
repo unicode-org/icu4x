@@ -50,14 +50,14 @@ impl<'d> DataResponse<'d> {
             })
     }
 
-    /// Get an immutable reference to the payload as an erased_serde::Serialize trait object.
+    /// Get an immutable reference to the payload as an `erased_serde::Serialize` trait object.
     pub fn borrow_as_serialize(&self) -> &dyn erased_serde::Serialize {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed.as_serialize()
     }
 
-    /// Get a mutable reference to the payload in a Response object.
-    /// The payload may or may not be owned by the Response.
+    /// Get a mutable reference to the payload in a `Response` object.
+    /// The payload may or may not be owned by the `Response`.
     pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, Error> {
         let borrowed_mut: &mut dyn CloneableAny = self.payload.to_mut().borrow_mut();
         // TODO: If I move this into the lambda, I get E0502. Why?
@@ -91,7 +91,7 @@ impl<'d> DataResponse<'d> {
         }
     }
 
-    /// Get the TypeId of the payload.
+    /// Get the `TypeId` of the payload.
     pub fn get_payload_type_id(&self) -> TypeId {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
         borrowed.as_any().type_id()
@@ -104,7 +104,7 @@ pub struct DataResponseBuilder {
 }
 
 impl DataResponseBuilder {
-    /// Construct a DataResponse from the builder, with owned data.
+    /// Construct a `DataResponse` from the builder, with owned data.
     /// Consumes both the builder and the data.
     /// Returns the 'static lifetime since there is no borrowed data.
     pub fn with_owned_payload<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
@@ -117,7 +117,7 @@ impl DataResponseBuilder {
         }
     }
 
-    /// Construct a DataResponse from the builder, with borrowed data.
+    /// Construct a `DataResponse` from the builder, with borrowed data.
     /// Consumes the builder, but not the data.
     #[allow(clippy::needless_lifetimes)]
     pub fn with_borrowed_payload<'d, T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
@@ -133,7 +133,7 @@ impl DataResponseBuilder {
 
 /// An abstract data provider that takes a request object and returns a response with a payload.
 /// Lifetimes:
-/// - 'a = lifetime of the DataProvider object
+/// - 'a = lifetime of the `DataProvider` object
 /// - 'd = lifetime of the borrowed payload
 /// Note: 'd and 'a can be the same, but they do not need to be. For example, 'd = 'static if:
 /// 1. The provider always returns data that lives in static memory

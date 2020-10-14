@@ -76,13 +76,13 @@ fn serialize_andcondition(cond: &ast::AndCondition, w: &mut impl fmt::Write) -> 
 fn serialize_relation(relation: &ast::Relation, w: &mut impl fmt::Write) -> fmt::Result {
     serialize_expression(&relation.expression, w)?;
     w.write_char(' ')?;
-    serialize_operator(&relation.operator, w)?;
+    serialize_operator(relation.operator, w)?;
     w.write_char(' ')?;
     serialize_rangelist(&relation.range_list, w)
 }
 
 fn serialize_expression(exp: &ast::Expression, w: &mut impl fmt::Write) -> fmt::Result {
-    serialize_operand(&exp.operand, w)?;
+    serialize_operand(exp.operand, w)?;
     if let Some(modulus) = &exp.modulus {
         w.write_str(" % ")?;
         serialize_value(modulus, w)?;
@@ -90,14 +90,14 @@ fn serialize_expression(exp: &ast::Expression, w: &mut impl fmt::Write) -> fmt::
     Ok(())
 }
 
-fn serialize_operator(operator: &ast::Operator, w: &mut impl fmt::Write) -> fmt::Result {
+fn serialize_operator(operator: ast::Operator, w: &mut impl fmt::Write) -> fmt::Result {
     match operator {
         ast::Operator::Eq => w.write_char('='),
         ast::Operator::NotEq => w.write_str("!="),
     }
 }
 
-fn serialize_operand(operand: &ast::Operand, w: &mut impl fmt::Write) -> fmt::Result {
+fn serialize_operand(operand: ast::Operand, w: &mut impl fmt::Write) -> fmt::Result {
     match operand {
         ast::Operand::N => w.write_char('n'),
         ast::Operand::I => w.write_char('i'),
@@ -130,9 +130,9 @@ fn serialize_rangelistitem(rli: &ast::RangeListItem, w: &mut impl fmt::Write) ->
 }
 
 fn serialize_range(range: &RangeInclusive<ast::Value>, w: &mut impl fmt::Write) -> fmt::Result {
-    serialize_value(&range.start(), w)?;
+    serialize_value(range.start(), w)?;
     w.write_str("..")?;
-    serialize_value(&range.end(), w)?;
+    serialize_value(range.end(), w)?;
     Ok(())
 }
 

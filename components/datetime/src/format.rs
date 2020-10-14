@@ -59,7 +59,7 @@ where
 fn format_number(
     result: &mut impl fmt::Write,
     num: usize,
-    length: &FieldLength,
+    length: FieldLength,
 ) -> Result<(), std::fmt::Error> {
     match length {
         FieldLength::One => write!(result, "{}", num),
@@ -72,7 +72,7 @@ fn format_number(
                 result.write_str(&buffer[len - 2..])
             }
         }
-        length => write!(result, "{:0>width$}", num, width = *length as usize),
+        length => write!(result, "{:0>width$}", num, width = length as usize),
     }
 }
 
@@ -98,10 +98,10 @@ where
     for item in &pattern.0 {
         match item {
             PatternItem::Field(field) => match field.symbol {
-                FieldSymbol::Year(..) => format_number(w, date_time.year(), &field.length)?,
+                FieldSymbol::Year(..) => format_number(w, date_time.year(), field.length)?,
                 FieldSymbol::Month(month) => match field.length {
                     FieldLength::One | FieldLength::TwoDigit => {
-                        format_number(w, usize::from(date_time.month()) + 1, &field.length)?
+                        format_number(w, usize::from(date_time.month()) + 1, field.length)?
                     }
                     length => {
                         let symbol = data.get_symbol_for_month(month, length, date_time.month());
@@ -114,7 +114,7 @@ where
                     w.write_str(symbol)?
                 }
                 FieldSymbol::Day(..) => {
-                    format_number(w, usize::from(date_time.day()) + 1, &field.length)?
+                    format_number(w, usize::from(date_time.day()) + 1, field.length)?
                 }
                 FieldSymbol::Hour(hour) => {
                     let h = date_time.hour().into();
@@ -137,11 +137,11 @@ where
                             }
                         }
                     };
-                    format_number(w, value, &field.length)?
+                    format_number(w, value, field.length)?
                 }
-                FieldSymbol::Minute => format_number(w, date_time.minute().into(), &field.length)?,
+                FieldSymbol::Minute => format_number(w, date_time.minute().into(), field.length)?,
                 FieldSymbol::Second(..) => {
-                    format_number(w, date_time.second().into(), &field.length)?
+                    format_number(w, date_time.second().into(), field.length)?
                 }
                 FieldSymbol::DayPeriod(period) => match period {
                     fields::DayPeriod::AmPm => {
@@ -176,7 +176,7 @@ mod tests {
         for (length, expected) in samples {
             for (value, expected) in values.iter().zip(expected) {
                 let mut s = String::new();
-                format_number(&mut s, *value, length).unwrap();
+                format_number(&mut s, *value, *length).unwrap();
                 assert_eq!(s, *expected);
             }
         }

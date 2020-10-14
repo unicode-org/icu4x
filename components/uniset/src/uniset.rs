@@ -38,13 +38,13 @@ impl UnicodeSet {
     /// let empty: Vec<u32> = vec![];
     /// assert_eq!(UnicodeSet::from_inversion_list(empty.clone()), Err(UnicodeSetError::InvalidSet(empty.clone())))
     /// ```
-    pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<UnicodeSet, UnicodeSetError> {
+    pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError> {
         if is_valid(&inv_list) {
             let size: usize = inv_list
                 .chunks(2)
                 .map(|end_points| end_points[1] - end_points[0])
                 .sum::<u32>() as usize;
-            Ok(UnicodeSet { inv_list, size })
+            Ok(Self { inv_list, size })
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list))
         }
@@ -53,8 +53,8 @@ impl UnicodeSet {
     /// Returns UnicodeSet spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
-    pub fn all() -> UnicodeSet {
-        UnicodeSet {
+    pub fn all() -> Self {
+        Self {
             inv_list: vec![0, (char::MAX as u32) + 1],
             size: (char::MAX as usize) + 1,
         }
@@ -63,8 +63,8 @@ impl UnicodeSet {
     /// Returns UnicodeSet spanning BMP range
     ///
     /// The range spans from `0x0 -> 0xFFFF` inclusive
-    pub fn bmp() -> UnicodeSet {
-        UnicodeSet {
+    pub fn bmp() -> Self {
+        Self {
             inv_list: vec![0, BMP_MAX + 1],
             size: (BMP_MAX as usize) + 1,
         }
@@ -209,7 +209,7 @@ impl UnicodeSet {
     /// assert!(!example.contains_set(&f_to_t)); // contains none
     /// assert!(!example.contains_set(&r_to_x)); // contains some
     /// ```
-    pub fn contains_set(&self, set: &UnicodeSet) -> bool {
+    pub fn contains_set(&self, set: &Self) -> bool {
         if set.size() > self.size() {
             return false;
         }

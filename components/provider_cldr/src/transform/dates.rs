@@ -174,11 +174,11 @@ macro_rules! symbols_from {
     ([$name: ident, $name2: ident]) => {
         impl cldr_json::$name::Symbols {
             // Helper function which returns None if the two groups of symbols overlap.
-            pub fn get_unaliased(&self, other: &cldr_json::$name::Symbols) -> Option<Self> {
-                if self != other {
-                    Some(self.clone())
-                } else {
+            pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
+                if self == other {
                     None
+                } else {
+                    Some(self.clone())
                 }
             }
         }

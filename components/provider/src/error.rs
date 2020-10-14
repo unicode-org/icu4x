@@ -34,25 +34,25 @@ pub enum Error {
 
 impl From<&DataKey> for Error {
     fn from(data_key: &DataKey) -> Self {
-        Error::UnsupportedDataKey(*data_key)
+        Self::UnsupportedDataKey(*data_key)
     }
 }
 
 impl From<&DataCategory> for Error {
     fn from(category: &DataCategory) -> Self {
-        Error::UnsupportedCategory(*category)
+        Self::UnsupportedCategory(*category)
     }
 }
 
 impl From<DataRequest> for Error {
     fn from(req: DataRequest) -> Self {
-        Error::UnavailableEntry(req)
+        Self::UnavailableEntry(req)
     }
 }
 
 impl From<Box<dyn std::error::Error>> for Error {
     fn from(err: Box<dyn std::error::Error>) -> Self {
-        Error::ResourceError(err)
+        Self::ResourceError(err)
     }
 }
 
@@ -61,24 +61,24 @@ impl Error {
     where
         T: 'static + std::error::Error,
     {
-        Error::ResourceError(Box::new(err))
+        Self::ResourceError(Box::new(err))
     }
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
-            Error::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
-            Error::MismatchedType { actual, generic } => {
+            Self::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
+            Self::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
+            Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
                 if let Some(type_id) = generic {
                     write!(f, " (expected from generic type parameter: {:?})", type_id)?;
                 }
                 Ok(())
             }
-            Error::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
-            Error::ResourceError(err) => write!(f, "Failed to load resource: {}", err),
+            Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
+            Self::ResourceError(err) => write!(f, "Failed to load resource: {}", err),
         }
     }
 }
@@ -86,7 +86,7 @@ impl fmt::Display for Error {
 impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            Error::ResourceError(error) => Some(error.deref()),
+            Self::ResourceError(error) => Some(error.deref()),
             _ => None,
         }
     }
