@@ -18,7 +18,7 @@ pub enum PatternItem {
 
 impl From<(FieldSymbol, FieldLength)> for PatternItem {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {
-        PatternItem::Field(Field {
+        Self::Field(Field {
             symbol: input.0,
             length: input.1,
         })
@@ -29,7 +29,7 @@ impl TryFrom<(FieldSymbol, u8)> for PatternItem {
     type Error = Error;
     fn try_from(input: (FieldSymbol, u8)) -> Result<Self, Self::Error> {
         let length = FieldLength::try_from(input.1).map_err(|_| Error::FieldTooLong(input.0))?;
-        Ok(PatternItem::Field(Field {
+        Ok(Self::Field(Field {
             symbol: input.0,
             length,
         }))
@@ -53,18 +53,18 @@ pub struct Pattern(pub Vec<PatternItem>);
 
 impl Pattern {
     pub fn from_bytes(input: &str) -> Result<Self, Error> {
-        Parser::new(input).parse().map(Pattern)
+        Parser::new(input).parse().map(Self)
     }
 
     // TODO(#277): This should be turned into a utility for all ICU4X.
     pub fn from_bytes_combination(
         input: &str,
-        date: Pattern,
-        time: Pattern,
+        date: Self,
+        time: Self,
     ) -> Result<Self, Error> {
         Parser::new(input)
             .parse_placeholders(vec![time, date])
-            .map(Pattern)
+            .map(Self)
     }
 }
 
