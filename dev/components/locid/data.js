@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602692755818,
+  "lastUpdate": 1602693938886,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -179,6 +179,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 5334,
             "range": "± 367",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "038531324236e1b45a4b7c4a47c30aef9f1b91bd",
+          "message": "Remove Error postfix from Errors.",
+          "timestamp": "2020-10-14T09:41:37-07:00",
+          "tree_id": "98a6ee4f8f23eec30e4fd63ecac6587f24040fbf",
+          "url": "https://github.com/unicode-org/icu4x/commit/038531324236e1b45a4b7c4a47c30aef9f1b91bd"
+        },
+        "date": 1602693938134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5426,
+            "range": "± 605",
             "unit": "ns/iter"
           }
         ]
