@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602638251817,
+  "lastUpdate": 1602692755818,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -149,6 +149,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 5256,
             "range": "± 151",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "9013960948d6d3251e880969e0fee933bc1a7681",
+          "message": "Clippy nursery and pedantic lints - almost all are Self and docs.",
+          "timestamp": "2020-10-14T09:18:05-07:00",
+          "tree_id": "be801716393c689d188d64a89fd9d90f8ad0a26a",
+          "url": "https://github.com/unicode-org/icu4x/commit/9013960948d6d3251e880969e0fee933bc1a7681"
+        },
+        "date": 1602692753612,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5334,
+            "range": "± 367",
             "unit": "ns/iter"
           }
         ]
