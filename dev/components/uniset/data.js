@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602731982500,
+  "lastUpdate": 1602732043443,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1085,6 +1085,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31471400,
             "range": "± 1734225",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d1d0124bd522f96dae72653e4fb97a76181a5d35",
+          "message": "Update README.md",
+          "timestamp": "2020-10-14T20:17:36-07:00",
+          "tree_id": "aed1c8033b5298fa4504b0e62e987356471b117b",
+          "url": "https://github.com/unicode-org/icu4x/commit/d1d0124bd522f96dae72653e4fb97a76181a5d35"
+        },
+        "date": 1602732043054,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31980537,
+            "range": "± 1257946",
             "unit": "ns/iter"
           }
         ]
