@@ -8,7 +8,12 @@
 # List of components with at least two owners as specified in docs/crate-ownership.
 
 components/locid/               @zbraniecki @nciric
-components/plurals/              @zbraniecki @sffc
-components/provider/        @sffc
-components/provider_cldr/   @sffc
-components/provider_fs/     @sffc
+components/plurals/             @zbraniecki @sffc
+components/datetime/            @zbraniecki @sffc
+components/uniset/              @echeran @EvanJP
+components/provider/            @sffc
+components/provider_cldr/       @sffc
+components/provider_fs/         @sffc
+components/ecma402/             @filmil
+resources/testdata/             @sffc
+utils/fixed_decimal/            @sffc
