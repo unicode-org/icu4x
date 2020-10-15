@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602708708749,
+  "lastUpdate": 1602726200267,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -935,6 +935,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36424299,
             "range": "± 732208",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a960563d6ad2dd5d76a5e73af7bb33f0a1877bf8",
+          "message": "Refactor the DateTime pattern parser to handle quotes. (#336)\n\n* Refactor the DateTime pattern parser to handle quotes.\r\n\r\n* Refactor Parser\r\n\r\n* Switch several places to use Self",
+          "timestamp": "2020-10-14T18:39:36-07:00",
+          "tree_id": "5505bb1791e9c3454a1afe53751fd0f42b134182",
+          "url": "https://github.com/unicode-org/icu4x/commit/a960563d6ad2dd5d76a5e73af7bb33f0a1877bf8"
+        },
+        "date": 1602726199815,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36583721,
+            "range": "± 98517",
             "unit": "ns/iter"
           }
         ]
