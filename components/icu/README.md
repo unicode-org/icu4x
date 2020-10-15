@@ -18,7 +18,7 @@ components with pre-selected features.
 Most of Unicode functionality relies on data which has to be provided
 to the APIs.
 
-`ICU4X` project uses a concept of [`DataProvider`] - a service used to
+`ICU4X` project uses a concept of `DataProvider` - a service used to
 handle data management.
 
 There can be many different heuristics for handling data management and
@@ -27,8 +27,8 @@ this meta-package does not supply any default `DataProvider`.
 When using `ICU4X` users are expected to decide which provider they want to use
 and instrument it to point at the correct location where the data files are stored.
 
-In the following examples an [`icu_testdata`] package is used which wraps
-an [`FsDataProvider`] with locally available subset of data.
+In the following examples an `icu_testdata` package is used which wraps
+an `FsDataProvider` with locally available subset of data.
 
 # Examples
 
@@ -56,6 +56,6 @@ let formatted_date = dtf.format(&date);
 assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
 ```
 
-[`icu_testdata`]: ../icu_testdata/index.html
-[`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
-[`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
+# More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
