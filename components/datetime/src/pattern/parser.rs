@@ -1,110 +1,430 @@
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::error::Error;
 use super::{Pattern, PatternItem};
-use crate::fields::{Field, FieldSymbol};
+use crate::fields::FieldSymbol;
 use std::convert::{TryFrom, TryInto};
 
+#[derive(Debug, PartialEq)]
 enum Segment {
-    Symbol { symbol: FieldSymbol, byte: u8 },
-    Literal,
-}
-
-struct State {
-    segment: Segment,
-    start_idx: usize,
+    Symbol { symbol: FieldSymbol, length: u8 },
+    Literal { literal: String, quoted: bool },
 }
 
 pub struct Parser<'p> {
     source: &'p str,
-    state: State,
-    items: Vec<PatternItem>,
+    state: Segment,
 }
 
 impl<'p> Parser<'p> {
     pub fn new(source: &'p str) -> Self {
         Self {
             source,
-            state: State {
-                segment: Segment::Literal,
-                start_idx: 0,
+            state: Segment::Literal {
+                literal: String::new(),
+                quoted: false,
             },
-            items: Vec::with_capacity(source.len()),
         }
     }
 
-    fn collect_item(&mut self, idx: usize) -> Result<(), Error> {
-        match self.state.segment {
-            Segment::Symbol { symbol, .. } => self.collect_symbol(symbol, idx)?,
-            Segment::Literal => self.collect_literal(idx),
+    fn handle_quoted_literal(
+        &mut self,
+        ch: char,
+        chars: &mut std::iter::Peekable<std::str::Chars>,
+        result: &mut Vec<PatternItem>,
+    ) -> Result<bool, Error> {
+        if ch == '\'' {
+            match (&mut self.state, chars.peek() == Some(&'\'')) {
+                (
+                    Segment::Literal {
+                        ref mut literal, ..
+                    },
+                    true,
+                ) => {
+                    literal.push('\'');
+                    chars.next();
+                }
+                (Segment::Literal { ref mut quoted, .. }, false) => {
+                    *quoted = !*quoted;
+                }
+                (Segment::Symbol { symbol, length }, true) => {
+                    result.push((*symbol, *length).try_into()?);
+                    self.state = Segment::Literal {
+                        literal: String::from(ch),
+                        quoted: false,
+                    };
+                    chars.next();
+                },
+                (Segment::Symbol { symbol, length }, false) => {
+                    result.push((*symbol, *length).try_into()?);
+                    self.state = Segment::Literal {
+                        literal: String::new(),
+                        quoted: true,
+                    };
+                },
+            }
+            Ok(true)
+        } else if let Segment::Literal {
+            ref mut literal,
+            quoted: true,
+        } = self.state
+        {
+            literal.push(ch);
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), Error> {
+        match state {
+            Segment::Symbol { symbol, length } => {
+                result.push((symbol, length).try_into()?);
+            }
+            Segment::Literal { quoted, .. } if quoted => {
+                return Err(Error::UnclosedLiteral);
+            }
+            Segment::Literal { literal, .. } => {
+                if !literal.is_empty() {
+                    result.push(literal.into());
+                }
+            }
         }
         Ok(())
-    }
-
-    fn collect_symbol(&mut self, symbol: FieldSymbol, idx: usize) -> Result<(), Error> {
-        let field: Field = (symbol, idx - self.state.start_idx).try_into()?;
-        self.items.push(field.into());
-        Ok(())
-    }
-
-    fn collect_literal(&mut self, idx: usize) {
-        if idx > self.state.start_idx {
-            let slice = &self.source[self.state.start_idx..idx];
-            let item = PatternItem::Literal(slice.to_string());
-            self.items.push(item);
-        }
     }
 
     pub fn parse(mut self) -> Result<Vec<PatternItem>, Error> {
-        for (idx, b) in self.source.bytes().enumerate() {
-            if let Segment::Symbol { byte, .. } = self.state.segment {
-                if b == byte {
-                    continue;
+        let mut chars = self.source.chars().peekable();
+        let mut result = vec![];
+
+        while let Some(ch) = chars.next() {
+            if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
+                if let Ok(new_symbol) = FieldSymbol::try_from(ch as u8) {
+                    match self.state {
+                        Segment::Symbol {
+                            ref symbol,
+                            ref mut length,
+                        } if new_symbol == *symbol => {
+                            *length += 1;
+                        }
+                        segment => {
+                            Self::collect_segment(segment, &mut result)?;
+                            self.state = Segment::Symbol {
+                                symbol: new_symbol,
+                                length: 1,
+                            };
+                        }
+                    }
+                } else {
+                    match self.state {
+                        Segment::Symbol { symbol, length } => {
+                            result.push((symbol, length).try_into()?);
+                            self.state = Segment::Literal {
+                                literal: String::from(ch),
+                                quoted: false,
+                            };
+                        }
+                        Segment::Literal {
+                            ref mut literal, ..
+                        } => literal.push(ch),
+                    }
                 }
             }
-
-            if let Ok(symbol) = FieldSymbol::try_from(b) {
-                self.collect_item(idx)?;
-                self.state = State {
-                    segment: Segment::Symbol { symbol, byte: b },
-                    start_idx: idx,
-                };
-            } else if let Segment::Symbol { symbol, .. } = self.state.segment {
-                self.collect_symbol(symbol, idx)?;
-                self.state = State {
-                    segment: Segment::Literal,
-                    start_idx: idx,
-                };
-            }
         }
-        self.collect_item(self.source.len())?;
-        Ok(self.items)
+
+        Self::collect_segment(self.state, &mut result)?;
+
+        Ok(result)
     }
 
     pub fn parse_placeholders(
         mut self,
         mut replacements: Vec<Pattern>,
     ) -> Result<Vec<PatternItem>, Error> {
-        let mut bytes = self.source.bytes().enumerate();
-        while let Some((idx, b)) = bytes.next() {
-            if b == b'{' {
-                if let Segment::Literal = self.state.segment {
-                    self.collect_literal(idx);
+        let mut chars = self.source.chars().peekable();
+        let mut result = vec![];
+
+        while let Some(ch) = chars.next() {
+            if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
+                if ch == '{' {
+                    Self::collect_segment(self.state, &mut result)?;
+
+                    let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
+                    let idx: u32 = ch.to_digit(10).ok_or(Error::UnknownSubstitution(ch))?;
+                    let replacement = replacements
+                        .get_mut(idx as usize)
+                        .ok_or(Error::UnknownSubstitution(ch))?;
+                    result.append(&mut replacement.0);
+                    let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
+                    if ch != '}' {
+                        return Err(Error::UnclosedPlaceholder);
+                    }
+                    self.state = Segment::Literal {
+                        literal: String::new(),
+                        quoted: false,
+                    };
+                } else if let Segment::Literal {
+                    ref mut literal, ..
+                } = self.state
+                {
+                    literal.push(ch);
+                } else {
+                    unreachable!()
                 }
-                let (_, b) = bytes.next().ok_or(Error::Unknown)?;
-                let replacement = replacements
-                    .get_mut(b as usize - 48)
-                    .ok_or(Error::UnknownSubstitution(b))?;
-                self.items.append(&mut replacement.0);
-                bytes.next().ok_or(Error::Unknown)?;
-                self.state = State {
-                    segment: Segment::Literal,
-                    start_idx: idx + 3,
-                };
             }
         }
-        self.collect_item(self.source.len())?;
-        Ok(self.items)
+
+        Self::collect_segment(self.state, &mut result)?;
+
+        Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::fields::{self, FieldLength};
+    use crate::pattern::Pattern;
+
+    #[test]
+    fn pattern_parse_simple() {
+        let samples = vec![
+            (
+                "dd/MM/y",
+                vec![
+                    (fields::Day::DayOfMonth.into(), FieldLength::TwoDigit).into(),
+                    "/".into(),
+                    (fields::Month::Format.into(), FieldLength::TwoDigit).into(),
+                    "/".into(),
+                    (fields::Year::Calendar.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "HH:mm:ss",
+                vec![
+                    (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                    ":".into(),
+                    (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
+                    ":".into(),
+                    (fields::Second::Second.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+            (
+                "y年M月d日",
+                vec![
+                    (fields::Year::Calendar.into(), FieldLength::One).into(),
+                    "年".into(),
+                    (fields::Month::Format.into(), FieldLength::One).into(),
+                    "月".into(),
+                    (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
+                    "日".into(),
+                ],
+            ),
+        ];
+
+        for (string, pattern) in samples {
+            assert_eq!(
+                Pattern::from_bytes(string).expect("Parsing pattern failed."),
+                pattern.into_iter().collect()
+            );
+        }
+    }
+
+    #[test]
+    fn pattern_parse_literals() {
+        let samples = vec![
+            ("", vec![]),
+            (" ", vec![" ".into()]),
+            ("  ", vec!["  ".into()]),
+            (" żółć ", vec![" żółć ".into()]),
+            ("''", vec!["'".into()]),
+            (" ''", vec![" '".into()]),
+            (" '' ", vec![" ' ".into()]),
+            ("''''", vec!["''".into()]),
+            (" '' '' ", vec![" ' ' ".into()]),
+            ("ż'ół'ć", vec!["żółć".into()]),
+            ("ż'ó''ł'ć", vec!["żó'łć".into()]),
+            (" 'Ymd' ", vec![" Ymd ".into()]),
+        ];
+
+        for (string, pattern) in samples {
+            assert_eq!(
+                Parser::new(string)
+                    .parse()
+                    .expect("Parsing pattern failed."),
+                pattern,
+            );
+
+            assert_eq!(
+                Parser::new(string)
+                    .parse_placeholders(vec![])
+                    .expect("Parsing pattern failed."),
+                pattern,
+            );
+        }
+
+        let broken = vec![(" 'foo ", Error::UnclosedLiteral)];
+
+        for (string, error) in broken {
+            assert_eq!(Parser::new(string).parse(), Err(error),);
+        }
+    }
+
+    #[test]
+    fn pattern_parse_symbols() {
+        let samples = vec![
+            (
+                "y",
+                vec![(fields::Year::Calendar.into(), FieldLength::One).into()],
+            ),
+            (
+                "yy",
+                vec![(fields::Year::Calendar.into(), FieldLength::TwoDigit).into()],
+            ),
+            (
+                "yyy",
+                vec![(fields::Year::Calendar.into(), FieldLength::Abbreviated).into()],
+            ),
+            (
+                "yyyy",
+                vec![(fields::Year::Calendar.into(), FieldLength::Wide).into()],
+            ),
+            (
+                "yyyyy",
+                vec![(fields::Year::Calendar.into(), FieldLength::Narrow).into()],
+            ),
+            (
+                "yyyyyy",
+                vec![(fields::Year::Calendar.into(), FieldLength::Six).into()],
+            ),
+            (
+                "yM",
+                vec![
+                    (fields::Year::Calendar.into(), FieldLength::One).into(),
+                    (fields::Month::Format.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "y ",
+                vec![
+                    (fields::Year::Calendar.into(), FieldLength::One).into(),
+                    " ".into(),
+                ],
+            ),
+            (
+                "y M",
+                vec![
+                    (fields::Year::Calendar.into(), FieldLength::One).into(),
+                    " ".into(),
+                    (fields::Month::Format.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "hh''a",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    "'".into(),
+                    (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "y'My'M",
+                vec![
+                (fields::Year::Calendar.into(), FieldLength::One).into(),
+                "My".into(),
+                (fields::Month::Format.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "y 'My' M",
+                vec![
+                (fields::Year::Calendar.into(), FieldLength::One).into(),
+                " My ".into(),
+                (fields::Month::Format.into(), FieldLength::One).into(),
+                ],
+            ),
+            (" 'r'. 'y'. ", vec![
+             " r. y. ".into(),
+            ]),
+            ("hh 'o''clock' a", vec![
+             (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+             " o'clock ".into(),
+             (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
+            ]),
+            ("hh''a", vec![
+             (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+             "'".into(),
+             (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
+            ]),
+        ];
+
+        for (string, pattern) in samples {
+            assert_eq!(
+                Parser::new(string)
+                    .parse()
+                    .expect("Parsing pattern failed."),
+                pattern,
+            );
+        }
+
+        let broken = vec![(
+            "yyyyyyy",
+            Error::FieldTooLong(FieldSymbol::Year(fields::Year::Calendar)),
+        )];
+
+        for (string, error) in broken {
+            assert_eq!(Parser::new(string).parse(), Err(error),);
+        }
+    }
+
+    #[test]
+    fn pattern_parse_placeholders() {
+        let samples = vec![
+            ("{0}", vec![Pattern(vec!["ONE".into()])], vec!["ONE".into()]),
+            (
+                "{0}{1}",
+                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec!["ONE".into(), "TWO".into()],
+            ),
+            (
+                "{0} 'at' {1}",
+                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec!["ONE".into(), " at ".into(), "TWO".into()],
+            ),
+            (
+                "{0}'at'{1}",
+                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec!["ONE".into(), "at".into(), "TWO".into()],
+            ),
+            (
+                "'{0}' 'at' '{1}'",
+                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec!["{0} at {1}".into()],
+            ),
+        ];
+
+        for (string, replacements, pattern) in samples {
+            assert_eq!(
+                Parser::new(string)
+                    .parse_placeholders(replacements)
+                    .expect("Parsing pattern failed."),
+                pattern,
+            );
+        }
+
+        let broken = vec![
+            ("{0}", vec![], Error::UnknownSubstitution('0')),
+            ("{a}", vec![], Error::UnknownSubstitution('a')),
+            ("{", vec![], Error::UnclosedPlaceholder),
+            ("{0", vec![Pattern(vec![])], Error::UnclosedPlaceholder),
+            ("{01", vec![Pattern(vec![])], Error::UnclosedPlaceholder),
+            ("{00}", vec![Pattern(vec![])], Error::UnclosedPlaceholder),
+            ("'{00}", vec![Pattern(vec![])], Error::UnclosedLiteral),
+        ];
+
+        for (string, replacements, error) in broken {
+            assert_eq!(
+                Parser::new(string).parse_placeholders(replacements),
+                Err(error),
+            );
+        }
     }
 }

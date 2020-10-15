@@ -54,7 +54,7 @@
 //!     .expect("Failed to parse date.");
 //!
 //! let formatted_date = dtf.format(&date);
-//! assert_eq!(formatted_date.to_string(), "September 12, 2020 \'at\' 12:35:00 PM");
+//! assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
 //! ```
 //!
 //! [`icu_testdata`]: ../icu_testdata/index.html

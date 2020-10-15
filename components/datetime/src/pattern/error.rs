@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::fields;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Error {
-    Unknown,
     FieldTooLong(fields::FieldSymbol),
-    UnknownSubstitution(u8),
+    UnknownSubstitution(char),
+    UnclosedLiteral,
+    UnclosedPlaceholder,
 }
 
 impl From<fields::Error> for Error {
