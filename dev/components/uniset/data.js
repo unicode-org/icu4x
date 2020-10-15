@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602726200267,
+  "lastUpdate": 1602726246950,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -965,6 +965,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36583721,
             "range": "± 98517",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b1fac4565d04cf5c55c689c449b359ffea10c411",
+          "message": "Add author line to LICENSE (#350)",
+          "timestamp": "2020-10-14T20:40:31-05:00",
+          "tree_id": "3dfe935bd859a464cbfc6356952d8981c6aad96e",
+          "url": "https://github.com/unicode-org/icu4x/commit/b1fac4565d04cf5c55c689c449b359ffea10c411"
+        },
+        "date": 1602726245754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30729236,
+            "range": "± 1664513",
             "unit": "ns/iter"
           }
         ]
