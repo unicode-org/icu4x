@@ -92,7 +92,6 @@ jobs:
           - components/locid
           - components/uniset
           - components/plurals
-          - components/uniset
           - components/datetime
           - utils/fixed_decimal
 
