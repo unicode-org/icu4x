@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602738413137,
+  "lastUpdate": 1602773749841,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1139,6 +1139,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37560388,
             "range": "± 1145256",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90f742a5bbad4a3588e37303f5f7cdda10f02c5c",
+          "message": "Add reference to #355 from DateTimeType API docs (#356)",
+          "timestamp": "2020-10-15T07:51:57-07:00",
+          "tree_id": "8cb06e5985121110bea3015bbd75fd8eabbc3093",
+          "url": "https://github.com/unicode-org/icu4x/commit/90f742a5bbad4a3588e37303f5f7cdda10f02c5c"
+        },
+        "date": 1602773749022,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32593645,
+            "range": "± 2162033",
             "unit": "ns/iter"
           }
         ]
