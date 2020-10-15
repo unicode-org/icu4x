@@ -83,6 +83,5 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 
 | Component     | Runtime                                                                  |
 |---------------|--------------------------------------------------------------------------|
-| locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/componennts/locid)   |
+| locale        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/locid)   |
 | uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
-| fixed_decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed_decimal) |
