@@ -91,9 +91,10 @@ jobs:
         component:
           - components/locid
           - components/uniset
-
-          # TODO(#320): re-enable
-          # - utils/fixed_decimal
+          - components/plurals
+          - components/uniset
+          - components/datetime
+          - utils/fixed_decimal
 
 
     # If you are modifying and debugging is required, don't be afraid to get
