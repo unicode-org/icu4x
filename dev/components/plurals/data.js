@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602738488836,
+  "lastUpdate": 1602773791720,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -83,6 +83,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112743,
             "range": "± 6966",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90f742a5bbad4a3588e37303f5f7cdda10f02c5c",
+          "message": "Add reference to #355 from DateTimeType API docs (#356)",
+          "timestamp": "2020-10-15T07:51:57-07:00",
+          "tree_id": "8cb06e5985121110bea3015bbd75fd8eabbc3093",
+          "url": "https://github.com/unicode-org/icu4x/commit/90f742a5bbad4a3588e37303f5f7cdda10f02c5c"
+        },
+        "date": 1602773791252,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1385,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6483,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 114537,
+            "range": "± 639",
             "unit": "ns/iter"
           }
         ]
