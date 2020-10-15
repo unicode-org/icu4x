@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602735143013,
+  "lastUpdate": 1602736738244,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -659,6 +659,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 4790,
             "range": "± 451",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "42f8db6b3f2a941f3a4ad32d8d8dfff08b4b896d",
+          "message": "First draft of datetime-input.md (#352)",
+          "timestamp": "2020-10-14T23:35:03-05:00",
+          "tree_id": "c27cdc5bc6f78a20347cb876de3623122abc03b7",
+          "url": "https://github.com/unicode-org/icu4x/commit/42f8db6b3f2a941f3a4ad32d8d8dfff08b4b896d"
+        },
+        "date": 1602736734312,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4789,
+            "range": "± 316",
             "unit": "ns/iter"
           }
         ]
