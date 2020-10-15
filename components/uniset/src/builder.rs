@@ -19,7 +19,7 @@ impl UnicodeSetBuilder {
         Self { intervals: vec![] }
     }
 
-    /// Returns a UnicodeSet and consumes the `UnicodeSetBuilder`
+    /// Returns a `UnicodeSet` and consumes the `UnicodeSetBuilder`
     pub fn build(self) -> UnicodeSet {
         UnicodeSet::from_inversion_list(self.intervals).unwrap()
     }
@@ -107,7 +107,7 @@ impl UnicodeSetBuilder {
         self.add(start, end);
     }
 
-    /// Add the UnicodeSet reference to the `UnicodeSetBuilder`
+    /// Add the `UnicodeSet` reference to the `UnicodeSetBuilder`
     ///
     /// # Example:
     ///

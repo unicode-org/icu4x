@@ -8,9 +8,9 @@ use crate::utils::{deconstruct_range, is_valid};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
-/// UnicodeSet membership wrapper
+/// `UnicodeSet` membership wrapper
 ///
-/// Provides exposure to membership functions and constructors from serialized UnicodeSets
+/// Provides exposure to membership functions and constructors from serialized `UnicodeSets`
 /// and predefined ranges.
 #[derive(Debug, PartialEq)]
 pub struct UnicodeSet {
@@ -24,7 +24,7 @@ pub struct UnicodeSet {
 }
 
 impl UnicodeSet {
-    /// Returns UnicodeSet from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    /// Returns `UnicodeSet` from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented by a `Vec<u32>` of codepoints.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
@@ -50,7 +50,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Returns UnicodeSet spanning entire Unicode range
+    /// Returns `UnicodeSet` spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
@@ -60,7 +60,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Returns UnicodeSet spanning BMP range
+    /// Returns `UnicodeSet` spanning BMP range
     ///
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
@@ -77,7 +77,7 @@ impl UnicodeSet {
         &self.inv_list
     }
 
-    /// Yields an iterator going through the character set in the UnicodeSet
+    /// Yields an iterator going through the character set in the `UnicodeSet`
     ///
     /// # Example:
     ///
@@ -99,7 +99,7 @@ impl UnicodeSet {
             .filter_map(char::from_u32)
     }
 
-    /// Returns the number of elements of the UnicodeSet
+    /// Returns the number of elements of the `UnicodeSet`
     pub fn size(&self) -> usize {
         if self.is_empty() {
             return 0;
@@ -107,7 +107,7 @@ impl UnicodeSet {
         self.size
     }
 
-    /// Returns whether or not the UnicodeSet is empty
+    /// Returns whether or not the `UnicodeSet` is empty
     pub fn is_empty(&self) -> bool {
         self.inv_list.is_empty()
     }
@@ -135,7 +135,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Checks to see the query is in the UnicodeSet
+    /// Checks to see the query is in the `UnicodeSet`
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using `std` implementation
@@ -153,7 +153,7 @@ impl UnicodeSet {
         self.contains_query(query as u32).is_some()
     }
 
-    /// Checks to see if the range is in the UnicodeSet, returns a Result
+    /// Checks to see if the range is in the `UnicodeSet`, returns a Result
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using `std::vec::Vec` implementation Only runs the search once on the `start`
@@ -171,7 +171,7 @@ impl UnicodeSet {
     /// ```
     ///
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return false if the Range contains them but the
-    /// UnicodeSet does not.
+    /// `UnicodeSet` does not.
     ///
     /// # Example:
     ///
@@ -194,7 +194,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Check if the calling UnicodeSet contains all the characters of the given UnicodeSet
+    /// Check if the calling `UnicodeSet` contains all the characters of the given `UnicodeSet`
     ///
     /// # Example:
     ///

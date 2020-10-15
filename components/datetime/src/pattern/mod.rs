@@ -57,11 +57,7 @@ impl Pattern {
     }
 
     // TODO(#277): This should be turned into a utility for all ICU4X.
-    pub fn from_bytes_combination(
-        input: &str,
-        date: Self,
-        time: Self,
-    ) -> Result<Self, Error> {
+    pub fn from_bytes_combination(input: &str, date: Self, time: Self) -> Result<Self, Error> {
         Parser::new(input)
             .parse_placeholders(vec![time, date])
             .map(Self)

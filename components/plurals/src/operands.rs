@@ -107,11 +107,7 @@ impl FromStr for PluralOperands {
             return Err(OperandsError::Empty);
         }
 
-        let abs_str = if input.starts_with('-') {
-            &input[1..]
-        } else {
-            &input
-        };
+        let abs_str = input.strip_prefix('-').unwrap_or(input);
 
         let (
             integer_digits,

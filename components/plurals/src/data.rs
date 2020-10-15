@@ -38,9 +38,7 @@ impl PluralRuleList {
     }
 }
 
-fn parse_rule<'s>(
-    input: &Option<Cow<'s, str>>,
-) -> Result<Option<ast::Condition>, PluralRulesError> {
+fn parse_rule(input: &Option<Cow<str>>) -> Result<Option<ast::Condition>, PluralRulesError> {
     Ok(if let Some(input) = input {
         Some(rules::parse_condition((input).as_bytes())?)
     } else {
