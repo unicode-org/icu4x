@@ -4,7 +4,7 @@
 [package]
 name = "icu_locid"
 description = "API for managing Unicode Language and Locale Identifiers"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -13,12 +13,14 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
     "Cargo.toml",
     "README.md"
 ]
 
 [dependencies]
-tinystr = "0.3"
+tinystr = "0.4"
 serde = { version = "1.0", optional = true }
 
 [dev-dependencies]
@@ -31,7 +33,6 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 default = []
-
 bench = []
 
 [[bench]]

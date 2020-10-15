@@ -4,7 +4,7 @@
 [package]
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -13,13 +13,15 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
     "Cargo.toml",
     "README.md"
 ]
 
 [dependencies]
-icu_provider = { path = "../provider" }
-icu_locid = { path = "../locid", features = ["serde"] }
+icu_provider = { version = "0.1", path = "../provider" }
+icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 
 # Serializers
@@ -34,11 +36,11 @@ static_assertions = { version = "1.1", optional = true }
 
 # Dependencies for the binary
 clap = { version = "2.33", optional = true }
-icu_provider_cldr = { path = "../provider_cldr", features = ["download"], optional = true }
-simple_logger = { version = "1.10", optional = true }
+icu_provider_cldr = { version = "0.1", path = "../provider_cldr", features = ["download"], optional = true }
+simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
-icu_locid_macros = { path = "../locid/macros" }
+icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 
 [features]
 export = ["erased-serde", "icu_provider/invariant", "static_assertions", "log"]

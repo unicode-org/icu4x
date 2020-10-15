@@ -4,7 +4,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -13,6 +13,8 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
     "Cargo.toml",
     "README.md"
 ]

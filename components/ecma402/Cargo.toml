@@ -4,7 +4,7 @@
 [package]
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -13,20 +13,22 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
     "Cargo.toml",
     "README.md"
 ]
 
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
-icu = { path = "../icu" }
-icu_provider = { path = "../provider", features = ["invariant"] }
+icu = { version = "0.1", path = "../icu" }
+icu_provider = { version = "0.1", path = "../provider", features = ["invariant"] }
 
 
 [dev-dependencies]
 criterion = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
-icu_locid = { path = "../locid", features = ["serde"] }
-icu_provider = { path = "../provider", features = ["invariant"] }
-icu_testdata = { path = "../../resources/testdata"  }
+icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
+icu_provider = { version = "0.1", path = "../provider", features = ["invariant"] }
+icu_testdata = { version = "0.1", path = "../../resources/testdata"  }

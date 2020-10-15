@@ -4,7 +4,7 @@
 [package]
 name = "icu"
 description = "International Components for Unicode"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -13,16 +13,18 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
     "Cargo.toml",
     "README.md"
 ]
 
 [dependencies]
-icu_datetime = { path = "../datetime" }
-icu_locid = { path = "../locid" }
-icu_locid_macros = { path = "../locid/macros" }
-icu_plurals = { path = "../plurals" }
-icu_uniset = { path = "../uniset" }
+icu_datetime = { version = "0.1", path = "../datetime" }
+icu_locid = { version = "0.1", path = "../locid" }
+icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+icu_plurals = { version = "0.1", path = "../plurals" }
+icu_uniset = { version = "0.1", path = "../uniset" }
 
 [dev-dependencies]
-icu_testdata = { path = "../../resources/testdata" }
+icu_testdata = { version = "0.1", path = "../../resources/testdata" }
