@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602734895535,
+  "lastUpdate": 1602735131492,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1019,6 +1019,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 38979726,
             "range": "± 1551180",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c018c1a53a310bee22983363fb3f13842b2da82",
+          "message": "Update CODEOWNERS",
+          "timestamp": "2020-10-14T21:08:31-07:00",
+          "tree_id": "191830ced40b15b72c1b715c0012c50c2be1ce21",
+          "url": "https://github.com/unicode-org/icu4x/commit/6c018c1a53a310bee22983363fb3f13842b2da82"
+        },
+        "date": 1602735130754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30709194,
+            "range": "± 2395715",
             "unit": "ns/iter"
           }
         ]
