@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu_uniset"
-description = "API for managing Unicode Language and Locale Identifiers"
+description = "API for highly efficient querying of sets of Unicode characters"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"

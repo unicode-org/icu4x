@@ -1,5 +1,4 @@
-ICU4X Test Data
-===============
+# icu_testdata [![crates.io](http://meritbadge.herokuapp.com/icu_testdata)](https://crates.io/crates/icu_testdata)
 
 This project contains data used for ICU4X unit tests. The data is based on a CLDR tag and a short list of locales that, together, cover a range of scenarios that are useful in unit testing.
 

@@ -58,24 +58,12 @@
 //! * [`Cardinal`](./enum.PluralRuleType.html#variant.Cardinal): `3 doors`, `1 month`, `10 dollars`
 //! * [`Ordinal`](./enum.PluralRuleType.html#variant.Ordinal): `1st place`, `10th day`, `11th floor`
 //!
-//! ## Data Provider
-//!
-//! In order to function, the API requires data from [`CLDR`].
-//!
-//! [`ICU4X`] is going to use a special API for handling data management called `DataProvider`.
-//! Until that happens, this crate will provide a simple `JSON` and `bincode` providers behind a
-//! flag.
-//! For tests and documentation examples, there is also a `DummyDataProvider`.
-//!
-//! All of the content of the [`data`] module is heavily experimental and subject to change.
-//!
 //! [`ICU4X`]: ../icu/index.html
 //! [`PluralRules`]: ./struct.PluralRules.html
 //! [`Plural Type`]: ./enum.PluralRuleType.html
 //! [`Plural Category`]: ./enum.PluralCategory.html
 //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 //! [`CLDR`]: http://cldr.unicode.org/
-//! [`data`]: ./data/index.html
 mod data;
 mod error;
 mod operands;

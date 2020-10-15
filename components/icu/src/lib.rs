@@ -63,7 +63,7 @@
 pub mod datetime {
     //! Date and Time operations
     //!
-    //! This API provides necessary functionatliy for formatting date and time to user readable textual representation.
+    //! This API provides necessary functionality for formatting date and time to user readable textual representation.
     //!
     //! [`DateTimeFormat`] is the main structure of the component. It accepts a set of arguments which
     //! allow it to collect necessary data from the [`DataProvider`], and once instantiated, can be

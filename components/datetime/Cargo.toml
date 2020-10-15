@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu_datetime"
-description = "API for managing Unicode Language and Locale Identifiers"
+description = "API for formatting date and time to user readable textual representation"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"

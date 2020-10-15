@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [package]
 name = "icu_testdata"
-description = "Test data for ICU4X, generated from CLDR."
+description = "Test data for ICU4X, generated from CLDR"
 version = "0.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"

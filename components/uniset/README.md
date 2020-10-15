@@ -1,12 +1,50 @@
-# ICU4X
+# icu_uniset [![crates.io](http://meritbadge.herokuapp.com/icu_uniset)](https://crates.io/crates/icu_uniset)
 
-ICU4X is a set of internationalization components for Unicode.
+`icu_uniset` is one of the `ICU4X` components.
 
-# Status [![crates.io](http://meritbadge.herokuapp.com/icu4x)](https://crates.io/crates/icu4x)
+This API provides necessary functionality for highly efficient querying of sets of Unicode characters.
 
-The project is in an incubation period.
+It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
-# Authors
+# Architecture
+ICU4X `UnicodeSet` is split up into independent levels, with `UnicodeSet` representing the membership/query API,
+and `UnicodeSetBuilder` representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
+is in future works.
 
-The project is managed by a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.
+# Examples:
 
+## Creating a `UnicodeSet`
+
+UnicodeSets are created from either serialized UnicodeSets,
+represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
+the `UnicodeSetBuilder`, or from the TBA Properties API.
+
+```rust
+use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+
+let mut builder = UnicodeSetBuilder::new();
+builder.add_range(&('A'..'Z'));
+let set: UnicodeSet = builder.build();
+
+assert!(set.contains('A'));
+```
+
+## Querying a `UnicodeSet`
+
+Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
+
+```rust
+use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+
+let mut builder = UnicodeSetBuilder::new();
+builder.add_range(&('A'..'Z'));
+let set: UnicodeSet = builder.build();
+
+assert!(set.contains('A'));
+assert!(set.contains_range(&('A'..='C')));
+assert_eq!(set.iter().next(), Some('A'));
+```
+
+# More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
