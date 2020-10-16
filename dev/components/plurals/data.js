@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602776676239,
+  "lastUpdate": 1602832948709,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -167,6 +167,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 122654,
             "range": "± 7167",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9eb493a7f06d2a10026a0a7a013206e81df15687",
+          "message": "Merge pull request #358 from annevk/patch-1\n\nEditorial corrections for string representation",
+          "timestamp": "2020-10-16T10:18:59+03:00",
+          "tree_id": "0a2e38fd2fa1cb4933a92eaf12221984a3414ae2",
+          "url": "https://github.com/unicode-org/icu4x/commit/9eb493a7f06d2a10026a0a7a013206e81df15687"
+        },
+        "date": 1602832948277,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1309,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5990,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 106594,
+            "range": "± 2709",
             "unit": "ns/iter"
           }
         ]
