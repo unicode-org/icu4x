@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1602776603167,
+  "lastUpdate": 1602832922014,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -809,6 +809,36 @@ window.BENCHMARK_DATA = {
             "name": "langid/overview",
             "value": 5691,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9eb493a7f06d2a10026a0a7a013206e81df15687",
+          "message": "Merge pull request #358 from annevk/patch-1\n\nEditorial corrections for string representation",
+          "timestamp": "2020-10-16T10:18:59+03:00",
+          "tree_id": "0a2e38fd2fa1cb4933a92eaf12221984a3414ae2",
+          "url": "https://github.com/unicode-org/icu4x/commit/9eb493a7f06d2a10026a0a7a013206e81df15687"
+        },
+        "date": 1602832919584,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4871,
+            "range": "± 287",
             "unit": "ns/iter"
           }
         ]
