@@ -43,11 +43,11 @@ It is expected that text transformation functions, such as case changes and norm
 
 ## Supported encoding forms
 
-The following encoding forms a reasonable candidates to be supported by a given ICU4X operation. Since Rust doesn't have function overloading based on argument type, what are logically overloads need to be signified by naming convention.
+The following encoding forms are reasonable candidates to be supported by a given ICU4X operation. Since Rust doesn't have function overloading based on argument type, what are logically overloads need to be signified by naming convention.
 
 ### Potentially-invalid UTF-8
 
-This is what use Go uses natively and what UTF-8-using C and C++ code bases can be trusted to use. For input, the Rust type is `&[u8]`. For output, it is `&mut [u8]`. The name annotation is `_utf8`. In the headers for C and C++, the slice pointer shall be of type `char8_t*` (with const and without, respectively). For versions of C and C++ that don't support `char8_t`, ICU4X shall provide a preprocessor polyfill that `typedef`s `char8_t` as `unsigned char`.
+This is what Go uses natively and what UTF-8-using C and C++ code bases can be trusted to use. For input, the Rust type is `&[u8]`. For output, it is `&mut [u8]`. The name annotation is `_utf8`. In the headers for C and C++, the slice pointer shall be of type `char8_t*` (with const and without, respectively). For versions of C and C++ that don't support `char8_t`, ICU4X shall provide a preprocessor polyfill that `typedef`s `char8_t` as `unsigned char`.
 
 On the input side, ICU4X must iterate over the input such that ill-formed sequences are treated as the REPLACEMENT CHARACTER according to the WHATWG Encoding Standard. (Unicode 13.0 does not require this behavior but points the reader to the W3C snapshot of the Encoding Standard on this point. Older versions called this "best practice".) This is consistent with what the Rust standard library does if it is asked to convert from `&[u8]` to `String`. Unfortunately, this does not match the REPLACEMENT CHARACTER generation behavior built into Go's iterators, so a Go wrapper for ICU4X would behave inconsistently with Go's language behavior on this point. Documentation for future Go wrapper for ICU4X should acknowledge this but otherwise not to do anything special about it.
 
@@ -57,7 +57,7 @@ A given ICU4X operation must always provide a version that accepts potentially i
 
 ### Guaranteed-valid UTF-8
 
-This is what Rust uses natively. C and C++ programmers who want maximum performance and are confident in their code correctness in a particular place in their code could use this for specific things. For input, the type is `&str`, which is idiomatic Rust. For output, the type is `&mut str`, which isn't quite idiomatic Rust. (In particular, the language currently doesn't allow materializing a zero-initialized stack-allocated `&mut str` without `unsafe`, even though there is no fundamental reason why this operation could be provided in the language without `unsafe`.) The pointer types in C and C++ header are the same as in the potentially-invalid case.
+This is what Rust uses natively. C and C++ programmers who want maximum performance and are confident in their code correctness in a particular place in their code could use this for specific things. For input, the type is `&str`, which is idiomatic Rust. For output, the type is `&mut str`, which isn't quite idiomatic Rust. (In particular, the language currently doesn't allow materializing a zero-initialized stack-allocated `&mut str` without `unsafe`, even though there is no fundamental reason why this operation could not be provided in the language without `unsafe`.) The pointer types in C and C++ header are the same as in the potentially-invalid case.
 
 In the Rust context, the name annotation is `_str`. In the FFI context of the input side, the main limitation is `_utf8_unsafe`. The point of the different annotations is that of the Rust side, thanks to the guarantees of Rust, calling these functions is safe. However, when called from the language that doesn't have Rust's guarantees as part of the language, it is up to the programmer to ensure that the input is valid UTF-8. Otherwise, Undefined Behavior ensues. Hence the "unsafe" designation in FFI, i.e. the C API. (This type is irrelevant in the FFI context on the output side.)
 
@@ -71,7 +71,7 @@ A given ICU4X operation that outputs text must always provide a version, whose i
 
 This is what many systems whose compatibility constraints date back to the 1990s use. For input, the Rust type is `&[u16]`. For output, it is `&mut [u16]`. The name annotation is `_utf16`. In the headers for C and C++, the slice pointer shall be of type `char16_t*` (with const and without, respectively). 
 
-On the input side, ICU4X must iterate over the input such that unpaired surrogates are treated as the REPLACEMENT CHARACTER. On the output side, ICU4X must guarantee UTF-16 validity. If the API is incremental, i.e. the logical output stream can be split across many API calls, the surrogate pair not be split across output slices even if it means not filling the earlier slice completely.
+On the input side, ICU4X must iterate over the input such that each unpaired surrogate is treated as the REPLACEMENT CHARACTER. On the output side, ICU4X must guarantee UTF-16 validity. If the API is incremental, i.e. the logical output stream can be split across many API calls, the surrogate pair not be split across output slices even if it means not filling the earlier slice completely.
 
 A given ICU4X operation must provide a version that takes potentially-invalid UTF-16 and outputs guaranteed-valid UTF-16.
 
@@ -83,7 +83,7 @@ A given ICU4X operation may provide a version that takes Latin1 when it makes se
 
 ### Encoding forms deliberately not included
 
-Guaranteed-invalid UTF-16 is not in use in practice. The use of UTF-32 is rare enough that it's not worth supporting.
+Guaranteed-valid UTF-16 is not in use in practice. The use of UTF-32 is rare enough that it's not worth supporting.
 
 ## Non-resumable operations
 
