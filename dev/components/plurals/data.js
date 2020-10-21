@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603242504191,
+  "lastUpdate": 1603318580462,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -251,6 +251,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112563,
             "range": "± 1544",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "23aaf0b47dc511ce323c764547c39fb878c94cd4",
+          "message": "Update README.md",
+          "timestamp": "2020-10-21T15:12:19-07:00",
+          "tree_id": "a9fd3d6ef6fb085b8dc4078a8e9aa87e05054ca2",
+          "url": "https://github.com/unicode-org/icu4x/commit/23aaf0b47dc511ce323c764547c39fb878c94cd4"
+        },
+        "date": 1603318579706,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1277,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5645,
+            "range": "± 240",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 118932,
+            "range": "± 5599",
             "unit": "ns/iter"
           }
         ]
