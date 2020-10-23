@@ -18,3 +18,8 @@ members = [
     "resources/testdata",
     "utils/fixed_decimal",
 ]
+
+[profile.release]
+panic = "abort"
+opt-level = "s"
+lto = true

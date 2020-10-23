@@ -1,0 +1,9 @@
+cargo +nightly build --example permyriad --release --target wasm32-unknown-unknown;
+mkdir -p pkg;
+cp ../../target/wasm32-unknown-unknown/release/examples/permyriad.wasm pkg;
+wasm-opt pkg/permyriad.wasm -Os -o pkg/permyriad_opt.wasm;
+twiggy dominators pkg/permyriad.wasm > pkg/permyriad.txt;
+twiggy dominators pkg/permyriad_opt.wasm > pkg/permyriad_opt.txt;
+wasm2wat pkg/permyriad.wasm -o pkg/permyriad.wat;
+wasm2wat pkg/permyriad_opt.wasm -o pkg/permyriad_opt.wat;
+du -b pkg/*;
