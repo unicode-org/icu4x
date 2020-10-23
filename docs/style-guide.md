@@ -604,6 +604,43 @@ When structs with public string fields contain strings, use the following type c
 
 A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.
 
+### Pre-validation of options :: suggested
+
+Main issue: [#158](https://github.com/unicode-org/icu4x/issues/158)
+
+When a variable or struct field needs to adhere to certain invariants, such as a currency code being 3 letters or significant digits being between 0 and 20, use a type that can only represent valid option values.
+
+```rust
+// BAD
+#[derive(Default)]
+#[non_exhaustive]
+struct MyStructOptions {
+    /// Must be between 0 and 20
+    pub fraction_digits: usize,
+}
+
+// GOOD
+#[derive(Default)]
+struct FractionDigits(usize);
+enum Error {
+    OutOfBounds,
+}
+impl FractionDigits {
+    fn try_new(value: usize) -> Result<Self, Error> {
+        if value >= 0 && value <= 20 {
+            Ok(Self(value))
+        } else {
+            Err(Error::OutOfBounds)
+        }
+    }
+}
+#[derive(Default)]
+#[non_exhaustive]
+struct MyStructOptions {
+    pub fraction_digits: FractionDigits,
+}
+```
+
 # Error Handling
 
 See also the [Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html) chapter in the Rust Book.
