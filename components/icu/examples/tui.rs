@@ -48,7 +48,8 @@ fn main() {
 
     {
         let mut builder = UnicodeSetBuilder::new();
-        builder.add_range(&('\u{0000}'..='\u{007F}'));
+        // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
+        builder.add_range(&('\u{0000}'..='\u{00FF}'));
         let latin1_set = builder.build();
 
         let only_latin1 = user_name.chars().all(|ch| latin1_set.contains(ch));
