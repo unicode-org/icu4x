@@ -12,6 +12,14 @@ use crate::CldrPaths;
 use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 
+/// Returns a list of all DataKeys that this provider can produce.
+pub fn get_all_data_keys() -> Vec<DataKey> {
+    let mut result: Vec<DataKey> = vec![];
+    result.extend(&plurals::ALL_KEYS);
+    result.extend(&dates::ALL_KEYS);
+    result
+}
+
 #[derive(Debug)]
 pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a dyn CldrPaths,

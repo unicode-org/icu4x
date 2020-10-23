@@ -4,9 +4,9 @@
 use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
-use icu_provider::icu_data_key;
 use icu_provider::iter::IterableDataProvider;
 use icu_provider_cldr::download::CldrPathsDownload;
+use icu_provider_cldr::get_all_data_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsLocal;
@@ -222,11 +222,7 @@ fn main() -> Result<(), Error> {
     }
 
     // TODO: Build up this list from --keys and --key-file
-    let keys = [
-        icu_data_key!(plurals: cardinal@1),
-        icu_data_key!(plurals: ordinal@1),
-        icu_data_key!(dates: gregory@1),
-    ];
+    let keys = get_all_data_keys();
 
     let output_path = PathBuf::from(
         matches

@@ -62,7 +62,8 @@ pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
 use icu_locid::LanguageIdentifier;
-use icu_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
+use icu_provider::prelude::*;
+use icu_provider::structs;
 #[doc(inline)]
 pub use options::DateTimeFormatOptions;
 use pattern::Pattern;
@@ -138,7 +139,7 @@ impl<'d> DateTimeFormat<'d> {
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
-        let data_key = icu_data_key!(dates: gregory@1);
+        let data_key = structs::dates::key::GREGORY_V1;
         let response = data_provider.load(&DataRequest {
             data_key,
             data_entry: DataEntry {

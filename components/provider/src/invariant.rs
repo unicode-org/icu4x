@@ -73,7 +73,7 @@ fn test_basic() {
     let provider = InvariantDataProvider;
     let response = provider
         .load(&DataRequest {
-            data_key: icu_data_key!(plurals: cardinal@1),
+            data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: LanguageIdentifier::default(),

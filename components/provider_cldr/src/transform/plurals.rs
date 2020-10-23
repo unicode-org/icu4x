@@ -8,10 +8,16 @@ use crate::CldrPaths;
 use icu_plurals::rules::{parse, serialize};
 use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
-use icu_provider::structs::plurals::PluralRuleStringsV1;
+use icu_provider::structs::plurals::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
+
+/// All keys that this module is able to produce.
+pub const ALL_KEYS: [DataKey; 2] = [
+    key::CARDINAL_V1, //
+    key::ORDINAL_V1,  //
+];
 
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
@@ -197,7 +203,7 @@ fn test_basic() {
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider
         .load(&DataRequest {
-            data_key: icu_data_key!(plurals: cardinal@1),
+            data_key: key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("cs"),
