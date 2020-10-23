@@ -31,6 +31,7 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::structs;
 /// use icu_provider::InvariantDataProvider;
 /// use icu_provider::iter::DataEntryCollection;
 /// use icu_locid_macros::langid;
@@ -41,7 +42,7 @@ where
 ///     langid: langid!("und"),
 /// }];
 /// let actual_entries: Vec<DataEntry> = provider
-///     .iter_for_key(&icu_data_key!(plurals: cardinal@1))
+///     .iter_for_key(&structs::plurals::key::CARDINAL_V1)
 ///     .unwrap()
 ///     .collect();
 /// assert_eq!(&expected_entries, &actual_entries);
