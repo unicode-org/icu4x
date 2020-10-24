@@ -91,7 +91,7 @@ fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
     warehouse
         .provider()
         .load(&DataRequest {
-            data_key: icu_data_key!(decimal: symbols@1),
+            data_key: structs::decimal::key::SYMBOLS_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("en-US"),

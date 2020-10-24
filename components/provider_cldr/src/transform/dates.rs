@@ -12,6 +12,11 @@ use icu_provider::structs::dates::*;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 
+/// All keys that this module is able to produce.
+pub const ALL_KEYS: [DataKey; 1] = [
+    key::GREGORY_V1, //
+];
+
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
 pub struct DatesProvider<'d> {
@@ -431,7 +436,7 @@ fn test_basic() {
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load(&DataRequest {
-            data_key: icu_data_key!(dates: gregory@1),
+            data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("cs"),
@@ -461,7 +466,7 @@ fn test_with_numbering_system() {
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load(&DataRequest {
-            data_key: icu_data_key!(dates: gregory@1),
+            data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("haw"),
@@ -486,7 +491,7 @@ fn unalias_contexts() {
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load(&DataRequest {
-            data_key: icu_data_key!(dates: gregory@1),
+            data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("cs"),

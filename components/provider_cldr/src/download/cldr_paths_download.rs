@@ -26,15 +26,15 @@ use std::path::PathBuf;
 /// fn demo<'d>(data_provider: &'d CldrJsonDataProvider<'d, 'd>) {
 ///     use std::borrow::Cow;
 ///     use icu_provider::prelude::*;
-///     use icu_provider::structs::plurals::PluralRuleStringsV1;
+///     use icu_provider::structs;
 ///
-///     let data: Cow<PluralRuleStringsV1> = data_provider
+///     let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
 ///         .load(&DataRequest {
 ///             data_entry: DataEntry {
 ///                 langid: langid!("uk"),
 ///                 variant: None,
 ///             },
-///             data_key: icu_data_key!(plurals: ordinal@1),
+///             data_key: structs::plurals::key::ORDINAL_V1,
 ///         })
 ///         .unwrap()
 ///         .take_payload()

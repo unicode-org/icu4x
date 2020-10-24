@@ -11,7 +11,7 @@
 //! ```
 //! use icu_provider::prelude::*;
 //! use icu_provider::InvariantDataProvider;
-//! use icu_provider::structs::plurals::PluralRuleStringsV1;
+//! use icu_provider::structs;
 //! use icu_provider::iter::IterableDataProvider;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
@@ -19,7 +19,7 @@
 //! use std::path::PathBuf;
 //!
 //! let DEMO_PATH = std::env::temp_dir().join("icu4x_json_demo");
-//! let DATA_KEY = icu_data_key!(plurals: cardinal@1);
+//! let DATA_KEY = structs::plurals::key::CARDINAL_V1;
 //!
 //! // Set up the exporter
 //! let mut options = serializers::json::Options::default();
@@ -53,8 +53,8 @@
 //!     .expect("Should successfully read from filesystem");
 //!
 //! assert_eq!(
-//!     inv_response.borrow_payload::<PluralRuleStringsV1>().unwrap(),
-//!     fs_response.borrow_payload::<PluralRuleStringsV1>().unwrap(),
+//!     inv_response.borrow_payload::<structs::plurals::PluralRuleStringsV1>().unwrap(),
+//!     fs_response.borrow_payload::<structs::plurals::PluralRuleStringsV1>().unwrap(),
 //! );
 //!
 //! // Clean up from demo

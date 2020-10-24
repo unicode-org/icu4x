@@ -6,7 +6,7 @@ mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
+use icu_provider::{structs, DataEntry, DataProvider, DataRequest};
 use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {
@@ -21,7 +21,7 @@ fn parser(c: &mut Criterion) {
     for langid in &plurals_data.langs {
         let response = provider
             .load(&DataRequest {
-                data_key: icu_data_key!(plurals: cardinal@1),
+                data_key: structs::plurals::key::CARDINAL_V1,
                 data_entry: DataEntry {
                     variant: None,
                     langid: langid.clone(),
