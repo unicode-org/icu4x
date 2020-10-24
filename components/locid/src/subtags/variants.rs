@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::Variant;
+use std::fmt::Write;
 use std::ops::Deref;
 
 /// Variants is a list of variants (examples: `["macos", "posix"]`, etc.)
@@ -165,7 +166,7 @@ impl std::fmt::Display for Variants {
                 if initial {
                     initial = false;
                 } else {
-                    f.write_str("-")?;
+                    f.write_char('-')?;
                 }
                 variant.fmt(f)?;
             }

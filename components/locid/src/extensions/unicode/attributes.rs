@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::Attribute;
+use std::fmt::Write;
 use std::ops::Deref;
 
 /// A set of [`Attribute`] elements as defined in [`Unicode Extension Attributes`].
@@ -91,7 +92,7 @@ impl std::fmt::Display for Attributes {
             if initial {
                 initial = false;
             } else {
-                f.write_str("-")?;
+                f.write_char('-')?;
             }
             variant.fmt(f)?;
         }
