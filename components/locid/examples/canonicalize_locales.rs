@@ -6,7 +6,7 @@
 
 use std::env;
 
-use icu_locid::{Locale};
+use icu_locid::Locale;
 
 const DEFAULT_INPUT: &str = "sr-cyrL-rS, es-mx, und-arab-u-ca-Buddhist";
 
