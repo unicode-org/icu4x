@@ -28,6 +28,9 @@ pub trait Writeable {
 
     /// Returns an estimation of the number of bytes that will be written to the sink. The actual
     /// number of bytes may be slightly different than what this function returns.
+    ///
+    /// This function may return an enumeration in the future. See:
+    /// https://github.com/unicode-org/icu4x/issues/370
     fn write_len(&self) -> usize;
 }
 
