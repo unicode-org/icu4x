@@ -53,5 +53,5 @@ name = "filter_langids"
 test = true
 
 [[example]]
-name = "canonicalize_locales"
+name = "syntatically_canonicalize_locales"
 test = true

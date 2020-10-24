@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // A sample application which takes a comma separated list of locales,
-// makes them canonical and serializes the list back into a comma separated list.
+// makes them syntatically canonical and serializes the list back into a comma separated list.
 
 use std::env;
 
@@ -10,7 +10,7 @@ use icu_locid::Locale;
 
 const DEFAULT_INPUT: &str = "sr-cyrL-rS, es-mx, und-arab-u-ca-Buddhist";
 
-fn canonicalize_locales(input: &str) -> String {
+fn syntatically_canonicalize_locales(input: &str) -> String {
     // Split input string and canonicalize each locale identifier.
     let canonical_locales: Vec<String> = input
         .split(',')
@@ -28,7 +28,7 @@ fn main() {
     } else {
         DEFAULT_INPUT
     };
-    let _output = canonicalize_locales(&input);
+    let _output = syntatically_canonicalize_locales(&input);
 
     #[cfg(debug_assertions)]
     println!("\nInput: {}\nOutput: {}", input, _output);
@@ -42,6 +42,9 @@ mod tests {
 
     #[test]
     fn ensure_default_output() {
-        assert_eq!(canonicalize_locales(DEFAULT_INPUT), DEFAULT_OUTPUT);
+        assert_eq!(
+            syntatically_canonicalize_locales(DEFAULT_INPUT),
+            DEFAULT_OUTPUT
+        );
     }
 }
