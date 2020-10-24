@@ -164,5 +164,25 @@
         "private": ["private", "foobar"]
       }
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "language": "es",
+      "region": "MX",
+      "extensions": {
+        "unicode": {
+          "keywords": {
+            "ca": "islamic",
+            "co": "search",
+            "nu": "roman"
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "es-MX-u-ca-islamic-co-search-nu-roman"
+    }
   }
 ]

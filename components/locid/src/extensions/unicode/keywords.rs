@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::borrow::Borrow;
+use std::fmt::Write;
 use std::ops::Deref;
 
 use super::Key;
@@ -125,7 +126,13 @@ impl Keywords {
 
 impl std::fmt::Display for Keywords {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut initial = true;
         for (key, value) in self.iter() {
+            if initial {
+                initial = false;
+            } else {
+                f.write_char('-')?;
+            }
             write!(f, "{}-{}", key, value)?;
         }
         Ok(())
