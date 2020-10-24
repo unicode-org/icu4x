@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603318515686,
+  "lastUpdate": 1603525076679,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -239,6 +239,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 835612,
             "range": "± 4312",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da3cc7152ec55a8469f09bcdfef78f2fb30a6999",
+          "message": "Replace icu_data_key macro with const DataKeys (#361)",
+          "timestamp": "2020-10-24T02:35:01-05:00",
+          "tree_id": "0e382ca4d7c7c03efd3990b8be31e802caab98d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/da3cc7152ec55a8469f09bcdfef78f2fb30a6999"
+        },
+        "date": 1603525073525,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 758749,
+            "range": "± 21327",
             "unit": "ns/iter"
           }
         ]
