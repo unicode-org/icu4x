@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603525072034,
+  "lastUpdate": 1603566203756,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1319,6 +1319,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35653365,
             "range": "± 537429",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b3b6ba29bacf5cb17114cac22d35ef22b66c8d1a",
+          "message": "Separate keywords in unicode extensions (#369)",
+          "timestamp": "2020-10-24T12:00:49-07:00",
+          "tree_id": "59e796e05c9b4d64a6090f8e2e6ad1c08eca8b06",
+          "url": "https://github.com/unicode-org/icu4x/commit/b3b6ba29bacf5cb17114cac22d35ef22b66c8d1a"
+        },
+        "date": 1603566203044,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 25506395,
+            "range": "± 1058246",
             "unit": "ns/iter"
           }
         ]
