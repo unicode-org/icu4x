@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603318580462,
+  "lastUpdate": 1603525110240,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -293,6 +293,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 118932,
             "range": "± 5599",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da3cc7152ec55a8469f09bcdfef78f2fb30a6999",
+          "message": "Replace icu_data_key macro with const DataKeys (#361)",
+          "timestamp": "2020-10-24T02:35:01-05:00",
+          "tree_id": "0e382ca4d7c7c03efd3990b8be31e802caab98d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/da3cc7152ec55a8469f09bcdfef78f2fb30a6999"
+        },
+        "date": 1603525107993,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1354,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5613,
+            "range": "± 233",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 104599,
+            "range": "± 4257",
             "unit": "ns/iter"
           }
         ]
