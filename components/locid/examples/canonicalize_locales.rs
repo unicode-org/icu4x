@@ -11,16 +11,10 @@ use icu_locid::Locale;
 const DEFAULT_INPUT: &str = "sr-cyrL-rS, es-mx, und-arab-u-ca-Buddhist";
 
 fn canonicalize_locales(input: &str) -> String {
-    // 1. Parse the input string into a list of locales.
-    let locales: Vec<Locale> = input
+    // Split input string and canonicalize each locale identifier.
+    let canonical_locales: Vec<String> = input
         .split(',')
-        .filter_map(|s| s.trim().parse().ok())
-        .collect();
-
-    // 2. Canonicalize and serialize the output.
-    let canonical_locales: Vec<String> = locales
-        .into_iter()
-        .filter_map(|locale| icu_locid::Locale::canonicalize(locale.to_string()).ok())
+        .filter_map(|s| Locale::canonicalize(s.trim()).ok())
         .collect();
 
     canonical_locales.join(", ")
