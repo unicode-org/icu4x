@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603566235607,
+  "lastUpdate": 1603585654870,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -299,6 +299,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 797604,
             "range": "± 13291",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nciric@gmail.com",
+            "name": "Nebojša Ćirić",
+            "username": "nciric"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d358e47b4dac60c5532ae6fa1aa44fd89f03aae5",
+          "message": "Adding an example to locid section. (#367)\n\n* Adding an example to locid section.\r\n\r\n* Fix fmt\r\n\r\n* Simplify logic and don't overparse.\r\n\r\n* Rename function, update comment.",
+          "timestamp": "2020-10-24T17:24:44-07:00",
+          "tree_id": "032848f91107095e1069784cea6ed60bfb5ac493",
+          "url": "https://github.com/unicode-org/icu4x/commit/d358e47b4dac60c5532ae6fa1aa44fd89f03aae5"
+        },
+        "date": 1603585652502,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 713791,
+            "range": "± 31596",
             "unit": "ns/iter"
           }
         ]
