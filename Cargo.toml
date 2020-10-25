@@ -17,4 +17,5 @@ members = [
     "components/uniset",
     "resources/testdata",
     "utils/fixed_decimal",
+    "tools/release",
 ]
