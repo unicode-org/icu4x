@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603585649174,
+  "lastUpdate": 1603706336216,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1379,6 +1379,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37061590,
             "range": "± 171065",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fbce283a133bf8865ded6c2806cd992a201a82db",
+          "message": "Merge pull request #366 from unicode-org/mihai_latin1\n\nFix for issue #357, Latin 1 definition",
+          "timestamp": "2020-10-26T02:56:13-07:00",
+          "tree_id": "c000495ad2a67b40a7f97be0e3058e31901c02b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/fbce283a133bf8865ded6c2806cd992a201a82db"
+        },
+        "date": 1603706335479,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30722636,
+            "range": "± 1556438",
             "unit": "ns/iter"
           }
         ]
