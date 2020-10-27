@@ -15,8 +15,8 @@
 /////////////////////////////////
 
 // Use `wee_alloc` as the global allocator.
-    #[global_allocator]
-    static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 /*
 // Need to provide a tiny `panic` implementation for `#![no_std]`.
@@ -44,6 +44,11 @@ pub extern "C" fn oom(_: ::core::alloc::Layout) -> ! {
 
 use fixed_decimal::FixedDecimal;
 
+// use smallstr::SmallString;
+
+use arraystring::ArrayString;
+use arraystring::typenum::U20;
+
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
     main();
@@ -56,13 +61,14 @@ fn main() {
     // let fixed_decimal = FixedDecimal::from(monetary_int)
         // .multiplied_pow10(-4)
         // .expect("-4 is well in range")
-        // .ok()
         ;
 
+    // let mut output: ArrayString<U20> = ArrayString::new();
+    // let mut output: SmallString<[u8; 10]> = SmallString::with_capacity(fixed_decimal.write_len());
     let mut output = String::with_capacity(fixed_decimal.write_len());
     fixed_decimal
         .write_to(&mut output)
-        .expect("Writing to a string is infallible");
+        .expect("Writing to a string is infallible")
         ;
-    // assert_eq!("19.9500", output);
+    // assert_eq!("19.9501", output);
 }

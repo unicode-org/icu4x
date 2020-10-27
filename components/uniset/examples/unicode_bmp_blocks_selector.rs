@@ -10,7 +10,22 @@
 //
 // This is a simple example of the API use and is severely oversimplified
 // compared to real Unicode block selection.
+
+#![feature(start)]
+
+
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+
+
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+
+#[start]
+fn start(_argc: isize, _argv: *const *const u8) -> isize {
+    main();
+    0
+}
 
 fn get_basic_latin_block() -> UnicodeSet {
     let mut builder = UnicodeSetBuilder::new();

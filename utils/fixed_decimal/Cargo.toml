@@ -29,6 +29,8 @@ criterion = "0.3.3"
 rand_pcg = "0.2"
 rand_distr = "0.2"
 wee_alloc = "0.4"
+smallstr = "0.2.0"
+arraystring = "0.3.0"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
