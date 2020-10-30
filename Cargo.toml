@@ -20,6 +20,7 @@ members = [
 ]
 
 # Enable lto for WASM.
-# 2020-10-30: This currently doesn't work in .cargo/config.
+# 2020-10-30: This currently doesn't work in .cargo/config:
+#   error: options `-C embed-bitcode=no` and `-C lto` are incompatible
 [profile.release]
 lto = true
