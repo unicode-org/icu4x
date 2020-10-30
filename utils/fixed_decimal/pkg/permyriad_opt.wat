@@ -60,8 +60,8 @@
         local.get 2
         i32.const 4
         i32.add
-        i32.const 11072
-        call 38
+        i32.const 11048
+        call 40
         local.set 1
         local.get 3
         local.get 2
@@ -78,9 +78,9 @@
       local.get 2
       i32.const 8
       i32.add
-      i32.const 11048
       i32.const 11096
-      call 38
+      i32.const 11072
+      call 40
       local.set 1
       i32.const 11120
       local.get 2
@@ -138,8 +138,8 @@
         local.get 2
         i32.const 8
         i32.add
-        i32.const 11072
-        call 45
+        i32.const 11048
+        call 42
         local.get 0
         local.get 2
         i32.load offset=12
@@ -156,9 +156,9 @@
       local.get 2
       i32.const 12
       i32.add
-      i32.const 11048
       i32.const 11096
-      call 45
+      i32.const 11072
+      call 42
       i32.const 11120
       local.get 2
       i32.load offset=12
@@ -536,7 +536,7 @@
     i32.const 0
     i32.store
     local.get 3
-    i32.const 11048
+    i32.const 11096
     i32.store offset=16
     local.get 3
     i64.const 1
@@ -1122,7 +1122,7 @@
     i32.sub
     global.set 0)
   (func (;18;) (type 7) (param i32) (result i64)
-    i64.const 2773228358778157168)
+    i64.const -4656704778008813959)
   (func (;19;) (type 14) (param i64 i32) (result i32)
     (local i32 i32 i32 i32 i64)
     global.get 0
@@ -1292,7 +1292,7 @@
     local.get 3
     i32.add
     local.set 7
-    i32.const 11048
+    i32.const 11096
     i32.const 0
     local.get 5
     i32.const 4
@@ -1741,7 +1741,7 @@
     i32.const 10756
     i32.store offset=4
     local.get 2
-    i32.const 11048
+    i32.const 11096
     i32.store
     local.get 2
     call 28
@@ -1777,9 +1777,11 @@
     local.get 2
     i32.store
     local.get 1
-    call 29
+    call 30
     unreachable)
-  (func (;29;) (type 6) (param i32)
+  (func (;29;) (type 7) (param i32) (result i64)
+    i64.const 7504629734305773520)
+  (func (;30;) (type 6) (param i32)
     (local i32)
     global.get 0
     i32.const 16
@@ -1807,12 +1809,12 @@
     i32.load offset=8
     local.get 1
     i32.load offset=8
-    call 34
+    call 35
     unreachable)
-  (func (;30;) (type 0) (param i32 i32)
+  (func (;31;) (type 0) (param i32 i32)
     (local i32 i32 i32)
     local.get 1
-    call 31
+    call 32
     local.tee 1
     i32.load offset=8
     local.set 2
@@ -1854,7 +1856,7 @@
     local.get 0
     local.get 1
     i32.store)
-  (func (;31;) (type 4) (param i32) (result i32)
+  (func (;32;) (type 4) (param i32) (result i32)
     (local i32 i32 i32 i32)
     global.get 0
     i32.const -64
@@ -1955,7 +1957,7 @@
     i32.sub
     global.set 0
     local.get 3)
-  (func (;32;) (type 6) (param i32)
+  (func (;33;) (type 6) (param i32)
     (local i32)
     local.get 0
     i32.load offset=4
@@ -1966,9 +1968,9 @@
       local.get 1
       call 7
     end)
-  (func (;33;) (type 0) (param i32 i32)
+  (func (;34;) (type 0) (param i32 i32)
     local.get 1
-    call 31
+    call 32
     local.set 1
     local.get 0
     i32.const 10968
@@ -1976,7 +1978,7 @@
     local.get 0
     local.get 1
     i32.store)
-  (func (;34;) (type 9) (param i32 i32)
+  (func (;35;) (type 9) (param i32 i32)
     i32.const 12148
     i32.const 12148
     i32.load
@@ -2045,8 +2047,6 @@
       unreachable
     end
     unreachable)
-  (func (;35;) (type 7) (param i32) (result i64)
-    i64.const 5229932410705260468)
   (func (;36;) (type 6) (param i32)
     (local i32)
     block  ;; label = @1
@@ -2067,129 +2067,6 @@
       call 7
     end)
   (func (;37;) (type 3) (param i32 i32 i32 i32)
-    (local i32)
-    global.get 0
-    i32.const 16
-    i32.sub
-    local.tee 3
-    global.set 0
-    local.get 3
-    local.get 1
-    i32.load
-    local.tee 1
-    i32.load
-    i32.store offset=12
-    local.get 2
-    i32.const 2
-    i32.add
-    local.tee 2
-    local.get 2
-    i32.mul
-    local.tee 2
-    i32.const 2048
-    local.get 2
-    i32.const 2048
-    i32.gt_u
-    select
-    local.tee 4
-    i32.const 4
-    local.get 3
-    i32.const 12
-    i32.add
-    i32.const 11048
-    i32.const 11048
-    call 38
-    local.set 2
-    local.get 1
-    local.get 3
-    i32.load offset=12
-    i32.store
-    local.get 2
-    if (result i32)  ;; label = @1
-      local.get 2
-      i64.const 0
-      i64.store offset=4 align=4
-      local.get 2
-      local.get 2
-      local.get 4
-      i32.const 2
-      i32.shl
-      i32.add
-      i32.const 2
-      i32.or
-      i32.store
-      i32.const 0
-    else
-      i32.const 1
-    end
-    local.set 1
-    local.get 0
-    local.get 2
-    i32.store offset=4
-    local.get 0
-    local.get 1
-    i32.store
-    local.get 3
-    i32.const 16
-    i32.add
-    global.set 0)
-  (func (;38;) (type 8) (param i32 i32 i32 i32 i32) (result i32)
-    (local i32 i32)
-    global.get 0
-    i32.const 16
-    i32.sub
-    local.tee 6
-    global.set 0
-    block  ;; label = @1
-      local.get 0
-      local.get 1
-      local.get 2
-      local.get 3
-      local.get 4
-      call 44
-      local.tee 5
-      br_if 0 (;@1;)
-      local.get 6
-      i32.const 8
-      i32.add
-      local.get 3
-      local.get 0
-      local.get 1
-      local.get 4
-      i32.load offset=12
-      call_indirect (type 3)
-      i32.const 0
-      local.set 5
-      local.get 6
-      i32.load offset=8
-      br_if 0 (;@1;)
-      local.get 6
-      i32.load offset=12
-      local.tee 5
-      local.get 2
-      i32.load
-      i32.store offset=8
-      local.get 2
-      local.get 5
-      i32.store
-      local.get 0
-      local.get 1
-      local.get 2
-      local.get 3
-      local.get 4
-      call 44
-      local.set 5
-    end
-    local.get 6
-    i32.const 16
-    i32.add
-    global.set 0
-    local.get 5)
-  (func (;39;) (type 2) (param i32 i32) (result i32)
-    local.get 1)
-  (func (;40;) (type 4) (param i32) (result i32)
-    i32.const 0)
-  (func (;41;) (type 3) (param i32 i32 i32 i32)
     block (result i32)  ;; label = @1
       local.get 2
       i32.const 2
@@ -2244,11 +2121,63 @@
     local.get 0
     local.get 2
     i32.store)
-  (func (;42;) (type 2) (param i32 i32) (result i32)
+  (func (;38;) (type 2) (param i32 i32) (result i32)
     i32.const 512)
-  (func (;43;) (type 4) (param i32) (result i32)
+  (func (;39;) (type 4) (param i32) (result i32)
     i32.const 1)
-  (func (;44;) (type 8) (param i32 i32 i32 i32 i32) (result i32)
+  (func (;40;) (type 8) (param i32 i32 i32 i32 i32) (result i32)
+    (local i32 i32)
+    global.get 0
+    i32.const 16
+    i32.sub
+    local.tee 6
+    global.set 0
+    block  ;; label = @1
+      local.get 0
+      local.get 1
+      local.get 2
+      local.get 3
+      local.get 4
+      call 41
+      local.tee 5
+      br_if 0 (;@1;)
+      local.get 6
+      i32.const 8
+      i32.add
+      local.get 3
+      local.get 0
+      local.get 1
+      local.get 4
+      i32.load offset=12
+      call_indirect (type 3)
+      i32.const 0
+      local.set 5
+      local.get 6
+      i32.load offset=8
+      br_if 0 (;@1;)
+      local.get 6
+      i32.load offset=12
+      local.tee 5
+      local.get 2
+      i32.load
+      i32.store offset=8
+      local.get 2
+      local.get 5
+      i32.store
+      local.get 0
+      local.get 1
+      local.get 2
+      local.get 3
+      local.get 4
+      call 41
+      local.set 5
+    end
+    local.get 6
+    i32.const 16
+    i32.add
+    global.set 0
+    local.get 5)
+  (func (;41;) (type 8) (param i32 i32 i32 i32 i32) (result i32)
     (local i32 i32 i32 i32 i32 i32 i32 i32)
     local.get 2
     i32.load
@@ -2547,7 +2476,7 @@
       end
     end
     i32.const 0)
-  (func (;45;) (type 3) (param i32 i32 i32 i32)
+  (func (;42;) (type 3) (param i32 i32 i32 i32)
     (local i32 i32 i32)
     local.get 0
     i32.load
@@ -2718,6 +2647,77 @@
       local.get 5
       i32.store
     end)
+  (func (;43;) (type 3) (param i32 i32 i32 i32)
+    (local i32)
+    global.get 0
+    i32.const 16
+    i32.sub
+    local.tee 3
+    global.set 0
+    local.get 3
+    local.get 1
+    i32.load
+    local.tee 1
+    i32.load
+    i32.store offset=12
+    local.get 2
+    i32.const 2
+    i32.add
+    local.tee 2
+    local.get 2
+    i32.mul
+    local.tee 2
+    i32.const 2048
+    local.get 2
+    i32.const 2048
+    i32.gt_u
+    select
+    local.tee 4
+    i32.const 4
+    local.get 3
+    i32.const 12
+    i32.add
+    i32.const 11096
+    i32.const 11096
+    call 40
+    local.set 2
+    local.get 1
+    local.get 3
+    i32.load offset=12
+    i32.store
+    local.get 2
+    if (result i32)  ;; label = @1
+      local.get 2
+      i64.const 0
+      i64.store offset=4 align=4
+      local.get 2
+      local.get 2
+      local.get 4
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.const 2
+      i32.or
+      i32.store
+      i32.const 0
+    else
+      i32.const 1
+    end
+    local.set 1
+    local.get 0
+    local.get 2
+    i32.store offset=4
+    local.get 0
+    local.get 1
+    i32.store
+    local.get 3
+    i32.const 16
+    i32.add
+    global.set 0)
+  (func (;44;) (type 2) (param i32 i32) (result i32)
+    local.get 1)
+  (func (;45;) (type 4) (param i32) (result i32)
+    i32.const 0)
   (func (;46;) (type 12) (param i32 i32 i32)
     local.get 2
     if  ;; label = @1
@@ -2750,5 +2750,5 @@
   (export "main" (func 3))
   (export "__data_end" (global 1))
   (export "__heap_base" (global 2))
-  (elem (;0;) (i32.const 1) func 12 22 21 13 14 15 16 13 18 32 35 36 30 33 13 41 42 43 13 37 39 40 13)
-  (data (;0;) (i32.const 10240) "capacity overflow\00\00\00$(\00\00p\00\00\00\1d\02\00\00\05\00\00\00/home/sffc/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/raw_vec.rs\04\00\00\00\04\00\00\00\04\00\00\00\05\00\00\00\06\00\00\00\07\00\00\0000010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899\84)\00\00o\00\00\00S\04\00\00\11\00\00\00/home/sffc/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/fmt/mod.rs\00\84)\00\00o\00\00\00]\04\00\00$\00\00\00\08\00\00\00\00\00\00\00\01\00\00\00\09\00\00\00$*\00\00 \00\00\00D*\00\00\12\00\00\00index out of bounds: the len is  but the index is /home/sffc/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs\00\00V*\00\00p\00\00\00\e2\01\00\00\1e\00\00\00\0a\00\00\00\0c\00\00\00\04\00\00\00\0b\00\00\00called `Option::unwrap()` on a `None` value\00\0c\00\00\00\10\00\00\00\04\00\00\00\0d\00\00\00\0e\00\00\00\0f\00\00\00\00\00\00\00\01\00\00\00\10\00\00\00\11\00\00\00\12\00\00\00\13\00\00\00\04\00\00\00\04\00\00\00\14\00\00\00\15\00\00\00\16\00\00\00\17\00\00\00\00\00\00\00\01\00\00\00\10\00\00\00\11\00\00\00\12"))
+  (elem (;0;) (i32.const 1) func 12 22 21 13 14 15 16 13 18 33 29 36 31 34 13 43 44 45 13 37 38 39 13)
+  (data (;0;) (i32.const 10240) "capacity overflow\00\00\00$(\00\00p\00\00\00\1d\02\00\00\05\00\00\00/home/sffc/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/alloc/src/raw_vec.rs\04\00\00\00\04\00\00\00\04\00\00\00\05\00\00\00\06\00\00\00\07\00\00\0000010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899\84)\00\00o\00\00\00S\04\00\00\11\00\00\00/home/sffc/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/fmt/mod.rs\00\84)\00\00o\00\00\00]\04\00\00$\00\00\00\08\00\00\00\00\00\00\00\01\00\00\00\09\00\00\00$*\00\00 \00\00\00D*\00\00\12\00\00\00index out of bounds: the len is  but the index is /home/sffc/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs\00\00V*\00\00p\00\00\00\e2\01\00\00\1e\00\00\00\0a\00\00\00\0c\00\00\00\04\00\00\00\0b\00\00\00called `Option::unwrap()` on a `None` value\00\0c\00\00\00\10\00\00\00\04\00\00\00\0d\00\00\00\0e\00\00\00\0f\00\00\00\04\00\00\00\04\00\00\00\10\00\00\00\11\00\00\00\12\00\00\00\13\00\00\00\00\00\00\00\01\00\00\00\14\00\00\00\15\00\00\00\16\00\00\00\17\00\00\00\00\00\00\00\01\00\00\00\14\00\00\00\15\00\00\00\16"))

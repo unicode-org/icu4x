@@ -1,4 +1,4 @@
-cargo +nightly build -Z build-std=std,panic_abort --example permyriad --release --target wasm32-unknown-unknown &&
+cargo +nightly build-wasm --example permyriad &&
 mkdir -p pkg &&
 cp ../../target/wasm32-unknown-unknown/release/examples/permyriad.wasm pkg &&
 wasm-opt pkg/permyriad.wasm -Os -o pkg/permyriad_opt.wasm &&

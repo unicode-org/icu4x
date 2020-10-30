@@ -1,5 +1,12 @@
+[alias]
+# Re-build standard library with panic=abort.
+build-wasm = "build -Z build-std=std,panic_abort --release --target wasm32-unknown-unknown"
+
 [target.wasm32-unknown-unknown]
-# 10 KiB heap size, to fit in 1 page.
 rustflags = [
+  # 10 KiB heap size, to fit in 1 page.
   "-C", "link-args=-z stack-size=10240",
+  # Several options to reduce code size.
+  "-C", "panic=abort",
+  "-C", "opt-level=s",
 ]

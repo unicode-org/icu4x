@@ -19,7 +19,7 @@ members = [
     "utils/fixed_decimal",
 ]
 
+# Enable lto for WASM.
+# 2020-10-30: This currently doesn't work in .cargo/config.
 [profile.release]
-panic = "abort"
-opt-level = "s"
 lto = true
