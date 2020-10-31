@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // An example application which uses icu_plurals to construct a correct
 // sentence for English based on the numerical value in Cardinal category.
+
+#![feature(start)]
+
 use icu_locid_macros::langid;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 
@@ -17,7 +20,8 @@ fn print(_input: &str, _value: Option<usize>) {
     }
 }
 
-fn main() {
+#[start]
+fn start(_argc: isize, _argv: *const *const u8) -> isize {
     let lid = langid!("en");
     let provider = icu_testdata::get_provider();
 
@@ -33,4 +37,6 @@ fn main() {
             }
         }
     }
+
+    0
 }

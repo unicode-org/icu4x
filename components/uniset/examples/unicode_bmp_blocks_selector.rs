@@ -13,19 +13,7 @@
 
 #![feature(start)]
 
-
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-
-
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
-    main();
-    0
-}
 
 fn get_basic_latin_block() -> UnicodeSet {
     let mut builder = UnicodeSetBuilder::new();
@@ -74,7 +62,8 @@ fn print(_input: &str) {
     println!("{}", _input);
 }
 
-fn main() {
+#[start]
+fn start(_argc: isize, _argv: *const *const u8) -> isize {
     let selector = BMPBlockSelector::new();
 
     let sample = "Welcome to MyName©®, Алексей!";
@@ -89,4 +78,6 @@ fn main() {
     for (ch, block) in result {
         print(&format!("{}: {:#?}", ch, block));
     }
+
+    0
 }
