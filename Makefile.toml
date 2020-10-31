@@ -1,0 +1,63 @@
+[config]
+default_to_workspace = false
+
+[tasks.wasm-build]
+description = "Build all examples as WASM into the target directory"
+category = "ICU4X WASM"
+install_crate = { rustup_component_name = "rust-src" }
+toolchain = "nightly"
+command = "cargo"
+args = ["wasm-build", "--examples"]
+
+[tasks.wasm-dir]
+description = "Make the WASM package directory"
+category = "ICU4X WASM"
+command = "mkdir"
+args = ["-p", "wasmpkg"]
+
+[tasks.wasm-wasm]
+description = "Copy the WASM files from target into wasmpkg"
+category = "ICU4X WASM"
+command = "cp"
+args = ["-a", "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/examples/.", "wasmpkg/"]
+dependencies = ["wasm-build", "wasm-dir"]
+
+[tasks.wasm-wat]
+description = "Create WebAssembly Text files from the WASM files"
+category = "ICU4X WASM"
+command = "find"
+args = ["wasmpkg/", "-name", "*.wasm", "-exec", "wasm2wat", "{}", "-o", "{}.wat", ";"]
+dependencies = ["wasm-wasm"]
+install_script = ["which wasm2wat || npm install -g wabt"]
+
+[tasks.wasm-opt]
+description = "Create optimized WASM files from the WASM files"
+category = "ICU4X WASM"
+command = "find"
+args = ["wasmpkg/", "-name", "*.wasm", "-exec", "wasm-opt", "{}", "-o", "{}.opt", ";"]
+dependencies = ["wasm-wasm"]
+install_script = ["which wasm-opt || npm install -g wasm-opt"]
+
+[tasks.wasm-twiggy-dominators]
+description = "Create Twiggy Dominator files from the WASM files"
+category = "ICU4X WASM"
+command = "find"
+args = ["wasmpkg/", "-name", "*.wasm", "-exec", "twiggy", "dominators", "{}", "-o", "{}.txt", ";"]
+dependencies = ["wasm-wasm"]
+install_crate = "twiggy"
+
+[tasks.wasm]
+description = "All-in-one command to build examples and supplements to wasmpkg"
+category = "ICU4X WASM"
+dependencies = [
+    "wasm-wasm",
+    "wasm-wat",
+    "wasm-opt",
+    "wasm-twiggy-dominators",
+]
+
+[tasks.wasm-clean]
+description = "Clean up WASM build artifacts"
+category = "ICU4X WASM"
+command = "rm"
+args = ["-rf", "wasmpkg"]

@@ -46,8 +46,8 @@ use fixed_decimal::FixedDecimal;
 
 // use smallstr::SmallString;
 
-use arraystring::ArrayString;
 use arraystring::typenum::U20;
+use arraystring::ArrayString;
 
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {

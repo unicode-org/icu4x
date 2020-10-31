@@ -1,6 +1,6 @@
 [alias]
 # Re-build standard library with panic=abort.
-build-wasm = "build -Z build-std=std,panic_abort --release --target wasm32-unknown-unknown"
+wasm-build = "build -Z build-std=std,panic_abort --release --target wasm32-unknown-unknown"
 
 [target.wasm32-unknown-unknown]
 rustflags = [
