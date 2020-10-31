@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // In computers, monetary values are sometimes stored as integers representing one ten-thousandth
 // (one permyriad) of a monetary unit. FixedDecimal enables a cheap representation of these
-// amounts, also while retaining trailing zeros.#![no_std]
+// amounts, also while retaining trailing zeros.
 
 #![feature(start)]
 
@@ -20,6 +20,8 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
     fixed_decimal
         .write_to(&mut output)
         .expect("Writing to a string is infallible");
+
+    debug_assert_eq!("19.9500", fixed_decimal.to_string());
 
     0
 }

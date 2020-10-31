@@ -20,7 +20,6 @@ include = [
 
 [dev-dependencies]
 criterion = "0.3.3"
-wee_alloc = { version = "0.4", default_features = false }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
