@@ -39,19 +39,6 @@ fn download_sync(url: &str, destination: &Path) -> Result<(), Error> {
     Ok(())
 }
 
-// TODO(#333): re-enable with caching to prevent flakiness
-#[test]
-#[ignore]
-fn test_download_sync() -> Result<(), Error> {
-    let temp_file = mktemp::Temp::new_file().map_err(|e| Error::Io(e, None))?;
-    download_sync(
-        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-        &temp_file,
-    )?;
-    assert_files_eq(&PathBuf::from("./tests/testdata/dummy.pdf"), &temp_file);
-    Ok(())
-}
-
 /// Synchronously unpack a zip file into a destination directory.
 // TODO(#297): Implement this async.
 fn unzip_sync(zip_path: &Path, dir_path: &Path) -> Result<(), Error> {
