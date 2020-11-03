@@ -10,7 +10,7 @@ command = "cargo"
 args = ["test", "--all-features", "--all-targets"]
 
 [tasks.test-docs]
-description = "Build and run all tests and docs"
+description = "Build and run all docs tests"
 category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc"]
@@ -45,11 +45,19 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["clippy", "--all-features", "--all-targets"]
 
+# Lint target without Clippy. Used in CI since Clippy has a separate CI task.
+[tasks.lint-no-clippy]
+description = "Run all lint procedures except for Clippy"
+category = "ICU4X Development"
+dependencies = [
+    "fmt-check",
+]
+
 [tasks.lint]
 description = "Run all lint procedures"
 category = "ICU4X Development"
 dependencies = [
-    "fmt-check",
+    "lint-no-clippy",
     "clippy-all",
 ]
 
@@ -60,7 +68,8 @@ description = "Run quick version of all lints and tests"
 category = "ICU4X Development"
 dependencies = [
     "test-all",
-    "lint",
+    "fmt-check",
+    "clippy-all",
 ]
 
 [tasks.ci]

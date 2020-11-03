@@ -71,7 +71,7 @@ jobs:
         command: build-all-features
 
 
-  # Lint job - runs all linting commands in "cargo lint"
+  # Lint job - runs all linting commands in "cargo make lint-no-clippy"
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -84,15 +84,10 @@ jobs:
       with:
         command: install
         args: --debug cargo-make
-    - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: --all-features
     - name: Lint
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: lint
+        command: make lint-no-clippy
 
 
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
