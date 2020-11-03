@@ -232,11 +232,10 @@ jobs:
           while IFS= read -r line; do
             echo "... $line ..."
           done
-      
 
-      - name: more testing
-        run: |
-          cat $HOME/files.csv
+      # - name: more testing
+      #   run: |
+      #     cat $HOME/files.csv
 
       - name: more testing
         run: |
