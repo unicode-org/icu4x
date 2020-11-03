@@ -221,6 +221,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: collect file_changes from PR
+        id: file_changes
         uses: trilom/file-changes-action@v1.2.4
         with:
           output: "\n"
@@ -232,6 +233,11 @@ jobs:
             echo "... $line ..."
           done
       
+
+      - name: more testing
+        run: |
+          cat $HOME/files.csv
+
       - name: more testing
         run: |
           echo '${{ steps.file_changes.outputs.files}}'
@@ -240,9 +246,6 @@ jobs:
         run: |
           cat '${{ steps.file_changes.outputs.files}}'
 
-      - name: more testing
-        run: |
-          cat $HOME/files.csv
 
       
 
