@@ -203,7 +203,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [build, format, benchmark]
+    needs: [build, lint, benchmark]
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
