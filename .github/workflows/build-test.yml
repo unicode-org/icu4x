@@ -224,8 +224,8 @@ jobs:
         id: file_changes
         uses: trilom/file-changes-action@v1.2.4
         with:
-          output: "\n"
-          fileOutput: "\n"
+          output: ","
+          fileOutput: ","
       
       # - name: test printing each file
       #   run: |
@@ -241,16 +241,18 @@ jobs:
         run: |
           echo '${{ steps.file_changes.outputs.files}}'
 
-      - name: all PR files - cat
-        run: |
-          cat '${{ steps.file_changes.outputs.files}}'
+      # - name: all PR files - cat
+      #   run: |
+      #     cat '${{ steps.file_changes.outputs.files}}'
 
       - name: all PR files - iterate
         run: |
           export FILES_STR="${{ steps.file_changes.outputs.files}}"
           echo $FILES_STR
           echo "============"
-          for file in $FILES_STR
+          export FILES=$(echo $FILES_STR | tr "," "\n")
+          echo "============"
+          for file in $FILES
           do
             echo "------------"
             cat $file
