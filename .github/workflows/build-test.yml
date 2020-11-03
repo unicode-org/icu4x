@@ -232,6 +232,19 @@ jobs:
             echo "... $line ..."
           done
       
+      - name: more testing
+        run: |
+          echo '${{ steps.file_changes.outputs.files}}'
+
+      - name: more testing
+        run: |
+          cat '${{ steps.file_changes.outputs.files}}'
+
+      - name: more testing
+        run: |
+          cat $HOME/files.csv
+
+      
 
   
   # Doc-GH-Pages job
