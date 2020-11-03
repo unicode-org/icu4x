@@ -222,8 +222,9 @@ jobs:
 
       - name: collect file_changes from PR
         uses: trilom/file-changes-action@v1.2.4
-        output: ','
-        fileOutput: ','
+        with:
+          output: "\n"
+          fileOutput: "\n"
       
       - name: test printing each file
         run: |
