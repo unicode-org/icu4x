@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1603706342283,
+  "lastUpdate": 1604370356007,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1037,6 +1037,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 8065,
             "range": "± 453",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "989bb737ce70a8e1d16bc04c173f09f2eb7779bb",
+          "message": "Documentation improvements for FsDataProvider and Options (#362)",
+          "timestamp": "2020-11-02T20:22:29-06:00",
+          "tree_id": "0de8977bc2ea3f9fab515dd78cadeb0e564f1db6",
+          "url": "https://github.com/unicode-org/icu4x/commit/989bb737ce70a8e1d16bc04c173f09f2eb7779bb"
+        },
+        "date": 1604370352268,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5209,
+            "range": "± 227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9188,
+            "range": "± 677",
             "unit": "ns/iter"
           }
         ]
