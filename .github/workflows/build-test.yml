@@ -38,11 +38,13 @@ jobs:
     - name: Test All Targets
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: make test-all
+        command: make
+        args: test-all
     - name: Test Docs
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: make test-docs
+        command: make
+        args: test-docs
 
 
   # Build job - builds all permutations of features
@@ -91,7 +93,8 @@ jobs:
     - name: Check Format
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: make fmt-check
+        command: make
+        args: fmt-check
 
 
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
