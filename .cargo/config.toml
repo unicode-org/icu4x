@@ -1,5 +1,3 @@
 [alias]
-exam = "make exam"
-lint = "make lint"
 quick = "make quick"
 ci = "make ci"

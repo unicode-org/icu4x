@@ -12,7 +12,7 @@ on:
 jobs:
 
 
-  # Test job - runs all testing commands in "cargo exam"
+  # Test job - runs all "cargo make" testing commands
   test:
     strategy:
       fail-fast: false
@@ -35,10 +35,14 @@ jobs:
       with:
         command: build
         args: --all-features
-    - name: Test
+    - name: Test All Targets
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: exam
+        command: make test-all
+    - name: Test Docs
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make test-docs
 
 
   # Build job - builds all permutations of features
@@ -71,7 +75,7 @@ jobs:
         command: build-all-features
 
 
-  # Lint job - runs all linting commands in "cargo make lint-no-clippy"
+  # Lint job - runs all "cargo make" linting commands
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -84,10 +88,10 @@ jobs:
       with:
         command: install
         args: --debug cargo-make
-    - name: Lint
+    - name: Check Format
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: make lint-no-clippy
+        command: make fmt-check
 
 
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR

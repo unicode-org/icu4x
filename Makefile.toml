@@ -1,7 +1,7 @@
 [config]
 default_to_workspace = false
 
-### MAIN TESTS ###
+### INDIVIDUAL TEST AND LINT TASKS ###
 
 [tasks.test-all]
 description = "Build and run all code paths except docs"
@@ -15,23 +15,11 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc"]
 
-[tasks.exam]
-description = "Run all test procedures"
-category = "ICU4X Development"
-dependencies = [
-    "test-all",
-    "test-docs",
-]
-
-### ADDITIONAL TESTS ###
-
 [tasks.build-all-features]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 command = "cargo"
 args = ["build-all-features"]
-
-### LINTS ###
 
 [tasks.fmt-check]
 description = "Check for formatting on all code"
@@ -45,23 +33,7 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["clippy", "--all-features", "--all-targets"]
 
-# Lint target without Clippy. Used in CI since Clippy has a separate CI task.
-[tasks.lint-no-clippy]
-description = "Run all lint procedures except for Clippy"
-category = "ICU4X Development"
-dependencies = [
-    "fmt-check",
-]
-
-[tasks.lint]
-description = "Run all lint procedures"
-category = "ICU4X Development"
-dependencies = [
-    "lint-no-clippy",
-    "clippy-all",
-]
-
-### ALL-IN-ONE ###
+### META TASKS ###
 
 [tasks.quick]
 description = "Run quick version of all lints and tests"
@@ -76,7 +48,7 @@ dependencies = [
 description = "Run all lints and tests"
 category = "ICU4X Development"
 dependencies = [
-    "exam",
+    "quick",
+    "test-docs",
     "build-all-features",
-    "lint",
 ]
