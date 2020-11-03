@@ -68,7 +68,7 @@ jobs:
     - name: Build All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: make build-all-features
+        command: build-all-features
 
 
   # Lint job - runs all linting commands in "cargo lint"
