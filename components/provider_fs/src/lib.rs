@@ -15,6 +15,38 @@
 //!     .expect_err("Specify a real directory in the line above");
 //! ```
 //!
+//! # Directory Structure
+//!
+//! The ICU4X data directory has a file named *manifest.json* at the root, and a nested structure
+//! with category (DataCategory), subcategory@version, optional variant, and language identifier
+//! as the leaf data files. For example, Arabic JSON data for cardinal plurals lives at
+//! *plurals/cardinal@1/ar.json*.
+//!
+//! The exact form of the directory structure may change over time. ICU4X uses metadata from
+//! *manifest.json* to dynamically interpret different versions of the directory structure.
+//!
+//! ```text
+//! ├── manifest.json
+//! ├── dates
+//! │   └── gregory@1
+//! │       ├── ar-EG.json
+//! │       ├── ar.json
+//! │       ├── be.json
+//! │       ⋮
+//! │       └── und.json
+//! └── plurals
+//!     ├── cardinal@1
+//!     │   ├── ar.json
+//!     │   ├── be.json
+//!     │   ⋮
+//!     │   └── und.json
+//!     └── ordinal@1
+//!         ├── ar.json
+//!         ├── be.json
+//!         ⋮
+//!         └── und.json
+//! ```
+//!
 //! # Resource Formats
 //!
 //! `ICU4X` data can be stored in different formats. At the moment there are:
@@ -41,9 +73,7 @@
 //!
 //! ```text
 //! cargo run
-//!   --features export-bin
-//!   --featuers bincode
-//!   --features serialize_none
+//!   --features export-bin,bincode,serialize_none
 //!   --
 //!   --cldr-tag 37.0.0
 //!   --out ./icu4x-data
