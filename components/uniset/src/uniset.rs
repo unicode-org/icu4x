@@ -172,8 +172,8 @@ impl UnicodeSet {
     ///
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return false if the Range contains them but the
     /// `UnicodeSet` does not.
-    /// 
-    /// Note: when comparing to ICU4C/J, keep in mind that ranges in Rust are 
+    ///
+    /// Note: when comparing to ICU4C/J, keep in mind that ranges in Rust are
     /// constructed inclusive of start boundary and exclusive of end boundary.
     /// The ICU4C/J `UnicodeSet::contains(UChar32 start, UChar32 end)` method
     /// differs by including the end boundary.
