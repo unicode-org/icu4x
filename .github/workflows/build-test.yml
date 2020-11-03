@@ -250,9 +250,6 @@ jobs:
           export FILES_STR="${{ steps.file_changes.outputs.files}}"
           echo $FILES_STR
           echo "============"
-#          export FILES=$(echo $FILES_STR | tr "," "\n")
-#          echo $FILES
-#          echo "============"
           for file in $FILES_STR
           do
             echo "------------"
