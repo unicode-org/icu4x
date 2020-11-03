@@ -1,7 +1,7 @@
 [config]
 default_to_workspace = false
 
-### TESTS ###
+### MAIN TESTS ###
 
 [tasks.test-all]
 description = "Build and run all code paths except docs"
@@ -18,11 +18,18 @@ args = ["test", "--all-features", "--doc"]
 [tasks.exam]
 description = "Run all test procedures"
 category = "ICU4X Development"
-command = "cargo"
 dependencies = [
     "test-all",
     "test-docs",
 ]
+
+### ADDITIONAL TESTS ###
+
+[tasks.build-all-features]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["build-all-features"]
 
 ### LINTS ###
 
@@ -48,10 +55,19 @@ dependencies = [
 
 ### ALL-IN-ONE ###
 
+[tasks.quick]
+description = "Run quick version of all lints and tests"
+category = "ICU4X Development"
+dependencies = [
+    "test-all",
+    "lint",
+]
+
 [tasks.ci]
 description = "Run all lints and tests"
 category = "ICU4X Development"
 dependencies = [
     "exam",
+    "build-all-features",
     "lint",
 ]

@@ -11,25 +11,6 @@ on:
 
 jobs:
 
-  # Build job - builds against all subsets of features, including null set (no features)
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v2
-
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
-    - name: Install cargo-all-features
-      # TODO: Revert to upstream cargo-all-features pending features from "omit" branch
-      run: cargo install --git https://github.com/sffc/cargo-all-features.git --branch omit
-    - name: Build All Feature Permutations
-      run: cargo build-all-features --verbose
-
 
   # Test job - runs all testing commands in "cargo exam"
   test:
@@ -60,6 +41,36 @@ jobs:
         command: exam
 
 
+  # Build job - builds all permutations of features
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
+    - name: Install cargo-all-features
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        # TODO: Revert to upstream cargo-all-features pending features from "omit" branch
+        args: --git https://github.com/sffc/cargo-all-features.git --branch omit
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-features
+    - name: Build All Feature Permutations
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make build-all-features
+
+
   # Lint job - runs all linting commands in "cargo lint"
   lint:
     runs-on: ubuntu-latest
@@ -73,6 +84,11 @@ jobs:
       with:
         command: install
         args: --debug cargo-make
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-features
     - name: Lint
       uses: actions-rs/cargo@v1.0.1
       with:

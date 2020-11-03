@@ -24,7 +24,8 @@ Handy commands (run from the root directory):
 
 - `cargo lint` runs Clippy and other linting tools. It also tells you if your code is not properly formatted with `cargo fmt`.
 - `cargo exam` runs all test configurations.
-- `cargo ci` runs `cargo exam` and `cargo lint` in one go.
+- `cargo quick` runs the fastest tests and lints.
+- `cargo ci` runs all tests and lints.
 
 ### Structure of commits in a Pull Request
 
