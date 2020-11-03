@@ -227,11 +227,11 @@ jobs:
           output: "\n"
           fileOutput: "\n"
       
-      - name: test printing each file
-        run: |
-          while IFS= read -r line; do
-            echo "... $line ..."
-          done
+      # - name: test printing each file
+      #   run: |
+      #     while IFS= read -r line; do
+      #       echo "... $line ..."
+      #     done
 
       # - name: more testing
       #   run: |
@@ -250,10 +250,10 @@ jobs:
           export FILES_STR="${{ steps.file_changes.outputs.files}}"
           echo $FILES_STR
           echo "============"
-          export FILES=$(echo $FILES_STR | tr "," "\n")
-          echo $FILES
-          echo "============"
-          for file in $FILES
+#          export FILES=$(echo $FILES_STR | tr "," "\n")
+#          echo $FILES
+#          echo "============"
+          for file in $FILES_STR
           do
             echo "------------"
             cat $file
