@@ -214,14 +214,15 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [build]
+    # TODO: uncomment this line
+    # needs: [build]
 
     steps:
       - uses: actions/checkout@v2
 
       - name: collect file_changes from PR
         uses: trilom/file-changes-action@v1.2.4
-        output: '\n'
+        output: "\n"
       
       - name: test printing each file
         run: |
