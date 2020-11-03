@@ -25,8 +25,9 @@ jobs:
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
     - name: Install cargo-all-features
-      run: cargo install cargo-all-features
-    - name: Build
+      # TODO: Revert to upstream cargo-all-features pending features from "omit" branch
+      run: cargo install --git https://github.com/sffc/cargo-all-features.git --branch omit
+    - name: Build All Feature Permutations
       run: cargo build-all-features --verbose
 
 
@@ -48,6 +49,11 @@ jobs:
       with:
         command: install
         args: --debug cargo-make
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-features
     - name: Test
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -76,8 +82,6 @@ jobs:
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
     runs-on: ubuntu-latest
-
-    needs: [build]
 
     steps:
     - uses: actions/checkout@v2
