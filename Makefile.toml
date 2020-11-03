@@ -1,0 +1,57 @@
+[config]
+default_to_workspace = false
+
+### TESTS ###
+
+[tasks.test-all]
+description = "Build and run all code paths except docs"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--all-targets"]
+
+[tasks.test-docs]
+description = "Build and run all tests and docs"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--doc"]
+
+[tasks.exam]
+description = "Run all test procedures"
+category = "ICU4X Development"
+command = "cargo"
+dependencies = [
+    "test-all",
+    "test-docs",
+]
+
+### LINTS ###
+
+[tasks.fmt-check]
+description = "Check for formatting on all code"
+category = "ICU4X Development"
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
+[tasks.clippy-all]
+description = "Run Clippy on all code paths"
+category = "ICU4X Development"
+command = "cargo"
+args = ["clippy", "--all-features", "--all-targets"]
+
+[tasks.lint]
+description = "Run all lint procedures"
+category = "ICU4X Development"
+dependencies = [
+    "fmt-check",
+    "clippy-all",
+]
+
+### ALL-IN-ONE ###
+
+[tasks.ci]
+description = "Run all lints and tests"
+category = "ICU4X Development"
+dependencies = [
+    "exam",
+    "lint",
+]

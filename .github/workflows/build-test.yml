@@ -11,20 +11,12 @@ on:
 
 jobs:
 
-  # Build job
-
+  # Build job - builds against all subsets of features, including null set (no features)
   build:
-
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        feature-set: [ "", "--all-features" ]  # no feature options ("") uses default.
-                                               # --no-default-features is not allowed
-                                               #     at root of virtual workspace for
-                                               #     both build and test.
-        
-
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -32,36 +24,57 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
-    # Build job > Build and run steps
-        
+    - name: Install cargo-all-features
+      run: cargo install cargo-all-features
     - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: ${{ matrix.feature-set }} --verbose
+      run: cargo build-all-features --verbose
 
-    - name: Test
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: test
-        args: ${{ matrix.feature-set }} --verbose
 
-  # Formatting job
+  # Test job - runs all testing commands in "cargo exam"
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
 
-  format:
-    runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v2
 
-    - name: Rust formatter
-      ## make this command fail if cargo fmt had to make changes
-      run: cargo fmt && git diff-index --exit-code HEAD
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
+    - name: Install cargo-make
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: --debug cargo-make
+    - name: Test
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: exam
 
 
-  # Linting job (cargo-clippy) - completes and puts warnings inline in PR
-
+  # Lint job - runs all linting commands in "cargo lint"
   lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
+    - name: Install cargo-make
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: --debug cargo-make
+    - name: Lint
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: lint
+
+
+  # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
+  clippy:
     runs-on: ubuntu-latest
 
     needs: [build]
@@ -69,7 +82,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Linting job > Install and run clippy steps
+    # Clippy job > Install and run clippy steps
 
     - name: Install clippy
       run: rustup component add clippy

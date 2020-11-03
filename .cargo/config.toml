@@ -1,0 +1,4 @@
+[alias]
+exam = "make exam"
+lint = "make lint"
+ci = "make ci"
