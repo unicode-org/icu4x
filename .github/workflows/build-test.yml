@@ -237,13 +237,30 @@ jobs:
       #   run: |
       #     cat $HOME/files.csv
 
-      - name: more testing
+      - name: all PR files - echo
         run: |
           echo '${{ steps.file_changes.outputs.files}}'
 
-      - name: more testing
+      - name: all PR files - cat
         run: |
           cat '${{ steps.file_changes.outputs.files}}'
+
+      - name: all PR files - iterate
+        run: |
+          export FILES_STR="${{ steps.file_changes.outputs.files}}"
+          echo $FILES_STR
+          echo "============"
+          export FILES=$(echo $FILES_STR | tr "," "\n")
+          echo $FILES
+          echo "============"
+          for file in $FILES
+          do
+            echo "------------"
+            cat $file
+            echo "------------"
+          done
+      
+
 
 
       
