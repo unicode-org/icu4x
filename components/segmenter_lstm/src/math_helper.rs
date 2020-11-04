@@ -72,6 +72,3 @@ pub fn concatenate_arr1(
     }
     out
 }
-
-#[test]
-fn test_sigmoid() {}
