@@ -2,7 +2,7 @@ use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 
 /// `sigmoid` computes the sigmoid function for a scalar value.
 pub fn sigmoid(x: f32) -> f32 {
-    return 1.0 / (1.0 + (-x).exp());
+    1.0 / (1.0 + (-x).exp())
 }
 
 /// `softmax` gets a 1d array of `f32` numbers, and compute the softmax probability for each element in the array.
@@ -15,7 +15,7 @@ pub fn softmax(arr: Array1<f32>) -> Array1<f32> {
     for i in 0..out.shape()[0] {
         out[[i]] = arr[[i]].exp() / sm;
     }
-    return out;
+    out
 }
 
 /// `max_arr1` returns the index of the maximum value in a 1d array.

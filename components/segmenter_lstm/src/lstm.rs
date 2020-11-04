@@ -37,11 +37,11 @@ impl Lstm {
     fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
         let ind = math_helper::max_arr1(arr.view());
         match ind {
-            0 => return Ok('b'),
-            1 => return Ok('i'),
-            2 => return Ok('e'),
-            3 => return Ok('s'),
-            _ => return Err(Error::Syntax),
+            0 => Ok('b'),
+            1 => Ok('i'),
+            2 => Ok('e'),
+            3 => Ok('s'),
+            _ => Err(Error::Syntax),
         }
     }
 
