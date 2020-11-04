@@ -35,7 +35,7 @@ fn segment_file_by_lstm() {
     let test_text_data = load_test_text(test_text_filename);
     let test_text = TestText::new(test_text_data);
     // Testing
-    for test_case in test_text.data.testcases{
+    for test_case in test_text.data.testcases {
         println!("Test case      : {}", test_case.unseg);
         println!("Estimated bies : {}", test_case.true_bies);
         println!("True bies      : {}", lstm.word_segmenter(&test_case.unseg));

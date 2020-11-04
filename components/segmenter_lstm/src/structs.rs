@@ -6,7 +6,7 @@ use std::collections::HashMap;
 /// 'LstmData' is a struct that store a LSTM model. Its attributes are:
 /// `model`: name of the model
 /// `dic`: the grapheme cluster dictionary used to train the model
-/// `mat1`: the matrix associateed with embedding layer 
+/// `mat1`: the matrix associateed with embedding layer
 /// `mat2` - `mat4`: the matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat5` - `mat7`: the matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
 /// `mat8` - `mat9`: the matrices associated with output layer (weight and bias term respectiely)
