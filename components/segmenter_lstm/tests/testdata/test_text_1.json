@@ -1,0 +1,3 @@
+{
+  "testcases": [{"unseg": "ทำสิ่งต่างๆ ได้มากขึ้นขณะที่อุปกรณ์ล็อกและชาร์จอยู่ด้วยโหมดแอมเบียนท์", "true_bies": "sbebiiesbebiebebiesbiiiebiebiebiiebebiebiiebiiiiiie"}, {"unseg": "เมื่อเราออกไปเดินนอกบ้านตามสนามหน้าบ้าน", "true_bies": "biebiebiebebiebiebiebiebiiebiebie"}, {"unseg": "แม้เราจะหนีไปอยู่ในถิ่นทุรกันดาร แห้งแล้ง", "true_bies": "bebiebebebebebebebiiiiiesbiiiie"}]
+}
