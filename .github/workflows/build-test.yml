@@ -260,10 +260,10 @@ jobs:
             then
               if ! (head -n 1 $file | egrep -q ".. This file is part of ICU4X. For terms of use, please see the file")
               then
-                echo "[$file] license exists!"
-              else
                 echo "**** ICU4X license header not seen for [$file]"
                 exit 1
+              else
+                echo "[$file] license exists!"
               fi
             else
               echo "not testing license header for [$file]"
