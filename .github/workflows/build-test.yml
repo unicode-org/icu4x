@@ -258,7 +258,7 @@ jobs:
             echo $file
             if [[ $file =~ .rs$ ]]
             then
-              if (( ! $(head -n 1 $file | egrep -q ".. This file is part of ICU4X. For terms of use, please see the file") ))
+              if ! (head -n 1 $file | egrep -q ".. This file is part of ICU4X. For terms of use, please see the file")
               then
                 echo "[$file] license exists!"
               else
