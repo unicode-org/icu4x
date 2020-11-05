@@ -260,6 +260,7 @@ jobs:
             then
               head -n 1 $file | egrep -q ".. This file is part of ICU4X. For terms of use, please see the file" && echo "[$file] license exists!" || echo "[$file] uh no (?), no license exists"
             else
+              echo "ICU4X license header not seen for [$file]"
               exit 1
             fi
             echo "------------"
