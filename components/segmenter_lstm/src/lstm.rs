@@ -82,10 +82,9 @@ impl Lstm {
         let mut c_fw = Array1::<f32>::zeros(hunits);
         let mut h_fw = Array1::<f32>::zeros(hunits);
         let mut all_h_fw = Array2::<f32>::zeros((graph_clust.len(), hunits));
-        for i in 0..graph_clust.len() {
-            let g = graph_clust[i];
-            let g_id: i16 = if self.data.dic.contains_key(g) {
-                self.data.dic[g]
+        for (i, g) in graph_clust.iter().enumerate() {
+            let g_id: i16 = if self.data.dic.contains_key(*g) {
+                self.data.dic[*g]
             } else {
                 graph_clust_len
             };
