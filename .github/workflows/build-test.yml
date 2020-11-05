@@ -256,7 +256,7 @@ jobs:
           do
             echo "------------"
             echo $file
-            if [[ $file =~ .rs$ ]]
+            if [[ $file =~ .rs$ || $file =~ .toml$ || $file =~ .yml$ ]]
             then
               if ! (head -n 1 $file | egrep -q ".. This file is part of ICU4X. For terms of use, please see the file")
               then
