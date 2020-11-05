@@ -255,7 +255,7 @@ jobs:
           for file in $FILES
           do
             echo "------------"
-            cat $file
+            head -n 1 | egrep "\.\. This file is part of ICU4X. For terms of use, please see the file" && echo "license exists!" || echo "uh no (?), no license exists"
             echo "------------"
           done
       
