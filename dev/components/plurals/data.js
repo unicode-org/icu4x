@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604687704513,
+  "lastUpdate": 1604688164242,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -545,6 +545,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 111403,
             "range": "± 1872",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dcab5bbd27d2bf8403ee3871a7cdb7db537511cb",
+          "message": "Document the ICU and ICU4X boundary logic for UnicodeSet from a range (#377)",
+          "timestamp": "2020-11-06T12:38:49-06:00",
+          "tree_id": "f4c74f1111c3483b97db707f3bb0c037f79eb3d5",
+          "url": "https://github.com/unicode-org/icu4x/commit/dcab5bbd27d2bf8403ee3871a7cdb7db537511cb"
+        },
+        "date": 1604688163656,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1309,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5825,
+            "range": "± 432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 110211,
+            "range": "± 7133",
             "unit": "ns/iter"
           }
         ]
