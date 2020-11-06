@@ -259,7 +259,7 @@ jobs:
             pattern='.rs$|.toml$|.yml$'
             if [[ $file =~ $pattern ]]
             then
-              if ! (head -n 1 $file | egrep -q ".. This file is part of ICU4X. For terms of use, please see the file")
+              if ! (head -n 1 $file | egrep -q "(//|#) This file is part of ICU4X. For terms of use, please see the file")
               then
                 echo "**** ICU4X license header not seen for [$file]"
                 exit 1
