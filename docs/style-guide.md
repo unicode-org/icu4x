@@ -39,7 +39,7 @@ Within a single crate, exposure of structs and functions via their modules is up
 
 In the example below, since date and time skeletons aren't used in most common scenarios, they are exposed via the `skeleton` module.
 
-### Local variable naming :: suggested
+### Variable naming :: suggested
 
 General convention is to use snake_case naming for variables, see [Naming - Rust API Guidelines](https://rust-lang.github.io/api-guidelines/naming.html).
 
@@ -49,7 +49,7 @@ Variables used in loops, closures and in narrow scope (handful of lines) can be 
 vec![2, 3].into_iter().fold(0, |l, r| l + r)
 `
 
-In all other cases use non-abbreviated names, like locale vs loc, canonicalized_locale vs canon_loc, item_count vs item_ct.
+In all other cases, esp. in public APIs, use non-abbreviated names, like locale vs loc, canonicalized_locale vs canon_loc, item_count vs item_ct.
 
 ### Naming Exported types :: suggested
 
