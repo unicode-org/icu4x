@@ -248,14 +248,9 @@ jobs:
       - name: all PR files - iterate
         run: |
           export FILES_STR="${{ steps.file_changes.outputs.files}}"
-          echo $FILES_STR
-          echo "============"
           export FILES=$(echo $FILES_STR | tr "," "\n")
-          echo "============"
           for file in $FILES
           do
-            echo "------------"
-            echo $file
             pattern='.rs$|.toml$|.yml$'
             if [[ $file =~ $pattern ]]
             then
@@ -263,14 +258,10 @@ jobs:
               then
                 echo "**** ICU4X license header not seen for [$file]"
                 exit 1
-              else
-                echo "[$file] license exists!"
               fi
-            else
-              echo "not testing license header for [$file]"
             fi
-            echo "------------"
           done
+          echo "ICU4X license headers confirmed for files matching [$pattern]"
       
 
 
