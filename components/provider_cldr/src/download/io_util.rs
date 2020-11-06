@@ -39,7 +39,8 @@ fn download_sync(url: &str, destination: &Path) -> Result<(), Error> {
     Ok(())
 }
 
-// TODO(#333): re-enable with caching to prevent flakiness
+// The following test is intentionally skipped to reduce flakiness. You can re-enable it locally
+// when editing the download function defined above.
 #[test]
 #[ignore]
 fn test_download_sync() -> Result<(), Error> {
