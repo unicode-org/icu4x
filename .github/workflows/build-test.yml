@@ -226,13 +226,9 @@ jobs:
           output: ","
           fileOutput: ","
 
-      - name: all PR files - echo
+      - name: check PR files - added files
         run: |
-          echo '${{ steps.file_changes.outputs.files}}'
-
-      - name: all PR files - iterate
-        run: |
-          export FILES_STR="${{ steps.file_changes.outputs.files}}"
+          export FILES_STR="${{ steps.file_changes.outputs.files_added}}"
           export FILES=$(echo $FILES_STR | tr "," "\n")
           for file in $FILES
           do
@@ -241,12 +237,30 @@ jobs:
             then
               if ! (head -n 1 $file | egrep -q "(//|#) This file is part of ICU4X. For terms of use, please see the file")
               then
-                echo "**** ICU4X license header not seen for [$file]"
+                echo "*** ICU4X license header not seen for [$file]"
                 exit 1
               fi
             fi
           done
-          echo "ICU4X license headers confirmed for files matching [$pattern]"
+          echo "ICU4X license headers confirmed for PR-added files matching [$pattern]"
+
+      - name: check PR files - modified files
+        run: |
+          export FILES_STR="${{ steps.file_changes.outputs.files_modified}}"
+          export FILES=$(echo $FILES_STR | tr "," "\n")
+          for file in $FILES
+          do
+            pattern='.rs$|.toml$|.yml$'
+            if [[ $file =~ $pattern ]]
+            then
+              if ! (head -n 1 $file | egrep -q "(//|#) This file is part of ICU4X. For terms of use, please see the file")
+              then
+                echo "*** ICU4X license header not seen for [$file]"
+                exit 1
+              fi
+            fi
+          done
+          echo "ICU4X license headers confirmed for PR-modified files matching [$pattern]"
   
   # Doc-GH-Pages job
 
