@@ -214,8 +214,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    # TODO: uncomment this line
-    # needs: [build]
+    needs: [build]
 
     steps:
       - uses: actions/checkout@v2
@@ -226,24 +225,10 @@ jobs:
         with:
           output: ","
           fileOutput: ","
-      
-      # - name: test printing each file
-      #   run: |
-      #     while IFS= read -r line; do
-      #       echo "... $line ..."
-      #     done
-
-      # - name: more testing
-      #   run: |
-      #     cat $HOME/files.csv
 
       - name: all PR files - echo
         run: |
           echo '${{ steps.file_changes.outputs.files}}'
-
-      # - name: all PR files - cat
-      #   run: |
-      #     cat '${{ steps.file_changes.outputs.files}}'
 
       - name: all PR files - iterate
         run: |
@@ -262,12 +247,6 @@ jobs:
             fi
           done
           echo "ICU4X license headers confirmed for files matching [$pattern]"
-      
-
-
-
-      
-
   
   # Doc-GH-Pages job
 
