@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604370308159,
+  "lastUpdate": 1604687669427,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1439,6 +1439,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33910600,
             "range": "± 1482468",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "82b272875850b583651ecca80e8d65f15c279589",
+          "message": "Add Cargo.lock to repo for benchmark stability (#375)",
+          "timestamp": "2020-11-06T12:31:09-06:00",
+          "tree_id": "4cb931d879e88af372e8abf26593ca2579452405",
+          "url": "https://github.com/unicode-org/icu4x/commit/82b272875850b583651ecca80e8d65f15c279589"
+        },
+        "date": 1604687667997,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33083674,
+            "range": "± 1816545",
             "unit": "ns/iter"
           }
         ]
