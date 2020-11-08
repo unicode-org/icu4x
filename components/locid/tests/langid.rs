@@ -116,3 +116,18 @@ fn test_langid_subtag_variants() {
     variants.clear();
     assert_eq!(variants.len(), 0);
 }
+
+#[test]
+fn test_langid_partialeq_str() {
+    let path = "./tests/fixtures/langid.json";
+    let tests: Vec<fixtures::LocaleTest> =
+        helpers::read_fixture(path).expect("Failed to read a fixture");
+    for test in tests {
+        let parsed: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
+        assert_eq!(parsed, &parsed.to_string() as &str);
+    }
+
+    // Check that trailing characters are not ignored
+    let lang: LanguageIdentifier = "en".parse().expect("Parsing failed.");
+    assert_ne!(lang, "en-US");
+}

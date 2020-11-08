@@ -154,14 +154,48 @@ impl std::fmt::Display for LanguageIdentifier {
     }
 }
 
+macro_rules! subtag_matches {
+    ($T:ty, $iter:ident, $expected:expr) => {
+        match $iter.next() {
+            Some(ref text) => {
+                let parsed: Result<$T, _> = text.parse();
+                match parsed {
+                    Ok(subtag) => subtag == $expected,
+                    Err(_) => false,
+                }
+            }
+            None => false,
+        }
+    };
+}
+
 impl PartialEq<&str> for LanguageIdentifier {
     fn eq(&self, other: &&str) -> bool {
-        self.to_string().eq(*other)
+        let mut iter = other.split('-').peekable();
+        if !subtag_matches!(subtags::Language, iter, self.language) {
+            return false;
+        }
+        if let Some(ref script) = self.script {
+            if !subtag_matches!(subtags::Script, iter, *script) {
+                return false;
+            }
+        }
+        if let Some(ref region) = self.region {
+            if !subtag_matches!(subtags::Region, iter, *region) {
+                return false;
+            }
+        }
+        for variant in self.variants.iter() {
+            if !subtag_matches!(subtags::Variant, iter, *variant) {
+                return false;
+            }
+        }
+        iter.next() == None
     }
 }
 
 impl PartialEq<str> for LanguageIdentifier {
     fn eq(&self, other: &str) -> bool {
-        self.to_string().eq(other)
+        self == &other
     }
 }
