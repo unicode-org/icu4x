@@ -12,6 +12,18 @@ The design goals of `ICU4X` are:
 * Availability and ease of use in multiple programming languages
 * Written by i18n experts to encourage best practices
 
+***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://corp.unicode.org/mailman/listinfo/icu4x-announce)
+
+## Documentation
+
+For an introduction the project, please visit [`Introduction to ICU4X for Rust`](https://github.com/unicode-org/icu4x/wiki/Introduction-to-ICU4X-for-Rust) tutorial.
+
+For technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
+
+More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).
+
+## Quick Start
+
 An example `ICU4X` powered application in Rust may look like this:
 
 ```toml
@@ -47,16 +59,6 @@ fn main() {
     println!("📅: {}", formatted_date);
 }
 ```
-
-
-## Documentation
-
-For an introduction the project, please visit [`Introduction to ICU4X for Rust`](https://github.com/unicode-org/icu4x/wiki/Introduction-to-ICU4X-for-Rust) tutorial.
-
-For technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
-
-More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).
-
 
 ## Development
 
