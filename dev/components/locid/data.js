@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604688145140,
+  "lastUpdate": 1604954599614,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1181,6 +1181,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 8293,
             "range": "± 674",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "23a283b2a8d159b99c45f3b459b0b5fe635794b9",
+          "message": "Adds icu4x-announce mailing list to README\n\nAlso moves documentation section above the quick start code section.",
+          "timestamp": "2020-11-09T14:40:02-06:00",
+          "tree_id": "1b043d0ee64e1864c22a24483f3a021224f4d17b",
+          "url": "https://github.com/unicode-org/icu4x/commit/23a283b2a8d159b99c45f3b459b0b5fe635794b9"
+        },
+        "date": 1604954599017,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 5310,
+            "range": "± 148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9433,
+            "range": "± 105",
             "unit": "ns/iter"
           }
         ]
