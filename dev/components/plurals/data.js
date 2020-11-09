@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604688189766,
+  "lastUpdate": 1604954650099,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -629,6 +629,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 109987,
             "range": "± 1157",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "23a283b2a8d159b99c45f3b459b0b5fe635794b9",
+          "message": "Adds icu4x-announce mailing list to README\n\nAlso moves documentation section above the quick start code section.",
+          "timestamp": "2020-11-09T14:40:02-06:00",
+          "tree_id": "1b043d0ee64e1864c22a24483f3a021224f4d17b",
+          "url": "https://github.com/unicode-org/icu4x/commit/23a283b2a8d159b99c45f3b459b0b5fe635794b9"
+        },
+        "date": 1604954646547,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1348,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6271,
+            "range": "± 791",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 116199,
+            "range": "± 7446",
             "unit": "ns/iter"
           }
         ]
