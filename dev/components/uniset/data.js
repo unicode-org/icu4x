@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604954565518,
+  "lastUpdate": 1604957930289,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1559,6 +1559,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32534163,
             "range": "± 1324944",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "006505e1b6f592ae7e7515ae5c558cc367b8bf04",
+          "message": "Update README.md",
+          "timestamp": "2020-11-09T15:35:51-06:00",
+          "tree_id": "aab69107718c318cca89c8844f091b1fc6006c15",
+          "url": "https://github.com/unicode-org/icu4x/commit/006505e1b6f592ae7e7515ae5c558cc367b8bf04"
+        },
+        "date": 1604957926730,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36785023,
+            "range": "± 370546",
             "unit": "ns/iter"
           }
         ]
