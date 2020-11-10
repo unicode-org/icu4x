@@ -13,6 +13,20 @@ install_crate_args = ["--version", "^1.4"]
 command = "cargo"
 args = ["build-all-features"]
 
+[tasks.build-nightly]
+description = "Build all targets in nightly mode"
+category = "ICU4X Development"
+toolchain = "nightly"
+command = "cargo"
+args = ["build", "--all-features", "--all-targets"]
+
+[tasks.clippy-nightly]
+description = "Run clippy on all targets in nightly mode"
+category = "ICU4X Development"
+toolchain = "nightly"
+command = "cargo"
+args = ["clippy", "--all-features", "--all-targets"]
+
 ### META TASKS ###
 
 [tasks.quick]
@@ -31,6 +45,8 @@ dependencies = [
     "quick",
     "test-docs",
     "build-all-features",
+    "build-nightly",
+    "clippy-nightly",
 ]
 
 ### WASM TASKS ###
