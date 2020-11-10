@@ -5,7 +5,6 @@
 // This example illustrates a very simple type implementing Writeable.
 
 use std::fmt;
-use std::string::ToString;
 use writeable::Writeable;
 
 struct WriteableMessage<'s> {
@@ -26,5 +25,5 @@ fn main() {
     let writeable = WriteableMessage {
         message: "hello world",
     };
-    assert_eq!("hello world", (&writeable as &dyn Writeable).to_string());
+    assert_eq!("hello world", writeable.writeable_to_string());
 }

@@ -19,7 +19,6 @@
 //! [`ICU4X`]: ../icu/index.html
 
 use std::fmt;
-use std::string::ToString;
 
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
 pub trait Writeable {
@@ -32,10 +31,9 @@ pub trait Writeable {
     /// This function may return an enumeration in the future. See:
     /// https://github.com/unicode-org/icu4x/issues/370
     fn write_len(&self) -> usize;
-}
 
-impl ToString for dyn Writeable {
-    fn to_string(&self) -> String {
+    /// Creates a new String with the data from this Writeable. Like ToString, but faster.
+    fn writeable_to_string(&self) -> String {
         let mut output = String::with_capacity(self.write_len());
         self.write_to(&mut output)
             .expect("impl Write for String is infallible");
@@ -72,7 +70,7 @@ impl ToString for dyn Writeable {
 macro_rules! assert_writeable_eq {
     ($expected_str:expr, $actual_writeable:expr) => {
         let writeable: &dyn Writeable = $actual_writeable;
-        assert_eq!($expected_str, writeable.to_string());
+        assert_eq!($expected_str, writeable.writeable_to_string());
         assert_eq!($expected_str.len(), writeable.write_len());
     };
 }

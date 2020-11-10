@@ -37,18 +37,18 @@ fn overview_bench(c: &mut Criterion) {
         #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark runs to_string on short, medium, and long strings in one batch.
-            (&WriteableMessage {
+            WriteableMessage {
                 message: black_box(SHORT_STR),
-            } as &dyn Writeable)
-                .to_string();
-            (&WriteableMessage {
+            }
+            .writeable_to_string();
+            WriteableMessage {
                 message: black_box(MEDIUM_STR),
-            } as &dyn Writeable)
-                .to_string();
-            (&WriteableMessage {
+            }
+            .writeable_to_string();
+            WriteableMessage {
                 message: black_box(LONG_STR),
-            } as &dyn Writeable)
-                .to_string();
+            }
+            .writeable_to_string();
         });
     });
 
@@ -61,35 +61,35 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn writeable_benches(c: &mut Criterion) {
-    c.bench_function("writeable/short/to_string", |b| {
+    c.bench_function("writeable/to_string/short", |b| {
         b.iter(|| {
-            (&WriteableMessage {
+            WriteableMessage {
                 message: black_box(SHORT_STR),
-            } as &dyn Writeable)
-                .to_string()
+            }
+            .writeable_to_string()
         });
     });
-    c.bench_function("writeable/medium/to_string", |b| {
+    c.bench_function("writeable/to_string/medium", |b| {
         b.iter(|| {
-            (&WriteableMessage {
+            WriteableMessage {
                 message: black_box(MEDIUM_STR),
-            } as &dyn Writeable)
-                .to_string()
+            }
+            .writeable_to_string()
         });
     });
-    c.bench_function("writeable/long/to_string", |b| {
+    c.bench_function("writeable/to_string/long", |b| {
         b.iter(|| {
-            (&WriteableMessage {
+            WriteableMessage {
                 message: black_box(LONG_STR),
-            } as &dyn Writeable)
-                .to_string()
+            }
+            .writeable_to_string()
         });
     });
 }
 
 #[cfg(feature = "bench")]
 fn display_benches(c: &mut Criterion) {
-    c.bench_function("display/short/to_string", |b| {
+    c.bench_function("display/to_string/short", |b| {
         b.iter(|| {
             DisplayMessage {
                 message: black_box(SHORT_STR),
@@ -97,7 +97,7 @@ fn display_benches(c: &mut Criterion) {
             .to_string()
         });
     });
-    c.bench_function("display/medium/to_string", |b| {
+    c.bench_function("display/to_string/medium", |b| {
         b.iter(|| {
             DisplayMessage {
                 message: black_box(MEDIUM_STR),
@@ -105,7 +105,7 @@ fn display_benches(c: &mut Criterion) {
             .to_string()
         });
     });
-    c.bench_function("display/long/to_string", |b| {
+    c.bench_function("display/to_string/long", |b| {
         b.iter(|| {
             DisplayMessage {
                 message: black_box(LONG_STR),
