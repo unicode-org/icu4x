@@ -4,6 +4,7 @@
 use std::iter::Peekable;
 
 pub use super::errors::ParserError;
+use crate::parser::get_subtag_iterator;
 use crate::subtags;
 use crate::LanguageIdentifier;
 
@@ -98,6 +99,6 @@ pub fn parse_language_identifier(
     t: &[u8],
     mode: ParserMode,
 ) -> Result<LanguageIdentifier, ParserError> {
-    let mut iter = t.split(|c| *c == b'-' || *c == b'_').peekable();
+    let mut iter = get_subtag_iterator(t).peekable();
     parse_language_identifier_from_iter(&mut iter, mode)
 }

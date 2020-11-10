@@ -124,7 +124,7 @@ fn test_langid_partialeq_str() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
-        assert_eq!(parsed, &parsed.to_string() as &str);
+        assert_eq!(parsed, parsed.to_string().as_str());
     }
 
     // Check that trailing characters are not ignored

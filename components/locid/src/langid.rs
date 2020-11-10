@@ -4,7 +4,7 @@
 use std::fmt::Write;
 use std::str::FromStr;
 
-use crate::parser::{parse_language_identifier, ParserError, ParserMode};
+use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
 use crate::subtags;
 
 /// `LanguageIdentifier` is a core struct representing a [`Unicode BCP47 Language Identifier`].
@@ -156,22 +156,22 @@ impl std::fmt::Display for LanguageIdentifier {
 
 macro_rules! subtag_matches {
     ($T:ty, $iter:ident, $expected:expr) => {
-        match $iter.next() {
-            Some(ref text) => {
-                let parsed: Result<$T, _> = text.parse();
-                match parsed {
-                    Ok(subtag) => subtag == $expected,
-                    Err(_) => false,
-                }
-            }
-            None => false,
-        }
+        $iter
+            .next()
+            .map(|b| <$T>::from_bytes(b) == Ok($expected))
+            .unwrap_or(false)
     };
 }
 
 impl PartialEq<&str> for LanguageIdentifier {
     fn eq(&self, other: &&str) -> bool {
-        let mut iter = other.split('-').peekable();
+        self == *other
+    }
+}
+
+impl PartialEq<str> for LanguageIdentifier {
+    fn eq(&self, other: &str) -> bool {
+        let mut iter = get_subtag_iterator(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }
@@ -191,11 +191,5 @@ impl PartialEq<&str> for LanguageIdentifier {
             }
         }
         iter.next() == None
-    }
-}
-
-impl PartialEq<str> for LanguageIdentifier {
-    fn eq(&self, other: &str) -> bool {
-        self == &other
     }
 }
