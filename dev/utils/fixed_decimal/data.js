@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604996560978,
+  "lastUpdate": 1605028821852,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -539,6 +539,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 172373,
             "range": "± 4474",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nciric@gmail.com",
+            "name": "Nebojša Ćirić",
+            "username": "nciric"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "979806f8212579453a21cca562a7cd5bb77e8462",
+          "message": "Update style-guide.md (#385)\n\n* Update style-guide.md\r\n\r\nClosure example from https://github.com/pingcap/style-guide/issues/5\r\n\r\nResolves #60\r\n\r\n* Update style-guide.md",
+          "timestamp": "2020-11-10T09:17:18-08:00",
+          "tree_id": "4a6ebdcbd4a047a4de5a081300fca1f1feac2b3a",
+          "url": "https://github.com/unicode-org/icu4x/commit/979806f8212579453a21cca562a7cd5bb77e8462"
+        },
+        "date": 1605028820725,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 164318,
+            "range": "± 5738",
             "unit": "ns/iter"
           }
         ]
