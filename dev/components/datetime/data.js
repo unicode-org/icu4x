@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1604957961231,
+  "lastUpdate": 1604996584873,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -539,6 +539,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 833928,
             "range": "± 1558",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4b7a11d698b322517293c4875774dd1109d07d3b",
+          "message": "Adds aliases between CI, config.toml, and Makefile.toml (#376)",
+          "timestamp": "2020-11-10T02:19:35-06:00",
+          "tree_id": "3662c9afac38e853763da480a0dec4abeb98803d",
+          "url": "https://github.com/unicode-org/icu4x/commit/4b7a11d698b322517293c4875774dd1109d07d3b"
+        },
+        "date": 1604996584218,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 725064,
+            "range": "± 33388",
             "unit": "ns/iter"
           }
         ]
