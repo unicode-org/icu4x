@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605028835768,
+  "lastUpdate": 1605034147956,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1325,6 +1325,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9132,
             "range": "± 213",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "73f1d954dc2316e425014a4c68b0339f34ef9d47",
+          "message": "Use parsing iterator for LanguageIdentifier PartialEq (#386)\n\n* Use parsing iterator for LanguageIdentifier PartialEq\r\n\r\n* Address review feedback",
+          "timestamp": "2020-11-10T10:46:03-08:00",
+          "tree_id": "b19692744ffbf0a320c983dd6a0b6cb5405cbdf4",
+          "url": "https://github.com/unicode-org/icu4x/commit/73f1d954dc2316e425014a4c68b0339f34ef9d47"
+        },
+        "date": 1605034147255,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3976,
+            "range": "± 345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9190,
+            "range": "± 161",
             "unit": "ns/iter"
           }
         ]
