@@ -8,17 +8,19 @@ use std::borrow::Cow;
 #[cfg(feature = "invariant")]
 use crate::prelude::*;
 
+pub mod key {
+    use crate::data_key::DataKey;
+    pub const CARDINAL_V1: DataKey = data_key!(plurals, "cardinal", 1);
+    pub const ORDINAL_V1: DataKey = data_key!(plurals, "ordinal", 1);
+}
+
 /// Gets a locale-invariant default struct given a data key in this module's category.
 #[cfg(feature = "invariant")]
 pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
     use crate::invariant::make_inv_response;
-    if data_key.category != DataCategory::Plurals {
-        return None;
-    }
-    // TODO(#212): Match on TinyStr instead of &str
-    match (data_key.sub_category.as_str(), data_key.version) {
-        ("cardinal", 1) => make_inv_response::<PluralRuleStringsV1>(),
-        ("ordinal", 1) => make_inv_response::<PluralRuleStringsV1>(),
+    match *data_key {
+        key::CARDINAL_V1 => make_inv_response::<PluralRuleStringsV1>(),
+        key::ORDINAL_V1 => make_inv_response::<PluralRuleStringsV1>(),
         _ => None,
     }
 }

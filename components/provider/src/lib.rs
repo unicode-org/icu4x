@@ -22,7 +22,7 @@
 //! use std::any::TypeId;
 //!
 //! // Types included:
-//! println!("{:?}", TypeId::of::<DataProvider>());
+//! println!("{:?}", TypeId::of::<dyn DataProvider>());
 //! println!("{:?}", TypeId::of::<DataError>());
 //! println!("{:?}", TypeId::of::<DataKey>());
 //! println!("{:?}", TypeId::of::<DataEntry>());
@@ -30,9 +30,6 @@
 //! println!("{:?}", TypeId::of::<DataRequest>());
 //! println!("{:?}", TypeId::of::<DataResponse>());
 //! println!("{:?}", TypeId::of::<DataResponseBuilder>());
-//!
-//! // Macros included:
-//! assert_eq!("plurals/cardinal@1", icu_data_key!(plurals: cardinal@1).to_string());
 //! ```
 //!
 //! ## Types of Data Providers
@@ -70,6 +67,7 @@
 //! [`iter`]: ./iter/index.html
 mod cloneable_any;
 mod data_entry;
+#[macro_use]
 mod data_key;
 mod data_provider;
 mod error;
@@ -92,7 +90,6 @@ pub mod prelude {
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseBuilder;
     pub use crate::error::Error as DataError;
-    pub use crate::icu_data_key;
 }
 
 // Also include the same symbols at the top level for selective inclusion

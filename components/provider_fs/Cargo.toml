@@ -19,6 +19,18 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+# Skip combinations of export with bincode, since they are designed to fail
+skip_feature_sets = [
+    ["export", "bincode"],
+    ["export-bin", "bincode"],
+]
+# Omit most optional dependency features from permutation testing
+skip_optional_dependencies = true
+extra_features = [
+    "log",
+]
+
 [dependencies]
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }

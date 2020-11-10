@@ -39,6 +39,18 @@ Within a single crate, exposure of structs and functions via their modules is up
 
 In the example below, since date and time skeletons aren't used in most common scenarios, they are exposed via the `skeleton` module.
 
+### Variable naming :: suggested
+
+General convention is to use snake_case naming for variables, see [Naming - Rust API Guidelines](https://rust-lang.github.io/api-guidelines/naming.html).
+
+Variables used in loops, closures and in narrow scope (handful of lines) can be abbreviated to one or more characters, e.g.
+
+`
+vec![2, 3].into_iter().fold(0, |l, r| l + r)
+`
+
+In all other cases, esp. in public APIs, use non-abbreviated names, like locale vs loc, canonicalized_locale vs canon_loc, item_count vs item_ct.
+
 ### Naming Exported types :: suggested
 
 Follow the naming advice in [Naming - Rust API
@@ -603,6 +615,43 @@ When structs with public string fields contain strings, use the following type c
   - `Cow<'static, str>`  for longer strings.
 
 A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.
+
+### Pre-validation of options :: suggested
+
+Main issue: [#158](https://github.com/unicode-org/icu4x/issues/158)
+
+When a variable or struct field needs to adhere to certain invariants, such as a currency code being 3 letters or significant digits being between 0 and 20, use a type that can only represent valid option values.
+
+```rust
+// BAD
+#[derive(Default)]
+#[non_exhaustive]
+struct MyStructOptions {
+    /// Must be between 0 and 20
+    pub fraction_digits: usize,
+}
+
+// GOOD
+#[derive(Default)]
+struct FractionDigits(usize);
+enum Error {
+    OutOfBounds,
+}
+impl FractionDigits {
+    fn try_new(value: usize) -> Result<Self, Error> {
+        if value >= 0 && value <= 20 {
+            Ok(Self(value))
+        } else {
+            Err(Error::OutOfBounds)
+        }
+    }
+}
+#[derive(Default)]
+#[non_exhaustive]
+struct MyStructOptions {
+    pub fraction_digits: FractionDigits,
+}
+```
 
 # Error Handling
 
