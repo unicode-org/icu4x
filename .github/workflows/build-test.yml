@@ -29,7 +29,7 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: build
-        args: --all-features
+        args: --all-targets --all-features
     - name: Test All Targets
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -62,7 +62,7 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: build
-        args: --all-features
+        args: --all-targets --all-features
     - name: Build All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:
