@@ -1,37 +1,17 @@
 [config]
 default_to_workspace = false
+load_cargo_aliases = true
 
 ### INDIVIDUAL TEST AND LINT TASKS ###
-
-[tasks.test-all]
-description = "Build and run all code paths except docs"
-category = "ICU4X Development"
-command = "cargo"
-args = ["test", "--all-features", "--all-targets"]
-
-[tasks.test-docs]
-description = "Build and run all docs tests"
-category = "ICU4X Development"
-command = "cargo"
-args = ["test", "--all-features", "--doc"]
+# Note: If a task is purely a cargo alias, define it in .cargo/config.toml
 
 [tasks.build-all-features]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.4"]
 command = "cargo"
 args = ["build-all-features"]
-
-[tasks.fmt-check]
-description = "Check for formatting on all code"
-category = "ICU4X Development"
-command = "cargo"
-args = ["fmt", "--", "--check"]
-
-[tasks.clippy-all]
-description = "Run Clippy on all code paths"
-category = "ICU4X Development"
-command = "cargo"
-args = ["clippy", "--all-features", "--all-targets"]
 
 ### META TASKS ###
 

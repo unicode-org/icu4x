@@ -1,3 +1,23 @@
 [alias]
+
+### INDIVIDUAL TEST AND LINT TASKS ###
+
+# Build and run all code paths except docs
+test-all = "test --all-features --all-targets"
+
+# Build and run all docs tests
+test-docs = "test --all-features --doc"
+
+# Check for formatting on all code
+fmt-check = "fmt -- --check"
+
+# Run Clippy on all code paths
+clippy-all = "clippy --all-features --all-targets"
+
+### META TASKS ###
+
+# Run quick version of all lints and tests
 quick = "make quick"
+
+# Run all lints and tests
 ci = "make ci"
