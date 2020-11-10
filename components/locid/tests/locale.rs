@@ -24,8 +24,9 @@ fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
             }
             fixtures::LocaleInfo::Identifier(ident) => {
                 let input: Locale = test.input.try_into().expect("Parsing failed.");
-                let output: Locale = ident.try_into().expect("Parsing failed.");
+                let output: Locale = ident.clone().try_into().expect("Parsing failed.");
                 assert_eq!(input, output);
+                assert_eq!(input.to_string(), ident.identifier);
             }
             fixtures::LocaleInfo::Object(o) => {
                 let input: Locale = test.input.try_into().expect("Parsing failed.");

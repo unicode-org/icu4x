@@ -13,18 +13,18 @@
 //! ```
 //! use std::borrow::Cow;
 //! use icu_provider::prelude::*;
-//! use icu_provider::structs::plurals::PluralRuleStringsV1;
+//! use icu_provider::structs;
 //! use icu_locid_macros::langid;
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: Cow<PluralRuleStringsV1> = data_provider
+//! let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
 //!     .load(&DataRequest {
 //!         data_entry: DataEntry {
 //!             langid: langid!("be"),
 //!             variant: None,
 //!         },
-//!         data_key: icu_data_key!(plurals: cardinal@1),
+//!         data_key: structs::plurals::key::CARDINAL_V1,
 //!     })
 //!     .unwrap()
 //!     .take_payload()

@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use clap::{App, Arg};
-use icu_provider::icu_data_key;
 use icu_provider::iter::IterableDataProvider;
 use icu_provider_cldr::download::CldrPathsDownload;
+use icu_provider_cldr::get_all_data_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
@@ -107,12 +107,7 @@ fn main() -> Result<(), Error> {
         _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
     }
 
-    // TODO: Save this list of keys in a better place
-    let keys = [
-        icu_data_key!(plurals: cardinal@1),
-        icu_data_key!(plurals: ordinal@1),
-        icu_data_key!(dates: gregory@1),
-    ];
+    let keys = get_all_data_keys();
 
     let metadata = icu_testdata::metadata::load()?;
 

@@ -11,20 +11,13 @@ on:
 
 jobs:
 
-  # Build job
 
-  build:
-
+  # Test job - runs all "cargo make" testing commands
+  test:
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        feature-set: [ "", "--all-features" ]  # no feature options ("") uses default.
-                                               # --no-default-features is not allowed
-                                               #     at root of virtual workspace for
-                                               #     both build and test.
-        
-
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -32,44 +25,72 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
-    # Build job > Build and run steps
-        
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
         command: build
-        args: ${{ matrix.feature-set }} --verbose
-
-    - name: Test
+        args: --all-targets --all-features
+    - name: Test All Targets
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: test
-        args: ${{ matrix.feature-set }} --verbose
+        command: test-all
+    - name: Test Docs
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: test-docs
 
-  # Formatting job
 
-  format:
-    runs-on: ubuntu-latest
-    
+  # Build job - builds all permutations of features
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
     steps:
     - uses: actions/checkout@v2
 
-    - name: Rust formatter
-      ## make this command fail if cargo fmt had to make changes
-      run: cargo fmt && git diff-index --exit-code HEAD
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
+    - name: Install cargo-all-features
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: cargo-all-features --version "^1.4"
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-targets --all-features
+    - name: Build All Feature Permutations
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build-all-features
 
 
-  # Linting job (cargo-clippy) - completes and puts warnings inline in PR
-
+  # Lint job - runs all "cargo make" linting commands
   lint:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
 
-    needs: [build]
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
+    - name: Check Format
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: fmt-check
+
+
+  # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
+  clippy:
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
 
-    # Linting job > Install and run clippy steps
+    # Clippy job > Install and run clippy steps
 
     - name: Install clippy
       run: rustup component add clippy
@@ -190,7 +211,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [build, format, benchmark]
+    needs: [build, lint, benchmark]
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.

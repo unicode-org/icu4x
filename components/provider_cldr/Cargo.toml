@@ -19,6 +19,13 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+# Omit most optional dependency features from permutation testing
+skip_optional_dependencies = true
+extra_features = [
+    "log",
+]
+
 [dependencies]
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid = { version = "0.1", path = "../locid" }

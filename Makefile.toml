@@ -1,5 +1,39 @@
 [config]
 default_to_workspace = false
+load_cargo_aliases = true
+
+### INDIVIDUAL TEST AND LINT TASKS ###
+# Note: If a task is purely a cargo alias, define it in .cargo/config.toml
+
+[tasks.build-all-features]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.4"]
+command = "cargo"
+args = ["build-all-features"]
+
+### META TASKS ###
+
+[tasks.quick]
+description = "Run quick version of all lints and tests"
+category = "ICU4X Development"
+dependencies = [
+    "test-all",
+    "fmt-check",
+    "clippy-all",
+]
+
+[tasks.ci]
+description = "Run all lints and tests"
+category = "ICU4X Development"
+dependencies = [
+    "quick",
+    "test-docs",
+    "build-all-features",
+]
+
+### WASM TASKS ###
 
 [tasks.wasm-build]
 description = "Build all examples as WASM into the target directory"

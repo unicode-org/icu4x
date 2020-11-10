@@ -71,7 +71,8 @@ pub mod rules;
 
 pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
-use icu_provider::{icu_data_key, structs, DataEntry, DataProvider, DataRequest};
+use icu_provider::prelude::*;
+use icu_provider::structs;
 pub use operands::PluralOperands;
 use std::borrow::Cow;
 use std::convert::TryInto;
@@ -275,8 +276,8 @@ impl PluralRules {
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
         let data_key = match type_ {
-            PluralRuleType::Cardinal => icu_data_key!(plurals: cardinal@1),
-            PluralRuleType::Ordinal => icu_data_key!(plurals: ordinal@1),
+            PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
+            PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
         let response = data_provider.load(&DataRequest {
             data_key,
