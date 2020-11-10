@@ -89,6 +89,13 @@ locales = [
 # Git tag or sha1 for the CLDR data used to generate the testdata
 gitref = "36.0.0"
 
+[package.metadata.cargo-all-features]
+# Omit most optional dependency features from permutation testing
+skip_optional_dependencies = true
+extra_features = [
+    "log",
+]
+
 [dependencies]
 icu_provider = { version = "0.1", path = "../../components/provider" }
 icu_provider_fs = { version = "0.1", path = "../../components/provider_fs" }
@@ -109,7 +116,7 @@ simple_logger = { version = "1.11", optional = true }
 icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
 
 [features]
-metadata = ["serde", "serde_json", "icu_locid/serde"]
+metadata = ["cargo_metadata", "serde", "serde_json", "icu_locid/serde"]
 icu4x-gen-testdata = [
     "cargo_metadata",
     "clap",
