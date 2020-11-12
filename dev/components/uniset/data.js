@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605205885643,
+  "lastUpdate": 1605225249780,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1709,6 +1709,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31804541,
             "range": "± 1198498",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bd0d43a9383201acd02e13cba79c54856a729026",
+          "message": "Reorganize docs and add wiki articles. (#382)",
+          "timestamp": "2020-11-12T12:38:17-06:00",
+          "tree_id": "ffb79c9115631c738f6188bcaf7225b879839492",
+          "url": "https://github.com/unicode-org/icu4x/commit/bd0d43a9383201acd02e13cba79c54856a729026"
+        },
+        "date": 1605225249152,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33042585,
+            "range": "± 1096512",
             "unit": "ns/iter"
           }
         ]
