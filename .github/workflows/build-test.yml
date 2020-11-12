@@ -82,6 +82,10 @@ jobs:
       with:
         command: fmt-check
 
+    - name: Check License Headers
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: license-header-check
 
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
