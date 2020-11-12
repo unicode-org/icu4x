@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [config]
 default_to_workspace = false
 load_cargo_aliases = true
@@ -12,6 +15,47 @@ install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-f
 install_crate_args = ["--version", "^1.4"]
 command = "cargo"
 args = ["build-all-features"]
+
+[tasks.license-header-check]
+description = "Ensure all the source files have license headers"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+handle = glob_array ./**/*.rs
+
+for path in ${handle}
+    text = readfile ${path}
+    result = starts_with ${text} "// This file is part of ICU4X. For terms of use, please see the file"
+    if not ${result}
+        echo "License header missing in ${path}"
+        trigger_error "License header missing in ${path}"
+    end
+end
+
+handle = glob_array ./**/*.yml
+
+for path in ${handle}
+    text = readfile ${path}
+    result = starts_with ${text} "# This file is part of ICU4X. For terms of use, please see the file"
+    if not ${result}
+        echo "License header missing in ${path}"
+        trigger_error "License header missing in ${path}"
+    end
+end
+
+
+handle = glob_array ./**/*.toml
+
+for path in ${handle}
+    text = readfile ${path}
+    result = starts_with ${text} "# This file is part of ICU4X. For terms of use, please see the file"
+    if not ${result}
+        echo "License header missing in ${path}"
+        trigger_error "License header missing in ${path}"
+    end
+end
+'''
 
 ### META TASKS ###
 
@@ -31,4 +75,5 @@ dependencies = [
     "quick",
     "test-docs",
     "build-all-features",
+    "license-header-check",
 ]
