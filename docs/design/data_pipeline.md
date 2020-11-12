@@ -29,7 +29,7 @@ The most central piece of the data pipeline architecture is the data provider.  
 
 A JSON data provider might look something like this:
 
-![JSON Data Provider](assets/json-data-provider.svg)
+![JSON Data Provider](../assets/json_data_provider.svg)
 
 In the above diagram, ICU4X requests a specific key from the data provider.  The data provider uses a mapping to figure out what path to load from the JSON file corresponding to the key.  It then may use a mapping to convert the JSON object to the type expected for the hunk, and then finally it sends the hunk back to the ICU4X implementation.
 
@@ -37,7 +37,7 @@ Requests to the data provider consist not only of a key, but also additional req
 
 Data providers can delegate to other data providers for specific tasks.  For example, one might have a data provider that performs caching, or a data provider that delegates to one of several other data providers.  A complex setup might look something like:
 
-![JSON Data Provider](assets/multi-provider-architecture.svg)
+![JSON Data Provider](../assets/multi_provider_architecture.svg)
 
 In this example, data requests from ICU4X first go through an LRU cache, before going to a locale-sensitive provider, which forks to one of three other providers depending on the requested locale.
 

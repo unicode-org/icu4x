@@ -1,7 +1,7 @@
 Techniques for Writing Design Docs
 ==================================
 
-According to [bylaws.md](bylaws.md), designs should make their way to GitHub Markdown files somewhat early in the process.  However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice.  This document contains tips on the workflow.
+According to [bylaws.md](../process/bylaws.md), designs should make their way to GitHub Markdown files somewhat early in the process.  However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice.  This document contains tips on the workflow.
 
 ## Design Document Evolution
 
@@ -26,14 +26,14 @@ Once the working draft of your design is checked in, you can address open questi
 You can include images using code such as the following:
 
 ```markdown
-![JSON Data Provider](assets/multi-provider-architecture.svg)
+![JSON Data Provider](../assets/multi_provider_architecture.svg)
 ```
 
 Inside the `![...]` is the alt text, and inside the `(...)` is the relative path to the image file.  You should save your images in an *assets* folder in the same directory as the Markdown file.
 
 Shane likes SVG files because they scale up and down nicely on different screen sizes and resolutions.  However, bitmaps are acceptable, too, depending on how you created the images.
 
-Create the images using your favorite editor.  For the images in [data-pipeline.md](data-pipeline.md), Shane used Lucidchart.  You can also use Inkscape, Gimp, Google Slides, Adobe Illustrator, etc.  If you have a tablet, another good option may be to draw the image on your screen with your stylus into a whiteboard program and export it as an image.
+Create the images using your favorite editor.  For the images in [data-pipeline.md](../design/data-pipeline.md), Shane used Lucidchart.  You can also use Inkscape, Gimp, Google Slides, Adobe Illustrator, etc.  If you have a tablet, another good option may be to draw the image on your screen with your stylus into a whiteboard program and export it as an image.
 
 #### Previewing Images in PRs
 
