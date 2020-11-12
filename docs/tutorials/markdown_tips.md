@@ -1,7 +1,7 @@
 Techniques for Writing Design Docs
 ==================================
 
-According to [bylaws.md](bylaws.md), designs should make their way to GitHub Markdown files somewhat early in the process.  However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice.  This document contains tips on the workflow.
+According to [bylaws.md](../process/bylaws.md), designs should make their way to GitHub Markdown files somewhat early in the process.  However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice.  This document contains tips on the workflow.
 
 ## Design Document Evolution
 
