@@ -12,8 +12,9 @@
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
 //!
-//! Types implementing Writeable automatically implement ToString. Because of this, you cannot
-//! implement both Writeable and std::fmt::Display on the same type.
+//! Types implementing Writeable have a defaulted writeable_to_string function.
+//! If desired, types implementing Writeable can manually implement ToString
+//! to wrap writeable_to_string.
 //!
 //! [`Writeable`]: ./trait.Writeable.html
 //! [`ICU4X`]: ../icu/index.html
