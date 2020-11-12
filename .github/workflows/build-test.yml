@@ -75,6 +75,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - uses: actions-rs/install@v0.1.2
+        with:
+          crate: cargo-make
+          version: latest
+
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
     - name: Check Format
