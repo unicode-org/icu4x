@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605034188035,
+  "lastUpdate": 1605206093136,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -839,6 +839,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 110343,
             "range": "± 2270",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8c1c3c5a0011d8e8abff68f28220d51709109f30",
+          "message": "Adding Writeable crate and trait. (#364)",
+          "timestamp": "2020-11-12T12:28:44-06:00",
+          "tree_id": "16d5dc6bdb7128a62cc83e074909db37c3e3bb34",
+          "url": "https://github.com/unicode-org/icu4x/commit/8c1c3c5a0011d8e8abff68f28220d51709109f30"
+        },
+        "date": 1605206092527,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1299,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6298,
+            "range": "± 337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 112509,
+            "range": "± 4634",
             "unit": "ns/iter"
           }
         ]
