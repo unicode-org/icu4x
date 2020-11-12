@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605034147956,
+  "lastUpdate": 1605205920295,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1361,6 +1361,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9190,
             "range": "± 161",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8c1c3c5a0011d8e8abff68f28220d51709109f30",
+          "message": "Adding Writeable crate and trait. (#364)",
+          "timestamp": "2020-11-12T12:28:44-06:00",
+          "tree_id": "16d5dc6bdb7128a62cc83e074909db37c3e3bb34",
+          "url": "https://github.com/unicode-org/icu4x/commit/8c1c3c5a0011d8e8abff68f28220d51709109f30"
+        },
+        "date": 1605205919742,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3835,
+            "range": "± 195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9649,
+            "range": "± 628",
             "unit": "ns/iter"
           }
         ]
