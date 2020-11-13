@@ -78,8 +78,8 @@ jobs:
     - name: Install cargo-make
       uses: actions-rs/install@v0.1.2
       with:
-        command: install
-        args: cargo-make --version "^0.32.9"
+        crate: cargo-make
+        version: latest
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
