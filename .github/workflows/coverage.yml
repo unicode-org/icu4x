@@ -43,6 +43,5 @@ jobs:
       - name:                   Push grcov results to Codecov via GitHub Action
         uses:                   codecov/codecov-action@v1
         with:
-          #token:                ${{ secrets.GITHUB_TOKEN }}  # not required for public repos
           file:                 ${{ steps.coverage.outputs.report }}
           fail_ci_if_error:     true
