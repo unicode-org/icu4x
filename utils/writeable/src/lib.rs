@@ -16,6 +16,35 @@
 //! If desired, types implementing Writeable can manually implement ToString
 //! to wrap writeable_to_string.
 //!
+//! # Example
+//!
+//! ```
+//! use writeable::Writeable;
+//! use writeable::assert_writeable_eq;
+//! use std::fmt;
+//!
+//! struct WelcomeMessage<'s>{
+//!     pub name: &'s str,
+//! }
+//!
+//! impl<'s> Writeable for WelcomeMessage<'s> {
+//!     fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+//!         sink.write_str("Hello, ")?;
+//!         sink.write_str(self.name)?;
+//!         sink.write_char('!')?;
+//!         Ok(())
+//!     }
+//! 
+//!     fn write_len(&self) -> usize {
+//!         // "Hello, " + '!' + length of name
+//!         8 + self.name.len()
+//!     }
+//! }
+//!
+//! let message = WelcomeMessage { name: "Alice" };
+//! assert_writeable_eq!("Hello, Alice!", &message);
+//! ```
+//!
 //! [`Writeable`]: ./trait.Writeable.html
 //! [`ICU4X`]: ../icu/index.html
 
