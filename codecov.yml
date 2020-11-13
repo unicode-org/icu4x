@@ -1,0 +1,9 @@
+ignore
+  - "/*"
+  - "C:/*"
+  - "../*"
+  - "components/locid/macros"
+  - "**/tests/**"
+  - "**/benches/**"
+  - "**/examples/**"
+  - "resources/testdata/**"
