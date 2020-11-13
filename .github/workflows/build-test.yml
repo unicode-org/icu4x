@@ -75,10 +75,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: actions-rs/install@v0.1.2
+    - name: Install cargo-make
+      uses: actions-rs/install@v0.1.2
         with:
-          crate: cargo-make
-          version: latest
+          command: install
+          args: cargo-make --version "^0.32.9"
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
