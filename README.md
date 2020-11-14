@@ -16,11 +16,11 @@ The design goals of `ICU4X` are:
 
 ## Documentation
 
-For an introduction the project, please visit [`Introduction to ICU4X for Rust`](https://github.com/unicode-org/icu4x/wiki/Introduction-to-ICU4X-for-Rust) tutorial.
+For an introduction the project, please visit [`Introduction to ICU4X for Rust`](docs/tutorials/intro.md) tutorial.
 
 For technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
 
-More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).
+More information about the project can be found in [the docs subdirectory](docs/README.md).
 
 ## Quick Start
 
