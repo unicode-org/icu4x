@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605225304385,
+  "lastUpdate": 1605564499521,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -965,6 +965,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 108972,
             "range": "± 3953",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "chris@sourcefoundry.org",
+            "name": "Chris Simpkins",
+            "username": "chrissimpkins"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10bb36be3a47f6c7d95995babb10c522da1858a3",
+          "message": "Fix README links following documentation move (#391)",
+          "timestamp": "2020-11-16T16:04:28-06:00",
+          "tree_id": "41695b662fcad3a36311f96aa7232c3cc28b7d1a",
+          "url": "https://github.com/unicode-org/icu4x/commit/10bb36be3a47f6c7d95995babb10c522da1858a3"
+        },
+        "date": 1605564498299,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1388,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6404,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 114762,
+            "range": "± 6241",
             "unit": "ns/iter"
           }
         ]
