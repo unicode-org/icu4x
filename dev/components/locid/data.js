@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605225276474,
+  "lastUpdate": 1605564452913,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1469,6 +1469,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9409,
             "range": "± 45",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "chris@sourcefoundry.org",
+            "name": "Chris Simpkins",
+            "username": "chrissimpkins"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10bb36be3a47f6c7d95995babb10c522da1858a3",
+          "message": "Fix README links following documentation move (#391)",
+          "timestamp": "2020-11-16T16:04:28-06:00",
+          "tree_id": "41695b662fcad3a36311f96aa7232c3cc28b7d1a",
+          "url": "https://github.com/unicode-org/icu4x/commit/10bb36be3a47f6c7d95995babb10c522da1858a3"
+        },
+        "date": 1605564449408,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4126,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9587,
+            "range": "± 83",
             "unit": "ns/iter"
           }
         ]
