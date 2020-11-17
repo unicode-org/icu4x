@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605634429770,
+  "lastUpdate": 1605636039379,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -749,6 +749,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 177402,
             "range": "± 6555",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c43fd478c0b69bb97461d334163a6bb3c9da2d4e",
+          "message": "Add copyright check in CI (#381)",
+          "timestamp": "2020-11-17T09:30:30-08:00",
+          "tree_id": "0953e11235f9b7920026a46881cdaf3563819f10",
+          "url": "https://github.com/unicode-org/icu4x/commit/c43fd478c0b69bb97461d334163a6bb3c9da2d4e"
+        },
+        "date": 1605636037990,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 179661,
+            "range": "± 7236",
             "unit": "ns/iter"
           }
         ]
