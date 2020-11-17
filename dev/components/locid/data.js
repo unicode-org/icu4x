@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605564452913,
+  "lastUpdate": 1605634445854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1505,6 +1505,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9587,
             "range": "± 83",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd524a91df3f5aef2efb908adddd051827972328",
+          "message": "Change code coverage to Codecov (#390)",
+          "timestamp": "2020-11-17T09:30:11-08:00",
+          "tree_id": "5f93517a009ce74fb72b66481ab1f249f515f2a4",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd524a91df3f5aef2efb908adddd051827972328"
+        },
+        "date": 1605634441974,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3941,
+            "range": "± 341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9616,
+            "range": "± 379",
             "unit": "ns/iter"
           }
         ]
