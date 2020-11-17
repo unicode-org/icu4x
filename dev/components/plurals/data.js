@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605564499521,
+  "lastUpdate": 1605634471213,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1007,6 +1007,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 114762,
             "range": "± 6241",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd524a91df3f5aef2efb908adddd051827972328",
+          "message": "Change code coverage to Codecov (#390)",
+          "timestamp": "2020-11-17T09:30:11-08:00",
+          "tree_id": "5f93517a009ce74fb72b66481ab1f249f515f2a4",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd524a91df3f5aef2efb908adddd051827972328"
+        },
+        "date": 1605634467859,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1305,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6146,
+            "range": "± 310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111108,
+            "range": "± 5491",
             "unit": "ns/iter"
           }
         ]
