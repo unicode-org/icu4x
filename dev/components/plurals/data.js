@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605634471213,
+  "lastUpdate": 1605636093469,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1049,6 +1049,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 111108,
             "range": "± 5491",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c43fd478c0b69bb97461d334163a6bb3c9da2d4e",
+          "message": "Add copyright check in CI (#381)",
+          "timestamp": "2020-11-17T09:30:30-08:00",
+          "tree_id": "0953e11235f9b7920026a46881cdaf3563819f10",
+          "url": "https://github.com/unicode-org/icu4x/commit/c43fd478c0b69bb97461d334163a6bb3c9da2d4e"
+        },
+        "date": 1605636092147,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1372,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6078,
+            "range": "± 210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 113724,
+            "range": "± 7592",
             "unit": "ns/iter"
           }
         ]
