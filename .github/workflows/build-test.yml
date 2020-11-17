@@ -75,6 +75,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install cargo-make
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
     - name: Check Format
@@ -82,6 +88,10 @@ jobs:
       with:
         command: fmt-check
 
+    - name: Check License Headers
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: license-check
 
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
@@ -122,6 +132,9 @@ jobs:
     # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/296714990
 
     runs-on: ubuntu-latest
+
+    needs: [build]
+
     steps:
       - uses: actions/checkout@v2
 

@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [alias]
 
 ### INDIVIDUAL TEST AND LINT TASKS ###
@@ -10,6 +13,9 @@ test-docs = "test --all-features --doc"
 
 # Check for formatting on all code
 fmt-check = "fmt -- --check"
+
+# Check for license headers
+license-check = "make license-header-check"
 
 # Run Clippy on all code paths
 clippy-all = "clippy --all-features --all-targets"

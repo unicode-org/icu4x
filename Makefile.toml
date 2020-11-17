@@ -1,3 +1,6 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 [config]
 default_to_workspace = false
 load_cargo_aliases = true
@@ -13,6 +16,37 @@ install_crate_args = ["--version", "^1.4"]
 command = "cargo"
 args = ["build-all-features"]
 
+[tasks.license-header-check]
+description = "Ensure all the source files have license headers"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml"
+
+for pattern in ${glob_pattern_array}
+    handle = glob_array ${pattern}
+    for path in ${handle}
+        if not starts_with ${path} "target"  # skip paths in target dir
+            text = readfile ${path}
+            result_hash = starts_with ${text} "# This file is part of ICU4X. For terms of use, please see the file"
+            result_slash = starts_with ${text} "// This file is part of ICU4X. For terms of use, please see the file"
+            not_result_hash = not result_hash
+            not_result_slash = not result_slash
+            if ${not_result_hash} and ${not_result_slash}
+              echo "License header missing in ${path}"
+              trigger_error "License header missing in ${path}"
+            end
+        end
+    end
+    echo "License headers found in files matching ${pattern}"
+end
+echo "License header check complete"
+
+
+'''
+
 ### META TASKS ###
 
 [tasks.quick]
@@ -22,6 +56,7 @@ dependencies = [
     "test-all",
     "fmt-check",
     "clippy-all",
+    "license-header-check",
 ]
 
 [tasks.ci]
