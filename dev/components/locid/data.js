@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605636042825,
+  "lastUpdate": 1605661944316,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1577,6 +1577,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9463,
             "range": "± 430",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a52e5677cc7f9ba69d53d0a700f836d99796776",
+          "message": "fix typo for Coveralls badge (#394)",
+          "timestamp": "2020-11-17T16:39:04-08:00",
+          "tree_id": "867cd8144d27934b7a2e6104a71ef0d93e04fa7a",
+          "url": "https://github.com/unicode-org/icu4x/commit/7a52e5677cc7f9ba69d53d0a700f836d99796776"
+        },
+        "date": 1605661943236,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3999,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 9846,
+            "range": "± 589",
             "unit": "ns/iter"
           }
         ]
