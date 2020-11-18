@@ -11,7 +11,7 @@
 // This is a simple example of the API use and is severely oversimplified
 // compared to real Unicode block selection.
 
-#![no_main]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 

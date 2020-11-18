@@ -4,7 +4,7 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-#![no_main]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
 use icu::locid::{macros::langid, LanguageIdentifier};

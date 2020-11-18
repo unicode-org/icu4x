@@ -5,7 +5,7 @@
 // (one permyriad) of a monetary unit. FixedDecimal enables a cheap representation of these
 // amounts, also while retaining trailing zeros.
 
-#![no_main]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use fixed_decimal::FixedDecimal;
 

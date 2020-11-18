@@ -4,7 +4,7 @@
 // An example application which uses icu_plurals to construct a correct
 // sentence for English based on the numerical value in Cardinal category.
 
-#![no_main]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu_locid_macros::langid;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};

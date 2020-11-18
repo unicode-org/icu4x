@@ -8,7 +8,7 @@
 // Note: This is an example of the API use, and is not a good base for language matching.
 // For language matching, please consider algorithms such as Locale Matcher.
 
-#![no_main]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use std::env;
 

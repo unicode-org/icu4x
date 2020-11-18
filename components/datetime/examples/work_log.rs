@@ -4,7 +4,7 @@
 // An example application which uses icu_datetime to format entries
 // from a work log into human readable dates and times.
 
-#![no_main]
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
