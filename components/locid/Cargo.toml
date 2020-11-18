@@ -47,3 +47,11 @@ harness = false
 [[bench]]
 name = "locale"
 harness = false
+
+[[example]]
+name = "filter_langids"
+test = true
+
+[[example]]
+name = "syntatically_canonicalize_locales"
+test = true

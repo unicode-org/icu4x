@@ -69,36 +69,6 @@ jobs:
         command: build-all-features
 
 
-  # Nightly build job: builds all targets with nightly mode
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v2
-
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
-    - name: Install cargo-make
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: install
-        args: cargo-make
-    - name: Build Nightly
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: build-nightly
-    - name: Clippy Nightly
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: clippy-nightly
-
-
   # Lint job - runs all "cargo make" linting commands
   lint:
     runs-on: ubuntu-latest
@@ -128,7 +98,7 @@ jobs:
     - uses: actions-rs/clippy-check@v1.0.7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        args:  --lib --bins --tests --benches --all-features -- -D warnings
+        args: --all-targets --all-features -- -D warnings
 
   # Benchmarking & dashboards job
 
