@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605636093469,
+  "lastUpdate": 1605661967421,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1091,6 +1091,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 113724,
             "range": "± 7592",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a52e5677cc7f9ba69d53d0a700f836d99796776",
+          "message": "fix typo for Coveralls badge (#394)",
+          "timestamp": "2020-11-17T16:39:04-08:00",
+          "tree_id": "867cd8144d27934b7a2e6104a71ef0d93e04fa7a",
+          "url": "https://github.com/unicode-org/icu4x/commit/7a52e5677cc7f9ba69d53d0a700f836d99796776"
+        },
+        "date": 1605661966520,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1185,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5863,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 102363,
+            "range": "± 6211",
             "unit": "ns/iter"
           }
         ]
