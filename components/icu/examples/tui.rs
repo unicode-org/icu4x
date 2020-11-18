@@ -4,7 +4,7 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-#![feature(start)]
+#![no_main]
 
 use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
 use icu::locid::{macros::langid, LanguageIdentifier};
@@ -17,8 +17,8 @@ fn print<T: AsRef<str>>(_input: T) {
     println!("{}", _input.as_ref());
 }
 
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let provider = icu_testdata::get_provider();
 
     let args: Vec<String> = env::args().collect();

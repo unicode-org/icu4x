@@ -11,7 +11,7 @@
 // This is a simple example of the API use and is severely oversimplified
 // compared to real Unicode block selection.
 
-#![feature(start)]
+#![no_main]
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
@@ -62,8 +62,8 @@ fn print(_input: &str) {
     println!("{}", _input);
 }
 
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let selector = BMPBlockSelector::new();
 
     let sample = "Welcome to MyName©®, Алексей!";

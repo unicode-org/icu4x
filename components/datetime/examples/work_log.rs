@@ -4,7 +4,7 @@
 // An example application which uses icu_datetime to format entries
 // from a work log into human readable dates and times.
 
-#![feature(start)]
+#![no_main]
 
 use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
@@ -32,8 +32,8 @@ fn print(_input: &str, _value: Option<usize>) {
     }
 }
 
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let lid = langid!("en");
 
     let provider = icu_testdata::get_provider();

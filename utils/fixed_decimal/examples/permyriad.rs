@@ -5,12 +5,12 @@
 // (one permyriad) of a monetary unit. FixedDecimal enables a cheap representation of these
 // amounts, also while retaining trailing zeros.
 
-#![feature(start)]
+#![no_main]
 
 use fixed_decimal::FixedDecimal;
 
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let monetary_int = 19_9500;
     let fixed_decimal = FixedDecimal::from(monetary_int)
         .multiplied_pow10(-4)

@@ -4,7 +4,7 @@
 // An example application which uses icu_plurals to construct a correct
 // sentence for English based on the numerical value in Ordinal category.
 
-#![feature(start)]
+#![no_main]
 
 use icu_locid_macros::langid;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
@@ -20,8 +20,8 @@ fn print(_input: &str, _value: Option<usize>) {
     }
 }
 
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let lid = langid!("en");
 
     let provider = icu_testdata::get_provider();

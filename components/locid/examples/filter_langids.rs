@@ -8,7 +8,7 @@
 // Note: This is an example of the API use, and is not a good base for language matching.
 // For language matching, please consider algorithms such as Locale Matcher.
 
-#![feature(start)]
+#![no_main]
 
 use std::env;
 
@@ -37,8 +37,8 @@ fn filter_input(input: &str) -> String {
     en_strs.join(", ")
 }
 
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let args: Vec<String> = env::args().collect();
 
     let input = if let Some(input) = args.get(1) {
