@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605750363466,
+  "lastUpdate": 1605810285584,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1259,6 +1259,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 98834,
             "range": "± 3734",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c3d26c839a1c5822ae9459624d472098421103e8",
+          "message": "Replacing Belarusian with Russian in testdata. (Fixes #342) (#392)\n\n* Replacing Belarusian with Russian in testdata. (#342)\r\n\r\n* Fix all tests failing with Russian instead of Belarusian\r\n\r\n* Fix all bench tests failing with Russian instead of Belarusian",
+          "timestamp": "2020-11-19T10:08:39-08:00",
+          "tree_id": "6989c34d9b3bff7d80947ad582054a7b53467720",
+          "url": "https://github.com/unicode-org/icu4x/commit/c3d26c839a1c5822ae9459624d472098421103e8"
+        },
+        "date": 1605810284323,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1191,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6188,
+            "range": "± 405",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 100589,
+            "range": "± 4796",
             "unit": "ns/iter"
           }
         ]
