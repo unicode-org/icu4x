@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605661939465,
+  "lastUpdate": 1605749992792,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -839,6 +839,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 802474,
             "range": "± 5618",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ead8619942be315d6521100509117f843669ebc",
+          "message": "Add T-techdebt",
+          "timestamp": "2020-11-18T19:25:03-06:00",
+          "tree_id": "132e494cbd370040881c40cc23dd493da1dab513",
+          "url": "https://github.com/unicode-org/icu4x/commit/4ead8619942be315d6521100509117f843669ebc"
+        },
+        "date": 1605749989035,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 864429,
+            "range": "± 43895",
             "unit": "ns/iter"
           }
         ]
