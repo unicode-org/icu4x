@@ -34,7 +34,7 @@
 //!         sink.write_char('!')?;
 //!         Ok(())
 //!     }
-//! 
+//!
 //!     fn write_len(&self) -> usize {
 //!         // "Hello, " + '!' + length of name
 //!         8 + self.name.len()
