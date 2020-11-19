@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605661967421,
+  "lastUpdate": 1605750047901,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1133,6 +1133,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 102363,
             "range": "± 6211",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ead8619942be315d6521100509117f843669ebc",
+          "message": "Add T-techdebt",
+          "timestamp": "2020-11-18T19:25:03-06:00",
+          "tree_id": "132e494cbd370040881c40cc23dd493da1dab513",
+          "url": "https://github.com/unicode-org/icu4x/commit/4ead8619942be315d6521100509117f843669ebc"
+        },
+        "date": 1605750044461,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1397,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6310,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 114126,
+            "range": "± 279",
             "unit": "ns/iter"
           }
         ]
