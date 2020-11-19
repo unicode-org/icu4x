@@ -8,7 +8,7 @@ use std::panic;
 use std::path::Path;
 use std::u32;
 
-use icu_unicodeset::{UnicodeSet, UnicodeSetBuilder};
+use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 //
 // Can run with command in root of icu_unicodeset crate:
