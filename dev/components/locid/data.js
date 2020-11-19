@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605750313034,
+  "lastUpdate": 1605810320673,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1721,6 +1721,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 8537,
             "range": "± 26",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c3d26c839a1c5822ae9459624d472098421103e8",
+          "message": "Replacing Belarusian with Russian in testdata. (Fixes #342) (#392)\n\n* Replacing Belarusian with Russian in testdata. (#342)\r\n\r\n* Fix all tests failing with Russian instead of Belarusian\r\n\r\n* Fix all bench tests failing with Russian instead of Belarusian",
+          "timestamp": "2020-11-19T10:08:39-08:00",
+          "tree_id": "6989c34d9b3bff7d80947ad582054a7b53467720",
+          "url": "https://github.com/unicode-org/icu4x/commit/c3d26c839a1c5822ae9459624d472098421103e8"
+        },
+        "date": 1605810319577,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4141,
+            "range": "± 171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 10362,
+            "range": "± 1047",
             "unit": "ns/iter"
           }
         ]
