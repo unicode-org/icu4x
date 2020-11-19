@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605810238759,
+  "lastUpdate": 1605822810490,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -959,6 +959,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 763766,
             "range": "± 20064",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "561e10a3ea242397466781a9162c5ba37736e97e",
+          "message": "Add WASM build task for examples (#365)",
+          "timestamp": "2020-11-19T15:41:20-06:00",
+          "tree_id": "659274e93fa5b90dc30c97ec85f3f9f9ae564b92",
+          "url": "https://github.com/unicode-org/icu4x/commit/561e10a3ea242397466781a9162c5ba37736e97e"
+        },
+        "date": 1605822809889,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 694838,
+            "range": "± 1604",
             "unit": "ns/iter"
           }
         ]
