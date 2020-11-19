@@ -27,3 +27,17 @@ quick = "make quick"
 
 # Run all lints and tests
 ci = "make ci"
+
+### WASM TASKS ###
+
+# Re-build standard library with panic=abort.
+wasm-build = "build -Z build-std=std,panic_abort --target wasm32-unknown-unknown --release"
+
+[target.wasm32-unknown-unknown]
+rustflags = [
+  # 10 KiB heap size, to fit in 1 page.
+  "-C", "link-args=-z stack-size=10240",
+  # Several options to reduce code size.
+  "-C", "panic=abort",
+  "-C", "opt-level=s",
+]
