@@ -32,11 +32,6 @@ locales = [
     "ar",
     "ar-EG",
 
-    # Belarusian:
-    # - Cyrillic script
-    # - Interesting plural rules
-    "be",
-
     # Bangla:
     # - Uses non-Latin numerals
     "bn",
@@ -67,9 +62,16 @@ locales = [
     # - Complex date patterns
     "ja",
 
+    # Russian:
+    # - Cyrillic script
+    # - Interesting plural rules
+    # - Hightly inflected, many gramatical cases
+    "ru",
+
     # Serbian:
     # - Multiple scripts
     # - Southern Europe
+    # - Hightly inflected, many gramatical cases
     "sr",
     "sr-Cyrl",
     "sr-Latn",
