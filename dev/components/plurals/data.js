@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605810285584,
+  "lastUpdate": 1605822892132,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1301,6 +1301,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 100589,
             "range": "± 4796",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "561e10a3ea242397466781a9162c5ba37736e97e",
+          "message": "Add WASM build task for examples (#365)",
+          "timestamp": "2020-11-19T15:41:20-06:00",
+          "tree_id": "659274e93fa5b90dc30c97ec85f3f9f9ae564b92",
+          "url": "https://github.com/unicode-org/icu4x/commit/561e10a3ea242397466781a9162c5ba37736e97e"
+        },
+        "date": 1605822888614,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1364,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6766,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111513,
+            "range": "± 5852",
             "unit": "ns/iter"
           }
         ]
