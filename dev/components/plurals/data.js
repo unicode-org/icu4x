@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605750229228,
+  "lastUpdate": 1605750363466,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1217,6 +1217,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112539,
             "range": "± 1250",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9ec48f03056b0df8a6d86c552902092da928533",
+          "message": "Update triaging.md",
+          "timestamp": "2020-11-18T19:31:14-06:00",
+          "tree_id": "7ff50630b3175fbd2983c522354df0e8734a0592",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9ec48f03056b0df8a6d86c552902092da928533"
+        },
+        "date": 1605750362294,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1207,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5571,
+            "range": "± 233",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 98834,
+            "range": "± 3734",
             "unit": "ns/iter"
           }
         ]
