@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605822820616,
+  "lastUpdate": 1605897576517,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2009,6 +2009,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28226109,
             "range": "± 1745714",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd2728764d5561f1e130546eb969b3811a226de5",
+          "message": "Switch to use Rust intra-doc (#400)",
+          "timestamp": "2020-11-20T10:25:17-08:00",
+          "tree_id": "26ee4a83a1a5056ef2520cc25f21b9c77f34b65e",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd2728764d5561f1e130546eb969b3811a226de5"
+        },
+        "date": 1605897575829,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29180928,
+            "range": "± 1774863",
             "unit": "ns/iter"
           }
         ]
