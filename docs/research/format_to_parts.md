@@ -16,23 +16,70 @@ new Intl.DateTimeFormat("fr").formatToParts(new Date())
   {type: "year", value: "2020"},
 ] */
 
-new Intl.DateTimeFormat("fr").formatRangeToParts(new Date(2020, 0, 0), new Date(2020, 2, 3))
+new Intl.DateTimeFormat("fr", { dateStyle: "medium" }).formatRange(new Date(2020, 0, 1), new Date(2020, 2, 3))
+// "1 janv. – 3 mars 2020"
+
+new Intl.DateTimeFormat("fr", { dateStyle: "medium" }).formatRangeToParts(new Date(2020, 0, 1), new Date(2020, 2, 3))
 /* [
-{type: "day", value: "31", source: "startRange"}
-{type: "literal", value: "/", source: "startRange"}
-{type: "month", value: "12", source: "startRange"}
-{type: "literal", value: "/", source: "startRange"}
-{type: "year", value: "2019", source: "startRange"}
-{type: "literal", value: " – ", source: "shared"}
-{type: "day", value: "03", source: "endRange"}
-{type: "literal", value: "/", source: "endRange"}
-{type: "month", value: "03", source: "endRange"}
-{type: "literal", value: "/", source: "endRange"}
-{type: "year", value: "2020", source: "endRange"}
+  {type: "day", value: "1", source: "startRange"},
+  {type: "literal", value: " ", source: "startRange"},
+  {type: "month", value: "janv.", source: "startRange"},
+  {type: "literal", value: " – ", source: "shared"},
+  {type: "day", value: "3", source: "endRange"},
+  {type: "literal", value: " ", source: "endRange"},
+  {type: "month", value: "mars", source: "endRange"},
+  {type: "literal", value: " ", source: "shared"},
+  {type: "year", value: "2020", source: "shared"},
 ] */
 ```
 
-The goal of this document is to discuss how we will deal with formatToParts in ICU4X, both with regard to the data model (implementation) and the API (both logical and ergonomic).
+The goal of this document is to discuss how we will deal with formatToParts in ICU4X, both with regard to the API model and the data model (implementation).
+
+## API Model
+
+There are two prevailing models in formatting to parts: linear attributes and nested fields.
+
+### Linear Attributes
+
+ECMA-402 uses the linear attributes model: each substring is mapped to exactly one bag of attributes.  Expressed in terms of starts and ends of ranges:
+
+```
+1 janv. – 3 mars 2020
+
+[) day, startRange
+ [) literal, startRange
+  [    ) month, startRange
+       [  ) literal, shared
+          [) day, endRange
+           [) literal, endRange
+            [   ) month, endRange
+                [) literal, shared
+                 [   ) year, Shared
+```
+
+### Nested Fields
+
+In the nested fields model, there is a set of ranges, and a particular character could live in more than one range.  Here is how the above date interval format would look with nested fields:
+
+```
+1 janv. – 3 mars 2020
+
+[) day
+ [) literal
+  [    ) month
+[      ) startRange
+       [  ) literal
+       [  ) shared
+          [) day
+           [) literal
+            [   ) month
+          [     ) endRange
+                [) literal
+                 [   ) year
+                [    ) shared
+```
+
+The linear attributes model is simpler, but the nested fields model is more flexible.
 
 ## Data Model
 
@@ -62,8 +109,8 @@ Pros:
 
 Cons:
 
-- **Doesn't support multiple attributes:** Additional business logic is required to support nested fields.  For example, "2020" is a year, a number, and an integer, but this data model is only able to represent one type.  This problem comes up in situations like DateIntervalFormat, where ECMA-402 requires the implementation to return multiple attributes on a particular formatToParts object.
-- **Doesn't support distinct adjacent fields:** Since adjacent field identifiers are coallesced, this data model doesn't support situations where two fields of the same type are adjacent to each other in the string.  For example, in Chinese, no separators are used in certain types of lists, so different list items cannot be distinguished without an extra data structure.
+- **Doesn't support multiple attributes or nested fields:** Additional business logic is required to support all bust the most basic field logic.  For example, "2020" is a year, a number, and an integer, but this data model is only able to represent one type.  This problem comes up in situations like DateIntervalFormat, where ECMA-402 requires the implementation to return multiple attributes on a particular formatToParts object.
+- **Doesn't distinguish adjacent fields:** Since adjacent field identifiers are coallesced, this data model doesn't support situations where two fields of the same type are adjacent to each other in the string.  For example, in Chinese, no separators are used in certain types of lists, so different list items cannot be distinguished without an extra data structure.
 
 ### Model B
 
@@ -86,7 +133,7 @@ Pros:
 
 Cons:
 
-- **Implementation difficulty:** This model works when the only operation is to append to the end of a string, but in i18n formatting, prepend and insert are common operations that require extra care with this data model.
+- **Implementation difficulty:** This model works when the only operation is to append to the end of a string, but in i18n formatting, prepend and insert are common operations that require extra care with this data model.  Imposing this restriction on ICU4X would mean a choice between a quadratic field updating algorithm on all formatting operations, or complicated feature-flagging to disable the field structure when it is not needed.
 - **Decoupled memory growth:** The chars and fields arrays in this model grow at different rates, making it harder to reason about situations where memory allocation is required.
 
 ### Model C
@@ -105,7 +152,7 @@ parts = [
 
 Pros:
 
-- **Linear:** Same data model as ECMA-402 with 1-to-1 correspondence between string parts and fields.
+- **Easy to implement:** Prepending and inserting strings is trivial.
 
 
 Cons:
@@ -141,8 +188,3 @@ Pros:
 Cons:
 
 - **Less intuitive:** Potentially less clear than the other options to ICU4X developers.
-
-
-## API
-
-TODO
