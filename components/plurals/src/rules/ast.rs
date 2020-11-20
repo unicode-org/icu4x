@@ -34,9 +34,9 @@
 //! ])));
 //! ```
 //!
-//! [`PluralCategory`]: ../enum.PluralCategory.html
-//! [`parse`]: ../fn.parse.html
-//! [`test_condition`]: ../fn.test_condition.html
+//! [`PluralCategory`]: crate::PluralCategory
+//! [`parse`]: super::parse()
+//! [`test_condition`]: super::test_condition()
 use std::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.

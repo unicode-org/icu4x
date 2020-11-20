@@ -16,10 +16,9 @@
 //! It is much more efficient if you use [`FsDataProvider`] instead.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
-//! [`CldrPaths`]: ./trait.CldrPaths.html
+//! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`CldrJsonDataProvider`]: ./transform/struct.CldrJsonDataProvider.html
+//! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
 mod cldr_langid;
 mod cldr_paths;

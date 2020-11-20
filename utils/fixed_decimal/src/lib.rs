@@ -35,7 +35,6 @@
 //! );
 //! ```
 //!
-//! [`FixedDecimal`]: ./struct.FixedDecimal.html
 //! [`ICU4X`]: ../icu/index.html
 
 pub mod decimal;

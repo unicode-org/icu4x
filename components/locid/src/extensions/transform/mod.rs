@@ -6,9 +6,7 @@
 //! The main struct for this extension is [`Transform`] which contains [`Fields`] and an
 //! optional [`LanguageIdentifier`].
 //!
-//! [`Transform`]: ./struct.Transform.html
-//! [`Fields`]: ./struct.Fields.html
-//! [`LanguageIdentifier`]: ../../struct.LanguageIdentifier.html
+//! [`LanguageIdentifier`]: super::super::LanguageIdentifier
 //!
 //! # Examples
 //!

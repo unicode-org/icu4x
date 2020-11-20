@@ -7,7 +7,7 @@ use std::str::FromStr;
 use crate::parser::errors::ParserError;
 use tinystr::TinyStr8;
 
-/// A single item used in a list of [`Private`] extensions.
+/// A single item used in a list of [`Private`](super::Private) extensions.
 ///
 /// The key has to be an ASCII alphanumerical string no shorter than
 /// one character and no longer than eight.
@@ -22,7 +22,6 @@ use tinystr::TinyStr8;
 ///
 /// assert_eq!(key1.as_str(), "foo");
 /// ```
-/// [`Private`]: ./struct.Private.html
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 pub struct Key(TinyStr8);
 

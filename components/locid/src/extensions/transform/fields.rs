@@ -17,8 +17,6 @@ use super::Value;
 ///
 /// You can find the full list in [`Unicode BCP 47 T Extension`] section of LDML.
 ///
-/// [`Key`]: ./struct.Key.html
-/// [`Value`]: ./struct.Value.html
 /// [`Unicode BCP 47 T Extension`]: https://unicode.org/reports/tr35/tr35.html#BCP47_T_Extension
 ///
 /// # Examples
@@ -40,8 +38,6 @@ pub struct Fields(Box<[(Key, Value)]>);
 impl Fields {
     /// A constructor which takes a pre-sorted list of `(Key, Value)` tuples.
     ///
-    /// [`Key`]: ./struct.Key.html
-    /// [`Value`]: ./struct.Value.html
     ///
     /// # Examples
     ///
@@ -85,8 +81,6 @@ impl Fields {
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
     ///
-    /// [`Key`]: ./struct.Key.html
-    /// [`Value`]: ./struct.Value.html
     ///
     /// # Examples
     ///
@@ -113,8 +107,6 @@ impl Fields {
 
     /// Returns a reference to the [`Value`] corresponding to the [`Key`].
     ///
-    /// [`Key`]: ./struct.Key.html
-    /// [`Value`]: ./struct.Value.html
     ///
     /// # Examples
     ///

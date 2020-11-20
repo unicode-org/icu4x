@@ -56,15 +56,14 @@
 //! `"invariant"` feature in your Cargo.toml file.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: ./prelude/trait.DataProvider.html
-//! [`Request`]: ./prelude/struct.DataRequest.html
-//! [`Response`]: ./prelude/struct.DataResponse.html
-//! [`DataKey`]: ./prelude/struct.DataKey.html
-//! [`Category`]: ./prelude/enum.DataCategory.html
-//! [`DataEntry`]: ./prelude/struct.DataEntry.html
-//! [`DataEntryCollection`]: ./iter/trait.DataEntryCollection.html
-//! [`IterableDataProvider`]: ./iter/trait.IterableDataProvider.html
-//! [`iter`]: ./iter/index.html
+//! [`DataProvider`]: prelude::DataProvider
+//! [`Request`]: prelude::DataRequest
+//! [`Response`]: prelude::DataResponse
+//! [`DataKey`]: prelude::DataKey
+//! [`Category`]: prelude::DataCategory
+//! [`DataEntry`]: prelude::DataEntry
+//! [`DataEntryCollection`]: iter::DataEntryCollection
+//! [`IterableDataProvider`]: iter::IterableDataProvider
 mod cloneable_any;
 mod data_entry;
 #[macro_use]

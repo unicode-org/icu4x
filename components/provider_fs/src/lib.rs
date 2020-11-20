@@ -85,7 +85,6 @@
 //! added with `bincode` feature.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`FsDataProvider`]: ./struct.FsDataProvider.html
 
 mod deserializer;
 mod error;

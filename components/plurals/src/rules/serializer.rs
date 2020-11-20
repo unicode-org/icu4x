@@ -29,14 +29,14 @@ use std::ops::RangeInclusive;
 /// assert_eq!(input, result);
 /// ```
 ///
-/// [`AST`]: ../rules/ast/index.html
-/// [`resolver`]: ../rules/resolver/index.html
-/// [`PluralOperands`]: ../struct.PluralOperands.html
-/// [`PluralCategory`]: ../enum.PluralCategory.html
-/// [`Rule`]: ../rules/ast/struct.Rule.html
-/// [`Samples`]: ../rules/ast/struct.Samples.html
-/// [`Condition`]:  ../rules/ast/struct.Condition.html
-/// [`parse_condition`]: ./fn.parse_condition.html
+/// [`AST`]: super::ast
+/// [`resolver`]: super::rules::resolver
+/// [`PluralOperands`]: super::PluralOperands
+/// [`PluralCategory`]: super::PluralCategory
+/// [`Rule`]: super::rules::ast::Rule
+/// [`Samples`]: super::rules::ast::Samples
+/// [`Condition`]:  super::rules::ast::Condition
+/// [`parse_condition`]: parse_condition()
 pub fn serialize(rule: &ast::Rule, w: &mut impl fmt::Write) -> fmt::Result {
     serialize_condition(&rule.condition, w)?;
     if let Some(samples) = &rule.samples {
