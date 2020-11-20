@@ -15,6 +15,21 @@ new Intl.DateTimeFormat("fr").formatToParts(new Date())
   {type: "literal", value: "/"},
   {type: "year", value: "2020"},
 ] */
+
+new Intl.DateTimeFormat("fr").formatRangeToParts(new Date(2020, 0, 0), new Date(2020, 2, 3))
+/* [
+{type: "day", value: "31", source: "startRange"}
+{type: "literal", value: "/", source: "startRange"}
+{type: "month", value: "12", source: "startRange"}
+{type: "literal", value: "/", source: "startRange"}
+{type: "year", value: "2019", source: "startRange"}
+{type: "literal", value: " – ", source: "shared"}
+{type: "day", value: "03", source: "endRange"}
+{type: "literal", value: "/", source: "endRange"}
+{type: "month", value: "03", source: "endRange"}
+{type: "literal", value: "/", source: "endRange"}
+{type: "year", value: "2020", source: "endRange"}
+] */
 ```
 
 The goal of this document is to discuss how we will deal with formatToParts in ICU4X, both with regard to the data model (implementation) and the API (both logical and ergonomic).
@@ -47,7 +62,7 @@ Pros:
 
 Cons:
 
-- **Doesn't support nesting:** Additional business logic is required to support nested fields.  For example, "2020" is a year, a number, and an integer, but this data model is only able to represent one type.  This problem comes up in situations like DateIntervalFormat, where ECMA-402 requires the implementation to return multiple attributes on a particular formatToParts object.
+- **Doesn't support multiple attributes:** Additional business logic is required to support nested fields.  For example, "2020" is a year, a number, and an integer, but this data model is only able to represent one type.  This problem comes up in situations like DateIntervalFormat, where ECMA-402 requires the implementation to return multiple attributes on a particular formatToParts object.
 - **Doesn't support distinct adjacent fields:** Since adjacent field identifiers are coallesced, this data model doesn't support situations where two fields of the same type are adjacent to each other in the string.  For example, in Chinese, no separators are used in certain types of lists, so different list items cannot be distinguished without an extra data structure.
 
 ### Model B
