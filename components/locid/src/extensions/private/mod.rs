@@ -26,8 +26,7 @@
 //! assert_eq!(loc.to_string(), "en-US");
 //! ```
 //!
-//! [`Private`]: ./struct.Private.html
-//! [`Keys`]: ./struct.Key.html
+//! [`Keys`]: Key
 mod key;
 use std::ops::Deref;
 

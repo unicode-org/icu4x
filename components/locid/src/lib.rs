@@ -46,10 +46,8 @@
 //! For more details, see [`Locale`] and [`LanguageIdentifier`].
 //!
 //! [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`]: https://unicode.org/reports/tr35/tr35.html#Unicode_Language_and_Locale_Identifiers
-//! [`LanguageIdentifier`]: ./struct.LanguageIdentifier.html
-//! [`Locale`]: ./struct.Locale.html
 //! [`ICU4X`]: ../icu/index.html
-//! [`Unicode Extensions`]: ./extensions/index.html
+//! [`Unicode Extensions`]: extensions
 pub mod extensions;
 mod langid;
 mod locale;

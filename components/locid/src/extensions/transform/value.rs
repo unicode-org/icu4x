@@ -12,14 +12,13 @@ pub struct Value(Box<[TinyStr8]>);
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_TVALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828_u64) }; // "true"
 
-/// A value used in a list of [`Fields`].
+/// A value used in a list of [`Fields`](super::Fields).
 ///
 /// The value has to be a sequence of one or more alphanumerical strings
 /// separated by `-`.
 /// Each part of the sequence has to be no shorter than three characters and no
 /// longer than 8.
 ///
-/// [`Fields`]: ./struct.Fields.html
 ///
 /// # Examples
 ///

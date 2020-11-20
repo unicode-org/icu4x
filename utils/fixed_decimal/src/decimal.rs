@@ -39,7 +39,7 @@ const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
-    /// List of digits; digits[0] is the most significant.
+    /// List of digits; digits\[0\] is the most significant.
     ///
     /// Invariants:
     /// - Must not include leading or trailing zeros
@@ -47,7 +47,7 @@ pub struct FixedDecimal {
     // TODO: Consider using a nibble array
     digits: SmallVec<[u8; 8]>,
 
-    /// Power of 10 of digits[0].
+    /// Power of 10 of digits\[0\].
     ///
     /// Invariants:
     /// - <= upper_magnitude

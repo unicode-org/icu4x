@@ -28,7 +28,6 @@ use std::ops::Deref;
 /// assert_eq!(variants.to_string(), "macos-posix");
 /// ```
 ///
-/// [`Variant`]: ./struct.Variant.html
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Variants(
     // The internal representation of the struct uses `Option` to workaround

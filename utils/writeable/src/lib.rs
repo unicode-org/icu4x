@@ -15,7 +15,6 @@
 //! Types implementing Writeable automatically implement ToString. Because of this, you cannot
 //! implement both Writeable and std::fmt::Display on the same type.
 //!
-//! [`Writeable`]: ./trait.Writeable.html
 //! [`ICU4X`]: ../icu/index.html
 
 use std::fmt;

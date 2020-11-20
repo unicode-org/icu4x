@@ -7,7 +7,6 @@ use std::ops::Deref;
 
 /// A set of [`Attribute`] elements as defined in [`Unicode Extension Attributes`].
 ///
-/// [`Attribute`]: ./struct.Attribute.html
 /// [`Unicode Extension Attributes`]: https://unicode.org/reports/tr35/tr35.html#u_Extension
 ///
 /// # Examples
@@ -28,14 +27,12 @@ use std::ops::Deref;
 /// assert_eq!(attributes.to_string(), "foobar-testing");
 /// ```
 ///
-/// [`Attribute`]: ./struct.Attribute.html
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Attributes(Box<[Attribute]>);
 
 impl Attributes {
     /// A constructor which takes a pre-sorted list of [`Attribute`] elements.
     ///
-    /// [`Attribute`]: ./struct.Attribute.html
     ///
     /// # Examples
     ///

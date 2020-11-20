@@ -38,7 +38,7 @@
 //! };
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormat`] is a subject to change over
+//! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use super::preferences;

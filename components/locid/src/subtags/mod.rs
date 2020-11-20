@@ -43,12 +43,7 @@
 //! that all operations work on a canonicalized version of the subtag
 //! and serialization is very cheap.
 //!
-//! [`Language`]: ./struct.Language.html
-//! [`Script`]: ./struct.Script.html
-//! [`Region`]: ./struct.Region.html
-//! [`Variants`]: ./struct.Variants.html
-//! [`Variant`]: ./struct.Variant.html
-//! [`LanguageIdentifier`]: ../struct.LanguageIdentifier.html
+//! [`LanguageIdentifier`]: super::LanguageIdentifier
 mod language;
 mod region;
 mod script;

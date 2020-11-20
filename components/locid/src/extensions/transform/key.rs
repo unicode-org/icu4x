@@ -5,12 +5,11 @@ use crate::parser::errors::ParserError;
 use std::str::FromStr;
 use tinystr::TinyStr4;
 
-/// A key used in a list of [`Fields`].
+/// A key used in a list of [`Fields`](super::Fields).
 ///
 /// The key has to be a two ASCII characters long, with the first
 /// character being alphabetic, and the second being a number.
 ///
-/// [`Fields`]: ./struct.Fields.html
 ///
 /// # Examples
 ///

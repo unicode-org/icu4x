@@ -35,7 +35,7 @@ impl From<std::num::ParseIntError> for DateTimeError {
 /// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
 /// other calendars in the upcoming releases. See https://github.com/unicode-org/icu4x/issues/355
 ///
-/// [`DateTimeFormat`]: ../struct.DateTimeFormat.html
+/// [`DateTimeFormat`]: super::DateTimeFormat
 pub trait DateTimeType: FromStr {
     fn year(&self) -> usize;
     fn month(&self) -> Month;
@@ -56,7 +56,6 @@ pub trait DateTimeType: FromStr {
 /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
 ///     .expect("Failed to construct DateTime.");
 /// ```
-/// [`DateTimeType`]: ./trait.DateTimeType.html
 #[derive(Debug, Default)]
 pub struct MockDateTime {
     pub year: usize,

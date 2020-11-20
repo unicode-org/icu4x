@@ -37,12 +37,12 @@
 //!            Some(&value));
 //! ```
 //!
-//! [`LanguageIdentifier`]: ../struct.LanguageIdentifier.html
-//! [`Locale`]: ../struct.Locale.html
-//! [`subtags`]: ../subtags/index.html
-//! [`Unicode Extensions`]: ./unicode/index.html
-//! [`Transform Extensions`]: ./transform/index.html
-//! [`Private Use Extensions`]: ./private/index.html
+//! [`LanguageIdentifier`]: super::LanguageIdentifier
+//! [`Locale`]: super::Locale
+//! [`subtags`]: super::subtags
+//! [`Unicode Extensions`]: unicode
+//! [`Transform Extensions`]: transform
+//! [`Private Use Extensions`]: private
 pub mod private;
 pub mod transform;
 pub mod unicode;

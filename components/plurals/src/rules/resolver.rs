@@ -20,9 +20,9 @@ use crate::operands::PluralOperands;
 /// assert_eq!(test_condition(&condition, &operands), true);
 /// ```
 ///
-/// [`PluralCategory`]: ../enum.PluralCategory.html
-/// [`PluralOperands`]: ../struct.PluralOperands.html
-/// [`Condition`]: ../rules/ast/struct.Condition.html
+/// [`PluralCategory`]: crate::PluralCategory
+/// [`PluralOperands`]: crate::PluralOperands
+/// [`Condition`]: super::ast::Condition
 pub fn test_condition(condition: &ast::Condition, operands: &PluralOperands) -> bool {
     condition.0.is_empty() || condition.0.iter().any(|c| test_and_condition(c, operands))
 }

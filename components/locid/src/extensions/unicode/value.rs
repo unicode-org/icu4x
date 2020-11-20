@@ -6,14 +6,13 @@ use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
-/// A value used in a list of [`Keywords`].
+/// A value used in a list of [`Keywords`](super::Keywords).
 ///
 /// The value has to be a sequence of one or more alphanumerical strings
 /// separated by `-`.
 /// Each part of the sequence has to be no shorter than three characters and no
 /// longer than 8.
 ///
-/// [`Keywords`]: ./struct.Keywords.html
 ///
 /// # Examples
 ///
