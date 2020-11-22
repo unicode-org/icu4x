@@ -140,6 +140,9 @@ impl Fields {
 
 impl std::fmt::Display for Fields {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        if self.is_empty() {
+            return Ok(());
+        }
         let mut first = true;
         for (key, value) in self.iter() {
             if first {
