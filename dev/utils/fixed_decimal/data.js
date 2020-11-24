@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1605897573323,
+  "lastUpdate": 1606260289964,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -989,6 +989,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 155589,
             "range": "± 8040",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4cae8e0a2f1e4d497621055c77d0446e17cbe041",
+          "message": "Populating Writeable readme with lib.rs (#389)",
+          "timestamp": "2020-11-24T17:10:57-06:00",
+          "tree_id": "bc1bfc4b39890657ec5c9bd0d56eadacaca9f587",
+          "url": "https://github.com/unicode-org/icu4x/commit/4cae8e0a2f1e4d497621055c77d0446e17cbe041"
+        },
+        "date": 1606260286925,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 132806,
+            "range": "± 7666",
             "unit": "ns/iter"
           }
         ]
