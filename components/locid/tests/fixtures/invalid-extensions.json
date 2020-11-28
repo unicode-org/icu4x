@@ -58,5 +58,25 @@
       "error": "InvalidExtension",
       "text": "Invalid subtag"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-t-m0"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-t-m0-n0-mixed"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
   }
 ]

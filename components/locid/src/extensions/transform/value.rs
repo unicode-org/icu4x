@@ -104,9 +104,13 @@ impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut first = true;
 
+        if self.0.is_empty() {
+            f.write_str(TRUE_TVALUE.as_str())?;
+        }
+
         for subtag in self.0.iter() {
             if first {
-                write!(f, "{}", subtag)?;
+                subtag.fmt(f)?;
                 first = false;
             } else {
                 write!(f, "-{}", subtag)?;
