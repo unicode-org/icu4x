@@ -390,7 +390,7 @@ impl UnicodeSetBuilder {
     /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let check = builder.build();
-    /// assert!(check.is_empty()); // true
+    /// assert!(check.is_empty());
     /// ```
     pub fn is_empty(&mut self) -> bool {
         self.intervals.is_empty()
