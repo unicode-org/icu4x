@@ -37,8 +37,8 @@ impl UnicodeSet {
     /// ```
     /// use icu_uniset::UnicodeSet;
     /// use icu_uniset::UnicodeSetError;
-    /// let empty: Vec<u32> = vec![];
-    /// assert_eq!(UnicodeSet::from_inversion_list(empty.clone()), Err(UnicodeSetError::InvalidSet(empty.clone())))
+    /// let invalid: Vec<u32> = vec![0, 128, 3];
+    /// assert_eq!(UnicodeSet::from_inversion_list(invalid.clone()), Err(UnicodeSetError::InvalidSet(invalid.clone())))
     /// ```
     pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError> {
         if is_valid(&inv_list) {

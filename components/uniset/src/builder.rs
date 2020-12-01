@@ -384,8 +384,14 @@ impl UnicodeSetBuilder {
 
     /// Returns whether the build is empty.
     ///
-    /// Note: UnicodeSetBuilder panics when trying to build an empty builder.
+    /// # Example:
     ///
+    /// ```
+    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// let mut builder = UnicodeSetBuilder::new();
+    /// let check = builder.build();
+    /// assert!(check.is_empty()); // true
+    /// ```
     pub fn is_empty(&mut self) -> bool {
         self.intervals.is_empty()
     }
@@ -415,6 +421,12 @@ mod tests {
         builder.add(65, 66);
         let check: UnicodeSet = builder.build();
         assert_eq!(check.iter().next(), Some('A'));
+    }
+
+    #[test]
+    fn test_empty_build() {
+        let mut builder = UnicodeSetBuilder::new();
+        let check: UnicodeSet = builder.build();
     }
 
     #[test]
