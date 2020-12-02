@@ -120,27 +120,9 @@ pub mod v2 {
         fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any>;
     }
 
-    impl<'d, 'de> dyn DataReceiver<'d, 'de> {
-        pub fn borrow_payload<T: Any>(&self) -> Option<Result<&T, Error>> {
-            let borrowed: Option<&dyn Any> = self.borrow_payload_as_any();
-            borrowed.map(|any| {
-                let downcasted: Option<&T> = any.downcast_ref();
-                downcasted.ok_or_else(|| Error::MismatchedType {
-                    actual: any.type_id(),
-                    generic: Some(TypeId::of::<T>()),
-                })
-            })
-        }
-
-        pub fn borrow_payload_mut<T: Any>(&mut self) -> Option<Result<&mut T, Error>> {
-            self.borrow_payload_as_any_mut().map(|any| {
-                let actual_type_id = (any as &dyn Any).type_id();
-                any.downcast_mut().ok_or_else(|| Error::MismatchedType {
-                    actual: actual_type_id,
-                    generic: Some(TypeId::of::<T>()),
-                })
-            })
-        }
+    pub trait DataReceiverPart<T: Any> {
+        fn borrow_payload(&self) -> Option<Result<&T, Error>>;
+        fn borrow_payload_mut(&mut self) -> Option<Result<&mut T, Error>>;
     }
 
     #[derive(Debug)]
@@ -200,8 +182,34 @@ pub mod v2 {
         }
     }
 
-    pub trait DataProvider<'d> {
-        fn load(
+    impl<'d, T> DataReceiverPart<T> for DataReceiverImpl<'d, T>
+    where
+        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    {
+        fn borrow_payload(&self) -> Option<Result<&T, Error>> {
+            let borrowed: Option<&dyn Any> = self.borrow_payload_as_any();
+            borrowed.map(|any| {
+                let downcasted: Option<&T> = any.downcast_ref();
+                downcasted.ok_or_else(|| Error::MismatchedType {
+                    actual: any.type_id(),
+                    generic: Some(TypeId::of::<T>()),
+                })
+            })
+        }
+
+        fn borrow_payload_mut(&mut self) -> Option<Result<&mut T, Error>> {
+            self.borrow_payload_as_any_mut().map(|any| {
+                let actual_type_id = (any as &dyn Any).type_id();
+                any.downcast_mut().ok_or_else(|| Error::MismatchedType {
+                    actual: actual_type_id,
+                    generic: Some(TypeId::of::<T>()),
+                })
+            })
+        }
+    }
+
+    pub trait DataProviderV2<'d> {
+        fn load_v2(
             &self,
             req: &DataRequest,
             receiver: &mut dyn DataReceiver<'d, 'static>,

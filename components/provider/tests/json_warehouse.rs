@@ -10,6 +10,9 @@ use std::str::FromStr;
 
 use icu_provider::prelude::*;
 use icu_provider::structs;
+use icu_provider::v2;
+use icu_provider::v2::DataProviderV2;
+use icu_provider::v2::DataReceiverPart;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
@@ -72,6 +75,18 @@ impl<'d> DataProvider<'d> for JsonDataProvider<'d> {
     }
 }
 
+impl<'d> DataProviderV2<'d> for JsonDataProvider<'d> {
+    /// Loads JSON data. Returns borrowed data.
+    fn load_v2(
+        &self,
+        _request: &DataRequest,
+        receiver: &mut dyn v2::DataReceiver<'d, 'static>,
+    ) -> Result<(), DataError> {
+        receiver.set_to_any(&self.borrowed_data.decimal.symbols_v1_a)?;
+        Ok(())
+    }
+}
+
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
     "decimal": {
@@ -87,17 +102,22 @@ fn get_warehouse() -> JsonDataWarehouse {
     JsonDataWarehouse::from_str(DATA).unwrap()
 }
 
+fn get_receiver<'d>() -> v2::DataReceiverImpl<'d, structs::decimal::SymbolsV1> {
+    v2::DataReceiverImpl { payload: None }
+}
+
+fn get_request() -> DataRequest {
+    DataRequest {
+        data_key: structs::decimal::key::SYMBOLS_V1,
+        data_entry: DataEntry {
+            variant: None,
+            langid: langid!("en-US"),
+        },
+    }
+}
+
 fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
-    warehouse
-        .provider()
-        .load(&DataRequest {
-            data_key: structs::decimal::key::SYMBOLS_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("en-US"),
-            },
-        })
-        .unwrap()
+    warehouse.provider().load(&get_request()).unwrap()
 }
 
 fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
@@ -144,4 +164,41 @@ fn test_clone_payload() {
         decimal_data.into_owned()
     };
     check_data(&final_data);
+}
+
+#[test]
+fn test_data_receiver() {
+    let warehouse = get_warehouse();
+    let mut receiver = get_receiver();
+    warehouse
+        .provider()
+        .load_v2(&get_request(), &mut receiver)
+        .unwrap();
+    let decimal_data: &structs::decimal::SymbolsV1 = &receiver.payload.unwrap();
+    check_data(decimal_data);
+}
+
+#[test]
+fn test_data_receiver_borrow() {
+    let warehouse = get_warehouse();
+    let mut receiver = get_receiver();
+    warehouse
+        .provider()
+        .load_v2(&get_request(), &mut receiver)
+        .unwrap();
+    let decimal_data: &structs::decimal::SymbolsV1 = receiver.borrow_payload().unwrap().unwrap();
+    check_data(decimal_data);
+}
+
+#[test]
+fn test_data_receiver_borrow_mut() {
+    let warehouse = get_warehouse();
+    let mut receiver = get_receiver();
+    warehouse
+        .provider()
+        .load_v2(&get_request(), &mut receiver)
+        .unwrap();
+    let decimal_data: &mut structs::decimal::SymbolsV1 =
+        receiver.borrow_payload_mut().unwrap().unwrap();
+    check_data(decimal_data);
 }
