@@ -93,3 +93,118 @@ pub mod prelude {
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
+
+pub mod v2 {
+    use crate::error::Error;
+    use crate::prelude::*;
+    use downcast_rs::Downcast;
+    use std::any::Any;
+    use std::any::TypeId;
+    use std::borrow::Borrow;
+    use std::borrow::BorrowMut;
+    use std::borrow::Cow;
+    use std::fmt::Debug;
+
+    pub trait DataReceiver<'d, 'de> {
+        fn set_to(
+            &mut self,
+            deserializer: &mut dyn erased_serde::Deserializer<'de>,
+        ) -> Result<(), Error>;
+
+        fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error>;
+
+        fn borrow_payload_as_any(&self) -> Option<&dyn Any>;
+
+        fn borrow_payload_as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
+
+        fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any>;
+    }
+
+    impl<'d, 'de> dyn DataReceiver<'d, 'de> {
+        pub fn borrow_payload<T: Any>(&self) -> Option<Result<&T, Error>> {
+            let borrowed: Option<&dyn Any> = self.borrow_payload_as_any();
+            borrowed.map(|any| {
+                let downcasted: Option<&T> = any.downcast_ref();
+                downcasted.ok_or_else(|| Error::MismatchedType {
+                    actual: any.type_id(),
+                    generic: Some(TypeId::of::<T>()),
+                })
+            })
+        }
+
+        pub fn borrow_payload_mut<T: Any>(&mut self) -> Option<Result<&mut T, Error>> {
+            self.borrow_payload_as_any_mut().map(|any| {
+                let actual_type_id = (any as &dyn Any).type_id();
+                any.downcast_mut().ok_or_else(|| Error::MismatchedType {
+                    actual: actual_type_id,
+                    generic: Some(TypeId::of::<T>()),
+                })
+            })
+        }
+    }
+
+    #[derive(Debug)]
+    pub struct DataReceiverImpl<'d, T>
+    where
+        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    {
+        pub payload: Option<Cow<'d, T>>,
+    }
+
+    impl<'d, T> DataReceiver<'d, 'static> for DataReceiverImpl<'d, T>
+    where
+        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    {
+        fn set_to(
+            &mut self,
+            deserializer: &mut dyn erased_serde::Deserializer<'static>,
+        ) -> Result<(), Error> {
+            let obj: T = erased_serde::deserialize(deserializer)?;
+            self.payload = Some(Cow::Owned(obj));
+            Ok(())
+        }
+
+        fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error> {
+            self.payload = Some(Cow::Borrowed(any.downcast_ref().unwrap()));
+            Ok(())
+        }
+
+        fn borrow_payload_as_any(&self) -> Option<&dyn Any> {
+            match &self.payload {
+                Some(cow) => {
+                    let borrowed: &T = cow.borrow();
+                    Some(borrowed.as_any())
+                }
+                None => None,
+            }
+        }
+
+        fn borrow_payload_as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
+            match &self.payload {
+                Some(cow) => {
+                    let borrowed: &T = cow.borrow();
+                    Some(borrowed as &dyn erased_serde::Serialize)
+                }
+                None => None,
+            }
+        }
+
+        fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any> {
+            match &mut self.payload {
+                Some(cow) => {
+                    let borrowed: &mut T = cow.to_mut().borrow_mut();
+                    Some(borrowed.as_any_mut())
+                }
+                None => None,
+            }
+        }
+    }
+
+    pub trait DataProvider<'d> {
+        fn load(
+            &self,
+            req: &DataRequest,
+            receiver: &mut dyn DataReceiver<'d, 'static>,
+        ) -> Result<(), Error>;
+    }
+}

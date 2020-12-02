@@ -19,6 +19,9 @@ pub enum Error {
     /// (variant or language identifier).
     UnavailableEntry(DataRequest),
 
+    /// An error occurred when deserializing data.
+    Serde(erased_serde::Error),
+
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
         /// The actual TypeID of the payload.
@@ -50,6 +53,12 @@ impl From<DataRequest> for Error {
     }
 }
 
+impl From<erased_serde::Error> for Error {
+    fn from(err: erased_serde::Error) -> Self {
+        Self::Serde(err)
+    }
+}
+
 impl From<Box<dyn std::error::Error>> for Error {
     fn from(err: Box<dyn std::error::Error>) -> Self {
         Self::Resource(err)
@@ -70,6 +79,8 @@ impl fmt::Display for Error {
         match self {
             Self::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
             Self::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
+            Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
+            Self::Serde(err) => write!(f, "Serde error: {}", err),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
                 if let Some(type_id) = generic {
@@ -77,7 +88,6 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
-            Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
             Self::Resource(err) => write!(f, "Failed to load resource: {}", err),
         }
     }
@@ -86,6 +96,7 @@ impl fmt::Display for Error {
 impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
+            Self::Serde(error) => Some(error),
             Self::Resource(error) => Some(error.deref()),
             _ => None,
         }
