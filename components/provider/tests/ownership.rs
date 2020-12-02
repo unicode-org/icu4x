@@ -1,8 +1,5 @@
 use icu_provider::structs::decimal::SymbolsV1;
 use icu_provider::v2::*;
-use icu_provider::DataError;
-use std::any::Any;
-use std::any::TypeId;
 use std::borrow::Cow;
 use std::default::Default;
 
@@ -13,17 +10,9 @@ const DATA: &'static str = r#"{
     "grouping_separator": ","
 }"#;
 
-fn borrow_payload<'a, T: Any>(receiver: &'a dyn DataReceiver) -> Option<Result<&'a T, DataError>> {
-    receiver.borrow_payload_as_any().map(|any| {
-        any.downcast_ref().ok_or_else(|| DataError::MismatchedType {
-            actual: any.type_id(),
-            generic: Some(TypeId::of::<T>()),
-        })
-    })
-}
-
 fn check_zero_digit<'d, 'de>(receiver: &dyn DataReceiver<'d, 'de>, expected: char) {
-    let data: &SymbolsV1 = borrow_payload(receiver)
+    let decoder = DataReceiverDecoder(receiver);
+    let data: &SymbolsV1 = decoder.borrow_payload()
         .expect("Data should be present")
         .expect("Type should be correct");
     assert_eq!(data.zero_digit, expected);

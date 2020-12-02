@@ -120,9 +120,38 @@ pub mod v2 {
         fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any>;
     }
 
-    pub trait DataReceiverPart<T: Any> {
-        fn borrow_payload(&self) -> Option<Result<&T, Error>>;
-        fn borrow_payload_mut(&mut self) -> Option<Result<&mut T, Error>>;
+    pub struct DataReceiverDecoder<'a, 'd, 'de>(
+        pub &'a dyn DataReceiver<'d, 'de>
+    );
+
+    impl<'a, 'd, 'de> DataReceiverDecoder<'a, 'd, 'de> {
+        pub fn borrow_payload<T: Any>(&self) -> Option<Result<&T, Error>> {
+            let borrowed: Option<&dyn Any> = self.0.borrow_payload_as_any();
+            borrowed.map(|any| {
+                let downcasted: Option<&T> = any.downcast_ref();
+                downcasted.ok_or_else(|| Error::MismatchedType {
+                    actual: any.type_id(),
+                    generic: Some(TypeId::of::<T>()),
+                })
+            })
+        }
+    }
+
+    pub struct DataReceiverDecoderMut<'a, 'd, 'de>(
+        pub &'a mut dyn DataReceiver<'d, 'de>
+    );
+
+    impl<'a, 'd, 'de> DataReceiverDecoderMut<'a, 'd, 'de> {
+        pub fn borrow_payload_mut<T: Any>(&mut self) -> Option<Result<&mut T, Error>> {
+            let borrowed: Option<&mut dyn Any> = self.0.borrow_payload_as_any_mut();
+            borrowed.map(|any| {
+                let actual_type_id = (any as &dyn Any).type_id();
+                any.downcast_mut().ok_or_else(|| Error::MismatchedType {
+                    actual: actual_type_id,
+                    generic: Some(TypeId::of::<T>()),
+                })
+            })
+        }
     }
 
     #[derive(Debug)]
@@ -179,32 +208,6 @@ pub mod v2 {
                 }
                 None => None,
             }
-        }
-    }
-
-    impl<'d, T> DataReceiverPart<T> for DataReceiverImpl<'d, T>
-    where
-        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
-    {
-        fn borrow_payload(&self) -> Option<Result<&T, Error>> {
-            let borrowed: Option<&dyn Any> = self.borrow_payload_as_any();
-            borrowed.map(|any| {
-                let downcasted: Option<&T> = any.downcast_ref();
-                downcasted.ok_or_else(|| Error::MismatchedType {
-                    actual: any.type_id(),
-                    generic: Some(TypeId::of::<T>()),
-                })
-            })
-        }
-
-        fn borrow_payload_mut(&mut self) -> Option<Result<&mut T, Error>> {
-            self.borrow_payload_as_any_mut().map(|any| {
-                let actual_type_id = (any as &dyn Any).type_id();
-                any.downcast_mut().ok_or_else(|| Error::MismatchedType {
-                    actual: actual_type_id,
-                    generic: Some(TypeId::of::<T>()),
-                })
-            })
         }
     }
 

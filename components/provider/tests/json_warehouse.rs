@@ -12,7 +12,6 @@ use icu_provider::prelude::*;
 use icu_provider::structs;
 use icu_provider::v2;
 use icu_provider::v2::DataProviderV2;
-use icu_provider::v2::DataReceiverPart;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
@@ -186,7 +185,8 @@ fn test_data_receiver_borrow() {
         .provider()
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
-    let decimal_data: &structs::decimal::SymbolsV1 = receiver.borrow_payload().unwrap().unwrap();
+    let decoder = v2::DataReceiverDecoder(&receiver);
+    let decimal_data: &structs::decimal::SymbolsV1 = decoder.borrow_payload().unwrap().unwrap();
     check_data(decimal_data);
 }
 
@@ -198,7 +198,7 @@ fn test_data_receiver_borrow_mut() {
         .provider()
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
-    let decimal_data: &mut structs::decimal::SymbolsV1 =
-        receiver.borrow_payload_mut().unwrap().unwrap();
+    let mut decoder_mut = v2::DataReceiverDecoderMut(&mut receiver);
+    let decimal_data: &mut structs::decimal::SymbolsV1 = decoder_mut.borrow_payload_mut().unwrap().unwrap();
     check_data(decimal_data);
 }
