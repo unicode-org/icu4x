@@ -120,65 +120,32 @@ pub mod v2 {
         fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any>;
     }
 
-    pub struct DataReceiverDecoder<'a, 'd, 'de>(pub &'a dyn DataReceiver<'d, 'de>);
-
-    impl<'a, 'd, 'de> DataReceiverDecoder<'a, 'd, 'de> {
-        pub fn borrow_payload<T: Any>(&self) -> Option<Result<&T, Error>> {
-            let borrowed: Option<&dyn Any> = self.0.borrow_payload_as_any();
-            borrowed.map(|any| {
-                let downcasted: Option<&T> = any.downcast_ref();
-                downcasted.ok_or_else(|| Error::MismatchedType {
-                    actual: any.type_id(),
-                    generic: Some(TypeId::of::<T>()),
-                })
+    // TODO: Can we put this function in a better place?
+    pub fn borrow_payload<'a, 'd, 'de, T: Any>(
+        receiver: &'a dyn DataReceiver<'d, 'de>,
+    ) -> Option<Result<&'a T, Error>> {
+        let borrowed: Option<&dyn Any> = receiver.borrow_payload_as_any();
+        borrowed.map(|any| {
+            let downcasted: Option<&T> = any.downcast_ref();
+            downcasted.ok_or_else(|| Error::MismatchedType {
+                actual: any.type_id(),
+                generic: Some(TypeId::of::<T>()),
             })
-        }
+        })
     }
 
-    pub struct DataReceiverDecoder2<'a, T>(&'a T);
-
-    impl<'a, 'd, 'de, T: Any> DataReceiverDecoder2<'a, T> {
-        pub fn try_new(receiver: &'a dyn DataReceiver<'d, 'de>) -> Result<Self, Error> {
-            let borrowed: Option<&dyn Any> = receiver.borrow_payload_as_any();
-            match borrowed {
-                Some(any) => {
-                    let downcasted: Option<&T> = any.downcast_ref();
-                    match downcasted {
-                        Some(t) => Ok(Self(t)),
-                        None => Err(Error::MismatchedType {
-                            actual: any.type_id(),
-                            generic: Some(TypeId::of::<T>()),
-                        }),
-                    }
-                }
-                // TODO
-                None => Err(Error::MismatchedType {
-                    actual: TypeId::of::<T>(),
-                    generic: None,
-                }),
-            }
-        }
-    }
-
-    impl<'a, T> Borrow<T> for DataReceiverDecoder2<'a, T> {
-        fn borrow(&self) -> &T {
-            self.0
-        }
-    }
-
-    pub struct DataReceiverDecoderMut<'a, 'd, 'de>(pub &'a mut dyn DataReceiver<'d, 'de>);
-
-    impl<'a, 'd, 'de> DataReceiverDecoderMut<'a, 'd, 'de> {
-        pub fn borrow_payload_mut<T: Any>(&mut self) -> Option<Result<&mut T, Error>> {
-            let borrowed: Option<&mut dyn Any> = self.0.borrow_payload_as_any_mut();
-            borrowed.map(|any| {
-                let actual_type_id = (any as &dyn Any).type_id();
-                any.downcast_mut().ok_or_else(|| Error::MismatchedType {
-                    actual: actual_type_id,
-                    generic: Some(TypeId::of::<T>()),
-                })
+    // TODO: Can we put this function in a better place?
+    pub fn borrow_payload_mut<'a, 'd, 'de, T: Any>(
+        receiver: &'a mut dyn DataReceiver<'d, 'de>,
+    ) -> Option<Result<&'a mut T, Error>> {
+        let borrowed: Option<&mut dyn Any> = receiver.borrow_payload_as_any_mut();
+        borrowed.map(|any| {
+            let actual_type_id = (any as &dyn Any).type_id();
+            any.downcast_mut().ok_or_else(|| Error::MismatchedType {
+                actual: actual_type_id,
+                generic: Some(TypeId::of::<T>()),
             })
-        }
+        })
     }
 
     #[derive(Debug)]

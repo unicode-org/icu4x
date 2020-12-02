@@ -185,8 +185,8 @@ fn test_data_receiver_borrow() {
         .provider()
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
-    let decoder = v2::DataReceiverDecoder(&receiver);
-    let decimal_data: &structs::decimal::SymbolsV1 = decoder.borrow_payload().unwrap().unwrap();
+    let decimal_data: &structs::decimal::SymbolsV1 =
+        v2::borrow_payload(&receiver).unwrap().unwrap();
     check_data(decimal_data);
 }
 
@@ -198,8 +198,7 @@ fn test_data_receiver_borrow_mut() {
         .provider()
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
-    let mut decoder_mut = v2::DataReceiverDecoderMut(&mut receiver);
     let decimal_data: &mut structs::decimal::SymbolsV1 =
-        decoder_mut.borrow_payload_mut().unwrap().unwrap();
+        v2::borrow_payload_mut(&mut receiver).unwrap().unwrap();
     check_data(decimal_data);
 }
