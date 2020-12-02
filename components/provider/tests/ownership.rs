@@ -1,5 +1,6 @@
 use icu_provider::structs::decimal::SymbolsV1;
 use icu_provider::v2::*;
+use std::borrow::Borrow;
 use std::borrow::Cow;
 use std::default::Default;
 
@@ -12,10 +13,16 @@ const DATA: &'static str = r#"{
 
 fn check_zero_digit<'d, 'de>(receiver: &dyn DataReceiver<'d, 'de>, expected: char) {
     let decoder = DataReceiverDecoder(receiver);
-    let data: &SymbolsV1 = decoder.borrow_payload()
+    let data: &SymbolsV1 = decoder
+        .borrow_payload()
         .expect("Data should be present")
         .expect("Type should be correct");
     assert_eq!(data.zero_digit, expected);
+
+    let decoder2 =
+        DataReceiverDecoder2::try_new(receiver).expect("Data should be present and correct");
+    let data2: &SymbolsV1 = decoder2.borrow();
+    assert_eq!(data2.zero_digit, expected);
 }
 
 #[test]

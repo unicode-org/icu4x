@@ -199,6 +199,7 @@ fn test_data_receiver_borrow_mut() {
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
     let mut decoder_mut = v2::DataReceiverDecoderMut(&mut receiver);
-    let decimal_data: &mut structs::decimal::SymbolsV1 = decoder_mut.borrow_payload_mut().unwrap().unwrap();
+    let decimal_data: &mut structs::decimal::SymbolsV1 =
+        decoder_mut.borrow_payload_mut().unwrap().unwrap();
     check_data(decimal_data);
 }

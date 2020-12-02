@@ -120,9 +120,7 @@ pub mod v2 {
         fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any>;
     }
 
-    pub struct DataReceiverDecoder<'a, 'd, 'de>(
-        pub &'a dyn DataReceiver<'d, 'de>
-    );
+    pub struct DataReceiverDecoder<'a, 'd, 'de>(pub &'a dyn DataReceiver<'d, 'de>);
 
     impl<'a, 'd, 'de> DataReceiverDecoder<'a, 'd, 'de> {
         pub fn borrow_payload<T: Any>(&self) -> Option<Result<&T, Error>> {
@@ -137,9 +135,38 @@ pub mod v2 {
         }
     }
 
-    pub struct DataReceiverDecoderMut<'a, 'd, 'de>(
-        pub &'a mut dyn DataReceiver<'d, 'de>
-    );
+    pub struct DataReceiverDecoder2<'a, T>(&'a T);
+
+    impl<'a, 'd, 'de, T: Any> DataReceiverDecoder2<'a, T> {
+        pub fn try_new(receiver: &'a dyn DataReceiver<'d, 'de>) -> Result<Self, Error> {
+            let borrowed: Option<&dyn Any> = receiver.borrow_payload_as_any();
+            match borrowed {
+                Some(any) => {
+                    let downcasted: Option<&T> = any.downcast_ref();
+                    match downcasted {
+                        Some(t) => Ok(Self(t)),
+                        None => Err(Error::MismatchedType {
+                            actual: any.type_id(),
+                            generic: Some(TypeId::of::<T>()),
+                        }),
+                    }
+                }
+                // TODO
+                None => Err(Error::MismatchedType {
+                    actual: TypeId::of::<T>(),
+                    generic: None,
+                }),
+            }
+        }
+    }
+
+    impl<'a, T> Borrow<T> for DataReceiverDecoder2<'a, T> {
+        fn borrow(&self) -> &T {
+            self.0
+        }
+    }
+
+    pub struct DataReceiverDecoderMut<'a, 'd, 'de>(pub &'a mut dyn DataReceiver<'d, 'de>);
 
     impl<'a, 'd, 'de> DataReceiverDecoderMut<'a, 'd, 'de> {
         pub fn borrow_payload_mut<T: Any>(&mut self) -> Option<Result<&mut T, Error>> {
