@@ -23,14 +23,6 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-fn get_line_str_opt(line_result: Result<String, Error>) -> Option<String> {
-    if let Ok(line) = line_result {
-        Some(line)
-    } else {
-        None
-    }
-}
-
 fn split_line(line: &str) -> Vec<&str> {
     line.split(';').collect::<Vec<_>>()
 }
@@ -232,7 +224,7 @@ fn main() {
     let filename = &args[1];
 
     if let Ok(lines) = read_lines(filename) {
-        let line_opts = lines.map(get_line_str_opt);
+        let line_opts = lines.map(|line_result| line_result.ok());
         let line_strs = line_opts.flatten();
         let parseable_lines = line_strs.filter(|line| !is_skip_ppucd_line(line));
 
