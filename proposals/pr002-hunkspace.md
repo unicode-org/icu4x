@@ -24,7 +24,7 @@ more general and open to independent third party extensions.
 [hunk]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
 [icudp]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
 
-# Prior Art
+## Prior Art
 
 The *ICU4X Locale Data Pipeline* document proposes a [data model][dm] that fits
 the current use case of CLDR data. The data storage method is abstracted from
@@ -35,11 +35,11 @@ the example key.
 [dm]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
 [rq]: https://github.com/unicode-org/icu4x/blob/master/components/data-provider/src/lib.rs
 
-# Use cases
+## Use cases
 
 > This section lists a few use cases where a shared hunkspace are helpful.
 
-## Third party language packs
+### Third party language packs
 
 The use case comes from [Fuchsia OS][fx], though it is not a
 unique need. The explanation below gives the context of the use case, and ends
@@ -85,7 +85,7 @@ The implications for language packs are:
     usually monitor it closely for this reason.
 2.  Third party language pack contributions are common and to be expected. 
 	Different approaches exist that make this possible.   For examples, see
-	Mozilla Localization or [ᎭᎴᎾ ᏗᏓᏴᎳᏛᏍᎩ ᎬᏗ Gmail ᏣᎳᎩ][gmailch0].
+	Mozilla Localization or [ᎭᎴᎾ ᏗᏓᏴᎳᏛᏍᎩ ᎬᏗ Gmail ᏣᎳᎩ][gmailch].
 
 [gmailch]: https://gmail.googleblog.com/2012/11/gmail-get-started-with-gmail-in-cherokee.html
 
@@ -125,7 +125,7 @@ common specification could go a long way towards a common solution that
 works well in many use cases.  Similarly to how the industry has mostly
 used the ICU library for handling internationalization matters.
 
-## Delegated localization
+### Delegated localization
 
 The language pack approach works reasonably well to support a known set
 of localizable resources.  There are use cases, however, for which a
@@ -169,7 +169,7 @@ renderer follows the hints.  The claim here is that this specific
 pattern is common enough that localization could benefit from a common
 specification of that rendering protocol.
 
-# Detailed Proposal
+## Detailed Proposal
 
 Allow independent third parties to put new non-overlapping points into
 a common hunkspace, such that for each platform a single data provider
@@ -200,7 +200,7 @@ the OS puts in place on the runtime. (You'd have to download a prebuilt version
 for your locale, from Mozilla.)  Having a cross-platform data provider
 specification could make that a non-issue.]
 
-## Unique IDs
+### Unique IDs
 
 Every localizable resource should get a unique identifier.  This allows
 a platform-level localization clearinghouse (from the example above) to
@@ -239,7 +239,6 @@ Key: {
 Value: "Hello, {user}"
 ```
 
-
 A note is in order on what constitutes "identical" messages.
 Two messages are identical if and only if they map to the same point in
 the hunkspace, which means that they are interchangeable no matter what
@@ -258,20 +257,21 @@ are out of scope.
 A CLDR-only data provider would be a data provider which fixes the
 "source" string to the value "cldr.unicode.org".
 
-## Requirements
+### Requirements
+
 Some requirements distilled from the discussion above:
 
 1.  There must be a commonly understood data schema for each data set.
      For example "CLDR unicode data",
-2.  It must be possible for that data to come from multiple sources.
+1.  It must be possible for that data to come from multiple sources.
      E.g. "mozilla.org", vs "google.com", vs. "unicode.org".  Every
     source that provides a specific data schema can have own data.
-3.  The key space is multi-dimensional. Each dimension is named, and
+1.  The key space is multi-dimensional. Each dimension is named, and
     the set of dimensions is specific to each data schema.  Example
     dimension name: `message_id`.
-4.  The dimensions of the key space are [not]{.c1} ordered.
+1.  The dimensions of the key space are [not]{.c1} ordered.
 
-# Key encoding schema
+## Key encoding schema
 
 Taking into account the needs for the shape and form of the keys
 discussed above, and the requirements, here are proposed mappings.
@@ -280,7 +280,7 @@ It is allowed for the key encoding to have different equivalent
 schemas, which can be used where convenient.  Two proposed schemas are
 below, one for URI, another for JSON.
 
-## URI
+### URI
 
 The following mapping specifies how the dimensions of the "hunkspace"
 key are mapped to an URI.
@@ -331,7 +331,7 @@ Key: {
 Value: "Hello, {user}"
 ```
 
-### Example 1: Unicode data
+#### Example 1: Unicode data
 
 Always required dimensions are prefixed with "@" in the key.  Implementations
 may omit them in internal data structures only if they are otherwise available
@@ -361,7 +361,7 @@ udata://icu4x.unicode.org/key/symbols-v1/langid/en-US/category/decimal
 
 > Perhaps we want to specify a canonical ordering of dimensions, for simpler comparison.
 
-### Example 2: Localization
+#### Example 2: Localization
 
 Key:
 
@@ -386,10 +386,9 @@ fuchsia-l10n://fuchsia.dev/app/program-name/locale/en-US/message-id/42
 
 > Other acceptable permutations are omitted for brevity.
 
-## JSON
-------------
+### JSON
 
-### Example 1: Unicode data
+#### Example 1: Unicode data
 
 Key:
 
@@ -415,7 +414,7 @@ JSON encoding:
 }
 ```
 
-### Example 2: Localization
+#### Example 2: Localization
 
 Key:
 
@@ -441,7 +440,7 @@ JSON encoding:
 }
 ```
 
-### Example 3: Firefox Localization and localization contexts
+#### Example 3: Firefox Localization and localization contexts
 
 This section gives an example of query use in a software product with complex
 localization requirements.  See the [Mozilla documentation][ffl10n] for details on
@@ -541,3 +540,4 @@ JSON:
 The keywords `?from` and `?to` are implementation defined, and a data
 provider serving the scheme "mozilla-l10n" will need to understand the
 intended semantics.
+
