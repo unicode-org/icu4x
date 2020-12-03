@@ -85,9 +85,10 @@ The implications for language packs are:
     usually monitor it closely for this reason.
 2.  Third party language pack contributions are common and to be expected. 
 	Different approaches exist that make this possible.   For examples, see
-	Mozilla Localization or [ᎭᎴᎾ ᏗᏓᏴᎳᏛᏍᎩ ᎬᏗ Gmail ᏣᎳᎩ][gmailch].
+	[Mozilla Localization][ml10n] or [ᎭᎴᎾ ᏗᏓᏴᎳᏛᏍᎩ ᎬᏗ Gmail ᏣᎳᎩ][gmailch].
 
 [gmailch]: https://gmail.googleblog.com/2012/11/gmail-get-started-with-gmail-in-cherokee.html
+[ml10n]: https://l10n.mozilla.org
 
 Item (2) has a consequence that a language pack for a software package may come
 from a place that the software distributor doesn't even know exists.  In the
