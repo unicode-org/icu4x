@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::manifest::SyntaxOption;
-use icu_provider::DataError;
 use icu_provider::v2::DataReceiver;
+use icu_provider::DataError;
 use std::io;
 use std::path::Path;
 
@@ -70,7 +70,11 @@ where
     }
 }
 
-pub fn deserialize_into_receiver<R>(rdr: R, syntax_option: &SyntaxOption, receiver: &mut dyn DataReceiver) -> Result<(), Error>
+pub fn deserialize_into_receiver<R>(
+    rdr: R,
+    syntax_option: &SyntaxOption,
+    receiver: &mut dyn DataReceiver,
+) -> Result<(), Error>
 where
     R: io::Read,
 {
@@ -79,7 +83,7 @@ where
             let mut d = serde_json::Deserializer::from_reader(rdr);
             receiver.set_to(&mut erased_serde::Deserializer::erase(&mut d))?;
             Ok(())
-        },
+        }
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => {
             use bincode::Options;
@@ -89,7 +93,7 @@ where
             let mut d = bincode::de::Deserializer::with_reader(rdr, options);
             receiver.set_to(&mut erased_serde::Deserializer::erase(&mut d))?;
             Ok(())
-        },
+        }
         #[cfg(not(feature = "bincode"))]
         SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
     }

@@ -48,16 +48,19 @@ fn test_read_json_v2() {
     let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
         DataReceiverImpl { payload: None };
     provider
-        .load_v2(&DataRequest {
-            data_key: structs::plurals::key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("ru"),
+        .load_v2(
+            &DataRequest {
+                data_key: structs::plurals::key::CARDINAL_V1,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: langid!("ru"),
+                },
             },
-        }, &mut receiver)
+            &mut receiver,
+        )
         .expect("The data should be valid");
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &receiver.payload
-        .expect("The data should be present");
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 =
+        &receiver.payload.expect("The data should be present");
     assert_eq!(
         plurals_data,
         &structs::plurals::PluralRuleStringsV1 {
@@ -113,16 +116,19 @@ fn test_read_bincode_v2() {
     let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
         DataReceiverImpl { payload: None };
     provider
-        .load_v2(&DataRequest {
-            data_key: structs::plurals::key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("sr"),
+        .load_v2(
+            &DataRequest {
+                data_key: structs::plurals::key::CARDINAL_V1,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: langid!("sr"),
+                },
             },
-        }, &mut receiver)
+            &mut receiver,
+        )
         .expect("The data should be valid");
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &receiver.payload
-        .expect("The data should be present");
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 =
+        &receiver.payload.expect("The data should be present");
     assert_eq!(
         plurals_data,
         &structs::plurals::PluralRuleStringsV1 {
