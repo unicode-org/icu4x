@@ -122,7 +122,7 @@ not a part of CLDR.  Such as, for example, a translation of the
 string "Firefox" into Urdu.  While everyone could roll their own
 approach to localization (as was the case historically) , having a
 common specification could go a long way towards a common solution that
-works well in many use cases.  Similarly to how the industry has mostly
+works well in many use cases.  Similar to how the industry has mostly
 used the ICU library for handling internationalization matters.
 
 ### Delegated localization
@@ -219,7 +219,7 @@ CLDR][dpcldr] uses a 4-dimensional key space consisting of:
 This key space is intended to fit any CLDR resource according to the data
 mapping which is internally defined by CLDR rules.
 
-It does not represent a fictitious resource string "Hello, {user}" from
+It does not represent a fictitious resource string `Hello, {user}` from
 Firefox v143, for example.  So we allow the key space to have more
 dimensions than the current 4 of CLDR, to allow us to address both
 resources uniquely.  Call that key space a "hunkspace".
@@ -296,7 +296,7 @@ key are mapped to an URI.
 * Source (always required):
   * Key: `source`
   * URI: "authority"
-  * Remark:  We propose here the authority should be using the FQDN form such
+  * Remark:  We propose here the authority should be using the [FQDN][fqdn] form such
     as `icu4x.unicode.org`, as this may be more immediately recognizable due
 	to its prevalent use on the Internet.
 * Dimension
@@ -304,6 +304,8 @@ key are mapped to an URI.
   * URI: path component such as `...locale_id/42/...`
   * Remark: Every path component becomes a pair of path elements separated by
   * a forward slash (`/`).
+
+[fqdn]: https://en.wikipedia.org/wiki/Fully_qualified_domain_name
 
 For a multi-dimensional key, there may be several equivalent URI
 mappings, corresponding to different possible orderings of the
@@ -333,19 +335,15 @@ Value: "Hello, {user}"
 
 #### Example 1: Unicode data
 
-Always required dimensions are prefixed with "@" in the key.  Implementations
-may omit them in internal data structures only if they are otherwise available
-to the code and unambiguous.
-
 Key:
 
 ```
 {
-  “@scheme” = “udata”
-  “@source” = “icu4x.unicode.org”
-  “langid” = “en-US”
-  “category” = “Decimal”,
-  “key” = “symbols-v1”,
+  "scheme" = "udata"
+  "source" = "icu4x.unicode.org"
+  "langid" = "en-US"
+  "category" = "Decimal"
+  "key" = "symbols-v1"
 }
 ```
 
@@ -359,7 +357,8 @@ udata://icu4x.unicode.org/key/symbols-v1/langid/en-US/category/decimal
 
 > Any permutations of dimensions with the same values are equivalent.  
 
-> Perhaps we want to specify a canonical ordering of dimensions, for simpler comparison.
+> Perhaps we want to specify a canonical ordering of dimensions, for simpler
+> comparison.
 
 #### Example 2: Localization
 
@@ -367,23 +366,23 @@ Key:
 
 ```
 {
-  “@scheme” = “fuchsia-l10n”
-  “@source” = “fuchsia.dev”
-  “app” = “program-name”
-  “locale” = “en-US”
-  “message_id” = “42”
+  "scheme" = "fuchsia-l10n"
+  "source" = "fuchsia.dev"
+  "app" = “program-name"
+  "locale" = "en-US"
+  "message_id" = "42"
 }
 ```
 
 
 URI encoding:
+
 ```
 fuchsia-l10n://fuchsia.dev/app/program-name/locale/en-US/message-id/42
 ```
 
 > “fuchsia-l10n” scheme means “localization, in Fuchsia style”.  “mozilla.org”
 > may define a different scheme that matches the localization process.
-
 > Other acceptable permutations are omitted for brevity.
 
 ### JSON
@@ -394,23 +393,23 @@ Key:
 
 ```
 {
-  “@scheme” = “udata”
-  “@source” = “icu4x.unicode.org”
-  “langid” = “en-US”
-  “category” = “Decimal”,
-  “key” = “symbols-v1”,
+  "scheme" = "udata"
+  "source" = "icu4x.unicode.org"
+  "langid" = "en-US"
+  "category" = "Decimal"
+  "key" = "symbols-v1"
 }
 ```
 
 JSON encoding:
 
-```
+```json
 {
-  “@scheme”: “udata”,
-  “@source”: “icu4x.unicode.org”,
-  “langid”:  “en-US”,
-  “category: “decimal”,
-  “key”:     “symbols-v1”
+  "scheme": "udata",
+  "source": "icu4x.unicode.org",
+  "langid":  "en-US",
+  "category": "decimal",
+  "key": "symbols-v1"
 }
 ```
 
@@ -420,23 +419,23 @@ Key:
 
 ```
 {
-  “@scheme” = “fuchsia-l10n”
-  “@source” = “fuchsia.dev”
-  “app” = “program-name”
-  “locale” = “en-US”
-  “message_id” = “42”
+  "scheme" = "fuchsia-l10n"
+  "source" = "fuchsia.dev"
+  "app" = "program-name”
+  "locale" = "en-US"
+  "message_id" = "42”
 }
 ```
 
 JSON encoding:
 
-```
+```json
 {
-  “@scheme”: “fuchsia-l10n”,
-  “@source”: “fuchsia.dev”,
-  “app”: “program-name”,
-  “locale”: “en-US”,
-  “message_id”: “42”,
+  "scheme": "fuchsia-l10n",
+  "source": "fuchsia.dev",
+  "app": "program-name",
+  "locale": "en-US",
+  "message_id": "42"
 }
 ```
 
@@ -444,7 +443,7 @@ JSON encoding:
 
 This section gives an example of query use in a software product with complex
 localization requirements.  See the [Mozilla documentation][ffl10n] for details on
-Firefox localization]. The summary is that all the Firefox user
+Firefox localization. The summary is that all the Firefox user
 interface is declarative, which is achieved using a mix of SGML-based
 technologies.  This includes localization.
 
@@ -525,19 +524,43 @@ mozilla-l10n://mozilla.org/app/firefox/locale/en-us/message-id/-monitor-brand-na
 
 JSON:
 
-```
+```json
 {
-  “@scheme”: “mozilla-l10n”,
-  “@source”: “mozilla.org”,
-  “app”: “firefox”,
-  “locale”: “en-us”,
-  “message-id”: “-monitor-brand-name”,
-  “?from”: “browser/branding/brandings.ftl”,
-  “?to”: “source/browser/components/preferences/preferences.xhtml”,
+  "scheme": "mozilla-l10n",
+  "source": "mozilla.org",
+  "app": "firefox",
+  "locale": "en-us",
+  "message-id": "-monitor-brand-name",
+  "?from": "browser/branding/brandings.ftl",
+  "?to": "source/browser/components/preferences/preferences.xhtml"
 }
 ```
 
 The keywords `?from` and `?to` are implementation defined, and a data
 provider serving the scheme "mozilla-l10n" will need to understand the
 intended semantics.
+
+Going a step further, it is also possible to obtain a "context token" from the
+proider, which encodes an opaque local state to which the query needs to be
+applied:
+
+URI:
+
+```
+mozilla-l10n://mozilla.org/app/firefox/locale/en-us/message-id/-monitor-brand-name⮒
+    ?token=0xdeadbeef
+```
+
+JSON:
+
+```json
+{
+  "scheme": "mozilla-l10n",
+  "source": "mozilla.org",
+  "app": "firefox",
+  "locale": "en-us",
+  "message-id": "-monitor-brand-name",
+  "?from": "browser/branding/brandings.ftl"
+}
+```
 
