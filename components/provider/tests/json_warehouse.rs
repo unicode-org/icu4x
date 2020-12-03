@@ -11,7 +11,6 @@ use std::str::FromStr;
 use icu_provider::prelude::*;
 use icu_provider::structs;
 use icu_provider::v2;
-use icu_provider::v2::DataProviderV2;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
@@ -79,10 +78,12 @@ impl<'d> DataProviderV2<'d> for JsonDataProvider<'d> {
     fn load_v2(
         &self,
         _request: &DataRequest,
-        receiver: &mut dyn v2::DataReceiver<'d, 'static>,
-    ) -> Result<(), DataError> {
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponseV2, DataError> {
         receiver.set_to_any(&self.borrowed_data.decimal.symbols_v1_a)?;
-        Ok(())
+        Ok(DataResponseV2 {
+            data_langid: LanguageIdentifier::default(),
+        })
     }
 }
 
@@ -101,8 +102,8 @@ fn get_warehouse() -> JsonDataWarehouse {
     JsonDataWarehouse::from_str(DATA).unwrap()
 }
 
-fn get_receiver<'d>() -> v2::DataReceiverImpl<'d, structs::decimal::SymbolsV1> {
-    v2::DataReceiverImpl { payload: None }
+fn get_receiver<'d>() -> DataReceiverImpl<'d, structs::decimal::SymbolsV1> {
+    DataReceiverImpl { payload: None }
 }
 
 fn get_request() -> DataRequest {

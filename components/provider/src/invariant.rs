@@ -55,6 +55,22 @@ impl DataProvider<'static> for InvariantDataProvider {
     }
 }
 
+impl DataProviderV2<'static> for InvariantDataProvider {
+    fn load_v2<'a>(
+        &'a self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'static, 'static>,
+    ) -> Result<DataResponseV2, Error> {
+        // TODO: Re-work get_invariant to be optimized for DataProviderV2
+        let response =
+            structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))?;
+        receiver.set_to_boxed(response.take_as_boxed_any())?;
+        Ok(DataResponseV2 {
+            data_langid: LanguageIdentifier::default(),
+        })
+    }
+}
+
 impl DataEntryCollection for InvariantDataProvider {
     fn iter_for_key(
         &self,
@@ -82,6 +98,43 @@ fn test_basic() {
         })
         .unwrap();
     let plurals_data: &structs::plurals::PluralRuleStringsV1 = response.borrow_payload().unwrap();
+    assert_eq!(
+        plurals_data,
+        &structs::plurals::PluralRuleStringsV1 {
+            zero: None,
+            one: None,
+            two: None,
+            few: None,
+            many: None,
+        }
+    );
+}
+
+#[test]
+fn test_v2() {
+    use std::any::TypeId;
+
+    println!(
+        "{:?}",
+        TypeId::of::<structs::plurals::PluralRuleStringsV1>()
+    );
+
+    let provider = InvariantDataProvider;
+    let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
+        DataReceiverImpl { payload: None };
+    provider
+        .load_v2(
+            &DataRequest {
+                data_key: structs::plurals::key::CARDINAL_V1,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: LanguageIdentifier::default(),
+                },
+            },
+            &mut receiver,
+        )
+        .unwrap();
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &(receiver.payload.unwrap());
     assert_eq!(
         plurals_data,
         &structs::plurals::PluralRuleStringsV1 {

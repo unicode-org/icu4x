@@ -89,6 +89,11 @@ pub mod prelude {
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseBuilder;
     pub use crate::error::Error as DataError;
+
+    pub use crate::v2::DataProviderV2;
+    pub use crate::v2::DataReceiver;
+    pub use crate::v2::DataReceiverImpl;
+    pub use crate::v2::DataResponseV2;
 }
 
 // Also include the same symbols at the top level for selective inclusion
@@ -98,6 +103,7 @@ pub mod v2 {
     use crate::error::Error;
     use crate::prelude::*;
     use downcast_rs::Downcast;
+    use icu_locid::LanguageIdentifier;
     use std::any::Any;
     use std::any::TypeId;
     use std::borrow::Borrow;
@@ -112,6 +118,8 @@ pub mod v2 {
         ) -> Result<(), Error>;
 
         fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error>;
+
+        fn set_to_boxed(&mut self, boxed: Box<dyn Any>) -> Result<(), Error>;
 
         fn borrow_payload_as_any(&self) -> Option<&dyn Any>;
 
@@ -170,7 +178,22 @@ pub mod v2 {
         }
 
         fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error> {
-            self.payload = Some(Cow::Borrowed(any.downcast_ref().unwrap()));
+            self.payload = Some(Cow::Borrowed(any.downcast_ref().ok_or_else(|| {
+                Error::MismatchedType {
+                    actual: any.type_id(),
+                    generic: Some(TypeId::of::<T>()),
+                }
+            })?));
+            Ok(())
+        }
+
+        fn set_to_boxed(&mut self, boxed: Box<dyn Any>) -> Result<(), Error> {
+            self.payload = Some(Cow::Owned(
+                *(boxed.downcast().map_err(|any| Error::MismatchedType {
+                    actual: any.type_id(),
+                    generic: Some(TypeId::of::<T>()),
+                })?),
+            ));
             Ok(())
         }
 
@@ -205,11 +228,16 @@ pub mod v2 {
         }
     }
 
+    #[derive(Debug, Clone)]
+    pub struct DataResponseV2 {
+        pub data_langid: LanguageIdentifier,
+    }
+
     pub trait DataProviderV2<'d> {
         fn load_v2(
             &self,
             req: &DataRequest,
             receiver: &mut dyn DataReceiver<'d, 'static>,
-        ) -> Result<(), Error>;
+        ) -> Result<DataResponseV2, Error>;
     }
 }

@@ -91,6 +91,12 @@ impl<'d> DataResponse<'d> {
         }
     }
 
+    /// Take ownership of the payload without downcasting. May clone the payload.
+    pub fn take_as_boxed_any(self) -> Box<dyn Any> {
+        let owned: Box<dyn CloneableAny> = self.payload.into_owned();
+        owned.into_any()
+    }
+
     /// Get the `TypeId` of the payload.
     pub fn get_payload_type_id(&self) -> TypeId {
         let borrowed: &dyn CloneableAny = self.payload.borrow();
