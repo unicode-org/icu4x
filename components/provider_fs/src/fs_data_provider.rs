@@ -109,3 +109,40 @@ impl DataProvider<'_> for FsDataProvider {
         }
     }
 }
+
+impl<'de> DataProviderV2<'de> for FsDataProvider {
+    fn load_v2(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'de, 'static>,
+    ) -> Result<DataResponseV2, DataError> {
+        type Error = DataError;
+        let mut path_buf = self.res_root.clone();
+        path_buf.extend(req.data_key.get_components().iter());
+        if !path_buf.exists() {
+            path_buf.pop();
+            if path_buf.exists() {
+                return Err(Error::UnsupportedDataKey(req.data_key));
+            } else {
+                return Err(Error::UnsupportedCategory(req.data_key.category));
+            }
+        }
+        // TODO: Implement proper locale fallback
+        path_buf.extend(req.data_entry.get_components().iter());
+        path_buf.set_extension(self.manifest.syntax.get_file_extension());
+        if !path_buf.exists() {
+            return Err(Error::UnavailableEntry(req.clone()));
+        }
+        let file = match File::open(&path_buf) {
+            Ok(file) => file,
+            Err(err) => return Err(Error::Resource(Box::new(err))),
+        };
+        let reader = BufReader::new(file);
+        let mut deserializer = deserializer::deserializer_from_reader_v2(reader, &self.manifest.syntax)
+            .map_err(|err| err.into_resource_error(&path_buf))?;
+        receiver.set_to(&mut deserializer.as_erased_deserializer())?;
+        Ok(DataResponseV2 {
+            data_langid: req.data_entry.langid.clone(),
+        })
+    }
+}

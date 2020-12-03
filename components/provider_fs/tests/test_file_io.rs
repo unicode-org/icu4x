@@ -41,6 +41,40 @@ fn test_read_json() {
 }
 
 #[test]
+fn test_read_json_v2() {
+    let provider = FsDataProvider::try_new("./tests/testdata/json")
+        .expect("Loading file from testdata directory");
+
+    let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
+        DataReceiverImpl { payload: None };
+    provider
+        .load_v2(&DataRequest {
+            data_key: structs::plurals::key::CARDINAL_V1,
+            data_entry: DataEntry {
+                variant: None,
+                langid: langid!("ru"),
+            },
+        }, &mut receiver)
+        .expect("The data should be valid");
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &receiver.payload
+        .expect("The data should be present");
+    assert_eq!(
+        plurals_data,
+        &structs::plurals::PluralRuleStringsV1 {
+            zero: None,
+            one: Some(Cow::Borrowed("v = 0 and i % 10 = 1 and i % 100 != 11")),
+            two: None,
+            few: Some(Cow::Borrowed(
+                "v = 0 and i % 10 = 2..4 and i % 100 != 12..14"
+            )),
+            many: Some(Cow::Borrowed(
+                "v = 0 and i % 10 = 0 or v = 0 and i % 10 = 5..9 or v = 0 and i % 100 = 11..14"
+            )),
+        }
+    );
+}
+
+#[test]
 #[cfg(feature = "bincode")]
 fn test_read_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")

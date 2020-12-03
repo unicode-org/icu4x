@@ -114,11 +114,6 @@ fn test_basic() {
 fn test_v2() {
     use std::any::TypeId;
 
-    println!(
-        "{:?}",
-        TypeId::of::<structs::plurals::PluralRuleStringsV1>()
-    );
-
     let provider = InvariantDataProvider;
     let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
         DataReceiverImpl { payload: None };

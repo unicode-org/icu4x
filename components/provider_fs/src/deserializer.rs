@@ -58,3 +58,32 @@ where
         SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
     }
 }
+
+pub enum FsDeserializer<R: io::Read + 'static> {
+    Json(serde_json::Deserializer<serde_json::de::IoRead<R>>),
+}
+
+impl<'de, R: io::Read + 'static> FsDeserializer<R> {
+    pub fn as_erased_deserializer(&mut self) -> impl erased_serde::Deserializer<'de> + '_ {
+        match self {
+            FsDeserializer::Json(d) => erased_serde::Deserializer::erase(d),
+        }
+    }
+}
+
+pub fn deserializer_from_reader_v2<R>(rdr: R, syntax_option: &SyntaxOption) -> Result<FsDeserializer<R>, Error>
+where
+    // TODO: Why static?
+    R: io::Read + 'static,
+{
+    match syntax_option {
+        SyntaxOption::Json => {
+            let d1: serde_json::Deserializer<serde_json::de::IoRead<R>> = serde_json::Deserializer::from_reader(rdr);
+            Ok(FsDeserializer::Json(d1))
+        },
+        // #[cfg(feature = "bincode")]
+        // SyntaxOption::Bincode => erased_serde::Deserializer::erase(serde_bincode::Deserializer::from_reader(rdr)),
+        // #[cfg(not(feature = "bincode"))]
+        SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
+    }
+}
