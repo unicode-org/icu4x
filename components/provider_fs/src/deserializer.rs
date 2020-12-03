@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::manifest::SyntaxOption;
 use icu_provider::DataError;
+use icu_provider::v2::DataReceiver;
 use std::io;
 use std::path::Path;
 
@@ -11,6 +12,7 @@ pub enum Error {
     Json(serde_json::error::Error),
     #[cfg(feature = "bincode")]
     Bincode(bincode::Error),
+    Serde(erased_serde::Error),
     #[allow(dead_code)]
     UnknownSyntax(SyntaxOption),
 }
@@ -28,6 +30,12 @@ impl From<bincode::Error> for Error {
     }
 }
 
+impl From<erased_serde::Error> for Error {
+    fn from(err: erased_serde::Error) -> Self {
+        Self::Serde(err)
+    }
+}
+
 impl Error {
     pub fn into_resource_error<P: AsRef<Path>>(self, path: P) -> DataError {
         use crate::error::Error as CrateError;
@@ -37,6 +45,9 @@ impl Error {
             }
             #[cfg(feature = "bincode")]
             Self::Bincode(err) => {
+                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+            }
+            Self::Serde(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
             Self::UnknownSyntax(v) => CrateError::UnknownSyntax(v),
@@ -59,31 +70,27 @@ where
     }
 }
 
-pub enum FsDeserializer<R: io::Read + 'static> {
-    Json(serde_json::Deserializer<serde_json::de::IoRead<R>>),
-}
-
-impl<'de, R: io::Read + 'static> FsDeserializer<R> {
-    pub fn as_erased_deserializer(&mut self) -> impl erased_serde::Deserializer<'de> + '_ {
-        match self {
-            FsDeserializer::Json(d) => erased_serde::Deserializer::erase(d),
-        }
-    }
-}
-
-pub fn deserializer_from_reader_v2<R>(rdr: R, syntax_option: &SyntaxOption) -> Result<FsDeserializer<R>, Error>
+pub fn deserialize_into_receiver<R>(rdr: R, syntax_option: &SyntaxOption, receiver: &mut dyn DataReceiver) -> Result<(), Error>
 where
-    // TODO: Why static?
-    R: io::Read + 'static,
+    R: io::Read,
 {
     match syntax_option {
         SyntaxOption::Json => {
-            let d1: serde_json::Deserializer<serde_json::de::IoRead<R>> = serde_json::Deserializer::from_reader(rdr);
-            Ok(FsDeserializer::Json(d1))
+            let mut d = serde_json::Deserializer::from_reader(rdr);
+            receiver.set_to(&mut erased_serde::Deserializer::erase(&mut d))?;
+            Ok(())
         },
-        // #[cfg(feature = "bincode")]
-        // SyntaxOption::Bincode => erased_serde::Deserializer::erase(serde_bincode::Deserializer::from_reader(rdr)),
-        // #[cfg(not(feature = "bincode"))]
+        #[cfg(feature = "bincode")]
+        SyntaxOption::Bincode => {
+            use bincode::Options;
+            let options = bincode::DefaultOptions::new()
+                .with_fixint_encoding()
+                .allow_trailing_bytes();
+            let mut d = bincode::de::Deserializer::with_reader(rdr, options);
+            receiver.set_to(&mut erased_serde::Deserializer::erase(&mut d))?;
+            Ok(())
+        },
+        #[cfg(not(feature = "bincode"))]
         SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
     }
 }

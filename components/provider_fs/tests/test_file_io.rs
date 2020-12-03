@@ -103,3 +103,34 @@ fn test_read_bincode() {
         }
     );
 }
+
+#[test]
+#[cfg(feature = "bincode")]
+fn test_read_bincode_v2() {
+    let provider = FsDataProvider::try_new("./tests/testdata/bincode")
+        .expect("Loading file from testdata directory");
+
+    let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
+        DataReceiverImpl { payload: None };
+    provider
+        .load_v2(&DataRequest {
+            data_key: structs::plurals::key::CARDINAL_V1,
+            data_entry: DataEntry {
+                variant: None,
+                langid: langid!("sr"),
+            },
+        }, &mut receiver)
+        .expect("The data should be valid");
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &receiver.payload
+        .expect("The data should be present");
+    assert_eq!(
+        plurals_data,
+        &structs::plurals::PluralRuleStringsV1 {
+            zero: None,
+            one: Some(Cow::Borrowed("v = 0 and i % 10 = 1 and i % 100 != 11 or f % 10 = 1 and f % 100 != 11")),
+            two: None,
+            few: Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14 or f % 10 = 2..4 and f % 100 != 12..14")),
+            many: None,
+        }
+    );
+}

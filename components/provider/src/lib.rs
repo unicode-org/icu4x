@@ -115,7 +115,7 @@ pub mod v2 {
         fn set_to(
             &mut self,
             deserializer: &mut dyn erased_serde::Deserializer<'de>,
-        ) -> Result<(), Error>;
+        ) -> Result<(), erased_serde::Error>;
 
         fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error>;
 
@@ -171,7 +171,7 @@ pub mod v2 {
         fn set_to(
             &mut self,
             deserializer: &mut dyn erased_serde::Deserializer<'static>,
-        ) -> Result<(), Error> {
+        ) -> Result<(), erased_serde::Error> {
             let obj: T = erased_serde::deserialize(deserializer)?;
             self.payload = Some(Cow::Owned(obj));
             Ok(())

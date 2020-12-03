@@ -138,9 +138,8 @@ impl<'de> DataProviderV2<'de> for FsDataProvider {
             Err(err) => return Err(Error::Resource(Box::new(err))),
         };
         let reader = BufReader::new(file);
-        let mut deserializer = deserializer::deserializer_from_reader_v2(reader, &self.manifest.syntax)
+        deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
-        receiver.set_to(&mut deserializer.as_erased_deserializer())?;
         Ok(DataResponseV2 {
             data_langid: req.data_entry.langid.clone(),
         })
