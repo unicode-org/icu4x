@@ -49,9 +49,11 @@
 //! [`ICU4X`]: ../icu/index.html
 
 #[macro_use]
-mod uniset;
+pub mod error; // How do I make this crate-visible in a way that allows
+               // a binary file/module to still use it?
 mod builder;
 mod conversions;
+mod uniset;
 mod uniset_const;
 mod utils;
 

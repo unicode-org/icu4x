@@ -2,12 +2,13 @@ use std::char;
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs::File;
-use std::io::{self, BufRead, Error};
+use std::io::{self, BufRead};
 use std::iter::Iterator;
 use std::panic;
 use std::path::Path;
 use std::u32;
 
+use icu_uniset::error::Error;
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 //
@@ -219,64 +220,66 @@ fn get_binary_prop_unisets(
     m
 }
 
-fn main() {
+fn main() -> Result<(), io::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    if let Ok(lines) = read_lines(filename) {
-        let line_opts = lines.map(|line_result| line_result.ok());
-        let line_strs = line_opts.flatten();
-        let parseable_lines = line_strs.filter(|line| !is_skip_ppucd_line(line));
+    let lines = read_lines(filename)?;
+ 
+    let line_opts = lines.map(|line_result| line_result.ok());
+    let line_strs = line_opts.flatten();
+    let parseable_lines = line_strs.filter(|line| !is_skip_ppucd_line(line));
 
-        let mut prop_aliases: HashMap<String, HashSet<String>> = HashMap::new();
+    let mut prop_aliases: HashMap<String, HashSet<String>> = HashMap::new();
 
-        let mut defaults: HashMap<String, String> = HashMap::new();
+    let mut defaults: HashMap<String, String> = HashMap::new();
 
-        // TODO: need advice - how should we not add Hash and Eq from UnicodeSet unless we need it?
-        let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
+    // TODO: need advice - how should we not add Hash and Eq from UnicodeSet unless we need it?
+    let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
 
-        let mut code_point_overrides: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
+    let mut code_point_overrides: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
 
-        let mut code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
+    let mut code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
 
-        for line in parseable_lines {
-            if is_property_line(&line) {
-                update_aliases(&mut prop_aliases, &line);
-            } else if is_defaults_line(&line) {
-                defaults = get_defaults_prop_vals(&line);
-            } else if is_block_line(&line) {
-                let (range, prop_vals) = get_block_range_prop_vals(&line);
-                blocks.insert(range, prop_vals);
-            } else if is_code_point_line(&line) {
-                // record code point override vals directly from line
-                let (code_point_range, prop_vals) = get_code_point_overrides(&line);
-                code_point_overrides.insert(code_point_range, prop_vals);
+    for line in parseable_lines {
+        if is_property_line(&line) {
+            update_aliases(&mut prop_aliases, &line);
+        } else if is_defaults_line(&line) {
+            defaults = get_defaults_prop_vals(&line);
+        } else if is_block_line(&line) {
+            let (range, prop_vals) = get_block_range_prop_vals(&line);
+            blocks.insert(range, prop_vals);
+        } else if is_code_point_line(&line) {
+            // record code point override vals directly from line
+            let (code_point_range, prop_vals) = get_code_point_overrides(&line);
+            code_point_overrides.insert(code_point_range, prop_vals);
 
-                // compute final code point property vals after applying all
-                // levels of overrides
-                // can't clone UnicodeSet, so recomputing code point range
-                let (code_point_range, _) = get_code_point_overrides(&line);
-                for code_point_char in code_point_range.iter() {
-                    let code_point = code_point_char as u32;
-                    let code_point_prop_vals = get_code_point_prop_vals(
-                        code_point,
-                        &code_point_overrides,
-                        &blocks,
-                        &defaults,
-                    );
-                    code_points.insert(code_point, code_point_prop_vals);
-                }
+            // compute final code point property vals after applying all
+            // levels of overrides
+            // can't clone UnicodeSet, so recomputing code point range
+            let (code_point_range, _) = get_code_point_overrides(&line);
+            for code_point_char in code_point_range.iter() {
+                let code_point = code_point_char as u32;
+                let code_point_prop_vals = get_code_point_prop_vals(
+                    code_point,
+                    &code_point_overrides,
+                    &blocks,
+                    &defaults,
+                );
+                code_points.insert(code_point, code_point_prop_vals);
             }
         }
-
-        let binary_prop_unisets: HashMap<String, UnicodeSet> =
-            get_binary_prop_unisets(&prop_aliases, &code_points);
-
-        for (canonical_name, uniset) in binary_prop_unisets {
-            println!("canonical name of binary property = [{}]", canonical_name);
-            println!("{:?}", uniset); // pretty print UnicodeSet
-        }
     }
+
+    let binary_prop_unisets: HashMap<String, UnicodeSet> =
+        get_binary_prop_unisets(&prop_aliases, &code_points);
+
+    for (canonical_name, uniset) in binary_prop_unisets {
+        println!("canonical name of binary property = [{}]", canonical_name);
+        println!("{:?}", uniset); // pretty print UnicodeSet
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]
