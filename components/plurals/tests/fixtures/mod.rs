@@ -47,7 +47,7 @@ impl From<&FixedDecimalInput> for FixedDecimal {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum PluralOperandsInput {
-    List((f64, u64, usize, usize, u64, u64)),
+    List((f64, u64, usize, usize, u64, u64, usize)),
     Struct {
         n: Option<f64>,
         i: Option<u64>,
@@ -55,6 +55,7 @@ pub enum PluralOperandsInput {
         w: Option<usize>,
         f: Option<u64>,
         t: Option<u64>,
+        e: Option<usize>,
     },
     String(String),
     Number(isize),
@@ -69,13 +70,23 @@ impl From<PluralOperandsInput> for PluralOperands {
                 w: operands.3,
                 f: operands.4,
                 t: operands.5,
+                e: operands.6,
             },
-            PluralOperandsInput::Struct { n, i, v, w, f, t } => Self {
+            PluralOperandsInput::Struct {
+                n,
+                i,
+                v,
+                w,
+                f,
+                t,
+                e,
+            } => Self {
                 i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
                 v: v.unwrap_or(0),
                 w: w.unwrap_or(0),
                 f: f.unwrap_or(0),
                 t: t.unwrap_or(0),
+                e: e.unwrap_or(0),
             },
             PluralOperandsInput::String(num) => num
                 .parse()

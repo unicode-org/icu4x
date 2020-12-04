@@ -264,6 +264,9 @@ pub enum Operand {
     F,
     /// Visible fraction digits without trailing zeros
     T,
+    /// Compact decimal exponent value:
+    ///   exponent of the power of 10 used in compact decimal formatting
+    E,
 }
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of `RangeListItems`.

@@ -165,6 +165,7 @@ impl<'l> Lexer<'l> {
                         Token::Ellipsis
                     }
                     b'~' => Token::Tilde,
+                    b'e' => Token::Operand(ast::Operand::E),
                     b => return Err(LexerError::UnknownToken(*b)),
                 };
                 return Ok(Some(token));
