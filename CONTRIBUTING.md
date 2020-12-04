@@ -2,7 +2,7 @@
 
 `ICU4X` is an open source project and welcomes everyone to participate.
 
-In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](./docs/charter.md) and [style](./docs/style-guide.md) used by the project.
+In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](docs/process/charter.md) and [style guide][style_guide] used by the project.
 
 The list of [open issues](triaging.md) represent the current focus points of the project, and the [help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+label%3A%22help+wanted%22+no%3Aassignee+) lists the issues which we don't have resources to work on right now, but would consider accepting if someone volunteered to work on them.
 
@@ -18,7 +18,7 @@ That branch may end up containing one of more commits that are constituting the 
 
 ### Checklist
 
-Each commit and pull request should follow the [style guide](./docs/style-guide.md) and be properly formatted with `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage is above `90%`.
+Each commit and pull request should follow the [style guide][style_guide] and be properly formatted with `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage is above `90%`.
 
 Handy commands (run from the root directory):
 
@@ -98,7 +98,7 @@ Examples of such angle may be:
 * Memory management of the code in pull request
 * Test coverage, and sanity checks
 * Use of CLDR, Unicode, Rust and other best practices
-* Consistency with the ICU4X [style guide](./docs/style-guide.md)
+* Consistency with the ICU4X [style guide][style_guide]
 * Use of I/O, data management, etc.
 
 The pull request author is expected to evaluate what kind of review(s) they need to ensure the quality of their pull request.
@@ -206,3 +206,5 @@ _(followed by the original boilerplate from Unicode data)_
 ### Other cases
 
 Please discuss first.
+
+[style_guide]: docs/process/style_guide.md
