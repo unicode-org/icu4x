@@ -184,5 +184,65 @@
       "type": "Locale",
       "identifier": "es-MX-u-ca-islamic-co-search-nu-roman"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-u-kn"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "und-u-kn"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-u-kn-ca-calendar"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "und-u-ca-calendar-kn"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-u-kn-nu-arab"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "und-u-kn-nu-arab"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-t-m0-true"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "und-t-m0-true"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-t-m0-true-n0-mixed"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "und-t-m0-true-n0-mixed"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "und-t-m0-true-c0-mixed"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "und-t-c0-mixed-m0-true"
+    }
   }
 ]

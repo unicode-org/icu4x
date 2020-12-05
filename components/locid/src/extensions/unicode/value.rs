@@ -87,6 +87,10 @@ impl Value {
             Ok(Some(s))
         }
     }
+
+    pub(crate) fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
 }
 
 impl FromStr for Value {
@@ -103,7 +107,7 @@ impl std::fmt::Display for Value {
 
         for subtag in self.0.iter() {
             if first {
-                write!(f, "{}", subtag)?;
+                subtag.fmt(f)?;
                 first = false;
             } else {
                 write!(f, "-{}", subtag)?;
