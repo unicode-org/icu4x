@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607067521236,
+  "lastUpdate": 1607128675899,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1079,6 +1079,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 756818,
             "range": "± 773",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4dfb4e29fbaabd1560156fbccb71c4676845cd49",
+          "message": "Fix handling of true in u/t extensions (#404)",
+          "timestamp": "2020-12-04T16:22:36-08:00",
+          "tree_id": "06853c21de842e7e9c6981db81636831f53a37ad",
+          "url": "https://github.com/unicode-org/icu4x/commit/4dfb4e29fbaabd1560156fbccb71c4676845cd49"
+        },
+        "date": 1607128672419,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 991017,
+            "range": "± 49246",
             "unit": "ns/iter"
           }
         ]
