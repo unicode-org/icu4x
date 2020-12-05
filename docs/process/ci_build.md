@@ -26,7 +26,7 @@ Basic concepts:
   * The `on` key config shows that the workflow is triggered only when a commit is made on `master`. Since the repository only allows commits to `master` through the Pull Request process, this workflow is unhelpful for Pull Request authors and reviewers because pull requests originating from any branch not called `master` (all of them) will not trigger the workflow.
   * There is one job, which is to build and run unit tests.
   * The first step of any job is usually to checkout the latest code in the repository. Otherwise, the fresh VM runner has an empty filesystem.
-  * The first step of this job invokes `actions/checkout@v2`. This means to invoke the Github Action kept in the repository https://www.github.com/actions/checkout, and use the state of that repository that the `v2` ref points to. Since `v2` is a git "ref", that means could be a git tag, a git branch name, or a git commit hash value.
+  * The first step of this job invokes `actions/checkout@v2`. These action coordinates indicate: invoke the Github Action kept in the repository https://www.github.com/actions/checkout, and use the state of that repository that the `v2` ref points to. Since `v2` is a git "ref", that means could be a git tag, a git branch name, or a git commit hash value.
     * The preferred convention by Github Actions is that action repository maintainers use `v1` and `v2` as tags that point to the commits that are tagged with the latest version within that major version. (Ex: `v1` points to `v1.2.3`, `v2` points to `v2.8.9.1`). However, be aware that not all actions adhere to this guideline, and instead only have `vX.Y.Z` tags without a `vX` tag to the latest `vX.*.*`. As an example, this problem was [observed and worked around in the `unicode-org/cldr` repo](https://github.com/unicode-org/cldr/pull/813).
   * For this simplistic example, the way to improve it to allow a Pull Request to run the same checks after each new commit is pushed, in the same way that checks are run on merges to `master`, is to change `on.pull_request.branches` to [match all origin branch names](https://github.com/unicode-org/icu4x/commit/16ae4611738fbe94b36e17b77aee6cc541c0a171).
 
@@ -68,7 +68,7 @@ Here, `os` is a parameter defined under `strategy.matrix.os` for the `test` job'
           - components/datetime
           - utils/fixed_decimal
 ```
-Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the YAML array `[ components/locid, components/uniset, components/plurals, components/datetime, utils/fixed_decimal]`
+Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the [YAML array](https://stackoverflow.com/a/33136212) `[ components/locid, components/uniset, components/plurals, components/datetime, utils/fixed_decimal]`
 * Conditional execution of steps and jobs - you can use the `if` key to control more granularly whether a step or job can run.
   * In this [example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `master`, but some steps, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute on merges to `master`.
 * "Uploading / downloading artifacts" is a mechanism that Github Actions provides to allow a persistence of files from one job to another within a single workflow. This can be useful since each job VM runner is created fresh, and inherits no previous state.
@@ -89,11 +89,36 @@ Here, `component` is a parameter defined under `strategy.matrix.component` for t
         path: ./copy-to-ext-repo/dev
         name: benchmark-perf
 ```
-## Implementation of Various CI Aspects
+  * There is no mechanism to persist data storage across workflow instantiations. The only way to persist / store data across workflow instances is through making commits on a branch within the git repo itself. A benchmark dashboard requires the accumulation of data points computed from each invocation. Therefore, the benchmark action that we use relies on creating git commits on a branch to store this historical information over time.
 
-TODO: elaborate on each
+
+## Implementation of Various CI Functionality
 
 * Copy API docs to separate repo
-* Benchmarking - create data, store in separate branch, copy to same repo as API docs
-* Run CI checks locally - Rust's `cargo-makefile` to allow a local way to run a sequence of commands, rewire CI test to use commands, runs cross-platform
+  - We maintain a separate repo to store API docs. This allows the generated output HTML, which is usually larger in size than the source code it is generate from, to be under version control without swelling up the size of the main repo. Also, changes to the APIs will cause larger diffs in the HTML.
+  - The separate repo for `unicode-org/icu4x` is in `unicode-org/icu4x-docs`, similar to how `unicode-org/icu-docs` is used for API docs for `unicode-org/icu`.
+  - We use the [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages) action to copy files destined for [Github Pages](https://pages.github.com/), which is Github's built-in HTML/website serving functionality. The action allows for copying to remote repos and handles permissions for doing so (default & user Github tokens, etc.).
+  - After commits are pushed to the branch that is configured to hold Github Pages content in `unicode-org/icu4x-docs`, the results are visible in https://unicode-org.github.io/icu4x-docs/.
+* Benchmarking
+  - We use the [rhysd/github-action-benchmark](https://github.com/rhysd/github-action-benchmark). It does the following
+    1. For a handful of programming languages (including Rust), it runs the most common benchmark tool
+    1. It converts the benchmark tool's output into a JSON file
+    1. It stores the JSON file in a separate branch. It produces a static HTML that renders the JSON file as a dashboard.
+    1. It commits the output JSON + HTML as a commit in a separate branch. This preserves the data for future invocations, when conversion of benchmark output to JSON is appended to the previous JSON to create the new JSON data file.
+  - We copy the benchmark dashboards along with the API docs in `unicode-org/icu4x-docs`. This allows the GH Pages for the main repo to be used for general purposes, if needed (ex: landing page, blog, etc.).
+* Run CI checks locally
+  - Developers [need an easy way to run the same commands and options locally as they are run in CI](https://github.com/unicode-org/icu4x/issues/334)
+  - Currently, there is no official way to invoke a Github Actions workflow locally
+  - Since we run tests on all major OS types, we need a cross-platform solution to running commands
+  - Rust's `cargo-makefile` is a plugin for the `cargo` build tool that allows creation of a sequence of commands and options using an alias
+  - Using `cargo-makefile`, the CI commands were rewritten to use the new aliases
+  - `cargo-makefile` has built-in support for the inline inclusion of scripts written in [Duckscript](https://github.com/sagiegurari/duckscript)
+    * [Example of an inline script in a `cargo-makefile` task](https://github.com/unicode-org/icu4x/pull/381/files#diff-9375fd04332c86472d7be397ef09428cb86babd8826880a5835bd1d1c1bdbc08R23-R48) that ensures that all new source files have a specific license header
 * Code coverage
+  - Code coverage is configured in a separate workflow since it is completely independent of the operations for build, test, format/style-checking, linting/error-prone-checking, API docs, benchmarking.
+  - Two code coverage dashboard services exist:
+    * [Codecov](https://codecov.io/)
+      - [config for Codecov](https://github.com/unicode-org/icu4x/commit/fd524a91df3f5aef2efb908adddd051827972328#diff-a2115d277b5ca5a2f09a999e53440839cf332b94da177f3d1766334555b0f7c6R49-R53)
+    * [Coveralls](https://coveralls.io/)
+      - [config for Coveralls](https://github.com/unicode-org/icu4x/commit/00c514f3a189787c4e77704eb98714e6b6430d37#diff-a2115d277b5ca5a2f09a999e53440839cf332b94da177f3d1766334555b0f7c6R36-R40)
+  - Both code coverage dashboard services automatically support most output file formats for most programming languages' code coverage tools
