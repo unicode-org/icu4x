@@ -68,10 +68,19 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
             - components/plurals
             - components/datetime
             - utils/fixed_decimal
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Run benchmark
+          run: |
+            pushd $PWD && cd ${{ matrix.component }};
+            cargo bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
+            popd
+        - ...
   ```
   Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the [YAML array](https://stackoverflow.com/a/33136212) `[ components/locid, components/uniset, components/plurals, components/datetime, utils/fixed_decimal]`
 * Conditional execution of steps and jobs - you can use the `if` key to control more granularly whether a step or job can run.
-  * In this [example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `master`, but some steps, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute on merges to `master`.
+  * In this [example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `master`. However, when we look more granularly at the jobs within the workflow, some jobs, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute when they're fully finished, reviewed, and merged to `master`. We add the `if` key on the jobs to control the conditional execution in isolated instances that is more granular than the workflow-level triggers defined in the `on` key.
 * "Uploading / downloading artifacts" is a mechanism that Github Actions provides to allow a persistence of files from one job to another within a single workflow. This can be useful since each job VM runner is created fresh, and inherits no previous state.
   * [Example upload](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L213-L218):
   ```
