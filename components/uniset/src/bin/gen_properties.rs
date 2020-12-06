@@ -225,7 +225,7 @@ fn main() -> Result<(), io::Error> {
     let filename = &args[1];
 
     let lines = read_lines(filename)?;
- 
+
     let line_opts = lines.map(|line_result| line_result.ok());
     let line_strs = line_opts.flatten();
     let parseable_lines = line_strs.filter(|line| !is_skip_ppucd_line(line));
@@ -260,12 +260,8 @@ fn main() -> Result<(), io::Error> {
             let (code_point_range, _) = get_code_point_overrides(&line);
             for code_point_char in code_point_range.iter() {
                 let code_point = code_point_char as u32;
-                let code_point_prop_vals = get_code_point_prop_vals(
-                    code_point,
-                    &code_point_overrides,
-                    &blocks,
-                    &defaults,
-                );
+                let code_point_prop_vals =
+                    get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
                 code_points.insert(code_point, code_point_prop_vals);
             }
         }
