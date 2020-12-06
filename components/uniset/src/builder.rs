@@ -425,8 +425,9 @@ mod tests {
 
     #[test]
     fn test_empty_build() {
-        let mut builder = UnicodeSetBuilder::new();
+        let builder = UnicodeSetBuilder::new();
         let check: UnicodeSet = builder.build();
+        assert!(check.is_empty());
     }
 
     #[test]

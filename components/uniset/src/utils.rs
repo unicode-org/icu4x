@@ -9,7 +9,7 @@ use std::{
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
-    v.len() == 0
+    v.is_empty()
         || (v.len() % 2 == 0
             && v.windows(2).all(|chunk| chunk[0] < chunk[1])
             && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
