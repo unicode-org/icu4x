@@ -36,3 +36,4 @@ harness = false
 name = "genprops"
 path = "src/bin/gen_properties.rs"
 test = true
+bench = false
