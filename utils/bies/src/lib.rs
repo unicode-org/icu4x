@@ -72,7 +72,7 @@ impl Breakpoints {
     ) -> Self {
         let mut breakpoints = vec![];
         for i in valid_breakpoints {
-            if i <= 0 || i >= matrix.0.len() {
+            if i == 0 || i >= matrix.0.len() {
                 // TODO: Make fail-safe
                 panic!("Invalid i value");
             }
@@ -98,7 +98,7 @@ impl Breakpoints {
     ) -> Self {
         let mut breakpoints = vec![];
         for i in valid_breakpoints {
-            if i <= 0 || i >= matrix.0.len() {
+            if i == 0 || i >= matrix.0.len() {
                 // TODO: Make fail-safe
                 panic!("Invalid i value");
             }

@@ -24,26 +24,48 @@ struct TestDataGenerator<R: Rng> {
 }
 
 impl<R: Rng> TestDataGenerator<R> {
+    /// Returns a test case with a BIES matrix representing a correct LSTM prediction.
     pub fn semi_random_test_case(
         &mut self,
         len: usize,
         skip_algorithms: Option<Vec<Algorithm>>,
     ) -> TestCase {
+        self.noisy_random_test_case(0.0, len, skip_algorithms)
+    }
+
+    /// Returns a test case with a BIES matrix with a variable amount of noise.
+    pub fn noisy_random_test_case(
+        &mut self,
+        noise: f32,
+        len: usize,
+        skip_algorithms: Option<Vec<Algorithm>>,
+    ) -> TestCase {
         let true_breakpoints = self.rand_breakpoints(len, 0.3);
         let valid_breakpoints = self.rand_valid_breakpoints(&true_breakpoints, 0.5);
-        let matrix = self.bies_matrix_for_breakpoints(&true_breakpoints);
-        let expected_bies = BiesString::from(&true_breakpoints).writeable_to_string();
+        let matrix = self.bies_matrix_for_breakpoints(&true_breakpoints, noise);
+        // If the data is noisy, Alg3a could make a different prediction from the true value
+        let expected_breakpoints = if noise > 0.0 {
+            Breakpoints::from_bies_matrix(
+                Algorithm::Alg3a,
+                &matrix,
+                valid_breakpoints.iter().copied(),
+            )
+        } else {
+            true_breakpoints
+        };
+        let expected_bies = BiesString::from(&expected_breakpoints).writeable_to_string();
         TestCase {
             sample_data: SampleData {
                 matrix,
                 valid_breakpoints,
             },
-            expected_breakpoints: true_breakpoints,
+            expected_breakpoints,
             expected_bies,
             skip_algorithms,
         }
     }
 
+    /// Returns a fully random BIES matrix paired with breakpoints based on Alg3a.
     pub fn fully_random_sample_data(&mut self, len: usize) -> SampleData {
         let matrix = self.rand_bies_matrix(len);
         let true_breakpoints = Breakpoints::from_bies_matrix(Algorithm::Alg3a, &matrix, 1..len);
@@ -77,13 +99,17 @@ impl<R: Rng> TestDataGenerator<R> {
     }
 
     /// Returns a BIES vector weighted at the given cell (b, i, e, s)
-    fn bies_vector_for_char(&mut self, ch: char) -> BiesVector<f32> {
-        let cell = match ch {
-            'b' => 0,
-            'i' => 1,
-            'e' => 2,
-            's' => 3,
-            _ => unreachable!(),
+    fn bies_vector_for_char(&mut self, ch: char, noise: f32) -> BiesVector<f32> {
+        let cell = if self.rng.gen::<f32>() < noise {
+            self.rng.gen_range(0, 4)
+        } else {
+            match ch {
+                'b' => 0,
+                'i' => 1,
+                'e' => 2,
+                's' => 3,
+                _ => unreachable!(),
+            }
         };
         self.bies_vector_for_cell(cell)
     }
@@ -100,11 +126,11 @@ impl<R: Rng> TestDataGenerator<R> {
     }
 
     /// Returns a BIES matrix representing the given Breakpoints
-    fn bies_matrix_for_breakpoints(&mut self, breakpoints: &Breakpoints) -> BiesMatrix {
+    fn bies_matrix_for_breakpoints(&mut self, breakpoints: &Breakpoints, noise: f32) -> BiesMatrix {
         let bies = BiesString::from(breakpoints).writeable_to_string();
         let matrix = bies
             .chars()
-            .map(|ch| self.bies_vector_for_char(ch))
+            .map(|ch| self.bies_vector_for_char(ch, noise))
             .collect();
         BiesMatrix(matrix)
     }
@@ -306,6 +332,24 @@ fn get_test_cases() -> Vec<TestCase> {
         test_gen.semi_random_test_case(75, Some(vec![Algorithm::Alg3a])),
         test_gen.semi_random_test_case(75, Some(vec![Algorithm::Alg3a])),
         test_gen.semi_random_test_case(75, Some(vec![Algorithm::Alg3a])),
+        // Test cases with noise:
+        test_gen.noisy_random_test_case(0.05, 15, None),
+        test_gen.noisy_random_test_case(0.05, 15, None),
+        test_gen.noisy_random_test_case(0.05, 15, Some(vec![Algorithm::Alg1a, Algorithm::Alg1b])),
+        test_gen.noisy_random_test_case(0.05, 15, None),
+        test_gen.noisy_random_test_case(0.1, 15, Some(vec![Algorithm::Alg1a, Algorithm::Alg1b])),
+        test_gen.noisy_random_test_case(0.1, 15, None),
+        test_gen.noisy_random_test_case(0.1, 15, None),
+        test_gen.noisy_random_test_case(0.1, 15, None),
+        test_gen.noisy_random_test_case(
+            0.25,
+            15,
+            Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
+        ),
+        // Extra long test cases:
+        test_gen.semi_random_test_case(1000, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(1000, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(1000, Some(vec![Algorithm::Alg3a])),
     ]
 }
 
