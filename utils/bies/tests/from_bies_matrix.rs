@@ -196,7 +196,7 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 length: 5,
             },
             expected_bies: "besss",
-            skip_algorithms: Some(vec![Algorithm::Alg1a]),
+            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
         },
         TestCase {
             sample_data: rand_sample_data(5, &mut rng),
@@ -205,7 +205,7 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 length: 5,
             },
             expected_bies: "biebe",
-            skip_algorithms: Some(vec![Algorithm::Alg1a]),
+            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
         },
         TestCase {
             sample_data: rand_sample_data(15, &mut rng),
@@ -214,7 +214,7 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 length: 15,
             },
             expected_bies: "biebiiiiiiessbe",
-            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg2a]),
+            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
         },
         TestCase {
             sample_data: rand_sample_data(15, &mut rng),
@@ -223,7 +223,7 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 length: 15,
             },
             expected_bies: "biebiesbiiessss",
-            skip_algorithms: Some(vec![Algorithm::Alg1a]),
+            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
         },
         TestCase {
             sample_data: rand_sample_data(15, &mut rng),
@@ -232,7 +232,7 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 length: 15,
             },
             expected_bies: "ssssbesbebiesbe",
-            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg2a]),
+            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
         },
     ]
 }

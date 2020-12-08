@@ -30,8 +30,11 @@ pub struct BiesString<'a>(&'a Breakpoints);
 
 #[derive(Clone, Copy, Debug, PartialEq, EnumIter)]
 pub enum Algorithm {
-    /// Algorithm 1: check probabilities surrounding each valid breakpoint.
+    /// Algorithm 1a: check probabilities surrounding each valid breakpoint. Switch based on the sum.
     Alg1a,
+
+    /// Algorithm 1b: check probabilities surrounding each valid breakpoint. Switch based on the individual max.
+    Alg1b,
 
     /// Algorithm 2: step forward through the matrix and pick the highest probability at each step
     Alg2a,
@@ -57,6 +60,7 @@ impl Breakpoints {
     ) -> Self {
         match algorithm {
             Algorithm::Alg1a => Self::from_bies_matrix_1a(matrix, valid_breakpoints),
+            Algorithm::Alg1b => Self::from_bies_matrix_1b(matrix, valid_breakpoints),
             Algorithm::Alg2a => Self::from_bies_matrix_2a(matrix, valid_breakpoints),
             Algorithm::Alg3a => Self::from_bies_matrix_3a(matrix, valid_breakpoints),
         }
@@ -79,6 +83,37 @@ impl Breakpoints {
             let nobrk_score =
                 bies1.i * bies2.i + bies1.i * bies2.e + bies1.b * bies2.i + bies1.b * bies2.e;
             if break_score > nobrk_score {
+                breakpoints.push(i);
+            }
+        }
+        Self {
+            breakpoints,
+            length: matrix.0.len(),
+        }
+    }
+
+    fn from_bies_matrix_1b(
+        matrix: &BiesMatrix,
+        valid_breakpoints: impl Iterator<Item = usize>,
+    ) -> Self {
+        let mut breakpoints = vec![];
+        for i in valid_breakpoints {
+            if i <= 0 || i >= matrix.0.len() {
+                // TODO: Make fail-safe
+                panic!("Invalid i value");
+            }
+            let bies1 = &matrix.0[i - 1];
+            let bies2 = &matrix.0[i];
+            let mut candidate = (f32::NEG_INFINITY, false);
+            candidate = max(candidate, (bies1.e * bies2.b, true));
+            candidate = max(candidate, (bies1.e * bies2.s, true));
+            candidate = max(candidate, (bies1.s * bies2.b, true));
+            candidate = max(candidate, (bies1.s * bies2.s, true));
+            candidate = max(candidate, (bies1.i * bies2.i, false));
+            candidate = max(candidate, (bies1.i * bies2.e, false));
+            candidate = max(candidate, (bies1.b * bies2.i, false));
+            candidate = max(candidate, (bies1.b * bies2.e, false));
+            if candidate.1 {
                 breakpoints.push(i);
             }
         }
