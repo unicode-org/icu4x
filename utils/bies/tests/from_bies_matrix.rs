@@ -10,120 +10,122 @@ struct SampleData<'s> {
 }
 
 fn get_sample_data() -> Vec<SampleData<'static>> {
-    vec![SampleData {
-        matrix: BiesMatrix(vec![
-            BiesVector {
-                b: 0.0,
-                i: 0.0,
-                e: 0.0,
-                s: 1.0,
+    vec![
+        SampleData {
+            matrix: BiesMatrix(vec![
+                BiesVector {
+                    b: 0.0,
+                    i: 0.0,
+                    e: 0.0,
+                    s: 1.0,
+                },
+                BiesVector {
+                    b: 1.0,
+                    i: 0.0,
+                    e: 0.0,
+                    s: 0.0,
+                },
+                BiesVector {
+                    b: 0.0,
+                    i: 1.0,
+                    e: 0.0,
+                    s: 0.0,
+                },
+                BiesVector {
+                    b: 0.0,
+                    i: 1.0,
+                    e: 0.0,
+                    s: 0.0,
+                },
+                BiesVector {
+                    b: 0.0,
+                    i: 0.0,
+                    e: 1.0,
+                    s: 0.0,
+                },
+                BiesVector {
+                    b: 0.0,
+                    i: 0.0,
+                    e: 0.0,
+                    s: 1.0,
+                },
+                BiesVector {
+                    b: 1.0,
+                    i: 0.0,
+                    e: 0.0,
+                    s: 0.0,
+                },
+                BiesVector {
+                    b: 0.0,
+                    i: 0.0,
+                    e: 1.0,
+                    s: 0.0,
+                },
+            ]),
+            valid_breakpoints: vec![1, 2, 3, 4, 5, 6, 7],
+            expected_breakpoints: Breakpoints {
+                breakpoints: vec![1, 5, 6],
+                length: 8,
             },
-            BiesVector {
-                b: 1.0,
-                i: 0.0,
-                e: 0.0,
-                s: 0.0,
-            },
-            BiesVector {
-                b: 0.0,
-                i: 1.0,
-                e: 0.0,
-                s: 0.0,
-            },
-            BiesVector {
-                b: 0.0,
-                i: 1.0,
-                e: 0.0,
-                s: 0.0,
-            },
-            BiesVector {
-                b: 0.0,
-                i: 0.0,
-                e: 1.0,
-                s: 0.0,
-            },
-            BiesVector {
-                b: 0.0,
-                i: 0.0,
-                e: 0.0,
-                s: 1.0,
-            },
-            BiesVector {
-                b: 1.0,
-                i: 0.0,
-                e: 0.0,
-                s: 0.0,
-            },
-            BiesVector {
-                b: 0.0,
-                i: 0.0,
-                e: 1.0,
-                s: 0.0,
-            },
-        ]),
-        valid_breakpoints: vec![1, 2, 3, 4, 5, 6, 7],
-        expected_breakpoints: Breakpoints {
-            breakpoints: vec![1, 5, 6],
-            length: 8,
+            expected_bies: "sbiiesbe",
         },
-        expected_bies: "sbiiesbe",
-    },
-    SampleData {
-        matrix: BiesMatrix(vec![
-            BiesVector {
-                b: 0.25,
-                i: 0.25,
-                e: 0.25,
-                s: 0.25,
+        SampleData {
+            matrix: BiesMatrix(vec![
+                BiesVector {
+                    b: 0.25,
+                    i: 0.25,
+                    e: 0.25,
+                    s: 0.25,
+                },
+                BiesVector {
+                    b: 0.25,
+                    i: 0.25,
+                    e: 0.25,
+                    s: 0.25,
+                },
+                BiesVector {
+                    b: 0.25,
+                    i: 0.25,
+                    e: 0.25,
+                    s: 0.25,
+                },
+            ]),
+            valid_breakpoints: vec![],
+            expected_breakpoints: Breakpoints {
+                breakpoints: vec![],
+                length: 3,
             },
-            BiesVector {
-                b: 0.25,
-                i: 0.25,
-                e: 0.25,
-                s: 0.25,
-            },
-            BiesVector {
-                b: 0.25,
-                i: 0.25,
-                e: 0.25,
-                s: 0.25,
-            },
-        ]),
-        valid_breakpoints: vec![],
-        expected_breakpoints: Breakpoints {
-            breakpoints: vec![],
-            length: 3,
+            expected_bies: "bie",
         },
-        expected_bies: "bie",
-    },
-    SampleData {
-        matrix: BiesMatrix(vec![
-            BiesVector {
-                b: 0.7,
-                i: 0.1,
-                e: 0.1,
-                s: 0.1,
+        SampleData {
+            matrix: BiesMatrix(vec![
+                BiesVector {
+                    b: 0.7,
+                    i: 0.1,
+                    e: 0.1,
+                    s: 0.1,
+                },
+                BiesVector {
+                    b: 0.7,
+                    i: 0.1,
+                    e: 0.1,
+                    s: 0.1,
+                },
+                BiesVector {
+                    b: 0.7,
+                    i: 0.1,
+                    e: 0.1,
+                    s: 0.1,
+                },
+            ]),
+            valid_breakpoints: vec![2],
+            expected_breakpoints: Breakpoints {
+                breakpoints: vec![2],
+                length: 3,
             },
-            BiesVector {
-                b: 0.7,
-                i: 0.1,
-                e: 0.1,
-                s: 0.1,
-            },
-            BiesVector {
-                b: 0.7,
-                i: 0.1,
-                e: 0.1,
-                s: 0.1,
-            },
-        ]),
-        valid_breakpoints: vec![2],
-        expected_breakpoints: Breakpoints {
-            breakpoints: vec![2],
-            length: 3,
+            expected_bies: "bes",
         },
-        expected_bies: "bes",
-    }]
+    ]
 }
 
 #[test]
