@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use partial_min_max::max;
 use std::default::Default;
 use std::fmt;
@@ -5,7 +6,9 @@ use writeable::Writeable;
 
 #[derive(Debug, PartialEq)]
 pub struct Breakpoints {
+    /// An ascending list of breakpoints. All elements must be between 0 and length exclusive.
     pub breakpoints: Vec<usize>,
+    /// The total length; i.e., the limit of the final word.
     pub length: usize,
 }
 
@@ -34,6 +37,7 @@ impl Default for Breakpoints {
 }
 
 impl Breakpoints {
+    /// Greedy algorithm 1: check probabilities surrounding each valid breakpoint.
     pub fn from_bies_matrix_1a(
         matrix: &BiesMatrix,
         valid_breakpoints: impl Iterator<Item = usize>,
@@ -60,6 +64,7 @@ impl Breakpoints {
         }
     }
 
+    /// Greedy algorithm 2: step forward through the matrix and pick the highest probability at each step
     pub fn from_bies_matrix_2a(
         matrix: &BiesMatrix,
         mut valid_breakpoints: impl Iterator<Item = usize>,
@@ -100,6 +105,46 @@ impl Breakpoints {
             inside_word = !candidate.1;
             if is_valid_brkpt {
                 next_valid_brkpt = valid_breakpoints.next();
+            }
+        }
+        Self {
+            breakpoints,
+            length: matrix.0.len(),
+        }
+    }
+
+    /// Greedy algorithm 3: exhaustively check all combinations of breakpoints to find the highest true probability
+    pub fn from_bies_matrix_3a(
+        matrix: &BiesMatrix,
+        valid_breakpoints: impl Iterator<Item = usize>,
+    ) -> Self {
+        let valid_breakpoints: Vec<usize> = valid_breakpoints.collect();
+        let mut best_log_probability = f32::NEG_INFINITY;
+        let mut breakpoints: Vec<usize> = vec![];
+        for i in 1..=valid_breakpoints.len() {
+            for combo in valid_breakpoints.iter().combinations(i) {
+                let mut log_probability = 0.0;
+                let mut add_word = |i: usize, j: usize| {
+                    if i == j - 1 {
+                        log_probability += matrix.0[i].s.ln();
+                    } else {
+                        log_probability += matrix.0[i].b.ln();
+                        for k in (i + 1)..(j - 1) {
+                            log_probability += matrix.0[k].i.ln();
+                        }
+                        log_probability += matrix.0[j - 1].e.ln();
+                    }
+                };
+                let mut i = 0;
+                for j in combo.iter().copied().copied() {
+                    add_word(i, j);
+                    i = j;
+                }
+                add_word(i, matrix.0.len());
+                if log_probability > best_log_probability {
+                    best_log_probability = log_probability;
+                    breakpoints = combo.iter().copied().copied().collect();
+                }
             }
         }
         Self {

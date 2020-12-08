@@ -61,6 +61,7 @@ name = "bies"
 version = "0.1.1"
 dependencies = [
  "criterion",
+ "itertools",
  "num-traits",
  "partial-min-max",
  "writeable",

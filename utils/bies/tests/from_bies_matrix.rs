@@ -14,52 +14,52 @@ fn get_sample_data() -> Vec<SampleData<'static>> {
         SampleData {
             matrix: BiesMatrix(vec![
                 BiesVector {
-                    b: 0.0,
-                    i: 0.0,
-                    e: 0.0,
-                    s: 1.0,
+                    b: 0.01,
+                    i: 0.01,
+                    e: 0.01,
+                    s: 0.97,
                 },
                 BiesVector {
-                    b: 1.0,
-                    i: 0.0,
-                    e: 0.0,
-                    s: 0.0,
+                    b: 0.97,
+                    i: 0.01,
+                    e: 0.01,
+                    s: 0.01,
                 },
                 BiesVector {
-                    b: 0.0,
-                    i: 1.0,
-                    e: 0.0,
-                    s: 0.0,
+                    b: 0.01,
+                    i: 0.97,
+                    e: 0.01,
+                    s: 0.01,
                 },
                 BiesVector {
-                    b: 0.0,
-                    i: 1.0,
-                    e: 0.0,
-                    s: 0.0,
+                    b: 0.01,
+                    i: 0.97,
+                    e: 0.01,
+                    s: 0.01,
                 },
                 BiesVector {
-                    b: 0.0,
-                    i: 0.0,
-                    e: 1.0,
-                    s: 0.0,
+                    b: 0.01,
+                    i: 0.01,
+                    e: 0.97,
+                    s: 0.01,
                 },
                 BiesVector {
-                    b: 0.0,
-                    i: 0.0,
-                    e: 0.0,
-                    s: 1.0,
+                    b: 0.01,
+                    i: 0.01,
+                    e: 0.01,
+                    s: 0.97,
                 },
                 BiesVector {
-                    b: 1.0,
-                    i: 0.0,
-                    e: 0.0,
-                    s: 0.0,
+                    b: 0.97,
+                    i: 0.01,
+                    e: 0.01,
+                    s: 0.01,
                 },
                 BiesVector {
-                    b: 0.0,
-                    i: 0.0,
-                    e: 1.0,
-                    s: 0.0,
+                    b: 0.01,
+                    i: 0.01,
+                    e: 0.97,
+                    s: 0.01,
                 },
             ]),
             valid_breakpoints: vec![1, 2, 3, 4, 5, 6, 7],
@@ -155,6 +155,21 @@ fn test_1a() {
 fn test_2a() {
     for sample in get_sample_data().iter() {
         let actual_breakpoints = Breakpoints::from_bies_matrix_2a(
+            &sample.matrix,
+            sample.valid_breakpoints.iter().copied(),
+        );
+        assert_eq!(
+            sample.expected_breakpoints, actual_breakpoints,
+            "{:?}",
+            sample
+        );
+    }
+}
+
+#[test]
+fn test_3a() {
+    for sample in get_sample_data().iter() {
+        let actual_breakpoints = Breakpoints::from_bies_matrix_3a(
             &sample.matrix,
             sample.valid_breakpoints.iter().copied(),
         );
