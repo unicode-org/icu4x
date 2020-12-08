@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607128642479,
+  "lastUpdate": 1607465908954,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2129,6 +2129,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32052636,
             "range": "± 944000",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17ff2cfa39a1f7442515ab903244bd270deb39c3",
+          "message": "Replace placeholders in docs README.md with actual content (#412)",
+          "timestamp": "2020-12-08T14:03:44-08:00",
+          "tree_id": "ec1bd9d1e0761130ee3cf859398e445e59ec2bd4",
+          "url": "https://github.com/unicode-org/icu4x/commit/17ff2cfa39a1f7442515ab903244bd270deb39c3"
+        },
+        "date": 1607465906940,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35656702,
+            "range": "± 170178",
             "unit": "ns/iter"
           }
         ]
