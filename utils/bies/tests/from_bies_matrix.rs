@@ -216,6 +216,24 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
             expected_bies: "biebiiiiiiessbe",
             skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg2a]),
         },
+        TestCase {
+            sample_data: rand_sample_data(15, &mut rng),
+            expected_breakpoints: Breakpoints {
+                breakpoints: vec![3, 6, 7, 11, 12, 13, 14],
+                length: 15,
+            },
+            expected_bies: "biebiesbiiessss",
+            skip_algorithms: Some(vec![Algorithm::Alg1a]),
+        },
+        TestCase {
+            sample_data: rand_sample_data(15, &mut rng),
+            expected_breakpoints: Breakpoints {
+                breakpoints: vec![1, 2, 3, 4, 6, 7, 9, 12, 13],
+                length: 15,
+            },
+            expected_bies: "ssssbesbebiesbe",
+            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg2a]),
+        },
     ]
 }
 
