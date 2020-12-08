@@ -24,9 +24,13 @@ itertools = "0.9"
 num-traits = "0.2"
 partial-min-max = "0.4"
 writeable = { version = "0.1", path = "../writeable" }
+strum = { version = "0.20", features = ["derive"] }
 
 [dev-dependencies]
-criterion = "0.3"
+rand = "0.7"
+criterion = "0.3.3"
+rand_pcg = "0.2"
+rand_distr = "0.3"
 
 [lib]
 bench = false  # This option is required for Benchmark CI

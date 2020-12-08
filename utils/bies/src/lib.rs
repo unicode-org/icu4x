@@ -2,9 +2,10 @@ use itertools::Itertools;
 use partial_min_max::max;
 use std::default::Default;
 use std::fmt;
+use strum::EnumIter;
 use writeable::Writeable;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Breakpoints {
     /// An ascending list of breakpoints. All elements must be between 0 and length exclusive.
     pub breakpoints: Vec<usize>,
@@ -12,7 +13,7 @@ pub struct Breakpoints {
     pub length: usize,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct BiesVector<F: fmt::Debug> {
     pub b: F,
     pub i: F,
@@ -21,11 +22,23 @@ pub struct BiesVector<F: fmt::Debug> {
 }
 
 // TODO: Consider parameterizing the f32 to a trait
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct BiesMatrix(pub Vec<BiesVector<f32>>);
 
-#[derive(PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct BiesString<'a>(&'a Breakpoints);
+
+#[derive(Clone, Copy, Debug, PartialEq, EnumIter)]
+pub enum Algorithm {
+    /// Algorithm 1: check probabilities surrounding each valid breakpoint.
+    Alg1a,
+
+    /// Algorithm 2: step forward through the matrix and pick the highest probability at each step
+    Alg2a,
+
+    /// Algorithm 3: exhaustively check all combinations of breakpoints to find the highest true probability
+    Alg3a,
+}
 
 impl Default for Breakpoints {
     fn default() -> Self {
@@ -37,8 +50,19 @@ impl Default for Breakpoints {
 }
 
 impl Breakpoints {
-    /// Greedy algorithm 1: check probabilities surrounding each valid breakpoint.
-    pub fn from_bies_matrix_1a(
+    pub fn from_bies_matrix(
+        algorithm: Algorithm,
+        matrix: &BiesMatrix,
+        valid_breakpoints: impl Iterator<Item = usize>,
+    ) -> Self {
+        match algorithm {
+            Algorithm::Alg1a => Self::from_bies_matrix_1a(matrix, valid_breakpoints),
+            Algorithm::Alg2a => Self::from_bies_matrix_2a(matrix, valid_breakpoints),
+            Algorithm::Alg3a => Self::from_bies_matrix_3a(matrix, valid_breakpoints),
+        }
+    }
+
+    fn from_bies_matrix_1a(
         matrix: &BiesMatrix,
         valid_breakpoints: impl Iterator<Item = usize>,
     ) -> Self {
@@ -64,8 +88,7 @@ impl Breakpoints {
         }
     }
 
-    /// Greedy algorithm 2: step forward through the matrix and pick the highest probability at each step
-    pub fn from_bies_matrix_2a(
+    fn from_bies_matrix_2a(
         matrix: &BiesMatrix,
         mut valid_breakpoints: impl Iterator<Item = usize>,
     ) -> Self {
@@ -113,8 +136,7 @@ impl Breakpoints {
         }
     }
 
-    /// Greedy algorithm 3: exhaustively check all combinations of breakpoints to find the highest true probability
-    pub fn from_bies_matrix_3a(
+    fn from_bies_matrix_3a(
         matrix: &BiesMatrix,
         valid_breakpoints: impl Iterator<Item = usize>,
     ) -> Self {
