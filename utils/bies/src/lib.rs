@@ -178,7 +178,7 @@ impl Breakpoints {
         let valid_breakpoints: Vec<usize> = valid_breakpoints.collect();
         let mut best_log_probability = f32::NEG_INFINITY;
         let mut breakpoints: Vec<usize> = vec![];
-        for i in 1..=valid_breakpoints.len() {
+        for i in 0..=valid_breakpoints.len() {
             for combo in valid_breakpoints.iter().combinations(i) {
                 let mut log_probability = 0.0;
                 let mut add_word = |i: usize, j: usize| {

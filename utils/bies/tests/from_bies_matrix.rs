@@ -5,56 +5,141 @@ use rand_pcg::Lcg64Xsh32;
 use strum::IntoEnumIterator;
 use writeable::Writeable;
 
-fn rand_bies_vector(rng: &mut dyn RngCore) -> BiesVector<f32> {
-    // Use a Beta distribution with heavy weight on low numbers.
-    let beta: Beta<f32> = Beta::new(0.2, 5.0).unwrap();
-    let mut nums = [1.0, beta.sample(rng), beta.sample(rng), beta.sample(rng)];
-    nums.shuffle(rng);
-    let total: f32 = nums.iter().sum();
-    BiesVector {
-        b: nums[0] / total,
-        i: nums[1] / total,
-        e: nums[2] / total,
-        s: nums[3] / total,
-    }
-}
-
-fn rand_bies_matrix(len: usize, rng: &mut dyn RngCore) -> BiesMatrix {
-    BiesMatrix((0..len).map(|_| rand_bies_vector(rng)).collect())
-}
-
 #[derive(Debug)]
 struct SampleData {
     pub matrix: BiesMatrix,
     pub valid_breakpoints: Vec<usize>,
 }
 
-fn rand_sample_data(len: usize, rng: &mut dyn RngCore) -> SampleData {
-    let matrix = rand_bies_matrix(len, rng);
-    let true_breakpoints = Breakpoints::from_bies_matrix(Algorithm::Alg3a, &matrix, 1..len);
-    let mut valid_breakpoints = vec![];
-    for i in 1..len {
-        if true_breakpoints.breakpoints.contains(&i) || rng.gen::<f32>() < 0.5 {
-            valid_breakpoints.push(i);
-        }
-    }
-    SampleData {
-        matrix,
-        valid_breakpoints,
-    }
-}
-
 #[derive(Debug)]
-struct TestCase<'s> {
+struct TestCase {
     pub sample_data: SampleData,
     pub expected_breakpoints: Breakpoints,
-    pub expected_bies: &'s str,
+    pub expected_bies: String,
     pub skip_algorithms: Option<Vec<Algorithm>>,
 }
 
-fn get_test_cases() -> Vec<TestCase<'static>> {
+struct TestDataGenerator<R: Rng> {
+    pub rng: R,
+}
+
+impl<R: Rng> TestDataGenerator<R> {
+    pub fn semi_random_test_case(
+        &mut self,
+        len: usize,
+        skip_algorithms: Option<Vec<Algorithm>>,
+    ) -> TestCase {
+        let true_breakpoints = self.rand_breakpoints(len, 0.3);
+        let valid_breakpoints = self.rand_valid_breakpoints(&true_breakpoints, 0.5);
+        let matrix = self.bies_matrix_for_breakpoints(&true_breakpoints);
+        let expected_bies = BiesString::from(&true_breakpoints).writeable_to_string();
+        TestCase {
+            sample_data: SampleData {
+                matrix,
+                valid_breakpoints,
+            },
+            expected_breakpoints: true_breakpoints,
+            expected_bies,
+            skip_algorithms,
+        }
+    }
+
+    pub fn fully_random_sample_data(&mut self, len: usize) -> SampleData {
+        let matrix = self.rand_bies_matrix(len);
+        let true_breakpoints = Breakpoints::from_bies_matrix(Algorithm::Alg3a, &matrix, 1..len);
+        let valid_breakpoints = self.rand_valid_breakpoints(&true_breakpoints, 0.5);
+        SampleData {
+            matrix,
+            valid_breakpoints,
+        }
+    }
+
+    /// Returns a BIES vector weighted at the given cell (0=b, 1=i, 2=e, 3=s)
+    fn bies_vector_for_cell(&mut self, cell: usize) -> BiesVector<f32> {
+        // Use a Beta distribution with heavy weight on low numbers.
+        let beta: Beta<f32> = Beta::new(0.2, 5.0).unwrap();
+        let nums: Vec<f32> = (0..4)
+            .map(|i| {
+                if i == cell {
+                    1.0
+                } else {
+                    beta.sample(&mut self.rng)
+                }
+            })
+            .collect();
+        let total: f32 = nums.iter().sum();
+        BiesVector {
+            b: nums[0] / total,
+            i: nums[1] / total,
+            e: nums[2] / total,
+            s: nums[3] / total,
+        }
+    }
+
+    /// Returns a BIES vector weighted at the given cell (b, i, e, s)
+    fn bies_vector_for_char(&mut self, ch: char) -> BiesVector<f32> {
+        let cell = match ch {
+            'b' => 0,
+            'i' => 1,
+            'e' => 2,
+            's' => 3,
+            _ => unreachable!(),
+        };
+        self.bies_vector_for_cell(cell)
+    }
+
+    /// Returns a random BIES vector.
+    fn rand_bies_vector(&mut self) -> BiesVector<f32> {
+        let cell = self.rng.gen_range(0, 4);
+        self.bies_vector_for_cell(cell)
+    }
+
+    /// Returns a random BIES matrix.
+    fn rand_bies_matrix(&mut self, len: usize) -> BiesMatrix {
+        BiesMatrix((0..len).map(|_| self.rand_bies_vector()).collect())
+    }
+
+    /// Returns a BIES matrix representing the given Breakpoints
+    fn bies_matrix_for_breakpoints(&mut self, breakpoints: &Breakpoints) -> BiesMatrix {
+        let bies = BiesString::from(breakpoints).writeable_to_string();
+        let matrix = bies
+            .chars()
+            .map(|ch| self.bies_vector_for_char(ch))
+            .collect();
+        BiesMatrix(matrix)
+    }
+
+    /// Returns a random instance of Breakpoints with the given concentration (higher = more breakpoints)
+    fn rand_breakpoints(&mut self, len: usize, concentr: f32) -> Breakpoints {
+        let breakpoints = (1..len - 1)
+            .filter(|_| self.rng.gen::<f32>() < concentr)
+            .collect();
+        Breakpoints {
+            breakpoints,
+            length: len,
+        }
+    }
+
+    fn rand_valid_breakpoints(
+        &mut self,
+        true_breakpoints: &Breakpoints,
+        concentr: f32,
+    ) -> Vec<usize> {
+        let mut breakpoints = vec![];
+        for i in 1..true_breakpoints.length {
+            if true_breakpoints.breakpoints.contains(&i) || self.rng.gen::<f32>() < concentr {
+                breakpoints.push(i);
+            }
+        }
+        breakpoints
+    }
+}
+
+fn get_test_cases() -> Vec<TestCase> {
     // Use Lcg64Xsh32, a small, fast PRNG.
-    let mut rng: Lcg64Xsh32 = Lcg64Xsh32::seed_from_u64(2020);
+    let mut test_gen = TestDataGenerator {
+        rng: Lcg64Xsh32::seed_from_u64(2020),
+    };
     vec![
         TestCase {
             sample_data: SampleData {
@@ -114,7 +199,7 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 breakpoints: vec![1, 5, 6],
                 length: 8,
             },
-            expected_bies: "sbiiesbe",
+            expected_bies: "sbiiesbe".to_string(),
             skip_algorithms: None,
         },
         TestCase {
@@ -145,29 +230,29 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 breakpoints: vec![],
                 length: 3,
             },
-            expected_bies: "bie",
+            expected_bies: "bie".to_string(),
             skip_algorithms: None,
         },
         TestCase {
             sample_data: SampleData {
                 matrix: BiesMatrix(vec![
                     BiesVector {
-                        b: 0.7,
+                        b: 0.2,
                         i: 0.1,
                         e: 0.1,
+                        s: 0.6,
+                    },
+                    BiesVector {
+                        b: 0.6,
+                        i: 0.1,
+                        e: 0.2,
                         s: 0.1,
                     },
                     BiesVector {
-                        b: 0.7,
+                        b: 0.6,
                         i: 0.1,
                         e: 0.1,
-                        s: 0.1,
-                    },
-                    BiesVector {
-                        b: 0.7,
-                        i: 0.1,
-                        e: 0.1,
-                        s: 0.1,
+                        s: 0.2,
                     },
                 ]),
                 valid_breakpoints: vec![2],
@@ -176,64 +261,51 @@ fn get_test_cases() -> Vec<TestCase<'static>> {
                 breakpoints: vec![2],
                 length: 3,
             },
-            expected_bies: "bes",
+            expected_bies: "bes".to_string(),
             skip_algorithms: None,
         },
-        // Some seeded random cases:
+        // Some fully random cases:
         TestCase {
-            sample_data: rand_sample_data(5, &mut rng),
+            sample_data: test_gen.fully_random_sample_data(10),
             expected_breakpoints: Breakpoints {
-                breakpoints: vec![2, 3, 4],
-                length: 5,
+                breakpoints: vec![3, 4, 5, 9],
+                length: 10,
             },
-            expected_bies: "besss",
-            skip_algorithms: None,
-        },
-        TestCase {
-            sample_data: rand_sample_data(5, &mut rng),
-            expected_breakpoints: Breakpoints {
-                breakpoints: vec![2, 3, 4],
-                length: 5,
-            },
-            expected_bies: "besss",
+            expected_bies: "biessbiies".to_string(),
             skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
         },
         TestCase {
-            sample_data: rand_sample_data(5, &mut rng),
+            sample_data: test_gen.fully_random_sample_data(10),
             expected_breakpoints: Breakpoints {
-                breakpoints: vec![3],
-                length: 5,
+                breakpoints: vec![6, 7],
+                length: 10,
             },
-            expected_bies: "biebe",
-            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
-        },
-        TestCase {
-            sample_data: rand_sample_data(15, &mut rng),
-            expected_breakpoints: Breakpoints {
-                breakpoints: vec![3, 11, 12, 13],
-                length: 15,
-            },
-            expected_bies: "biebiiiiiiessbe",
+            expected_bies: "biiiiesbie".to_string(),
             skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
         },
         TestCase {
-            sample_data: rand_sample_data(15, &mut rng),
+            sample_data: test_gen.fully_random_sample_data(10),
             expected_breakpoints: Breakpoints {
-                breakpoints: vec![3, 6, 7, 11, 12, 13, 14],
-                length: 15,
+                breakpoints: vec![4, 5, 6],
+                length: 10,
             },
-            expected_bies: "biebiesbiiessss",
+            expected_bies: "biiessbiie".to_string(),
             skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
         },
-        TestCase {
-            sample_data: rand_sample_data(15, &mut rng),
-            expected_breakpoints: Breakpoints {
-                breakpoints: vec![1, 2, 3, 4, 6, 7, 9, 12, 13],
-                length: 15,
-            },
-            expected_bies: "ssssbesbebiesbe",
-            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
-        },
+        // Some partially random cases:
+        test_gen.semi_random_test_case(5, None),
+        test_gen.semi_random_test_case(5, None),
+        test_gen.semi_random_test_case(5, None),
+        test_gen.semi_random_test_case(15, None),
+        test_gen.semi_random_test_case(15, None),
+        test_gen.semi_random_test_case(15, None),
+        // Alg3a is slow over about length 20:
+        test_gen.semi_random_test_case(35, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(35, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(35, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(75, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(75, Some(vec![Algorithm::Alg3a])),
+        test_gen.semi_random_test_case(75, Some(vec![Algorithm::Alg3a])),
     ]
 }
 
