@@ -806,6 +806,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_ppucd"
+version = "0.1.0"
+dependencies = [
+ "icu_provider",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "icu_testdata"
 version = "0.1.0"
 dependencies = [
