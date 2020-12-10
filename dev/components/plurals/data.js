@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607621542226,
+  "lastUpdate": 1607625594690,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1595,6 +1595,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 99138,
             "range": "± 429",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6f25f89484dc3c17d2ec0a07bff6534e36e4462a",
+          "message": "Add doc on CI for ICU4X (#408)",
+          "timestamp": "2020-12-10T10:25:03-08:00",
+          "tree_id": "811ce90ea5c6db118013f0614972e46803269f89",
+          "url": "https://github.com/unicode-org/icu4x/commit/6f25f89484dc3c17d2ec0a07bff6534e36e4462a"
+        },
+        "date": 1607625590924,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1192,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7063,
+            "range": "± 459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 114030,
+            "range": "± 8014",
             "unit": "ns/iter"
           }
         ]
