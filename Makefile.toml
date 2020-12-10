@@ -32,8 +32,8 @@ for pattern in ${glob_pattern_array}
             text = readfile ${path}
             result_hash = starts_with ${text} "# This file is part of ICU4X. For terms of use, please see the file"
             result_slash = starts_with ${text} "// This file is part of ICU4X. For terms of use, please see the file"
-            not_result_hash = not result_hash
-            not_result_slash = not result_slash
+            not_result_hash = not ${result_hash}
+            not_result_slash = not ${result_slash}
             if ${not_result_hash} and ${not_result_slash}
               echo "License header missing in ${path}"
               trigger_error "License header missing in ${path}"
@@ -43,8 +43,6 @@ for pattern in ${glob_pattern_array}
     echo "License headers found in files matching ${pattern}"
 end
 echo "License header check complete"
-
-
 '''
 
 ### META TASKS ###
