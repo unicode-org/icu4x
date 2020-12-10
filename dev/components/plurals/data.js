@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607465939886,
+  "lastUpdate": 1607621542226,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1553,6 +1553,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 99120,
             "range": "± 5621",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2bfeb089cd885e5b425704f05500e55743db239b",
+          "message": "Fix license check by fixing typo in duckscript syntax (#416)",
+          "timestamp": "2020-12-10T09:16:47-08:00",
+          "tree_id": "d799103d9420068322c688f29e16c4c485a79c4f",
+          "url": "https://github.com/unicode-org/icu4x/commit/2bfeb089cd885e5b425704f05500e55743db239b"
+        },
+        "date": 1607621541683,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1028,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5779,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 99138,
+            "range": "± 429",
             "unit": "ns/iter"
           }
         ]
