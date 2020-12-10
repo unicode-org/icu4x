@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607465908954,
+  "lastUpdate": 1607621456923,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2159,6 +2159,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35656702,
             "range": "± 170178",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2bfeb089cd885e5b425704f05500e55743db239b",
+          "message": "Fix license check by fixing typo in duckscript syntax (#416)",
+          "timestamp": "2020-12-10T09:16:47-08:00",
+          "tree_id": "d799103d9420068322c688f29e16c4c485a79c4f",
+          "url": "https://github.com/unicode-org/icu4x/commit/2bfeb089cd885e5b425704f05500e55743db239b"
+        },
+        "date": 1607621453455,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30603301,
+            "range": "± 1405035",
             "unit": "ns/iter"
           }
         ]
