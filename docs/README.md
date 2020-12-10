@@ -28,6 +28,7 @@ Document | Summary
 [release.md](process/release.md) | Documentation on release process.
 [style_guide.md](process/style_guide.md) | A guide to best practices for writing Rust code in ICU4x.
 [triaging.md](process/triaging.md) | ICU4X uses GitHub for tracking feature requests and work items.
+[ci_build.md](process/ci_build.md) | An overview of continuous integration setup in ICU4X.
 
 ## Design
 
