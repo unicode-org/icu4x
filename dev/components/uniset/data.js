@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607621456923,
+  "lastUpdate": 1607625492725,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2189,6 +2189,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30603301,
             "range": "± 1405035",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6f25f89484dc3c17d2ec0a07bff6534e36e4462a",
+          "message": "Add doc on CI for ICU4X (#408)",
+          "timestamp": "2020-12-10T10:25:03-08:00",
+          "tree_id": "811ce90ea5c6db118013f0614972e46803269f89",
+          "url": "https://github.com/unicode-org/icu4x/commit/6f25f89484dc3c17d2ec0a07bff6534e36e4462a"
+        },
+        "date": 1607625492127,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29668326,
+            "range": "± 48415",
             "unit": "ns/iter"
           }
         ]
