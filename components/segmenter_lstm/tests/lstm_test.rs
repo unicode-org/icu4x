@@ -29,7 +29,7 @@ fn test_model_loading() {
 
 #[test]
 fn segment_file_by_lstm() {
-    // Choose the embedding system. It can be "graphclust" or "codepoints"
+    // Choosing the embedding system. It can be "graphclust" or "codepoints".
     let embedding: &str = "graphclust";
     let mut model_filename = "tests/testdata/Thai_".to_owned();
     model_filename.push_str(embedding);

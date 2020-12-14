@@ -46,8 +46,8 @@ impl Lstm {
         }
     }
 
-    /// `_return_id` is a function that returns the id associated with a code point or a grapheme cluster.
-    pub fn _return_id(&self, g: &str) -> i16 {
+    /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
+    fn return_id(&self, g: &str) -> i16 {
         let g_id: i16 = if self.data.dic.contains_key(g) {
             self.data.dic[g]
         } else {
@@ -86,11 +86,11 @@ impl Lstm {
         let input_seq: Result<Vec<i16>, Error> = if self.data.model.contains("codepoints") {
             Ok(input
                 .chars()
-                .map(|c| self._return_id(&c.to_string()))
+                .map(|c| self.return_id(&c.to_string()))
                 .collect())
         } else if self.data.model.contains("graphclust") {
             Ok(UnicodeSegmentation::graphemes(input, true)
-                .map(|s| self._return_id(s))
+                .map(|s| self.return_id(s))
                 .collect())
         } else {
             Err(Error::Syntax)
