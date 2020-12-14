@@ -47,7 +47,7 @@ fn get_value_from_token_stream(input: TokenStream) -> String {
 /// assert_eq!(DE, de);
 /// ```
 ///
-/// [`Language`]: ../icu_locid/subtags/struct.Language.html
+/// [`Language`]: icu_locid::subtags::Language
 #[proc_macro]
 pub fn language(input: TokenStream) -> TokenStream {
     let val = get_value_from_token_stream(input);
@@ -78,7 +78,7 @@ pub fn language(input: TokenStream) -> TokenStream {
 /// assert_eq!(ARAB, arab);
 /// ```
 ///
-/// [`Script`]: ../icu_locid/subtags/struct.Script.html
+/// [`Script`]: icu_locid::subtags::Script
 #[proc_macro]
 pub fn script(input: TokenStream) -> TokenStream {
     let val = get_value_from_token_stream(input);
@@ -109,7 +109,7 @@ pub fn script(input: TokenStream) -> TokenStream {
 /// assert_eq!(CN, cn);
 /// ```
 ///
-/// [`Region`]: ../icu_locid/subtags/struct.Region.html
+/// [`Region`]: icu_locid::subtags::Region
 #[proc_macro]
 pub fn region(input: TokenStream) -> TokenStream {
     let val = get_value_from_token_stream(input);
@@ -140,7 +140,7 @@ pub fn region(input: TokenStream) -> TokenStream {
 /// assert_eq!(POSIX, posix);
 /// ```
 ///
-/// [`Variant`]: ../icu_locid/subtags/struct.Variant.html
+/// [`Variant`]: icu_locid::subtags::Variant
 #[proc_macro]
 pub fn variant(input: TokenStream) -> TokenStream {
     let val = get_value_from_token_stream(input);
@@ -174,7 +174,7 @@ pub fn variant(input: TokenStream) -> TokenStream {
 /// *Note*: As of Rust 1.47, the macro cannot produce language identifier
 /// with variants in the const mode pending [`Heap Allocations in Constants`].
 ///
-/// [`LanguageIdentifier`]: ../icu_locid/struct.LanguageIdentifier.html
+/// [`LanguageIdentifier`]: icu_locid::LanguageIdentifier
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
 #[proc_macro]
 pub fn langid(input: TokenStream) -> TokenStream {

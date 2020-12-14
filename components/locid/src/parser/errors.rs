@@ -5,12 +5,8 @@ use std::error::Error;
 use std::fmt::{self, Display};
 
 /// List of parser errors that can be generated
-/// while parsing [`LanguageIdentifier`], [`Locale`], [`subtags`] or [`extensions`].
+/// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale), [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
 ///
-/// [`LanguageIdentifier`]: ./struct.LanguageIdentifier.html
-/// [`Locale`]: ./struct.Locale.html
-/// [`subtags`]: ./subtags/index.html
-/// [`extensions`]: ./extensions/index.html
 #[derive(Debug, PartialEq)]
 pub enum ParserError {
     /// Invalid language subtag.

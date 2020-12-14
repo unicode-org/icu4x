@@ -6,9 +6,6 @@
 //! The main struct for this extension is [`Unicode`] which contains [`Keywords`] and
 //! [`Attributes`].
 //!
-//! [`Unicode`]: ./struct.Unicode.html
-//! [`Keywords`]: ./struct.Keywords.html
-//! [`Attributes`]: ./struct.Attributes.html
 //!
 //! # Examples
 //!

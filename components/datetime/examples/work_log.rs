@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // An example application which uses icu_datetime to format entries
 // from a work log into human readable dates and times.
+
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
+
 use icu_datetime::date::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
 use icu_locid_macros::langid;
@@ -29,7 +32,8 @@ fn print(_input: &str, _value: Option<usize>) {
     }
 }
 
-fn main() {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let lid = langid!("en");
 
     let provider = icu_testdata::get_provider();
@@ -56,4 +60,6 @@ fn main() {
             println!("{}) {}", idx, fdt);
         }
     }
+
+    0
 }

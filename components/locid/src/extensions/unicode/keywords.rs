@@ -18,8 +18,6 @@ use super::Value;
 ///
 /// You can find the full list in [`Unicode BCP 47 U Extension`] section of LDML.
 ///
-/// [`Key`]: ./struct.Key.html
-/// [`Value`]: ./struct.Value.html
 /// [`Unicode BCP 47 U Extension`]: https://unicode.org/reports/tr35/tr35.html#Key_And_Type_Definitions_
 ///
 /// # Examples
@@ -41,8 +39,6 @@ pub struct Keywords(Box<[(Key, Value)]>);
 impl Keywords {
     /// A constructor which takes a pre-sorted list of `(Key, Value)` tuples.
     ///
-    /// [`Key`]: ./struct.Key.html
-    /// [`Value`]: ./struct.Value.html
     ///
     /// # Examples
     ///
@@ -63,8 +59,6 @@ impl Keywords {
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
     ///
-    /// [`Key`]: ./struct.Key.html
-    /// [`Value`]: ./struct.Value.html
     ///
     /// # Examples
     ///
@@ -91,8 +85,6 @@ impl Keywords {
 
     /// Returns a reference to the [`Value`] corresponding to the [`Key`].
     ///
-    /// [`Key`]: ./struct.Key.html
-    /// [`Value`]: ./struct.Value.html
     ///
     /// # Examples
     ///
@@ -126,14 +118,19 @@ impl Keywords {
 
 impl std::fmt::Display for Keywords {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut initial = true;
+        let mut first = true;
         for (key, value) in self.iter() {
-            if initial {
-                initial = false;
+            if first {
+                first = false;
             } else {
                 f.write_char('-')?;
             }
-            write!(f, "{}-{}", key, value)?;
+
+            if value.is_empty() {
+                key.fmt(f)?;
+            } else {
+                write!(f, "{}-{}", key, value)?;
+            }
         }
         Ok(())
     }

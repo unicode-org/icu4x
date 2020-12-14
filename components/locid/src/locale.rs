@@ -15,7 +15,6 @@ use std::str::FromStr;
 /// `Locale` exposes all of the same fields and methods as [`LanguageIdentifier`], and
 /// on top of that is able to parse, manipulate and serialize unicode extension fields.
 ///
-/// [`LanguageIdentifier`]: ./struct.LanguageIdentifier.html
 ///
 /// # Examples
 ///

@@ -1,0 +1,43 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+[alias]
+
+### INDIVIDUAL TEST AND LINT TASKS ###
+
+# Build and run all code paths except docs
+test-all = "test --all-features --all-targets"
+
+# Build and run all docs tests
+test-docs = "test --all-features --doc"
+
+# Check for formatting on all code
+fmt-check = "fmt -- --check"
+
+# Check for license headers
+license-check = "make license-header-check"
+
+# Run Clippy on all code paths
+clippy-all = "clippy --all-features --all-targets"
+
+### META TASKS ###
+
+# Run quick version of all lints and tests
+quick = "make quick"
+
+# Run all lints and tests
+ci = "make ci"
+
+### WASM TASKS ###
+
+# Re-build standard library with panic=abort.
+wasm-build = "build -Z build-std=std,panic_abort --target wasm32-unknown-unknown --release"
+
+[target.wasm32-unknown-unknown]
+rustflags = [
+  # 10 KiB heap size, to fit in 1 page.
+  "-C", "link-args=-z stack-size=10240",
+  # Several options to reduce code size.
+  "-C", "panic=abort",
+  "-C", "opt-level=s",
+]

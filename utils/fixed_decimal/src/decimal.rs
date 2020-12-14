@@ -39,7 +39,7 @@ const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
-    /// List of digits; digits[0] is the most significant.
+    /// List of digits; digits\[0\] is the most significant.
     ///
     /// Invariants:
     /// - Must not include leading or trailing zeros
@@ -47,7 +47,7 @@ pub struct FixedDecimal {
     // TODO: Consider using a nibble array
     digits: SmallVec<[u8; 8]>,
 
-    /// Power of 10 of digits[0].
+    /// Power of 10 of digits\[0\].
     ///
     /// Invariants:
     /// - <= upper_magnitude
@@ -807,7 +807,7 @@ fn test_zero_str_bounds() {
     for cas in &cases {
         let mut input_str = format!("{:0fill$}", 0, fill = cas.zeros_before_dot);
         if cas.zeros_after_dot > 0 {
-            input_str.push_str(".");
+            input_str.push('.');
             input_str.push_str(&format!("{:0fill$}", 0, fill = cas.zeros_after_dot));
         }
         match FixedDecimal::from_str(&input_str) {

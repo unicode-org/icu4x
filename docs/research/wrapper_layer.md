@@ -15,7 +15,7 @@ Although ergonomic APIs correspond with what users of i18n intend to do, from an
 
 The goal of the *wrapper layer* is to provide an ergonomic API for clients, but resolve the user request into specific functional units, load the data, and pass the data to the logical API under the hood.
 
-![Ergonomic to Logical API](assets/ergonomic-logical.svg)
+![Ergonomic to Logical API](../assets/ergonomic_logical.svg)
 
 For example, in the above diagram, a client uses the ergonomic Intl.NumberFormat API with options to enable compact notation in long form.  The wrapper layer performs a bit of logic to figure out that this combination of options requires two functional units: plural rules and compact decimal format.  It then delegates to those two functions in the logical API.
 
@@ -39,7 +39,7 @@ Rust has great support for dead code elimination.  In languages where tooling fo
 
 ### Data Loading
 
-In accordance with [principles.md](principles.md), the core library should not perform I/O; instead, data should be passed via a dynamic DataProvider ([data-pipeline.md](data-pipeline.md)).
+In accordance with [principles.md](../design/principles.md), the core library should not perform I/O; instead, data should be passed via a dynamic DataProvider ([data-pipeline.md](../design/data_pipeline.md)).
 
 How does this fit into the wrapper layer model?
 

@@ -94,7 +94,6 @@ pub mod datetime {
     //! let formatted_date = dtf.format(&date);
     //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
     //! ```
-    //! [`DateTimeFormat`]: ./struct.DateTimeFormat.html
     //! [`DataProvider`]: ../../icu_provider/index.html
     pub use icu_datetime::*;
 }
@@ -145,10 +144,8 @@ pub mod locid {
     //! For more details, see [`Locale`] and [`LanguageIdentifier`].
     //!
     //! [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`]: https://unicode.org/reports/tr35/tr35.html#Unicode_Language_and_Locale_Identifiers
-    //! [`LanguageIdentifier`]: ./struct.LanguageIdentifier.html
-    //! [`Locale`]: ./struct.Locale.html
     //! [`ICU4X`]: https://github.com/unicode-org/icu4x
-    //! [`Unicode Extensions`]: ./extensions/index.html
+    //! [`Unicode Extensions`]: extensions
     pub use icu_locid::*;
 
     pub mod macros {
@@ -202,36 +199,23 @@ pub mod plurals {
     //! Every number in every language belongs to a certain [`Plural Category`].
     //! For example, Polish language uses four:
     //!
-    //! * [`One`](./enum.PluralCategory.html#variant.One): `1 miesiąc`
-    //! * [`Few`](./enum.PluralCategory.html#variant.Few): `2 miesiące`
-    //! * [`Many`](./enum.PluralCategory.html#variant.Many): `5 miesięcy`
-    //! * [`Other`](./enum.PluralCategory.html#variant.Other): `1.5 miesiąca`
+    //! * [`One`](PluralCategory::One): `1 miesiąc`
+    //! * [`Few`](PluralCategory::Few): `2 miesiące`
+    //! * [`Many`](PluralCategory::Many): `5 miesięcy`
+    //! * [`Other`](PluralCategory::Other): `1.5 miesiąca`
     //!
     //! ## Plural Rule Type
     //!
     //! Plural rules depend on the use case. This crate supports two types of plural rules:
     //!
-    //! * [`Cardinal`](./enum.PluralRuleType.html#variant.Cardinal): `3 doors`, `1 month`, `10 dollars`
-    //! * [`Ordinal`](./enum.PluralRuleType.html#variant.Ordinal): `1st place`, `10th day`, `11th floor`
-    //!
-    //! ## Data Provider
-    //!
-    //! In order to function, the API requires data from [`CLDR`].
-    //!
-    //! [`ICU4X`] is going to use a special API for handling data management called `DataProvider`.
-    //! Until that happens, this crate will provide a simple `JSON` and `bincode` providers behind a
-    //! flag.
-    //! For tests and documentation examples, there is also a `DummyDataProvider`.
-    //!
-    //! All of the content of the [`data`] module is heavily experimental and subject to change.
+    //! * [`Cardinal`](PluralRuleType::Cardinal): `3 doors`, `1 month`, `10 dollars`
+    //! * [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
     //!
     //! [`ICU4X`]: https://github.com/unicode-org/icu4x
-    //! [`PluralRules`]: ./struct.PluralRules.html
-    //! [`Plural Type`]: ./enum.PluralRuleType.html
-    //! [`Plural Category`]: ./enum.PluralCategory.html
+    //! [`Plural Type`]: PluralRuleType
+    //! [`Plural Category`]: PluralCategory
     //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
     //! [`CLDR`]: http://cldr.unicode.org/
-    //! [`data`]: ./data/index.html
     pub use icu_plurals::*;
 }
 
@@ -243,8 +227,8 @@ pub mod uniset {
     //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
     //!
     //! # Architecture
-    //! ICU4X `UnicodeSet` is split up into independent levels, with [`UnicodeSet`](struct.UnicodeSet.html) representing the membership/query API,
-    //! and [`UnicodeSetBuilder`](struct.UnicodeSetBuilder.html) representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
+    //! ICU4X `UnicodeSet` is split up into independent levels, with [`UnicodeSet`] representing the membership/query API,
+    //! and [`UnicodeSetBuilder`] representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
     //! is in future works.
     //!
     //! # Examples:
@@ -253,7 +237,7 @@ pub mod uniset {
     //!
     //! UnicodeSets are created from either serialized UnicodeSets,
     //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
-    //! the [`UnicodeSetBuilder`](struct.UnicodeSetBuilder.html), or from the TBA Properties API.
+    //! the [`UnicodeSetBuilder`], or from the TBA Properties API.
     //!
     //! ```
     //! use icu::uniset::{UnicodeSet, UnicodeSetBuilder};

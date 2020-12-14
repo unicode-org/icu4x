@@ -10,6 +10,9 @@
 //
 // This is a simple example of the API use and is severely oversimplified
 // compared to real Unicode block selection.
+
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
+
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 fn get_basic_latin_block() -> UnicodeSet {
@@ -59,7 +62,8 @@ fn print(_input: &str) {
     println!("{}", _input);
 }
 
-fn main() {
+#[no_mangle]
+fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let selector = BMPBlockSelector::new();
 
     let sample = "Welcome to MyName©®, Алексей!";
@@ -74,4 +78,6 @@ fn main() {
     for (ch, block) in result {
         print(&format!("{}: {:#?}", ch, block));
     }
+
+    0
 }

@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use crate::parser::ParserError;
+use crate::parser::{get_subtag_iterator, ParserError};
 use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::TinyStr8;
@@ -12,14 +12,13 @@ pub struct Value(Box<[TinyStr8]>);
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_TVALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828_u64) }; // "true"
 
-/// A value used in a list of [`Fields`].
+/// A value used in a list of [`Fields`](super::Fields).
 ///
 /// The value has to be a sequence of one or more alphanumerical strings
 /// separated by `-`.
 /// Each part of the sequence has to be no shorter than three characters and no
 /// longer than 8.
 ///
-/// [`Fields`]: ./struct.Fields.html
 ///
 /// # Examples
 ///
@@ -52,7 +51,7 @@ impl Value {
         let mut v = vec![];
         let mut has_value = false;
 
-        for subtag in input.split(|c| *c == b'-' || *c == b'_') {
+        for subtag in get_subtag_iterator(input) {
             if !Self::is_type_subtag(subtag) {
                 return Err(ParserError::InvalidExtension);
             }
@@ -105,9 +104,13 @@ impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let mut first = true;
 
+        if self.0.is_empty() {
+            f.write_str(TRUE_TVALUE.as_str())?;
+        }
+
         for subtag in self.0.iter() {
             if first {
-                write!(f, "{}", subtag)?;
+                subtag.fmt(f)?;
                 first = false;
             } else {
                 write!(f, "-{}", subtag)?;

@@ -1,18 +1,18 @@
 Issue Triaging
 ==============
 
-ICU4X uses GitHub for tracking feature requests and work items.
+ICU4X uses GitHub for tracking feature requests and work items.  The following queries omit issues having the **discuss** label.
 
-- All valid issues should have a type label or the **discuss** label.
-    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-tests+-label%3Aduplicate+-label%3Adiscuss)
+- All valid issues should have a type label.
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3AT-tests+-label%3Aduplicate+-label%3Adiscuss)
 - All valid issues should have a component label.
     - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3Ainvalid+-label%3Aduplicate)
-- All *open* issues should have an assignee or **help wanted** label.
-    - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+no%3Aassignee)
+- All *open* issues should have an assignee or the **help wanted** label.
+    - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+-label%3Adiscuss+no%3Aassignee)
 - All *closed* issues should have a resolution, linked pull request, or the **T-task**, **question**, **invalid**, or **duplicate** label.
     - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3AR-as-designed+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AR-fixed-elsewhere+-label%3Aquestion+-label%3Ainvalid+-label%3AT-task+-label%3Aduplicate)
 - If an issue is open and not labeled **backlog**, the issue should be actionable. Open issues should be assigned to a milestone.
-    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Abacklog)
+    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Abacklog+-label%3Adiscuss)
 - If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and remain open.  The backlog should be checked periodically for issues that should be re-prioritized.
     - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+label%3Abacklog+sort%3Aupdated-desc+)
 
@@ -27,6 +27,7 @@ Labels starting with `T-` are *type* labels, indicating the type of deliverable 
 - **T-docs** = relates to documentation, including user guide, architecture design, team processes, and API docs.
 - **T-enhancement** = a lower-priority improvement or new feature.
 - **T-task** = a task, not a code change.
+- **T-techdebt** = the issue has no user-facing effect
 - **T-tests** = the issue can be addressed by unit testing.
 
 Additional labels that can be used in place of a type:

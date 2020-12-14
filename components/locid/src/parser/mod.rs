@@ -8,3 +8,7 @@ mod locale;
 pub use errors::ParserError;
 pub use langid::{parse_language_identifier, parse_language_identifier_from_iter, ParserMode};
 pub use locale::parse_locale;
+
+pub fn get_subtag_iterator(t: &[u8]) -> impl Iterator<Item = &[u8]> {
+    t.split(|c| *c == b'-' || *c == b'_')
+}

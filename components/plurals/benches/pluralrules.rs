@@ -41,7 +41,7 @@ fn pluralrules(c: &mut Criterion) {
             });
         });
 
-        let lid = langid!("pl");
+        let lid = langid!("ru");
         let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
         c.bench_function("plurals/pluralrules/select/fs", |b| {
             b.iter(|| {

@@ -9,13 +9,13 @@ use icu_provider::structs::plurals::PluralRuleStringsV1;
 use std::borrow::Cow;
 use std::convert::TryInto;
 
-/// A raw function pointer to a [`PluralRulesFn`](./type.PluralRulesFn.html)
+/// A raw function pointer to a [`PluralRulesFn`]
 // pub type PluralRulesFn = fn(&PluralOperands) -> PluralCategory;
 
 /// A structure holding a list of [`ast::Condition`] for a given locale and type.
 ///
-/// [`PluralCategory`]: ../enum.PluralCategory.html
-/// [`ast::Condition`]: ../rules/ast/struct.Condition.html
+/// [`PluralCategory`]: super::PluralCategory
+/// [`ast::Condition`]: super::rules::ast::Condition
 #[derive(Default, Debug)]
 pub struct PluralRuleList {
     zero: Option<ast::Condition>,
@@ -62,7 +62,7 @@ impl TryInto<PluralRuleList> for &PluralRuleStringsV1 {
 /// An enum storing models of
 /// handling plural rules selection.
 pub enum RulesSelector {
-    /// A raw function pointer to a [`PluralRulesFn`](./type.PluralRulesFn.html)
+    /// A raw function pointer to a [`PluralRulesFn`]
     ///
     /// This variant is used by providers which store rules as native Rust functions.
     // Function(PluralRulesFn),
@@ -71,8 +71,8 @@ pub enum RulesSelector {
     /// This variant is used by providers which parse the list of conditions out
     /// of source strings.
     ///
-    /// [`PluralCategory`]: ../enum.PluralCategory.html
-    /// [`ast::Condition`]: ../rules/ast/struct.Condition.html
+    /// [`PluralCategory`]: super::PluralCategory
+    /// [`ast::Condition`]: super::rules::ast::Condition
     Conditions(PluralRuleList),
 }
 

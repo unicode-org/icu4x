@@ -6,9 +6,8 @@ use crate::rules::parser::ParserError;
 use icu_provider::prelude::DataError;
 use std::fmt;
 
-/// A list of possible error outcomes for the [`PluralRules`] struct.
+/// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///
-/// [`PluralRules`]: ./struct.PluralRules.html
 #[derive(Debug)]
 pub enum PluralRulesError {
     Parser(ParserError),

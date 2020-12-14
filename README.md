@@ -1,4 +1,4 @@
-# ICU4X [![Docs](https://docs.rs/icu/badge.svg)](https://docs.rs/icu) [![Build Status](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=master)](https://coveralls.io/github/unicode-org/icu4x?branch=master)
+# ICU4X [![Docs](https://docs.rs/icu/badge.svg)](https://docs.rs/icu) [![Build Status](https://github.com/unicode-org/icu4x/workflows/Build%20&%20Test/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status (Coveralls)](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=master)](https://coveralls.io/github/unicode-org/icu4x?branch=master) [![Coverage Status (Codecov)](https://codecov.io/gh/unicode-org/icu4x/branch/master/graph/badge.svg)](https://codecov.io/gh/unicode-org/icu4x)
 
 Welcome to the home page for the `ICU4X` project.
 
@@ -11,6 +11,18 @@ The design goals of `ICU4X` are:
 * Pluggable locale data
 * Availability and ease of use in multiple programming languages
 * Written by i18n experts to encourage best practices
+
+***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://corp.unicode.org/mailman/listinfo/icu4x-announce).  *Note: After subscribing, check your spam folder for a confirmation.*
+
+## Documentation
+
+For an introduction to the project, please visit [`Introduction to ICU4X for Rust`](docs/tutorials/intro.md) tutorial.
+
+For technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
+
+More information about the project can be found in [the docs subdirectory](docs/README.md).
+
+## Quick Start
 
 An example `ICU4X` powered application in Rust may look like this:
 
@@ -48,16 +60,6 @@ fn main() {
 }
 ```
 
-
-## Documentation
-
-For an introduction the project, please visit [`Introduction to ICU4X for Rust`](https://github.com/unicode-org/icu4x/wiki/Introduction-to-ICU4X-for-Rust) tutorial.
-
-For technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
-
-More information about the project can be found on our [wiki](https://github.com/unicode-org/icu4x/wiki) and in [the docs subdirectory](docs/index.md).
-
-
 ## Development
 
 `ICU4X` is developed by the `ICU4X-SC`. We are a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.  See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
@@ -66,7 +68,7 @@ Please subscribe to this repository to participate in discussions.  If you want 
 
 ## Charter
 
-*For the full charter, including answers to frequently asked questions, see [charter.md](docs/charter.md).*
+*For the full charter, including answers to frequently asked questions, see [charter.md](docs/process/charter.md).*
 
 ICU4X is a new project whose objective is to solve the needs of clients who wish to provide client-side i18n for their products in resource-constrained environments.
 

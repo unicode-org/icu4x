@@ -43,11 +43,10 @@
 //! [`MockDateTime`] as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
 //! we hope to work with the community to develop core date and time APIs that will work as an input for this component.
 //!
-//! [`DateTimeFormat`]: ./struct.DateTimeFormat.html
-//! [`DataProvider`]: ../icu_provider/index.html
+//! [`DataProvider`]: icu_provider::DataProvider
 //! [`ICU4X`]: ../icu/index.html
-//! [`Style`]: ./options/style/index.html
-//! [`MockDateTime`]: ./date/struct.MockDateTime.html
+//! [`Style`]: options::style
+//! [`MockDateTime`]: date::MockDateTime
 pub mod date;
 mod error;
 mod fields;
