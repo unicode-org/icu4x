@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 
 /// `sigmoid` computes the sigmoid function for a scalar value.
