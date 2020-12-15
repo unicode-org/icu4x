@@ -12,6 +12,6 @@ pub enum Error {
     /// Example: If there is a letter other than {b, e, i, s} in a bies sequence.
     Syntax,
 
-    /// This error shows if matrices are compatible for multiplication.
+    /// This error shows if matrices are not compatible for multiplication.
     DimensionMismatch,
 }

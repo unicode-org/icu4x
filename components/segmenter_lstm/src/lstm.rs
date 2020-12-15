@@ -35,9 +35,6 @@ impl Lstm {
         {
             return Err(Error::DimensionMismatch);
         }
-
-        // data.mat1 = 2;
-
         Ok(Self { data })
     }
 

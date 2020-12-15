@@ -79,9 +79,9 @@ fn segment_file_by_lstm() {
     for test_case in test_text.data.testcases {
         let lstm_output = lstm.word_segmenter(&test_case.unseg);
         println!("Test case      : {}", test_case.unseg);
-        println!("xpected bies   : {}", test_case.true_bies);
-        println!("Estimated bies : {}", test_case.true_bies);
-        println!("True bies      : {}", lstm_output);
+        println!("Expected bies  : {}", test_case.expected_bies);
+        println!("Estimated bies : {}", lstm_output);
+        println!("True bies      : {}", test_case.true_bies);
         println!("****************************************************");
         assert_eq!(test_case.expected_bies, lstm_output);
     }

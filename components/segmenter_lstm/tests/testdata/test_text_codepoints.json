@@ -25,7 +25,7 @@
                 {"unseg": "ประกอบด้วยข่าวหลายข่าว", "expected_bies": "biiiiebiiebiiebiiebiie", "true_bies": "biiiiebiiebiiebiiebiie"},
                 {"unseg": "จึงมีราคาอยู่เพียงวันเดียวเมื่อพ้นวันไปแล้วก็หมดราคา", "expected_bies": "biebebiiebiiebiiiebiebiiiebiiiebiebiebebiiebebiebiii", "true_bies": "biebebiiebiiebiiiebiebiiiebiiiebiebiebebiiebebiebiie"},
                 {"unseg": "นิตยสาร", "expected_bies": "biiebii", "true_bies": "biiiiie"},
-                {"unseg": "ทางด้านความคิด", "expected_bies": "biebiiebiiebii", "true_bies": "iiibiiebiiebie"},
+                {"unseg": "ทางด้านความคิด", "expected_bies": "biebiiebiiebii", "true_bies": "biebiiebiiebie"},
                 {"unseg": "ละภาพจะมีบุคคลที่ทำหน้าที่ศึกษาค้นคว้าและออกความเห็นว่าควรมีภาพอะไรและมีลักษณะรายละเอียดอย่างใด", "expected_bies": "iiiiebebebiiiebiebebiiiiiebiiiebiiiiiebiebiebiiebiiebiebiebebiebiiebiebebiiiiebiiiiiiiiebiiiebe", "true_bies": "bebiebebebiiiebiebebiiiiiebiiiebiiiiiebiebiebiiebiiebiebiebebiebiiebiebebiiiiebiiiiiiiiebiiiebe"},
                 {"unseg": "การนำเอาภาพและตัวหนังสือมารวมกันเป็นหน้า", "expected_bies": "biebebiiiiebiebiebiiiiiebebiebiebiiebiii", "true_bies": "biebebiebiebiebiebiiiiiebebiebiebiiebiie"},
                 {"unseg": "เรียกว่า", "expected_bies": "biiiebie", "true_bies": "biiiebie"}]
