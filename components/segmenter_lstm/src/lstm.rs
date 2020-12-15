@@ -13,23 +13,31 @@ pub struct Lstm {
     data: structs::LstmData,
 }
 
-#[derive(Debug)]
-pub struct TestText {
-    pub data: structs::TestTextData,
-}
-
-impl TestText {
-    pub fn new(data: structs::TestTextData) -> Self {
-        Self { data }
-    }
-}
-
 impl Lstm {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(data: structs::LstmData) -> Result<Self, Error> {
         if data.dic.len() > std::i16::MAX as usize {
             return Err(Error::Limit);
         }
+        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_") {
+            return Err(Error::Syntax);
+        }
+        let embedd_dim = data.mat1.shape()[1];
+        let hunits = data.mat3.shape()[0];
+        if data.mat2.shape() != [embedd_dim, 4 * hunits]
+            || data.mat3.shape() != [hunits, 4 * hunits]
+            || data.mat4.shape() != [4 * hunits]
+            || data.mat5.shape() != [embedd_dim, 4 * hunits]
+            || data.mat6.shape() != [hunits, 4 * hunits]
+            || data.mat7.shape() != [4 * hunits]
+            || data.mat8.shape() != [2 * hunits, 4]
+            || data.mat9.shape() != [4]
+        {
+            return Err(Error::DimensionMismatch);
+        }
+
+        // data.mat1 = 2;
+
         Ok(Self { data })
     }
 
@@ -38,6 +46,7 @@ impl Lstm {
         &self.data.model
     }
 
+    // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
     fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
         let ind = math_helper::max_arr1(arr.view());
@@ -87,30 +96,29 @@ impl Lstm {
     pub fn word_segmenter(&self, input: &str) -> String {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
-        let input_seq: Result<Vec<i16>, Error> = if self.data.model.contains("codepoints") {
-            Ok(input
+        // Already checked that the name of the model is either "codepoints" or "graphclsut"
+        // TODO: Avoid allocating a string for each code point
+        let input_seq: Vec<i16> = if self.data.model.contains("_codepoints_") {
+            input
                 .chars()
                 .map(|c| self.return_id(&c.to_string()))
-                .collect())
-        } else if self.data.model.contains("graphclust") {
-            Ok(UnicodeSegmentation::graphemes(input, true)
-                .map(|s| self.return_id(s))
-                .collect())
+                .collect()
         } else {
-            Err(Error::Syntax)
+            UnicodeSegmentation::graphemes(input, true)
+                .map(|s| self.return_id(s))
+                .collect()
         };
 
         // x_data is the data ready to be feed into the model
-        let x_data = input_seq.unwrap();
-        let x_data_len = x_data.len();
+        let input_seq_len = input_seq.len();
 
         // hunits is the number of hidden unints in each LSTM cell
         let hunits = self.data.mat3.shape()[0];
         // Forward LSTM
         let mut c_fw = Array1::<f32>::zeros(hunits);
         let mut h_fw = Array1::<f32>::zeros(hunits);
-        let mut all_h_fw = Array2::<f32>::zeros((x_data_len, hunits));
-        for (i, g_id) in x_data.iter().enumerate() {
+        let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
+        for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.data.mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
@@ -128,8 +136,8 @@ impl Lstm {
         // Backward LSTM
         let mut c_bw = Array1::<f32>::zeros(hunits);
         let mut h_bw = Array1::<f32>::zeros(hunits);
-        let mut all_h_bw = Array2::<f32>::zeros((x_data_len, hunits));
-        for (i, g_id) in x_data.iter().rev().enumerate() {
+        let mut all_h_bw = Array2::<f32>::zeros((input_seq_len, hunits));
+        for (i, g_id) in input_seq.iter().rev().enumerate() {
             let x_t = self.data.mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
@@ -141,14 +149,14 @@ impl Lstm {
             );
             h_bw = new_h;
             c_bw = new_c;
-            all_h_bw = math_helper::change_row(all_h_bw, x_data_len - 1 - i, &h_bw);
+            all_h_bw = math_helper::change_row(all_h_bw, input_seq_len - 1 - i, &h_bw);
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
         let timew = self.data.mat8.view();
         let timeb = self.data.mat9.view();
         let mut bies = String::from("");
-        for i in 0..x_data_len {
+        for i in 0..input_seq_len {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);

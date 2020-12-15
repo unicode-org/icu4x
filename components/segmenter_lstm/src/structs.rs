@@ -28,18 +28,3 @@ pub struct LstmData {
     pub mat8: Array2<f32>,
     pub mat9: Array1<f32>,
 }
-
-/// `TestCase` is a struct used to store a single test case.
-/// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
-/// sequence representing the true segmentation.
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
-pub struct TestCase {
-    pub unseg: String,
-    pub true_bies: String,
-}
-
-/// `TestTextData` is a struct to store a vector of `TestCase` that represents a test text.
-#[derive(PartialEq, Debug, Serialize, Deserialize)]
-pub struct TestTextData {
-    pub testcases: Vec<TestCase>,
-}
