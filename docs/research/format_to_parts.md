@@ -33,9 +33,9 @@ new Intl.DateTimeFormat("fr", { dateStyle: "medium" }).formatRangeToParts(new Da
 ] */
 ```
 
-The goal of this document is to discuss how we will deal with formatToParts in ICU4X, both with regard to the API model and the data model (implementation).
+The goal of this document is to discuss how we will deal with formatToParts in ICU4X, both with regard to the internal data model (capabilities) and the internal data model (implementation).
 
-## API Model
+## External Data Model
 
 There are two prevailing models in formatting to parts: linear attributes and nested fields.
 
@@ -59,7 +59,7 @@ ECMA-402 uses the linear attributes model: each substring is mapped to exactly o
 
 ### Nested Fields
 
-In the nested fields model, there is a set of ranges, and a particular character could live in more than one range.  Here is how the above date interval format would look with nested fields:
+Parts of ICU use the nested fields model: there is a set of ranges, and a particular character could live in more than one range.  Here is how the above date interval format would look with nested fields:
 
 ```
 1 janv. – 3 mars 2020
@@ -81,7 +81,7 @@ In the nested fields model, there is a set of ranges, and a particular character
 
 The linear attributes model is simpler, but the nested fields model is more flexible.
 
-## Data Model
+## Internal Data Model
 
 This section discusses alternate representations of formatToParts data with respect to the internal representation in types such as FormattedDateTime.
 
