@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tinystr;
 use crate::error::Error;
 use icu_uniset::UnicodeSet;
@@ -28,18 +28,25 @@ pub mod key {
     pub const WSPACE_V1: DataKey = data_key!(uniset, "wspace", 1);
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct PpucdProperty {
     pub name: String,
     pub inv_list: Vec<u32>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct PpucdResource {
     pub properties: Vec<PpucdProperty>,
 }
 
 impl PpucdProperty {
+
+    pub fn default() -> PpucdProperty {
+        PpucdProperty {
+            name: String::new(),
+            inv_list: vec![],
+        }
+    }
 
     /// Converts a UnicodeSet into a conversion list since UnicodeSet does not
     /// expose a public method to convert to inversion lists.
@@ -76,6 +83,15 @@ impl PpucdProperty {
         PpucdProperty {
             name: String::from(name),
             inv_list,
+        }
+    }
+}
+
+impl PpucdResource {
+    pub fn default() -> PpucdResource {
+        let properties = vec![ PpucdProperty::default() ];
+        PpucdResource {
+            properties,
         }
     }
 }
