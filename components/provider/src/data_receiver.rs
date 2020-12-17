@@ -23,12 +23,14 @@ pub trait DataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
     ///
     /// let mut receiver = DataReceiverForType::<String>::new();
     /// let mut d = serde_json::Deserializer::from_str(JSON);
-    /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
+    /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))
+    ///     .expect("Deserialization should be successful");
     ///
     /// assert_eq!(receiver.payload, Some(Cow::Owned("hello world".to_string())));
     /// ```
@@ -43,13 +45,14 @@ pub trait DataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
     ///
-    /// const DATA: &'static str = "hello world";
+    /// let borrowed_data: String = "hello world".to_string();
     ///
     /// let mut receiver = DataReceiverForType::<String>::new();
-    /// receiver.receive_borrow(DATA);
+    /// receiver.receive_borrow(&borrowed_data).expect("Types should match");
     ///
-    /// assert_eq!(receiver.payload, Some(Cow::Borrowed("hello world")));
+    /// assert_eq!(receiver.payload, Some(Cow::Borrowed(&borrowed_data)));
     /// ```
     fn receive_borrow(&mut self, borrowed_any: &'d dyn Any) -> Result<(), Error>;
 
@@ -59,10 +62,11 @@ pub trait DataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
     ///
     /// let mut receiver = DataReceiverForType::<String>::new();
     /// let boxed = Box::new("hello world".to_string());
-    /// receiver.receive_box(boxed);
+    /// receiver.receive_box(boxed).expect("Types should match");
     ///
     /// assert_eq!(receiver.payload, Some(Cow::Owned("hello world".to_string())));
     /// ```
@@ -74,12 +78,13 @@ pub trait DataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
     ///
     /// let mut receiver = DataReceiverForType::<String>::new();
     /// let mut option = Some("hello world".to_string());
-    /// receiver.receive_option(&mut option);
+    /// receiver.receive_option(&mut option).expect("Types should match");
     ///
-    /// assert!(option, None);
+    /// assert!(option.is_none());
     /// assert_eq!(receiver.payload, Some(Cow::Owned("hello world".to_string())));
     /// ```
     fn receive_option(&mut self, option_any: &mut dyn Any) -> Result<(), Error>;
@@ -102,6 +107,8 @@ impl<'a, 'd, 'de> dyn DataReceiver<'d, 'de> + 'a {
 /// # Example
 ///
 /// ```
+/// use icu_provider::prelude::*;
+///
 /// let mut string_receiver = DataReceiverForType::<String>::new();
 /// ```
 #[derive(Debug)]

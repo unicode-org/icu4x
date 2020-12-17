@@ -19,17 +19,6 @@
 //!
 //! ```
 //! use icu_provider::prelude::*;
-//! use std::any::TypeId;
-//!
-//! // Types included:
-//! println!("{:?}", TypeId::of::<dyn DataProvider>());
-//! println!("{:?}", TypeId::of::<DataError>());
-//! println!("{:?}", TypeId::of::<DataKey>());
-//! println!("{:?}", TypeId::of::<DataEntry>());
-//! println!("{:?}", TypeId::of::<DataCategory>());
-//! println!("{:?}", TypeId::of::<DataRequest>());
-//! println!("{:?}", TypeId::of::<DataResponse>());
-//! println!("{:?}", TypeId::of::<DataResponseBuilder>());
 //! ```
 //!
 //! ## Types of Data Providers

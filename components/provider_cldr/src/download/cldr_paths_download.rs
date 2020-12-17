@@ -13,6 +13,7 @@ use std::path::PathBuf;
 /// # Example
 ///
 /// ```
+/// use icu_provider::prelude::*;
 /// use icu_provider_cldr::download::CldrPathsDownload;
 /// use icu_provider_cldr::CldrJsonDataProvider;
 /// use icu_locid_macros::langid;
@@ -28,8 +29,9 @@ use std::path::PathBuf;
 ///     use icu_provider::prelude::*;
 ///     use icu_provider::structs;
 ///
-///     let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
-///         .load(&DataRequest {
+///     let data: Cow<structs::plurals::PluralRuleStringsV1> =
+///         (data_provider as &dyn DataProvider)
+///         .load_payload(&DataRequest {
 ///             data_entry: DataEntry {
 ///                 langid: langid!("uk"),
 ///                 variant: None,
@@ -37,7 +39,7 @@ use std::path::PathBuf;
 ///             data_key: structs::plurals::key::ORDINAL_V1,
 ///         })
 ///         .unwrap()
-///         .take_payload()
+///         .payload
 ///         .unwrap();
 ///     assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
 /// }
