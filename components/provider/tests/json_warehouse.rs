@@ -9,13 +9,13 @@ use std::prelude::v1::*;
 use std::str::FromStr;
 
 use icu_provider::prelude::*;
-use icu_provider::structs;
+use icu_provider::structs::{self, decimal::SymbolsV1};
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
 #[derive(Serialize, Deserialize, Debug)]
 struct DecimalJsonSchema {
-    pub symbols_v1_a: structs::decimal::SymbolsV1,
+    pub symbols_v1_a: SymbolsV1,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -101,8 +101,8 @@ fn get_warehouse() -> JsonDataWarehouse {
     JsonDataWarehouse::from_str(DATA).unwrap()
 }
 
-fn get_receiver<'d>() -> DataReceiverImpl<'d, structs::decimal::SymbolsV1> {
-    DataReceiverImpl { payload: None }
+fn get_receiver<'d>() -> DataReceiverForType<'d, SymbolsV1> {
+    DataReceiverForType::default()
 }
 
 fn get_request() -> DataRequest {
@@ -119,10 +119,10 @@ fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
     warehouse.provider().load(&get_request()).unwrap()
 }
 
-fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
+fn check_data(decimal_data: &SymbolsV1) {
     assert_eq!(
         decimal_data,
-        &structs::decimal::SymbolsV1 {
+        &SymbolsV1 {
             zero_digit: '0',
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
@@ -134,7 +134,7 @@ fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
 fn test_read_string() {
     let warehouse = get_warehouse();
     let response = get_response(&warehouse);
-    let decimal_data: &structs::decimal::SymbolsV1 = response.borrow_payload().unwrap();
+    let decimal_data: &SymbolsV1 = response.borrow_payload().unwrap();
     check_data(decimal_data);
 }
 
@@ -142,7 +142,7 @@ fn test_read_string() {
 fn test_borrow_payload_mut() {
     let warehouse = get_warehouse();
     let mut response = get_response(&warehouse);
-    let decimal_data: &mut structs::decimal::SymbolsV1 = response.borrow_payload_mut().unwrap();
+    let decimal_data: &mut SymbolsV1 = response.borrow_payload_mut().unwrap();
     check_data(decimal_data);
 }
 
@@ -150,7 +150,7 @@ fn test_borrow_payload_mut() {
 fn test_take_payload() {
     let warehouse = get_warehouse();
     let response = get_response(&warehouse);
-    let decimal_data: Cow<structs::decimal::SymbolsV1> = response.take_payload().unwrap();
+    let decimal_data: Cow<SymbolsV1> = response.take_payload().unwrap();
     check_data(&decimal_data);
 }
 
@@ -159,7 +159,7 @@ fn test_clone_payload() {
     let final_data = {
         let warehouse = get_warehouse();
         let response = get_response(&warehouse);
-        let decimal_data: Cow<structs::decimal::SymbolsV1> = response.take_payload().unwrap();
+        let decimal_data: Cow<SymbolsV1> = response.take_payload().unwrap();
         decimal_data.into_owned()
     };
     check_data(&final_data);
@@ -173,6 +173,13 @@ fn test_data_receiver() {
         .provider()
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
-    let decimal_data: &structs::decimal::SymbolsV1 = &receiver.payload.unwrap();
+    let decimal_data: &SymbolsV1 = &receiver.payload.unwrap();
     check_data(decimal_data);
 }
+
+// #[test]
+// fn test_receiver_dyn_impl<'d>() {
+//     let warehouse = get_warehouse();
+//     let provider: &dyn DataProviderV2<'d> = &warehouse.provider();
+//     let response = provider.load_v2a::<SymbolsV1>(&get_request()).unwrap();
+// }

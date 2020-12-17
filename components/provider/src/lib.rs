@@ -92,7 +92,7 @@ pub mod prelude {
 
     pub use crate::v2::DataProviderV2;
     pub use crate::v2::DataReceiver;
-    pub use crate::v2::DataReceiverImpl;
+    pub use crate::v2::DataReceiverForType;
     pub use crate::v2::DataResponseV2;
 }
 
@@ -123,14 +123,36 @@ pub mod v2 {
     }
 
     #[derive(Debug)]
-    pub struct DataReceiverImpl<'d, T>
+    pub struct DataReceiverForType<'d, T>
     where
-        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+        T: Clone + Debug,
     {
         pub payload: Option<Cow<'d, T>>,
     }
 
-    impl<'d, T> DataReceiver<'d, 'static> for DataReceiverImpl<'d, T>
+    impl<'d, T> Default for DataReceiverForType<'d, T>
+    where
+        T: Clone + Debug,
+    {
+        fn default() -> Self {
+            Self { payload: None }
+        }
+    }
+
+    impl<'d, T> DataReceiverForType<'d, T>
+    where
+        T: Clone + Debug,
+    {
+        pub fn new() -> Self {
+            Self::default()
+        }
+
+        pub fn borrow_payload(&self) -> Option<&T> {
+            self.payload.as_ref().map(|cow| cow.borrow())
+        }
+    }
+
+    impl<'d, T> DataReceiver<'d, 'static> for DataReceiverForType<'d, T>
     where
         T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
     {

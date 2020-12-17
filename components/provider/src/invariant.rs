@@ -113,8 +113,8 @@ fn test_basic() {
 #[test]
 fn test_v2() {
     let provider = InvariantDataProvider;
-    let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
-        DataReceiverImpl { payload: None };
+    let mut receiver =
+        DataReceiverForType::<structs::plurals::PluralRuleStringsV1> { payload: None };
     provider
         .load_v2(
             &DataRequest {
