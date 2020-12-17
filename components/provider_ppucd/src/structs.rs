@@ -5,6 +5,7 @@
 use serde::Deserialize;
 use tinystr;
 use crate::error::Error;
+use icu_uniset::UnicodeSet;
 
 macro_rules! data_key {
     (uniset, $sub_category:literal, $version:tt) => {
@@ -28,16 +29,29 @@ pub mod key {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct PpucdResource {
-    pub properties: Vec<i32>,
+pub struct PpucdProperty {
+    pub name: String,
+    pub inv_list: Vec<i32>,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct PpucdResource {
+    pub properties: Vec<PpucdProperty>,
+}
 
 #[test]
 fn test_basic() {
     let json_str: &str = 
-        r#"{ "properties": [9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289] } "#;
+        r#"{
+            "properties": [
+                {
+                    "name": "wspace",
+                    "inv_list" : [9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289]
+                }
+                ]
+            }"#;
     let deserialize_result: Result<PpucdResource, serde_json::Error> = serde_json::from_str(json_str);
+    // println!("***** deserialize_result = {:?}", deserialize_result);
     let resource = deserialize_result.unwrap();
-    println!("***** parsed struct = {:?}", resource);
+    // println!("***** parsed struct = {:?}", resource);
 }
