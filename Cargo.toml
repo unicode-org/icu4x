@@ -4,6 +4,7 @@
 [workspace]
 
 members = [
+    "experimental/segmenter_lstm",
     "components/datetime",
     "components/ecma402",
     "components/icu",
