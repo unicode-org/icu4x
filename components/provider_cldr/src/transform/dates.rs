@@ -93,17 +93,17 @@ impl<'d> DatesProvider<'d> {
 }
 
 impl<'d> DataProviderV2<'d> for DatesProvider<'d> {
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponseV2, DataError> {
+    ) -> Result<DataResponse, DataError> {
         let cldr_langid = req.data_entry.langid.clone().into();
 
         let dates = self.get_dates_for(&req.data_key, &cldr_langid)?;
         let mut option = Some(gregory::DatesV1::from(dates));
         receiver.receive_option(&mut option)?;
-        Ok(DataResponseV2 {
+        Ok(DataResponse {
             data_langid: req.data_entry.langid.clone(),
         })
     }
@@ -440,7 +440,7 @@ fn test_basic() {
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProviderV2)
-        .load_v2a(&DataRequest {
+        .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
@@ -470,7 +470,7 @@ fn test_with_numbering_system() {
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProviderV2)
-        .load_v2a(&DataRequest {
+        .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
@@ -495,7 +495,7 @@ fn unalias_contexts() {
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProviderV2)
-        .load_v2a(&DataRequest {
+        .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,

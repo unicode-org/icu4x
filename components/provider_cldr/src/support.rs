@@ -41,12 +41,12 @@ where
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<DataResponseV2>, DataError> {
+    ) -> Result<Option<DataResponse>, DataError> {
         if T::supports_key(&req.data_key).is_err() {
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
-            return data_provider.load_v2(req, receiver).map(Some);
+            return data_provider.load_to_receiver(req, receiver).map(Some);
         }
         let mut src = self.src.write().map_err(map_poison)?;
         if src.is_none() {
@@ -55,7 +55,7 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        data_provider.load_v2(req, receiver).map(Some)
+        data_provider.load_to_receiver(req, receiver).map(Some)
     }
 
     /// Call `T::iter_for_key`, initializing T if necessary.

@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::manifest::SyntaxOption;
-use icu_provider::v2::DataReceiver;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 use std::io;
 use std::path::Path;
 

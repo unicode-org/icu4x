@@ -276,7 +276,7 @@ impl PluralRules {
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
         let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
-        data_provider.load_v2(
+        data_provider.load_to_receiver(
             &DataRequest {
                 data_key,
                 data_entry: DataEntry {

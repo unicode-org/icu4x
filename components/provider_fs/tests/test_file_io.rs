@@ -13,7 +13,7 @@ fn test_read_json() {
         .expect("Loading file from testdata directory");
 
     let response = (&provider as &dyn DataProviderV2)
-        .load_v2a(&DataRequest {
+        .load_payload(&DataRequest {
             data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,
@@ -46,7 +46,7 @@ fn test_read_bincode() {
         .expect("Loading file from testdata directory");
 
     let response = (&provider as &dyn DataProviderV2)
-        .load_v2a(&DataRequest {
+        .load_payload(&DataRequest {
             data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,

@@ -52,11 +52,11 @@ impl FsDataProvider {
 }
 
 impl<'de> DataProviderV2<'de> for FsDataProvider {
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'de, 'static>,
-    ) -> Result<DataResponseV2, DataError> {
+    ) -> Result<DataResponse, DataError> {
         type Error = DataError;
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.data_key.get_components().iter());
@@ -81,7 +81,7 @@ impl<'de> DataProviderV2<'de> for FsDataProvider {
         let reader = BufReader::new(file);
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
-        Ok(DataResponseV2 {
+        Ok(DataResponse {
             data_langid: req.data_entry.langid.clone(),
         })
     }

@@ -62,13 +62,13 @@ impl<'d> From<&'d JsonDataWarehouse> for JsonDataProvider<'d> {
 
 impl<'d> DataProviderV2<'d> for JsonDataProvider<'d> {
     /// Loads JSON data. Returns borrowed data.
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         _request: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponseV2, DataError> {
+    ) -> Result<DataResponse, DataError> {
         receiver.receive_borrow(&self.borrowed_data.decimal.symbols_v1_a)?;
-        Ok(DataResponseV2 {
+        Ok(DataResponse {
             data_langid: LanguageIdentifier::default(),
         })
     }
@@ -120,7 +120,7 @@ fn test_data_receiver() {
     let mut receiver = get_receiver();
     warehouse
         .provider()
-        .load_v2(&get_request(), &mut receiver)
+        .load_to_receiver(&get_request(), &mut receiver)
         .unwrap();
     let decimal_data: &SymbolsV1 = &receiver.payload.unwrap();
     check_data(decimal_data);
@@ -130,5 +130,5 @@ fn test_data_receiver() {
 // fn test_receiver_dyn_impl<'d>() {
 //     let warehouse = get_warehouse();
 //     let provider: &dyn DataProviderV2<'d> = &warehouse.provider();
-//     let response = provider.load_v2a::<SymbolsV1>(&get_request()).unwrap();
+//     let response = provider.load_payload::<SymbolsV1>(&get_request()).unwrap();
 // }

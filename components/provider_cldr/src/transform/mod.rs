@@ -38,11 +38,11 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
 }
 
 impl<'a, 'd> DataProviderV2<'d> for CldrJsonDataProvider<'a, 'd> {
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponseV2, DataError> {
+    ) -> Result<DataResponse, DataError> {
         if let Some(result) = self.plurals.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
         }

@@ -38,13 +38,13 @@ use icu_locid::LanguageIdentifier;
 pub struct InvariantDataProvider;
 
 impl<'d> DataProviderV2<'d> for InvariantDataProvider {
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponseV2, Error> {
+    ) -> Result<DataResponse, Error> {
         structs::get_invariant(&req.data_key, receiver)?;
-        Ok(DataResponseV2 {
+        Ok(DataResponse {
             data_langid: LanguageIdentifier::default(),
         })
     }
@@ -71,7 +71,7 @@ fn test_v2() {
     let mut receiver =
         DataReceiverForType::<structs::plurals::PluralRuleStringsV1> { payload: None };
     provider
-        .load_v2(
+        .load_to_receiver(
             &DataRequest {
                 data_key: structs::plurals::key::CARDINAL_V1,
                 data_entry: DataEntry {

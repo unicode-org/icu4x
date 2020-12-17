@@ -30,7 +30,7 @@ impl fmt::Display for DataRequest {
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone)]
-pub struct DataResponseV2 {
+pub struct DataResponse {
     pub data_langid: LanguageIdentifier,
 }
 
@@ -40,18 +40,22 @@ pub trait DataProviderV2<'d> {
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponseV2, Error>;
+    ) -> Result<DataResponse, Error>;
 }
 
-pub struct DataResponseV2a<'d, T>
+/// A response object containing an object as payload and metadata about it.
+pub struct DataResponseWithPayload<'d, T>
 where
     T: Clone + Debug,
 {
-    pub response: DataResponseV2,
+    /// Metadata about the returned object.
+    pub response: DataResponse,
+
+    /// The object itself; None if it was not loaded.
     pub payload: Option<Cow<'d, T>>,
 }
 
@@ -60,13 +64,16 @@ impl<'d> dyn DataProviderV2<'d> + 'd {
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    pub fn load_v2a<T>(&self, req: &DataRequest) -> Result<DataResponseV2a<'d, T>, Error>
+    pub fn load_payload<T>(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponseWithPayload<'d, T>, Error>
     where
         T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
     {
         let mut receiver = DataReceiverForType::<T>::new();
-        let response = self.load_v2(req, &mut receiver)?;
-        Ok(DataResponseV2a {
+        let response = self.load_to_receiver(req, &mut receiver)?;
+        Ok(DataResponseWithPayload {
             response,
             payload: receiver.payload,
         })

@@ -95,11 +95,11 @@ impl<'d> PluralsProvider<'d> {
 }
 
 impl<'d> DataProviderV2<'d> for PluralsProvider<'d> {
-    fn load_v2(
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponseV2, DataError> {
+    ) -> Result<DataResponse, DataError> {
         let cldr_rules = self.get_rules_for(&req.data_key)?;
         // TODO: Implement language fallback?
         // TODO: Avoid the clone
@@ -110,7 +110,7 @@ impl<'d> DataProviderV2<'d> for PluralsProvider<'d> {
         };
         let mut option = Some(PluralRuleStringsV1::from(r));
         receiver.receive_option(&mut option)?;
-        Ok(DataResponseV2 {
+        Ok(DataResponse {
             data_langid: req.data_entry.langid.clone(),
         })
     }
@@ -207,7 +207,7 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn DataProviderV2)
-        .load_v2a(&DataRequest {
+        .load_payload(&DataRequest {
             data_key: key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,

@@ -50,7 +50,7 @@ where
                 data_key: *data_key,
                 data_entry,
             };
-            self.load_v2(&req, receiver.as_mut())?;
+            self.load_to_receiver(&req, receiver.as_mut())?;
             let payload = receiver.as_serialize();
             sink.put(&req, &payload)?;
         }

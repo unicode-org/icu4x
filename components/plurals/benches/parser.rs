@@ -20,7 +20,7 @@ fn parser(c: &mut Criterion) {
 
     for langid in &plurals_data.langs {
         let response = (&provider as &dyn DataProviderV2)
-            .load_v2a(&DataRequest {
+            .load_payload(&DataRequest {
                 data_key: structs::plurals::key::CARDINAL_V1,
                 data_entry: DataEntry {
                     variant: None,
