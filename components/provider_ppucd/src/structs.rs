@@ -12,7 +12,7 @@ macro_rules! data_key {
         data_key!(icu_provider::DataCategory::Uniset, $sub_category, $version)
     };
 
-    // this was copied over from `provider` crate, but maybe should be refacotred
+    // this was copied over from `provider` crate, but maybe should be refactored
 
     ($category:expr, $sub_category:literal, $version:tt) => {
         icu_provider::DataKey {
@@ -34,13 +34,13 @@ pub struct PpucdProperty {
     pub inv_list: Vec<u32>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
-pub struct PpucdResource {
-    pub properties: Vec<PpucdProperty>,
-}
+// #[derive(Deserialize, Serialize, Debug)]
+// pub struct PpucdResource {
+//     pub properties: Vec<PpucdProperty>,
+// }
 
 impl PpucdProperty {
-
+    /// Default empty nameless property
     pub fn default() -> PpucdProperty {
         PpucdProperty {
             name: String::new(),
@@ -87,30 +87,24 @@ impl PpucdProperty {
     }
 }
 
-impl PpucdResource {
-    pub fn default() -> PpucdResource {
-        let properties = vec![ PpucdProperty::default() ];
-        PpucdResource {
-            properties,
-        }
-    }
-}
+// impl PpucdResource {
+//     pub fn default() -> PpucdResource {
+//         let properties = vec![ PpucdProperty::default() ];
+//         PpucdResource {
+//             properties,
+//         }
+//     }
+// }
 
 #[test]
 fn test_basic() {
     let json_str: &str = 
         r#"{
-            "properties": [
-                {
-                    "name": "wspace",
-                    "inv_list" : [9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289]
-                }
-                ]
+            "name": "wspace",
+            "inv_list" : [9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289]
             }"#;
-    let deserialize_result: Result<PpucdResource, serde_json::Error> = serde_json::from_str(json_str);
-    // println!("***** deserialize_result = {:?}", deserialize_result);
-    let resource = deserialize_result.unwrap();
-    // println!("***** parsed struct = {:?}", resource);
+    let deserialize_result: Result<PpucdProperty, serde_json::Error> = serde_json::from_str(json_str);
+    let ppucd_property = deserialize_result.unwrap();
 }
 
 #[test]

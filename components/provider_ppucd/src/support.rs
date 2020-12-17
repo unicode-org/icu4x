@@ -9,7 +9,7 @@ use std::convert::{TryFrom, TryInto};
 use std::fs::File;
 use std::io::BufReader;
 use std::marker::PhantomData;
-use crate::structs::PpucdResource;
+use crate::structs::{PpucdResource, PpucdProperty};
 
 
 const FAKE_PAYLOAD: &str = "I am a payload?! :|";
@@ -17,23 +17,22 @@ const FAKE_PATH: &str = "some-ppucd-file.txt";
 
 #[derive(Debug)]
 pub struct PpucdDataProvider<'d> {
-    pub ppucd_data: PpucdResource,
+    pub ppucd_prop_data: PpucdProperty,
     _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
 impl<'d> PpucdDataProvider<'d> {
-    pub fn new(ppucd_path: &String) -> Self {
-        let ppucd_path_string = ppucd_path.to_string();
-        let fake_resource: PpucdResource = PpucdResource::default();
+    pub fn new(ppucd_prop_path: &String) -> Self {
+        let ppucd_prop_path_string = ppucd_prop_path.to_string();
         let data_rdr: BufReader<File> =
-            File::open(&ppucd_path)
+            File::open(&ppucd_prop_path)
                 .map(BufReader::new)
                 .unwrap();
-        let data: PpucdResource =
+        let data: PpucdProperty =
             serde_json::from_reader(data_rdr)
                 .unwrap();
         PpucdDataProvider {
-            ppucd_data: fake_resource,
+            ppucd_prop_data: data,
             _phantom: PhantomData,
         }
     }
@@ -54,9 +53,9 @@ impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
 impl<'d> TryFrom<&'d str> for PpucdDataProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let data: PpucdResource = serde_json::from_str(s)?;
+        let data: PpucdProperty = serde_json::from_str(s)?;
         Ok(PpucdDataProvider {
-            ppucd_data: data,
+            ppucd_prop_data: data,
             _phantom: PhantomData,
         })
     }
@@ -65,7 +64,7 @@ impl<'d> TryFrom<&'d str> for PpucdDataProvider<'d> {
 impl<'d> TryInto<String> for PpucdDataProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_into(self) -> Result<String, Self::Error> {
-        let data: PpucdResource = self.ppucd_data;
+        let data: PpucdProperty = self.ppucd_prop_data;
         serde_json::to_string(&data)
     }
 }
