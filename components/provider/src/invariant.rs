@@ -64,7 +64,7 @@ impl DataProviderV2<'static> for InvariantDataProvider {
         // TODO: Re-work get_invariant to be optimized for DataProviderV2
         let response =
             structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))?;
-        receiver.set_to_boxed(response.take_as_boxed_any())?;
+        receiver.receive_box(response.take_as_boxed_any())?;
         Ok(DataResponseV2 {
             data_langid: LanguageIdentifier::default(),
         })

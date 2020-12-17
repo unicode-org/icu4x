@@ -80,7 +80,7 @@ impl<'d> DataProviderV2<'d> for JsonDataProvider<'d> {
         _request: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponseV2, DataError> {
-        receiver.set_to_any(&self.borrowed_data.decimal.symbols_v1_a)?;
+        receiver.receive_borrow(&self.borrowed_data.decimal.symbols_v1_a)?;
         Ok(DataResponseV2 {
             data_langid: LanguageIdentifier::default(),
         })

@@ -81,7 +81,7 @@ where
     match syntax_option {
         SyntaxOption::Json => {
             let mut d = serde_json::Deserializer::from_reader(rdr);
-            receiver.set_to(&mut erased_serde::Deserializer::erase(&mut d))?;
+            receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
             Ok(())
         }
         #[cfg(feature = "bincode")]
@@ -91,7 +91,7 @@ where
                 .with_fixint_encoding()
                 .allow_trailing_bytes();
             let mut d = bincode::de::Deserializer::with_reader(rdr, options);
-            receiver.set_to(&mut erased_serde::Deserializer::erase(&mut d))?;
+            receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
             Ok(())
         }
         #[cfg(not(feature = "bincode"))]

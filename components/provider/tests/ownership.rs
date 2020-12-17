@@ -27,7 +27,7 @@ fn test_basic() {
 
     let json = &mut serde_json::Deserializer::from_str(DATA);
     receiver
-        .set_to(&mut erased_serde::Deserializer::erase(json))
+        .receive_deserializer(&mut erased_serde::Deserializer::erase(json))
         .expect("Data should be well-formed");
     check_zero_digit(&receiver, 'a');
 }

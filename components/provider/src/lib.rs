@@ -112,14 +112,14 @@ pub mod v2 {
     use std::fmt::Debug;
 
     pub trait DataReceiver<'d, 'de> {
-        fn set_to(
+        fn receive_deserializer(
             &mut self,
             deserializer: &mut dyn erased_serde::Deserializer<'de>,
         ) -> Result<(), erased_serde::Error>;
 
-        fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error>;
+        fn receive_borrow(&mut self, any: &'d dyn Any) -> Result<(), Error>;
 
-        fn set_to_boxed(&mut self, boxed: Box<dyn Any>) -> Result<(), Error>;
+        fn receive_box(&mut self, boxed: Box<dyn Any>) -> Result<(), Error>;
 
         fn borrow_payload_as_any(&self) -> Option<&dyn Any>;
 
@@ -168,7 +168,7 @@ pub mod v2 {
     where
         T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
     {
-        fn set_to(
+        fn receive_deserializer(
             &mut self,
             deserializer: &mut dyn erased_serde::Deserializer<'static>,
         ) -> Result<(), erased_serde::Error> {
@@ -177,7 +177,7 @@ pub mod v2 {
             Ok(())
         }
 
-        fn set_to_any(&mut self, any: &'d dyn Any) -> Result<(), Error> {
+        fn receive_borrow(&mut self, any: &'d dyn Any) -> Result<(), Error> {
             self.payload = Some(Cow::Borrowed(any.downcast_ref().ok_or_else(|| {
                 Error::MismatchedType {
                     actual: any.type_id(),
@@ -187,7 +187,7 @@ pub mod v2 {
             Ok(())
         }
 
-        fn set_to_boxed(&mut self, boxed: Box<dyn Any>) -> Result<(), Error> {
+        fn receive_box(&mut self, boxed: Box<dyn Any>) -> Result<(), Error> {
             self.payload = Some(Cow::Owned(
                 *(boxed.downcast().map_err(|any| Error::MismatchedType {
                     actual: any.type_id(),
