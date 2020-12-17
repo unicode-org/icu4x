@@ -60,7 +60,7 @@ impl<'d> From<&'d JsonDataWarehouse> for JsonDataProvider<'d> {
     }
 }
 
-impl<'d> DataProviderV2<'d> for JsonDataProvider<'d> {
+impl<'d> DataProvider<'d> for JsonDataProvider<'d> {
     /// Loads JSON data. Returns borrowed data.
     fn load_to_receiver(
         &self,
@@ -129,6 +129,6 @@ fn test_data_receiver() {
 // #[test]
 // fn test_receiver_dyn_impl<'d>() {
 //     let warehouse = get_warehouse();
-//     let provider: &dyn DataProviderV2<'d> = &warehouse.provider();
+//     let provider: &dyn DataProvider<'d> = &warehouse.provider();
 //     let response = provider.load_payload::<SymbolsV1>(&get_request()).unwrap();
 // }

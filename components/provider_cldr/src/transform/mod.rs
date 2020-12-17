@@ -37,7 +37,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd> DataProviderV2<'d> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,

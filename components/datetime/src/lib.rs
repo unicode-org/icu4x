@@ -133,7 +133,7 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProviderV2<'d>>(
+    pub fn try_new<D: DataProvider<'d>>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,

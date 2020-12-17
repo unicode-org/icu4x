@@ -12,7 +12,7 @@ fn test_read_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let response = (&provider as &dyn DataProviderV2)
+    let response = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
             data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {
@@ -45,7 +45,7 @@ fn test_read_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let response = (&provider as &dyn DataProviderV2)
+    let response = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
             data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {

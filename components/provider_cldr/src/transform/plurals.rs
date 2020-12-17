@@ -94,7 +94,7 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-impl<'d> DataProviderV2<'d> for PluralsProvider<'d> {
+impl<'d> DataProvider<'d> for PluralsProvider<'d> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
@@ -206,7 +206,7 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn DataProviderV2)
+    let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
             data_key: key::CARDINAL_V1,
             data_entry: DataEntry {

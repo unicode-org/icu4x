@@ -85,7 +85,7 @@ pub mod prelude {
     pub use crate::data_entry::DataEntry;
     pub use crate::data_key::DataCategory;
     pub use crate::data_key::DataKey;
-    pub use crate::data_provider::DataProviderV2;
+    pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseWithPayload;

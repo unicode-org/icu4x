@@ -37,7 +37,7 @@ use icu_locid::LanguageIdentifier;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d> DataProviderV2<'d> for InvariantDataProvider {
+impl<'d> DataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,

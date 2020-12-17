@@ -35,7 +35,7 @@ pub struct DataResponse {
 }
 
 /// An abstract data provider that loads a payload given a request object.
-pub trait DataProviderV2<'d> {
+pub trait DataProvider<'d> {
     /// Query the provider for data, loading it into a DataReceiver.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
@@ -59,7 +59,7 @@ where
     pub payload: Option<Cow<'d, T>>,
 }
 
-impl<'d> dyn DataProviderV2<'d> + 'd {
+impl<'d> dyn DataProvider<'d> + 'd {
     /// Query the provider for data, returning the result.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an

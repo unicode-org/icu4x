@@ -32,7 +32,7 @@ fn map_poison<E>(_err: E) -> DataError {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, 'd, T> LazyCldrProvider<T>
 where
-    T: DataProviderV2<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b dyn CldrPaths>,
+    T: DataProvider<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b dyn CldrPaths>,
     <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
 {
     /// Call `T::load`, initializing T if necessary.

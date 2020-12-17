@@ -92,7 +92,7 @@ impl<'d> DatesProvider<'d> {
     }
 }
 
-impl<'d> DataProviderV2<'d> for DatesProvider<'d> {
+impl<'d> DataProvider<'d> for DatesProvider<'d> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
@@ -439,7 +439,7 @@ fn test_basic() {
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProviderV2)
+    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
@@ -469,7 +469,7 @@ fn test_with_numbering_system() {
     let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProviderV2)
+    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
@@ -494,7 +494,7 @@ fn unalias_contexts() {
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProviderV2)
+    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {

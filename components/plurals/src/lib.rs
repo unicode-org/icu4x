@@ -266,7 +266,7 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProviderV2<'d>>(
+    pub fn try_new<'d, D: DataProvider<'d>>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,

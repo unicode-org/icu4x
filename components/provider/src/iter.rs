@@ -17,7 +17,7 @@ pub trait DataEntryCollection {
 }
 
 /// Auto-implemented trait: A data provider that allows for iteration over `DataEntry` instances.
-pub trait IterableDataProvider<'d>: DataProviderV2<'d> + DataEntryCollection {
+pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {
     /// Dump all data in this data provider for the specified key into the sink.
     fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error>;
 }
@@ -38,7 +38,7 @@ pub trait DataExporter {
 
 impl<'d, T> IterableDataProvider<'d> for T
 where
-    T: DataProviderV2<'d> + DataEntryCollection,
+    T: DataProvider<'d> + DataEntryCollection,
 {
     fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error> {
         for data_entry in self.iter_for_key(data_key)? {

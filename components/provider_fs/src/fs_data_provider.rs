@@ -51,7 +51,7 @@ impl FsDataProvider {
     }
 }
 
-impl<'de> DataProviderV2<'de> for FsDataProvider {
+impl<'de> DataProvider<'de> for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
