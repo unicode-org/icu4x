@@ -115,9 +115,11 @@ pub mod v2 {
             deserializer: &mut dyn erased_serde::Deserializer<'de>,
         ) -> Result<(), erased_serde::Error>;
 
-        fn receive_borrow(&mut self, any: &'d dyn Any) -> Result<(), Error>;
+        fn receive_borrow(&mut self, borrowed_any: &'d dyn Any) -> Result<(), Error>;
 
-        fn receive_box(&mut self, boxed: Box<dyn Any>) -> Result<(), Error>;
+        fn receive_box(&mut self, boxed_any: Box<dyn Any>) -> Result<(), Error>;
+
+        fn receive_option(&mut self, option_any: &mut dyn Any) -> Result<(), Error>;
 
         fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
     }
@@ -165,23 +167,36 @@ pub mod v2 {
             Ok(())
         }
 
-        fn receive_borrow(&mut self, any: &'d dyn Any) -> Result<(), Error> {
-            self.payload = Some(Cow::Borrowed(any.downcast_ref().ok_or_else(|| {
-                Error::MismatchedType {
-                    actual: any.type_id(),
-                    generic: Some(TypeId::of::<T>()),
-                }
-            })?));
+        fn receive_borrow(&mut self, borrowed_any: &'d dyn Any) -> Result<(), Error> {
+            let borrowed: &T =
+                borrowed_any
+                    .downcast_ref()
+                    .ok_or_else(|| Error::MismatchedType {
+                        actual: Some(borrowed_any.type_id()),
+                        generic: Some(TypeId::of::<T>()),
+                    })?;
+            self.payload = Some(Cow::Borrowed(borrowed));
             Ok(())
         }
 
-        fn receive_box(&mut self, boxed: Box<dyn Any>) -> Result<(), Error> {
-            self.payload = Some(Cow::Owned(
-                *(boxed.downcast().map_err(|any| Error::MismatchedType {
-                    actual: any.type_id(),
-                    generic: Some(TypeId::of::<T>()),
-                })?),
-            ));
+        fn receive_box(&mut self, boxed_any: Box<dyn Any>) -> Result<(), Error> {
+            let boxed: Box<T> = boxed_any.downcast().map_err(|any| Error::MismatchedType {
+                actual: Some(any.type_id()),
+                generic: Some(TypeId::of::<T>()),
+            })?;
+            self.payload = Some(Cow::Owned(*boxed));
+            Ok(())
+        }
+
+        fn receive_option(&mut self, option_any: &mut dyn Any) -> Result<(), Error> {
+            let option: &mut Option<T> =
+                option_any
+                    .downcast_mut()
+                    .ok_or_else(|| Error::MismatchedType {
+                        actual: None,
+                        generic: Some(TypeId::of::<T>()),
+                    })?;
+            self.payload = option.take().map(|t| Cow::Owned(t));
             Ok(())
         }
 

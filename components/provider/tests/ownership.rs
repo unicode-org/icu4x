@@ -29,3 +29,17 @@ fn test_basic() {
         .expect("Data should be well-formed");
     check_zero_digit(&receiver, 'a');
 }
+
+#[cfg(feature = "invariant")]
+#[test]
+fn test_receive_option() {
+    let mut option = Some(SymbolsV1::default());
+    let mut receiver = DataReceiverForType::<SymbolsV1>::new();
+    assert!(option.is_some());
+    assert!(receiver.payload.is_none());
+
+    receiver.receive_option(&mut option).expect("Types should match");
+    assert!(option.is_none());
+    assert!(receiver.payload.is_some());
+    check_zero_digit(&receiver, '0');
+}

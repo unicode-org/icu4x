@@ -45,7 +45,7 @@ impl<'d> DataResponse<'d> {
             .as_any()
             .downcast_ref::<T>()
             .ok_or_else(|| Error::MismatchedType {
-                actual: borrowed.as_any().type_id(),
+                actual: Some(borrowed.as_any().type_id()),
                 generic: Some(TypeId::of::<T>()),
             })
     }
@@ -66,7 +66,7 @@ impl<'d> DataResponse<'d> {
             .as_any_mut()
             .downcast_mut::<T>()
             .ok_or_else(|| Error::MismatchedType {
-                actual: type_id,
+                actual: Some(type_id),
                 generic: Some(TypeId::of::<T>()),
             })
     }
@@ -77,14 +77,14 @@ impl<'d> DataResponse<'d> {
             Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
                 Some(v) => Ok(Cow::Borrowed(v)),
                 None => Err(Error::MismatchedType {
-                    actual: borrowed.as_any().type_id(),
+                    actual: Some(borrowed.as_any().type_id()),
                     generic: Some(TypeId::of::<T>()),
                 }),
             },
             Cow::Owned(boxed) => match boxed.into_any().downcast::<T>() {
                 Ok(boxed_t) => Ok(Cow::Owned(*boxed_t)),
                 Err(boxed_any) => Err(Error::MismatchedType {
-                    actual: boxed_any.type_id(),
+                    actual: Some(boxed_any.type_id()),
                     generic: Some(TypeId::of::<T>()),
                 }),
             },

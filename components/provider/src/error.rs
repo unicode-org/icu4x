@@ -21,8 +21,8 @@ pub enum Error {
 
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
-        /// The actual TypeID of the payload.
-        actual: TypeId,
+        /// The actual TypeID of the payload, if available.
+        actual: Option<TypeId>,
 
         /// The expected TypeID derived from the generic type parameter at the call site.
         generic: Option<TypeId>,
