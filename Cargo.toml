@@ -4,6 +4,7 @@
 [workspace]
 
 members = [
+    "experimental/segmenter_lstm",
     "components/datetime",
     "components/ecma402",
     "components/icu",
@@ -14,7 +15,6 @@ members = [
     "components/provider_cldr",
     "components/provider_fs",
     "components/provider",
-    "components/segmenter_lstm",
     "components/uniset",
     "resources/testdata",
     "utils/fixed_decimal",
