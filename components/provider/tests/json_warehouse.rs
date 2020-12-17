@@ -10,7 +10,6 @@ use std::str::FromStr;
 
 use icu_provider::prelude::*;
 use icu_provider::structs;
-use icu_provider::v2;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
@@ -175,31 +174,5 @@ fn test_data_receiver() {
         .load_v2(&get_request(), &mut receiver)
         .unwrap();
     let decimal_data: &structs::decimal::SymbolsV1 = &receiver.payload.unwrap();
-    check_data(decimal_data);
-}
-
-#[test]
-fn test_data_receiver_borrow() {
-    let warehouse = get_warehouse();
-    let mut receiver = get_receiver();
-    warehouse
-        .provider()
-        .load_v2(&get_request(), &mut receiver)
-        .unwrap();
-    let decimal_data: &structs::decimal::SymbolsV1 =
-        v2::borrow_payload(&receiver).unwrap().unwrap();
-    check_data(decimal_data);
-}
-
-#[test]
-fn test_data_receiver_borrow_mut() {
-    let warehouse = get_warehouse();
-    let mut receiver = get_receiver();
-    warehouse
-        .provider()
-        .load_v2(&get_request(), &mut receiver)
-        .unwrap();
-    let decimal_data: &mut structs::decimal::SymbolsV1 =
-        v2::borrow_payload_mut(&mut receiver).unwrap().unwrap();
     check_data(decimal_data);
 }

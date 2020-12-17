@@ -102,12 +102,10 @@ pub use prelude::*;
 pub mod v2 {
     use crate::error::Error;
     use crate::prelude::*;
-    use downcast_rs::Downcast;
     use icu_locid::LanguageIdentifier;
     use std::any::Any;
     use std::any::TypeId;
     use std::borrow::Borrow;
-    use std::borrow::BorrowMut;
     use std::borrow::Cow;
     use std::fmt::Debug;
 
@@ -121,39 +119,7 @@ pub mod v2 {
 
         fn receive_box(&mut self, boxed: Box<dyn Any>) -> Result<(), Error>;
 
-        fn borrow_payload_as_any(&self) -> Option<&dyn Any>;
-
-        fn borrow_payload_as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
-
-        fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any>;
-    }
-
-    // TODO: Can we put this function in a better place?
-    pub fn borrow_payload<'a, 'd, 'de, T: Any>(
-        receiver: &'a dyn DataReceiver<'d, 'de>,
-    ) -> Option<Result<&'a T, Error>> {
-        let borrowed: Option<&dyn Any> = receiver.borrow_payload_as_any();
-        borrowed.map(|any| {
-            let downcasted: Option<&T> = any.downcast_ref();
-            downcasted.ok_or_else(|| Error::MismatchedType {
-                actual: any.type_id(),
-                generic: Some(TypeId::of::<T>()),
-            })
-        })
-    }
-
-    // TODO: Can we put this function in a better place?
-    pub fn borrow_payload_mut<'a, 'd, 'de, T: Any>(
-        receiver: &'a mut dyn DataReceiver<'d, 'de>,
-    ) -> Option<Result<&'a mut T, Error>> {
-        let borrowed: Option<&mut dyn Any> = receiver.borrow_payload_as_any_mut();
-        borrowed.map(|any| {
-            let actual_type_id = (any as &dyn Any).type_id();
-            any.downcast_mut().ok_or_else(|| Error::MismatchedType {
-                actual: actual_type_id,
-                generic: Some(TypeId::of::<T>()),
-            })
-        })
+        fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
     }
 
     #[derive(Debug)]
@@ -197,31 +163,11 @@ pub mod v2 {
             Ok(())
         }
 
-        fn borrow_payload_as_any(&self) -> Option<&dyn Any> {
-            match &self.payload {
-                Some(cow) => {
-                    let borrowed: &T = cow.borrow();
-                    Some(borrowed.as_any())
-                }
-                None => None,
-            }
-        }
-
-        fn borrow_payload_as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
+        fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
             match &self.payload {
                 Some(cow) => {
                     let borrowed: &T = cow.borrow();
                     Some(borrowed as &dyn erased_serde::Serialize)
-                }
-                None => None,
-            }
-        }
-
-        fn borrow_payload_as_any_mut(&mut self) -> Option<&mut dyn Any> {
-            match &mut self.payload {
-                Some(cow) => {
-                    let borrowed: &mut T = cow.to_mut().borrow_mut();
-                    Some(borrowed.as_any_mut())
                 }
                 None => None,
             }
