@@ -809,9 +809,12 @@ dependencies = [
 name = "icu_provider_ppucd"
 version = "0.1.0"
 dependencies = [
+ "icu_locid",
+ "icu_locid_macros",
  "icu_provider",
  "serde",
  "serde_json",
+ "tinystr",
 ]
 
 [[package]]

@@ -17,6 +17,7 @@ pub enum DataCategory {
     Decimal,
     Plurals,
     Dates,
+    Uniset,
     PrivateUse(TinyStr4),
 }
 
@@ -27,6 +28,7 @@ impl DataCategory {
             Self::Decimal => Cow::Borrowed("decimal"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::Dates => Cow::Borrowed("dates"),
+            Self::Uniset => Cow::Borrowed("uniset"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());

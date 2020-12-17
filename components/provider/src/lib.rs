@@ -67,7 +67,7 @@
 mod cloneable_any;
 mod data_entry;
 #[macro_use]
-mod data_key;
+pub mod data_key;
 mod data_provider;
 mod error;
 pub mod iter;

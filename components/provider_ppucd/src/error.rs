@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::error;
+use std::path::{Path, PathBuf};
 
 pub enum Error {
     Io(std::io::Error, Option<PathBuf>),
