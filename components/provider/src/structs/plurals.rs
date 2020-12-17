@@ -4,8 +4,6 @@
 // Plural types
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-
-#[cfg(feature = "invariant")]
 use crate::prelude::*;
 
 pub mod key {
@@ -21,6 +19,14 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
     match *data_key {
         key::CARDINAL_V1 => make_inv_response::<PluralRuleStringsV1>(),
         key::ORDINAL_V1 => make_inv_response::<PluralRuleStringsV1>(),
+        _ => None,
+    }
+}
+
+pub fn get_receiver<'d>(data_key: &DataKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
+    match *data_key {
+        key::CARDINAL_V1 => Some(DataReceiverForType::<PluralRuleStringsV1>::new_boxed()),
+        key::ORDINAL_V1 => Some(DataReceiverForType::<PluralRuleStringsV1>::new_boxed()),
         _ => None,
     }
 }

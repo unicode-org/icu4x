@@ -49,12 +49,6 @@ where
 /// ```
 pub struct InvariantDataProvider;
 
-impl DataProvider<'static> for InvariantDataProvider {
-    fn load<'a>(&'a self, req: &DataRequest) -> Result<DataResponse<'static>, Error> {
-        structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))
-    }
-}
-
 impl DataProviderV2<'static> for InvariantDataProvider {
     fn load_v2<'a>(
         &'a self,

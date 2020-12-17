@@ -45,8 +45,7 @@ fn test_read_json_v2() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
-        DataReceiverImpl { payload: None };
+    let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
     provider
         .load_v2(
             &DataRequest {
@@ -113,8 +112,7 @@ fn test_read_bincode_v2() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let mut receiver: DataReceiverImpl<structs::plurals::PluralRuleStringsV1> =
-        DataReceiverImpl { payload: None };
+    let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
     provider
         .load_v2(
             &DataRequest {

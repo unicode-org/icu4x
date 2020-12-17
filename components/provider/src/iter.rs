@@ -4,6 +4,7 @@
 //! Collection of iteration APIs for `DataProvider`.
 use crate::error::Error;
 use crate::prelude::*;
+use crate::structs;
 
 /// An object that exposes an iterable list of `DataEntry` instances for a certain `DataKey`.
 pub trait DataEntryCollection {
@@ -16,7 +17,7 @@ pub trait DataEntryCollection {
 }
 
 /// Auto-implemented trait: A data provider that allows for iteration over `DataEntry` instances.
-pub trait IterableDataProvider<'d>: DataProvider<'d> + DataEntryCollection {
+pub trait IterableDataProvider<'d>: DataProviderV2<'d> + DataEntryCollection {
     /// Dump all data in this data provider for the specified key into the sink.
     fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error>;
 }
@@ -37,19 +38,20 @@ pub trait DataExporter {
 
 impl<'d, T> IterableDataProvider<'d> for T
 where
-    T: DataProvider<'d> + DataEntryCollection,
+    T: DataProviderV2<'d> + DataEntryCollection,
 {
     fn export_key(&self, data_key: &DataKey, sink: &mut dyn DataExporter) -> Result<(), Error> {
         for data_entry in self.iter_for_key(data_key)? {
             if !sink.includes(&data_entry) {
                 continue;
             }
+            let mut receiver = structs::get_receiver(data_key).unwrap();
             let req = DataRequest {
                 data_key: *data_key,
                 data_entry,
             };
-            let response = self.load(&req)?;
-            let payload = response.borrow_as_serialize();
+            self.load_v2(&req, receiver.as_mut())?;
+            let payload = receiver.as_serialize();
             sink.put(&req, &payload)?;
         }
         Ok(())

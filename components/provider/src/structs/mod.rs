@@ -19,3 +19,10 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
         .or_else(|| plurals::get_invariant(data_key)) //
         .or_else(|| dates::get_invariant(data_key)) //
 }
+
+pub fn get_receiver<'d>(data_key: &DataKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
+    None //
+        .or_else(|| decimal::get_receiver(data_key)) //
+        .or_else(|| plurals::get_receiver(data_key)) //
+        .or_else(|| dates::get_receiver(data_key)) //
+}

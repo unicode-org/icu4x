@@ -4,8 +4,6 @@
 // Decimal types
 use serde::{Deserialize, Serialize};
 use smallstr::SmallString;
-
-#[cfg(feature = "invariant")]
 use crate::prelude::*;
 
 pub mod key {
@@ -19,6 +17,13 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
     use crate::invariant::make_inv_response;
     match *data_key {
         key::SYMBOLS_V1 => make_inv_response::<SymbolsV1>(),
+        _ => None,
+    }
+}
+
+pub fn get_receiver<'d>(data_key: &DataKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
+    match *data_key {
+        key::SYMBOLS_V1 => Some(DataReceiverForType::<SymbolsV1>::new_boxed()),
         _ => None,
     }
 }

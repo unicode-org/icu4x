@@ -154,6 +154,16 @@ pub mod v2 {
         }
     }
 
+    impl<'d, T> DataReceiverForType<'d, T>
+    where
+        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    {
+        pub fn new_boxed() -> Box<dyn DataReceiver<'d, 'static> + 'd> {
+            let receiver: DataReceiverForType<'d, T> = Self::new();
+            Box::new(receiver)
+        }
+    }
+
     impl<'d, T> DataReceiver<'d, 'static> for DataReceiverForType<'d, T>
     where
         T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
@@ -196,7 +206,7 @@ pub mod v2 {
                         actual: None,
                         generic: Some(TypeId::of::<T>()),
                     })?;
-            self.payload = option.take().map(|t| Cow::Owned(t));
+            self.payload = option.take().map(Cow::Owned);
             Ok(())
         }
 

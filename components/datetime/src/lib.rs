@@ -133,20 +133,24 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d>>(
+    pub fn try_new<D: DataProviderV2<'d>>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
         let data_key = structs::dates::key::GREGORY_V1;
-        let response = data_provider.load(&DataRequest {
-            data_key,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid.clone(),
+        let mut receiver = DataReceiverForType::<structs::dates::gregory::DatesV1>::new();
+        data_provider.load_v2(
+            &DataRequest {
+                data_key,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: langid.clone(),
+                },
             },
-        })?;
-        let data: Cow<structs::dates::gregory::DatesV1> = response.take_payload()?;
+            &mut receiver,
+        )?;
+        let data = receiver.payload.expect("Load was successful");
 
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 

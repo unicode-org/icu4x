@@ -38,7 +38,9 @@ fn test_receive_option() {
     assert!(option.is_some());
     assert!(receiver.payload.is_none());
 
-    receiver.receive_option(&mut option).expect("Types should match");
+    receiver
+        .receive_option(&mut option)
+        .expect("Types should match");
     assert!(option.is_none());
     assert!(receiver.payload.is_some());
     check_zero_digit(&receiver, '0');

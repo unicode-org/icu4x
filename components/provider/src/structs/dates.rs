@@ -1,8 +1,8 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 // Date
-#[cfg(feature = "invariant")]
 use crate::prelude::*;
 
 pub mod key {
@@ -16,6 +16,13 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
     use crate::invariant::make_inv_response;
     match *data_key {
         key::GREGORY_V1 => make_inv_response::<gregory::DatesV1>(),
+        _ => None,
+    }
+}
+
+pub fn get_receiver<'d>(data_key: &DataKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
+    match *data_key {
+        key::GREGORY_V1 => Some(DataReceiverForType::<gregory::DatesV1>::new_boxed()),
         _ => None,
     }
 }
