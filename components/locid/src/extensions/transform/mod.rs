@@ -121,18 +121,18 @@ impl Transform {
             if let Some(tkey) = current_tkey {
                 if let Ok(val) = Value::parse_subtag(subtag) {
                     current_tvalue.push(val);
-                } else if let Ok(new_key) = Key::from_bytes(subtag) {
+                } else {
+                    if current_tvalue.is_empty() {
+                        return Err(ParserError::InvalidExtension);
+                    }
                     tfields.push((
                         tkey,
                         Value::from_vec_unchecked(
                             current_tvalue.drain(..).filter_map(|s| s).collect(),
                         ),
                     ));
-                    current_tkey = Some(new_key);
-                } else if current_tvalue.is_empty() {
-                    return Err(ParserError::InvalidExtension);
-                } else {
-                    break;
+                    current_tkey = None;
+                    continue;
                 }
             } else if let Ok(tkey) = Key::from_bytes(subtag) {
                 current_tkey = Some(tkey);

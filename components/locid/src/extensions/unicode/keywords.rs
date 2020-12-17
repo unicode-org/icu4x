@@ -118,14 +118,19 @@ impl Keywords {
 
 impl std::fmt::Display for Keywords {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut initial = true;
+        let mut first = true;
         for (key, value) in self.iter() {
-            if initial {
-                initial = false;
+            if first {
+                first = false;
             } else {
                 f.write_char('-')?;
             }
-            write!(f, "{}-{}", key, value)?;
+
+            if value.is_empty() {
+                key.fmt(f)?;
+            } else {
+                write!(f, "{}-{}", key, value)?;
+            }
         }
         Ok(())
     }
