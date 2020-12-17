@@ -6,7 +6,6 @@ use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
-use icu_provider::structs;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
@@ -49,64 +48,6 @@ impl FsDataProvider {
             res_root: root_path_buf,
             manifest,
         })
-    }
-}
-
-impl DataProvider<'_> for FsDataProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<'static>, DataError> {
-        type Error = DataError;
-        let mut path_buf = self.res_root.clone();
-        path_buf.extend(req.data_key.get_components().iter());
-        if !path_buf.exists() {
-            path_buf.pop();
-            if path_buf.exists() {
-                return Err(Error::UnsupportedDataKey(req.data_key));
-            } else {
-                return Err(Error::UnsupportedCategory(req.data_key.category));
-            }
-        }
-        // TODO: Implement proper locale fallback
-        path_buf.extend(req.data_entry.get_components().iter());
-        path_buf.set_extension(self.manifest.syntax.get_file_extension());
-        if !path_buf.exists() {
-            return Err(Error::UnavailableEntry(req.clone()));
-        }
-        let file = match File::open(&path_buf) {
-            Ok(file) => file,
-            Err(err) => return Err(Error::Resource(Box::new(err))),
-        };
-        let reader = BufReader::new(file);
-        // TODO: Eliminate this dispatch.
-        // https://github.com/unicode-org/icu4x/issues/196
-        if req.data_key.category == DataCategory::Plurals {
-            // TODO: Pick deserializer based on manifest
-            let obj: structs::plurals::PluralRuleStringsV1 =
-                match deserializer::deserialize_from_reader(reader, &self.manifest.syntax) {
-                    Ok(obj) => obj,
-                    Err(err) => return Err(err.into_resource_error(&path_buf)),
-                };
-            let response = DataResponseBuilder {
-                // TODO: Return the actual locale when fallbacks are implemented.
-                data_langid: req.data_entry.langid.clone(),
-            }
-            .with_owned_payload(obj);
-            Ok(response)
-        } else if req.data_key.category == DataCategory::Dates {
-            // TODO: Pick deserializer based on manifest
-            let obj: structs::dates::gregory::DatesV1 =
-                match deserializer::deserialize_from_reader(reader, &self.manifest.syntax) {
-                    Ok(obj) => obj,
-                    Err(err) => return Err(err.into_resource_error(&path_buf)),
-                };
-            let response = DataResponseBuilder {
-                // TODO: Return the actual locale when fallbacks are implemented.
-                data_langid: req.data_entry.langid.clone(),
-            }
-            .with_owned_payload(obj);
-            Ok(response)
-        } else {
-            panic!("Don't know how to parse this data key, but it is on the filesystem");
-        }
     }
 }
 

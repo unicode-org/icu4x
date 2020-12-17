@@ -4,7 +4,6 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 use std::prelude::v1::*;
 use std::str::FromStr;
 
@@ -61,17 +60,6 @@ impl<'d> From<&'d JsonDataWarehouse> for JsonDataProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d> for JsonDataProvider<'d> {
-    /// Loads JSON data. Returns borrowed data.
-    fn load(&self, _request: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        let response = DataResponseBuilder {
-            data_langid: LanguageIdentifier::default(),
-        }
-        .with_borrowed_payload(&self.borrowed_data.decimal.symbols_v1_a);
-        Ok(response)
-    }
-}
-
 impl<'d> DataProviderV2<'d> for JsonDataProvider<'d> {
     /// Loads JSON data. Returns borrowed data.
     fn load_v2(
@@ -115,10 +103,6 @@ fn get_request() -> DataRequest {
     }
 }
 
-fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
-    warehouse.provider().load(&get_request()).unwrap()
-}
-
 fn check_data(decimal_data: &SymbolsV1) {
     assert_eq!(
         decimal_data,
@@ -128,41 +112,6 @@ fn check_data(decimal_data: &SymbolsV1) {
             grouping_separator: ",".into(),
         }
     );
-}
-
-#[test]
-fn test_read_string() {
-    let warehouse = get_warehouse();
-    let response = get_response(&warehouse);
-    let decimal_data: &SymbolsV1 = response.borrow_payload().unwrap();
-    check_data(decimal_data);
-}
-
-#[test]
-fn test_borrow_payload_mut() {
-    let warehouse = get_warehouse();
-    let mut response = get_response(&warehouse);
-    let decimal_data: &mut SymbolsV1 = response.borrow_payload_mut().unwrap();
-    check_data(decimal_data);
-}
-
-#[test]
-fn test_take_payload() {
-    let warehouse = get_warehouse();
-    let response = get_response(&warehouse);
-    let decimal_data: Cow<SymbolsV1> = response.take_payload().unwrap();
-    check_data(&decimal_data);
-}
-
-#[test]
-fn test_clone_payload() {
-    let final_data = {
-        let warehouse = get_warehouse();
-        let response = get_response(&warehouse);
-        let decimal_data: Cow<SymbolsV1> = response.take_payload().unwrap();
-        decimal_data.into_owned()
-    };
-    check_data(&final_data);
 }
 
 #[test]

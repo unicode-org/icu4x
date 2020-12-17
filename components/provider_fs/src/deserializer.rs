@@ -56,20 +56,6 @@ impl Error {
     }
 }
 
-pub fn deserialize_from_reader<R, T>(rdr: R, syntax_option: &SyntaxOption) -> Result<T, Error>
-where
-    R: io::Read,
-    T: serde::de::DeserializeOwned,
-{
-    match syntax_option {
-        SyntaxOption::Json => serde_json::from_reader(rdr).map_err(|e| e.into()),
-        #[cfg(feature = "bincode")]
-        SyntaxOption::Bincode => bincode::deserialize_from(rdr).map_err(|e| e.into()),
-        #[cfg(not(feature = "bincode"))]
-        SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
-    }
-}
-
 pub fn deserialize_into_receiver<R>(
     rdr: R,
     syntax_option: &SyntaxOption,

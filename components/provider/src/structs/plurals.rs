@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 // Plural types
+use crate::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use crate::prelude::*;
 
 pub mod key {
     use crate::data_key::DataKey;

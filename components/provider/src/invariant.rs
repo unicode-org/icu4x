@@ -80,31 +80,6 @@ impl DataEntryCollection for InvariantDataProvider {
 }
 
 #[test]
-fn test_basic() {
-    let provider = InvariantDataProvider;
-    let response = provider
-        .load(&DataRequest {
-            data_key: structs::plurals::key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: LanguageIdentifier::default(),
-            },
-        })
-        .unwrap();
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response.borrow_payload().unwrap();
-    assert_eq!(
-        plurals_data,
-        &structs::plurals::PluralRuleStringsV1 {
-            zero: None,
-            one: None,
-            two: None,
-            few: None,
-            many: None,
-        }
-    );
-}
-
-#[test]
 fn test_v2() {
     let provider = InvariantDataProvider;
     let mut receiver =

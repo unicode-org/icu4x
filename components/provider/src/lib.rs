@@ -84,7 +84,7 @@ pub mod prelude {
     pub use crate::data_entry::DataEntry;
     pub use crate::data_key::DataCategory;
     pub use crate::data_key::DataKey;
-    pub use crate::data_provider::DataProvider;
+    // pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseBuilder;
@@ -232,5 +232,27 @@ pub mod v2 {
             req: &DataRequest,
             receiver: &mut dyn DataReceiver<'d, 'static>,
         ) -> Result<DataResponseV2, Error>;
+    }
+
+    pub struct DataResponseV2a<'d, T>
+    where
+        T: Clone + Debug,
+    {
+        pub response: DataResponseV2,
+        pub payload: Option<Cow<'d, T>>,
+    }
+
+    impl<'d> dyn DataProviderV2<'d> + 'd {
+        pub fn load_v2a<T>(&self, req: &DataRequest) -> Result<DataResponseV2a<'d, T>, Error>
+        where
+            T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+        {
+            let mut receiver = DataReceiverForType::<T>::new();
+            let response = self.load_v2(req, &mut receiver)?;
+            Ok(DataResponseV2a {
+                response,
+                payload: receiver.payload,
+            })
+        }
     }
 }

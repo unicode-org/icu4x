@@ -276,13 +276,16 @@ impl PluralRules {
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
         let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
-        data_provider.load_v2(&DataRequest {
-            data_key,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid.clone(),
+        data_provider.load_v2(
+            &DataRequest {
+                data_key,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: langid.clone(),
+                },
             },
-        }, &mut receiver)?;
+            &mut receiver,
+        )?;
         let plurals_data = receiver.payload.expect("Load was successful");
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;

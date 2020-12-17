@@ -37,12 +37,16 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        if let Some(result) = self.plurals.try_load(req, self.cldr_paths)? {
+impl<'a, 'd> DataProviderV2<'d> for CldrJsonDataProvider<'a, 'd> {
+    fn load_v2(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponseV2, DataError> {
+        if let Some(result) = self.plurals.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.dates.try_load(req, self.cldr_paths)? {
+        if let Some(result) = self.dates.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
         }
         Err(DataError::UnsupportedDataKey(req.data_key))

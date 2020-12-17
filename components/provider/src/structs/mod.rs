@@ -6,7 +6,6 @@ pub mod dates;
 pub mod decimal;
 pub mod plurals;
 
-#[cfg(feature = "invariant")]
 use crate::prelude::*;
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
