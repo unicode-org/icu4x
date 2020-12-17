@@ -1,16 +1,16 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use crate::cloneable_any::CloneableAny;
+
 use crate::data_entry::DataEntry;
 use crate::data_key::DataKey;
+use crate::data_receiver::DataReceiver;
+use crate::data_receiver::DataReceiverForType;
 use icu_locid::LanguageIdentifier;
 use std::any::Any;
-use std::any::TypeId;
-use std::borrow::Borrow;
-use std::borrow::BorrowMut;
 use std::borrow::Cow;
 use std::fmt;
+use std::fmt::Debug;
 
 // Re-export Error so it can be referenced by "data_provider::Error"
 pub use crate::error::Error;
@@ -28,142 +28,47 @@ impl fmt::Display for DataRequest {
     }
 }
 
-/// A response object containing a data hunk ("payload").
+/// A response object containing metadata about the returned data.
 #[derive(Debug, Clone)]
-pub struct DataResponse<'d> {
-    pub data_langid: LanguageIdentifier,
-    payload: Cow<'d, dyn CloneableAny>,
-    // source: Cow<'static, str>,
-}
-
-impl<'d> DataResponse<'d> {
-    /// Get an immutable reference to the payload in a Response object.
-    /// The payload may or may not be owned by the Response.
-    pub fn borrow_payload<T: 'static>(&self) -> Result<&T, Error> {
-        let borrowed: &dyn CloneableAny = self.payload.borrow();
-        borrowed
-            .as_any()
-            .downcast_ref::<T>()
-            .ok_or_else(|| Error::MismatchedType {
-                actual: Some(borrowed.as_any().type_id()),
-                generic: Some(TypeId::of::<T>()),
-            })
-    }
-
-    /// Get an immutable reference to the payload as an `erased_serde::Serialize` trait object.
-    pub fn borrow_as_serialize(&self) -> &dyn erased_serde::Serialize {
-        let borrowed: &dyn CloneableAny = self.payload.borrow();
-        borrowed.as_serialize()
-    }
-
-    /// Get a mutable reference to the payload in a `Response` object.
-    /// The payload may or may not be owned by the `Response`.
-    pub fn borrow_payload_mut<T: 'static>(&mut self) -> Result<&mut T, Error> {
-        let borrowed_mut: &mut dyn CloneableAny = self.payload.to_mut().borrow_mut();
-        // TODO: If I move this into the lambda, I get E0502. Why?
-        let type_id = borrowed_mut.as_any().type_id();
-        borrowed_mut
-            .as_any_mut()
-            .downcast_mut::<T>()
-            .ok_or_else(|| Error::MismatchedType {
-                actual: Some(type_id),
-                generic: Some(TypeId::of::<T>()),
-            })
-    }
-
-    /// Take ownership of the payload from a Response object. Consumes the Response object.
-    pub fn take_payload<T: 'static + Clone>(self) -> Result<Cow<'d, T>, Error> {
-        match self.payload {
-            Cow::Borrowed(borrowed) => match borrowed.as_any().downcast_ref::<T>() {
-                Some(v) => Ok(Cow::Borrowed(v)),
-                None => Err(Error::MismatchedType {
-                    actual: Some(borrowed.as_any().type_id()),
-                    generic: Some(TypeId::of::<T>()),
-                }),
-            },
-            Cow::Owned(boxed) => match boxed.into_any().downcast::<T>() {
-                Ok(boxed_t) => Ok(Cow::Owned(*boxed_t)),
-                Err(boxed_any) => Err(Error::MismatchedType {
-                    actual: Some(boxed_any.type_id()),
-                    generic: Some(TypeId::of::<T>()),
-                }),
-            },
-        }
-    }
-
-    /// Take ownership of the payload without downcasting. May clone the payload.
-    pub fn take_as_boxed_any(self) -> Box<dyn Any> {
-        let owned: Box<dyn CloneableAny> = self.payload.into_owned();
-        owned.into_any()
-    }
-
-    /// Get the `TypeId` of the payload.
-    pub fn get_payload_type_id(&self) -> TypeId {
-        let borrowed: &dyn CloneableAny = self.payload.borrow();
-        borrowed.as_any().type_id()
-    }
-}
-
-/// Builder class used to construct a Response.
-pub struct DataResponseBuilder {
+pub struct DataResponseV2 {
     pub data_langid: LanguageIdentifier,
 }
 
-impl DataResponseBuilder {
-    /// Construct a `DataResponse` from the builder, with owned data.
-    /// Consumes both the builder and the data.
-    /// Returns the 'static lifetime since there is no borrowed data.
-    pub fn with_owned_payload<T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
-        self,
-        t: T,
-    ) -> DataResponse<'static> {
-        DataResponse {
-            data_langid: self.data_langid,
-            payload: Cow::Owned(Box::new(t) as Box<dyn CloneableAny>),
-        }
-    }
-
-    /// Construct a `DataResponse` from the builder, with borrowed data.
-    /// Consumes the builder, but not the data.
-    #[allow(clippy::needless_lifetimes)]
-    pub fn with_borrowed_payload<'d, T: 'static + Clone + erased_serde::Serialize + fmt::Debug>(
-        self,
-        t: &'d T,
-    ) -> DataResponse<'d> {
-        DataResponse {
-            data_langid: self.data_langid,
-            payload: Cow::Borrowed(t),
-        }
-    }
+/// An abstract data provider that loads a payload given a request object.
+pub trait DataProviderV2<'d> {
+    /// Query the provider for data, loading it into a DataReceiver.
+    ///
+    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_v2(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponseV2, Error>;
 }
 
-/// An abstract data provider that takes a request object and returns a response with a payload.
-/// Lifetimes:
-/// - 'a = lifetime of the `DataProvider` object
-/// - 'd = lifetime of the borrowed payload
-/// Note: 'd and 'a can be the same, but they do not need to be. For example, 'd = 'static if:
-/// 1. The provider always returns data that lives in static memory
-/// 2. The provider always returns owned data, not borrowed data
-// TODO: Make this async
-// #[async_trait]
-pub trait DataProvider<'d> {
-    /// Query the provider for data. Returns Ok if the request successfully loaded data. If data
-    /// failed to load, returns an Error with more information.
-    fn load<'a>(&'a self, req: &DataRequest) -> Result<DataResponse<'d>, Error>;
+pub struct DataResponseV2a<'d, T>
+where
+    T: Clone + Debug,
+{
+    pub response: DataResponseV2,
+    pub payload: Option<Cow<'d, T>>,
 }
 
-impl<'d> dyn DataProvider<'d> + 'd {
-    /// Query the provider for data. Returns Ok(Some) if the request successfully loaded data. If
-    /// data failed to load due to the provider not supporting the requested category or data key,
-    /// returns Ok(None). Otherwise, returns an Error.
-    pub fn load_graceful(&self, req: &DataRequest) -> Result<Option<DataResponse<'d>>, Error> {
-        match self.load(req) {
-            Ok(response) => Ok(Some(response)),
-            Err(err) => match err {
-                Error::UnsupportedCategory(_) => Ok(None),
-                Error::UnsupportedDataKey(_) => Ok(None),
-                _ => Err(err),
-            },
-        }
+impl<'d> dyn DataProviderV2<'d> + 'd {
+    /// Query the provider for data, returning the result.
+    ///
+    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    pub fn load_v2a<T>(&self, req: &DataRequest) -> Result<DataResponseV2a<'d, T>, Error>
+    where
+        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    {
+        let mut receiver = DataReceiverForType::<T>::new();
+        let response = self.load_v2(req, &mut receiver)?;
+        Ok(DataResponseV2a {
+            response,
+            payload: receiver.payload,
+        })
     }
 }

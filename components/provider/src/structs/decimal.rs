@@ -13,14 +13,17 @@ pub mod key {
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
 #[cfg(feature = "invariant")]
-pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
-    use crate::invariant::make_inv_response;
+pub fn get_invariant<'d>(
+    data_key: &DataKey,
+    receiver: &mut dyn DataReceiver<'d, 'static>,
+) -> Result<(), DataError> {
     match *data_key {
-        key::SYMBOLS_V1 => make_inv_response::<SymbolsV1>(),
-        _ => None,
+        key::SYMBOLS_V1 => receiver.receive_invariant::<SymbolsV1>(),
+        _ => Err(DataError::UnsupportedDataKey(*data_key)),
     }
 }
 
+/// Gets a boxed DataReceiver capable of receiving a data key in this module's category.
 pub fn get_receiver<'d>(data_key: &DataKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
     match *data_key {
         key::SYMBOLS_V1 => Some(DataReceiverForType::<SymbolsV1>::new_boxed()),

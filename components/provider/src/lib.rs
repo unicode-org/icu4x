@@ -69,6 +69,7 @@ mod data_entry;
 #[macro_use]
 mod data_key;
 mod data_provider;
+mod data_receiver;
 mod error;
 pub mod iter;
 pub mod structs;
@@ -84,175 +85,14 @@ pub mod prelude {
     pub use crate::data_entry::DataEntry;
     pub use crate::data_key::DataCategory;
     pub use crate::data_key::DataKey;
-    // pub use crate::data_provider::DataProvider;
+    pub use crate::data_provider::DataProviderV2;
     pub use crate::data_provider::DataRequest;
-    pub use crate::data_provider::DataResponse;
-    pub use crate::data_provider::DataResponseBuilder;
+    pub use crate::data_provider::DataResponseV2;
+    pub use crate::data_receiver::DataReceiver;
+    pub use crate::data_receiver::DataReceiverForType;
+    pub use crate::data_receiver::DataReceiverThrowAway;
     pub use crate::error::Error as DataError;
-
-    pub use crate::v2::DataProviderV2;
-    pub use crate::v2::DataReceiver;
-    pub use crate::v2::DataReceiverForType;
-    pub use crate::v2::DataResponseV2;
 }
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
-
-pub mod v2 {
-    use crate::error::Error;
-    use crate::prelude::*;
-    use icu_locid::LanguageIdentifier;
-    use std::any::Any;
-    use std::any::TypeId;
-    use std::borrow::Borrow;
-    use std::borrow::Cow;
-    use std::fmt::Debug;
-
-    pub trait DataReceiver<'d, 'de> {
-        fn receive_deserializer(
-            &mut self,
-            deserializer: &mut dyn erased_serde::Deserializer<'de>,
-        ) -> Result<(), erased_serde::Error>;
-
-        fn receive_borrow(&mut self, borrowed_any: &'d dyn Any) -> Result<(), Error>;
-
-        fn receive_box(&mut self, boxed_any: Box<dyn Any>) -> Result<(), Error>;
-
-        fn receive_option(&mut self, option_any: &mut dyn Any) -> Result<(), Error>;
-
-        fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
-    }
-
-    #[derive(Debug)]
-    pub struct DataReceiverForType<'d, T>
-    where
-        T: Clone + Debug,
-    {
-        pub payload: Option<Cow<'d, T>>,
-    }
-
-    impl<'d, T> Default for DataReceiverForType<'d, T>
-    where
-        T: Clone + Debug,
-    {
-        fn default() -> Self {
-            Self { payload: None }
-        }
-    }
-
-    impl<'d, T> DataReceiverForType<'d, T>
-    where
-        T: Clone + Debug,
-    {
-        pub fn new() -> Self {
-            Self::default()
-        }
-
-        pub fn borrow_payload(&self) -> Option<&T> {
-            self.payload.as_ref().map(|cow| cow.borrow())
-        }
-    }
-
-    impl<'d, T> DataReceiverForType<'d, T>
-    where
-        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
-    {
-        pub fn new_boxed() -> Box<dyn DataReceiver<'d, 'static> + 'd> {
-            let receiver: DataReceiverForType<'d, T> = Self::new();
-            Box::new(receiver)
-        }
-    }
-
-    impl<'d, T> DataReceiver<'d, 'static> for DataReceiverForType<'d, T>
-    where
-        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
-    {
-        fn receive_deserializer(
-            &mut self,
-            deserializer: &mut dyn erased_serde::Deserializer<'static>,
-        ) -> Result<(), erased_serde::Error> {
-            let obj: T = erased_serde::deserialize(deserializer)?;
-            self.payload = Some(Cow::Owned(obj));
-            Ok(())
-        }
-
-        fn receive_borrow(&mut self, borrowed_any: &'d dyn Any) -> Result<(), Error> {
-            let borrowed: &T =
-                borrowed_any
-                    .downcast_ref()
-                    .ok_or_else(|| Error::MismatchedType {
-                        actual: Some(borrowed_any.type_id()),
-                        generic: Some(TypeId::of::<T>()),
-                    })?;
-            self.payload = Some(Cow::Borrowed(borrowed));
-            Ok(())
-        }
-
-        fn receive_box(&mut self, boxed_any: Box<dyn Any>) -> Result<(), Error> {
-            let boxed: Box<T> = boxed_any.downcast().map_err(|any| Error::MismatchedType {
-                actual: Some(any.type_id()),
-                generic: Some(TypeId::of::<T>()),
-            })?;
-            self.payload = Some(Cow::Owned(*boxed));
-            Ok(())
-        }
-
-        fn receive_option(&mut self, option_any: &mut dyn Any) -> Result<(), Error> {
-            let option: &mut Option<T> =
-                option_any
-                    .downcast_mut()
-                    .ok_or_else(|| Error::MismatchedType {
-                        actual: None,
-                        generic: Some(TypeId::of::<T>()),
-                    })?;
-            self.payload = option.take().map(Cow::Owned);
-            Ok(())
-        }
-
-        fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
-            match &self.payload {
-                Some(cow) => {
-                    let borrowed: &T = cow.borrow();
-                    Some(borrowed as &dyn erased_serde::Serialize)
-                }
-                None => None,
-            }
-        }
-    }
-
-    #[derive(Debug, Clone)]
-    pub struct DataResponseV2 {
-        pub data_langid: LanguageIdentifier,
-    }
-
-    pub trait DataProviderV2<'d> {
-        fn load_v2(
-            &self,
-            req: &DataRequest,
-            receiver: &mut dyn DataReceiver<'d, 'static>,
-        ) -> Result<DataResponseV2, Error>;
-    }
-
-    pub struct DataResponseV2a<'d, T>
-    where
-        T: Clone + Debug,
-    {
-        pub response: DataResponseV2,
-        pub payload: Option<Cow<'d, T>>,
-    }
-
-    impl<'d> dyn DataProviderV2<'d> + 'd {
-        pub fn load_v2a<T>(&self, req: &DataRequest) -> Result<DataResponseV2a<'d, T>, Error>
-        where
-            T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
-        {
-            let mut receiver = DataReceiverForType::<T>::new();
-            let response = self.load_v2(req, &mut receiver)?;
-            Ok(DataResponseV2a {
-                response,
-                payload: receiver.payload,
-            })
-        }
-    }
-}

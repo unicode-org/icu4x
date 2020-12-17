@@ -45,8 +45,7 @@ where
             if !sink.includes(&data_entry) {
                 continue;
             }
-            // TODO: Make a custom receiver that can accept anything implementing Serialize.
-            let mut receiver = structs::get_receiver(data_key).unwrap();
+            let mut receiver = structs::get_receiver(data_key)?;
             let req = DataRequest {
                 data_key: *data_key,
                 data_entry,

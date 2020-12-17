@@ -1,25 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
+use crate::data_receiver::DataReceiverThrowAway;
 use crate::error::Error;
 use crate::iter::DataEntryCollection;
 use crate::prelude::*;
 use crate::structs;
 use icu_locid::LanguageIdentifier;
-use std::fmt;
-
-/// Package a data struct T implementing `Default` as a `DataResponse`.
-pub fn make_inv_response<T>() -> Option<DataResponse<'static>>
-where
-    T: 'static + Clone + erased_serde::Serialize + fmt::Debug + Default,
-{
-    Some(
-        DataResponseBuilder {
-            data_langid: LanguageIdentifier::default(),
-        }
-        .with_owned_payload(T::default()),
-    )
-}
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -49,16 +37,13 @@ where
 /// ```
 pub struct InvariantDataProvider;
 
-impl DataProviderV2<'static> for InvariantDataProvider {
-    fn load_v2<'a>(
-        &'a self,
+impl<'d> DataProviderV2<'d> for InvariantDataProvider {
+    fn load_v2(
+        &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'static, 'static>,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponseV2, Error> {
-        // TODO: Re-work get_invariant to be optimized for DataProviderV2
-        let response =
-            structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))?;
-        receiver.receive_box(response.take_as_boxed_any())?;
+        structs::get_invariant(&req.data_key, receiver)?;
         Ok(DataResponseV2 {
             data_langid: LanguageIdentifier::default(),
         })
@@ -70,7 +55,8 @@ impl DataEntryCollection for InvariantDataProvider {
         &self,
         data_key: &DataKey,
     ) -> Result<Box<dyn Iterator<Item = DataEntry>>, Error> {
-        structs::get_invariant(data_key).ok_or(Error::UnsupportedDataKey(*data_key))?;
+        let mut receiver = DataReceiverThrowAway::default();
+        structs::get_invariant(data_key, &mut receiver)?;
         let list: Vec<DataEntry> = vec![DataEntry {
             variant: None,
             langid: LanguageIdentifier::default(),
