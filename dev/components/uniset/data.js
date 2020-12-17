@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1607625492725,
+  "lastUpdate": 1608236000860,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2219,6 +2219,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 29668326,
             "range": "± 48415",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "43288204+SahandFarhoodi@users.noreply.github.com",
+            "name": "Sahand Farhoodi",
+            "username": "SahandFarhoodi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8557dc671b84b5b900010b7e47e4c5ce7310fba2",
+          "message": "Adding LSTM-based word segmentation crate to experimental directory (#379)",
+          "timestamp": "2020-12-17T13:58:35-06:00",
+          "tree_id": "9d130ed6fde2cfe1f2d7942d0f9d7c8adc89f82f",
+          "url": "https://github.com/unicode-org/icu4x/commit/8557dc671b84b5b900010b7e47e4c5ce7310fba2"
+        },
+        "date": 1608235998818,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31541105,
+            "range": "± 2015739",
             "unit": "ns/iter"
           }
         ]
