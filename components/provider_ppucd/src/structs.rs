@@ -97,17 +97,6 @@ impl PpucdProperty {
 // }
 
 #[test]
-fn test_basic() {
-    let json_str: &str = 
-        r#"{
-            "name": "wspace",
-            "inv_list" : [9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289]
-            }"#;
-    let deserialize_result: Result<PpucdProperty, serde_json::Error> = serde_json::from_str(json_str);
-    let ppucd_property = deserialize_result.unwrap();
-}
-
-#[test]
 fn test_uniset_to_inv_list() {
     let inv_list: Vec<u32> = vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289];
     let inv_list_clone = (&inv_list).clone();
