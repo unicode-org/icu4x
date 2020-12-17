@@ -31,12 +31,53 @@ pub mod key {
 #[derive(Deserialize, Debug)]
 pub struct PpucdProperty {
     pub name: String,
-    pub inv_list: Vec<i32>,
+    pub inv_list: Vec<u32>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PpucdResource {
     pub properties: Vec<PpucdProperty>,
+}
+
+impl PpucdProperty {
+
+    /// Converts a UnicodeSet into a conversion list since UnicodeSet does not
+    /// expose a public method to convert to inversion lists.
+    pub fn uniset_to_inv_list(s: &UnicodeSet) -> Vec<u32> {
+        let mut start_code_point: i32 = -1;
+        let mut end_code_point: i32 = -1;
+        let mut inv_list: Vec<u32> = vec![];
+        for ch in s.iter() {
+            let cp = ch as i32;
+            if start_code_point < 0 && end_code_point < 0 {
+                start_code_point = cp;
+                end_code_point = cp;
+            }
+            else if cp == end_code_point + 1 {
+                end_code_point = end_code_point + 1;
+            } else {
+                inv_list.push(start_code_point as u32);
+                inv_list.push((end_code_point + 1) as u32);
+                start_code_point = cp;
+                end_code_point = cp;
+            }
+        }
+        if start_code_point >= 0 && end_code_point >= 0 {
+            inv_list.push(start_code_point as u32);
+            inv_list.push((end_code_point + 1) as u32);
+        }
+        inv_list
+    }
+
+    /// Converts a UnicodeSet into a corresponding PpucdProperty struct for 
+    /// serde JSON de-/serialization.
+    pub fn from_uniset(s: &UnicodeSet, name: &str) -> PpucdProperty {
+        let inv_list = PpucdProperty::uniset_to_inv_list(s);
+        PpucdProperty {
+            name: String::from(name),
+            inv_list,
+        }
+    }
 }
 
 #[test]
@@ -54,4 +95,13 @@ fn test_basic() {
     // println!("***** deserialize_result = {:?}", deserialize_result);
     let resource = deserialize_result.unwrap();
     // println!("***** parsed struct = {:?}", resource);
+}
+
+#[test]
+fn test_uniset_to_inv_list() {
+    let inv_list: Vec<u32> = vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289];
+    let inv_list_clone = (&inv_list).clone();
+    let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();
+    let round_trip_inv_list = PpucdProperty::uniset_to_inv_list(&s);
+    assert_eq!(round_trip_inv_list, inv_list);
 }
