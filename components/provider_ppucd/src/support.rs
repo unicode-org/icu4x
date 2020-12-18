@@ -5,6 +5,7 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::prelude::*;
+use icu_uniset::UnicodeSet;
 use std::borrow::Cow;
 use std::convert::{TryFrom, TryInto};
 use std::fs::File;
@@ -43,11 +44,22 @@ impl<'d> PpucdDataProvider<'d> {
 impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
         const UND: LanguageIdentifier = langid!("und");
+        // let result: Result<UnicodeSet, DataError> = 
+        //     (&self).ppucd_prop_data
+        //         .try_into()
+        //         .map_err(|e| DataError::UnavailableEntry(req.clone()));
+        // let set: UnicodeSet = result.unwrap();
+        // let set: UnicodeSet =
+        //     UnicodeSet::from_inversion_list(
+        //         (&self).ppucd_prop_data.inv_list.clone()
+        //     ).unwrap();
+        let data: &PpucdProperty = &self.ppucd_prop_data;
+        let payload = data.clone();
         Ok(
             DataResponseBuilder {
                 data_langid: UND,
             }
-            .with_borrowed_payload(&FAKE_PAYLOAD)
+            .with_owned_payload(payload)
         )
     }
 }
@@ -94,11 +106,11 @@ fn test_json_serde() {
             }"#;
     let deserialize_result: Result<PpucdProperty, serde_json::Error> = serde_json::from_str(json_str);
     let ppucd_property = deserialize_result.unwrap();
-    let exp_propery = PpucdProperty {
+    let exp_property = PpucdProperty {
         name: String::from("wspace"),
         inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
     };
-    assert_eq!(exp_propery, ppucd_property);
+    assert_eq!(exp_property, ppucd_property);
 }
 
 #[test]
@@ -107,11 +119,11 @@ fn test_json_serde_manual_file_parse() {
     let json_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let deserialize_result: Result<PpucdProperty, serde_json::Error> = serde_json::from_str(&json_str);
     let ppucd_property = deserialize_result.unwrap();
-    let exp_propery = PpucdProperty {
+    let exp_property = PpucdProperty {
         name: String::from("wspace"),
         inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
     };
-    assert_eq!(exp_propery, ppucd_property);
+    assert_eq!(exp_property, ppucd_property);
 }
 
 #[test]
@@ -132,10 +144,15 @@ fn test_ppucd_provider_resp_manual_file_parse() {
             })
             .unwrap();
     // println!("data resp: {:?}", resp);
-    let some_payload: Cow<&str> =
+    let ppucd_property_cow: Cow<PpucdProperty> =
         resp
             .take_payload()
             .unwrap();
+    let exp_property = PpucdProperty {
+        name: String::from("wspace"),
+        inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
+    };
+    assert_eq!(exp_property, ppucd_property_cow.into_owned());
 }
 
 // fn test_ppucd_provider_resp_fs_provider_dir_load() {

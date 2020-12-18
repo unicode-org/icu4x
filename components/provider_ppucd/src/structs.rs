@@ -6,6 +6,11 @@ use serde::{Deserialize, Serialize};
 use tinystr;
 use crate::error::Error;
 use icu_uniset::UnicodeSet;
+use std::convert::TryInto;
+
+//
+// data key structs - the structs used directly by users of data provider
+//
 
 macro_rules! data_key {
     (uniset, $sub_category:literal, $version:tt) => {
@@ -28,16 +33,26 @@ pub mod key {
     pub const WSPACE_V1: DataKey = data_key!(uniset, "wspace", 1);
 }
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+struct FakePropertyUnicodeSet {
+    set: UnicodeSet,
+}
+
+enum PropertyUnicodeSetV1 {
+    Wspace(UnicodeSet),
+}
+
+
+//
+// JSON structs - the structs that define the schema of JSON data and
+//     effecively become the containers of data between JSON and Rust
+//     via serde_json
+//
+
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct PpucdProperty {
     pub name: String,
     pub inv_list: Vec<u32>,
 }
-
-// #[derive(Deserialize, Serialize, Debug)]
-// pub struct PpucdResource {
-//     pub properties: Vec<PpucdProperty>,
-// }
 
 impl PpucdProperty {
     /// Default empty nameless property
@@ -48,7 +63,7 @@ impl PpucdProperty {
         }
     }
 
-    /// Converts a UnicodeSet into a conversion list since UnicodeSet does not
+    /// Converts a UnicodeSet into an inversion list since UnicodeSet does not
     /// expose a public method to convert to inversion lists.
     pub fn uniset_to_inv_list(s: &UnicodeSet) -> Vec<u32> {
         let mut start_code_point: i32 = -1;
@@ -87,14 +102,13 @@ impl PpucdProperty {
     }
 }
 
-// impl PpucdResource {
-//     pub fn default() -> PpucdResource {
-//         let properties = vec![ PpucdProperty::default() ];
-//         PpucdResource {
-//             properties,
-//         }
-//     }
-// }
+impl TryInto<UnicodeSet> for PpucdProperty {
+    type Error = crate::error::Error;
+    fn try_into(self) -> Result<UnicodeSet, Self::Error> {
+        UnicodeSet::from_inversion_list(self.inv_list)
+            .map_err(|e| crate::error::Error::UnisetConversion(e))
+    }
+}
 
 #[test]
 fn test_uniset_to_inv_list() {
