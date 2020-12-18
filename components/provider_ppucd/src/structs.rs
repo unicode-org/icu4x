@@ -28,7 +28,7 @@ pub mod key {
     pub const WSPACE_V1: DataKey = data_key!(uniset, "wspace", 1);
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct PpucdProperty {
     pub name: String,
     pub inv_list: Vec<u32>,

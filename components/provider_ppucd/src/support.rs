@@ -63,6 +63,20 @@ impl<'d> TryFrom<&'d str> for PpucdDataProvider<'d> {
     }
 }
 
+impl<'d> From<File> for PpucdDataProvider<'d> {
+    fn from(prop_file: File) -> Self {
+        let data_rdr: BufReader<File> =
+            BufReader::new(prop_file);
+        let data: PpucdProperty =
+            serde_json::from_reader(data_rdr)
+                .unwrap();
+        PpucdDataProvider {
+              ppucd_prop_data: data,
+              _phantom: PhantomData,
+        }
+    }
+}
+
 impl<'d> TryInto<String> for PpucdDataProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_into(self) -> Result<String, Self::Error> {
@@ -80,24 +94,34 @@ fn test_json_serde() {
             }"#;
     let deserialize_result: Result<PpucdProperty, serde_json::Error> = serde_json::from_str(json_str);
     let ppucd_property = deserialize_result.unwrap();
+    let exp_propery = PpucdProperty {
+        name: String::from("wspace"),
+        inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
+    };
+    assert_eq!(exp_propery, ppucd_property);
 }
 
 #[test]
-fn test_json_serde_manual_file_load() {
-    let ppucd_property_file_path = "tests/testdata/wspace.json";
-    let json_str = std::fs::read_to_string(ppucd_property_file_path).unwrap();
+fn test_json_serde_manual_file_parse() {
+    let ppucd_property_files_root_path = "tests/testdata/wspace.json";
+    let json_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let deserialize_result: Result<PpucdProperty, serde_json::Error> = serde_json::from_str(&json_str);
     let ppucd_property = deserialize_result.unwrap();
-    
+    let exp_propery = PpucdProperty {
+        name: String::from("wspace"),
+        inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
+    };
+    assert_eq!(exp_propery, ppucd_property);
 }
 
 #[test]
-fn test_basic_fake_resp() {
-    let ppucd_property_file_path = "tests/testdata/wspace.json";
-    let ppucd_provider = PpucdDataProvider::new( &ppucd_property_file_path );
+fn test_ppucd_provider_resp_manual_file_parse() {
+    let ppucd_property_files_root_path = "tests/testdata/wspace.json";
+    let ppucd_property_file = File::open(ppucd_property_files_root_path).unwrap();
+    let ppucd_provider: PpucdDataProvider = PpucdDataProvider::from( ppucd_property_file );
     // TODO: make the type and data actually correspond to the data request
     const UND: LanguageIdentifier = langid!("und");
-    let fake_resp_result: Result<DataResponse, DataError> = 
+    let resp: DataResponse = 
         ppucd_provider
             .load(&DataRequest {
                 data_key: key::WSPACE_V1,
@@ -105,13 +129,33 @@ fn test_basic_fake_resp() {
                     variant: None,
                     langid: UND,
                 },
-            });
-    println!("data resp: {:?}", fake_resp_result);
-    let fake_resp: DataResponse = fake_resp_result.unwrap();
-    let fake_payload_result: Result<Cow<&str>, DataError> =
-        fake_resp
-            .take_payload();
-    let fake_payload: Cow<&str> =
-        fake_payload_result
+            })
+            .unwrap();
+    // println!("data resp: {:?}", resp);
+    let some_payload: Cow<&str> =
+        resp
+            .take_payload()
             .unwrap();
 }
+
+// fn test_ppucd_provider_resp_fs_provider_dir_load() {
+//     let ppucd_property_files_root_path = "tests/testdata/wspace.json";
+//     let ppucd_provider = PpucdDataProvider::new( &ppucd_property_files_root_path );
+//     // TODO: make the type and data actually correspond to the data request
+//     const UND: LanguageIdentifier = langid!("und");
+//     let resp: DataResponse = 
+//         ppucd_provider
+//             .load(&DataRequest {
+//                 data_key: key::WSPACE_V1,
+//                 data_entry: DataEntry {
+//                     variant: None,
+//                     langid: UND,
+//                 },
+//             })
+//             .unwrap();
+//     // println!("data resp: {:?}", resp);
+//     let some_payload: Cow<&str> =
+//         resp
+//             .take_payload()
+//             .unwrap();   
+// }
