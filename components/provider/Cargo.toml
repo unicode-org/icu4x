@@ -30,7 +30,7 @@ serialize_none = []
 hello_world = ["icu_locid_macros"]
 
 [dependencies]
-icu_locid = { version = "0.1", path = "../locid" }
+icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
 tinystr = "0.4"
 erased-serde = "0.3"
 smallstr = { version = "0.2", features = ["serde"] }

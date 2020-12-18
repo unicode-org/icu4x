@@ -1,0 +1,15 @@
+[package]
+name = "icu_locale_canonicalizer"
+version = "0.1.0"
+authors = ["Daniel Minor <dminor@mozilla.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+icu_locid = { version = "0.1", path = "../locid" }
+icu_provider = { version = "0.1", path = "../provider" }
+
+[dev-dependencies]
+icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+icu_provider_cldr = { version = "0.1", path = "../provider_cldr" }
