@@ -34,7 +34,7 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.supplemental.likely_subtags
         };
-        entries.sort();
+        entries.sort_unstable();
         Ok(LikelySubtagsProvider {
             entries,
             _phantom: PhantomData,
@@ -47,7 +47,7 @@ impl<'d> TryFrom<&'d str> for LikelySubtagsProvider<'d> {
     /// Attempt to parse a JSON string.
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
         let mut data: cldr_json::Resource = serde_json::from_str(s)?;
-        data.supplemental.likely_subtags.sort();
+        data.supplemental.likely_subtags.sort_unstable();
         Ok(LikelySubtagsProvider {
             entries: data.supplemental.likely_subtags,
             _phantom: PhantomData,
