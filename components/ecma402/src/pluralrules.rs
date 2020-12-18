@@ -214,6 +214,7 @@ pub(crate) mod internal {
                     w: 1,
                     f: 50,
                     t: 5,
+                    e: 0,
                 },
             }];
             for test in tests {
