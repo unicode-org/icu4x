@@ -53,8 +53,15 @@ impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
         //     UnicodeSet::from_inversion_list(
         //         (&self).ppucd_prop_data.inv_list.clone()
         //     ).unwrap();
+        let data_key_str = req.data_key.sub_category.as_str();
         let data: &PpucdProperty = &self.ppucd_prop_data;
-        let payload = data.clone();
+        // Note: cannot return as a struct/enum containing a field of type
+        // UnicodeSet because UnicodeSet does not implement Clone, Debug, Serialize, etc.
+        let payload: PpucdProperty = data.clone();
+        if payload.name != data_key_str {
+            let data_err: DataError = req.clone().into();
+            return Err(data_err);
+        }
         Ok(
             DataResponseBuilder {
                 data_langid: UND,
@@ -126,24 +133,45 @@ fn test_json_serde_manual_file_parse() {
     assert_eq!(exp_property, ppucd_property);
 }
 
+// How to make this test work? A little confused what to do to make this
+// answer work: https://stackoverflow.com/questions/57234140/how-to-assert-errors-in-rust
+// But I can see that the data key is being compared to the data before being returned,
+// so skipping for now.
+// #[test]
+// fn test_ppucd_provider_resp_manual_file_parse_error() {
+//     let ppucd_property_files_root_path = "tests/testdata/wspace)bad.json";
+//     let ppucd_property_file = File::open(ppucd_property_files_root_path).unwrap();
+//     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::from( ppucd_property_file );
+//     const UND: LanguageIdentifier = langid!("und");
+//     let data_req = DataRequest {
+//         data_key: key::WSPACE_V1,
+//         data_entry: DataEntry {
+//             variant: None,
+//             langid: UND,
+//         },
+//     };
+//     let exp_err = DataError::UnsupportedDataKey(key::WSPACE_V1);
+//     assert_eq!(ppucd_provider.load(&data_req), exp_err);
+// }
+
 #[test]
 fn test_ppucd_provider_resp_manual_file_parse() {
     let ppucd_property_files_root_path = "tests/testdata/wspace.json";
     let ppucd_property_file = File::open(ppucd_property_files_root_path).unwrap();
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::from( ppucd_property_file );
-    // TODO: make the type and data actually correspond to the data request
     const UND: LanguageIdentifier = langid!("und");
+    let data_req = DataRequest {
+        data_key: key::WSPACE_V1,
+        data_entry: DataEntry {
+            variant: None,
+            langid: UND,
+        },
+    };
     let resp: DataResponse = 
         ppucd_provider
-            .load(&DataRequest {
-                data_key: key::WSPACE_V1,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: UND,
-                },
-            })
+            .load(&data_req)
             .unwrap();
-    // println!("data resp: {:?}", resp);
+    
     let ppucd_property_cow: Cow<PpucdProperty> =
         resp
             .take_payload()
