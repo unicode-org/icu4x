@@ -4,6 +4,7 @@
 use std::error;
 use std::path::{Path, PathBuf};
 
+#[derive(Debug)]
 pub enum Error {
     Io(std::io::Error, Option<PathBuf>),
     UnisetConversion(icu_uniset::UnicodeSetError)

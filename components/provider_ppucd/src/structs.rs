@@ -33,12 +33,19 @@ pub mod key {
     pub const WSPACE_V1: DataKey = data_key!(uniset, "wspace", 1);
 }
 
-struct FakePropertyUnicodeSet {
-    set: UnicodeSet,
-}
+// struct FakePropertyUnicodeSet {
+//     set: UnicodeSet,
+// }
 
-enum PropertyUnicodeSetV1 {
-    Wspace(UnicodeSet),
+// Have to use inversion lists as the data argument for the property enum types
+// because cannot create a DataResponse directly (b/c CloneableAny trait is private
+// in Provider) and the .with_owned_payload() method of Provider requires the payload
+// type to implement Clone, Debug, Serialize. Would want to use UnicodeSet as payload
+// type but implementing these traits would make UnicodeSet depend on serde & serde_json,
+// which I think we want to avoid to keep that building block lib clean and lean.
+#[derive(Clone, Debug, Serialize, PartialEq)]
+pub enum PropertyUnicodeSetV1 {
+    Wspace(Vec<u32>),
 }
 
 

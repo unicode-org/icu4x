@@ -12,11 +12,11 @@ use std::fs::File;
 use std::io::BufReader;
 use std::marker::PhantomData;
 use crate::structs::key;
-use crate::structs::PpucdProperty;
+use crate::structs::{PpucdProperty, PropertyUnicodeSetV1};
 
 
-const FAKE_PAYLOAD: &str = "I am a payload?! :|";
-const FAKE_PATH: &str = "some-ppucd-file.txt";
+// const FAKE_PAYLOAD: &str = "I am a payload?! :|";
+// const FAKE_PATH: &str = "some-ppucd-file.txt";
 
 #[derive(Debug)]
 pub struct PpucdDataProvider<'d> {
@@ -39,6 +39,14 @@ impl<'d> PpucdDataProvider<'d> {
             _phantom: PhantomData,
         }
     }
+
+    fn get_prop_uniset(&self, data_key: &DataKey, ppucd_prop: PpucdProperty) -> Option<PropertyUnicodeSetV1> {
+        let inv_list = ppucd_prop.inv_list;
+        match *data_key {
+            key::WSPACE_V1 => Some(PropertyUnicodeSetV1::Wspace(inv_list)),
+            _ => None,
+        }
+    }
 }
 
 impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
@@ -53,15 +61,17 @@ impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
         //     UnicodeSet::from_inversion_list(
         //         (&self).ppucd_prop_data.inv_list.clone()
         //     ).unwrap();
-        let data_key_str = req.data_key.sub_category.as_str();
+        let data_key: &DataKey = &req.data_key;
+        let data_key_str: &str = data_key.sub_category.as_str();
         let data: &PpucdProperty = &self.ppucd_prop_data;
-        // Note: cannot return as a struct/enum containing a field of type
-        // UnicodeSet because UnicodeSet does not implement Clone, Debug, Serialize, etc.
-        let payload: PpucdProperty = data.clone();
-        if payload.name != data_key_str {
+        if data.name != data_key_str {
             let data_err: DataError = req.clone().into();
             return Err(data_err);
         }
+        // let payload: PpucdProperty = data.clone();
+        let payload: PropertyUnicodeSetV1 = 
+            self.get_prop_uniset(data_key, data.clone())
+                .unwrap();
         Ok(
             DataResponseBuilder {
                 data_langid: UND,
@@ -139,7 +149,7 @@ fn test_json_serde_manual_file_parse() {
 // so skipping for now.
 // #[test]
 // fn test_ppucd_provider_resp_manual_file_parse_error() {
-//     let ppucd_property_files_root_path = "tests/testdata/wspace)bad.json";
+//     let ppucd_property_files_root_path = "tests/testdata/wspace_bad.json";
 //     let ppucd_property_file = File::open(ppucd_property_files_root_path).unwrap();
 //     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::from( ppucd_property_file );
 //     const UND: LanguageIdentifier = langid!("und");
@@ -172,15 +182,15 @@ fn test_ppucd_provider_resp_manual_file_parse() {
             .load(&data_req)
             .unwrap();
     
-    let ppucd_property_cow: Cow<PpucdProperty> =
+    let ppucd_property_cow: Cow<PropertyUnicodeSetV1> =
         resp
             .take_payload()
             .unwrap();
-    let exp_property = PpucdProperty {
-        name: String::from("wspace"),
-        inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
-    };
-    assert_eq!(exp_property, ppucd_property_cow.into_owned());
+    let exp_prop_uniset: PropertyUnicodeSetV1 =
+        PropertyUnicodeSetV1::Wspace(
+            vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289],
+        );
+    assert_eq!(exp_prop_uniset, ppucd_property_cow.into_owned());
 }
 
 // fn test_ppucd_provider_resp_fs_provider_dir_load() {
