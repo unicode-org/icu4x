@@ -22,9 +22,10 @@
 //! # Examples
 //!
 //! ```
+//! use icu_datetime::DateTimeFormatOptions;
 //! use icu_datetime::options::components;
 //!
-//! let options = components::Bag {
+//! let bag = components::Bag {
 //!     year: Some(components::Numeric::Numeric),
 //!     month: Some(components::Month::Long),
 //!     day: Some(components::Numeric::Numeric),
@@ -36,6 +37,8 @@
 //!
 //!     ..Default::default()
 //! };
+//!
+//! let options = DateTimeFormatOptions::Components(bag);
 //! ```
 //!
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
