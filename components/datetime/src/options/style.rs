@@ -1,8 +1,12 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! Style is a model of encoding information on how to format date and time by specifying the preferred length
+
+//! `Style` is a bag type available to [`DateTimeFormatOptions`](crate::DateTimeFormatOptions).
+//! It is a model of encoding information on how to format date and time by specifying the preferred length
 //! of date and time fields.
+//!
+//! A "bag" is a term to describe an un-ordered collection of configuration options.
 //!
 //! If either of the fields is omitted, the value will be formatted according to the pattern associated with the
 //! preferred length of the present field in a given locale.
@@ -31,7 +35,7 @@
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use super::preferences;
 /// `style::Bag` is a structure to represent the set of styles in which the `DateTime` should
-/// be formatted to.
+/// be formatted to. The term "bag" refers to the fact that it's an un-ordered collection of configuration options.
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
