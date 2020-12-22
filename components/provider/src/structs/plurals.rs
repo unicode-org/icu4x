@@ -28,7 +28,7 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
-/// More information: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
+/// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[cfg_attr(feature = "invariant", derive(Default))]
 pub struct PluralRuleStringsV1 {

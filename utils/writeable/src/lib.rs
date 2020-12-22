@@ -58,7 +58,7 @@ pub trait Writeable {
     /// number of bytes may be slightly different than what this function returns.
     ///
     /// This function may return an enumeration in the future. See:
-    /// https://github.com/unicode-org/icu4x/issues/370
+    /// <https://github.com/unicode-org/icu4x/issues/370>
     fn write_len(&self) -> usize;
 
     /// Creates a new String with the data from this Writeable. Like ToString, but faster.

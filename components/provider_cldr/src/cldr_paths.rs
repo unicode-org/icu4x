@@ -9,11 +9,11 @@ use std::path::PathBuf;
 /// The fields should be Ok if present. They default to Err when not present.
 pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of cldr-core:
-    /// https://github.com/unicode-cldr/cldr-core
+    /// <https://github.com/unicode-cldr/cldr-core>
     fn cldr_core(&self) -> Result<PathBuf, Error>;
 
     /// Path to checkout of cldr-dates:
-    /// https://github.com/unicode-cldr/cldr-dates-full
+    /// <https://github.com/unicode-cldr/cldr-dates-full>
     fn cldr_dates(&self) -> Result<PathBuf, Error>;
 }
 
