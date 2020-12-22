@@ -12,17 +12,17 @@ used to quickly format any date and time provided.
 
 ```rust
 use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 
 let provider = icu_testdata::get_provider();
 
 let lid = langid!("en");
 
-let options = style::Bag {
+let options = DateTimeFormatOptions::Style(style::Bag {
     date: Some(style::Date::Medium),
     time: Some(style::Time::Short),
     ..Default::default()
-}.into();
+});
 
 let dtf = DateTimeFormat::try_new(lid, &provider, &options)
     .expect("Failed to create DateTimeFormat instance.");
