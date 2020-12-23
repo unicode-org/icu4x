@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1608691245163,
+  "lastUpdate": 1608693989491,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2153,6 +2153,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 8661,
             "range": "± 266",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "05490a5c8606d6e3cb69fd443682843ad7cb3303",
+          "message": "Fix link warnings for the docs (#425)\n\nThese link warnings were generated while running cargo doc on the root\r\nof the project.",
+          "timestamp": "2020-12-22T19:11:05-08:00",
+          "tree_id": "d941409e76b443dc324cf3fe52a46f30be7cba9f",
+          "url": "https://github.com/unicode-org/icu4x/commit/05490a5c8606d6e3cb69fd443682843ad7cb3303"
+        },
+        "date": 1608693977285,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3530,
+            "range": "± 223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 7984,
+            "range": "± 443",
             "unit": "ns/iter"
           }
         ]
