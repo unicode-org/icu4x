@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1608694060663,
+  "lastUpdate": 1608694111494,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1805,6 +1805,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 113933,
             "range": "± 399",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90f7381e0cbea53b38d7b6d53279903e4f19efe5",
+          "message": "Add more documentation and examples for MockDateTime (#427)\n\n* Add more documentation and examples for MockDateTime\r\n\r\n* Add a link to date_time.md document",
+          "timestamp": "2020-12-22T19:11:49-08:00",
+          "tree_id": "87e1e434dbd71872cc6168d67d3dbd46db5400d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/90f7381e0cbea53b38d7b6d53279903e4f19efe5"
+        },
+        "date": 1608694109326,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1044,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6196,
+            "range": "± 454",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 101772,
+            "range": "± 6022",
             "unit": "ns/iter"
           }
         ]
