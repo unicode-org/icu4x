@@ -12,46 +12,45 @@
 //! use icu_provider::prelude::*;
 //! use icu_provider::InvariantDataProvider;
 //! use icu_provider::structs;
-//! use icu_provider::iter::IterableDataProvider;
+//! use icu_provider::iter::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
 //! use std::path::PathBuf;
 //!
-//! let DEMO_PATH = std::env::temp_dir().join("icu4x_json_demo");
+//! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
 //! let DATA_KEY = structs::plurals::key::CARDINAL_V1;
 //!
 //! // Set up the exporter
 //! let mut options = serializers::json::Options::default();
 //! let serializer = Box::new(serializers::json::Serializer::new(options));
 //! let mut options = fs_exporter::ExporterOptions::default();
-//! options.root = DEMO_PATH.clone();
+//! options.root = demo_path.clone();
 //! let mut exporter = fs_exporter::FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export a key
 //! let inv_provider = InvariantDataProvider;
-//! let result = inv_provider.export_key(&DATA_KEY, &mut exporter);
+//! let result = exporter.put_key_from_provider(&DATA_KEY, &inv_provider);
 //! // Ensure flush() is called, even when the result is an error
 //! exporter.flush().expect("Should successfully flush");
 //! result.expect("Should successfully export");
 //!
 //! // Create a filesystem provider reading from the demo directory
-//! let fs_provider = FsDataProvider::try_new(DEMO_PATH.clone())
+//! let fs_provider = FsDataProvider::try_new(demo_path.clone())
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     resc_key: DATA_KEY,
-//!     resc_options: ResourceOptions {
-//!         variant: None,
-//!         langid: Default::default(),
+//!     resource_path: ResourcePath {
+//!         key: DATA_KEY,
+//!         options: ResourceOptions::default(),
 //!     }
 //! };
-//! let inv_response = (&inv_provider as &DataProvider)
+//! let inv_response = (&inv_provider as &dyn DataProvider)
 //!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
 //!     .unwrap();
-//! let fs_response = (&fs_provider as &DataProvider)
+//! let fs_response = (&fs_provider as &dyn DataProvider)
 //!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
 //!     .expect("Should successfully read from filesystem");
 //!
@@ -61,7 +60,7 @@
 //! );
 //!
 //! // Clean up from demo
-//! std::fs::remove_dir_all(&DEMO_PATH).expect("Should clean up test directory");
+//! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
 //! ```
 
 mod aliasing;

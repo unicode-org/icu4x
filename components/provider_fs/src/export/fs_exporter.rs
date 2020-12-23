@@ -85,7 +85,10 @@ impl DataExporter for FilesystemExporter {
     fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool {
         match self.manifest.locales {
             LocalesOption::IncludeAll => true,
-            LocalesOption::IncludeList(ref list) => list.contains(&resc_options.langid),
+            LocalesOption::IncludeList(ref list) => match &resc_options.langid {
+                Some(langid) => list.contains(&langid),
+                None => true,
+            },
         }
     }
 }

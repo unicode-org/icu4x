@@ -33,7 +33,14 @@ impl fmt::Display for DataRequest {
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone)]
 pub struct DataResponse {
-    pub data_langid: LanguageIdentifier,
+    /// The language of the returned data, or None if the resource key isn't localized.
+    pub data_langid: Option<LanguageIdentifier>,
+}
+
+impl Default for DataResponse {
+    fn default() -> Self {
+        Self { data_langid: None }
+    }
 }
 
 /// An abstract data provider that loads a payload given a request object.

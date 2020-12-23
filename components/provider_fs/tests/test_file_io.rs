@@ -18,7 +18,7 @@ fn test_read_json() {
                 key: structs::plurals::key::CARDINAL_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: langid!("ru"),
+                    langid: Some(langid!("ru")),
                 },
             },
         })
@@ -53,7 +53,7 @@ fn test_read_bincode() {
                 key: structs::plurals::key::CARDINAL_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: langid!("sr"),
+                    langid: Some(langid!("sr")),
                 },
             },
         })

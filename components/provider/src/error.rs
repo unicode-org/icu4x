@@ -15,9 +15,12 @@ pub enum Error {
     /// The data provider supports the category, but not the key (sub-category or version).
     UnsupportedResourceKey(ResourceKey),
 
-    /// The data provider supports the data key, but does not have data for the specific entry
-    /// (variant or language identifier).
-    UnavailableEntry(DataRequest),
+    /// The data provider supports the key, but does not have data for the specific entry.
+    UnavailableResourceOptions(DataRequest),
+
+    /// The data provider supports the key, but it requires a language identifier, which was
+    /// missing from the request.
+    NeedsLanguageIdentifier(DataRequest),
 
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
@@ -46,7 +49,7 @@ impl From<&ResourceCategory> for Error {
 
 impl From<DataRequest> for Error {
     fn from(req: DataRequest) -> Self {
-        Self::UnavailableEntry(req)
+        Self::UnavailableResourceOptions(req)
     }
 }
 
@@ -70,9 +73,16 @@ impl fmt::Display for Error {
         match self {
             Self::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
             Self::UnsupportedResourceKey(resc_key) => {
-                write!(f, "Unsupported data key: {}", resc_key)
+                write!(f, "Unsupported resource key: {}", resc_key)
             }
-            Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
+            Self::UnavailableResourceOptions(request) => {
+                write!(f, "Unavailable resource options: {}", request)
+            }
+            Self::NeedsLanguageIdentifier(request) => write!(
+                f,
+                "Requested key needs language identifier in request: {}",
+                request
+            ),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
                 if let Some(type_id) = generic {

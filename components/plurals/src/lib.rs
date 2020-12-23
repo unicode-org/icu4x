@@ -282,7 +282,7 @@ impl PluralRules {
                     key,
                     options: ResourceOptions {
                         variant: None,
-                        langid: langid.clone(),
+                        langid: Some(langid.clone()),
                     },
                 },
             },

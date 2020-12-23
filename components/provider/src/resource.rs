@@ -153,9 +153,9 @@ impl From<&ResourceKey> for ResourceKeyComponents {
 /// The fields in a `ResourceOptions` are not generally known until runtime.
 #[derive(PartialEq, Clone)]
 pub struct ResourceOptions {
-    // TODO: Consider making this a list of variants
+    // TODO: Consider making multiple variant fields.
     pub variant: Option<Cow<'static, str>>,
-    pub langid: LanguageIdentifier,
+    pub langid: Option<LanguageIdentifier>,
 }
 
 impl fmt::Debug for ResourceOptions {
@@ -192,7 +192,7 @@ impl ResourceOptions {
     ///
     /// let resc_options = ResourceOptions {
     ///     variant: Some(Cow::Borrowed("GBP")),
-    ///     langid: langid!("pt_BR"),
+    ///     langid: Some(langid!("pt_BR")),
     /// };
     /// let components = resc_options.get_components();
     ///
@@ -204,13 +204,18 @@ impl ResourceOptions {
     pub fn get_components(&self) -> ResourceOptionsComponents {
         self.into()
     }
+
+    /// Returns whether this `ResourceOptions` has all empty fields (no components).
+    pub fn is_empty(&self) -> bool {
+        self == &Self::default()
+    }
 }
 
 impl Default for ResourceOptions {
     fn default() -> Self {
         Self {
             variant: None,
-            langid: Default::default(),
+            langid: None,
         }
     }
 }
@@ -232,13 +237,11 @@ impl From<&ResourceOptions> for ResourceOptionsComponents {
     fn from(resc_options: &ResourceOptions) -> Self {
         Self {
             components: [
-                if let Some(variant) = &resc_options.variant {
-                    // Does not actually clone if the variant is borrowed
-                    Some(variant.clone())
-                } else {
-                    None
-                },
-                Some(Cow::Owned(resc_options.langid.to_string())),
+                resc_options.variant.as_ref().cloned(),
+                resc_options
+                    .langid
+                    .as_ref()
+                    .map(|s| Cow::Owned(s.to_string())),
             ],
         }
     }
@@ -304,21 +307,21 @@ fn test_key_to_string() {
         TestCase {
             resc_options: ResourceOptions {
                 variant: None,
-                langid: LanguageIdentifier::default(),
+                langid: Some(LanguageIdentifier::default()),
             },
             expected: "und",
         },
         TestCase {
             resc_options: ResourceOptions {
                 variant: Some(Cow::Borrowed("GBP")),
-                langid: LanguageIdentifier::default(),
+                langid: Some(LanguageIdentifier::default()),
             },
             expected: "GBP/und",
         },
         TestCase {
             resc_options: ResourceOptions {
                 variant: Some(Cow::Borrowed("GBP")),
-                langid: langid!("en-ZA"),
+                langid: Some(langid!("en-ZA")),
             },
             expected: "GBP/en-ZA",
         },

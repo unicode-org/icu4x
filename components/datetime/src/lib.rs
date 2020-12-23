@@ -145,7 +145,7 @@ impl<'d> DateTimeFormat<'d> {
                     key: structs::dates::key::GREGORY_V1,
                     options: ResourceOptions {
                         variant: None,
-                        langid: langid.clone(),
+                        langid: Some(langid.clone()),
                     },
                 },
             },

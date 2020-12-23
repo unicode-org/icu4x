@@ -26,9 +26,9 @@ fn parser(c: &mut Criterion) {
                     key: structs::plurals::key::CARDINAL_V1,
                     options: ResourceOptions {
                         variant: None,
-                        langid: langid.clone(),
+                        langid: Some(langid.clone()),
                     },
-                }
+                },
             })
             .unwrap();
         let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.payload.unwrap();

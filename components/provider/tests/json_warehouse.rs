@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use icu_locid::LanguageIdentifier;
+
 use serde::{Deserialize, Serialize};
 use std::prelude::v1::*;
 use std::str::FromStr;
@@ -67,9 +67,7 @@ impl<'d> DataProvider<'d> for JsonDataProvider<'d> {
         receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponse, DataError> {
         receiver.receive_borrow(&self.borrowed_data.decimal.symbols_v1_a)?;
-        Ok(DataResponse {
-            data_langid: LanguageIdentifier::default(),
-        })
+        Ok(DataResponse::default())
     }
 }
 

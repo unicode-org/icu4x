@@ -82,10 +82,9 @@ impl<'d> KeyedDataProvider<'d> for PluralsProvider<'d> {
 impl<'d> PluralsProvider<'d> {
     fn get_rules_for(&self, resc_key: &ResourceKey) -> Result<&cldr_json::Rules, DataError> {
         PluralsProvider::supports_key(resc_key)?;
-        match resc_key.sub_category.as_str() {
-            // TODO(#212): Match on TinyStr
-            "cardinal" => self.cardinal_rules.as_ref(),
-            "ordinal" => self.ordinal_rules.as_ref(),
+        match *resc_key {
+            key::CARDINAL_V1 => self.cardinal_rules.as_ref(),
+            key::ORDINAL_V1 => self.ordinal_rules.as_ref(),
             _ => return Err(resc_key.into()),
         }
         .ok_or_else(|| resc_key.into())
@@ -100,8 +99,15 @@ impl<'d> DataProvider<'d> for PluralsProvider<'d> {
     ) -> Result<DataResponse, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
-        // TODO: Avoid the clone
-        let cldr_langid = req.resource_path.options.langid.clone().into();
+        let cldr_langid = req
+            .resource_path
+            .options
+            .langid
+            .as_ref()
+            .ok_or_else(|| DataError::NeedsLanguageIdentifier(req.clone()))?
+            .clone()
+            .into();
+
         let (_, r) = match cldr_rules.0.binary_search_by_key(&&cldr_langid, |(l, _)| l) {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
@@ -126,7 +132,7 @@ impl<'d> IterableDataProvider<'d> for PluralsProvider<'d> {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: l.langid.clone(),
+                langid: Some(l.langid.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
@@ -210,7 +216,7 @@ fn test_basic() {
                 key: key::CARDINAL_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: langid!("cs"),
+                    langid: Some(langid!("cs")),
                 },
             },
         })

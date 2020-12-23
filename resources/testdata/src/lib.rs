@@ -21,11 +21,13 @@
 //! let data: Cow<structs::plurals::PluralRuleStringsV1> =
 //!     (&data_provider as &dyn DataProvider)
 //!     .load_payload(&DataRequest {
-//!         resc_options: ResourceOptions {
-//!             langid: langid!("ru"),
-//!             variant: None,
+//!         resource_path: ResourcePath {
+//!             key: structs::plurals::key::CARDINAL_V1,
+//!             options: ResourceOptions {
+//!                 langid: Some(langid!("ru")),
+//!                 variant: None,
+//!             },
 //!         },
-//!         resc_key: structs::plurals::key::CARDINAL_V1,
 //!     })
 //!     .unwrap()
 //!     .payload

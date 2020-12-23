@@ -96,7 +96,14 @@ impl<'d> DataProvider<'d> for DatesProvider<'d> {
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponse, DataError> {
-        let cldr_langid = req.resource_path.options.langid.clone().into();
+        let cldr_langid = req
+            .resource_path
+            .options
+            .langid
+            .as_ref()
+            .ok_or_else(|| DataError::NeedsLanguageIdentifier(req.clone()))?
+            .clone()
+            .into();
 
         let dates = self.get_dates_for(&req.resource_path.key, &cldr_langid)?;
         let mut option = Some(gregory::DatesV1::from(dates));
@@ -118,7 +125,7 @@ impl<'d> IterableDataProvider<'d> for DatesProvider<'d> {
             .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: l.langid.clone(),
+                langid: Some(l.langid.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
@@ -443,7 +450,7 @@ fn test_basic() {
                 key: key::GREGORY_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: langid!("cs"),
+                    langid: Some(langid!("cs")),
                 },
             },
         })
@@ -475,7 +482,7 @@ fn test_with_numbering_system() {
                 key: key::GREGORY_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: langid!("haw"),
+                    langid: Some(langid!("haw")),
                 },
             },
         })
@@ -502,7 +509,7 @@ fn unalias_contexts() {
                 key: key::GREGORY_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: langid!("cs"),
+                    langid: Some(langid!("cs")),
                 },
             },
         })

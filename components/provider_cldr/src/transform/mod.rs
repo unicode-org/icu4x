@@ -57,10 +57,16 @@ impl<'a, 'd> IterableDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
         &self,
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        if let Some(resp) = self.plurals.try_supported_options(resc_key, self.cldr_paths)? {
+        if let Some(resp) = self
+            .plurals
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
             return Ok(resp);
         }
-        if let Some(resp) = self.dates.try_supported_options(resc_key, self.cldr_paths)? {
+        if let Some(resp) = self
+            .dates
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
             return Ok(resp);
         }
         Err(DataError::UnsupportedResourceKey(*resc_key))
@@ -69,7 +75,7 @@ impl<'a, 'd> IterableDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
 
 impl<'a, 'd> KeyedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        return PluralsProvider::supports_key(resc_key)
-            .or_else(|err| DatesProvider::or_else_supports_key(err, resc_key));
+        PluralsProvider::supports_key(resc_key)
+            .or_else(|err| DatesProvider::or_else_supports_key(err, resc_key))
     }
 }

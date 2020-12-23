@@ -7,7 +7,6 @@ use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
 use crate::structs;
-use icu_locid::LanguageIdentifier;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -24,10 +23,7 @@ use icu_locid::LanguageIdentifier;
 /// use icu_locid_macros::langid;
 ///
 /// let provider = InvariantDataProvider;
-/// let expected_entries = vec![ResourceOptions {
-///     variant: None,
-///     langid: langid!("und"),
-/// }];
+/// let expected_entries = vec![ResourceOptions::default()];
 /// let actual_entries: Vec<ResourceOptions> = provider
 ///     .supported_options_for_key(&structs::plurals::key::CARDINAL_V1)
 ///     .unwrap()
@@ -43,9 +39,7 @@ impl<'d> DataProvider<'d> for InvariantDataProvider {
         receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponse, Error> {
         structs::get_invariant(&req.resource_path.key, receiver)?;
-        Ok(DataResponse {
-            data_langid: LanguageIdentifier::default(),
-        })
+        Ok(DataResponse::default())
     }
 }
 
@@ -56,10 +50,7 @@ impl IterableDataProvider<'_> for InvariantDataProvider {
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error> {
         let mut receiver = DataReceiverThrowAway::default();
         structs::get_invariant(resc_key, &mut receiver)?;
-        let list: Vec<ResourceOptions> = vec![ResourceOptions {
-            variant: None,
-            langid: LanguageIdentifier::default(),
-        }];
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
         Ok(Box::new(list.into_iter()))
     }
 }

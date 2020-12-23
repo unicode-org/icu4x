@@ -35,7 +35,7 @@ use std::path::PathBuf;
 ///             resource_path: ResourcePath {
 ///                 key: structs::plurals::key::ORDINAL_V1,
 ///                 options: ResourceOptions {
-///                     langid: langid!("uk"),
+///                     langid: Some(langid!("uk")),
 ///                     variant: None,
 ///                 },
 ///             },

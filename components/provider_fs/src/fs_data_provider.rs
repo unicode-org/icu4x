@@ -60,6 +60,9 @@ impl<'de> DataProvider<'de> for FsDataProvider {
         type Error = DataError;
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
+        if req.resource_path.options.is_empty() {
+            path_buf.set_extension(self.manifest.syntax.get_file_extension());
+        }
         if !path_buf.exists() {
             path_buf.pop();
             if path_buf.exists() {
@@ -68,11 +71,13 @@ impl<'de> DataProvider<'de> for FsDataProvider {
                 return Err(Error::UnsupportedCategory(req.resource_path.key.category));
             }
         }
-        // TODO: Implement proper locale fallback
-        path_buf.extend(req.resource_path.options.get_components().iter());
-        path_buf.set_extension(self.manifest.syntax.get_file_extension());
+        if !req.resource_path.options.is_empty() {
+            // TODO: Implement proper locale fallback
+            path_buf.extend(req.resource_path.options.get_components().iter());
+            path_buf.set_extension(self.manifest.syntax.get_file_extension());
+        }
         if !path_buf.exists() {
-            return Err(Error::UnavailableEntry(req.clone()));
+            return Err(Error::UnavailableResourceOptions(req.clone()));
         }
         let file = match File::open(&path_buf) {
             Ok(file) => file,
