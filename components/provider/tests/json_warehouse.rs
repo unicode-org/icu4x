@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use icu_locid::LanguageIdentifier;
-use icu_locid_macros::langid;
 use serde::{Deserialize, Serialize};
 use std::prelude::v1::*;
 use std::str::FromStr;
@@ -95,10 +94,9 @@ fn get_receiver<'d>() -> DataReceiverForType<'d, SymbolsV1> {
 
 fn get_request() -> DataRequest {
     DataRequest {
-        data_key: structs::decimal::key::SYMBOLS_V1,
-        data_entry: DataEntry {
-            variant: None,
-            langid: langid!("en-US"),
+        resource_path: ResourcePath {
+            key: structs::decimal::key::SYMBOLS_V1,
+            options: Default::default(),
         },
     }
 }

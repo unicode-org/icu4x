@@ -7,25 +7,25 @@
 use crate::prelude::*;
 
 pub mod key {
-    use crate::data_key::DataKey;
-    pub const GREGORY_V1: DataKey = data_key!(dates, "gregory", 1);
+    use crate::resource::ResourceKey;
+    pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
 }
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
 #[cfg(feature = "invariant")]
 pub fn get_invariant<'d>(
-    data_key: &DataKey,
+    resc_key: &ResourceKey,
     receiver: &mut dyn DataReceiver<'d, 'static>,
 ) -> Result<(), DataError> {
-    match *data_key {
+    match *resc_key {
         key::GREGORY_V1 => receiver.receive_invariant::<gregory::DatesV1>(),
-        _ => Err(DataError::UnsupportedDataKey(*data_key)),
+        _ => Err(DataError::UnsupportedResourceKey(*resc_key)),
     }
 }
 
 /// Gets a boxed DataReceiver capable of receiving a data key in this module's category.
-pub fn get_receiver<'d>(data_key: &DataKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
-    match *data_key {
+pub fn get_receiver<'d>(resc_key: &ResourceKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
+    match *resc_key {
         key::GREGORY_V1 => Some(DataReceiverForType::<gregory::DatesV1>::new_boxed()),
         _ => None,
     }

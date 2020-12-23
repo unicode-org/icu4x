@@ -4,9 +4,9 @@
 use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::IterableDataProvider;
+use icu_provider::iter::DataExporter;
 use icu_provider_cldr::download::CldrPathsDownload;
-use icu_provider_cldr::get_all_data_keys;
+use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsLocal;
@@ -222,7 +222,7 @@ fn main() -> Result<(), Error> {
     }
 
     // TODO: Build up this list from --keys and --key-file
-    let keys = get_all_data_keys();
+    let keys = get_all_resc_keys();
 
     let output_path = PathBuf::from(
         matches
@@ -292,7 +292,7 @@ fn main() -> Result<(), Error> {
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
 
     for key in keys.iter() {
-        let result = provider.export_key(key, &mut exporter);
+        let result = exporter.put_key_from_provider(key, &provider);
         // Ensure flush() is called, even when the result is an error
         exporter.flush()?;
         result?;

@@ -11,8 +11,8 @@
 //! fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
 //! ```
 //!
-//! A Request contains a [`DataKey`] (a composition of a [`Category`] and sub-category, e.g.,
-//! "plurals/cardinal@1") and [`DataEntry`] (a language identifier and optional variant, e.g.,
+//! A Request contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,
+//! "plurals/cardinal@1") and [`ResourceOptions`] (a language identifier and optional variant, e.g.,
 //! "fr") being requested. The Response contains the data payload corresponding to the Request.
 //!
 //! The most common types required for ICU4X [`DataProvider`] are included via the prelude:
@@ -33,8 +33,8 @@
 //!
 //! ## Iterable Data Providers
 //!
-//! Data providers can implement [`DataEntryCollection`], allowing them to be used via the
-//! auto-implemented trait [`IterableDataProvider`]. This allows iteration over all [`DataEntry`]
+//! Data providers can implement [`ResourceOptionsCollection`], allowing them to be used via the
+//! auto-implemented trait [`IterableDataProvider`]. This allows iteration over all [`ResourceOptions`]
 //! instances supported for a certain key in the data provider. This can be useful when
 //! transforming data between storage formats. For more information, see the [`iter`] module.
 //!
@@ -48,18 +48,17 @@
 //! [`DataProvider`]: prelude::DataProvider
 //! [`Request`]: prelude::DataRequest
 //! [`Response`]: prelude::DataResponse
-//! [`DataKey`]: prelude::DataKey
-//! [`Category`]: prelude::DataCategory
-//! [`DataEntry`]: prelude::DataEntry
-//! [`DataEntryCollection`]: iter::DataEntryCollection
+//! [`ResourceKey`]: prelude::ResourceKey
+//! [`Category`]: prelude::ResourceCategory
+//! [`ResourceOptions`]: prelude::ResourceOptions
+//! [`ResourceOptionsCollection`]: iter::ResourceOptionsCollection
 //! [`IterableDataProvider`]: iter::IterableDataProvider
-mod cloneable_any;
-mod data_entry;
-#[macro_use]
-mod data_key;
+
 mod data_provider;
 mod data_receiver;
 mod error;
+#[macro_use]
+mod resource;
 pub mod iter;
 pub mod structs;
 
@@ -71,9 +70,6 @@ pub use invariant::InvariantDataProvider;
 
 pub mod prelude {
     //! Core selection of APIs and structures for `DataProvider`.
-    pub use crate::data_entry::DataEntry;
-    pub use crate::data_key::DataCategory;
-    pub use crate::data_key::DataKey;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
@@ -82,6 +78,12 @@ pub mod prelude {
     pub use crate::data_receiver::DataReceiverForType;
     pub use crate::data_receiver::DataReceiverThrowAway;
     pub use crate::error::Error as DataError;
+    pub use crate::iter::IterableDataProvider;
+    pub use crate::iter::KeyedDataProvider;
+    pub use crate::resource::ResourceCategory;
+    pub use crate::resource::ResourceKey;
+    pub use crate::resource::ResourceOptions;
+    pub use crate::resource::ResourcePath;
 }
 
 // Also include the same symbols at the top level for selective inclusion

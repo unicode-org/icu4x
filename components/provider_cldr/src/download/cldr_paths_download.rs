@@ -32,11 +32,13 @@ use std::path::PathBuf;
 ///     let data: Cow<structs::plurals::PluralRuleStringsV1> =
 ///         (data_provider as &dyn DataProvider)
 ///         .load_payload(&DataRequest {
-///             data_entry: DataEntry {
-///                 langid: langid!("uk"),
-///                 variant: None,
+///             resource_path: ResourcePath {
+///                 key: structs::plurals::key::ORDINAL_V1,
+///                 options: ResourceOptions {
+///                     langid: langid!("uk"),
+///                     variant: None,
+///                 },
 ///             },
-///             data_key: structs::plurals::key::ORDINAL_V1,
 ///         })
 ///         .unwrap()
 ///         .payload

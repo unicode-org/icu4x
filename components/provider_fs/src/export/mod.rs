@@ -42,8 +42,8 @@
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     data_key: DATA_KEY,
-//!     data_entry: DataEntry {
+//!     resc_key: DATA_KEY,
+//!     resc_options: ResourceOptions {
 //!         variant: None,
 //!         langid: Default::default(),
 //!     }

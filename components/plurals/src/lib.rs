@@ -271,17 +271,19 @@ impl PluralRules {
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
-        let data_key = match type_ {
+        let key = match type_ {
             PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
         let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
         data_provider.load_to_receiver(
             &DataRequest {
-                data_key,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: langid.clone(),
+                resource_path: ResourcePath {
+                    key,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: langid.clone(),
+                    },
                 },
             },
             &mut receiver,

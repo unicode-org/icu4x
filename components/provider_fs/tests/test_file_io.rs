@@ -14,10 +14,12 @@ fn test_read_json() {
 
     let response = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
-            data_key: structs::plurals::key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("ru"),
+            resource_path: ResourcePath {
+                key: structs::plurals::key::CARDINAL_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: langid!("ru"),
+                },
             },
         })
         .expect("The data should be valid");
@@ -47,10 +49,12 @@ fn test_read_bincode() {
 
     let response = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
-            data_key: structs::plurals::key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("sr"),
+            resource_path: ResourcePath {
+                key: structs::plurals::key::CARDINAL_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: langid!("sr"),
+                },
             },
         })
         .expect("The data should be valid");

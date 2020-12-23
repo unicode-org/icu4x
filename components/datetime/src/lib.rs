@@ -138,14 +138,15 @@ impl<'d> DateTimeFormat<'d> {
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
-        let data_key = structs::dates::key::GREGORY_V1;
         let mut receiver = DataReceiverForType::<structs::dates::gregory::DatesV1>::new();
         data_provider.load_to_receiver(
             &DataRequest {
-                data_key,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: langid.clone(),
+                resource_path: ResourcePath {
+                    key: structs::dates::key::GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: langid.clone(),
+                    },
                 },
             },
             &mut receiver,

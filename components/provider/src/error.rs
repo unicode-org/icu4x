@@ -10,10 +10,10 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     /// The data provider does not support the requested category.
-    UnsupportedCategory(DataCategory),
+    UnsupportedCategory(ResourceCategory),
 
     /// The data provider supports the category, but not the key (sub-category or version).
-    UnsupportedDataKey(DataKey),
+    UnsupportedResourceKey(ResourceKey),
 
     /// The data provider supports the data key, but does not have data for the specific entry
     /// (variant or language identifier).
@@ -32,14 +32,14 @@ pub enum Error {
     Resource(Box<dyn std::error::Error>),
 }
 
-impl From<&DataKey> for Error {
-    fn from(data_key: &DataKey) -> Self {
-        Self::UnsupportedDataKey(*data_key)
+impl From<&ResourceKey> for Error {
+    fn from(resc_key: &ResourceKey) -> Self {
+        Self::UnsupportedResourceKey(*resc_key)
     }
 }
 
-impl From<&DataCategory> for Error {
-    fn from(category: &DataCategory) -> Self {
+impl From<&ResourceCategory> for Error {
+    fn from(category: &ResourceCategory) -> Self {
         Self::UnsupportedCategory(*category)
     }
 }
@@ -69,7 +69,9 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
-            Self::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
+            Self::UnsupportedResourceKey(resc_key) => {
+                write!(f, "Unsupported data key: {}", resc_key)
+            }
             Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;

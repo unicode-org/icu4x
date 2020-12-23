@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::CldrPaths;
-use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
-pub trait DataKeySupport {
-    fn supports_key(data_key: &DataKey) -> Result<(), DataError>;
+pub trait ResourceKeySupport {
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
 }
 
 #[derive(Debug)]
@@ -32,7 +31,10 @@ fn map_poison<E>(_err: E) -> DataError {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, 'd, T> LazyCldrProvider<T>
 where
-    T: DataProvider<'d> + DataKeySupport + DataEntryCollection + TryFrom<&'b dyn CldrPaths>,
+    T: DataProvider<'d>
+        + IterableDataProvider<'d>
+        + KeyedDataProvider<'d>
+        + TryFrom<&'b dyn CldrPaths>,
     <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
 {
     /// Call `T::load`, initializing T if necessary.
@@ -42,7 +44,7 @@ where
         receiver: &mut dyn DataReceiver<'d, 'static>,
         cldr_paths: &'b dyn CldrPaths,
     ) -> Result<Option<DataResponse>, DataError> {
-        if T::supports_key(&req.data_key).is_err() {
+        if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
@@ -58,17 +60,17 @@ where
         data_provider.load_to_receiver(req, receiver).map(Some)
     }
 
-    /// Call `T::iter_for_key`, initializing T if necessary.
-    pub fn try_iter(
+    /// Call `T::supported_options_for_key`, initializing T if necessary.
+    pub fn try_supported_options(
         &self,
-        data_key: &DataKey,
+        resc_key: &ResourceKey,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<Box<dyn Iterator<Item = DataEntry>>>, DataError> {
-        if T::supports_key(data_key).is_err() {
+    ) -> Result<Option<Box<dyn Iterator<Item = ResourceOptions>>>, DataError> {
+        if T::supports_key(resc_key).is_err() {
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
-            return data_provider.iter_for_key(data_key).map(Some);
+            return data_provider.supported_options_for_key(resc_key).map(Some);
         }
         let mut src = self.src.write().map_err(map_poison)?;
         if src.is_none() {
@@ -77,6 +79,6 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        data_provider.iter_for_key(data_key).map(Some)
+        data_provider.supported_options_for_key(resc_key).map(Some)
     }
 }

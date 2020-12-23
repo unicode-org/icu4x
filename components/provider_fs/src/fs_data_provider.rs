@@ -59,17 +59,17 @@ impl<'de> DataProvider<'de> for FsDataProvider {
     ) -> Result<DataResponse, DataError> {
         type Error = DataError;
         let mut path_buf = self.res_root.clone();
-        path_buf.extend(req.data_key.get_components().iter());
+        path_buf.extend(req.resource_path.key.get_components().iter());
         if !path_buf.exists() {
             path_buf.pop();
             if path_buf.exists() {
-                return Err(Error::UnsupportedDataKey(req.data_key));
+                return Err(Error::UnsupportedResourceKey(req.resource_path.key));
             } else {
-                return Err(Error::UnsupportedCategory(req.data_key.category));
+                return Err(Error::UnsupportedCategory(req.resource_path.key.category));
             }
         }
         // TODO: Implement proper locale fallback
-        path_buf.extend(req.data_entry.get_components().iter());
+        path_buf.extend(req.resource_path.options.get_components().iter());
         path_buf.set_extension(self.manifest.syntax.get_file_extension());
         if !path_buf.exists() {
             return Err(Error::UnavailableEntry(req.clone()));
@@ -82,7 +82,7 @@ impl<'de> DataProvider<'de> for FsDataProvider {
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
         Ok(DataResponse {
-            data_langid: req.data_entry.langid.clone(),
+            data_langid: req.resource_path.options.langid.clone(),
         })
     }
 }

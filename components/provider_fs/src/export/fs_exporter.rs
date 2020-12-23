@@ -69,23 +69,23 @@ impl Drop for FilesystemExporter {
 }
 
 impl DataExporter for FilesystemExporter {
-    fn put(
+    fn put_payload(
         &mut self,
         req: &DataRequest,
         obj: &dyn erased_serde::Serialize,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut path_buf = self.root.clone();
-        path_buf.extend(req.data_key.get_components().iter());
-        path_buf.extend(req.data_entry.get_components().iter());
+        path_buf.extend(req.resource_path.key.get_components().iter());
+        path_buf.extend(req.resource_path.options.get_components().iter());
         log::trace!("Writing: {}", req);
         self.write_to_path(path_buf, obj)?;
         Ok(())
     }
 
-    fn includes(&self, data_entry: &DataEntry) -> bool {
+    fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool {
         match self.manifest.locales {
             LocalesOption::IncludeAll => true,
-            LocalesOption::IncludeList(ref list) => list.contains(&data_entry.langid),
+            LocalesOption::IncludeList(ref list) => list.contains(&resc_options.langid),
         }
     }
 }
@@ -134,7 +134,7 @@ impl FilesystemExporter {
     }
 
     /// This function must be called before the FilesystemExporter leaves scope.
-    /// It is recommended to flush after exporting each DataKey.
+    /// It is recommended to flush after exporting each ResourceKey.
     pub fn flush(&mut self) -> Result<(), Error> {
         if let Some(mut alias_collection) = self.alias_collection.take() {
             alias_collection.flush()?;

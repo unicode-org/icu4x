@@ -9,12 +9,11 @@ pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
-use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 
-/// Returns a list of all DataKeys that this provider can produce.
-pub fn get_all_data_keys() -> Vec<DataKey> {
-    let mut result: Vec<DataKey> = vec![];
+/// Returns a list of all ResourceKeys that this provider can produce.
+pub fn get_all_resc_keys() -> Vec<ResourceKey> {
+    let mut result: Vec<ResourceKey> = vec![];
     result.extend(&plurals::ALL_KEYS);
     result.extend(&dates::ALL_KEYS);
     result
@@ -49,21 +48,28 @@ impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
         if let Some(result) = self.dates.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
         }
-        Err(DataError::UnsupportedDataKey(req.data_key))
+        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 
-impl<'a, 'd> DataEntryCollection for CldrJsonDataProvider<'a, 'd> {
-    fn iter_for_key(
+impl<'a, 'd> IterableDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
+    fn supported_options_for_key(
         &self,
-        data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, DataError> {
-        if let Some(resp) = self.plurals.try_iter(data_key, self.cldr_paths)? {
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        if let Some(resp) = self.plurals.try_supported_options(resc_key, self.cldr_paths)? {
             return Ok(resp);
         }
-        if let Some(resp) = self.dates.try_iter(data_key, self.cldr_paths)? {
+        if let Some(resp) = self.dates.try_supported_options(resc_key, self.cldr_paths)? {
             return Ok(resp);
         }
-        Err(DataError::UnsupportedDataKey(*data_key))
+        Err(DataError::UnsupportedResourceKey(*resc_key))
+    }
+}
+
+impl<'a, 'd> KeyedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
+        return PluralsProvider::supports_key(resc_key)
+            .or_else(|err| DatesProvider::or_else_supports_key(err, resc_key));
     }
 }

@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use clap::{App, Arg};
-use icu_provider::iter::IterableDataProvider;
 use icu_provider_cldr::download::CldrPathsDownload;
-use icu_provider_cldr::get_all_data_keys;
+use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
+use icu_provider::iter::DataExporter;
 use simple_logger::SimpleLogger;
 use std::fmt;
 use std::path::PathBuf;
@@ -107,7 +107,7 @@ fn main() -> Result<(), Error> {
         _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
     }
 
-    let keys = get_all_data_keys();
+    let keys = get_all_resc_keys();
 
     let metadata = icu_testdata::metadata::load()?;
 
@@ -137,7 +137,7 @@ fn main() -> Result<(), Error> {
 
     for key in keys.iter() {
         log::info!("Processing key: {}", key);
-        let result = provider.export_key(key, &mut exporter);
+        let result = exporter.put_key_from_provider(key, &provider);
         // Ensure flush() is called, even when the result is an error
         exporter.flush()?;
         result?;

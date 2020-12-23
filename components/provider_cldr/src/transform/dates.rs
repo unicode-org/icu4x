@@ -4,16 +4,14 @@
 use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
-use crate::support::DataKeySupport;
 use crate::CldrPaths;
-use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 use icu_provider::structs::dates::*;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [DataKey; 1] = [
+pub const ALL_KEYS: [ResourceKey; 1] = [
     key::GREGORY_V1, //
 ];
 
@@ -64,13 +62,13 @@ impl TryFrom<&str> for DatesProvider<'_> {
     }
 }
 
-impl<'d> DataKeySupport for DatesProvider<'d> {
-    fn supports_key(data_key: &DataKey) -> Result<(), DataError> {
-        if data_key.category != DataCategory::Dates {
-            return Err((&data_key.category).into());
+impl<'d> KeyedDataProvider<'d> for DatesProvider<'d> {
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
+        if resc_key.category != ResourceCategory::Dates {
+            return Err((&resc_key.category).into());
         }
-        if data_key.version != 1 {
-            return Err(data_key.into());
+        if resc_key.version != 1 {
+            return Err(resc_key.into());
         }
         Ok(())
     }
@@ -79,15 +77,15 @@ impl<'d> DataKeySupport for DatesProvider<'d> {
 impl<'d> DatesProvider<'d> {
     fn get_dates_for(
         &self,
-        data_key: &DataKey,
+        resc_key: &ResourceKey,
         langid: &CldrLangID,
     ) -> Result<&cldr_json::Dates, DataError> {
-        DatesProvider::supports_key(data_key)?;
+        DatesProvider::supports_key(resc_key)?;
 
         if let Ok(idx) = self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
             Ok(&self.data[idx].1.dates)
         } else {
-            Err(DataError::UnsupportedDataKey(*data_key))
+            Err(DataError::UnsupportedResourceKey(*resc_key))
         }
     }
 }
@@ -98,26 +96,26 @@ impl<'d> DataProvider<'d> for DatesProvider<'d> {
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponse, DataError> {
-        let cldr_langid = req.data_entry.langid.clone().into();
+        let cldr_langid = req.resource_path.options.langid.clone().into();
 
-        let dates = self.get_dates_for(&req.data_key, &cldr_langid)?;
+        let dates = self.get_dates_for(&req.resource_path.key, &cldr_langid)?;
         let mut option = Some(gregory::DatesV1::from(dates));
         receiver.receive_option(&mut option)?;
         Ok(DataResponse {
-            data_langid: req.data_entry.langid.clone(),
+            data_langid: req.resource_path.options.langid.clone(),
         })
     }
 }
 
-impl<'d> DataEntryCollection for DatesProvider<'d> {
-    fn iter_for_key(
+impl<'d> IterableDataProvider<'d> for DatesProvider<'d> {
+    fn supported_options_for_key(
         &self,
-        _data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, DataError> {
-        let list: Vec<DataEntry> = self
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = self
             .data
             .iter()
-            .map(|(l, _)| DataEntry {
+            .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
                 langid: l.langid.clone(),
@@ -441,10 +439,12 @@ fn test_basic() {
 
     let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
-            data_key: key::GREGORY_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("cs"),
+            resource_path: ResourcePath {
+                key: key::GREGORY_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: langid!("cs"),
+                },
             },
         })
         .unwrap()
@@ -471,10 +471,12 @@ fn test_with_numbering_system() {
 
     let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
-            data_key: key::GREGORY_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("haw"),
+            resource_path: ResourcePath {
+                key: key::GREGORY_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: langid!("haw"),
+                },
             },
         })
         .unwrap()
@@ -496,10 +498,12 @@ fn unalias_contexts() {
 
     let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
         .load_payload(&DataRequest {
-            data_key: key::GREGORY_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("cs"),
+            resource_path: ResourcePath {
+                key: key::GREGORY_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: langid!("cs"),
+                },
             },
         })
         .unwrap()

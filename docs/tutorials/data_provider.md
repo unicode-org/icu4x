@@ -30,8 +30,8 @@ impl MyComponent {
         data_provider: &D,
     ) -> Result<Self, MyError> {
         let response = data_provider.load(&DataRequest {
-            data_key: icu_data_key!(decimals: symbols@1),
-            data_entry: DataEntry {
+            resc_key: icu_resc_key!(decimals: symbols@1),
+            resc_options: ResourceOptions {
                 variant: None,
                 langid: langid.clone(),
             },

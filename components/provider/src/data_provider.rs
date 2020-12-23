@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::data_entry::DataEntry;
-use crate::data_key::DataKey;
 use crate::data_receiver::DataReceiver;
 use crate::data_receiver::DataReceiverForType;
+use crate::resource::ResourcePath;
 use icu_locid::LanguageIdentifier;
 use std::any::Any;
 use std::borrow::Cow;
@@ -18,13 +17,16 @@ pub use crate::error::Error;
 /// A struct to request a certain hunk of data from a data provider.
 #[derive(PartialEq, Clone, Debug)]
 pub struct DataRequest {
-    pub data_key: DataKey,
-    pub data_entry: DataEntry,
+    pub resource_path: ResourcePath,
 }
 
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}/{}", self.data_key, self.data_entry)
+        write!(
+            f,
+            "{}/{}",
+            self.resource_path.key, self.resource_path.options
+        )
     }
 }
 

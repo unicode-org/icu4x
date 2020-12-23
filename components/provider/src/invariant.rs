@@ -4,7 +4,7 @@
 
 use crate::data_receiver::DataReceiverThrowAway;
 use crate::error::Error;
-use crate::iter::DataEntryCollection;
+use crate::iter::IterableDataProvider;
 use crate::prelude::*;
 use crate::structs;
 use icu_locid::LanguageIdentifier;
@@ -21,16 +21,15 @@ use icu_locid::LanguageIdentifier;
 /// use icu_provider::prelude::*;
 /// use icu_provider::structs;
 /// use icu_provider::InvariantDataProvider;
-/// use icu_provider::iter::DataEntryCollection;
 /// use icu_locid_macros::langid;
 ///
 /// let provider = InvariantDataProvider;
-/// let expected_entries = vec![DataEntry {
+/// let expected_entries = vec![ResourceOptions {
 ///     variant: None,
 ///     langid: langid!("und"),
 /// }];
-/// let actual_entries: Vec<DataEntry> = provider
-///     .iter_for_key(&structs::plurals::key::CARDINAL_V1)
+/// let actual_entries: Vec<ResourceOptions> = provider
+///     .supported_options_for_key(&structs::plurals::key::CARDINAL_V1)
 ///     .unwrap()
 ///     .collect();
 /// assert_eq!(&expected_entries, &actual_entries);
@@ -43,21 +42,21 @@ impl<'d> DataProvider<'d> for InvariantDataProvider {
         req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d, 'static>,
     ) -> Result<DataResponse, Error> {
-        structs::get_invariant(&req.data_key, receiver)?;
+        structs::get_invariant(&req.resource_path.key, receiver)?;
         Ok(DataResponse {
             data_langid: LanguageIdentifier::default(),
         })
     }
 }
 
-impl DataEntryCollection for InvariantDataProvider {
-    fn iter_for_key(
+impl IterableDataProvider<'_> for InvariantDataProvider {
+    fn supported_options_for_key(
         &self,
-        data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, Error> {
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error> {
         let mut receiver = DataReceiverThrowAway::default();
-        structs::get_invariant(data_key, &mut receiver)?;
-        let list: Vec<DataEntry> = vec![DataEntry {
+        structs::get_invariant(resc_key, &mut receiver)?;
+        let list: Vec<ResourceOptions> = vec![ResourceOptions {
             variant: None,
             langid: LanguageIdentifier::default(),
         }];
@@ -73,10 +72,9 @@ fn test_v2() {
     provider
         .load_to_receiver(
             &DataRequest {
-                data_key: structs::plurals::key::CARDINAL_V1,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: LanguageIdentifier::default(),
+                resource_path: ResourcePath {
+                    key: structs::plurals::key::CARDINAL_V1,
+                    options: Default::default(),
                 },
             },
             &mut receiver,
