@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1608694045500,
+  "lastUpdate": 1608694099681,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1319,6 +1319,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1307817,
             "range": "± 104123",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90f7381e0cbea53b38d7b6d53279903e4f19efe5",
+          "message": "Add more documentation and examples for MockDateTime (#427)\n\n* Add more documentation and examples for MockDateTime\r\n\r\n* Add a link to date_time.md document",
+          "timestamp": "2020-12-22T19:11:49-08:00",
+          "tree_id": "87e1e434dbd71872cc6168d67d3dbd46db5400d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/90f7381e0cbea53b38d7b6d53279903e4f19efe5"
+        },
+        "date": 1608694099005,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1317007,
+            "range": "± 61141",
             "unit": "ns/iter"
           }
         ]
