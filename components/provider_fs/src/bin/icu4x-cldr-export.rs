@@ -147,7 +147,7 @@ fn main() -> Result<(), Error> {
                 .multiple(true)
                 .takes_value(true)
                 .help(
-                    "Include this data key in the output. Accepts multiple arguments. \
+                    "Include this resource key in the output. Accepts multiple arguments. \
                 Also see --key-file.",
                 ),
         )
@@ -157,7 +157,7 @@ fn main() -> Result<(), Error> {
                 .long("key-file")
                 .takes_value(true)
                 .help(
-                    "Path to text file with data keys to include, one per line. Empty lines and \
+                    "Path to text file with resource keys to include, one per line. Empty lines and \
                     lines starting with '#' are ignored. Also see --key.",
                 ),
         )

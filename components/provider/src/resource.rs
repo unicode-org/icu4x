@@ -13,7 +13,7 @@ use tinystr::{TinyStr16, TinyStr4};
 // Re-export tinystr16 for crate macro resc_key!()
 pub(crate) use tinystr::tinystr16;
 
-/// A top-level collection of related data keys.
+/// A top-level collection of related resource keys.
 #[non_exhaustive]
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
 pub enum ResourceCategory {
@@ -49,7 +49,7 @@ impl fmt::Display for ResourceCategory {
 ///
 /// The fields in a `ResourceKey` should generally be known at compile time.
 ///
-/// Use `icu_resc_key!` as a shortcut to create data keys in code.
+/// Use `resource_key!` as a shortcut to create resource keys in code.
 #[derive(PartialEq, Eq, Copy, Clone)]
 pub struct ResourceKey {
     pub category: ResourceCategory,

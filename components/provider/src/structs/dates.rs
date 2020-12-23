@@ -11,7 +11,7 @@ pub mod key {
     pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
 }
 
-/// Gets a locale-invariant default struct given a data key in this module's category.
+/// Gets a locale-invariant default struct given a resource key in this module's category.
 #[cfg(feature = "invariant")]
 pub fn get_invariant<'d>(
     resc_key: &ResourceKey,
@@ -23,7 +23,7 @@ pub fn get_invariant<'d>(
     }
 }
 
-/// Gets a boxed DataReceiver capable of receiving a data key in this module's category.
+/// Gets a boxed DataReceiver capable of receiving a resource key in this module's category.
 pub fn get_receiver<'d>(resc_key: &ResourceKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
     match *resc_key {
         key::GREGORY_V1 => Some(DataReceiverForType::<gregory::DatesV1>::new_boxed()),

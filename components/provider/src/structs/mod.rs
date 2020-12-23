@@ -8,8 +8,8 @@ pub mod plurals;
 
 use crate::prelude::*;
 
-/// Gets a locale-invariant default struct given a data key in this module's category.
-/// For example, if the data key is `plurals/cardinal@1`, a Response with an object of type
+/// Gets a locale-invariant default struct given a resource key in this module's category.
+/// For example, if the resource key is `plurals/cardinal@1`, a Response with an object of type
 /// `PluralRuleStringsV1` will be returned.
 #[cfg(feature = "invariant")]
 pub fn get_invariant<'d>(

@@ -217,7 +217,7 @@ where
 /// Concrete implementation of DataReceiver that records whether or not it received data, but
 /// throws away any data it receives.
 ///
-/// Can be used for checking whether a DataProvider supports a particular data key.
+/// Can be used for checking whether a DataProvider supports a particular resource key.
 pub struct DataReceiverThrowAway {
     flag: bool,
 }

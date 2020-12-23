@@ -12,7 +12,7 @@ pub mod key {
     pub const ORDINAL_V1: ResourceKey = resource_key!(plurals, "ordinal", 1);
 }
 
-/// Gets a locale-invariant default struct given a data key in this module's category.
+/// Gets a locale-invariant default struct given a resource key in this module's category.
 #[cfg(feature = "invariant")]
 pub fn get_invariant<'d>(
     resc_key: &ResourceKey,
@@ -25,7 +25,7 @@ pub fn get_invariant<'d>(
     }
 }
 
-/// Gets a boxed DataReceiver capable of receiving a data key in this module's category.
+/// Gets a boxed DataReceiver capable of receiving a resource key in this module's category.
 pub fn get_receiver<'d>(resc_key: &ResourceKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
     match *resc_key {
         key::CARDINAL_V1 => Some(DataReceiverForType::<PluralRuleStringsV1>::new_boxed()),
