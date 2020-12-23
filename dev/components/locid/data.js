@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1608690498920,
+  "lastUpdate": 1608691245163,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2117,6 +2117,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 9063,
             "range": "± 293",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c29534633acb3d88cd85f30ae2a4078ac555f6a5",
+          "message": "Merge pull request #426 from gregtatum/trivial-typos\n\nFix some trivial typos in documentation",
+          "timestamp": "2020-12-22T18:25:38-08:00",
+          "tree_id": "4ec160a35865ab0aad73934f5b7f6f2caefc822f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c29534633acb3d88cd85f30ae2a4078ac555f6a5"
+        },
+        "date": 1608691241732,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3871,
+            "range": "± 197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 8661,
+            "range": "± 266",
             "unit": "ns/iter"
           }
         ]
