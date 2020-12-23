@@ -33,7 +33,7 @@ impl From<std::num::ParseIntError> for DateTimeError {
 /// This type represents all data that the formatted needs in order to produced formatted string.
 ///
 /// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
-/// other calendars in the upcoming releases. See https://github.com/unicode-org/icu4x/issues/355
+/// other calendars in the upcoming releases. See <https://github.com/unicode-org/icu4x/issues/355>
 ///
 /// [`DateTimeFormat`]: super::DateTimeFormat
 pub trait DateTimeType: FromStr {
