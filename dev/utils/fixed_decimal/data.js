@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1608236008106,
+  "lastUpdate": 1608690478349,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1199,6 +1199,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 143866,
             "range": "± 400",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6597c1a6b431f43efc70468e904a2868e5bc9fd1",
+          "message": "Adding DataReceiver and refactoring DataProvider trait (#405)",
+          "timestamp": "2020-12-22T20:13:33-06:00",
+          "tree_id": "800f5d2de7c6930165deeb7dbc34550d6ec0fc60",
+          "url": "https://github.com/unicode-org/icu4x/commit/6597c1a6b431f43efc70468e904a2868e5bc9fd1"
+        },
+        "date": 1608690477708,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 163901,
+            "range": "± 3735",
             "unit": "ns/iter"
           }
         ]
