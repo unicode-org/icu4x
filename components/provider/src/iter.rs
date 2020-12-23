@@ -4,6 +4,7 @@
 //! Collection of iteration APIs for `DataProvider`.
 use crate::error::Error;
 use crate::prelude::*;
+use crate::structs;
 
 /// An object that exposes an iterable list of `DataEntry` instances for a certain `DataKey`.
 pub trait DataEntryCollection {
@@ -44,12 +45,13 @@ where
             if !sink.includes(&data_entry) {
                 continue;
             }
+            let mut receiver = structs::get_receiver(data_key)?;
             let req = DataRequest {
                 data_key: *data_key,
                 data_entry,
             };
-            let response = self.load(&req)?;
-            let payload = response.borrow_as_serialize();
+            self.load_to_receiver(&req, receiver.as_mut())?;
+            let payload = receiver.as_serialize();
             sink.put(&req, &payload)?;
         }
         Ok(())

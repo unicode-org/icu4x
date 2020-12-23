@@ -4,18 +4,17 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 use std::prelude::v1::*;
 use std::str::FromStr;
 
 use icu_provider::prelude::*;
-use icu_provider::structs;
+use icu_provider::structs::{self, decimal::SymbolsV1};
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a JSON string.
 
 #[derive(Serialize, Deserialize, Debug)]
 struct DecimalJsonSchema {
-    pub symbols_v1_a: structs::decimal::SymbolsV1,
+    pub symbols_v1_a: SymbolsV1,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -63,12 +62,15 @@ impl<'d> From<&'d JsonDataWarehouse> for JsonDataProvider<'d> {
 
 impl<'d> DataProvider<'d> for JsonDataProvider<'d> {
     /// Loads JSON data. Returns borrowed data.
-    fn load(&self, _request: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        let response = DataResponseBuilder {
+    fn load_to_receiver(
+        &self,
+        _request: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponse, DataError> {
+        receiver.receive_borrow(&self.borrowed_data.decimal.symbols_v1_a)?;
+        Ok(DataResponse {
             data_langid: LanguageIdentifier::default(),
-        }
-        .with_borrowed_payload(&self.borrowed_data.decimal.symbols_v1_a);
-        Ok(response)
+        })
     }
 }
 
@@ -87,23 +89,24 @@ fn get_warehouse() -> JsonDataWarehouse {
     JsonDataWarehouse::from_str(DATA).unwrap()
 }
 
-fn get_response(warehouse: &JsonDataWarehouse) -> DataResponse {
-    warehouse
-        .provider()
-        .load(&DataRequest {
-            data_key: structs::decimal::key::SYMBOLS_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("en-US"),
-            },
-        })
-        .unwrap()
+fn get_receiver<'d>() -> DataReceiverForType<'d, SymbolsV1> {
+    DataReceiverForType::default()
 }
 
-fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
+fn get_request() -> DataRequest {
+    DataRequest {
+        data_key: structs::decimal::key::SYMBOLS_V1,
+        data_entry: DataEntry {
+            variant: None,
+            langid: langid!("en-US"),
+        },
+    }
+}
+
+fn check_data(decimal_data: &SymbolsV1) {
     assert_eq!(
         decimal_data,
-        &structs::decimal::SymbolsV1 {
+        &SymbolsV1 {
             zero_digit: '0',
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
@@ -112,36 +115,20 @@ fn check_data(decimal_data: &structs::decimal::SymbolsV1) {
 }
 
 #[test]
-fn test_read_string() {
+fn test_data_receiver() {
     let warehouse = get_warehouse();
-    let response = get_response(&warehouse);
-    let decimal_data: &structs::decimal::SymbolsV1 = response.borrow_payload().unwrap();
+    let mut receiver = get_receiver();
+    warehouse
+        .provider()
+        .load_to_receiver(&get_request(), &mut receiver)
+        .unwrap();
+    let decimal_data: &SymbolsV1 = &receiver.payload.unwrap();
     check_data(decimal_data);
 }
 
-#[test]
-fn test_borrow_payload_mut() {
-    let warehouse = get_warehouse();
-    let mut response = get_response(&warehouse);
-    let decimal_data: &mut structs::decimal::SymbolsV1 = response.borrow_payload_mut().unwrap();
-    check_data(decimal_data);
-}
-
-#[test]
-fn test_take_payload() {
-    let warehouse = get_warehouse();
-    let response = get_response(&warehouse);
-    let decimal_data: Cow<structs::decimal::SymbolsV1> = response.take_payload().unwrap();
-    check_data(&decimal_data);
-}
-
-#[test]
-fn test_clone_payload() {
-    let final_data = {
-        let warehouse = get_warehouse();
-        let response = get_response(&warehouse);
-        let decimal_data: Cow<structs::decimal::SymbolsV1> = response.take_payload().unwrap();
-        decimal_data.into_owned()
-    };
-    check_data(&final_data);
-}
+// #[test]
+// fn test_receiver_dyn_impl<'d>() {
+//     let warehouse = get_warehouse();
+//     let provider: &dyn DataProvider<'d> = &warehouse.provider();
+//     let response = provider.load_payload::<SymbolsV1>(&get_request()).unwrap();
+// }

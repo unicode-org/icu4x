@@ -93,14 +93,19 @@ impl<'d> DatesProvider<'d> {
 }
 
 impl<'d> DataProvider<'d> for DatesProvider<'d> {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponse, DataError> {
         let cldr_langid = req.data_entry.langid.clone().into();
 
         let dates = self.get_dates_for(&req.data_key, &cldr_langid)?;
-        Ok(DataResponseBuilder {
+        let mut option = Some(gregory::DatesV1::from(dates));
+        receiver.receive_option(&mut option)?;
+        Ok(DataResponse {
             data_langid: req.data_entry.langid.clone(),
-        }
-        .with_owned_payload(gregory::DatesV1::from(dates)))
+        })
     }
 }
 
@@ -434,8 +439,8 @@ fn test_basic() {
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = provider
-        .load(&DataRequest {
+    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
+        .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
@@ -443,7 +448,7 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
         .unwrap();
 
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
@@ -464,8 +469,8 @@ fn test_with_numbering_system() {
     let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = provider
-        .load(&DataRequest {
+    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
+        .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
@@ -473,7 +478,7 @@ fn test_with_numbering_system() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
         .unwrap();
 
     assert_eq!("d MMM y", cs_dates.patterns.date.medium);
@@ -489,8 +494,8 @@ fn unalias_contexts() {
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = provider
-        .load(&DataRequest {
+    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn DataProvider)
+        .load_payload(&DataRequest {
             data_key: key::GREGORY_V1,
             data_entry: DataEntry {
                 variant: None,
@@ -498,7 +503,7 @@ fn unalias_contexts() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
         .unwrap();
 
     // Czech months are not unaliased because `wide` differs.

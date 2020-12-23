@@ -19,8 +19,8 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &plurals_data.langs {
-        let response = provider
-            .load(&DataRequest {
+        let response = (&provider as &dyn DataProvider)
+            .load_payload(&DataRequest {
                 data_key: structs::plurals::key::CARDINAL_V1,
                 data_entry: DataEntry {
                     variant: None,
@@ -28,8 +28,7 @@ fn parser(c: &mut Criterion) {
                 },
             })
             .unwrap();
-        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-            response.take_payload().unwrap();
+        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.payload.unwrap();
 
         let r = &[
             &plurals_data.zero,

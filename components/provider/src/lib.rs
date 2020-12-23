@@ -19,17 +19,6 @@
 //!
 //! ```
 //! use icu_provider::prelude::*;
-//! use std::any::TypeId;
-//!
-//! // Types included:
-//! println!("{:?}", TypeId::of::<dyn DataProvider>());
-//! println!("{:?}", TypeId::of::<DataError>());
-//! println!("{:?}", TypeId::of::<DataKey>());
-//! println!("{:?}", TypeId::of::<DataEntry>());
-//! println!("{:?}", TypeId::of::<DataCategory>());
-//! println!("{:?}", TypeId::of::<DataRequest>());
-//! println!("{:?}", TypeId::of::<DataResponse>());
-//! println!("{:?}", TypeId::of::<DataResponseBuilder>());
 //! ```
 //!
 //! ## Types of Data Providers
@@ -69,6 +58,7 @@ mod data_entry;
 #[macro_use]
 mod data_key;
 mod data_provider;
+mod data_receiver;
 mod error;
 pub mod iter;
 pub mod structs;
@@ -87,7 +77,10 @@ pub mod prelude {
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
-    pub use crate::data_provider::DataResponseBuilder;
+    pub use crate::data_provider::DataResponseWithPayload;
+    pub use crate::data_receiver::DataReceiver;
+    pub use crate::data_receiver::DataReceiverForType;
+    pub use crate::data_receiver::DataReceiverThrowAway;
     pub use crate::error::Error as DataError;
 }
 

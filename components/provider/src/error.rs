@@ -21,8 +21,8 @@ pub enum Error {
 
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
-        /// The actual TypeID of the payload.
-        actual: TypeId,
+        /// The actual TypeID of the payload, if available.
+        actual: Option<TypeId>,
 
         /// The expected TypeID derived from the generic type parameter at the call site.
         generic: Option<TypeId>,
@@ -70,6 +70,7 @@ impl fmt::Display for Error {
         match self {
             Self::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
             Self::UnsupportedDataKey(data_key) => write!(f, "Unsupported data key: {}", data_key),
+            Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
                 if let Some(type_id) = generic {
@@ -77,7 +78,6 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
-            Self::UnavailableEntry(request) => write!(f, "Unavailable data entry: {}", request),
             Self::Resource(err) => write!(f, "Failed to load resource: {}", err),
         }
     }

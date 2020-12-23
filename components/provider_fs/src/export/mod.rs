@@ -48,13 +48,16 @@
 //!         langid: Default::default(),
 //!     }
 //! };
-//! let inv_response = inv_provider.load(&req).unwrap();
-//! let fs_response = fs_provider.load(&req)
+//! let inv_response = (&inv_provider as &DataProvider)
+//!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
+//!     .unwrap();
+//! let fs_response = (&fs_provider as &DataProvider)
+//!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
 //!     .expect("Should successfully read from filesystem");
 //!
 //! assert_eq!(
-//!     inv_response.borrow_payload::<structs::plurals::PluralRuleStringsV1>().unwrap(),
-//!     fs_response.borrow_payload::<structs::plurals::PluralRuleStringsV1>().unwrap(),
+//!     inv_response.payload,
+//!     fs_response.payload,
 //! );
 //!
 //! // Clean up from demo

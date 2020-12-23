@@ -18,8 +18,9 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
-//!     .load(&DataRequest {
+//! let data: Cow<structs::plurals::PluralRuleStringsV1> =
+//!     (&data_provider as &dyn DataProvider)
+//!     .load_payload(&DataRequest {
 //!         data_entry: DataEntry {
 //!             langid: langid!("ru"),
 //!             variant: None,
@@ -27,7 +28,7 @@
 //!         data_key: structs::plurals::key::CARDINAL_V1,
 //!     })
 //!     .unwrap()
-//!     .take_payload()
+//!     .payload
 //!     .unwrap();
 //! assert_eq!(data.few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
 //! ```

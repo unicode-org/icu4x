@@ -73,7 +73,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::structs;
 pub use operands::PluralOperands;
-use std::borrow::Cow;
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -276,14 +275,18 @@ impl PluralRules {
             PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
-        let response = data_provider.load(&DataRequest {
-            data_key,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid.clone(),
+        let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
+        data_provider.load_to_receiver(
+            &DataRequest {
+                data_key,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: langid.clone(),
+                },
             },
-        })?;
-        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.take_payload()?;
+            &mut receiver,
+        )?;
+        let plurals_data = receiver.payload.expect("Load was successful");
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 

@@ -12,21 +12,20 @@ fn test_read_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let response = provider
-        .load(&DataRequest {
+    let response = (&provider as &dyn DataProvider)
+        .load_payload(&DataRequest {
             data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("ru"),
             },
         })
-        .expect("The key should be present in the testdata");
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response
-        .borrow_payload()
-        .expect("The JSON should match the struct definition");
+        .expect("The data should be valid");
+    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
+        response.payload.expect("The data should be present");
     assert_eq!(
-        plurals_data,
-        &structs::plurals::PluralRuleStringsV1 {
+        *plurals_data,
+        structs::plurals::PluralRuleStringsV1 {
             zero: None,
             one: Some(Cow::Borrowed("v = 0 and i % 10 = 1 and i % 100 != 11")),
             two: None,
@@ -46,21 +45,20 @@ fn test_read_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let response = provider
-        .load(&DataRequest {
+    let response = (&provider as &dyn DataProvider)
+        .load_payload(&DataRequest {
             data_key: structs::plurals::key::CARDINAL_V1,
             data_entry: DataEntry {
                 variant: None,
                 langid: langid!("sr"),
             },
         })
-        .expect("The key should be present in the testdata");
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response
-        .borrow_payload()
-        .expect("The Bincode should match the struct definition");
+        .expect("The data should be valid");
+    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
+        response.payload.expect("The data should be present");
     assert_eq!(
-        plurals_data,
-        &structs::plurals::PluralRuleStringsV1 {
+        *plurals_data,
+        structs::plurals::PluralRuleStringsV1 {
             zero: None,
             one: Some(Cow::Borrowed("v = 0 and i % 10 = 1 and i % 100 != 11 or f % 10 = 1 and f % 100 != 11")),
             two: None,

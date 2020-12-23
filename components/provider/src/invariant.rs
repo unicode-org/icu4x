@@ -1,25 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
+use crate::data_receiver::DataReceiverThrowAway;
 use crate::error::Error;
 use crate::iter::DataEntryCollection;
 use crate::prelude::*;
 use crate::structs;
 use icu_locid::LanguageIdentifier;
-use std::fmt;
-
-/// Package a data struct T implementing `Default` as a `DataResponse`.
-pub fn make_inv_response<T>() -> Option<DataResponse<'static>>
-where
-    T: 'static + Clone + erased_serde::Serialize + fmt::Debug + Default,
-{
-    Some(
-        DataResponseBuilder {
-            data_langid: LanguageIdentifier::default(),
-        }
-        .with_owned_payload(T::default()),
-    )
-}
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -49,9 +37,16 @@ where
 /// ```
 pub struct InvariantDataProvider;
 
-impl DataProvider<'static> for InvariantDataProvider {
-    fn load<'a>(&'a self, req: &DataRequest) -> Result<DataResponse<'static>, Error> {
-        structs::get_invariant(&req.data_key).ok_or(Error::UnsupportedDataKey(req.data_key))
+impl<'d> DataProvider<'d> for InvariantDataProvider {
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponse, Error> {
+        structs::get_invariant(&req.data_key, receiver)?;
+        Ok(DataResponse {
+            data_langid: LanguageIdentifier::default(),
+        })
     }
 }
 
@@ -60,7 +55,8 @@ impl DataEntryCollection for InvariantDataProvider {
         &self,
         data_key: &DataKey,
     ) -> Result<Box<dyn Iterator<Item = DataEntry>>, Error> {
-        structs::get_invariant(data_key).ok_or(Error::UnsupportedDataKey(*data_key))?;
+        let mut receiver = DataReceiverThrowAway::default();
+        structs::get_invariant(data_key, &mut receiver)?;
         let list: Vec<DataEntry> = vec![DataEntry {
             variant: None,
             langid: LanguageIdentifier::default(),
@@ -70,18 +66,23 @@ impl DataEntryCollection for InvariantDataProvider {
 }
 
 #[test]
-fn test_basic() {
+fn test_v2() {
     let provider = InvariantDataProvider;
-    let response = provider
-        .load(&DataRequest {
-            data_key: structs::plurals::key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: LanguageIdentifier::default(),
+    let mut receiver =
+        DataReceiverForType::<structs::plurals::PluralRuleStringsV1> { payload: None };
+    provider
+        .load_to_receiver(
+            &DataRequest {
+                data_key: structs::plurals::key::CARDINAL_V1,
+                data_entry: DataEntry {
+                    variant: None,
+                    langid: LanguageIdentifier::default(),
+                },
             },
-        })
+            &mut receiver,
+        )
         .unwrap();
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = response.borrow_payload().unwrap();
+    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &(receiver.payload.unwrap());
     assert_eq!(
         plurals_data,
         &structs::plurals::PluralRuleStringsV1 {

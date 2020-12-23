@@ -6,7 +6,6 @@ use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
-use icu_provider::structs;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
@@ -52,8 +51,12 @@ impl FsDataProvider {
     }
 }
 
-impl DataProvider<'_> for FsDataProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<'static>, DataError> {
+impl<'de> DataProvider<'de> for FsDataProvider {
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'de, 'static>,
+    ) -> Result<DataResponse, DataError> {
         type Error = DataError;
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.data_key.get_components().iter());
@@ -76,36 +79,10 @@ impl DataProvider<'_> for FsDataProvider {
             Err(err) => return Err(Error::Resource(Box::new(err))),
         };
         let reader = BufReader::new(file);
-        // TODO: Eliminate this dispatch.
-        // https://github.com/unicode-org/icu4x/issues/196
-        if req.data_key.category == DataCategory::Plurals {
-            // TODO: Pick deserializer based on manifest
-            let obj: structs::plurals::PluralRuleStringsV1 =
-                match deserializer::deserialize_from_reader(reader, &self.manifest.syntax) {
-                    Ok(obj) => obj,
-                    Err(err) => return Err(err.into_resource_error(&path_buf)),
-                };
-            let response = DataResponseBuilder {
-                // TODO: Return the actual locale when fallbacks are implemented.
-                data_langid: req.data_entry.langid.clone(),
-            }
-            .with_owned_payload(obj);
-            Ok(response)
-        } else if req.data_key.category == DataCategory::Dates {
-            // TODO: Pick deserializer based on manifest
-            let obj: structs::dates::gregory::DatesV1 =
-                match deserializer::deserialize_from_reader(reader, &self.manifest.syntax) {
-                    Ok(obj) => obj,
-                    Err(err) => return Err(err.into_resource_error(&path_buf)),
-                };
-            let response = DataResponseBuilder {
-                // TODO: Return the actual locale when fallbacks are implemented.
-                data_langid: req.data_entry.langid.clone(),
-            }
-            .with_owned_payload(obj);
-            Ok(response)
-        } else {
-            panic!("Don't know how to parse this data key, but it is on the filesystem");
-        }
+        deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)
+            .map_err(|err| err.into_resource_error(&path_buf))?;
+        Ok(DataResponse {
+            data_langid: req.data_entry.langid.clone(),
+        })
     }
 }
