@@ -36,7 +36,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd> DataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
@@ -73,7 +73,7 @@ impl<'a, 'd> IterableDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd> KeyedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd> KeyedDataProvider for CldrJsonDataProvider<'a, 'd> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         PluralsProvider::supports_key(resc_key)
             .or_else(|err| DatesProvider::or_else_supports_key(err, resc_key))

@@ -67,7 +67,7 @@ impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
     }
 }
 
-impl<'d> KeyedDataProvider<'d> for PluralsProvider<'d> {
+impl<'d> KeyedDataProvider for PluralsProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::Plurals {
             return Err((&resc_key.category).into());
@@ -91,12 +91,11 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d> for PluralsProvider<'d> {
-    fn load_to_receiver(
+impl<'d, 'de> DataProvider<'d, 'de, PluralRuleStringsV1> for PluralsProvider<'d> {
+    fn load_payload(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, DataError> {
+    ) -> Result<DataResponseWithPayload<'d, PluralRuleStringsV1>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req
@@ -112,13 +111,16 @@ impl<'d> DataProvider<'d> for PluralsProvider<'d> {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
         };
-        let mut option = Some(PluralRuleStringsV1::from(r));
-        receiver.receive_option(&mut option)?;
-        Ok(DataResponse {
-            data_langid: req.resource_path.options.langid.clone(),
+        Ok(DataResponseWithPayload {
+            response: DataResponse {
+                data_langid: req.resource_path.options.langid.clone(),
+            },
+            payload: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
         })
     }
 }
+
+icu_provider::impl_erased!(PluralsProvider<'d>, 'd);
 
 impl<'d> IterableDataProvider<'d> for PluralsProvider<'d> {
     fn supported_options_for_key(
@@ -210,7 +212,7 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn DataProvider)
+    let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn ErasedDataProvider)
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::CARDINAL_V1,

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::manifest::SyntaxOption;
 use icu_provider::prelude::*;
-use std::io;
+use std::io::Read;
 use std::path::Path;
 
 /// An Error type specifically for the Deserializer that doesn't carry filenames
@@ -55,27 +55,65 @@ impl Error {
     }
 }
 
-pub fn deserialize_into_receiver<R>(
-    rdr: R,
+/// Get a JSON Deserializer. Implemeted as a macro because the return type is complex/private.
+macro_rules! get_json_deserializer {
+    ($rdr:tt) => {
+        serde_json::Deserializer::from_reader($rdr)
+    };
+}
+
+/// Get a Bincode Deserializer. Implemeted as a macro because the return type is complex/private.
+#[cfg(feature = "bincode")]
+macro_rules! get_bincode_deserializer {
+    ($rdr:tt) => {{
+        use bincode::Options;
+        let options = bincode::DefaultOptions::new()
+            .with_fixint_encoding()
+            .allow_trailing_bytes();
+        bincode::de::Deserializer::with_reader($rdr, options)
+    }};
+}
+
+/// Deserialize into a generic type (DataProvider). Covers all supported data formats.
+pub fn deserialize_into_type<'de, T>(
+    rdr: impl Read,
     syntax_option: &SyntaxOption,
-    receiver: &mut dyn DataReceiver,
-) -> Result<(), Error>
+) -> Result<T, Error>
 where
-    R: io::Read,
+    T: serde::Deserialize<'de>,
 {
     match syntax_option {
         SyntaxOption::Json => {
-            let mut d = serde_json::Deserializer::from_reader(rdr);
+            let mut d = get_json_deserializer!(rdr);
+            let data = T::deserialize(&mut d)?;
+            Ok(data)
+        }
+        #[cfg(feature = "bincode")]
+        SyntaxOption::Bincode => {
+            let mut d = get_bincode_deserializer!(rdr);
+            let data = T::deserialize(&mut d)?;
+            Ok(data)
+        }
+        #[cfg(not(feature = "bincode"))]
+        SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
+    }
+}
+
+/// Deserialize into a receiver (ErasedDataProvider). Covers all supported data formats.
+pub fn deserialize_into_receiver(
+    rdr: impl Read,
+    syntax_option: &SyntaxOption,
+    receiver: &mut dyn DataReceiver,
+) -> Result<(), Error> {
+    match syntax_option {
+        SyntaxOption::Json => {
+            let mut d = get_json_deserializer!(rdr);
             receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
             Ok(())
         }
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => {
-            use bincode::Options;
-            let options = bincode::DefaultOptions::new()
-                .with_fixint_encoding()
-                .allow_trailing_bytes();
-            let mut d = bincode::de::Deserializer::with_reader(rdr, options);
+            let mut d = get_bincode_deserializer!(rdr);
             receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
             Ok(())
         }

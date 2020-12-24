@@ -53,12 +53,18 @@ simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+criterion = "0.3.3"
 
 [features]
 export = ["icu_provider/invariant", "static_assertions", "log"]
 export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
 serialize_none = ["icu_provider/serialize_none"]
+bench = []
 
 [[bin]]
 name = "icu4x-cldr-export"
 required-features = [ "export-bin" ]
+
+[[bench]]
+name = "provider_fs"
+harness = false

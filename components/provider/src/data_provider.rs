@@ -43,20 +43,8 @@ impl Default for DataResponse {
     }
 }
 
-/// An abstract data provider that loads a payload given a request object.
-pub trait DataProvider<'d> {
-    /// Query the provider for data, loading it into a DataReceiver.
-    ///
-    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
-    /// Error with more information.
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, Error>;
-}
-
 /// A response object containing an object as payload and metadata about it.
+#[derive(Debug, Clone)]
 pub struct DataResponseWithPayload<'d, T>
 where
     T: Clone + Debug,
@@ -68,18 +56,58 @@ where
     pub payload: Option<Cow<'d, T>>,
 }
 
-impl<'d> dyn DataProvider<'d> + 'd {
+/// A generic data provider that loads a payload of a specific type.
+pub trait DataProvider<'d, 'de, T>
+where
+    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug,
+{
     /// Query the provider for data, returning the result.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    pub fn load_payload<T>(
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, Error>;
+}
+
+/// A type-erased data provider that loads a payload of any type.
+pub trait ErasedDataProvider<'d> {
+    /// Query the provider for data, loading it into a DataReceiver.
+    ///
+    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_to_receiver(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'d, T>, Error>
-    where
-        T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
-    {
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponse, Error>;
+}
+
+/// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
+/// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
+#[macro_export]
+macro_rules! impl_erased {
+    ($type:ty, $lifetime:tt) => {
+        impl<$lifetime> $crate::prelude::ErasedDataProvider<$lifetime> for $type {
+            fn load_to_receiver(
+                &self,
+                req: &$crate::prelude::DataRequest,
+                receiver: &mut dyn $crate::prelude::DataReceiver<$lifetime, 'static>,
+            ) -> Result<$crate::prelude::DataResponse, $crate::prelude::DataError> {
+                println!("{:?}", req);
+                let result = self.load_payload(req)?;
+                println!("{:?}", result);
+                receiver.receive_optional_cow(result.payload)?;
+                Ok(result.response)
+            }
+        }
+    };
+}
+
+/// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
+impl<'a, 'd, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'a
+where
+    T: serde::Deserialize<'static> + serde::Serialize + Any + Clone + Debug,
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, Error> {
         let mut receiver = DataReceiverForType::<T>::new();
         let response = self.load_to_receiver(req, &mut receiver)?;
         Ok(DataResponseWithPayload {

@@ -133,14 +133,13 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d>>(
+    pub fn try_new<D: DataProvider<'d, 'd, structs::dates::gregory::DatesV1> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
-        let mut receiver = DataReceiverForType::<structs::dates::gregory::DatesV1>::new();
-        data_provider.load_to_receiver(
-            &DataRequest {
+        let data = data_provider
+            .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: structs::dates::key::GREGORY_V1,
                     options: ResourceOptions {
@@ -148,10 +147,9 @@ impl<'d> DateTimeFormat<'d> {
                         langid: Some(langid.clone()),
                     },
                 },
-            },
-            &mut receiver,
-        )?;
-        let data = receiver.payload.expect("Load was successful");
+            })?
+            .payload
+            .expect("Load was successful");
 
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 

@@ -7,6 +7,8 @@ use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
 use crate::structs;
+use std::borrow::Cow;
+use std::fmt::Debug;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -32,7 +34,19 @@ use crate::structs;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d> DataProvider<'d> for InvariantDataProvider {
+impl<'d, T> DataProvider<'d, 'static, T> for InvariantDataProvider
+where
+    T: serde::Deserialize<'static> + serde::Serialize + Clone + Debug + Default,
+{
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, Error> {
+        Ok(DataResponseWithPayload {
+            response: DataResponse::default(),
+            payload: Some(Cow::Owned(T::default())),
+        })
+    }
+}
+
+impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,

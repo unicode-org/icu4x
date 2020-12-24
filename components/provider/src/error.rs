@@ -22,6 +22,9 @@ pub enum Error {
     /// missing from the request.
     NeedsLanguageIdentifier(DataRequest),
 
+    /// Default invariant data was requested, but Default is not implemented for the type.
+    NeedsDefault,
+
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
         /// The actual TypeID of the payload, if available.
@@ -82,6 +85,10 @@ impl fmt::Display for Error {
                 f,
                 "Requested key needs language identifier in request: {}",
                 request
+            ),
+            Self::NeedsDefault => write!(
+                f,
+                "Invariant data requested, but type does not implement Default"
             ),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;

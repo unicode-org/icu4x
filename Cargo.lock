@@ -793,6 +793,7 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "clap",
+ "criterion",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",

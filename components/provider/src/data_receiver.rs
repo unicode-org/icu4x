@@ -89,6 +89,23 @@ pub trait DataReceiver<'d, 'de> {
     /// ```
     fn receive_option(&mut self, option_any: &mut dyn Any) -> Result<(), Error>;
 
+    /// Sets the payload to the default value. Requires Default to be implemented for the type.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let mut receiver = DataReceiverForType::<String>::new();
+    /// receiver.receive_default().expect("Default is implemented for String");
+    ///
+    /// assert_eq!(receiver.payload, Some(Cow::Owned("".to_string())));
+    /// ```
+    fn receive_default(&mut self) -> Result<(), Error> {
+        Err(Error::NeedsDefault)
+    }
+
     /// Borrows the value in this DataReceiver as a Serialize trait object.
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
 }
@@ -99,6 +116,26 @@ impl<'a, 'd, 'de> dyn DataReceiver<'d, 'de> + 'a {
     pub fn receive_invariant<T: Default + Any>(&mut self) -> Result<(), Error> {
         let mut option = Some(T::default());
         self.receive_option(&mut option)
+    }
+
+    /// Sets this DataReceiver to a Cow. Delegates to the main trait methods.
+    pub fn receive_optional_cow<T: Clone + Any + Debug>(
+        &mut self,
+        optional_cow: Option<Cow<'d, T>>,
+    ) -> Result<(), Error> {
+        match optional_cow {
+            Some(cow) => match cow {
+                Cow::Borrowed(v) => self.receive_borrow(v),
+                Cow::Owned(v) => {
+                    let mut option = Some(v);
+                    self.receive_option(&mut option)
+                }
+            },
+            None => {
+                let mut option: Option<T> = None;
+                self.receive_option(&mut option)
+            }
+        }
     }
 }
 
@@ -149,7 +186,7 @@ where
 
 impl<'d, T> DataReceiverForType<'d, T>
 where
-    T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    T: serde::Deserialize<'static> + serde::Serialize + Any + Clone + Debug,
 {
     /// Creates a new, empty DataReceiver, returning it as a boxed trait object.
     pub fn new_boxed() -> Box<dyn DataReceiver<'d, 'static> + 'd> {
@@ -160,7 +197,7 @@ where
 
 impl<'d, T> DataReceiver<'d, 'static> for DataReceiverForType<'d, T>
 where
-    T: serde::Deserialize<'static> + erased_serde::Serialize + Any + Clone + Debug,
+    T: serde::Deserialize<'static> + serde::Serialize + Any + Clone + Debug,
 {
     fn receive_deserializer(
         &mut self,

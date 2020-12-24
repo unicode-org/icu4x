@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 mod fixtures;
 mod helpers;
 
@@ -20,7 +21,7 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &plurals_data.langs {
-        let response = (&provider as &dyn DataProvider)
+        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: structs::plurals::key::CARDINAL_V1,
@@ -30,8 +31,9 @@ fn parser(c: &mut Criterion) {
                     },
                 },
             })
+            .unwrap()
+            .payload
             .unwrap();
-        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.payload.unwrap();
 
         let r = &[
             &plurals_data.zero,

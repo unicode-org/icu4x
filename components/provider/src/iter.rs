@@ -12,7 +12,7 @@ use crate::structs;
 ///
 /// Implementing this trait means that a DataProvider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProvider<'d>: DataProvider<'d> {
+pub trait IterableDataProvider<'d>: ErasedDataProvider<'d> {
     /// Given a `ResourceKey`, returns a boxed iterator over `ResourceOptions`.
     fn supported_options_for_key(
         &self,
@@ -26,7 +26,7 @@ pub trait IterableDataProvider<'d>: DataProvider<'d> {
 /// keys; for example, by transforming those keys from an external data source.
 ///
 /// TODO: When const_trait_impl is stable, most implementations of this trait should be const.
-pub trait KeyedDataProvider<'d>: DataProvider<'d> {
+pub trait KeyedDataProvider {
     /// Given a `ResourceKey`, checks whether this type of DataProvider supports it.
     ///
     /// Returns Ok if the key is supported, or an Error with more information if not. The Error

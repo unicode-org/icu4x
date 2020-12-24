@@ -30,7 +30,7 @@ use std::path::PathBuf;
 ///     use icu_provider::structs;
 ///
 ///     let data: Cow<structs::plurals::PluralRuleStringsV1> =
-///         (data_provider as &dyn DataProvider)
+///         (data_provider as &dyn ErasedDataProvider)
 ///         .load_payload(&DataRequest {
 ///             resource_path: ResourcePath {
 ///                 key: structs::plurals::key::ORDINAL_V1,

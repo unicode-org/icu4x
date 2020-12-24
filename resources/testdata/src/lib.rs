@@ -18,8 +18,7 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: Cow<structs::plurals::PluralRuleStringsV1> =
-//!     (&data_provider as &dyn DataProvider)
+//! let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
 //!     .load_payload(&DataRequest {
 //!         resource_path: ResourcePath {
 //!             key: structs::plurals::key::CARDINAL_V1,

@@ -74,6 +74,7 @@ pub mod prelude {
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseWithPayload;
+    pub use crate::data_provider::ErasedDataProvider;
     pub use crate::data_receiver::DataReceiver;
     pub use crate::data_receiver::DataReceiverForType;
     pub use crate::data_receiver::DataReceiverThrowAway;

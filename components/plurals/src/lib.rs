@@ -266,7 +266,7 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProvider<'d>>(
+    pub fn try_new<'d, D: DataProvider<'d, 'd, structs::plurals::PluralRuleStringsV1> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,
@@ -275,9 +275,8 @@ impl PluralRules {
             PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
-        let mut receiver = DataReceiverForType::<structs::plurals::PluralRuleStringsV1>::new();
-        data_provider.load_to_receiver(
-            &DataRequest {
+        let plurals_data = data_provider
+            .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key,
                     options: ResourceOptions {
@@ -285,10 +284,9 @@ impl PluralRules {
                         langid: Some(langid.clone()),
                     },
                 },
-            },
-            &mut receiver,
-        )?;
-        let plurals_data = receiver.payload.expect("Load was successful");
+            })?
+            .payload
+            .expect("Load was successful");
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 

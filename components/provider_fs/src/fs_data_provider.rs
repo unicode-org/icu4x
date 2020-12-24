@@ -6,9 +6,12 @@ use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
+use std::borrow::Cow;
+use std::fmt::Debug;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
+use std::io::Read;
 use std::path::PathBuf;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
@@ -49,14 +52,8 @@ impl FsDataProvider {
             manifest,
         })
     }
-}
 
-impl<'de> DataProvider<'de> for FsDataProvider {
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'de, 'static>,
-    ) -> Result<DataResponse, DataError> {
+    fn get_reader(&self, req: &DataRequest) -> Result<(impl Read, PathBuf), DataError> {
         type Error = DataError;
         let mut path_buf = self.res_root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
@@ -83,7 +80,34 @@ impl<'de> DataProvider<'de> for FsDataProvider {
             Ok(file) => file,
             Err(err) => return Err(Error::Resource(Box::new(err))),
         };
-        let reader = BufReader::new(file);
+        Ok((BufReader::new(file), path_buf))
+    }
+}
+
+impl<'d, 'de, T> DataProvider<'d, 'de, T> for FsDataProvider
+where
+    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug,
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, DataError> {
+        let (reader, path_buf) = self.get_reader(req)?;
+        let data = deserializer::deserialize_into_type(reader, &self.manifest.syntax)
+            .map_err(|err| err.into_resource_error(&path_buf))?;
+        Ok(DataResponseWithPayload {
+            response: DataResponse {
+                data_langid: req.resource_path.options.langid.clone(),
+            },
+            payload: Some(Cow::Owned(data)),
+        })
+    }
+}
+
+impl<'d> ErasedDataProvider<'d> for FsDataProvider {
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d, 'static>,
+    ) -> Result<DataResponse, DataError> {
+        let (reader, path_buf) = self.get_reader(req)?;
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
         Ok(DataResponse {

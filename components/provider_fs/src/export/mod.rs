@@ -16,6 +16,7 @@
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
+//! use std::borrow::Cow;
 //! use std::path::PathBuf;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
@@ -47,12 +48,10 @@
 //!         options: ResourceOptions::default(),
 //!     }
 //! };
-//! let inv_response = (&inv_provider as &dyn DataProvider)
-//!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
-//!     .unwrap();
-//! let fs_response = (&fs_provider as &dyn DataProvider)
-//!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
-//!     .expect("Should successfully read from filesystem");
+//! let inv_response: DataResponseWithPayload<structs::plurals::PluralRuleStringsV1> =
+//!     inv_provider.load_payload(&req).unwrap();
+//! let fs_response: DataResponseWithPayload<structs::plurals::PluralRuleStringsV1> =
+//!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(
 //!     inv_response.payload,
