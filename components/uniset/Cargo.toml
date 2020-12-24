@@ -31,9 +31,3 @@ bench = []
 [[bench]]
 name = "inv_list"
 harness = false
-
-[[bin]]
-name = "genprops"
-path = "src/bin/gen_properties.rs"
-test = true
-bench = false

@@ -29,3 +29,9 @@ serde_json = "1.0"
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 tinystr = "0.4"
 icu_uniset = { version = "0.1", path = "../uniset" }
+
+[[bin]]
+name = "genprops"
+path = "src/bin/gen_properties.rs"
+test = true
+bench = false # This option is required for Benchmark CI

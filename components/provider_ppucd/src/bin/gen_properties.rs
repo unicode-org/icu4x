@@ -4,11 +4,14 @@ use std::env;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::iter::Iterator;
+use std::marker::PhantomData;
 use std::panic;
 use std::path::Path;
 use std::u32;
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use icu_provider_ppucd::structs::PpucdProperty;
+use icu_provider_ppucd::support::PpucdDataProvider;
 
 //
 // Can run with command in root of icu_unicodeset crate:
@@ -270,6 +273,10 @@ fn main() -> Result<(), io::Error> {
         get_binary_prop_unisets(&prop_aliases, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
+        let ppucd_prop: PpucdProperty =
+            PpucdProperty::from_uniset(&uniset, canonical_name.as_str());
+        let ppucd_data_provider = PpucdDataProvider::from_prop(ppucd_prop);
+        let ppucd_prop_json: String = ppucd_data_provider.try_into().unwrap();
         println!("canonical name of binary property = [{}]", canonical_name);
         println!("{:?}", uniset); // pretty print UnicodeSet
     }
@@ -278,7 +285,7 @@ fn main() -> Result<(), io::Error> {
 }
 
 #[cfg(test)]
-mod test {
+mod gen_properties_test {
     use super::*;
 
     #[test]
