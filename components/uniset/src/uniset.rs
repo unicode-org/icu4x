@@ -52,6 +52,16 @@ impl UnicodeSet {
         }
     }
 
+    /// Returns an owned inversion list representing the current `UnicodeSet`
+    pub fn get_inversion_list(&self) -> Vec<u32> {
+        let result: Vec<u32> = 
+            self.as_inversion_list()  // Only crate public, to not leak impl
+                .iter()
+                .cloned()
+                .collect();
+        result
+    }
+
     /// Returns `UnicodeSet` spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
