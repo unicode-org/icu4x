@@ -10,7 +10,7 @@ use std::path::Path;
 use std::u32;
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-use icu_provider_ppucd::structs::PpucdProperty;
+use icu_provider_ppucd::structs::{UnicodeProperty, UnicodeProperties};
 use icu_provider_ppucd::support::PpucdDataProvider;
 
 //
@@ -66,8 +66,6 @@ fn is_property_line(line: &str) -> bool {
 /// For a property definition line, update the property aliases map.
 /// Only operate on binary properties, currently.
 fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &str) {
-    // println!("{}", &line);
-
     let mut line_parts = split_line(&line);
     assert_eq!(&"property", &line_parts[0]);
     let prop_type = &line_parts[1];
@@ -222,23 +220,21 @@ fn get_binary_prop_unisets(
     m
 }
 
-fn main() -> Result<(), io::Error> {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-
-    let lines = read_lines(filename)?;
-
-    let line_opts = lines.map(|line_result| line_result.ok());
-    let line_strs = line_opts.flatten();
-    let parseable_lines = line_strs.filter(|line| !is_skip_ppucd_line(line));
+fn parse(s: String) -> UnicodeProperties {
+    let lines: std::str::Lines = s.lines();
+    
+    let parseable_lines = lines.filter(|line| !is_skip_ppucd_line(line));
 
     let mut prop_aliases: HashMap<String, HashSet<String>> = HashMap::new();
 
     let mut defaults: HashMap<String, String> = HashMap::new();
 
-    // TODO: need advice - how should we not add Hash and Eq from UnicodeSet unless we need it?
+    // UnicodeSet is used to store the code point range described in a PPUCD
+    // `block` line
     let mut blocks: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
 
+    // UnicodeSet is used to store the code point or code point range described
+    // in a PPUCD `cp` line, according to the PPUCD file format spec.
     let mut code_point_overrides: HashMap<UnicodeSet, HashMap<String, String>> = HashMap::new();
 
     let mut code_points: HashMap<u32, HashMap<String, String>> = HashMap::new();
@@ -259,6 +255,7 @@ fn main() -> Result<(), io::Error> {
             // compute final code point property vals after applying all
             // levels of overrides
             // can't clone UnicodeSet, so recomputing code point range
+            // TODO: can we allow UnicodeSet to derive Clone ?
             let (code_point_range, _) = get_code_point_overrides(&line);
             for code_point_char in code_point_range.iter() {
                 let code_point = code_point_char as u32;
@@ -272,17 +269,35 @@ fn main() -> Result<(), io::Error> {
     let binary_prop_unisets: HashMap<String, UnicodeSet> =
         get_binary_prop_unisets(&prop_aliases, &code_points);
 
+    let mut props: Vec<UnicodeProperty> = vec![];
+
     for (canonical_name, uniset) in binary_prop_unisets {
-        let ppucd_prop: PpucdProperty =
-            PpucdProperty::from_uniset(&uniset, canonical_name.as_str());
-        let ppucd_data_provider = PpucdDataProvider::from_prop(ppucd_prop);
-        let ppucd_prop_json: String = ppucd_data_provider.try_into().unwrap();
-        println!("canonical name of binary property = [{}]", canonical_name);
-        println!("{:?}", uniset); // pretty print UnicodeSet
+        let ppucd_prop: UnicodeProperty =
+            UnicodeProperty::from_uniset(&uniset, canonical_name.as_str());        
+        props.push(ppucd_prop);
+    }
+
+    UnicodeProperties { props }
+}
+
+
+fn main() -> Result<(), io::Error> {
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
+
+    let file_str = std::fs::read_to_string(filename)?;
+
+    let unicode_props: UnicodeProperties = parse(file_str);
+
+    for prop in unicode_props.props {
+        let ppucd_prop_json: String = serde_json::to_string(&prop).unwrap();
+        println!("{}", ppucd_prop_json); 
     }
 
     Ok(())
 }
+
+
 
 #[cfg(test)]
 mod gen_properties_test {

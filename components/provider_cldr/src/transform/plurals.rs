@@ -58,7 +58,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
 
 impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
     type Error = serde_json::error::Error;
-    /// Attempt to parse a JSON string.
+    /// Attempt to parse a CLDR JSON string.
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
         let data: cldr_json::Resource = serde_json::from_str(s)?;
         Ok(PluralsProvider {

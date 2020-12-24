@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use crate::structs::key;
-use crate::structs::{PpucdProperty, PropertyUnicodeSetV1};
+use crate::structs::{UnicodeProperty};
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::prelude::*;
@@ -19,7 +19,7 @@ use std::marker::PhantomData;
 
 #[derive(Debug)]
 pub struct PpucdDataProvider<'d> {
-    pub ppucd_prop_data: PpucdProperty,
+    pub ppucd_prop_data: UnicodeProperty,
     _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
@@ -27,22 +27,17 @@ impl<'d> PpucdDataProvider<'d> {
     pub fn new(ppucd_prop_path: &str) -> Self {
         let ppucd_prop_path_string = ppucd_prop_path.to_string();
         let data_rdr: BufReader<File> = File::open(&ppucd_prop_path).map(BufReader::new).unwrap();
-        let data: PpucdProperty = serde_json::from_reader(data_rdr).unwrap();
+        let data: UnicodeProperty = serde_json::from_reader(data_rdr).unwrap();
         PpucdDataProvider {
             ppucd_prop_data: data,
             _phantom: PhantomData,
         }
     }
 
-    fn get_prop_uniset(
-        &self,
-        data_key: &DataKey,
-        ppucd_prop: PpucdProperty,
-    ) -> Option<PropertyUnicodeSetV1> {
-        let inv_list = ppucd_prop.inv_list;
-        match *data_key {
-            key::WSPACE_V1 => Some(PropertyUnicodeSetV1::Wspace(inv_list)),
-            _ => None,
+    pub fn from_prop(ppucd_prop: UnicodeProperty) -> Self {
+        PpucdDataProvider {
+            ppucd_prop_data: ppucd_prop,
+            _phantom: PhantomData,
         }
     }
 }
@@ -50,24 +45,15 @@ impl<'d> PpucdDataProvider<'d> {
 impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
         const UND: LanguageIdentifier = langid!("und");
-        // let result: Result<UnicodeSet, DataError> =
-        //     (&self).ppucd_prop_data
-        //         .try_into()
-        //         .map_err(|e| DataError::UnavailableEntry(req.clone()));
-        // let set: UnicodeSet = result.unwrap();
-        // let set: UnicodeSet =
-        //     UnicodeSet::from_inversion_list(
-        //         (&self).ppucd_prop_data.inv_list.clone()
-        //     ).unwrap();
         let data_key: &DataKey = &req.data_key;
         let data_key_str: &str = data_key.sub_category.as_str();
-        let data: &PpucdProperty = &self.ppucd_prop_data;
+        let data: &UnicodeProperty = &self.ppucd_prop_data;
         if data.name != data_key_str {
             let data_err: DataError = req.clone().into();
             return Err(data_err);
         }
-        // let payload: PpucdProperty = data.clone();
-        let payload: PropertyUnicodeSetV1 = self.get_prop_uniset(data_key, data.clone()).unwrap();
+        let payload: UnicodeProperty = data.clone();
+        
         Ok(DataResponseBuilder { data_langid: UND }.with_owned_payload(payload))
     }
 }
@@ -75,7 +61,7 @@ impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
 impl<'d> TryFrom<&'d str> for PpucdDataProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let data: PpucdProperty = serde_json::from_str(s)?;
+        let data: UnicodeProperty = serde_json::from_str(s)?;
         Ok(PpucdDataProvider {
             ppucd_prop_data: data,
             _phantom: PhantomData,
@@ -86,7 +72,7 @@ impl<'d> TryFrom<&'d str> for PpucdDataProvider<'d> {
 impl<'d> From<File> for PpucdDataProvider<'d> {
     fn from(prop_file: File) -> Self {
         let data_rdr: BufReader<File> = BufReader::new(prop_file);
-        let data: PpucdProperty = serde_json::from_reader(data_rdr).unwrap();
+        let data: UnicodeProperty = serde_json::from_reader(data_rdr).unwrap();
         PpucdDataProvider {
             ppucd_prop_data: data,
             _phantom: PhantomData,
@@ -97,7 +83,7 @@ impl<'d> From<File> for PpucdDataProvider<'d> {
 impl<'d> TryInto<String> for PpucdDataProvider<'d> {
     type Error = serde_json::error::Error;
     fn try_into(self) -> Result<String, Self::Error> {
-        let data: PpucdProperty = self.ppucd_prop_data;
+        let data: UnicodeProperty = self.ppucd_prop_data;
         serde_json::to_string(&data)
     }
 }
@@ -108,10 +94,10 @@ fn test_json_serde() {
             "name": "wspace",
             "inv_list" : [9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289]
             }"#;
-    let deserialize_result: Result<PpucdProperty, serde_json::Error> =
+    let deserialize_result: Result<UnicodeProperty, serde_json::Error> =
         serde_json::from_str(json_str);
     let ppucd_property = deserialize_result.unwrap();
-    let exp_property = PpucdProperty {
+    let exp_property = UnicodeProperty {
         name: String::from("wspace"),
         inv_list: vec![
             9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
@@ -125,10 +111,10 @@ fn test_json_serde() {
 fn test_json_serde_manual_file_parse() {
     let ppucd_property_files_root_path = "tests/testdata/wspace.json";
     let json_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
-    let deserialize_result: Result<PpucdProperty, serde_json::Error> =
+    let deserialize_result: Result<UnicodeProperty, serde_json::Error> =
         serde_json::from_str(&json_str);
     let ppucd_property = deserialize_result.unwrap();
-    let exp_property = PpucdProperty {
+    let exp_property = UnicodeProperty {
         name: String::from("wspace"),
         inv_list: vec![
             9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
@@ -174,11 +160,10 @@ fn test_ppucd_provider_resp_manual_file_parse() {
     };
     let resp: DataResponse = ppucd_provider.load(&data_req).unwrap();
 
-    let ppucd_property_cow: Cow<PropertyUnicodeSetV1> = resp.take_payload().unwrap();
-    let exp_prop_uniset: PropertyUnicodeSetV1 = PropertyUnicodeSetV1::Wspace(vec![
-        9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287,
-        8288, 12288, 12289,
-    ]);
+    let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload().unwrap();
+    let exp_prop_uniset: UnicodeProperty = UnicodeProperty { name: String::from("wspace"),
+        inv_list: vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287,
+        8288, 12288, 12289] };
     assert_eq!(exp_prop_uniset, ppucd_property_cow.into_owned());
 }
 

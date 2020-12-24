@@ -4,4 +4,4 @@
 
 mod error;
 pub mod structs;
-mod support;
+pub mod support;
