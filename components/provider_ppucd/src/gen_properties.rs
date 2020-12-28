@@ -10,8 +10,8 @@ use std::path::Path;
 use std::u32;
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-use icu_provider_ppucd::structs::{UnicodeProperty, UnicodeProperties};
-use icu_provider_ppucd::support::PpucdDataProvider;
+use crate::structs::{UnicodeProperty, UnicodeProperties};
+use crate::support::PpucdDataProvider;
 
 //
 // Can run with command in root of icu_unicodeset crate:
@@ -220,7 +220,7 @@ fn get_binary_prop_unisets(
     m
 }
 
-fn parse(s: String) -> UnicodeProperties {
+pub fn parse(s: String) -> UnicodeProperties {
     let lines: std::str::Lines = s.lines();
     
     let parseable_lines = lines.filter(|line| !is_skip_ppucd_line(line));

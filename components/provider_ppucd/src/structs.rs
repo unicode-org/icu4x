@@ -29,7 +29,7 @@ macro_rules! data_key {
 
 pub mod key {
     use icu_provider::DataKey;
-    pub const WSPACE_V1: DataKey = data_key!(uniset, "wspace", 1);
+    pub const WSPACE_V1: DataKey = data_key!(uniset, "WSpace", 1);
 }
 
 /// Gets a locale-invariant default struct given a data key in this module's category.
@@ -42,6 +42,7 @@ pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>>
     }
 }
 
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct UnicodeProperties {
     pub props: Vec<UnicodeProperty>,
 }

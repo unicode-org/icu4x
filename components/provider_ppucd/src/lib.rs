@@ -5,3 +5,4 @@
 mod error;
 pub mod structs;
 pub mod support;
+pub mod gen_properties;
