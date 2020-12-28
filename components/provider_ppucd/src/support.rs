@@ -46,7 +46,7 @@ impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
         let props_data: &UnicodeProperties = &self.ppucd_props;
         let matching_prop: Option<&UnicodeProperty> =
             props_data.props.iter().find(|p| p.name == data_key_str);
-        let owned_matching_prop: Option<UnicodeProperty> = matching_prop.map(|p_opt| p_opt.clone());
+        let owned_matching_prop: Option<UnicodeProperty> = matching_prop.cloned();
         let prop_as_result: Result<UnicodeProperty, DataError> =
             owned_matching_prop.ok_or_else(|| DataError::from(req.clone()));
         prop_as_result.map(|p| DataResponseBuilder { data_langid: UND }.with_owned_payload(p))
@@ -68,7 +68,7 @@ impl<'d> From<File> for PpucdDataProvider<'d> {
     fn from(prop_file: File) -> Self {
         let mut file_contents = String::new();
         let _result = (&prop_file).read_to_string(&mut file_contents);
-        let props_data: UnicodeProperties = parse_ppucd::parse(String::from(file_contents));
+        let props_data: UnicodeProperties = parse_ppucd::parse(file_contents);
         PpucdDataProvider {
             ppucd_props: props_data,
             _phantom: PhantomData,

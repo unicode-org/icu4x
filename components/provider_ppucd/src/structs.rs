@@ -75,7 +75,7 @@ impl TryInto<UnicodeSet> for UnicodeProperty {
     type Error = crate::error::Error;
     fn try_into(self) -> Result<UnicodeSet, Self::Error> {
         UnicodeSet::from_inversion_list(self.inv_list)
-            .map_err(|e| crate::error::Error::UnisetConversion(e))
+            .map_err(crate::error::Error::UnisetConversion)
     }
 }
 
