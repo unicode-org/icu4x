@@ -2,11 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::error::Error;
 use icu_uniset::UnicodeSet;
 use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
-use tinystr;
 
 //
 // data key structs - the structs used directly by users of data provider

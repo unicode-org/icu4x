@@ -1,30 +1,11 @@
 use std::char;
 use std::collections::{HashMap, HashSet};
-use std::env;
-use std::fs::File;
-use std::io::{self, BufRead};
 use std::iter::Iterator;
-use std::marker::PhantomData;
 use std::panic;
-use std::path::Path;
 use std::u32;
 
+use crate::structs::{UnicodeProperties, UnicodeProperty};
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-use crate::structs::{UnicodeProperty, UnicodeProperties};
-use crate::support::PpucdDataProvider;
-
-//
-// Can run with command in root of icu_unicodeset crate:
-//   cargo run --bin genprops <ppucd-file>
-//
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
 
 fn split_line(line: &str) -> Vec<&str> {
     line.split(';').collect::<Vec<_>>()
@@ -222,7 +203,7 @@ fn get_binary_prop_unisets(
 
 pub fn parse(s: String) -> UnicodeProperties {
     let lines: std::str::Lines = s.lines();
-    
+
     let parseable_lines = lines.filter(|line| !is_skip_ppucd_line(line));
 
     let mut prop_aliases: HashMap<String, HashSet<String>> = HashMap::new();
@@ -273,31 +254,12 @@ pub fn parse(s: String) -> UnicodeProperties {
 
     for (canonical_name, uniset) in binary_prop_unisets {
         let ppucd_prop: UnicodeProperty =
-            UnicodeProperty::from_uniset(&uniset, canonical_name.as_str());        
+            UnicodeProperty::from_uniset(&uniset, canonical_name.as_str());
         props.push(ppucd_prop);
     }
 
     UnicodeProperties { props }
 }
-
-
-fn main() -> Result<(), io::Error> {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-
-    let file_str = std::fs::read_to_string(filename)?;
-
-    let unicode_props: UnicodeProperties = parse(file_str);
-
-    for prop in unicode_props.props {
-        let ppucd_prop_json: String = serde_json::to_string(&prop).unwrap();
-        println!("{}", ppucd_prop_json); 
-    }
-
-    Ok(())
-}
-
-
 
 #[cfg(test)]
 mod gen_properties_test {

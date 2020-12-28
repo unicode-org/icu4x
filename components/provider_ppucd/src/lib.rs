@@ -3,6 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 mod error;
+pub mod parse_ppucd;
 pub mod structs;
 pub mod support;
-pub mod gen_properties;
