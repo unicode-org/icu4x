@@ -54,7 +54,6 @@ pub mod error; // How do I make this crate-visible in a way that allows
 mod builder;
 mod conversions;
 mod uniset;
-mod uniset_const;
 mod utils;
 
 pub use builder::UnicodeSetBuilder;
