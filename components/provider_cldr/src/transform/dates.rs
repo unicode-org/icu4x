@@ -91,11 +91,11 @@ impl<'d> DatesProvider<'d> {
     }
 }
 
-impl<'d, 'de> DataProvider<'d, 'de, gregory::DatesV1> for DatesProvider<'d> {
+impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'d, gregory::DatesV1>, DataError> {
+    ) -> Result<DataResponse<'d, gregory::DatesV1>, DataError> {
         let cldr_langid = req
             .resource_path
             .options
@@ -106,8 +106,8 @@ impl<'d, 'de> DataProvider<'d, 'de, gregory::DatesV1> for DatesProvider<'d> {
             .into();
 
         let dates = self.get_dates_for(&req.resource_path.key, &cldr_langid)?;
-        Ok(DataResponseWithPayload {
-            response: DataResponse {
+        Ok(DataResponse {
+            metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(Cow::Owned(gregory::DatesV1::from(dates))),

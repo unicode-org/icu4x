@@ -34,13 +34,13 @@ use std::fmt::Debug;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d, T> DataProvider<'d, 'static, T> for InvariantDataProvider
+impl<'d, T> DataProvider<'d, T> for InvariantDataProvider
 where
-    T: serde::Deserialize<'static> + serde::Serialize + Clone + Debug + Default,
+    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Default + 'd,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, Error> {
-        Ok(DataResponseWithPayload {
-            response: DataResponse::default(),
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Owned(T::default())),
         })
     }
@@ -50,10 +50,10 @@ impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, Error> {
+        receiver: &mut dyn DataReceiver<'d>,
+    ) -> Result<DataResponseMetadata, Error> {
         structs::get_invariant(&req.resource_path.key, receiver)?;
-        Ok(DataResponse::default())
+        Ok(DataResponseMetadata::default())
     }
 }
 

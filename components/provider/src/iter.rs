@@ -7,17 +7,46 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::structs;
+use std::fmt::Debug;
 
-/// A DataProvider that can iterate over all supported `ResourceOptions` for a certain key.
+/// A provider that can iterate over all supported `ResourceOptions` for a certain key.
 ///
 /// Implementing this trait means that a DataProvider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProvider<'d>: ErasedDataProvider<'d> {
+pub trait IterableDataProvider<'d> {
     /// Given a `ResourceKey`, returns a boxed iterator over `ResourceOptions`.
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error>;
+}
+
+/// Super-trait combining DataProvider and IterableDataProvider, auto-implemented
+/// for all types implementing both of those traits.
+pub trait IterableTypedDataProvider<'d, T>:
+    IterableDataProvider<'d> + DataProvider<'d, T>
+where
+    T: Clone + Debug + 'd,
+{
+}
+
+impl<'d, S, T> IterableTypedDataProvider<'d, T> for S
+where
+    S: IterableDataProvider<'d> + DataProvider<'d, T>,
+    T: Clone + Debug + 'd,
+{
+}
+
+/// Super-trait combining ErasedDataProvider and IterableDataProvider, auto-implemented
+/// for all types implementing both of those traits.
+pub trait IterableErasedDataProvider<'d>:
+    IterableDataProvider<'d> + ErasedDataProvider<'d>
+{
+}
+
+impl<'d, S> IterableErasedDataProvider<'d> for S where
+    S: IterableDataProvider<'d> + ErasedDataProvider<'d>
+{
 }
 
 /// A DataProvider whose supported keys are known statically at compile time.
@@ -77,7 +106,7 @@ pub trait DataExporter {
     fn put_key_from_provider<'a, 'd>(
         &mut self,
         resc_key: &ResourceKey,
-        provider: &impl IterableDataProvider<'d>,
+        provider: &impl IterableErasedDataProvider<'d>,
     ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {

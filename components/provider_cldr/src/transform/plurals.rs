@@ -91,11 +91,12 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-impl<'d, 'de> DataProvider<'d, 'de, PluralRuleStringsV1> for PluralsProvider<'d> {
+// Only returns owned data, so assert 'static for ErasedDataProvider compatibility.
+impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'d, PluralRuleStringsV1>, DataError> {
+    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'static>>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req
@@ -111,8 +112,8 @@ impl<'d, 'de> DataProvider<'d, 'de, PluralRuleStringsV1> for PluralsProvider<'d>
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
         };
-        Ok(DataResponseWithPayload {
-            response: DataResponse {
+        Ok(DataResponse {
+            metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
@@ -141,7 +142,7 @@ impl<'d> IterableDataProvider<'d> for PluralsProvider<'d> {
     }
 }
 
-impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1 {
+impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
     fn from(other: &cldr_json::LocalePluralRules) -> Self {
         #[allow(clippy::ptr_arg)]
         fn convert(s: &Cow<'static, str>) -> Cow<'static, str> {

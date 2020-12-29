@@ -1,8 +1,12 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 use icu_locid_macros::langid;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
+use icu_provider::struct_provider::StructProvider;
+use icu_provider::structs::plurals::PluralRuleStringsV1;
+use std::borrow::Cow;
 
 #[test]
 fn test_plural_rules() {
@@ -31,4 +35,24 @@ fn test_plural_category_all() {
     let categories: Vec<&PluralCategory> = PluralCategory::all().collect();
 
     assert_eq!(categories.get(0), Some(&&PluralCategory::Zero));
+}
+
+#[test]
+fn test_plural_rules_non_static_lifetime() {
+    let local_string = "v = 0 and i % 10 = 1".to_string();
+    let local_data = PluralRuleStringsV1 {
+        zero: None,
+        one: Some(Cow::Borrowed(&local_string)),
+        two: None,
+        few: None,
+        many: None,
+    };
+    let provider = StructProvider(&local_data);
+
+    let lid = langid!("und");
+    let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();
+
+    assert_eq!(pr.select(1_usize), PluralCategory::One);
+    assert_eq!(pr.select(5_usize), PluralCategory::Other);
+    assert_eq!(pr.select(11_usize), PluralCategory::One);
 }

@@ -48,9 +48,9 @@
 //!         options: ResourceOptions::default(),
 //!     }
 //! };
-//! let inv_response: DataResponseWithPayload<structs::plurals::PluralRuleStringsV1> =
+//! let inv_response: DataResponse<structs::plurals::PluralRuleStringsV1> =
 //!     inv_provider.load_payload(&req).unwrap();
-//! let fs_response: DataResponseWithPayload<structs::plurals::PluralRuleStringsV1> =
+//! let fs_response: DataResponse<structs::plurals::PluralRuleStringsV1> =
 //!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(

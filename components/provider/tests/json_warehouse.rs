@@ -82,16 +82,16 @@ impl<'d> From<&'d DataWarehouse> for DataProviderImplErased<'d> {
     }
 }
 
-impl DataProvider<'_, '_, SymbolsV1> for DataWarehouse {
+impl DataProvider<'static, SymbolsV1> for DataWarehouse {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'static, SymbolsV1>, DataError> {
+    ) -> Result<DataResponse<'static, SymbolsV1>, DataError> {
         if req.resource_path.key != structs::decimal::key::SYMBOLS_V1 {
             return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
         }
-        Ok(DataResponseWithPayload {
-            response: DataResponse::default(),
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Owned(self.data.decimal.symbols_v1_a.clone())),
         })
     }
@@ -99,31 +99,25 @@ impl DataProvider<'_, '_, SymbolsV1> for DataWarehouse {
 
 icu_provider::impl_erased!(DataWarehouse, 'd);
 
-impl<'d> DataProvider<'d, '_, SymbolsV1> for DataProviderBorrowing<'d> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'d, SymbolsV1>, DataError> {
+impl<'d> DataProvider<'d, SymbolsV1> for DataProviderBorrowing<'d> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, SymbolsV1>, DataError> {
         if req.resource_path.key != structs::decimal::key::SYMBOLS_V1 {
             return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
         }
-        Ok(DataResponseWithPayload {
-            response: DataResponse::default(),
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.borrowed_data.decimal.symbols_v1_a)),
         })
     }
 }
 
-impl<'d> DataProvider<'d, '_, SymbolsV2> for DataProviderBorrowing<'d> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'d, SymbolsV2>, DataError> {
+impl<'d> DataProvider<'d, SymbolsV2> for DataProviderBorrowing<'d> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, SymbolsV2>, DataError> {
         if req.resource_path.key != structs::decimal::key::SYMBOLS_V2 {
             return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
         }
-        Ok(DataResponseWithPayload {
-            response: DataResponse::default(),
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.borrowed_data.decimal.symbols_v2_a)),
         })
     }
@@ -134,32 +128,29 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, DataError> {
+        receiver: &mut dyn DataReceiver<'d>,
+    ) -> Result<DataResponseMetadata, DataError> {
         match req.resource_path.key {
             structs::decimal::key::SYMBOLS_V1 => {
                 receiver.receive_borrow(&self.borrowed_data.decimal.symbols_v1_a)?;
-                Ok(DataResponse::default())
+                Ok(DataResponseMetadata::default())
             }
             structs::decimal::key::SYMBOLS_V2 => {
                 receiver.receive_borrow(&self.borrowed_data.decimal.symbols_v2_a)?;
-                Ok(DataResponse::default())
+                Ok(DataResponseMetadata::default())
             }
             _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
         }
     }
 }
 
-impl<'d> DataProvider<'d, '_, SymbolsV1> for DataProviderImplErased<'d> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponseWithPayload<'d, SymbolsV1>, DataError> {
+impl<'d> DataProvider<'d, SymbolsV1> for DataProviderImplErased<'d> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, SymbolsV1>, DataError> {
         if req.resource_path.key != structs::decimal::key::SYMBOLS_V1 {
             return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
         }
-        Ok(DataResponseWithPayload {
-            response: DataResponse::default(),
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.borrowed_data.decimal.symbols_v1_a)),
         })
     }
@@ -191,14 +182,14 @@ fn get_receiver_v1<'d>() -> DataReceiverForType<'d, SymbolsV1> {
     DataReceiverForType::default()
 }
 
-fn get_payload_v1<'d, 'de, P: DataProvider<'d, 'de, SymbolsV1> + ?Sized>(
+fn get_payload_v1<'d, P: DataProvider<'d, SymbolsV1> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, SymbolsV1>, DataError> {
     let response = d.load_payload(&get_request_v1())?;
     Ok(response.payload.unwrap())
 }
 
-fn get_payload_v2<'d, 'de, P: DataProvider<'d, 'de, SymbolsV2> + ?Sized>(
+fn get_payload_v2<'d, P: DataProvider<'d, SymbolsV2> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, SymbolsV2>, DataError> {
     let response = d.load_payload(&get_request_v2())?;
@@ -296,9 +287,9 @@ fn test_dyn_generic() {
 fn test_mismatched_types() {
     let warehouse = get_warehouse();
     // Request is for v2, but type argument is for v1
-    let response: Result<DataResponseWithPayload<SymbolsV1>, DataError> =
-        (&warehouse.provider_borrowing() as &dyn ErasedDataProvider)
-            .load_payload(&get_request_v2());
+    let response: Result<DataResponse<SymbolsV1>, DataError> = (&warehouse.provider_borrowing()
+        as &dyn ErasedDataProvider)
+        .load_payload(&get_request_v2());
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
 
@@ -309,13 +300,7 @@ fn test_impl_erased() {
     check_data(&decimal_data.unwrap());
 }
 
-fn check_v1_v2<
-    'd,
-    'de,
-    P: DataProvider<'d, 'de, SymbolsV1> + DataProvider<'d, 'de, SymbolsV2> + ?Sized,
->(
-    d: &P,
-) {
+fn check_v1_v2<'d, P: DataProvider<'d, SymbolsV1> + DataProvider<'d, SymbolsV2> + ?Sized>(d: &P) {
     let v1: Cow<'d, SymbolsV1> = d.load_payload(&get_request_v1()).unwrap().payload.unwrap();
     let v2: Cow<'d, SymbolsV2> = d.load_payload(&get_request_v2()).unwrap().payload.unwrap();
     if v1.zero_digit != v2.zero_digit {

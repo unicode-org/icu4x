@@ -3,49 +3,150 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use icu_provider::prelude::*;
-use icu_provider::structs::decimal::SymbolsV1;
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use std::default::Default;
+
+#[derive(Deserialize, Serialize, Clone, Debug, PartialEq)]
+struct DataStruct<'a> {
+    #[serde(borrow)]
+    pub value: Cow<'a, str>,
+}
 
 #[allow(clippy::redundant_static_lifetimes)]
-const DATA: &'static str = r#"{
-    "zero_digit": "a",
-    "decimal_separator": ".",
-    "grouping_separator": ","
+const DATA_JSON: &'static str = r#"{
+    "value": "abc"
 }"#;
 
-fn check_zero_digit<'d>(receiver: &DataReceiverForType<'d, SymbolsV1>, expected: char) {
-    let data: &SymbolsV1 = receiver.borrow_payload().expect("Data should be present");
-    assert_eq!(data.zero_digit, expected);
+const DATA_STRUCT: DataStruct<'static> = DataStruct {
+    value: Cow::Borrowed("def"),
+};
+
+fn get_struct_with_static_references() -> DataStruct<'static> {
+    // Deserialize from a string to create static references.
+    serde_json::from_str(DATA_JSON).expect("Well-formed data")
 }
 
-#[cfg(feature = "invariant")]
-#[test]
-fn test_basic() {
-    let mut receiver: DataReceiverForType<'_, SymbolsV1> = DataReceiverForType {
-        payload: Some(Cow::Owned(SymbolsV1::default())),
-    };
-    check_zero_digit(&receiver, '0');
+fn get_struct_with_owned_data() -> DataStruct<'static> {
+    icu_provider::resource_key!(x, "foo", "bar", 1);
+    // Deserialize from a reader to create owned data.
+    // NOTE: Unclear why plain `serde_json::from_reader` doesn't work here:
+    //     error: implementation of `_::_serde::Deserialize` is not general enough
+    // let data: DataStruct = serde_json::from_reader(DATA_JSON.as_bytes()).unwrap();
+    let deserializer = &mut serde_json::Deserializer::from_reader(DATA_JSON.as_bytes());
+    DataStruct::deserialize(deserializer).expect("Well-formed data")
+}
 
-    let json = &mut serde_json::Deserializer::from_str(DATA);
+#[test]
+fn test_deserializer_static() {
+    // Deserialize from a string to create static references.
+    let deserializer = &mut serde_json::Deserializer::from_str(DATA_JSON);
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
     receiver
-        .receive_deserializer(&mut erased_serde::Deserializer::erase(json))
-        .expect("Data should be well-formed");
-    check_zero_digit(&receiver, 'a');
+        .receive_deserializer(&mut erased_serde::Deserializer::erase(deserializer))
+        .expect("Well-formed data");
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Owned(DataStruct {
+            value: Cow::Borrowed(_)
+        }))
+    ));
 }
 
-#[cfg(feature = "invariant")]
 #[test]
-fn test_receive_option() {
-    let mut option = Some(SymbolsV1::default());
-    let mut receiver = DataReceiverForType::<SymbolsV1>::new();
-    assert!(option.is_some());
-    assert!(receiver.payload.is_none());
+fn test_deserializer_owned() {
+    // Deserialize from a reader to create owned data.
+    let deserializer = &mut serde_json::Deserializer::from_reader(DATA_JSON.as_bytes());
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
+    receiver
+        .receive_deserializer(&mut erased_serde::Deserializer::erase(deserializer))
+        .expect("Well-formed data");
 
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Owned(DataStruct {
+            value: Cow::Owned(_)
+        }))
+    ));
+}
+
+#[test]
+fn test_borrow_static() {
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
+    receiver
+        .receive_borrow(&DATA_STRUCT)
+        .expect("Types should match");
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Borrowed(DataStruct {
+            value: Cow::Borrowed(_)
+        }))
+    ));
+}
+
+#[test]
+fn test_box_static() {
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
+    receiver
+        .receive_box(Box::new(get_struct_with_static_references()))
+        .expect("Types should match");
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Owned(DataStruct {
+            value: Cow::Borrowed(_)
+        }))
+    ));
+}
+
+#[test]
+fn test_box_owned() {
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
+    receiver
+        .receive_box(Box::new(get_struct_with_owned_data()))
+        .expect("Types should match");
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Owned(DataStruct {
+            value: Cow::Owned(_)
+        }))
+    ));
+}
+
+#[test]
+fn test_option_static() {
+    let mut option = Some(get_struct_with_static_references());
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
     receiver
         .receive_option(&mut option)
         .expect("Types should match");
     assert!(option.is_none());
     assert!(receiver.payload.is_some());
-    check_zero_digit(&receiver, '0');
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Owned(DataStruct {
+            value: Cow::Borrowed(_)
+        }))
+    ));
+}
+
+#[test]
+fn test_option_owned() {
+    let mut option = Some(get_struct_with_owned_data());
+    let mut receiver = DataReceiverForType::<DataStruct>::new();
+    receiver
+        .receive_option(&mut option)
+        .expect("Types should match");
+    assert!(option.is_none());
+    assert!(receiver.payload.is_some());
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Owned(DataStruct {
+            value: Cow::Owned(_)
+        }))
+    ));
 }

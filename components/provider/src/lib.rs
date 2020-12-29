@@ -8,10 +8,10 @@
 //! a [`Response`]:
 //!
 //! ```ignore
-//! fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
+//! fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
 //! ```
 //!
-//! A Request contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,
+//! A [`Request`] contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,
 //! "plurals/cardinal@1") and [`ResourceOptions`] (a language identifier and optional variant, e.g.,
 //! "fr") being requested. The Response contains the data payload corresponding to the Request.
 //!
@@ -21,28 +21,57 @@
 //! use icu_provider::prelude::*;
 //! ```
 //!
-//! ## Types of Data Providers
+//! ## Concrete Implementations of Data Providers
 //!
 //! Any object implementing [`DataProvider`] can be used to supply ICU4X with locale data. ICU4X ships
 //! with some pre-built data providers:
 //!
-//! - [`FsDataProvider`](../icu_provider_fs/struct.FsDataProvider.html) reads structured data from the
-//!   filesystem. It can also write out that filesystem structure.
 //! - [`CldrJsonDataProvider`](../icu_provider_cldr/transform/struct.CldrJsonDataProvider.html) reads structured
 //!   data directly from CLDR source files.
+//! - [`FsDataProvider`](../icu_provider_fs/struct.FsDataProvider.html) reads structured data from the
+//!   filesystem. It can also write out that filesystem structure. More efficient than CldrJsonDataProvider.
 //!
-//! ## Iterable Data Providers
+//! This crate also contains some concrete implementations for testing purposes:
+//! 
+//! - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
+//! - [`StructProvider`] wraps a particular instance of a struct and returns it.
 //!
-//! Data providers can implement [`ResourceOptionsCollection`], allowing them to be used via the
-//! auto-implemented trait [`IterableDataProvider`]. This allows iteration over all [`ResourceOptions`]
-//! instances supported for a certain key in the data provider. This can be useful when
-//! transforming data between storage formats. For more information, see the [`iter`] module.
+//! ## Additional Traits
+//! 
+//! ### `IterableDataProvider`
 //!
-//! ## `InvariantDataProvider`
+//! Data providers can implement [`IterableDataProvider`], allowing iteration over all [`ResourceOptions`]
+//! instances supported for a certain key in the data provider.
 //!
-//! For testing or development purposes, this crate also offers `InvariantDataProvider`, which
-//! returns fixed data that does not vary by locale. You must enable `InvariantDataProvider` via the
-//! `"invariant"` feature in your Cargo.toml file.
+//! For more information, see the [`iter`] module.
+//!
+//! ### `ErasedDataProvider`
+//!
+//! The [`DataProvider`] trait has a type argument corresponding to the type being loaded. A peer
+//! trait [`ErasedDataProvider`] removes the type argument, using runtime type checking instead.
+//!
+//! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for:
+//!
+//! - Caches
+//! - Bulk data operations
+//! - Transforming from one format to another
+//!
+//! ## Types and Lifetimes
+//!
+//! All types `T` implementing standard Clone and Debug can be passed through the data provider.
+//!
+//! Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
+//! returned by the DataProvider.
+//!
+//! DataProvider returns data in the form of a `Cow<'d, T>`, where `'d` is the lifetime of the data
+//! if it is borrowed, and `T` is constrained by `T: 'd` such that if the data is owned, it may not
+//! have any fields whose lifetime subceeds `'d`.
+//!
+//! When using `ErasedDataProvider`, the following additional requirements are placed on `T`:
+//!
+//! - `T: 'static`, since `T` must be compatible with `Any`
+//! - `serde::Deserialize` and `serde::Serialize`, allowing for type-agnostic (de)serialization
+//! - `Default`, allowing `InvariantDataProvider` to work
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: prelude::DataProvider
@@ -51,15 +80,15 @@
 //! [`ResourceKey`]: prelude::ResourceKey
 //! [`Category`]: prelude::ResourceCategory
 //! [`ResourceOptions`]: prelude::ResourceOptions
-//! [`ResourceOptionsCollection`]: iter::ResourceOptionsCollection
 //! [`IterableDataProvider`]: iter::IterableDataProvider
 
 mod data_provider;
 mod data_receiver;
 mod error;
 #[macro_use]
-mod resource;
+pub mod resource;
 pub mod iter;
+pub mod struct_provider;
 pub mod structs;
 
 #[cfg(feature = "invariant")]
@@ -73,7 +102,7 @@ pub mod prelude {
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
-    pub use crate::data_provider::DataResponseWithPayload;
+    pub use crate::data_provider::DataResponseMetadata;
     pub use crate::data_provider::ErasedDataProvider;
     pub use crate::data_receiver::DataReceiver;
     pub use crate::data_receiver::DataReceiverForType;

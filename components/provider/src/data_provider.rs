@@ -4,6 +4,7 @@
 
 use crate::data_receiver::DataReceiver;
 use crate::data_receiver::DataReceiverForType;
+use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use icu_locid::LanguageIdentifier;
 use std::any::Any;
@@ -15,7 +16,7 @@ use std::fmt::Debug;
 pub use crate::error::Error;
 
 /// A struct to request a certain hunk of data from a data provider.
-#[derive(PartialEq, Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct DataRequest {
     pub resource_path: ResourcePath,
 }
@@ -30,42 +31,48 @@ impl fmt::Display for DataRequest {
     }
 }
 
+/// Create a DataRequest to a particular ResourceKey with default options.
+impl From<ResourceKey> for DataRequest {
+    fn from(key: ResourceKey) -> Self {
+        DataRequest {
+            resource_path: ResourcePath {
+                key,
+                options: Default::default(),
+            },
+        }
+    }
+}
+
 /// A response object containing metadata about the returned data.
-#[derive(Debug, Clone)]
-pub struct DataResponse {
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct DataResponseMetadata {
     /// The language of the returned data, or None if the resource key isn't localized.
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-impl Default for DataResponse {
-    fn default() -> Self {
-        Self { data_langid: None }
-    }
-}
-
 /// A response object containing an object as payload and metadata about it.
 #[derive(Debug, Clone)]
-pub struct DataResponseWithPayload<'d, T>
+pub struct DataResponse<'d, T>
 where
-    T: Clone + Debug,
+    T: Clone + Debug + 'd,
 {
     /// Metadata about the returned object.
-    pub response: DataResponse,
+    pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
     pub payload: Option<Cow<'d, T>>,
 }
 
 /// A generic data provider that loads a payload of a specific type.
-pub trait DataProvider<'d, 'de, T>
+pub trait DataProvider<'d, T>
 where
-    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug,
+    T: Clone + Debug + 'd,
 {
     /// Query the provider for data, returning the result.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, Error>;
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error>;
 }
 
 /// A type-erased data provider that loads a payload of any type.
@@ -77,8 +84,8 @@ pub trait ErasedDataProvider<'d> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, Error>;
+        receiver: &mut dyn DataReceiver<'d>,
+    ) -> Result<DataResponseMetadata, Error>;
 }
 
 /// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
@@ -90,28 +97,28 @@ macro_rules! impl_erased {
             fn load_to_receiver(
                 &self,
                 req: &$crate::prelude::DataRequest,
-                receiver: &mut dyn $crate::prelude::DataReceiver<$lifetime, 'static>,
-            ) -> Result<$crate::prelude::DataResponse, $crate::prelude::DataError> {
+                receiver: &mut dyn $crate::prelude::DataReceiver<$lifetime>,
+            ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
                 println!("{:?}", req);
                 let result = self.load_payload(req)?;
                 println!("{:?}", result);
                 receiver.receive_optional_cow(result.payload)?;
-                Ok(result.response)
+                Ok(result.metadata)
             }
         }
     };
 }
 
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
-impl<'a, 'd, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'a
+impl<'a, 'd, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: serde::Deserialize<'static> + serde::Serialize + Any + Clone + Debug,
+    T: serde::Deserialize<'d> + serde::Serialize + Any + Clone + Debug,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let mut receiver = DataReceiverForType::<T>::new();
-        let response = self.load_to_receiver(req, &mut receiver)?;
-        Ok(DataResponseWithPayload {
-            response,
+        let metadata = self.load_to_receiver(req, &mut receiver)?;
+        Ok(DataResponse {
+            metadata,
             payload: receiver.payload,
         })
     }

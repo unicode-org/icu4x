@@ -16,7 +16,7 @@ use std::default::Default;
 /// Lifetimes:
 /// - 'd = lifetime of borrowed data (Cow::Borrowed)
 /// - 'de = lifetime parameter of owned data (Cow::Owned)
-pub trait DataReceiver<'d, 'de> {
+pub trait DataReceiver<'d> {
     /// Consumes a Serde Deserializer into this DataReceiver as owned data.
     ///
     /// # Example
@@ -36,7 +36,7 @@ pub trait DataReceiver<'d, 'de> {
     /// ```
     fn receive_deserializer(
         &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'de>,
+        deserializer: &mut dyn erased_serde::Deserializer<'d>,
     ) -> Result<(), erased_serde::Error>;
 
     /// Sets this DataReceiver to a borrowed value.
@@ -110,7 +110,7 @@ pub trait DataReceiver<'d, 'de> {
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
 }
 
-impl<'a, 'd, 'de> dyn DataReceiver<'d, 'de> + 'a {
+impl<'a, 'd> dyn DataReceiver<'d> + 'a {
     /// Sets this DataReceiver to the default value of the given type.
     #[cfg(feature = "invariant")]
     pub fn receive_invariant<T: Default + Any>(&mut self) -> Result<(), Error> {
@@ -186,22 +186,22 @@ where
 
 impl<'d, T> DataReceiverForType<'d, T>
 where
-    T: serde::Deserialize<'static> + serde::Serialize + Any + Clone + Debug,
+    T: serde::Deserialize<'d> + serde::Serialize + Any + Clone + Debug,
 {
     /// Creates a new, empty DataReceiver, returning it as a boxed trait object.
-    pub fn new_boxed() -> Box<dyn DataReceiver<'d, 'static> + 'd> {
+    pub fn new_boxed() -> Box<dyn DataReceiver<'d> + 'd> {
         let receiver: DataReceiverForType<'d, T> = Self::new();
         Box::new(receiver)
     }
 }
 
-impl<'d, T> DataReceiver<'d, 'static> for DataReceiverForType<'d, T>
+impl<'d, T> DataReceiver<'d> for DataReceiverForType<'d, T>
 where
-    T: serde::Deserialize<'static> + serde::Serialize + Any + Clone + Debug,
+    T: serde::Deserialize<'d> + serde::Serialize + Any + Clone + Debug,
 {
     fn receive_deserializer(
         &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'static>,
+        deserializer: &mut dyn erased_serde::Deserializer<'d>,
     ) -> Result<(), erased_serde::Error> {
         let obj: T = erased_serde::deserialize(deserializer)?;
         self.payload = Some(Cow::Owned(obj));
@@ -277,10 +277,10 @@ impl DataReceiverThrowAway {
     }
 }
 
-impl<'d> DataReceiver<'d, 'static> for DataReceiverThrowAway {
+impl<'d> DataReceiver<'d> for DataReceiverThrowAway {
     fn receive_deserializer(
         &mut self,
-        _: &mut dyn erased_serde::Deserializer<'static>,
+        _: &mut dyn erased_serde::Deserializer<'d>,
     ) -> Result<(), erased_serde::Error> {
         self.flag = true;
         Ok(())

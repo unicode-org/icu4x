@@ -41,9 +41,9 @@ where
     pub fn try_load(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
+        receiver: &mut dyn DataReceiver<'d>,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<DataResponse>, DataError> {
+    ) -> Result<Option<DataResponseMetadata>, DataError> {
         if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }

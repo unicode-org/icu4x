@@ -18,7 +18,7 @@ pub mod key {
 #[cfg(feature = "invariant")]
 pub fn get_invariant<'d>(
     resc_key: &ResourceKey,
-    receiver: &mut dyn DataReceiver<'d, 'static>,
+    receiver: &mut dyn DataReceiver<'d>,
 ) -> Result<(), DataError> {
     match *resc_key {
         key::SYMBOLS_V1 => receiver.receive_invariant::<SymbolsV1>(),
@@ -28,7 +28,7 @@ pub fn get_invariant<'d>(
 }
 
 /// Gets a boxed DataReceiver capable of receiving a resource key in this module's category.
-pub fn get_receiver<'d>(resc_key: &ResourceKey) -> Option<Box<dyn DataReceiver<'d, 'static> + 'd>> {
+pub fn get_receiver<'d>(resc_key: &ResourceKey) -> Option<Box<dyn DataReceiver<'d> + 'd>> {
     match *resc_key {
         key::SYMBOLS_V2 => Some(DataReceiverForType::<SymbolsV2>::new_boxed()),
         _ => None,

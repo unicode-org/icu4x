@@ -261,7 +261,7 @@ impl PluralRules {
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'d, 'd, icu_provider::structs::plurals::PluralRuleStringsV1>,
+        P: icu_provider::DataProvider<'d, icu_provider::structs::plurals::PluralRuleStringsV1>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);

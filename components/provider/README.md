@@ -7,7 +7,7 @@ The primary trait is `DataProvider`. It has one method, which transforms a `Requ
 a `Response`:
 
 ```
-fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
+fn load(&self, req: &DataRequest) -> Result<DataResponseMetadata<'d>, DataError>
 ```
 
 A Request contains a `ResourceKey` (a composition of a `Category` and sub-category, e.g.,

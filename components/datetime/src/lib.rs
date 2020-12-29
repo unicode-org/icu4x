@@ -133,7 +133,7 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d, 'd, structs::dates::gregory::DatesV1> + ?Sized>(
+    pub fn try_new<D: DataProvider<'d, structs::dates::gregory::DatesV1> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,

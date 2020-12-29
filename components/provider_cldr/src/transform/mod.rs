@@ -40,8 +40,8 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, DataError> {
+        receiver: &mut dyn DataReceiver<'d>,
+    ) -> Result<DataResponseMetadata, DataError> {
         if let Some(result) = self.plurals.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
         }

@@ -10,8 +10,11 @@ use std::fmt;
 use std::fmt::Write;
 use tinystr::{TinyStr16, TinyStr4};
 
-// Re-export tinystr16 for crate macro resc_key!()
-pub(crate) use tinystr::tinystr16;
+/// Re-export tinystr4 for crate macro resource_key!()
+pub use tinystr::tinystr4;
+
+/// Re-export tinystr16 for crate macro resource_key!()
+pub use tinystr::tinystr16;
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
@@ -57,16 +60,34 @@ pub struct ResourceKey {
     pub version: u32,
 }
 
-/// Internal-only: Shortcut to construct a const resource identifier.
+/// Shortcut to construct a const resource identifier.
+///
+/// # Example
+///
+/// ```
+/// use icu_provider::prelude::*;
+///
+/// // Create a private-use ResourceKey
+/// const MY_PRIVATE_USE_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
+/// assert_eq!("x-foo/bar@1", format!("{}", MY_PRIVATE_USE_KEY));
+/// ```
+#[macro_export]
 macro_rules! resource_key {
     (decimal, $sub_category:literal, $version:tt) => {
-        resource_key!($crate::ResourceCategory::Decimal, $sub_category, $version)
+        $crate::resource_key!($crate::ResourceCategory::Decimal, $sub_category, $version)
     };
     (plurals, $sub_category:literal, $version:tt) => {
-        resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)
+        $crate::resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)
     };
     (dates, $sub_category:literal, $version:tt) => {
-        resource_key!($crate::ResourceCategory::Dates, $sub_category, $version)
+        $crate::resource_key!($crate::ResourceCategory::Dates, $sub_category, $version)
+    };
+    (x, $pu:literal, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!(
+            $crate::ResourceCategory::PrivateUse($crate::resource::tinystr4!($pu)),
+            $sub_category,
+            $version
+        )
     };
     ($category:expr, $sub_category:literal, $version:tt) => {
         $crate::ResourceKey {
@@ -179,6 +200,15 @@ impl fmt::Display for ResourceOptions {
     }
 }
 
+impl Default for ResourceOptions {
+    fn default() -> Self {
+        Self {
+            variant: None,
+            langid: None,
+        }
+    }
+}
+
 impl ResourceOptions {
     /// Gets the standard path components of this `ResourceOptions`. These components should be used when
     /// persisting the `ResourceOptions` on the filesystem or in structured data.
@@ -211,15 +241,6 @@ impl ResourceOptions {
     }
 }
 
-impl Default for ResourceOptions {
-    fn default() -> Self {
-        Self {
-            variant: None,
-            langid: None,
-        }
-    }
-}
-
 /// The standard components of a ResourceOptions path.
 pub struct ResourceOptionsComponents {
     components: [Option<Cow<'static, str>>; 2],
@@ -247,7 +268,7 @@ impl From<&ResourceOptions> for ResourceOptionsComponents {
     }
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ResourcePath {
     pub key: ResourceKey,
     pub options: ResourceOptions,

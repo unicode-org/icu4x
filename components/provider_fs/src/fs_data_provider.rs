@@ -84,16 +84,16 @@ impl FsDataProvider {
     }
 }
 
-impl<'d, 'de, T> DataProvider<'d, 'de, T> for FsDataProvider
+impl<'d, T> DataProvider<'d, T> for FsDataProvider
 where
-    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug,
+    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + 'd,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponseWithPayload<'d, T>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         let data = deserializer::deserialize_into_type(reader, &self.manifest.syntax)
             .map_err(|err| err.into_resource_error(&path_buf))?;
-        Ok(DataResponseWithPayload {
-            response: DataResponse {
+        Ok(DataResponse {
+            metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(Cow::Owned(data)),
@@ -105,12 +105,12 @@ impl<'d> ErasedDataProvider<'d> for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, DataError> {
+        receiver: &mut dyn DataReceiver<'d>,
+    ) -> Result<DataResponseMetadata, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
-        Ok(DataResponse {
+        Ok(DataResponseMetadata {
             data_langid: req.resource_path.options.langid.clone(),
         })
     }

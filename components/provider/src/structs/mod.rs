@@ -14,7 +14,7 @@ use crate::prelude::*;
 #[cfg(feature = "invariant")]
 pub fn get_invariant<'d>(
     resc_key: &ResourceKey,
-    receiver: &mut dyn DataReceiver<'d, 'static>,
+    receiver: &mut dyn DataReceiver<'d>,
 ) -> Result<(), DataError> {
     Err(DataError::UnsupportedResourceKey(*resc_key)) //
         .or_else(|_| decimal::get_invariant(resc_key, receiver)) //
@@ -25,7 +25,7 @@ pub fn get_invariant<'d>(
 /// Gets a boxed DataReceiver capable of receiving any known data struct.
 pub fn get_receiver<'d>(
     resc_key: &ResourceKey,
-) -> Result<Box<dyn DataReceiver<'d, 'static> + 'd>, DataError> {
+) -> Result<Box<dyn DataReceiver<'d> + 'd>, DataError> {
     None //
         .or_else(|| decimal::get_receiver(resc_key)) //
         .or_else(|| plurals::get_receiver(resc_key)) //
