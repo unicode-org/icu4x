@@ -20,7 +20,7 @@ pub use tinystr::tinystr16;
 #[non_exhaustive]
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
 pub enum ResourceCategory {
-    Decimal,
+    Icu4x,
     Plurals,
     Dates,
     PrivateUse(TinyStr4),
@@ -30,7 +30,7 @@ impl ResourceCategory {
     /// Gets or builds a string form of this `ResourceCategory`.
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
-            Self::Decimal => Cow::Borrowed("decimal"),
+            Self::Icu4x => Cow::Borrowed("icu4x"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::Dates => Cow::Borrowed("dates"),
             Self::PrivateUse(id) => {
@@ -73,6 +73,9 @@ pub struct ResourceKey {
 /// ```
 #[macro_export]
 macro_rules! resource_key {
+    (icu4x, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!($crate::ResourceCategory::Icu4x, $sub_category, $version)
+    };
     (decimal, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Decimal, $sub_category, $version)
     };

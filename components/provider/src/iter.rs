@@ -23,8 +23,7 @@ pub trait IterableDataProvider<'d> {
 
 /// Super-trait combining DataProvider and IterableDataProvider, auto-implemented
 /// for all types implementing both of those traits.
-pub trait IterableTypedDataProvider<'d, T>:
-    IterableDataProvider<'d> + DataProvider<'d, T>
+pub trait IterableTypedDataProvider<'d, T>: IterableDataProvider<'d> + DataProvider<'d, T>
 where
     T: Clone + Debug + 'd,
 {
@@ -112,16 +111,14 @@ pub trait DataExporter {
             if !self.include_resource_options(&resc_options) {
                 continue;
             }
-            let mut receiver = structs::get_receiver(resc_key)?;
             let req = DataRequest {
                 resource_path: ResourcePath {
                     key: *resc_key,
                     options: resc_options,
                 },
             };
-            provider.load_to_receiver(&req, receiver.as_mut())?;
-            let payload = receiver.as_serialize();
-            self.put_payload(&req, &payload)?;
+            let serialize = provider.load_as_serialize(&req)?;
+            self.put_payload(&req, &serialize)?;
         }
         Ok(())
     }

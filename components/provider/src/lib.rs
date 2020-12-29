@@ -32,12 +32,12 @@
 //!   filesystem. It can also write out that filesystem structure. More efficient than CldrJsonDataProvider.
 //!
 //! This crate also contains some concrete implementations for testing purposes:
-//! 
+//!
 //! - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
 //! - [`StructProvider`] wraps a particular instance of a struct and returns it.
 //!
 //! ## Additional Traits
-//! 
+//!
 //! ### `IterableDataProvider`
 //!
 //! Data providers can implement [`IterableDataProvider`], allowing iteration over all [`ResourceOptions`]
@@ -83,10 +83,10 @@
 //! [`IterableDataProvider`]: iter::IterableDataProvider
 
 mod data_provider;
-mod data_receiver;
 mod error;
 #[macro_use]
 pub mod resource;
+pub mod erased;
 pub mod iter;
 pub mod struct_provider;
 pub mod structs;
@@ -103,10 +103,10 @@ pub mod prelude {
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
-    pub use crate::data_provider::ErasedDataProvider;
-    pub use crate::data_receiver::DataReceiver;
-    pub use crate::data_receiver::DataReceiverForType;
-    pub use crate::data_receiver::DataReceiverThrowAway;
+    pub use crate::erased::DataReceiver;
+    pub use crate::erased::DataReceiverForType;
+    pub use crate::erased::DataReceiverThrowAway;
+    pub use crate::erased::ErasedDataProvider;
     pub use crate::error::Error as DataError;
     pub use crate::iter::IterableDataProvider;
     pub use crate::iter::KeyedDataProvider;

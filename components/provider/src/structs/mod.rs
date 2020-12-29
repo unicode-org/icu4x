@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 //! Collection of data structures for `DataProvider`.
 pub mod dates;
-pub mod decimal;
+pub mod icu4x;
 pub mod plurals;
 
 use crate::prelude::*;
 
+/*
 /// Gets a locale-invariant default struct given a resource key in this module's category.
 /// For example, if the resource key is `plurals/cardinal@1`, a Response with an object of type
 /// `PluralRuleStringsV1` will be returned.
@@ -32,3 +33,4 @@ pub fn get_receiver<'d>(
         .or_else(|| dates::get_receiver(resc_key)) //
         .ok_or_else(|| DataError::UnsupportedResourceKey(*resc_key)) //
 }
+*/

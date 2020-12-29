@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use crate::error::Error;
+use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
 use std::borrow::Borrow;
@@ -11,6 +12,9 @@ use std::fmt::Debug;
 
 #[cfg(feature = "invariant")]
 use std::default::Default;
+
+/// Re-export erased_serde for the impl_erased! macro
+pub use erased_serde;
 
 /// An object capable of accepting data from a variety of forms.
 /// Lifetimes:
@@ -102,9 +106,7 @@ pub trait DataReceiver<'d> {
     ///
     /// assert_eq!(receiver.payload, Some(Cow::Owned("".to_string())));
     /// ```
-    fn receive_default(&mut self) -> Result<(), Error> {
-        Err(Error::NeedsDefault)
-    }
+    fn receive_default(&mut self) -> Result<(), Error>;
 
     /// Borrows the value in this DataReceiver as a Serialize trait object.
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
@@ -186,7 +188,7 @@ where
 
 impl<'d, T> DataReceiverForType<'d, T>
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Any + Clone + Debug,
+    T: serde::de::DeserializeOwned + serde::Serialize + Clone + Debug + Any + Default,
 {
     /// Creates a new, empty DataReceiver, returning it as a boxed trait object.
     pub fn new_boxed() -> Box<dyn DataReceiver<'d> + 'd> {
@@ -197,7 +199,7 @@ where
 
 impl<'d, T> DataReceiver<'d> for DataReceiverForType<'d, T>
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Any + Clone + Debug,
+    T: serde::de::DeserializeOwned + serde::Serialize + Clone + Debug + Any + Default,
 {
     fn receive_deserializer(
         &mut self,
@@ -237,6 +239,11 @@ where
                     generic: Some(TypeId::of::<T>()),
                 })?;
         self.payload = option.take().map(Cow::Owned);
+        Ok(())
+    }
+
+    fn receive_default(&mut self) -> Result<(), Error> {
+        self.payload = Some(Cow::Owned(T::default()));
         Ok(())
     }
 
@@ -301,7 +308,76 @@ impl<'d> DataReceiver<'d> for DataReceiverThrowAway {
         Ok(())
     }
 
+    fn receive_default(&mut self) -> Result<(), Error> {
+        self.flag = true;
+        Ok(())
+    }
+
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
         None
+    }
+}
+
+/// A type-erased data provider that loads a payload of any type.
+pub trait ErasedDataProvider<'d> {
+    /// Query the provider for data, loading it into a DataReceiver.
+    ///
+    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn DataReceiver<'d>,
+    ) -> Result<DataResponseMetadata, Error>;
+
+    /// Query the provider for data, returning it as a boxed Serialize trait object.
+    ///
+    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_as_serialize(
+        &self,
+        req: &DataRequest,
+    ) -> Result<Box<dyn erased_serde::Serialize>, Error>;
+}
+
+/// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
+/// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
+#[macro_export]
+macro_rules! impl_erased {
+    ($type:ty, $lifetime:tt) => {
+        impl<$lifetime> $crate::prelude::ErasedDataProvider<$lifetime> for $type {
+            fn load_to_receiver(
+                &self,
+                req: &$crate::prelude::DataRequest,
+                receiver: &mut dyn $crate::prelude::DataReceiver<$lifetime>,
+            ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
+                let result = self.load_payload(req)?;
+                receiver.receive_optional_cow(result.payload)?;
+                Ok(result.metadata)
+            }
+
+            fn load_as_serialize(
+                &self,
+                req: &$crate::prelude::DataRequest,
+            ) -> Result<Box<dyn $crate::erased::erased_serde::Serialize>, $crate::prelude::DataError> {
+                let result = self.load_payload(req)?;
+                Ok(Box::new(result.payload.expect("Load was successful").into_owned()))
+            }
+        }
+    };
+}
+
+/// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
+impl<'a, 'd, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
+where
+    T: serde::de::DeserializeOwned + serde::Serialize + Clone + Debug + Any + Default,
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+        let mut receiver = DataReceiverForType::<T>::new();
+        let metadata = self.load_to_receiver(req, &mut receiver)?;
+        Ok(DataResponse {
+            metadata,
+            payload: receiver.payload,
+        })
     }
 }

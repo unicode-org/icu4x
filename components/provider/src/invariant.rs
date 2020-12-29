@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::data_receiver::DataReceiverThrowAway;
+use crate::erased::DataReceiverThrowAway;
 use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
@@ -22,7 +22,6 @@ use std::fmt::Debug;
 /// use icu_provider::prelude::*;
 /// use icu_provider::structs;
 /// use icu_provider::InvariantDataProvider;
-/// use icu_locid_macros::langid;
 ///
 /// let provider = InvariantDataProvider;
 /// let expected_entries = vec![ResourceOptions::default()];
@@ -36,7 +35,7 @@ pub struct InvariantDataProvider;
 
 impl<'d, T> DataProvider<'d, T> for InvariantDataProvider
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Default + 'd,
+    T: Clone + Debug + Default + 'd,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {
@@ -49,51 +48,47 @@ where
 impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
-        req: &DataRequest,
+        _req: &DataRequest,
         receiver: &mut dyn DataReceiver<'d>,
     ) -> Result<DataResponseMetadata, Error> {
-        structs::get_invariant(&req.resource_path.key, receiver)?;
+        receiver.receive_default()?;
         Ok(DataResponseMetadata::default())
+    }
+
+    /// Method always fails: a concrete type is required to return a Serialize trait object
+    fn load_as_serialize(
+        &self,
+        req: &DataRequest,
+    ) -> Result<Box<dyn erased_serde::Serialize>, Error> {
+        Err(Error::NeedsTypeInfo(req.clone()))
     }
 }
 
 impl IterableDataProvider<'_> for InvariantDataProvider {
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error> {
-        let mut receiver = DataReceiverThrowAway::default();
-        structs::get_invariant(resc_key, &mut receiver)?;
         let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
         Ok(Box::new(list.into_iter()))
     }
 }
 
 #[test]
-fn test_v2() {
+fn test_receiver() {
     let provider = InvariantDataProvider;
-    let mut receiver =
-        DataReceiverForType::<structs::plurals::PluralRuleStringsV1> { payload: None };
+    let mut receiver = DataReceiverForType::<structs::icu4x::HelloV1>::new();
     provider
         .load_to_receiver(
-            &DataRequest {
-                resource_path: ResourcePath {
-                    key: structs::plurals::key::CARDINAL_V1,
-                    options: Default::default(),
-                },
-            },
+            &DataRequest::from(structs::icu4x::key::HELLO_V1),
             &mut receiver,
         )
         .unwrap();
-    let plurals_data: &structs::plurals::PluralRuleStringsV1 = &(receiver.payload.unwrap());
+    let plurals_data: &structs::icu4x::HelloV1 = &receiver.payload.unwrap();
     assert_eq!(
         plurals_data,
-        &structs::plurals::PluralRuleStringsV1 {
-            zero: None,
-            one: None,
-            two: None,
-            few: None,
-            many: None,
+        &structs::icu4x::HelloV1 {
+            hello: Cow::Borrowed("(und) Hello World")
         }
     );
 }

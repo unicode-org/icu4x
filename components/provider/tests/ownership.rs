@@ -6,7 +6,7 @@ use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-#[derive(Deserialize, Serialize, Clone, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Clone, Debug, Default, PartialEq)]
 struct DataStruct<'a> {
     #[serde(borrow)]
     pub value: Cow<'a, str>,
@@ -31,7 +31,7 @@ fn get_struct_with_owned_data() -> DataStruct<'static> {
     // Deserialize from a reader to create owned data.
     // NOTE: Unclear why plain `serde_json::from_reader` doesn't work here:
     //     error: implementation of `_::_serde::Deserialize` is not general enough
-    // let data: DataStruct = serde_json::from_reader(DATA_JSON.as_bytes()).unwrap();
+    // serde_json::from_reader(DATA_JSON.as_bytes()).unwrap();
     let deserializer = &mut serde_json::Deserializer::from_reader(DATA_JSON.as_bytes());
     DataStruct::deserialize(deserializer).expect("Well-formed data")
 }
