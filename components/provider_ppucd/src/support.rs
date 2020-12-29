@@ -16,9 +16,7 @@ pub struct PpucdDataProvider<'s> {
 impl<'s> PpucdDataProvider<'s> {
     pub fn new(prop_str: &'s str) -> Self {
         let data: UnicodeProperties = parse_ppucd::parse(prop_str);
-        PpucdDataProvider {
-            ppucd_props: data,
-        }
+        PpucdDataProvider { ppucd_props: data }
     }
 
     pub fn from_prop(ppucd_prop: UnicodeProperty<'s>) -> Self {
@@ -30,8 +28,6 @@ impl<'s> PpucdDataProvider<'s> {
     }
 }
 
-// Similar to provider_cldr for plurals:
-// Only returns owned data, so assert 'static for ErasedDataProvider compatibility.
 impl<'d, 's> DataProvider<'d, UnicodeProperty<'s>> for PpucdDataProvider<'s> {
     fn load_payload(
         &self,
@@ -51,9 +47,6 @@ impl<'d, 's> DataProvider<'d, UnicodeProperty<'s>> for PpucdDataProvider<'s> {
             metadata: DataResponseMetadata { data_langid: None },
             payload: Some(Cow::Owned(prop)),
         })
-        // let prop_as_result: Result<UnicodeProperty, DataError> =
-        //     owned_matching_prop.ok_or_else(|| DataError::from(req.clone()));
-        // prop_as_result.map(|p| DataResponseBuilder { data_langid: UND }.with_owned_payload(p))
     }
 }
 
@@ -67,23 +60,11 @@ impl<'s> TryFrom<&'s str> for PpucdDataProvider<'s> {
     }
 }
 
-// impl<'d> From<File> for PpucdDataProvider<'d> {
-//     fn from(prop_file: File) -> Self {
-//         let mut file_contents = String::new();
-//         let _result = (&prop_file).read_to_string(&mut file_contents);
-//         let props_data: UnicodeProperties = parse_ppucd::parse(file_contents);
-//         PpucdDataProvider {
-//             ppucd_props: props_data,
-//         }
-//     }
-// }
-
 #[test]
 fn test_ppucd_provider_parse() {
     let ppucd_property_files_root_path = "tests/testdata/ppucd-wspace-test.txt";
     let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
-    // const UND: LanguageIdentifier = langid!("und");
     let data_req = DataRequest {
         resource_path: ResourcePath {
             key: key::WSPACE_V1,

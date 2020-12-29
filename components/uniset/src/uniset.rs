@@ -166,11 +166,11 @@ impl UnicodeSet {
     }
 
     /// Checks to see the unsigned int is in the `UnicodeSet`.all()
-    /// 
+    ///
     /// Note: Even though `u32` and `char` in Rust are non-negative 4-byte
     /// values, there is an important difference. A `u32` can take values up to
     /// a very large integer value, while a `char` in Rust is defined to be in
-    /// the range from 0 to the maximum valid Unicode Scalar Value. 
+    /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using `std` implementation

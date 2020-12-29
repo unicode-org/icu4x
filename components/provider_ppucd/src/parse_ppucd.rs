@@ -30,7 +30,7 @@ fn get_data_line_prop_vals<'s>(data_line_parts: &[&'s str]) -> HashMap<&'s str, 
         if let Some(idx) = first_equals_idx {
             // Properties with an "=" in their string have values associated
             // (ex: enumerated properties).
-            m.insert(&prop_str[0..idx], &prop_str[idx+1..]);
+            m.insert(&prop_str[0..idx], &prop_str[idx + 1..]);
         } else {
             // For properties that don't take values, let their value in the map be the prop name itself
             // This applies to binary properties.
@@ -275,8 +275,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let mut props: Vec<UnicodeProperty> = vec![];
 
     for (canonical_name, uniset) in binary_prop_unisets {
-        let ppucd_prop: UnicodeProperty =
-            UnicodeProperty::from_uniset(&uniset, canonical_name);
+        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
         props.push(ppucd_prop);
     }
 
@@ -354,8 +353,7 @@ mod gen_properties_test {
 
     #[test]
     fn block_range_prop_vals_test() {
-        let line =
-            "block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy";
+        let line = "block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy";
 
         let mut exp_prop_vals: HashMap<&str, &str> = HashMap::new();
         exp_prop_vals.insert("age", "1.1");
@@ -397,8 +395,7 @@ mod gen_properties_test {
         exp_code_point_prop_vals.insert("lb", "SP");
         exp_code_point_prop_vals.insert("NFC_QC", "Y");
         exp_code_point_prop_vals.insert("SB", "SP");
-        exp_code_point_prop_vals
-            .insert("Name_Alias", "abbreviation=SP");
+        exp_code_point_prop_vals.insert("Name_Alias", "abbreviation=SP");
         exp_code_point_prop_vals.insert("dt", "None");
         exp_code_point_prop_vals.insert("ea", "Na");
         exp_code_point_prop_vals.insert("nt", "None");

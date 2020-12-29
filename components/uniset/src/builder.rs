@@ -92,11 +92,11 @@ impl UnicodeSetBuilder {
     }
 
     /// Add the code point value to the `UnicodeSetBuilder`
-    /// 
+    ///
     /// Note: Even though `u32` and `char` in Rust are non-negative 4-byte
     /// values, there is an important difference. A `u32` can take values up to
     /// a very large integer value, while a `char` in Rust is defined to be in
-    /// the range from 0 to the maximum valid Unicode Scalar Value. 
+    /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// # Example:
     ///
@@ -108,7 +108,8 @@ impl UnicodeSetBuilder {
     /// assert_eq!(check.iter().next(), Some(65));
     /// ```
     pub fn add_u32(&mut self, c: u32) {
-        if c <= char::MAX as u32 {   // we already know 0 <= c  because c: u32
+        if c <= char::MAX as u32 {
+            // we already know 0 <= c  because c: u32
             self.add(c, c + 1);
         }
     }
