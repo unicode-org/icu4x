@@ -26,9 +26,8 @@ where
         let data = self
             .map
             .get(langid)
-            // TODO: Reference instead of clone
             .map(|s| HelloV1 {
-                hello: Cow::Owned(s.to_string()),
+                hello: s.clone(),
             })
             .ok_or_else(|| DataError::UnavailableResourceOptions(req.clone()))?;
         Ok(DataResponse {

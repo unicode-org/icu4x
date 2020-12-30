@@ -85,6 +85,18 @@ impl<'d> DataProvider<'d, HelloV1<'d>> for DataWarehouse<'d> {
     }
 }
 
+impl<'d, 's> DataProvider<'d, HelloV1<'s>> for &'d DataWarehouse<'s> where 's: 'd {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloV1<'s>>, DataError> {
+        if req.resource_path.key != structs::icu4x::key::HELLO_V1 {
+            return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
+        }
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(Cow::Borrowed(&self.data.hello_v1)),
+        })
+    }
+}
+
 icu_provider::impl_erased!(DataWarehouse<'static>, 'd);
 
 impl<'d, 's> DataProvider<'d, HelloV1<'s>> for DataProviderBorrowing<'d, 's> {
@@ -113,10 +125,10 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
 
 impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     /// Loads JSON data. Returns borrowed data.
-    fn load_to_receiver(
+    fn load_to_receiver<'a>(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d>,
+        receiver: &'a mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, DataError> {
         match req.resource_path.key {
             structs::icu4x::key::HELLO_V1 => {
@@ -237,8 +249,6 @@ fn test_warehouse_dyn_erased_alt() {
     ));
 }
 
-/*
-
 #[test]
 fn test_data_receiver() {
     let warehouse = get_warehouse(DATA);
@@ -250,6 +260,8 @@ fn test_data_receiver() {
     let hello_data: &HelloV1 = &receiver.take_payload().unwrap();
     check_data_v1(hello_data);
 }
+
+/*
 
 #[test]
 fn test_generic() {

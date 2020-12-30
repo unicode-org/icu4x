@@ -56,6 +56,8 @@
 //! - Bulk data operations
 //! - Transforming from one format to another
 //!
+//! To use [`ErasedDataProvider`], the "serde" feature must be enabled.
+//!
 //! ## Types and Lifetimes
 //!
 //! All types `T` implementing standard Clone and Debug can be passed through the data provider.
