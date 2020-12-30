@@ -27,7 +27,7 @@ fn overview_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .payload
+                .take_payload()
                 .expect("Loading was successful");
         });
     });
@@ -60,7 +60,7 @@ fn json_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .payload
+                .take_payload()
                 .expect("Loading was successful");
         });
     });
@@ -79,7 +79,7 @@ fn json_bench(c: &mut Criterion) {
                         },
                     })
                     .expect("The data should be valid")
-                    .payload
+                    .take_payload()
                     .expect("Loading was successful");
         });
     });
@@ -103,7 +103,7 @@ fn bincode_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .payload
+                .take_payload()
                 .expect("Loading was successful");
         });
     });
@@ -122,7 +122,7 @@ fn bincode_bench(c: &mut Criterion) {
                         },
                     })
                     .expect("The data should be valid")
-                    .payload
+                    .take_payload()
                     .expect("Loading was successful");
         });
     });

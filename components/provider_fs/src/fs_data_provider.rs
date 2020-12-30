@@ -105,7 +105,7 @@ impl<'d> ErasedDataProvider<'d> for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d>,
+        receiver: &mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)

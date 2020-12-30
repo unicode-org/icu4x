@@ -458,7 +458,7 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
+        .take_payload()
         .unwrap();
 
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
@@ -490,7 +490,7 @@ fn test_with_numbering_system() {
             },
         })
         .unwrap()
-        .payload
+        .take_payload()
         .unwrap();
 
     assert_eq!("d MMM y", cs_dates.patterns.date.medium);
@@ -517,7 +517,7 @@ fn unalias_contexts() {
             },
         })
         .unwrap()
-        .payload
+        .take_payload()
         .unwrap();
 
     // Czech months are not unaliased because `wide` differs.

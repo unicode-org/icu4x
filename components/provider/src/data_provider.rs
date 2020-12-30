@@ -60,6 +60,25 @@ where
     pub payload: Option<Cow<'d, T>>,
 }
 
+impl<'d, T> DataResponse<'d, T>
+where
+    T: Clone + Debug,
+{
+    /// Convenience method: borrows the underlying payload. Error if not present.
+    pub fn borrow_payload(&self) -> Result<&T, Error> {
+        use std::borrow::Borrow;
+        self.payload
+            .as_ref()
+            .map(|cow| cow.borrow())
+            .ok_or(Error::MissingPayload)
+    }
+
+    /// Convenience method: takes ownership of the underlying payload. Error if not present.
+    pub fn take_payload(&mut self) -> Result<Cow<'d, T>, Error> {
+        self.payload.take().ok_or(Error::MissingPayload)
+    }
+}
+
 /// A generic data provider that loads a payload of a specific type.
 pub trait DataProvider<'d, T>
 where

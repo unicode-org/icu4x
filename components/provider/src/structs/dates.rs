@@ -2,33 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-// Date
-
-use crate::prelude::*;
-
 pub mod key {
     use crate::resource::ResourceKey;
     pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
-}
-
-/// Gets a locale-invariant default struct given a resource key in this module's category.
-#[cfg(feature = "invariant")]
-pub fn get_invariant<'d>(
-    resc_key: &ResourceKey,
-    receiver: &mut dyn DataReceiver<'d>,
-) -> Result<(), DataError> {
-    match *resc_key {
-        key::GREGORY_V1 => receiver.receive_invariant::<gregory::DatesV1>(),
-        _ => Err(DataError::UnsupportedResourceKey(*resc_key)),
-    }
-}
-
-/// Gets a boxed DataReceiver capable of receiving a resource key in this module's category.
-pub fn get_receiver<'d>(resc_key: &ResourceKey) -> Option<Box<dyn DataReceiver<'d> + 'd>> {
-    match *resc_key {
-        key::GREGORY_V1 => Some(DataReceiverForType::<gregory::DatesV1>::new_boxed()),
-        _ => None,
-    }
 }
 
 pub mod gregory {

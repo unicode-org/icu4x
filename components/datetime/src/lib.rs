@@ -148,8 +148,7 @@ impl<'d> DateTimeFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .expect("Load was successful");
+            .take_payload()?;
 
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 

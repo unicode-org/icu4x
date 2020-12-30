@@ -79,7 +79,7 @@ fn test_json() {
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid");
     let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.payload.expect("The data should be present");
+        response.take_payload().expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
 
@@ -92,7 +92,7 @@ fn test_json_dyn_erased() {
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid");
     let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.payload.expect("The data should be present");
+        response.take_payload().expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
 
@@ -105,7 +105,7 @@ fn test_json_owned() {
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid");
     let plurals_data: Cow<PluralsWithBorrow> =
-        response.payload.expect("The data should be present");
+        response.take_payload().expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA_2);
 }
 
@@ -119,7 +119,7 @@ fn test_bincode() {
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid");
     let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.payload.expect("The data should be present");
+        response.take_payload().expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }
 
@@ -133,6 +133,6 @@ fn test_bincode_dyn_erased() {
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid");
     let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.payload.expect("The data should be present");
+        response.take_payload().expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }

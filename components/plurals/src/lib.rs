@@ -285,8 +285,7 @@ impl PluralRules {
                     },
                 },
             })?
-            .payload
-            .expect("Load was successful");
+            .take_payload()?;
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 

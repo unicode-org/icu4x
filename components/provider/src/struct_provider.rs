@@ -36,7 +36,7 @@ use std::fmt::Debug;
 ///
 /// let payload: Cow<SampleDataStruct> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
-///     .payload
+///     .take_payload()
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(*payload, local_data);

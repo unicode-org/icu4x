@@ -104,9 +104,8 @@ pub mod prelude {
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
     pub use crate::erased::DataReceiver;
-    pub use crate::erased::DataReceiverForType;
-    pub use crate::erased::DataReceiverThrowAway;
     pub use crate::erased::ErasedDataProvider;
+    pub use crate::erased::ErasedDataReceiver;
     pub use crate::error::Error as DataError;
     pub use crate::iter::IterableDataProvider;
     pub use crate::iter::KeyedDataProvider;

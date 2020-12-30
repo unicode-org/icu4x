@@ -117,15 +117,15 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d>,
+        receiver: &mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, DataError> {
         match req.resource_path.key {
             structs::icu4x::key::HELLO_V1 => {
-                receiver.receive_borrow(&self.borrowed_data.hello_v1)?;
+                receiver.receive_erased(Cow::Borrowed(&self.borrowed_data.hello_v1))?;
                 Ok(DataResponseMetadata::default())
             }
             HELLO_ALT_KEY => {
-                receiver.receive_borrow(&self.borrowed_data.hello_alt)?;
+                receiver.receive_erased(Cow::Borrowed(&self.borrowed_data.hello_alt))?;
                 Ok(DataResponseMetadata::default())
             }
             _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
@@ -169,22 +169,20 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_receiver_v1<'d, 's>() -> DataReceiverForType<'d, HelloV1<'s>> {
-    DataReceiverForType::new()
+fn get_receiver_v1<'d, 's>() -> DataReceiver<'d, HelloV1<'s>> {
+    DataReceiver::new()
 }
 
 fn get_payload_v1<'d, P: DataProvider<'d, HelloV1<'d>> + ?Sized + 'd>(
     provider: &P,
 ) -> Result<Cow<'d, HelloV1<'d>>, DataError> {
-    let response = provider.load_payload(&get_request_v1())?;
-    Ok(response.payload.unwrap())
+    provider.load_payload(&get_request_v1())?.take_payload()
 }
 
 fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
-    let response = d.load_payload(&get_request_alt())?;
-    Ok(response.payload.unwrap())
+    d.load_payload(&get_request_alt())?.take_payload()
 }
 
 fn get_request_v1() -> DataRequest {
@@ -250,12 +248,12 @@ fn test_warehouse_dyn_erased_alt() {
 #[test]
 fn test_data_receiver() {
     let warehouse = get_warehouse(DATA);
-    let mut receiver: DataReceiverForType<HelloV1> = get_receiver_v1();
+    let mut receiver: DataReceiver<HelloV1> = get_receiver_v1();
     warehouse
         .provider_borrowing()
         .load_to_receiver(&get_request_v1(), &mut receiver)
         .unwrap();
-    let hello_data: &HelloV1 = &receiver.payload.unwrap();
+    let hello_data: &HelloV1 = &receiver.take_payload().unwrap();
     check_data_v1(hello_data);
 }
 
@@ -298,8 +296,8 @@ fn test_impl_erased() {
 }
 
 fn check_v1_v2<'d, P: DataProvider<'d, HelloV1<'d>> + DataProvider<'d, HelloAlt> + ?Sized>(d: &P) {
-    let v1: Cow<'d, HelloV1> = d.load_payload(&get_request_v1()).unwrap().payload.unwrap();
-    let v2: Cow<'d, HelloAlt> = d.load_payload(&get_request_alt()).unwrap().payload.unwrap();
+    let v1: Cow<'d, HelloV1> = d.load_payload(&get_request_v1()).unwrap().take_payload().unwrap();
+    let v2: Cow<'d, HelloAlt> = d.load_payload(&get_request_alt()).unwrap().take_payload().unwrap();
     if v1.hello == v2.hello {
         panic!()
     }

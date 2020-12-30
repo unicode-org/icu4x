@@ -26,6 +26,9 @@ pub enum Error {
     /// cannot be deserialized without the concrete type.
     NeedsTypeInfo(DataRequest),
 
+    /// The payload is missing. This error is usually unexpected.
+    MissingPayload,
+
     /// The TypeID of the payload does not match the expected TypeID.
     MismatchedType {
         /// The actual TypeID of the payload, if available.
@@ -90,6 +93,7 @@ impl fmt::Display for Error {
             Self::NeedsTypeInfo(request) => {
                 write!(f, "Complete type information is required: {}", request)
             }
+            Self::MissingPayload => write!(f, "Payload is missing"),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
                 if let Some(type_id) = generic {

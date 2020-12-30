@@ -41,7 +41,7 @@ use std::path::PathBuf;
 ///             },
 ///         })
 ///         .unwrap()
-///         .payload
+///         .take_payload()
 ///         .unwrap();
 ///     assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
 /// }

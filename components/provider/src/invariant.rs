@@ -2,11 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::erased::DataReceiverThrowAway;
 use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
-use crate::structs;
 use std::borrow::Cow;
 use std::fmt::Debug;
 
@@ -49,7 +47,7 @@ impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         _req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d>,
+        receiver: &mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, Error> {
         receiver.receive_default()?;
         Ok(DataResponseMetadata::default())
@@ -76,15 +74,16 @@ impl IterableDataProvider<'_> for InvariantDataProvider {
 
 #[test]
 fn test_receiver() {
+    use crate::structs;
     let provider = InvariantDataProvider;
-    let mut receiver = DataReceiverForType::<structs::icu4x::HelloV1>::new();
+    let mut receiver = DataReceiver::<structs::icu4x::HelloV1>::new();
     provider
         .load_to_receiver(
             &DataRequest::from(structs::icu4x::key::HELLO_V1),
             &mut receiver,
         )
         .unwrap();
-    let plurals_data: &structs::icu4x::HelloV1 = &receiver.payload.unwrap();
+    let plurals_data: &structs::icu4x::HelloV1 = &receiver.take_payload().unwrap();
     assert_eq!(
         plurals_data,
         &structs::icu4x::HelloV1 {

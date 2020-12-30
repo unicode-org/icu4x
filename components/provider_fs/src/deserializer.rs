@@ -103,7 +103,7 @@ where
 pub fn deserialize_into_receiver(
     rdr: impl Read,
     syntax_option: &SyntaxOption,
-    receiver: &mut dyn DataReceiver,
+    receiver: &mut dyn ErasedDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
         SyntaxOption::Json => {

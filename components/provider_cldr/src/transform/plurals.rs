@@ -224,7 +224,7 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
+        .take_payload()
         .unwrap();
 
     assert_eq!(None, cs_rules.zero);
