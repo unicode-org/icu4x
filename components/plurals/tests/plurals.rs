@@ -5,7 +5,7 @@
 use icu_locid_macros::langid;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu_provider::struct_provider::StructProvider;
-use icu_provider::structs::plurals::PluralRuleStringsV1;
+use icu_provider::structs::{self, plurals::PluralRuleStringsV1};
 use std::borrow::Cow;
 
 #[test]
@@ -47,7 +47,10 @@ fn test_plural_rules_non_static_lifetime() {
         few: None,
         many: None,
     };
-    let provider = StructProvider(&local_data);
+    let provider = StructProvider {
+        key: structs::plurals::key::CARDINAL_V1,
+        data: &local_data,
+    };
 
     let lid = langid!("und");
     let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal).unwrap();

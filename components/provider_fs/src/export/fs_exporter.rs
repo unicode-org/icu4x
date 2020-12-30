@@ -72,13 +72,13 @@ impl DataExporter for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: &DataRequest,
-        obj: &dyn erased_serde::Serialize,
+        obj: &dyn ErasedDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         path_buf.extend(req.resource_path.options.get_components().iter());
         log::trace!("Writing: {}", req);
-        self.write_to_path(path_buf, obj)?;
+        self.write_to_path(path_buf, obj.as_serialize())?;
         Ok(())
     }
 

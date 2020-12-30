@@ -308,6 +308,10 @@ where
     <T as ToOwned>::Owned: Debug,
 {
     /// Creates a new, empty DataReceiver.
+    ///
+    /// Default is not implemented because it would be misleading: does the DataReceiver start
+    /// empty, or does it start with the Default value of T?
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self { payload: None }
     }
