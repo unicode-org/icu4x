@@ -20,7 +20,7 @@
 //! use std::path::PathBuf;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
-//! let DATA_KEY = structs::plurals::key::CARDINAL_V1;
+//! const DATA_KEY: icu_provider::ResourceKey = structs::plurals::key::CARDINAL_V1;
 //!
 //! // Set up the exporter
 //! let mut options = serializers::json::Options::default();

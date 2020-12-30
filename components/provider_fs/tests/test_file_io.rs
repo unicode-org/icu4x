@@ -75,11 +75,11 @@ fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let response = provider
+    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = provider
         .load_payload(&get_request(langid!("ru")))
-        .expect("The data should be valid");
-    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.take_payload().expect("The data should be present");
+        .expect("The data should be valid")
+        .take_payload()
+        .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
 
@@ -88,11 +88,12 @@ fn test_json_dyn_erased() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let response = (&provider as &dyn ErasedDataProvider)
+    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = (&provider
+        as &dyn ErasedDataProvider)
         .load_payload(&get_request(langid!("ru")))
-        .expect("The data should be valid");
-    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.take_payload().expect("The data should be present");
+        .expect("The data should be valid")
+        .take_payload()
+        .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
 
@@ -101,11 +102,11 @@ fn test_json_owned() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let response = provider
+    let plurals_data: Cow<PluralsWithBorrow> = provider
         .load_payload(&get_request(langid!("ru")))
-        .expect("The data should be valid");
-    let plurals_data: Cow<PluralsWithBorrow> =
-        response.take_payload().expect("The data should be present");
+        .expect("The data should be valid")
+        .take_payload()
+        .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA_2);
 }
 
@@ -115,11 +116,11 @@ fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let response = provider
+    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = provider
         .load_payload(&get_request(langid!("sr")))
-        .expect("The data should be valid");
-    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.take_payload().expect("The data should be present");
+        .expect("The data should be valid")
+        .take_payload()
+        .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }
 
@@ -129,10 +130,11 @@ fn test_bincode_dyn_erased() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let response = (&provider as &dyn ErasedDataProvider)
+    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = (&provider
+        as &dyn ErasedDataProvider)
         .load_payload(&get_request(langid!("sr")))
-        .expect("The data should be valid");
-    let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> =
-        response.take_payload().expect("The data should be present");
+        .expect("The data should be valid")
+        .take_payload()
+        .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }

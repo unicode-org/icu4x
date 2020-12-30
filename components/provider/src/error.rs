@@ -24,7 +24,7 @@ pub enum Error {
 
     /// The operation cannot be completed without more type information. For example, data
     /// cannot be deserialized without the concrete type.
-    NeedsTypeInfo(DataRequest),
+    NeedsTypeInfo,
 
     /// The payload is missing. This error is usually unexpected.
     MissingPayload,
@@ -37,6 +37,9 @@ pub enum Error {
         /// The expected TypeID derived from the generic type parameter at the call site.
         generic: Option<TypeId>,
     },
+
+    /// An error occured during serialization or deserialization.
+    Serde(erased_serde::Error),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
     Resource(Box<dyn std::error::Error>),
@@ -57,6 +60,12 @@ impl From<&ResourceCategory> for Error {
 impl From<DataRequest> for Error {
     fn from(req: DataRequest) -> Self {
         Self::UnavailableResourceOptions(req)
+    }
+}
+
+impl From<erased_serde::Error> for Error {
+    fn from(err: erased_serde::Error) -> Self {
+        Self::Serde(err)
     }
 }
 
@@ -90,9 +99,7 @@ impl fmt::Display for Error {
                 "Requested key needs language identifier in request: {}",
                 request
             ),
-            Self::NeedsTypeInfo(request) => {
-                write!(f, "Complete type information is required: {}", request)
-            }
+            Self::NeedsTypeInfo => write!(f, "Complete type information is required"),
             Self::MissingPayload => write!(f, "Payload is missing"),
             Self::MismatchedType { actual, generic } => {
                 write!(f, "Mismatched type: payload is {:?}", actual)?;
@@ -101,6 +108,7 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
+            Self::Serde(err) => write!(f, "Serde error: {}", err),
             Self::Resource(err) => write!(f, "Failed to load resource: {}", err),
         }
     }

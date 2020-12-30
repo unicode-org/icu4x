@@ -87,14 +87,11 @@ mod error;
 #[macro_use]
 pub mod resource;
 pub mod erased;
+mod invariant;
 pub mod iter;
 pub mod struct_provider;
 pub mod structs;
 
-#[cfg(feature = "invariant")]
-mod invariant;
-
-#[cfg(feature = "invariant")]
 pub use invariant::InvariantDataProvider;
 
 pub mod prelude {
@@ -106,6 +103,7 @@ pub mod prelude {
     pub use crate::erased::DataReceiver;
     pub use crate::erased::ErasedDataProvider;
     pub use crate::erased::ErasedDataReceiver;
+    pub use crate::erased::ErasedDataStruct;
     pub use crate::error::Error as DataError;
     pub use crate::iter::IterableDataProvider;
     pub use crate::iter::KeyedDataProvider;

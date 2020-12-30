@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use crate::error::Error;
 use icu_locid::LanguageIdentifier;
 use std::borrow::Borrow;
 use std::borrow::Cow;
@@ -142,6 +143,33 @@ impl ResourceKey {
     /// ```
     pub fn get_components(&self) -> ResourceKeyComponents {
         self.into()
+    }
+
+    /// Returns Ok if this DataKey matches the argument, or the appropriate error.
+    ///
+    /// Convenience method for data providers that support a single ResourceKey.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
+    /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!(x, "foo", "baz", 1);
+    /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!(x, "bar", "baz", 1);
+    ///
+    /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
+    /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::UnsupportedResourceKey(_))));
+    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::UnsupportedCategory(_))));
+    /// ```
+    pub fn match_key(&self, key: ResourceKey) -> Result<(), Error> {
+        if self.category != key.category {
+            Err(Error::UnsupportedCategory(self.category))
+        } else if *self != key {
+            Err(Error::UnsupportedResourceKey(*self))
+        } else {
+            Ok(())
+        }
     }
 }
 

@@ -52,14 +52,6 @@ impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
         receiver.receive_default()?;
         Ok(DataResponseMetadata::default())
     }
-
-    /// Method always fails: a concrete type is required to return a Serialize trait object
-    fn load_as_serialize(
-        &self,
-        req: &DataRequest,
-    ) -> Result<Box<dyn erased_serde::Serialize>, Error> {
-        Err(Error::NeedsTypeInfo(req.clone()))
-    }
 }
 
 impl IterableDataProvider<'_> for InvariantDataProvider {

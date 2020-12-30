@@ -11,7 +11,8 @@ pub enum Error {
     Json(serde_json::error::Error),
     #[cfg(feature = "bincode")]
     Bincode(bincode::Error),
-    Serde(erased_serde::Error),
+    DataProvider(DataError),
+    // Serde(erased_serde::Error),
     #[allow(dead_code)]
     UnknownSyntax(SyntaxOption),
 }
@@ -29,11 +30,17 @@ impl From<bincode::Error> for Error {
     }
 }
 
-impl From<erased_serde::Error> for Error {
-    fn from(err: erased_serde::Error) -> Self {
-        Self::Serde(err)
+impl From<DataError> for Error {
+    fn from(err: DataError) -> Self {
+        Self::DataProvider(err)
     }
 }
+
+// impl From<erased_serde::Error> for Error {
+//     fn from(err: erased_serde::Error) -> Self {
+//         Self::Serde(err)
+//     }
+// }
 
 impl Error {
     pub fn into_resource_error<P: AsRef<Path>>(self, path: P) -> DataError {
@@ -46,7 +53,10 @@ impl Error {
             Self::Bincode(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
-            Self::Serde(err) => {
+            // Self::Serde(err) => {
+            //     CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+            // }
+            Self::DataProvider(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
             Self::UnknownSyntax(v) => CrateError::UnknownSyntax(v),

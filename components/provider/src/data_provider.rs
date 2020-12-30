@@ -40,6 +40,45 @@ impl From<ResourceKey> for DataRequest {
     }
 }
 
+impl DataRequest {
+    /// Returns the LanguageIdentifier for this DataRequest, or an error if it is not present.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
+    ///
+    /// let req_no_langid = DataRequest {
+    ///     resource_path: ResourcePath {
+    ///         key: FOO_BAR,
+    ///         options: ResourceOptions::default(),
+    ///     }
+    /// };
+    ///
+    /// let req_with_langid = DataRequest {
+    ///     resource_path: ResourcePath {
+    ///         key: FOO_BAR,
+    ///         options: ResourceOptions {
+    ///             variant: None,
+    ///             langid: Some(icu_locid_macros::langid!("ar-EG")),
+    ///         },
+    ///     }
+    /// };
+    ///
+    /// assert!(matches!(req_no_langid.get_langid(), Err(DataError::NeedsLanguageIdentifier(_))));
+    /// assert!(matches!(req_with_langid.get_langid(), Ok(_)));
+    /// ```
+    pub fn get_langid(&self) -> Result<&LanguageIdentifier, Error> {
+        self.resource_path
+            .options
+            .langid
+            .as_ref()
+            .ok_or_else(|| Error::NeedsLanguageIdentifier(self.clone()))
+    }
+}
+
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct DataResponseMetadata {

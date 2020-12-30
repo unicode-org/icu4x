@@ -91,8 +91,8 @@ pub trait DataExporter {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload(
         &mut self,
-        data_request: &DataRequest,
-        payload: &dyn erased_serde::Serialize,
+        req: &DataRequest,
+        payload: &dyn ErasedDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -116,8 +116,9 @@ pub trait DataExporter {
                     options: resc_options,
                 },
             };
-            let serialize = provider.load_as_serialize(&req)?;
-            self.put_payload(&req, &serialize)?;
+            let mut receiver = DataReceiver::<dyn ErasedDataStruct>::new();
+            provider.load_to_receiver(&req, &mut receiver)?;
+            self.put_payload(&req, receiver.borrow_payload()?)?;
         }
         Ok(())
     }

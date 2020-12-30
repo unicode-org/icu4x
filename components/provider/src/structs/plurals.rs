@@ -15,8 +15,7 @@ pub mod key {
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
 /// More information: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
-#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
-#[cfg_attr(feature = "invariant", derive(Default))]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
 pub struct PluralRuleStringsV1<'s> {
     #[cfg_attr(
         not(feature = "serialize_none"),

@@ -5,7 +5,6 @@
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Debug;
-use std::prelude::v1::*;
 use std::str::FromStr;
 
 use icu_provider::prelude::*;
@@ -131,13 +130,6 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
             _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
         }
     }
-
-    fn load_as_serialize(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<Box<dyn erased_serde::Serialize>, DataError> {
-        unimplemented!()
-    }
 }
 
 impl<'d, 's> DataProvider<'d, HelloV1<'s>> for DataProviderImplErased<'d, 's> {
@@ -245,6 +237,8 @@ fn test_warehouse_dyn_erased_alt() {
     ));
 }
 
+/*
+
 #[test]
 fn test_data_receiver() {
     let warehouse = get_warehouse(DATA);
@@ -296,8 +290,16 @@ fn test_impl_erased() {
 }
 
 fn check_v1_v2<'d, P: DataProvider<'d, HelloV1<'d>> + DataProvider<'d, HelloAlt> + ?Sized>(d: &P) {
-    let v1: Cow<'d, HelloV1> = d.load_payload(&get_request_v1()).unwrap().take_payload().unwrap();
-    let v2: Cow<'d, HelloAlt> = d.load_payload(&get_request_alt()).unwrap().take_payload().unwrap();
+    let v1: Cow<'d, HelloV1> = d
+        .load_payload(&get_request_v1())
+        .unwrap()
+        .take_payload()
+        .unwrap();
+    let v2: Cow<'d, HelloAlt> = d
+        .load_payload(&get_request_alt())
+        .unwrap()
+        .take_payload()
+        .unwrap();
     if v1.hello == v2.hello {
         panic!()
     }
@@ -314,3 +316,5 @@ fn test_v1_v2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     check_v1_v2(&warehouse.provider_borrowing() as &dyn ErasedDataProvider);
 }
+
+*/
