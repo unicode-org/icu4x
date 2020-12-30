@@ -16,6 +16,120 @@ use std::default::Default;
 /// Re-export erased_serde for the impl_erased! macro
 pub use erased_serde;
 
+/// Auto-implemented trait allowing for type erasure of data provider structs.
+pub trait ErasedDataStruct: 'static {
+    /// Clone this trait object reference, returning a boxed trait object.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::erased::ErasedDataStruct;
+    /// use icu_provider::structs::icu4x::HelloV1;
+    ///
+    /// // Create type-erased reference
+    /// let data = HelloV1::default();
+    /// let erased_reference: &dyn ErasedDataStruct = &data;
+    ///
+    /// // Create a new type-erased trait object
+    /// let erased_boxed: Box<dyn ErasedDataStruct> = erased_reference.clone_into_box();
+    /// ```
+    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
+
+    /// Return this boxed trait object as Box<dyn Any>.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::erased::ErasedDataStruct;
+    /// use icu_provider::structs::icu4x::HelloV1;
+    ///
+    /// // Create type-erased box
+    /// let erased: Box<dyn ErasedDataStruct> = Box::new(HelloV1::default());
+    ///
+    /// // Convert to typed box
+    /// let boxed: Box<HelloV1> = erased.into_any().downcast().expect("Types should match");
+    /// ```
+    fn into_any(self: Box<Self>) -> Box<dyn Any>;
+
+    /// Return this trait object reference as &dyn Any.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::erased::ErasedDataStruct;
+    /// use icu_provider::structs::icu4x::HelloV1;
+    ///
+    /// // Create type-erased reference
+    /// let data = HelloV1::default();
+    /// let erased: &dyn ErasedDataStruct = &data;
+    ///
+    /// // Borrow as typed reference
+    /// let borrowed: &HelloV1 = erased.as_any().downcast_ref().expect("Types should match");
+    /// ```
+    fn as_any(&self) -> &dyn Any;
+
+    /// Return this trait object reference for Serde serialization.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::erased::ErasedDataStruct;
+    /// use icu_provider::structs::icu4x::HelloV1;
+    ///
+    /// // Create type-erased reference
+    /// let data = HelloV1::default();
+    /// let erased: &dyn ErasedDataStruct = &data;
+    ///
+    /// // Borrow as serialize trait object
+    /// let serialize: &dyn erased_serde::Serialize = erased.as_serialize();
+    ///
+    /// // Serialize the object to a JSON string
+    /// let mut buffer: Vec<u8> = vec![];
+    /// serialize.erased_serialize(
+    ///     &mut erased_serde::Serializer::erase(
+    ///         &mut serde_json::Serializer::new(&mut buffer)
+    ///     )
+    /// ).expect("Serialization should succeed");
+    /// assert_eq!("{\"hello\":\"(und) Hello World\"}".as_bytes(), buffer);
+    /// ```
+    fn as_serialize(&self) -> &dyn erased_serde::Serialize;
+}
+
+impl ToOwned for dyn ErasedDataStruct {
+    type Owned = Box<dyn ErasedDataStruct>;
+
+    fn to_owned(&self) -> Self::Owned {
+        self.clone_into_box()
+    }
+}
+
+impl Clone for Box<dyn ErasedDataStruct> {
+    fn clone(&self) -> Box<dyn ErasedDataStruct> {
+        self.clone_into_box()
+    }
+}
+
+impl<T> ErasedDataStruct for T
+where
+    T: erased_serde::Serialize + Clone + Any,
+{
+    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
+        Box::new(self.clone())
+    }
+
+    fn into_any(self: Box<Self>) -> Box<dyn Any> {
+        self
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_serialize(&self) -> &dyn erased_serde::Serialize {
+        self
+    }
+}
+
 /// An object capable of accepting data from a variety of forms.
 /// Lifetimes:
 /// - 'd = lifetime of borrowed data (Cow::Borrowed)
@@ -108,6 +222,10 @@ pub trait DataReceiver<'d> {
     /// ```
     fn receive_default(&mut self) -> Result<(), Error>;
 
+    fn receive_erased(&mut self, cow: Cow<'d, dyn ErasedDataStruct>) -> Result<(), Error>;
+
+    fn take_erased(&mut self) -> Option<Cow<'d, dyn ErasedDataStruct>>;
+
     /// Borrows the value in this DataReceiver as a Serialize trait object.
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize>;
 }
@@ -188,7 +306,7 @@ where
 
 impl<'d, T> DataReceiverForType<'d, T>
 where
-    T: serde::de::DeserializeOwned + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Any + Default,
 {
     /// Creates a new, empty DataReceiver, returning it as a boxed trait object.
     pub fn new_boxed() -> Box<dyn DataReceiver<'d> + 'd> {
@@ -199,7 +317,7 @@ where
 
 impl<'d, T> DataReceiver<'d> for DataReceiverForType<'d, T>
 where
-    T: serde::de::DeserializeOwned + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Any + Default,
 {
     fn receive_deserializer(
         &mut self,
@@ -245,6 +363,48 @@ where
     fn receive_default(&mut self) -> Result<(), Error> {
         self.payload = Some(Cow::Owned(T::default()));
         Ok(())
+    }
+
+    fn receive_erased(&mut self, cow: Cow<'d, dyn ErasedDataStruct>) -> Result<(), Error> {
+        match cow {
+            Cow::Borrowed(erased) => {
+                let borrowed: &'d T =
+                    erased
+                        .as_any()
+                        .downcast_ref()
+                        .ok_or_else(|| Error::MismatchedType {
+                            actual: Some(erased.type_id()),
+                            generic: Some(TypeId::of::<T>()),
+                        })?;
+                self.payload = Some(Cow::Borrowed(borrowed));
+            }
+            Cow::Owned(erased) => {
+                let boxed: Box<T> =
+                    erased
+                        .into_any()
+                        .downcast()
+                        .map_err(|any| Error::MismatchedType {
+                            actual: Some(any.type_id()),
+                            generic: Some(TypeId::of::<T>()),
+                        })?;
+                self.payload = Some(Cow::Owned(*boxed));
+            }
+        };
+        Ok(())
+    }
+
+    fn take_erased(&mut self) -> Option<Cow<'d, dyn ErasedDataStruct>> {
+        match self.payload.take() {
+            Some(cow) => match cow {
+                Cow::Borrowed(borrowed) => Some(Cow::Borrowed(borrowed)),
+                Cow::Owned(owned) => {
+                    let o: T = owned;
+                    unimplemented!()
+                    // Some(Cow::Owned(Box::new(o)))
+                }
+            },
+            None => None,
+        }
     }
 
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
@@ -313,6 +473,15 @@ impl<'d> DataReceiver<'d> for DataReceiverThrowAway {
         Ok(())
     }
 
+    fn receive_erased(&mut self, _: Cow<'d, dyn ErasedDataStruct>) -> Result<(), Error> {
+        self.flag = true;
+        Ok(())
+    }
+
+    fn take_erased(&mut self) -> Option<Cow<'d, dyn ErasedDataStruct>> {
+        None
+    }
+
     fn as_serialize(&self) -> Option<&dyn erased_serde::Serialize> {
         None
     }
@@ -370,7 +539,7 @@ macro_rules! impl_erased {
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
 impl<'a, 'd, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: serde::de::DeserializeOwned + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Any + Default,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let mut receiver = DataReceiverForType::<T>::new();
