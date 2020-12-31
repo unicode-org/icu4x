@@ -22,10 +22,10 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloV1;
+    /// use icu_provider::structs::icu4x::HelloWorldV1;
     ///
     /// // Create type-erased reference
-    /// let data = HelloV1::default();
+    /// let data = HelloWorldV1::default();
     /// let erased_reference: &dyn ErasedDataStruct = &data;
     ///
     /// // Create a new type-erased trait object
@@ -39,13 +39,13 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloV1;
+    /// use icu_provider::structs::icu4x::HelloWorldV1;
     ///
     /// // Create type-erased box
-    /// let erased: Box<dyn ErasedDataStruct> = Box::new(HelloV1::default());
+    /// let erased: Box<dyn ErasedDataStruct> = Box::new(HelloWorldV1::default());
     ///
     /// // Convert to typed box
-    /// let boxed: Box<HelloV1> = erased.into_any().downcast().expect("Types should match");
+    /// let boxed: Box<HelloWorldV1> = erased.into_any().downcast().expect("Types should match");
     /// ```
     fn into_any(self: Box<Self>) -> Box<dyn Any>;
 
@@ -57,14 +57,14 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloV1;
+    /// use icu_provider::structs::icu4x::HelloWorldV1;
     ///
     /// // Create type-erased reference
-    /// let data = HelloV1::default();
+    /// let data = HelloWorldV1::default();
     /// let erased: &dyn ErasedDataStruct = &data;
     ///
     /// // Borrow as typed reference
-    /// let borrowed: &HelloV1 = erased.as_any().downcast_ref().expect("Types should match");
+    /// let borrowed: &HelloWorldV1 = erased.as_any().downcast_ref().expect("Types should match");
     /// ```
     fn as_any(&self) -> &dyn Any;
 
@@ -74,10 +74,10 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloV1;
+    /// use icu_provider::structs::icu4x::HelloWorldV1;
     ///
     /// // Create type-erased reference
-    /// let data = HelloV1::default();
+    /// let data = HelloWorldV1::default();
     /// let erased: &dyn ErasedDataStruct = &data;
     ///
     /// // Borrow as serialize trait object
@@ -90,7 +90,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///         &mut serde_json::Serializer::new(&mut buffer)
     ///     )
     /// ).expect("Serialization should succeed");
-    /// assert_eq!("{\"hello\":\"(und) Hello World\"}".as_bytes(), buffer);
+    /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
@@ -116,14 +116,14 @@ impl dyn ErasedDataStruct {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloV1;
+    /// use icu_provider::structs::icu4x::HelloWorldV1;
     ///
     /// // Create type-erased reference
-    /// let data = HelloV1::default();
+    /// let data = HelloWorldV1::default();
     /// let erased: &dyn ErasedDataStruct = &data;
     ///
     /// // Borrow as typed reference
-    /// let borrowed: &HelloV1 = erased.downcast_ref().expect("Types should match");
+    /// let borrowed: &HelloWorldV1 = erased.downcast_ref().expect("Types should match");
     /// ```
     pub fn downcast_ref<T: Any>(&self) -> Result<&T, Error> {
         self.as_any()
@@ -172,6 +172,8 @@ pub trait ErasedDataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
@@ -197,6 +199,8 @@ pub trait ErasedDataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// let mut receiver = DataReceiver::<String>::new();
@@ -214,6 +218,8 @@ pub trait ErasedDataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// let local_data = "hello world".to_string();
@@ -235,6 +241,8 @@ pub trait ErasedDataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// let mut receiver = DataReceiver::<String>::new();
@@ -254,6 +262,8 @@ pub trait ErasedDataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// let mut receiver = DataReceiver::<String>::new();
@@ -270,6 +280,8 @@ pub trait ErasedDataReceiver<'d, 'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// let mut receiver = DataReceiver::<String>::new();
@@ -292,6 +304,8 @@ impl<'a, 'd> dyn ErasedDataReceiver<'d, '_> + 'a {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::DataReceiver;
+    /// use icu_provider::erased::ErasedDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// let mut receiver1 = DataReceiver::<f64>::new();
@@ -327,6 +341,7 @@ impl<'a, 'd> dyn ErasedDataReceiver<'d, '_> + 'a {
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::erased::DataReceiver;
 ///
 /// let mut string_receiver = DataReceiver::<String>::new();
 /// // Now pass string_receiver as an argument to ErasedDataProvider

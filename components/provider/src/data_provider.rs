@@ -123,8 +123,8 @@ where
 /// A generic data provider that loads a payload of a specific type.
 pub trait DataProvider<'d, T>
 where
-T: ToOwned + ?Sized,
-<T as ToOwned>::Owned: Debug,
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
 {
     /// Query the provider for data, returning the result.
     ///

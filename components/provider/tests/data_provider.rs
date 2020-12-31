@@ -8,7 +8,7 @@ use std::fmt::Debug;
 
 use icu_provider::erased::*;
 use icu_provider::prelude::*;
-use icu_provider::structs::{self, icu4x::HelloV1};
+use icu_provider::structs::{self, icu4x::HelloWorldV1};
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -16,32 +16,35 @@ use icu_provider::structs::{self, icu4x::HelloV1};
 /// Key for HelloAlt, used for testing mismatched types
 const HELLO_ALT_KEY: ResourceKey = icu_provider::resource_key!(icu4x, "helloalt", 1);
 
-/// A data struct serialization-compatible with HelloV1 used for testing mismatched types
+/// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 struct HelloAlt {
-    hello: String,
+    message: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 struct HelloCombined<'s> {
     #[serde(borrow)]
-    pub hello_v1: HelloV1<'s>,
+    pub hello_v1: HelloWorldV1<'s>,
     pub hello_alt: HelloAlt,
 }
 
 /// A DataProvider that owns its data. DataProvider is implemented on `DataWarehouse`, returning
-/// owned data, and on `&'d DataWarehouse`, returning borrowed data. Both support only HELLO_V1
-/// and use `impl_erased!()`.
+/// owned data, and on `&'d DataWarehouse`, returning borrowed data. Both support only
+/// HELLO_WORLD_V1 and use `impl_erased!()`.
 #[derive(Debug)]
 struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
 }
 
-impl<'d, 's: 'd> DataProvider<'d, HelloV1<'s>> for DataWarehouse<'s> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloV1<'s>>, DataError> {
+impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path
             .key
-            .match_key(structs::icu4x::key::HELLO_V1)?;
+            .match_key(structs::icu4x::key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Owned(self.data.hello_v1.clone())),
@@ -51,11 +54,14 @@ impl<'d, 's: 'd> DataProvider<'d, HelloV1<'s>> for DataWarehouse<'s> {
 
 icu_provider::impl_erased!(DataWarehouse<'static>, 'd);
 
-impl<'d, 's: 'd> DataProvider<'d, HelloV1<'s>> for &'d DataWarehouse<'s> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloV1<'s>>, DataError> {
+impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path
             .key
-            .match_key(structs::icu4x::key::HELLO_V1)?;
+            .match_key(structs::icu4x::key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.data.hello_v1)),
@@ -65,7 +71,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloV1<'s>> for &'d DataWarehouse<'s> {
 
 icu_provider::impl_erased!(&'d DataWarehouse<'static>, 'd);
 
-/// A DataProvider that returns borrowed data. Supports both HELLO_V1 and HELLO_ALT. Custom implementation of
+/// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT. Custom implementation of
 /// ErasedDataProvider.
 #[derive(Debug)]
 struct DataProviderBorrowing<'d, 's> {
@@ -80,11 +86,14 @@ impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloV1<'s>> for DataProviderBorrowing<'d, 's> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloV1<'s>>, DataError> {
+impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path
             .key
-            .match_key(structs::icu4x::key::HELLO_V1)?;
+            .match_key(structs::icu4x::key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
@@ -110,7 +119,7 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
         receiver: &'a mut dyn ErasedDataReceiver<'d, '_>,
     ) -> Result<DataResponseMetadata, DataError> {
         match req.resource_path.key {
-            structs::icu4x::key::HELLO_V1 => {
+            structs::icu4x::key::HELLO_WORLD_V1 => {
                 receiver.receive_erased(Cow::Borrowed(&self.borrowed_data.hello_v1))?;
                 Ok(DataResponseMetadata::default())
             }
@@ -126,10 +135,10 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
     "hello_v1": {
-        "hello": "Hello V1"
+        "message": "Hello V1"
     },
     "hello_alt": {
-        "hello": "Hello Alt"
+        "message": "Hello Alt"
     }
 }"#;
 
@@ -139,13 +148,13 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_receiver_v1<'d, 's>() -> DataReceiver<'d, HelloV1<'s>> {
+fn get_receiver_v1<'d, 's>() -> DataReceiver<'d, HelloWorldV1<'s>> {
     DataReceiver::new()
 }
 
-fn get_payload_v1<'d, 's, P: DataProvider<'d, HelloV1<'s>> + ?Sized + 'd>(
+fn get_payload_v1<'d, 's, P: DataProvider<'d, HelloWorldV1<'s>> + ?Sized + 'd>(
     provider: &P,
-) -> Result<Cow<'d, HelloV1<'s>>, DataError>
+) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError>
 where
     's: 'd,
 {
@@ -161,7 +170,7 @@ fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
 fn get_request_v1() -> DataRequest {
     DataRequest {
         resource_path: ResourcePath {
-            key: structs::icu4x::key::HELLO_V1,
+            key: structs::icu4x::key::HELLO_WORLD_V1,
             options: Default::default(),
         },
     }
@@ -182,8 +191,8 @@ fn test_warehouse_owned() {
     let hello_data = get_payload_v1(&warehouse);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Owned(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Owned(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -194,8 +203,8 @@ fn test_warehouse_owned_dyn_erased() {
     let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Owned(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Owned(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -203,11 +212,11 @@ fn test_warehouse_owned_dyn_erased() {
 #[test]
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloV1>);
+    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1>);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Owned(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Owned(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -222,14 +231,14 @@ fn test_warehouse_owned_dyn_erased_alt() {
 #[test]
 fn test_warehouse_owned_receiver() {
     let warehouse = get_warehouse(DATA);
-    let mut receiver: DataReceiver<HelloV1> = get_receiver_v1();
+    let mut receiver: DataReceiver<HelloWorldV1> = get_receiver_v1();
     warehouse
         .load_to_receiver(&get_request_v1(), &mut receiver)
         .unwrap();
     assert!(matches!(
         receiver.payload,
-        Some(Cow::Owned(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Some(Cow::Owned(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -240,8 +249,8 @@ fn test_warehouse_ref() {
     let hello_data = get_payload_v1(&&warehouse);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -252,8 +261,8 @@ fn test_warehouse_ref_dyn_erased() {
     let hello_data = get_payload_v1(&&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -261,11 +270,11 @@ fn test_warehouse_ref_dyn_erased() {
 #[test]
 fn test_warehouse_ref_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloV1>);
+    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1>);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -280,14 +289,14 @@ fn test_warehouse_ref_dyn_erased_alt() {
 #[test]
 fn test_warehouse_ref_receiver() {
     let warehouse = get_warehouse(DATA);
-    let mut receiver: DataReceiver<HelloV1> = get_receiver_v1();
+    let mut receiver: DataReceiver<HelloWorldV1> = get_receiver_v1();
     (&&warehouse)
         .load_to_receiver(&get_request_v1(), &mut receiver)
         .unwrap();
     assert!(matches!(
         receiver.payload,
-        Some(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Some(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -299,8 +308,8 @@ fn test_borrowing() {
     let hello_data = get_payload_v1(&provider);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -312,8 +321,8 @@ fn test_borrowing_dyn_erased() {
     let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -333,11 +342,11 @@ fn test_borrowing_dyn_erased_alt() {
 fn test_borrowing_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloV1>);
+    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1>);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -358,7 +367,7 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataResponse<HelloV1>, DataError> =
+    let response: Result<DataResponse<HelloWorldV1>, DataError> =
         (&provider as &dyn ErasedDataProvider).load_payload(&get_request_alt());
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
@@ -366,9 +375,9 @@ fn test_mismatched_types() {
 fn check_v1_v2<'d, 's, P>(d: &P)
 where
     's: 'd,
-    P: DataProvider<'d, HelloV1<'s>> + DataProvider<'d, HelloAlt> + ?Sized,
+    P: DataProvider<'d, HelloWorldV1<'s>> + DataProvider<'d, HelloAlt> + ?Sized,
 {
-    let v1: Cow<'d, HelloV1<'s>> = d
+    let v1: Cow<'d, HelloWorldV1<'s>> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
@@ -378,7 +387,7 @@ where
         .unwrap()
         .take_payload()
         .unwrap();
-    if v1.hello == v2.hello {
+    if v1.message == v2.message {
         panic!()
     }
 }
@@ -404,8 +413,8 @@ fn test_local() {
     let hello_data = get_payload_v1(&warehouse);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Owned(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Owned(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }
@@ -417,8 +426,8 @@ fn test_local_ref() {
     let hello_data = get_payload_v1(&&warehouse);
     assert!(matches!(
         hello_data,
-        Ok(Cow::Borrowed(HelloV1 {
-            hello: Cow::Borrowed(_),
+        Ok(Cow::Borrowed(HelloWorldV1 {
+            message: Cow::Borrowed(_),
         }))
     ));
 }

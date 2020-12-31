@@ -20,7 +20,7 @@ use std::fmt::Debug;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::structs;
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let provider = InvariantDataProvider;
 /// let expected_entries = vec![ResourceOptions::default()];
@@ -66,21 +66,28 @@ impl IterableDataProvider<'_> for InvariantDataProvider {
 }
 
 #[test]
-fn test_receiver() {
+fn test_invariant() {
     use crate::structs;
     let provider = InvariantDataProvider;
-    let mut receiver = DataReceiver::<structs::icu4x::HelloV1>::new();
-    provider
-        .load_to_receiver(
-            &DataRequest::from(structs::icu4x::key::HELLO_V1),
-            &mut receiver,
-        )
+
+    let data1: Cow<structs::icu4x::HelloWorldV1> = provider
+        .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
+        .unwrap()
+        .take_payload()
         .unwrap();
-    let plurals_data: &structs::icu4x::HelloV1 = &receiver.take_payload().unwrap();
+
+    let data2: Cow<structs::icu4x::HelloWorldV1> = (&provider as &dyn ErasedDataProvider)
+        .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
     assert_eq!(
-        plurals_data,
-        &structs::icu4x::HelloV1 {
-            hello: Cow::Borrowed("(und) Hello World")
+        &*data1,
+        &structs::icu4x::HelloWorldV1 {
+            message: Cow::Borrowed("(und) Hello World")
         }
     );
+
+    assert_eq!(data1, data2);
 }

@@ -118,7 +118,7 @@ pub enum PluralRuleType {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -225,7 +225,7 @@ impl PluralCategory {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -255,7 +255,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType};
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -302,7 +302,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -332,7 +332,7 @@ impl PluralRules {
     /// # use icu_locid_macros::langid;
     /// # use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_plurals::{PluralCategory, PluralOperands};
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// #
     /// # let lid = langid!("en");
     /// #

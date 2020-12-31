@@ -9,9 +9,9 @@
 //! # Examples
 //!
 //! ```
+//! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
-//! use icu_provider::InvariantDataProvider;
-//! use icu_provider::structs;
+//! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
 //! use icu_provider::iter::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
@@ -20,7 +20,6 @@
 //! use std::path::PathBuf;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
-//! const DATA_KEY: icu_provider::ResourceKey = structs::plurals::key::CARDINAL_V1;
 //!
 //! // Set up the exporter
 //! let mut options = serializers::json::Options::default();
@@ -31,8 +30,8 @@
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export a key
-//! let inv_provider = InvariantDataProvider;
-//! let result = exporter.put_key_from_provider(&DATA_KEY, &inv_provider);
+//! let source_provider = HelloWorldProvider::new_with_placeholder_data();
+//! let result = exporter.put_key_from_provider(&key::HELLO_WORLD_V1, &source_provider);
 //! // Ensure flush() is called, even when the result is an error
 //! exporter.flush().expect("Should successfully flush");
 //! result.expect("Should successfully export");
@@ -44,17 +43,20 @@
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
 //!     resource_path: ResourcePath {
-//!         key: DATA_KEY,
-//!         options: ResourceOptions::default(),
+//!         key: key::HELLO_WORLD_V1,
+//!         options: ResourceOptions {
+//!             variant: None,
+//!             langid: Some(langid!("bn")),
+//!         },
 //!     }
 //! };
-//! let inv_response: DataResponse<structs::plurals::PluralRuleStringsV1> =
-//!     inv_provider.load_payload(&req).unwrap();
-//! let fs_response: DataResponse<structs::plurals::PluralRuleStringsV1> =
+//! let source_response: DataResponse<HelloWorldV1> =
+//!     source_provider.load_payload(&req).unwrap();
+//! let fs_response: DataResponse<HelloWorldV1> =
 //!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(
-//!     inv_response.payload,
+//!     source_response.payload,
 //!     fs_response.payload,
 //! );
 //!

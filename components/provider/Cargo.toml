@@ -30,8 +30,8 @@ erased-serde = "0.3"
 smallstr = { version = "0.2", features = ["serde"] }
 downcast-rs = "1.2"
 serde = { version = "1.0", features = ["derive"] }
+icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 
 [dev-dependencies]
 serde_json = "1.0"
-icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 static_assertions = "1.1"

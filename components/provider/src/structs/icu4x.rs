@@ -9,20 +9,20 @@ use std::borrow::Cow;
 
 pub mod key {
     use crate::resource::ResourceKey;
-    pub const HELLO_V1: ResourceKey = resource_key!(icu4x, "hello", 1);
+    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(icu4x, "helloworld", 1);
 }
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
-pub struct HelloV1<'s> {
+pub struct HelloWorldV1<'s> {
     #[serde(borrow)]
-    pub hello: Cow<'s, str>,
+    pub message: Cow<'s, str>,
 }
 
-impl Default for HelloV1<'_> {
+impl Default for HelloWorldV1<'_> {
     fn default() -> Self {
-        HelloV1 {
-            hello: Cow::Borrowed("(und) Hello World"),
+        HelloWorldV1 {
+            message: Cow::Borrowed("(und) Hello World"),
         }
     }
 }

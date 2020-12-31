@@ -14,6 +14,7 @@ use std::path::PathBuf;
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::structs;
 /// use icu_provider_cldr::download::CldrPathsDownload;
 /// use icu_provider_cldr::CldrJsonDataProvider;
 /// use icu_locid_macros::langid;
@@ -24,13 +25,16 @@ use std::path::PathBuf;
 ///
 /// let data_provider = CldrJsonDataProvider::new(&paths);
 ///
-/// fn demo<'d>(data_provider: &'d CldrJsonDataProvider<'d, 'd>) {
+/// fn demo<'d, 's, P>(data_provider: &P)
+/// where
+///     's: 'd,
+///     P: DataProvider<'d, structs::plurals::PluralRuleStringsV1<'s>>
+/// {
 ///     use std::borrow::Cow;
 ///     use icu_provider::prelude::*;
 ///     use icu_provider::structs;
 ///
-///     let data: Cow<structs::plurals::PluralRuleStringsV1> =
-///         (data_provider as &dyn ErasedDataProvider)
+///     let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
 ///         .load_payload(&DataRequest {
 ///             resource_path: ResourcePath {
 ///                 key: structs::plurals::key::ORDINAL_V1,

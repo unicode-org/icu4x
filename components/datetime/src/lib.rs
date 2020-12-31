@@ -82,7 +82,7 @@ use std::borrow::Cow;
 /// use icu_locid_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
 /// use icu_datetime::date::MockDateTime;
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -121,7 +121,7 @@ impl<'d> DateTimeFormat<'d> {
     /// use icu_locid_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_datetime::date::MockDateTime;
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -168,7 +168,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -206,7 +206,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -238,7 +238,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();

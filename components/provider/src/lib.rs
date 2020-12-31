@@ -35,6 +35,7 @@
 //!
 //! - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
 //! - [`StructProvider`] wraps a particular instance of a struct and returns it.
+//! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
 //! ## Additional Traits
 //!
@@ -83,12 +84,15 @@
 //! [`IterableDataProvider`]: iter::IterableDataProvider
 //! [`InvariantDataProvider`]: inv::InvariantDataProvider
 //! [`StructProvider`]: struct_provider::StructProvider
+//! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
 
 pub mod data_provider;
 #[macro_use]
 pub mod resource;
+#[macro_use]
 pub mod erased;
+pub mod hello_world;
 pub mod inv;
 pub mod iter;
 pub mod struct_provider;
