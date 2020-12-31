@@ -88,7 +88,8 @@ pub struct DataResponseMetadata {
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
 where
-    T: Clone + Debug + 'd,
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -99,7 +100,8 @@ where
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: Clone + Debug,
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
 {
     /// Convenience method: borrows the underlying payload. Error if not present.
     pub fn borrow_payload(&self) -> Result<&T, Error> {
@@ -116,10 +118,13 @@ where
     }
 }
 
+// TODO(#434): Implement DataProvider<ErasedDataStruct>
+
 /// A generic data provider that loads a payload of a specific type.
 pub trait DataProvider<'d, T>
 where
-    T: Clone + Debug + 'd,
+T: ToOwned + ?Sized,
+<T as ToOwned>::Owned: Debug,
 {
     /// Query the provider for data, returning the result.
     ///

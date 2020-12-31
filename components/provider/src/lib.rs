@@ -58,7 +58,7 @@
 //!
 //! ## Types and Lifetimes
 //!
-//! All types `T` implementing standard Clone and Debug can be passed through the data provider.
+//! All types `T` compatible with `Cow` and `Debug` can be passed through the data provider.
 //!
 //! Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
 //! returned by the DataProvider.
