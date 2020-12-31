@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use crate::error::Error;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use icu_locid::LanguageIdentifier;
@@ -9,10 +10,7 @@ use std::borrow::Cow;
 use std::fmt;
 use std::fmt::Debug;
 
-// Re-export Error so it can be referenced by "data_provider::Error"
-pub use crate::error::Error;
-
-/// A struct to request a certain hunk of data from a data provider.
+/// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
 pub struct DataRequest {
     pub resource_path: ResourcePath,

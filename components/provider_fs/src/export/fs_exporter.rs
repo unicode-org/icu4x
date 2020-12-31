@@ -8,6 +8,7 @@ use crate::manifest::AliasOption;
 use crate::manifest::LocalesOption;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
+use icu_provider::erased::ErasedDataStruct;
 use icu_provider::iter::DataExporter;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};

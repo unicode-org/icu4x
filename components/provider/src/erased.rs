@@ -156,10 +156,12 @@ where
     }
 }
 
-/// An object capable of accepting data from a variety of forms.
+/// An receiver capable of accepting type-erased data.
+///
 /// Lifetimes:
-/// - 'd = lifetime of borrowed data (Cow::Borrowed)
-/// - 'de = deserializer lifetime; can usually be `'_`
+///
+/// - `'d` = lifetime of borrowed data (Cow::Borrowed)
+/// - `'de` = deserializer lifetime; can usually be `'_`
 pub trait ErasedDataReceiver<'d, 'de> {
     /// Consumes a Serde Deserializer into this ErasedDataReceiver as owned data.
     ///
@@ -238,10 +240,46 @@ pub trait ErasedDataReceiver<'d, 'de> {
     /// let mut receiver = DataReceiver::<String>::new();
     /// receiver.receive_default().expect("Default is implemented for String");
     ///
+    /// assert!(receiver.has_payload());
     /// let erased_payload = receiver.take_erased().unwrap();
+    /// assert!(!receiver.has_payload());
+    ///
     /// assert_eq!("", erased_payload.as_any().downcast_ref::<String>().unwrap());
     /// ```
     fn take_erased(&mut self) -> Result<Cow<'d, dyn ErasedDataStruct>, Error>;
+
+    /// Returns whether the receiver has a payload.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let mut receiver = DataReceiver::<String>::new();
+    /// assert!(!receiver.has_payload());
+    ///
+    /// receiver.receive_default().expect("Default is implemented for String");
+    /// assert!(receiver.has_payload());
+    /// ```
+    fn has_payload(&self) -> bool;
+
+    /// Discards the payload if present.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let mut receiver = DataReceiver::<String>::new();
+    /// receiver.receive_default().expect("Default is implemented for String");
+    ///
+    /// assert!(receiver.has_payload());
+    /// receiver.reset();
+    /// assert!(!receiver.has_payload());
+    /// ```
+    fn reset(&mut self);
 }
 
 impl<'a, 'd> dyn ErasedDataReceiver<'d, '_> + 'a {
@@ -390,6 +428,14 @@ where
             None => Err(Error::MissingPayload),
         }
     }
+
+    fn has_payload(&self) -> bool {
+        self.payload.is_some()
+    }
+
+    fn reset(&mut self) {
+        self.payload.take();
+    }
 }
 
 /// Implementation of DataReceiver for ErasedDataStruct trait object.
@@ -413,6 +459,14 @@ impl<'d, 'de> ErasedDataReceiver<'d, 'de> for DataReceiver<'d, dyn ErasedDataStr
     fn take_erased(&mut self) -> Result<Cow<'d, dyn ErasedDataStruct>, Error> {
         self.payload.take().ok_or(Error::MissingPayload)
     }
+
+    fn has_payload(&self) -> bool {
+        self.payload.is_some()
+    }
+
+    fn reset(&mut self) {
+        self.payload.take();
+    }
 }
 
 /// A type-erased data provider that loads a payload of any type.
@@ -433,11 +487,11 @@ pub trait ErasedDataProvider<'d> {
 #[macro_export]
 macro_rules! impl_erased {
     ($type:ty, $lifetime:tt) => {
-        impl<$lifetime> $crate::prelude::ErasedDataProvider<$lifetime> for $type {
+        impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $type {
             fn load_to_receiver(
                 &self,
                 req: &$crate::prelude::DataRequest,
-                receiver: &mut dyn $crate::prelude::ErasedDataReceiver<$lifetime, '_>,
+                receiver: &mut dyn $crate::erased::ErasedDataReceiver<$lifetime, '_>,
             ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
                 let mut result = self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;

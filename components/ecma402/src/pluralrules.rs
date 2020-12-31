@@ -238,7 +238,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         Self: Sized,
     {
         // TODO: introduce a global data provider here.
-        let dp = icu_provider::InvariantDataProvider;
+        let dp = icu_provider::inv::InvariantDataProvider;
         Self::try_new_with_provider(l, opts, &dp)
     }
 

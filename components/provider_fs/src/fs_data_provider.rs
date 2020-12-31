@@ -5,6 +5,7 @@ use crate::deserializer;
 use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
+use icu_provider::erased::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::fmt::Debug;

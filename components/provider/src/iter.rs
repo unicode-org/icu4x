@@ -4,6 +4,7 @@
 
 //! Collection of iteration APIs for `DataProvider`.
 
+use crate::erased::*;
 use crate::error::Error;
 use crate::prelude::*;
 use std::fmt::Debug;

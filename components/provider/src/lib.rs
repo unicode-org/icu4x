@@ -43,7 +43,7 @@
 //! Data providers can implement [`IterableDataProvider`], allowing iteration over all [`ResourceOptions`]
 //! instances supported for a certain key in the data provider.
 //!
-//! For more information, see the [`iter`] module.
+//! For more information, see the `iter` module.
 //!
 //! ### `ErasedDataProvider`
 //!
@@ -55,8 +55,6 @@
 //! - Caches
 //! - Bulk data operations
 //! - Transforming from one format to another
-//!
-//! To use [`ErasedDataProvider`], the "serde" feature must be enabled.
 //!
 //! ## Types and Lifetimes
 //!
@@ -76,25 +74,29 @@
 //! - `Default`, allowing `InvariantDataProvider` to work
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: prelude::DataProvider
-//! [`Request`]: prelude::DataRequest
-//! [`Response`]: prelude::DataResponse
-//! [`ResourceKey`]: prelude::ResourceKey
-//! [`Category`]: prelude::ResourceCategory
-//! [`ResourceOptions`]: prelude::ResourceOptions
+//! [`DataProvider`]: data_provider::DataProvider
+//! [`Request`]: data_provider::DataRequest
+//! [`Response`]: data_provider::DataResponse
+//! [`ResourceKey`]: resource::ResourceKey
+//! [`Category`]: resource::ResourceCategory
+//! [`ResourceOptions`]: resource::ResourceOptions
 //! [`IterableDataProvider`]: iter::IterableDataProvider
+//! [`InvariantDataProvider`]: inv::InvariantDataProvider
+//! [`StructProvider`]: struct_provider::StructProvider
+//! [`ErasedDataProvider`]: erased::ErasedDataProvider
 
-mod data_provider;
-mod error;
+pub mod data_provider;
 #[macro_use]
 pub mod resource;
 pub mod erased;
-mod invariant;
+pub mod inv;
 pub mod iter;
 pub mod struct_provider;
 pub mod structs;
 
-pub use invariant::InvariantDataProvider;
+mod error;
+
+pub use error::Error as DataError;
 
 pub mod prelude {
     //! Core selection of APIs and structures for `DataProvider`.
@@ -102,10 +104,6 @@ pub mod prelude {
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
-    pub use crate::erased::DataReceiver;
-    pub use crate::erased::ErasedDataProvider;
-    pub use crate::erased::ErasedDataReceiver;
-    pub use crate::erased::ErasedDataStruct;
     pub use crate::error::Error as DataError;
     pub use crate::iter::IterableDataProvider;
     pub use crate::iter::KeyedDataProvider;

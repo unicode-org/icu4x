@@ -75,37 +75,20 @@ impl<'d> KeyedDataProvider for DatesProvider<'d> {
     }
 }
 
-impl<'d> DatesProvider<'d> {
-    fn get_dates_for(
-        &self,
-        resc_key: &ResourceKey,
-        langid: &CldrLangID,
-    ) -> Result<&cldr_json::Dates, DataError> {
-        DatesProvider::supports_key(resc_key)?;
-
-        if let Ok(idx) = self.data.binary_search_by_key(&langid, |(lid, _)| lid) {
-            Ok(&self.data[idx].1.dates)
-        } else {
-            Err(DataError::UnsupportedResourceKey(*resc_key))
-        }
-    }
-}
-
 impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, gregory::DatesV1>, DataError> {
-        let cldr_langid = req
-            .resource_path
-            .options
-            .langid
-            .as_ref()
-            .ok_or_else(|| DataError::NeedsLanguageIdentifier(req.clone()))?
-            .clone()
-            .into();
-
-        let dates = self.get_dates_for(&req.resource_path.key, &cldr_langid)?;
+        DatesProvider::supports_key(&req.resource_path.key)?;
+        let cldr_langid: CldrLangID = req.get_langid()?.clone().into();
+        let dates = match self
+            .data
+            .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
+        {
+            Ok(idx) => &self.data[idx].1.dates,
+            Err(_) => return Err(DataError::UnavailableResourceOptions(req.clone())),
+        };
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
@@ -447,7 +430,7 @@ fn test_basic() {
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn ErasedDataProvider)
+    let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -479,7 +462,7 @@ fn test_with_numbering_system() {
     let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn ErasedDataProvider)
+    let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -506,7 +489,7 @@ fn unalias_contexts() {
     let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
     let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = (&provider as &dyn ErasedDataProvider)
+    let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,

@@ -9,6 +9,7 @@ pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
+use icu_provider::erased::*;
 use icu_provider::prelude::*;
 
 /// Returns a list of all ResourceKeys that this provider can produce.

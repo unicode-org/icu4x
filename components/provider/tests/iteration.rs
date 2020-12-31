@@ -4,6 +4,7 @@
 
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
+use icu_provider::erased::ErasedDataStruct;
 use icu_provider::iter::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::structs::icu4x::{key::HELLO_V1, HelloV1};

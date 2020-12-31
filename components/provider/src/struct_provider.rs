@@ -52,13 +52,10 @@ where
     T: Clone + Debug + Sized + 'd,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        if req.resource_path.key == self.key {
-            Ok(DataResponse {
-                metadata: DataResponseMetadata::default(),
-                payload: Some(Cow::Borrowed(self.data)),
-            })
-        } else {
-            Err(Error::UnsupportedResourceKey(req.resource_path.key))
-        }
+        req.resource_path.key.match_key(self.key)?;
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(Cow::Borrowed(self.data)),
+        })
     }
 }

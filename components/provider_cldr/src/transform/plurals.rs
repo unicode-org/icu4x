@@ -213,7 +213,7 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn ErasedDataProvider)
+    let cs_rules: Cow<PluralRuleStringsV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::CARDINAL_V1,

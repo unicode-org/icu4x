@@ -5,6 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locid_macros::langid;
+use icu_provider::erased::*;
 use icu_provider::prelude::*;
 use icu_provider::structs;
 use icu_provider_fs::FsDataProvider;

@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Debug;
 
+use icu_provider::erased::*;
 use icu_provider::prelude::*;
 use icu_provider::structs::{self, icu4x::HelloV1};
 

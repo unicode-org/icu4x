@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::manifest::SyntaxOption;
+use icu_provider::erased::ErasedDataReceiver;
 use icu_provider::prelude::*;
 use std::io::Read;
 use std::path::Path;
@@ -12,7 +13,6 @@ pub enum Error {
     #[cfg(feature = "bincode")]
     Bincode(bincode::Error),
     DataProvider(DataError),
-    // Serde(erased_serde::Error),
     #[allow(dead_code)]
     UnknownSyntax(SyntaxOption),
 }
@@ -36,12 +36,6 @@ impl From<DataError> for Error {
     }
 }
 
-// impl From<erased_serde::Error> for Error {
-//     fn from(err: erased_serde::Error) -> Self {
-//         Self::Serde(err)
-//     }
-// }
-
 impl Error {
     pub fn into_resource_error<P: AsRef<Path>>(self, path: P) -> DataError {
         use crate::error::Error as CrateError;
@@ -53,9 +47,6 @@ impl Error {
             Self::Bincode(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
-            // Self::Serde(err) => {
-            //     CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
-            // }
             Self::DataProvider(err) => {
                 CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
             }
