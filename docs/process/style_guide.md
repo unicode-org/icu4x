@@ -13,7 +13,7 @@ Items in this document are categorized as **required** or **suggested**, which e
 
 Many of the practices here are collected from existing sources (which should be cited) and where applicable there may be some additional justification for including that practice in this document and why it is categorized as it is. In general where a practice is sensible, expected to be achievable, and has no obvious downside, it will be marked as required.
 
-Note however that none of this document is meant to trump common sense, if if you're in a situation where it would be better to violate a **required** practice, then it just means we should have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However exceptions should always be commented clearly for the next maintainer.
+Note however that none of this document is meant to trump common sense, if you're in a situation where it would be better to violate a **required** practice, then it just means we should have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However exceptions should always be commented clearly for the next maintainer.
 
 If you're new to Rust, see the [Appendix](#appendix) for some, hopefully useful, links.
 
@@ -938,4 +938,3 @@ Thus we could provide one or more ICU4X traits bound to things like `str` to pro
   * You can save snippets in permantent links and incluce them as working examples in docs.
 * Write code and see what it compiles to: https://rust.godbolt.org
   * Note that you need to enable compiler optimizations via `-C opt-level=3` if you are looking to meaningfully compare two code snippets.
-
