@@ -159,8 +159,8 @@ where
 /// An object capable of accepting data from a variety of forms.
 /// Lifetimes:
 /// - 'd = lifetime of borrowed data (Cow::Borrowed)
-/// - 'de = lifetime parameter of owned data (Cow::Owned)
-pub trait ErasedDataReceiver<'d> {
+/// - 'de = deserializer lifetime; can usually be `'_`
+pub trait ErasedDataReceiver<'d, 'de> {
     /// Consumes a Serde Deserializer into this ErasedDataReceiver as owned data.
     ///
     /// This method results in an owned payload, but the payload could have non-static references
@@ -184,7 +184,7 @@ pub trait ErasedDataReceiver<'d> {
     /// ```
     fn receive_deserializer(
         &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'d>,
+        deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error>;
 
     /// Sets the payload to the default value. Assumes Default is implemented for the type.
@@ -244,7 +244,7 @@ pub trait ErasedDataReceiver<'d> {
     fn take_erased(&mut self) -> Result<Cow<'d, dyn ErasedDataStruct>, Error>;
 }
 
-impl<'a, 'd> dyn ErasedDataReceiver<'d> + 'a {
+impl<'a, 'd> dyn ErasedDataReceiver<'d, '_> + 'a {
     /// Convenience method: sets the payload to the value contained in the given Cow of a concrete
     /// type. May be owned or borrowed.
     ///
@@ -332,13 +332,13 @@ where
 }
 
 /// Implementation of DataReceiver for sized types.
-impl<'d, T> ErasedDataReceiver<'d> for DataReceiver<'d, T>
+impl<'d, 'de, T> ErasedDataReceiver<'d, 'de> for DataReceiver<'d, T>
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug + Any + Default,
 {
     fn receive_deserializer(
         &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'d>,
+        deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error> {
         let obj: T = erased_serde::deserialize(deserializer)?;
         self.payload = Some(Cow::Owned(obj));
@@ -392,10 +392,11 @@ where
     }
 }
 
-impl<'d> ErasedDataReceiver<'d> for DataReceiver<'d, dyn ErasedDataStruct> {
+/// Implementation of DataReceiver for ErasedDataStruct trait object.
+impl<'d, 'de> ErasedDataReceiver<'d, 'de> for DataReceiver<'d, dyn ErasedDataStruct> {
     fn receive_deserializer(
         &mut self,
-        _deserializer: &mut dyn erased_serde::Deserializer<'d>,
+        _deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error> {
         Err(Error::NeedsTypeInfo)
     }
@@ -423,7 +424,7 @@ pub trait ErasedDataProvider<'d> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d>,
+        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
     ) -> Result<DataResponseMetadata, Error>;
 }
 
@@ -436,7 +437,7 @@ macro_rules! impl_erased {
             fn load_to_receiver(
                 &self,
                 req: &$crate::prelude::DataRequest,
-                receiver: &mut dyn $crate::prelude::ErasedDataReceiver<$lifetime>,
+                receiver: &mut dyn $crate::prelude::ErasedDataReceiver<$lifetime, '_>,
             ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
                 let mut result = self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;
@@ -447,9 +448,9 @@ macro_rules! impl_erased {
 }
 
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
-impl<'a, 'd, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
+impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug + Any + Default,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let mut receiver = DataReceiver::<T>::new();

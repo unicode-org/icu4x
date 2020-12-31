@@ -47,7 +47,7 @@ impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         _req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d>,
+        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
     ) -> Result<DataResponseMetadata, Error> {
         receiver.receive_default()?;
         Ok(DataResponseMetadata::default())

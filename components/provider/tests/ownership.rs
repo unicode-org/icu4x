@@ -72,6 +72,25 @@ fn test_deserializer_owned() {
 }
 
 #[test]
+fn test_borrow_owned() {
+    // Demonstrates Cow::Borrowed on the outside and Cow::Owned on the inside.
+    let local_struct = DataStruct {
+        value: Cow::Owned("hello world".to_string()),
+    };
+    let mut receiver = DataReceiver::<DataStruct>::new();
+    receiver
+        .receive_erased(Cow::Borrowed(&local_struct))
+        .expect("Types should match");
+
+    assert!(matches!(
+        receiver.payload,
+        Some(Cow::Borrowed(DataStruct {
+            value: Cow::Owned(_)
+        }))
+    ));
+}
+
+#[test]
 fn test_borrow_static() {
     let mut receiver = DataReceiver::<DataStruct>::new();
     receiver

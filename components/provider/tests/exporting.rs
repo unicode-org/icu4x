@@ -26,9 +26,7 @@ where
         let data = self
             .map
             .get(langid)
-            .map(|s| HelloV1 {
-                hello: s.clone(),
-            })
+            .map(|s| HelloV1 { hello: s.clone() })
             .ok_or_else(|| DataError::UnavailableResourceOptions(req.clone()))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
