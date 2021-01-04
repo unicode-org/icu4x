@@ -56,8 +56,13 @@ impl Language {
     pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         let slen = v.len();
 
+        if !LANGUAGE_LENGTH.contains(&slen) || slen == SCRIPT_LENGTH {
+            return Err(ParserError::InvalidLanguage);
+        }
+
         let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
-        if !LANGUAGE_LENGTH.contains(&slen) || slen == SCRIPT_LENGTH || !s.is_ascii_alphabetic() {
+
+        if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidLanguage);
         }
 
