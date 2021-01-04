@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1608694099681,
+  "lastUpdate": 1609801616566,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1349,6 +1349,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1317007,
             "range": "± 61141",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f1e984e849558b20d561606237c19375c060d59",
+          "message": "Otpimize parsing Language::from_bytes() (#432)\n\nChanges the `Language::from_bytes()` function to return\r\nan Err if the length does not match before creating a\r\nTinyStr and checking `is_ascii_alphabetic()`.\r\n\r\nThis is a small optimization, but the change is congruent\r\nwith `Region::from_bytes()` and `Script::from_bytes()`",
+          "timestamp": "2021-01-04T14:51:24-08:00",
+          "tree_id": "dfb64ec5d5e308e104122ab709f6ed86728e3c97",
+          "url": "https://github.com/unicode-org/icu4x/commit/3f1e984e849558b20d561606237c19375c060d59"
+        },
+        "date": 1609801615914,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1364572,
+            "range": "± 41480",
             "unit": "ns/iter"
           }
         ]
