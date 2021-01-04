@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1609801556726,
+  "lastUpdate": 1609801729737,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1889,6 +1889,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 85705,
             "range": "± 2617",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03ae8315ff1ccb4dfcb3336bf436066176d2cd7c",
+          "message": "Use parsing iterator for Locale PartialEq<str>  (#402)\n\n* Fix display of transform fields\r\n\r\nWithout these changes, fields after the first are not separated by\r\n`-`, so `en-US-t-h0-hybrid-k0-platform-s0-true` is displayed as\r\n`en-US-t-h0-hybridk0-platforms0-`.\r\n\r\n* Use parsing iterator for Locale PartialEq<str>\r\n\r\nThis is similar to what was done for LanguateIdentifier PartialEq<str>.\r\nThe extensions are parsed all at once on the assumption that they will\r\nnot be encountered often enough for the potential performance\r\nbenefits of parsing them one at a time to justify the additional\r\ncode complexity.",
+          "timestamp": "2021-01-04T14:52:08-08:00",
+          "tree_id": "4153026a6098501fa2161321bb5baf3f89942a6a",
+          "url": "https://github.com/unicode-org/icu4x/commit/03ae8315ff1ccb4dfcb3336bf436066176d2cd7c"
+        },
+        "date": 1609801729110,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1168,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6645,
+            "range": "± 150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 109599,
+            "range": "± 1920",
             "unit": "ns/iter"
           }
         ]
