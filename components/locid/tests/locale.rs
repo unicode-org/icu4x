@@ -79,3 +79,18 @@ fn test_locale_canonicalize() {
         Locale::canonicalize("eN-latN-uS-macOS").unwrap()
     );
 }
+
+#[test]
+fn test_locale_partialeq_str() {
+    let path = "./tests/fixtures/locale.json";
+    let tests: Vec<fixtures::LocaleTest> =
+        helpers::read_fixture(path).expect("Failed to read a fixture");
+    for test in tests {
+        let parsed: Locale = test.input.try_into().expect("Parsing failed.");
+        assert_eq!(parsed, parsed.to_string().as_str());
+    }
+
+    // Check that trailing characters are not ignored
+    let locale: Locale = "en".parse().expect("Parsing failed.");
+    assert_ne!(locale, "en-US");
+}
