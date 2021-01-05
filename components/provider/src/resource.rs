@@ -305,88 +305,92 @@ pub struct ResourcePath {
     pub options: ResourceOptions,
 }
 
-#[test]
-fn test_entry_to_string() {
+#[cfg(test)]
+mod tests {
+    use super::*;
     use tinystr::tinystr4;
-    struct TestCase {
-        pub resc_key: ResourceKey,
-        pub expected: &'static str,
-    }
-    let cases = [
-        TestCase {
-            resc_key: resource_key!(plurals, "cardinal", 1),
-            expected: "plurals/cardinal@1",
-        },
-        TestCase {
-            resc_key: ResourceKey {
-                category: ResourceCategory::PrivateUse(tinystr4!("priv")),
-                sub_category: tinystr16!("cardinal"),
-                version: 1,
-            },
-            expected: "x-priv/cardinal@1",
-        },
-        TestCase {
-            resc_key: resource_key!(plurals, "maxlengthsubcatg", 1),
-            expected: "plurals/maxlengthsubcatg@1",
-        },
-        TestCase {
-            resc_key: resource_key!(plurals, "cardinal", 2147483647),
-            expected: "plurals/cardinal@2147483647",
-        },
-    ];
-    for cas in cases.iter() {
-        assert_eq!(cas.expected, cas.resc_key.to_string());
-        assert_eq!(
-            cas.expected,
-            cas.resc_key
-                .get_components()
-                .iter()
-                .collect::<Vec<&str>>()
-                .join("/")
-        );
-    }
-}
 
-#[test]
-fn test_key_to_string() {
-    use icu_locid_macros::langid;
-
-    struct TestCase {
-        pub resc_options: ResourceOptions,
-        pub expected: &'static str,
+    #[test]
+    fn test_entry_to_string() {
+        struct TestCase {
+            pub resc_key: ResourceKey,
+            pub expected: &'static str,
+        }
+        let cases = [
+            TestCase {
+                resc_key: resource_key!(plurals, "cardinal", 1),
+                expected: "plurals/cardinal@1",
+            },
+            TestCase {
+                resc_key: ResourceKey {
+                    category: ResourceCategory::PrivateUse(tinystr4!("priv")),
+                    sub_category: tinystr16!("cardinal"),
+                    version: 1,
+                },
+                expected: "x-priv/cardinal@1",
+            },
+            TestCase {
+                resc_key: resource_key!(plurals, "maxlengthsubcatg", 1),
+                expected: "plurals/maxlengthsubcatg@1",
+            },
+            TestCase {
+                resc_key: resource_key!(plurals, "cardinal", 2147483647),
+                expected: "plurals/cardinal@2147483647",
+            },
+        ];
+        for cas in cases.iter() {
+            assert_eq!(cas.expected, cas.resc_key.to_string());
+            assert_eq!(
+                cas.expected,
+                cas.resc_key
+                    .get_components()
+                    .iter()
+                    .collect::<Vec<&str>>()
+                    .join("/")
+            );
+        }
     }
-    let cases = [
-        TestCase {
-            resc_options: ResourceOptions {
-                variant: None,
-                langid: Some(LanguageIdentifier::default()),
+
+    #[test]
+    fn test_key_to_string() {
+        use icu_locid_macros::langid;
+        struct TestCase {
+            pub resc_options: ResourceOptions,
+            pub expected: &'static str,
+        }
+        let cases = [
+            TestCase {
+                resc_options: ResourceOptions {
+                    variant: None,
+                    langid: Some(LanguageIdentifier::default()),
+                },
+                expected: "und",
             },
-            expected: "und",
-        },
-        TestCase {
-            resc_options: ResourceOptions {
-                variant: Some(Cow::Borrowed("GBP")),
-                langid: Some(LanguageIdentifier::default()),
+            TestCase {
+                resc_options: ResourceOptions {
+                    variant: Some(Cow::Borrowed("GBP")),
+                    langid: Some(LanguageIdentifier::default()),
+                },
+                expected: "GBP/und",
             },
-            expected: "GBP/und",
-        },
-        TestCase {
-            resc_options: ResourceOptions {
-                variant: Some(Cow::Borrowed("GBP")),
-                langid: Some(langid!("en-ZA")),
+            TestCase {
+                resc_options: ResourceOptions {
+                    variant: Some(Cow::Borrowed("GBP")),
+                    langid: Some(langid!("en-ZA")),
+                },
+                expected: "GBP/en-ZA",
             },
-            expected: "GBP/en-ZA",
-        },
-    ];
-    for cas in cases.iter() {
-        assert_eq!(cas.expected, cas.resc_options.to_string());
-        assert_eq!(
-            cas.expected,
-            cas.resc_options
-                .get_components()
-                .iter()
-                .collect::<Vec<&str>>()
-                .join("/")
-        );
+        ];
+        for cas in cases.iter() {
+            assert_eq!(cas.expected, cas.resc_options.to_string());
+            assert_eq!(
+                cas.expected,
+                cas.resc_options
+                    .get_components()
+                    .iter()
+                    .collect::<Vec<&str>>()
+                    .join("/")
+            );
+        }
     }
 }

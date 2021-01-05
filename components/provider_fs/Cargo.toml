@@ -53,6 +53,7 @@ simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+icu_provider = { version = "0.1", path = "../provider", features = ["hello_world"] }
 criterion = "0.3.3"
 
 [features]

@@ -65,29 +65,34 @@ impl IterableDataProvider<'_> for InvariantDataProvider {
     }
 }
 
-#[test]
-fn test_invariant() {
-    use crate::structs;
-    let provider = InvariantDataProvider;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let data1: Cow<structs::icu4x::HelloWorldV1> = provider
-        .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
-        .unwrap()
-        .take_payload()
-        .unwrap();
+    #[test]
+    fn test_invariant() {
+        use crate::structs;
+        let provider = InvariantDataProvider;
 
-    let data2: Cow<structs::icu4x::HelloWorldV1> = (&provider as &dyn ErasedDataProvider)
-        .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
-        .unwrap()
-        .take_payload()
-        .unwrap();
+        let data1: Cow<structs::icu4x::HelloWorldV1> = provider
+            .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
-    assert_eq!(
-        &*data1,
-        &structs::icu4x::HelloWorldV1 {
-            message: Cow::Borrowed("(und) Hello World")
-        }
-    );
+        let data2: Cow<structs::icu4x::HelloWorldV1> = (&provider as &dyn ErasedDataProvider)
+            .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
-    assert_eq!(data1, data2);
+        assert_eq!(
+            &*data1,
+            &structs::icu4x::HelloWorldV1 {
+                message: Cow::Borrowed("(und) Hello World")
+            }
+        );
+
+        assert_eq!(data1, data2);
+    }
 }

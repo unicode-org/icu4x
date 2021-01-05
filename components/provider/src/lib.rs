@@ -92,6 +92,7 @@ pub mod data_provider;
 pub mod resource;
 #[macro_use]
 pub mod erased;
+#[cfg(feature = "hello_world")]
 pub mod hello_world;
 pub mod inv;
 pub mod iter;

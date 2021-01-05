@@ -5,6 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locid_macros::langid;
+#[cfg(feature = "bench")]
 use icu_provider::erased::*;
 use icu_provider::prelude::*;
 use icu_provider::structs;
