@@ -18,17 +18,18 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: Cow<structs::plurals::PluralRuleStringsV1> =
-//!     (&data_provider as &dyn DataProvider)
+//! let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
 //!     .load_payload(&DataRequest {
-//!         data_entry: DataEntry {
-//!             langid: langid!("ru"),
-//!             variant: None,
+//!         resource_path: ResourcePath {
+//!             key: structs::plurals::key::CARDINAL_V1,
+//!             options: ResourceOptions {
+//!                 langid: Some(langid!("ru")),
+//!                 variant: None,
+//!             },
 //!         },
-//!         data_key: structs::plurals::key::CARDINAL_V1,
 //!     })
 //!     .unwrap()
-//!     .payload
+//!     .take_payload()
 //!     .unwrap();
 //! assert_eq!(data.few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
 //! ```

@@ -83,7 +83,7 @@ use std::borrow::Cow;
 /// use icu_locid_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
 /// use icu_datetime::date::MockDateTime;
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -122,7 +122,7 @@ impl<'d> DateTimeFormat<'d> {
     /// use icu_locid_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_datetime::date::MockDateTime;
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -134,24 +134,22 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d>>(
+    pub fn try_new<D: DataProvider<'d, structs::dates::gregory::DatesV1> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
-        let data_key = structs::dates::key::GREGORY_V1;
-        let mut receiver = DataReceiverForType::<structs::dates::gregory::DatesV1>::new();
-        data_provider.load_to_receiver(
-            &DataRequest {
-                data_key,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: langid.clone(),
+        let data = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: structs::dates::key::GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
                 },
-            },
-            &mut receiver,
-        )?;
-        let data = receiver.payload.expect("Load was successful");
+            })?
+            .take_payload()?;
 
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 
@@ -171,7 +169,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -209,7 +207,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -241,7 +239,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();

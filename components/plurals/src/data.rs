@@ -46,7 +46,7 @@ fn parse_rule(input: &Option<Cow<str>>) -> Result<Option<ast::Condition>, Plural
     })
 }
 
-impl TryInto<PluralRuleList> for &PluralRuleStringsV1 {
+impl<'s> TryInto<PluralRuleList> for &PluralRuleStringsV1<'s> {
     type Error = PluralRulesError;
     fn try_into(self) -> Result<PluralRuleList, Self::Error> {
         Ok(PluralRuleList {

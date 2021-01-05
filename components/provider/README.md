@@ -7,11 +7,11 @@ The primary trait is `DataProvider`. It has one method, which transforms a `Requ
 a `Response`:
 
 ```
-fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
+fn load(&self, req: &DataRequest) -> Result<DataResponseMetadata<'d>, DataError>
 ```
 
-A Request contains a `DataKey` (a composition of a `Category` and sub-category, e.g.,
-"plurals/cardinal@1") and `DataEntry` (a language identifier and optional variant, e.g.,
+A Request contains a `ResourceKey` (a composition of a `Category` and sub-category, e.g.,
+"plurals/cardinal@1") and `ResourceOptions` (a language identifier and optional variant, e.g.,
 "fr") being requested. The Response contains the data payload corresponding to the Request.
 
 The most common types required for ICU4X `DataProvider` are included via the prelude:
@@ -23,15 +23,15 @@ use std::any::TypeId;
 // Types included:
 println!("{:?}", TypeId::of::<DataProvider>());
 println!("{:?}", TypeId::of::<DataError>());
-println!("{:?}", TypeId::of::<DataKey>());
-println!("{:?}", TypeId::of::<DataEntry>());
-println!("{:?}", TypeId::of::<DataCategory>());
+println!("{:?}", TypeId::of::<ResourceKey>());
+println!("{:?}", TypeId::of::<ResourceOptions>());
+println!("{:?}", TypeId::of::<ResourceCategory>());
 println!("{:?}", TypeId::of::<DataRequest>());
 println!("{:?}", TypeId::of::<DataResponse>());
 println!("{:?}", TypeId::of::<DataResponseBuilder>());
 
 // Macros included:
-assert_eq!("plurals/cardinal@1", icu_data_key!(plurals: cardinal@1).to_string());
+assert_eq!("plurals/cardinal@1", icu_resc_key!(plurals: cardinal@1).to_string());
 ```
 
 ## Types of Data Providers
@@ -46,8 +46,8 @@ with some pre-built data providers:
 
 ## Iterable Data Providers
 
-Data providers can implement `DataEntryCollection`, allowing them to be used via the
-auto-implemented trait `IterableDataProvider`. This allows iteration over all `DataEntry`
+Data providers can implement `ResourceOptionsCollection`, allowing them to be used via the
+auto-implemented trait `IterableDataProvider`. This allows iteration over all `ResourceOptions`
 instances supported for a certain key in the data provider. This can be useful when
 transforming data between storage formats. For more information, see the `iter` module.
 

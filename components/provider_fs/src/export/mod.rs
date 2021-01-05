@@ -9,59 +9,59 @@
 //! # Examples
 //!
 //! ```
+//! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
-//! use icu_provider::InvariantDataProvider;
-//! use icu_provider::structs;
-//! use icu_provider::iter::IterableDataProvider;
+//! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
+//! use icu_provider::iter::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
+//! use std::borrow::Cow;
 //! use std::path::PathBuf;
 //!
-//! let DEMO_PATH = std::env::temp_dir().join("icu4x_json_demo");
-//! let DATA_KEY = structs::plurals::key::CARDINAL_V1;
+//! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
 //!
 //! // Set up the exporter
 //! let mut options = serializers::json::Options::default();
 //! let serializer = Box::new(serializers::json::Serializer::new(options));
 //! let mut options = fs_exporter::ExporterOptions::default();
-//! options.root = DEMO_PATH.clone();
+//! options.root = demo_path.clone();
 //! let mut exporter = fs_exporter::FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export a key
-//! let inv_provider = InvariantDataProvider;
-//! let result = inv_provider.export_key(&DATA_KEY, &mut exporter);
+//! let source_provider = HelloWorldProvider::new_with_placeholder_data();
+//! let result = exporter.put_key_from_provider(&key::HELLO_WORLD_V1, &source_provider);
 //! // Ensure flush() is called, even when the result is an error
 //! exporter.flush().expect("Should successfully flush");
 //! result.expect("Should successfully export");
 //!
 //! // Create a filesystem provider reading from the demo directory
-//! let fs_provider = FsDataProvider::try_new(DEMO_PATH.clone())
+//! let fs_provider = FsDataProvider::try_new(demo_path.clone())
 //!     .expect("Should successfully read from filesystem");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     data_key: DATA_KEY,
-//!     data_entry: DataEntry {
-//!         variant: None,
-//!         langid: Default::default(),
+//!     resource_path: ResourcePath {
+//!         key: key::HELLO_WORLD_V1,
+//!         options: ResourceOptions {
+//!             variant: None,
+//!             langid: Some(langid!("bn")),
+//!         },
 //!     }
 //! };
-//! let inv_response = (&inv_provider as &DataProvider)
-//!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
-//!     .unwrap();
-//! let fs_response = (&fs_provider as &DataProvider)
-//!     .load_payload::<structs::plurals::PluralRuleStringsV1>(&req)
-//!     .expect("Should successfully read from filesystem");
+//! let source_response: DataResponse<HelloWorldV1> =
+//!     source_provider.load_payload(&req).unwrap();
+//! let fs_response: DataResponse<HelloWorldV1> =
+//!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(
-//!     inv_response.payload,
+//!     source_response.payload,
 //!     fs_response.payload,
 //! );
 //!
 //! // Clean up from demo
-//! std::fs::remove_dir_all(&DEMO_PATH).expect("Should clean up test directory");
+//! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
 //! ```
 
 mod aliasing;

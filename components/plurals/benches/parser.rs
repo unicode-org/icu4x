@@ -1,12 +1,14 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 mod fixtures;
 mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_provider::{structs, DataEntry, DataProvider, DataRequest};
+use icu_provider::prelude::*;
+use icu_provider::structs;
 use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {
@@ -19,16 +21,19 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &plurals_data.langs {
-        let response = (&provider as &dyn DataProvider)
+        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = provider
             .load_payload(&DataRequest {
-                data_key: structs::plurals::key::CARDINAL_V1,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: langid.clone(),
+                resource_path: ResourcePath {
+                    key: structs::plurals::key::CARDINAL_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
                 },
             })
+            .unwrap()
+            .take_payload()
             .unwrap();
-        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.payload.unwrap();
 
         let r = &[
             &plurals_data.zero,

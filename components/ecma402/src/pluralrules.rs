@@ -238,7 +238,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         Self: Sized,
     {
         // TODO: introduce a global data provider here.
-        let dp = icu_provider::InvariantDataProvider;
+        let dp = icu_provider::inv::InvariantDataProvider;
         Self::try_new_with_provider(l, opts, &dp)
     }
 
@@ -254,14 +254,14 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
 
 impl PluralRules {
     /// Creates a new [`PluralRules`], using the specified data provider.
-    pub fn try_new_with_provider<L, P>(
+    pub fn try_new_with_provider<'d, L, P>(
         l: L,
         opts: ecma402_traits::pluralrules::Options,
         provider: &P,
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'static>,
+        P: icu_provider::DataProvider<'d, icu_provider::structs::plurals::PluralRuleStringsV1<'d>>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);

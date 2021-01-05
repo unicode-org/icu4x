@@ -3,10 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::DataKeySupport;
 use crate::CldrPaths;
 use icu_plurals::rules::{parse, serialize};
-use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 use icu_provider::structs::plurals::*;
 use std::borrow::Cow;
@@ -14,7 +12,7 @@ use std::convert::TryFrom;
 use std::marker::PhantomData;
 
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [DataKey; 2] = [
+pub const ALL_KEYS: [ResourceKey; 2] = [
     key::CARDINAL_V1, //
     key::ORDINAL_V1,  //
 ];
@@ -69,73 +67,74 @@ impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
     }
 }
 
-impl<'d> DataKeySupport for PluralsProvider<'d> {
-    fn supports_key(data_key: &DataKey) -> Result<(), DataError> {
-        if data_key.category != DataCategory::Plurals {
-            return Err((&data_key.category).into());
+impl<'d> KeyedDataProvider for PluralsProvider<'d> {
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
+        if resc_key.category != ResourceCategory::Plurals {
+            return Err((&resc_key.category).into());
         }
-        if data_key.version != 1 {
-            return Err(data_key.into());
+        if resc_key.version != 1 {
+            return Err(resc_key.into());
         }
         Ok(())
     }
 }
 
 impl<'d> PluralsProvider<'d> {
-    fn get_rules_for(&self, data_key: &DataKey) -> Result<&cldr_json::Rules, DataError> {
-        PluralsProvider::supports_key(data_key)?;
-        match data_key.sub_category.as_str() {
-            // TODO(#212): Match on TinyStr
-            "cardinal" => self.cardinal_rules.as_ref(),
-            "ordinal" => self.ordinal_rules.as_ref(),
-            _ => return Err(data_key.into()),
+    fn get_rules_for(&self, resc_key: &ResourceKey) -> Result<&cldr_json::Rules, DataError> {
+        PluralsProvider::supports_key(resc_key)?;
+        match *resc_key {
+            key::CARDINAL_V1 => self.cardinal_rules.as_ref(),
+            key::ORDINAL_V1 => self.ordinal_rules.as_ref(),
+            _ => return Err(resc_key.into()),
         }
-        .ok_or_else(|| data_key.into())
+        .ok_or_else(|| resc_key.into())
     }
 }
 
-impl<'d> DataProvider<'d> for PluralsProvider<'d> {
-    fn load_to_receiver(
+// Only returns owned data, so assert 'static for ErasedDataProvider compatibility.
+impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> {
+    fn load_payload(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn DataReceiver<'d, 'static>,
-    ) -> Result<DataResponse, DataError> {
-        let cldr_rules = self.get_rules_for(&req.data_key)?;
+    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'static>>, DataError> {
+        let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
-        // TODO: Avoid the clone
-        let cldr_langid = req.data_entry.langid.clone().into();
+        let cldr_langid = req.try_langid()?.clone().into();
         let (_, r) = match cldr_rules.0.binary_search_by_key(&&cldr_langid, |(l, _)| l) {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),
         };
-        let mut option = Some(PluralRuleStringsV1::from(r));
-        receiver.receive_option(&mut option)?;
         Ok(DataResponse {
-            data_langid: req.data_entry.langid.clone(),
+            metadata: DataResponseMetadata {
+                data_langid: req.resource_path.options.langid.clone(),
+            },
+            payload: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
         })
     }
 }
 
-impl<'d> DataEntryCollection for PluralsProvider<'d> {
-    fn iter_for_key(
+icu_provider::impl_erased!(PluralsProvider<'d>, 'd);
+
+impl<'d> IterableDataProvider<'d> for PluralsProvider<'d> {
+    fn supported_options_for_key(
         &self,
-        data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, DataError> {
-        let cldr_rules = self.get_rules_for(data_key)?;
-        let list: Vec<DataEntry> = cldr_rules
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let cldr_rules = self.get_rules_for(resc_key)?;
+        let list: Vec<ResourceOptions> = cldr_rules
             .0
             .iter()
-            .map(|(l, _)| DataEntry {
+            .map(|(l, _)| ResourceOptions {
                 variant: None,
                 // TODO: Avoid the clone
-                langid: l.langid.clone(),
+                langid: Some(l.langid.clone()),
             })
             .collect();
         Ok(Box::new(list.into_iter()))
     }
 }
 
-impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1 {
+impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
     fn from(other: &cldr_json::LocalePluralRules) -> Self {
         #[allow(clippy::ptr_arg)]
         fn convert(s: &Cow<'static, str>) -> Cow<'static, str> {
@@ -206,16 +205,18 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: Cow<PluralRuleStringsV1> = (&provider as &dyn DataProvider)
+    let cs_rules: Cow<PluralRuleStringsV1> = provider
         .load_payload(&DataRequest {
-            data_key: key::CARDINAL_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("cs"),
+            resource_path: ResourcePath {
+                key: key::CARDINAL_V1,
+                options: ResourceOptions {
+                    variant: None,
+                    langid: Some(langid!("cs")),
+                },
             },
         })
         .unwrap()
-        .payload
+        .take_payload()
         .unwrap();
 
     assert_eq!(None, cs_rules.zero);
