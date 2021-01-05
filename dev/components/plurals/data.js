@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1609801729737,
+  "lastUpdate": 1609888740007,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1931,6 +1931,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 109599,
             "range": "± 1920",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a8893b1182dc5e0607122d74c193971b1e452fc",
+          "message": "Adding ErasedDataProvider; renaming DataKey, DataEntry, and other traits",
+          "timestamp": "2021-01-05T17:01:52-06:00",
+          "tree_id": "1f2ca5a5f2337167693bf6e857745ac38939e54b",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a8893b1182dc5e0607122d74c193971b1e452fc"
+        },
+        "date": 1609888738957,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1253,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7076,
+            "range": "± 407",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 108007,
+            "range": "± 12825",
             "unit": "ns/iter"
           }
         ]
