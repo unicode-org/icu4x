@@ -5,7 +5,6 @@ use crate::error::Error;
 use crate::reader::open_reader;
 use crate::support::DataKeySupport;
 use crate::CldrPaths;
-use icu_locid::LanguageIdentifier;
 use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 use icu_provider::structs::likelysubtags::*;
@@ -18,25 +17,22 @@ pub const ALL_KEYS: [DataKey; 1] = [key::LIKELY_SUBTAGS_V1];
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
 pub struct LikelySubtagsProvider<'d> {
-    entries: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    data: cldr_json::Resource,
     _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
 impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
-        let mut entries = {
+        let data: cldr_json::Resource = {
             let path = cldr_paths
                 .cldr_core()?
                 .join("supplemental")
                 .join("likelySubtags.json");
-            let data: cldr_json::Resource =
-                serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            data.supplemental.likely_subtags
+            serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
         };
-        entries.sort_unstable();
-        Ok(LikelySubtagsProvider {
-            entries,
+        Ok(Self {
+            data,
             _phantom: PhantomData,
         })
     }
@@ -46,10 +42,9 @@ impl<'d> TryFrom<&'d str> for LikelySubtagsProvider<'d> {
     type Error = serde_json::error::Error;
     /// Attempt to parse a JSON string.
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let mut data: cldr_json::Resource = serde_json::from_str(s)?;
-        data.supplemental.likely_subtags.sort_unstable();
-        Ok(LikelySubtagsProvider {
-            entries: data.supplemental.likely_subtags,
+        let data: cldr_json::Resource = serde_json::from_str(s)?;
+        Ok(Self {
+            data,
             _phantom: PhantomData,
         })
     }
@@ -78,9 +73,7 @@ impl<'d> DataProvider<'d> for LikelySubtagsProvider<'d> {
             Ok(DataResponseBuilder {
                 data_langid: langid,
             }
-            .with_owned_payload(LikelySubtagsV1 {
-                entries: self.entries.clone(),
-            }))
+            .with_owned_payload(LikelySubtagsV1::from(&self.data)))
         } else {
             Err(DataError::UnavailableEntry(req.clone()))
         }
@@ -97,6 +90,14 @@ impl<'d> DataEntryCollection for LikelySubtagsProvider<'d> {
             langid: "und".parse().unwrap(),
         }];
         Ok(Box::new(list.into_iter()))
+    }
+}
+
+impl From<&cldr_json::Resource> for LikelySubtagsV1 {
+    fn from(other: &cldr_json::Resource) -> Self {
+        let mut entries = other.supplemental.likely_subtags.clone();
+        entries.sort_unstable();
+        Self { entries }
     }
 }
 

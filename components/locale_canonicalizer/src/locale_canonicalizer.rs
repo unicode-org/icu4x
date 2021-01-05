@@ -32,7 +32,7 @@ impl LocaleCanonicalizer {
     /// This returns a new Locale that is the result of running the
     /// 'Add Likely Subtags' algorithm from
     /// https://www.unicode.org/reports/tr35/#Likely_Subtags.
-    pub fn maximize(&self, locale: &Locale) -> Result<Locale, LocaleCanonicalizerError> {
+    pub fn maximize(&self, locale: &mut Locale) -> Result<bool, LocaleCanonicalizerError> {
         let mut key = LanguageIdentifier {
             language: locale.language,
             script: locale.script,
@@ -40,20 +40,16 @@ impl LocaleCanonicalizer {
             variants: subtags::Variants::default(),
         };
 
-        let to_result = |index: usize| -> Locale {
+        let maybe_update_locale = |index: usize, locale: &mut Locale| -> bool {
             let entry = &self.likely_subtags.entries[index].1;
-            let language = if locale.language.is_empty() {
-                entry.language
-            } else {
-                locale.language
-            };
-            Locale {
-                language,
-                script: locale.script.or(entry.script),
-                region: locale.region.or(entry.region),
-                variants: locale.variants.clone(),
-                extensions: locale.extensions.clone(),
+            let modified =
+                locale.language.is_empty() || locale.script.is_none() || locale.region.is_none();
+            if locale.language.is_empty() {
+                locale.language = entry.language;
             }
+            locale.script = locale.script.or(entry.script);
+            locale.region = locale.region.or(entry.region);
+            modified
         };
 
         // languages_scripts_regions
@@ -63,7 +59,7 @@ impl LocaleCanonicalizer {
                 .entries
                 .binary_search_by_key(&&key, |(l, _)| l)
             {
-                return Ok(to_result(index));
+                return Ok(maybe_update_locale(index, locale));
             }
         }
 
@@ -75,7 +71,7 @@ impl LocaleCanonicalizer {
                 .entries
                 .binary_search_by_key(&&key, |(l, _)| l)
             {
-                return Ok(to_result(index));
+                return Ok(maybe_update_locale(index, locale));
             }
         }
 
@@ -88,7 +84,7 @@ impl LocaleCanonicalizer {
                 .entries
                 .binary_search_by_key(&&key, |(l, _)| l)
             {
-                return Ok(to_result(index));
+                return Ok(maybe_update_locale(index, locale));
             }
         }
 
@@ -100,7 +96,7 @@ impl LocaleCanonicalizer {
             .entries
             .binary_search_by_key(&&key, |(l, _)| l)
         {
-            return Ok(to_result(index));
+            return Ok(maybe_update_locale(index, locale));
         }
 
         // und_scripts
@@ -113,7 +109,7 @@ impl LocaleCanonicalizer {
                 .entries
                 .binary_search_by_key(&&key, |(l, _)| l)
             {
-                return Ok(to_result(index));
+                return Ok(maybe_update_locale(index, locale));
             }
         }
 
@@ -123,32 +119,36 @@ impl LocaleCanonicalizer {
     /// This returns a new Locale that is the result of running the
     /// 'Remove Likely Subtags' algorithm from
     /// https://www.unicode.org/reports/tr35/#Likely_Subtags.
-    pub fn minimize(&self, locale: &Locale) -> Result<Locale, LocaleCanonicalizerError> {
-        let max = self.maximize(locale)?;
+    pub fn minimize(&self, locale: &mut Locale) -> Result<bool, LocaleCanonicalizerError> {
+        let mut max = locale.clone();
+        let modified = self.maximize(&mut max)?;
         let mut trial = max.clone();
         trial.variants.clear();
 
         trial.script = None;
         trial.region = None;
-        if self.maximize(&trial)? == max {
-            trial.variants = max.variants;
-            return Ok(trial);
+        if self.maximize(&mut trial)? && trial == max {
+            locale.script = None;
+            locale.region = None;
+            return Ok(true);
         }
 
         trial.script = None;
         trial.region = max.region;
-        if self.maximize(&trial)? == max {
-            trial.variants = max.variants;
-            return Ok(trial);
+        if self.maximize(&mut trial)? && trial == max {
+            locale.script = None;
+            locale.region = max.region;
+            return Ok(true);
         }
 
         trial.script = max.script;
         trial.region = None;
-        if self.maximize(&trial)? == max {
-            trial.variants = max.variants;
-            return Ok(trial);
+        if self.maximize(&mut trial)? && trial == max {
+            locale.script = max.script;
+            locale.region = None;
+            return Ok(true);
         }
-
-        Ok(max)
+        *locale = max;
+        Ok(modified)
     }
 }

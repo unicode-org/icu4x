@@ -722,10 +722,11 @@ dependencies = [
 name = "icu_locale_canonicalizer"
 version = "0.1.0"
 dependencies = [
+ "criterion",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
- "icu_provider_cldr",
+ "icu_testdata",
 ]
 
 [[package]]

@@ -4,14 +4,10 @@
 use icu_locale_canonicalizer::LocaleCanonicalizer;
 use icu_locid::Locale;
 use icu_locid_macros::langid;
-use icu_provider_cldr::transform::LikelySubtagsProvider;
-use std::convert::TryFrom;
 
 #[test]
 fn test_maximize() {
-    let json_str =
-        std::fs::read_to_string("../provider_cldr/tests/testdata/likelySubtags.json").unwrap();
-    let provider = LikelySubtagsProvider::try_from(json_str.as_str()).unwrap();
+    let provider = icu_testdata::get_provider();
     let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let test_cases: &[(&str, &str)] = &[
@@ -61,29 +57,32 @@ fn test_maximize() {
     ];
 
     for case in test_cases {
-        let locale: Locale = case.0.parse().unwrap();
-        assert_eq!(lc.maximize(&locale).unwrap().to_string(), case.1);
+        let mut locale: Locale = case.0.parse().unwrap();
+        let modified = lc.maximize(&mut locale).unwrap();
+        assert_eq!(locale.to_string(), case.1);
+        if modified {
+            assert_ne!(locale.to_string(), case.0);
+        } else {
+            assert_eq!(locale.to_string(), case.0);
+        }
     }
 
-    assert!(lc.maximize(&langid!("zz").into()).is_err());
+    let mut locale = langid!("zz").into();
+    assert!(lc.maximize(&mut locale).is_err());
 }
 
 #[test]
 fn test_minimize() {
     use icu_locid_macros::langid;
 
-    let json_str =
-        std::fs::read_to_string("../provider_cldr/tests/testdata/likelySubtags.json").unwrap();
-    let provider = LikelySubtagsProvider::try_from(json_str.as_str()).unwrap();
+    let provider = icu_testdata::get_provider();
     let lc = LocaleCanonicalizer::new(&provider).unwrap();
-    assert_eq!(
-        lc.minimize(&langid!("zh-Hant").into()).unwrap().to_string(),
-        "zh-TW"
-    );
-    assert_eq!(
-        lc.minimize(&langid!("en-Latn-US").into())
-            .unwrap()
-            .to_string(),
-        "en"
-    );
+
+    let mut locale = langid!("zh-Hant").into();
+    lc.minimize(&mut locale);
+    assert_eq!(locale.to_string(), "zh-TW");
+
+    let mut locale = langid!("en-Latn-US").into();
+    lc.minimize(&mut locale);
+    assert_eq!(locale.to_string(), "en");
 }
