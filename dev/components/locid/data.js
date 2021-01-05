@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1609801716103,
+  "lastUpdate": 1609888665771,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2297,6 +2297,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 6714,
             "range": "± 272",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8a8893b1182dc5e0607122d74c193971b1e452fc",
+          "message": "Adding ErasedDataProvider; renaming DataKey, DataEntry, and other traits",
+          "timestamp": "2021-01-05T17:01:52-06:00",
+          "tree_id": "1f2ca5a5f2337167693bf6e857745ac38939e54b",
+          "url": "https://github.com/unicode-org/icu4x/commit/8a8893b1182dc5e0607122d74c193971b1e452fc"
+        },
+        "date": 1609888661412,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2984,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4988,
+            "range": "± 161",
             "unit": "ns/iter"
           }
         ]
