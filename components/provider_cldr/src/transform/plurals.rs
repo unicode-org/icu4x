@@ -99,15 +99,7 @@ impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> 
     ) -> Result<DataResponse<'d, PluralRuleStringsV1<'static>>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
-        let cldr_langid = req
-            .resource_path
-            .options
-            .langid
-            .as_ref()
-            .ok_or_else(|| DataError::NeedsLanguageIdentifier(req.clone()))?
-            .clone()
-            .into();
-
+        let cldr_langid = req.try_langid()?.clone().into();
         let (_, r) = match cldr_rules.0.binary_search_by_key(&&cldr_langid, |(l, _)| l) {
             Ok(idx) => &cldr_rules.0[idx],
             Err(_) => return Err(req.clone().into()),

@@ -81,7 +81,7 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
         req: &DataRequest,
     ) -> Result<DataResponse<'d, gregory::DatesV1>, DataError> {
         DatesProvider::supports_key(&req.resource_path.key)?;
-        let cldr_langid: CldrLangID = req.get_langid()?.clone().into();
+        let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
         let dates = match self
             .data
             .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)

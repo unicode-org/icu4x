@@ -65,10 +65,10 @@ impl DataRequest {
     ///     }
     /// };
     ///
-    /// assert!(matches!(req_no_langid.get_langid(), Err(DataError::NeedsLanguageIdentifier(_))));
-    /// assert!(matches!(req_with_langid.get_langid(), Ok(_)));
+    /// assert!(matches!(req_no_langid.try_langid(), Err(DataError::NeedsLanguageIdentifier(_))));
+    /// assert!(matches!(req_with_langid.try_langid(), Ok(_)));
     /// ```
-    pub fn get_langid(&self) -> Result<&LanguageIdentifier, Error> {
+    pub fn try_langid(&self) -> Result<&LanguageIdentifier, Error> {
         self.resource_path
             .options
             .langid

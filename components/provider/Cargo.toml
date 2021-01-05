@@ -19,6 +19,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+
 [features]
 # Serialize None values when exporting. Required for Bincode.
 serialize_none = []

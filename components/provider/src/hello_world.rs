@@ -78,7 +78,7 @@ where
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
-        let langid = req.get_langid()?;
+        let langid = req.try_langid()?;
         let data = self
             .map
             .get(langid)
@@ -121,7 +121,7 @@ impl DataExporter for HelloWorldProvider<'static> {
         payload: &dyn ErasedDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
-        let langid = req.get_langid()?;
+        let langid = req.try_langid()?;
         let data: &HelloWorldV1 = payload.downcast_ref()?;
         self.map.insert(langid.clone(), data.message.clone());
         Ok(())
