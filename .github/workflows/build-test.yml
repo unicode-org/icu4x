@@ -40,8 +40,8 @@ jobs:
         command: test-docs
 
 
-  # Build job - builds all permutations of features
-  build:
+  # Feature coverage job - builds all permutations of features
+  features:
     strategy:
       fail-fast: false
       matrix:
@@ -67,6 +67,10 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: build-all-features
+    - name: Test All Feature Permutations
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: test-all-features
 
 
   # Lint job - runs all "cargo make" linting commands
