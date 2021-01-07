@@ -34,6 +34,9 @@ fn get_data_line_prop_vals<'s>(data_line_parts: &[&'s str]) -> HashMap<&'s str, 
         } else {
             // For properties that don't take values, let their value in the map be the prop name itself
             // This applies to binary properties.
+            // Also, keep the string as-is to preserve any initial minus sign that
+            // indicates for binary properties that this line excludes this code
+            // point range from inclusion in the property set.
             m.insert(prop_str, prop_str);
         }
     }
@@ -48,31 +51,80 @@ fn is_property_line(line: &str) -> bool {
     line.starts_with("property;")
 }
 
-/// For a property definition line, update the property aliases map.
-/// Only operate on binary properties, currently.
+fn is_enum_val_line(line: &str) -> bool {
+    line.starts_with("value;")
+}
+
+/// For a property definition or enumerated property value line, update the aliases map.
 fn update_aliases<'s>(prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>, line: &'s str) {
     let mut line_parts = split_line(&line);
+    line_parts.drain(0..2);
+
+    // TODO: ask Markus what to do with the property lines that appear to have
+    // no canonical name
+    // property;Binary;;alnum
+    // property;Binary;;blank
+    // property;Binary;;graph
+    // property;Binary;;print
+    // property;Binary;;xdigit
+    if line_parts[0].is_empty() {
+        line_parts.drain(0..1);
+    }
+
+    let canonical_name = line_parts[0];
+    let all_names: Vec<&'s str> = line_parts.iter().copied().collect();
+    let all_names_set: HashSet<&'s str> = all_names.into_iter().collect();
+    prop_aliases.insert(canonical_name, all_names_set);
+}
+
+/// Parse property definition line for binary and enumerated properties.
+fn update_property_aliases<'s>(
+    binary_prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>,
+    enum_prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>,
+    line: &'s str,
+) {
+    let line_parts = split_line(&line);
     assert_eq!(&"property", &line_parts[0]);
     let prop_type = &line_parts[1];
     if prop_type == &"Binary" {
-        line_parts.drain(0..2);
-
-        // TODO: ask Markus what to do with the property lines that appear to have
-        // no canonical name
-        // property;Binary;;alnum
-        // property;Binary;;blank
-        // property;Binary;;graph
-        // property;Binary;;print
-        // property;Binary;;xdigit
-        if line_parts[0].is_empty() {
-            line_parts.drain(0..1);
-        }
-
-        let canonical_name = line_parts[0];
-        let all_names: Vec<&'s str> = line_parts.iter().copied().collect();
-        let all_names_set: HashSet<&'s str> = all_names.into_iter().collect();
-        prop_aliases.insert(canonical_name, all_names_set);
+        update_aliases(binary_prop_aliases, line);
+    } else if prop_type == &"Enumerated" {
+        update_aliases(enum_prop_aliases, line);
     }
+}
+
+/// Parse enum property value definition line.
+fn update_enum_val_aliases<'s>(
+    enum_val_aliases: &mut HashMap<&'s str, HashSet<&'s str>>,
+    line: &'s str,
+) {
+    let line_parts = split_line(&line);
+    assert_eq!(&"value", &line_parts[0]);
+    update_aliases(enum_val_aliases, line);
+}
+
+/// Return a new map in which any binary exclusion values
+/// (in other words, values for binary properties that are prefixed with a
+/// minus sign, as described in the PPUCD documentation, ex: "-Gr_Base")
+/// are not included and any existing include values for the binary property
+/// (ex: "Gr_Base") are accordingly also removed from the map.
+fn apply_exclude_vals_for_binary_props<'s>(
+    prop_vals: HashMap<&'s str, &'s str>,
+) -> HashMap<&'s str, &'s str> {
+    let mut prop_names: HashSet<&'s str> = prop_vals.keys().copied().collect();
+    // If we see "-Gr_Base", then remove both "Gr_Base" and "-Gr_Base".
+    for prop_name in prop_vals.keys() {
+        if prop_name.starts_with('-') {
+            let orig_prop_name: &str = &prop_name[1..];
+            prop_names.remove(&orig_prop_name);
+            prop_names.remove(prop_name);
+        }
+    }
+    prop_vals
+        .clone()
+        .into_iter()
+        .filter(|(k, _)| prop_names.contains(k))
+        .collect()
 }
 
 fn is_defaults_line(line: &str) -> bool {
@@ -132,6 +184,7 @@ fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
 
     let range_str = &line_parts[1];
     let range_bound_strs = &range_str.split("..").collect::<Vec<_>>();
+    // a "cp" line in PPUCD can either represent a single code point or a code point range
     let range_result = if range_bound_strs.len() > 1 {
         let range_start: &u32 = &u32::from_str_radix(&range_bound_strs[0], 16).unwrap();
         let range_end: &u32 = &u32::from_str_radix(&range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
@@ -175,6 +228,9 @@ fn get_code_point_prop_vals<'s>(
     for (range, block_prop_vals) in blocks {
         if range.contains_u32(code_point) {
             prop_vals.extend(block_prop_vals);
+            // Apply any exclude overrides for a binary property as indicated
+            // when the binary property name is prefixed with a "-"
+            prop_vals = apply_exclude_vals_for_binary_props(prop_vals);
         }
     }
 
@@ -182,6 +238,9 @@ fn get_code_point_prop_vals<'s>(
     for (range, code_point_prop_vals) in code_point_overrides {
         if range.contains_u32(code_point) {
             prop_vals.extend(code_point_prop_vals);
+            // Apply any exclude overrides for a binary property as indicated
+            // when the binary property name is prefixed with a "-"
+            prop_vals = apply_exclude_vals_for_binary_props(prop_vals);
         }
     }
 
@@ -194,7 +253,7 @@ fn get_code_point_prop_vals<'s>(
 /// dimension of code point <-> property key-value information from the
 /// grouping by code point (as given by `code_points`) to a grouping by
 /// property name.
-fn get_binary_prop_unisets<'s>(
+fn get_prop_unisets<'s>(
     prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
 ) -> HashMap<&'s str, UnicodeSet> {
@@ -219,7 +278,7 @@ fn get_binary_prop_unisets<'s>(
     m
 }
 
-/// Parse a whole PPUCD file that was loaded into a `String` and return a
+/// Parse a whole PPUCD file that was loaded into a string slice and return a
 /// struct of the binary and enumerated property inversion lists.
 /// Note: even though `UnicodeProperties` stores a sequential data structure of
 /// the `UnicodeProperty` struct, there is no inherent ordering of the entries.
@@ -228,7 +287,11 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
 
     let parseable_lines = lines.filter(|line| !is_skip_ppucd_line(line));
 
-    let mut prop_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
+    let mut binary_prop_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
+
+    let mut enum_prop_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
+
+    let mut enum_val_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
 
     let mut defaults: HashMap<&'s str, &'s str> = HashMap::new();
 
@@ -242,9 +305,13 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
 
     let mut code_points: HashMap<u32, HashMap<&'s str, &'s str>> = HashMap::new();
 
+    // parse PPUCD to fill out data structures for info of property name aliases
+    // and overrides at defaults/blocks/cp levels
     for line in parseable_lines {
         if is_property_line(&line) {
-            update_aliases(&mut prop_aliases, &line);
+            update_property_aliases(&mut binary_prop_aliases, &mut enum_prop_aliases, &line);
+        } else if is_enum_val_line(&line) {
+            update_enum_val_aliases(&mut enum_val_aliases, &line);
         } else if is_defaults_line(&line) {
             defaults = get_defaults_prop_vals(&line);
         } else if is_block_line(&line) {
@@ -269,12 +336,20 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
         }
     }
 
-    let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
-        get_binary_prop_unisets(&prop_aliases, &code_points);
-
     let mut props: Vec<UnicodeProperty> = vec![];
 
+    let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
+        get_prop_unisets(&binary_prop_aliases, &code_points);
+
+    let enum_val_unisets: HashMap<&'s str, UnicodeSet> =
+        get_prop_unisets(&enum_val_aliases, &code_points);
+
     for (canonical_name, uniset) in binary_prop_unisets {
+        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
+        props.push(ppucd_prop);
+    }
+
+    for (canonical_name, uniset) in enum_val_unisets {
         let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
         props.push(ppucd_prop);
     }
@@ -422,6 +497,98 @@ mod gen_properties_test {
         exp_code_point_prop_vals.insert("jt", "U");
         exp_code_point_prop_vals.insert("tc", "<code point>");
         exp_code_point_prop_vals.insert("Gr_Base", "Gr_Base");
+        exp_code_point_prop_vals.insert("WSpace", "WSpace");
+        exp_code_point_prop_vals.insert("Pat_WS", "Pat_WS");
+        let defaults: HashMap<&str, &str> = get_defaults_prop_vals(&defaults_line);
+        let mut exp_code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
+        exp_code_points.insert(exp_code_point, exp_code_point_prop_vals);
+
+        let mut blocks: HashMap<UnicodeSet, HashMap<&str, &str>> = HashMap::new();
+        let (range, prop_vals) = get_block_range_prop_vals(&block_line);
+        blocks.insert(range, prop_vals);
+
+        let mut code_point_overrides: HashMap<UnicodeSet, HashMap<&str, &str>> = HashMap::new();
+        let (code_point_range, prop_vals) = get_code_point_overrides(&code_point_line);
+        code_point_overrides.insert(code_point_range, prop_vals);
+
+        let (code_point_range, _) = get_code_point_overrides(&code_point_line);
+        let mut code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
+        for code_point_char in code_point_range.iter() {
+            let code_point = code_point_char as u32;
+            let code_point_prop_vals =
+                get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
+            code_points.insert(code_point, code_point_prop_vals);
+        }
+
+        assert_eq!(&exp_code_points, &code_points);
+    }
+
+    #[test]
+    fn apply_exclude_vals_for_binary_props_test() {
+        let exp_binary_props1: HashMap<&str, &str> = HashMap::new();
+        let mut input_binary_props1: HashMap<&str, &str> = HashMap::new();
+        input_binary_props1.insert("Gr_Base", "Gr_Base");
+        input_binary_props1.insert("-Gr_Base", "-Gr_Base");
+        let act_binary_props1: HashMap<&str, &str> =
+            apply_exclude_vals_for_binary_props(input_binary_props1);
+        assert_eq!(exp_binary_props1, act_binary_props1);
+
+        let mut exp_binary_props2: HashMap<&str, &str> = HashMap::new();
+        exp_binary_props2.insert("Gr_Base", "Gr_Base");
+        let mut input_binary_props2: HashMap<&str, &str> = HashMap::new();
+        input_binary_props2.insert("Gr_Base", "Gr_Base");
+        let act_binary_props2: HashMap<&str, &str> =
+            apply_exclude_vals_for_binary_props(input_binary_props2);
+        assert_eq!(exp_binary_props2, act_binary_props2);
+    }
+
+    #[test]
+    fn code_point_overrides_binary_prop_minus_prefix_test() {
+        let defaults_line = "defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX";
+        let block_line = "block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy";
+        let code_point_line = "cp;000D;bc=B;ea=N;GCB=CR;-Gr_Base;lb=CR;Name_Alias=control=CARRIAGE RETURN,abbreviation=CR;Pat_WS;SB=CR;WB=CR;WSpace";
+
+        let exp_code_point: u32 = 13;
+        let mut exp_code_point_prop_vals: HashMap<&str, &str> = HashMap::new();
+        exp_code_point_prop_vals.insert("WB", "CR");
+        exp_code_point_prop_vals.insert("FC_NFKC", "<code point>");
+        exp_code_point_prop_vals.insert("GCB", "CR");
+        exp_code_point_prop_vals.insert("gcm", "Cn");
+        exp_code_point_prop_vals.insert("scx", "<script>");
+        exp_code_point_prop_vals.insert("bc", "B");
+        exp_code_point_prop_vals.insert("lc", "<code point>");
+        exp_code_point_prop_vals.insert("NFKC_CF", "<code point>");
+        exp_code_point_prop_vals.insert("InPC", "NA");
+        exp_code_point_prop_vals.insert("lb", "CR");
+        exp_code_point_prop_vals.insert("NFC_QC", "Y");
+        exp_code_point_prop_vals.insert("SB", "CR");
+        exp_code_point_prop_vals.insert("Name_Alias", "control=CARRIAGE RETURN,abbreviation=CR");
+        exp_code_point_prop_vals.insert("dt", "None");
+        exp_code_point_prop_vals.insert("ea", "N");
+        exp_code_point_prop_vals.insert("nt", "None");
+        exp_code_point_prop_vals.insert("InSC", "Other");
+        exp_code_point_prop_vals.insert("NFD_QC", "Y");
+        exp_code_point_prop_vals.insert("bpt", "n");
+        exp_code_point_prop_vals.insert("jg", "No_Joining_Group");
+        exp_code_point_prop_vals.insert("gc", "Cc");
+        exp_code_point_prop_vals.insert("vo", "R");
+        exp_code_point_prop_vals.insert("NFKD_QC", "Y");
+        exp_code_point_prop_vals.insert("NFKC_QC", "Y");
+        exp_code_point_prop_vals.insert("blk", "ASCII");
+        exp_code_point_prop_vals.insert("uc", "<code point>");
+        exp_code_point_prop_vals.insert("suc", "<code point>");
+        exp_code_point_prop_vals.insert("scf", "<code point>");
+        exp_code_point_prop_vals.insert("slc", "<code point>");
+        exp_code_point_prop_vals.insert("age", "1.1");
+        // exp_code_point_prop_vals.insert("na", "SPACE");
+        exp_code_point_prop_vals.insert("cf", "<code point>");
+        exp_code_point_prop_vals.insert("hst", "NA");
+        exp_code_point_prop_vals.insert("dm", "<code point>");
+        exp_code_point_prop_vals.insert("sc", "Zyyy");
+        exp_code_point_prop_vals.insert("stc", "<code point>");
+        exp_code_point_prop_vals.insert("jt", "U");
+        exp_code_point_prop_vals.insert("tc", "<code point>");
+        // exp_code_point_prop_vals.insert("Gr_Base"), "Gr_Base"));
         exp_code_point_prop_vals.insert("WSpace", "WSpace");
         exp_code_point_prop_vals.insert("Pat_WS", "Pat_WS");
         let defaults: HashMap<&str, &str> = get_defaults_prop_vals(&defaults_line);
