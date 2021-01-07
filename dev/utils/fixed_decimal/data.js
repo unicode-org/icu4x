@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1609888660528,
+  "lastUpdate": 1610045327084,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1409,6 +1409,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 156698,
             "range": "± 7680",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "91223e9d10839d2ef632a27cca7f793231320431",
+          "message": "Fix URLs to the provider's directory (#438)",
+          "timestamp": "2021-01-07T12:30:45-06:00",
+          "tree_id": "cc09349a454a3fcccf1349d3d856763881827a36",
+          "url": "https://github.com/unicode-org/icu4x/commit/91223e9d10839d2ef632a27cca7f793231320431"
+        },
+        "date": 1610045326426,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 162312,
+            "range": "± 15413",
             "unit": "ns/iter"
           }
         ]
