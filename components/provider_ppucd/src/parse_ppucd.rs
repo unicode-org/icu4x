@@ -94,13 +94,27 @@ fn update_property_aliases<'s>(
 }
 
 /// Parse enum property value definition line.
-fn update_enum_val_aliases<'s>(
-    enum_val_aliases: &mut HashMap<&'s str, HashSet<&'s str>>,
-    line: &'s str,
-) {
-    let line_parts = split_line(&line);
+fn update_enum_val_aliases<'s>(enum_val_aliases: &mut HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>, line: &'s str) {
+    let mut line_parts = split_line(&line);
     assert_eq!(&"value", &line_parts[0]);
-    update_aliases(enum_val_aliases, line);
+    line_parts.drain(0..1);
+    let enum_prop_name = line_parts[0];
+    let enum_prop_val = line_parts[1];
+    if ! enum_val_aliases.contains_key(&enum_prop_name) {
+        enum_val_aliases.insert(enum_prop_name, HashMap::new());
+    }
+    let enum_val_alias_map: &mut HashMap<&str, HashSet<&str>> = enum_val_aliases.get_mut(&enum_prop_name).unwrap();
+    if ! enum_val_alias_map.contains_key(&enum_prop_val) {
+        enum_val_alias_map.insert(enum_prop_val, HashSet::new());
+    }
+    let enum_prop_val_aliases: &mut HashSet<&str> = enum_val_alias_map.get_mut(&enum_prop_val).unwrap();
+    enum_prop_val_aliases.insert(enum_prop_val);
+    line_parts.drain(0..2);
+    // What remains of line_parts are all of the remaining aliases for this
+    // enumerated property's value
+    for alias in line_parts {
+        enum_prop_val_aliases.insert(alias);
+    }
 }
 
 /// Return a new map in which any binary exclusion values
@@ -291,7 +305,9 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
 
     let mut enum_prop_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
 
-    let mut enum_val_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
+    let mut enum_val_aliases: HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>> = HashMap::new();
+
+    let mut enum_val_sets: HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>> = HashMap::new();
 
     let mut defaults: HashMap<&'s str, &'s str> = HashMap::new();
 
@@ -341,18 +357,19 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
         get_prop_unisets(&binary_prop_aliases, &code_points);
 
-    let enum_val_unisets: HashMap<&'s str, UnicodeSet> =
-        get_prop_unisets(&enum_val_aliases, &code_points);
+    // let enum_val_unisets: HashMap<String, UnicodeSet> =
+    //     get_prop_unisets(&enum_val_sets, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
         let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
         props.push(ppucd_prop);
     }
 
-    for (canonical_name, uniset) in enum_val_unisets {
-        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
-        props.push(ppucd_prop);
-    }
+    // for (canonical_name, uniset) in enum_val_unisets {
+    //     let ppucd_prop: UnicodeProperty =
+    //         UnicodeProperty::from_uniset(&uniset, canonical_name.as_str());
+    //     props.push(ppucd_prop);
+    // }
 
     UnicodeProperties { props }
 }
@@ -613,5 +630,65 @@ mod gen_properties_test {
         }
 
         assert_eq!(&exp_code_points, &code_points);
+    }
+
+    // #[test]
+    // fn update_enum_val_sets_test() {
+    //     let mut exp_enum_val_sets: HashMap<String, HashSet<String>> = HashMap::new();
+    //     let exp_key = String::from("gcm");
+    //     let mut exp_val_set: HashSet<String> = HashSet::new();
+    //     exp_val_set.insert(String::from("Sc"));
+    //     exp_val_set.insert(String::from("Sk"));
+    //     exp_val_set.insert(String::from("Sm"));
+    //     exp_val_set.insert(String::from("So"));
+    //     exp_enum_val_sets.insert(exp_key, exp_val_set);
+
+    //     let mut act_enum_val_sets: HashMap<String, HashSet<String>> = HashMap::new();
+    //     let line1 = String::from("value;gcm;Sc;Currency_Symbol");
+    //     let line2 = String::from("value;gcm;Sk;Modifier_Symbol");
+    //     let line3 = String::from("value;gcm;Sm;Math_Symbol");
+    //     let line4 = String::from("value;gcm;So;Other_Symbol");
+    //     update_enum_val_sets(&mut act_enum_val_sets, &line1);
+    //     update_enum_val_sets(&mut act_enum_val_sets, &line2);
+    //     update_enum_val_sets(&mut act_enum_val_sets, &line3);
+    //     update_enum_val_sets(&mut act_enum_val_sets, &line4);
+
+    //     assert_eq!(exp_enum_val_sets, act_enum_val_sets);
+    // }
+
+    #[test]
+    fn update_enum_val_aliases_test() {
+        let mut exp_enum_val_aliases: HashMap<&str, HashMap<&str, HashSet<&str>>> = HashMap::new();
+        let exp_key = "gcm";
+        let mut exp_val_alias_map: HashMap<&str, HashSet<&str>> = HashMap::new();
+        let mut sc_set: HashSet<&str>= HashSet::new();
+        sc_set.insert("Sc");
+        sc_set.insert("Currency_Symbol");
+        let mut sk_set: HashSet<&str> = HashSet::new();
+        sk_set.insert("Sk");
+        sk_set.insert("Modifier_Symbol");
+        let mut sm_set: HashSet<&str> = HashSet::new();
+        sm_set.insert("Sm");
+        sm_set.insert("Math_Symbol");
+        let mut so_set: HashSet<&str> = HashSet::new();
+        so_set.insert("So");
+        so_set.insert("Other_Symbol");
+        exp_val_alias_map.insert("Sc", sc_set);
+        exp_val_alias_map.insert("Sk", sk_set);
+        exp_val_alias_map.insert("Sm", sm_set);
+        exp_val_alias_map.insert("So", so_set);
+        exp_enum_val_aliases.insert(exp_key, exp_val_alias_map);
+
+        let mut act_enum_val_aliases: HashMap<&str, HashMap<&str, HashSet<&str>>> = HashMap::new();
+        let line1 = "value;gcm;Sc;Currency_Symbol";
+        let line2 = "value;gcm;Sk;Modifier_Symbol";
+        let line3 = "value;gcm;Sm;Math_Symbol";
+        let line4 = "value;gcm;So;Other_Symbol";
+        update_enum_val_aliases(&mut act_enum_val_aliases, &line1);
+        update_enum_val_aliases(&mut act_enum_val_aliases, &line2);
+        update_enum_val_aliases(&mut act_enum_val_aliases, &line3);
+        update_enum_val_aliases(&mut act_enum_val_aliases, &line4);
+
+        assert_eq!(exp_enum_val_aliases, act_enum_val_aliases);
     }
 }
