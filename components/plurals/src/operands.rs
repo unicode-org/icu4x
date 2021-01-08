@@ -25,7 +25,7 @@ use std::str::FromStr;
 ///    w: 0,
 ///    f: 0,
 ///    t: 0,
-///    e: 0,
+///    c: 0,
 /// }, PluralOperands::from(2_usize))
 /// ```
 ///
@@ -40,7 +40,7 @@ use std::str::FromStr;
 ///    w: 3,
 ///    f: 567,
 ///    t: 567,
-///    e: 0,
+///    c: 0,
 /// }), "-1234.567".parse())
 /// ```
 ///
@@ -55,7 +55,7 @@ use std::str::FromStr;
 ///    w: 2,
 ///    f: 45,
 ///    t: 45,
-///    e: 0,
+///    c: 0,
 /// }), "123.45".parse())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -70,8 +70,8 @@ pub struct PluralOperands {
     pub f: u64,
     /// Visible fraction digits without trailing zeros
     pub t: u64,
-    /// Exponent
-    pub e: usize,
+    /// Exponent of the power of 10 used in compact decimal formatting
+    pub c: usize,
 }
 
 impl PluralOperands {
@@ -169,7 +169,7 @@ impl FromStr for PluralOperands {
             w: num_fraction_digits,
             f: fraction_digits0,
             t: fraction_digits,
-            e: exponent,
+            c: exponent,
         })
     }
 }
@@ -184,7 +184,7 @@ macro_rules! impl_integer_type {
                     w: 0,
                     f: 0,
                     t: 0,
-                    e: 0,
+                    c: 0,
                 }
             }
         }
@@ -206,7 +206,7 @@ macro_rules! impl_signed_integer_type {
                     w: 0,
                     f: 0,
                     t: 0,
-                    e: 0,
+                    c: 0,
                 })
             }
         }
@@ -252,7 +252,7 @@ impl From<&FixedDecimal> for PluralOperands {
             w,
             f,
             t,
-            e: 0,
+            c: 0,
         }
     }
 }

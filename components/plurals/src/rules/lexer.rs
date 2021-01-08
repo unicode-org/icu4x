@@ -165,7 +165,9 @@ impl<'l> Lexer<'l> {
                         Token::Ellipsis
                     }
                     b'~' => Token::Tilde,
+                    // `e` may come up also in samples for scientific notation.
                     b'e' => Token::Operand(ast::Operand::E),
+                    b'c' => Token::Operand(ast::Operand::C),
                     b => return Err(LexerError::UnknownToken(*b)),
                 };
                 return Ok(Some(token));

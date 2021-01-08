@@ -55,7 +55,7 @@ pub enum PluralOperandsInput {
         w: Option<usize>,
         f: Option<u64>,
         t: Option<u64>,
-        e: Option<usize>,
+        c: Option<usize>,
     },
     String(String),
     Number(isize),
@@ -70,7 +70,7 @@ impl From<PluralOperandsInput> for PluralOperands {
                 w: operands.3,
                 f: operands.4,
                 t: operands.5,
-                e: operands.6,
+                c: operands.6,
             },
             PluralOperandsInput::Struct {
                 n,
@@ -79,14 +79,14 @@ impl From<PluralOperandsInput> for PluralOperands {
                 w,
                 f,
                 t,
-                e,
+                c,
             } => Self {
                 i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
                 v: v.unwrap_or(0),
                 w: w.unwrap_or(0),
                 f: f.unwrap_or(0),
                 t: t.unwrap_or(0),
-                e: e.unwrap_or(0),
+                c: c.unwrap_or(0),
             },
             PluralOperandsInput::String(num) => num
                 .parse()

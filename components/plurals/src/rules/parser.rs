@@ -302,6 +302,21 @@ impl<'p> Parser<'p> {
                 self.lexer.next();
             }
         }
+
+        // We are re-using `e` operand for scientific notation here.
+        if self.take_if(Token::Operand(ast::Operand::E)) {
+            s.push('e');
+            match self.lexer.peek() {
+                Some(Token::Zero) => s.push('0'),
+                Some(Token::Number(v)) => {
+                    s.push_str(&v.to_string());
+                }
+                _ => {
+                    return Err(ParserError::ExpectedValue);
+                }
+            }
+            self.lexer.next();
+        }
         if s.is_empty() {
             Err(ParserError::ExpectedValue)
         } else {

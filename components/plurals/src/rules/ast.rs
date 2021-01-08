@@ -266,6 +266,8 @@ pub enum Operand {
     T,
     /// Compact decimal exponent value:
     ///   exponent of the power of 10 used in compact decimal formatting
+    C,
+    /// Currently, synonym for ‘c’. however, may be redefined in the future
     E,
 }
 
