@@ -10,18 +10,18 @@ use icu_provider::prelude::*;
 use icu_provider::structs::likelysubtags::*;
 use std::borrow::Cow;
 
-impl LocaleCanonicalizer {
+impl LocaleCanonicalizer<'_> {
     /// A constructor which takes a DataProvider and creates a
     /// LocaleCanonicalizer.
-    pub fn new(
-        provider: &dyn DataProvider<LikelySubtagsV1>,
-    ) -> Result<LocaleCanonicalizer, DataError> {
+    pub fn new<'a>(
+        provider: &dyn DataProvider<'a, LikelySubtagsV1>,
+    ) -> Result<LocaleCanonicalizer<'a>, DataError> {
         let payload: Cow<LikelySubtagsV1> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
             .take_payload()?;
 
         Ok(LocaleCanonicalizer {
-            likely_subtags: payload.into_owned(),
+            likely_subtags: payload,
         })
     }
 

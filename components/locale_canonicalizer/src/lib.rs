@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use icu_provider::structs::likelysubtags::*;
+use std::borrow::Cow;
 
 pub mod locale_canonicalizer;
 
@@ -10,6 +11,6 @@ pub enum LocaleCanonicalizerError {
     NotMatched,
 }
 
-pub struct LocaleCanonicalizer {
-    likely_subtags: LikelySubtagsV1,
+pub struct LocaleCanonicalizer<'a> {
+    likely_subtags: Cow<'a, LikelySubtagsV1>,
 }
