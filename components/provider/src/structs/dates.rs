@@ -46,7 +46,7 @@ pub mod gregory {
                 symbols!();
             }
         };
-        ($name: ident, $($element: ident: $ty: ty),*) => {
+        ($name: ident, $($element: ident: $ty: ty),+ $(,)?) => {
             pub mod $name {
                 use super::*;
 

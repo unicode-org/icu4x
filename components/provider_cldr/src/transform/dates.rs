@@ -148,7 +148,7 @@ impl From<&cldr_json::Dates> for gregory::DatesV1 {
 }
 
 macro_rules! symbols_from {
-    ([$name: ident, $name2: ident], [ $($element: ident),* ]) => {
+    ([$name: ident, $name2: ident $(,)?], [ $($element: ident),+ $(,)? ] $(,)?) => {
         impl From<&cldr_json::$name::Symbols> for gregory::$name2::SymbolsV1 {
             fn from(other: &cldr_json::$name::Symbols) -> Self {
                 Self([
@@ -160,7 +160,7 @@ macro_rules! symbols_from {
         }
         symbols_from!([$name, $name2]);
     };
-    ([$name: ident, $name2: ident], { $($element: ident),* }) => {
+    ([$name: ident, $name2: ident $(,)?], { $($element: ident),+ $(,)? } $(,)?) => {
         impl From<&cldr_json::$name::Symbols> for gregory::$name2::SymbolsV1 {
             fn from(other: &cldr_json::$name::Symbols) -> Self {
                 Self {
@@ -246,7 +246,7 @@ macro_rules! symbols_from {
 
 symbols_from!(
     [months, months],
-    [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12]
+    [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12],
 );
 
 symbols_from!([days, weekdays], [sun, mon, tue, wed, thu, fri, sat]);
@@ -254,12 +254,12 @@ symbols_from!([days, weekdays], [sun, mon, tue, wed, thu, fri, sat]);
 symbols_from!(
     [
         day_periods,
-        day_periods
+        day_periods,
     ],
     {
         am,
-        pm
-    }
+        pm,
+    },
 );
 
 /// Serde structs for the CLDR JSON dates files.
@@ -269,7 +269,7 @@ pub(self) mod cldr_json {
     use std::borrow::Cow;
 
     macro_rules! symbols {
-        ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),*) => {
+        ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),+ $(,)?) => {
             pub mod $name {
                 use super::*;
 
@@ -284,7 +284,7 @@ pub(self) mod cldr_json {
                 symbols!();
             }
         };
-        ($name: ident, $([$element: ident, $ty: ty]),*) => {
+        ($name: ident, $([$element: ident, $ty: ty]),+ $(,)?) => {
             pub mod $name {
                 use super::*;
 
@@ -335,7 +335,7 @@ pub(self) mod cldr_json {
         ["9", m9, Cow<'static, str>],
         ["10", m10, Cow<'static, str>],
         ["11", m11, Cow<'static, str>],
-        ["12", m12, Cow<'static, str>]
+        ["12", m12, Cow<'static, str>],
     );
 
     symbols!(
@@ -346,13 +346,13 @@ pub(self) mod cldr_json {
         [wed, Cow<'static, str>],
         [thu, Cow<'static, str>],
         [fri, Cow<'static, str>],
-        [sat, Cow<'static, str>]
+        [sat, Cow<'static, str>],
     );
 
     symbols!(
         day_periods,
         ["am", am, Cow<'static, str>],
-        ["pm", pm, Cow<'static, str>]
+        ["pm", pm, Cow<'static, str>],
     );
 
     #[derive(PartialEq, Debug, Deserialize)]
