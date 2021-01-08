@@ -27,6 +27,7 @@ fn assert_files_eq(expected_file_path: &Path, actual_file_path: &Path) {
 // TODO(#297): Implement this async.
 fn download_sync(url: &str, destination: &Path) -> Result<(), Error> {
     log::info!("Downloading: {}", url);
+    log::info!("Please be patient; this could take a while. Downloads may exceed 50 MB");
     let start = Instant::now();
     let mut response = reqwest::blocking::get(url)?;
     if !response.status().is_success() {
@@ -58,6 +59,7 @@ fn test_download_sync() -> Result<(), Error> {
 fn unzip_sync(zip_path: &Path, dir_path: &Path) -> Result<(), Error> {
     let reader = File::open(zip_path).map_err(|e| (e, zip_path))?;
     log::info!("Unzipping...");
+    log::info!("Please be patient; this could take a while. Unzipped size may exceed 500 MB");
     let start = Instant::now();
     Unzipper::new(reader, dir_path)
         .unzip()

@@ -5,7 +5,6 @@ use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::DataExporter;
-use icu_provider_cldr::download::CldrPathsDownload;
 use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
@@ -115,8 +114,8 @@ fn main() -> Result<(), Error> {
                 .long("cldr-tag")
                 .value_name("TAG")
                 .help(
-                    "Download CLDR JSON data from this GitHub tag: \n\
-                    https://github.com/unicode-cldr/cldr-core/tags",
+                    "Download CLDR 38+ JSON data from this GitHub tag: \n\
+                    https://github.com/unicode-org/cldr-json/tags",
                 )
                 .takes_value(true),
         )
@@ -231,7 +230,7 @@ fn main() -> Result<(), Error> {
     );
 
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrPathsDownload::try_from_github_tag(tag)?)
+        icu_provider_cldr::download::try_from_github_tag(tag)?
     } else {
         let mut cldr_paths_local = CldrPathsLocal::default();
         if let Some(path) = matches.value_of("CLDR_CORE") {

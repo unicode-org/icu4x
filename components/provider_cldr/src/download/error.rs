@@ -11,6 +11,7 @@ pub enum Error {
     Io(io::Error, Option<PathBuf>),
     Reqwest(reqwest::Error),
     HttpStatus(reqwest::StatusCode, String),
+    InvalidGitHubTag,
     NoCacheDir,
 }
 
@@ -35,6 +36,7 @@ impl fmt::Display for Error {
             Self::Io(err, None) => err.fmt(f),
             Self::Reqwest(err) => err.fmt(f),
             Self::HttpStatus(status, url) => write!(f, "HTTP request failed: {}: {}", status, url),
+            Self::InvalidGitHubTag => write!(f, "Invalid CLDR-JSON GitHub tag"),
             Self::NoCacheDir => write!(f, "dirs::cache_dir() returned None"),
         }
     }
