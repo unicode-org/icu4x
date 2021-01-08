@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610045384185,
+  "lastUpdate": 1610071936010,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2015,6 +2015,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 113469,
             "range": "± 6611",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d0ee68bf679bd5bb49cb1514025fcec0428ff618",
+          "message": "Add support for trailing commas in symbos! and symbols_from! macros (#437)\n\n- Adds support for trailing commas for the `symbols!()` macro.\r\n- Adds support for trailing commas in the `symbols!_from()` macro.\r\n- Changes some zero-or-more matches to one-or-more matches.\r\n- Updates multi-line invocations of these macros to use trailing commas.",
+          "timestamp": "2021-01-07T17:54:58-08:00",
+          "tree_id": "f677a3933d09bb77e225119d757fd9e0f37007b0",
+          "url": "https://github.com/unicode-org/icu4x/commit/d0ee68bf679bd5bb49cb1514025fcec0428ff618"
+        },
+        "date": 1610071935366,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1176,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6767,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 107395,
+            "range": "± 1584",
             "unit": "ns/iter"
           }
         ]
