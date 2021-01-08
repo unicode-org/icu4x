@@ -63,7 +63,7 @@ fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands)
         ast::Operand::V => operands.v as u64,
         ast::Operand::W => operands.w as u64,
         ast::Operand::T => operands.t,
-        ast::Operand::C | ast::Operand::E => operands.c as u64,
+        ast::Operand::C => operands.c as u64,
     };
     if let Some(modulus) = &expression.modulus {
         value.checked_rem_euclid(modulus.0)

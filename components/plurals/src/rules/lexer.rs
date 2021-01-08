@@ -21,6 +21,7 @@ pub enum Token {
     Integer,
     Ellipsis,
     Tilde,
+    E,
 }
 
 #[derive(Debug)]
@@ -165,8 +166,7 @@ impl<'l> Lexer<'l> {
                         Token::Ellipsis
                     }
                     b'~' => Token::Tilde,
-                    // `e` may come up also in samples for scientific notation.
-                    b'e' => Token::Operand(ast::Operand::E),
+                    b'e' => Token::E,
                     b'c' => Token::Operand(ast::Operand::C),
                     b => return Err(LexerError::UnknownToken(*b)),
                 };

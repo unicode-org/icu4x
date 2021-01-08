@@ -4,7 +4,7 @@
 mod fixtures;
 mod helpers;
 
-use icu_plurals::rules::{parse, parse_condition, test_condition, Lexer, serialize};
+use icu_plurals::rules::{parse, parse_condition, serialize, test_condition, Lexer};
 use icu_plurals::PluralOperands;
 
 #[test]
@@ -35,7 +35,6 @@ fn test_parsing_operands() {
                 let mut string = String::new();
                 assert!(serialize(&ast, &mut string).is_ok());
                 assert_eq!(string, test.rule);
-
             }
             fixtures::RuleTestOutput::Error(val) => {
                 let err = parse(test.rule.as_bytes()).unwrap_err();
