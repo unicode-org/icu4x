@@ -87,6 +87,6 @@ fn test_minimize() {
     assert_eq!(locale.to_string(), "en");
 
     let mut locale = langid!("en").into();
-    assert!(lc.minimize(&mut locale).unwrap() == false);
+    assert!(!lc.minimize(&mut locale).unwrap());
     assert_eq!(locale.to_string(), "en");
 }
