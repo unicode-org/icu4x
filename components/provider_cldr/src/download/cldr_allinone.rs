@@ -74,7 +74,7 @@ pub struct CldrAllInOneDownloader {
 impl CldrPaths for CldrAllInOneDownloader {
     fn cldr_core(&self) -> Result<PathBuf, crate::error::Error> {
         self.download_and_unzip()
-            .map(|p| p.join(format!("cldr-core")))
+            .map(|p| p.join("cldr-core".to_string()))
     }
     fn cldr_dates(&self) -> Result<PathBuf, crate::error::Error> {
         self.download_and_unzip()
