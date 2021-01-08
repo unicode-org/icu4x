@@ -83,7 +83,11 @@ macro_rules! resource_key {
         $crate::resource_key!($crate::ResourceCategory::Icu4x, $sub_category, $version)
     };
     (likelysubtags, $sub_category:literal, $version:tt) => {
-        data_key!($crate::DataCategory::LikelySubtags, $sub_category, $version)
+        $crate::resource_key!(
+            $crate::ResourceCategory::LikelySubtags,
+            $sub_category,
+            $version
+        )
     };
     (plurals, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)

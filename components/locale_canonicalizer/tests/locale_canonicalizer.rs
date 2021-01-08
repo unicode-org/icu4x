@@ -79,10 +79,14 @@ fn test_minimize() {
     let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let mut locale = langid!("zh-Hant").into();
-    lc.minimize(&mut locale);
+    assert!(lc.minimize(&mut locale).unwrap());
     assert_eq!(locale.to_string(), "zh-TW");
 
     let mut locale = langid!("en-Latn-US").into();
-    lc.minimize(&mut locale);
+    assert!(lc.minimize(&mut locale).unwrap());
+    assert_eq!(locale.to_string(), "en");
+
+    let mut locale = langid!("en").into();
+    assert!(lc.minimize(&mut locale).unwrap() == false);
     assert_eq!(locale.to_string(), "en");
 }

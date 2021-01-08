@@ -40,7 +40,7 @@ fn maximize_bench(c: &mut Criterion) {
     group.bench_function("maximize", |b| {
         b.iter(|| {
             for locale in locales.iter() {
-                lc.maximize(&mut locale.clone());
+                lc.maximize(&mut locale.clone()).unwrap();
             }
         })
     });

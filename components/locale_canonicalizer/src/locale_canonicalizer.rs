@@ -13,15 +13,11 @@ use std::borrow::Cow;
 impl LocaleCanonicalizer {
     /// A constructor which takes a DataProvider and creates a
     /// LocaleCanonicalizer.
-    pub fn new(provider: &dyn DataProvider) -> Result<LocaleCanonicalizer, DataError> {
+    pub fn new(
+        provider: &dyn DataProvider<LikelySubtagsV1>,
+    ) -> Result<LocaleCanonicalizer, DataError> {
         let payload: Cow<LikelySubtagsV1> = provider
-            .load(&DataRequest {
-                data_key: key::LIKELY_SUBTAGS_V1,
-                data_entry: DataEntry {
-                    variant: None,
-                    langid: "und".parse().unwrap(),
-                },
-            })?
+            .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
             .take_payload()?;
 
         Ok(LocaleCanonicalizer {
@@ -121,34 +117,43 @@ impl LocaleCanonicalizer {
     /// https://www.unicode.org/reports/tr35/#Likely_Subtags.
     pub fn minimize(&self, locale: &mut Locale) -> Result<bool, LocaleCanonicalizerError> {
         let mut max = locale.clone();
-        let modified = self.maximize(&mut max)?;
+        self.maximize(&mut max)?;
+        max.variants.clear();
         let mut trial = max.clone();
-        trial.variants.clear();
 
         trial.script = None;
         trial.region = None;
-        if self.maximize(&mut trial)? && trial == max {
+        self.maximize(&mut trial)?;
+        if trial == max {
+            let modified = locale.script.is_some() || locale.script.is_some();
             locale.script = None;
             locale.region = None;
-            return Ok(true);
+            return Ok(modified);
         }
 
         trial.script = None;
         trial.region = max.region;
-        if self.maximize(&mut trial)? && trial == max {
+        self.maximize(&mut trial)?;
+        if trial == max {
+            let modified = locale.script.is_some() || locale.region != max.region;
             locale.script = None;
             locale.region = max.region;
-            return Ok(true);
+            return Ok(modified);
         }
 
         trial.script = max.script;
         trial.region = None;
-        if self.maximize(&mut trial)? && trial == max {
+        self.maximize(&mut trial)?;
+        if trial == max {
+            let modified = locale.script != max.script || locale.region.is_some();
             locale.script = max.script;
             locale.region = None;
-            return Ok(true);
+            return Ok(modified);
         }
-        *locale = max;
+
+        let modified = locale.script != max.script || locale.region != max.region;
+        locale.script = max.script;
+        locale.region = max.region;
         Ok(modified)
     }
 }

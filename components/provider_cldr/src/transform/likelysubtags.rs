@@ -3,16 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::error::Error;
 use crate::reader::open_reader;
-use crate::support::DataKeySupport;
 use crate::CldrPaths;
-use icu_provider::iter::DataEntryCollection;
 use icu_provider::prelude::*;
 use icu_provider::structs::likelysubtags::*;
+use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [DataKey; 1] = [key::LIKELY_SUBTAGS_V1];
+pub const ALL_KEYS: [ResourceKey; 1] = [key::LIKELY_SUBTAGS_V1];
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
@@ -50,44 +49,51 @@ impl<'d> TryFrom<&'d str> for LikelySubtagsProvider<'d> {
     }
 }
 
-impl<'d> DataKeySupport for LikelySubtagsProvider<'d> {
-    fn supports_key(data_key: &DataKey) -> Result<(), DataError> {
-        if data_key.category != DataCategory::LikelySubtags {
-            return Err((&data_key.category).into());
+impl<'d> KeyedDataProvider for LikelySubtagsProvider<'d> {
+    fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
+        if resc_key.category != ResourceCategory::LikelySubtags {
+            return Err((&resc_key.category).into());
         }
-        if data_key.version != 1 {
-            return Err(data_key.into());
+        if resc_key.version != 1 {
+            return Err(resc_key.into());
         }
         Ok(())
     }
 }
 
-impl<'d> DataProvider<'d> for LikelySubtagsProvider<'d> {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        LikelySubtagsProvider::supports_key(&req.data_key)?;
-        let langid = req.data_entry.langid.clone();
+impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, LikelySubtagsV1>, DataError> {
+        LikelySubtagsProvider::supports_key(&req.resource_path.key)?;
+        let langid = req.resource_path.options.langid.clone();
 
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
-        if langid == "und" {
-            Ok(DataResponseBuilder {
-                data_langid: langid,
-            }
-            .with_owned_payload(LikelySubtagsV1::from(&self.data)))
+        if langid.is_none() {
+            Ok(DataResponse {
+                metadata: DataResponseMetadata {
+                    data_langid: langid,
+                },
+                payload: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
+            })
         } else {
-            Err(DataError::UnavailableEntry(req.clone()))
+            Err(DataError::UnavailableResourceOptions(req.clone()))
         }
     }
 }
 
-impl<'d> DataEntryCollection for LikelySubtagsProvider<'d> {
-    fn iter_for_key(
+icu_provider::impl_erased!(LikelySubtagsProvider<'d>, 'd);
+
+impl<'d> IterableDataProvider<'d> for LikelySubtagsProvider<'d> {
+    fn supported_options_for_key(
         &self,
-        _data_key: &DataKey,
-    ) -> Result<Box<dyn Iterator<Item = DataEntry>>, DataError> {
-        let list: Vec<DataEntry> = vec![DataEntry {
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions {
             variant: None,
-            langid: "und".parse().unwrap(),
+            langid: None,
         }];
         Ok(Box::new(list.into_iter()))
     }
@@ -96,6 +102,8 @@ impl<'d> DataEntryCollection for LikelySubtagsProvider<'d> {
 impl From<&cldr_json::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_json::Resource) -> Self {
         let mut entries = other.supplemental.likely_subtags.clone();
+        // We sort here because the ordering from sorting by LanguageIdentifier
+        // is not necessarily the order in the underlying CLDR data.
         entries.sort_unstable();
         Self { entries }
     }
@@ -125,15 +133,8 @@ fn test_basic() {
 
     let json_str = std::fs::read_to_string("tests/testdata/likelySubtags.json").unwrap();
     let provider = LikelySubtagsProvider::try_from(json_str.as_str()).unwrap();
-
     let result: Cow<LikelySubtagsV1> = provider
-        .load(&DataRequest {
-            data_key: key::LIKELY_SUBTAGS_V1,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid!("und"),
-            },
-        })
+        .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
         .take_payload()
         .unwrap();
