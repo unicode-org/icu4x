@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610045279860,
+  "lastUpdate": 1610071901295,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2489,6 +2489,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30178819,
             "range": "± 64690",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d0ee68bf679bd5bb49cb1514025fcec0428ff618",
+          "message": "Add support for trailing commas in symbos! and symbols_from! macros (#437)\n\n- Adds support for trailing commas for the `symbols!()` macro.\r\n- Adds support for trailing commas in the `symbols!_from()` macro.\r\n- Changes some zero-or-more matches to one-or-more matches.\r\n- Updates multi-line invocations of these macros to use trailing commas.",
+          "timestamp": "2021-01-07T17:54:58-08:00",
+          "tree_id": "f677a3933d09bb77e225119d757fd9e0f37007b0",
+          "url": "https://github.com/unicode-org/icu4x/commit/d0ee68bf679bd5bb49cb1514025fcec0428ff618"
+        },
+        "date": 1610071897684,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36545269,
+            "range": "± 179667",
             "unit": "ns/iter"
           }
         ]
