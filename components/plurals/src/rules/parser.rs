@@ -174,7 +174,7 @@ impl<'p> Parser<'p> {
 
     fn get_expression(&mut self) -> Result<Option<ast::Expression>, ParserError> {
         let operand = match self.lexer.peek() {
-            Some(Token::E) => ast::Operand::C,
+            Some(Token::E) => ast::Operand::E,
             Some(Token::Operand(op)) => *op,
             Some(Token::At) | None => return Ok(None),
             _ => return Err(ParserError::ExpectedOperand),
