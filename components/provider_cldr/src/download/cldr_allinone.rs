@@ -56,7 +56,7 @@ use std::path::PathBuf;
 /// }
 ///
 /// // Calling demo(&paths) will cause the data to actually get downloaded.
-/// demo(&paths);
+/// //demo(&paths);
 /// ```
 #[derive(Debug)]
 pub struct CldrAllInOneDownloader {
