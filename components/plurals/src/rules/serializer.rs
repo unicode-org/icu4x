@@ -105,6 +105,8 @@ fn serialize_operand(operand: ast::Operand, w: &mut impl fmt::Write) -> fmt::Res
         ast::Operand::W => w.write_char('w'),
         ast::Operand::F => w.write_char('f'),
         ast::Operand::T => w.write_char('t'),
+        ast::Operand::C => w.write_char('c'),
+        ast::Operand::E => w.write_char('e'),
     }
 }
 
@@ -115,7 +117,7 @@ fn serialize_rangelist(rl: &ast::RangeList, w: &mut impl fmt::Write) -> fmt::Res
         if first {
             first = false;
         } else {
-            w.write_str(",")?;
+            w.write_str(", ")?;
         }
         serialize_rangelistitem(rli, w)?
     }
@@ -144,9 +146,6 @@ pub fn serialize_samples(samples: &ast::Samples, w: &mut impl fmt::Write) -> fmt
     if let Some(sample_list) = &samples.integer {
         w.write_str(" @integer ")?;
         serialize_sample_list(sample_list, w)?;
-    } else {
-        // Quirk of the current serializer
-        w.write_str("  ")?;
     }
     if let Some(sample_list) = &samples.decimal {
         w.write_str(" @decimal ")?;
