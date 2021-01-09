@@ -22,7 +22,7 @@ use std::path::PathBuf;
 /// use icu_provider::prelude::*;
 /// use icu_provider::structs;
 /// use icu_provider_cldr::CldrPaths;
-/// use icu_provider_cldr::download::cldr_allinone::CldrAllInOneDownloader;
+/// use icu_provider_cldr::download::CldrAllInOneDownloader;
 /// use icu_provider_cldr::transform::PluralsProvider;
 /// use icu_locid_macros::langid;
 /// use std::path::PathBuf;
