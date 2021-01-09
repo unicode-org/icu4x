@@ -89,7 +89,7 @@ locales = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata
-gitref = "36.0.0"
+gitref = "38.1.0-BETA4"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
