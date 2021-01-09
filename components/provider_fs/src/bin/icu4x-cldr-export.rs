@@ -5,6 +5,7 @@ use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
 use icu_provider::iter::DataExporter;
+use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
@@ -230,7 +231,7 @@ fn main() -> Result<(), Error> {
     );
 
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        icu_provider_cldr::download::try_from_github_tag(tag)?
+        Box::new(CldrAllInOneDownloader::try_from_github_tag(tag)?)
     } else {
         let mut cldr_paths_local = CldrPathsLocal::default();
         if let Some(path) = matches.value_of("CLDR_CORE") {

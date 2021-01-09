@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use clap::{App, Arg};
 use icu_provider::iter::DataExporter;
+use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_fs::export::fs_exporter;
@@ -125,8 +126,8 @@ fn main() -> Result<(), Error> {
     log::info!("Writing testdata to: {:?}", output_path);
 
     let cldr_paths =
-        icu_provider_cldr::download::try_from_github_tag(&metadata.package_metadata.gitref)?;
-    let provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
+        CldrAllInOneDownloader::try_from_github_tag(&metadata.package_metadata.gitref)?;
+    let provider = CldrJsonDataProvider::new(&cldr_paths);
 
     let mut options = serializers::json::Options::default();
     options.style = serializers::json::StyleOption::Pretty;
