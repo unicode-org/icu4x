@@ -37,7 +37,7 @@
     "output": false
   },
   {
-    "rule": " @integer 1,2, … @decimal 1.3~1.5",
+    "rule": " @integer 1, 2, … @decimal 1.3~1.5",
     "input": {
       "n": 1
     },
@@ -114,6 +114,16 @@
   },
   {
     "rule": "n % 0 = 1",
+    "input": 1,
+    "output": false
+  },
+  {
+    "rule": "c = 0 and i != 0 and i % 1000000 = 0 and v = 0 or c != 0..5 @integer 1000000, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, … @decimal 1.0000001e6, 1.1e6, 2.0000001e6, 2.1e6, 3.0000001e6, 3.1e6, …",
+    "input": 1,
+    "output": false
+  },
+  {
+    "rule": "e = 0 and i != 0 and i % 1000000 = 0 and v = 0 or e != 0..5 @integer 1000000, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, … @decimal 1.0000001e6, 1.1e6, 2.0000001e6, 2.1e6, 3.0000001e6, 3.1e6, …",
     "input": 1,
     "output": false
   }
