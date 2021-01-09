@@ -78,7 +78,7 @@ fn main() -> Result<(), Error> {
                 .short("v")
                 .long("verbose")
                 .multiple(true)
-                .help("Sets the level of verbosity (-v or -vv)"),
+                .help("Sets the level of verbosity (-v, -vv, or -vvv)"),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -100,10 +100,14 @@ fn main() -> Result<(), Error> {
             .init()
             .unwrap(),
         2 => SimpleLogger::new()
+            .with_level(log::LevelFilter::Debug)
+            .init()
+            .unwrap(),
+        3 => SimpleLogger::new()
             .with_level(log::LevelFilter::Trace)
             .init()
             .unwrap(),
-        _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
+        _ => return Err(Error::Unsupported("Only -v, -vv, and -vvv are supported")),
     }
 
     let keys = get_all_resc_keys();

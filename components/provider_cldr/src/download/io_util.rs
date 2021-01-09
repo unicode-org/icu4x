@@ -99,10 +99,16 @@ pub fn download_and_unzip(zip_file_url: &str, cache_dir: &Path) -> Result<PathBu
 
     if !zip_path.exists() {
         download_sync(zip_file_url, &zip_path)?;
+        log::debug!("Saved as: {:?}", &zip_path);
+    } else {
+        log::debug!("Data already downloaded: {:?}", &zip_path);
     }
 
     if !dir_path.exists() {
         unzip_sync(&zip_path, &dir_path)?;
+        log::debug!("Unzipped as: {:?}", &dir_path);
+    } else {
+        log::debug!("Data already unzipped as: {:?}", &dir_path);
     }
 
     Ok(dir_path)
