@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610071921359,
+  "lastUpdate": 1610152747103,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2405,6 +2405,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 6727,
             "range": "± 38",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2a9adbca47e13371a314f5d98d0a48f3a2407916",
+          "message": "Add support for E PluralOperand (#407)\n\n* Add support for E PluralOperand\r\n\r\n* Add the FromStr\r\n\r\n* Fix ecma402 trait\r\n\r\n* Apply reviewers feedback\r\n\r\n* Add roundtrip parse/serialize test\r\n\r\n* Fix ECMA402 test for plurals\r\n\r\n* Move `e` to not be an operand\r\n\r\n* Move to serialize C as `c` and switch tests to use it.\r\n\r\n* Re-add AST node for E",
+          "timestamp": "2021-01-08T16:21:00-08:00",
+          "tree_id": "be2dc0e4f02be06a3f620b29b9763b04e8eb7afb",
+          "url": "https://github.com/unicode-org/icu4x/commit/2a9adbca47e13371a314f5d98d0a48f3a2407916"
+        },
+        "date": 1610152746414,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4069,
+            "range": "± 220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 6764,
+            "range": "± 516",
             "unit": "ns/iter"
           }
         ]
