@@ -61,7 +61,7 @@ jobs:
       with:
         command: install
         args: cargo-all-features --version "^1.4"
-    # Note: we need test-all-features in order to docs
+    # Note: we need test-all-features (rather than build-all-features) for docs
     - name: Test All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:

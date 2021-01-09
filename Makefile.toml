@@ -8,20 +8,13 @@ load_cargo_aliases = true
 ### INDIVIDUAL TEST AND LINT TASKS ###
 # Note: If a task is purely a cargo alias, define it in .cargo/config.toml
 
-[tasks.build-all-features]
-description = "Build all permutations of all features"
-category = "ICU4X Development"
-install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.4"]
-command = "cargo"
-args = ["build-all-features"]
-
 [tasks.test-all-features]
 description = "Test all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.4"]
 command = "cargo"
+# Note: we need test-all-features (rather than build-all-features) for docs
 args = ["test-all-features"]
 
 [tasks.license-header-check]
@@ -71,7 +64,6 @@ category = "ICU4X Development"
 dependencies = [
     "quick",
     "test-docs",
-    "build-all-features",
     "test-all-features",
 ]
 
