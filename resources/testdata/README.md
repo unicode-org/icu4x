@@ -14,7 +14,7 @@ From this directory, run:
 $ cargo gen-testdata
 ```
 
-To monitor the progress, run with `-v` or `-vv`:
+To monitor the progress, run with `-v`, `-vv`, or `-vvv`:
 
 ```bash
 $ cargo gen-testdata -vv

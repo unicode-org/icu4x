@@ -1,6 +1,10 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
+//! Data downloader for CLDR JSON versions 38 and later. Starting in CLDR 38, the JSON for all
+//! components is shipped in a single zip file.
+
 use super::error::Error;
 use super::io_util;
 use crate::CldrPaths;
@@ -10,29 +14,30 @@ use std::path::PathBuf;
 /// The download artifacts are saved in the user's cache directory; see
 /// https://docs.rs/dirs/3.0.0/dirs/fn.cache_dir.html
 ///
+/// Downloads a single zip file for all components, as used in CLDR 38 and later.
+///
 /// # Example
 ///
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::structs;
-/// use icu_provider_cldr::download::CldrPathsDownload;
-/// use icu_provider_cldr::CldrJsonDataProvider;
+/// use icu_provider_cldr::CldrPaths;
+/// use icu_provider_cldr::download::CldrAllInOneDownloader;
+/// use icu_provider_cldr::transform::PluralsProvider;
 /// use icu_locid_macros::langid;
 /// use std::path::PathBuf;
 ///
-/// let paths = CldrPathsDownload::try_from_github_tag("36.0.0")
+/// let paths = CldrAllInOneDownloader::try_from_github_tag("38.1.0-BETA4")
 ///     .expect("Cache directory not found");
 ///
-/// let data_provider = CldrJsonDataProvider::new(&paths);
-///
-/// fn demo<'d, 's, P>(data_provider: &P)
-/// where
-///     's: 'd,
-///     P: DataProvider<'d, structs::plurals::PluralRuleStringsV1<'s>>
-/// {
+/// fn demo(paths: &dyn CldrPaths) {
 ///     use std::borrow::Cow;
+///     use std::convert::TryFrom;
 ///     use icu_provider::prelude::*;
 ///     use icu_provider::structs;
+///
+///     let data_provider = PluralsProvider::try_from(paths)
+///         .expect("The data should be well-formed after downloading");
 ///
 ///     let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
 ///         .load_payload(&DataRequest {
@@ -50,30 +55,35 @@ use std::path::PathBuf;
 ///     assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
 /// }
 ///
-/// // Calling demo(&data_provider) will cause the data to actually get downloaded.
-/// //demo(&data_provider);
+/// // Calling demo(&paths) will cause the data to actually get downloaded.
+/// //demo(&paths);
 /// ```
 #[derive(Debug)]
-pub struct CldrPathsDownload {
-    /// Directory where downloaded files are stored.
+pub struct CldrAllInOneDownloader {
+    /// Directory where downloaded files are stored
     pub cache_dir: PathBuf,
 
-    pub cldr_core: CldrZipFileInfo,
-    pub cldr_dates: CldrZipFileInfo,
+    /// The URL to the remote zip file
+    pub url: String,
+
+    /// CLDR JSON directory suffix: probably either "modern" or "full"
+    pub suffix: String,
 }
 
 // TODO(#297): Implement this async.
-impl CldrPaths for CldrPathsDownload {
+impl CldrPaths for CldrAllInOneDownloader {
     fn cldr_core(&self) -> Result<PathBuf, crate::error::Error> {
-        self.cldr_core.download_and_unzip(&self)
+        self.download_and_unzip()
+            .map(|p| p.join("cldr-core".to_string()))
     }
     fn cldr_dates(&self) -> Result<PathBuf, crate::error::Error> {
-        self.cldr_dates.download_and_unzip(&self)
+        self.download_and_unzip()
+            .map(|p| p.join(format!("cldr-dates-{}", self.suffix)))
     }
 }
 
-impl CldrPathsDownload {
-    /// Creates a CldrPathsDownload that downloads files to the system cache directory
+impl CldrAllInOneDownloader {
+    /// Creates a CldrAllInOneDownloader that downloads files to the system cache directory
     /// as determined by dirs::cache_dir().
     ///
     /// github_tag should be a tag in the CLDR JSON repositories, such as "36.0.0":
@@ -84,39 +94,15 @@ impl CldrPathsDownload {
                 .ok_or(Error::NoCacheDir)?
                 .join("icu4x")
                 .join("cldr"),
-            cldr_core: CldrZipFileInfo {
-                url: format!(
-                    "https://github.com/unicode-cldr/cldr-core/archive/{}.zip",
-                    github_tag
-                ),
-                top_dir: format!("cldr-core-{}", github_tag),
-            },
-            cldr_dates: CldrZipFileInfo {
-                url: format!(
-                    "https://github.com/unicode-cldr/cldr-dates-full/archive/{}.zip",
-                    github_tag
-                ),
-                top_dir: format!("cldr-dates-full-{}", github_tag),
-            },
+            url: format!(
+                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
+                github_tag, github_tag
+            ),
+            suffix: "full".to_string(),
         })
     }
-}
 
-#[derive(Debug)]
-pub struct CldrZipFileInfo {
-    /// The URL to the remote zip file
-    pub url: String,
-    /// The directory name in the unpacked zip fle
-    pub top_dir: String,
-}
-
-impl CldrZipFileInfo {
-    fn download_and_unzip(
-        &self,
-        parent: &CldrPathsDownload,
-    ) -> Result<PathBuf, crate::error::Error> {
-        io_util::download_and_unzip(&self.url, &parent.cache_dir)
-            .map(|p| p.join(&self.top_dir))
-            .map_err(|e| e.into())
+    fn download_and_unzip(&self) -> Result<PathBuf, crate::error::Error> {
+        io_util::download_and_unzip(&self.url, &self.cache_dir).map_err(|e| e.into())
     }
 }
