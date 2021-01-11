@@ -1,0 +1,14 @@
+[
+  {
+    "input": "zh-Hant",
+    "output": "zh-TW"
+  },
+  {
+    "input": "en-Latn-US",
+    "output": "en"
+  },
+  {
+    "input": "en",
+    "output": "en"
+  }
+]

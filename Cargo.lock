@@ -727,6 +727,8 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

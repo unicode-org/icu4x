@@ -67,14 +67,14 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
         req: &DataRequest,
     ) -> Result<DataResponse<'d, LikelySubtagsV1>, DataError> {
         LikelySubtagsProvider::supports_key(&req.resource_path.key)?;
-        let langid = req.resource_path.options.langid.clone();
+        let langid = &req.resource_path.options.langid;
 
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
         if langid.is_none() {
             Ok(DataResponse {
                 metadata: DataResponseMetadata {
-                    data_langid: langid,
+                    data_langid: langid.clone(),
                 },
                 payload: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
             })
@@ -91,10 +91,7 @@ impl<'d> IterableDataProvider<'d> for LikelySubtagsProvider<'d> {
         &self,
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-        let list: Vec<ResourceOptions> = vec![ResourceOptions {
-            variant: None,
-            langid: None,
-        }];
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
         Ok(Box::new(list.into_iter()))
     }
 }
