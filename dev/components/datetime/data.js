@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610364416732,
+  "lastUpdate": 1610394680974,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1559,6 +1559,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1137113,
             "range": "± 48273",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "273ec285057bad902c6a08880df4c07a188a7968",
+          "message": "Updating provider_cldr and testdata to CLDR 38.1.0-BETA4 (#441)",
+          "timestamp": "2021-01-11T13:45:58-06:00",
+          "tree_id": "33914139d1bbfbe04a8cab54884d53fa45bca8e0",
+          "url": "https://github.com/unicode-org/icu4x/commit/273ec285057bad902c6a08880df4c07a188a7968"
+        },
+        "date": 1610394673942,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 849839,
+            "range": "± 826",
             "unit": "ns/iter"
           }
         ]
