@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610152741369,
+  "lastUpdate": 1610364416732,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1529,6 +1529,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1083257,
             "range": "± 43295",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c8d9dff321ceb822bab5a3c7b4e250792fffeb6",
+          "message": "Enable test-all-features and rename some GitHub Actions targets (#436)",
+          "timestamp": "2021-01-11T05:20:41-06:00",
+          "tree_id": "c2fe16c76d99ba703e3d55a9d0a0dc52a9f71b5c",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c8d9dff321ceb822bab5a3c7b4e250792fffeb6"
+        },
+        "date": 1610364416044,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1137113,
+            "range": "± 48273",
             "unit": "ns/iter"
           }
         ]
