@@ -1019,6 +1019,7 @@ name = "memory_bench"
 version = "0.1.0"
 dependencies = [
  "quote",
+ "serde_json",
  "syn",
 ]
 

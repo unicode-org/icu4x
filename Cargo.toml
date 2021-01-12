@@ -27,3 +27,11 @@ members = [
 #   error: options `-C embed-bitcode=no` and `-C lto` are incompatible
 [profile.release]
 lto = true
+
+# Enable debug information specifically for memory profiling.
+# https://docs.rs/dhat/0.2.1/dhat/#configuration
+#
+# 2021-01-08: This would be nicer as a named profile, e.g. [profile.memory]
+# https://github.com/rust-lang/cargo/issues/6988
+[profile.bench]
+debug = true
