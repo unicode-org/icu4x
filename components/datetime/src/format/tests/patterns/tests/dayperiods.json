@@ -1,0 +1,240 @@
+[
+  {
+    "locale": "ar-EG",
+    "test_cases": [
+      {
+        "date_times": [
+          "2021-01-11T12:00:00.000"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaa",
+              "aaaaaa",
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbb",
+              "bbbbbb"
+            ],
+            "expected": "م"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T00:00:00.000"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaa",
+              "aaaaaa",
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbb",
+              "bbbbbb"
+            ],
+            "expected": "ص"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "test_cases": [
+      {
+        "date_times": [
+          "2021-01-11T00:01:00.000",
+          "2021-01-11T11:59:59.999"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaaa",
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbbb"
+            ],
+            "expected": "AM"
+          },
+          {
+            "patterns": [
+              "aaaaa",
+              "bbbbb"
+            ],
+            "expected": "a"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T12:01:00.000",
+          "2021-01-11T23:59:59.999"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaaa",
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbbb"
+            ],
+            "expected": "PM"
+          },
+          {
+            "patterns": [
+              "aaaaa",
+              "bbbbb"
+            ],
+            "expected": "p"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T00:00:00.000",
+          "2021-01-11T00:00:59.999"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaaa"
+            ],
+            "expected": "AM"
+          },
+          {
+            "patterns": [
+              "aaaaa"
+            ],
+            "expected": "a"
+          },
+          {
+            "patterns": [
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbbb"
+            ],
+            "expected": "midnight"
+          },
+          {
+            "patterns": [
+              "bbbbb"
+            ],
+            "expected": "mi"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T12:00:00.000",
+          "2021-01-11T12:00:59.999"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaaa"
+            ],
+            "expected": "PM"
+          },
+          {
+            "patterns": [
+              "aaaaa"
+            ],
+            "expected": "p"
+          },
+          {
+            "patterns": [
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbbb"
+            ],
+            "expected": "noon"
+          },
+          {
+            "patterns": [
+              "bbbbb"
+            ],
+            "expected": "n"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "locale": "ru",
+    "test_cases": [
+      {
+        "date_times": [
+          "2021-01-11T12:00:00.000",
+          "2021-01-11T12:00:12.345"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaa",
+              "aaaaaa"
+            ],
+            "expected": "PM"
+          },
+          {
+            "patterns": [
+              "b",
+              "bb",
+              "bbb",
+              "bbbbb",
+              "bbbbbb"
+            ],
+            "expected": "полд."
+          },
+          {
+            "patterns": [
+              "bbbb"
+            ],
+            "expected": "полдень"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -329,6 +329,14 @@ mod tests {
                 ],
             ),
             (
+                "hh''b",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    "'".into(),
+                    (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
                 "y'My'M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
@@ -354,11 +362,27 @@ mod tests {
                 ],
             ),
             (
+                "hh 'o''clock' b",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    " o'clock ".into(),
+                    (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
                 "hh''a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
                     "'".into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "hh''b",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    "'".into(),
+                    (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
         ];
