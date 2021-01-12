@@ -38,7 +38,16 @@
 //!     ..Default::default()
 //! };
 //!
+//! // The options can be created manually.
 //! let options = DateTimeFormatOptions::Components(bag);
+//! ```
+//!
+//! Or the options can be inferred through the `.into()` trait.
+//!
+//! ```
+//! # use icu_datetime::DateTimeFormatOptions;
+//! # use icu_datetime::options::components;
+//! let options: DateTimeFormatOptions = components::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over

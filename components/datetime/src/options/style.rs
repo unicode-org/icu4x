@@ -29,6 +29,14 @@
 //! let options = DateTimeFormatOptions::Style(bag);
 //! ```
 //!
+//! Or the options can be inferred through the `.into()` trait.
+//!
+//! ```
+//! # use icu_datetime::DateTimeFormatOptions;
+//! # use icu_datetime::options::style;
+//! let options: DateTimeFormatOptions = style::Bag::default().into();
+//! ```
+//!
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
@@ -51,6 +59,14 @@ use super::preferences;
 /// };
 ///
 /// let options = DateTimeFormatOptions::Style(bag);
+/// ```
+///
+/// Or the options can be inferred through the `.into()` trait.
+///
+/// ```
+/// # use icu_datetime::DateTimeFormatOptions;
+/// # use icu_datetime::options::style;
+/// let options: DateTimeFormatOptions = style::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
