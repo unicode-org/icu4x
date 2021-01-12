@@ -183,7 +183,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         hour: date::Hour,
         minute: date::Minute,
     ) -> &Cow<str> {
-        use fields::{DayPeriod::*, FieldLength};
+        use fields::{DayPeriod::NoonMidnight, FieldLength};
         let widths = &self.symbols.day_periods.format;
         let symbols = match length {
             FieldLength::Wide => &widths.wide,
@@ -192,10 +192,9 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         };
         match (day_period, u8::from(hour), u8::from(minute)) {
             (NoonMidnight, 0, 0) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
-            (NoonMidnight, 24, 0) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
             (NoonMidnight, 12, 0) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
             (_, hour, _) => {
-                if hour < 12 || hour == 24 {
+                if hour < 12 {
                     &symbols.am
                 } else {
                     &symbols.pm
