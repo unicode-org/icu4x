@@ -39,6 +39,7 @@ pub trait DateTimeDates {
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::Hour,
+        minute: date::Minute,
     ) -> &Cow<str>;
 }
 
@@ -180,22 +181,26 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::Hour,
+        minute: date::Minute,
     ) -> &Cow<str> {
-        let widths = match day_period {
-            fields::DayPeriod::AmPm => &self.symbols.day_periods.format,
-        };
+        use fields::{DayPeriod::*, FieldLength};
+        let widths = &self.symbols.day_periods.format;
         let symbols = match length {
-            fields::FieldLength::Wide => &widths.wide,
-            fields::FieldLength::Narrow => &widths.narrow,
+            FieldLength::Wide => &widths.wide,
+            FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-
-        //TODO: Once we have more dayperiod types, we'll need to handle
-        //      this logic in the right location.
-        if u8::from(hour) < 12 {
-            &symbols.am
-        } else {
-            &symbols.pm
+        match (day_period, u8::from(hour), u8::from(minute)) {
+            (NoonMidnight, 0, 0) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
+            (NoonMidnight, 24, 0) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
+            (NoonMidnight, 12, 0) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
+            (_, hour, _) => {
+                if hour < 12 || hour == 24 {
+                    &symbols.am
+                } else {
+                    &symbols.pm
+                }
+            }
         }
     }
 }

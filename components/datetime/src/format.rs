@@ -154,12 +154,10 @@ where
                 FieldSymbol::Second(..) => {
                     format_number(w, date_time.second().into(), field.length)?
                 }
-                FieldSymbol::DayPeriod(period) => match period {
-                    fields::DayPeriod::AmPm => {
-                        let symbol =
-                            data.get_symbol_for_day_period(period, field.length, date_time.hour());
-                        w.write_str(symbol)?
-                    }
+                FieldSymbol::DayPeriod(period) => {
+                    let symbol =
+                        data.get_symbol_for_day_period(period, field.length, date_time.hour(), date_time.minute());
+                    w.write_str(symbol)?
                 },
             },
             PatternItem::Literal(l) => w.write_str(l)?,

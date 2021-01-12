@@ -136,7 +136,13 @@ pub mod gregory {
 
     symbols!(weekdays, [Cow<'static, str>; 7]);
 
-    symbols!(day_periods, am: Cow<'static, str>, pm: Cow<'static, str>);
+    symbols!(
+        day_periods,
+        am: Cow<'static, str>,
+        pm: Cow<'static, str>,
+        noon: Option<Cow<'static, str>>,
+        midnight: Option<Cow<'static, str>>,
+    );
 
     pub mod patterns {
         use super::*;

@@ -259,6 +259,8 @@ symbols_from!(
     {
         am,
         pm,
+        noon,
+        midnight,
     },
 );
 
@@ -353,6 +355,8 @@ pub(self) mod cldr_json {
         day_periods,
         ["am", am, Cow<'static, str>],
         ["pm", pm, Cow<'static, str>],
+        ["noon", noon, Option<Cow<'static, str>>],
+        ["midnight", midnight, Option<Cow<'static, str>>],
     );
 
     #[derive(PartialEq, Debug, Deserialize)]
