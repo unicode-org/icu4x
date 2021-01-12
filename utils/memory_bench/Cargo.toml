@@ -1,0 +1,15 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+[package]
+name = "memory_bench"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+
+[dependencies]
+quote = "1.0.8"
+
+[dependencies.syn]
+version = "1.0.58"
+features = ["full", "extra-traits"]
