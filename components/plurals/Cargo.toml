@@ -23,6 +23,7 @@ include = [
 fixed_decimal = { version = "0.1", path = "../../utils/fixed_decimal" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid = { version = "0.1", path = "../locid" }
+dhat = "0.2.1"
 
 [dev-dependencies]
 criterion = "0.3"

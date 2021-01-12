@@ -20,6 +20,7 @@ include = [
 
 [dev-dependencies]
 criterion = "0.3.3"
+dhat = "0.2.1"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
