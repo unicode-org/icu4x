@@ -1,8 +1,9 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
-use std::iter::Iterator;
+use std::iter::{FromIterator, Iterator};
 use std::u32;
 
 use crate::support::UnicodeProperties;
@@ -161,7 +162,7 @@ fn is_block_line(line: &str) -> bool {
 /// Return the property key-value information represented in a "blk"
 /// line as a map. "blocks" represent overrides of property values for code
 /// points in PPUCD within a Unicode block above the "defaults" values.
-fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
+fn get_block_range_prop_vals<'s>(line: &'s str) -> (UnicodeSet, HashMap<&'s str, &'s str>) {
     let line_parts = split_line(&line);
     assert_eq!(&"block", &line_parts[0]);
 
@@ -192,7 +193,7 @@ fn is_code_point_line(line: &str) -> bool {
 /// Return the property key-value information represented in a "cp"
 /// line as a map. "cp" represents overrides of property values for a code
 /// point (or range of code points) that are layered above "blk" and "defaults".
-fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
+fn get_code_point_overrides<'s>(line: &'s str) -> (UnicodeSet, HashMap<&'s str, &'s str>) {
     let line_parts = split_line(&line);
     assert_eq!(&"cp", &line_parts[0]);
 
@@ -267,7 +268,7 @@ fn get_code_point_prop_vals<'s>(
 /// dimension of code point <-> property key-value information from the
 /// grouping by code point (as given by `code_points`) to a grouping by
 /// property name.
-fn get_prop_unisets<'s>(
+fn get_binary_prop_unisets<'s>(
     prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
 ) -> HashMap<&'s str, UnicodeSet> {
@@ -290,6 +291,84 @@ fn get_prop_unisets<'s>(
     }
 
     m
+}
+
+fn get_enum_prop_unisets<'s>(
+    enum_prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
+    enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
+    code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
+) -> HashMap<&'s str, UnicodeSet> {
+
+    let mut m: HashMap<&str, HashMap<&str, UnicodeSetBuilder>> = HashMap::new();
+    let enum_prop_mappings: HashMap<&str, &str> =
+        aliases_as_canonical_mappings(enum_prop_aliases);
+    
+    let enum_val_mappings: HashMap<&str, HashMap<&str, &str>> =
+        get_enum_val_canonical_mapping(enum_val_aliases);
+
+    for (canonical_prop_name, all_prop_name_aliases) in enum_prop_aliases {    
+        for (code_point, code_point_prop_key_vals) in code_points {
+            
+            let code_point_prop_names: HashSet<&str> =
+                code_point_prop_key_vals.keys().copied().collect();
+            if !all_prop_name_aliases.is_disjoint(&code_point_prop_names) {
+
+                for prop_name in all_prop_name_aliases.intersection(&code_point_prop_names) {
+                    let val_name: &str = code_point_prop_key_vals.get(prop_name).unwrap();
+                    let canonicalized_val_name: &str = enum_val_mappings.get(canonical_prop_name).unwrap().get(val_name).unwrap();
+
+                    if !m.contains_key(canonical_prop_name) {
+                        m.insert(canonical_prop_name, HashMap::new());
+                    }
+
+                    if !m.get(canonical_prop_name).unwrap().contains_key(canonicalized_val_name) {
+                        let result_prop_val_builder_map: &mut HashMap<&str, UnicodeSetBuilder> = m.get_mut(canonical_prop_name).unwrap();
+                        result_prop_val_builder_map.insert(canonicalized_val_name, UnicodeSetBuilder::new());
+                    }
+
+                    let enum_val_uniset_builder: &mut UnicodeSetBuilder = m.get_mut(canonical_prop_name).unwrap().get_mut(canonicalized_val_name).unwrap();
+                    enum_val_uniset_builder.add_char(std::char::from_u32(*code_point).unwrap());
+                }
+            }
+        }
+    }
+
+    let mut result: HashMap<&str, UnicodeSet> = HashMap::new();
+
+    for (canonical_prop_name, prop_val_builder_map) in m {
+        for (canonical_val_name, uniset_builder) in prop_val_builder_map {
+            let enum_val_uniset_name: String = format!("{}={}", canonical_prop_name, canonical_val_name);
+            let uniset = uniset_builder.build();
+
+            result.insert(enum_val_uniset_name.as_str(), uniset);
+        }
+    }
+
+    result
+    
+}
+
+fn aliases_as_canonical_mappings<'s>(aliases_map: &HashMap<&'s str, HashSet<&'s str>>) -> HashMap<&'s str, &'s str> {
+    let mut result: HashMap<&str, &str> = HashMap::new();
+    for (canonical_name, aliases) in aliases_map {
+        // let canonical_name = canonical_name.clone();
+        result.insert(canonical_name.clone(), canonical_name.clone());
+        for alias in aliases {
+            result.insert(alias.clone(), canonical_name.clone());
+        }
+    }
+
+    result
+}
+
+fn get_enum_val_canonical_mapping<'s>(enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>) -> HashMap<&'s str, HashMap<&'s str, &'s str>> {
+    let mut result: HashMap<&str, HashMap<&str, &str>> = HashMap::new();
+    for (enum_prop_canon_name, enum_val_aliases) in enum_val_aliases {
+        let enum_val_canonical_mapping = aliases_as_canonical_mappings(enum_val_aliases);
+        result.insert(enum_prop_canon_name.clone(), enum_val_canonical_mapping);
+    }
+
+    result
 }
 
 /// Parse a whole PPUCD file that was loaded into a string slice and return a
@@ -319,6 +398,8 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     // in a PPUCD `cp` line, according to the PPUCD file format spec.
     let mut code_point_overrides: HashMap<UnicodeSet, HashMap<&'s str, &'s str>> = HashMap::new();
 
+    // current implementation uses this data structure to pull all of the code
+    // point info into memory
     let mut code_points: HashMap<u32, HashMap<&'s str, &'s str>> = HashMap::new();
 
     // parse PPUCD to fill out data structures for info of property name aliases
@@ -355,21 +436,21 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let mut props: Vec<UnicodeProperty> = vec![];
 
     let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
-        get_prop_unisets(&binary_prop_aliases, &code_points);
+        get_binary_prop_unisets(&binary_prop_aliases, &code_points);
 
-    // let enum_val_unisets: HashMap<String, UnicodeSet> =
-    //     get_prop_unisets(&enum_val_sets, &code_points);
+    let enum_prop_unisets: HashMap<&'s str, UnicodeSet> =
+        get_enum_prop_unisets(&enum_prop_aliases, &enum_val_aliases, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
         let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
         props.push(ppucd_prop);
     }
 
-    // for (canonical_name, uniset) in enum_val_unisets {
-    //     let ppucd_prop: UnicodeProperty =
-    //         UnicodeProperty::from_uniset(&uniset, canonical_name.as_str());
-    //     props.push(ppucd_prop);
-    // }
+    for (key_val_tuple_name, uniset) in enum_prop_unisets {
+        let ppucd_prop: UnicodeProperty =
+            UnicodeProperty::from_uniset(&uniset, key_val_tuple_name);
+        props.push(ppucd_prop);
+    }
 
     UnicodeProperties { props }
 }
@@ -380,28 +461,28 @@ mod gen_properties_test {
 
     #[test]
     fn skip_ppucd_line_test() {
-        assert_eq!(true, is_skip_ppucd_line(&String::from("ucd;13.0.0")));
+        assert_eq!(true, is_skip_ppucd_line("ucd;13.0.0"));
         assert_eq!(
             false,
-            is_skip_ppucd_line(&String::from("value;InSC;Gemination_Mark;Gemination_Mark"))
+            is_skip_ppucd_line("value;InSC;Gemination_Mark;Gemination_Mark")
         );
     }
 
     #[test]
     fn split_line_test() {
-        let line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
+        let line = "cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace";
         let exp_parts = vec![
-            String::from("cp"),
-            String::from("0020"),
-            String::from("bc=WS"),
-            String::from("gc=Zs"),
-            String::from("lb=SP"),
-            String::from("na=SPACE"),
-            String::from("Name_Alias=abbreviation=SP"),
-            String::from("Pat_WS"),
-            String::from("SB=SP"),
-            String::from("WB=WSegSpace"),
-            String::from("WSpace"),
+            "cp",
+            "0020",
+            "bc=WS",
+            "gc=Zs",
+            "lb=SP",
+            "na=SPACE",
+            "Name_Alias=abbreviation=SP",
+            "Pat_WS",
+            "SB=SP",
+            "WB=WSegSpace",
+            "WSpace",
         ];
         let line_parts = split_line(&line);
         assert_eq!(exp_parts, line_parts);
@@ -468,10 +549,10 @@ mod gen_properties_test {
 
     #[test]
     fn code_point_overrides_test() {
-        let defaults_line = String::from("defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX");
+        let defaults_line = "defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX";
         let block_line =
-            String::from("block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy");
-        let code_point_line = String::from("cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace");
+            "block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy";
+        let code_point_line = "cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace";
 
         let exp_code_point: u32 = 32;
         let mut exp_code_point_prop_vals: HashMap<&str, &str> = HashMap::new();
@@ -632,30 +713,6 @@ mod gen_properties_test {
         assert_eq!(&exp_code_points, &code_points);
     }
 
-    // #[test]
-    // fn update_enum_val_sets_test() {
-    //     let mut exp_enum_val_sets: HashMap<String, HashSet<String>> = HashMap::new();
-    //     let exp_key = String::from("gcm");
-    //     let mut exp_val_set: HashSet<String> = HashSet::new();
-    //     exp_val_set.insert(String::from("Sc"));
-    //     exp_val_set.insert(String::from("Sk"));
-    //     exp_val_set.insert(String::from("Sm"));
-    //     exp_val_set.insert(String::from("So"));
-    //     exp_enum_val_sets.insert(exp_key, exp_val_set);
-
-    //     let mut act_enum_val_sets: HashMap<String, HashSet<String>> = HashMap::new();
-    //     let line1 = String::from("value;gcm;Sc;Currency_Symbol");
-    //     let line2 = String::from("value;gcm;Sk;Modifier_Symbol");
-    //     let line3 = String::from("value;gcm;Sm;Math_Symbol");
-    //     let line4 = String::from("value;gcm;So;Other_Symbol");
-    //     update_enum_val_sets(&mut act_enum_val_sets, &line1);
-    //     update_enum_val_sets(&mut act_enum_val_sets, &line2);
-    //     update_enum_val_sets(&mut act_enum_val_sets, &line3);
-    //     update_enum_val_sets(&mut act_enum_val_sets, &line4);
-
-    //     assert_eq!(exp_enum_val_sets, act_enum_val_sets);
-    // }
-
     #[test]
     fn update_enum_val_aliases_test() {
         let mut exp_enum_val_aliases: HashMap<&str, HashMap<&str, HashSet<&str>>> = HashMap::new();
@@ -690,5 +747,338 @@ mod gen_properties_test {
         update_enum_val_aliases(&mut act_enum_val_aliases, &line4);
 
         assert_eq!(exp_enum_val_aliases, act_enum_val_aliases);
+    }
+
+    #[test]
+    fn aliases_as_canonical_mappings_test() {
+        let mut exp_mappings: HashMap<&str, &str> = HashMap::new();
+        exp_mappings.insert("Sc", "Sc");
+        exp_mappings.insert("Currency_Symbol", "Sc");
+        exp_mappings.insert("Sk", "Sk");
+        exp_mappings.insert("Modifier_Symbol", "Sk");
+        exp_mappings.insert("Sm", "Sm");
+        exp_mappings.insert("Math_Symbol", "Sm");
+        exp_mappings.insert("So", "So");
+        exp_mappings.insert("Other_Symbol", "So");
+
+        let mut symbol_props_val_alias_map: HashMap<&str, HashSet<&str>> = HashMap::new();
+        let mut sc_set: HashSet<&str>= HashSet::new();
+        sc_set.insert("Sc");
+        sc_set.insert("Currency_Symbol");
+        let mut sk_set: HashSet<&str> = HashSet::new();
+        sk_set.insert("Sk");
+        sk_set.insert("Modifier_Symbol");
+        let mut sm_set: HashSet<&str> = HashSet::new();
+        sm_set.insert("Sm");
+        sm_set.insert("Math_Symbol");
+        let mut so_set: HashSet<&str> = HashSet::new();
+        so_set.insert("So");
+        so_set.insert("Other_Symbol");
+        symbol_props_val_alias_map.insert("Sc", sc_set);
+        symbol_props_val_alias_map.insert("Sk", sk_set);
+        symbol_props_val_alias_map.insert("Sm", sm_set);
+        symbol_props_val_alias_map.insert("So", so_set);
+
+        let act_mappings = aliases_as_canonical_mappings(&symbol_props_val_alias_map);
+        assert_eq!(act_mappings, exp_mappings);
+    }
+
+    #[test]
+    fn get_enum_val_canonical_mapping_test() {
+        // expected
+        let mut exp_enum_mapping: HashMap<&str, HashMap<&str, &str>> = HashMap::new();
+        let enum_prop = "gcm";
+        let mut exp_mapping: HashMap<&str, &str> = HashMap::new();
+        exp_mapping.insert("Sc", "Sc");
+        exp_mapping.insert("Currency_Symbol", "Sc");
+        exp_mapping.insert("Sk", "Sk");
+        exp_mapping.insert("Modifier_Symbol", "Sk");
+        exp_mapping.insert("Sm", "Sm");
+        exp_mapping.insert("Math_Symbol", "Sm");
+        exp_mapping.insert("So", "So");
+        exp_mapping.insert("Other_Symbol", "So");
+        exp_enum_mapping.insert(enum_prop, exp_mapping);
+
+        // input
+        let mut enum_val_aliases: HashMap<&str, HashMap<&str, HashSet<&str>>> = HashMap::new();
+        let enum_prop = "gcm";
+        let mut val_alias_map: HashMap<&str, HashSet<&str>> = HashMap::new();
+        let mut sc_set: HashSet<&str>= HashSet::new();
+        sc_set.insert("Sc");
+        sc_set.insert("Currency_Symbol");
+        let mut sk_set: HashSet<&str> = HashSet::new();
+        sk_set.insert("Sk");
+        sk_set.insert("Modifier_Symbol");
+        let mut sm_set: HashSet<&str> = HashSet::new();
+        sm_set.insert("Sm");
+        sm_set.insert("Math_Symbol");
+        let mut so_set: HashSet<&str> = HashSet::new();
+        so_set.insert("So");
+        so_set.insert("Other_Symbol");
+        val_alias_map.insert("Sc", sc_set);
+        val_alias_map.insert("Sk", sk_set);
+        val_alias_map.insert("Sm", sm_set);
+        val_alias_map.insert("So", so_set);
+        enum_val_aliases.insert(enum_prop, val_alias_map);
+
+        // actual
+        let enum_val_canonical_mapping = get_enum_val_canonical_mapping(&enum_val_aliases);
+
+        assert_eq!(enum_val_canonical_mapping, exp_enum_mapping);
+    }
+
+    // Test the functionality of enumerated property parsing.
+    //
+    // As a side effect when doing so in a direct-from-PPUCD manner, other
+    // functionality that gets tested again: "-" prefix for binary props,
+    // cascading of binary/enum props across defaults/blk/cp lines in PPUCD,
+    // only parsing binary/enum props (ignore catalog props).
+    #[test]
+    fn parse_with_enum_props_test() {
+        // Input
+        let ppucd_property_files_root_path = "tests/testdata/ppucd-sc-tglg-test.txt";
+        let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
+        // Actual
+        let uni_props: UnicodeProperties = parse(&ppucd_property_file_str);
+        // Convert actual to testable form
+        let act_uni_props_set: HashSet<UnicodeProperty> = HashSet::from_iter(uni_props.props);
+
+        // Expected
+        let mut exp_uni_props_set: HashSet<UnicodeProperty> = HashSet::new();
+        let gc_lo = UnicodeProperty {
+            name: Cow::Borrowed("gc=Lo"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(gc_lo);
+        let gc_mn = UnicodeProperty {
+            name: Cow::Borrowed("gc=Mn"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(gc_mn);
+        let gr_base = UnicodeProperty {
+            name: Cow::Borrowed("Gr_Base"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(gr_base);
+        let idc = UnicodeProperty {
+            name: Cow::Borrowed("IDC"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(idc);
+        let ids = UnicodeProperty {
+            name: Cow::Borrowed("IDS"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(ids);
+        let insc_consonant = UnicodeProperty {
+            name: Cow::Borrowed("InSC=Consonant"),
+            inv_list: vec![5891, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(insc_consonant);
+        let insc_vowel_independent = UnicodeProperty {
+            name: Cow::Borrowed("InSC=Vowel_Independent"),
+            inv_list: vec![5888, 5891],
+        };
+        exp_uni_props_set.insert(insc_vowel_independent);
+        let insc_vowel_dependent = UnicodeProperty {
+            name: Cow::Borrowed("InSC=Vowel_Dependent"),
+            inv_list: vec![5906, 5908],
+        };
+        exp_uni_props_set.insert(insc_vowel_dependent);
+        let insc_pure_killer = UnicodeProperty {
+            name: Cow::Borrowed("InSC=Pure_Killer"),
+            inv_list: vec![5908, 5909],
+        };
+        exp_uni_props_set.insert(insc_pure_killer);
+        let lb_al = UnicodeProperty {
+            name: Cow::Borrowed("lb=AL"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(lb_al);
+        let lb_cm = UnicodeProperty {
+            name: Cow::Borrowed("lb=CM"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(lb_cm);
+        let sb_le = UnicodeProperty {
+            name: Cow::Borrowed("SB=LE"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(sb_le);
+        let sb_ex = UnicodeProperty {
+            name: Cow::Borrowed("SB=EX"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(sb_ex);
+        let wb_le = UnicodeProperty {
+            name: Cow::Borrowed("WB=LE"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(wb_le);
+        let wb_extend = UnicodeProperty {
+            name: Cow::Borrowed("WB=Extend"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(wb_extend);
+        let xidc = UnicodeProperty {
+            name: Cow::Borrowed("XIDC"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(xidc);
+        let xids = UnicodeProperty {
+            name: Cow::Borrowed("XIDS"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(xids);
+        let bc_l = UnicodeProperty {
+            name: Cow::Borrowed("bc=L"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(bc_l);
+        let bc_nsm = UnicodeProperty {
+            name: Cow::Borrowed("bc=NSM"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(bc_nsm);
+        let ci = UnicodeProperty {
+            name: Cow::Borrowed("CI"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(ci);
+        let gcb_ex = UnicodeProperty {
+            name: Cow::Borrowed("GCB=EX"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(gcb_ex);
+        let gcb_xx = UnicodeProperty {
+            name: Cow::Borrowed("GCB=XX"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(gcb_xx);
+        let gr_ext = UnicodeProperty {
+            name: Cow::Borrowed("Gr_Ext"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(gr_ext);
+        let inpc_al = UnicodeProperty {
+            name: Cow::Borrowed("InPC=NA"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(inpc_al);
+        let inpc_top = UnicodeProperty {
+            name: Cow::Borrowed("InPC=Top"),
+            inv_list: vec![5906, 5907],
+        };
+        exp_uni_props_set.insert(inpc_top);
+        let inpc_bottom = UnicodeProperty {
+            name: Cow::Borrowed("InPC=Bottom"),
+            inv_list: vec![5907, 5909],
+        };
+        exp_uni_props_set.insert(inpc_bottom);
+
+        let jt_u = UnicodeProperty {
+            name: Cow::Borrowed("jt=U"),
+            inv_list: vec![5888, 5901, 5902, 5906],
+        };
+        exp_uni_props_set.insert(jt_u);
+        let jt_t = UnicodeProperty {
+            name: Cow::Borrowed("jt=T"),
+            inv_list: vec![5906, 5909],
+        };
+        exp_uni_props_set.insert(jt_t);
+        let alpha = UnicodeProperty {
+            name: Cow::Borrowed("Alpha"),
+            inv_list: vec![5888, 5901, 5902, 5908],
+        };
+        exp_uni_props_set.insert(alpha);
+        let nfd_qc_y = UnicodeProperty {
+            name: Cow::Borrowed("NFD_QC=Y"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(nfd_qc_y);
+        let nfc_qc_y = UnicodeProperty {
+            name: Cow::Borrowed("NFC_QC=Y"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(nfc_qc_y);
+        let nfkd_qc_y = UnicodeProperty {
+            name: Cow::Borrowed("NFKD_QC=Y"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(nfkd_qc_y);
+        let nfkc_qc_y = UnicodeProperty {
+            name: Cow::Borrowed("NFKC_QC=Y"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(nfkc_qc_y);
+        let jg_no_joining_group = UnicodeProperty {
+            name: Cow::Borrowed("jg=No_Joining_Group"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(jg_no_joining_group);
+        let dt_none = UnicodeProperty {
+            name: Cow::Borrowed("dt=None"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(dt_none);
+        let nt_none = UnicodeProperty {
+            name: Cow::Borrowed("nt=None"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(nt_none);
+        let ea_n = UnicodeProperty {
+            name: Cow::Borrowed("ea=N"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(ea_n);
+        let vo_r = UnicodeProperty {
+            name: Cow::Borrowed("vo=R"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(vo_r);
+        let ccc_9 = UnicodeProperty {
+            name: Cow::Borrowed("ccc=9"),
+            inv_list: vec![5908, 5909],
+        };
+        exp_uni_props_set.insert(ccc_9);
+        let hst_na = UnicodeProperty {
+            name: Cow::Borrowed("hst=NA"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(hst_na);
+        let gr_link = UnicodeProperty {
+            name: Cow::Borrowed("Gr_Link"),
+            inv_list: vec![5908, 5909],
+        };
+        exp_uni_props_set.insert(gr_link);
+        let bpt_n = UnicodeProperty {
+            name: Cow::Borrowed("bpt=n"),
+            inv_list: vec![5888, 5901, 5902, 5909],
+        };
+        exp_uni_props_set.insert(bpt_n);
+
+        // partial assertion
+        let exp_uni_props_names_set: HashSet<&str> =
+            exp_uni_props_set.iter().map(|p| p.name).collect();
+        let act_uni_props_names_set: HashSet<&str> =
+            act_uni_props_set.iter().map(|p| p.name).collect();
+        let names_diff = act_uni_props_names_set.difference(&exp_uni_props_names_set);
+        let names_diff_str = 
+            names_diff
+                .into_iter()
+                .map(|s| s.clone())
+                .collect::<Vec<&str>>()
+                .join(", ");
+        assert_eq!(exp_uni_props_names_set, act_uni_props_names_set, "**** prop names missing in exp but in act = {}", names_diff_str);
+
+        // full assertion
+        let diff = act_uni_props_set.difference(&exp_uni_props_set);
+        let diff_str = 
+            diff
+                .into_iter()
+                .map(|up| format!("{:?}", up))
+                .collect::<Vec<String>>()
+                .join(", ");
+        assert_eq!(exp_uni_props_set, act_uni_props_set, "**** UnicodeProperty values missing in exp but in act = {}", diff_str);
     }
 }
