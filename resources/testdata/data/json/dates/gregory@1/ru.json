@@ -131,15 +131,21 @@
       "format": {
         "abbreviated": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": "полд.",
+          "midnight": "полн."
         },
         "narrow": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": "полд.",
+          "midnight": "полн."
         },
         "wide": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": "полдень",
+          "midnight": "полночь"
         }
       }
     }

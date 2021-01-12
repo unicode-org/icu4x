@@ -90,21 +90,29 @@
       "format": {
         "abbreviated": {
           "am": "ص",
-          "pm": "م"
+          "pm": "م",
+          "noon": null,
+          "midnight": null
         },
         "narrow": {
           "am": "ص",
-          "pm": "م"
+          "pm": "م",
+          "noon": null,
+          "midnight": null
         },
         "wide": {
           "am": "ص",
-          "pm": "م"
+          "pm": "م",
+          "noon": null,
+          "midnight": null
         }
       },
       "stand_alone": {
         "wide": {
           "am": "صباحًا",
-          "pm": "مساءً"
+          "pm": "مساءً",
+          "noon": null,
+          "midnight": null
         }
       }
     }
