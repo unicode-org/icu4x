@@ -26,7 +26,7 @@ pub trait DateTimeDates {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: date::Month,
+        num: usize,
     ) -> &Cow<str>;
     fn get_symbol_for_weekday(
         &self,
@@ -146,7 +146,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: date::Month,
+        num: usize,
     ) -> &Cow<str> {
         let widths = match month {
             fields::Month::Format => &self.symbols.months.format,
