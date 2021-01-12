@@ -176,7 +176,7 @@ jobs:
           fail-on-alert: true
           gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
                                                    # We could use another branch besides `gh-pages` to store this historical benchmark info.
-          auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure 
+          auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure
                             # that the branch in `gh-pages-branch` is different from the branch used for merges to master/main branch.
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
@@ -215,6 +215,130 @@ jobs:
         with:
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
+
+  # Run examples with dhat-rs in order to collect memory heap size metrics. These
+  # metrics will then be charted over time. See utils/memory_bench/README.md for
+  # more information.
+
+  # dhat-rs:
+  #   https://github.com/nnethercote/dhat-rs
+  # Benchmarking action (forked):
+  #   https://github.com/gregtatum/github-action-benchmark
+  # The memory data is collected in:
+  #   benchmarks/memory/{os}/{component_path}/output.ndjson
+  # The full data report is stored in:
+  #   benchmarks/memory/{os}/{component_path}/{example}-dhat-heap.json
+
+  memory:
+    strategy:
+      fail-fast: false
+      # Create a matrix of all platforms, and all components. Each job then can run
+      # multiple examples in that job. The examples are defined as a space separated
+      # list of the name of the examples. The examples are assumed to be in the
+      # examples folder.
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        example: [
+          { component: components/datetime, examples: "work_log" },
+          { component: components/locid, examples: "syntatically_canonicalize_locales filter_langids" },
+          { component: components/plurals, examples: "unread_emails elevator_floors" },
+          { component: components/uniset, examples: unicode_bmp_blocks_selector },
+          # Important! When adding new components, ensure that dhat is added as
+          # dev dependency, or else the job will fail.
+        ]
+
+    runs-on: ${{ matrix.os }}
+
+    # This job waits on the full build, even though it doesn't need anything from it.
+    # This way it is only triggered if the build is successful. The CI could be made
+    # a little bit faster by starting this job immediately, as it's fully independent.
+    needs: [build]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
+      # then this line is no longer needed.
+      - name: Install nightly toolchain
+        run: rustup toolchain install nightly
+
+      - name: Install cargo-make
+        uses: davidB/rust-cargo-make@v1
+        with:
+          version: latest
+
+      - name: Run the example with dhat-rs to collect memory information
+        run: |
+          cargo run --package memory_bench -- ${{ matrix.os }} ${{ matrix.example.component }} ${{ matrix.example.examples }}
+
+      # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
+      # dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result & create dashboard (unmerged PR only)
+        # any action that is not a merge to master implies unfinished PR
+        if: github.event_name != 'push' || github.ref != 'refs/heads/master'
+        uses: gregtatum/github-action-benchmark@v1
+        with:
+          name: Heap – ${{ matrix.example.component }}
+          # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+          tool: 'ndjson'
+          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}
+          output-file-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}/output.ndjson
+          # Show alert with commit comment on detecting possible memory regression
+          alert-threshold: '200%'
+          fail-on-alert: true
+          # Requires one-time-only creation of this branch on remote repo. This will
+          # store the generated information.
+          gh-pages-branch: unmerged-pr-memory-data
+
+          # Do not store historical benchmark info of unfinished PRs. Commits seem to get
+          # made anyways, so make sure that the branch in `gh-pages-branch` is
+          # different from the branch used for merges to master/main branch.
+          auto-push: false
+
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
+
+      # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output
+      # into dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result & create dashboard (merge to master only)
+        # only merges to master (implies PR is finished and approved by this point)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: gregtatum/github-action-benchmark@v1
+        with:
+          name: Heap – ${{ matrix.example.component }}
+          # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+          tool: 'ndjson'
+          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}
+          output-file-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}/output.ndjson
+          alert-threshold: '200%'
+          fail-on-alert: true
+          # The historical run information will be stored in this branch. This is the same
+          # branch that is being used by the performance benchmark. The information is
+          # computed by gregtatum/github-action-benchmark, and is added to a .js file in
+          # the branch, e.g. benchmarks/memory/{os}/{component}/{example}/data.js
+          gh-pages-branch: gh-pages
+          auto-push: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
+
+      # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the
+      # files across jobs within the same workflow.
+
+      - name: Switch branch to get result of benchmark pages output (merge to master only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: git checkout gh-pages
+
+      - name: Upload updated benchmark data (merge to master only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v2
+        with:
+          # Use wildcard pattern to preserve dir structure of uploaded files:
+          path: ./benchmarks/memory/**
+          name: benchmark-memory
 
   # Doc-GH-Pages job
 
