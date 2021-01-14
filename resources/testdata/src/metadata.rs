@@ -86,11 +86,10 @@ pub fn load() -> Result<PackageInfo, Error> {
 
 #[test]
 fn test_metadata() {
-    use icu_locid_macros::langid;
     let package_info = load().expect("Failed to load metadata");
     assert!(package_info
         .package_metadata
         .locales
-        .contains(&(langid!("und"))));
+        .contains(&(LanguageIdentifier::und())));
     assert!(package_info.package_metadata.locales.len() > 10);
 }

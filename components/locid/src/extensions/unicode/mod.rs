@@ -78,6 +78,23 @@ pub struct Unicode {
 }
 
 impl Unicode {
+    /// Returns a new empty map of Unicode extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::unicode::Unicode;
+    ///
+    /// assert_eq!(Unicode::const_default(), Unicode::default());
+    /// ```
+    #[inline]
+    pub const fn const_default() -> Self {
+        Self {
+            keywords: Keywords::const_default(),
+            attributes: Attributes::const_default(),
+        }
+    }
+
     /// Returns `true` if there list of keywords and attributes is empty.
     ///
     /// # Examples
@@ -85,7 +102,7 @@ impl Unicode {
     /// ```
     /// use icu_locid::Locale;
     ///
-    /// let mut loc: Locale = "en-US-u-foo".parse()
+    /// let loc: Locale = "en-US-u-foo".parse()
     ///     .expect("Parsing failed.");
     ///
     /// assert_eq!(loc.extensions.unicode.is_empty(), false);

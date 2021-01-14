@@ -78,7 +78,7 @@ impl ExtensionType {
     }
 }
 
-/// A map of extensions associated with a given `Locale.
+/// A map of extensions associated with a given `Locale`.
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Extensions {
     pub unicode: Unicode,
@@ -87,6 +87,36 @@ pub struct Extensions {
 }
 
 impl Extensions {
+    /// Returns a new empty map of extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::Extensions;
+    ///
+    /// assert_eq!(Extensions::const_default(), Extensions::default());
+    /// ```
+    #[inline]
+    pub const fn const_default() -> Self {
+        Self {
+            unicode: Unicode::const_default(),
+            transform: Transform::const_default(),
+            private: Private::const_default(),
+        }
+    }
+
+    /// Returns whether there are no extensions present.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    ///
+    /// let loc: Locale = "en-US-u-foo".parse()
+    ///     .expect("Parsing failed.");
+    ///
+    /// assert_eq!(loc.extensions.is_empty(), false);
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.unicode.is_empty() && self.transform.is_empty() && self.private.is_empty()
     }

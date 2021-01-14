@@ -362,14 +362,14 @@ mod tests {
             TestCase {
                 resc_options: ResourceOptions {
                     variant: None,
-                    langid: Some(LanguageIdentifier::default()),
+                    langid: Some(LanguageIdentifier::und()),
                 },
                 expected: "und",
             },
             TestCase {
                 resc_options: ResourceOptions {
                     variant: Some(Cow::Borrowed("GBP")),
-                    langid: Some(LanguageIdentifier::default()),
+                    langid: Some(LanguageIdentifier::und()),
                 },
                 expected: "GBP/und",
             },

@@ -103,6 +103,26 @@ impl LanguageIdentifier {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
+    /// Returns the default undefined language "und". Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::LanguageIdentifier;
+    ///
+    /// assert_eq!(LanguageIdentifier::und(), LanguageIdentifier::default());
+    /// assert_eq!("und", LanguageIdentifier::und().to_string());
+    /// ```
+    #[inline]
+    pub const fn und() -> Self {
+        Self {
+            language: subtags::Language::und(),
+            script: None,
+            region: None,
+            variants: subtags::Variants::const_default(),
+        }
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
