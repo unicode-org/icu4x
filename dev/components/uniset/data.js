@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610394674135,
+  "lastUpdate": 1610604946502,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2609,6 +2609,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33538454,
             "range": "± 828512",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20dd293f708382695be8d730d7492400bf50520f",
+          "message": "Make the DateTime bags more explicit (#429)\n\n* Make the DateTime bags more explicit\r\n\r\nI found myself confused on the usage of the bags and the difference\r\nbetween them and the options provided to the date time. I felt that it\r\nwas better to be explicit in the examples, rather than giving more\r\nterse, but potentially misleading examples.\r\n\r\n* Address feedback on adding into() examples",
+          "timestamp": "2021-01-13T22:10:10-08:00",
+          "tree_id": "cf42e024d6e4b6463169ec87f02ad4433bc5055c",
+          "url": "https://github.com/unicode-org/icu4x/commit/20dd293f708382695be8d730d7492400bf50520f"
+        },
+        "date": 1610604943013,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34247213,
+            "range": "± 1496129",
             "unit": "ns/iter"
           }
         ]
