@@ -153,7 +153,7 @@
   },
   {
     "input": "und-Arab-FO",
-    "output": "fo-Arab-FO"
+    "output": "ar-Arab-FO"
   },
   {
     "input": "zh-TW",
@@ -170,5 +170,9 @@
   {
     "input": "und-TW",
     "output": "zh-Hant-TW"
+  },
+  {
+    "input": "zh-hant-u-nu-Chinese-hc-h24",
+    "output": "zh-Hant-TW-u-hc-h24-nu-chinese"
   }
 ]

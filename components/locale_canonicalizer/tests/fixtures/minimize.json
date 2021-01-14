@@ -10,5 +10,9 @@
   {
     "input": "en",
     "output": "en"
+  },
+  {
+    "input": "zh-Hant-TW-u-hc-h24-nu-chinese",
+    "output": "zh-TW-u-hc-h24-nu-chinese"
   }
 ]

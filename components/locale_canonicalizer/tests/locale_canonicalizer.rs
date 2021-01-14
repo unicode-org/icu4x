@@ -4,9 +4,8 @@
 mod fixtures;
 mod helpers;
 
-use icu_locale_canonicalizer::LocaleCanonicalizer;
+use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 use icu_locid::Locale;
-use icu_locid_macros::langid;
 
 #[test]
 fn test_maximize() {
@@ -18,19 +17,16 @@ fn test_maximize() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
 
     for case in testcases {
-        let mut locale: Locale = case.input.into();
+        let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
-        let was_modified = lc.maximize(&mut locale).unwrap();
+        let result = lc.maximize(&mut locale);
         assert_eq!(locale.to_string(), case.output);
-        if was_modified {
+        if result == CanonicalizationResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
             assert_eq!(locale, unmodified);
         }
     }
-
-    let mut locale = langid!("zz").into();
-    assert!(lc.maximize(&mut locale).is_err());
 }
 
 #[test]
@@ -43,11 +39,11 @@ fn test_minimize() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
 
     for case in testcases {
-        let mut locale: Locale = case.input.into();
+        let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
-        let was_modified = lc.minimize(&mut locale).unwrap();
+        let result = lc.minimize(&mut locale);
         assert_eq!(locale.to_string(), case.output);
-        if was_modified {
+        if result == CanonicalizationResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
             assert_eq!(locale, unmodified);
