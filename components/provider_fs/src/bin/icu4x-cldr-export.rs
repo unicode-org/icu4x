@@ -269,8 +269,10 @@ fn main() -> Result<(), Error> {
         _ => unreachable!(),
     };
 
-    let mut options = fs_exporter::ExporterOptions::default();
-    options.root = output_path;
+    let mut options = fs_exporter::ExporterOptions {
+        root: output_path,
+        ..Default::default(),
+    };
     if let Some(value) = matches.value_of("ALIASING") {
         options.aliasing = match value {
             "none" => manifest::AliasOption::NoAliases,
