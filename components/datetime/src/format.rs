@@ -6,6 +6,7 @@ use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider::DateTimeDates;
+use writeable::Writeable;
 use icu_provider::structs;
 use std::fmt;
 
@@ -45,7 +46,20 @@ where
     pub(crate) date_time: &'l T,
 }
 
-// TODO(#181): Implement Writeable instead of fmt::Display
+impl<'l, T> Writeable for FormattedDateTime<'l, T>
+where
+    T: DateTimeType
+{
+    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+        write_pattern(self.pattern, self.data, self.date_time, sink).map_err(|_| std::fmt::Error)
+    }
+
+    fn write_len(&self) -> usize {
+        // TODO(#370): Return a signal that this value is only an approximate lower bound.
+        self.pattern.0.len()
+    }
+}
+
 impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
 where
     T: DateTimeType,
@@ -56,11 +70,11 @@ where
 }
 
 // Temporary formatting number with length.
-fn format_number(
-    result: &mut impl fmt::Write,
+fn format_number<W>(
+    result: &mut W,
     num: usize,
     length: FieldLength,
-) -> Result<(), std::fmt::Error> {
+) -> Result<(), std::fmt::Error> where W: fmt::Write + ?Sized {
     match length {
         FieldLength::One => write!(result, "{}", num),
         FieldLength::TwoDigit => {
@@ -86,14 +100,15 @@ fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::Wee
     date::WeekDay::new_unchecked(result as u8)
 }
 
-pub fn write_pattern<T>(
+pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
     data: &structs::dates::gregory::DatesV1,
     date_time: &T,
-    w: &mut impl fmt::Write,
+    w: &mut W,
 ) -> Result<(), DateTimeFormatError>
 where
     T: DateTimeType,
+    W: fmt::Write + ?Sized,
 {
     for item in &pattern.0 {
         match item {

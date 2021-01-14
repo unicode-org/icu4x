@@ -22,6 +22,7 @@ include = [
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
+writeable = { version = "0.1", path = "../../utils/writeable" }
 
 [dev-dependencies]
 criterion = "0.3"
