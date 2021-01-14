@@ -187,10 +187,10 @@ fn write_field_new(
             length,
         } => format_number(w, date_time.year().number, length)?,
 
-        fields::Field {
-            symbol: fields::FieldSymbol::Year(fields::Year::WeekOf),
-            length,
-        } => format_number(w, date_time.year_week().number, length)?,
+        // fields::Field {
+        //     symbol: fields::FieldSymbol::Year(fields::Year::WeekOf),
+        //     length,
+        // } => format_number(w, date_time.year_week().number, length)?,
 
         fields::Field {
             symbol: fields::FieldSymbol::Month(month_type),

@@ -16,18 +16,29 @@ pub struct MonthCode(pub TinyStr8);
 
 pub struct JulianDay(pub i64);
 
-pub struct Year {
-    pub start: JulianDay,
+pub struct DayOfMonth(pub u32);
 
+pub struct Weekday(pub u8);
+
+pub struct DayOfYear(pub u32);
+
+pub struct WeekOfMonth(pub u32);
+
+pub struct WeekOfYear(pub u32);
+
+
+
+
+
+pub struct Year {
     pub era: Era,
     pub number: usize,   // FIXME: i64
     pub extended: usize, // FIXME: i64
     pub cyclic: CyclicYear,
+    pub length: usize, // FIXME: u32
 }
 
 pub struct Month {
-    pub start: JulianDay,
-
     pub number: usize, // FIXME: i64
     pub code: MonthCode,
 }
@@ -47,21 +58,29 @@ pub struct Time {
 }
 
 pub trait NewDateTimeType {
-    fn julian_day(&self) -> JulianDay;
     fn year(&self) -> Year;
-    fn year_week(&self) -> Year;
+    fn prev_year(&self) -> Year;
+    fn next_year(&self) -> Year;
     fn quarter(&self) -> Quarter;
     fn month(&self) -> Month;
+    fn day_of_year(&self) -> DayOfYear;
+    fn day_of_month(&self) -> DayOfMonth;
+    fn weekday(&self) -> Weekday;
     fn time(&self) -> Time;
 }
 
-fn julian_year(year: usize) -> i64 {
-    // FIXME: Implement this correctly!
-    // This is a NOT a real implementation!!!
-    ((year as i64) - 2000) * 365
+pub struct DateTimeLocalizer<'s, T: NewDateTimeType> {
+    pub data: &'s T,
 }
 
-fn julian_month(month: date::Month) -> i64 {
+pub trait FullDateTime: NewDateTimeType {
+    fn year_week(&self) -> Year;
+    fn week_of_month(&self) -> WeekOfMonth;
+    fn week_of_year(&self) -> WeekOfYear;
+    fn flexible_day_period(&self) -> ();
+}
+
+fn month_day_of_year(month: date::Month) -> u32 {
     // FIXME: This doesn't do leap years!!!
     match u8::from(month) {
         1 => 0,
@@ -81,21 +100,32 @@ fn julian_month(month: date::Month) -> i64 {
 }
 
 impl NewDateTimeType for MockDateTime {
-    fn julian_day(&self) -> JulianDay {
-        JulianDay(julian_year(self.year) + julian_month(self.month) + u8::from(self.day) as i64)
-    }
     fn year(&self) -> Year {
         Year {
-            start: JulianDay(julian_year(self.year)),
             era: Era(tinystr8!("era001")),
             number: self.year,
             extended: self.year,
             cyclic: CyclicYear(tinystr8!("TODO")),
+            length: 365, // TODO
         }
     }
-    fn year_week(&self) -> Year {
-        // FIXME
-        self.year()
+    fn prev_year(&self) -> Year {
+        Year {
+            era: Era(tinystr8!("era001")),
+            number: self.year - 1,
+            extended: self.year - 1,
+            cyclic: CyclicYear(tinystr8!("TODO")),
+            length: 365, // TODO
+        }
+    }
+    fn next_year(&self) -> Year {
+        Year {
+            era: Era(tinystr8!("era001")),
+            number: self.year + 1,
+            extended: self.year + 1,
+            cyclic: CyclicYear(tinystr8!("TODO")),
+            length: 365, // TODO
+        }
     }
     fn quarter(&self) -> Quarter {
         match u8::from(self.month) {
@@ -108,10 +138,18 @@ impl NewDateTimeType for MockDateTime {
     }
     fn month(&self) -> Month {
         Month {
-            start: JulianDay(julian_year(self.year) + julian_month(self.month)),
             number: u8::from(self.month) as usize,
             code: MonthCode(tinystr8!("TODO")),
         }
+    }
+    fn day_of_year(&self) -> DayOfYear {
+        DayOfYear(month_day_of_year(self.month) + u8::from(self.day) as u32)
+    }
+    fn day_of_month(&self) -> DayOfMonth {
+        DayOfMonth(u8::from(self.day) as u32)
+    }
+    fn weekday(&self) -> Weekday {
+        unimplemented!()
     }
     fn time(&self) -> Time {
         Time {
