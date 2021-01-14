@@ -95,20 +95,25 @@ fn update_property_aliases<'s>(
 }
 
 /// Parse enum property value definition line.
-fn update_enum_val_aliases<'s>(enum_val_aliases: &mut HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>, line: &'s str) {
+fn update_enum_val_aliases<'s>(
+    enum_val_aliases: &mut HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
+    line: &'s str,
+) {
     let mut line_parts = split_line(&line);
     assert_eq!(&"value", &line_parts[0]);
     line_parts.drain(0..1);
     let enum_prop_name = line_parts[0];
     let enum_prop_val = line_parts[1];
-    if ! enum_val_aliases.contains_key(&enum_prop_name) {
+    if !enum_val_aliases.contains_key(&enum_prop_name) {
         enum_val_aliases.insert(enum_prop_name, HashMap::new());
     }
-    let enum_val_alias_map: &mut HashMap<&str, HashSet<&str>> = enum_val_aliases.get_mut(&enum_prop_name).unwrap();
-    if ! enum_val_alias_map.contains_key(&enum_prop_val) {
+    let enum_val_alias_map: &mut HashMap<&str, HashSet<&str>> =
+        enum_val_aliases.get_mut(&enum_prop_name).unwrap();
+    if !enum_val_alias_map.contains_key(&enum_prop_val) {
         enum_val_alias_map.insert(enum_prop_val, HashSet::new());
     }
-    let enum_prop_val_aliases: &mut HashSet<&str> = enum_val_alias_map.get_mut(&enum_prop_val).unwrap();
+    let enum_prop_val_aliases: &mut HashSet<&str> =
+        enum_val_alias_map.get_mut(&enum_prop_val).unwrap();
     enum_prop_val_aliases.insert(enum_prop_val);
     line_parts.drain(0..2);
     // What remains of line_parts are all of the remaining aliases for this
@@ -298,35 +303,45 @@ fn get_enum_prop_unisets<'s>(
     enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
 ) -> HashMap<&'s str, UnicodeSet> {
-
     let mut m: HashMap<&str, HashMap<&str, UnicodeSetBuilder>> = HashMap::new();
-    let enum_prop_mappings: HashMap<&str, &str> =
-        aliases_as_canonical_mappings(enum_prop_aliases);
-    
+    let enum_prop_mappings: HashMap<&str, &str> = aliases_as_canonical_mappings(enum_prop_aliases);
+
     let enum_val_mappings: HashMap<&str, HashMap<&str, &str>> =
         get_enum_val_canonical_mapping(enum_val_aliases);
 
-    for (canonical_prop_name, all_prop_name_aliases) in enum_prop_aliases {    
+    for (canonical_prop_name, all_prop_name_aliases) in enum_prop_aliases {
         for (code_point, code_point_prop_key_vals) in code_points {
-            
             let code_point_prop_names: HashSet<&str> =
                 code_point_prop_key_vals.keys().copied().collect();
             if !all_prop_name_aliases.is_disjoint(&code_point_prop_names) {
-
                 for prop_name in all_prop_name_aliases.intersection(&code_point_prop_names) {
                     let val_name: &str = code_point_prop_key_vals.get(prop_name).unwrap();
-                    let canonicalized_val_name: &str = enum_val_mappings.get(canonical_prop_name).unwrap().get(val_name).unwrap();
+                    let canonicalized_val_name: &str = enum_val_mappings
+                        .get(canonical_prop_name)
+                        .unwrap()
+                        .get(val_name)
+                        .unwrap();
 
                     if !m.contains_key(canonical_prop_name) {
                         m.insert(canonical_prop_name, HashMap::new());
                     }
 
-                    if !m.get(canonical_prop_name).unwrap().contains_key(canonicalized_val_name) {
-                        let result_prop_val_builder_map: &mut HashMap<&str, UnicodeSetBuilder> = m.get_mut(canonical_prop_name).unwrap();
-                        result_prop_val_builder_map.insert(canonicalized_val_name, UnicodeSetBuilder::new());
+                    if !m
+                        .get(canonical_prop_name)
+                        .unwrap()
+                        .contains_key(canonicalized_val_name)
+                    {
+                        let result_prop_val_builder_map: &mut HashMap<&str, UnicodeSetBuilder> =
+                            m.get_mut(canonical_prop_name).unwrap();
+                        result_prop_val_builder_map
+                            .insert(canonicalized_val_name, UnicodeSetBuilder::new());
                     }
 
-                    let enum_val_uniset_builder: &mut UnicodeSetBuilder = m.get_mut(canonical_prop_name).unwrap().get_mut(canonicalized_val_name).unwrap();
+                    let enum_val_uniset_builder: &mut UnicodeSetBuilder = m
+                        .get_mut(canonical_prop_name)
+                        .unwrap()
+                        .get_mut(canonicalized_val_name)
+                        .unwrap();
                     enum_val_uniset_builder.add_char(std::char::from_u32(*code_point).unwrap());
                 }
             }
@@ -337,7 +352,8 @@ fn get_enum_prop_unisets<'s>(
 
     for (canonical_prop_name, prop_val_builder_map) in m {
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
-            let enum_val_uniset_name: String = format!("{}={}", canonical_prop_name, canonical_val_name);
+            let enum_val_uniset_name: String =
+                format!("{}={}", canonical_prop_name, canonical_val_name);
             let uniset = uniset_builder.build();
 
             result.insert(enum_val_uniset_name.as_str(), uniset);
@@ -345,10 +361,11 @@ fn get_enum_prop_unisets<'s>(
     }
 
     result
-    
 }
 
-fn aliases_as_canonical_mappings<'s>(aliases_map: &HashMap<&'s str, HashSet<&'s str>>) -> HashMap<&'s str, &'s str> {
+fn aliases_as_canonical_mappings<'s>(
+    aliases_map: &HashMap<&'s str, HashSet<&'s str>>,
+) -> HashMap<&'s str, &'s str> {
     let mut result: HashMap<&str, &str> = HashMap::new();
     for (canonical_name, aliases) in aliases_map {
         // let canonical_name = canonical_name.clone();
@@ -361,7 +378,9 @@ fn aliases_as_canonical_mappings<'s>(aliases_map: &HashMap<&'s str, HashSet<&'s 
     result
 }
 
-fn get_enum_val_canonical_mapping<'s>(enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>) -> HashMap<&'s str, HashMap<&'s str, &'s str>> {
+fn get_enum_val_canonical_mapping<'s>(
+    enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
+) -> HashMap<&'s str, HashMap<&'s str, &'s str>> {
     let mut result: HashMap<&str, HashMap<&str, &str>> = HashMap::new();
     for (enum_prop_canon_name, enum_val_aliases) in enum_val_aliases {
         let enum_val_canonical_mapping = aliases_as_canonical_mappings(enum_val_aliases);
@@ -447,8 +466,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     }
 
     for (key_val_tuple_name, uniset) in enum_prop_unisets {
-        let ppucd_prop: UnicodeProperty =
-            UnicodeProperty::from_uniset(&uniset, key_val_tuple_name);
+        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, key_val_tuple_name);
         props.push(ppucd_prop);
     }
 
@@ -550,8 +568,7 @@ mod gen_properties_test {
     #[test]
     fn code_point_overrides_test() {
         let defaults_line = "defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX";
-        let block_line =
-            "block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy";
+        let block_line = "block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;lb=AL;sc=Zyyy";
         let code_point_line = "cp;0020;bc=WS;gc=Zs;lb=SP;na=SPACE;Name_Alias=abbreviation=SP;Pat_WS;SB=SP;WB=WSegSpace;WSpace";
 
         let exp_code_point: u32 = 32;
@@ -718,7 +735,7 @@ mod gen_properties_test {
         let mut exp_enum_val_aliases: HashMap<&str, HashMap<&str, HashSet<&str>>> = HashMap::new();
         let exp_key = "gcm";
         let mut exp_val_alias_map: HashMap<&str, HashSet<&str>> = HashMap::new();
-        let mut sc_set: HashSet<&str>= HashSet::new();
+        let mut sc_set: HashSet<&str> = HashSet::new();
         sc_set.insert("Sc");
         sc_set.insert("Currency_Symbol");
         let mut sk_set: HashSet<&str> = HashSet::new();
@@ -762,7 +779,7 @@ mod gen_properties_test {
         exp_mappings.insert("Other_Symbol", "So");
 
         let mut symbol_props_val_alias_map: HashMap<&str, HashSet<&str>> = HashMap::new();
-        let mut sc_set: HashSet<&str>= HashSet::new();
+        let mut sc_set: HashSet<&str> = HashSet::new();
         sc_set.insert("Sc");
         sc_set.insert("Currency_Symbol");
         let mut sk_set: HashSet<&str> = HashSet::new();
@@ -803,7 +820,7 @@ mod gen_properties_test {
         let mut enum_val_aliases: HashMap<&str, HashMap<&str, HashSet<&str>>> = HashMap::new();
         let enum_prop = "gcm";
         let mut val_alias_map: HashMap<&str, HashSet<&str>> = HashMap::new();
-        let mut sc_set: HashSet<&str>= HashSet::new();
+        let mut sc_set: HashSet<&str> = HashSet::new();
         sc_set.insert("Sc");
         sc_set.insert("Currency_Symbol");
         let mut sk_set: HashSet<&str> = HashSet::new();
@@ -837,7 +854,8 @@ mod gen_properties_test {
     fn parse_with_enum_props_test() {
         // Input
         let ppucd_property_files_root_path = "tests/testdata/ppucd-sc-tglg-test.txt";
-        let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
+        let ppucd_property_file_str =
+            std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
         // Actual
         let uni_props: UnicodeProperties = parse(&ppucd_property_file_str);
         // Convert actual to testable form
@@ -1063,22 +1081,28 @@ mod gen_properties_test {
         let act_uni_props_names_set: HashSet<&str> =
             act_uni_props_set.iter().map(|p| p.name).collect();
         let names_diff = act_uni_props_names_set.difference(&exp_uni_props_names_set);
-        let names_diff_str = 
-            names_diff
-                .into_iter()
-                .map(|s| s.clone())
-                .collect::<Vec<&str>>()
-                .join(", ");
-        assert_eq!(exp_uni_props_names_set, act_uni_props_names_set, "**** prop names missing in exp but in act = {}", names_diff_str);
+        let names_diff_str = names_diff
+            .into_iter()
+            .map(|s| s.clone())
+            .collect::<Vec<&str>>()
+            .join(", ");
+        assert_eq!(
+            exp_uni_props_names_set, act_uni_props_names_set,
+            "**** prop names missing in exp but in act = {}",
+            names_diff_str
+        );
 
         // full assertion
         let diff = act_uni_props_set.difference(&exp_uni_props_set);
-        let diff_str = 
-            diff
-                .into_iter()
-                .map(|up| format!("{:?}", up))
-                .collect::<Vec<String>>()
-                .join(", ");
-        assert_eq!(exp_uni_props_set, act_uni_props_set, "**** UnicodeProperty values missing in exp but in act = {}", diff_str);
+        let diff_str = diff
+            .into_iter()
+            .map(|up| format!("{:?}", up))
+            .collect::<Vec<String>>()
+            .join(", ");
+        assert_eq!(
+            exp_uni_props_set, act_uni_props_set,
+            "**** UnicodeProperty values missing in exp but in act = {}",
+            diff_str
+        );
     }
 }
