@@ -17,13 +17,24 @@
 //! # Examples
 //!
 //! ```
+//! use icu_datetime::DateTimeFormatOptions;
 //! use icu_datetime::options::style;
 //!
-//! let options = style::Bag {
+//! let bag = style::Bag {
 //!      date: Some(style::Date::Medium), // `Medium` length connector will be used
 //!      time: Some(style::Time::Short),
 //!      preferences: None,
 //! };
+//!
+//! let options = DateTimeFormatOptions::Style(bag);
+//! ```
+//!
+//! Or the options can be inferred through the `.into()` trait.
+//!
+//! ```
+//! # use icu_datetime::DateTimeFormatOptions;
+//! # use icu_datetime::options::style;
+//! let options: DateTimeFormatOptions = style::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
@@ -38,13 +49,24 @@ use super::preferences;
 /// # Examples
 ///
 /// ```
+/// use icu_datetime::DateTimeFormatOptions;
 /// use icu_datetime::options::style;
 ///
-/// let options = style::Bag {
+/// let bag = style::Bag {
 ///      date: Some(style::Date::Medium),
 ///      time: Some(style::Time::Short),
 ///      preferences: None,
 /// };
+///
+/// let options = DateTimeFormatOptions::Style(bag);
+/// ```
+///
+/// Or the options can be inferred through the `.into()` trait.
+///
+/// ```
+/// # use icu_datetime::DateTimeFormatOptions;
+/// # use icu_datetime::options::style;
+/// let options: DateTimeFormatOptions = style::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html

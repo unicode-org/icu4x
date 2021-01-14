@@ -13,17 +13,18 @@
 //!
 //! ```
 //! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
 //! let lid = langid!("en");
 //!
-//! let options = style::Bag {
+//! // See the next code example for a more ergonomic example with .into().
+//! let options = DateTimeFormatOptions::Style(style::Bag {
 //!     date: Some(style::Date::Medium),
 //!     time: Some(style::Time::Short),
 //!     ..Default::default()
-//! }.into();
+//! });
 //!
 //! let dtf = DateTimeFormat::try_new(lid, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
@@ -34,6 +35,23 @@
 //!
 //! let formatted_date = dtf.format(&date);
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
+//! ```
+//!
+//! The options can be created more ergonomically using the `Into` trait to automatically
+//! convert a [`options::style::Bag`] into a [`DateTimeFormatOptions::Style`].
+//!
+//! ```
+//! # use icu_locid_macros::langid;
+//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
+//! # let provider = icu_testdata::get_provider();
+//! # let lid = langid!("en");
+//! let options = style::Bag {
+//!     date: Some(style::Date::Medium),
+//!     time: Some(style::Time::Short),
+//!     ..Default::default()
+//! }.into();
+//!
+//! let dtf = DateTimeFormat::try_new(lid, &provider, &options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Style`] bag, but in the future,
