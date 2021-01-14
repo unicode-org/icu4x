@@ -1,8 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-#[cfg(test)]
-mod tests;
 
 use crate::date::{self, DateTimeType};
 use crate::error::DateTimeFormatError;
@@ -171,4 +169,30 @@ where
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_format_number() {
+        let values = &[2, 20, 201, 2017, 20173];
+        let samples = &[
+            (FieldLength::One, ["2", "20", "201", "2017", "20173"]),
+            (FieldLength::TwoDigit, ["02", "20", "01", "17", "73"]),
+            (
+                FieldLength::Abbreviated,
+                ["002", "020", "201", "2017", "20173"],
+            ),
+            (FieldLength::Wide, ["0002", "0020", "0201", "2017", "20173"]),
+        ];
+        for (length, expected) in samples {
+            for (value, expected) in values.iter().zip(expected) {
+                let mut s = String::new();
+                format_number(&mut s, *value, *length).unwrap();
+                assert_eq!(s, *expected);
+            }
+        }
+    }
 }

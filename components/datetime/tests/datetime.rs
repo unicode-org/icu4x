@@ -2,10 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 mod fixtures;
+mod patterns;
 
-use icu_datetime::date::MockDateTime;
-use icu_datetime::DateTimeFormat;
-use std::fmt::Write;
+use icu_datetime::{DateTimeFormat, provider::{gregory::DatesV1, key::GREGORY_V1}};
+use icu_datetime::{date::MockDateTime, DateTimeFormatOptions};
+use icu_locid::LanguageIdentifier;
+use icu_provider::{
+    struct_provider::StructProvider,
+    DataProvider, DataRequest, ResourceOptions, ResourcePath,
+};
+use std::{borrow::Cow, fmt::Write};
 
 #[test]
 fn test_fixtures() {
@@ -31,5 +37,59 @@ fn test_fixtures() {
         let mut s = String::new();
         write!(s, "{}", fdt).unwrap();
         assert_eq!(s, fx.output.value);
+    }
+}
+
+#[test]
+fn test_dayperiod_patterns() {
+    use patterns::structs::Expectation;
+    let provider = icu_testdata::get_provider();
+    for test in patterns::get_tests("dayperiods").unwrap().0 {
+        let langid: LanguageIdentifier = test.locale.parse().unwrap();
+        let mut data: Cow<DatesV1> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        for test_case in &test.test_cases {
+            for dt_input in &test_case.date_times {
+                let date_time: MockDateTime = dt_input.parse().unwrap();
+                for Expectation { patterns, expected } in &test_case.expectations {
+                    for pattern_input in patterns {
+                        *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
+                        *data.to_mut().patterns.date_time.long.to_mut() = String::from("{0}");
+                        let provider = StructProvider {
+                            key: GREGORY_V1,
+                            data: data.as_ref(),
+                        };
+                        let dtf = DateTimeFormat::try_new(
+                            langid.clone(),
+                            &provider,
+                            &DateTimeFormatOptions::default(),
+                        )
+                        .unwrap();
+                        assert_eq!(
+                            dtf.format(&date_time).to_string(),
+                            *expected,
+                            "\n\
+                            locale:   `{}`,\n\
+                            datetime: `{}`,\n\
+                            pattern:  `{}`",
+                            langid,
+                            dt_input,
+                            pattern_input,
+                        );
+                    }
+                }
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@ use std::fs::File;
 use std::io::BufReader;
 
 pub fn get_tests(name: &str) -> std::io::Result<structs::Tests> {
-    let file = File::open(format!("./src/format/tests/patterns/tests/{}.json", name))?;
+    let file = File::open(format!("./tests/patterns/tests/{}.json", name))?;
     let reader = BufReader::new(file);
     Ok(serde_json::from_reader(reader)?)
 }
