@@ -108,7 +108,7 @@ impl Locale {
     /// assert_eq!("und", Locale::und().to_string());
     /// ```
     #[inline]
-    pub fn und() -> Self {
+    pub const fn und() -> Self {
         Self {
             language: subtags::Language::und(),
             script: None,
