@@ -106,21 +106,15 @@
       "format": {
         "abbreviated": {
           "am": "AM",
-          "pm": "PM",
-          "noon": null,
-          "midnight": null
+          "pm": "PM"
         },
         "narrow": {
           "am": "AM",
-          "pm": "PM",
-          "noon": null,
-          "midnight": null
+          "pm": "PM"
         },
         "wide": {
           "am": "AM",
-          "pm": "PM",
-          "noon": null,
-          "midnight": null
+          "pm": "PM"
         }
       }
     }

@@ -102,28 +102,24 @@
         "abbreviated": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "mediodía",
-          "midnight": null
+          "noon": "mediodía"
         },
         "narrow": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "del mediodía",
-          "midnight": null
+          "noon": "del mediodía"
         },
         "wide": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "mediodía",
-          "midnight": null
+          "noon": "mediodía"
         }
       },
       "stand_alone": {
         "narrow": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "m.",
-          "midnight": null
+          "noon": "m."
         }
       }
     }
