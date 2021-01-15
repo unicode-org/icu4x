@@ -366,7 +366,7 @@ impl UnicodeSetBuilder {
     /// Complements the set in the builder, adding any elements in the set if not in the builder, and
     /// removing them otherwise.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};

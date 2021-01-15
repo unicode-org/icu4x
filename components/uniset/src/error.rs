@@ -7,24 +7,6 @@ use std::path::{Path, PathBuf};
 #[derive(Debug)]
 pub enum Error {
     Io(std::io::Error, Option<PathBuf>),
-    PpucdParse(PpucdParseError),
-}
-
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub struct PpucdParseError {
-    pub src: &'static str,
-}
-
-impl From<PpucdParseError> for Error {
-    fn from(err: PpucdParseError) -> Self {
-        Self::PpucdParse(err)
-    }
-}
-
-impl fmt::Display for PpucdParseError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Could not parse PPUCD file: {}", self.src)
-    }
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
@@ -40,7 +22,6 @@ impl fmt::Display for Error {
         match self {
             Self::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
             Self::Io(err, None) => err.fmt(f),
-            Self::PpucdParse(err) => err.fmt(f),
         }
     }
 }

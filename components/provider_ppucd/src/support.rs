@@ -8,7 +8,7 @@ use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryFrom;
 use std::fs::File;
 use std::io::Read;
 use std::marker::PhantomData;
@@ -73,14 +73,6 @@ impl<'d> From<File> for PpucdDataProvider<'d> {
             ppucd_props: props_data,
             _phantom: PhantomData,
         }
-    }
-}
-
-impl<'d> TryInto<String> for PpucdDataProvider<'d> {
-    type Error = serde_json::error::Error;
-    fn try_into(self) -> Result<String, Self::Error> {
-        let props_data: UnicodeProperties = self.ppucd_props;
-        serde_json::to_string(&props_data)
     }
 }
 

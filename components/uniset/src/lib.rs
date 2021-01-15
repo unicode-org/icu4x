@@ -59,6 +59,7 @@ mod utils;
 
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
+pub use std::fmt;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 
@@ -67,6 +68,12 @@ pub use utils::*;
 pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     InvalidRange(u32, u32),
+}
+
+impl fmt::Display for UnicodeSetError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Error with UnicodeSet: {:?}", self)
+    }
 }
 
 #[derive(PartialEq)]

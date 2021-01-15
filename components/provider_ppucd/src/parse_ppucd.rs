@@ -11,6 +11,13 @@ fn split_line(line: &str) -> Vec<&str> {
     line.split(';').collect::<Vec<_>>()
 }
 
+/// For lines in PPUCD that begin with "defaults", "blk", and "cp" -- the lines
+/// that convey property values for code points (or ranges thereof) -- return
+/// the property information as a map. Enumerated properties' names and values
+/// become keys and values in the map, while the binary property strings are
+/// stored as the key and value in the map. Binary property strings are stored
+/// as-is, so no parsing occurs here when the "false" state of a binary
+/// property is represented with a minus ("-") prefix before the name.
 fn get_data_line_prop_vals(data_line_parts: &[&str]) -> HashMap<String, String> {
     let mut m = HashMap::new();
     // idx 0 = line type identifier (property, value, defaults, blk, cp)
@@ -75,6 +82,9 @@ fn is_defaults_line(line: &str) -> bool {
     line.starts_with("defaults;")
 }
 
+/// Return the property key-value information represented in the "defaults"
+/// line as a map. "defaults" is like the base level of overrides of property
+/// values for all code points in PPUCD.
 fn get_defaults_prop_vals(line: &str) -> HashMap<String, String> {
     let line_parts = split_line(&line);
     assert_eq!(&"defaults", &line_parts[0]);
@@ -85,6 +95,9 @@ fn is_block_line(line: &str) -> bool {
     line.starts_with("block;")
 }
 
+/// Return the property key-value information represented in a "blk"
+/// line as a map. "blocks" represent overrides of property values for code
+/// points in PPUCD within a Unicode block above the "defaults" values.
 fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"block", &line_parts[0]);
@@ -113,6 +126,9 @@ fn is_code_point_line(line: &str) -> bool {
     line.starts_with("cp;")
 }
 
+/// Return the property key-value information represented in a "cp"
+/// line as a map. "cp" represents overrides of property values for a code
+/// point (or range ofcode points) that are layered above "blk" and "defaults".
 fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<String, String>) {
     let line_parts = split_line(&line);
     assert_eq!(&"cp", &line_parts[0]);
@@ -144,6 +160,8 @@ fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<String, String>)
     (range, props_vals)
 }
 
+/// For a single code point, apply the overrides from the PPUCD lines
+/// "defaults", "blk", and "cp".
 fn get_code_point_prop_vals(
     code_point: u32,
     code_point_overrides: &HashMap<UnicodeSet, HashMap<String, String>>,
@@ -177,6 +195,12 @@ fn get_code_point_prop_vals(
     prop_vals
 }
 
+/// Return a map of property names to UnicodeSets when given a map of known
+/// binary property names and the assigned property key-value information for
+/// each code point in PPUCD. This function effectively changes the "grouping"
+/// dimension of code point <-> property key-value information from the
+/// grouping by code point (as given by `code_points`) to a grouping by
+/// property name.
 fn get_binary_prop_unisets(
     prop_aliases: &HashMap<String, HashSet<String>>,
     code_points: &HashMap<u32, HashMap<String, String>>,
@@ -201,6 +225,10 @@ fn get_binary_prop_unisets(
     m
 }
 
+/// Parse a whole PPUCD file that was loaded into a `String` and return a
+/// struct of the binary and enumerated property inversion lists.
+/// Note: even though `UnicodeProperties` stores a sequential data structure of
+/// the `UnicodeProperty` struct, there is no inherent ordering of the entries.
 pub fn parse(s: String) -> UnicodeProperties {
     let lines: std::str::Lines = s.lines();
 

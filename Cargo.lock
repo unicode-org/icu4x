@@ -814,7 +814,6 @@ dependencies = [
  "icu_provider",
  "icu_uniset",
  "serde",
- "serde_json",
  "tinystr",
 ]
 
