@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610604946502,
+  "lastUpdate": 1610735763471,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2639,6 +2639,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34247213,
             "range": "± 1496129",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3a359966df24a4cac457f24f4ef1e6a22d42756e",
+          "message": "Fix clippy warnings (#452)\n\n* Fix clippy warnings\r\n\r\n* Additional fix\r\n\r\n* Revert the additional change, since ExporterOptions are non exhaustive",
+          "timestamp": "2021-01-15T10:29:37-08:00",
+          "tree_id": "a0e6ed158c282dd8c00da376053859c40edb6955",
+          "url": "https://github.com/unicode-org/icu4x/commit/3a359966df24a4cac457f24f4ef1e6a22d42756e"
+        },
+        "date": 1610735759509,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29725605,
+            "range": "± 44669",
             "unit": "ns/iter"
           }
         ]
