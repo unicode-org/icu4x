@@ -1,0 +1,4 @@
+[parse]
+# Whether to parse dependent crates and include their types in the output
+# default: false
+parse_deps = true

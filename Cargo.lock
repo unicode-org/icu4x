@@ -719,6 +719,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_ffi_utils"
+version = "0.1.0"
+dependencies = [
+ "tinystr",
+]
+
+[[package]]
 name = "icu_locid"
 version = "0.1.0"
 dependencies = [
@@ -1843,9 +1850,9 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.4.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "939125669d4043772e1eb2e91e25d1f933679155d961149aa181519de131439f"
+checksum = "1baaa9e6df65a1719dd7259a78655f69eb07b784b78b9c60569cdbcbf36846de"
 dependencies = [
  "tinystr-macros",
  "tinystr-raw",
