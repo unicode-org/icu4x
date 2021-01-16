@@ -122,6 +122,21 @@ impl Language {
         })
     }
 
+    /// Returns the default undefined language "und". Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::subtags::Language;
+    ///
+    /// assert_eq!(Language::und(), Language::default());
+    /// assert_eq!("und", Language::und().to_string());
+    /// ```
+    #[inline]
+    pub const fn und() -> Self {
+        Self(None)
+    }
+
     /// A helper function for displaying
     /// a `Language` subtag as a `&str`.
     ///
