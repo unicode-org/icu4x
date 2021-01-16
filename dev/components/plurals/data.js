@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610735817817,
+  "lastUpdate": 1610765930434,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2267,6 +2267,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 116612,
             "range": "± 541",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f526638516e522312213c9e437a44ecf2101fe6d",
+          "message": "Implementing const Locale::und() and LanguageIdentifier::und() (#450)",
+          "timestamp": "2021-01-15T20:53:02-06:00",
+          "tree_id": "b8429b31702119e9c8612de8f0b3fb72332bafda",
+          "url": "https://github.com/unicode-org/icu4x/commit/f526638516e522312213c9e437a44ecf2101fe6d"
+        },
+        "date": 1610765929840,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1770,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7854,
+            "range": "± 75",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 112260,
+            "range": "± 2595",
             "unit": "ns/iter"
           }
         ]
