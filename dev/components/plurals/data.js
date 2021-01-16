@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610778598363,
+  "lastUpdate": 1610778701189,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2351,6 +2351,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 88206,
             "range": "± 5077",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9347aa4ec3d55df1102a19eb1c438beb1fdd54d",
+          "message": "Adding const tests for Locale und (#458)",
+          "timestamp": "2021-01-16T00:25:06-06:00",
+          "tree_id": "ebc2c67a0e92cd96801ad1e1f8263ed3f4edde86",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9347aa4ec3d55df1102a19eb1c438beb1fdd54d"
+        },
+        "date": 1610778699584,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1797,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7999,
+            "range": "± 361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111002,
+            "range": "± 6041",
             "unit": "ns/iter"
           }
         ]
