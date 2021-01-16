@@ -98,8 +98,11 @@ pub trait Writeable {
 #[macro_export]
 macro_rules! assert_writeable_eq {
     ($expected_str:expr, $actual_writeable:expr) => {
-        let writeable = $actual_writeable;
-        assert_eq!($expected_str, writeable.writeable_to_string());
-        assert_eq!($expected_str.len(), writeable.write_len());
+        {
+            use $crate::Writeable;
+            let writeable = $actual_writeable;
+            assert_eq!($expected_str, writeable.writeable_to_string());
+            assert_eq!($expected_str.len(), writeable.write_len());
+        }
     };
 }

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::script::SCRIPT_LENGTH;
 use crate::parser::errors::ParserError;
+use std::fmt;
 use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::TinyStr8;
@@ -190,10 +191,27 @@ impl FromStr for Language {
     }
 }
 
-impl std::fmt::Display for Language {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl fmt::Display for Language {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_str(self.as_str())
     }
+}
+
+impl writeable::Writeable for Language {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        sink.write_str(self.as_str())
+    }
+
+    fn write_len(&self) -> usize {
+        self.0.map(|t| t.len()).unwrap_or(3)
+    }
+}
+
+#[test]
+fn test_writeable() {
+    writeable::assert_writeable_eq!("aa", &Language::from_str("aa").unwrap());
+    writeable::assert_writeable_eq!("xyz", &Language::from_str("xyz").unwrap());
+    writeable::assert_writeable_eq!("und", &Language::from_str("und").unwrap());
 }
 
 impl PartialEq<&str> for Language {

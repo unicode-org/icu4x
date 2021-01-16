@@ -727,6 +727,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr",
+ "writeable",
 ]
 
 [[package]]
