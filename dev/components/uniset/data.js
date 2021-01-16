@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610765890071,
+  "lastUpdate": 1610778545129,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2699,6 +2699,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36714261,
             "range": "± 712336",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19cc9749dd2f6d29fa70c6a663aef24aa06820e7",
+          "message": "Add environment variable to use custom testdata (#456)",
+          "timestamp": "2021-01-16T00:24:07-06:00",
+          "tree_id": "911f9237447741a675d4d1029ae392f19333a141",
+          "url": "https://github.com/unicode-org/icu4x/commit/19cc9749dd2f6d29fa70c6a663aef24aa06820e7"
+        },
+        "date": 1610778543964,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30461482,
+            "range": "± 62411",
             "unit": "ns/iter"
           }
         ]
