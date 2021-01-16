@@ -19,10 +19,9 @@ pub struct CldrLangID {
 impl CldrLangID {
     /// Return the `CldrLangID` for "root"
     pub fn root() -> Self {
-        // TODO: Use LanguageIdentifier::default()
         Self {
             cldr_language: "root".parse().unwrap(),
-            langid: LanguageIdentifier::default(),
+            langid: LanguageIdentifier::und(),
         }
     }
 }
@@ -30,7 +29,7 @@ impl CldrLangID {
 impl From<LanguageIdentifier> for CldrLangID {
     /// Return a `CldrLangID` for a generic `LanguageIdentifier`. "und" becomes "root".
     fn from(langid: LanguageIdentifier) -> Self {
-        if langid == LanguageIdentifier::default() {
+        if langid == LanguageIdentifier::und() {
             Self::root()
         } else {
             Self {
@@ -152,7 +151,7 @@ fn test_order() {
 fn test_und_root() {
     CldrLangID::from_str("und").expect_err("und should not be allowed as a string");
 
-    let und = CldrLangID::from(LanguageIdentifier::default());
+    let und = CldrLangID::from(LanguageIdentifier::und());
     let root = CldrLangID::from_str("root").unwrap();
     assert_eq!(und, root);
 }
