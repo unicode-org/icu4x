@@ -766,6 +766,7 @@ dependencies = [
  "smallstr",
  "static_assertions",
  "tinystr",
+ "writeable",
 ]
 
 [[package]]
