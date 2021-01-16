@@ -94,15 +94,25 @@ pub trait Writeable {
 /// }
 ///
 /// assert_writeable_eq!("foo", &Demo);
+/// assert_writeable_eq!("foo", &Demo, "Message: {}", "Hello World");
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
-    ($expected_str:expr, $actual_writeable:expr) => {
+    ($expected_str:expr, $actual_writeable:expr $(,)?) => {
         {
             use $crate::Writeable;
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string());
             assert_eq!($expected_str.len(), writeable.write_len());
+        }
+    };
+
+    ($expected_str:expr, $actual_writeable:expr, $($arg:tt)+) => {
+        {
+            use $crate::Writeable;
+            let writeable = $actual_writeable;
+            assert_eq!($expected_str, writeable.writeable_to_string(), $($arg)+);
+            assert_eq!($expected_str.len(), writeable.write_len(), $($arg)+);
         }
     };
 }

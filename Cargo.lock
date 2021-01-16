@@ -445,6 +445,7 @@ dependencies = [
  "rand_pcg 0.2.1",
  "smallvec",
  "static_assertions",
+ "writeable",
 ]
 
 [[package]]

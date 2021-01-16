@@ -5,6 +5,7 @@ use rand::SeedableRng;
 use rand_distr::{Distribution, Triangular};
 use rand_pcg::Lcg64Xsh32;
 use std::str::FromStr;
+use writeable::Writeable;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 

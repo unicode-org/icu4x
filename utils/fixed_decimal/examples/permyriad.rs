@@ -8,6 +8,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use fixed_decimal::FixedDecimal;
+use writeable::Writeable;
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
