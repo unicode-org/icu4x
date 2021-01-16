@@ -38,10 +38,10 @@ impl Attributes {
     /// ```
     /// use icu_locid::extensions::unicode::Attributes;
     ///
-    /// assert_eq!(Attributes::const_default(), Attributes::default());
+    /// assert_eq!(Attributes::new(), Attributes::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self(None)
     }
 

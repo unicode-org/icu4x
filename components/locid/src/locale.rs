@@ -113,8 +113,8 @@ impl Locale {
             language: subtags::Language::und(),
             script: None,
             region: None,
-            variants: subtags::Variants::const_default(),
-            extensions: extensions::Extensions::const_default(),
+            variants: subtags::Variants::new(),
+            extensions: extensions::Extensions::new(),
         }
     }
 

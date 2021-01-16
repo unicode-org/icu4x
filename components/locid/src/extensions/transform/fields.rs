@@ -43,10 +43,10 @@ impl Fields {
     /// ```
     /// use icu_locid::extensions::transform::Fields;
     ///
-    /// assert_eq!(Fields::const_default(), Fields::default());
+    /// assert_eq!(Fields::new(), Fields::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self(None)
     }
 

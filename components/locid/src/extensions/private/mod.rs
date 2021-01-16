@@ -67,10 +67,10 @@ impl Private {
     /// ```
     /// use icu_locid::extensions::private::Private;
     ///
-    /// assert_eq!(Private::const_default(), Private::default());
+    /// assert_eq!(Private::new(), Private::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self(None)
     }
 

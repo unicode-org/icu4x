@@ -39,10 +39,10 @@ impl Variants {
     /// ```
     /// use icu_locid::subtags::Variants;
     ///
-    /// assert_eq!(Variants::const_default(), Variants::default());
+    /// assert_eq!(Variants::new(), Variants::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self(None)
     }
 

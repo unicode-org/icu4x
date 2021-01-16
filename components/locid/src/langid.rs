@@ -119,7 +119,7 @@ impl LanguageIdentifier {
             language: subtags::Language::und(),
             script: None,
             region: None,
-            variants: subtags::Variants::const_default(),
+            variants: subtags::Variants::new(),
         }
     }
 

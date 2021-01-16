@@ -94,14 +94,14 @@ impl Extensions {
     /// ```
     /// use icu_locid::extensions::Extensions;
     ///
-    /// assert_eq!(Extensions::const_default(), Extensions::default());
+    /// assert_eq!(Extensions::new(), Extensions::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self {
-            unicode: Unicode::const_default(),
-            transform: Transform::const_default(),
-            private: Private::const_default(),
+            unicode: Unicode::new(),
+            transform: Transform::new(),
+            private: Private::new(),
         }
     }
 

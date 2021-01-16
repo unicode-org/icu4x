@@ -89,13 +89,13 @@ impl Transform {
     /// ```
     /// use icu_locid::extensions::transform::Transform;
     ///
-    /// assert_eq!(Transform::const_default(), Transform::default());
+    /// assert_eq!(Transform::new(), Transform::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self {
             lang: None,
-            fields: Fields::const_default(),
+            fields: Fields::new(),
         }
     }
 

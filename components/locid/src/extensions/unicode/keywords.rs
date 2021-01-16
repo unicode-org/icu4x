@@ -44,10 +44,10 @@ impl Keywords {
     /// ```
     /// use icu_locid::extensions::unicode::Keywords;
     ///
-    /// assert_eq!(Keywords::const_default(), Keywords::default());
+    /// assert_eq!(Keywords::new(), Keywords::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self(None)
     }
 

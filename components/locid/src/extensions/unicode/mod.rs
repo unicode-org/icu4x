@@ -85,13 +85,13 @@ impl Unicode {
     /// ```
     /// use icu_locid::extensions::unicode::Unicode;
     ///
-    /// assert_eq!(Unicode::const_default(), Unicode::default());
+    /// assert_eq!(Unicode::new(), Unicode::default());
     /// ```
     #[inline]
-    pub const fn const_default() -> Self {
+    pub const fn new() -> Self {
         Self {
-            keywords: Keywords::const_default(),
-            attributes: Attributes::const_default(),
+            keywords: Keywords::new(),
+            attributes: Attributes::new(),
         }
     }
 
