@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610735770356,
+  "lastUpdate": 1610765909758,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1619,6 +1619,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 155226,
             "range": "± 6904",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f526638516e522312213c9e437a44ecf2101fe6d",
+          "message": "Implementing const Locale::und() and LanguageIdentifier::und() (#450)",
+          "timestamp": "2021-01-15T20:53:02-06:00",
+          "tree_id": "b8429b31702119e9c8612de8f0b3fb72332bafda",
+          "url": "https://github.com/unicode-org/icu4x/commit/f526638516e522312213c9e437a44ecf2101fe6d"
+        },
+        "date": 1610765909162,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 146304,
+            "range": "± 4892",
             "unit": "ns/iter"
           }
         ]
