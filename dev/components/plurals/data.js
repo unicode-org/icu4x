@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610765930434,
+  "lastUpdate": 1610778598363,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2309,6 +2309,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112260,
             "range": "± 2595",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19cc9749dd2f6d29fa70c6a663aef24aa06820e7",
+          "message": "Add environment variable to use custom testdata (#456)",
+          "timestamp": "2021-01-16T00:24:07-06:00",
+          "tree_id": "911f9237447741a675d4d1029ae392f19333a141",
+          "url": "https://github.com/unicode-org/icu4x/commit/19cc9749dd2f6d29fa70c6a663aef24aa06820e7"
+        },
+        "date": 1610778597776,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1344,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5895,
+            "range": "± 338",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 88206,
+            "range": "± 5077",
             "unit": "ns/iter"
           }
         ]
