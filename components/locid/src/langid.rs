@@ -110,8 +110,9 @@ impl LanguageIdentifier {
     /// ```
     /// use icu_locid::LanguageIdentifier;
     ///
-    /// assert_eq!(LanguageIdentifier::und(), LanguageIdentifier::default());
-    /// assert_eq!("und", LanguageIdentifier::und().to_string());
+    /// const langid: LanguageIdentifier = LanguageIdentifier::und();
+    /// assert_eq!(LanguageIdentifier::default(), langid);
+    /// assert_eq!("und", langid.to_string());
     /// ```
     #[inline]
     pub const fn und() -> Self {

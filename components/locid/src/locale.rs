@@ -104,8 +104,9 @@ impl Locale {
     /// ```
     /// use icu_locid::Locale;
     ///
-    /// assert_eq!(Locale::und(), Locale::default());
-    /// assert_eq!("und", Locale::und().to_string());
+    /// const loc: Locale = Locale::und();
+    /// assert_eq!(Locale::default(), loc);
+    /// assert_eq!("und", loc.to_string());
     /// ```
     #[inline]
     pub const fn und() -> Self {

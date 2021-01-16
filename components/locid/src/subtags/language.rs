@@ -128,8 +128,9 @@ impl Language {
     /// ```
     /// use icu_locid::subtags::Language;
     ///
-    /// assert_eq!(Language::und(), Language::default());
-    /// assert_eq!("und", Language::und().to_string());
+    /// const language: Language = Language::und();
+    /// assert_eq!(Language::default(), language);
+    /// assert_eq!("und", language.to_string());
     /// ```
     #[inline]
     pub const fn und() -> Self {
