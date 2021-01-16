@@ -19,12 +19,14 @@
 //! let data_provider = icu_testdata::get_provider();
 //!
 //! let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
-//!     .load(&DataRequest {
-//!         data_entry: DataEntry {
-//!             langid: langid!("ru"),
-//!             variant: None,
+//!     .load_payload(&DataRequest {
+//!         resource_path: ResourcePath {
+//!             key: structs::plurals::key::CARDINAL_V1,
+//!             options: ResourceOptions {
+//!                 langid: Some(langid!("ru")),
+//!                 variant: None,
+//!             },
 //!         },
-//!         data_key: structs::plurals::key::CARDINAL_V1,
 //!     })
 //!     .unwrap()
 //!     .take_payload()

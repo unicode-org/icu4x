@@ -156,7 +156,7 @@ pub(crate) mod internal {
                 n: f64,
                 opts: Options,
                 expected: &'static str,
-            };
+            }
             let tests = vec![
                 TestCase {
                     n: 0.0,
@@ -197,7 +197,7 @@ pub(crate) mod internal {
                 n: f64,
                 opts: Options,
                 expected: PluralOperands,
-            };
+            }
             let tests = vec![TestCase {
                 n: 1.5,
                 opts: Options {
@@ -214,6 +214,7 @@ pub(crate) mod internal {
                     w: 1,
                     f: 50,
                     t: 5,
+                    c: 0,
                 },
             }];
             for test in tests {
@@ -238,7 +239,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         Self: Sized,
     {
         // TODO: introduce a global data provider here.
-        let dp = icu_provider::InvariantDataProvider;
+        let dp = icu_provider::inv::InvariantDataProvider;
         Self::try_new_with_provider(l, opts, &dp)
     }
 
@@ -254,14 +255,14 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
 
 impl PluralRules {
     /// Creates a new [`PluralRules`], using the specified data provider.
-    pub fn try_new_with_provider<L, P>(
+    pub fn try_new_with_provider<'d, L, P>(
         l: L,
         opts: ecma402_traits::pluralrules::Options,
         provider: &P,
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'static>,
+        P: icu_provider::DataProvider<'d, icu_provider::structs::plurals::PluralRuleStringsV1<'d>>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);
@@ -291,7 +292,7 @@ mod testing {
             opts: pluralrules::Options,
             numbers: Vec<f64>,
             expected: Vec<&'static str>,
-        };
+        }
         let tests = vec![
             TestCase {
                 locale: "ar",

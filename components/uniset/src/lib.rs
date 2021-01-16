@@ -8,8 +8,8 @@
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!
 //! # Architecture
-//! ICU4X `UnicodeSet` is split up into independent levels, with [`UnicodeSet`](struct.UnicodeSet.html) representing the membership/query API,
-//! and [`UnicodeSetBuilder`](struct.UnicodeSetBuilder.html) representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
+//! ICU4X `UnicodeSet` is split up into independent levels, with [`UnicodeSet`] representing the membership/query API,
+//! and [`UnicodeSetBuilder`] representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
 //! is in future works.
 //!
 //! # Examples:
@@ -18,7 +18,7 @@
 //!
 //! UnicodeSets are created from either serialized UnicodeSets,
 //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
-//! the [`UnicodeSetBuilder`](struct.UnicodeSetBuilder.html), or from the TBA Properties API.
+//! the [`UnicodeSetBuilder`], or from the TBA Properties API.
 //!
 //! ```
 //! use icu_uniset::{UnicodeSet, UnicodeSetBuilder};

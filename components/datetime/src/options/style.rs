@@ -17,16 +17,27 @@
 //! # Examples
 //!
 //! ```
+//! use icu_datetime::DateTimeFormatOptions;
 //! use icu_datetime::options::style;
 //!
-//! let options = style::Bag {
+//! let bag = style::Bag {
 //!      date: Some(style::Date::Medium), // `Medium` length connector will be used
 //!      time: Some(style::Time::Short),
 //!      preferences: None,
 //! };
+//!
+//! let options = DateTimeFormatOptions::Style(bag);
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormat`] is a subject to change over
+//! Or the options can be inferred through the `.into()` trait.
+//!
+//! ```
+//! # use icu_datetime::DateTimeFormatOptions;
+//! # use icu_datetime::options::style;
+//! let options: DateTimeFormatOptions = style::Bag::default().into();
+//! ```
+//!
+//! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use super::preferences;
@@ -38,13 +49,24 @@ use super::preferences;
 /// # Examples
 ///
 /// ```
+/// use icu_datetime::DateTimeFormatOptions;
 /// use icu_datetime::options::style;
 ///
-/// let options = style::Bag {
+/// let bag = style::Bag {
 ///      date: Some(style::Date::Medium),
 ///      time: Some(style::Time::Short),
 ///      preferences: None,
 /// };
+///
+/// let options = DateTimeFormatOptions::Style(bag);
+/// ```
+///
+/// Or the options can be inferred through the `.into()` trait.
+///
+/// ```
+/// # use icu_datetime::DateTimeFormatOptions;
+/// # use icu_datetime::options::style;
+/// let options: DateTimeFormatOptions = style::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
@@ -90,7 +112,7 @@ impl Default for Bag {
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-/// [`DateTimeFormat`]: ../../struct.DateTimeFormat.html
+/// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Date {
     /// Full length, usually with weekday name.
@@ -167,7 +189,7 @@ pub enum Date {
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
-/// [`DateTimeFormat`]: ../../struct.DateTimeFormat.html
+/// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Time {
     /// Full length, with spelled out time zone name.

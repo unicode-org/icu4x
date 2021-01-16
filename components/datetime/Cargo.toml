@@ -25,7 +25,7 @@ icu_provider = { version = "0.1", path = "../provider" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu_provider = { version = "0.1", path = "../provider", features = ["invariant"] }
+icu_provider = { version = "0.1", path = "../provider" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 serde = { version = "1.0", features = ["derive"] }

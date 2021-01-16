@@ -12,10 +12,39 @@
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
 //!
-//! Types implementing Writeable automatically implement ToString. Because of this, you cannot
-//! implement both Writeable and std::fmt::Display on the same type.
+//! Types implementing Writeable have a defaulted writeable_to_string function.
+//! If desired, types implementing Writeable can manually implement ToString
+//! to wrap writeable_to_string.
 //!
-//! [`Writeable`]: ./trait.Writeable.html
+//! # Example
+//!
+//! ```
+//! use writeable::Writeable;
+//! use writeable::assert_writeable_eq;
+//! use std::fmt;
+//!
+//! struct WelcomeMessage<'s>{
+//!     pub name: &'s str,
+//! }
+//!
+//! impl<'s> Writeable for WelcomeMessage<'s> {
+//!     fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+//!         sink.write_str("Hello, ")?;
+//!         sink.write_str(self.name)?;
+//!         sink.write_char('!')?;
+//!         Ok(())
+//!     }
+//!
+//!     fn write_len(&self) -> usize {
+//!         // "Hello, " + '!' + length of name
+//!         8 + self.name.len()
+//!     }
+//! }
+//!
+//! let message = WelcomeMessage { name: "Alice" };
+//! assert_writeable_eq!("Hello, Alice!", &message);
+//! ```
+//!
 //! [`ICU4X`]: ../icu/index.html
 
 use std::fmt;
@@ -29,7 +58,7 @@ pub trait Writeable {
     /// number of bytes may be slightly different than what this function returns.
     ///
     /// This function may return an enumeration in the future. See:
-    /// https://github.com/unicode-org/icu4x/issues/370
+    /// <https://github.com/unicode-org/icu4x/issues/370>
     fn write_len(&self) -> usize;
 
     /// Creates a new String with the data from this Writeable. Like ToString, but faster.

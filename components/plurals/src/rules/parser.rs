@@ -38,7 +38,7 @@ impl fmt::Display for ParserError {
 /// A single [`Rule`] contains a [`Condition`] and optionally a set of
 /// [`Samples`].
 ///
-/// A [`Condition`] can be then used by the [`resolver`] to test
+/// A [`Condition`] can be then used by the [`test_condition`] to test
 /// against [`PluralOperands`], to find the appropriate [`PluralCategory`].
 ///
 /// [`Samples`] are useful for tooling to help translators understand examples of numbers
@@ -55,14 +55,14 @@ impl fmt::Display for ParserError {
 /// assert_eq!(parse(input).is_ok(), true);
 /// ```
 ///
-/// [`AST`]: ../rules/ast/index.html
-/// [`resolver`]: ../rules/resolver/index.html
-/// [`PluralOperands`]: ../struct.PluralOperands.html
-/// [`PluralCategory`]: ../enum.PluralCategory.html
-/// [`Rule`]: ../rules/ast/struct.Rule.html
-/// [`Samples`]: ../rules/ast/struct.Samples.html
-/// [`Condition`]:  ../rules/ast/struct.Condition.html
-/// [`parse_condition`]: ./fn.parse_condition.html
+/// [`AST`]: super::ast
+/// [`test_condition`]: super::test_condition
+/// [`PluralOperands`]: crate::PluralOperands
+/// [`PluralCategory`]: crate::PluralCategory
+/// [`Rule`]: super::ast::Rule
+/// [`Samples`]: super::ast::Samples
+/// [`Condition`]:  super::ast::Condition
+/// [`parse_condition`]: parse_condition()
 pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
     let parser = Parser::new(input);
     parser.parse()
@@ -71,7 +71,7 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
 /// Unicode Plural Rule parser converts an
 /// input string into an [`AST`].
 ///
-/// That [`AST`] can be then used by the [`resolver`] to test
+/// That [`AST`] can be then used by the [`test_condition`] to test
 /// against [`PluralOperands`], to find the appropriate [`PluralCategory`].
 ///
 /// # Examples
@@ -83,10 +83,10 @@ pub fn parse(input: &[u8]) -> Result<ast::Rule, ParserError> {
 /// assert_eq!(parse_condition(input).is_ok(), true);
 /// ```
 ///
-/// [`AST`]: ../rules/ast/index.html
-/// [`resolver`]: ../rules/resolver/index.html
-/// [`PluralOperands`]: ../struct.PluralOperands.html
-/// [`PluralCategory`]: ../enum.PluralCategory.html
+/// [`AST`]: super::ast
+/// [`test_condition`]: super::test_condition
+/// [`PluralOperands`]: crate::PluralOperands
+/// [`PluralCategory`]: crate::PluralCategory
 pub fn parse_condition(input: &[u8]) -> Result<ast::Condition, ParserError> {
     let parser = Parser::new(input);
     parser.parse_condition()
@@ -174,6 +174,7 @@ impl<'p> Parser<'p> {
 
     fn get_expression(&mut self) -> Result<Option<ast::Expression>, ParserError> {
         let operand = match self.lexer.peek() {
+            Some(Token::E) => ast::Operand::E,
             Some(Token::Operand(op)) => *op,
             Some(Token::At) | None => return Ok(None),
             _ => return Err(ParserError::ExpectedOperand),
@@ -301,6 +302,20 @@ impl<'p> Parser<'p> {
                 }
                 self.lexer.next();
             }
+        }
+
+        if self.take_if(Token::E) {
+            s.push('e');
+            match self.lexer.peek() {
+                Some(Token::Zero) => s.push('0'),
+                Some(Token::Number(v)) => {
+                    s.push_str(&v.to_string());
+                }
+                _ => {
+                    return Err(ParserError::ExpectedValue);
+                }
+            }
+            self.lexer.next();
         }
         if s.is_empty() {
             Err(ParserError::ExpectedValue)

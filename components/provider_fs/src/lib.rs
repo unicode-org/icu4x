@@ -18,7 +18,7 @@
 //! # Directory Structure
 //!
 //! The ICU4X data directory has a file named *manifest.json* at the root, and a nested structure
-//! with category (DataCategory), subcategory@version, optional variant, and language identifier
+//! with category (ResourceCategory), subcategory@version, optional variant, and language identifier
 //! as the leaf data files. For example, Arabic JSON data for cardinal plurals lives at
 //! *plurals/cardinal@1/ar.json*.
 //!
@@ -85,7 +85,6 @@
 //! added with `bincode` feature.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`FsDataProvider`]: ./struct.FsDataProvider.html
 
 mod deserializer;
 mod error;

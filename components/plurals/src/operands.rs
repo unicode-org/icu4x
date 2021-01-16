@@ -25,6 +25,7 @@ use std::str::FromStr;
 ///    w: 0,
 ///    f: 0,
 ///    t: 0,
+///    c: 0,
 /// }, PluralOperands::from(2_usize))
 /// ```
 ///
@@ -39,6 +40,7 @@ use std::str::FromStr;
 ///    w: 3,
 ///    f: 567,
 ///    t: 567,
+///    c: 0,
 /// }), "-1234.567".parse())
 /// ```
 ///
@@ -53,6 +55,7 @@ use std::str::FromStr;
 ///    w: 2,
 ///    f: 45,
 ///    t: 45,
+///    c: 0,
 /// }), "123.45".parse())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -67,6 +70,8 @@ pub struct PluralOperands {
     pub f: u64,
     /// Visible fraction digits without trailing zeros
     pub t: u64,
+    /// Exponent of the power of 10 used in compact decimal formatting
+    pub c: usize,
 }
 
 impl PluralOperands {
@@ -99,6 +104,15 @@ impl From<IOError> for OperandsError {
     }
 }
 
+fn get_exponent(input: &str) -> Result<(&str, usize), OperandsError> {
+    if let Some(e_idx) = input.find('e') {
+        let e = usize::from_str(&input[e_idx + 1..])?;
+        Ok((&input[..e_idx], e))
+    } else {
+        Ok((input, 0))
+    }
+}
+
 impl FromStr for PluralOperands {
     type Err = OperandsError;
 
@@ -115,9 +129,10 @@ impl FromStr for PluralOperands {
             num_fraction_digits,
             fraction_digits0,
             fraction_digits,
+            exponent,
         ) = if let Some(sep_idx) = abs_str.find('.') {
             let int_str = &abs_str[..sep_idx];
-            let dec_str = &abs_str[(sep_idx + 1)..];
+            let (dec_str, exponent) = get_exponent(&abs_str[(sep_idx + 1)..])?;
 
             let integer_digits = u64::from_str(int_str)?;
 
@@ -140,10 +155,12 @@ impl FromStr for PluralOperands {
                 num_fraction_digits,
                 fraction_digits0,
                 fraction_digits,
+                exponent,
             )
         } else {
+            let (abs_str, exponent) = get_exponent(abs_str)?;
             let integer_digits = u64::from_str(abs_str)?;
-            (integer_digits, 0, 0, 0, 0)
+            (integer_digits, 0, 0, 0, 0, exponent)
         };
 
         Ok(Self {
@@ -152,6 +169,7 @@ impl FromStr for PluralOperands {
             w: num_fraction_digits,
             f: fraction_digits0,
             t: fraction_digits,
+            c: exponent,
         })
     }
 }
@@ -166,6 +184,7 @@ macro_rules! impl_integer_type {
                     w: 0,
                     f: 0,
                     t: 0,
+                    c: 0,
                 }
             }
         }
@@ -187,6 +206,7 @@ macro_rules! impl_signed_integer_type {
                     w: 0,
                     f: 0,
                     t: 0,
+                    c: 0,
                 })
             }
         }
@@ -232,6 +252,7 @@ impl From<&FixedDecimal> for PluralOperands {
             w,
             f,
             t,
+            c: 0,
         }
     }
 }

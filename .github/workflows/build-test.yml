@@ -3,6 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 name: Build and Test
 
+# TODO(#234) re-include cache steps, also using Rust version in cache key
+
 on:
   push:
     branches: [ master ]
@@ -11,6 +13,16 @@ on:
 
 jobs:
 
+  # Build job - basic smoke test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: check
+        args: --all-targets --all-features
 
   # Test job - runs all "cargo make" testing commands
   test:
@@ -22,9 +34,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -40,33 +49,23 @@ jobs:
         command: test-docs
 
 
-  # Build job - builds all permutations of features
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
+  # Feature coverage job - builds all permutations of features
+  features:
+    runs-on: ubuntu-latest
+    needs: [build]
 
     steps:
     - uses: actions/checkout@v2
-
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
     - name: Install cargo-all-features
       uses: actions-rs/cargo@v1.0.1
       with:
         command: install
         args: cargo-all-features --version "^1.4"
-    - name: Build
+    # Note: we need test-all-features (rather than build-all-features) for docs
+    - name: Test All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: build
-        args: --all-targets --all-features
-    - name: Build All Feature Permutations
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build-all-features
+        command: test-all-features
 
 
   # Lint job - runs all "cargo make" linting commands

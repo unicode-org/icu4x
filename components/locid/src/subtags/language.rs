@@ -56,8 +56,13 @@ impl Language {
     pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         let slen = v.len();
 
+        if !LANGUAGE_LENGTH.contains(&slen) || slen == SCRIPT_LENGTH {
+            return Err(ParserError::InvalidLanguage);
+        }
+
         let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
-        if !LANGUAGE_LENGTH.contains(&slen) || slen == SCRIPT_LENGTH || !s.is_ascii_alphabetic() {
+
+        if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidLanguage);
         }
 
@@ -114,6 +119,21 @@ impl Language {
             Some(v) => Some(TinyStr8::new_unchecked(v)),
             None => None,
         })
+    }
+
+    /// Returns the default undefined language "und". Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::subtags::Language;
+    ///
+    /// assert_eq!(Language::und(), Language::default());
+    /// assert_eq!("und", Language::und().to_string());
+    /// ```
+    #[inline]
+    pub const fn und() -> Self {
+        Self(None)
     }
 
     /// A helper function for displaying

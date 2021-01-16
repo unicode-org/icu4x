@@ -6,7 +6,7 @@ At the moment, `DataProvider` is only synchronous, but the model of plugging it 
 
 ## Data
 
-The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in the [`./structs`](https://github.com/unicode-org/icu4x/tree/master/components/data-provider/src/structs) directory and should represent the data efficiently (rather than 1-1 match to CLDR data model).
+The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in the [`components/provider/src/structs`](../../components/provider/src/structs) directory and should represent the data efficiently (rather than 1-1 match to CLDR data model).
 
 ## Types of providers
 
@@ -30,8 +30,8 @@ impl MyComponent {
         data_provider: &D,
     ) -> Result<Self, MyError> {
         let response = data_provider.load(&DataRequest {
-            data_key: icu_data_key!(decimals: symbols@1),
-            data_entry: DataEntry {
+            resc_key: icu_resc_key!(decimals: symbols@1),
+            resc_options: ResourceOptions {
                 variant: None,
                 langid: langid.clone(),
             },

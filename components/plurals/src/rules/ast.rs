@@ -34,9 +34,9 @@
 //! ])));
 //! ```
 //!
-//! [`PluralCategory`]: ../enum.PluralCategory.html
-//! [`parse`]: ../fn.parse.html
-//! [`test_condition`]: ../fn.test_condition.html
+//! [`PluralCategory`]: crate::PluralCategory
+//! [`parse`]: super::parse()
+//! [`test_condition`]: super::test_condition()
 use std::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
@@ -264,6 +264,11 @@ pub enum Operand {
     F,
     /// Visible fraction digits without trailing zeros
     T,
+    /// Compact decimal exponent value:
+    ///   exponent of the power of 10 used in compact decimal formatting
+    C,
+    /// Currently, synonym for ‘c’. however, may be redefined in the future
+    E,
 }
 
 /// An incomplete AST representation of a plural rule. Comprises a vector of `RangeListItems`.

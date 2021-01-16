@@ -6,9 +6,7 @@
 //! The main struct for this extension is [`Transform`] which contains [`Fields`] and an
 //! optional [`LanguageIdentifier`].
 //!
-//! [`Transform`]: ./struct.Transform.html
-//! [`Fields`]: ./struct.Fields.html
-//! [`LanguageIdentifier`]: ../../struct.LanguageIdentifier.html
+//! [`LanguageIdentifier`]: super::super::LanguageIdentifier
 //!
 //! # Examples
 //!
@@ -84,6 +82,23 @@ pub struct Transform {
 }
 
 impl Transform {
+    /// Returns a new empty map of Transform extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::transform::Transform;
+    ///
+    /// assert_eq!(Transform::new(), Transform::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self {
+            lang: None,
+            fields: Fields::new(),
+        }
+    }
+
     /// Returns `true` if there are no tfields and no tlang in
     /// the `TransformExtensionList`.
     ///
@@ -123,18 +138,18 @@ impl Transform {
             if let Some(tkey) = current_tkey {
                 if let Ok(val) = Value::parse_subtag(subtag) {
                     current_tvalue.push(val);
-                } else if let Ok(new_key) = Key::from_bytes(subtag) {
+                } else {
+                    if current_tvalue.is_empty() {
+                        return Err(ParserError::InvalidExtension);
+                    }
                     tfields.push((
                         tkey,
                         Value::from_vec_unchecked(
                             current_tvalue.drain(..).filter_map(|s| s).collect(),
                         ),
                     ));
-                    current_tkey = Some(new_key);
-                } else if current_tvalue.is_empty() {
-                    return Err(ParserError::InvalidExtension);
-                } else {
-                    break;
+                    current_tkey = None;
+                    continue;
                 }
             } else if let Ok(tkey) = Key::from_bytes(subtag) {
                 current_tkey = Some(tkey);

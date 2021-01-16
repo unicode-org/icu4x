@@ -20,9 +20,9 @@ use crate::operands::PluralOperands;
 /// assert_eq!(test_condition(&condition, &operands), true);
 /// ```
 ///
-/// [`PluralCategory`]: ../enum.PluralCategory.html
-/// [`PluralOperands`]: ../struct.PluralOperands.html
-/// [`Condition`]: ../rules/ast/struct.Condition.html
+/// [`PluralCategory`]: crate::PluralCategory
+/// [`PluralOperands`]: crate::PluralOperands
+/// [`Condition`]: super::ast::Condition
 pub fn test_condition(condition: &ast::Condition, operands: &PluralOperands) -> bool {
     condition.0.is_empty() || condition.0.iter().any(|c| test_and_condition(c, operands))
 }
@@ -63,6 +63,7 @@ fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands)
         ast::Operand::V => operands.v as u64,
         ast::Operand::W => operands.w as u64,
         ast::Operand::T => operands.t,
+        ast::Operand::C | ast::Operand::E => operands.c as u64,
     };
     if let Some(modulus) = &expression.modulus {
         value.checked_rem_euclid(modulus.0)

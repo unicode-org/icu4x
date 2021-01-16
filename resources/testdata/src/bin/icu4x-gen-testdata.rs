@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use clap::{App, Arg};
-use icu_provider::iter::IterableDataProvider;
-use icu_provider_cldr::download::CldrPathsDownload;
-use icu_provider_cldr::get_all_data_keys;
+use icu_provider::iter::DataExporter;
+use icu_provider_cldr::download::CldrAllInOneDownloader;
+use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
@@ -79,7 +79,7 @@ fn main() -> Result<(), Error> {
                 .short("v")
                 .long("verbose")
                 .multiple(true)
-                .help("Sets the level of verbosity (-v or -vv)"),
+                .help("Sets the level of verbosity (-v, -vv, or -vvv)"),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -101,13 +101,17 @@ fn main() -> Result<(), Error> {
             .init()
             .unwrap(),
         2 => SimpleLogger::new()
+            .with_level(log::LevelFilter::Debug)
+            .init()
+            .unwrap(),
+        3 => SimpleLogger::new()
             .with_level(log::LevelFilter::Trace)
             .init()
             .unwrap(),
-        _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
+        _ => return Err(Error::Unsupported("Only -v, -vv, and -vvv are supported")),
     }
 
-    let keys = get_all_data_keys();
+    let keys = get_all_resc_keys();
 
     let metadata = icu_testdata::metadata::load()?;
 
@@ -121,7 +125,8 @@ fn main() -> Result<(), Error> {
 
     log::info!("Writing testdata to: {:?}", output_path);
 
-    let cldr_paths = CldrPathsDownload::try_from_github_tag(&metadata.package_metadata.gitref)?;
+    let cldr_paths =
+        CldrAllInOneDownloader::try_from_github_tag(&metadata.package_metadata.gitref)?;
     let provider = CldrJsonDataProvider::new(&cldr_paths);
 
     let mut options = serializers::json::Options::default();
@@ -137,7 +142,7 @@ fn main() -> Result<(), Error> {
 
     for key in keys.iter() {
         log::info!("Processing key: {}", key);
-        let result = provider.export_key(key, &mut exporter);
+        let result = exporter.put_key_from_provider(key, &provider);
         // Ensure flush() is called, even when the result is an error
         exporter.flush()?;
         result?;

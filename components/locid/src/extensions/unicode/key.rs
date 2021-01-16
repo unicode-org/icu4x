@@ -6,12 +6,11 @@ use std::str::FromStr;
 use crate::parser::errors::ParserError;
 use tinystr::TinyStr4;
 
-/// A key used in a list of [`Keywords`].
+/// A key used in a list of [`Keywords`](super::Keywords).
 ///
 /// The key has to be a two ASCII alphanumerical characters long, with the first
 /// character being alphanumeric, and the second being alphabetic.
 ///
-/// [`Keywords`]: ./struct.Keywords.html
 ///
 /// # Examples
 ///

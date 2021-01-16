@@ -46,22 +46,21 @@
 //! Every number in every language belongs to a certain [`Plural Category`].
 //! For example, Polish language uses four:
 //!
-//! * [`One`](./enum.PluralCategory.html#variant.One): `1 miesiąc`
-//! * [`Few`](./enum.PluralCategory.html#variant.Few): `2 miesiące`
-//! * [`Many`](./enum.PluralCategory.html#variant.Many): `5 miesięcy`
-//! * [`Other`](./enum.PluralCategory.html#variant.Other): `1.5 miesiąca`
+//! * [`One`](PluralCategory::One): `1 miesiąc`
+//! * [`Few`](PluralCategory::Few): `2 miesiące`
+//! * [`Many`](PluralCategory::Many): `5 miesięcy`
+//! * [`Other`](PluralCategory::Other): `1.5 miesiąca`
 //!
 //! ## Plural Rule Type
 //!
 //! Plural rules depend on the use case. This crate supports two types of plural rules:
 //!
-//! * [`Cardinal`](./enum.PluralRuleType.html#variant.Cardinal): `3 doors`, `1 month`, `10 dollars`
-//! * [`Ordinal`](./enum.PluralRuleType.html#variant.Ordinal): `1st place`, `10th day`, `11th floor`
+//! * [`Cardinal`](PluralRuleType::Cardinal): `3 doors`, `1 month`, `10 dollars`
+//! * [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`PluralRules`]: ./struct.PluralRules.html
-//! [`Plural Type`]: ./enum.PluralRuleType.html
-//! [`Plural Category`]: ./enum.PluralCategory.html
+//! [`Plural Type`]: PluralRuleType
+//! [`Plural Category`]: PluralCategory
 //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 //! [`CLDR`]: http://cldr.unicode.org/
 mod data;
@@ -74,12 +73,10 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::structs;
 pub use operands::PluralOperands;
-use std::borrow::Cow;
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 ///
-/// [`PluralRules`]: ./struct.PluralRules.html
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum PluralRuleType {
     /// Cardinal plural forms express quantities of units such as time, currency or distance,
@@ -90,8 +87,8 @@ pub enum PluralRuleType {
     /// * [`One`]: `1 day`
     /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
     ///
-    /// [`One`]: ./enum.PluralCategory.html#variant.One
-    /// [`Other`]: ./enum.PluralCategory.html#variant.Other
+    /// [`One`]: PluralCategory::One
+    /// [`Other`]: PluralCategory::Other
     Cardinal,
     /// Ordinal plural forms denote the order of items in a set and are always integers.
     ///
@@ -102,10 +99,10 @@ pub enum PluralRuleType {
     /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
     /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
     ///
-    /// [`One`]: ./enum.PluralCategory.html#variant.One
-    /// [`Two`]: ./enum.PluralCategory.html#variant.Two
-    /// [`Few`]: ./enum.PluralCategory.html#variant.Few
-    /// [`Other`]: ./enum.PluralCategory.html#variant.Other
+    /// [`One`]: PluralCategory::One
+    /// [`Two`]: PluralCategory::Two
+    /// [`Few`]: PluralCategory::Few
+    /// [`Other`]: PluralCategory::Other
     Ordinal,
 }
 
@@ -121,7 +118,7 @@ pub enum PluralRuleType {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -228,7 +225,7 @@ impl PluralCategory {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -241,9 +238,8 @@ impl PluralCategory {
 /// ```
 ///
 /// [`ICU4X`]: ../icu/index.html
-/// [`PluralRules`]: ./struct.PluralRules.html
-/// [`Plural Type`]: ./enum.PluralRuleType.html
-/// [`Plural Category`]: ./enum.PluralCategory.html
+/// [`Plural Type`]: PluralRuleType
+/// [`Plural Category`]: PluralCategory
 pub struct PluralRules {
     _langid: LanguageIdentifier,
     selector: data::RulesSelector,
@@ -259,7 +255,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType};
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -268,25 +264,28 @@ impl PluralRules {
     /// let _ = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal);
     /// ```
     ///
-    /// [`type`]: ./enum.PluralRuleType.html
-    /// [`data provider`]: ./data/trait.DataProviderType.html
-    pub fn try_new<'d, D: DataProvider<'d>>(
+    /// [`type`]: PluralRuleType
+    /// [`data provider`]: icu_provider::DataProvider
+    pub fn try_new<'d, D: DataProvider<'d, structs::plurals::PluralRuleStringsV1<'d>> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
-        let data_key = match type_ {
+        let key = match type_ {
             PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
-        let response = data_provider.load(&DataRequest {
-            data_key,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid.clone(),
-            },
-        })?;
-        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.take_payload()?;
+        let plurals_data = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })?
+            .take_payload()?;
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 
@@ -303,7 +302,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -333,7 +332,7 @@ impl PluralRules {
     /// # use icu_locid_macros::langid;
     /// # use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_plurals::{PluralCategory, PluralOperands};
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// #
     /// # let lid = langid!("en");
     /// #
@@ -351,8 +350,8 @@ impl PluralRules {
     /// assert_eq!(pr.select(operands2), PluralCategory::Other);
     /// ```
     ///
-    /// [`Plural Category`]: ./enum.PluralCategory.html
-    /// [`Plural Operands`]: ./operands/struct.PluralOperands.html
+    /// [`Plural Category`]: PluralCategory
+    /// [`Plural Operands`]: operands::PluralOperands
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
         self.selector.select(&input.into())
     }

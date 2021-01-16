@@ -17,7 +17,7 @@ pub mod pluralrules;
 pub enum Locale {
     /// An ECMA402 compatible [Locale] created from icu4x [LanguageIdentifier].
     FromLangid(LanguageIdentifier),
-    /// An ECMA402 [Locale] created from icu4x [icu_locid::Locale].
+    /// An ECMA402 [Locale] created from icu4x [icu::locid::Locale].
     FromLocale(icu::locid::Locale),
 }
 

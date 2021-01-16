@@ -6,14 +6,13 @@ use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
-/// A value used in a list of [`Keywords`].
+/// A value used in a list of [`Keywords`](super::Keywords).
 ///
 /// The value has to be a sequence of one or more alphanumerical strings
 /// separated by `-`.
 /// Each part of the sequence has to be no shorter than three characters and no
 /// longer than 8.
 ///
-/// [`Keywords`]: ./struct.Keywords.html
 ///
 /// # Examples
 ///
@@ -88,6 +87,10 @@ impl Value {
             Ok(Some(s))
         }
     }
+
+    pub(crate) fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
 }
 
 impl FromStr for Value {
@@ -104,7 +107,7 @@ impl std::fmt::Display for Value {
 
         for subtag in self.0.iter() {
             if first {
-                write!(f, "{}", subtag)?;
+                subtag.fmt(f)?;
                 first = false;
             } else {
                 write!(f, "-{}", subtag)?;

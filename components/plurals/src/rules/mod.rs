@@ -35,7 +35,8 @@
 //!     v: 0,
 //!     w: 0,
 //!     f: 0,
-//!     t: 0
+//!     t: 0,
+//!     c: 0,
 //! };
 //! ```
 //!
@@ -128,19 +129,19 @@
 //!
 //! For example, in Russian [`PluralCategory::One`] matches numbers such as `11`, `21`, `121` etc.
 //!
-//! [`PluralCategory`]: ../enum.PluralCategory.html
-//! [`PluralCategories`]: ../enum.PluralCategory.html
-//! [`PluralCategory::One`]: ../enum.PluralCategory.html#variant.One
-//! [`PluralCategory::Other`]: ../enum.PluralCategory.html#variant.Other
-//! [`PluralOperands`]: ../struct.PluralOperands.html
-//! [`PluralOperands::i`]: ../struct.PluralOperands.html#structfield.i
-//! [`PluralOperands::v`]: ../struct.PluralOperands.html#structfield.v
-//! [`PluralRuleType::Cardinal`]: ../enum.PluralRuleType.html#variant.Cardinal
-//! [`Rule`]: ../rules/ast/struct.Rule.html
-//! [`Rules`]: ../rules/ast/struct.Rule.html
-//! [`Condition`]: ../rules/ast/struct.Condition.html
-//! [`Sample`]: ../rules/ast/struct.Sample.html
-//! [`AST`]: ../rules/ast/index.html
+//! [`PluralCategory`]: super::PluralCategory
+//! [`PluralCategories`]: super::PluralCategory
+//! [`PluralCategory::One`]: super::PluralCategory::One
+//! [`PluralCategory::Other`]: super::PluralCategory::Other
+//! [`PluralOperands`]: super::PluralOperands
+//! [`PluralOperands::i`]: super::PluralOperands::i
+//! [`PluralOperands::v`]: super::PluralOperands::v
+//! [`PluralRuleType::Cardinal`]: super::PluralRuleType::Cardinal
+//! [`Rule`]: super::rules::ast::Rule
+//! [`Rules`]: super::rules::ast::Rule
+//! [`Condition`]: super::rules::ast::Condition
+//! [`Sample`]: super::rules::ast::Samples
+//! [`AST`]: super::rules::ast
 pub mod ast;
 pub(crate) mod lexer;
 pub(crate) mod parser;

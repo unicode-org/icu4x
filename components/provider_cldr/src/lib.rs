@@ -16,10 +16,9 @@
 //! It is much more efficient if you use [`FsDataProvider`] instead.
 //!
 //! [`ICU4X`]: ../icu/index.html
-//! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
-//! [`CldrPaths`]: ./trait.CldrPaths.html
+//! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`CldrJsonDataProvider`]: ./transform/struct.CldrJsonDataProvider.html
+//! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
 mod cldr_langid;
 mod cldr_paths;
@@ -35,5 +34,5 @@ pub mod download;
 pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
-pub use transform::get_all_data_keys;
+pub use transform::get_all_resc_keys;
 pub use transform::CldrJsonDataProvider;

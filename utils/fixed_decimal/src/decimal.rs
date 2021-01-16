@@ -39,7 +39,7 @@ const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
-    /// List of digits; digits[0] is the most significant.
+    /// List of digits; digits\[0\] is the most significant.
     ///
     /// Invariants:
     /// - Must not include leading or trailing zeros
@@ -47,7 +47,7 @@ pub struct FixedDecimal {
     // TODO: Consider using a nibble array
     digits: SmallVec<[u8; 8]>,
 
-    /// Power of 10 of digits[0].
+    /// Power of 10 of digits\[0\].
     ///
     /// Invariants:
     /// - <= upper_magnitude
@@ -384,7 +384,7 @@ impl FromStr for FixedDecimal {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
         // Check if the input string is "" or "-"
-        if input_str == "" || input_str == "-" {
+        if input_str.is_empty() || input_str == "-" {
             return Err(Error::Syntax);
         }
         let input_str = input_str.as_bytes();
@@ -426,8 +426,10 @@ impl FromStr for FixedDecimal {
         }
 
         // defining the output dec here and set its sign
-        let mut dec: Self = Self::default();
-        dec.is_negative = is_negative;
+        let mut dec = Self {
+            is_negative,
+            ..Default::default()
+        };
 
         // no_dot_str_len: shows length of the string after removing the dot
         let mut no_dot_str_len = no_sign_str_len;
@@ -525,7 +527,7 @@ fn test_basic() {
         pub input: isize,
         pub delta: i16,
         pub expected: &'static str,
-    };
+    }
     let cases = [
         TestCase {
             input: 51423,
@@ -633,7 +635,7 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-    };
+    }
     let cases = [
         TestCase {
             input_str: "-00123400",
@@ -750,7 +752,7 @@ fn test_zero_str_bounds() {
         pub zeros_before_dot: usize,
         pub zeros_after_dot: usize,
         pub expected_err: Option<Error>,
-    };
+    }
     // Note that std::i16::MAX = 32768
     let cases = [
         TestCase {
@@ -828,7 +830,7 @@ fn test_syntax_error() {
     struct TestCase {
         pub input_str: &'static str,
         pub expected_err: Option<Error>,
-    };
+    }
     let cases = [
         TestCase {
             input_str: "-12a34",

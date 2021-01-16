@@ -7,12 +7,11 @@ use std::str::FromStr;
 use crate::parser::errors::ParserError;
 use tinystr::TinyStr8;
 
-/// An attribute used in a set of [`Attributes`].
+/// An attribute used in a set of [`Attributes`](super::Attributes).
 ///
 /// An attribute has to be a sequence of alphanumerical characters no
 /// shorter than three and no longer than eight characters.
 ///
-/// [`Attributes`]: ./struct.Attributes.html
 ///
 /// # Examples
 ///
