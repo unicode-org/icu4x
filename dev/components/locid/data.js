@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1610778562983,
+  "lastUpdate": 1610778633028,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2657,6 +2657,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5165,
             "range": "± 220",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d9347aa4ec3d55df1102a19eb1c438beb1fdd54d",
+          "message": "Adding const tests for Locale und (#458)",
+          "timestamp": "2021-01-16T00:25:06-06:00",
+          "tree_id": "ebc2c67a0e92cd96801ad1e1f8263ed3f4edde86",
+          "url": "https://github.com/unicode-org/icu4x/commit/d9347aa4ec3d55df1102a19eb1c438beb1fdd54d"
+        },
+        "date": 1610778629453,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3155,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5865,
+            "range": "± 358",
             "unit": "ns/iter"
           }
         ]
