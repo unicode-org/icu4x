@@ -28,7 +28,7 @@
 //! }
 //!
 //! impl<'s> Writeable for WelcomeMessage<'s> {
-//!     fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+//!     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
 //!         sink.write_str("Hello, ")?;
 //!         sink.write_str(self.name)?;
 //!         sink.write_char('!')?;
@@ -52,7 +52,7 @@ use std::fmt;
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
 pub trait Writeable {
     /// Writes bytes to the given sink. Errors from the sink are bubbled up.
-    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result;
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result;
 
     /// Returns an estimation of the number of bytes that will be written to the sink. The actual
     /// number of bytes may be slightly different than what this function returns.
@@ -85,7 +85,7 @@ pub trait Writeable {
 ///
 /// struct Demo;
 /// impl Writeable for Demo {
-///     fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
 ///         sink.write_str("foo")
 ///     }
 ///     fn write_len(&self) -> usize {
@@ -98,7 +98,7 @@ pub trait Writeable {
 #[macro_export]
 macro_rules! assert_writeable_eq {
     ($expected_str:expr, $actual_writeable:expr) => {
-        let writeable: &dyn Writeable = $actual_writeable;
+        let writeable = $actual_writeable;
         assert_eq!($expected_str, writeable.writeable_to_string());
         assert_eq!($expected_str.len(), writeable.write_len());
     };

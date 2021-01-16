@@ -11,7 +11,7 @@ struct WriteableMessage<'s> {
 }
 
 impl Writeable for WriteableMessage<'_> {
-    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_str(self.message)
     }
 
@@ -58,6 +58,7 @@ fn overview_bench(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         writeable_benches(c);
+        writeable_dyn_benches(c);
         display_benches(c);
     }
 }
@@ -86,6 +87,39 @@ fn writeable_benches(c: &mut Criterion) {
                 message: black_box(LONG_STR),
             }
             .writeable_to_string()
+        });
+    });
+}
+
+#[cfg(feature = "bench")]
+fn writeable_dyn_benches(c: &mut Criterion) {
+    // Same as writeable_to_string, but casts to a dyn fmt::Write
+    fn writeable_dyn_to_string(w: &impl Writeable) -> String {
+        let mut output = String::with_capacity(w.write_len());
+        w.write_to(&mut output as &mut dyn fmt::Write)
+            .expect("impl Write for String is infallible");
+        output
+    }
+
+    c.bench_function("writeable_dyn/to_string/short", |b| {
+        b.iter(|| {
+            writeable_dyn_to_string(&WriteableMessage {
+                message: black_box(SHORT_STR),
+            })
+        });
+    });
+    c.bench_function("writeable_dyn/to_string/medium", |b| {
+        b.iter(|| {
+            writeable_dyn_to_string(&WriteableMessage {
+                message: black_box(MEDIUM_STR),
+            })
+        });
+    });
+    c.bench_function("writeable_dyn/to_string/long", |b| {
+        b.iter(|| {
+            writeable_dyn_to_string(&WriteableMessage {
+                message: black_box(LONG_STR),
+            })
         });
     });
 }

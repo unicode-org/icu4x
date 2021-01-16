@@ -6,9 +6,9 @@ use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider::DateTimeDates;
-use writeable::Writeable;
 use icu_provider::structs;
 use std::fmt;
+use writeable::Writeable;
 
 /// `FormattedDateTime` is a intermediate structure which can be retrieved as
 /// an output from `DateTimeFormat`.
@@ -48,9 +48,9 @@ where
 
 impl<'l, T> Writeable for FormattedDateTime<'l, T>
 where
-    T: DateTimeType
+    T: DateTimeType,
 {
-    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern(self.pattern, self.data, self.date_time, sink).map_err(|_| std::fmt::Error)
     }
 
@@ -70,11 +70,10 @@ where
 }
 
 // Temporary formatting number with length.
-fn format_number<W>(
-    result: &mut W,
-    num: usize,
-    length: FieldLength,
-) -> Result<(), std::fmt::Error> where W: fmt::Write + ?Sized {
+fn format_number<W>(result: &mut W, num: usize, length: FieldLength) -> Result<(), std::fmt::Error>
+where
+    W: fmt::Write + ?Sized,
+{
     match length {
         FieldLength::One => write!(result, "{}", num),
         FieldLength::TwoDigit => {

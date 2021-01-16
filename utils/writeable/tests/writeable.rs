@@ -11,7 +11,7 @@ struct WriteableMessage<'s> {
 }
 
 impl Writeable for WriteableMessage<'_> {
-    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_str(self.message)
     }
 
