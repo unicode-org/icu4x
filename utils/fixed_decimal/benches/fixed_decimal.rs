@@ -100,7 +100,7 @@ fn to_string_benches(c: &mut Criterion) {
     ];
 
     {
-        let mut group = c.benchmark_group("to_string");
+        let mut group = c.benchmark_group("to_string/to_string");
         for object in objects.iter() {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
@@ -112,7 +112,7 @@ fn to_string_benches(c: &mut Criterion) {
     }
 
     {
-        let mut group = c.benchmark_group("write_to");
+        let mut group = c.benchmark_group("to_string/write_to");
         for object in objects.iter() {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
