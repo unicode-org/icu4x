@@ -157,9 +157,24 @@ impl Extensions {
 
 impl std::fmt::Display for Extensions {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        // Alphabetic by singleton (t, u, x)
-        write!(f, "{}{}{}", self.transform, self.unicode, self.private)?;
+        writeable::Writeable::write_to(self, f)
+    }
+}
 
+impl writeable::Writeable for Extensions {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+        // Alphabetic by singleton (t, u, x)
+        writeable::Writeable::write_to(&self.transform, sink)?;
+        writeable::Writeable::write_to(&self.unicode, sink)?;
+        writeable::Writeable::write_to(&self.private, sink)?;
         Ok(())
+    }
+
+    fn write_len(&self) -> usize {
+        let mut result = 0;
+        result += writeable::Writeable::write_len(&self.transform);
+        result += writeable::Writeable::write_len(&self.unicode);
+        result += writeable::Writeable::write_len(&self.private);
+        result
     }
 }

@@ -217,6 +217,7 @@ impl writeable::Writeable for Language {
         sink.write_str(self.as_str())
     }
 
+    #[inline]
     fn write_len(&self) -> usize {
         self.0.map(|t| t.len()).unwrap_or(3)
     }

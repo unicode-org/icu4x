@@ -133,16 +133,32 @@ impl Private {
 
 impl std::fmt::Display for Private {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl writeable::Writeable for Private {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
         if self.is_empty() {
             return Ok(());
         }
-
-        f.write_str("-x")?;
-
+        sink.write_str("-x")?;
         for key in self.iter() {
-            write!(f, "-{}", key)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(key, sink)?;
         }
         Ok(())
+    }
+
+    fn write_len(&self) -> usize {
+        if self.is_empty() {
+            return 0;
+        }
+        let mut result = 2;
+        for key in self.iter() {
+            result += writeable::Writeable::write_len(key) + 1;
+        }
+        result
     }
 }
 

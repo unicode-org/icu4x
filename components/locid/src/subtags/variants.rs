@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::Variant;
-use std::fmt;
 use std::ops::Deref;
-use writeable::Writeable;
 
 /// Variants is a list of variants (examples: `["macos", "posix"]`, etc.)
 ///
@@ -165,47 +163,7 @@ impl Variants {
     }
 }
 
-impl std::fmt::Display for Variants {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        self.write_to(f)
-    }
-}
-
-impl Writeable for Variants {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        let mut initial = true;
-        for variant in self.iter() {
-            if initial {
-                initial = false;
-            } else {
-                sink.write_char('-')?;
-            }
-            variant.write_to(sink)?;
-        }
-        Ok(())
-    }
-
-    fn write_len(&self) -> usize {
-        if self.0.is_none() {
-            0
-        } else {
-            self.iter().map(Writeable::write_len).sum::<usize>() + self.len() - 1
-        }
-    }
-}
-
-#[test]
-fn test_writeable() {
-    writeable::assert_writeable_eq!("", &Variants::default());
-    writeable::assert_writeable_eq!(
-        "posix",
-        &Variants::from_vec_unchecked(vec!["posix".parse().unwrap()])
-    );
-    writeable::assert_writeable_eq!(
-        "posix-macos",
-        &Variants::from_vec_unchecked(vec!["posix".parse().unwrap(), "macos".parse().unwrap()])
-    );
-}
+impl_writeable_for_subtag_list!(Variants, "macos", "posix");
 
 impl Deref for Variants {
     type Target = [Variant];

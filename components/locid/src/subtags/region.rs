@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::parser::errors::ParserError;
-use std::fmt;
 use std::str::FromStr;
 use tinystr::TinyStr4;
 
@@ -133,26 +132,7 @@ impl FromStr for Region {
     }
 }
 
-impl std::fmt::Display for Region {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
-
-impl writeable::Writeable for Region {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        sink.write_str(self.as_str())
-    }
-
-    fn write_len(&self) -> usize {
-        self.0.len()
-    }
-}
-
-#[test]
-fn test_writeable() {
-    writeable::assert_writeable_eq!("AA", &Region::from_str("AA").unwrap());
-}
+impl_writeable_for_single_subtag!(Region, "GB");
 
 impl PartialEq<&str> for Region {
     fn eq(&self, other: &&str) -> bool {

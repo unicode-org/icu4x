@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::parser::errors::ParserError;
-use std::fmt;
 use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::TinyStr8;
@@ -134,27 +133,7 @@ impl FromStr for Variant {
     }
 }
 
-impl std::fmt::Display for Variant {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
-
-impl writeable::Writeable for Variant {
-    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        sink.write_str(self.as_str())
-    }
-
-    fn write_len(&self) -> usize {
-        self.0.len()
-    }
-}
-
-#[test]
-fn test_writeable() {
-    writeable::assert_writeable_eq!("posix", &Variant::from_str("posix").unwrap());
-    writeable::assert_writeable_eq!("abcdefgh", &Variant::from_str("abcdefgh").unwrap());
-}
+impl_writeable_for_single_subtag!(Variant, "posix");
 
 impl PartialEq<&str> for Variant {
     fn eq(&self, other: &&str) -> bool {
