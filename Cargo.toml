@@ -4,6 +4,7 @@
 [workspace]
 
 members = [
+    "experimental/bies",
     "experimental/segmenter_lstm",
     "components/datetime",
     "components/ecma402",
@@ -17,7 +18,6 @@ members = [
     "components/provider",
     "components/uniset",
     "resources/testdata",
-    "utils/bies",
     "utils/fixed_decimal",
     "utils/writeable",
 ]
