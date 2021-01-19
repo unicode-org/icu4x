@@ -49,8 +49,6 @@
 //! [`ICU4X`]: ../icu/index.html
 
 #[macro_use]
-pub mod error; // How do I make this crate-visible in a way that allows
-               // a binary file/module to still use it?
 mod builder;
 mod conversions;
 mod uniset;
@@ -72,7 +70,7 @@ pub enum UnicodeSetError {
 
 impl fmt::Display for UnicodeSetError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Error with UnicodeSet: {:?}", self)
+        write!(f, "{:?}", self)
     }
 }
 

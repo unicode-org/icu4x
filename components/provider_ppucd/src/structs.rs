@@ -16,16 +16,6 @@ pub mod key {
     pub const WSPACE_V1: ResourceKey = resource_key!(uniset, "WSpace", 1);
 }
 
-// /// Gets a locale-invariant default struct given a data key in this module's category.
-// #[cfg(feature = "invariant")]
-// pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
-//     use crate::invariant::make_inv_response;
-//     match *data_key {
-//         key::WSPACE_V1 => make_inv_response::<UnicodeProperty>(),
-//         _ => None,
-//     }
-// }
-
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct UnicodeProperties {
     pub props: Vec<UnicodeProperty>,
