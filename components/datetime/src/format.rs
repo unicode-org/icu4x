@@ -22,7 +22,7 @@ use std::fmt;
 /// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::date::MockDateTime;
-/// # use icu_provider::InvariantDataProvider;
+/// # use icu_provider::inv::InvariantDataProvider;
 /// # let lid = langid!("en");
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();

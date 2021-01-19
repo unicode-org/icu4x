@@ -1,3 +1,6 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::char;
 use std::collections::{HashMap, HashSet};
 use std::iter::Iterator;
@@ -67,7 +70,7 @@ fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &st
         // property;Binary;;graph
         // property;Binary;;print
         // property;Binary;;xdigit
-        if line_parts[0] == "" {
+        if line_parts[0].is_empty() {
             line_parts.drain(0..1);
         }
 

@@ -22,7 +22,7 @@ include = [
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
 icu = { version = "0.1", path = "../icu" }
-icu_provider = { version = "0.1", path = "../provider", features = ["invariant"] }
+icu_provider = { version = "0.1", path = "../provider" }
 
 
 [dev-dependencies]
@@ -30,5 +30,5 @@ criterion = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
 icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
-icu_provider = { version = "0.1", path = "../provider", features = ["invariant"] }
+icu_provider = { version = "0.1", path = "../provider" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata"  }

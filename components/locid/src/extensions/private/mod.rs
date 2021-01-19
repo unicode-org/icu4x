@@ -57,9 +57,23 @@ use crate::parser::ParserError;
 /// [`Private Use Extensions`]: https://unicode.org/reports/tr35/#pu_extensions
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Private(Box<[Key]>);
+pub struct Private(Option<Box<[Key]>>);
 
 impl Private {
+    /// Returns a new empty list of private-use extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::private::Private;
+    ///
+    /// assert_eq!(Private::new(), Private::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self(None)
+    }
+
     /// A constructor which takes a pre-sorted list of `Key`.
     ///
     /// # Examples
@@ -75,8 +89,12 @@ impl Private {
     /// let private = Private::from_vec_unchecked(vec![key1, key2]);
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     /// ```
-    pub fn from_vec_unchecked(v: Vec<Key>) -> Self {
-        Self(v.into_boxed_slice())
+    pub fn from_vec_unchecked(input: Vec<Key>) -> Self {
+        if input.is_empty() {
+            Self(None)
+        } else {
+            Self(Some(input.into_boxed_slice()))
+        }
     }
 
     /// Empties the `Private` list.
@@ -99,7 +117,7 @@ impl Private {
     /// assert_eq!(&private.to_string(), "");
     /// ```
     pub fn clear(&mut self) {
-        self.0 = Box::new([]);
+        self.0 = None;
     }
 
     pub(crate) fn try_from_iter<'a>(
@@ -109,7 +127,7 @@ impl Private {
             .map(|subtag| Key::from_bytes(subtag))
             .collect::<Result<Vec<_>, _>>()?;
 
-        Ok(Self(keys.into_boxed_slice()))
+        Ok(Self::from_vec_unchecked(keys))
     }
 }
 
@@ -132,6 +150,10 @@ impl Deref for Private {
     type Target = [Key];
 
     fn deref(&self) -> &Self::Target {
-        &self.0
+        if let Some(ref data) = self.0 {
+            data
+        } else {
+            &[]
+        }
     }
 }

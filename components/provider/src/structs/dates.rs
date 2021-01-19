@@ -1,23 +1,10 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-// Date
-#[cfg(feature = "invariant")]
-use crate::prelude::*;
 
 pub mod key {
-    use crate::data_key::DataKey;
-    pub const GREGORY_V1: DataKey = data_key!(dates, "gregory", 1);
-}
-
-/// Gets a locale-invariant default struct given a data key in this module's category.
-#[cfg(feature = "invariant")]
-pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
-    use crate::invariant::make_inv_response;
-    match *data_key {
-        key::GREGORY_V1 => make_inv_response::<gregory::DatesV1>(),
-        _ => None,
-    }
+    use crate::resource::ResourceKey;
+    pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
 }
 
 pub mod gregory {
@@ -59,7 +46,7 @@ pub mod gregory {
                 symbols!();
             }
         };
-        ($name: ident, $($element: ident: $ty: ty),*) => {
+        ($name: ident, $($element: ident: $ty: ty),+ $(,)?) => {
             pub mod $name {
                 use super::*;
 

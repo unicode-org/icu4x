@@ -4,8 +4,6 @@
 
 use crate::parse_ppucd;
 use crate::structs::*;
-use icu_locid::LanguageIdentifier;
-use icu_locid_macros::langid;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -38,18 +36,29 @@ impl<'d> PpucdDataProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d> for PpucdDataProvider<'d> {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError> {
-        const UND: LanguageIdentifier = langid!("und");
-        let data_key: &DataKey = &req.data_key;
-        let data_key_str: &str = data_key.sub_category.as_str();
+// Similar to provider_cldr for plurals
+impl<'d> DataProvider<'d, UnicodeProperty> for PpucdDataProvider<'d> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, UnicodeProperty>, DataError> {
+        let resc_key: &ResourceKey = &req.resource_path.key;
+        let resc_key_str: &str = resc_key.sub_category.as_str();
         let props_data: &UnicodeProperties = &self.ppucd_props;
         let matching_prop: Option<&UnicodeProperty> =
-            props_data.props.iter().find(|p| p.name == data_key_str);
+            props_data.props.iter().find(|p| p.name == resc_key_str);
         let owned_matching_prop: Option<UnicodeProperty> = matching_prop.cloned();
-        let prop_as_result: Result<UnicodeProperty, DataError> =
-            owned_matching_prop.ok_or_else(|| DataError::from(req.clone()));
-        prop_as_result.map(|p| DataResponseBuilder { data_langid: UND }.with_owned_payload(p))
+        let prop = match owned_matching_prop {
+            Some(p) => p,
+            None => return Err(req.clone().into()),
+        };
+        Ok(DataResponse {
+            metadata: DataResponseMetadata { data_langid: None },
+            payload: Some(Cow::Owned(prop)),
+        })
+        // let prop_as_result: Result<UnicodeProperty, DataError> =
+        //     owned_matching_prop.ok_or_else(|| DataError::from(req.clone()));
+        // prop_as_result.map(|p| DataResponseBuilder { data_langid: UND }.with_owned_payload(p))
     }
 }
 
@@ -81,15 +90,17 @@ fn test_ppucd_provider_parse() {
     let ppucd_property_files_root_path = "tests/testdata/ppucd-wspace-test.txt";
     let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
-    const UND: LanguageIdentifier = langid!("und");
+    // const UND: LanguageIdentifier = langid!("und");
     let data_req = DataRequest {
-        data_key: key::WSPACE_V1,
-        data_entry: DataEntry {
-            variant: None,
-            langid: UND,
+        resource_path: ResourcePath {
+            key: key::WSPACE_V1,
+            options: ResourceOptions {
+                variant: None,
+                langid: None,
+            },
         },
     };
-    let resp: DataResponse = ppucd_provider.load(&data_req).unwrap();
+    let mut resp: DataResponse<UnicodeProperty> = ppucd_provider.load_payload(&data_req).unwrap();
 
     let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload().unwrap();
     let exp_prop_uniset: UnicodeProperty = UnicodeProperty {

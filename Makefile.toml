@@ -8,13 +8,14 @@ load_cargo_aliases = true
 ### INDIVIDUAL TEST AND LINT TASKS ###
 # Note: If a task is purely a cargo alias, define it in .cargo/config.toml
 
-[tasks.build-all-features]
-description = "Build all permutations of all features"
+[tasks.test-all-features]
+description = "Test all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.4"]
 command = "cargo"
-args = ["build-all-features"]
+# Note: we need test-all-features (rather than build-all-features) for docs
+args = ["test-all-features"]
 
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
@@ -32,8 +33,8 @@ for pattern in ${glob_pattern_array}
             text = readfile ${path}
             result_hash = starts_with ${text} "# This file is part of ICU4X. For terms of use, please see the file"
             result_slash = starts_with ${text} "// This file is part of ICU4X. For terms of use, please see the file"
-            not_result_hash = not result_hash
-            not_result_slash = not result_slash
+            not_result_hash = not ${result_hash}
+            not_result_slash = not ${result_slash}
             if ${not_result_hash} and ${not_result_slash}
               echo "License header missing in ${path}"
               trigger_error "License header missing in ${path}"
@@ -43,8 +44,6 @@ for pattern in ${glob_pattern_array}
     echo "License headers found in files matching ${pattern}"
 end
 echo "License header check complete"
-
-
 '''
 
 ### META TASKS ###
@@ -65,7 +64,7 @@ category = "ICU4X Development"
 dependencies = [
     "quick",
     "test-docs",
-    "build-all-features",
+    "test-all-features",
 ]
 
 ### WASM TASKS ###

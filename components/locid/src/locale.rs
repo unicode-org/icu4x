@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use crate::parser::{parse_locale, ParserError};
+use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use std::fmt::Write;
 use std::str::FromStr;
@@ -97,6 +97,28 @@ impl Locale {
         parse_locale(v)
     }
 
+    /// Returns the default undefined locale "und". Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    ///
+    /// const loc: Locale = Locale::und();
+    /// assert_eq!(Locale::default(), loc);
+    /// assert_eq!("und", loc.to_string());
+    /// ```
+    #[inline]
+    pub const fn und() -> Self {
+        Self {
+            language: subtags::Language::und(),
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
+            extensions: extensions::Extensions::new(),
+        }
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
@@ -174,12 +196,52 @@ impl std::fmt::Display for Locale {
 
 impl PartialEq<&str> for Locale {
     fn eq(&self, other: &&str) -> bool {
-        self.to_string().eq(*other)
+        self == *other
     }
+}
+
+macro_rules! subtag_matches {
+    ($T:ty, $iter:ident, $expected:expr) => {
+        $iter
+            .next()
+            .map(|b| <$T>::from_bytes(b) == Ok($expected))
+            .unwrap_or(false)
+    };
 }
 
 impl PartialEq<str> for Locale {
     fn eq(&self, other: &str) -> bool {
-        self.to_string().eq(other)
+        let mut iter = get_subtag_iterator(other.as_bytes()).peekable();
+        if !subtag_matches!(subtags::Language, iter, self.language) {
+            return false;
+        }
+        if let Some(ref script) = self.script {
+            if !subtag_matches!(subtags::Script, iter, *script) {
+                return false;
+            }
+        }
+        if let Some(ref region) = self.region {
+            if !subtag_matches!(subtags::Region, iter, *region) {
+                return false;
+            }
+        }
+        for variant in self.variants.iter() {
+            if !subtag_matches!(subtags::Variant, iter, *variant) {
+                return false;
+            }
+        }
+        if !self.extensions.is_empty() {
+            match extensions::Extensions::try_from_iter(&mut iter) {
+                Ok(exts) => {
+                    if self.extensions != exts {
+                        return false;
+                    }
+                }
+                Err(_) => {
+                    return false;
+                }
+            }
+        }
+        iter.next() == None
     }
 }

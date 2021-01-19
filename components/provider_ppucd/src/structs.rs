@@ -10,35 +10,21 @@ use std::convert::TryInto;
 // data key structs - the structs used directly by users of data provider
 //
 
-macro_rules! data_key {
-    (uniset, $sub_category:literal, $version:tt) => {
-        data_key!(icu_provider::DataCategory::Uniset, $sub_category, $version)
-    };
-
-    // this was copied over from `provider` crate, but maybe should be refactored
-    ($category:expr, $sub_category:literal, $version:tt) => {
-        icu_provider::DataKey {
-            category: $category,
-            sub_category: tinystr::tinystr16!($sub_category),
-            version: $version,
-        }
-    };
-}
-
 pub mod key {
-    use icu_provider::DataKey;
-    pub const WSPACE_V1: DataKey = data_key!(uniset, "WSpace", 1);
+    use icu_provider::resource_key;
+    use icu_provider::ResourceKey;
+    pub const WSPACE_V1: ResourceKey = resource_key!(uniset, "WSpace", 1);
 }
 
-/// Gets a locale-invariant default struct given a data key in this module's category.
-#[cfg(feature = "invariant")]
-pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
-    use crate::invariant::make_inv_response;
-    match *data_key {
-        key::WSPACE_V1 => make_inv_response::<UnicodeProperty>(),
-        _ => None,
-    }
-}
+// /// Gets a locale-invariant default struct given a data key in this module's category.
+// #[cfg(feature = "invariant")]
+// pub(crate) fn get_invariant(data_key: &DataKey) -> Option<DataResponse<'static>> {
+//     use crate::invariant::make_inv_response;
+//     match *data_key {
+//         key::WSPACE_V1 => make_inv_response::<UnicodeProperty>(),
+//         _ => None,
+//     }
+// }
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub struct UnicodeProperties {

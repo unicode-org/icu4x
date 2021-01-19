@@ -6,6 +6,14 @@ The list of locales and the current CLDR tag can be found in [Cargo.toml](./Carg
 
 The output data can be found in the [data](./data/) subdirectory.
 
+## Pointing to custom test data
+
+If you wish to run ICU4X tests with custom test data, you may do so by setting the "ICU4X_TESTDATA_DIR" environment variable:
+
+```bash
+$ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
+```
+
 ## Re-generating the data
 
 From this directory, run:
@@ -14,7 +22,7 @@ From this directory, run:
 $ cargo gen-testdata
 ```
 
-To monitor the progress, run with `-v` or `-vv`:
+To monitor the progress, run with `-v`, `-vv`, or `-vvv`:
 
 ```bash
 $ cargo gen-testdata -vv

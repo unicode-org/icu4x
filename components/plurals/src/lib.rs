@@ -73,7 +73,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::structs;
 pub use operands::PluralOperands;
-use std::borrow::Cow;
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -119,7 +118,7 @@ pub enum PluralRuleType {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -226,7 +225,7 @@ impl PluralCategory {
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -256,7 +255,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType};
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -267,23 +266,26 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProvider<'d>>(
+    pub fn try_new<'d, D: DataProvider<'d, structs::plurals::PluralRuleStringsV1<'d>> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
-        let data_key = match type_ {
+        let key = match type_ {
             PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
             PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
         };
-        let response = data_provider.load(&DataRequest {
-            data_key,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid.clone(),
-            },
-        })?;
-        let plurals_data: Cow<structs::plurals::PluralRuleStringsV1> = response.take_payload()?;
+        let plurals_data = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })?
+            .take_payload()?;
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 
@@ -300,7 +302,7 @@ impl PluralRules {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -330,7 +332,7 @@ impl PluralRules {
     /// # use icu_locid_macros::langid;
     /// # use icu_plurals::{PluralRules, PluralRuleType};
     /// use icu_plurals::{PluralCategory, PluralOperands};
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// #
     /// # let lid = langid!("en");
     /// #

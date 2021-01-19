@@ -13,17 +13,18 @@
 //!
 //! ```
 //! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
 //! let lid = langid!("en");
 //!
-//! let options = style::Bag {
+//! // See the next code example for a more ergonomic example with .into().
+//! let options = DateTimeFormatOptions::Style(style::Bag {
 //!     date: Some(style::Date::Medium),
 //!     time: Some(style::Time::Short),
 //!     ..Default::default()
-//! }.into();
+//! });
 //!
 //! let dtf = DateTimeFormat::try_new(lid, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
@@ -36,12 +37,30 @@
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
 //! ```
 //!
+//! The options can be created more ergonomically using the `Into` trait to automatically
+//! convert a [`options::style::Bag`] into a [`DateTimeFormatOptions::Style`].
+//!
+//! ```
+//! # use icu_locid_macros::langid;
+//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
+//! # let provider = icu_testdata::get_provider();
+//! # let lid = langid!("en");
+//! let options = style::Bag {
+//!     date: Some(style::Date::Medium),
+//!     time: Some(style::Time::Short),
+//!     ..Default::default()
+//! }.into();
+//!
+//! let dtf = DateTimeFormat::try_new(lid, &provider, &options);
+//! ```
+//!
 //! At the moment, the crate provides only options using the [`Style`] bag, but in the future,
 //! we expect to add more ways to customize the output, like skeletons, and components.
 //!
 //! *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 //! [`MockDateTime`] as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-//! we hope to work with the community to develop core date and time APIs that will work as an input for this component.
+//! [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/master/docs/research/date_time.md)
+//! to develop core date and time APIs that will work as an input for this component.
 //!
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`ICU4X`]: ../icu/index.html
@@ -82,7 +101,7 @@ use std::borrow::Cow;
 /// use icu_locid_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
 /// use icu_datetime::date::MockDateTime;
-/// use icu_provider::InvariantDataProvider;
+/// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en");
 ///
@@ -121,7 +140,7 @@ impl<'d> DateTimeFormat<'d> {
     /// use icu_locid_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_datetime::date::MockDateTime;
-    /// use icu_provider::InvariantDataProvider;
+    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en");
     ///
@@ -133,20 +152,22 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d>>(
+    pub fn try_new<D: DataProvider<'d, structs::dates::gregory::DatesV1> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
-        let data_key = structs::dates::key::GREGORY_V1;
-        let response = data_provider.load(&DataRequest {
-            data_key,
-            data_entry: DataEntry {
-                variant: None,
-                langid: langid.clone(),
-            },
-        })?;
-        let data: Cow<structs::dates::gregory::DatesV1> = response.take_payload()?;
+        let data = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: structs::dates::key::GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })?
+            .take_payload()?;
 
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 
@@ -166,7 +187,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -204,7 +225,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -236,7 +257,7 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
-    /// # use icu_provider::InvariantDataProvider;
+    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en");
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
