@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use icu_uniset::UnicodeSet;
-use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 
 //
@@ -16,12 +15,12 @@ pub mod key {
     pub const WSPACE_V1: ResourceKey = resource_key!(uniset, "WSpace", 1);
 }
 
-#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct UnicodeProperties {
     pub props: Vec<UnicodeProperty>,
 }
 
-#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct UnicodeProperty {
     pub name: String,
     pub inv_list: Vec<u32>,
@@ -36,8 +35,6 @@ impl UnicodeProperty {
         }
     }
 
-    /// Converts a UnicodeSet into a corresponding UnicodeProperty struct
-    /// for serde JSON de-/serialization.
     pub fn from_uniset(s: &UnicodeSet, name: &str) -> UnicodeProperty {
         let inv_list = s.get_inversion_list();
         UnicodeProperty {

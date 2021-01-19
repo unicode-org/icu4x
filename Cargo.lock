@@ -814,7 +814,6 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_uniset",
- "serde",
  "tinystr",
 ]
 

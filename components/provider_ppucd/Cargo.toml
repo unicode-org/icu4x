@@ -24,7 +24,6 @@ include = [
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
-serde = { version = "1.0", features = ["derive"] }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 tinystr = "0.4"
 icu_uniset = { version = "0.1", path = "../uniset" }
