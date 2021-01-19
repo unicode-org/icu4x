@@ -26,14 +26,17 @@ pub struct UnicodeProperty {
     pub inv_list: Vec<u32>,
 }
 
-impl UnicodeProperty {
-    /// Default empty nameless property
-    pub fn default() -> UnicodeProperty {
+impl Default for UnicodeProperty {
+    fn default() -> UnicodeProperty {
         UnicodeProperty {
             name: String::new(),
             inv_list: vec![],
         }
     }
+}
+
+impl UnicodeProperty {
+    /// Default empty nameless property
 
     pub fn from_uniset(s: &UnicodeSet, name: &str) -> UnicodeProperty {
         let inv_list = s.get_inversion_list();
