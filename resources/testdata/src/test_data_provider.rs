@@ -12,10 +12,10 @@ pub fn get_provider() -> FsDataProvider {
             .join("data")
             .join("json"),
     };
-    FsDataProvider::try_new(&path).unwrap_or_else(|_| {
+    FsDataProvider::try_new(&path).unwrap_or_else(|err| {
         panic!(
-            "The test data directory was unable to be opened: {:?}",
-            path
+            "The test data directory was unable to be opened: {}: {:?}",
+            err, path
         )
     })
 }
