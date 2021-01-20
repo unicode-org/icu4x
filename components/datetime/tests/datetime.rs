@@ -44,6 +44,7 @@ fn test_fixtures() {
 fn test_dayperiod_patterns() {
     use patterns::structs::Expectation;
     let provider = icu_testdata::get_provider();
+    let format_options = DateTimeFormatOptions::default();
     for test in patterns::get_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut data: Cow<DatesV1> = provider
@@ -59,23 +60,20 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
+        *data.to_mut().patterns.date_time.long.to_mut() = String::from("{0}");
         for test_case in &test.test_cases {
             for dt_input in &test_case.date_times {
                 let date_time: MockDateTime = dt_input.parse().unwrap();
                 for Expectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
-                        *data.to_mut().patterns.date_time.long.to_mut() = String::from("{0}");
                         let provider = StructProvider {
                             key: GREGORY_V1,
                             data: data.as_ref(),
                         };
-                        let dtf = DateTimeFormat::try_new(
-                            langid.clone(),
-                            &provider,
-                            &DateTimeFormatOptions::default(),
-                        )
-                        .unwrap();
+                        let dtf =
+                            DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
+                                .unwrap();
                         assert_eq!(
                             dtf.format(&date_time).to_string(),
                             *expected,
