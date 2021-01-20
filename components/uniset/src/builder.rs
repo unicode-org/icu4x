@@ -105,7 +105,7 @@ impl UnicodeSetBuilder {
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_u32(65);
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some(65));
+    /// assert_eq!(check.contains_u32(65), true);
     /// ```
     pub fn add_u32(&mut self, c: u32) {
         if c <= char::MAX as u32 {
