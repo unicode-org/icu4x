@@ -165,6 +165,29 @@ impl UnicodeSet {
         self.contains_query(query as u32).is_some()
     }
 
+    /// Checks to see the unsigned int is in the `UnicodeSet`.all()
+    /// 
+    /// Note: Even though `u32` and `char` in Rust are non-negative 4-byte
+    /// values, there is an important difference. A `u32` can take values up to
+    /// a very large integer value, while a `char` in Rust is defined to be in
+    /// the range from 0 to the maximum valid Unicode Scalar Value. 
+    ///
+    /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
+    /// in the set using `std` implementation
+    ///
+    /// # Example:
+    ///
+    /// ```
+    /// use icu_uniset::UnicodeSet;
+    /// let example_list = vec![65, 67, 68, 69];
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// assert!(example.contains_u32(65));
+    /// assert!(!example.contains_u32(67));
+    /// ```
+    pub fn contains_u32(&self, query: u32) -> bool {
+        self.contains_query(query).is_some()
+    }
+
     /// Checks to see if the range is in the UnicodeSet, returns a Result
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
