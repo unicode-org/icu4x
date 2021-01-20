@@ -32,7 +32,7 @@ impl UnicodeSet {
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -91,7 +91,7 @@ impl UnicodeSet {
 
     /// Yields an iterator going through the character set in the `UnicodeSet`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -152,7 +152,7 @@ impl UnicodeSet {
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using `std` implementation
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -175,7 +175,7 @@ impl UnicodeSet {
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using `std` implementation
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -194,7 +194,7 @@ impl UnicodeSet {
     /// in the set using `std::vec::Vec` implementation Only runs the search once on the `start`
     /// parameter, while the `end` parameter is checked in a single `O(1)` step
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -213,7 +213,7 @@ impl UnicodeSet {
     /// The ICU4C/J `UnicodeSet::contains(UChar32 start, UChar32 end)` method
     /// differs by including the end boundary.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -236,7 +236,7 @@ impl UnicodeSet {
 
     /// Check if the calling `UnicodeSet` contains all the characters of the given `UnicodeSet`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -271,7 +271,7 @@ impl UnicodeSet {
     /// Returns the end of the initial substring where the characters are either contained/not contained
     /// in the set.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
@@ -292,7 +292,7 @@ impl UnicodeSet {
     /// Returns the start of the trailing substring (starting from end of string) where the characters are
     /// either contained/not contained in the set. Returns the length of the string if no valid return.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSet;
