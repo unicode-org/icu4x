@@ -13,9 +13,9 @@ use std::borrow::Cow;
 impl LocaleCanonicalizer<'_> {
     /// A constructor which takes a DataProvider and creates a
     /// LocaleCanonicalizer.
-    pub fn new<'a>(
-        provider: &dyn DataProvider<'a, LikelySubtagsV1>,
-    ) -> Result<LocaleCanonicalizer<'a>, DataError> {
+    pub fn new<'d>(
+        provider: &(impl DataProvider<'d, LikelySubtagsV1> + ?Sized),
+    ) -> Result<LocaleCanonicalizer<'d>, DataError> {
         let payload: Cow<LikelySubtagsV1> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
             .take_payload()?;
