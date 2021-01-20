@@ -82,7 +82,7 @@ fn is_defaults_line(line: &str) -> bool {
 /// Return the property key-value information represented in the "defaults"
 /// line as a map. "defaults" is like the base level of overrides of property
 /// values for all code points in PPUCD.
-fn get_defaults_prop_vals<'s>(line: &'s str) -> HashMap<&'s str, &'s str> {
+fn get_defaults_prop_vals(line: &str) -> HashMap<&str, &str> {
     let line_parts = split_line(&line);
     assert_eq!(&"defaults", &line_parts[0]);
     get_data_line_prop_vals(&line_parts)
