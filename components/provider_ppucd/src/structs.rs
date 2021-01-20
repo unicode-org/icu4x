@@ -16,38 +16,38 @@ pub mod key {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct UnicodeProperties {
-    pub props: Vec<UnicodeProperty>,
+pub struct UnicodeProperties<'s> {
+    pub props: Vec<UnicodeProperty<'s>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct UnicodeProperty {
-    pub name: String,
+pub struct UnicodeProperty<'s> {
+    pub name: &'s str,
     pub inv_list: Vec<u32>,
 }
 
-impl Default for UnicodeProperty {
-    fn default() -> UnicodeProperty {
+impl Default for UnicodeProperty<'static> {
+    fn default() -> UnicodeProperty<'static> {
         UnicodeProperty {
-            name: String::new(),
+            name: "",
             inv_list: vec![],
         }
     }
 }
 
-impl UnicodeProperty {
+impl<'s> UnicodeProperty<'s> {
     /// Default empty nameless property
 
-    pub fn from_uniset(s: &UnicodeSet, name: &str) -> UnicodeProperty {
-        let inv_list = s.get_inversion_list();
+    pub fn from_uniset(set: &UnicodeSet, name: &'s str) -> UnicodeProperty<'s> {
+        let inv_list = set.get_inversion_list();
         UnicodeProperty {
-            name: String::from(name),
+            name,
             inv_list,
         }
     }
 }
 
-impl TryInto<UnicodeSet> for UnicodeProperty {
+impl<'s> TryInto<UnicodeSet> for UnicodeProperty<'s> {
     type Error = crate::error::Error;
     fn try_into(self) -> Result<UnicodeSet, Self::Error> {
         UnicodeSet::from_inversion_list(self.inv_list)

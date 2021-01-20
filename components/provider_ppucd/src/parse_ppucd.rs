@@ -56,7 +56,7 @@ fn is_property_line(line: &str) -> bool {
 
 /// For a property definition line, update the property aliases map.
 /// Only operate on binary properties, currently.
-fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &str) {
+fn update_aliases<'s>(prop_aliases: &mut HashMap<&'s str, HashSet<String>>, line: &'s str) {
     let mut line_parts = split_line(&line);
     assert_eq!(&"property", &line_parts[0]);
     let prop_type = &line_parts[1];
@@ -74,7 +74,7 @@ fn update_aliases(prop_aliases: &mut HashMap<String, HashSet<String>>, line: &st
             line_parts.drain(0..1);
         }
 
-        let canonical_name = String::from(line_parts[0]);
+        let canonical_name = line_parts[0];
         let all_names: Vec<String> = line_parts.iter().map(|line| String::from(*line)).collect();
         let all_names_set: HashSet<String> = all_names.into_iter().collect();
         prop_aliases.insert(canonical_name, all_names_set);
@@ -204,11 +204,11 @@ fn get_code_point_prop_vals(
 /// dimension of code point <-> property key-value information from the
 /// grouping by code point (as given by `code_points`) to a grouping by
 /// property name.
-fn get_binary_prop_unisets(
-    prop_aliases: &HashMap<String, HashSet<String>>,
+fn get_binary_prop_unisets<'s>(
+    prop_aliases: &HashMap<&'s str, HashSet<String>>,
     code_points: &HashMap<u32, HashMap<String, String>>,
-) -> HashMap<String, UnicodeSet> {
-    let mut m: HashMap<String, UnicodeSet> = HashMap::new();
+) -> HashMap<&'s str, UnicodeSet> {
+    let mut m: HashMap<&'s str, UnicodeSet> = HashMap::new();
 
     for (canonical_name, all_names) in prop_aliases {
         let mut uniset_builder = UnicodeSetBuilder::new();
@@ -221,7 +221,7 @@ fn get_binary_prop_unisets(
         }
         if !&uniset_builder.is_empty() {
             let uniset = uniset_builder.build();
-            m.insert(canonical_name.clone(), uniset);
+            m.insert(canonical_name, uniset);
         }
     }
 
@@ -232,12 +232,12 @@ fn get_binary_prop_unisets(
 /// struct of the binary and enumerated property inversion lists.
 /// Note: even though `UnicodeProperties` stores a sequential data structure of
 /// the `UnicodeProperty` struct, there is no inherent ordering of the entries.
-pub fn parse(s: String) -> UnicodeProperties {
+pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let lines: std::str::Lines = s.lines();
 
     let parseable_lines = lines.filter(|line| !is_skip_ppucd_line(line));
 
-    let mut prop_aliases: HashMap<String, HashSet<String>> = HashMap::new();
+    let mut prop_aliases: HashMap<&'s str, HashSet<String>> = HashMap::new();
 
     let mut defaults: HashMap<String, String> = HashMap::new();
 
@@ -278,14 +278,14 @@ pub fn parse(s: String) -> UnicodeProperties {
         }
     }
 
-    let binary_prop_unisets: HashMap<String, UnicodeSet> =
+    let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
         get_binary_prop_unisets(&prop_aliases, &code_points);
 
     let mut props: Vec<UnicodeProperty> = vec![];
 
     for (canonical_name, uniset) in binary_prop_unisets {
         let ppucd_prop: UnicodeProperty =
-            UnicodeProperty::from_uniset(&uniset, canonical_name.as_str());
+            UnicodeProperty::from_uniset(&uniset, canonical_name);
         props.push(ppucd_prop);
     }
 

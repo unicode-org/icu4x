@@ -7,41 +7,36 @@ use crate::structs::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use std::fs::File;
-use std::io::Read;
-use std::marker::PhantomData;
 
 #[derive(Debug)]
-pub struct PpucdDataProvider<'d> {
-    pub ppucd_props: UnicodeProperties,
-    _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
+pub struct PpucdDataProvider<'s> {
+    pub ppucd_props: UnicodeProperties<'s>,
 }
 
-impl<'d> PpucdDataProvider<'d> {
-    pub fn new(prop_str: &str) -> Self {
-        let data: UnicodeProperties = parse_ppucd::parse(prop_str.to_string());
+impl<'s> PpucdDataProvider<'s> {
+    pub fn new(prop_str: &'s str) -> Self {
+        let data: UnicodeProperties = parse_ppucd::parse(prop_str);
         PpucdDataProvider {
             ppucd_props: data,
-            _phantom: PhantomData,
         }
     }
 
-    pub fn from_prop(ppucd_prop: UnicodeProperty) -> Self {
+    pub fn from_prop(ppucd_prop: UnicodeProperty<'s>) -> Self {
         PpucdDataProvider {
             ppucd_props: UnicodeProperties {
                 props: vec![ppucd_prop],
             },
-            _phantom: PhantomData,
         }
     }
 }
 
-// Similar to provider_cldr for plurals
-impl<'d> DataProvider<'d, UnicodeProperty> for PpucdDataProvider<'d> {
+// Similar to provider_cldr for plurals:
+// Only returns owned data, so assert 'static for ErasedDataProvider compatibility.
+impl<'d, 's> DataProvider<'d, UnicodeProperty<'s>> for PpucdDataProvider<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, UnicodeProperty>, DataError> {
+    ) -> Result<DataResponse<'d, UnicodeProperty<'s>>, DataError> {
         let resc_key: &ResourceKey = &req.resource_path.key;
         let resc_key_str: &str = resc_key.sub_category.as_str();
         let props_data: &UnicodeProperties = &self.ppucd_props;
@@ -62,28 +57,26 @@ impl<'d> DataProvider<'d, UnicodeProperty> for PpucdDataProvider<'d> {
     }
 }
 
-impl<'d> TryFrom<&'d str> for PpucdDataProvider<'d> {
+impl<'s> TryFrom<&'s str> for PpucdDataProvider<'s> {
     type Error = DataError;
-    fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let props_data: UnicodeProperties = parse_ppucd::parse(String::from(s));
+    fn try_from(s: &'s str) -> Result<Self, Self::Error> {
+        let props_data: UnicodeProperties = parse_ppucd::parse(s);
         Ok(PpucdDataProvider {
             ppucd_props: props_data,
-            _phantom: PhantomData,
         })
     }
 }
 
-impl<'d> From<File> for PpucdDataProvider<'d> {
-    fn from(prop_file: File) -> Self {
-        let mut file_contents = String::new();
-        let _result = (&prop_file).read_to_string(&mut file_contents);
-        let props_data: UnicodeProperties = parse_ppucd::parse(file_contents);
-        PpucdDataProvider {
-            ppucd_props: props_data,
-            _phantom: PhantomData,
-        }
-    }
-}
+// impl<'d> From<File> for PpucdDataProvider<'d> {
+//     fn from(prop_file: File) -> Self {
+//         let mut file_contents = String::new();
+//         let _result = (&prop_file).read_to_string(&mut file_contents);
+//         let props_data: UnicodeProperties = parse_ppucd::parse(file_contents);
+//         PpucdDataProvider {
+//             ppucd_props: props_data,
+//         }
+//     }
+// }
 
 #[test]
 fn test_ppucd_provider_parse() {
@@ -104,7 +97,7 @@ fn test_ppucd_provider_parse() {
 
     let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload().unwrap();
     let exp_prop_uniset: UnicodeProperty = UnicodeProperty {
-        name: String::from("WSpace"),
+        name: "WSpace",
         inv_list: vec![
             9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
             8287, 8288, 12288, 12289,
