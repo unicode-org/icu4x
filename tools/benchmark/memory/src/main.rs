@@ -1,9 +1,9 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use quote::quote;
+use cargo_metadata::Metadata;
+use clap::{App, Arg};
 use serde_json::json;
-use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::process;
@@ -11,113 +11,57 @@ use std::process::Command;
 use std::{env, process::Stdio};
 use std::{fs, io::BufReader};
 
-fn inject_dhat_scoped_variable(syntax: &mut syn::File) {
-    let dhat = syn::parse_str("let _dhat = Dhat::start_heap_profiling();")
-        .expect("Unable to parse the dhat string");
-
-    // Find the main function.
-    for item in syntax.items.iter_mut() {
-        if let syn::Item::Fn(ref mut fn_item) = item {
-            if fn_item.sig.ident == "main" {
-                // Create a new vector with the injected statement at the beginning.
-                let mut new_stmts = vec![dhat];
-                for stmt in fn_item.block.stmts.drain(..) {
-                    new_stmts.push(stmt);
-                }
-                fn_item.block.stmts = new_stmts;
-                return;
-            }
-        }
-    }
-
-    panic!("Unable to find the main function.");
+struct ProcessedArgs {
+    os: Option<String>,
+    examples: Vec<String>,
 }
 
-fn inject_allocator_declaration(syntax: &mut syn::File) {
-    let use_code = "use dhat::{Dhat, DhatAlloc};";
-    let allocator_code = "
-        #[global_allocator]
-        static ALLOCATOR: DhatAlloc = DhatAlloc;
-    ";
-    let mut new_items = vec![
-        syn::parse_str(use_code).expect("Unable to parse the dhat use string"),
-        syn::parse_str(allocator_code).expect("Unable to parse the allocator string"),
-    ];
+fn process_cli_args() -> ProcessedArgs {
+    let matches = App::new("ICU4X Memory Benchmarks")
+        .about("Collect a memory report for examples using dhat-rs.")
+        .arg(
+            Arg::with_name("EXAMPLES")
+                .index(1)
+                .multiple(true)
+                .required(true)
+                .help("The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>")
+            )
+        .arg(
+            Arg::with_name("OS")
+                .long("os")
+                .takes_value(true)
+                .value_name("OS")
+                .required(false)
+                .help("Nests the results of the benchmark in a folder per-OS, primarily needed by CI.")
+        ).get_matches();
 
-    for item in syntax.items.drain(..) {
-        new_items.push(item);
-    }
-    syntax.items = new_items;
-}
-
-/// dhat requires that the files are manually instrumented. This function automates
-/// that process, by processing the AST using the syn package, modifying the AST,
-/// and then finally writing it back out to a file with a slightly different name.
-/// The instrumented version of the file can then be run.
-fn run_dhat_injection(filename: &PathBuf) -> String {
-    let mut file = File::open(&filename).expect("Unable to open file");
-
-    let mut src = String::new();
-    file.read_to_string(&mut src).expect("Unable to read file");
-
-    let mut syntax = syn::parse_file(&src).expect("Unable to parse file");
-
-    inject_allocator_declaration(&mut syntax);
-    inject_dhat_scoped_variable(&mut syntax);
-
-    quote!(#syntax).to_string()
-}
-
-fn print_usage() {
-    eprintln!("Usage: cargo run --component memory -- [os] [component] [...example]");
-    eprintln!("e.g. : cargo run --component memory -- macos-latest datetime work_log skeletons");
-}
-
-fn process_cli_args() -> (String, String, Vec<String>) {
-    let mut args = env::args();
-
-    let (os, component) = match (args.next(), args.next(), args.next()) {
-        (Some(_executable), Some(os), Some(component)) => {
+    ProcessedArgs {
+        // Validate the OS, and copy into an owned String.
+        os: matches.value_of("OS").map(|os| {
             if !os
                 .chars()
                 .all(|c| c.is_alphanumeric() || c == '_' || c == '-')
             {
-                eprintln!("The OS had an unexpected character \"{:?}\"", component);
-                print_usage();
-                process::exit(1);
+                panic!("The OS had an unexpected character");
             }
+            os.to_string()
+        }),
 
-            if !component
-                .chars()
-                .all(|c| c.is_alphanumeric() || c == '_' || c == '/')
-            {
-                eprintln!(
-                    "The component had an unexpected character \"{:?}\"",
-                    component
-                );
-                print_usage();
-                process::exit(1);
-            }
-
-            (os, component)
-        }
-        _ => {
-            print_usage();
-            process::exit(1);
-        }
-    };
-
-    let mut examples = Vec::new();
-    for example in args {
-        if !example.chars().all(|c| c.is_alphanumeric() || c == '_') {
-            eprintln!("An example had an unexpected character \"{:?}\"", example);
-            print_usage();
-            process::exit(1);
-        }
-        examples.push(example);
+        // Validate the examples, and map them into owned Strings.
+        examples: matches
+            .values_of("EXAMPLES")
+            .expect("At least one example must be provided.")
+            .map(|example| {
+                if !example
+                    .chars()
+                    .all(|c| c.is_alphanumeric() || c == '_' || c == '/')
+                {
+                    panic!("An example had an unexpected character \"{:?}\"", example);
+                }
+                example.to_string()
+            })
+            .collect(),
     }
-
-    (os, component, examples)
 }
 
 fn parse_dhat_log(dhat_log: &[String]) -> (u64, u64, u64) {
@@ -149,76 +93,70 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .expect("Unable to parse the byte amount");
 }
 
+fn get_meta_data(root_dir: &PathBuf) -> Metadata {
+    let main_cargo_toml_path = {
+        let mut path = root_dir.clone();
+        path.push("Cargo.toml");
+        if !path.exists() {
+            panic!("Could not find the root Cargo.toml");
+        }
+        path
+    };
+
+    let mut cmd = cargo_metadata::MetadataCommand::new();
+    cmd.manifest_path(main_cargo_toml_path);
+    cmd.exec().expect("Unable to generate the cargo metadata")
+}
+
 /// This file is intended to be run from CI to gather heap information, but it can also
 /// be run locally. The charts are only generated in CI.
 ///
 /// The workflow for this program is as follows:
 ///
-/// 1. Process the CLI arguments to get the os, component, and examples.
-/// 2. Create the directory for the benchmarks to go in.
-/// 3. Loop through each example and:
-///   a. Inject dhat memory instrumentation into the main function.
-///   b. Write out that file to path/to/component/examples/foo___memory.rs
-///   c. Run `cargo run --example foo` from the component directory
-///   d. Extract the dhat stderr, and process out the interesting bytes.
-///   e. Add the output to an `ndjson` file.
-///   f. Move the dhat-heap.json file to the benchmark folder.
+/// 1. Process the CLI arguments to get the os, and examples.
+/// 2. Loop through each example and:
+///   a. Create the directory for the benchmarks to go in.
+///   b. Run `cargo run --example {example}` with the appropriate settings.
+///   c. Extract the dhat stderr, and process out the interesting bytes.
+///   d. Add the output to an `ndjson` file.
+///   e. Move the dhat-heap.json file to the benchmark folder.
 fn main() {
-    let (os, component, examples) = process_cli_args();
-
-    println!(
-        "[memory_bench] Running memory instrumentation on examples in {:?}",
-        component
-    );
+    let ProcessedArgs { os, examples } = process_cli_args();
 
     let root_dir = {
         let mut path = PathBuf::from(&env::var("CARGO_MANIFEST_DIR").expect("$CARGO_MANIFEST_DIR"));
         path.pop();
         path.pop();
+        path.pop();
         path
     };
 
-    let component_dir = {
-        let mut path = root_dir.clone();
-        path.push(&component);
-        if !path.exists() {
-            panic!("Could not find the component at the path: {:?}", path);
-        }
-        path
-    };
+    let metadata = get_meta_data(&root_dir);
 
-    let example_dir = {
-        let mut path = component_dir.clone();
-        path.push("examples");
-        if !path.exists() {
-            panic!(
-                "Could not find the examples directory at the path: {:?}",
-                path
-            );
-        }
-        path
-    };
-
+    // benchmarks/memory/{os}
     let benchmark_dir = {
-        let mut path = root_dir;
+        let mut path = root_dir.clone();
         path.push("benchmarks/memory");
-        path.push(os);
-        path.push(&component);
+        if let Some(os) = os {
+            path.push(os);
+        }
         path
     };
 
-    let benchmark_output_path = {
-        let mut path = benchmark_dir.clone();
-        path.push("output.ndjson");
-        path
-    };
-
+    // Make the directory: benchmarks/memory/{os}
     fs::create_dir_all(&benchmark_dir).unwrap_or_else(|err| {
         panic!(
             "Unable to create the benchmark directory {:?} {:?}",
             benchmark_dir, err
         );
     });
+
+    // benchmarks/memory/{os}/output.ndjson
+    let benchmark_output_path = {
+        let mut path = benchmark_dir.clone();
+        path.push("output.ndjson");
+        path
+    };
 
     if benchmark_output_path.exists() {
         fs::remove_file(&benchmark_output_path).unwrap_or_else(|err| {
@@ -229,64 +167,61 @@ fn main() {
         });
     }
 
-    let mut benchmark_output = fs::OpenOptions::new()
-        .read(true)
-        .append(true)
-        .create(true)
-        .open(&benchmark_output_path)
-        .expect("Unable to open the benchmark output file for write.");
-
-    for example in examples {
-        println!("[memory_bench] Starting example {:?}", example);
-        let example_path = {
-            let mut path = example_dir.clone();
-            path.push(format!("{}.rs", example));
-            if !path.exists() {
-                eprintln!("Could not find the example at the path: {:?}", path);
+    for ref package_example in examples {
+        let (package_name, example) = {
+            // Split up the "package_name/example" string.
+            let parts: Vec<&str> = package_example.split('/').collect();
+            if parts.len() != 2 {
+                eprintln!(
+                    "An example is expected take the form package_name/example: {:?}",
+                    package_example
+                );
                 process::exit(1);
             }
-            path
-        };
-        let example_copy_path = {
-            let mut path = example_dir.clone();
-            path.push(format!("{}___memory.rs", example));
-            path
+            (*parts.get(0).unwrap(), *parts.get(1).unwrap())
         };
 
-        println!(
-            "[memory_bench] Injecting the memory instrumentation into {:?}",
-            example
-        );
-        let instrumented_src = run_dhat_injection(&example_path);
-
-        let mut file = File::create(&example_copy_path).unwrap_or_else(|err| {
-            panic!(
-                "Could not create the file {:?} {:?}",
-                example_copy_path, err
-            );
-        });
-
-        file.write_all(instrumented_src.as_bytes())
-            .unwrap_or_else(|err| {
-                eprintln!("Could not write the file {:?} {:?}", example_copy_path, err);
+        let package = match metadata
+            .packages
+            .iter()
+            .find(|package| package.name == package_name)
+        {
+            Some(p) => p,
+            None => {
+                eprintln!(
+                    "Unable to find the metadata for the package_name: {:?}",
+                    package_name
+                );
                 process::exit(1);
-            });
+            }
+        };
 
-        println!(
-            "[memory_bench] Running the instrumented example {:?}",
-            example
-        );
+        let mut benchmark_output = fs::OpenOptions::new()
+            .read(true)
+            .append(true)
+            .create(true)
+            .open(&benchmark_output_path)
+            .expect("Unable to open the benchmark output file for write.");
+
+        println!("[memory] Starting example {:?}", example);
 
         let mut run_example = Command::new("cargo")
+            // +nightly is required for unstable options.
             .arg("+nightly")
             .arg("run")
             .arg("--example")
-            .arg(format!("{}___memory", example))
+            .arg(example)
+            // This is an unstable option.
             .arg("--profile")
             .arg("bench")
             .arg("-Z")
             .arg("unstable-options")
-            .current_dir(&component_dir)
+            // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
+            // icu_benchmark_macros package.
+            .arg("--manifest-path")
+            .arg(&package.manifest_path)
+            .arg("--features")
+            .arg("icu_benchmark_macros/benchmark_memory")
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {
@@ -302,17 +237,30 @@ fn main() {
         let dhat_log: Vec<_> = BufReader::new(stdout)
             .lines()
             .map(|s| s.expect("Unable to read from stderr."))
-            .inspect(|s| println!("[memory_bench] > {}", s))
+            .inspect(|s| println!("[memory] > {}", s))
             .filter(|s| s.starts_with("dhat: "))
             .collect();
 
-        fs::remove_file(&example_copy_path).unwrap_or_else(|err| {
-            panic!(
-                "Could not remove the file {:?} {:?}",
-                example_copy_path, err
-            );
-        });
+        let status = run_example
+            .wait()
+            .expect("Unable to get the status of the example child process.");
 
+        if !status.success() {
+            eprintln!(
+                "The example \"{}\" had a non-zero exit code: {:?}",
+                example,
+                status.code().expect("An example could not be run.")
+            );
+            process::exit(1);
+        }
+
+        if dhat_log.is_empty() {
+            eprintln!(
+                "The {:?} example needs to be instrumented with icu_benchmark_macros.",
+                example
+            );
+            process::exit(1);
+        }
         let (total, gmax, end) = parse_dhat_log(&dhat_log);
 
         let write_json = |bytes, label| {
@@ -327,11 +275,17 @@ fn main() {
 
         let output = format!(
             "{}\n{}\n{}\n",
-            write_json(total, format!("{} – Total Heap Allocations", example)),
-            write_json(gmax, format!("{} – Heap at Global Memory Max", example)),
+            write_json(
+                total,
+                format!("{} – Total Heap Allocations", package_example)
+            ),
+            write_json(
+                gmax,
+                format!("{} – Heap at Global Memory Max", package_example)
+            ),
             write_json(
                 end,
-                format!("{} – Heap at End of Program Execution", example)
+                format!("{} – Heap at End of Program Execution", package_example)
             ),
         );
 
@@ -346,7 +300,7 @@ fn main() {
         };
 
         let dhat_source = {
-            let mut path = component_dir.clone();
+            let mut path = root_dir.clone();
             path.push("dhat-heap.json");
             assert!(path.exists(), "The dhat-heap.json file did not exist.");
             path
@@ -354,55 +308,15 @@ fn main() {
 
         fs::rename(&dhat_source, &dhat_destination).expect("Unable to move the dhat-heap.json");
 
-        println!("[memory_bench] Memory log:  {:?}", benchmark_output_path);
-        println!("[memory_bench] dhat file:   {:?}", dhat_destination);
-        println!(
-            "[memory_bench] Viewable in: https://gregtatum.github.io/dhat-viewer/dh_view.html"
-        );
-        println!("\n{}", output);
+        println!("[memory] Memory log:  {:?}", benchmark_output_path);
+        println!("[memory] dhat file:   {:?}", dhat_destination);
+        println!("[memory] Viewable in: https://nnethercote.github.io/dh_view/dh_view.html");
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-
-    #[test]
-    fn test_dhat_injection() {
-        let path = {
-            let mut path =
-                PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("$CARGO_MANIFEST_DIR"));
-            path.push("tests/fixtures/code.rs.txt");
-            path
-        };
-
-        // The result ends up on one line of text which is a bit hard to read.
-        // Split it up on the semi-colons to improve readability.
-        let result: Vec<String> = run_dhat_injection(&path)
-            .split(';')
-            .map(String::from)
-            .collect();
-
-        assert_eq!(
-            result,
-            [
-                // Injected code:
-                "use dhat :: { Dhat , DhatAlloc } ",
-                " # [global_allocator] static ALLOCATOR : DhatAlloc = DhatAlloc ",
-                // Original code:
-                " use std :: env ",
-                " fn do_something () { println ! (\"It has another function in it.\") ",
-                " println ! (\"It uses an import. {}\" , env ! (\"CARGO_PKG_VERSION\") ",
-                ") ",
-                // Injected code:
-                " } fn main () { let _dhat = Dhat :: start_heap_profiling () ",
-                //               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                // Original:
-                " println ! (\"This is a test fixture\") ",
-                " }",
-            ],
-        );
-    }
 
     #[test]
     fn test_byte_extraction() {
