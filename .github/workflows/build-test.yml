@@ -217,7 +217,7 @@ jobs:
           name: benchmark-perf
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
-  # metrics will then be charted over time. See utils/memory_bench/README.md for
+  # metrics will then be charted over time. See tools/benchmark/memory/README.md for
   # more information.
 
   # dhat-rs:
@@ -225,9 +225,9 @@ jobs:
   # Benchmarking action (forked):
   #   https://github.com/gregtatum/github-action-benchmark
   # The memory data is collected in:
-  #   benchmarks/memory/{os}/{component_path}/output.ndjson
+  #   benchmarks/memory/{os}/output.ndjson
   # The full data report is stored in:
-  #   benchmarks/memory/{os}/{component_path}/{example}-dhat-heap.json
+  #   benchmarks/memory/{os}/{example}-dhat-heap.json
 
   memory:
     strategy:
@@ -238,21 +238,25 @@ jobs:
       # examples folder.
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        example: [
-          { component: components/datetime, examples: "work_log" },
-          { component: components/locid, examples: "syntatically_canonicalize_locales filter_langids" },
-          { component: components/plurals, examples: "unread_emails elevator_floors" },
-          { component: components/uniset, examples: unicode_bmp_blocks_selector },
-          # Important! When adding new components, ensure that dhat is added as
-          # dev dependency, or else the job will fail.
-        ]
+        # The list of examples to run, with the form {package}/{example}.
+        #
+        # n.b. Don't get tripped up by the yml syntax here. This is a list with a single string
+        # entry. It is using the block chomping indicator ">-", which means the multiline string
+        # will be joined together into one line using a single space between each line. This
+        # will place all of the examples on the same line so they can get passed to the
+        # icu_benchmark_memory cli.
+        examples:
+          - >-
+              icu_datetime/work_log
+              icu_locid/syntatically_canonicalize_locales
+              icu_locid/filter_langids
+              icu_plurals/unread_emails
+              icu_plurals/elevator_floors
+              icu_uniset/unicode_bmp_blocks_selector
+              fixed_decimal/permyriad
+              writeable/writeable_message
 
     runs-on: ${{ matrix.os }}
-
-    # This job waits on the full build, even though it doesn't need anything from it.
-    # This way it is only triggered if the build is successful. The CI could be made
-    # a little bit faster by starting this job immediately, as it's fully independent.
-    needs: [build]
 
     steps:
       - uses: actions/checkout@v2
@@ -262,14 +266,9 @@ jobs:
       - name: Install nightly toolchain
         run: rustup toolchain install nightly
 
-      - name: Install cargo-make
-        uses: davidB/rust-cargo-make@v1
-        with:
-          version: latest
-
       - name: Run the example with dhat-rs to collect memory information
         run: |
-          cargo run --package memory_bench -- ${{ matrix.os }} ${{ matrix.example.component }} ${{ matrix.example.examples }}
+          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
       # dashboard HTML in a commit of a branch of the local repo.
@@ -277,13 +276,16 @@ jobs:
       - name: Store benchmark result & create dashboard (unmerged PR only)
         # any action that is not a merge to master implies unfinished PR
         if: github.event_name != 'push' || github.ref != 'refs/heads/master'
-        uses: gregtatum/github-action-benchmark@v1
+        # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+        # If the PR gets merged, this can be switched back to the main project.
+        # https://github.com/rhysd/github-action-benchmark/pull/54
+        uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
         with:
-          name: Heap – ${{ matrix.example.component }}
+          name: Heap – ${{ matrix.os }}
           # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
           tool: 'ndjson'
-          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}
-          output-file-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}/output.ndjson
+          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+          output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
           # Show alert with commit comment on detecting possible memory regression
           alert-threshold: '200%'
           fail-on-alert: true
@@ -306,19 +308,22 @@ jobs:
       - name: Store benchmark result & create dashboard (merge to master only)
         # only merges to master (implies PR is finished and approved by this point)
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: gregtatum/github-action-benchmark@v1
+        # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+        # If the PR gets merged, this can be switched back to the main project.
+        # https://github.com/rhysd/github-action-benchmark/pull/54
+        uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
         with:
-          name: Heap – ${{ matrix.example.component }}
+          name: Heap – ${{ matrix.os }}
           # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
           tool: 'ndjson'
-          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}
-          output-file-path: ./benchmarks/memory/${{ matrix.os }}/${{ matrix.example.component }}/output.ndjson
+          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+          output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
           alert-threshold: '200%'
           fail-on-alert: true
           # The historical run information will be stored in this branch. This is the same
           # branch that is being used by the performance benchmark. The information is
           # computed by gregtatum/github-action-benchmark, and is added to a .js file in
-          # the branch, e.g. benchmarks/memory/{os}/{component}/{example}/data.js
+          # the branch, e.g. benchmarks/memory/{os}/data.js
           gh-pages-branch: gh-pages
           auto-push: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
