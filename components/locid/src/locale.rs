@@ -97,6 +97,28 @@ impl Locale {
         parse_locale(v)
     }
 
+    /// Returns the default undefined locale "und". Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    ///
+    /// const loc: Locale = Locale::und();
+    /// assert_eq!(Locale::default(), loc);
+    /// assert_eq!("und", loc.to_string());
+    /// ```
+    #[inline]
+    pub const fn und() -> Self {
+        Self {
+            language: subtags::Language::und(),
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
+            extensions: extensions::Extensions::new(),
+        }
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future

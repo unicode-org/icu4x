@@ -29,16 +29,23 @@ use std::ops::Deref;
 /// ```
 ///
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-pub struct Variants(
-    // The internal representation of the struct uses `Option` to workaround
-    // the limitation of `const fn` in Rust at the time of writing.
-    //
-    // Once Rust supports boxed slices in const fn, we should remove the
-    // wrapping `Option`.
-    Option<Box<[Variant]>>,
-);
+pub struct Variants(Option<Box<[Variant]>>);
 
 impl Variants {
+    /// Returns a new empty list of variants. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::subtags::Variants;
+    ///
+    /// assert_eq!(Variants::new(), Variants::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self(None)
+    }
+
     /// Creates a new `Variants` set from a vector.
     /// The caller is expected to provide sorted and deduplicated vector as
     /// an input.

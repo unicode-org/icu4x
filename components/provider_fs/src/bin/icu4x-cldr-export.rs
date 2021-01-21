@@ -292,6 +292,7 @@ fn main() -> Result<(), Error> {
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
 
     for key in keys.iter() {
+        log::info!("Writing key: {}", key);
         let result = exporter.put_key_from_provider(key, &provider);
         // Ensure flush() is called, even when the result is an error
         exporter.flush()?;

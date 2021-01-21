@@ -82,6 +82,23 @@ pub struct Transform {
 }
 
 impl Transform {
+    /// Returns a new empty map of Transform extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::transform::Transform;
+    ///
+    /// assert_eq!(Transform::new(), Transform::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self {
+            lang: None,
+            fields: Fields::new(),
+        }
+    }
+
     /// Returns `true` if there are no tfields and no tlang in
     /// the `TransformExtensionList`.
     ///
