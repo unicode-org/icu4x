@@ -3,8 +3,8 @@ Issue Triaging
 
 ICU4X uses GitHub for tracking feature requests and work items.  The following queries omit issues having the **discuss** label.
 
-- All valid issues should have a type label.
-    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3AT-tests+-label%3Aduplicate+-label%3Adiscuss)
+- All *open* issues should have a type label.
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3AT-tests+-label%3Aduplicate+-label%3Adiscuss)
 - All valid issues should have a component label.
     - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3Ainvalid+-label%3Aduplicate)
 - All *open* issues should have an assignee or the **help wanted** label.
