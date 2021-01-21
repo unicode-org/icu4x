@@ -26,6 +26,12 @@ dhat-rs outputs a summary to stderr, plus a `dhat-heap.json` file that can be vi
 tool into an `.ndjson` located in the `benchmarks/memory` folder. This is the file that is read by
 the benchmarking action in CI.
 
+There is also some experimental support for viewing these profiles in a [deploy preview for the
+Firefox Profiler](https://deploy-preview-3128--perf-html.netlify.app/). Drag the `dhat-heap.json`
+file into the UI, and the memory can be analyzed using the call tree and flame graph.
+[PR #3128](https://github.com/firefox-devtools/profiler/pull/3128) is the tracking issue for
+official support.
+
 ### Packages used:
 
 * [dhat-rs](https://github.com/nnethercote/dhat-rs) for instrumentation.
