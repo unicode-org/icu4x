@@ -1,14 +1,24 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use crate::CanonicalizationResult;
-use crate::LocaleCanonicalizer;
 use icu_locid::subtags;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use icu_provider::structs::likelysubtags::*;
 use std::borrow::Cow;
+
+/// CanonicalizationResult is used to track the result of a canonicalization
+/// operation that potentially modifies its argument in place.
+#[derive(Debug, PartialEq)]
+pub enum CanonicalizationResult {
+    Modified,
+    Unmodified,
+}
+
+pub struct LocaleCanonicalizer<'a> {
+    likely_subtags: Cow<'a, LikelySubtagsV1>,
+}
 
 impl LocaleCanonicalizer<'_> {
     /// A constructor which takes a DataProvider and creates a
