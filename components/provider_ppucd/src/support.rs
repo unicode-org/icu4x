@@ -78,7 +78,7 @@ fn test_ppucd_provider_parse() {
 
     let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload().unwrap();
     let exp_prop_uniset: UnicodeProperty = UnicodeProperty {
-        name: "WSpace",
+        name: Cow::Borrowed("WSpace"),
         inv_list: vec![
             9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
             8287, 8288, 12288, 12289,

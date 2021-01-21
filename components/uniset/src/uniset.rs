@@ -324,12 +324,14 @@ mod tests {
         assert_eq!(ex, check.inv_list);
         assert_eq!(2, check.size());
     }
+
     #[test]
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![1, 1, 2, 3, 4];
         let set = UnicodeSet::from_inversion_list(check.clone());
         assert_eq!(Err(UnicodeSetError::InvalidSet(check)), set);
     }
+
     #[test]
     fn test_unicodeset_all() {
         let expected = vec![0, (char::MAX as u32) + 1];
@@ -339,6 +341,7 @@ mod tests {
             (expected[1] - expected[0]) as usize
         )
     }
+
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0, BMP_MAX + 1];
@@ -371,6 +374,7 @@ mod tests {
         assert!(check.contains(10 as char));
         assert!(check.contains(14 as char));
     }
+
     #[test]
     fn test_unicodeset_contains_false() {
         let ex = vec![2, 5, 10, 15];
@@ -381,6 +385,7 @@ mod tests {
         assert!(!check.contains(15 as char));
         assert!(!check.contains(16 as char));
     }
+
     #[test]
     fn test_unicodeset_contains_range() {
         let ex = vec![65, 70, 75, 85];
@@ -390,6 +395,7 @@ mod tests {
         assert!(check.contains_range(&('L'..'P'))); // 76 - 80
         assert!(!check.contains_range(&('L'..='U'))); // 76 - 85
     }
+
     #[test]
     fn test_unicodeset_contains_range_false() {
         let ex = vec![65, 70, 75, 85];
@@ -398,12 +404,14 @@ mod tests {
         assert!(!check.contains_range(&('F'..'K'))); // 70 - 74
         assert!(!check.contains_range(&('U'..))); // 85 - ..
     }
+
     #[test]
     fn test_unicodeset_contains_range_invalid() {
         let check = UnicodeSet::all();
         assert!(!check.contains_range(&('A'..'!'))); // 65 - 33
         assert!(!check.contains_range(&('A'..'A'))); // 65 - 65
     }
+
     #[test]
     fn test_unicodeset_contains_set_u() {
         let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
@@ -412,6 +420,7 @@ mod tests {
         let s = UnicodeSet::from_inversion_list(inside).unwrap();
         assert!(u.contains_set(&s));
     }
+
     #[test]
     fn test_unicodeset_contains_set_u_false() {
         let ex = vec![10, 20, 40, 50, 70, 80, 100, 110];
@@ -420,6 +429,7 @@ mod tests {
         let s = UnicodeSet::from_inversion_list(outside).unwrap();
         assert!(!u.contains_set(&s));
     }
+
     #[test]
     fn test_unicodeset_size() {
         let ex = vec![2, 5, 10, 15];
@@ -434,6 +444,7 @@ mod tests {
         };
         assert_eq!(check.size(), 0);
     }
+
     #[test]
     fn test_unicodeset_is_empty() {
         let check = UnicodeSet {
@@ -442,11 +453,13 @@ mod tests {
         };
         assert!(check.is_empty());
     }
+
     #[test]
     fn test_unicodeset_is_not_empty() {
         let check = UnicodeSet::all();
         assert!(!check.is_empty());
     }
+
     #[test]
     fn test_unicodeset_iter() {
         let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
@@ -458,6 +471,7 @@ mod tests {
         assert_eq!(Some('E'), iter.next());
         assert_eq!(None, iter.next());
     }
+
     #[test]
     fn test_unicodeset_span_contains() {
         let ex = vec![65, 68, 70, 75]; // A - D, F - K
@@ -465,6 +479,7 @@ mod tests {
         assert_eq!(check.span("ABCDE", true), 3);
         assert_eq!(check.span("E", true), 0);
     }
+
     #[test]
     fn test_unicodeset_span_does_not_contain() {
         let ex = vec![65, 68, 70, 75]; // A - D, F - K
@@ -472,6 +487,7 @@ mod tests {
         assert_eq!(check.span("DEF", false), 2);
         assert_eq!(check.span("KLMA", false), 3);
     }
+
     #[test]
     fn test_unicodeset_span_back_contains() {
         let ex = vec![65, 68, 70, 75]; // A - D, F - K
@@ -479,11 +495,24 @@ mod tests {
         assert_eq!(check.span_back("XYZABFH", true), 3);
         assert_eq!(check.span_back("ABCXYZ", true), 6);
     }
+
     #[test]
     fn test_unicodeset_span_back_does_not_contain() {
         let ex = vec![65, 68, 70, 75]; // A - D, F - K
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
         assert_eq!(check.span_back("ABCXYZ", false), 3);
         assert_eq!(check.span_back("XYZABC", false), 6);
+    }
+
+    #[test]
+    fn test_uniset_to_inv_list() {
+        let inv_list: Vec<u32> = vec![
+            9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
+            8287, 8288, 12288, 12289,
+        ];
+        let inv_list_clone = (&inv_list).clone();
+        let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();
+        let round_trip_inv_list = s.get_inversion_list();
+        assert_eq!(round_trip_inv_list, inv_list);
     }
 }

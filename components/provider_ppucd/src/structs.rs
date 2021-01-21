@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use icu_uniset::UnicodeSet;
+use std::borrow::Cow;
 use std::convert::TryInto;
 
 //
@@ -87,25 +88,27 @@ pub struct UnicodeProperties<'s> {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct UnicodeProperty<'s> {
-    pub name: &'s str,
+    pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,
 }
 
 impl Default for UnicodeProperty<'static> {
+    /// Default empty nameless property
     fn default() -> UnicodeProperty<'static> {
         UnicodeProperty {
-            name: "",
+            name: Cow::Borrowed(""),
             inv_list: vec![],
         }
     }
 }
 
 impl<'s> UnicodeProperty<'s> {
-    /// Default empty nameless property
-
     pub fn from_uniset(set: &UnicodeSet, name: &'s str) -> UnicodeProperty<'s> {
         let inv_list = set.get_inversion_list();
-        UnicodeProperty { name, inv_list }
+        UnicodeProperty {
+            name: Cow::Borrowed(name),
+            inv_list,
+        }
     }
 }
 
@@ -115,16 +118,4 @@ impl<'s> TryInto<UnicodeSet> for UnicodeProperty<'s> {
         UnicodeSet::from_inversion_list(self.inv_list)
             .map_err(crate::error::Error::UnisetConversion)
     }
-}
-
-#[test]
-fn test_uniset_to_inv_list() {
-    let inv_list: Vec<u32> = vec![
-        9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287,
-        8288, 12288, 12289,
-    ];
-    let inv_list_clone = (&inv_list).clone();
-    let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();
-    let round_trip_inv_list = s.get_inversion_list();
-    assert_eq!(round_trip_inv_list, inv_list);
 }
