@@ -49,21 +49,45 @@
 
 use std::fmt;
 
+/// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
+///
+/// See this issue for more info: <https://github.com/unicode-org/icu4x/issues/370>.
+pub enum LengthHint {
+    /// Default value: no hint is provided.
+    Undefined,
+
+    /// An exact length hint. This value is expected to equal the actual length from write_to.
+    Exact(usize),
+}
+
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
 pub trait Writeable {
     /// Writes bytes to the given sink. Errors from the sink are bubbled up.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result;
 
-    /// Returns an estimation of the number of bytes that will be written to the sink. The actual
-    /// number of bytes may be slightly different than what this function returns.
-    ///
-    /// This function may return an enumeration in the future. See:
-    /// <https://github.com/unicode-org/icu4x/issues/370>
-    fn write_len(&self) -> usize;
+    /// Returns a hint for the number of bytes that will be written to the sink.
+    /// 
+    /// Override this method if it can be computed quickly.
+    fn write_len(&self) -> LengthHint {
+        LengthHint::Undefined
+    }
 
-    /// Creates a new String with the data from this Writeable. Like ToString, but faster.
+    /// Returns a recommendation for the number of bytes to pre-allocate based on write_len.
+    ///
+    /// Not intended to be overridden.
+    fn default_capacity(&self) -> usize {
+        match self.write_len() {
+            LengthHint::Undefined => 0,
+            LengthHint::Exact(len) => len,
+        }
+    }
+
+    /// Creates a new String with the data from this Writeable. Like ToString, but smaller and
+    /// faster.
+    ///
+    /// Not intended to be overriden.
     fn writeable_to_string(&self) -> String {
-        let mut output = String::with_capacity(self.write_len());
+        let mut output = String::with_capacity(self.default_capacity());
         self.write_to(&mut output)
             .expect("impl Write for String is infallible");
         output
@@ -103,7 +127,9 @@ macro_rules! assert_writeable_eq {
             use $crate::Writeable;
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string());
-            assert_eq!($expected_str.len(), writeable.write_len());
+            if let $crate::LengthHint::Exact(len) = writeable.write_len() {
+                assert_eq!($expected_str.len(), len);
+            }
         }
     };
 
@@ -112,7 +138,9 @@ macro_rules! assert_writeable_eq {
             use $crate::Writeable;
             let writeable = $actual_writeable;
             assert_eq!($expected_str, writeable.writeable_to_string(), $($arg)+);
-            assert_eq!($expected_str.len(), writeable.write_len(), $($arg)+);
+            if let $crate::LengthHint::Exact(len) = writeable.write_len() {
+                assert_eq!($expected_str.len(), len, $($arg)+);
+            }
         }
     };
 }

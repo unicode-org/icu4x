@@ -5,7 +5,6 @@ use rand::SeedableRng;
 use rand_distr::{Distribution, Triangular};
 use rand_pcg::Lcg64Xsh32;
 use std::str::FromStr;
-use writeable::Writeable;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -93,6 +92,7 @@ fn larger_isize_benches(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn to_string_benches(c: &mut Criterion) {
     use criterion::BenchmarkId;
+    use writeable::Writeable;
 
     let objects = [
         FixedDecimal::from(2250).multiplied_pow10(-2).unwrap(),

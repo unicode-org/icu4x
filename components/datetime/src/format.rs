@@ -54,10 +54,7 @@ where
         write_pattern(self.pattern, self.data, self.date_time, sink).map_err(|_| std::fmt::Error)
     }
 
-    fn write_len(&self) -> usize {
-        // TODO(#370): Return a signal that this value is only an approximate lower bound.
-        self.pattern.0.len()
-    }
+    // TODO: Implement write_len
 }
 
 impl<'l, T> fmt::Display for FormattedDateTime<'l, T>

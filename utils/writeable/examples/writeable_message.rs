@@ -5,6 +5,7 @@
 // This example illustrates a very simple type implementing Writeable.
 
 use std::fmt;
+use writeable::LengthHint;
 use writeable::Writeable;
 
 struct WriteableMessage<'s> {
@@ -16,8 +17,8 @@ impl Writeable for WriteableMessage<'_> {
         sink.write_str(self.message)
     }
 
-    fn write_len(&self) -> usize {
-        self.message.len()
+    fn write_len(&self) -> LengthHint {
+        LengthHint::Exact(self.message.len())
     }
 }
 

@@ -202,17 +202,17 @@ impl writeable::Writeable for Transform {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
+    fn write_len(&self) -> writeable::LengthHint {
         if self.is_empty() {
-            return 0;
+            return writeable::LengthHint::Exact(0);
         }
         let mut result = 2;
         if let Some(lang) = &self.lang {
-            result += writeable::Writeable::write_len(lang) + 1;
+            result += writeable::Writeable::default_capacity(lang) + 1;
         }
         if !self.fields.is_empty() {
-            result += writeable::Writeable::write_len(&self.fields) + 1;
+            result += writeable::Writeable::default_capacity(&self.fields) + 1;
         }
-        result
+        writeable::LengthHint::Exact(result)
     }
 }

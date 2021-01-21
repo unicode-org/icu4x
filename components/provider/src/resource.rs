@@ -54,8 +54,8 @@ impl writeable::Writeable for ResourceCategory {
         sink.write_str(&self.as_str())
     }
 
-    fn write_len(&self) -> usize {
-        self.as_str().len()
+    fn write_len(&self) -> writeable::LengthHint {
+        writeable::LengthHint::Exact(self.as_str().len())
     }
 }
 
@@ -137,8 +137,8 @@ impl writeable::Writeable for ResourceKey {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
-        2 + self.category.as_str().len()
+    fn write_len(&self) -> writeable::LengthHint {
+        writeable::LengthHint::Exact(2 + self.category.as_str().len()
             + self.sub_category.len()
             + if self.version < 10 {
                 1
@@ -150,7 +150,7 @@ impl writeable::Writeable for ResourceKey {
                 4
             } else {
                 5
-            }
+            })
     }
 }
 
@@ -267,7 +267,7 @@ impl writeable::Writeable for ResourceOptions {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
+    fn write_len(&self) -> writeable::LengthHint {
         let mut result = 0;
         let mut initial = true;
         for component in self.get_components().iter() {
@@ -278,7 +278,7 @@ impl writeable::Writeable for ResourceOptions {
             }
             result += component.len();
         }
-        result
+        writeable::LengthHint::Exact(result)
     }
 }
 
@@ -378,13 +378,14 @@ impl writeable::Writeable for ResourcePath {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
+    fn write_len(&self) -> writeable::LengthHint {
+        // All fields implement write_len, so default_capacity is equivalent
         let mut result = 0;
-        result += writeable::Writeable::write_len(&self.key);
+        result += writeable::Writeable::default_capacity(&self.key);
         if !self.options.is_empty() {
-            result += writeable::Writeable::write_len(&self.options) + 1;
+            result += writeable::Writeable::default_capacity(&self.options) + 1;
         }
-        result
+        writeable::LengthHint::Exact(result)
     }
 }
 

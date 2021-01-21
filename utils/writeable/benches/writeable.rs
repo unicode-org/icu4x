@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use std::fmt;
+use writeable::LengthHint;
 use writeable::Writeable;
 
 /// A sample type implementing Writeable
@@ -15,8 +16,8 @@ impl Writeable for WriteableMessage<'_> {
         sink.write_str(self.message)
     }
 
-    fn write_len(&self) -> usize {
-        self.message.len()
+    fn write_len(&self) -> LengthHint {
+        LengthHint::Exact(self.message.len())
     }
 }
 
@@ -95,7 +96,7 @@ fn writeable_benches(c: &mut Criterion) {
 fn writeable_dyn_benches(c: &mut Criterion) {
     // Same as writeable_to_string, but casts to a dyn fmt::Write
     fn writeable_dyn_to_string(w: &impl Writeable) -> String {
-        let mut output = String::with_capacity(w.write_len());
+        let mut output = String::with_capacity(w.default_capacity());
         w.write_to(&mut output as &mut dyn fmt::Write)
             .expect("impl Write for String is infallible");
         output

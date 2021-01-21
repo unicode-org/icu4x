@@ -15,8 +15,8 @@ macro_rules! impl_writeable_for_single_subtag {
                 sink.write_str(self.as_str())
             }
             #[inline]
-            fn write_len(&self) -> usize {
-                self.0.len()
+            fn write_len(&self) -> writeable::LengthHint {
+                writeable::LengthHint::Exact(self.0.len())
             }
         }
 
@@ -50,16 +50,17 @@ macro_rules! impl_writeable_for_subtag_list {
             }
 
             #[inline]
-            fn write_len(&self) -> usize {
-                if self.0.is_none() {
+            fn write_len(&self) -> writeable::LengthHint {
+                writeable::LengthHint::Exact(if self.0.is_none() {
                     0
                 } else {
                     self.iter()
-                        .map(writeable::Writeable::write_len)
+                        // All fields implement write_len, so default_capacity is equivalent
+                        .map(writeable::Writeable::default_capacity)
                         .sum::<usize>()
                         + self.len()
                         - 1
-                }
+                })
             }
         }
 
@@ -107,12 +108,12 @@ macro_rules! impl_writeable_for_tinystr_list {
             }
 
             #[inline]
-            fn write_len(&self) -> usize {
-                if self.0.len() == 0 {
+            fn write_len(&self) -> writeable::LengthHint {
+                writeable::LengthHint::Exact(if self.0.len() == 0 {
                     $if_empty.len()
                 } else {
                     self.0.iter().map(|s| s.len()).sum::<usize>() + self.0.len() - 1
-                }
+                })
             }
         }
 
@@ -151,7 +152,8 @@ macro_rules! impl_writeable_for_key_value {
                         sink.write_char('-')?;
                     }
                     writeable::Writeable::write_to(key, sink)?;
-                    if writeable::Writeable::write_len(value) > 0 {
+                    // All fields implement write_len, so default_capacity is equivalent
+                    if writeable::Writeable::default_capacity(value) > 0 {
                         sink.write_char('-')?;
                         writeable::Writeable::write_to(value, sink)?;
                     }
@@ -160,23 +162,24 @@ macro_rules! impl_writeable_for_key_value {
             }
 
             #[inline]
-            fn write_len(&self) -> usize {
-                if self.0.is_none() {
+            fn write_len(&self) -> writeable::LengthHint {
+                writeable::LengthHint::Exact(if self.0.is_none() {
                     0
                 } else {
                     self.iter()
                         .map(|(key, value)| {
-                            writeable::Writeable::write_len(key)
-                                + if writeable::Writeable::write_len(value) == 0 {
+                            // All fields implement write_len, so default_capacity is equivalent
+                            writeable::Writeable::default_capacity(key)
+                                + if writeable::Writeable::default_capacity(value) == 0 {
                                     0
                                 } else {
-                                    1 + writeable::Writeable::write_len(value)
+                                    1 + writeable::Writeable::default_capacity(value)
                                 }
                         })
                         .sum::<usize>()
                         + self.len()
                         - 1
-                }
+                })
             }
         }
 
