@@ -4,8 +4,7 @@
 // A sample application which takes a comma separated list of locales,
 // makes them syntatically canonical and serializes the list back into a comma separated list.
 
-use icu_benchmark_macros::{main_setup, static_setup};
-static_setup!();
+icu_benchmark_macros::static_setup!();
 
 use std::env;
 
@@ -24,7 +23,7 @@ fn syntatically_canonicalize_locales(input: &str) -> String {
 }
 
 fn main() {
-    main_setup!();
+    icu_benchmark_macros::main_setup!();
     let args: Vec<String> = env::args().collect();
 
     let input = if let Some(input) = args.get(1) {

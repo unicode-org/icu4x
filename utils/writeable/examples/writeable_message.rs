@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 // This example illustrates a very simple type implementing Writeable.
-use icu_benchmark_macros::{main_setup, static_setup};
-static_setup!();
+icu_benchmark_macros::static_setup!();
 
 use std::fmt;
 use writeable::Writeable;
@@ -24,7 +23,7 @@ impl Writeable for WriteableMessage<'_> {
 }
 
 fn main() {
-    main_setup!();
+    icu_benchmark_macros::main_setup!();
 
     let writeable = WriteableMessage {
         message: "hello world",
