@@ -367,9 +367,9 @@ impl writeable::Writeable for FixedDecimal {
     /// assert_eq!("-50.00", result);
     /// assert_eq!(6, dec.write_len());
     /// ```
-    fn write_len(&self) -> usize {
-        let num_digits = 1 + (self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize;
-        num_digits
+    fn write_len(&self) -> writeable::LengthHint {
+        writeable::LengthHint::Exact(1)
+            + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
             + (if self.is_negative { 1 } else { 0 })
             + (if self.lower_magnitude < 0 { 1 } else { 0 })
     }

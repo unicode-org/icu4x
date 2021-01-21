@@ -197,7 +197,7 @@ impl writeable::Writeable for Locale {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
+    fn write_len(&self) -> writeable::LengthHint {
         let mut result = writeable::Writeable::write_len(&self.language);
         if let Some(ref script) = self.script {
             result += writeable::Writeable::write_len(script) + 1;

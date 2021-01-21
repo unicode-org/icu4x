@@ -55,6 +55,8 @@ use std::fmt;
 
 /// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
 ///
+/// LengthHint implements std::ops::Add and similar traits for easy composition.
+///
 /// See this issue for more info: <https://github.com/unicode-org/icu4x/issues/370>.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LengthHint {
@@ -67,10 +69,28 @@ pub enum LengthHint {
 
 impl LengthHint {
     /// Returns a recommendation for the number of bytes to pre-allocate.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use writeable::Writeable;
+    ///
+    /// fn pre_allocate_string(w: &impl Writeable) -> String {
+    ///     String::with_capacity(w.write_len().capacity())
+    /// }
+    /// ```
     pub fn capacity(&self) -> usize {
         match self {
             LengthHint::Undefined => 0,
             LengthHint::Exact(len) => *len,
+        }
+    }
+
+    /// Returns whether the LengthHint indicates that the string is exactly 0 bytes long.
+    pub fn is_zero(&self) -> bool {
+        match self {
+            LengthHint::Undefined => false,
+            LengthHint::Exact(len) => *len == 0,
         }
     }
 }
@@ -81,7 +101,7 @@ pub trait Writeable {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result;
 
     /// Returns a hint for the number of bytes that will be written to the sink.
-    /// 
+    ///
     /// Override this method if it can be computed quickly.
     fn write_len(&self) -> LengthHint {
         LengthHint::Undefined

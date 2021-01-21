@@ -137,8 +137,9 @@ impl writeable::Writeable for ResourceKey {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
-        2 + self.category.as_str().len()
+    fn write_len(&self) -> writeable::LengthHint {
+        writeable::LengthHint::Exact(2)
+            + self.category.as_str().len()
             + self.sub_category.len()
             + if self.version < 10 {
                 1
@@ -378,9 +379,8 @@ impl writeable::Writeable for ResourcePath {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
-        let mut result = 0;
-        result += writeable::Writeable::write_len(&self.key);
+    fn write_len(&self) -> writeable::LengthHint {
+        let mut result = writeable::Writeable::write_len(&self.key);
         if !self.options.is_empty() {
             result += writeable::Writeable::write_len(&self.options) + 1;
         }

@@ -119,7 +119,7 @@ fn to_string_benches(c: &mut Criterion) {
                 object,
                 |b, object| {
                     b.iter(|| {
-                        let mut result = String::with_capacity(object.write_len());
+                        let mut result = String::with_capacity(object.write_len().capacity());
                         object.write_to(&mut result)
                     })
                 },

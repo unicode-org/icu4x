@@ -15,8 +15,8 @@ macro_rules! impl_writeable_for_single_subtag {
                 sink.write_str(self.as_str())
             }
             #[inline]
-            fn write_len(&self) -> usize {
-                self.0.len()
+            fn write_len(&self) -> writeable::LengthHint {
+                writeable::LengthHint::Exact(self.0.len())
             }
         }
 
@@ -50,15 +50,14 @@ macro_rules! impl_writeable_for_subtag_list {
             }
 
             #[inline]
-            fn write_len(&self) -> usize {
+            fn write_len(&self) -> writeable::LengthHint {
                 if self.0.is_none() {
-                    0
+                    writeable::LengthHint::Exact(0)
                 } else {
                     self.iter()
                         .map(writeable::Writeable::write_len)
-                        .sum::<usize>()
-                        + self.len()
-                        - 1
+                        .sum::<writeable::LengthHint>()
+                        + (self.len() - 1)
                 }
             }
         }
@@ -107,11 +106,15 @@ macro_rules! impl_writeable_for_tinystr_list {
             }
 
             #[inline]
-            fn write_len(&self) -> usize {
+            fn write_len(&self) -> writeable::LengthHint {
                 if self.0.len() == 0 {
-                    $if_empty.len()
+                    writeable::LengthHint::Exact($if_empty.len())
                 } else {
-                    self.0.iter().map(|s| s.len()).sum::<usize>() + self.0.len() - 1
+                    self.0
+                        .iter()
+                        .map(|s| s.len())
+                        .sum::<writeable::LengthHint>()
+                        + (self.0.len() - 1)
                 }
             }
         }
@@ -151,7 +154,7 @@ macro_rules! impl_writeable_for_key_value {
                         sink.write_char('-')?;
                     }
                     writeable::Writeable::write_to(key, sink)?;
-                    if writeable::Writeable::write_len(value) > 0 {
+                    if !writeable::Writeable::write_len(value).is_zero() {
                         sink.write_char('-')?;
                         writeable::Writeable::write_to(value, sink)?;
                     }
@@ -160,22 +163,22 @@ macro_rules! impl_writeable_for_key_value {
             }
 
             #[inline]
-            fn write_len(&self) -> usize {
+            fn write_len(&self) -> writeable::LengthHint {
                 if self.0.is_none() {
-                    0
+                    writeable::LengthHint::Exact(0)
                 } else {
                     self.iter()
                         .map(|(key, value)| {
                             writeable::Writeable::write_len(key)
-                                + if writeable::Writeable::write_len(value) == 0 {
+                                + writeable::Writeable::write_len(value)
+                                + if writeable::Writeable::write_len(value).is_zero() {
                                     0
                                 } else {
-                                    1 + writeable::Writeable::write_len(value)
+                                    1
                                 }
                         })
-                        .sum::<usize>()
-                        + self.len()
-                        - 1
+                        .sum::<writeable::LengthHint>()
+                        + (self.len() - 1)
                 }
             }
         }
