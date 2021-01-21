@@ -218,8 +218,8 @@ impl writeable::Writeable for Language {
     }
 
     #[inline]
-    fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(self.0.map(|t| t.len()).unwrap_or(3))
+    fn write_len(&self) -> usize {
+        self.0.map(|t| t.len()).unwrap_or(3)
     }
 }
 

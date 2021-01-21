@@ -179,19 +179,18 @@ impl writeable::Writeable for LanguageIdentifier {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
-        // All fields implement write_len, so default_capacity is equivalent
-        let mut result = writeable::Writeable::default_capacity(&self.language);
+    fn write_len(&self) -> usize {
+        let mut result = writeable::Writeable::write_len(&self.language);
         if let Some(ref script) = self.script {
-            result += writeable::Writeable::default_capacity(script) + 1;
+            result += writeable::Writeable::write_len(script) + 1;
         }
         if let Some(ref region) = self.region {
-            result += writeable::Writeable::default_capacity(region) + 1;
+            result += writeable::Writeable::write_len(region) + 1;
         }
         if !self.variants.is_empty() {
-            result += writeable::Writeable::default_capacity(&self.variants) + 1;
+            result += writeable::Writeable::write_len(&self.variants) + 1;
         }
-        writeable::LengthHint::Exact(result)
+        result
     }
 }
 

@@ -150,15 +150,15 @@ impl writeable::Writeable for Private {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn write_len(&self) -> usize {
         if self.is_empty() {
-            return writeable::LengthHint::Exact(0);
+            return 0;
         }
         let mut result = 2;
         for key in self.iter() {
-            result += writeable::Writeable::default_capacity(key) + 1;
+            result += writeable::Writeable::write_len(key) + 1;
         }
-        writeable::LengthHint::Exact(result)
+        result
     }
 }
 

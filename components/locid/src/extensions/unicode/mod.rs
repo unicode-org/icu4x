@@ -185,17 +185,17 @@ impl writeable::Writeable for Unicode {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn write_len(&self) -> usize {
         if self.is_empty() {
-            return writeable::LengthHint::Exact(0);
+            return 0;
         }
         let mut result = 2;
         if !self.attributes.is_empty() {
-            result += writeable::Writeable::default_capacity(&self.attributes) + 1;
+            result += writeable::Writeable::write_len(&self.attributes) + 1;
         }
         if !self.keywords.is_empty() {
-            result += writeable::Writeable::default_capacity(&self.keywords) + 1;
+            result += writeable::Writeable::write_len(&self.keywords) + 1;
         }
-        writeable::LengthHint::Exact(result)
+        result
     }
 }

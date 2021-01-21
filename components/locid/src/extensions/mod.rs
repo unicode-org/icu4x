@@ -170,11 +170,11 @@ impl writeable::Writeable for Extensions {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn write_len(&self) -> usize {
         let mut result = 0;
-        result += writeable::Writeable::default_capacity(&self.transform);
-        result += writeable::Writeable::default_capacity(&self.unicode);
-        result += writeable::Writeable::default_capacity(&self.private);
-        writeable::LengthHint::Exact(result)
+        result += writeable::Writeable::write_len(&self.transform);
+        result += writeable::Writeable::write_len(&self.unicode);
+        result += writeable::Writeable::write_len(&self.private);
+        result
     }
 }
