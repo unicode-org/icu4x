@@ -10,6 +10,9 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
+use icu_benchmark_macros::{main_setup, static_setup};
+static_setup!();
+
 use std::env;
 
 use icu_locid::{subtags, LanguageIdentifier};
@@ -39,6 +42,7 @@ fn filter_input(input: &str) -> String {
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
+    main_setup!();
     let args: Vec<String> = env::args().collect();
 
     let input = if let Some(input) = args.get(1) {

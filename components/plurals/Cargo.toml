@@ -23,10 +23,10 @@ include = [
 fixed_decimal = { version = "0.1", path = "../../utils/fixed_decimal" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid = { version = "0.1", path = "../locid" }
-dhat = "0.2.1"
 
 [dev-dependencies]
 criterion = "0.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }

@@ -17,6 +17,7 @@ members = [
     "components/provider",
     "components/uniset",
     "resources/testdata",
+    "tools/benchmark/macros",
     "tools/benchmark/memory",
     "utils/fixed_decimal",
     "utils/writeable",
