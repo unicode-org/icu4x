@@ -45,6 +45,14 @@ macro_rules! to_string {
                 }
             })
         });
+        $c.bench_function(std::concat!($struct_name, "/writeable"), |b| {
+            use writeable::Writeable;
+            b.iter(|| {
+                for s in $data {
+                    let _ = black_box(s).writeable_to_string();
+                }
+            })
+        });
     };
 }
 
