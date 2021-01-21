@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 //! `writeable` is a utility crate of the [`ICU4X`] project.
 //!
 //! It includes [`Writeable`], a core trait representing an object that can be written to a
@@ -20,6 +21,7 @@
 //!
 //! ```
 //! use writeable::Writeable;
+//! use writeable::LengthHint;
 //! use writeable::assert_writeable_eq;
 //! use std::fmt;
 //!
@@ -35,9 +37,9 @@
 //!         Ok(())
 //!     }
 //!
-//!     fn write_len(&self) -> usize {
+//!     fn write_len(&self) -> LengthHint {
 //!         // "Hello, " + '!' + length of name
-//!         8 + self.name.len()
+//!         LengthHint::Exact(8 + self.name.len())
 //!     }
 //! }
 //!
@@ -47,17 +49,30 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+mod ops;
+
 use std::fmt;
 
 /// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
 ///
 /// See this issue for more info: <https://github.com/unicode-org/icu4x/issues/370>.
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum LengthHint {
     /// Default value: no hint is provided.
     Undefined,
 
     /// An exact length hint. This value is expected to equal the actual length from write_to.
     Exact(usize),
+}
+
+impl LengthHint {
+    /// Returns a recommendation for the number of bytes to pre-allocate.
+    pub fn capacity(&self) -> usize {
+        match self {
+            LengthHint::Undefined => 0,
+            LengthHint::Exact(len) => *len,
+        }
+    }
 }
 
 /// Writeable is an alternative to std::fmt::Display with the addition of a length function.
@@ -72,22 +87,12 @@ pub trait Writeable {
         LengthHint::Undefined
     }
 
-    /// Returns a recommendation for the number of bytes to pre-allocate based on write_len.
-    ///
-    /// Not intended to be overridden.
-    fn default_capacity(&self) -> usize {
-        match self.write_len() {
-            LengthHint::Undefined => 0,
-            LengthHint::Exact(len) => len,
-        }
-    }
-
-    /// Creates a new String with the data from this Writeable. Like ToString, but smaller and
-    /// faster.
+    /// Creates a new String with the data from this Writeable. Like ToString,
+    /// but smaller and faster.
     ///
     /// Not intended to be overriden.
     fn writeable_to_string(&self) -> String {
-        let mut output = String::with_capacity(self.default_capacity());
+        let mut output = String::with_capacity(self.write_len().capacity());
         self.write_to(&mut output)
             .expect("impl Write for String is infallible");
         output
@@ -104,6 +109,7 @@ pub trait Writeable {
 ///
 /// ```
 /// use writeable::Writeable;
+/// use writeable::LengthHint;
 /// use writeable::assert_writeable_eq;
 /// use std::fmt;
 ///
@@ -112,8 +118,8 @@ pub trait Writeable {
 ///     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
 ///         sink.write_str("foo")
 ///     }
-///     fn write_len(&self) -> usize {
-///         3
+///     fn write_len(&self) -> LengthHint {
+///         LengthHint::Exact(3)
 ///     }
 /// }
 ///

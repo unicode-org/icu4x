@@ -96,7 +96,7 @@ fn writeable_benches(c: &mut Criterion) {
 fn writeable_dyn_benches(c: &mut Criterion) {
     // Same as writeable_to_string, but casts to a dyn fmt::Write
     fn writeable_dyn_to_string(w: &impl Writeable) -> String {
-        let mut output = String::with_capacity(w.default_capacity());
+        let mut output = String::with_capacity(w.write_len().capacity());
         w.write_to(&mut output as &mut dyn fmt::Write)
             .expect("impl Write for String is infallible");
         output
