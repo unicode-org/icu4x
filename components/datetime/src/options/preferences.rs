@@ -31,7 +31,8 @@ use crate::fields;
 ///     hour_cycle: Some(preferences::HourCycle::H23)
 /// };
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug)]
+#[cfg_attr(not(feature = "serialize_none"), derive(Clone))]
 pub struct Bag {
     pub hour_cycle: Option<HourCycle>,
 }
