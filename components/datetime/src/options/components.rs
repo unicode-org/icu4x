@@ -54,8 +54,11 @@
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use super::preferences;
+#[cfg(not(feature = "serialize_none"))]
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
+#[cfg_attr(not(feature = "serialize_none"), derive(Clone, Serialize, Deserialize))]
 pub struct Bag {
     pub era: Option<Text>,
     pub year: Option<Numeric>,
@@ -69,6 +72,10 @@ pub struct Bag {
 
     pub time_zone_name: Option<TimeZoneName>,
 
+    #[cfg_attr(
+        not(feature = "serialize_none"),
+        serde(skip_serializing, skip_deserializing)
+    )]
     pub preferences: Option<preferences::Bag>,
 }
 
@@ -93,29 +100,45 @@ impl Default for Bag {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "serialize_none"), derive(Serialize, Deserialize))]
 pub enum Numeric {
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "numeric"))]
     Numeric,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "two-digit"))]
     TwoDigit,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "serialize_none"), derive(Serialize, Deserialize))]
 pub enum Text {
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "long"))]
     Long,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "short"))]
     Short,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "narrow"))]
     Narrow,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "serialize_none"), derive(Serialize, Deserialize))]
 pub enum Month {
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "numeric"))]
     Numeric,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "two-digit"))]
     TwoDigit,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "long"))]
     Long,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "short"))]
     Short,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "narrow"))]
     Narrow,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(not(feature = "serialize_none"), derive(Serialize, Deserialize))]
 pub enum TimeZoneName {
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "long"))]
     Long,
+    #[cfg_attr(not(feature = "serialize_none"), serde(rename = "short"))]
     Short,
 }
