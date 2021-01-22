@@ -719,6 +719,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_locale_canonicalizer"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "icu_locid"
 version = "0.1.0"
 dependencies = [
