@@ -1,6 +1,8 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+#![cfg(not(feature = "serialize_none"))]
+
 mod fixtures;
 mod patterns;
 
@@ -15,11 +17,10 @@ use icu_provider::{
 };
 use std::{borrow::Cow, fmt::Write};
 
-#[test]
-fn test_fixtures() {
+fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
 
-    for fx in fixtures::get_fixture("styles").unwrap().0 {
+    for fx in fixtures::get_fixture(fixture_name).unwrap().0 {
         let langid = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
         let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
@@ -92,4 +93,17 @@ fn test_dayperiod_patterns() {
             }
         }
     }
+}
+
+#[test]
+fn test_style_fixtures() {
+    test_fixture("styles");
+}
+
+// Expected panic: 'not implemented', components/datetime/src/provider.rs:49:53
+// https://github.com/unicode-org/icu4x/issues/272
+#[test]
+#[should_panic]
+fn test_components_fixtures() {
+    test_fixture("components");
 }
