@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::collections::{HashMap, HashSet};
 use std::iter::Iterator;
-use std::panic;
 use std::u32;
 
 use crate::structs::{UnicodeProperties, UnicodeProperty};
