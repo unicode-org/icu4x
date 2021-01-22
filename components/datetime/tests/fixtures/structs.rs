@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 #![cfg(not(feature = "serialize_none"))]
 
-use icu_datetime::options::components;
+use icu_datetime::options::{components, style};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -25,27 +25,9 @@ pub struct TestInput {
 #[derive(Debug, Serialize, Deserialize)]
 pub enum TestOptions {
     #[serde(rename = "style")]
-    Style(TestOptionsStyle),
+    Style(style::Bag),
     #[serde(rename = "components")]
     Components(components::Bag),
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestOptionsStyle {
-    pub date: Option<TestStyleWidth>,
-    pub time: Option<TestStyleWidth>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestStyleWidth {
-    #[serde(rename = "short")]
-    Short,
-    #[serde(rename = "medium")]
-    Medium,
-    #[serde(rename = "long")]
-    Long,
-    #[serde(rename = "full")]
-    Full,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
