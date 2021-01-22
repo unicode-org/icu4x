@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use crate::parse_ppucd;
-use crate::structs::*;
 use icu_provider::prelude::*;
+use icu_uniset::provider::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 

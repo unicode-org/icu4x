@@ -849,6 +849,7 @@ name = "icu_uniset"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu_provider",
 ]
 
 [[package]]

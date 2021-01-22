@@ -4,6 +4,4 @@
 
 mod error;
 pub mod parse_ppucd;
-pub mod structs;
 pub mod support;
-pub mod uniset_const;

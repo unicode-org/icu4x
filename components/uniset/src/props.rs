@@ -3,10 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 #![allow(clippy::unreadable_literal, dead_code)]
 
-use crate::structs::*;
-use crate::support::*;
+use crate::provider::*;
+use crate::UnicodeSet;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
 use std::borrow::Cow;
 use std::convert::TryInto;
 
@@ -295,18 +294,4 @@ pub fn ci<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D) -
 /// Cased
 pub fn cased<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D) -> UnicodeSet {
     get_prop(provider, key::CASED_V1)
-}
-
-#[test]
-fn test_wspace_getter() {
-    let ppucd_property_files_root_path = "tests/testdata/ppucd-wspace-test.txt";
-    let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
-    let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
-    let wspace_uniset: UnicodeSet = wspace(&ppucd_provider);
-    let exp_uniset: UnicodeSet = UnicodeSet::from_inversion_list(vec![
-        9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287,
-        8288, 12288, 12289,
-    ])
-    .unwrap();
-    assert_eq!(wspace_uniset, exp_uniset);
 }

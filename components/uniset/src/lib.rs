@@ -51,6 +51,8 @@
 #[macro_use]
 mod builder;
 mod conversions;
+pub mod props;
+pub mod provider;
 mod uniset;
 mod utils;
 

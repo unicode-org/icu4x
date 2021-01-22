@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use icu_uniset::UnicodeSet;
+use crate::uniset::UnicodeSet;
 use std::borrow::Cow;
 use std::convert::TryInto;
 
@@ -113,9 +113,8 @@ impl<'s> UnicodeProperty<'s> {
 }
 
 impl<'s> TryInto<UnicodeSet> for UnicodeProperty<'s> {
-    type Error = crate::error::Error;
+    type Error = crate::UnicodeSetError;
     fn try_into(self) -> Result<UnicodeSet, Self::Error> {
         UnicodeSet::from_inversion_list(self.inv_list)
-            .map_err(crate::error::Error::UnisetConversion)
     }
 }

@@ -18,6 +18,9 @@ include = [
     "Cargo.toml",
 ]
 
+[dependencies]
+icu_provider = { version = "0.1", path = "../provider" }
+
 [dev-dependencies]
 criterion = "0.3.3"
 

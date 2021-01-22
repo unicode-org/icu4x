@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
 use std::iter::Iterator;
 use std::u32;
 
-use crate::structs::{UnicodeProperties, UnicodeProperty};
+use icu_uniset::provider::{UnicodeProperties, UnicodeProperty};
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 fn split_line(line: &str) -> Vec<&str> {

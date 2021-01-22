@@ -6,7 +6,6 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     PpucdParse(PpucdParseError),
-    UnisetConversion(icu_uniset::UnicodeSetError),
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -30,7 +29,6 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::PpucdParse(err) => err.fmt(f),
-            Self::UnisetConversion(err) => err.fmt(f),
         }
     }
 }
