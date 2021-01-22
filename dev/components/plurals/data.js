@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611270393514,
+  "lastUpdate": 1611348271501,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2477,6 +2477,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 110677,
             "range": "± 7507",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e609a54f363ebee202d619a8560e6857b07a6339",
+          "message": "Add LocaleCanonicalizer to support likely subtags (#423)\n\nAdd LocaleCanonicalizer to support likely subtagss",
+          "timestamp": "2021-01-22T15:38:02-05:00",
+          "tree_id": "7426de0f884f04f21e80aff7dcab0e1782f258f0",
+          "url": "https://github.com/unicode-org/icu4x/commit/e609a54f363ebee202d619a8560e6857b07a6339"
+        },
+        "date": 1611348264604,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1648,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7035,
+            "range": "± 365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 106209,
+            "range": "± 4638",
             "unit": "ns/iter"
           }
         ]
