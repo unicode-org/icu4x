@@ -4,12 +4,14 @@
 mod fixtures;
 mod patterns;
 
-use icu_datetime::{DateTimeFormat, provider::{gregory::DatesV1, key::GREGORY_V1}};
 use icu_datetime::{date::MockDateTime, DateTimeFormatOptions};
+use icu_datetime::{
+    provider::{gregory::DatesV1, key::GREGORY_V1},
+    DateTimeFormat,
+};
 use icu_locid::LanguageIdentifier;
 use icu_provider::{
-    struct_provider::StructProvider,
-    DataProvider, DataRequest, ResourceOptions, ResourcePath,
+    struct_provider::StructProvider, DataProvider, DataRequest, ResourceOptions, ResourcePath,
 };
 use std::{borrow::Cow, fmt::Write};
 

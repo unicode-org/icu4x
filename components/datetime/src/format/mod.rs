@@ -2,12 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::date::{self, DateTimeType};
 use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeDates;
+use crate::{
+    date::{self, DateTimeType},
+    pattern::TimeGranularity,
+};
 use std::fmt;
 use writeable::Writeable;
 
@@ -107,6 +110,17 @@ where
     T: DateTimeType,
     W: fmt::Write + ?Sized,
 {
+    // A formatted time is only noon- or midnight-compatible if the
+    // most granular time being displayed lands exactly on the hour.
+    // e.g. 12:05:15 is noon-compatible if displaying only the hour,
+    // but not noon-compatible if displaying the minutes or seconds.
+    let noon_midnight_compatible = match pattern.most_granular_time() {
+        None | Some(TimeGranularity::Hours) => true,
+        Some(TimeGranularity::Minutes) => u8::from(date_time.minute()) == 0,
+        Some(TimeGranularity::Seconds) => {
+            u8::from(date_time.minute()) + u8::from(date_time.second()) == 0
+        }
+    };
     for item in &pattern.0 {
         match item {
             PatternItem::Field(field) => match field.symbol {
@@ -160,7 +174,7 @@ where
                         period,
                         field.length,
                         date_time.hour(),
-                        date_time.minute(),
+                        noon_midnight_compatible,
                     );
                     w.write_str(symbol)?
                 }

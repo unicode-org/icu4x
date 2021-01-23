@@ -4,7 +4,7 @@
     "test_cases": [
       {
         "date_times": [
-          "2021-01-11T12:00:00.000"
+          "2021-01-11T12:00:00"
         ],
         "expectations": [
           {
@@ -28,7 +28,7 @@
       },
       {
         "date_times": [
-          "2021-01-11T00:00:00.000"
+          "2021-01-11T00:00:00"
         ],
         "expectations": [
           {
@@ -53,157 +53,11 @@
     ]
   },
   {
-    "locale": "en",
-    "test_cases": [
-      {
-        "date_times": [
-          "2021-01-11T00:01:00.000",
-          "2021-01-11T11:59:59.999"
-        ],
-        "expectations": [
-          {
-            "patterns": [
-              "a",
-              "aa",
-              "aaa",
-              "aaaa",
-              "aaaaaa",
-              "b",
-              "bb",
-              "bbb",
-              "bbbb",
-              "bbbbbb"
-            ],
-            "expected": "AM"
-          },
-          {
-            "patterns": [
-              "aaaaa",
-              "bbbbb"
-            ],
-            "expected": "a"
-          }
-        ]
-      },
-      {
-        "date_times": [
-          "2021-01-11T12:01:00.000",
-          "2021-01-11T23:59:59.999"
-        ],
-        "expectations": [
-          {
-            "patterns": [
-              "a",
-              "aa",
-              "aaa",
-              "aaaa",
-              "aaaaaa",
-              "b",
-              "bb",
-              "bbb",
-              "bbbb",
-              "bbbbbb"
-            ],
-            "expected": "PM"
-          },
-          {
-            "patterns": [
-              "aaaaa",
-              "bbbbb"
-            ],
-            "expected": "p"
-          }
-        ]
-      },
-      {
-        "date_times": [
-          "2021-01-11T00:00:00.000",
-          "2021-01-11T00:00:59.999"
-        ],
-        "expectations": [
-          {
-            "patterns": [
-              "a",
-              "aa",
-              "aaa",
-              "aaaa",
-              "aaaaaa"
-            ],
-            "expected": "AM"
-          },
-          {
-            "patterns": [
-              "aaaaa"
-            ],
-            "expected": "a"
-          },
-          {
-            "patterns": [
-              "b",
-              "bb",
-              "bbb",
-              "bbbb",
-              "bbbbbb"
-            ],
-            "expected": "midnight"
-          },
-          {
-            "patterns": [
-              "bbbbb"
-            ],
-            "expected": "mi"
-          }
-        ]
-      },
-      {
-        "date_times": [
-          "2021-01-11T12:00:00.000",
-          "2021-01-11T12:00:59.999"
-        ],
-        "expectations": [
-          {
-            "patterns": [
-              "a",
-              "aa",
-              "aaa",
-              "aaaa",
-              "aaaaaa"
-            ],
-            "expected": "PM"
-          },
-          {
-            "patterns": [
-              "aaaaa"
-            ],
-            "expected": "p"
-          },
-          {
-            "patterns": [
-              "b",
-              "bb",
-              "bbb",
-              "bbbb",
-              "bbbbbb"
-            ],
-            "expected": "noon"
-          },
-          {
-            "patterns": [
-              "bbbbb"
-            ],
-            "expected": "n"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "locale": "ru",
     "test_cases": [
       {
         "date_times": [
-          "2021-01-11T12:00:00.000",
-          "2021-01-11T12:00:12.345"
+          "2021-01-11T12:00:00"
         ],
         "expectations": [
           {
@@ -232,6 +86,377 @@
               "bbbb"
             ],
             "expected": "полдень"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "test_cases": [
+      {
+        "date_times": [
+          "2021-01-11T00:00:00",
+          "2021-01-11T00:01:00",
+          "2021-01-11T00:00:01"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaaa"
+            ],
+            "expected": "AM"
+          },
+          {
+            "patterns": [
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbbb"
+            ],
+            "expected": "midnight"
+          },
+          {
+            "patterns": [
+              "aaaaa"
+            ],
+            "expected": "a"
+          },
+          {
+            "patterns": [
+              "bbbbb"
+            ],
+            "expected": "mi"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T12:00:00",
+          "2021-01-11T12:01:00",
+          "2021-01-11T12:00:01"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "a",
+              "aa",
+              "aaa",
+              "aaaa",
+              "aaaaaa"
+            ],
+            "expected": "PM"
+          },
+          {
+            "patterns": [
+              "b",
+              "bb",
+              "bbb",
+              "bbbb",
+              "bbbbbb"
+            ],
+            "expected": "noon"
+          },
+          {
+            "patterns": [
+              "aaaaa"
+            ],
+            "expected": "p"
+          },
+          {
+            "patterns": [
+              "bbbbb"
+            ],
+            "expected": "n"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T12:00:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a"
+            ],
+            "expected": "12:00:00 PM"
+          },
+          {
+            "patterns": [
+              "h:mm a"
+            ],
+            "expected": "12:00 PM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 PM"
+          },
+          {
+            "patterns": [
+              "h:mm:ss b"
+            ],
+            "expected": "12:00:00 noon"
+          },
+          {
+            "patterns": [
+              "h:mm b"
+            ],
+            "expected": "12:00 noon"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 noon"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T12:00:01"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a",
+              "h:mm:ss b"
+            ],
+            "expected": "12:00:01 PM"
+          },
+          {
+            "patterns": [
+              "h:mm a"
+            ],
+            "expected": "12:00 PM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 PM"
+          },
+          {
+            "patterns": [
+              "h:mm b"
+            ],
+            "expected": "12:00 noon"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 noon"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T12:01:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a",
+              "h:mm:ss b"
+            ],
+            "expected": "12:01:00 PM"
+          },
+          {
+            "patterns": [
+              "h:mm a",
+              "h:mm b"
+            ],
+            "expected": "12:01 PM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 PM"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 noon"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T13:00:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a",
+              "h:mm:ss b"
+            ],
+            "expected": "1:00:00 PM"
+          },
+          {
+            "patterns": [
+              "h:mm a",
+              "h:mm b"
+            ],
+            "expected": "1:00 PM"
+          },
+          {
+            "patterns": [
+              "h a",
+              "h b"
+            ],
+            "expected": "1 PM"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T00:00:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a"
+            ],
+            "expected": "12:00:00 AM"
+          },
+          {
+            "patterns": [
+              "h:mm a"
+            ],
+            "expected": "12:00 AM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 AM"
+          },
+          {
+            "patterns": [
+              "h:mm:ss b"
+            ],
+            "expected": "12:00:00 midnight"
+          },
+          {
+            "patterns": [
+              "h:mm b"
+            ],
+            "expected": "12:00 midnight"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 midnight"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T00:00:01"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a",
+              "h:mm:ss b"
+            ],
+            "expected": "12:00:01 AM"
+          },
+          {
+            "patterns": [
+              "h:mm a"
+            ],
+            "expected": "12:00 AM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 AM"
+          },
+          {
+            "patterns": [
+              "h:mm b"
+            ],
+            "expected": "12:00 midnight"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 midnight"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T00:01:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a",
+              "h:mm:ss b"
+            ],
+            "expected": "12:01:00 AM"
+          },
+          {
+            "patterns": [
+              "h:mm a",
+              "h:mm b"
+            ],
+            "expected": "12:01 AM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 AM"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 midnight"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T01:00:00"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss a",
+              "h:mm:ss b"
+            ],
+            "expected": "1:00:00 AM"
+          },
+          {
+            "patterns": [
+              "h:mm a",
+              "h:mm b"
+            ],
+            "expected": "1:00 AM"
+          },
+          {
+            "patterns": [
+              "h a",
+              "h b"
+            ],
+            "expected": "1 AM"
           }
         ]
       }
