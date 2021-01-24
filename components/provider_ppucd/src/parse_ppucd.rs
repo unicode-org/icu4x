@@ -350,6 +350,7 @@ fn get_enum_prop_unisets<'s>(
 
     let mut result: HashMap<&str, UnicodeSet> = HashMap::new();
 
+    // Insert UnicodeSets into `result`, with a key like `"gc=Lo"`.
     for (canonical_prop_name, prop_val_builder_map) in m {
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
             let enum_val_uniset_name: String =
