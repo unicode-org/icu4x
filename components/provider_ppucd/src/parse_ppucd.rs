@@ -58,8 +58,9 @@ fn is_enum_val_line(line: &str) -> bool {
 
 /// For a property definition or enumerated property value line, update the aliases map.
 fn update_aliases<'s>(prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>, line: &'s str) {
-    let mut line_parts = split_line(&line);
-    line_parts.drain(0..2);
+    let line_parts = split_line(&line);
+    let mut line_parts: &[&str] = line_parts.as_slice();
+    line_parts = &line_parts[2..];
 
     // TODO: ask Markus what to do with the property lines that appear to have
     // no canonical name
@@ -69,12 +70,11 @@ fn update_aliases<'s>(prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>, lin
     // property;Binary;;print
     // property;Binary;;xdigit
     if line_parts[0].is_empty() {
-        line_parts.drain(0..1);
+        line_parts = &line_parts[1..];
     }
 
     let canonical_name = line_parts[0];
-    let all_names: Vec<&'s str> = line_parts.iter().copied().collect();
-    let all_names_set: HashSet<&'s str> = all_names.into_iter().collect();
+    let all_names_set: HashSet<&'s str> = line_parts.iter().copied().collect();
     prop_aliases.insert(canonical_name, all_names_set);
 }
 
@@ -99,9 +99,10 @@ fn update_enum_val_aliases<'s>(
     enum_val_aliases: &mut HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
     line: &'s str,
 ) {
-    let mut line_parts = split_line(&line);
+    let line_parts = split_line(&line);
+    let mut line_parts: &[&str] = line_parts.as_slice();
     assert_eq!(&"value", &line_parts[0]);
-    line_parts.drain(0..1);
+    line_parts = &line_parts[1..];
     let enum_prop_name = line_parts[0];
     let enum_prop_val = line_parts[1];
     if !enum_val_aliases.contains_key(&enum_prop_name) {
@@ -115,7 +116,7 @@ fn update_enum_val_aliases<'s>(
     let enum_prop_val_aliases: &mut HashSet<&str> =
         enum_val_alias_map.get_mut(&enum_prop_val).unwrap();
     enum_prop_val_aliases.insert(enum_prop_val);
-    line_parts.drain(0..2);
+    line_parts = &line_parts[2..];
     // What remains of line_parts are all of the remaining aliases for this
     // enumerated property's value
     for alias in line_parts {
@@ -302,7 +303,7 @@ fn get_enum_prop_unisets<'s>(
     enum_prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
     enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
-) -> HashMap<&'s str, UnicodeSet> {
+) -> HashMap<Cow<'s, str>, UnicodeSet> {
     let mut m: HashMap<&str, HashMap<&str, UnicodeSetBuilder>> = HashMap::new();
     let enum_prop_mappings: HashMap<&str, &str> = aliases_as_canonical_mappings(enum_prop_aliases);
 
@@ -348,16 +349,16 @@ fn get_enum_prop_unisets<'s>(
         }
     }
 
-    let mut result: HashMap<&str, UnicodeSet> = HashMap::new();
+    let mut result: HashMap<Cow<'s, str>, UnicodeSet> = HashMap::new();
 
     // Insert UnicodeSets into `result`, with a key like `"gc=Lo"`.
     for (canonical_prop_name, prop_val_builder_map) in m {
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
-            let enum_val_uniset_name: String =
-                format!("{}={}", canonical_prop_name, canonical_val_name);
+            let enum_val_uniset_name: Cow<str> =
+                Cow::Owned( format!("{}={}", canonical_prop_name, canonical_val_name) );
             let uniset = uniset_builder.build();
 
-            result.insert(enum_val_uniset_name.as_str(), uniset);
+            result.insert(enum_val_uniset_name, uniset);
         }
     }
 
@@ -458,7 +459,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
         get_binary_prop_unisets(&binary_prop_aliases, &code_points);
 
-    let enum_prop_unisets: HashMap<&'s str, UnicodeSet> =
+    let enum_prop_unisets: HashMap<Cow<'s, str>, UnicodeSet> =
         get_enum_prop_unisets(&enum_prop_aliases, &enum_val_aliases, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
@@ -467,7 +468,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     }
 
     for (key_val_tuple_name, uniset) in enum_prop_unisets {
-        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, key_val_tuple_name);
+        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, &key_val_tuple_name);
         props.push(ppucd_prop);
     }
 
