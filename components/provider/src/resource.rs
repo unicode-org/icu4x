@@ -22,6 +22,7 @@ pub use tinystr::tinystr16;
 #[derive(PartialEq, Eq, Copy, Clone, Debug)]
 pub enum ResourceCategory {
     Icu4x,
+    LikelySubtags,
     Plurals,
     Dates,
     Uniset,
@@ -33,6 +34,7 @@ impl ResourceCategory {
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
             Self::Icu4x => Cow::Borrowed("icu4x"),
+            Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::Dates => Cow::Borrowed("dates"),
             Self::Uniset => Cow::Borrowed("uniset"),
@@ -76,11 +78,18 @@ pub struct ResourceKey {
 /// ```
 #[macro_export]
 macro_rules! resource_key {
+    (dates, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!($crate::ResourceCategory::Dates, $sub_category, $version)
+    };
     (icu4x, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Icu4x, $sub_category, $version)
     };
-    (decimal, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Decimal, $sub_category, $version)
+    (likelysubtags, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!(
+            $crate::ResourceCategory::LikelySubtags,
+            $sub_category,
+            $version
+        )
     };
     (plurals, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)
