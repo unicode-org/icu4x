@@ -58,6 +58,7 @@ mod utils;
 
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
+use icu_provider::DataError;
 pub use std::fmt;
 pub use uniset::UnicodeSet;
 pub use utils::*;
@@ -67,11 +68,18 @@ pub use utils::*;
 pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     InvalidRange(u32, u32),
+    PropDataLoad,
 }
 
 impl fmt::Display for UnicodeSetError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
+    }
+}
+
+impl From<DataError> for UnicodeSetError {
+    fn from(_err: DataError) -> Self {
+        Self::PropDataLoad
     }
 }
 

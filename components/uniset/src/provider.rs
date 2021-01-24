@@ -82,11 +82,6 @@ pub mod key {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct UnicodeProperties<'s> {
-    pub props: Vec<UnicodeProperty<'s>>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
 pub struct UnicodeProperty<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,

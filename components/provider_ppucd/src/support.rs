@@ -8,6 +8,11 @@ use icu_uniset::provider::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 
+#[derive(Debug, PartialEq, Clone)]
+pub struct UnicodeProperties<'s> {
+    pub props: Vec<UnicodeProperty<'s>>,
+}
+
 #[derive(Debug)]
 pub struct PpucdDataProvider<'s> {
     pub ppucd_props: UnicodeProperties<'s>,
