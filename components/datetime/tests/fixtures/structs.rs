@@ -6,23 +6,23 @@
 use icu_datetime::options::{components, style};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Fixture(pub Vec<Test>);
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Test {
     pub input: TestInput,
     pub output: TestOutput,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestInput {
     pub locale: String,
     pub value: String,
     pub options: TestOptions,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TestOptions {
     #[serde(rename = "style")]
     Style(style::Bag),
