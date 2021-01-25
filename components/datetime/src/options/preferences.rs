@@ -32,7 +32,7 @@ use crate::fields;
 /// };
 /// ```
 #[derive(Debug)]
-#[cfg_attr(not(feature = "serialize_none"), derive(Clone))]
+#[cfg_attr(all(not(feature = "serialize_none"), feature = "serde"), derive(Clone))]
 pub struct Bag {
     pub hour_cycle: Option<HourCycle>,
 }
