@@ -87,11 +87,7 @@ impl FromStr for Attribute {
     }
 }
 
-impl std::fmt::Display for Attribute {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
+impl_writeable_for_single_subtag!(Attribute, "buddhist");
 
 impl PartialEq<&str> for Attribute {
     fn eq(&self, other: &&str) -> bool {

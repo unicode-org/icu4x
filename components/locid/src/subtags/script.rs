@@ -123,11 +123,7 @@ impl FromStr for Script {
     }
 }
 
-impl std::fmt::Display for Script {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
+impl_writeable_for_single_subtag!(Script, "Mymr");
 
 impl PartialEq<&str> for Script {
     fn eq(&self, other: &&str) -> bool {

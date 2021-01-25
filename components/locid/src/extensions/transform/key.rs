@@ -77,11 +77,7 @@ impl FromStr for Key {
     }
 }
 
-impl std::fmt::Display for Key {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
+impl_writeable_for_single_subtag!(Key, "k0");
 
 impl PartialEq<&str> for Key {
     fn eq(&self, other: &&str) -> bool {

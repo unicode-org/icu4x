@@ -22,6 +22,7 @@ include = [
 [dependencies]
 smallvec = "1.4"
 static_assertions = "1.1"
+writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [dev-dependencies]
 rand = "0.7"

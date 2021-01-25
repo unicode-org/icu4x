@@ -156,23 +156,7 @@ impl Fields {
     }
 }
 
-impl std::fmt::Display for Fields {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if self.is_empty() {
-            return Ok(());
-        }
-        let mut first = true;
-        for (key, value) in self.iter() {
-            if first {
-                write!(f, "{}-{}", key, value)?;
-                first = false;
-            } else {
-                write!(f, "-{}-{}", key, value)?;
-            }
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_key_value!(Fields, "h0", "hybrid", "m0", "m0-true");
 
 impl Deref for Fields {
     type Target = [(Key, Value)];

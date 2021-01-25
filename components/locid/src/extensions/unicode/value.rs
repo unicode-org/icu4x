@@ -31,7 +31,7 @@ use tinystr::TinyStr8;
 pub struct Value(Box<[TinyStr8]>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_VALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828_u64) }; // "true"
+const TRUE_VALUE: TinyStr8 = tinystr::tinystr8!("true");
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
@@ -87,10 +87,6 @@ impl Value {
             Ok(Some(s))
         }
     }
-
-    pub(crate) fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
 }
 
 impl FromStr for Value {
@@ -101,18 +97,4 @@ impl FromStr for Value {
     }
 }
 
-impl std::fmt::Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut first = true;
-
-        for subtag in self.0.iter() {
-            if first {
-                subtag.fmt(f)?;
-                first = false;
-            } else {
-                write!(f, "-{}", subtag)?;
-            }
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
