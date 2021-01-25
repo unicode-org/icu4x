@@ -7,7 +7,7 @@ use partial_min_max::max;
 use std::default::Default;
 use std::fmt;
 use strum::EnumIter;
-use writeable::Writeable;
+use writeable::{LengthHint, Writeable};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Breakpoints {
@@ -222,7 +222,7 @@ impl<'a> From<&'a Breakpoints> for BiesString<'a> {
 }
 
 impl Writeable for BiesString<'_> {
-    fn write_to(&self, sink: &mut dyn std::fmt::Write) -> fmt::Result {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
         let mut write_bies_word = |i: usize, j: usize| -> fmt::Result {
             if i == j - 1 {
                 sink.write_char('s')?;
@@ -244,8 +244,8 @@ impl Writeable for BiesString<'_> {
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
-        self.0.length
+    fn write_len(&self) -> writeable::LengthHint {
+        LengthHint::Exact(self.0.length)
     }
 }
 
