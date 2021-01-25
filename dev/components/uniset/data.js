@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611348181701,
+  "lastUpdate": 1611564069345,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2849,6 +2849,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30228014,
             "range": "± 82416",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9daf90be3a3a3fc31b6c725686ab0e12b773e9e6",
+          "message": "Implementing Writeable across ICU4X components (#457)\n\n- Changes Writeable signature to remove \"dyn\"\r\n- Adds LengthHint with std::ops",
+          "timestamp": "2021-01-25T02:35:47-06:00",
+          "tree_id": "2a74a15a24e78d938211b03b87d58f3f7badd9b8",
+          "url": "https://github.com/unicode-org/icu4x/commit/9daf90be3a3a3fc31b6c725686ab0e12b773e9e6"
+        },
+        "date": 1611564068683,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34679450,
+            "range": "± 588381",
             "unit": "ns/iter"
           }
         ]
