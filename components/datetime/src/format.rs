@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use crate::date::{self, DateTimeType};
 use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeDates;
-use crate::date::{self, DateTimeType};
 use std::fmt;
 use writeable::Writeable;
 
@@ -99,7 +99,7 @@ fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::Wee
 /// The granularity of time represented in a pattern item.
 /// Ordered from least granular to most granular for comparsion.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum TimeGranularity {
+enum TimeGranularity {
     Hours,
     Minutes,
     Seconds,
