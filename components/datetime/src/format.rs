@@ -2,12 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::date::{self, DateTimeType};
 use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeDates;
+use crate::{
+    date::{self, DateTimeType},
+    fields::DayPeriod,
+};
 use std::fmt;
 use writeable::Writeable;
 
@@ -124,14 +127,19 @@ fn time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
 /// if the most granular time being displayed lands exactly on the hour. For example, the time
 /// 12:00:00 is always noon-compatible. The time 12:05:15 is noon-compatible only if the
 /// pattern does not contain the minutes or seconds.
-fn is_noon_midnight_compatible<T: DateTimeType>(pattern: &Pattern, date_time: &T) -> bool {
-    match pattern.0.iter().flat_map(time_granularity).max() {
-        None | Some(TimeGranularity::Hours) => true,
-        Some(TimeGranularity::Minutes) => u8::from(date_time.minute()) == 0,
-        Some(TimeGranularity::Seconds) => {
-            u8::from(date_time.minute()) + u8::from(date_time.second()) == 0
+fn is_noon_midnight_compatible<T: DateTimeType>(
+    day_period: DayPeriod,
+    pattern: &Pattern,
+    date_time: &T,
+) -> bool {
+    matches!(day_period, DayPeriod::NoonMidnight)
+        && match pattern.0.iter().flat_map(time_granularity).max() {
+            None | Some(TimeGranularity::Hours) => true,
+            Some(TimeGranularity::Minutes) => u8::from(date_time.minute()) == 0,
+            Some(TimeGranularity::Seconds) => {
+                u8::from(date_time.minute()) + u8::from(date_time.second()) == 0
+            }
         }
-    }
 }
 
 pub fn write_pattern<T, W>(
@@ -197,7 +205,7 @@ where
                         period,
                         field.length,
                         date_time.hour(),
-                        is_noon_midnight_compatible(&pattern, date_time),
+                        is_noon_midnight_compatible(period, &pattern, date_time),
                     );
                     w.write_str(symbol)?
                 }
