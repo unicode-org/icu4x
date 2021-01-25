@@ -57,10 +57,10 @@ use super::preferences;
 #[cfg(all(not(feature = "serialize_none"), feature = "serde"))]
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
     all(not(feature = "serialize_none"), feature = "serde"),
-    derive(Clone, Serialize, Deserialize)
+    derive(Serialize, Deserialize)
 )]
 pub struct Bag {
     pub era: Option<Text>,

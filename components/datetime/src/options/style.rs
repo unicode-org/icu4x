@@ -73,10 +73,10 @@ use serde::{Deserialize, Serialize};
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
     all(not(feature = "serialize_none"), feature = "serde"),
-    derive(Clone, Serialize, Deserialize)
+    derive(Serialize, Deserialize)
 )]
 pub struct Bag {
     pub date: Option<Date>,
