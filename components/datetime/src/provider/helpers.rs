@@ -193,13 +193,8 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         match (day_period, u8::from(hour), noon_midnight_compatible) {
             (NoonMidnight, 00, true) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
             (NoonMidnight, 12, true) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
-            (_, hour, _) => {
-                if hour < 12 {
-                    &symbols.am
-                } else {
-                    &symbols.pm
-                }
-            }
+            (_, hour, _) if hour < 12 => &symbols.am,
+            _ => &symbols.pm,
         }
     }
 }

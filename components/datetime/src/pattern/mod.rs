@@ -16,28 +16,6 @@ pub enum PatternItem {
     Literal(String),
 }
 
-/// The granularity of time represented by `PatternItem`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum TimeGranularity {
-    Hours,
-    Minutes,
-    Seconds,
-}
-
-impl PatternItem {
-    fn time_granularity(&self) -> Option<TimeGranularity> {
-        match self {
-            Self::Field(field) => match field.symbol {
-                fields::FieldSymbol::Hour(_) => Some(TimeGranularity::Hours),
-                fields::FieldSymbol::Minute => Some(TimeGranularity::Minutes),
-                fields::FieldSymbol::Second(_) => Some(TimeGranularity::Seconds),
-                _ => None,
-            },
-            _ => None,
-        }
-    }
-}
-
 impl From<(FieldSymbol, FieldLength)> for PatternItem {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {
         Self::Field(Field {
@@ -83,15 +61,6 @@ impl Pattern {
         Parser::new(input)
             .parse_placeholders(vec![time, date])
             .map(Self)
-    }
-
-    /// Returns the maximum time granularity contained in the pattern,
-    /// or `None` if the pattern does not contain time.
-    /// e.g. The maximum granularity for `h:mm` is `Minutes`.
-    /// e.g. The maximum granularity for `h:mm:ss` is `Seconds`.
-    /// e.g. The maximum granularity for `E, dd/MM/y` is `None`.
-    pub fn most_granular_time(&self) -> Option<TimeGranularity> {
-        self.0.iter().flat_map(PatternItem::time_granularity).max()
     }
 }
 
