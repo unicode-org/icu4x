@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611564093875,
+  "lastUpdate": 1611598488511,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2837,6 +2837,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5490,
             "range": "± 21",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30da77444dfe80f41e7226bb9054e87b8fe43196",
+          "message": "Fix BIES build (#462)\n\nThis updates the BIES code to work against Writeable 0.2.0.",
+          "timestamp": "2021-01-25T12:09:37-06:00",
+          "tree_id": "dc572e18293a96926f7102363d461742b23300db",
+          "url": "https://github.com/unicode-org/icu4x/commit/30da77444dfe80f41e7226bb9054e87b8fe43196"
+        },
+        "date": 1611598487865,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3494,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4585,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
