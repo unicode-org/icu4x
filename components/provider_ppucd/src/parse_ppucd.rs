@@ -105,14 +105,14 @@ fn update_enum_val_aliases<'s>(
     line_parts = &line_parts[1..];
     let enum_prop_name = line_parts[0];
     let enum_prop_val = line_parts[1];
-    if !enum_val_aliases.contains_key(&enum_prop_name) {
-        enum_val_aliases.insert(enum_prop_name, HashMap::new());
-    }
+    enum_val_aliases
+        .entry(enum_prop_name)
+        .or_insert_with(HashMap::new);
     let enum_val_alias_map: &mut HashMap<&str, HashSet<&str>> =
         enum_val_aliases.get_mut(&enum_prop_name).unwrap();
-    if !enum_val_alias_map.contains_key(&enum_prop_val) {
-        enum_val_alias_map.insert(enum_prop_val, HashSet::new());
-    }
+    enum_val_alias_map
+        .entry(enum_prop_val)
+        .or_insert_with(HashSet::new);
     let enum_prop_val_aliases: &mut HashSet<&str> =
         enum_val_alias_map.get_mut(&enum_prop_val).unwrap();
     enum_prop_val_aliases.insert(enum_prop_val);
@@ -305,7 +305,6 @@ fn get_enum_prop_unisets<'s>(
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
 ) -> HashMap<Cow<'s, str>, UnicodeSet> {
     let mut m: HashMap<&str, HashMap<&str, UnicodeSetBuilder>> = HashMap::new();
-    let enum_prop_mappings: HashMap<&str, &str> = aliases_as_canonical_mappings(enum_prop_aliases);
 
     let enum_val_mappings: HashMap<&str, HashMap<&str, &str>> =
         get_enum_val_canonical_mapping(enum_val_aliases);
@@ -370,10 +369,9 @@ fn aliases_as_canonical_mappings<'s>(
 ) -> HashMap<&'s str, &'s str> {
     let mut result: HashMap<&str, &str> = HashMap::new();
     for (canonical_name, aliases) in aliases_map {
-        // let canonical_name = canonical_name.clone();
-        result.insert(canonical_name.clone(), canonical_name.clone());
+        result.insert(<&str>::clone(canonical_name), <&str>::clone(canonical_name));
         for alias in aliases {
-            result.insert(alias.clone(), canonical_name.clone());
+            result.insert(<&str>::clone(alias), <&str>::clone(canonical_name));
         }
     }
 
@@ -386,7 +384,10 @@ fn get_enum_val_canonical_mapping<'s>(
     let mut result: HashMap<&str, HashMap<&str, &str>> = HashMap::new();
     for (enum_prop_canon_name, enum_val_aliases) in enum_val_aliases {
         let enum_val_canonical_mapping = aliases_as_canonical_mappings(enum_val_aliases);
-        result.insert(enum_prop_canon_name.clone(), enum_val_canonical_mapping);
+        result.insert(
+            <&str>::clone(enum_prop_canon_name),
+            enum_val_canonical_mapping,
+        );
     }
 
     result
@@ -406,8 +407,6 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let mut enum_prop_aliases: HashMap<&'s str, HashSet<&'s str>> = HashMap::new();
 
     let mut enum_val_aliases: HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>> = HashMap::new();
-
-    let mut enum_val_sets: HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>> = HashMap::new();
 
     let mut defaults: HashMap<&'s str, &'s str> = HashMap::new();
 
@@ -1086,7 +1085,7 @@ mod gen_properties_test {
         let names_diff = act_uni_props_names_set.difference(&exp_uni_props_names_set);
         let names_diff_str = names_diff
             .into_iter()
-            .map(|s| s.clone())
+            .cloned()
             .collect::<Vec<Cow<str>>>()
             .join(", ");
         assert_eq!(
