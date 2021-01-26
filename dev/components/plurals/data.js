@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611598571698,
+  "lastUpdate": 1611664678309,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2603,6 +2603,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 120711,
             "range": "± 5648",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2661c9b4a699c182aa335e710a7c393f41abb53",
+          "message": "Re-generate likely subtags test data (#463)",
+          "timestamp": "2021-01-26T07:32:09-05:00",
+          "tree_id": "bc706c9073696d2e06e340110701228e25912269",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2661c9b4a699c182aa335e710a7c393f41abb53"
+        },
+        "date": 1611664676199,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1442,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6311,
+            "range": "± 322",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 103598,
+            "range": "± 8154",
             "unit": "ns/iter"
           }
         ]
