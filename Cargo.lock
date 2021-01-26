@@ -799,6 +799,7 @@ dependencies = [
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "serde",
  "serde_json",
  "smallstr",
@@ -812,6 +813,7 @@ name = "icu_provider_cldr"
 version = "0.1.0"
 dependencies = [
  "dirs",
+ "icu_datetime",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
@@ -838,6 +840,7 @@ dependencies = [
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
  "log",
@@ -865,6 +868,7 @@ dependencies = [
  "clap",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
  "icu_provider_fs",

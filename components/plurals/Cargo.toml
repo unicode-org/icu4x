@@ -23,6 +23,7 @@ include = [
 fixed_decimal = { version = "0.1", path = "../../utils/fixed_decimal" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid = { version = "0.1", path = "../locid" }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -37,8 +38,9 @@ serde_json = { version = "1.0" }
 bench = false  # This option is required for Benchmark CI
 
 [features]
-default = []
+default = ["serde"]
 bench = []
+serialize_none = []
 
 [[bench]]
 name = "operands"
@@ -47,7 +49,21 @@ harness = false
 [[bench]]
 name = "parser"
 harness = false
+required-features = ["serde"]
 
 [[bench]]
 name = "pluralrules"
 harness = false
+required-features = ["serde"]
+
+[[test]]
+name = "plurals"
+required-features = ["serde"]
+
+[[example]]
+name = "unread_emails"
+required-features = ["serde"]
+
+[[example]]
+name = "elevator_floors"
+required-features = ["serde"]

@@ -5,7 +5,6 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_provider::hello_world::*;
-use icu_provider::iter::DataExporter;
 use icu_provider::prelude::*;
 
 #[test]
@@ -40,8 +39,11 @@ fn test_supported_langids() {
     );
 }
 
+#[cfg(feature = "erased")]
 #[test]
 fn test_export() {
+    use icu_provider::iter::DataExporter;
+
     let source_provider = HelloWorldProvider::new_with_placeholder_data();
     let mut dest_provider = HelloWorldProvider::default();
 

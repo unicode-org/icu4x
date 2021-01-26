@@ -23,6 +23,7 @@
 //! # Examples
 //!
 //! ```
+//! # #[cfg(feature = "serde")] {
 //! use icu_locid_macros::langid;
 //! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 //!
@@ -34,6 +35,7 @@
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
+//! # } // feature = "serde"
 //! ```
 //!
 //! ## Plural Rules
@@ -66,12 +68,12 @@
 mod data;
 mod error;
 mod operands;
+pub mod provider;
 pub mod rules;
 
 pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use icu_provider::structs;
 pub use operands::PluralOperands;
 use std::convert::TryInto;
 
@@ -266,14 +268,14 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProvider<'d, structs::plurals::PluralRuleStringsV1<'d>> + ?Sized>(
+    pub fn try_new<'d, D: DataProvider<'d, provider::PluralRuleStringsV1<'d>> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
         let key = match type_ {
-            PluralRuleType::Cardinal => structs::plurals::key::CARDINAL_V1,
-            PluralRuleType::Ordinal => structs::plurals::key::ORDINAL_V1,
+            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
+            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
         };
         let plurals_data = data_provider
             .load_payload(&DataRequest {

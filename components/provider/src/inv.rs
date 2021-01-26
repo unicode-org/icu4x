@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::erased::*;
 use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
@@ -19,13 +18,12 @@ use std::fmt::Debug;
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::structs;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let provider = InvariantDataProvider;
 /// let expected_entries = vec![ResourceOptions::default()];
 /// let actual_entries: Vec<ResourceOptions> = provider
-///     .supported_options_for_key(&structs::plurals::key::CARDINAL_V1)
+///     .supported_options_for_key(&icu_plurals::provider::key::CARDINAL_V1)
 ///     .unwrap()
 ///     .collect();
 /// assert_eq!(&expected_entries, &actual_entries);
@@ -44,11 +42,12 @@ where
     }
 }
 
-impl<'d> ErasedDataProvider<'d> for InvariantDataProvider {
+#[cfg(feature = "erased")]
+impl<'d> crate::erased::ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         _req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
+        receiver: &mut dyn crate::erased::ErasedDataReceiver<'d, '_>,
     ) -> Result<DataResponseMetadata, Error> {
         receiver.receive_default()?;
         Ok(DataResponseMetadata::default())
@@ -65,30 +64,32 @@ impl IterableDataProvider<'_> for InvariantDataProvider {
     }
 }
 
+#[cfg(all(feature = "hello_world", feature = "erased"))]
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::erased::ErasedDataProvider;
 
     #[test]
     fn test_invariant() {
-        use crate::structs;
+        use crate::hello_world;
         let provider = InvariantDataProvider;
 
-        let data1: Cow<structs::icu4x::HelloWorldV1> = provider
-            .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
+        let data1: Cow<hello_world::HelloWorldV1> = provider
+            .load_payload(&DataRequest::from(hello_world::key::HELLO_WORLD_V1))
             .unwrap()
             .take_payload()
             .unwrap();
 
-        let data2: Cow<structs::icu4x::HelloWorldV1> = (&provider as &dyn ErasedDataProvider)
-            .load_payload(&DataRequest::from(structs::icu4x::key::HELLO_WORLD_V1))
+        let data2: Cow<hello_world::HelloWorldV1> = (&provider as &dyn ErasedDataProvider)
+            .load_payload(&DataRequest::from(hello_world::key::HELLO_WORLD_V1))
             .unwrap()
             .take_payload()
             .unwrap();
 
         assert_eq!(
             &*data1,
-            &structs::icu4x::HelloWorldV1 {
+            &hello_world::HelloWorldV1 {
                 message: Cow::Borrowed("(und) Hello World")
             }
         );

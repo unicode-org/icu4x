@@ -90,14 +90,13 @@
 pub mod data_provider;
 #[macro_use]
 pub mod resource;
+#[cfg(feature = "erased")]
 #[macro_use]
 pub mod erased;
-#[cfg(feature = "hello_world")]
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
 pub mod struct_provider;
-pub mod structs;
 
 mod error;
 

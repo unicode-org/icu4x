@@ -23,6 +23,7 @@ include = [
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -36,14 +37,24 @@ serde_json = "1.0"
 bench = false  # This option is required for Benchmark CI
 
 [features]
-default = []
+default = ["serde"]
 bench = []
+serialize_none = []
 
 [[bench]]
 name = "datetime"
 harness = false
+required-features = ["serde"]
 
 [[bench]]
 name = "pattern"
 harness = false
 required-features = ["bench"]
+
+[[test]]
+name = "datetime"
+required-features = ["serde"]
+
+[[example]]
+name = "work_log"
+required-features = ["serde"]
