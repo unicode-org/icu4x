@@ -4,9 +4,9 @@
 use crate::date::{self, DateTimeType};
 use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
-use crate::internal_provider::DateTimeDates;
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
+use crate::provider::helpers::DateTimeDates;
 use std::fmt;
 use writeable::Writeable;
 

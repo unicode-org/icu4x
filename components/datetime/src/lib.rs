@@ -75,19 +75,18 @@ pub mod date;
 mod error;
 mod fields;
 mod format;
-mod internal_provider;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
 
+use crate::provider::helpers::DateTimeDates;
 use date::DateTimeType;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use internal_provider::DateTimeDates;
 #[doc(inline)]
 pub use options::DateTimeFormatOptions;
 use pattern::Pattern;
