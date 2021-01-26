@@ -81,7 +81,7 @@ pub mod key {
     pub const XIDS_V1: ResourceKey = resource_key!(uniset, "XIDS", 1);
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct UnicodeProperty<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,
@@ -98,12 +98,9 @@ impl Default for UnicodeProperty<'static> {
 }
 
 impl<'s> UnicodeProperty<'s> {
-    pub fn from_uniset(set: &UnicodeSet, name: &'s str) -> UnicodeProperty<'s> {
+    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodeProperty<'s> {
         let inv_list = set.get_inversion_list();
-        UnicodeProperty {
-            name: Cow::Borrowed(name),
-            inv_list,
-        }
+        UnicodeProperty { name, inv_list }
     }
 }
 

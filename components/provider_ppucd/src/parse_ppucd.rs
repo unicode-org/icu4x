@@ -355,7 +355,7 @@ fn get_enum_prop_unisets<'s>(
     for (canonical_prop_name, prop_val_builder_map) in m {
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
             let enum_val_uniset_name: Cow<str> =
-                Cow::Owned( format!("{}={}", canonical_prop_name, canonical_val_name) );
+                Cow::Owned(format!("{}={}", canonical_prop_name, canonical_val_name));
             let uniset = uniset_builder.build();
 
             result.insert(enum_val_uniset_name, uniset);
@@ -463,12 +463,13 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
         get_enum_prop_unisets(&enum_prop_aliases, &enum_val_aliases, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
-        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, canonical_name);
+        let ppucd_prop: UnicodeProperty =
+            UnicodeProperty::from_uniset(&uniset, Cow::Borrowed(canonical_name));
         props.push(ppucd_prop);
     }
 
     for (key_val_tuple_name, uniset) in enum_prop_unisets {
-        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, &key_val_tuple_name);
+        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, key_val_tuple_name);
         props.push(ppucd_prop);
     }
 
@@ -1078,15 +1079,15 @@ mod gen_properties_test {
         exp_uni_props_set.insert(bpt_n);
 
         // partial assertion
-        let exp_uni_props_names_set: HashSet<&str> =
-            exp_uni_props_set.iter().map(|p| p.name).collect();
-        let act_uni_props_names_set: HashSet<&str> =
-            act_uni_props_set.iter().map(|p| p.name).collect();
+        let exp_uni_props_names_set: HashSet<Cow<str>> =
+            exp_uni_props_set.iter().map(|p| p.name.clone()).collect();
+        let act_uni_props_names_set: HashSet<Cow<str>> =
+            act_uni_props_set.iter().map(|p| p.name.clone()).collect();
         let names_diff = act_uni_props_names_set.difference(&exp_uni_props_names_set);
         let names_diff_str = names_diff
             .into_iter()
             .map(|s| s.clone())
-            .collect::<Vec<&str>>()
+            .collect::<Vec<Cow<str>>>()
             .join(", ");
         assert_eq!(
             exp_uni_props_names_set, act_uni_props_names_set,
