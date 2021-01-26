@@ -329,7 +329,7 @@ mod tests {
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![1, 1, 2, 3, 4];
         let set = UnicodeSet::from_inversion_list(check.clone());
-        assert_eq!(Err(UnicodeSetError::InvalidSet(check)), set);
+        assert!(matches!(set, Err(UnicodeSetError::InvalidSet(set))));
     }
 
     #[test]

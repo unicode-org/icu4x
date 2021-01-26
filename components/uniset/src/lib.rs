@@ -64,11 +64,11 @@ pub use uniset::UnicodeSet;
 pub use utils::*;
 
 /// Custom Errors for `UnicodeSet`.
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),
     InvalidRange(u32, u32),
-    PropDataLoad,
+    PropDataLoad(DataError),
 }
 
 impl fmt::Display for UnicodeSetError {
@@ -78,8 +78,8 @@ impl fmt::Display for UnicodeSetError {
 }
 
 impl From<DataError> for UnicodeSetError {
-    fn from(_err: DataError) -> Self {
-        Self::PropDataLoad
+    fn from(err: DataError) -> Self {
+        Self::PropDataLoad(err)
     }
 }
 
