@@ -19,23 +19,22 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+
 [features]
 # Include the ErasedDataProvider, useful for type-agnostic data processing.
 # Also required for DataExporter.
-erased = ["serde"]
+erased = ["serde", "erased-serde"]
 
 [dependencies]
-# The serde feature in icu_locid is required for likely subtags support
-icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
+icu_locid = { version = "0.1", path = "../locid" }
 tinystr = "0.4"
-erased-serde = "0.3"
-smallstr = { version = "0.2", features = ["serde"] }
-downcast-rs = "1.2"
-serde = { version = "1.0", features = ["derive"], optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
-# For feature "hello_world"
-icu_locid_macros = { version = "0.1", path = "../locid/macros", optional = true }
+# For "erased" feature
+erased-serde = { version = "0.3", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_json = "1.0"

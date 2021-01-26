@@ -1,11 +1,11 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+use crate::provider::*;
 use icu_locid::subtags;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-use icu_provider::structs::likelysubtags::*;
 use std::borrow::Cow;
 
 /// CanonicalizationResult is used to track the result of a canonicalization
@@ -48,6 +48,7 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
+    /// # #[cfg(feature = "serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -61,6 +62,7 @@ impl LocaleCanonicalizer<'_> {
     /// let mut locale : Locale = "en-Latn-DE".parse().unwrap();
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "en-Latn-DE");
+    /// # } // feature = "serde"
     /// ```
     pub fn maximize(&self, locale: &mut Locale) -> CanonicalizationResult {
         let mut key = LanguageIdentifier {
@@ -160,6 +162,7 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
+    /// # #[cfg(feature = "serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -173,6 +176,7 @@ impl LocaleCanonicalizer<'_> {
     /// let mut locale : Locale = "en".parse().unwrap();
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "en");
+    /// # } // feature = "serde"
     /// ```
     pub fn minimize(&self, locale: &mut Locale) -> CanonicalizationResult {
         let mut max = locale.clone();
