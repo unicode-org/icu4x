@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611598488511,
+  "lastUpdate": 1611664667608,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2873,6 +2873,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4585,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2661c9b4a699c182aa335e710a7c393f41abb53",
+          "message": "Re-generate likely subtags test data (#463)",
+          "timestamp": "2021-01-26T07:32:09-05:00",
+          "tree_id": "bc706c9073696d2e06e340110701228e25912269",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2661c9b4a699c182aa335e710a7c393f41abb53"
+        },
+        "date": 1611664666502,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4311,
+            "range": "± 216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5711,
+            "range": "± 204",
             "unit": "ns/iter"
           }
         ]
