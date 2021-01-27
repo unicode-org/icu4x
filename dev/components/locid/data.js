@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611664667608,
+  "lastUpdate": 1611765314271,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2909,6 +2909,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5711,
             "range": "± 204",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6e0b36cc38ac11ce6e4a2d6a37877acd3b2f7314",
+          "message": "Manually-defined UnicodeSets for binary Unicode properties (#242)",
+          "timestamp": "2021-01-27T08:29:00-08:00",
+          "tree_id": "cfc9ef4c40d41a200ab94698f5518541c2b8c3c5",
+          "url": "https://github.com/unicode-org/icu4x/commit/6e0b36cc38ac11ce6e4a2d6a37877acd3b2f7314"
+        },
+        "date": 1611765309843,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4090,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 6681,
+            "range": "± 400",
             "unit": "ns/iter"
           }
         ]
