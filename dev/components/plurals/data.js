@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611765320322,
+  "lastUpdate": 1611768821285,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2687,6 +2687,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112290,
             "range": "± 1498",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5915f19bfd775c930e31dc4a600d771efad746c",
+          "message": "Update UnicodeSet component code owners list (#459)",
+          "timestamp": "2021-01-27T09:26:30-08:00",
+          "tree_id": "5f50d35a6b7caff3f0cb7e5906eab77d3d25e731",
+          "url": "https://github.com/unicode-org/icu4x/commit/f5915f19bfd775c930e31dc4a600d771efad746c"
+        },
+        "date": 1611768820195,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1841,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8318,
+            "range": "± 392",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 118034,
+            "range": "± 4315",
             "unit": "ns/iter"
           }
         ]
