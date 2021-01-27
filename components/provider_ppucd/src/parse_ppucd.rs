@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
-use std::iter::{FromIterator, Iterator};
+use std::iter::Iterator;
 use std::u32;
 
 use crate::support::UnicodeProperties;
@@ -854,6 +854,8 @@ mod gen_properties_test {
     // only parsing binary/enum props (ignore catalog props).
     #[test]
     fn parse_with_enum_props_test() {
+        use std::iter::FromIterator;
+
         // Input
         let ppucd_property_files_root_path = "tests/testdata/ppucd-sc-tglg-test.txt";
         let ppucd_property_file_str =
