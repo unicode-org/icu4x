@@ -82,7 +82,7 @@ mod tests {
     #[test]
     fn test_try_from_range_error() {
         let check = UnicodeSet::try_from(&('A'..'A'));
-        assert_eq!(Err(UnicodeSetError::InvalidRange(65, 65)), check);
+        assert!(matches!(check, Err(UnicodeSetError::InvalidRange(65, 65))));
     }
     #[test]
     fn test_try_from_range_inclusive() {
@@ -92,7 +92,7 @@ mod tests {
     #[test]
     fn test_try_from_range_inclusive_err() {
         let check = UnicodeSet::try_from(&('B'..'A'));
-        assert_eq!(Err(UnicodeSetError::InvalidRange(66, 65)), check);
+        assert!(matches!(check, Err(UnicodeSetError::InvalidRange(66, 65))));
     }
     #[test]
     fn test_try_from_range_from() {
@@ -111,7 +111,7 @@ mod tests {
     #[test]
     fn test_try_from_range_to_err() {
         let check = UnicodeSet::try_from(&(..(0 as char)));
-        assert_eq!(Err(UnicodeSetError::InvalidRange(0, 0)), check);
+        assert!(matches!(check, Err(UnicodeSetError::InvalidRange(0, 0))));
     }
     #[test]
     fn test_try_from_range_to_inclusive() {

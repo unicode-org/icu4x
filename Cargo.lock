@@ -848,6 +848,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_ppucd"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "icu_uniset",
+ "tinystr",
+]
+
+[[package]]
 name = "icu_segmenter_lstm"
 version = "0.1.0"
 dependencies = [
@@ -879,6 +890,7 @@ name = "icu_uniset"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu_provider",
 ]
 
 [[package]]
