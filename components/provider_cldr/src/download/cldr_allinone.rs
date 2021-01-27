@@ -27,7 +27,7 @@ use std::path::PathBuf;
 /// use icu_locid_macros::langid;
 /// use std::path::PathBuf;
 ///
-/// let paths = CldrAllInOneDownloader::try_from_github_tag("38.1.0-BETA4")
+/// let paths = CldrAllInOneDownloader::try_from_github_tag("38.1.0")
 ///     .expect("Cache directory not found");
 ///
 /// fn demo(paths: &dyn CldrPaths) {
