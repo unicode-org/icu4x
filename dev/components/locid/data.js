@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611768793405,
+  "lastUpdate": 1611782598508,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2981,6 +2981,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4881,
             "range": "± 280",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b9696b7c0ee7e922e027b96f5363184bbc79b8d1",
+          "message": "Change CLDR tag to 38.1.0 (#465)",
+          "timestamp": "2021-01-27T15:18:12-06:00",
+          "tree_id": "85619fb928fb9362a7f3d1fec400f1af2241028f",
+          "url": "https://github.com/unicode-org/icu4x/commit/b9696b7c0ee7e922e027b96f5363184bbc79b8d1"
+        },
+        "date": 1611782597853,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3476,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4745,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
