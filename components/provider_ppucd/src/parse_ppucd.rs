@@ -168,7 +168,7 @@ fn is_block_line(line: &str) -> bool {
 /// Return the property key-value information represented in a "blk"
 /// line as a map. "blocks" represent overrides of property values for code
 /// points in PPUCD within a Unicode block above the "defaults" values.
-fn get_block_range_prop_vals<'s>(line: &'s str) -> (UnicodeSet, HashMap<&'s str, &'s str>) {
+fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
     let line_parts = split_line(&line);
     assert_eq!(&"block", &line_parts[0]);
 
@@ -199,7 +199,7 @@ fn is_code_point_line(line: &str) -> bool {
 /// Return the property key-value information represented in a "cp"
 /// line as a map. "cp" represents overrides of property values for a code
 /// point (or range of code points) that are layered above "blk" and "defaults".
-fn get_code_point_overrides<'s>(line: &'s str) -> (UnicodeSet, HashMap<&'s str, &'s str>) {
+fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
     let line_parts = split_line(&line);
     assert_eq!(&"cp", &line_parts[0]);
 
