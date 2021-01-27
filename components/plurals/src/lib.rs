@@ -23,7 +23,7 @@
 //! # Examples
 //!
 //! ```
-//! # #[cfg(feature = "serde")] {
+//! # #[cfg(feature = "provider_serde")] {
 //! use icu_locid_macros::langid;
 //! use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
 //!
@@ -35,7 +35,7 @@
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
-//! # } // feature = "serde"
+//! # } // feature = "provider_serde"
 //! ```
 //!
 //! ## Plural Rules

@@ -15,30 +15,33 @@ pub mod key {
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct PluralRuleStringsV1<'s> {
     #[cfg_attr(
-        all(feature = "serde", not(feature = "serialize_none")),
+        all(feature = "provider_serde", not(feature = "serialize_none")),
         serde(skip_serializing_if = "Option::is_none")
     )]
     pub zero: Option<Cow<'s, str>>,
     #[cfg_attr(
-        all(feature = "serde", not(feature = "serialize_none")),
+        all(feature = "provider_serde", not(feature = "serialize_none")),
         serde(skip_serializing_if = "Option::is_none")
     )]
     pub one: Option<Cow<'s, str>>,
     #[cfg_attr(
-        all(feature = "serde", not(feature = "serialize_none")),
+        all(feature = "provider_serde", not(feature = "serialize_none")),
         serde(skip_serializing_if = "Option::is_none")
     )]
     pub two: Option<Cow<'s, str>>,
     #[cfg_attr(
-        all(feature = "serde", not(feature = "serialize_none")),
+        all(feature = "provider_serde", not(feature = "serialize_none")),
         serde(skip_serializing_if = "Option::is_none")
     )]
     pub few: Option<Cow<'s, str>>,
     #[cfg_attr(
-        all(feature = "serde", not(feature = "serialize_none")),
+        all(feature = "provider_serde", not(feature = "serialize_none")),
         serde(skip_serializing_if = "Option::is_none")
     )]
     pub many: Option<Cow<'s, str>>,

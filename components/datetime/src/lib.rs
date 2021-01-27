@@ -13,7 +13,7 @@
 //! # Examples
 //!
 //! ```
-//! # #[cfg(feature = "serde")] {
+//! # #[cfg(feature = "provider_serde")] {
 //! use icu_locid_macros::langid;
 //! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //!
@@ -37,14 +37,14 @@
 //!
 //! let formatted_date = dtf.format(&date);
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
-//! # } // feature = "serde"
+//! # } // feature = "provider_serde"
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
 //! convert a [`options::style::Bag`] into a [`DateTimeFormatOptions::Style`].
 //!
 //! ```
-//! # #[cfg(feature = "serde")] {
+//! # #[cfg(feature = "provider_serde")] {
 //! # use icu_locid_macros::langid;
 //! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //! # let provider = icu_testdata::get_provider();
@@ -56,7 +56,7 @@
 //! }.into();
 //!
 //! let dtf = DateTimeFormat::try_new(lid, &provider, &options);
-//! # } // feature = "serde"
+//! # } // feature = "provider_serde"
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Style`] bag, but in the future,

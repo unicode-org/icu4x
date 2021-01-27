@@ -82,6 +82,10 @@ pub mod key {
 }
 
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct UnicodeProperty<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,

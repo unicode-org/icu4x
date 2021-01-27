@@ -48,7 +48,7 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "serde")] {
+    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -62,7 +62,7 @@ impl LocaleCanonicalizer<'_> {
     /// let mut locale : Locale = "en-Latn-DE".parse().unwrap();
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "en-Latn-DE");
-    /// # } // feature = "serde"
+    /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize(&self, locale: &mut Locale) -> CanonicalizationResult {
         let mut key = LanguageIdentifier {
@@ -162,7 +162,7 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "serde")] {
+    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -176,7 +176,7 @@ impl LocaleCanonicalizer<'_> {
     /// let mut locale : Locale = "en".parse().unwrap();
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "en");
-    /// # } // feature = "serde"
+    /// # } // feature = "provider_serde"
     /// ```
     pub fn minimize(&self, locale: &mut Locale) -> CanonicalizationResult {
         let mut max = locale.clone();

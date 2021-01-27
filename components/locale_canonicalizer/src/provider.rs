@@ -10,7 +10,10 @@ pub mod key {
 }
 
 #[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct LikelySubtagsV1 {
     pub entries: Vec<(LanguageIdentifier, LanguageIdentifier)>,
 }

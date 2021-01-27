@@ -29,6 +29,6 @@ icu_provider = { version = "0.1", path = "../provider" }
 criterion = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
-icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
+icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata"  }
