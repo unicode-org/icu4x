@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611765291404,
+  "lastUpdate": 1611768778942,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -1949,6 +1949,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1006227,
             "range": "± 3474",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5915f19bfd775c930e31dc4a600d771efad746c",
+          "message": "Update UnicodeSet component code owners list (#459)",
+          "timestamp": "2021-01-27T09:26:30-08:00",
+          "tree_id": "5f50d35a6b7caff3f0cb7e5906eab77d3d25e731",
+          "url": "https://github.com/unicode-org/icu4x/commit/f5915f19bfd775c930e31dc4a600d771efad746c"
+        },
+        "date": 1611768776928,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 968931,
+            "range": "± 33517",
             "unit": "ns/iter"
           }
         ]
