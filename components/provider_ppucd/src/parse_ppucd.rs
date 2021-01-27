@@ -135,8 +135,8 @@ fn apply_exclude_vals_for_binary_props<'s>(
     let mut prop_names: HashSet<&'s str> = prop_vals.keys().copied().collect();
     // If we see "-Gr_Base", then remove both "Gr_Base" and "-Gr_Base".
     for prop_name in prop_vals.keys() {
-        if prop_name.starts_with('-') {
-            let orig_prop_name: &str = &prop_name[1..];
+        if let Some(unadorned_prop_name) = prop_name.strip_prefix('-') {
+            let orig_prop_name: &str = unadorned_prop_name;
             prop_names.remove(&orig_prop_name);
             prop_names.remove(prop_name);
         }
