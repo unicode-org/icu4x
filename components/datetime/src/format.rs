@@ -2,15 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::error::DateTimeFormatError;
+use crate::date::{self, DateTimeType};
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeDates;
-use crate::{
-    date::{self, DateTimeType},
-    fields::DayPeriod,
-};
+use crate::{error::DateTimeFormatError, pattern::TimeGranularity};
 use std::fmt;
 use writeable::Writeable;
 
@@ -99,47 +96,19 @@ fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::Wee
     let result = (year + year / 4 - year / 100 + year / 400 + t[month] + day + 1) % 7;
     date::WeekDay::new_unchecked(result as u8)
 }
-/// The granularity of time represented in a pattern item.
-/// Ordered from least granular to most granular for comparsion.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-enum TimeGranularity {
-    Hours,
-    Minutes,
-    Seconds,
-}
 
-/// Retrieves the granularity of time represented by a `PatternItem`.
-/// If the `PatternItem` is not time-related, returns `None`.
-fn time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
-    match item {
-        PatternItem::Field(field) => match field.symbol {
-            fields::FieldSymbol::Hour(_) => Some(TimeGranularity::Hours),
-            fields::FieldSymbol::Minute => Some(TimeGranularity::Minutes),
-            fields::FieldSymbol::Second(_) => Some(TimeGranularity::Seconds),
-            _ => None,
-        },
-        _ => None,
-    }
-}
-
-/// Returns whether a `Pattern` and a `DateTimeType` are together compatible to display
-/// the `DayPeriod` as noon or midnight. A formatted time is only noon- or midnight-compatible
-/// if the most granular time being displayed lands exactly on the hour. For example, the time
-/// 12:00:00 is always noon-compatible. The time 12:05:15 is noon-compatible only if the
-/// pattern does not contain the minutes or seconds.
-fn is_noon_midnight_compatible<T: DateTimeType>(
-    day_period: DayPeriod,
-    pattern: &Pattern,
-    date_time: &T,
-) -> bool {
-    matches!(day_period, DayPeriod::NoonMidnight)
-        && match pattern.0.iter().flat_map(time_granularity).max() {
-            None | Some(TimeGranularity::Hours) => true,
-            Some(TimeGranularity::Minutes) => u8::from(date_time.minute()) == 0,
-            Some(TimeGranularity::Seconds) => {
-                u8::from(date_time.minute()) + u8::from(date_time.second()) == 0
-            }
+/// Returns `true` if the most granular time being displayed will align with
+/// the top of the hour, otherwise returns `false`.
+/// e.g. `12:00:00` is at the top of the hour for hours, minutes, and seconds.
+/// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
+fn is_top_of_hour<T: DateTimeType>(pattern: &Pattern, date_time: &T) -> bool {
+    match pattern.most_granular_time() {
+        None | Some(TimeGranularity::Hours) => true,
+        Some(TimeGranularity::Minutes) => u8::from(date_time.minute()) == 0,
+        Some(TimeGranularity::Seconds) => {
+            u8::from(date_time.minute()) + u8::from(date_time.second()) == 0
         }
+    }
 }
 
 pub fn write_pattern<T, W>(
@@ -152,7 +121,7 @@ where
     T: DateTimeType,
     W: fmt::Write + ?Sized,
 {
-    for item in &pattern.0 {
+    for item in pattern.items() {
         match item {
             PatternItem::Field(field) => match field.symbol {
                 FieldSymbol::Year(..) => format_number(w, date_time.year(), field.length)?,
@@ -205,12 +174,12 @@ where
                         period,
                         field.length,
                         date_time.hour(),
-                        is_noon_midnight_compatible(period, &pattern, date_time),
+                        is_top_of_hour(&pattern, date_time),
                     );
                     w.write_str(symbol)?
                 }
             },
-            PatternItem::Literal(l) => w.write_str(l)?,
+            PatternItem::Literal(l) => w.write_str(&l)?,
         }
     }
     Ok(())

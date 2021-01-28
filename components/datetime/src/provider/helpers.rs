@@ -39,7 +39,7 @@ pub trait DateTimeDates {
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::Hour,
-        noon_midnight_compatible: bool,
+        is_top_of_hour: bool,
     ) -> &Cow<str>;
 }
 
@@ -181,7 +181,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::Hour,
-        noon_midnight_compatible: bool,
+        is_top_of_hour: bool,
     ) -> &Cow<str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};
         let widths = &self.symbols.day_periods.format;
@@ -190,7 +190,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
             FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-        match (day_period, u8::from(hour), noon_midnight_compatible) {
+        match (day_period, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
             (NoonMidnight, 12, true) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
             (_, hour, _) if hour < 12 => &symbols.am,
