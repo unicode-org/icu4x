@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611782673697,
+  "lastUpdate": 1611860424827,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2771,6 +2771,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 115731,
             "range": "± 5877",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "de60d1698f9c2a04a5733982c10998087c071f2c",
+          "message": "Adding review contract examples (#464)",
+          "timestamp": "2021-01-28T12:51:55-06:00",
+          "tree_id": "540015789534a6c35e0066be69bbd67fbb77b91e",
+          "url": "https://github.com/unicode-org/icu4x/commit/de60d1698f9c2a04a5733982c10998087c071f2c"
+        },
+        "date": 1611860423968,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1686,
+            "range": "± 163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7425,
+            "range": "± 530",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111020,
+            "range": "± 9568",
             "unit": "ns/iter"
           }
         ]
