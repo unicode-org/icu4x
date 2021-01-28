@@ -7,6 +7,7 @@ use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::str::FromStr;
 
 pub mod key {
     use crate::resource::ResourceKey;
@@ -62,25 +63,29 @@ pub struct HelloWorldProvider<'s> {
 impl<'s> HelloWorldProvider<'s> {
     /// Creates a HelloWorldProvider pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider<'static> {
-        let mut map = HashMap::new();
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
         // Note: we don't want to use langid!() because icu_langid_macros is heavy.
-        map.insert("bn".parse().unwrap(), Cow::Borrowed("ওহে বিশ্ব"));
-        map.insert("cs".parse().unwrap(), Cow::Borrowed("Ahoj světe"));
-        map.insert("de".parse().unwrap(), Cow::Borrowed("Hallo Welt"));
-        map.insert("el".parse().unwrap(), Cow::Borrowed("Καλημέρα κόσμε"));
-        map.insert("en".parse().unwrap(), Cow::Borrowed("Hello World"));
-        map.insert("eo".parse().unwrap(), Cow::Borrowed("Saluton, Mondo"));
-        map.insert("fa".parse().unwrap(), Cow::Borrowed("سلام دنیا‎"));
-        map.insert("fi".parse().unwrap(), Cow::Borrowed("hei maailma"));
-        map.insert("is".parse().unwrap(), Cow::Borrowed("Halló, heimur"));
-        map.insert("ja".parse().unwrap(), Cow::Borrowed("こんにちは世界"));
-        map.insert("la".parse().unwrap(), Cow::Borrowed("Ave, munde"));
-        map.insert("ro".parse().unwrap(), Cow::Borrowed("Salut,lume!"));
-        map.insert("ru".parse().unwrap(), Cow::Borrowed("Привет, мир"));
-        map.insert("vi".parse().unwrap(), Cow::Borrowed("Xin chào thế giới"));
-        map.insert("zh".parse().unwrap(), Cow::Borrowed("你好世界"));
-        HelloWorldProvider { map }
+        HelloWorldProvider {
+            map: [
+                ("bn", "ওহে বিশ্ব"),
+                ("cs", "Ahoj světe"),
+                ("de", "Hallo Welt"),
+                ("el", "Καλημέρα κόσμε"),
+                ("en", "Hello World"),
+                ("eo", "Saluton, Mondo"),
+                ("fa", "سلام دنیا‎"),
+                ("fi", "hei maailma"),
+                ("is", "Halló, heimur"),
+                ("ja", "こんにちは世界"),
+                ("la", "Ave, munde"),
+                ("ro", "Salut,lume!"),
+                ("ru", "Привет, мир"),
+                ("vi", "Xin chào thế giới"),
+                ("zh", "你好世界"),
+            ].iter().map(|(loc, value)| {
+                (LanguageIdentifier::from_str(loc).unwrap(), Cow::Borrowed(*value))
+            }).collect()
+        }
     }
 }
 
