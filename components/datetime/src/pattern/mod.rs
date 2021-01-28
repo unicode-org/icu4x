@@ -116,10 +116,6 @@ impl From<Vec<PatternItem>> for Pattern {
 
 impl FromIterator<PatternItem> for Pattern {
     fn from_iter<I: IntoIterator<Item = PatternItem>>(iter: I) -> Self {
-        let items: Vec<PatternItem> = iter.into_iter().collect();
-        Self {
-            items,
-            ..Self::default()
-        }
+        Pattern::from(iter.into_iter().collect::<Vec<_>>())
     }
 }
