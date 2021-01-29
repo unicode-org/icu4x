@@ -19,9 +19,15 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+# "serde" is an intentional feature, enabling serialization of LanguageIdentifier and others:
+extra_features = ["serde"]
+
 [dependencies]
 tinystr = "0.4"
 serde = { version = "1.0", optional = true }
+writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [dev-dependencies]
 criterion = "0.3.3"

@@ -4,16 +4,19 @@
 [workspace]
 
 members = [
+    "experimental/bies",
     "experimental/segmenter_lstm",
     "components/datetime",
     "components/ecma402",
     "components/icu",
     "components/icu4x",
+    "components/locale_canonicalizer",
     "components/locid",
     "components/locid/macros",
     "components/plurals",
     "components/provider_cldr",
     "components/provider_fs",
+    "components/provider_ppucd",
     "components/provider",
     "components/uniset",
     "resources/testdata",

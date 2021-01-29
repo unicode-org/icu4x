@@ -10,11 +10,12 @@ pub fn get_provider() -> FsDataProvider {
         Some(val) => val.into(),
         None => PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
             .join("data")
-            .join("json")
-            .into(),
+            .join("json"),
     };
-    FsDataProvider::try_new(&path).expect(&format!(
-        "The test data directory was unable to be opened: {:?}",
-        path
-    ))
+    FsDataProvider::try_new(&path).unwrap_or_else(|err| {
+        panic!(
+            "The test data directory was unable to be opened: {}: {:?}",
+            err, path
+        )
+    })
 }

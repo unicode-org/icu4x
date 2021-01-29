@@ -19,6 +19,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+
 [dependencies]
 icu_datetime = { version = "0.1", path = "../datetime" }
 icu_locid = { version = "0.1", path = "../locid" }
@@ -28,3 +31,19 @@ icu_uniset = { version = "0.1", path = "../uniset" }
 
 [dev-dependencies]
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
+
+[features]
+default = ["provider_serde"]
+serde = [
+    "icu_locid/serde"
+]
+provider_serde = [
+    "icu_datetime/provider_serde",
+    "icu_plurals/provider_serde",
+    "icu_uniset/provider_serde",
+]
+serialize_none = [
+    "icu_datetime/serialize_none",
+    "icu_plurals/serialize_none",
+    "icu_uniset/serialize_none",
+]

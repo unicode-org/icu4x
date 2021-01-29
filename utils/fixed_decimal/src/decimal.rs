@@ -302,53 +302,6 @@ impl FixedDecimal {
         }
     }
 
-    /// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    ///
-    /// let dec = FixedDecimal::from(42);
-    /// let mut result = String::with_capacity(dec.write_len());
-    /// dec.write_to(&mut result).expect("write_to(String) should not fail");
-    /// assert_eq!("42", result);
-    /// ```
-    pub fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
-        if self.is_negative {
-            sink.write_char('-')?;
-        }
-        for m in self.magnitude_range().rev() {
-            if m == -1 {
-                sink.write_char('.')?;
-            }
-            let d = self.digit_at(m);
-            sink.write_char((b'0' + d) as char)?;
-        }
-        Ok(())
-    }
-
-    /// The number of bytes that will be written by `FixedDecimal::write_to`. Use this function to
-    /// pre-allocate capacity in the destination buffer.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    ///
-    /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
-    /// let mut result = String::with_capacity(dec.write_len());
-    /// dec.write_to(&mut result).expect("write_to(String) should not fail");
-    /// assert_eq!("-50.00", result);
-    /// assert_eq!(6, dec.write_len());
-    /// ```
-    pub const fn write_len(&self) -> usize {
-        let num_digits = 1 + (self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize;
-        num_digits
-            + (if self.is_negative { 1 } else { 0 })
-            + (if self.lower_magnitude < 0 { 1 } else { 0 })
-    }
-
     /// Assert that the invariants among struct fields are enforced. Returns true if all are okay.
     /// Call this in any method that mutates the struct fields.
     ///
@@ -371,10 +324,60 @@ impl FixedDecimal {
     }
 }
 
+impl writeable::Writeable for FixedDecimal {
+    /// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use writeable::Writeable;
+    ///
+    /// let dec = FixedDecimal::from(42);
+    /// let mut result = String::with_capacity(dec.write_len().capacity());
+    /// dec.write_to(&mut result).expect("write_to(String) should not fail");
+    /// assert_eq!("42", result);
+    /// ```
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        if self.is_negative {
+            sink.write_char('-')?;
+        }
+        for m in self.magnitude_range().rev() {
+            if m == -1 {
+                sink.write_char('.')?;
+            }
+            let d = self.digit_at(m);
+            sink.write_char((b'0' + d) as char)?;
+        }
+        Ok(())
+    }
+
+    /// The number of bytes that will be written by `FixedDecimal::write_to`. Use this function to
+    /// pre-allocate capacity in the destination buffer.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use writeable::Writeable;
+    /// use writeable::LengthHint;
+    ///
+    /// let dec = FixedDecimal::from(-5000).multiplied_pow10(-2).expect("Bounds are small");
+    /// let result = dec.writeable_to_string();
+    /// assert_eq!(LengthHint::Exact(6), dec.write_len());
+    /// ```
+    fn write_len(&self) -> writeable::LengthHint {
+        writeable::LengthHint::Exact(1)
+            + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
+            + (if self.is_negative { 1 } else { 0 })
+            + (if self.lower_magnitude < 0 { 1 } else { 0 })
+    }
+}
+
 /// Renders the `FixedDecimal` according to the syntax documented in `FixedDecimal::write_to`.
 impl fmt::Display for FixedDecimal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.write_to(f)
+        writeable::Writeable::write_to(self, f)
     }
 }
 
@@ -624,9 +627,7 @@ fn test_basic() {
         let mut dec: FixedDecimal = cas.input.into();
         // println!("{}", cas.input + 0.01);
         dec.multiply_pow10(cas.delta).unwrap();
-        let string = dec.to_string();
-        assert_eq!(cas.expected, string, "{:?}", cas);
-        assert_eq!(string.len(), dec.write_len(), "{:?}", cas);
+        writeable::assert_writeable_eq!(cas.expected, dec, "{:?}", cas);
     }
 }
 
@@ -693,7 +694,7 @@ fn test_isize_limits() {
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        assert_eq!(dec.write_len(), dec_str.len());
+        writeable::assert_writeable_eq!(dec_str, dec);
     }
 }
 
@@ -704,14 +705,14 @@ fn test_ui128_limits() {
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        assert_eq!(dec.write_len(), dec_str.len());
+        writeable::assert_writeable_eq!(dec_str, dec);
     }
     for num in &[std::u128::MAX, std::u128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
-        assert_eq!(dec.write_len(), dec_str.len());
+        writeable::assert_writeable_eq!(dec_str, dec);
     }
 }
 

@@ -48,6 +48,10 @@
 //! [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`]: https://unicode.org/reports/tr35/tr35.html#Unicode_Language_and_Locale_Identifiers
 //! [`ICU4X`]: ../icu/index.html
 //! [`Unicode Extensions`]: extensions
+
+#[macro_use]
+mod helpers;
+
 pub mod extensions;
 mod langid;
 mod locale;

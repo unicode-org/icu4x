@@ -164,19 +164,38 @@ impl Unicode {
 
 impl std::fmt::Display for Unicode {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl writeable::Writeable for Unicode {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
         if self.is_empty() {
             return Ok(());
         }
-
-        f.write_str("-u")?;
-
+        sink.write_str("-u")?;
         if !self.attributes.is_empty() {
-            write!(f, "-{}", self.attributes)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(&self.attributes, sink)?;
         }
-
         if !self.keywords.is_empty() {
-            write!(f, "-{}", self.keywords)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(&self.keywords, sink)?;
         }
         Ok(())
+    }
+
+    fn write_len(&self) -> writeable::LengthHint {
+        if self.is_empty() {
+            return writeable::LengthHint::Exact(0);
+        }
+        let mut result = writeable::LengthHint::Exact(2);
+        if !self.attributes.is_empty() {
+            result += writeable::Writeable::write_len(&self.attributes) + 1;
+        }
+        if !self.keywords.is_empty() {
+            result += writeable::Writeable::write_len(&self.keywords) + 1;
+        }
+        result
     }
 }

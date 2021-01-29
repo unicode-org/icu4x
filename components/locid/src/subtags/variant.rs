@@ -133,11 +133,7 @@ impl FromStr for Variant {
     }
 }
 
-impl std::fmt::Display for Variant {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
+impl_writeable_for_single_subtag!(Variant, "posix");
 
 impl PartialEq<&str> for Variant {
     fn eq(&self, other: &&str) -> bool {

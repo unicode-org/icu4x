@@ -21,30 +21,33 @@ include = [
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+# "serde" is an intentional feature, enabling serialization of HelloWorldV1:
+extra_features = ["serde"]
 
 [features]
-# Serialize None values when exporting. Required for Bincode.
-serialize_none = []
-
-# Include the HelloWorldProvider, useful for unit testing.
-hello_world = ["icu_locid_macros"]
+# Include the ErasedDataProvider, useful for type-agnostic data processing.
+# Also required for DataExporter.
+erased = ["serde", "erased-serde"]
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
 tinystr = "0.4"
-erased-serde = "0.3"
-smallstr = { version = "0.2", features = ["serde"] }
-downcast-rs = "1.2"
-serde = { version = "1.0", features = ["derive"] }
+writeable = { version = "0.2", path = "../../utils/writeable" }
 
-# For feature "hello_world"
-icu_locid_macros = { version = "0.1", path = "../locid/macros", optional = true }
+# For "erased" feature
+erased-serde = { version = "0.3", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_json = "1.0"
 static_assertions = "1.1"
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+icu_plurals = { version = "0.1", path = "../plurals" }
 
 [[test]]
-name = "iteration"
-required-features = ["hello_world"]
+name = "data_provider"
+required-features = ["erased", "serde"]
+
+[[test]]
+name = "data_receiver"
+required-features = ["erased"]

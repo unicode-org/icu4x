@@ -1,7 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use std::fmt::Write;
+
 use std::str::FromStr;
 
 use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
@@ -158,21 +158,64 @@ impl FromStr for LanguageIdentifier {
 
 impl std::fmt::Display for LanguageIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        self.language.fmt(f)?;
+        writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl writeable::Writeable for LanguageIdentifier {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+        writeable::Writeable::write_to(&self.language, sink)?;
         if let Some(ref script) = self.script {
-            f.write_char('-')?;
-            script.fmt(f)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(script, sink)?;
         }
         if let Some(ref region) = self.region {
-            f.write_char('-')?;
-            region.fmt(f)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(region, sink)?;
         }
         if !self.variants.is_empty() {
-            f.write_char('-')?;
-            self.variants.fmt(f)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(&self.variants, sink)?;
         }
         Ok(())
     }
+
+    fn write_len(&self) -> writeable::LengthHint {
+        let mut result = writeable::Writeable::write_len(&self.language);
+        if let Some(ref script) = self.script {
+            result += writeable::Writeable::write_len(script) + 1;
+        }
+        if let Some(ref region) = self.region {
+            result += writeable::Writeable::write_len(region) + 1;
+        }
+        if !self.variants.is_empty() {
+            result += writeable::Writeable::write_len(&self.variants) + 1;
+        }
+        result
+    }
+}
+
+#[test]
+fn test_writeable() {
+    use writeable::assert_writeable_eq;
+    assert_writeable_eq!("und", LanguageIdentifier::und());
+    assert_writeable_eq!("und-001", LanguageIdentifier::from_str("und-001").unwrap());
+    assert_writeable_eq!(
+        "und-Mymr",
+        LanguageIdentifier::from_str("und-Mymr").unwrap()
+    );
+    assert_writeable_eq!(
+        "my-Mymr-MM",
+        LanguageIdentifier::from_str("my-Mymr-MM").unwrap()
+    );
+    assert_writeable_eq!(
+        "my-Mymr-MM-posix",
+        LanguageIdentifier::from_str("my-Mymr-MM-posix").unwrap()
+    );
+    assert_writeable_eq!(
+        "zh-macos-posix",
+        LanguageIdentifier::from_str("zh-macos-posix").unwrap()
+    );
 }
 
 macro_rules! subtag_matches {
