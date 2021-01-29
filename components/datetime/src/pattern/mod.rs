@@ -7,8 +7,8 @@ mod parser;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 pub use error::Error;
 use parser::Parser;
+use std::convert::TryFrom;
 use std::iter::FromIterator;
-use std::{cell::RefCell, convert::TryFrom};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum PatternItem {
@@ -60,7 +60,7 @@ pub(super) enum TimeGranularity {
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct Pattern {
     items: Vec<PatternItem>,
-    time_granularity: RefCell<Option<Option<TimeGranularity>>>,
+    time_granularity: Option<TimeGranularity>,
 }
 
 /// Retrieves the granularity of time represented by a `PatternItem`.
@@ -94,28 +94,21 @@ impl Pattern {
     }
 
     pub(super) fn most_granular_time(&self) -> Option<TimeGranularity> {
-        let mut time_granularity = self.time_granularity.borrow_mut();
-        match *time_granularity {
-            Some(granularity) => granularity,
-            None => {
-                *time_granularity = Some(self.items.iter().flat_map(get_time_granularity).max());
-                time_granularity.unwrap()
-            }
-        }
+        self.time_granularity
     }
 }
 
 impl From<Vec<PatternItem>> for Pattern {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
+            time_granularity: items.iter().flat_map(get_time_granularity).max(),
             items,
-            ..Self::default()
         }
     }
 }
 
 impl FromIterator<PatternItem> for Pattern {
     fn from_iter<I: IntoIterator<Item = PatternItem>>(iter: I) -> Self {
-        Pattern::from(iter.into_iter().collect::<Vec<_>>())
+        Self::from(iter.into_iter().collect::<Vec<_>>())
     }
 }
