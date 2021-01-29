@@ -4,8 +4,8 @@
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
+use icu_locale_canonicalizer::provider::*;
 use icu_provider::prelude::*;
-use icu_provider::structs::likelysubtags::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;

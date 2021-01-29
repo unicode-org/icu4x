@@ -409,12 +409,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "downcast-rs"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
-
-[[package]]
 name = "dtoa"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -795,13 +789,12 @@ dependencies = [
 name = "icu_provider"
 version = "0.1.0"
 dependencies = [
- "downcast-rs",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "serde",
  "serde_json",
- "smallstr",
  "static_assertions",
  "tinystr",
  "writeable",
@@ -812,6 +805,8 @@ name = "icu_provider_cldr"
 version = "0.1.0"
 dependencies = [
  "dirs",
+ "icu_datetime",
+ "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
@@ -838,6 +833,7 @@ dependencies = [
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
  "log",
@@ -876,6 +872,7 @@ dependencies = [
  "clap",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
  "icu_provider_fs",
@@ -891,6 +888,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu_provider",
+ "serde",
 ]
 
 [[package]]
@@ -1831,16 +1829,6 @@ name = "slab"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c111b5bd5695e56cffe5129854aa230b39c93a305372fdbb2668ca2394eea9f8"
-
-[[package]]
-name = "smallstr"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e922794d168678729ffc7e07182721a14219c65814e66e91b839a272fe5ae4f"
-dependencies = [
- "serde",
- "smallvec",
-]
 
 [[package]]
 name = "smallvec"

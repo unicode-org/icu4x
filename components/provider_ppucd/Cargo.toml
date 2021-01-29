@@ -19,7 +19,8 @@ include = [
     "README.md"
 ]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }

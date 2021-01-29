@@ -20,7 +20,6 @@ use std::path::PathBuf;
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::structs;
 /// use icu_provider_cldr::CldrPaths;
 /// use icu_provider_cldr::download::CldrAllInOneDownloader;
 /// use icu_provider_cldr::transform::PluralsProvider;
@@ -34,15 +33,14 @@ use std::path::PathBuf;
 ///     use std::borrow::Cow;
 ///     use std::convert::TryFrom;
 ///     use icu_provider::prelude::*;
-///     use icu_provider::structs;
 ///
 ///     let data_provider = PluralsProvider::try_from(paths)
 ///         .expect("The data should be well-formed after downloading");
 ///
-///     let data: Cow<structs::plurals::PluralRuleStringsV1> = data_provider
+///     let data: Cow<icu_plurals::provider::PluralRuleStringsV1> = data_provider
 ///         .load_payload(&DataRequest {
 ///             resource_path: ResourcePath {
-///                 key: structs::plurals::key::ORDINAL_V1,
+///                 key: icu_plurals::provider::key::ORDINAL_V1,
 ///                 options: ResourceOptions {
 ///                     langid: Some(langid!("uk")),
 ///                     variant: None,

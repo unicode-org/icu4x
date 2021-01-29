@@ -4,7 +4,6 @@
 
 //! Collection of iteration APIs for `DataProvider`.
 
-use crate::erased::*;
 use crate::error::Error;
 use crate::prelude::*;
 use std::fmt::Debug;
@@ -38,13 +37,15 @@ where
 
 /// Super-trait combining ErasedDataProvider and IterableDataProvider, auto-implemented
 /// for all types implementing both of those traits.
+#[cfg(feature = "erased")]
 pub trait IterableErasedDataProvider<'d>:
-    IterableDataProvider<'d> + ErasedDataProvider<'d>
+    IterableDataProvider<'d> + crate::erased::ErasedDataProvider<'d>
 {
 }
 
+#[cfg(feature = "erased")]
 impl<'d, S> IterableErasedDataProvider<'d> for S where
-    S: IterableDataProvider<'d> + ErasedDataProvider<'d>
+    S: IterableDataProvider<'d> + crate::erased::ErasedDataProvider<'d>
 {
 }
 
@@ -88,12 +89,13 @@ pub trait KeyedDataProvider {
 /// An object capable of storing/persisting data payloads to be read by a DataProvider.
 ///
 /// A DataProvider by itself is "read-only"; this trait enables it to be "read-write".
+#[cfg(feature = "erased")]
 pub trait DataExporter {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload(
         &mut self,
         req: &DataRequest,
-        payload: &dyn ErasedDataStruct,
+        payload: &dyn crate::erased::ErasedDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -117,7 +119,8 @@ pub trait DataExporter {
                     options: resc_options,
                 },
             };
-            let mut receiver = DataReceiver::<dyn ErasedDataStruct>::new();
+            let mut receiver =
+                crate::erased::DataReceiver::<dyn crate::erased::ErasedDataStruct>::new();
             provider.load_to_receiver(&req, &mut receiver)?;
             self.put_payload(&req, receiver.borrow_payload()?)?;
         }

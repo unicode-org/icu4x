@@ -177,9 +177,8 @@ impl ResourceKey {
     ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// use icu_provider::structs;
     ///
-    /// let resc_key = structs::plurals::key::CARDINAL_V1;
+    /// let resc_key = icu_plurals::provider::key::CARDINAL_V1;
     /// let components = resc_key.get_components();
     ///
     /// assert_eq!(

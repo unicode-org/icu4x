@@ -5,8 +5,8 @@ use crate::date::{self, DateTimeType};
 use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
-use crate::provider::DateTimeDates;
-use icu_provider::structs;
+use crate::provider;
+use crate::provider::helpers::DateTimeDates;
 use std::fmt;
 use writeable::Writeable;
 
@@ -42,7 +42,7 @@ where
     T: DateTimeType,
 {
     pub(crate) pattern: &'l Pattern,
-    pub(crate) data: &'l structs::dates::gregory::DatesV1,
+    pub(crate) data: &'l provider::gregory::DatesV1,
     pub(crate) date_time: &'l T,
 }
 
@@ -98,7 +98,7 @@ fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::Wee
 
 pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
-    data: &structs::dates::gregory::DatesV1,
+    data: &provider::gregory::DatesV1,
     date_time: &T,
     w: &mut W,
 ) -> Result<(), DateTimeFormatError>

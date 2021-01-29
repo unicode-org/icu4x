@@ -116,6 +116,7 @@ simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
+icu_plurals = { version = "0.1", path = "../../components/plurals" }
 
 [features]
 metadata = ["cargo_metadata", "serde", "serde_json", "icu_locid/serde"]

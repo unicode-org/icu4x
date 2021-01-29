@@ -4,9 +4,9 @@
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
+use icu_plurals::provider::*;
 use icu_plurals::rules::{parse, serialize};
 use icu_provider::prelude::*;
-use icu_provider::structs::plurals::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;

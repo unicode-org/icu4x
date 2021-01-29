@@ -6,7 +6,7 @@ use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{style, DateTimeFormatOptions};
 use crate::pattern::Pattern;
-use icu_provider::structs;
+use crate::provider;
 use std::borrow::Cow;
 
 type Result<T> = std::result::Result<T, DateTimeFormatError>;
@@ -42,7 +42,7 @@ pub trait DateTimeDates {
     ) -> &Cow<str>;
 }
 
-impl DateTimeDates for structs::dates::gregory::DatesV1 {
+impl DateTimeDates for provider::gregory::DatesV1 {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
         match options {
             DateTimeFormatOptions::Style(bag) => self.get_pattern_for_style_bag(bag),
