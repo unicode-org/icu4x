@@ -101,7 +101,7 @@ impl Pattern {
 impl From<Vec<PatternItem>> for Pattern {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
-            time_granularity: items.iter().flat_map(get_time_granularity).max(),
+            time_granularity: items.iter().filter_map(get_time_granularity).max(),
             items,
         }
     }
