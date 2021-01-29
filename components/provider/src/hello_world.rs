@@ -82,9 +82,15 @@ impl<'s> HelloWorldProvider<'s> {
                 ("ru", "Привет, мир"),
                 ("vi", "Xin chào thế giới"),
                 ("zh", "你好世界"),
-            ].iter().map(|(loc, value)| {
-                (LanguageIdentifier::from_str(loc).unwrap(), Cow::Borrowed(*value))
-            }).collect()
+            ]
+            .iter()
+            .map(|(loc, value)| {
+                (
+                    LanguageIdentifier::from_str(loc).unwrap(),
+                    Cow::Borrowed(*value),
+                )
+            })
+            .collect(),
         }
     }
 }
