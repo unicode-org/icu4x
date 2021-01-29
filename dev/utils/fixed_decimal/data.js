@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611860309458,
+  "lastUpdate": 1611890856290,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2009,6 +2009,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 128772,
             "range": "± 8363",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2f47f76a82b64a1204bec2a81130fcb70fcea06",
+          "message": "Moving data provider structs into their own crates (#451)\n\nAdds \"provider_serde\" feature across components",
+          "timestamp": "2021-01-28T21:22:30-06:00",
+          "tree_id": "9bf2dd468ae1bd5e4e0759bddb20b89a7513073f",
+          "url": "https://github.com/unicode-org/icu4x/commit/d2f47f76a82b64a1204bec2a81130fcb70fcea06"
+        },
+        "date": 1611890855660,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 154171,
+            "range": "± 26673",
             "unit": "ns/iter"
           }
         ]
