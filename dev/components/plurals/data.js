@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611860424827,
+  "lastUpdate": 1611890893942,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2813,6 +2813,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 111020,
             "range": "± 9568",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2f47f76a82b64a1204bec2a81130fcb70fcea06",
+          "message": "Moving data provider structs into their own crates (#451)\n\nAdds \"provider_serde\" feature across components",
+          "timestamp": "2021-01-28T21:22:30-06:00",
+          "tree_id": "9bf2dd468ae1bd5e4e0759bddb20b89a7513073f",
+          "url": "https://github.com/unicode-org/icu4x/commit/d2f47f76a82b64a1204bec2a81130fcb70fcea06"
+        },
+        "date": 1611890890402,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1736,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7406,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 113762,
+            "range": "± 1163",
             "unit": "ns/iter"
           }
         ]
