@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::Attribute;
-use std::fmt::Write;
 use std::ops::Deref;
 
 /// A set of [`Attribute`] elements as defined in [`Unicode Extension Attributes`].
@@ -100,20 +99,7 @@ impl Attributes {
     }
 }
 
-impl std::fmt::Display for Attributes {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut initial = true;
-        for variant in self.iter() {
-            if initial {
-                initial = false;
-            } else {
-                f.write_char('-')?;
-            }
-            variant.fmt(f)?;
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_subtag_list!(Attributes, "foobar", "testing");
 
 impl Deref for Attributes {
     type Target = [Attribute];

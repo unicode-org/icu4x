@@ -77,7 +77,7 @@ impl UnicodeSetBuilder {
 
     /// Add the character to the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -91,9 +91,32 @@ impl UnicodeSetBuilder {
         self.add(to_add, to_add + 1);
     }
 
+    /// Add the code point value to the `UnicodeSetBuilder`
+    ///
+    /// Note: Even though `u32` and `char` in Rust are non-negative 4-byte
+    /// values, there is an important difference. A `u32` can take values up to
+    /// a very large integer value, while a `char` in Rust is defined to be in
+    /// the range from 0 to the maximum valid Unicode Scalar Value.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_uniset::UnicodeSetBuilder;
+    /// let mut builder = UnicodeSetBuilder::new();
+    /// builder.add_u32(65);
+    /// let check = builder.build();
+    /// assert_eq!(check.contains_u32(65), true);
+    /// ```
+    pub fn add_u32(&mut self, c: u32) {
+        if c <= char::MAX as u32 {
+            // we already know 0 <= c  because c: u32
+            self.add(c, c + 1);
+        }
+    }
+
     /// Add the range of characters to the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -109,7 +132,7 @@ impl UnicodeSetBuilder {
 
     /// Add the `UnicodeSet` reference to the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
@@ -144,7 +167,7 @@ impl UnicodeSetBuilder {
 
     /// Remove the character from the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -160,7 +183,7 @@ impl UnicodeSetBuilder {
 
     /// Remove the range of characters from the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -176,7 +199,7 @@ impl UnicodeSetBuilder {
 
     /// Remove the `UnicodeSet` from the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
@@ -194,7 +217,7 @@ impl UnicodeSetBuilder {
 
     /// Retain the specified character in the `UnicodeSetBuilder` if it exists
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -214,7 +237,7 @@ impl UnicodeSetBuilder {
 
     /// Retain the range of characters located within the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -235,7 +258,7 @@ impl UnicodeSetBuilder {
 
     /// Retain the elements in the specified set within the `UnicodeSetBuilder`
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
@@ -297,7 +320,7 @@ impl UnicodeSetBuilder {
     /// Computes the complement of the builder, inverting the builder (any elements in the builder are removed,
     /// while any elements not in the builder are added)
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
@@ -325,7 +348,7 @@ impl UnicodeSetBuilder {
 
     /// Complements the character in the builder, adding it if not in the builder, and removing it otherwise.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -346,7 +369,7 @@ impl UnicodeSetBuilder {
     /// Complements the range in the builder, adding any elements in the range if not in the builder, and
     /// removing them otherwise.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::UnicodeSetBuilder;
@@ -366,7 +389,7 @@ impl UnicodeSetBuilder {
     /// Complements the set in the builder, adding any elements in the set if not in the builder, and
     /// removing them otherwise.
     ///
-    /// # Example:
+    /// # Example
     ///
     /// ```
     /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
@@ -380,6 +403,20 @@ impl UnicodeSetBuilder {
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
         self.complement_list(set.as_inversion_list());
+    }
+
+    /// Returns whether the build is empty.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// let mut builder = UnicodeSetBuilder::new();
+    /// let check = builder.build();
+    /// assert!(check.is_empty());
+    /// ```
+    pub fn is_empty(&mut self) -> bool {
+        self.intervals.is_empty()
     }
 }
 
@@ -407,6 +444,13 @@ mod tests {
         builder.add(65, 66);
         let check: UnicodeSet = builder.build();
         assert_eq!(check.iter().next(), Some('A'));
+    }
+
+    #[test]
+    fn test_empty_build() {
+        let builder = UnicodeSetBuilder::new();
+        let check: UnicodeSet = builder.build();
+        assert!(check.is_empty());
     }
 
     #[test]
@@ -797,5 +841,11 @@ mod tests {
         builder.complement_set(&set);
         let expected = vec![65, 67, 70, 75, 78, 90];
         assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let mut builder = UnicodeSetBuilder::new();
+        assert_eq!(true, builder.is_empty());
     }
 }

@@ -4,9 +4,9 @@
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
+use icu_plurals::provider::*;
 use icu_plurals::rules::{parse, serialize};
 use icu_provider::prelude::*;
-use icu_provider::structs::plurals::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
@@ -56,7 +56,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
 
 impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
     type Error = serde_json::error::Error;
-    /// Attempt to parse a JSON string.
+    /// Attempt to parse a CLDR JSON string.
     fn try_from(s: &'d str) -> Result<Self, Self::Error> {
         let data: cldr_json::Resource = serde_json::from_str(s)?;
         Ok(PluralsProvider {

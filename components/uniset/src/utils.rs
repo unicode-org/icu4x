@@ -9,12 +9,13 @@ use std::{
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
-    v.len() % 2 == 0
-        && v.windows(2).all(|chunk| chunk[0] < chunk[1])
-        && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1))
+    v.is_empty()
+        || (v.len() % 2 == 0
+            && v.windows(2).all(|chunk| chunk[0] < chunk[1])
+            && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
 }
 
-/// Returns start (inclusive) and end (excluisive) bounds of `RangeBounds`
+/// Returns start (inclusive) and end (exclusive) bounds of `RangeBounds`
 pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
     let from = match range.start_bound() {
         Included(b) => (*b as u32),
@@ -42,7 +43,7 @@ mod tests {
     #[test]
     fn test_is_valid_empty() {
         let check = vec![];
-        assert!(!is_valid(&check));
+        assert!(is_valid(&check));
     }
     #[test]
     fn test_is_valid_overlapping() {

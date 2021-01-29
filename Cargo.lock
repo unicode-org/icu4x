@@ -80,6 +80,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
+name = "bies"
+version = "0.1.1"
+dependencies = [
+ "criterion",
+ "itertools",
+ "num-traits",
+ "partial-min-max",
+ "rand 0.7.3",
+ "rand_distr 0.3.0",
+ "rand_pcg 0.2.1",
+ "strum",
+ "writeable",
+]
+
+[[package]]
 name = "bincode"
 version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -453,12 +468,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "downcast-rs"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
-
-[[package]]
 name = "dtoa"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -501,10 +510,11 @@ dependencies = [
  "criterion",
  "icu_benchmark_macros",
  "rand 0.7.3",
- "rand_distr",
+ "rand_distr 0.2.2",
  "rand_pcg 0.2.1",
  "smallvec",
  "static_assertions",
+ "writeable",
 ]
 
 [[package]]
@@ -663,6 +673,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
 
 [[package]]
+name = "heck"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20564e78d53d2bb135c343b3f47714a56af2061f1c928fdb541dc7b9fdd94205"
+dependencies = [
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "hermit-abi"
 version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -799,6 +818,20 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
+ "writeable",
+]
+
+[[package]]
+name = "icu_locale_canonicalizer"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -810,6 +843,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr",
+ "writeable",
 ]
 
 [[package]]
@@ -840,15 +874,15 @@ dependencies = [
 name = "icu_provider"
 version = "0.1.0"
 dependencies = [
- "downcast-rs",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "serde",
  "serde_json",
- "smallstr",
  "static_assertions",
  "tinystr",
+ "writeable",
 ]
 
 [[package]]
@@ -856,6 +890,8 @@ name = "icu_provider_cldr"
 version = "0.1.0"
 dependencies = [
  "dirs",
+ "icu_datetime",
+ "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
@@ -883,6 +919,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
  "log",
@@ -890,6 +927,17 @@ dependencies = [
  "serde_json",
  "simple_logger",
  "static_assertions",
+]
+
+[[package]]
+name = "icu_provider_ppucd"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_locid_macros",
+ "icu_provider",
+ "icu_uniset",
+ "tinystr",
 ]
 
 [[package]]
@@ -910,6 +958,7 @@ dependencies = [
  "clap",
  "icu_locid",
  "icu_locid_macros",
+ "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
  "icu_provider_fs",
@@ -925,6 +974,8 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
+ "icu_provider",
+ "serde",
 ]
 
 [[package]]
@@ -1014,6 +1065,12 @@ name = "libc"
 version = "0.2.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d58d1b70b004888f764dfbf6a26a3b0342a1632d33968e4a179d8011c760614"
+
+[[package]]
+name = "libm"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "log"
@@ -1200,6 +1257,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a64b1ec5cda2586e284722486d802acf1f7dbdc623e2bfc57e65ca1cd099290"
 dependencies = [
  "autocfg 1.0.1",
+ "libm",
 ]
 
 [[package]]
@@ -1262,6 +1320,12 @@ dependencies = [
  "pkg-config",
  "vcpkg",
 ]
+
+[[package]]
+name = "partial-min-max"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6448add382c60bbbc64f9dab41309a12ec530c05191601042f911356ac09758c"
 
 [[package]]
 name = "percent-encoding"
@@ -1469,6 +1533,16 @@ version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96977acbdd3a6576fb1d27391900035bf3863d4a16422973a409b488cf29ffb2"
 dependencies = [
+ "rand 0.7.3",
+]
+
+[[package]]
+name = "rand_distr"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9e9532ada3929fb8b2e9dbe28d1e06c9b2cc65813f074fcb6bd5fbefeff9d56"
+dependencies = [
+ "num-traits",
  "rand 0.7.3",
 ]
 
@@ -1890,16 +1964,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c111b5bd5695e56cffe5129854aa230b39c93a305372fdbb2668ca2394eea9f8"
 
 [[package]]
-name = "smallstr"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e922794d168678729ffc7e07182721a14219c65814e66e91b839a272fe5ae4f"
-dependencies = [
- "serde",
- "smallvec",
-]
-
-[[package]]
 name = "smallvec"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1928,6 +1992,27 @@ name = "strsim"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
+
+[[package]]
+name = "strum"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7318c509b5ba57f18533982607f24070a55d353e90d4cae30c467cdb2ad5ac5c"
+dependencies = [
+ "strum_macros",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee8bc6b87a5112aeeab1f4a9f7ab634fe6cbefc4850006df31267f4cfb9e3149"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "syn"
@@ -2392,7 +2477,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",

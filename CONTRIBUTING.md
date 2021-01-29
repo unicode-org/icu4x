@@ -134,6 +134,22 @@ PRs should generally not be merged with pending reviews.
 
 If the PR author decides to make any substantial changes that go beyond of what the reviewers already approved, they can re-request an already accepted review after updating the PR.
 
+#### Examples
+
+The following PR has one non-blocking review, two approvals, and two pending reviews. The author should wait for reviews from *EvanJP* and *nciric* before merging.
+
+![One comment, two checkmarks, two pending](docs/assets/reviewers-1.png)
+
+The following PR has two non-blocking reviews and one approval. Since there are no pending reviews, the author may merge this PR.
+
+![Two comments, one checkmark](docs/assets/reviewers-2.png)
+
+The following PR has one non-blocking review, one blocking review, one approval, and one pending review. The author should wait for sffc to resolve their blocking review and for nciric to leave a review before merging.
+
+![Two comments, one checkmark](docs/assets/reviewers-3.png)
+
+*Note:* GitHub turns approvals into non-blocking reviews when new commits are pushed to a branch.
+
 ## Licenses
 
 See the file called [LICENSE](LICENSE) for terms applying to your contribution.

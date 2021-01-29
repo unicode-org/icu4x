@@ -6,6 +6,7 @@
 icu_benchmark_macros::static_setup!();
 
 use std::fmt;
+use writeable::LengthHint;
 use writeable::Writeable;
 
 struct WriteableMessage<'s> {
@@ -13,12 +14,12 @@ struct WriteableMessage<'s> {
 }
 
 impl Writeable for WriteableMessage<'_> {
-    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_str(self.message)
     }
 
-    fn write_len(&self) -> usize {
-        self.message.len()
+    fn write_len(&self) -> LengthHint {
+        LengthHint::Exact(self.message.len())
     }
 }
 

@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use icu_locid_macros::langid;
+use icu_plurals::provider::{self, PluralRuleStringsV1};
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu_provider::struct_provider::StructProvider;
-use icu_provider::structs::{self, plurals::PluralRuleStringsV1};
 use std::borrow::Cow;
 
 #[test]
@@ -48,7 +48,7 @@ fn test_plural_rules_non_static_lifetime() {
         many: None,
     };
     let provider = StructProvider {
-        key: structs::plurals::key::CARDINAL_V1,
+        key: provider::key::CARDINAL_V1,
         data: &local_data,
     };
 

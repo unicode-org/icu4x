@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::borrow::Borrow;
-use std::fmt::Write;
 use std::ops::Deref;
 
 use super::Key;
@@ -132,25 +131,7 @@ impl Keywords {
     }
 }
 
-impl std::fmt::Display for Keywords {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut first = true;
-        for (key, value) in self.iter() {
-            if first {
-                first = false;
-            } else {
-                f.write_char('-')?;
-            }
-
-            if value.is_empty() {
-                key.fmt(f)?;
-            } else {
-                write!(f, "{}-{}", key, value)?;
-            }
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
 
 impl Deref for Keywords {
     type Target = [(Key, Value)];

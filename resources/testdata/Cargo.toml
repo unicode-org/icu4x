@@ -89,7 +89,7 @@ locales = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata
-gitref = "38.1.0-BETA4"
+gitref = "38.1.0"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -116,6 +116,7 @@ simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
+icu_plurals = { version = "0.1", path = "../../components/plurals" }
 
 [features]
 metadata = ["cargo_metadata", "serde", "serde_json", "icu_locid/serde"]

@@ -32,7 +32,7 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider" }
+icu_provider = { version = "0.1", path = "../provider", features = ["erased"] }
 icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 erased-serde = { version = "0.3" }
@@ -54,13 +54,13 @@ simple_logger = { version = "1.11", optional = true }
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
-icu_provider = { version = "0.1", path = "../provider", features = ["hello_world"] }
+icu_plurals = { version = "0.1", path = "../plurals" }
 criterion = "0.3.3"
 
 [features]
 export = ["static_assertions", "log"]
 export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
-serialize_none = ["icu_provider/serialize_none"]
+serialize_none = ["icu_provider_cldr/serialize_none"]
 bench = []
 
 [[bin]]

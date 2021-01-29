@@ -10,7 +10,7 @@ use tinystr::TinyStr8;
 pub struct Value(Box<[TinyStr8]>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
-const TRUE_TVALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(1_702_195_828_u64) }; // "true"
+const TRUE_TVALUE: TinyStr8 = tinystr::tinystr8!("true");
 
 /// A value used in a list of [`Fields`](super::Fields).
 ///
@@ -100,22 +100,4 @@ impl FromStr for Value {
     }
 }
 
-impl std::fmt::Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut first = true;
-
-        if self.0.is_empty() {
-            f.write_str(TRUE_TVALUE.as_str())?;
-        }
-
-        for subtag in self.0.iter() {
-            if first {
-                subtag.fmt(f)?;
-                first = false;
-            } else {
-                write!(f, "-{}", subtag)?;
-            }
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_tinystr_list!(Value, "true", "hybrid", "foobar");

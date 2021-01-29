@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use super::Variant;
-use std::fmt::Write;
 use std::ops::Deref;
 
 /// Variants is a list of variants (examples: `["macos", "posix"]`, etc.)
@@ -164,22 +163,7 @@ impl Variants {
     }
 }
 
-impl std::fmt::Display for Variants {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        if let Some(elements) = &self.0 {
-            let mut initial = true;
-            for variant in elements.iter() {
-                if initial {
-                    initial = false;
-                } else {
-                    f.write_char('-')?;
-                }
-                variant.fmt(f)?;
-            }
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_subtag_list!(Variants, "macos", "posix");
 
 impl Deref for Variants {
     type Target = [Variant];

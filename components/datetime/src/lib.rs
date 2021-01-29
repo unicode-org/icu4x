@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 //! `icu_datetime` is one of the [`ICU4X`] components.
 //!
 //! This API provides necessary functionality for formatting date and time to user readable textual representation.
@@ -12,6 +13,7 @@
 //! # Examples
 //!
 //! ```
+//! # #[cfg(feature = "provider_serde")] {
 //! use icu_locid_macros::langid;
 //! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //!
@@ -35,12 +37,14 @@
 //!
 //! let formatted_date = dtf.format(&date);
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
+//! # } // feature = "provider_serde"
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
 //! convert a [`options::style::Bag`] into a [`DateTimeFormatOptions::Style`].
 //!
 //! ```
+//! # #[cfg(feature = "provider_serde")] {
 //! # use icu_locid_macros::langid;
 //! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //! # let provider = icu_testdata::get_provider();
@@ -52,6 +56,7 @@
 //! }.into();
 //!
 //! let dtf = DateTimeFormat::try_new(lid, &provider, &options);
+//! # } // feature = "provider_serde"
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Style`] bag, but in the future,
@@ -73,19 +78,18 @@ mod format;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
-mod provider;
+pub mod provider;
 
+use crate::provider::helpers::DateTimeDates;
 use date::DateTimeType;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use icu_provider::structs;
 #[doc(inline)]
 pub use options::DateTimeFormatOptions;
 use pattern::Pattern;
-use provider::DateTimeDates;
 use std::borrow::Cow;
 
 /// `DateTimeFormat` is the main structure of the `icu_datetime` component.
@@ -127,7 +131,7 @@ use std::borrow::Cow;
 pub struct DateTimeFormat<'d> {
     _langid: LanguageIdentifier,
     pattern: Pattern,
-    data: Cow<'d, structs::dates::gregory::DatesV1>,
+    data: Cow<'d, provider::gregory::DatesV1>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -152,7 +156,7 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d, structs::dates::gregory::DatesV1> + ?Sized>(
+    pub fn try_new<D: DataProvider<'d, provider::gregory::DatesV1> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         options: &DateTimeFormatOptions,
@@ -160,7 +164,7 @@ impl<'d> DateTimeFormat<'d> {
         let data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: structs::dates::key::GREGORY_V1,
+                    key: provider::key::GREGORY_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid.clone()),
