@@ -1,12 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 use crate::date::{self, DateTimeType};
-use crate::error::DateTimeFormatError;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeDates;
+use crate::{error::DateTimeFormatError, pattern::TimeGranularity};
 use std::fmt;
 use writeable::Writeable;
 
@@ -96,6 +97,20 @@ fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::Wee
     date::WeekDay::new_unchecked(result as u8)
 }
 
+/// Returns `true` if the most granular time being displayed will align with
+/// the top of the hour, otherwise returns `false`.
+/// e.g. `12:00:00` is at the top of the hour for hours, minutes, and seconds.
+/// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
+fn is_top_of_hour<T: DateTimeType>(pattern: &Pattern, date_time: &T) -> bool {
+    match pattern.most_granular_time() {
+        None | Some(TimeGranularity::Hours) => true,
+        Some(TimeGranularity::Minutes) => u8::from(date_time.minute()) == 0,
+        Some(TimeGranularity::Seconds) => {
+            u8::from(date_time.minute()) + u8::from(date_time.second()) == 0
+        }
+    }
+}
+
 pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
     data: &provider::gregory::DatesV1,
@@ -106,7 +121,7 @@ where
     T: DateTimeType,
     W: fmt::Write + ?Sized,
 {
-    for item in &pattern.0 {
+    for item in pattern.items() {
         match item {
             PatternItem::Field(field) => match field.symbol {
                 FieldSymbol::Year(..) => format_number(w, date_time.year(), field.length)?,
@@ -154,15 +169,17 @@ where
                 FieldSymbol::Second(..) => {
                     format_number(w, date_time.second().into(), field.length)?
                 }
-                FieldSymbol::DayPeriod(period) => match period {
-                    fields::DayPeriod::AmPm => {
-                        let symbol =
-                            data.get_symbol_for_day_period(period, field.length, date_time.hour());
-                        w.write_str(symbol)?
-                    }
-                },
+                FieldSymbol::DayPeriod(period) => {
+                    let symbol = data.get_symbol_for_day_period(
+                        period,
+                        field.length,
+                        date_time.hour(),
+                        is_top_of_hour(&pattern, date_time),
+                    );
+                    w.write_str(symbol)?
+                }
             },
-            PatternItem::Literal(l) => w.write_str(l)?,
+            PatternItem::Literal(l) => w.write_str(&l)?,
         }
     }
     Ok(())
@@ -173,7 +190,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_format_numer() {
+    fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
             (FieldLength::One, ["2", "20", "201", "2017", "20173"]),
