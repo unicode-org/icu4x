@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611890867097,
+  "lastUpdate": 1611965896806,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2069,6 +2069,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 937247,
             "range": "± 60498",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d14a5dc9a94ef334d387ef685e4faf4eb1ff51a",
+          "message": "Add support for width-aware noon and midnight options for DayPeriod (#444)\n\n* Add support for NoonMidnight dayPeriods in test data.\r\n\r\n- Updates all of the JSON test data to contain fields for noon and midnight dayperiods.\r\n\r\n* Add DayPeriod symbols for NoonMidnight\r\n\r\n- Adds optional `DayPeriod` symbol for `noon`.\r\n- Adds optional `DayPeriod` symbol for `midnight`.\r\n\r\n* Add tests for DayPeirod AmPm and NoonMidnight patterns\r\n\r\n- Restructures `format` module to use directory structure instead of single file.\r\n- Adds a `format/tests` directory.\r\n- Moves existing local tests from `format.rs` to `format/tests/mod.rs`\r\n- Adds JSON test data for `DayPeriod` patterns.\r\n- Adds JSON-serializable structs for testing formatting patterns.\r\n- Adds test cases for `DayPeriod` patterns.\r\n- Adds parsing test cases for the `b` `DayPeriod` pattern.\r\n\r\n* Remove logic that handles 24:00\r\n\r\n- 24:00 will not be a valid time once #355 is fixed.\r\n- Removes logic than handles 24:00 for now.\r\n\r\n* Refactor DayPeriod patterns tests to integration tests\r\n\r\n- Converts `DayPeriod` pattern tests to be integration tests.\r\n  - Tests no longer direclty use the private `write_pattern()`.\r\n  - Tests now mutate the `DatesV1` struct to the desired pattern,\r\n    using `DateTimeFormat` to format the custom patterns.\r\n\r\n* Rewrite symbols!() macro to support serde_none seralization for Options\r\n\r\n- Rewrites the `symbols!()` macro as a token tree muncher.\r\n  - For `Option` members, adds serde attributes to skip serializing if none.\r\n  - Otherwise, includes them in the seralization.\r\n\r\n* Regenerate test data with optional serializtion for dayperiods\r\n\r\n- Regenerates the test data now that `noon` and `midnight` are skipped if not present.\r\n  - Previously `noon` and `midnight` would show up as `null`.\r\n\r\n* Minor Test Cleanup\r\n\r\n- Moves a few expressions in the dayperiod patterns test to outer loops.\r\n\r\n* Make NoonMidnight dependent on granularity of pattern's time.\r\n\r\n- Adds capability for a pattern to compute its most granular time.\r\n  - e.g. `h:mm:ss` is `Seconds`.\r\n  - e.g. `h` is `Hours`.\r\n  - e.g. `E, dd/MM/y` is `None`.\r\n- Patterns containing `b` the `NoonMidnight` pattern item will now\r\n  display noon or midnight only if the displayed time falls on the hour.\r\n  - This means that `12:00:00` is always noon-compatible.\r\n  - However, `12:05:15` is noon-compatible only if the display pattern\r\n    does not contain the minutes or seconds.\r\n\r\n* Move time granularity functions to format-local helper functions.\r\n\r\n- Time granularity functionality is no longer associated with Pattern or\r\n  PatternItem. It is now local to the format module alone as standalone\r\n  functions.\r\n\r\n* Move format/mod.rs to format.rs\r\n\r\n- Format no longer needs to be a directory.\r\n\r\n* Fix access specifiers\r\n\r\n- Makes TimeGranularity private instead of public.\r\n\r\n* Add minor DayPeriod formatting optimization.\r\n\r\n- Only calculates the time granularity if the `DayPeriod` is `NoonMidnight`.\r\n\r\n* Cache time granularity on Pattern\r\n\r\n- Converts `Pattern` from a tuple struct to a traditional struct.\r\n- Adds a new data member `time_granularity` to `Pattern`.\r\n  - `time_granularity` is a lazily initialized, interrior-mutable cached value.\r\n- Makes `Pattern`'s data members private.\r\n  - The cached `time_granularity` is dependent on the `Pattern`'s `items`.\r\n    It is no longer safe to allow `items` to be publicly accessible,\r\n    because mutating `items` must invalidate the cached granularity.\r\n- Adds new method `items()` to `Pattern` to return a slice of its items.\r\n- Implement `From<Vec<PatternItem>` for `Pattern`\r\n  - This is out of convenience in many places where tuple-struct syntax\r\n    was used previously.\r\n\r\n* Clean up Pattern::from_iter\r\n\r\n- Pattern::from_iter now uses Pattern::from::<Vec<_>>\r\n\r\n* Eagerly evaluate Pattern time granularity\r\n\r\n- `Pattern`'s time granularity is no longer lazily evaluated.\r\n- It is instead evaulated on construction.\r\n\r\n* Use filter_map instead of flat_map\r\n\r\n- filter_map is more specialized, and arguably more readable.",
+          "timestamp": "2021-01-29T16:12:59-08:00",
+          "tree_id": "1346c593ea25db06f27b1797450da6c3d3736567",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d14a5dc9a94ef334d387ef685e4faf4eb1ff51a"
+        },
+        "date": 1611965894759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1096066,
+            "range": "± 15471",
             "unit": "ns/iter"
           }
         ]
