@@ -98,24 +98,22 @@ impl<'d> IterableDataProvider<'d> for LikelySubtagsProvider<'d> {
 
 impl From<&cldr_json::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_json::Resource) -> Self {
-        use icu_locid::subtags::{Language, Region, Script};
         use icu_locid::LanguageIdentifier;
 
-        let mut language_script_region: Vec<((Language, Script, Region), LikelySubtagsResultV1)> =
-            Vec::new();
-        let mut language_script: Vec<((Language, Script), LikelySubtagsResultV1)> = Vec::new();
-        let mut language_region: Vec<((Language, Region), LikelySubtagsResultV1)> = Vec::new();
-        let mut language: Vec<(Language, LikelySubtagsResultV1)> = Vec::new();
+        let mut language_script_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut language_script: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut language_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut language: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
 
-        // Create a result struct. We only need to store the delta between the
-        // search LanguageIdentifier and the result LanguageIdentifier.
+        // Create a result LanguageIdentifier. We only need to store the delta
+        // between the search LanguageIdentifier and the result LanguageIdentifier.
         let extract_result =
-            |entry: &(LanguageIdentifier, LanguageIdentifier)| -> LikelySubtagsResultV1 {
-                LikelySubtagsResultV1 {
+            |entry: &(LanguageIdentifier, LanguageIdentifier)| -> LanguageIdentifier {
+                LanguageIdentifier {
                     language: if entry.0.language != entry.1.language {
-                        Some(entry.1.language)
+                        entry.1.language
                     } else {
-                        None
+                        icu_locid::subtags::Language::und()
                     },
                     script: if entry.0.script != entry.1.script {
                         entry.1.script
@@ -127,40 +125,29 @@ impl From<&cldr_json::Resource> for LikelySubtagsV1 {
                     } else {
                         None
                     },
+                    variants: icu_locid::subtags::Variants::default(),
                 }
             };
 
         for entry in other.supplemental.likely_subtags.iter() {
             if entry.0.script.is_some() && entry.0.region.is_some() {
-                language_script_region.push((
-                    (
-                        entry.0.language,
-                        entry.0.script.unwrap(),
-                        entry.0.region.unwrap(),
-                    ),
-                    extract_result(entry),
-                ));
+                language_script_region.push((entry.0.clone(), extract_result(entry)));
             } else if entry.0.script.is_some() {
-                language_script.push((
-                    (entry.0.language, entry.0.script.unwrap()),
-                    extract_result(entry),
-                ));
+                language_script.push((entry.0.clone(), extract_result(entry)));
             } else if entry.0.region.is_some() {
-                language_region.push((
-                    (entry.0.language, entry.0.region.unwrap()),
-                    extract_result(entry),
-                ));
+                language_region.push((entry.0.clone(), extract_result(entry)));
             } else {
-                language.push((entry.0.language, extract_result(entry)));
+                language.push((entry.0.clone(), extract_result(entry)));
             }
         }
 
-        // We sort here because the ordering from sorting by LanguageIdentifier
-        // is not necessarily the order in the underlying CLDR data.
-        language_script_region.sort_unstable_by_key(|k| k.0);
-        language_script.sort_unstable_by_key(|k| k.0);
-        language_region.sort_unstable_by_key(|k| k.0);
-        language.sort_unstable_by_key(|k| k.0);
+        // We sort here to ensure that they are sorted properly by the subtags
+        // we will use to search the data. This is not necessary the order in
+        // the underlying CLDR data.
+        language_script_region.sort_unstable();
+        language_script.sort_unstable_by_key(|k| (k.0.language, k.0.script));
+        language_region.sort_unstable_by_key(|k| (k.0.language, k.0.region));
+        language.sort_unstable_by_key(|k| k.0.language);
         Self {
             language_script_region,
             language_script,
@@ -203,9 +190,11 @@ fn test_basic() {
     let langid = langid!("cu-Glag");
     let entry = result
         .language_script
-        .binary_search_by_key(&(langid.language, langid.script.unwrap()), |(l, _)| *l)
+        .binary_search_by_key(&(langid.language, langid.script), |(l, _)| {
+            (l.language, l.script)
+        })
         .unwrap();
-    assert!(result.language_script[entry].1.language.is_none());
+    assert!(result.language_script[entry].1.language.is_empty());
     assert!(result.language_script[entry].1.script.is_none());
     assert_eq!(result.language_script[entry].1.region.unwrap(), "BG");
 }

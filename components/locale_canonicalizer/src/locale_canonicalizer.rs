@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::provider::*;
-use icu_locid::Locale;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 
@@ -63,12 +63,12 @@ impl LocaleCanonicalizer<'_> {
     /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize(&self, locale: &mut Locale) -> CanonicalizationResult {
-        let maybe_update_locale = |entry: &LikelySubtagsResultV1,
+        let maybe_update_locale = |entry: &LanguageIdentifier,
                                    locale: &mut Locale|
          -> CanonicalizationResult {
             if locale.language.is_empty() || locale.script.is_none() || locale.region.is_none() {
-                if entry.language.is_some() {
-                    locale.language = entry.language.unwrap();
+                if locale.language.is_empty() {
+                    locale.language = entry.language;
                 }
                 locale.script = locale.script.or(entry.script);
                 locale.region = locale.region.or(entry.region);
@@ -80,15 +80,11 @@ impl LocaleCanonicalizer<'_> {
 
         // languages_scripts_regions
         if locale.script.is_some() && locale.region.is_some() {
-            let key = (
-                &locale.language,
-                &locale.script.unwrap(),
-                &locale.region.unwrap(),
-            );
+            let key = (&locale.language, &locale.script, &locale.region);
             if let Ok(index) = self
                 .likely_subtags
                 .language_script_region
-                .binary_search_by_key(&key, |(l, _)| (&l.0, &l.1, &l.2))
+                .binary_search_by_key(&key, |(l, _)| (&l.language, &l.script, &l.region))
             {
                 let entry = &self.likely_subtags.language_script_region[index].1;
                 return maybe_update_locale(entry, locale);
@@ -97,11 +93,11 @@ impl LocaleCanonicalizer<'_> {
 
         // languages_scripts
         if locale.script.is_some() {
-            let key = (&locale.language, &locale.script.unwrap());
+            let key = (&locale.language, &locale.script);
             if let Ok(index) = self
                 .likely_subtags
                 .language_script
-                .binary_search_by_key(&key, |(l, _)| (&l.0, &l.1))
+                .binary_search_by_key(&key, |(l, _)| (&l.language, &l.script))
             {
                 let entry = &self.likely_subtags.language_script[index].1;
                 return maybe_update_locale(entry, locale);
@@ -110,11 +106,11 @@ impl LocaleCanonicalizer<'_> {
 
         // languages_regions
         if locale.region.is_some() {
-            let key = (&locale.language, &locale.region.unwrap());
+            let key = (&locale.language, &locale.region);
             if let Ok(index) = self
                 .likely_subtags
                 .language_region
-                .binary_search_by_key(&key, |(l, _)| (&l.0, &l.1))
+                .binary_search_by_key(&key, |(l, _)| (&l.language, &l.region))
             {
                 let entry = &self.likely_subtags.language_region[index].1;
                 return maybe_update_locale(entry, locale);
@@ -126,7 +122,7 @@ impl LocaleCanonicalizer<'_> {
         if let Ok(index) = self
             .likely_subtags
             .language
-            .binary_search_by_key(key, |(l, _)| *l)
+            .binary_search_by_key(key, |(l, _)| l.language)
         {
             let entry = &self.likely_subtags.language[index].1;
             return maybe_update_locale(entry, locale);
@@ -134,11 +130,11 @@ impl LocaleCanonicalizer<'_> {
 
         // und_scripts
         if locale.script.is_some() {
-            let key = &locale.script.unwrap();
+            let key = &locale.script;
             if let Ok(index) = self
                 .likely_subtags
                 .language_script
-                .binary_search_by_key(&key, |(l, _)| &l.1)
+                .binary_search_by_key(&key, |(l, _)| &l.script)
             {
                 let entry = &self.likely_subtags.language_script[index].1;
                 return maybe_update_locale(entry, locale);
