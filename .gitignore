@@ -16,3 +16,7 @@
 
 # Ephemeral output of `cargo make wasm`
 wasmpkg/
+
+# Memory benchmarking output
+dhat-heap.json
+/benchmarks

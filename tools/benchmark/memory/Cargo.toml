@@ -1,0 +1,13 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+[package]
+name = "icu_benchmark_memory"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+version = "0.1.0"
+
+[dependencies]
+serde_json = "1.0"
+clap = "2.33"
+cargo_metadata = "0.12"

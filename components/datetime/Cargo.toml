@@ -30,6 +30,7 @@ serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }

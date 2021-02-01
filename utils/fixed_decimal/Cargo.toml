@@ -25,8 +25,9 @@ static_assertions = "1.1"
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [dev-dependencies]
-rand = "0.7"
 criterion = "0.3.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
+rand = "0.7"
 rand_pcg = "0.2"
 rand_distr = "0.2"
 

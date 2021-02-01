@@ -27,6 +27,7 @@ serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
