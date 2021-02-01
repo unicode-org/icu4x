@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1611965951327,
+  "lastUpdate": 1612217929173,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2897,6 +2897,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 120764,
             "range": "± 5625",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "71deed46c6e36a6283ed83e6af3c01cda7f642de",
+          "message": "Add memory benchmarks (#446)\n\n* Add dhat as a dev dependency to instrumented components\r\n\r\n* Update .gitignore for the newly generated files\r\n\r\n/benchmarks store all of the benchmark data.\r\n\r\n* Add a tool to inject dhat instrumentation into a file\r\n\r\nThis is a partial commit of the new tool.\r\n\r\nThe following commit completes the tool by running an example with the\r\ninjected code. dhat-rs must be manually instrumented in rust, as opposed\r\nto other memory tools. The benefit with using this approach is that it\r\nworks on macOS, Windows, and Linux, while Valgrind only works on Linux.\r\n\r\nThe added code takes the strategy of parsing the Rust AST, and injecting\r\nthe proper AST for the new code. The rust analyzer project has a pattern\r\nmatching search and replace, which was a good candidate, but it wasn't\r\nwell documented, and not great for matching the first expression in the\r\nmain function.\r\n\r\n* Finish memory_bench so that it automatically runs examples\r\n\r\nThis commit completes the memory_bench tool. It can be run locally, but\r\nis intended to run in CI. The next commit will add the CI functionality.\r\n\r\n* Add a CI job to collect memory benchmarks\r\n\r\nThis uses a custom fork of the benchmarking tool to add support for\r\nndjson as a tool. This ndjson uses the same format as the internal json\r\nstructure of the benchmarking tool. This allows for fully customizing\r\nthe output of the data, and what information is collected.\r\n\r\n* Create tools directory\r\n\r\n* Add macro support for the memory instrumentation\r\n\r\n* Remove the code injection, and update the benchmark tool\r\n\r\n* Update the workflows\r\n\r\n* Update the Cargo.lock\r\n\r\n* Make the DateTime bags more explicit (#429)\r\n\r\n* Make the DateTime bags more explicit\r\n\r\nI found myself confused on the usage of the bags and the difference\r\nbetween them and the options provided to the date time. I felt that it\r\nwas better to be explicit in the examples, rather than giving more\r\nterse, but potentially misleading examples.\r\n\r\n* Address feedback on adding into() examples\r\n\r\n* Remove use icu_benchmark_macros statements\r\n\r\n* Add mention of the firefox profiler",
+          "timestamp": "2021-02-01T16:12:33-06:00",
+          "tree_id": "a17d3bec25466f93a0a646280468b702473aa3c1",
+          "url": "https://github.com/unicode-org/icu4x/commit/71deed46c6e36a6283ed83e6af3c01cda7f642de"
+        },
+        "date": 1612217928610,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1487,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6541,
+            "range": "± 501",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 98581,
+            "range": "± 9260",
             "unit": "ns/iter"
           }
         ]
