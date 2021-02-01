@@ -369,6 +369,9 @@ jobs:
     - name: Create (ensure existence of) folder for benchmark data to copy
       run: mkdir -p copy-to-ext-repo/dev
 
+    - name: Create (ensure existence of) folder for memory benchmark data to copy
+      run: mkdir -p copy-to-ext-repo/benchmarks/memory
+
     # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
 
     - name: Download previous content destined for GH pages
@@ -376,6 +379,13 @@ jobs:
       with:
         path: ./copy-to-ext-repo/dev
         name: benchmark-perf
+
+    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
+      with:
+        path: ./copy-to-ext-repo/benchmarks/memory
+        name: benchmark-memory
 
     # Doc-GH-Pages job > Generate `cargo doc` step
 
