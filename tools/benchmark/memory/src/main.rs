@@ -5,7 +5,7 @@ use cargo_metadata::Metadata;
 use clap::{App, Arg};
 use serde_json::json;
 use std::io::prelude::*;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 use std::process::Command;
 use std::{env, process::Stdio};
@@ -93,9 +93,9 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .expect("Unable to parse the byte amount");
 }
 
-fn get_meta_data(root_dir: &PathBuf) -> Metadata {
+fn get_meta_data(root_dir: &Path) -> Metadata {
     let main_cargo_toml_path = {
-        let mut path = root_dir.clone();
+        let mut path = root_dir.to_owned();
         path.push("Cargo.toml");
         if !path.exists() {
             panic!("Could not find the root Cargo.toml");
