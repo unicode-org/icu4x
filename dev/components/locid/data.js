@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612217893534,
+  "lastUpdate": 1612246471719,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3161,6 +3161,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5366,
             "range": "± 63",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e9416c3fa5100f11a621f9c8bd498a7dd3a986db",
+          "message": "Fix clippy warnings (#473)",
+          "timestamp": "2021-02-01T22:08:40-08:00",
+          "tree_id": "8940f02ba87a19483c0027b6a5904a79a40c7a8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/e9416c3fa5100f11a621f9c8bd498a7dd3a986db"
+        },
+        "date": 1612246469441,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3551,
+            "range": "± 123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5228,
+            "range": "± 257",
             "unit": "ns/iter"
           }
         ]
