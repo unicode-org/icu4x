@@ -18,15 +18,25 @@ include = [
     "Cargo.toml",
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+
+[dependencies]
+icu_provider = { version = "0.1", path = "../provider" }
+serde = { version = "1.0", features = ["derive"], optional = true }
+
 [dev-dependencies]
 criterion = "0.3.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 
 [features]
-default = []
+default = ["provider_serde"]
 bench = []
+provider_serde = ["serde"]
+serialize_none = []
 
 [[bench]]
 name = "inv_list"

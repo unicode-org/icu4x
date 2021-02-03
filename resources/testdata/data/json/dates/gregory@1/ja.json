@@ -90,15 +90,21 @@
       "format": {
         "abbreviated": {
           "am": "午前",
-          "pm": "午後"
+          "pm": "午後",
+          "noon": "正午",
+          "midnight": "真夜中"
         },
         "narrow": {
           "am": "午前",
-          "pm": "午後"
+          "pm": "午後",
+          "noon": "正午",
+          "midnight": "真夜中"
         },
         "wide": {
           "am": "午前",
-          "pm": "午後"
+          "pm": "午後",
+          "noon": "正午",
+          "midnight": "真夜中"
         }
       }
     }

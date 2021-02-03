@@ -8,8 +8,10 @@ use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider::DateTimeDates;
 use icu_locid::Locale;
-use icu_provider::structs;
+use crate::provider;
+use crate::provider::helpers::DateTimeDates;
 use std::fmt;
+use writeable::Writeable;
 
 /// `FormattedDateTime` is a intermediate structure which can be retrieved as
 /// an output from `DateTimeFormat`.
@@ -25,10 +27,10 @@ use std::fmt;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::mock::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
-/// # let lid = langid!("en").into();
+/// # let locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();
-/// let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+/// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
@@ -43,12 +45,22 @@ where
     T: DateTimeInput,
 {
     pub(crate) pattern: &'l Pattern,
-    pub(crate) data: &'l structs::dates::gregory::DatesV1,
+    pub(crate) data: &'l provider::gregory::DatesV1,
     pub(crate) date_time: &'l T,
     pub(crate) locale: &'l Locale,
 }
 
-// TODO(#181): Implement Writeable instead of fmt::Display
+impl<'l, T> Writeable for FormattedDateTime<'l, T>
+where
+    T: DateTimeType,
+{
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        write_pattern(self.pattern, self.data, self.date_time, sink).map_err(|_| std::fmt::Error)
+    }
+
+    // TODO: Implement write_len
+}
+
 impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
 where
     T: DateTimeInput,
@@ -60,11 +72,10 @@ where
 }
 
 // Temporary formatting number with length.
-fn format_number(
-    result: &mut impl fmt::Write,
-    num: isize,
-    length: &FieldLength,
-) -> Result<(), std::fmt::Error> {
+fn format_number<W>(result: &mut W, num: isize, length: &FieldLength) -> Result<(), std::fmt::Error>
+where
+    W: fmt::Write + ?Sized,
+{
     match length {
         FieldLength::One => write!(result, "{}", num),
         FieldLength::TwoDigit => {
@@ -82,7 +93,7 @@ fn format_number(
 
 pub fn write_pattern<T>(
     pattern: &crate::pattern::Pattern,
-    data: &structs::dates::gregory::DatesV1,
+    data: &provider::gregory::DatesV1,
     date_time: &T,
     locale: &Locale,
     w: &mut impl fmt::Write,
@@ -263,7 +274,7 @@ mod tests {
     }
 
     #[test]
-    fn test_format_numer() {
+    fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
             (FieldLength::One, ["2", "20", "201", "2017", "20173"]),

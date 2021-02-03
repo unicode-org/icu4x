@@ -78,7 +78,7 @@ impl ExtensionType {
     }
 }
 
-/// A map of extensions associated with a given `Locale.
+/// A map of extensions associated with a given `Locale`.
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Extensions {
     pub unicode: Unicode,
@@ -87,6 +87,36 @@ pub struct Extensions {
 }
 
 impl Extensions {
+    /// Returns a new empty map of extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::Extensions;
+    ///
+    /// assert_eq!(Extensions::new(), Extensions::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self {
+            unicode: Unicode::new(),
+            transform: Transform::new(),
+            private: Private::new(),
+        }
+    }
+
+    /// Returns whether there are no extensions present.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    ///
+    /// let loc: Locale = "en-US-u-foo".parse()
+    ///     .expect("Parsing failed.");
+    ///
+    /// assert_eq!(loc.extensions.is_empty(), false);
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.unicode.is_empty() && self.transform.is_empty() && self.private.is_empty()
     }
@@ -127,9 +157,24 @@ impl Extensions {
 
 impl std::fmt::Display for Extensions {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        // Alphabetic by singleton (t, u, x)
-        write!(f, "{}{}{}", self.transform, self.unicode, self.private)?;
+        writeable::Writeable::write_to(self, f)
+    }
+}
 
+impl writeable::Writeable for Extensions {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+        // Alphabetic by singleton (t, u, x)
+        writeable::Writeable::write_to(&self.transform, sink)?;
+        writeable::Writeable::write_to(&self.unicode, sink)?;
+        writeable::Writeable::write_to(&self.private, sink)?;
         Ok(())
+    }
+
+    fn write_len(&self) -> writeable::LengthHint {
+        let mut result = writeable::LengthHint::Exact(0);
+        result += writeable::Writeable::write_len(&self.transform);
+        result += writeable::Writeable::write_len(&self.unicode);
+        result += writeable::Writeable::write_len(&self.private);
+        result
     }
 }

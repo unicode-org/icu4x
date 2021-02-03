@@ -10,7 +10,7 @@
 components/locid/               @zbraniecki @nciric
 components/plurals/             @zbraniecki @sffc
 components/datetime/            @zbraniecki @sffc
-components/uniset/              @echeran @EvanJP
+components/uniset/              @echeran
 components/provider/            @sffc
 components/provider_cldr/       @sffc
 components/provider_fs/         @sffc

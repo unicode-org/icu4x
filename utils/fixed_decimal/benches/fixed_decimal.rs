@@ -92,6 +92,7 @@ fn larger_isize_benches(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn to_string_benches(c: &mut Criterion) {
     use criterion::BenchmarkId;
+    use writeable::Writeable;
 
     let objects = [
         FixedDecimal::from(2250).multiplied_pow10(-2).unwrap(),
@@ -99,7 +100,7 @@ fn to_string_benches(c: &mut Criterion) {
     ];
 
     {
-        let mut group = c.benchmark_group("to_string");
+        let mut group = c.benchmark_group("to_string/to_string");
         for object in objects.iter() {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
@@ -111,14 +112,14 @@ fn to_string_benches(c: &mut Criterion) {
     }
 
     {
-        let mut group = c.benchmark_group("write_to");
+        let mut group = c.benchmark_group("to_string/write_to");
         for object in objects.iter() {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
                 object,
                 |b, object| {
                     b.iter(|| {
-                        let mut result = String::with_capacity(object.write_len());
+                        let mut result = String::with_capacity(object.write_len().capacity());
                         object.write_to(&mut result)
                     })
                 },

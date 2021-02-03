@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
-use std::fmt::Write;
 use std::str::FromStr;
 
 /// `Locale` is a core struct representing a [`Unicode Locale Identifier`].
@@ -97,6 +96,28 @@ impl Locale {
         parse_locale(v)
     }
 
+    /// Returns the default undefined locale "und". Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    ///
+    /// const loc: Locale = Locale::und();
+    /// assert_eq!(Locale::default(), loc);
+    /// assert_eq!("und", loc.to_string());
+    /// ```
+    #[inline]
+    pub const fn und() -> Self {
+        Self {
+            language: subtags::Language::und(),
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
+            extensions: extensions::Extensions::new(),
+        }
+    }
+
     /// This is a best-effort operation that performs all available levels of canonicalization.
     ///
     /// At the moment the operation will normalize casing and the separator, but in the future
@@ -148,28 +169,78 @@ impl From<Locale> for LanguageIdentifier {
 
 impl std::fmt::Debug for Locale {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        std::fmt::Display::fmt(&self, f)
+        writeable::Writeable::write_to(self, f)
     }
 }
 
 impl std::fmt::Display for Locale {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        self.language.fmt(f)?;
+        writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl writeable::Writeable for Locale {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+        writeable::Writeable::write_to(&self.language, sink)?;
         if let Some(ref script) = self.script {
-            f.write_char('-')?;
-            script.fmt(f)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(script, sink)?;
         }
         if let Some(ref region) = self.region {
-            f.write_char('-')?;
-            region.fmt(f)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(region, sink)?;
         }
         if !self.variants.is_empty() {
-            f.write_char('-')?;
-            self.variants.fmt(f)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(&self.variants, sink)?;
         }
-        self.extensions.fmt(f)?;
+        writeable::Writeable::write_to(&self.extensions, sink)?;
         Ok(())
     }
+
+    fn write_len(&self) -> writeable::LengthHint {
+        let mut result = writeable::Writeable::write_len(&self.language);
+        if let Some(ref script) = self.script {
+            result += writeable::Writeable::write_len(script) + 1;
+        }
+        if let Some(ref region) = self.region {
+            result += writeable::Writeable::write_len(region) + 1;
+        }
+        if !self.variants.is_empty() {
+            result += writeable::Writeable::write_len(&self.variants) + 1;
+        }
+        result += writeable::Writeable::write_len(&self.extensions);
+        result
+    }
+}
+
+#[test]
+fn test_writeable() {
+    use writeable::assert_writeable_eq;
+    assert_writeable_eq!("und", Locale::und());
+    assert_writeable_eq!("und-001", Locale::from_str("und-001").unwrap());
+    assert_writeable_eq!("und-Mymr", Locale::from_str("und-Mymr").unwrap());
+    assert_writeable_eq!("my-Mymr-MM", Locale::from_str("my-Mymr-MM").unwrap());
+    assert_writeable_eq!(
+        "my-Mymr-MM-posix",
+        Locale::from_str("my-Mymr-MM-posix").unwrap()
+    );
+    assert_writeable_eq!(
+        "zh-macos-posix",
+        Locale::from_str("zh-macos-posix").unwrap()
+    );
+    assert_writeable_eq!(
+        "my-t-my-d0-zawgyi",
+        Locale::from_str("my-t-my-d0-zawgyi").unwrap()
+    );
+    assert_writeable_eq!(
+        "ar-SA-u-ca-islamic-civil",
+        Locale::from_str("ar-SA-u-ca-islamic-civil").unwrap()
+    );
+    assert_writeable_eq!(
+        "en-001-x-foo-bar",
+        Locale::from_str("en-001-x-foo-bar").unwrap()
+    );
 }
 
 impl PartialEq<&str> for Locale {

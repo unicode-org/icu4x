@@ -5,8 +5,8 @@ use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
+use icu_datetime::provider::*;
 use icu_provider::prelude::*;
-use icu_provider::structs::dates::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
@@ -259,6 +259,8 @@ symbols_from!(
     {
         am,
         pm,
+        noon,
+        midnight,
     },
 );
 
@@ -353,6 +355,8 @@ pub(self) mod cldr_json {
         day_periods,
         ["am", am, Cow<'static, str>],
         ["pm", pm, Cow<'static, str>],
+        ["noon", noon, Option<Cow<'static, str>>],
+        ["midnight", midnight, Option<Cow<'static, str>>],
     );
 
     #[derive(PartialEq, Debug, Deserialize)]

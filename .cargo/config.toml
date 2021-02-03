@@ -18,7 +18,9 @@ fmt-check = "fmt -- --check"
 license-check = "make license-header-check"
 
 # Run Clippy on all code paths
-clippy-all = "clippy --all-features --all-targets"
+# unknown-clippy-lints: to allow us to work with nightly clippy lints that we don't CI
+# field-reassign-with-default: https://github.com/rust-lang/rust-clippy/issues/6559 (fixed in nightly but not stable)
+clippy-all = "clippy --all-features --all-targets -- -Aclippy::unknown-clippy-lints -Aclippy::field-reassign-with-default"
 
 ### META TASKS ###
 

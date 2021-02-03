@@ -82,6 +82,23 @@ pub struct Transform {
 }
 
 impl Transform {
+    /// Returns a new empty map of Transform extensions. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::transform::Transform;
+    ///
+    /// assert_eq!(Transform::new(), Transform::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self {
+            lang: None,
+            fields: Fields::new(),
+        }
+    }
+
     /// Returns `true` if there are no tfields and no tlang in
     /// the `TransformExtensionList`.
     ///
@@ -164,20 +181,38 @@ impl Transform {
 
 impl std::fmt::Display for Transform {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl writeable::Writeable for Transform {
+    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
         if self.is_empty() {
             return Ok(());
         }
-
-        f.write_str("-t")?;
-
+        sink.write_str("-t")?;
         if let Some(lang) = &self.lang {
-            write!(f, "-{}", lang)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(lang, sink)?;
         }
-
         if !self.fields.is_empty() {
-            write!(f, "-{}", self.fields)?;
+            sink.write_char('-')?;
+            writeable::Writeable::write_to(&self.fields, sink)?;
         }
-
         Ok(())
+    }
+
+    fn write_len(&self) -> writeable::LengthHint {
+        if self.is_empty() {
+            return writeable::LengthHint::Exact(0);
+        }
+        let mut result = writeable::LengthHint::Exact(2);
+        if let Some(lang) = &self.lang {
+            result += writeable::Writeable::write_len(lang) + 1;
+        }
+        if !self.fields.is_empty() {
+            result += writeable::Writeable::write_len(&self.fields) + 1;
+        }
+        result
     }
 }

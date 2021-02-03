@@ -155,7 +155,7 @@ impl<'p> Parser<'p> {
                     let replacement = replacements
                         .get_mut(idx as usize)
                         .ok_or(Error::UnknownSubstitution(ch))?;
-                    result.append(&mut replacement.0);
+                    result.extend_from_slice(replacement.items());
                     let ch = chars.next().ok_or(Error::UnclosedPlaceholder)?;
                     if ch != '}' {
                         return Err(Error::UnclosedPlaceholder);
@@ -329,6 +329,14 @@ mod tests {
                 ],
             ),
             (
+                "hh''b",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    "'".into(),
+                    (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
                 "y'My'M",
                 vec![
                     (fields::Year::Calendar.into(), FieldLength::One).into(),
@@ -354,11 +362,27 @@ mod tests {
                 ],
             ),
             (
+                "hh 'o''clock' b",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    " o'clock ".into(),
+                    (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
                 "hh''a",
                 vec![
                     (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
                     "'".into(),
                     (fields::DayPeriod::AmPm.into(), FieldLength::One).into(),
+                ],
+            ),
+            (
+                "hh''b",
+                vec![
+                    (fields::Hour::H12.into(), FieldLength::TwoDigit).into(),
+                    "'".into(),
+                    (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
         ];
@@ -385,25 +409,41 @@ mod tests {
     #[test]
     fn pattern_parse_placeholders() {
         let samples = vec![
-            ("{0}", vec![Pattern(vec!["ONE".into()])], vec!["ONE".into()]),
+            (
+                "{0}",
+                vec![Pattern::from(vec!["ONE".into()])],
+                vec!["ONE".into()],
+            ),
             (
                 "{0}{1}",
-                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec![
+                    Pattern::from(vec!["ONE".into()]),
+                    Pattern::from(vec!["TWO".into()]),
+                ],
                 vec!["ONE".into(), "TWO".into()],
             ),
             (
                 "{0} 'at' {1}",
-                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec![
+                    Pattern::from(vec!["ONE".into()]),
+                    Pattern::from(vec!["TWO".into()]),
+                ],
                 vec!["ONE".into(), " at ".into(), "TWO".into()],
             ),
             (
                 "{0}'at'{1}",
-                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec![
+                    Pattern::from(vec!["ONE".into()]),
+                    Pattern::from(vec!["TWO".into()]),
+                ],
                 vec!["ONE".into(), "at".into(), "TWO".into()],
             ),
             (
                 "'{0}' 'at' '{1}'",
-                vec![Pattern(vec!["ONE".into()]), Pattern(vec!["TWO".into()])],
+                vec![
+                    Pattern::from(vec!["ONE".into()]),
+                    Pattern::from(vec!["TWO".into()]),
+                ],
                 vec!["{0} at {1}".into()],
             ),
         ];
@@ -421,10 +461,22 @@ mod tests {
             ("{0}", vec![], Error::UnknownSubstitution('0')),
             ("{a}", vec![], Error::UnknownSubstitution('a')),
             ("{", vec![], Error::UnclosedPlaceholder),
-            ("{0", vec![Pattern(vec![])], Error::UnclosedPlaceholder),
-            ("{01", vec![Pattern(vec![])], Error::UnclosedPlaceholder),
-            ("{00}", vec![Pattern(vec![])], Error::UnclosedPlaceholder),
-            ("'{00}", vec![Pattern(vec![])], Error::UnclosedLiteral),
+            (
+                "{0",
+                vec![Pattern::from(vec![])],
+                Error::UnclosedPlaceholder,
+            ),
+            (
+                "{01",
+                vec![Pattern::from(vec![])],
+                Error::UnclosedPlaceholder,
+            ),
+            (
+                "{00}",
+                vec![Pattern::from(vec![])],
+                Error::UnclosedPlaceholder,
+            ),
+            ("'{00}", vec![Pattern::from(vec![])], Error::UnclosedLiteral),
         ];
 
         for (string, replacements, error) in broken {

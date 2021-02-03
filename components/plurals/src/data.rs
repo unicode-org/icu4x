@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::operands::PluralOperands;
+use crate::provider::PluralRuleStringsV1;
 use crate::rules;
 use crate::rules::ast;
 use crate::{PluralCategory, PluralRulesError};
-use icu_provider::structs::plurals::PluralRuleStringsV1;
 use std::borrow::Cow;
 use std::convert::TryInto;
 

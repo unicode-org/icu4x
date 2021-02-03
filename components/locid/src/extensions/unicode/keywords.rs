@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::borrow::Borrow;
-use std::fmt::Write;
 use std::ops::Deref;
 
 use super::Key;
@@ -34,15 +33,27 @@ use super::Value;
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(Box<[(Key, Value)]>);
+pub struct Keywords(Option<Box<[(Key, Value)]>>);
 
 impl Keywords {
+    /// Returns a new empty list of key-value pairs. Same as `Default`, but is `const`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locid::extensions::unicode::Keywords;
+    ///
+    /// assert_eq!(Keywords::new(), Keywords::default());
+    /// ```
+    #[inline]
+    pub const fn new() -> Self {
+        Self(None)
+    }
+
     /// A constructor which takes a pre-sorted list of `(Key, Value)` tuples.
     ///
     ///
     /// # Examples
-    ///
-    /// ```
     /// use icu_locid::extensions::unicode::{Keywords, Key, Value};
     ///
     /// let key: Key = "ca".parse()
@@ -54,7 +65,11 @@ impl Keywords {
     /// assert_eq!(&keywords.to_string(), "ca-buddhist");
     /// ```
     pub fn from_vec_unchecked(input: Vec<(Key, Value)>) -> Self {
-        Self(input.into_boxed_slice())
+        if input.is_empty() {
+            Self(None)
+        } else {
+            Self(Some(input.into_boxed_slice()))
+        }
     }
 
     /// Returns `true` if the list contains a [`Value`] for the specified [`Key`].
@@ -108,38 +123,24 @@ impl Keywords {
     where
         Q: Borrow<Key>,
     {
-        if let Ok(idx) = self.0.binary_search_by_key(key.borrow(), |(key, _)| *key) {
-            self.0.get(idx).map(|(_, v)| v)
+        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
+            self.deref().get(idx).map(|(_, v)| v)
         } else {
             None
         }
     }
 }
 
-impl std::fmt::Display for Keywords {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut first = true;
-        for (key, value) in self.iter() {
-            if first {
-                first = false;
-            } else {
-                f.write_char('-')?;
-            }
-
-            if value.is_empty() {
-                key.fmt(f)?;
-            } else {
-                write!(f, "{}-{}", key, value)?;
-            }
-        }
-        Ok(())
-    }
-}
+impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");
 
 impl Deref for Keywords {
     type Target = [(Key, Value)];
 
     fn deref(&self) -> &Self::Target {
-        &self.0
+        if let Some(ref data) = self.0 {
+            data
+        } else {
+            &[]
+        }
     }
 }

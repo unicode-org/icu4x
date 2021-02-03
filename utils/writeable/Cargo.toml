@@ -5,7 +5,7 @@
 [package]
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -21,6 +21,7 @@ include = [
 
 [dev-dependencies]
 criterion = "0.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI

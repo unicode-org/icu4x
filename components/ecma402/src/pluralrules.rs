@@ -156,7 +156,7 @@ pub(crate) mod internal {
                 n: f64,
                 opts: Options,
                 expected: &'static str,
-            };
+            }
             let tests = vec![
                 TestCase {
                     n: 0.0,
@@ -197,7 +197,7 @@ pub(crate) mod internal {
                 n: f64,
                 opts: Options,
                 expected: PluralOperands,
-            };
+            }
             let tests = vec![TestCase {
                 n: 1.5,
                 opts: Options {
@@ -262,7 +262,7 @@ impl PluralRules {
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'d, icu_provider::structs::plurals::PluralRuleStringsV1<'d>>,
+        P: icu_provider::DataProvider<'d, ipr::provider::PluralRuleStringsV1<'d>>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);
@@ -292,7 +292,7 @@ mod testing {
             opts: pluralrules::Options,
             numbers: Vec<f64>,
             expected: Vec<&'static str>,
-        };
+        }
         let tests = vec![
             TestCase {
                 locale: "ar",

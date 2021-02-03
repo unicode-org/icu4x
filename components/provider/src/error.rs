@@ -40,6 +40,7 @@ pub enum Error {
     },
 
     /// An error occured during serialization or deserialization.
+    #[cfg(feature = "erased-serde")]
     Serde(erased_serde::Error),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
@@ -64,6 +65,7 @@ impl From<DataRequest> for Error {
     }
 }
 
+#[cfg(feature = "erased-serde")]
 impl From<erased_serde::Error> for Error {
     fn from(err: erased_serde::Error) -> Self {
         Self::Serde(err)
@@ -109,6 +111,7 @@ impl fmt::Display for Error {
                 }
                 Ok(())
             }
+            #[cfg(feature = "erased-serde")]
             Self::Serde(err) => write!(f, "Serde error: {}", err),
             Self::Resource(err) => write!(f, "Failed to load resource: {}", err),
         }

@@ -132,11 +132,7 @@ impl FromStr for Region {
     }
 }
 
-impl std::fmt::Display for Region {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.write_str(&self.0)
-    }
-}
+impl_writeable_for_single_subtag!(Region, "GB");
 
 impl PartialEq<&str> for Region {
     fn eq(&self, other: &&str) -> bool {
