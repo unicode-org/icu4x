@@ -60,10 +60,10 @@ mod provider;
 
 pub mod date_new;
 
-use date::DateTimeType;
+use date_new::DateTimeInput;
 pub use error::DateTimeFormatError;
+use format::write_pattern;
 pub use format::FormattedDateTime;
-use format::{write_pattern, write_pattern_new};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 use icu_provider::structs;
@@ -192,12 +192,13 @@ impl<'d> DateTimeFormat<'d> {
     /// about formatted date and so on.
     pub fn format<'s, T>(&'s self, value: &'s T) -> FormattedDateTime<'s, T>
     where
-        T: DateTimeType,
+        T: DateTimeInput,
     {
         FormattedDateTime {
             pattern: &self.pattern,
             data: &self.data,
             date_time: value,
+            locale: &self.locale,
         }
     }
 
@@ -229,20 +230,13 @@ impl<'d> DateTimeFormat<'d> {
     pub fn format_to_write(
         &self,
         w: &mut impl std::fmt::Write,
-        value: &impl DateTimeType,
+        value: &impl DateTimeInput,
     ) -> std::fmt::Result {
-        write_pattern(&self.pattern, &self.data, value, w).map_err(|_| std::fmt::Error)
-    }
-
-    pub fn format_to_write_new(
-        &self,
-        w: &mut impl std::fmt::Write,
-        value: &impl date_new::DateTimeInput,
-    ) -> std::fmt::Result {
-        write_pattern_new(
+        write_pattern(
             &self.pattern,
             &self.data,
-            &date_new::DateTimeInputWithLocale::new(value, &self.locale),
+            value,
+            &self.locale,
             w,
         )
         .map_err(|_| std::fmt::Error)
@@ -269,16 +263,9 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// let _ = dtf.format_to_string(&date_time);
     /// ```
-    pub fn format_to_string_old(&self, value: &impl DateTimeType) -> String {
+    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
-        s
-    }
-
-    pub fn format_to_string(&self, value: &impl date_new::DateTimeInput) -> String {
-        let mut s = String::new();
-        self.format_to_write_new(&mut s, value)
             .expect("Failed to write to a String.");
         s
     }
