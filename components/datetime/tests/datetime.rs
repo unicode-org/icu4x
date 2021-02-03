@@ -73,9 +73,12 @@ fn test_dayperiod_patterns() {
                             key: GREGORY_V1,
                             data: data.as_ref(),
                         };
-                        let dtf =
-                            DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
-                                .unwrap();
+                        let dtf = DateTimeFormat::try_new(
+                            langid.clone().into(),
+                            &provider,
+                            &format_options,
+                        )
+                        .unwrap();
                         assert_eq!(
                             dtf.format(&date_time).to_string(),
                             *expected,
