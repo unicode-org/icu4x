@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use icu_locid::Locale;
 use std::convert::TryFrom;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
-use icu_locid::Locale;
 use tinystr::TinyStr8;
 
 pub trait DateInput {
@@ -103,8 +103,6 @@ impl From<std::num::ParseIntError> for DateTimeError {
         Self::Parse(input)
     }
 }
-
-
 
 /// This macro defines a struct for each type of unit to be used in a DateTime. Each
 /// unit is bounded by a range. The traits implemented here will return a Result on

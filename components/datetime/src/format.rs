@@ -54,14 +54,8 @@ where
     T: DateTimeInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(
-            self.pattern,
-            self.data,
-            self.date_time,
-            self.locale,
-            f,
-        )
-        .map_err(|_| std::fmt::Error)
+        write_pattern(self.pattern, self.data, self.date_time, self.locale, f)
+            .map_err(|_| std::fmt::Error)
     }
 }
 
@@ -143,7 +137,8 @@ where
                         .date_time()
                         .month()
                         .ok_or(Error::MissingInputField)?
-                        .number as usize - 1,
+                        .number as usize
+                        - 1,
                 );
                 w.write_str(symbol)?
             }
@@ -234,8 +229,8 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_provider::prelude::*;
     use crate::mock::MockDateTime;
+    use icu_provider::prelude::*;
 
     #[test]
     fn test_basic() {
@@ -256,7 +251,14 @@ mod tests {
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
         let date_time = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
-        write_pattern(&pattern, &data, &date_time, &"und".parse().unwrap(), &mut sink).unwrap();
+        write_pattern(
+            &pattern,
+            &data,
+            &date_time,
+            &"und".parse().unwrap(),
+            &mut sink,
+        )
+        .unwrap();
         println!("{}", sink);
     }
 

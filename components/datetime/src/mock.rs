@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::date::*;
-use std::str::FromStr;
-use std::convert::TryInto;
-use tinystr::tinystr8;
 use crate::arithmetic;
+use crate::date::*;
+use std::convert::TryInto;
+use std::str::FromStr;
+use tinystr::tinystr8;
 
 /// Temporary implementation of [`DateTimeInput`],
 /// which is used in tests, benchmarks and examples of this component.

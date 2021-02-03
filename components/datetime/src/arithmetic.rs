@@ -4,7 +4,7 @@
 
 //! Assorted functions to help with date calculations.
 
-use crate::date::{Era, Year, WeekDay};
+use crate::date::{Era, WeekDay, Year};
 
 use tinystr::tinystr8;
 

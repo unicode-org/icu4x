@@ -231,14 +231,8 @@ impl<'d> DateTimeFormat<'d> {
         w: &mut impl std::fmt::Write,
         value: &impl DateTimeInput,
     ) -> std::fmt::Result {
-        write_pattern(
-            &self.pattern,
-            &self.data,
-            value,
-            &self.locale,
-            w,
-        )
-        .map_err(|_| std::fmt::Error)
+        write_pattern(&self.pattern, &self.data, value, &self.locale, w)
+            .map_err(|_| std::fmt::Error)
     }
 
     /// `format_to_string` takes a `DateTime` value and returns it formatted
