@@ -30,7 +30,6 @@ impl From<std::num::ParseIntError> for DateTimeError {
     }
 }
 
-
 pub trait DateInput {
     fn year(&self) -> Option<Year>;
     fn month(&self) -> Option<Month>;
@@ -39,7 +38,6 @@ pub trait DateInput {
     fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
 }
 
-
 pub trait TimeInput {
     fn hour(&self) -> Option<Hour>;
     fn minute(&self) -> Option<Minute>;
@@ -47,11 +45,9 @@ pub trait TimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
-
 pub trait DateTimeInput: DateInput + TimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + TimeInput {}
-
 
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn date_time(&self) -> &T;
@@ -60,7 +56,6 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn week_of_year(&self) -> WeekOfYear;
     fn flexible_day_period(&self); // TODO
 }
-
 
 pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
     data: &'s T,
