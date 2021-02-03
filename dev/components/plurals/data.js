@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612246461258,
+  "lastUpdate": 1612316853306,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2981,6 +2981,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 98516,
             "range": "± 563",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ae89da479dfbbcfc73fbaa977cd3f4ecfd0e4fac",
+          "message": "Allow some clippy lints (#474)",
+          "timestamp": "2021-02-02T17:40:53-08:00",
+          "tree_id": "b24a02430c995fda5f39e5982049523f7037643c",
+          "url": "https://github.com/unicode-org/icu4x/commit/ae89da479dfbbcfc73fbaa977cd3f4ecfd0e4fac"
+        },
+        "date": 1612316852691,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1556,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6342,
+            "range": "± 276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 103047,
+            "range": "± 5885",
             "unit": "ns/iter"
           }
         ]
