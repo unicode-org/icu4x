@@ -15,7 +15,7 @@
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
 //! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, mock::MockDateTime, options::style};
+//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -46,7 +46,7 @@
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
 //! # use icu_locid_macros::langid;
-//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
+//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale = langid!("en").into();
 //! let options = style::Bag {
@@ -82,8 +82,8 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 
-use date::DateTimeInput;
 use crate::provider::helpers::DateTimeDates;
+use date::DateTimeInput;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
@@ -131,7 +131,7 @@ use std::borrow::Cow;
 /// This model replicates that of `ICU` and `ECMA402` and in the future will get even more pronounce when we introduce
 /// asynchronous `DataProvider` and corresponding asynchronous constructor.
 pub struct DateTimeFormat<'d> {
-    _locale: Locale,
+    locale: Locale,
     pattern: Pattern,
     data: Cow<'d, provider::gregory::DatesV1>,
 }
@@ -178,7 +178,7 @@ impl<'d> DateTimeFormat<'d> {
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 
         Ok(Self {
-            _locale: locale,
+            locale,
             pattern,
             data,
         })

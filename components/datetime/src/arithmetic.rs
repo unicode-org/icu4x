@@ -5,6 +5,7 @@
 //! Assorted functions to help with date calculations.
 
 use crate::date::{Era, WeekDay, Year};
+use crate::pattern::{Pattern, TimeGranularity};
 
 use tinystr::tinystr8;
 
@@ -76,4 +77,16 @@ fn test_iso_date_to_weekday() {
     assert_eq!(weekdays::WED, iso_date_to_weekday(2021, 1, 2));
     assert_eq!(weekdays::SAT, iso_date_to_weekday(-400, 0, 0));
     assert_eq!(weekdays::WED, iso_date_to_weekday(-379, 1, 2));
+}
+
+/// Returns `true` if the most granular time being displayed will align with
+/// the top of the hour, otherwise returns `false`.
+/// e.g. `12:00:00` is at the top of the hour for hours, minutes, and seconds.
+/// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
+pub fn is_top_of_hour(pattern: &Pattern, minute: u8, second: u8) -> bool {
+    match pattern.most_granular_time() {
+        None | Some(TimeGranularity::Hours) => true,
+        Some(TimeGranularity::Minutes) => minute == 0,
+        Some(TimeGranularity::Seconds) => minute + second == 0,
+    }
 }

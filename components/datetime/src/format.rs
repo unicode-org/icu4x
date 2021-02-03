@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use crate::arithmetic;
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
-use crate::provider::DateTimeDates;
-use icu_locid::Locale;
 use crate::provider;
 use crate::provider::helpers::DateTimeDates;
+use icu_locid::Locale;
 use std::fmt;
 use writeable::Writeable;
 
@@ -52,10 +52,11 @@ where
 
 impl<'l, T> Writeable for FormattedDateTime<'l, T>
 where
-    T: DateTimeType,
+    T: DateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.pattern, self.data, self.date_time, sink).map_err(|_| std::fmt::Error)
+        write_pattern(self.pattern, self.data, self.date_time, self.locale, sink)
+            .map_err(|_| std::fmt::Error)
     }
 
     // TODO: Implement write_len
@@ -91,34 +92,37 @@ where
     }
 }
 
-pub fn write_pattern<T>(
+pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
     data: &provider::gregory::DatesV1,
     date_time: &T,
     locale: &Locale,
-    w: &mut impl fmt::Write,
+    w: &mut W,
 ) -> Result<(), Error>
 where
     T: DateTimeInput,
+    W: fmt::Write + ?Sized,
 {
     let loc_date_time = DateTimeInputWithLocale::new(date_time, locale);
-    for item in &pattern.0 {
+    for item in pattern.items() {
         match item {
-            PatternItem::Field(field) => write_field(field, data, &loc_date_time, w)?,
+            PatternItem::Field(field) => write_field(pattern, &field, data, &loc_date_time, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }
     Ok(())
 }
 
-fn write_field<T>(
+fn write_field<T, W>(
+    pattern: &crate::pattern::Pattern,
     field: &fields::Field,
-    data: &structs::dates::gregory::DatesV1,
+    data: &crate::provider::gregory::DatesV1,
     date_time: &impl LocalizedDateTimeInput<T>,
-    w: &mut impl fmt::Write,
+    w: &mut W,
 ) -> Result<(), Error>
 where
     T: DateTimeInput,
+    W: fmt::Write + ?Sized,
 {
     match field.symbol {
         FieldSymbol::Year(..) => format_number(
@@ -220,19 +224,22 @@ where
             ) as isize,
             &field.length,
         )?,
-        FieldSymbol::DayPeriod(period) => match period {
-            fields::DayPeriod::AmPm => {
-                let symbol = data.get_symbol_for_day_period(
-                    period,
-                    field.length,
-                    date_time
-                        .date_time()
-                        .hour()
-                        .ok_or(Error::MissingInputField)?,
-                );
-                w.write_str(symbol)?
-            }
-        },
+        FieldSymbol::DayPeriod(period) => {
+            let symbol = data.get_symbol_for_day_period(
+                period,
+                field.length,
+                date_time
+                    .date_time()
+                    .hour()
+                    .ok_or(Error::MissingInputField)?,
+                arithmetic::is_top_of_hour(
+                    &pattern,
+                    date_time.date_time().minute().map(u8::from).unwrap_or(0),
+                    date_time.date_time().second().map(u8::from).unwrap_or(0),
+                ),
+            );
+            w.write_str(symbol)?
+        }
     };
     Ok(())
 }
@@ -249,7 +256,7 @@ mod tests {
         let data = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: structs::dates::key::GREGORY_V1,
+                    key: provider::key::GREGORY_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some("en".parse().unwrap()),

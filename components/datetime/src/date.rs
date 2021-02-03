@@ -41,7 +41,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn year_week(&self) -> Year;
     fn week_of_month(&self) -> WeekOfMonth;
     fn week_of_year(&self) -> WeekOfYear;
-    fn flexible_day_period(&self) -> ();
+    fn flexible_day_period(&self); // TODO
 }
 
 pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
@@ -78,7 +78,7 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
         unimplemented!()
     }
 
-    fn flexible_day_period(&self) -> () {
+    fn flexible_day_period(&self) {
         unimplemented!()
     }
 }

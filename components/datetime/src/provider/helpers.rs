@@ -160,7 +160,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[usize::from(num)];
+                        return &symbols.0[num];
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -174,7 +174,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
             fields::FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-        &symbols.0[usize::from(num)]
+        &symbols.0[num]
     }
 
     fn get_symbol_for_day_period(
