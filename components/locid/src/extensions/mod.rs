@@ -25,10 +25,10 @@
 //! let loc: Locale = "en-US-u-ca-buddhist-t-en-US-h0-hybrid-x-foo".parse()
 //!     .expect("Failed to parse.");
 //!
-//! assert_eq!(loc.language, "en");
-//! assert_eq!(loc.script, None);
-//! assert_eq!(loc.region, Some("US".parse().unwrap()));
-//! assert_eq!(loc.variants.len(), 0);
+//! assert_eq!(loc.langid.language, "en");
+//! assert_eq!(loc.langid.script, None);
+//! assert_eq!(loc.langid.region, Some("US".parse().unwrap()));
+//! assert_eq!(loc.langid.variants.len(), 0);
 //!
 //!
 //! let key: Key = "ca".parse().expect("Parsing key failed.");

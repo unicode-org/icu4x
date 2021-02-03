@@ -233,10 +233,12 @@ impl TryFrom<LocaleSubtags> for Locale {
             Extensions::default()
         };
         Ok(Locale {
-            language,
-            script,
-            region,
-            variants: subtags::Variants::from_vec_unchecked(variants),
+            langid: LanguageIdentifier {
+                language,
+                script,
+                region,
+                variants: subtags::Variants::from_vec_unchecked(variants),
+            },
             extensions,
         })
     }

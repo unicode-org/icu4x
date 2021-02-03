@@ -15,11 +15,5 @@ pub fn parse_locale(t: &[u8]) -> Result<Locale, ParserError> {
     } else {
         Extensions::default()
     };
-    Ok(Locale {
-        language: langid.language,
-        script: langid.script,
-        region: langid.region,
-        variants: langid.variants,
-        extensions,
-    })
+    Ok(Locale { langid, extensions })
 }

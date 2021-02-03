@@ -142,6 +142,18 @@ impl LanguageIdentifier {
     }
 }
 
+impl AsRef<LanguageIdentifier> for LanguageIdentifier {
+    fn as_ref(&self) -> &LanguageIdentifier {
+        self
+    }
+}
+
+impl AsMut<LanguageIdentifier> for LanguageIdentifier {
+    fn as_mut(&mut self) -> &mut LanguageIdentifier {
+        self
+    }
+}
+
 impl std::fmt::Debug for LanguageIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         std::fmt::Display::fmt(&self, f)
