@@ -78,9 +78,7 @@ fn format_number(
 }
 
 // Temporary simplified function to get the day of the week
-fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::WeekDay {
-    let month: usize = month.into();
-    let day: usize = day.into();
+fn get_day_of_week(year: usize, month: usize, day: usize) -> date::WeekDay {
     let t = &[0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
     let year = if month < 2 { year - 1 } else { year };
     let result = (year + year / 4 - year / 100 + year / 400 + t[month] + day + 1) % 7;
@@ -113,7 +111,7 @@ where
 {
     for item in &pattern.0 {
         match item {
-            PatternItem::Field(field) => write_field_new(field, data, date_time, w)?,
+            PatternItem::Field(field) => write_field_new_2(field, data, date_time, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }
@@ -144,8 +142,8 @@ fn write_field_old(
             use std::convert::TryFrom;
             let dow = get_day_of_week(
                 usize::try_from(date_time.year()).unwrap(),
-                date_time.month(),
-                date_time.day(),
+                date_time.month().into(),
+                date_time.day().into(),
             );
             let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
@@ -185,6 +183,133 @@ fn write_field_old(
         FieldSymbol::DayPeriod(period) => match period {
             fields::DayPeriod::AmPm => {
                 let symbol = data.get_symbol_for_day_period(period, field.length, date_time.hour());
+                w.write_str(symbol)?
+            }
+        },
+    };
+    Ok(())
+}
+
+fn write_field_new_2<T>(
+    field: &fields::Field,
+    data: &structs::dates::gregory::DatesV1,
+    date_time: &impl LocalizedDateTimeInput<T>,
+    w: &mut impl fmt::Write,
+) -> Result<(), Error>
+where
+    T: DateTimeInput,
+{
+    match field.symbol {
+        FieldSymbol::Year(..) => format_number(
+            w,
+            date_time
+                .date_time()
+                .year()
+                .ok_or(Error::MissingInputField)?
+                .number as isize,
+            &field.length,
+        )?,
+        FieldSymbol::Month(month) => match field.length {
+            FieldLength::One | FieldLength::TwoDigit => format_number(
+                w,
+                date_time
+                    .date_time()
+                    .month()
+                    .ok_or(Error::MissingInputField)?
+                    .number as isize
+                    + 1,
+                &field.length,
+            )?,
+            length => {
+                let symbol = data.get_symbol_for_month(
+                    month,
+                    length,
+                    date_time
+                        .date_time()
+                        .month()
+                        .ok_or(Error::MissingInputField)?
+                        .number as usize,
+                );
+                w.write_str(symbol)?
+            }
+        },
+        FieldSymbol::Weekday(weekday) => {
+            let dow = date_time
+                .date_time()
+                .day_of_week()
+                .ok_or(Error::MissingInputField)?;
+            let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
+            w.write_str(symbol)?
+        }
+        FieldSymbol::Day(..) => format_number(
+            w,
+            usize::from(
+                date_time
+                    .date_time()
+                    .day_of_month()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize
+                + 1,
+            &field.length,
+        )?,
+        FieldSymbol::Hour(hour) => {
+            let h = usize::from(
+                date_time
+                    .date_time()
+                    .hour()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize;
+            let value = match hour {
+                fields::Hour::H11 => h % 12,
+                fields::Hour::H12 => {
+                    let v = h % 12;
+                    if v == 0 {
+                        12
+                    } else {
+                        v
+                    }
+                }
+                fields::Hour::H23 => h,
+                fields::Hour::H24 => {
+                    if h == 0 {
+                        24
+                    } else {
+                        h
+                    }
+                }
+            };
+            format_number(w, value, &field.length)?
+        }
+        FieldSymbol::Minute => format_number(
+            w,
+            usize::from(
+                date_time
+                    .date_time()
+                    .minute()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            &field.length,
+        )?,
+        FieldSymbol::Second(..) => format_number(
+            w,
+            usize::from(
+                date_time
+                    .date_time()
+                    .second()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            &field.length,
+        )?,
+        FieldSymbol::DayPeriod(period) => match period {
+            fields::DayPeriod::AmPm => {
+                let symbol = data.get_symbol_for_day_period(
+                    period,
+                    field.length,
+                    date_time
+                        .date_time()
+                        .hour()
+                        .ok_or(Error::MissingInputField)?,
+                );
                 w.write_str(symbol)?
             }
         },

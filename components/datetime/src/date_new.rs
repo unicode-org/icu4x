@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use crate::arithmetic;
 use crate::date::{Day as DayOfMonth, Hour, Minute, MockDateTime, Second, WeekDay};
 use icu_locid::Locale;
 use tinystr::tinystr8;
@@ -74,61 +75,9 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn flexible_day_period(&self) -> ();
 }
 
-fn iso_year_to_gregorian(iso_year: i32) -> Year {
-    if iso_year > 0 {
-        Year {
-            era: Era(tinystr8!("ce")),
-            number: iso_year,
-            related_iso: iso_year,
-        }
-    } else {
-        Year {
-            era: Era(tinystr8!("bce")),
-            number: -iso_year + 1,
-            related_iso: iso_year,
-        }
-    }
-}
-
-#[test]
-fn test_iso_year_to_gregorian() {
-    assert_eq!(
-        iso_year_to_gregorian(2020),
-        Year {
-            era: Era(tinystr8!("ce")),
-            number: 2020,
-            related_iso: 2020,
-        }
-    );
-    assert_eq!(
-        iso_year_to_gregorian(1),
-        Year {
-            era: Era(tinystr8!("ce")),
-            number: 1,
-            related_iso: 1,
-        }
-    );
-    assert_eq!(
-        iso_year_to_gregorian(0),
-        Year {
-            era: Era(tinystr8!("bce")),
-            number: 1,
-            related_iso: 0,
-        }
-    );
-    assert_eq!(
-        iso_year_to_gregorian(-1),
-        Year {
-            era: Era(tinystr8!("bce")),
-            number: 2,
-            related_iso: -1,
-        }
-    );
-}
-
 impl DateInput for MockDateTime {
     fn year(&self) -> Option<Year> {
-        Some(iso_year_to_gregorian(self.year))
+        Some(arithmetic::iso_year_to_gregorian(self.year))
     }
 
     fn month(&self) -> Option<Month> {
@@ -144,7 +93,11 @@ impl DateInput for MockDateTime {
     }
 
     fn day_of_week(&self) -> Option<WeekDay> {
-        unimplemented!()
+        Some(arithmetic::iso_date_to_weekday(
+            self.year,
+            usize::from(self.month),
+            usize::from(self.day),
+        ))
     }
 
     fn day_of_year_info(&self) -> Option<DayOfYearInfo> {

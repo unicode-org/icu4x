@@ -48,6 +48,8 @@ pub trait DateTimeType: FromStr {
 /// Temporary implementation of [`DateTimeType`],
 /// which is used in tests, benchmarks and examples of this component.
 ///
+/// Month and day are zero-based.
+///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 /// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
 /// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/master/docs/research/date_time.md)
@@ -276,3 +278,15 @@ dt_unit!(Day, 32);
 dt_unit!(Hour, 24);
 dt_unit!(Minute, 60);
 dt_unit!(Second, 60);
+
+pub mod weekdays {
+    // TODO: Change this ISO numbering (Sunday = 7)
+    use super::WeekDay;
+    pub const SUN: WeekDay = WeekDay(0);
+    pub const MON: WeekDay = WeekDay(1);
+    pub const TUE: WeekDay = WeekDay(2);
+    pub const WED: WeekDay = WeekDay(3);
+    pub const THU: WeekDay = WeekDay(4);
+    pub const FRI: WeekDay = WeekDay(5);
+    pub const SAT: WeekDay = WeekDay(6);
+}

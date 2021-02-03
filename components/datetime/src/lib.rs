@@ -48,6 +48,7 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`Style`]: options::style
 //! [`MockDateTime`]: date::MockDateTime
+mod arithmetic;
 pub mod date;
 mod error;
 mod fields;
@@ -268,14 +269,14 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// let _ = dtf.format_to_string(&date_time);
     /// ```
-    pub fn format_to_string(&self, value: &impl DateTimeType) -> String {
+    pub fn format_to_string_old(&self, value: &impl DateTimeType) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");
         s
     }
 
-    pub fn format_to_string_new(&self, value: &impl date_new::DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl date_new::DateTimeInput) -> String {
         let mut s = String::new();
         self.format_to_write_new(&mut s, value)
             .expect("Failed to write to a String.");
