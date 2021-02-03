@@ -34,7 +34,7 @@ fn print(_input: &str, _value: Option<usize>) {
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    let lid = langid!("en");
+    let lid = langid!("en").into();
 
     let provider = icu_testdata::get_provider();
 

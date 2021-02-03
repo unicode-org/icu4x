@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::date::{self, DateTimeType};
-use crate::date_new::DateTimeInput;
+use crate::date_new::{DateTimeInput, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
@@ -24,7 +24,7 @@ use std::fmt;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::date::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
-/// # let lid = langid!("en");
+/// # let lid = langid!("en").into();
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();
 /// let dtf = DateTimeFormat::try_new(lid, &provider, &options)
@@ -102,12 +102,15 @@ pub fn write_pattern(
     Ok(())
 }
 
-pub fn write_pattern_new(
+pub fn write_pattern_new<T>(
     pattern: &crate::pattern::Pattern,
     data: &structs::dates::gregory::DatesV1,
-    date_time: &impl DateTimeInput,
+    date_time: &impl LocalizedDateTimeInput<T>,
     w: &mut impl fmt::Write,
-) -> Result<(), Error> {
+) -> Result<(), Error>
+where
+    T: DateTimeInput,
+{
     for item in &pattern.0 {
         match item {
             PatternItem::Field(field) => write_field_new(field, data, date_time, w)?,
@@ -177,17 +180,17 @@ fn write_field_old(
     Ok(())
 }
 
-fn write_field_new(
+fn write_field_new<T>(
     field: &fields::Field,
     data: &structs::dates::gregory::DatesV1,
-    date_time: &impl DateTimeInput,
+    date_time: &impl LocalizedDateTimeInput<T>,
     w: &mut impl fmt::Write,
-) -> Result<(), Error> {
+) -> Result<(), Error> where T: DateTimeInput {
     match field {
         fields::Field {
             symbol: fields::FieldSymbol::Year(fields::Year::Calendar),
             length,
-        } => format_number(w, date_time.year().ok_or(Error::MissingInputField)?.number as isize, length)?,
+        } => format_number(w, date_time.date_time().year().ok_or(Error::MissingInputField)?.number as isize, length)?,
 
         // fields::Field {
         //     symbol: fields::FieldSymbol::Year(fields::Year::WeekOf),
@@ -199,11 +202,11 @@ fn write_field_new(
             length,
         } => match length {
             FieldLength::One | FieldLength::TwoDigit => {
-                format_number(w, date_time.month().ok_or(Error::MissingInputField)?.number as isize + 1, length)?
+                format_number(w, date_time.date_time().month().ok_or(Error::MissingInputField)?.number as isize + 1, length)?
             }
             _ => {
                 let symbol =
-                    data.get_symbol_for_month(*month_type, *length, date_time.month().ok_or(Error::MissingInputField)?.number as usize);
+                    data.get_symbol_for_month(*month_type, *length, date_time.date_time().month().ok_or(Error::MissingInputField)?.number as usize);
                 w.write_str(symbol)?;
             }
         },
@@ -217,6 +220,7 @@ fn write_field_new(
 mod tests {
     use super::*;
     use icu_provider::prelude::*;
+    use crate::date_new::DateTimeInputWithLocale;
 
     #[test]
     fn test_new() {
@@ -236,8 +240,9 @@ mod tests {
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
         let date_time = date::MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
+        let loc_date_time = DateTimeInputWithLocale::new(&date_time, &"und".parse().unwrap());
         let mut sink = String::new();
-        write_pattern_new(&pattern, &data, &date_time, &mut sink).unwrap();
+        write_pattern_new(&pattern, &data, &loc_date_time, &mut sink).unwrap();
         println!("{}", sink);
     }
 

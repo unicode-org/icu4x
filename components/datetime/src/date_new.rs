@@ -12,6 +12,7 @@ use crate::date::{
 };
 use tinystr::tinystr8;
 use tinystr::{TinyStr8};
+use icu_locid::Locale;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Era(pub TinyStr8);
@@ -76,7 +77,8 @@ pub trait DateTimeInput : DateInput + TimeInput {
 
 impl<T> DateTimeInput for T where T: DateInput + TimeInput {}
 
-pub trait LocalizedDateTimeInput: DateTimeInput {
+pub trait LocalizedDateTimeInput<T: DateTimeInput> {
+    fn date_time(&self) -> &T;
     fn year_week(&self) -> Year;
     fn week_of_month(&self) -> WeekOfMonth;
     fn week_of_year(&self) -> WeekOfYear;
@@ -87,10 +89,6 @@ pub trait LocalizedDateTimeInput: DateTimeInput {
 
 
 
-
-pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
-    pub data: &'s T,
-}
 
 fn iso_year_to_gregorian(iso_year: i32) -> Year {
     if iso_year > 0 {
@@ -173,5 +171,47 @@ impl TimeInput for MockDateTime {
 
     fn fraction(&self) -> Option<FractionalSecond> {
         None
+    }
+}
+
+
+
+
+pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
+    data: &'s T,
+    _first_weekday: u8,
+    _anchor_weekday: u8,
+}
+
+impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
+    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+        Self {
+            data,
+            // TODO
+            _first_weekday: 1,
+            _anchor_weekday: 4,
+        }
+    }
+}
+
+impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+    fn date_time(&self) -> &T {
+        self.data
+    }
+
+    fn year_week(&self) -> Year {
+        unimplemented!()
+    }
+
+    fn week_of_month(&self) -> WeekOfMonth {
+        unimplemented!()
+    }
+
+    fn week_of_year(&self) -> WeekOfYear {
+        unimplemented!()
+    }
+
+    fn flexible_day_period(&self) -> () {
+        unimplemented!()
     }
 }
