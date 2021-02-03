@@ -4,11 +4,9 @@
 
 use crate::date::{self, MockDateTime};
 use tinystr::tinystr8;
-use tinystr::TinyStr8;
+use tinystr::{TinyStr8, TinyStrAuto};
 
-pub struct Era(pub TinyStr8);
-
-pub struct CyclicYear(pub TinyStr8);
+pub struct Era(pub TinyStrAuto);
 
 pub struct Quarter(pub u8);
 
@@ -20,22 +18,22 @@ pub struct DayOfMonth(pub u32);
 
 pub struct Weekday(pub u8);
 
-pub struct DayOfYear(pub u32);
-
 pub struct WeekOfMonth(pub u32);
 
-pub struct WeekOfYear(pub u32);
 
 
 
-
+pub struct WeekOfYear {
+    pub day_of_year: u32,
+    pub days_in_year: u32,
+    pub prev_year: Year,
+    pub next_year: Year,
+}
 
 pub struct Year {
     pub era: Era,
     pub number: usize,   // FIXME: i64
-    pub extended: usize, // FIXME: i64
-    pub cyclic: CyclicYear,
-    pub length: usize, // FIXME: u32
+    pub related_iso: usize, // FIXME: i64
 }
 
 pub struct Month {
@@ -44,30 +42,34 @@ pub struct Month {
 }
 
 pub enum FractionalSecond {
-    Whole,
     Millisecond(u16),
     Microsecond(u32),
     Nanosecond(u32),
 }
 
-pub struct Time {
-    pub hour: u8,
-    pub minute: u8,
-    pub second: u8,
-    pub fractional: FractionalSecond,
+pub trait NewDateType {
+    fn year(&self) -> Option<Year>;
+    fn quarter(&self) -> Option<Quarter>;
+    fn month(&self) -> Option<Month>;
+    fn day_of_month(&self) -> Option<DayOfMonth>;
+    fn day_of_week(&self) -> Option<Weekday>;
+    fn week_of_year(&self) -> Option<WeekOfYear>;
 }
 
-pub trait NewDateTimeType {
-    fn year(&self) -> Year;
-    fn prev_year(&self) -> Year;
-    fn next_year(&self) -> Year;
-    fn quarter(&self) -> Quarter;
-    fn month(&self) -> Month;
-    fn day_of_year(&self) -> DayOfYear;
-    fn day_of_month(&self) -> DayOfMonth;
-    fn weekday(&self) -> Weekday;
-    fn time(&self) -> Time;
+pub trait NewTimeType {
+    fn hour(&self) -> Option<u8>;
+    fn minute(&self) -> Option<u8>;
+    fn second(&self) -> Option<u8>;
+    fn fraction(&self) -> Option<FractionalSecond>;
 }
+
+pub trait NewDateTimeType : NewDateType + NewTimeType {
+}
+
+
+
+
+
 
 pub struct DateTimeLocalizer<'s, T: NewDateTimeType> {
     pub data: &'s T,
@@ -105,7 +107,6 @@ impl NewDateTimeType for MockDateTime {
             era: Era(tinystr8!("era001")),
             number: self.year,
             extended: self.year,
-            cyclic: CyclicYear(tinystr8!("TODO")),
             length: 365, // TODO
         }
     }
@@ -114,7 +115,6 @@ impl NewDateTimeType for MockDateTime {
             era: Era(tinystr8!("era001")),
             number: self.year - 1,
             extended: self.year - 1,
-            cyclic: CyclicYear(tinystr8!("TODO")),
             length: 365, // TODO
         }
     }
@@ -123,7 +123,6 @@ impl NewDateTimeType for MockDateTime {
             era: Era(tinystr8!("era001")),
             number: self.year + 1,
             extended: self.year + 1,
-            cyclic: CyclicYear(tinystr8!("TODO")),
             length: 365, // TODO
         }
     }
