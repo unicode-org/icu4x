@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::date::{self, DateTimeType};
-use crate::date_new::NewDateTimeType;
-use crate::error::DateTimeFormatError;
+use crate::date_new::DateTimeInput;
+use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider::DateTimeDates;
@@ -59,7 +59,7 @@ where
 // Temporary formatting number with length.
 fn format_number(
     result: &mut impl fmt::Write,
-    num: usize,
+    num: isize,
     length: &FieldLength,
 ) -> Result<(), std::fmt::Error> {
     match length {
@@ -92,7 +92,7 @@ pub fn write_pattern(
     data: &structs::dates::gregory::DatesV1,
     date_time: &impl DateTimeType,
     w: &mut impl fmt::Write,
-) -> Result<(), DateTimeFormatError> {
+) -> Result<(), Error> {
     for item in &pattern.0 {
         match item {
             PatternItem::Field(field) => write_field_old(field, data, date_time, w)?,
@@ -105,9 +105,9 @@ pub fn write_pattern(
 pub fn write_pattern_new(
     pattern: &crate::pattern::Pattern,
     data: &structs::dates::gregory::DatesV1,
-    date_time: &impl NewDateTimeType,
+    date_time: &impl DateTimeInput,
     w: &mut impl fmt::Write,
-) -> Result<(), DateTimeFormatError> {
+) -> Result<(), Error> {
     for item in &pattern.0 {
         match item {
             PatternItem::Field(field) => write_field_new(field, data, date_time, w)?,
@@ -122,12 +122,12 @@ fn write_field_old(
     data: &structs::dates::gregory::DatesV1,
     date_time: &impl DateTimeType,
     w: &mut impl fmt::Write,
-) -> Result<(), DateTimeFormatError> {
+) -> Result<(), Error> {
     match field.symbol {
-        FieldSymbol::Year(..) => format_number(w, date_time.year(), &field.length)?,
+        FieldSymbol::Year(..) => format_number(w, date_time.year() as isize, &field.length)?,
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => {
-                format_number(w, usize::from(date_time.month()) + 1, &field.length)?
+                format_number(w, usize::from(date_time.month()) as isize + 1, &field.length)?
             }
             length => {
                 let symbol = data.get_symbol_for_month(month, length, date_time.month().into());
@@ -135,13 +135,15 @@ fn write_field_old(
             }
         },
         FieldSymbol::Weekday(weekday) => {
-            let dow = get_day_of_week(date_time.year(), date_time.month(), date_time.day());
+            // FIXME: Get rid of unwrap
+            use std::convert::TryFrom;
+            let dow = get_day_of_week(usize::try_from(date_time.year()).unwrap(), date_time.month(), date_time.day());
             let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
         }
-        FieldSymbol::Day(..) => format_number(w, usize::from(date_time.day()) + 1, &field.length)?,
+        FieldSymbol::Day(..) => format_number(w, usize::from(date_time.day()) as isize + 1, &field.length)?,
         FieldSymbol::Hour(hour) => {
-            let h = date_time.hour().into();
+            let h = usize::from(date_time.hour()) as isize;
             let value = match hour {
                 fields::Hour::H11 => h % 12,
                 fields::Hour::H12 => {
@@ -163,8 +165,8 @@ fn write_field_old(
             };
             format_number(w, value, &field.length)?
         }
-        FieldSymbol::Minute => format_number(w, date_time.minute().into(), &field.length)?,
-        FieldSymbol::Second(..) => format_number(w, date_time.second().into(), &field.length)?,
+        FieldSymbol::Minute => format_number(w, usize::from(date_time.minute()) as isize, &field.length)?,
+        FieldSymbol::Second(..) => format_number(w, usize::from(date_time.second()) as isize, &field.length)?,
         FieldSymbol::DayPeriod(period) => match period {
             fields::DayPeriod::AmPm => {
                 let symbol = data.get_symbol_for_day_period(period, field.length, date_time.hour());
@@ -178,14 +180,14 @@ fn write_field_old(
 fn write_field_new(
     field: &fields::Field,
     data: &structs::dates::gregory::DatesV1,
-    date_time: &impl NewDateTimeType,
+    date_time: &impl DateTimeInput,
     w: &mut impl fmt::Write,
-) -> Result<(), DateTimeFormatError> {
+) -> Result<(), Error> {
     match field {
         fields::Field {
             symbol: fields::FieldSymbol::Year(fields::Year::Calendar),
             length,
-        } => format_number(w, date_time.year().number, length)?,
+        } => format_number(w, date_time.year().ok_or(Error::MissingInputField)?.number as isize, length)?,
 
         // fields::Field {
         //     symbol: fields::FieldSymbol::Year(fields::Year::WeekOf),
@@ -197,11 +199,11 @@ fn write_field_new(
             length,
         } => match length {
             FieldLength::One | FieldLength::TwoDigit => {
-                format_number(w, date_time.month().number + 1, length)?
+                format_number(w, date_time.month().ok_or(Error::MissingInputField)?.number as isize + 1, length)?
             }
             _ => {
                 let symbol =
-                    data.get_symbol_for_month(*month_type, *length, date_time.month().number);
+                    data.get_symbol_for_month(*month_type, *length, date_time.month().ok_or(Error::MissingInputField)?.number as usize);
                 w.write_str(symbol)?;
             }
         },

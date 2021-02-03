@@ -14,6 +14,9 @@ pub enum DateTimeFormatError {
     Format(std::fmt::Error),
     /// An error originating inside of the DataProvider
     DataProvider(DataError),
+    /// Missing field in date time input
+    /// TODO: How can we return which field was missing?
+    MissingInputField,
 }
 
 impl From<DataError> for DateTimeFormatError {

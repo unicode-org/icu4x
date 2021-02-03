@@ -236,7 +236,7 @@ impl<'d> DateTimeFormat<'d> {
     pub fn format_to_write_new(
         &self,
         w: &mut impl std::fmt::Write,
-        value: &impl date_new::NewDateTimeType,
+        value: &impl date_new::DateTimeInput,
     ) -> std::fmt::Result {
         write_pattern_new(&self.pattern, &self.data, value, w).map_err(|_| std::fmt::Error)
     }
@@ -269,7 +269,7 @@ impl<'d> DateTimeFormat<'d> {
         s
     }
 
-    pub fn format_to_string_new(&self, value: &impl date_new::NewDateTimeType) -> String {
+    pub fn format_to_string_new(&self, value: &impl date_new::DateTimeInput) -> String {
         let mut s = String::new();
         self.format_to_write_new(&mut s, value)
             .expect("Failed to write to a String.");

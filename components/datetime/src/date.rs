@@ -37,7 +37,7 @@ impl From<std::num::ParseIntError> for DateTimeError {
 ///
 /// [`DateTimeFormat`]: super::DateTimeFormat
 pub trait DateTimeType: FromStr {
-    fn year(&self) -> usize;
+    fn year(&self) -> i32;
     fn month(&self) -> Month;
     fn day(&self) -> Day;
     fn hour(&self) -> Hour;
@@ -67,7 +67,7 @@ pub trait DateTimeType: FromStr {
 /// [`DateTimeFormat`]: super::DateTimeFormat
 #[derive(Debug, Default)]
 pub struct MockDateTime {
-    pub year: usize,
+    pub year: i32,
     pub month: Month,
     pub day: Day,
     pub hour: Hour,
@@ -78,7 +78,7 @@ pub struct MockDateTime {
 impl MockDateTime {
     /// Creates a new `MockDateTime` from a list of already validated date/time parameters.
     pub const fn new(
-        year: usize,
+        year: i32,
         month: Month,
         day: Day,
         hour: Hour,
@@ -114,7 +114,10 @@ impl MockDateTime {
         second: usize,
     ) -> Result<Self, DateTimeError> {
         Ok(Self {
-            year,
+            year: year.try_into().map_err(|_| DateTimeError::Overflow {
+                field: "Year",
+                max: i32::MAX as usize,
+            })?,
             month: month.try_into()?,
             day: day.try_into()?,
             hour: hour.try_into()?,
@@ -125,7 +128,7 @@ impl MockDateTime {
 }
 
 impl DateTimeType for MockDateTime {
-    fn year(&self) -> usize {
+    fn year(&self) -> i32 {
         self.year
     }
     fn month(&self) -> Month {
@@ -160,7 +163,7 @@ impl FromStr for MockDateTime {
     ///     .expect("Failed to parse a date time.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let year: usize = input[0..4].parse()?;
+        let year: i32 = input[0..4].parse()?;
         let month: Month = input[5..7].parse()?;
         let day: Day = input[8..10].parse()?;
         let hour: Hour = input[11..13].parse()?;
