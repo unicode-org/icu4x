@@ -6,7 +6,7 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-use icu_datetime::date::MockDateTime;
+use icu_datetime::mock::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
 use icu_locid_macros::langid;
 

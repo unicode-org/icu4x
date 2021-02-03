@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::date_new::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
+use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
@@ -23,7 +23,7 @@ use std::fmt;
 /// ```
 /// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// # use icu_datetime::date::MockDateTime;
+/// # use icu_datetime::mock::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
 /// # let lid = langid!("en").into();
 /// # let provider = InvariantDataProvider;
@@ -132,8 +132,7 @@ where
                     .date_time()
                     .month()
                     .ok_or(Error::MissingInputField)?
-                    .number as isize
-                    + 1,
+                    .number as isize,
                 &field.length,
             )?,
             length => {
@@ -144,7 +143,7 @@ where
                         .date_time()
                         .month()
                         .ok_or(Error::MissingInputField)?
-                        .number as usize,
+                        .number as usize - 1,
                 );
                 w.write_str(symbol)?
             }
@@ -164,8 +163,7 @@ where
                     .date_time()
                     .day_of_month()
                     .ok_or(Error::MissingInputField)?,
-            ) as isize
-                + 1,
+            ) as isize,
             &field.length,
         )?,
         FieldSymbol::Hour(hour) => {
@@ -237,6 +235,7 @@ where
 mod tests {
     use super::*;
     use icu_provider::prelude::*;
+    use crate::mock::MockDateTime;
 
     #[test]
     fn test_basic() {
@@ -255,7 +254,7 @@ mod tests {
             .take_payload()
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
-        let date_time = crate::date::MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
+        let date_time = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         write_pattern(&pattern, &data, &date_time, &"und".parse().unwrap(), &mut sink).unwrap();
         println!("{}", sink);

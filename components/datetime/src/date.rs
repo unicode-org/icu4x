@@ -1,11 +1,87 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! APIs for Date and Time handling
-use std::convert::{TryFrom, TryInto};
+
+use std::convert::TryFrom;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
+use icu_locid::Locale;
+use tinystr::TinyStr8;
+
+pub trait DateInput {
+    fn year(&self) -> Option<Year>;
+    fn month(&self) -> Option<Month>;
+    fn day_of_month(&self) -> Option<DayOfMonth>;
+    fn day_of_week(&self) -> Option<WeekDay>;
+    fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
+}
+
+pub trait TimeInput {
+    fn hour(&self) -> Option<Hour>;
+    fn minute(&self) -> Option<Minute>;
+    fn second(&self) -> Option<Second>;
+    fn fraction(&self) -> Option<FractionalSecond>;
+}
+
+/// Temporary trait used to represent the input data for [`DateTimeFormat`].
+///
+/// This type represents all data that the formatted needs in order to produced formatted string.
+///
+/// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
+/// other calendars in the upcoming releases. See <https://github.com/unicode-org/icu4x/issues/355>
+///
+/// [`DateTimeFormat`]: super::DateTimeFormat
+pub trait DateTimeInput: DateInput + TimeInput {}
+
+impl<T> DateTimeInput for T where T: DateInput + TimeInput {}
+
+pub trait LocalizedDateTimeInput<T: DateTimeInput> {
+    fn date_time(&self) -> &T;
+    fn year_week(&self) -> Year;
+    fn week_of_month(&self) -> WeekOfMonth;
+    fn week_of_year(&self) -> WeekOfYear;
+    fn flexible_day_period(&self) -> ();
+}
+
+pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
+    data: &'s T,
+    _first_weekday: u8,
+    _anchor_weekday: u8,
+}
+
+impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
+    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+        Self {
+            data,
+            // TODO
+            _first_weekday: 1,
+            _anchor_weekday: 4,
+        }
+    }
+}
+
+impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+    fn date_time(&self) -> &T {
+        self.data
+    }
+
+    fn year_week(&self) -> Year {
+        unimplemented!()
+    }
+
+    fn week_of_month(&self) -> WeekOfMonth {
+        unimplemented!()
+    }
+
+    fn week_of_year(&self) -> WeekOfYear {
+        unimplemented!()
+    }
+
+    fn flexible_day_period(&self) -> () {
+        unimplemented!()
+    }
+}
 
 #[derive(Debug)]
 pub enum DateTimeError {
@@ -28,159 +104,7 @@ impl From<std::num::ParseIntError> for DateTimeError {
     }
 }
 
-/// Temporary trait used to represent the input data for [`DateTimeFormat`].
-///
-/// This type represents all data that the formatted needs in order to produced formatted string.
-///
-/// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
-/// other calendars in the upcoming releases. See <https://github.com/unicode-org/icu4x/issues/355>
-///
-/// [`DateTimeFormat`]: super::DateTimeFormat
-pub trait DateTimeType: FromStr {
-    fn year(&self) -> i32;
-    fn month(&self) -> Month;
-    fn day(&self) -> Day;
-    fn hour(&self) -> Hour;
-    fn minute(&self) -> Minute;
-    fn second(&self) -> Second;
-}
 
-/// Temporary implementation of [`DateTimeType`],
-/// which is used in tests, benchmarks and examples of this component.
-///
-/// Month and day are zero-based.
-///
-/// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-/// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/master/docs/research/date_time.md)
-/// to develop core date and time APIs that will work as an input for this component.
-///
-/// # Examples
-///
-/// ```
-/// use icu_datetime::date::MockDateTime;
-///
-/// let dt1 = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
-///     .expect("Failed to construct DateTime.");
-///
-/// let dt2: MockDateTime = "2020-10-14T13:21:00".parse()
-///     .expect("Failed to parse a date time.");
-/// ```
-/// [`DateTimeFormat`]: super::DateTimeFormat
-#[derive(Debug, Default)]
-pub struct MockDateTime {
-    pub year: i32,
-    pub month: Month,
-    pub day: Day,
-    pub hour: Hour,
-    pub minute: Minute,
-    pub second: Second,
-}
-
-impl MockDateTime {
-    /// Creates a new `MockDateTime` from a list of already validated date/time parameters.
-    pub const fn new(
-        year: i32,
-        month: Month,
-        day: Day,
-        hour: Hour,
-        minute: Minute,
-        second: Second,
-    ) -> Self {
-        Self {
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second,
-        }
-    }
-
-    /// Constructor for the `MockDateTime`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_datetime::date::MockDateTime;
-    ///
-    /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
-    ///     .expect("Failed to construct a DateTime");
-    /// ```
-    pub fn try_new(
-        year: usize,
-        month: usize,
-        day: usize,
-        hour: usize,
-        minute: usize,
-        second: usize,
-    ) -> Result<Self, DateTimeError> {
-        Ok(Self {
-            year: year.try_into().map_err(|_| DateTimeError::Overflow {
-                field: "Year",
-                max: i32::MAX as usize,
-            })?,
-            month: month.try_into()?,
-            day: day.try_into()?,
-            hour: hour.try_into()?,
-            minute: minute.try_into()?,
-            second: second.try_into()?,
-        })
-    }
-}
-
-impl DateTimeType for MockDateTime {
-    fn year(&self) -> i32 {
-        self.year
-    }
-    fn month(&self) -> Month {
-        self.month
-    }
-    fn day(&self) -> Day {
-        self.day
-    }
-    fn hour(&self) -> Hour {
-        self.hour
-    }
-    fn minute(&self) -> Minute {
-        self.minute
-    }
-    fn second(&self) -> Second {
-        self.second
-    }
-}
-
-impl FromStr for MockDateTime {
-    type Err = DateTimeError;
-
-    /// Parse a `MockDateTime` from a string.
-    ///
-    /// This utility is for easily creating dates, not a complete robust solution. The
-    /// string must take a specific form of the ISO 8601 format: `YYYY-MM-DDThh:mm:ss`.
-    ///
-    /// ```
-    /// use icu_datetime::date::MockDateTime;
-    ///
-    /// let date: MockDateTime = "2020-10-14T13:21:00".parse()
-    ///     .expect("Failed to parse a date time.");
-    /// ```
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let year: i32 = input[0..4].parse()?;
-        let month: Month = input[5..7].parse()?;
-        let day: Day = input[8..10].parse()?;
-        let hour: Hour = input[11..13].parse()?;
-        let minute: Minute = input[14..16].parse()?;
-        let second: Second = input[17..19].parse()?;
-        Ok(Self {
-            year,
-            month: month - 1,
-            day: day - 1,
-            hour,
-            minute,
-            second,
-        })
-    }
-}
 
 /// This macro defines a struct for each type of unit to be used in a DateTime. Each
 /// unit is bounded by a range. The traits implemented here will return a Result on
@@ -272,12 +196,56 @@ macro_rules! dt_unit {
     };
 }
 
-dt_unit!(Month, 12);
+#[derive(Clone, Debug, PartialEq)]
+pub struct Era(pub TinyStr8);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Year {
+    pub era: Era,
+    pub number: i32,
+    pub related_iso: i32,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct MonthCode(pub TinyStr8);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Month {
+    pub number: u32,
+    pub code: MonthCode,
+}
+
+// TODO: There shouldn't be a bound on DayOfMonth
+dt_unit!(DayOfMonth, 32);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DayOfYearInfo {
+    pub day_of_year: u32,
+    pub days_in_year: u32,
+    pub prev_year: Year,
+    pub next_year: Year,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct WeekOfMonth(pub u32);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct WeekOfYear(pub u32);
+
 dt_unit!(WeekDay, 7);
-dt_unit!(Day, 32);
+
 dt_unit!(Hour, 24);
+
 dt_unit!(Minute, 60);
+
 dt_unit!(Second, 60);
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum FractionalSecond {
+    Millisecond(u16),
+    Microsecond(u32),
+    Nanosecond(u32),
+}
 
 pub mod weekdays {
     // TODO: Change this ISO numbering (Sunday = 7)

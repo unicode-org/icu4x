@@ -4,8 +4,7 @@
 
 //! Assorted functions to help with date calculations.
 
-use crate::date::WeekDay;
-use crate::date_new::{Era, Year};
+use crate::date::{Era, Year, WeekDay};
 
 use tinystr::tinystr8;
 
@@ -61,11 +60,12 @@ fn test_iso_year_to_gregorian() {
     );
 }
 
-// Temporary simplified function to get the day of the week
+/// Temporary simplified function to get the day of the week
+/// month and day are both zero-indexed.
 pub fn iso_date_to_weekday(year: i32, month: usize, day: usize) -> WeekDay {
     let t = &[0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
     let year = (if month < 2 { year - 1 } else { year }).rem_euclid(400) as usize;
-    let result = (year + year / 4 - year / 100 + year / 400 + t[month as usize] + day + 1) % 7;
+    let result = (year + year / 4 - year / 100 + year / 400 + t[month] + day + 1) % 7;
     WeekDay::new_unchecked(result as u8)
 }
 

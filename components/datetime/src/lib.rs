@@ -13,7 +13,7 @@
 //!
 //! ```
 //! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+//! use icu_datetime::{DateTimeFormat, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -47,20 +47,19 @@
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`ICU4X`]: ../icu/index.html
 //! [`Style`]: options::style
-//! [`MockDateTime`]: date::MockDateTime
+//! [`MockDateTime`]: mock::MockDateTime
 mod arithmetic;
 pub mod date;
 mod error;
 mod fields;
 mod format;
+pub mod mock;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 mod provider;
 
-pub mod date_new;
-
-use date_new::DateTimeInput;
+use date::DateTimeInput;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
@@ -85,7 +84,7 @@ use std::borrow::Cow;
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
-/// use icu_datetime::date::MockDateTime;
+/// use icu_datetime::mock::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let lid = langid!("en").into();
@@ -124,7 +123,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_datetime::date::MockDateTime;
+    /// use icu_datetime::mock::MockDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = langid!("en").into();
@@ -171,7 +170,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::date::MockDateTime;
+    /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -210,7 +209,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::date::MockDateTime;
+    /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -250,7 +249,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::date::MockDateTime;
+    /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
     /// # let lid = langid!("en").into();
     /// # let provider = InvariantDataProvider;
