@@ -247,11 +247,12 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::mock::MockDateTime;
-    use icu_provider::prelude::*;
 
     #[test]
+    #[cfg(feature = "provider_serde")]
     fn test_basic() {
+        use crate::mock::MockDateTime;
+        use icu_provider::prelude::*;
         let provider = icu_testdata::get_provider();
         let data = provider
             .load_payload(&DataRequest {

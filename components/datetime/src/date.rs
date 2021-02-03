@@ -9,6 +9,28 @@ use std::ops::{Add, Sub};
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
+#[derive(Debug)]
+pub enum DateTimeError {
+    Parse(std::num::ParseIntError),
+    Overflow { field: &'static str, max: usize },
+}
+
+impl fmt::Display for DateTimeError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Parse(err) => write!(f, "{}", err),
+            Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
+        }
+    }
+}
+
+impl From<std::num::ParseIntError> for DateTimeError {
+    fn from(input: std::num::ParseIntError) -> Self {
+        Self::Parse(input)
+    }
+}
+
+
 pub trait DateInput {
     fn year(&self) -> Option<Year>;
     fn month(&self) -> Option<Month>;
@@ -17,6 +39,7 @@ pub trait DateInput {
     fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
 }
 
+
 pub trait TimeInput {
     fn hour(&self) -> Option<Hour>;
     fn minute(&self) -> Option<Minute>;
@@ -24,17 +47,11 @@ pub trait TimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
-/// Temporary trait used to represent the input data for [`DateTimeFormat`].
-///
-/// This type represents all data that the formatted needs in order to produced formatted string.
-///
-/// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
-/// other calendars in the upcoming releases. See <https://github.com/unicode-org/icu4x/issues/355>
-///
-/// [`DateTimeFormat`]: super::DateTimeFormat
+
 pub trait DateTimeInput: DateInput + TimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + TimeInput {}
+
 
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn date_time(&self) -> &T;
@@ -43,6 +60,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn week_of_year(&self) -> WeekOfYear;
     fn flexible_day_period(&self); // TODO
 }
+
 
 pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
     data: &'s T,
@@ -80,27 +98,6 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
 
     fn flexible_day_period(&self) {
         unimplemented!()
-    }
-}
-
-#[derive(Debug)]
-pub enum DateTimeError {
-    Parse(std::num::ParseIntError),
-    Overflow { field: &'static str, max: usize },
-}
-
-impl fmt::Display for DateTimeError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Parse(err) => write!(f, "{}", err),
-            Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
-        }
-    }
-}
-
-impl From<std::num::ParseIntError> for DateTimeError {
-    fn from(input: std::num::ParseIntError) -> Self {
-        Self::Parse(input)
     }
 }
 
