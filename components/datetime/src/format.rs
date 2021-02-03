@@ -129,9 +129,11 @@ fn write_field_old(
     match field.symbol {
         FieldSymbol::Year(..) => format_number(w, date_time.year() as isize, &field.length)?,
         FieldSymbol::Month(month) => match field.length {
-            FieldLength::One | FieldLength::TwoDigit => {
-                format_number(w, usize::from(date_time.month()) as isize + 1, &field.length)?
-            }
+            FieldLength::One | FieldLength::TwoDigit => format_number(
+                w,
+                usize::from(date_time.month()) as isize + 1,
+                &field.length,
+            )?,
             length => {
                 let symbol = data.get_symbol_for_month(month, length, date_time.month().into());
                 w.write_str(symbol)?
@@ -140,11 +142,17 @@ fn write_field_old(
         FieldSymbol::Weekday(weekday) => {
             // FIXME: Get rid of unwrap
             use std::convert::TryFrom;
-            let dow = get_day_of_week(usize::try_from(date_time.year()).unwrap(), date_time.month(), date_time.day());
+            let dow = get_day_of_week(
+                usize::try_from(date_time.year()).unwrap(),
+                date_time.month(),
+                date_time.day(),
+            );
             let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
         }
-        FieldSymbol::Day(..) => format_number(w, usize::from(date_time.day()) as isize + 1, &field.length)?,
+        FieldSymbol::Day(..) => {
+            format_number(w, usize::from(date_time.day()) as isize + 1, &field.length)?
+        }
         FieldSymbol::Hour(hour) => {
             let h = usize::from(date_time.hour()) as isize;
             let value = match hour {
@@ -168,8 +176,12 @@ fn write_field_old(
             };
             format_number(w, value, &field.length)?
         }
-        FieldSymbol::Minute => format_number(w, usize::from(date_time.minute()) as isize, &field.length)?,
-        FieldSymbol::Second(..) => format_number(w, usize::from(date_time.second()) as isize, &field.length)?,
+        FieldSymbol::Minute => {
+            format_number(w, usize::from(date_time.minute()) as isize, &field.length)?
+        }
+        FieldSymbol::Second(..) => {
+            format_number(w, usize::from(date_time.second()) as isize, &field.length)?
+        }
         FieldSymbol::DayPeriod(period) => match period {
             fields::DayPeriod::AmPm => {
                 let symbol = data.get_symbol_for_day_period(period, field.length, date_time.hour());
@@ -185,28 +197,52 @@ fn write_field_new<T>(
     data: &structs::dates::gregory::DatesV1,
     date_time: &impl LocalizedDateTimeInput<T>,
     w: &mut impl fmt::Write,
-) -> Result<(), Error> where T: DateTimeInput {
+) -> Result<(), Error>
+where
+    T: DateTimeInput,
+{
     match field {
         fields::Field {
             symbol: fields::FieldSymbol::Year(fields::Year::Calendar),
             length,
-        } => format_number(w, date_time.date_time().year().ok_or(Error::MissingInputField)?.number as isize, length)?,
+        } => format_number(
+            w,
+            date_time
+                .date_time()
+                .year()
+                .ok_or(Error::MissingInputField)?
+                .number as isize,
+            length,
+        )?,
 
         // fields::Field {
         //     symbol: fields::FieldSymbol::Year(fields::Year::WeekOf),
         //     length,
         // } => format_number(w, date_time.year_week().number, length)?,
-
         fields::Field {
             symbol: fields::FieldSymbol::Month(month_type),
             length,
         } => match length {
-            FieldLength::One | FieldLength::TwoDigit => {
-                format_number(w, date_time.date_time().month().ok_or(Error::MissingInputField)?.number as isize + 1, length)?
-            }
+            FieldLength::One | FieldLength::TwoDigit => format_number(
+                w,
+                date_time
+                    .date_time()
+                    .month()
+                    .ok_or(Error::MissingInputField)?
+                    .number as isize
+                    + 1,
+                length,
+            )?,
             _ => {
-                let symbol =
-                    data.get_symbol_for_month(*month_type, *length, date_time.date_time().month().ok_or(Error::MissingInputField)?.number as usize);
+                let symbol = data.get_symbol_for_month(
+                    *month_type,
+                    *length,
+                    date_time
+                        .date_time()
+                        .month()
+                        .ok_or(Error::MissingInputField)?
+                        .number as usize,
+                );
                 w.write_str(symbol)?;
             }
         },
@@ -219,8 +255,8 @@ fn write_field_new<T>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_provider::prelude::*;
     use crate::date_new::DateTimeInputWithLocale;
+    use icu_provider::prelude::*;
 
     #[test]
     fn test_new() {

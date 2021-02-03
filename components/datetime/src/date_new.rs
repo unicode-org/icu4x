@@ -2,17 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::date::{
-    MockDateTime,
-    WeekDay,
-    Day as DayOfMonth,
-    Hour,
-    Minute,
-    Second,
-};
-use tinystr::tinystr8;
-use tinystr::{TinyStr8};
+use crate::date::{Day as DayOfMonth, Hour, Minute, MockDateTime, Second, WeekDay};
 use icu_locid::Locale;
+use tinystr::tinystr8;
+use tinystr::TinyStr8;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Era(pub TinyStr8);
@@ -25,9 +18,6 @@ pub struct WeekOfMonth(pub u32);
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct WeekOfYear(pub u32);
-
-
-
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct DayOfYearInfo {
@@ -72,8 +62,7 @@ pub trait TimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
-pub trait DateTimeInput : DateInput + TimeInput {
-}
+pub trait DateTimeInput: DateInput + TimeInput {}
 
 impl<T> DateTimeInput for T where T: DateInput + TimeInput {}
 
@@ -84,11 +73,6 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn week_of_year(&self) -> WeekOfYear;
     fn flexible_day_period(&self) -> ();
 }
-
-
-
-
-
 
 fn iso_year_to_gregorian(iso_year: i32) -> Year {
     if iso_year > 0 {
@@ -108,26 +92,38 @@ fn iso_year_to_gregorian(iso_year: i32) -> Year {
 
 #[test]
 fn test_iso_year_to_gregorian() {
-    assert_eq!(iso_year_to_gregorian(2020), Year {
-        era: Era(tinystr8!("ce")),
-        number: 2020,
-        related_iso: 2020,
-    });
-    assert_eq!(iso_year_to_gregorian(1), Year {
-        era: Era(tinystr8!("ce")),
-        number: 1,
-        related_iso: 1,
-    });
-    assert_eq!(iso_year_to_gregorian(0), Year {
-        era: Era(tinystr8!("bce")),
-        number: 1,
-        related_iso: 0,
-    });
-    assert_eq!(iso_year_to_gregorian(-1), Year {
-        era: Era(tinystr8!("bce")),
-        number: 2,
-        related_iso: -1,
-    });
+    assert_eq!(
+        iso_year_to_gregorian(2020),
+        Year {
+            era: Era(tinystr8!("ce")),
+            number: 2020,
+            related_iso: 2020,
+        }
+    );
+    assert_eq!(
+        iso_year_to_gregorian(1),
+        Year {
+            era: Era(tinystr8!("ce")),
+            number: 1,
+            related_iso: 1,
+        }
+    );
+    assert_eq!(
+        iso_year_to_gregorian(0),
+        Year {
+            era: Era(tinystr8!("bce")),
+            number: 1,
+            related_iso: 0,
+        }
+    );
+    assert_eq!(
+        iso_year_to_gregorian(-1),
+        Year {
+            era: Era(tinystr8!("bce")),
+            number: 2,
+            related_iso: -1,
+        }
+    );
 }
 
 impl DateInput for MockDateTime {
@@ -173,9 +169,6 @@ impl TimeInput for MockDateTime {
         None
     }
 }
-
-
-
 
 pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
     data: &'s T,
