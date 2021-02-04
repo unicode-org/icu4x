@@ -24,6 +24,7 @@ members = [
     "tools/benchmark/memory",
     "utils/fixed_decimal",
     "utils/writeable",
+    "utils/ffi_utils",
 ]
 
 # Enable lto for WASM.
