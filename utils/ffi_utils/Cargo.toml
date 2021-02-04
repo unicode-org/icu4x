@@ -1,0 +1,16 @@
+[package]
+name = "icu_ffi_utils"
+version = "0.1.0"
+authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cxx = "1.0.29"
+icu_locid = { path = "../../components/locid/" }
+icu_plurals = { path = "../../components/plurals/" }
+icu_provider = { path = "../../components/provider" }
+
+[build-dependencies]
+cxx-build = "1.0"

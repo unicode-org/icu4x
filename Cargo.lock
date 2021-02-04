@@ -270,6 +270,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "codespan-reporting"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6ce42b8998a383572e0a802d859b1f00c79b7b7474e62fff88ee5c2845d9c13"
+dependencies = [
+ "termcolor",
+ "unicode-width",
+]
+
+[[package]]
 name = "colored"
 version = "1.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -431,6 +441,50 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b2466559f260f48ad25fe6317b3c8dac77b5bdb5763ac7d9d6103530663bc90"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "cxx"
+version = "1.0.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc31438f037629cab5cf43e32ad6852f6fd590dde08006c439b3cd61a6a14898"
+dependencies = [
+ "cc",
+ "cxxbridge-flags",
+ "cxxbridge-macro",
+ "link-cplusplus",
+]
+
+[[package]]
+name = "cxx-build"
+version = "1.0.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fc27a71995199d030d61ce02455b5108a02aa5fdca3cea7c2f1999a6d1f9317"
+dependencies = [
+ "cc",
+ "codespan-reporting",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "scratch",
+ "syn",
+]
+
+[[package]]
+name = "cxxbridge-flags"
+version = "1.0.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59a0e2cec266b23b43ec182af46f30673fddb0c58e08cbd4e8affee9c6ca7062"
+
+[[package]]
+name = "cxxbridge-macro"
+version = "1.0.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a360123256a138e23265a2b469c92d1d26972d02772e24b55fc16a3dde5c191"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -822,6 +876,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_ffi_utils"
+version = "0.1.0"
+dependencies = [
+ "cxx",
+ "cxx-build",
+ "icu_locid",
+ "icu_plurals",
+ "icu_provider",
+]
+
+[[package]]
 name = "icu_locale_canonicalizer"
 version = "0.1.0"
 dependencies = [
@@ -1071,6 +1136,15 @@ name = "libm"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
+
+[[package]]
+name = "link-cplusplus"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f1becd27d473556dc610b8afa1636ef90747b574a84553bc11e82371d5ef2d1"
+dependencies = [
+ "cc",
+]
 
 [[package]]
 name = "log"
@@ -1816,6 +1890,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
+name = "scratch"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e114536316b51a5aa7a0e59fc49661fd263c5507dd08bd28de052e57626ce69"
+
+[[package]]
 name = "security-framework"
 version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2037,6 +2117,15 @@ dependencies = [
  "redox_syscall",
  "remove_dir_all",
  "winapi 0.3.9",
+]
+
+[[package]]
+name = "termcolor"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2dfed899f0eb03f32ee8c6a0aabdb8a7949659e3466561fc0adf54e26d88c5f4"
+dependencies = [
+ "winapi-util",
 ]
 
 [[package]]
