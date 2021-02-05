@@ -62,13 +62,10 @@ fn update_aliases<'s>(prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>, lin
     let mut line_parts: &[&str] = line_parts.as_slice();
     line_parts = &line_parts[2..];
 
-    // TODO: ask Markus what to do with the property lines that appear to have
-    // no canonical name
-    // property;Binary;;alnum
-    // property;Binary;;blank
-    // property;Binary;;graph
-    // property;Binary;;print
-    // property;Binary;;xdigit
+    // Properties defined in UTS 18 but not in UCD may have an empty line part in PPUCD
+    // because of the non-existence in UCD. See Compatibility Properties in UTS 18 Annex C
+    // that provide backwards compatibility for POSIX-style properties:
+    // https://unicode.org/reports/tr18/#Compatibility_Properties
     if line_parts[0].is_empty() {
         line_parts = &line_parts[1..];
     }
@@ -124,7 +121,7 @@ fn update_enum_val_aliases<'s>(
     }
 }
 
-/// Return a new map in which any binary exclusion values
+/// Mutate the map so any binary exclusion values
 /// (in other words, values for binary properties that are prefixed with a
 /// minus sign, as described in the PPUCD documentation, ex: "-Gr_Base")
 /// are not included and any existing include values for the binary property
@@ -135,8 +132,7 @@ fn apply_exclude_vals_for_binary_props<'s>(
     let mut prop_names: HashSet<&'s str> = prop_vals.keys().copied().collect();
     // If we see "-Gr_Base", then remove both "Gr_Base" and "-Gr_Base".
     for prop_name in prop_vals.keys() {
-        if let Some(unadorned_prop_name) = prop_name.strip_prefix('-') {
-            let orig_prop_name: &str = unadorned_prop_name;
+        if let Some(orig_prop_name) = prop_name.strip_prefix('-') {
             prop_names.remove(&orig_prop_name);
             prop_names.remove(prop_name);
         }
