@@ -101,15 +101,25 @@
       "format": {
         "abbreviated": {
           "am": "a. m.",
-          "pm": "p. m."
+          "pm": "p. m.",
+          "noon": "mediodía"
         },
         "narrow": {
           "am": "a. m.",
-          "pm": "p. m."
+          "pm": "p. m.",
+          "noon": "del mediodía"
         },
         "wide": {
           "am": "a. m.",
-          "pm": "p. m."
+          "pm": "p. m.",
+          "noon": "mediodía"
+        }
+      },
+      "stand_alone": {
+        "narrow": {
+          "am": "a. m.",
+          "pm": "p. m.",
+          "noon": "m."
         }
       }
     }

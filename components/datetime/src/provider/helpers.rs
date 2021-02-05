@@ -39,6 +39,7 @@ pub trait DateTimeDates {
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::Hour,
+        is_top_of_hour: bool,
     ) -> &Cow<str>;
 }
 
@@ -180,22 +181,20 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
         hour: date::Hour,
+        is_top_of_hour: bool,
     ) -> &Cow<str> {
-        let widths = match day_period {
-            fields::DayPeriod::AmPm => &self.symbols.day_periods.format,
-        };
+        use fields::{DayPeriod::NoonMidnight, FieldLength};
+        let widths = &self.symbols.day_periods.format;
         let symbols = match length {
-            fields::FieldLength::Wide => &widths.wide,
-            fields::FieldLength::Narrow => &widths.narrow,
+            FieldLength::Wide => &widths.wide,
+            FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-
-        //TODO: Once we have more dayperiod types, we'll need to handle
-        //      this logic in the right location.
-        if u8::from(hour) < 12 {
-            &symbols.am
-        } else {
-            &symbols.pm
+        match (day_period, u8::from(hour), is_top_of_hour) {
+            (NoonMidnight, 00, true) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
+            (NoonMidnight, 12, true) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
+            (_, hour, _) if hour < 12 => &symbols.am,
+            _ => &symbols.pm,
         }
     }
 }

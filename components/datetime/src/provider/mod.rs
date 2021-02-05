@@ -65,14 +65,49 @@ pub mod gregory {
                 symbols!();
             }
         };
-        ($name: ident, $($element: ident: $ty: ty),+ $(,)?) => {
+        ($name: ident { $($tokens: tt)* }) => {
+            symbols!($name { $($tokens)* } -> ());
+        };
+        ($name: ident { $element: ident: Option<$ty: ty>, $($tokens: tt)+ } -> ($($members:tt)*)) => {
+            symbols!($name { $($tokens)* } -> (
+                $($members)*
+                #[cfg_attr(
+                    all(feature="provider_serde", not(feature="serialize_none")),
+                    serde(skip_serializing_if = "Option::is_none"))
+                ]
+                pub $element: Option<$ty>,
+            ));
+        };
+        ($name: ident { $element: ident: $ty: ty, $($tokens: tt)+ } -> ($($members:tt)*)) => {
+            symbols!($name { $($tokens)* } -> (
+                $($members)*
+                pub $element: $ty,
+            ));
+        };
+        ($name: ident { $element: ident: Option<$ty: ty> $(,)? } -> ($($members:tt)*)) => {
+            symbols!($name { } -> (
+                $($members)*
+                #[cfg_attr(
+                    all(feature="provider_serde", not(feature="serialize_none")),
+                    serde(skip_serializing_if = "Option::is_none"))
+                ]
+                pub $element: Option<$ty>,
+            ));
+        };
+        ($name: ident { $element: ident: $ty: ty $(,)? } -> ($($members:tt)*)) => {
+            symbols!($name { } -> (
+                $($members)*
+                pub $element: $ty,
+            ));
+        };
+        ($name: ident { } -> ($($members: tt)*)) => {
             pub mod $name {
                 use super::*;
 
                 #[derive(Debug, PartialEq, Clone, Default)]
                 #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
                 pub struct SymbolsV1 {
-                    $(pub $element: $ty),*
+                    $($members)*
                 }
                 symbols!();
             }
@@ -136,7 +171,14 @@ pub mod gregory {
 
     symbols!(weekdays, [Cow<'static, str>; 7]);
 
-    symbols!(day_periods, am: Cow<'static, str>, pm: Cow<'static, str>);
+    symbols!(
+        day_periods {
+            am: Cow<'static, str>,
+            pm: Cow<'static, str>,
+            noon: Option<Cow<'static, str>>,
+            midnight: Option<Cow<'static, str>>,
+        }
+    );
 
     pub mod patterns {
         use super::*;

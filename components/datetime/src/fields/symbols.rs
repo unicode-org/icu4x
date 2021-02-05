@@ -190,6 +190,7 @@ impl From<Weekday> for FieldSymbol {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum DayPeriod {
     AmPm,
+    NoonMidnight,
 }
 
 impl TryFrom<u8> for DayPeriod {
@@ -197,6 +198,7 @@ impl TryFrom<u8> for DayPeriod {
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'a' => Ok(Self::AmPm),
+            b'b' => Ok(Self::NoonMidnight),
             b => Err(SymbolError::Unknown(b)),
         }
     }

@@ -13,6 +13,8 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
+icu_benchmark_macros::static_setup!();
+
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
 fn get_basic_latin_block() -> UnicodeSet {
@@ -64,6 +66,7 @@ fn print(_input: &str) {
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
+    icu_benchmark_macros::main_setup!();
     let selector = BMPBlockSelector::new();
 
     let sample = "Welcome to MyName©®, Алексей!";
