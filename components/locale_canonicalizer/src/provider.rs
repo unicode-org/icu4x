@@ -14,8 +14,11 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct LikelySubtagsV1 {
-    pub language_script_region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language_script: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language_region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub script_region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub script: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub und: LanguageIdentifier,
 }

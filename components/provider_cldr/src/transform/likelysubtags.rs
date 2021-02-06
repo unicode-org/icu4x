@@ -100,10 +100,13 @@ impl From<&cldr_json::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_json::Resource) -> Self {
         use icu_locid::LanguageIdentifier;
 
-        let mut language_script_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
         let mut language_script: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
         let mut language_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
         let mut language: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut script_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut script: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut und = LanguageIdentifier::default();
 
         // Create a result LanguageIdentifier. We only need to store the delta
         // between the search LanguageIdentifier and the result LanguageIdentifier.
@@ -130,29 +133,44 @@ impl From<&cldr_json::Resource> for LikelySubtagsV1 {
             };
 
         for entry in other.supplemental.likely_subtags.iter() {
-            if entry.0.script.is_some() && entry.0.region.is_some() {
-                language_script_region.push((entry.0.clone(), extract_result(entry)));
+            if !entry.0.language.is_empty() {
+                if entry.0.script.is_some() {
+                    language_script.push((entry.0.clone(), extract_result(entry)));
+                } else if entry.0.region.is_some() {
+                    language_region.push((entry.0.clone(), extract_result(entry)));
+                } else {
+                    language.push((entry.0.clone(), extract_result(entry)));
+                }
             } else if entry.0.script.is_some() {
-                language_script.push((entry.0.clone(), extract_result(entry)));
+                if entry.0.region.is_some() {
+                    script_region.push((entry.0.clone(), extract_result(entry)));
+                } else {
+                    script.push((entry.0.clone(), extract_result(entry)));
+                }
             } else if entry.0.region.is_some() {
-                language_region.push((entry.0.clone(), extract_result(entry)));
+                region.push((entry.0.clone(), extract_result(entry)));
             } else {
-                language.push((entry.0.clone(), extract_result(entry)));
+                und = entry.1.clone();
             }
         }
 
         // We sort here to ensure that they are sorted properly by the subtags
         // we will use to search the data. This is not necessary the order in
         // the underlying CLDR data.
-        language_script_region.sort_unstable();
         language_script.sort_unstable_by_key(|k| (k.0.language, k.0.script));
         language_region.sort_unstable_by_key(|k| (k.0.language, k.0.region));
         language.sort_unstable_by_key(|k| k.0.language);
+        script_region.sort_unstable_by_key(|k| (k.0.script, k.0.region));
+        script.sort_unstable_by_key(|k| k.0.script);
+        region.sort_unstable_by_key(|k| k.0.script);
         Self {
-            language_script_region,
             language_script,
             language_region,
             language,
+            script_region,
+            script,
+            region,
+            und,
         }
     }
 }
