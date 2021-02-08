@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612807486688,
+  "lastUpdate": 1612813846979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3239,6 +3239,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34128983,
             "range": "± 1426179",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "01d85cc1bd793aecbd189a1826d22ed3ddaba771",
+          "message": "Fix deploying memory benchmarks to GitHub pages (#472)",
+          "timestamp": "2021-02-08T13:44:52-06:00",
+          "tree_id": "2c56364a53a4a7ae440c17ab874dea143b804d24",
+          "url": "https://github.com/unicode-org/icu4x/commit/01d85cc1bd793aecbd189a1826d22ed3ddaba771"
+        },
+        "date": 1612813845872,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33433096,
+            "range": "± 757062",
             "unit": "ns/iter"
           }
         ]
