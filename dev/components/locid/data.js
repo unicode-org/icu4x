@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612813866945,
+  "lastUpdate": 1612826715194,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3305,6 +3305,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5760,
             "range": "± 582",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad895a860fc83a7617a0ab604d19ac36d1380915",
+          "message": "Change DateTimeFormat constructor to take Locale instead of LangID (#475)",
+          "timestamp": "2021-02-08T17:19:38-06:00",
+          "tree_id": "76c5cf0b9b2525cd88649614be13f54c1b8c849c",
+          "url": "https://github.com/unicode-org/icu4x/commit/ad895a860fc83a7617a0ab604d19ac36d1380915"
+        },
+        "date": 1612826708421,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3566,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4996,
+            "range": "± 157",
             "unit": "ns/iter"
           }
         ]
