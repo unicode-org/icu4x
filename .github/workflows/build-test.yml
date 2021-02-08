@@ -259,6 +259,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    # Only run the memory benchmark if the main build succeeded. The memory benchmark does not
+    # rely on any of the build artifacts.
+    needs: [build]
+
     steps:
       - uses: actions/checkout@v2
 
@@ -292,7 +296,7 @@ jobs:
           fail-on-alert: true
           # Requires one-time-only creation of this branch on remote repo. This will
           # store the generated information.
-          gh-pages-branch: unmerged-pr-memory-data
+          gh-pages-branch: unmerged-pr-bench-data
 
           # Do not store historical benchmark info of unfinished PRs. Commits seem to get
           # made anyways, so make sure that the branch in `gh-pages-branch` is
@@ -353,7 +357,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [build, lint, benchmark]
+    needs: [build, lint, benchmark, memory]
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
@@ -370,6 +374,9 @@ jobs:
     - name: Create (ensure existence of) folder for benchmark data to copy
       run: mkdir -p copy-to-ext-repo/dev
 
+    - name: Create (ensure existence of) folder for memory benchmark data to copy
+      run: mkdir -p copy-to-ext-repo/benchmarks/memory
+
     # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
 
     - name: Download previous content destined for GH pages
@@ -377,6 +384,13 @@ jobs:
       with:
         path: ./copy-to-ext-repo/dev
         name: benchmark-perf
+
+    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
+      with:
+        path: ./copy-to-ext-repo/benchmarks/memory
+        name: benchmark-memory
 
     # Doc-GH-Pages job > Generate `cargo doc` step
 
