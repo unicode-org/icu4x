@@ -19,7 +19,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let lid = langid!("en");
+//! let locale = langid!("en").into();
 //!
 //! // See the next code example for a more ergonomic example with .into().
 //! let options = DateTimeFormatOptions::Style(style::Bag {
@@ -28,7 +28,7 @@
 //!     ..Default::default()
 //! });
 //!
-//! let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+//! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //!
@@ -48,14 +48,14 @@
 //! # use icu_locid_macros::langid;
 //! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
 //! # let provider = icu_testdata::get_provider();
-//! # let lid = langid!("en");
+//! # let locale = langid!("en").into();
 //! let options = style::Bag {
 //!     date: Some(style::Date::Medium),
 //!     time: Some(style::Time::Short),
 //!     ..Default::default()
 //! }.into();
 //!
-//! let dtf = DateTimeFormat::try_new(lid, &provider, &options);
+//! let dtf = DateTimeFormat::try_new(locale, &provider, &options);
 //! # } // feature = "provider_serde"
 //! ```
 //!
@@ -85,7 +85,7 @@ use date::DateTimeType;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
-use icu_locid::LanguageIdentifier;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 #[doc(inline)]
 pub use options::DateTimeFormatOptions;
@@ -93,7 +93,7 @@ use pattern::Pattern;
 use std::borrow::Cow;
 
 /// `DateTimeFormat` is the main structure of the `icu_datetime` component.
-/// When constructed, it uses data from the `DataProvider`, selected `LanguageIdentifier` and provided options to
+/// When constructed, it uses data from the `DataProvider`, selected `Locale` and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
@@ -107,7 +107,7 @@ use std::borrow::Cow;
 /// use icu_datetime::date::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let lid = langid!("en");
+/// let locale = langid!("en").into();
 ///
 /// let provider = InvariantDataProvider;
 ///
@@ -116,7 +116,7 @@ use std::borrow::Cow;
 ///     time: Some(style::Time::Short),
 ///     ..Default::default()
 /// };
-/// let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
+/// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
@@ -129,13 +129,13 @@ use std::borrow::Cow;
 /// This model replicates that of `ICU` and `ECMA402` and in the future will get even more pronounce when we introduce
 /// asynchronous `DataProvider` and corresponding asynchronous constructor.
 pub struct DateTimeFormat<'d> {
-    _langid: LanguageIdentifier,
+    _locale: Locale,
     pattern: Pattern,
     data: Cow<'d, provider::gregory::DatesV1>,
 }
 
 impl<'d> DateTimeFormat<'d> {
-    /// `DateTimeFormat` constructor which takes a selected `LanguageIdentifier`, reference to a `DataProvider` and
+    /// `DateTimeFormat` constructor which takes a selected `Locale`, reference to a `DataProvider` and
     /// a list of options and collects all data necessary to format date and time values into the given locale.
     ///
     /// # Examples
@@ -146,18 +146,18 @@ impl<'d> DateTimeFormat<'d> {
     /// use icu_datetime::date::MockDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let lid = langid!("en");
+    /// let locale = langid!("en").into();
     ///
     /// let provider = InvariantDataProvider;
     ///
     /// let options = DateTimeFormatOptions::default();
     ///
-    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options);
+    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options);
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
     pub fn try_new<D: DataProvider<'d, provider::gregory::DatesV1> + ?Sized>(
-        langid: LanguageIdentifier,
+        locale: Locale,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
@@ -167,7 +167,7 @@ impl<'d> DateTimeFormat<'d> {
                     key: provider::key::GREGORY_V1,
                     options: ResourceOptions {
                         variant: None,
-                        langid: Some(langid.clone()),
+                        langid: Some(locale.clone().into()),
                     },
                 },
             })?
@@ -176,7 +176,7 @@ impl<'d> DateTimeFormat<'d> {
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 
         Ok(Self {
-            _langid: langid,
+            _locale: locale,
             pattern,
             data,
         })
@@ -192,10 +192,10 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
-    /// # let lid = langid!("en");
+    /// # let locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
@@ -230,10 +230,10 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
-    /// # let lid = langid!("en");
+    /// # let locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
+    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
@@ -262,10 +262,10 @@ impl<'d> DateTimeFormat<'d> {
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::date::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
-    /// # let lid = langid!("en");
+    /// # let locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
-    /// let dtf = DateTimeFormat::try_new(lid, &provider, &options.into())
+    /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
     /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
