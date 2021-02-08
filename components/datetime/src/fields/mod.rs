@@ -20,6 +20,21 @@ pub struct Field {
     pub length: FieldLength,
 }
 
+impl Field {
+    pub fn get_length_type(&self) -> TextOrNumeric {
+        match self.symbol {
+            FieldSymbol::Year(year) => year.get_length_type(&self.length),
+            FieldSymbol::Month(month) => month.get_length_type(&self.length),
+            FieldSymbol::Day(day) => day.get_length_type(&self.length),
+            FieldSymbol::Weekday(weekday) => weekday.get_length_type(&self.length),
+            FieldSymbol::DayPeriod(day_period) => day_period.get_length_type(&self.length),
+            FieldSymbol::Hour(hour) => hour.get_length_type(&self.length),
+            FieldSymbol::Minute => TextOrNumeric::Numeric,
+            FieldSymbol::Second(second) => second.get_length_type(&self.length),
+        }
+    }
+}
+
 impl From<(FieldSymbol, FieldLength)> for Field {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {
         Self {

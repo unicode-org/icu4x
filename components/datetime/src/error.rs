@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use crate::pattern;
+use crate::skeleton;
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
@@ -17,6 +18,8 @@ pub enum DateTimeFormatError {
     /// Missing field in date time input
     /// TODO: How can we return which field was missing?
     MissingInputField,
+    /// An error from skeleton matching,
+    Skeleton(skeleton::Error),
 }
 
 impl From<DataError> for DateTimeFormatError {

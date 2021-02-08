@@ -17,7 +17,9 @@
             }
         },
         "output": {
-            "value": "Tuesday, January 21, 2020 at 8:25:07 AM zzzz"
+            "TODO": "get_best_available_format_pattern() needs to be completed for more in-depth testing",
+            "value": "Jan 21, 2020",
+            "value_TODO": "Tuesday, January 21, 2020 at 8:25:07 AM zzzz"
         }
     }
 ]

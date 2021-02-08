@@ -5,15 +5,20 @@
 use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
-use crate::options::{style, DateTimeFormatOptions};
+use crate::options::{components, style, DateTimeFormatOptions};
 use crate::pattern::Pattern;
 use crate::provider;
+use crate::skeleton;
 use std::borrow::Cow;
 
 type Result<T> = std::result::Result<T, DateTimeFormatError>;
 
 pub trait DateTimeDates {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>>;
+    fn get_pattern_for_components_bag<'a>(
+        &'a self,
+        style: &components::Bag,
+    ) -> Result<Option<&'a Pattern>>;
     fn get_pattern_for_style_bag(&self, style: &style::Bag) -> Result<Option<Pattern>>;
     fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Pattern>;
     fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Pattern>;
@@ -48,8 +53,31 @@ impl DateTimeDates for provider::gregory::DatesV1 {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
         match options {
             DateTimeFormatOptions::Style(bag) => self.get_pattern_for_style_bag(bag),
-            DateTimeFormatOptions::Components(_) => unimplemented!(),
+            // TODO - This pattern could be passed by reference, but lifetimes need to be added
+            // further up the chain to do that.
+            DateTimeFormatOptions::Components(bag) => self
+                .get_pattern_for_components_bag(bag)
+                .map(|maybe_pattern| maybe_pattern.cloned()),
         }
+    }
+
+    fn get_pattern_for_components_bag<'a>(
+        &'a self,
+        components: &components::Bag,
+    ) -> Result<Option<&'a Pattern>> {
+        // Not all skeletons are currently supported.
+        let available_format_patterns = skeleton::get_available_format_patterns(&self);
+        let requested_fields = components.to_vec_fields();
+        Ok(
+            match skeleton::get_best_available_format_pattern(
+                available_format_patterns,
+                &requested_fields,
+            ) {
+                skeleton::BestSkeleton::AllFieldsMatch(skeleton)
+                | skeleton::BestSkeleton::MissingFields(skeleton) => Some(skeleton.pattern),
+                skeleton::BestSkeleton::NoMatch => None,
+            },
+        )
     }
 
     fn get_pattern_for_style_bag(&self, style: &style::Bag) -> Result<Option<Pattern>> {

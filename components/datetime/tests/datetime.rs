@@ -106,13 +106,12 @@ fn test_dayperiod_patterns() {
 
 #[test]
 fn test_style_fixtures() {
+    // components/datetime/tests/fixtures/tests/styles.json
     test_fixture("styles");
 }
 
-// Expected panic: 'not implemented', components/datetime/src/provider.rs:49:53
-// https://github.com/unicode-org/icu4x/issues/272
 #[test]
-#[should_panic]
 fn test_components_fixtures() {
+    // components/datetime/tests/fixtures/tests/components.json
     test_fixture("components");
 }
