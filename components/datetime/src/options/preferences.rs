@@ -31,7 +31,7 @@ use crate::fields;
 ///     hour_cycle: Some(preferences::HourCycle::H23)
 /// };
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Bag {
     pub hour_cycle: Option<HourCycle>,
 }
