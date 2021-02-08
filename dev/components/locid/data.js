@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612316794570,
+  "lastUpdate": 1612807524805,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3233,6 +3233,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4403,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "85c3a5a933a3a5b1dd2499f916511b80164a8fc1",
+          "message": "Stub out a components test, and use serde serialization for DateTime options (#461)\n\n* Stub out tests and serialization for components::Bag\r\n\r\n* Add serialization for the style::Bag\r\n\r\n* Fix preference bag attribute to use the conditional feature\r\n\r\n* Fix the attributes to properly treat serde as optional\r\n\r\n* Address feedback on freely deriving certain traits",
+          "timestamp": "2021-02-08T11:59:06-06:00",
+          "tree_id": "aa4dfdf479054ceece40e1ef09ddb1b5137c46a7",
+          "url": "https://github.com/unicode-org/icu4x/commit/85c3a5a933a3a5b1dd2499f916511b80164a8fc1"
+        },
+        "date": 1612807520544,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3590,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5317,
+            "range": "± 130",
             "unit": "ns/iter"
           }
         ]
