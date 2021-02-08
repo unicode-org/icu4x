@@ -63,20 +63,15 @@ impl LocaleCanonicalizer<'_> {
     /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize(&self, locale: &mut Locale) -> CanonicalizationResult {
-        let maybe_update_locale = |entry: &LanguageIdentifier,
-                                   locale: &mut Locale|
-         -> CanonicalizationResult {
-            if locale.language.is_empty() || locale.script.is_none() || locale.region.is_none() {
+        let update_locale =
+            |entry: &LanguageIdentifier, locale: &mut Locale| -> CanonicalizationResult {
                 if locale.language.is_empty() {
                     locale.language = entry.language;
                 }
                 locale.script = locale.script.or(entry.script);
                 locale.region = locale.region.or(entry.region);
                 CanonicalizationResult::Modified
-            } else {
-                CanonicalizationResult::Unmodified
-            }
-        };
+            };
 
         if !locale.language.is_empty() && locale.script.is_some() && locale.region.is_some() {
             return CanonicalizationResult::Unmodified;
@@ -91,7 +86,7 @@ impl LocaleCanonicalizer<'_> {
                     .binary_search_by_key(&key, |(l, _)| (&l.language, &l.script))
                 {
                     let entry = &self.likely_subtags.language_script[index].1;
-                    return maybe_update_locale(entry, locale);
+                    return update_locale(entry, locale);
                 }
             }
 
@@ -103,7 +98,7 @@ impl LocaleCanonicalizer<'_> {
                     .binary_search_by_key(&key, |(l, _)| (&l.language, &l.region))
                 {
                     let entry = &self.likely_subtags.language_region[index].1;
-                    return maybe_update_locale(entry, locale);
+                    return update_locale(entry, locale);
                 }
             }
 
@@ -114,7 +109,7 @@ impl LocaleCanonicalizer<'_> {
                 .binary_search_by_key(key, |(l, _)| l.language)
             {
                 let entry = &self.likely_subtags.language[index].1;
-                return maybe_update_locale(entry, locale);
+                return update_locale(entry, locale);
             }
         } else if locale.script.is_some() {
             if locale.region.is_some() {
@@ -125,7 +120,7 @@ impl LocaleCanonicalizer<'_> {
                     .binary_search_by_key(&key, |(l, _)| (&l.script, &l.region))
                 {
                     let entry = &self.likely_subtags.script_region[index].1;
-                    return maybe_update_locale(entry, locale);
+                    return update_locale(entry, locale);
                 }
             }
 
@@ -136,7 +131,7 @@ impl LocaleCanonicalizer<'_> {
                 .binary_search_by_key(&key, |(l, _)| &l.script)
             {
                 let entry = &self.likely_subtags.script[index].1;
-                return maybe_update_locale(entry, locale);
+                return update_locale(entry, locale);
             }
         } else if locale.region.is_some() {
             let key = &locale.region;
@@ -146,10 +141,10 @@ impl LocaleCanonicalizer<'_> {
                 .binary_search_by_key(&key, |(l, _)| &l.region)
             {
                 let entry = &self.likely_subtags.region[index].1;
-                return maybe_update_locale(entry, locale);
+                return update_locale(entry, locale);
             }
         } else {
-            return maybe_update_locale(&self.likely_subtags.und, locale);
+            return update_locale(&self.likely_subtags.und, locale);
         }
         CanonicalizationResult::Unmodified
     }
