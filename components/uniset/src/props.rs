@@ -30,373 +30,425 @@ fn get_prop<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     ppucd_property.try_into()
 }
 
-/// Upper
-pub fn upper<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_ascii_hex_digit_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::UPPER_V1)
+    get_prop(provider, key::ASCII_HEX_DIGIT_V1)
 }
 
-/// Bidi_M
-pub fn bidi_m<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_alnum_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::BIDI_M_V1)
+    get_prop(provider, key::ALNUM_V1)
 }
 
-/// PCM
-pub fn pcm<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_alphabetic_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::PCM_V1)
+    get_prop(provider, key::ALPHABETIC_V1)
 }
 
-/// Emoji
-pub fn emoji<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_control_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::EMOJI_V1)
+    get_prop(provider, key::BIDI_CONTROL_V1)
 }
 
-/// lower
-pub fn lower<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_mirrored_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LOWER_V1)
+    get_prop(provider, key::BIDI_MIRRORED_V1)
 }
 
-/// EMod
-pub fn emod<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_blank_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::EMOD_V1)
+    get_prop(provider, key::BLANK_V1)
 }
 
-/// XIDS
-pub fn xids<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_cased_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::XIDS_V1)
+    get_prop(provider, key::CASED_V1)
 }
 
-/// CWU
-pub fn cwu<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_case_ignorable_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CWU_V1)
+    get_prop(provider, key::CASE_IGNORABLE_V1)
 }
 
-/// Pat_Syn
-pub fn pat_syn<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_full_composition_exclusion_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::PAT_SYN_V1)
+    get_prop(provider, key::FULL_COMPOSITION_EXCLUSION_V1)
 }
 
-/// Gr_Base
-pub fn gr_base<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_changes_when_casefolded_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::GR_BASE_V1)
+    get_prop(provider, key::CHANGES_WHEN_CASEFOLDED_V1)
 }
 
-/// CWCM
-pub fn cwcm<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_changes_when_casemapped_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CWCM_V1)
+    get_prop(provider, key::CHANGES_WHEN_CASEMAPPED_V1)
 }
 
-/// UIdeo
-pub fn uideo<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_changes_when_nfkc_casefolded_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::UIDEO_V1)
+    get_prop(provider, key::CHANGES_WHEN_NFKC_CASEFOLDED_V1)
 }
 
-/// cwt
-pub fn cwt<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_changes_when_lowercased_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CWT_V1)
+    get_prop(provider, key::CHANGES_WHEN_LOWERCASED_V1)
 }
 
-/// alpha
-pub fn alpha<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_changes_when_titlecased_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::ALPHA_V1)
+    get_prop(provider, key::CHANGES_WHEN_TITLECASED_V1)
 }
 
-/// Term
-pub fn term<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_changes_when_uppercased_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TERM_V1)
+    get_prop(provider, key::CHANGES_WHEN_UPPERCASED_V1)
 }
 
-/// VS
-pub fn vs<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::VS_V1)
-}
-
-/// STerm
-pub fn sterm<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::STERM_V1)
-}
-
-/// bidi_c
-pub fn bidi_c<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::BIDI_C_V1)
-}
-
-/// Hex
-pub fn hex<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::HEX_V1)
-}
-
-/// AHex
-pub fn ahex<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::AHEX_V1)
-}
-
-/// math
-pub fn math<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::MATH_V1)
-}
-
-/// IDST
-pub fn idst<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::IDST_V1)
-}
-
-/// Pat_WS
-pub fn pat_ws<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::PAT_WS_V1)
-}
-
-/// IDSB
-pub fn idsb<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::IDSB_V1)
-}
-
-/// Gr_Ext
-pub fn gr_ext<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::GR_EXT_V1)
-}
-
-/// Join_C
-pub fn join_c<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::JOIN_C_V1)
-}
-
-/// EComp
-pub fn ecomp<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::ECOMP_V1)
-}
-
-/// Dep
-pub fn dep<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::DEP_V1)
-}
-
-/// ExtPict
-pub fn ext_pict<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::EXT_PICT_V1)
-}
-
-/// IDS
-pub fn ids<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::IDS_V1)
-}
-
-/// CWL
-pub fn cwl<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CWL_V1)
-}
-
-/// Ext
-pub fn ext<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::EXT_V1)
-}
-
-/// WSpace
-pub fn wspace<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::WSPACE_V1)
-}
-
-/// Gr_Link
-pub fn gr_link<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::GR_LINK_V1)
-}
-
-/// EPres
-pub fn epres<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::EPRES_V1)
-}
-
-/// EBase
-pub fn ebase<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::EBASE_V1)
-}
-
-/// LOE
-pub fn loe<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D,
-) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LOE_V1)
-}
-
-/// Dash
-pub fn dash<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_dash_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::DASH_V1)
 }
 
-/// Comp_Ex
-pub fn comp_ex<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_deprecated_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::COMP_EX_V1)
+    get_prop(provider, key::DEPRECATED_V1)
 }
 
-/// CWCF
-pub fn cwcf<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_default_ignorable_code_point_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CWCF_V1)
+    get_prop(provider, key::DEFAULT_IGNORABLE_CODE_POINT_V1)
 }
 
-/// QMark
-pub fn qmark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_diacritic_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::QMARK_V1)
+    get_prop(provider, key::DIACRITIC_V1)
 }
 
-/// Radical
-pub fn radical<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_emoji_modifier_base_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::RADICAL_V1)
+    get_prop(provider, key::EMOJI_MODIFIER_BASE_V1)
 }
 
-/// RI
-pub fn ri<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_emoji_component_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::RI_V1)
+    get_prop(provider, key::EMOJI_COMPONENT_V1)
 }
 
-/// IDC
-pub fn idc<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_emoji_modifier_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::IDC_V1)
+    get_prop(provider, key::EMOJI_MODIFIER_V1)
 }
 
-/// DI
-pub fn di<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_emoji_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::DI_V1)
+    get_prop(provider, key::EMOJI_V1)
 }
 
-/// SD
-pub fn sd<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_emoji_presentation_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::SD_V1)
+    get_prop(provider, key::EMOJI_PRESENTATION_V1)
 }
 
-/// Dia
-pub fn dia<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_extender_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::DIA_V1)
+    get_prop(provider, key::EXTENDER_V1)
 }
 
-/// Hyphen
-pub fn hyphen<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_extended_pictographic_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::EXTENDED_PICTOGRAPHIC_V1)
+}
+
+pub fn get_graph_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::GRAPH_V1)
+}
+
+pub fn get_grapheme_base_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::GRAPHEME_BASE_V1)
+}
+
+pub fn get_grapheme_extend_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::GRAPHEME_EXTEND_V1)
+}
+
+pub fn get_grapheme_link_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::GRAPHEME_LINK_V1)
+}
+
+pub fn get_hex_digit_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::HEX_DIGIT_V1)
+}
+
+pub fn get_hyphen_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HYPHEN_V1)
 }
 
-/// Ideo
-pub fn ideo<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_id_continue_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::IDEO_V1)
+    get_prop(provider, key::ID_CONTINUE_V1)
 }
 
-/// CWKCF
-pub fn cwkcf<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_ideographic_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CWKCF_V1)
+    get_prop(provider, key::IDEOGRAPHIC_V1)
 }
 
-/// XIDC
-pub fn xidc<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_id_start_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::XIDC_V1)
+    get_prop(provider, key::ID_START_V1)
 }
 
-/// CI
-pub fn ci<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_ids_binary_operator_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CI_V1)
+    get_prop(provider, key::IDS_BINARY_OPERATOR_V1)
 }
 
-/// Cased
-pub fn cased<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_ids_trinary_operator_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CASED_V1)
+    get_prop(provider, key::IDS_TRINARY_OPERATOR_V1)
+}
+
+pub fn get_join_control_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::JOIN_CONTROL_V1)
+}
+
+pub fn get_logical_order_exception_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::LOGICAL_ORDER_EXCEPTION_V1)
+}
+
+pub fn get_lowercase_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::LOWERCASE_V1)
+}
+
+pub fn get_math_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::MATH_V1)
+}
+
+pub fn get_noncharacter_code_point_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::NONCHARACTER_CODE_POINT_V1)
+}
+
+pub fn get_nfc_inert_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::NFC_INERT_V1)
+}
+
+pub fn get_nfd_inert_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::NFD_INERT_V1)
+}
+
+pub fn get_nfkc_inert_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::NFKC_INERT_V1)
+}
+
+pub fn get_nfkd_inert_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::NFKD_INERT_V1)
+}
+
+pub fn get_pattern_syntax_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::PATTERN_SYNTAX_V1)
+}
+
+pub fn get_pattern_white_space_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::PATTERN_WHITE_SPACE_V1)
+}
+
+pub fn get_prepended_concatenation_mark_property<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::PREPENDED_CONCATENATION_MARK_V1)
+}
+
+pub fn get_print_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::PRINT_V1)
+}
+
+pub fn get_quotation_mark_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::QUOTATION_MARK_V1)
+}
+
+pub fn get_radical_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::RADICAL_V1)
+}
+
+pub fn get_regional_indicator_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::REGIONAL_INDICATOR_V1)
+}
+
+pub fn get_soft_dotted_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::SOFT_DOTTED_V1)
+}
+
+pub fn get_segment_starter_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::SEGMENT_STARTER_V1)
+}
+
+pub fn get_case_sensitive_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::CASE_SENSITIVE_V1)
+}
+
+pub fn get_sentence_terminal_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::SENTENCE_TERMINAL_V1)
+}
+
+pub fn get_terminal_punctuation_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::TERMINAL_PUNCTUATION_V1)
+}
+
+pub fn get_unified_ideograph_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::UNIFIED_IDEOGRAPH_V1)
+}
+
+pub fn get_uppercase_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::UPPERCASE_V1)
+}
+
+pub fn get_variation_selector_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::VARIATION_SELECTOR_V1)
+}
+
+pub fn get_white_space_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::WHITE_SPACE_V1)
+}
+
+pub fn get_xdigit_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::XDIGIT_V1)
+}
+
+pub fn get_xid_continue_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::XID_CONTINUE_V1)
+}
+
+pub fn get_xid_start_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    get_prop(provider, key::XID_START_V1)
 }
