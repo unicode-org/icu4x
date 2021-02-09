@@ -168,10 +168,11 @@ where
         }
         FieldSymbol::Day(..) => format_number(
             w,
-                date_time
-                    .date_time()
-                    .day_of_month()
-                    .ok_or(Error::MissingInputField)?.0 as isize,
+            date_time
+                .date_time()
+                .day_of_month()
+                .ok_or(Error::MissingInputField)?
+                .0 as isize,
             &field.length,
         )?,
         FieldSymbol::Hour(hour) => {
