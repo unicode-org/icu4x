@@ -126,9 +126,7 @@ fn update_enum_val_aliases<'s>(
 /// minus sign, as described in the PPUCD documentation, ex: "-Gr_Base")
 /// are not included and any existing include values for the binary property
 /// (ex: "Gr_Base") are accordingly also removed from the map.
-fn apply_exclude_vals_for_binary_props<'s>(
-    prop_vals: &mut HashMap<&'s str, &'s str>,
-) {
+fn apply_exclude_vals_for_binary_props<'s>(prop_vals: &mut HashMap<&'s str, &'s str>) {
     let mut prop_names: HashSet<&'s str> = prop_vals.keys().copied().collect();
     // If we see "-Gr_Base", then remove both "Gr_Base" and "-Gr_Base".
     for prop_name in prop_vals.keys() {
@@ -137,9 +135,7 @@ fn apply_exclude_vals_for_binary_props<'s>(
             prop_names.remove(prop_name);
         }
     }
-    prop_vals.retain(|prop_name, _| {
-        prop_names.contains(prop_name)
-    });
+    prop_vals.retain(|prop_name, _| prop_names.contains(prop_name));
 }
 
 fn is_defaults_line(line: &str) -> bool {
