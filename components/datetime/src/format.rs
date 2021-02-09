@@ -59,7 +59,7 @@ where
             .map_err(|_| std::fmt::Error)
     }
 
-    // TODO: Implement write_len
+    // TODO(#489): Implement write_len
 }
 
 impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
@@ -73,7 +73,7 @@ where
 }
 
 // Temporary formatting number with length.
-fn format_number<W>(result: &mut W, num: isize, length: &FieldLength) -> Result<(), std::fmt::Error>
+fn format_number<W>(result: &mut W, num: isize, length: FieldLength) -> Result<(), std::fmt::Error>
 where
     W: fmt::Write + ?Sized,
 {
@@ -88,7 +88,7 @@ where
                 result.write_str(&buffer[len - 2..])
             }
         }
-        length => write!(result, "{:0>width$}", num, width = *length as usize),
+        length => write!(result, "{:0>width$}", num, width = length as usize),
     }
 }
 
@@ -132,7 +132,7 @@ where
                 .year()
                 .ok_or(Error::MissingInputField)?
                 .number as isize,
-            &field.length,
+            field.length,
         )?,
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
@@ -142,7 +142,7 @@ where
                     .month()
                     .ok_or(Error::MissingInputField)?
                     .number as isize,
-                &field.length,
+                field.length,
             )?,
             length => {
                 let symbol = data.get_symbol_for_month(
@@ -173,7 +173,7 @@ where
                 .day_of_month()
                 .ok_or(Error::MissingInputField)?
                 .0 as isize,
-            &field.length,
+            field.length,
         )?,
         FieldSymbol::Hour(hour) => {
             let h = usize::from(
@@ -201,7 +201,7 @@ where
                     }
                 }
             };
-            format_number(w, value, &field.length)?
+            format_number(w, value, field.length)?
         }
         FieldSymbol::Minute => format_number(
             w,
@@ -211,7 +211,7 @@ where
                     .minute()
                     .ok_or(Error::MissingInputField)?,
             ) as isize,
-            &field.length,
+            field.length,
         )?,
         FieldSymbol::Second(..) => format_number(
             w,
@@ -221,7 +221,7 @@ where
                     .second()
                     .ok_or(Error::MissingInputField)?,
             ) as isize,
-            &field.length,
+            field.length,
         )?,
         FieldSymbol::DayPeriod(period) => {
             let symbol = data.get_symbol_for_day_period(
@@ -295,7 +295,7 @@ mod tests {
         for (length, expected) in samples {
             for (value, expected) in values.iter().zip(expected) {
                 let mut s = String::new();
-                format_number(&mut s, *value, length).unwrap();
+                format_number(&mut s, *value, *length).unwrap();
                 assert_eq!(s, *expected);
             }
         }

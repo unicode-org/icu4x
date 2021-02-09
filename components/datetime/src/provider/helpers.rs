@@ -39,7 +39,7 @@ pub trait DateTimeDates {
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::Hour,
+        hour: date::IsoHour,
         is_top_of_hour: bool,
     ) -> &Cow<str>;
 }
@@ -181,7 +181,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::Hour,
+        hour: date::IsoHour,
         is_top_of_hour: bool,
     ) -> &Cow<str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};

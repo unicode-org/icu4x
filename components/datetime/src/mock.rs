@@ -11,7 +11,7 @@ use tinystr::tinystr8;
 /// Temporary implementation of [`DateTimeInput`],
 /// which is used in tests, benchmarks and examples of this component.
 ///
-/// Month and day are zero-based.
+/// All fields in MockDateTime are zero-based. For example, January is represented as 0, not 1.
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 /// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
@@ -32,12 +32,23 @@ use tinystr::tinystr8;
 /// [`DateTimeFormat`]: super::DateTimeFormat
 #[derive(Debug, Default)]
 pub struct MockDateTime {
+    /// ISO-8601 year (proleptic Gregorian).
     pub year: i32,
+
+    /// 0-based month index.
     pub month: u32,
+
+    /// 0-based day index.
     pub day: u32,
-    pub hour: Hour,
-    pub minute: Minute,
-    pub second: Second,
+
+    /// 0-based hour.
+    pub hour: IsoHour,
+
+    /// 0-based minute.
+    pub minute: IsoMinute,
+
+    /// 0-based second.
+    pub second: IsoSecond,
 }
 
 impl MockDateTime {
@@ -46,9 +57,9 @@ impl MockDateTime {
         year: i32,
         month: u32,
         day: u32,
-        hour: Hour,
-        minute: Minute,
-        second: Second,
+        hour: IsoHour,
+        minute: IsoMinute,
+        second: IsoSecond,
     ) -> Self {
         Self {
             year,
@@ -110,9 +121,9 @@ impl FromStr for MockDateTime {
         let year: i32 = input[0..4].parse()?;
         let month: u32 = input[5..7].parse()?;
         let day: u32 = input[8..10].parse()?;
-        let hour: Hour = input[11..13].parse()?;
-        let minute: Minute = input[14..16].parse()?;
-        let second: Second = input[17..19].parse()?;
+        let hour: IsoHour = input[11..13].parse()?;
+        let minute: IsoMinute = input[14..16].parse()?;
+        let second: IsoSecond = input[17..19].parse()?;
         Ok(Self {
             year,
             month: month - 1,
@@ -132,7 +143,7 @@ impl DateInput for MockDateTime {
     fn month(&self) -> Option<Month> {
         Some(Month {
             number: self.month + 1,
-            // TODO: Implement month codes
+            // TODO(#486): Implement month codes
             code: MonthCode(tinystr8!("TODO")),
         })
     }
@@ -154,16 +165,16 @@ impl DateInput for MockDateTime {
     }
 }
 
-impl TimeInput for MockDateTime {
-    fn hour(&self) -> Option<Hour> {
+impl IsoTimeInput for MockDateTime {
+    fn hour(&self) -> Option<IsoHour> {
         Some(self.hour)
     }
 
-    fn minute(&self) -> Option<Minute> {
+    fn minute(&self) -> Option<IsoMinute> {
         Some(self.minute)
     }
 
-    fn second(&self) -> Option<Second> {
+    fn second(&self) -> Option<IsoSecond> {
         Some(self.second)
     }
 
