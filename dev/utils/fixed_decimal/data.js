@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612826709629,
+  "lastUpdate": 1612899549950,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2249,6 +2249,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 140468,
             "range": "± 5433",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "efba26f9e066c514a2f1bfce9a8020e7e0a2b653",
+          "message": "Optimize likely subtags (#469)\n\nThis breaks up the current monolithic likely subtags data into multiple tables\r\nbased upon the subtags which are used for searching by the maximize algorithm.\r\nBecause of this change, searching can be done using references to the subtags\r\nof the input Locale rather than creating a copy of it.\r\n\r\nThe result of a search always shares data with the search key. This change\r\ntakes advantage of this fact to only store the delta between the search key\r\nand the result.",
+          "timestamp": "2021-02-09T14:33:46-05:00",
+          "tree_id": "31b1a7acbb99eaaa9981f887f97fca38ff479ed9",
+          "url": "https://github.com/unicode-org/icu4x/commit/efba26f9e066c514a2f1bfce9a8020e7e0a2b653"
+        },
+        "date": 1612899548886,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 141556,
+            "range": "± 6440",
             "unit": "ns/iter"
           }
         ]
