@@ -127,8 +127,8 @@ fn update_enum_val_aliases<'s>(
 /// are not included and any existing include values for the binary property
 /// (ex: "Gr_Base") are accordingly also removed from the map.
 fn apply_exclude_vals_for_binary_props<'s>(
-    prop_vals: HashMap<&'s str, &'s str>,
-) -> HashMap<&'s str, &'s str> {
+    prop_vals: &mut HashMap<&'s str, &'s str>,
+) {
     let mut prop_names: HashSet<&'s str> = prop_vals.keys().copied().collect();
     // If we see "-Gr_Base", then remove both "Gr_Base" and "-Gr_Base".
     for prop_name in prop_vals.keys() {
@@ -137,11 +137,9 @@ fn apply_exclude_vals_for_binary_props<'s>(
             prop_names.remove(prop_name);
         }
     }
-    prop_vals
-        .clone()
-        .into_iter()
-        .filter(|(k, _)| prop_names.contains(k))
-        .collect()
+    prop_vals.retain(|prop_name, _| {
+        prop_names.contains(prop_name)
+    });
 }
 
 fn is_defaults_line(line: &str) -> bool {
@@ -247,7 +245,7 @@ fn get_code_point_prop_vals<'s>(
             prop_vals.extend(block_prop_vals);
             // Apply any exclude overrides for a binary property as indicated
             // when the binary property name is prefixed with a "-"
-            prop_vals = apply_exclude_vals_for_binary_props(prop_vals);
+            apply_exclude_vals_for_binary_props(&mut prop_vals);
         }
     }
 
@@ -257,7 +255,7 @@ fn get_code_point_prop_vals<'s>(
             prop_vals.extend(code_point_prop_vals);
             // Apply any exclude overrides for a binary property as indicated
             // when the binary property name is prefixed with a "-"
-            prop_vals = apply_exclude_vals_for_binary_props(prop_vals);
+            apply_exclude_vals_for_binary_props(&mut prop_vals);
         }
     }
 
@@ -642,17 +640,15 @@ mod gen_properties_test {
         let mut input_binary_props1: HashMap<&str, &str> = HashMap::new();
         input_binary_props1.insert("Gr_Base", "Gr_Base");
         input_binary_props1.insert("-Gr_Base", "-Gr_Base");
-        let act_binary_props1: HashMap<&str, &str> =
-            apply_exclude_vals_for_binary_props(input_binary_props1);
-        assert_eq!(exp_binary_props1, act_binary_props1);
+        apply_exclude_vals_for_binary_props(&mut input_binary_props1);
+        assert_eq!(exp_binary_props1, input_binary_props1);
 
         let mut exp_binary_props2: HashMap<&str, &str> = HashMap::new();
         exp_binary_props2.insert("Gr_Base", "Gr_Base");
         let mut input_binary_props2: HashMap<&str, &str> = HashMap::new();
         input_binary_props2.insert("Gr_Base", "Gr_Base");
-        let act_binary_props2: HashMap<&str, &str> =
-            apply_exclude_vals_for_binary_props(input_binary_props2);
-        assert_eq!(exp_binary_props2, act_binary_props2);
+        apply_exclude_vals_for_binary_props(&mut input_binary_props2);
+        assert_eq!(exp_binary_props2, input_binary_props2);
     }
 
     #[test]
