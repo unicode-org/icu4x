@@ -161,19 +161,17 @@ where
         FieldSymbol::Weekday(weekday) => {
             let dow = date_time
                 .date_time()
-                .day_of_week()
+                .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
             let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
         }
         FieldSymbol::Day(..) => format_number(
             w,
-            usize::from(
                 date_time
                     .date_time()
                     .day_of_month()
-                    .ok_or(Error::MissingInputField)?,
-            ) as isize,
+                    .ok_or(Error::MissingInputField)?.0 as isize,
             &field.length,
         )?,
         FieldSymbol::Hour(hour) => {

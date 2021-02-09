@@ -4,7 +4,7 @@
 
 //! Assorted functions to help with date calculations.
 
-use crate::date::{Era, WeekDay, Year};
+use crate::date::{Era, IsoWeekday, Year};
 use crate::pattern::{Pattern, TimeGranularity};
 
 use tinystr::tinystr8;
@@ -63,20 +63,19 @@ fn test_iso_year_to_gregorian() {
 
 /// Temporary simplified function to get the day of the week
 /// month and day are both zero-indexed.
-pub fn iso_date_to_weekday(year: i32, month: usize, day: usize) -> WeekDay {
+pub fn iso_date_to_weekday(year: i32, month: usize, day: usize) -> IsoWeekday {
     let t = &[0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
     let year = (if month < 2 { year - 1 } else { year }).rem_euclid(400) as usize;
     let result = (year + year / 4 - year / 100 + year / 400 + t[month] + day + 1) % 7;
-    WeekDay::new_unchecked(result as u8)
+    result.into()
 }
 
 #[test]
 fn test_iso_date_to_weekday() {
-    use crate::date::weekdays;
-    assert_eq!(weekdays::SAT, iso_date_to_weekday(2000, 0, 0));
-    assert_eq!(weekdays::WED, iso_date_to_weekday(2021, 1, 2));
-    assert_eq!(weekdays::SAT, iso_date_to_weekday(-400, 0, 0));
-    assert_eq!(weekdays::WED, iso_date_to_weekday(-379, 1, 2));
+    assert_eq!(IsoWeekday::SATURDAY, iso_date_to_weekday(2000, 0, 0));
+    assert_eq!(IsoWeekday::WEDNESDAY, iso_date_to_weekday(2021, 1, 2));
+    assert_eq!(IsoWeekday::SATURDAY, iso_date_to_weekday(-400, 0, 0));
+    assert_eq!(IsoWeekday::WEDNESDAY, iso_date_to_weekday(-379, 1, 2));
 }
 
 /// Returns `true` if the most granular time being displayed will align with

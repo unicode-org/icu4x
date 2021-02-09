@@ -34,7 +34,7 @@ use tinystr::tinystr8;
 pub struct MockDateTime {
     pub year: i32,
     pub month: u32,
-    pub day: DayOfMonth,
+    pub day: u32,
     pub hour: Hour,
     pub minute: Minute,
     pub second: Second,
@@ -45,7 +45,7 @@ impl MockDateTime {
     pub const fn new(
         year: i32,
         month: u32,
-        day: DayOfMonth,
+        day: u32,
         hour: Hour,
         minute: Minute,
         second: Second,
@@ -84,7 +84,7 @@ impl MockDateTime {
                 max: i32::MAX as usize,
             })?,
             month: month as u32,
-            day: day.try_into()?,
+            day: day as u32,
             hour: hour.try_into()?,
             minute: minute.try_into()?,
             second: second.try_into()?,
@@ -109,7 +109,7 @@ impl FromStr for MockDateTime {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let year: i32 = input[0..4].parse()?;
         let month: u32 = input[5..7].parse()?;
-        let day: DayOfMonth = input[8..10].parse()?;
+        let day: u32 = input[8..10].parse()?;
         let hour: Hour = input[11..13].parse()?;
         let minute: Minute = input[14..16].parse()?;
         let second: Second = input[17..19].parse()?;
@@ -138,14 +138,14 @@ impl DateInput for MockDateTime {
     }
 
     fn day_of_month(&self) -> Option<DayOfMonth> {
-        Some(self.day + 1)
+        Some(DayOfMonth(self.day + 1))
     }
 
-    fn day_of_week(&self) -> Option<WeekDay> {
+    fn iso_weekday(&self) -> Option<IsoWeekday> {
         Some(arithmetic::iso_date_to_weekday(
             self.year,
             self.month as usize,
-            usize::from(self.day),
+            self.day as usize,
         ))
     }
 

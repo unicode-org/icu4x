@@ -34,7 +34,7 @@ pub trait DateInput {
     fn year(&self) -> Option<Year>;
     fn month(&self) -> Option<Month>;
     fn day_of_month(&self) -> Option<DayOfMonth>;
-    fn day_of_week(&self) -> Option<WeekDay>;
+    fn iso_weekday(&self) -> Option<IsoWeekday>;
     fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
 }
 
@@ -96,7 +96,88 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
     }
 }
 
-/// This macro defines a struct for each type of unit to be used in a DateTime. Each
+#[derive(Clone, Debug, PartialEq)]
+pub struct Era(pub TinyStr8);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Year {
+    pub era: Era,
+    pub number: i32,
+    pub related_iso: i32,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct MonthCode(pub TinyStr8);
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Month {
+    pub number: u32,
+    pub code: MonthCode,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DayOfYearInfo {
+    pub day_of_year: u32,
+    pub days_in_year: u32,
+    pub prev_year: Year,
+    pub next_year: Year,
+}
+
+/// A weekday in a 7-day week, according to ISO-8601 (Monday = 1, Sunday = 7).
+///
+/// The discriminant values correspond to ISO-8601 weekday numbers.
+/// 
+/// # Example
+/// 
+/// ```
+/// use icu_datetime::date::IsoWeekday;
+/// 
+/// assert_eq!(1, IsoWeekday::MONDAY as usize);
+/// assert_eq!(7, IsoWeekday::SUNDAY as usize);
+/// ```
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(i8)]
+pub enum IsoWeekday {
+    MONDAY = 1,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY,
+}
+
+impl From<usize> for IsoWeekday {
+    /// Convert from an ISO-8601 weekday number to an IsoWeekday enum. 0 is automatically converted
+    /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use icu_datetime::date::IsoWeekday;
+    /// 
+    /// assert_eq!(IsoWeekday::SUNDAY, IsoWeekday::from(0));
+    /// assert_eq!(IsoWeekday::MONDAY, IsoWeekday::from(1));
+    /// assert_eq!(IsoWeekday::SUNDAY, IsoWeekday::from(7));
+    /// ```
+    fn from(input: usize) -> IsoWeekday {
+        let mut ordinal = (input % 7) as i8;
+        if ordinal == 0 {
+            ordinal = 7;
+        }
+        unsafe { std::mem::transmute(ordinal) }
+    }
+}
+
+pub struct DayOfMonth(pub u32);
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WeekOfMonth(pub u32);
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WeekOfYear(pub u32);
+
+/// This macro defines a struct for hours, minutes, and seconds. Each
 /// unit is bounded by a range. The traits implemented here will return a Result on
 /// whether or not the unit is in range from the given input.
 macro_rules! dt_unit {
@@ -186,65 +267,16 @@ macro_rules! dt_unit {
     };
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Era(pub TinyStr8);
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Year {
-    pub era: Era,
-    pub number: i32,
-    pub related_iso: i32,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct MonthCode(pub TinyStr8);
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Month {
-    pub number: u32,
-    pub code: MonthCode,
-}
-
-// TODO: There shouldn't be a bound on DayOfMonth
-dt_unit!(DayOfMonth, 32);
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct DayOfYearInfo {
-    pub day_of_year: u32,
-    pub days_in_year: u32,
-    pub prev_year: Year,
-    pub next_year: Year,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct WeekOfMonth(pub u32);
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct WeekOfYear(pub u32);
-
-dt_unit!(WeekDay, 7);
-
 dt_unit!(Hour, 24);
 
 dt_unit!(Minute, 60);
 
 dt_unit!(Second, 60);
 
+// TODO(#485): Improve FractionalSecond.
 #[derive(Clone, Debug, PartialEq)]
 pub enum FractionalSecond {
     Millisecond(u16),
     Microsecond(u32),
     Nanosecond(u32),
-}
-
-pub mod weekdays {
-    // TODO: Change this ISO numbering (Sunday = 7)
-    use super::WeekDay;
-    pub const SUN: WeekDay = WeekDay(0);
-    pub const MON: WeekDay = WeekDay(1);
-    pub const TUE: WeekDay = WeekDay(2);
-    pub const WED: WeekDay = WeekDay(3);
-    pub const THU: WeekDay = WeekDay(4);
-    pub const FRI: WeekDay = WeekDay(5);
-    pub const SAT: WeekDay = WeekDay(6);
 }

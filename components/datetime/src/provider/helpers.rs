@@ -33,7 +33,7 @@ pub trait DateTimeDates {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::WeekDay,
+        day: date::IsoWeekday,
     ) -> &Cow<str>;
     fn get_symbol_for_day_period(
         &self,
@@ -109,7 +109,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::WeekDay,
+        day: date::IsoWeekday,
     ) -> &Cow<str> {
         let widths = match weekday {
             fields::Weekday::Format => &self.symbols.weekdays.format,
@@ -125,7 +125,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[usize::from(day)];
+                        return &symbols.0[(day as usize) % 7];
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -141,7 +141,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
             fields::FieldLength::Six => widths.short.as_ref().unwrap_or(&widths.abbreviated),
             _ => &widths.abbreviated,
         };
-        &symbols.0[usize::from(day)]
+        &symbols.0[(day as usize) % 7]
     }
 
     fn get_symbol_for_month(
