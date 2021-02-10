@@ -611,9 +611,11 @@ When structs with public string fields contain strings, use the following type c
 - `&'s str` if the struct does not need to own the string.
 - `Cow<'s, str>`  if the string could be borrowed or owned.
 - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
-- [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits at least 99% of cases.
+- [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits a large majority of cases.
 
-In general, do not use `String` in structs; use `Cow<'s, str>` instead.
+For `SmallString`, when determining what constitutes a "large majority of cases", consider 99% as a rule of thumb. If in doubt, start with `Cow<'s, str>`; `SmallString` is an additional optimization when the strings are almost always short.  The stack sizes of 8, 12, 16, and 20 for `SmallString` were chosen because these are the sizes that cause SmallString to have a round number of 32-bit-aligned stack bytes.
+
+In general, do not use `String` in structs; use `Cow<'s, str>` instead, because it allows for zero-cost construction. Only use `String` if the struct always owns its data, such as when the string is always dynamically generated at runtime.
 
 ### Pre-validation of options :: suggested
 
