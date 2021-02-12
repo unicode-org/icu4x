@@ -150,6 +150,8 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         length: fields::FieldLength,
         num: usize,
     ) -> &Cow<str> {
+        // TODO(#493): Support symbols for non-Gregorian calendars.
+        debug_assert!(num < 12);
         let widths = match month {
             fields::Month::Format => &self.symbols.months.format,
             fields::Month::StandAlone => {

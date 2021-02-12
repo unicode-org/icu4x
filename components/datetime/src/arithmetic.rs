@@ -63,7 +63,10 @@ fn test_iso_year_to_gregorian() {
 
 /// Temporary simplified function to get the day of the week
 /// month and day are both zero-indexed.
+///
+/// The caller should guarantee that `month` is between 0 and 11.
 pub fn iso_date_to_weekday(year: i32, month: usize, day: usize) -> IsoWeekday {
+    debug_assert!(month < 12);
     let t = &[0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
     let year = (if month < 2 { year - 1 } else { year }).rem_euclid(400) as usize;
     let result = (year + year / 4 - year / 100 + year / 400 + t[month] + day + 1) % 7;
