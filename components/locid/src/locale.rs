@@ -24,10 +24,10 @@ use std::str::FromStr;
 /// let loc: Locale = "en-US-u-ca-buddhist".parse()
 ///     .expect("Failed to parse.");
 ///
-/// assert_eq!(loc.langid.language, "en");
-/// assert_eq!(loc.langid.script, None);
-/// assert_eq!(loc.langid.region, Some("US".parse().unwrap()));
-/// assert_eq!(loc.langid.variants.len(), 0);
+/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc.id.script, None);
+/// assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+/// assert_eq!(loc.id.variants.len(), 0);
 /// assert_eq!(loc, "en-US-u-ca-buddhist");
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
@@ -58,16 +58,16 @@ use std::str::FromStr;
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12".parse()
 ///     .expect("Failed to parse.");
 ///
-/// assert_eq!(loc.langid.language, "en");
-/// assert_eq!(loc.langid.script, Some("Latn".parse().unwrap()));
-/// assert_eq!(loc.langid.region, Some("US".parse().unwrap()));
-/// assert_eq!(loc.langid.variants.get(0).unwrap(), "valencia");
+/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc.id.script, Some("Latn".parse().unwrap()));
+/// assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+/// assert_eq!(loc.id.variants.get(0).unwrap(), "valencia");
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Locale {
     // Language component of the Locale
-    pub langid: LanguageIdentifier,
+    pub id: LanguageIdentifier,
     // Unicode Locale Extensions
     pub extensions: extensions::Extensions,
 }
@@ -104,7 +104,7 @@ impl Locale {
     #[inline]
     pub const fn und() -> Self {
         Self {
-            langid: LanguageIdentifier::und(),
+            id: LanguageIdentifier::und(),
             extensions: extensions::Extensions::new(),
         }
     }
@@ -138,7 +138,7 @@ impl FromStr for Locale {
 impl From<LanguageIdentifier> for Locale {
     fn from(id: LanguageIdentifier) -> Self {
         Self {
-            langid: id,
+            id,
             extensions: extensions::Extensions::default(),
         }
     }
@@ -146,19 +146,19 @@ impl From<LanguageIdentifier> for Locale {
 
 impl From<Locale> for LanguageIdentifier {
     fn from(loc: Locale) -> Self {
-        loc.langid
+        loc.id
     }
 }
 
 impl AsRef<LanguageIdentifier> for Locale {
     fn as_ref(&self) -> &LanguageIdentifier {
-        &self.langid
+        &self.id
     }
 }
 
 impl AsMut<LanguageIdentifier> for Locale {
     fn as_mut(&mut self) -> &mut LanguageIdentifier {
-        &mut self.langid
+        &mut self.id
     }
 }
 
@@ -176,13 +176,13 @@ impl std::fmt::Display for Locale {
 
 impl writeable::Writeable for Locale {
     fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
-        writeable::Writeable::write_to(&self.langid, sink)?;
+        writeable::Writeable::write_to(&self.id, sink)?;
         writeable::Writeable::write_to(&self.extensions, sink)?;
         Ok(())
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.langid);
+        let mut result = writeable::Writeable::write_len(&self.id);
         result += writeable::Writeable::write_len(&self.extensions);
         result
     }
@@ -235,20 +235,20 @@ macro_rules! subtag_matches {
 impl PartialEq<str> for Locale {
     fn eq(&self, other: &str) -> bool {
         let mut iter = get_subtag_iterator(other.as_bytes()).peekable();
-        if !subtag_matches!(subtags::Language, iter, self.langid.language) {
+        if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }
-        if let Some(ref script) = self.langid.script {
+        if let Some(ref script) = self.id.script {
             if !subtag_matches!(subtags::Script, iter, *script) {
                 return false;
             }
         }
-        if let Some(ref region) = self.langid.region {
+        if let Some(ref region) = self.id.region {
             if !subtag_matches!(subtags::Region, iter, *region) {
                 return false;
             }
         }
-        for variant in self.langid.variants.iter() {
+        for variant in self.id.variants.iter() {
             if !subtag_matches!(subtags::Variant, iter, *variant) {
                 return false;
             }

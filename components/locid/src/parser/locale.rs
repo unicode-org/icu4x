@@ -9,11 +9,11 @@ use crate::Locale;
 pub fn parse_locale(t: &[u8]) -> Result<Locale, ParserError> {
     let mut iter = get_subtag_iterator(t).peekable();
 
-    let langid = parse_language_identifier_from_iter(&mut iter, ParserMode::Locale)?;
+    let id = parse_language_identifier_from_iter(&mut iter, ParserMode::Locale)?;
     let extensions = if iter.peek().is_some() {
         Extensions::try_from_iter(&mut iter)?
     } else {
         Extensions::default()
     };
-    Ok(Locale { langid, extensions })
+    Ok(Locale { id, extensions })
 }

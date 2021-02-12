@@ -233,7 +233,7 @@ impl TryFrom<LocaleSubtags> for Locale {
             Extensions::default()
         };
         Ok(Locale {
-            langid: LanguageIdentifier {
+            id: LanguageIdentifier {
                 language,
                 script,
                 region,
