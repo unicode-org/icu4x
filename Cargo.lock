@@ -818,6 +818,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
+ "tinystr",
  "writeable",
 ]
 

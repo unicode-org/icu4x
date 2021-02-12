@@ -6,7 +6,7 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
+use icu::datetime::{mock::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
 use icu::locid::{macros::langid, Locale};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu::uniset::UnicodeSetBuilder;

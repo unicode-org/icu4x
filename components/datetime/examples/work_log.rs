@@ -8,7 +8,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_datetime::date::MockDateTime;
+use icu_datetime::mock::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
 use icu_locid_macros::langid;
 

@@ -6,7 +6,7 @@
 mod fixtures;
 mod patterns;
 
-use icu_datetime::{date::MockDateTime, DateTimeFormatOptions};
+use icu_datetime::{mock::MockDateTime, DateTimeFormatOptions};
 use icu_datetime::{
     provider::{gregory::DatesV1, key::GREGORY_V1},
     DateTimeFormat,

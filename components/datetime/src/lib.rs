@@ -15,7 +15,7 @@
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
 //! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
+//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -46,7 +46,7 @@
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
 //! # use icu_locid_macros::langid;
-//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, date::MockDateTime, options::style};
+//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale = langid!("en").into();
 //! let options = style::Bag {
@@ -70,18 +70,20 @@
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`ICU4X`]: ../icu/index.html
 //! [`Style`]: options::style
-//! [`MockDateTime`]: date::MockDateTime
+//! [`MockDateTime`]: mock::MockDateTime
+mod arithmetic;
 pub mod date;
 mod error;
 mod fields;
 mod format;
+pub mod mock;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
 
 use crate::provider::helpers::DateTimeDates;
-use date::DateTimeType;
+use date::DateTimeInput;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
 pub use format::FormattedDateTime;
@@ -104,7 +106,7 @@ use std::borrow::Cow;
 /// ```
 /// use icu_locid_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
-/// use icu_datetime::date::MockDateTime;
+/// use icu_datetime::mock::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale = langid!("en").into();
@@ -129,7 +131,7 @@ use std::borrow::Cow;
 /// This model replicates that of `ICU` and `ECMA402` and in the future will get even more pronounce when we introduce
 /// asynchronous `DataProvider` and corresponding asynchronous constructor.
 pub struct DateTimeFormat<'d> {
-    _locale: Locale,
+    locale: Locale,
     pattern: Pattern,
     data: Cow<'d, provider::gregory::DatesV1>,
 }
@@ -143,7 +145,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// use icu_locid_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_datetime::date::MockDateTime;
+    /// use icu_datetime::mock::MockDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let locale = langid!("en").into();
@@ -176,7 +178,7 @@ impl<'d> DateTimeFormat<'d> {
         let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
 
         Ok(Self {
-            _locale: locale,
+            locale,
             pattern,
             data,
         })
@@ -190,7 +192,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::date::MockDateTime;
+    /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
     /// # let locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -211,12 +213,13 @@ impl<'d> DateTimeFormat<'d> {
     /// about formatted date and so on.
     pub fn format<'s, T>(&'s self, value: &'s T) -> FormattedDateTime<'s, T>
     where
-        T: DateTimeType,
+        T: DateTimeInput,
     {
         FormattedDateTime {
             pattern: &self.pattern,
             data: &self.data,
             date_time: value,
+            locale: &self.locale,
         }
     }
 
@@ -228,7 +231,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::date::MockDateTime;
+    /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
     /// # let locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -245,11 +248,13 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// let _ = format!("Date: {}", buffer);
     /// ```
-    pub fn format_to_write<T>(&self, w: &mut impl std::fmt::Write, value: &T) -> std::fmt::Result
-    where
-        T: DateTimeType,
-    {
-        write_pattern(&self.pattern, &self.data, value, w).map_err(|_| std::fmt::Error)
+    pub fn format_to_write(
+        &self,
+        w: &mut impl std::fmt::Write,
+        value: &impl DateTimeInput,
+    ) -> std::fmt::Result {
+        write_pattern(&self.pattern, &self.data, value, &self.locale, w)
+            .map_err(|_| std::fmt::Error)
     }
 
     /// `format_to_string` takes a `DateTime` value and returns it formatted
@@ -260,7 +265,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::date::MockDateTime;
+    /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
     /// # let locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
@@ -273,10 +278,7 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// let _ = dtf.format_to_string(&date_time);
     /// ```
-    pub fn format_to_string<T>(&self, value: &T) -> String
-    where
-        T: DateTimeType,
-    {
+    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");

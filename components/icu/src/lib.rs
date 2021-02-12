@@ -35,7 +35,7 @@
 //!
 //! ```
 //! use icu::locid::macros::langid;
-//! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+//! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -73,7 +73,7 @@ pub mod datetime {
     //!
     //! ```
     //! use icu::locid::macros::langid;
-    //! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+    //! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
