@@ -608,13 +608,14 @@ Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
 
 When structs with public string fields contain strings, use the following type conventions:
 
-- If lifetime parameters are allowed, use `&'a str`.
-- If lifetime parameters are not allowed, use one of:
-  - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
-  - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits at least 99% of cases.
-  - `Cow<'static, str>`  for longer strings.
+- `&'s str` if the struct does not need to own the string.
+- `Cow<'s, str>`  if the string could be borrowed or owned.
+- [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
+- [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits a large majority of cases.
 
-A case where lifetime parameters are not allowed is in the data provider structs.  TinyStr, SmallString, or `Cow<'static, str>` should be used as appropriate in data provider structs.
+For `SmallString`, when determining what constitutes a "large majority of cases", consider 99% as a rule of thumb. If in doubt, start with `Cow<'s, str>`; `SmallString` is an additional optimization when the strings are almost always short.  Another advantage of `SmallString` is the lack of a lifetime parameter.  The stack sizes of 8, 12, 16, and 20 for `SmallString` were chosen because these are the sizes that cause SmallString to have a round number of 32-bit-aligned stack bytes.
+
+In general, use `Cow<'s, str>` instead of `String` in structs if the struct can often use zero-cost construction. Use `String` if the struct always owns its data, such as when the string is always dynamically generated at runtime, or if a lifetime parameter cannot be used ergonomically.
 
 ### Pre-validation of options :: suggested
 
