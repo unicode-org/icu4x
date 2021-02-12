@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1612899549950,
+  "lastUpdate": 1613152007823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2279,6 +2279,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 141556,
             "range": "± 6440",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "324d9edd2def40e0d000646748172cce370d92db",
+          "message": "Re-write DateTimeType trait with DateTimeInput (#445)",
+          "timestamp": "2021-02-12T11:40:51-06:00",
+          "tree_id": "5882c86bb80a06b39e3b924ddded92a7d6d33b64",
+          "url": "https://github.com/unicode-org/icu4x/commit/324d9edd2def40e0d000646748172cce370d92db"
+        },
+        "date": 1613152005023,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 138598,
+            "range": "± 12002",
             "unit": "ns/iter"
           }
         ]
