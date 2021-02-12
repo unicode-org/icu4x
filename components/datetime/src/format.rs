@@ -25,10 +25,10 @@ use writeable::Writeable;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::date::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
-/// # let locale = langid!("en").into();
+/// # let langid = langid!("en");
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();
-/// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+/// let dtf = DateTimeFormat::try_new(langid, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
