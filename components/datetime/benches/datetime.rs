@@ -59,7 +59,7 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+                        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
                         let mut result = String::new();
 
