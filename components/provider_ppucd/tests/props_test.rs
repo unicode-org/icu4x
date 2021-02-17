@@ -33,3 +33,16 @@ fn test_enum_props_getters() {
     let exp_lb_lf_uniset: UnicodeSet = UnicodeSet::from_inversion_list(vec![10, 11]).unwrap();
     assert_eq!(lb_lf_uniset, exp_lb_lf_uniset);
 }
+
+#[test]
+fn test_enum_props_getters_truncated_resc_key_subcategory() {
+    let ppucd_property_files_root_path = "tests/testdata/ppucd-inpc-topbotleft-test.txt";
+    let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
+    let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
+
+    // InPC=Top_And_Bottom_And_Left
+    let inpc_topbotleft_uniset: UnicodeSet =
+        icu_uniset::props::get_indic_positional_category_top_and_bottom_and_left(&ppucd_provider).unwrap();
+    let exp_inpc_topbotleft_uniset: UnicodeSet = UnicodeSet::from_inversion_list(vec![4156, 4157, 71454, 71455]).unwrap();
+    assert_eq!(inpc_topbotleft_uniset, exp_inpc_topbotleft_uniset);
+}
