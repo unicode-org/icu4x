@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 //! ## `terrain`
 //!
 //! `terrain` is a crate providing [`VecMap`], a highly simplistic "flat" key-value map
