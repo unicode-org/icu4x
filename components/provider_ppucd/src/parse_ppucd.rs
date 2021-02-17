@@ -289,7 +289,7 @@ fn get_binary_prop_unisets<'s>(
     m
 }
 
-/// Return a Map of `UnicodeSet`s for each of the enumerated properties' 
+/// Return a Map of `UnicodeSet`s for each of the enumerated properties'
 /// values. The key in the map will be a string slice created from the
 /// combination of the enumerated property name and property value (ex:
 /// `"gc=Lo"`), and the value is the corresponding `UnicodeSet`.
@@ -447,7 +447,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
         }
     }
 
-    // This vector becomes the return value for the fn. Push each new 
+    // This vector becomes the return value for the fn. Push each new
     // `UnicodeProperty` constructed from each UnicodeSet + name for all of the
     // binary properties and enumerated properties parsed from the input.
     let mut props: Vec<UnicodeProperty> = vec![];

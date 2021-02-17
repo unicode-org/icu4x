@@ -30,7 +30,6 @@ fn get_prop<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     ppucd_property.try_into()
 }
 
-
 //
 // Binary property getter fns
 //
@@ -510,7 +509,10 @@ pub fn get_bidi_class_european_terminator<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::BIDI_CLASS_EUROPEAN_TERMINATOR_V1)
 }
 
-pub fn get_bidi_class_first_strong_isolate<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_first_strong_isolate<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_FIRST_STRONG_ISOLATE_V1)
@@ -522,19 +524,28 @@ pub fn get_bidi_class_left_to_right<'d, D: DataProvider<'d, UnicodeProperty<'d>>
     get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_V1)
 }
 
-pub fn get_bidi_class_left_to_right_embedding<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_left_to_right_embedding<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_EMBEDDING_V1)
 }
 
-pub fn get_bidi_class_left_to_right_isolate<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_left_to_right_isolate<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_ISOLATE_V1)
 }
 
-pub fn get_bidi_class_left_to_right_override<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_left_to_right_override<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_OVERRIDE_V1)
@@ -552,13 +563,19 @@ pub fn get_bidi_class_other_neutral<'d, D: DataProvider<'d, UnicodeProperty<'d>>
     get_prop(provider, key::BIDI_CLASS_OTHER_NEUTRAL_V1)
 }
 
-pub fn get_bidi_class_pop_directional_format<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_pop_directional_format<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_POP_DIRECTIONAL_FORMAT_V1)
 }
 
-pub fn get_bidi_class_pop_directional_isolate<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_pop_directional_isolate<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_POP_DIRECTIONAL_ISOLATE_V1)
@@ -570,19 +587,28 @@ pub fn get_bidi_class_right_to_left<'d, D: DataProvider<'d, UnicodeProperty<'d>>
     get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_V1)
 }
 
-pub fn get_bidi_class_right_to_left_embedding<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_right_to_left_embedding<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_EMBEDDING_V1)
 }
 
-pub fn get_bidi_class_right_to_left_isolate<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_right_to_left_isolate<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_ISOLATE_V1)
 }
 
-pub fn get_bidi_class_right_to_left_override<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_bidi_class_right_to_left_override<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_OVERRIDE_V1)
@@ -618,181 +644,277 @@ pub fn get_bidi_paired_bracket_type_open<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_OPEN_V1)
 }
 
-pub fn get_canonical_combining_class_not_reordered<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_not_reordered<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1)
 }
 
-pub fn get_canonical_combining_class_overlay<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_overlay<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_OVERLAY_V1)
 }
 
-pub fn get_canonical_combining_class_ccc10<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc10<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC10_V1)
 }
 
-pub fn get_canonical_combining_class_ccc103<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc103<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC103_V1)
 }
 
-pub fn get_canonical_combining_class_ccc107<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc107<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC107_V1)
 }
 
-pub fn get_canonical_combining_class_ccc11<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc11<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC11_V1)
 }
 
-pub fn get_canonical_combining_class_ccc118<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc118<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC118_V1)
 }
 
-pub fn get_canonical_combining_class_ccc12<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc12<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC12_V1)
 }
 
-pub fn get_canonical_combining_class_ccc122<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc122<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC122_V1)
 }
 
-pub fn get_canonical_combining_class_ccc129<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc129<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC129_V1)
 }
 
-pub fn get_canonical_combining_class_ccc13<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc13<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC13_V1)
 }
 
-pub fn get_canonical_combining_class_ccc130<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc130<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC130_V1)
 }
 
-pub fn get_canonical_combining_class_ccc132<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc132<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC132_V1)
 }
 
-pub fn get_canonical_combining_class_ccc133<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc133<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC133_V1)
 }
 
-pub fn get_canonical_combining_class_ccc14<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc14<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC14_V1)
 }
 
-pub fn get_canonical_combining_class_ccc15<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc15<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC15_V1)
 }
 
-pub fn get_canonical_combining_class_ccc16<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc16<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC16_V1)
 }
 
-pub fn get_canonical_combining_class_ccc17<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc17<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC17_V1)
 }
 
-pub fn get_canonical_combining_class_ccc18<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc18<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC18_V1)
 }
 
-pub fn get_canonical_combining_class_ccc19<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc19<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC19_V1)
 }
 
-pub fn get_canonical_combining_class_ccc20<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc20<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC20_V1)
 }
 
-pub fn get_canonical_combining_class_attached_below_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_attached_below_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1)
+    get_prop(
+        provider,
+        key::CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1,
+    )
 }
 
-pub fn get_canonical_combining_class_attached_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_attached_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1)
 }
 
-pub fn get_canonical_combining_class_ccc21<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc21<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC21_V1)
 }
 
-pub fn get_canonical_combining_class_attached_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_attached_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1)
 }
 
-pub fn get_canonical_combining_class_attached_above_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_attached_above_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1)
+    get_prop(
+        provider,
+        key::CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1,
+    )
 }
 
-pub fn get_canonical_combining_class_below_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_below_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1)
 }
 
-pub fn get_canonical_combining_class_ccc22<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc22<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC22_V1)
 }
 
-pub fn get_canonical_combining_class_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_BELOW_V1)
 }
 
-pub fn get_canonical_combining_class_below_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_below_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1)
@@ -804,163 +926,244 @@ pub fn get_canonical_combining_class_left<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_LEFT_V1)
 }
 
-pub fn get_canonical_combining_class_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_RIGHT_V1)
 }
 
-pub fn get_canonical_combining_class_above_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_above_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1)
 }
 
-pub fn get_canonical_combining_class_ccc23<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc23<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC23_V1)
 }
 
-pub fn get_canonical_combining_class_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_ABOVE_V1)
 }
 
-pub fn get_canonical_combining_class_above_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_above_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1)
 }
 
-pub fn get_canonical_combining_class_double_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_double_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1)
 }
 
-pub fn get_canonical_combining_class_double_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_double_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1)
 }
 
-pub fn get_canonical_combining_class_ccc24<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc24<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC24_V1)
 }
 
-pub fn get_canonical_combining_class_iota_subscript<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_iota_subscript<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1)
 }
 
-pub fn get_canonical_combining_class_ccc25<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc25<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC25_V1)
 }
 
-pub fn get_canonical_combining_class_ccc26<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc26<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC26_V1)
 }
 
-pub fn get_canonical_combining_class_ccc27<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc27<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC27_V1)
 }
 
-pub fn get_canonical_combining_class_ccc28<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc28<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC28_V1)
 }
 
-pub fn get_canonical_combining_class_ccc29<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc29<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC29_V1)
 }
 
-pub fn get_canonical_combining_class_ccc30<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc30<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC30_V1)
 }
 
-pub fn get_canonical_combining_class_ccc31<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc31<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC31_V1)
 }
 
-pub fn get_canonical_combining_class_ccc32<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc32<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC32_V1)
 }
 
-pub fn get_canonical_combining_class_ccc33<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc33<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC33_V1)
 }
 
-pub fn get_canonical_combining_class_ccc34<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc34<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC34_V1)
 }
 
-pub fn get_canonical_combining_class_ccc35<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc35<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC35_V1)
 }
 
-pub fn get_canonical_combining_class_ccc36<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc36<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC36_V1)
 }
 
-pub fn get_canonical_combining_class_han_reading<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_han_reading<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_HAN_READING_V1)
 }
 
-pub fn get_canonical_combining_class_nukta<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_nukta<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_NUKTA_V1)
 }
 
-pub fn get_canonical_combining_class_kana_voicing<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_kana_voicing<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_KANA_VOICING_V1)
 }
 
-pub fn get_canonical_combining_class_ccc84<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc84<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC84_V1)
 }
 
-pub fn get_canonical_combining_class_virama<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_virama<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_VIRAMA_V1)
 }
 
-pub fn get_canonical_combining_class_ccc91<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_canonical_combining_class_ccc91<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC91_V1)
@@ -1158,13 +1361,19 @@ pub fn get_general_category_cased_letter<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::GENERAL_CATEGORY_CASED_LETTER_V1)
 }
 
-pub fn get_general_category_lowercase_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_lowercase_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1)
 }
 
-pub fn get_general_category_modifier_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_modifier_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_MODIFIER_LETTER_V1)
@@ -1176,19 +1385,28 @@ pub fn get_general_category_other_letter<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::GENERAL_CATEGORY_OTHER_LETTER_V1)
 }
 
-pub fn get_general_category_titlecase_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_titlecase_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_TITLECASE_LETTER_V1)
 }
 
-pub fn get_general_category_uppercase_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_uppercase_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1)
 }
 
-pub fn get_general_category_combining_mark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_combining_mark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_COMBINING_MARK_V1)
@@ -1200,13 +1418,19 @@ pub fn get_general_category_spacing_mark<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::GENERAL_CATEGORY_SPACING_MARK_V1)
 }
 
-pub fn get_general_category_enclosing_mark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_enclosing_mark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_ENCLOSING_MARK_V1)
 }
 
-pub fn get_general_category_nonspacing_mark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_nonspacing_mark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_NONSPACING_MARK_V1)
@@ -1242,43 +1466,64 @@ pub fn get_general_category_punct<'d, D: DataProvider<'d, UnicodeProperty<'d>> +
     get_prop(provider, key::GENERAL_CATEGORY_PUNCT_V1)
 }
 
-pub fn get_general_category_connector_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_connector_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1)
 }
 
-pub fn get_general_category_dash_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_dash_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1)
 }
 
-pub fn get_general_category_close_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_close_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1)
 }
 
-pub fn get_general_category_final_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_final_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1)
 }
 
-pub fn get_general_category_initial_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_initial_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1)
 }
 
-pub fn get_general_category_other_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_other_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1)
 }
 
-pub fn get_general_category_open_punctuation<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_open_punctuation<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1)
@@ -1290,13 +1535,19 @@ pub fn get_general_category_symbol<'d, D: DataProvider<'d, UnicodeProperty<'d>> 
     get_prop(provider, key::GENERAL_CATEGORY_SYMBOL_V1)
 }
 
-pub fn get_general_category_currency_symbol<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_currency_symbol<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1)
 }
 
-pub fn get_general_category_modifier_symbol<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_modifier_symbol<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1)
@@ -1320,19 +1571,28 @@ pub fn get_general_category_separator<'d, D: DataProvider<'d, UnicodeProperty<'d
     get_prop(provider, key::GENERAL_CATEGORY_SEPARATOR_V1)
 }
 
-pub fn get_general_category_line_separator<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_line_separator<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_LINE_SEPARATOR_V1)
 }
 
-pub fn get_general_category_paragraph_separator<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_paragraph_separator<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1)
 }
 
-pub fn get_general_category_space_separator<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_general_category_space_separator<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1)
@@ -1356,13 +1616,19 @@ pub fn get_grapheme_cluster_break_e_base<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_BASE_V1)
 }
 
-pub fn get_grapheme_cluster_break_e_base_gaz<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_grapheme_cluster_break_e_base_gaz<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_BASE_GAZ_V1)
 }
 
-pub fn get_grapheme_cluster_break_e_modifier<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_grapheme_cluster_break_e_modifier<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_MODIFIER_V1)
@@ -1374,7 +1640,10 @@ pub fn get_grapheme_cluster_break_extend<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_EXTEND_V1)
 }
 
-pub fn get_grapheme_cluster_break_glue_after_zwj<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_grapheme_cluster_break_glue_after_zwj<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_GLUE_AFTER_ZWJ_V1)
@@ -1410,13 +1679,19 @@ pub fn get_grapheme_cluster_break_prepend<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_PREPEND_V1)
 }
 
-pub fn get_grapheme_cluster_break_regional_indicator<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_grapheme_cluster_break_regional_indicator<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_REGIONAL_INDICATOR_V1)
 }
 
-pub fn get_grapheme_cluster_break_spacingmark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_grapheme_cluster_break_spacingmark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_SPACINGMARK_V1)
@@ -1446,55 +1721,82 @@ pub fn get_grapheme_cluster_break_zwj<'d, D: DataProvider<'d, UnicodeProperty<'d
     get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_ZWJ_V1)
 }
 
-pub fn get_hangul_syllable_type_leading_jamo<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_hangul_syllable_type_leading_jamo<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1)
 }
 
-pub fn get_hangul_syllable_type_lv_syllable<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_hangul_syllable_type_lv_syllable<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LV_SYLLABLE_V1)
 }
 
-pub fn get_hangul_syllable_type_lvt_syllable<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_hangul_syllable_type_lvt_syllable<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LVT_SYLLABLE_V1)
 }
 
-pub fn get_hangul_syllable_type_not_applicable<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_hangul_syllable_type_not_applicable<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HANGUL_SYLLABLE_TYPE_NOT_APPLICABLE_V1)
 }
 
-pub fn get_hangul_syllable_type_trailing_jamo<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_hangul_syllable_type_trailing_jamo<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HANGUL_SYLLABLE_TYPE_TRAILING_JAMO_V1)
 }
 
-pub fn get_hangul_syllable_type_vowel_jamo<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_hangul_syllable_type_vowel_jamo<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::HANGUL_SYLLABLE_TYPE_VOWEL_JAMO_V1)
 }
 
-pub fn get_indic_positional_category_bottom<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_bottom<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_V1)
 }
 
-pub fn get_indic_positional_category_bottom_and_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_bottom_and_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_LEFT_V1)
 }
 
-pub fn get_indic_positional_category_bottom_and_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_bottom_and_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_RIGHT_V1)
@@ -1506,7 +1808,10 @@ pub fn get_indic_positional_category_left<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_LEFT_V1)
 }
 
-pub fn get_indic_positional_category_left_and_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_left_and_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_LEFT_AND_RIGHT_V1)
@@ -1518,13 +1823,19 @@ pub fn get_indic_positional_category_na<'d, D: DataProvider<'d, UnicodeProperty<
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_NA_V1)
 }
 
-pub fn get_indic_positional_category_overstruck<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_overstruck<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_OVERSTRUCK_V1)
 }
 
-pub fn get_indic_positional_category_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_RIGHT_V1)
@@ -1536,49 +1847,85 @@ pub fn get_indic_positional_category_top<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_V1)
 }
 
-pub fn get_indic_positional_category_top_and_bottom<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_top_and_bottom<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_V1)
 }
 
-pub fn get_indic_positional_category_top_and_bottom_and_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_top_and_bottom_and_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_LEFT_V1)
+    get_prop(
+        provider,
+        key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_LEFT_V1,
+    )
 }
 
-pub fn get_indic_positional_category_top_and_bottom_and_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_top_and_bottom_and_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_RIGHT_V1)
+    get_prop(
+        provider,
+        key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_RIGHT_V1,
+    )
 }
 
-pub fn get_indic_positional_category_top_and_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_top_and_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_V1)
 }
 
-pub fn get_indic_positional_category_top_and_left_and_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_top_and_left_and_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_AND_RIGHT_V1)
+    get_prop(
+        provider,
+        key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_AND_RIGHT_V1,
+    )
 }
 
-pub fn get_indic_positional_category_top_and_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_top_and_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_RIGHT_V1)
 }
 
-pub fn get_indic_positional_category_visual_order_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_positional_category_visual_order_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_VISUAL_ORDER_LEFT_V1)
+    get_prop(
+        provider,
+        key::INDIC_POSITIONAL_CATEGORY_VISUAL_ORDER_LEFT_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_avagraha<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_avagraha<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1)
@@ -1590,103 +1937,178 @@ pub fn get_indic_syllabic_category_bindu<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_BINDU_V1)
 }
 
-pub fn get_indic_syllabic_category_brahmi_joining_number<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_brahmi_joining_number<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_BRAHMI_JOINING_NUMBER_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_BRAHMI_JOINING_NUMBER_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_cantillation_mark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_cantillation_mark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CANTILLATION_MARK_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant_dead<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_dead<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_DEAD_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant_final<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_final<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_FINAL_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant_head_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_head_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_HEAD_LETTER_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_HEAD_LETTER_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_consonant_initial_postfixed<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_initial_postfixed<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_INITIAL_POSTFIXED_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_INITIAL_POSTFIXED_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_consonant_killer<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_killer<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_KILLER_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant_medial<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_medial<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_MEDIAL_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant_placeholder<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_placeholder<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PLACEHOLDER_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PLACEHOLDER_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_consonant_preceding_repha<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_preceding_repha<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PRECEDING_REPHA_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PRECEDING_REPHA_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_consonant_prefixed<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_prefixed<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PREFIXED_V1)
 }
 
-pub fn get_indic_syllabic_category_consonant_subjoined<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_subjoined<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUBJOINED_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUBJOINED_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_consonant_succeeding_repha<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_succeeding_repha<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUCCEEDING_REPHA_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUCCEEDING_REPHA_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_consonant_with_stacker<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_consonant_with_stacker<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_WITH_STACKER_V1)
+    get_prop(
+        provider,
+        key::INDIC_SYLLABIC_CATEGORY_CONSONANT_WITH_STACKER_V1,
+    )
 }
 
-pub fn get_indic_syllabic_category_gemination_mark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_gemination_mark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_GEMINATION_MARK_V1)
 }
 
-pub fn get_indic_syllabic_category_invisible_stacker<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_invisible_stacker<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_INVISIBLE_STACKER_V1)
@@ -1698,13 +2120,19 @@ pub fn get_indic_syllabic_category_joiner<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_JOINER_V1)
 }
 
-pub fn get_indic_syllabic_category_modifying_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_modifying_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_MODIFYING_LETTER_V1)
 }
 
-pub fn get_indic_syllabic_category_non_joiner<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_non_joiner<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NON_JOINER_V1)
@@ -1722,7 +2150,10 @@ pub fn get_indic_syllabic_category_number<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NUMBER_V1)
 }
 
-pub fn get_indic_syllabic_category_number_joiner<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_number_joiner<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NUMBER_JOINER_V1)
@@ -1734,31 +2165,46 @@ pub fn get_indic_syllabic_category_other<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_OTHER_V1)
 }
 
-pub fn get_indic_syllabic_category_pure_killer<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_pure_killer<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_PURE_KILLER_V1)
 }
 
-pub fn get_indic_syllabic_category_register_shifter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_register_shifter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_REGISTER_SHIFTER_V1)
 }
 
-pub fn get_indic_syllabic_category_syllable_modifier<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_syllable_modifier<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_SYLLABLE_MODIFIER_V1)
 }
 
-pub fn get_indic_syllabic_category_tone_letter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_tone_letter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_TONE_LETTER_V1)
 }
 
-pub fn get_indic_syllabic_category_tone_mark<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_tone_mark<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_TONE_MARK_V1)
@@ -1770,7 +2216,10 @@ pub fn get_indic_syllabic_category_virama<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VIRAMA_V1)
 }
 
-pub fn get_indic_syllabic_category_visarga<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_visarga<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VISARGA_V1)
@@ -1782,13 +2231,19 @@ pub fn get_indic_syllabic_category_vowel<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_V1)
 }
 
-pub fn get_indic_syllabic_category_vowel_dependent<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_vowel_dependent<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_DEPENDENT_V1)
 }
 
-pub fn get_indic_syllabic_category_vowel_independent<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_indic_syllabic_category_vowel_independent<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_INDEPENDENT_V1)
@@ -1842,7 +2297,10 @@ pub fn get_joining_group_beth<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
     get_prop(provider, key::JOINING_GROUP_BETH_V1)
 }
 
-pub fn get_joining_group_burushaski_yeh_barree<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_burushaski_yeh_barree<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_BURUSHASKI_YEH_BARREE_V1)
@@ -1908,13 +2366,19 @@ pub fn get_joining_group_hah<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Siz
     get_prop(provider, key::JOINING_GROUP_HAH_V1)
 }
 
-pub fn get_joining_group_hanifi_rohingya_kinna_ya<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_hanifi_rohingya_kinna_ya<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_HANIFI_ROHINGYA_KINNA_YA_V1)
 }
 
-pub fn get_joining_group_hanifi_rohingya_pa<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_hanifi_rohingya_pa<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_HANIFI_ROHINGYA_PA_V1)
@@ -2064,13 +2528,19 @@ pub fn get_joining_group_manichaean_beth<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_BETH_V1)
 }
 
-pub fn get_joining_group_manichaean_daleth<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_daleth<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_DALETH_V1)
 }
 
-pub fn get_joining_group_manichaean_dhamedh<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_dhamedh<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_DHAMEDH_V1)
@@ -2094,7 +2564,10 @@ pub fn get_joining_group_manichaean_heth<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_HETH_V1)
 }
 
-pub fn get_joining_group_manichaean_hundred<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_hundred<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_HUNDRED_V1)
@@ -2106,7 +2579,10 @@ pub fn get_joining_group_manichaean_kaph<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_KAPH_V1)
 }
 
-pub fn get_joining_group_manichaean_lamedh<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_lamedh<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_LAMEDH_V1)
@@ -2154,7 +2630,10 @@ pub fn get_joining_group_manichaean_sadhe<'d, D: DataProvider<'d, UnicodePropert
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_SADHE_V1)
 }
 
-pub fn get_joining_group_manichaean_samekh<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_samekh<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_SAMEKH_V1)
@@ -2178,13 +2657,19 @@ pub fn get_joining_group_manichaean_teth<'d, D: DataProvider<'d, UnicodeProperty
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TETH_V1)
 }
 
-pub fn get_joining_group_manichaean_thamedh<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_thamedh<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_THAMEDH_V1)
 }
 
-pub fn get_joining_group_manichaean_twenty<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_manichaean_twenty<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TWENTY_V1)
@@ -2346,7 +2831,10 @@ pub fn get_joining_group_teh_marbuta<'d, D: DataProvider<'d, UnicodeProperty<'d>
     get_prop(provider, key::JOINING_GROUP_TEH_MARBUTA_V1)
 }
 
-pub fn get_joining_group_hamza_on_heh_goal<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_joining_group_hamza_on_heh_goal<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::JOINING_GROUP_HAMZA_ON_HEH_GOAL_V1)
@@ -2484,7 +2972,10 @@ pub fn get_line_break_contingent_break<'d, D: DataProvider<'d, UnicodeProperty<'
     get_prop(provider, key::LINE_BREAK_CONTINGENT_BREAK_V1)
 }
 
-pub fn get_line_break_conditional_japanese_starter<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_line_break_conditional_japanese_starter<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LINE_BREAK_CONDITIONAL_JAPANESE_STARTER_V1)
@@ -2700,349 +3191,550 @@ pub fn get_line_break_zwj<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>
     get_prop(provider, key::LINE_BREAK_ZWJ_V1)
 }
 
-pub fn get_lead_canonical_combining_class_not_reordered<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_not_reordered<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_overlay<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_overlay<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_OVERLAY_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc10<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc10<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC10_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc103<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc103<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC103_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc107<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc107<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC107_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc11<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc11<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC11_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc118<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc118<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC118_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc12<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc12<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC12_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc122<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc122<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC122_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc129<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc129<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC129_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc13<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc13<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC13_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc130<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc130<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC130_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc132<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc132<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC132_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc133<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc133<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC133_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc14<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc14<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC14_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc15<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc15<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC15_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc16<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc16<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC16_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc17<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc17<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC17_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc18<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc18<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC18_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc19<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc19<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC19_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc20<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc20<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC20_V1)
 }
 
-pub fn get_lead_canonical_combining_class_attached_below_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_attached_below_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_attached_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_attached_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_ccc21<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc21<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC21_V1)
 }
 
-pub fn get_lead_canonical_combining_class_attached_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_attached_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_attached_above_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_attached_above_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_below_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_below_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc22<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc22<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC22_V1)
 }
 
-pub fn get_lead_canonical_combining_class_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_V1)
 }
 
-pub fn get_lead_canonical_combining_class_below_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_below_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1)
 }
 
-pub fn get_lead_canonical_combining_class_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_LEFT_V1)
 }
 
-pub fn get_lead_canonical_combining_class_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_RIGHT_V1)
 }
 
-pub fn get_lead_canonical_combining_class_above_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_above_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc23<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc23<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC23_V1)
 }
 
-pub fn get_lead_canonical_combining_class_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_V1)
 }
 
-pub fn get_lead_canonical_combining_class_above_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_above_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1)
 }
 
-pub fn get_lead_canonical_combining_class_double_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_double_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_double_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_double_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_ccc24<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc24<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC24_V1)
 }
 
-pub fn get_lead_canonical_combining_class_iota_subscript<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_iota_subscript<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_ccc25<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc25<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC25_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc26<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc26<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC26_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc27<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc27<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC27_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc28<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc28<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC28_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc29<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc29<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC29_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc30<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc30<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC30_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc31<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc31<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC31_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc32<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc32<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC32_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc33<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc33<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC33_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc34<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc34<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC34_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc35<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc35<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC35_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc36<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc36<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC36_V1)
 }
 
-pub fn get_lead_canonical_combining_class_han_reading<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_han_reading<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_HAN_READING_V1)
 }
 
-pub fn get_lead_canonical_combining_class_nukta<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_nukta<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NUKTA_V1)
 }
 
-pub fn get_lead_canonical_combining_class_kana_voicing<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_kana_voicing<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1)
+    get_prop(
+        provider,
+        key::LEAD_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1,
+    )
 }
 
-pub fn get_lead_canonical_combining_class_ccc84<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc84<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC84_V1)
 }
 
-pub fn get_lead_canonical_combining_class_virama<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_virama<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_VIRAMA_V1)
 }
 
-pub fn get_lead_canonical_combining_class_ccc91<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_lead_canonical_combining_class_ccc91<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC91_V1)
@@ -3222,349 +3914,559 @@ pub fn get_sentence_break_other<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?
     get_prop(provider, key::SENTENCE_BREAK_OTHER_V1)
 }
 
-pub fn get_trail_canonical_combining_class_not_reordered<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_not_reordered<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_overlay<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_overlay<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_OVERLAY_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc10<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc10<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC10_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc103<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc103<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC103_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc107<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc107<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC107_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc11<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc11<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC11_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc118<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc118<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC118_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc12<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc12<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC12_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc122<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc122<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC122_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc129<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc129<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC129_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc13<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc13<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC13_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc130<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc130<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC130_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc132<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc132<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC132_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc133<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc133<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC133_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc14<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc14<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC14_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc15<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc15<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC15_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc16<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc16<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC16_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc17<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc17<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC17_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc18<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc18<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC18_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc19<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc19<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC19_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc20<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc20<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC20_V1)
 }
 
-pub fn get_trail_canonical_combining_class_attached_below_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_attached_below_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_attached_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_attached_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_ccc21<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc21<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC21_V1)
 }
 
-pub fn get_trail_canonical_combining_class_attached_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_attached_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_attached_above_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_attached_above_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_below_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_below_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc22<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc22<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC22_V1)
 }
 
-pub fn get_trail_canonical_combining_class_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_V1)
 }
 
-pub fn get_trail_canonical_combining_class_below_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_below_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_LEFT_V1)
 }
 
-pub fn get_trail_canonical_combining_class_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_RIGHT_V1)
 }
 
-pub fn get_trail_canonical_combining_class_above_left<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_above_left<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc23<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc23<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC23_V1)
 }
 
-pub fn get_trail_canonical_combining_class_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_V1)
 }
 
-pub fn get_trail_canonical_combining_class_above_right<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_above_right<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_double_below<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_double_below<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_double_above<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_double_above<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_ccc24<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc24<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC24_V1)
 }
 
-pub fn get_trail_canonical_combining_class_iota_subscript<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_iota_subscript<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_ccc25<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc25<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC25_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc26<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc26<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC26_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc27<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc27<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC27_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc28<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc28<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC28_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc29<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc29<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC29_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc30<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc30<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC30_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc31<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc31<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC31_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc32<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc32<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC32_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc33<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc33<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC33_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc34<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc34<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC34_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc35<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc35<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC35_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc36<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc36<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC36_V1)
 }
 
-pub fn get_trail_canonical_combining_class_han_reading<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_han_reading<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_HAN_READING_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_HAN_READING_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_nukta<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_nukta<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NUKTA_V1)
 }
 
-pub fn get_trail_canonical_combining_class_kana_voicing<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_kana_voicing<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
-    get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1)
+    get_prop(
+        provider,
+        key::TRAIL_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1,
+    )
 }
 
-pub fn get_trail_canonical_combining_class_ccc84<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc84<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC84_V1)
 }
 
-pub fn get_trail_canonical_combining_class_virama<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_virama<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_VIRAMA_V1)
 }
 
-pub fn get_trail_canonical_combining_class_ccc91<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_trail_canonical_combining_class_ccc91<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC91_V1)
@@ -3576,13 +4478,19 @@ pub fn get_vertical_orientation_rotated<'d, D: DataProvider<'d, UnicodeProperty<
     get_prop(provider, key::VERTICAL_ORIENTATION_ROTATED_V1)
 }
 
-pub fn get_vertical_orientation_transformed_rotated<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_vertical_orientation_transformed_rotated<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_ROTATED_V1)
 }
 
-pub fn get_vertical_orientation_transformed_upright<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+pub fn get_vertical_orientation_transformed_upright<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
     provider: &D,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_UPRIGHT_V1)
@@ -3731,4 +4639,3 @@ pub fn get_word_break_zwj<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>
 ) -> Result<UnicodeSet, UnicodeSetError> {
     get_prop(provider, key::WORD_BREAK_ZWJ_V1)
 }
-

@@ -23,16 +23,13 @@ fn test_wspace_getter() {
 
 #[test]
 fn test_enum_props_getters() {
-    let ppucd_property_files_root_path = "tests/testdata/ppucd-enum_props-test.txt";
+    let ppucd_property_files_root_path = "tests/testdata/ppucd-enum-props-test.txt";
     let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
 
     // lb=LF
     let lb_lf_uniset: UnicodeSet =
         icu_uniset::props::get_line_break_line_feed(&ppucd_provider).unwrap();
-    let exp_lb_lf_uniset: UnicodeSet = Unicode::from_inversion_list(vec![
-        10,
-    ])
-    .unwrap();
+    let exp_lb_lf_uniset: UnicodeSet = UnicodeSet::from_inversion_list(vec![10, 11]).unwrap();
     assert_eq!(lb_lf_uniset, exp_lb_lf_uniset);
 }
