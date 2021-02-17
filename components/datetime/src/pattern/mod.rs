@@ -48,25 +48,67 @@ impl<'p> From<String> for PatternItem {
     }
 }
 
+/// The granularity of time represented in a pattern item.
+/// Ordered from least granular to most granular for comparsion.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub(super) enum TimeGranularity {
+    Hours,
+    Minutes,
+    Seconds,
+}
+
 #[derive(Default, Debug, Clone, PartialEq)]
-pub struct Pattern(pub Vec<PatternItem>);
+pub struct Pattern {
+    items: Vec<PatternItem>,
+    time_granularity: Option<TimeGranularity>,
+}
+
+/// Retrieves the granularity of time represented by a `PatternItem`.
+/// If the `PatternItem` is not time-related, returns `None`.
+fn get_time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
+    match item {
+        PatternItem::Field(field) => match field.symbol {
+            fields::FieldSymbol::Hour(_) => Some(TimeGranularity::Hours),
+            fields::FieldSymbol::Minute => Some(TimeGranularity::Minutes),
+            fields::FieldSymbol::Second(_) => Some(TimeGranularity::Seconds),
+            _ => None,
+        },
+        _ => None,
+    }
+}
 
 impl Pattern {
+    pub fn items(&self) -> &[PatternItem] {
+        &self.items
+    }
+
     pub fn from_bytes(input: &str) -> Result<Self, Error> {
-        Parser::new(input).parse().map(Self)
+        Parser::new(input).parse().map(Pattern::from)
     }
 
     // TODO(#277): This should be turned into a utility for all ICU4X.
     pub fn from_bytes_combination(input: &str, date: Self, time: Self) -> Result<Self, Error> {
         Parser::new(input)
             .parse_placeholders(vec![time, date])
-            .map(Self)
+            .map(Pattern::from)
+    }
+
+    pub(super) fn most_granular_time(&self) -> Option<TimeGranularity> {
+        self.time_granularity
+    }
+}
+
+impl From<Vec<PatternItem>> for Pattern {
+    fn from(items: Vec<PatternItem>) -> Self {
+        Self {
+            time_granularity: items.iter().filter_map(get_time_granularity).max(),
+            items,
+        }
     }
 }
 
 impl FromIterator<PatternItem> for Pattern {
     fn from_iter<I: IntoIterator<Item = PatternItem>>(iter: I) -> Self {
-        let items: Vec<PatternItem> = iter.into_iter().collect();
-        Self(items)
+        Self::from(iter.into_iter().collect::<Vec<_>>())
     }
 }

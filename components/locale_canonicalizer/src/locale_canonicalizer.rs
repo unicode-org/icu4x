@@ -1,11 +1,9 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use icu_locid::subtags;
-use icu_locid::LanguageIdentifier;
-use icu_locid::Locale;
+use crate::provider::*;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
-use icu_provider::structs::likelysubtags::*;
 use std::borrow::Cow;
 
 /// CanonicalizationResult is used to track the result of a canonicalization
@@ -48,6 +46,7 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
+    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -61,88 +60,91 @@ impl LocaleCanonicalizer<'_> {
     /// let mut locale : Locale = "en-Latn-DE".parse().unwrap();
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "en-Latn-DE");
+    /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize(&self, locale: &mut Locale) -> CanonicalizationResult {
-        let mut key = LanguageIdentifier {
-            language: locale.language,
-            script: locale.script,
-            region: locale.region,
-            variants: subtags::Variants::default(),
-        };
-
-        let maybe_update_locale = |index: usize, locale: &mut Locale| -> CanonicalizationResult {
-            let entry = &self.likely_subtags.entries[index].1;
-            if locale.language.is_empty() || locale.script.is_none() || locale.region.is_none() {
+        let update_locale =
+            |entry: &LanguageIdentifier, locale: &mut Locale| -> CanonicalizationResult {
                 if locale.language.is_empty() {
                     locale.language = entry.language;
                 }
                 locale.script = locale.script.or(entry.script);
                 locale.region = locale.region.or(entry.region);
                 CanonicalizationResult::Modified
-            } else {
-                CanonicalizationResult::Unmodified
-            }
-        };
+            };
 
-        // languages_scripts_regions
-        if locale.script.is_some() && locale.region.is_some() {
-            if let Ok(index) = self
-                .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
-            {
-                return maybe_update_locale(index, locale);
-            }
+        if !locale.language.is_empty() && locale.script.is_some() && locale.region.is_some() {
+            return CanonicalizationResult::Unmodified;
         }
 
-        // languages_scripts
-        if locale.script.is_some() {
-            key.script = locale.script;
-            key.region = None;
+        if !locale.language.is_empty() {
+            if locale.script.is_some() {
+                let key = (&locale.language, &locale.script);
+                if let Ok(index) = self
+                    .likely_subtags
+                    .language_script
+                    .binary_search_by_key(&key, |(l, _)| (&l.language, &l.script))
+                {
+                    let entry = &self.likely_subtags.language_script[index].1;
+                    return update_locale(entry, locale);
+                }
+            }
+
+            if locale.region.is_some() {
+                let key = (&locale.language, &locale.region);
+                if let Ok(index) = self
+                    .likely_subtags
+                    .language_region
+                    .binary_search_by_key(&key, |(l, _)| (&l.language, &l.region))
+                {
+                    let entry = &self.likely_subtags.language_region[index].1;
+                    return update_locale(entry, locale);
+                }
+            }
+
+            let key = &locale.language;
             if let Ok(index) = self
                 .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
+                .language
+                .binary_search_by_key(key, |(l, _)| l.language)
             {
-                return maybe_update_locale(index, locale);
+                let entry = &self.likely_subtags.language[index].1;
+                return update_locale(entry, locale);
             }
-        }
+        } else if locale.script.is_some() {
+            if locale.region.is_some() {
+                let key = (&locale.script, &locale.region);
+                if let Ok(index) = self
+                    .likely_subtags
+                    .script_region
+                    .binary_search_by_key(&key, |(l, _)| (&l.script, &l.region))
+                {
+                    let entry = &self.likely_subtags.script_region[index].1;
+                    return update_locale(entry, locale);
+                }
+            }
 
-        // languages_regions
-        if locale.region.is_some() {
-            key.script = None;
+            let key = &locale.script;
             if let Ok(index) = self
                 .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
+                .script
+                .binary_search_by_key(&key, |(l, _)| &l.script)
             {
-                return maybe_update_locale(index, locale);
+                let entry = &self.likely_subtags.script[index].1;
+                return update_locale(entry, locale);
             }
-        }
-
-        // languages
-        key.script = None;
-        key.region = None;
-        if let Ok(index) = self
-            .likely_subtags
-            .entries
-            .binary_search_by_key(&&key, |(l, _)| l)
-        {
-            return maybe_update_locale(index, locale);
-        }
-
-        // und_scripts
-        if locale.script.is_some() {
-            key.language = subtags::Language::default();
-            key.script = locale.script;
-            key.region = None;
+        } else if locale.region.is_some() {
+            let key = &locale.region;
             if let Ok(index) = self
                 .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
+                .region
+                .binary_search_by_key(&key, |(l, _)| &l.region)
             {
-                return maybe_update_locale(index, locale);
+                let entry = &self.likely_subtags.region[index].1;
+                return update_locale(entry, locale);
             }
+        } else {
+            return update_locale(&self.likely_subtags.und, locale);
         }
         CanonicalizationResult::Unmodified
     }
@@ -160,6 +162,7 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
+    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -173,6 +176,7 @@ impl LocaleCanonicalizer<'_> {
     /// let mut locale : Locale = "en".parse().unwrap();
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "en");
+    /// # } // feature = "provider_serde"
     /// ```
     pub fn minimize(&self, locale: &mut Locale) -> CanonicalizationResult {
         let mut max = locale.clone();

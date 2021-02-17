@@ -1,12 +1,15 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use crate::date::{self, DateTimeType};
-use crate::error::DateTimeFormatError;
+
+use crate::arithmetic;
+use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
+use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
-use crate::provider::DateTimeDates;
-use icu_provider::structs;
+use crate::provider;
+use crate::provider::helpers::DateTimeDates;
+use icu_locid::Locale;
 use std::fmt;
 use writeable::Writeable;
 
@@ -22,12 +25,12 @@ use writeable::Writeable;
 /// ```
 /// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// # use icu_datetime::date::MockDateTime;
+/// # use icu_datetime::mock::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
-/// # let lid = langid!("en");
+/// # let locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();
-/// let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+/// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
@@ -39,35 +42,38 @@ use writeable::Writeable;
 /// ```
 pub struct FormattedDateTime<'l, T>
 where
-    T: DateTimeType,
+    T: DateTimeInput,
 {
     pub(crate) pattern: &'l Pattern,
-    pub(crate) data: &'l structs::dates::gregory::DatesV1,
+    pub(crate) data: &'l provider::gregory::DatesV1,
     pub(crate) date_time: &'l T,
+    pub(crate) locale: &'l Locale,
 }
 
 impl<'l, T> Writeable for FormattedDateTime<'l, T>
 where
-    T: DateTimeType,
+    T: DateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.pattern, self.data, self.date_time, sink).map_err(|_| std::fmt::Error)
+        write_pattern(self.pattern, self.data, self.date_time, self.locale, sink)
+            .map_err(|_| std::fmt::Error)
     }
 
-    // TODO: Implement write_len
+    // TODO(#489): Implement write_len
 }
 
 impl<'l, T> fmt::Display for FormattedDateTime<'l, T>
 where
-    T: DateTimeType,
+    T: DateTimeInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.pattern, self.data, self.date_time, f).map_err(|_| std::fmt::Error)
+        write_pattern(self.pattern, self.data, self.date_time, self.locale, f)
+            .map_err(|_| std::fmt::Error)
     }
 }
 
 // Temporary formatting number with length.
-fn format_number<W>(result: &mut W, num: usize, length: FieldLength) -> Result<(), std::fmt::Error>
+fn format_number<W>(result: &mut W, num: isize, length: FieldLength) -> Result<(), std::fmt::Error>
 where
     W: fmt::Write + ?Sized,
 {
@@ -86,85 +92,154 @@ where
     }
 }
 
-// Temporary simplified function to get the day of the week
-fn get_day_of_week(year: usize, month: date::Month, day: date::Day) -> date::WeekDay {
-    let month: usize = month.into();
-    let day: usize = day.into();
-    let t = &[0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
-    let year = if month < 2 { year - 1 } else { year };
-    let result = (year + year / 4 - year / 100 + year / 400 + t[month] + day + 1) % 7;
-    date::WeekDay::new_unchecked(result as u8)
-}
-
 pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
-    data: &structs::dates::gregory::DatesV1,
+    data: &provider::gregory::DatesV1,
     date_time: &T,
+    locale: &Locale,
     w: &mut W,
-) -> Result<(), DateTimeFormatError>
+) -> Result<(), Error>
 where
-    T: DateTimeType,
+    T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    for item in &pattern.0 {
+    let loc_date_time = DateTimeInputWithLocale::new(date_time, locale);
+    for item in pattern.items() {
         match item {
-            PatternItem::Field(field) => match field.symbol {
-                FieldSymbol::Year(..) => format_number(w, date_time.year(), field.length)?,
-                FieldSymbol::Month(month) => match field.length {
-                    FieldLength::One | FieldLength::TwoDigit => {
-                        format_number(w, usize::from(date_time.month()) + 1, field.length)?
-                    }
-                    length => {
-                        let symbol = data.get_symbol_for_month(month, length, date_time.month());
-                        w.write_str(symbol)?
-                    }
-                },
-                FieldSymbol::Weekday(weekday) => {
-                    let dow = get_day_of_week(date_time.year(), date_time.month(), date_time.day());
-                    let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
-                    w.write_str(symbol)?
-                }
-                FieldSymbol::Day(..) => {
-                    format_number(w, usize::from(date_time.day()) + 1, field.length)?
-                }
-                FieldSymbol::Hour(hour) => {
-                    let h = date_time.hour().into();
-                    let value = match hour {
-                        fields::Hour::H11 => h % 12,
-                        fields::Hour::H12 => {
-                            let v = h % 12;
-                            if v == 0 {
-                                12
-                            } else {
-                                v
-                            }
-                        }
-                        fields::Hour::H23 => h,
-                        fields::Hour::H24 => {
-                            if h == 0 {
-                                24
-                            } else {
-                                h
-                            }
-                        }
-                    };
-                    format_number(w, value, field.length)?
-                }
-                FieldSymbol::Minute => format_number(w, date_time.minute().into(), field.length)?,
-                FieldSymbol::Second(..) => {
-                    format_number(w, date_time.second().into(), field.length)?
-                }
-                FieldSymbol::DayPeriod(period) => match period {
-                    fields::DayPeriod::AmPm => {
-                        let symbol =
-                            data.get_symbol_for_day_period(period, field.length, date_time.hour());
-                        w.write_str(symbol)?
-                    }
-                },
-            },
+            PatternItem::Field(field) => write_field(pattern, &field, data, &loc_date_time, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }
+    Ok(())
+}
+
+fn write_field<T, W>(
+    pattern: &crate::pattern::Pattern,
+    field: &fields::Field,
+    data: &crate::provider::gregory::DatesV1,
+    date_time: &impl LocalizedDateTimeInput<T>,
+    w: &mut W,
+) -> Result<(), Error>
+where
+    T: DateTimeInput,
+    W: fmt::Write + ?Sized,
+{
+    match field.symbol {
+        FieldSymbol::Year(..) => format_number(
+            w,
+            date_time
+                .date_time()
+                .year()
+                .ok_or(Error::MissingInputField)?
+                .number as isize,
+            field.length,
+        )?,
+        FieldSymbol::Month(month) => match field.length {
+            FieldLength::One | FieldLength::TwoDigit => format_number(
+                w,
+                date_time
+                    .date_time()
+                    .month()
+                    .ok_or(Error::MissingInputField)?
+                    .number as isize,
+                field.length,
+            )?,
+            length => {
+                let symbol = data.get_symbol_for_month(
+                    month,
+                    length,
+                    date_time
+                        .date_time()
+                        .month()
+                        .ok_or(Error::MissingInputField)?
+                        .number as usize
+                        - 1,
+                );
+                w.write_str(symbol)?
+            }
+        },
+        FieldSymbol::Weekday(weekday) => {
+            let dow = date_time
+                .date_time()
+                .iso_weekday()
+                .ok_or(Error::MissingInputField)?;
+            let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
+            w.write_str(symbol)?
+        }
+        FieldSymbol::Day(..) => format_number(
+            w,
+            date_time
+                .date_time()
+                .day_of_month()
+                .ok_or(Error::MissingInputField)?
+                .0 as isize,
+            field.length,
+        )?,
+        FieldSymbol::Hour(hour) => {
+            let h = usize::from(
+                date_time
+                    .date_time()
+                    .hour()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize;
+            let value = match hour {
+                fields::Hour::H11 => h % 12,
+                fields::Hour::H12 => {
+                    let v = h % 12;
+                    if v == 0 {
+                        12
+                    } else {
+                        v
+                    }
+                }
+                fields::Hour::H23 => h,
+                fields::Hour::H24 => {
+                    if h == 0 {
+                        24
+                    } else {
+                        h
+                    }
+                }
+            };
+            format_number(w, value, field.length)?
+        }
+        FieldSymbol::Minute => format_number(
+            w,
+            usize::from(
+                date_time
+                    .date_time()
+                    .minute()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            field.length,
+        )?,
+        FieldSymbol::Second(..) => format_number(
+            w,
+            usize::from(
+                date_time
+                    .date_time()
+                    .second()
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            field.length,
+        )?,
+        FieldSymbol::DayPeriod(period) => {
+            let symbol = data.get_symbol_for_day_period(
+                period,
+                field.length,
+                date_time
+                    .date_time()
+                    .hour()
+                    .ok_or(Error::MissingInputField)?,
+                arithmetic::is_top_of_hour(
+                    &pattern,
+                    date_time.date_time().minute().map(u8::from).unwrap_or(0),
+                    date_time.date_time().second().map(u8::from).unwrap_or(0),
+                ),
+            );
+            w.write_str(symbol)?
+        }
+    };
     Ok(())
 }
 
@@ -173,7 +248,40 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_format_numer() {
+    #[cfg(feature = "provider_serde")]
+    fn test_basic() {
+        use crate::mock::MockDateTime;
+        use icu_provider::prelude::*;
+        let provider = icu_testdata::get_provider();
+        let data = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some("en".parse().unwrap()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
+        let date_time = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
+        let mut sink = String::new();
+        write_pattern(
+            &pattern,
+            &data,
+            &date_time,
+            &"und".parse().unwrap(),
+            &mut sink,
+        )
+        .unwrap();
+        println!("{}", sink);
+    }
+
+    #[test]
+    fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
             (FieldLength::One, ["2", "20", "201", "2017", "20173"]),

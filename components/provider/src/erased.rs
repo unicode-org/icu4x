@@ -22,7 +22,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloWorldV1;
+    /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased reference
     /// let data = HelloWorldV1::default();
@@ -39,7 +39,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloWorldV1;
+    /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased box
     /// let erased: Box<dyn ErasedDataStruct> = Box::new(HelloWorldV1::default());
@@ -57,7 +57,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloWorldV1;
+    /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased reference
     /// let data = HelloWorldV1::default();
@@ -74,7 +74,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloWorldV1;
+    /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased reference
     /// let data = HelloWorldV1::default();
@@ -116,7 +116,7 @@ impl dyn ErasedDataStruct {
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::structs::icu4x::HelloWorldV1;
+    /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased reference
     /// let data = HelloWorldV1::default();

@@ -16,11 +16,13 @@ include = [
     "README.md"
 ]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -33,9 +35,15 @@ serde_json = "1.0"
 bench = false  # This option is required for Benchmark CI
 
 [features]
-default = []
+default = ["provider_serde"]
 bench = []
+provider_serde = ["serde", "icu_locid/serde"]
+serialize_none = []
 
 [[bench]]
 name = "locale_canonicalizer"
 harness = false
+
+[[test]]
+name = "locale_canonicalizer"
+required-features = ["provider_serde"]

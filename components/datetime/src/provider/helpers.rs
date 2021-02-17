@@ -1,12 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
 use crate::options::{style, DateTimeFormatOptions};
 use crate::pattern::Pattern;
-use icu_provider::structs;
+use crate::provider;
 use std::borrow::Cow;
 
 type Result<T> = std::result::Result<T, DateTimeFormatError>;
@@ -26,23 +27,24 @@ pub trait DateTimeDates {
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: date::Month,
+        num: usize,
     ) -> &Cow<str>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::WeekDay,
+        day: date::IsoWeekday,
     ) -> &Cow<str>;
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::Hour,
+        hour: date::IsoHour,
+        is_top_of_hour: bool,
     ) -> &Cow<str>;
 }
 
-impl DateTimeDates for structs::dates::gregory::DatesV1 {
+impl DateTimeDates for provider::gregory::DatesV1 {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
         match options {
             DateTimeFormatOptions::Style(bag) => self.get_pattern_for_style_bag(bag),
@@ -107,7 +109,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::WeekDay,
+        day: date::IsoWeekday,
     ) -> &Cow<str> {
         let widths = match weekday {
             fields::Weekday::Format => &self.symbols.weekdays.format,
@@ -123,7 +125,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[usize::from(day)];
+                        return &symbols.0[(day as usize) % 7];
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -139,15 +141,17 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Six => widths.short.as_ref().unwrap_or(&widths.abbreviated),
             _ => &widths.abbreviated,
         };
-        &symbols.0[usize::from(day)]
+        &symbols.0[(day as usize) % 7]
     }
 
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: date::Month,
+        num: usize,
     ) -> &Cow<str> {
+        // TODO(#493): Support symbols for non-Gregorian calendars.
+        debug_assert!(num < 12);
         let widths = match month {
             fields::Month::Format => &self.symbols.months.format,
             fields::Month::StandAlone => {
@@ -158,7 +162,7 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
                         _ => widths.abbreviated.as_ref(),
                     };
                     if let Some(symbols) = symbols {
-                        return &symbols.0[usize::from(num)];
+                        return &symbols.0[num];
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, num);
                     }
@@ -172,30 +176,28 @@ impl DateTimeDates for structs::dates::gregory::DatesV1 {
             fields::FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-        &symbols.0[usize::from(num)]
+        &symbols.0[num]
     }
 
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::Hour,
+        hour: date::IsoHour,
+        is_top_of_hour: bool,
     ) -> &Cow<str> {
-        let widths = match day_period {
-            fields::DayPeriod::AmPm => &self.symbols.day_periods.format,
-        };
+        use fields::{DayPeriod::NoonMidnight, FieldLength};
+        let widths = &self.symbols.day_periods.format;
         let symbols = match length {
-            fields::FieldLength::Wide => &widths.wide,
-            fields::FieldLength::Narrow => &widths.narrow,
+            FieldLength::Wide => &widths.wide,
+            FieldLength::Narrow => &widths.narrow,
             _ => &widths.abbreviated,
         };
-
-        //TODO: Once we have more dayperiod types, we'll need to handle
-        //      this logic in the right location.
-        if u8::from(hour) < 12 {
-            &symbols.am
-        } else {
-            &symbols.pm
+        match (day_period, u8::from(hour), is_top_of_hour) {
+            (NoonMidnight, 00, true) => symbols.midnight.as_ref().unwrap_or(&symbols.am),
+            (NoonMidnight, 12, true) => symbols.noon.as_ref().unwrap_or(&symbols.pm),
+            (_, hour, _) if hour < 12 => &symbols.am,
+            _ => &symbols.pm,
         }
     }
 }

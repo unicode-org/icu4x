@@ -5,10 +5,10 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locid_macros::langid;
+use icu_plurals::provider::*;
 #[cfg(feature = "bench")]
 use icu_provider::erased::*;
 use icu_provider::prelude::*;
-use icu_provider::structs;
 use icu_provider_fs::FsDataProvider;
 use std::borrow::Cow;
 
@@ -18,10 +18,10 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             let provider = FsDataProvider::try_new("./tests/testdata/json")
                 .expect("Loading file from testdata directory");
-            let _: Cow<structs::plurals::PluralRuleStringsV1> = black_box(&provider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
-                        key: structs::plurals::key::CARDINAL_V1,
+                        key: key::CARDINAL_V1,
                         options: ResourceOptions {
                             variant: None,
                             langid: Some(langid!("ru")),
@@ -51,10 +51,10 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: Cow<structs::plurals::PluralRuleStringsV1> = black_box(&provider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
-                        key: structs::plurals::key::CARDINAL_V1,
+                        key: key::CARDINAL_V1,
                         options: ResourceOptions {
                             variant: None,
                             langid: Some(langid!("ru")),
@@ -69,20 +69,19 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/erased", |b| {
         b.iter(|| {
-            let _: Cow<structs::plurals::PluralRuleStringsV1> =
-                black_box(&provider as &dyn ErasedDataProvider)
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: structs::plurals::key::CARDINAL_V1,
-                            options: ResourceOptions {
-                                variant: None,
-                                langid: Some(langid!("ru")),
-                            },
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn ErasedDataProvider)
+                .load_payload(&DataRequest {
+                    resource_path: ResourcePath {
+                        key: key::CARDINAL_V1,
+                        options: ResourceOptions {
+                            variant: None,
+                            langid: Some(langid!("ru")),
                         },
-                    })
-                    .expect("The data should be valid")
-                    .take_payload()
-                    .expect("Loading was successful");
+                    },
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
         });
     });
 }
@@ -94,10 +93,10 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: Cow<structs::plurals::PluralRuleStringsV1> = black_box(&provider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
-                        key: structs::plurals::key::CARDINAL_V1,
+                        key: key::CARDINAL_V1,
                         options: ResourceOptions {
                             variant: None,
                             langid: Some(langid!("sr")),
@@ -112,20 +111,19 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/erased", |b| {
         b.iter(|| {
-            let _: Cow<structs::plurals::PluralRuleStringsV1> =
-                black_box(&provider as &dyn ErasedDataProvider)
-                    .load_payload(&DataRequest {
-                        resource_path: ResourcePath {
-                            key: structs::plurals::key::CARDINAL_V1,
-                            options: ResourceOptions {
-                                variant: None,
-                                langid: Some(langid!("sr")),
-                            },
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn ErasedDataProvider)
+                .load_payload(&DataRequest {
+                    resource_path: ResourcePath {
+                        key: key::CARDINAL_V1,
+                        options: ResourceOptions {
+                            variant: None,
+                            langid: Some(langid!("sr")),
                         },
-                    })
-                    .expect("The data should be valid")
-                    .take_payload()
-                    .expect("Loading was successful");
+                    },
+                })
+                .expect("The data should be valid")
+                .take_payload()
+                .expect("Loading was successful");
         });
     });
 }

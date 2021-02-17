@@ -90,15 +90,35 @@
       "format": {
         "abbreviated": {
           "am": "a. m.",
-          "pm": "p. m."
+          "pm": "p. m.",
+          "noon": "del mediodía"
         },
         "narrow": {
           "am": "a. m.",
-          "pm": "p. m."
+          "pm": "p. m.",
+          "noon": "del mediodía"
         },
         "wide": {
           "am": "a. m.",
-          "pm": "p. m."
+          "pm": "p. m.",
+          "noon": "del mediodía"
+        }
+      },
+      "stand_alone": {
+        "abbreviated": {
+          "am": "a. m.",
+          "pm": "p. m.",
+          "noon": "mediodía"
+        },
+        "narrow": {
+          "am": "a. m.",
+          "pm": "p. m.",
+          "noon": "mediodía"
+        },
+        "wide": {
+          "am": "a. m.",
+          "pm": "p. m.",
+          "noon": "mediodía"
         }
       }
     }

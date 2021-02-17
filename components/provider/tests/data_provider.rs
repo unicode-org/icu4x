@@ -7,8 +7,8 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 
 use icu_provider::erased::*;
+use icu_provider::hello_world::{self, HelloWorldV1};
 use icu_provider::prelude::*;
-use icu_provider::structs::{self, icu4x::HelloWorldV1};
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -44,7 +44,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path
             .key
-            .match_key(structs::icu4x::key::HELLO_WORLD_V1)?;
+            .match_key(hello_world::key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Owned(self.data.hello_v1.clone())),
@@ -61,7 +61,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path
             .key
-            .match_key(structs::icu4x::key::HELLO_WORLD_V1)?;
+            .match_key(hello_world::key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.data.hello_v1)),
@@ -93,7 +93,7 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
         req.resource_path
             .key
-            .match_key(structs::icu4x::key::HELLO_WORLD_V1)?;
+            .match_key(hello_world::key::HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
@@ -119,7 +119,7 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
         receiver: &'a mut dyn ErasedDataReceiver<'d, '_>,
     ) -> Result<DataResponseMetadata, DataError> {
         match req.resource_path.key {
-            structs::icu4x::key::HELLO_WORLD_V1 => {
+            hello_world::key::HELLO_WORLD_V1 => {
                 receiver.receive_erased(Cow::Borrowed(&self.borrowed_data.hello_v1))?;
                 Ok(DataResponseMetadata::default())
             }
@@ -170,7 +170,7 @@ fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
 fn get_request_v1() -> DataRequest {
     DataRequest {
         resource_path: ResourcePath {
-            key: structs::icu4x::key::HELLO_WORLD_V1,
+            key: hello_world::key::HELLO_WORLD_V1,
             options: Default::default(),
         },
     }

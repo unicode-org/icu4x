@@ -90,21 +90,29 @@
       "format": {
         "abbreviated": {
           "am": "ÖÖ",
-          "pm": "ÖS"
+          "pm": "ÖS",
+          "noon": "öğle",
+          "midnight": "gece yarısı"
         },
         "narrow": {
           "am": "öö",
-          "pm": "ös"
+          "pm": "ös",
+          "noon": "ö",
+          "midnight": "gece"
         },
         "wide": {
           "am": "ÖÖ",
-          "pm": "ÖS"
+          "pm": "ÖS",
+          "noon": "öğle",
+          "midnight": "gece yarısı"
         }
       },
       "stand_alone": {
         "narrow": {
           "am": "ÖÖ",
-          "pm": "ÖS"
+          "pm": "ÖS",
+          "noon": "öğle",
+          "midnight": "gece yarısı"
         }
       }
     }

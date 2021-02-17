@@ -70,6 +70,7 @@ impl Breakpoints {
         }
     }
 
+    #[allow(clippy::suspicious_operation_groupings)]
     fn from_bies_matrix_1a(
         matrix: &BiesMatrix,
         valid_breakpoints: impl Iterator<Item = usize>,

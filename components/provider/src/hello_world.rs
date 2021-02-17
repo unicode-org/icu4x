@@ -2,18 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::erased::ErasedDataStruct;
-use crate::iter::DataExporter;
 use crate::prelude::*;
 use icu_locid::LanguageIdentifier;
-use icu_locid_macros::langid;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::str::FromStr;
 
-// Re-export symbols from structs::icu4x
-// TODO(#415): Move these symbols to this file.
-pub use crate::structs::icu4x::*;
+pub mod key {
+    use crate::resource::ResourceKey;
+    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(icu4x, "helloworld", 1);
+}
+
+/// A struct containing "Hello World" in the requested language.
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct HelloWorldV1<'s> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub message: Cow<'s, str>,
+}
+
+impl Default for HelloWorldV1<'_> {
+    fn default() -> Self {
+        HelloWorldV1 {
+            message: Cow::Borrowed("(und) Hello World"),
+        }
+    }
+}
 
 /// A data provider returning Hello World strings in different languages.
 ///
@@ -48,24 +63,35 @@ pub struct HelloWorldProvider<'s> {
 impl<'s> HelloWorldProvider<'s> {
     /// Creates a HelloWorldProvider pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider<'static> {
-        let mut map = HashMap::new();
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
-        map.insert(langid!("bn"), Cow::Borrowed("ওহে বিশ্ব"));
-        map.insert(langid!("cs"), Cow::Borrowed("Ahoj světe"));
-        map.insert(langid!("de"), Cow::Borrowed("Hallo Welt"));
-        map.insert(langid!("el"), Cow::Borrowed("Καλημέρα κόσμε"));
-        map.insert(langid!("en"), Cow::Borrowed("Hello World"));
-        map.insert(langid!("eo"), Cow::Borrowed("Saluton, Mondo"));
-        map.insert(langid!("fa"), Cow::Borrowed("سلام دنیا‎"));
-        map.insert(langid!("fi"), Cow::Borrowed("hei maailma"));
-        map.insert(langid!("is"), Cow::Borrowed("Halló, heimur"));
-        map.insert(langid!("ja"), Cow::Borrowed("こんにちは世界"));
-        map.insert(langid!("la"), Cow::Borrowed("Ave, munde"));
-        map.insert(langid!("ro"), Cow::Borrowed("Salut,lume!"));
-        map.insert(langid!("ru"), Cow::Borrowed("Привет, мир"));
-        map.insert(langid!("vi"), Cow::Borrowed("Xin chào thế giới"));
-        map.insert(langid!("zh"), Cow::Borrowed("你好世界"));
-        HelloWorldProvider { map }
+        // Note: we don't want to use langid!() because icu_langid_macros is heavy.
+        HelloWorldProvider {
+            map: [
+                ("bn", "ওহে বিশ্ব"),
+                ("cs", "Ahoj světe"),
+                ("de", "Hallo Welt"),
+                ("el", "Καλημέρα κόσμε"),
+                ("en", "Hello World"),
+                ("eo", "Saluton, Mondo"),
+                ("fa", "سلام دنیا‎"),
+                ("fi", "hei maailma"),
+                ("is", "Halló, heimur"),
+                ("ja", "こんにちは世界"),
+                ("la", "Ave, munde"),
+                ("ro", "Salut,lume!"),
+                ("ru", "Привет, мир"),
+                ("vi", "Xin chào thế giới"),
+                ("zh", "你好世界"),
+            ]
+            .iter()
+            .map(|(loc, value)| {
+                (
+                    LanguageIdentifier::from_str(loc).unwrap(),
+                    Cow::Borrowed(*value),
+                )
+            })
+            .collect(),
+        }
     }
 }
 
@@ -93,6 +119,7 @@ where
     }
 }
 
+#[cfg(feature = "erased")]
 impl_erased!(HelloWorldProvider<'static>, 'd);
 
 impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
@@ -114,11 +141,12 @@ impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a HelloWorldProvider as a DataExporter
-impl DataExporter for HelloWorldProvider<'static> {
+#[cfg(feature = "erased")]
+impl crate::iter::DataExporter for HelloWorldProvider<'static> {
     fn put_payload(
         &mut self,
         req: &DataRequest,
-        payload: &dyn ErasedDataStruct,
+        payload: &dyn crate::erased::ErasedDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;

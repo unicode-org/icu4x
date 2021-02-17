@@ -107,7 +107,8 @@ jobs:
     - uses: actions-rs/clippy-check@v1.0.7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        args: --all-targets --all-features -- -D warnings
+        # keep args in sync with `clippy-all` in .cargo/config.toml
+        args: --all-targets --all-features -- -Aclippy::unknown-clippy-lints -Aclippy::field-reassign-with-default
 
   # Benchmarking & dashboards job
 
@@ -176,7 +177,7 @@ jobs:
           fail-on-alert: true
           gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
                                                    # We could use another branch besides `gh-pages` to store this historical benchmark info.
-          auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure 
+          auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure
                             # that the branch in `gh-pages-branch` is different from the branch used for merges to master/main branch.
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
@@ -216,6 +217,139 @@ jobs:
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
 
+  # Run examples with dhat-rs in order to collect memory heap size metrics. These
+  # metrics will then be charted over time. See tools/benchmark/memory/README.md for
+  # more information.
+
+  # dhat-rs:
+  #   https://github.com/nnethercote/dhat-rs
+  # Benchmarking action (forked):
+  #   https://github.com/gregtatum/github-action-benchmark
+  # The memory data is collected in:
+  #   benchmarks/memory/{os}/output.ndjson
+  # The full data report is stored in:
+  #   benchmarks/memory/{os}/{example}-dhat-heap.json
+
+  memory:
+    strategy:
+      fail-fast: false
+      # Create a matrix of all platforms, and all components. Each job then can run
+      # multiple examples in that job. The examples are defined as a space separated
+      # list of the name of the examples. The examples are assumed to be in the
+      # examples folder.
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        # The list of examples to run, with the form {package}/{example}.
+        #
+        # n.b. Don't get tripped up by the yml syntax here. This is a list with a single string
+        # entry. It is using the block chomping indicator ">-", which means the multiline string
+        # will be joined together into one line using a single space between each line. This
+        # will place all of the examples on the same line so they can get passed to the
+        # icu_benchmark_memory cli.
+        examples:
+          - >-
+              icu_datetime/work_log
+              icu_locid/syntatically_canonicalize_locales
+              icu_locid/filter_langids
+              icu_plurals/unread_emails
+              icu_plurals/elevator_floors
+              icu_uniset/unicode_bmp_blocks_selector
+              fixed_decimal/permyriad
+              writeable/writeable_message
+
+    runs-on: ${{ matrix.os }}
+
+    # Only run the memory benchmark if the main build succeeded. The memory benchmark does not
+    # rely on any of the build artifacts.
+    needs: [build]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
+      # then this line is no longer needed.
+      - name: Install nightly toolchain
+        run: rustup toolchain install nightly
+
+      - name: Run the example with dhat-rs to collect memory information
+        run: |
+          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+
+      # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
+      # dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result & create dashboard (unmerged PR only)
+        # any action that is not a merge to master implies unfinished PR
+        if: github.event_name != 'push' || github.ref != 'refs/heads/master'
+        # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+        # If the PR gets merged, this can be switched back to the main project.
+        # https://github.com/rhysd/github-action-benchmark/pull/54
+        uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+        with:
+          name: Heap – ${{ matrix.os }}
+          # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+          tool: 'ndjson'
+          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+          output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
+          # Show alert with commit comment on detecting possible memory regression
+          alert-threshold: '200%'
+          fail-on-alert: true
+          # Requires one-time-only creation of this branch on remote repo. This will
+          # store the generated information.
+          gh-pages-branch: unmerged-pr-bench-data
+
+          # Do not store historical benchmark info of unfinished PRs. Commits seem to get
+          # made anyways, so make sure that the branch in `gh-pages-branch` is
+          # different from the branch used for merges to master/main branch.
+          auto-push: false
+
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
+
+      # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output
+      # into dashboard HTML in a commit of a branch of the local repo.
+
+      - name: Store benchmark result & create dashboard (merge to master only)
+        # only merges to master (implies PR is finished and approved by this point)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+        # If the PR gets merged, this can be switched back to the main project.
+        # https://github.com/rhysd/github-action-benchmark/pull/54
+        uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+        with:
+          name: Heap – ${{ matrix.os }}
+          # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+          tool: 'ndjson'
+          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+          output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
+          alert-threshold: '200%'
+          fail-on-alert: true
+          # The historical run information will be stored in this branch. This is the same
+          # branch that is being used by the performance benchmark. The information is
+          # computed by gregtatum/github-action-benchmark, and is added to a .js file in
+          # the branch, e.g. benchmarks/memory/{os}/data.js
+          gh-pages-branch: gh-pages
+          auto-push: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on-alert: true
+          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
+
+      # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the
+      # files across jobs within the same workflow.
+
+      - name: Switch branch to get result of benchmark pages output (merge to master only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: git checkout gh-pages
+
+      - name: Upload updated benchmark data (merge to master only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v2
+        with:
+          # Use wildcard pattern to preserve dir structure of uploaded files:
+          path: ./benchmarks/memory/**
+          name: benchmark-memory
+
   # Doc-GH-Pages job
 
   doc_gh_pages:
@@ -223,7 +357,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [build, lint, benchmark]
+    needs: [build, lint, benchmark, memory]
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
@@ -240,6 +374,9 @@ jobs:
     - name: Create (ensure existence of) folder for benchmark data to copy
       run: mkdir -p copy-to-ext-repo/dev
 
+    - name: Create (ensure existence of) folder for memory benchmark data to copy
+      run: mkdir -p copy-to-ext-repo/benchmarks/memory
+
     # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
 
     - name: Download previous content destined for GH pages
@@ -247,6 +384,13 @@ jobs:
       with:
         path: ./copy-to-ext-repo/dev
         name: benchmark-perf
+
+    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
+      with:
+        path: ./copy-to-ext-repo/benchmarks/memory
+        name: benchmark-memory
 
     # Doc-GH-Pages job > Generate `cargo doc` step
 

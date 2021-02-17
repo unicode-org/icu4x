@@ -19,7 +19,8 @@ include = [
     "README.md"
 ]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
@@ -27,3 +28,6 @@ icu_provider = { version = "0.1", path = "../provider" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 tinystr = "0.4"
 icu_uniset = { version = "0.1", path = "../uniset" }
+
+[dev-dependencies]
+icu_uniset = { version = "0.1", path = "../uniset", features = ["testing"] }

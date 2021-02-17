@@ -35,11 +35,11 @@
 //!
 //! ```
 //! use icu::locid::macros::langid;
-//! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+//! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let lid = langid!("en");
+//! let locale = langid!("en").into();
 //!
 //! let options = style::Bag {
 //!     date: Some(style::Date::Long),
@@ -47,7 +47,7 @@
 //!     ..Default::default()
 //! }.into();
 //!
-//! let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+//! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 //!     .expect("Failed to create DateTimeFormat instance.");
 //!
 //! let date: MockDateTime = "2020-09-12T12:35:00".parse()
@@ -73,11 +73,11 @@ pub mod datetime {
     //!
     //! ```
     //! use icu::locid::macros::langid;
-    //! use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+    //! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let lid = langid!("en");
+    //! let locale = langid!("en").into();
     //!
     //! let options = style::Bag {
     //!     date: Some(style::Date::Medium),
@@ -85,7 +85,7 @@ pub mod datetime {
     //!     ..Default::default()
     //! }.into();
     //!
-    //! let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+    //! let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     //!     .expect("Failed to create DateTimeFormat instance.");
     //!
     //! let date: MockDateTime = "2020-09-12T12:35:00".parse()

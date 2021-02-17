@@ -1,11 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-//! APIs for Date and Time handling
-use std::convert::{TryFrom, TryInto};
+
+use icu_locid::Locale;
+use std::convert::TryFrom;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
+use tinystr::TinyStr8;
 
 #[derive(Debug)]
 pub enum DateTimeError {
@@ -28,156 +30,225 @@ impl From<std::num::ParseIntError> for DateTimeError {
     }
 }
 
-/// Temporary trait used to represent the input data for [`DateTimeFormat`].
+/// Representation of a formattable calendar date. Supports dates in any calendar system that uses
+/// solar days indexed by an era, year, month, and day.
 ///
-/// This type represents all data that the formatted needs in order to produced formatted string.
+/// All fields are optional. If a field is not present but is required when formatting, an error
+/// result will be returned from the formatter.
 ///
-/// *Note*: At the moment we support only `gregorian` calendar, and plan to extend support to
-/// other calendars in the upcoming releases. See <https://github.com/unicode-org/icu4x/issues/355>
-///
-/// [`DateTimeFormat`]: super::DateTimeFormat
-pub trait DateTimeType: FromStr {
-    fn year(&self) -> usize;
-    fn month(&self) -> Month;
-    fn day(&self) -> Day;
-    fn hour(&self) -> Hour;
-    fn minute(&self) -> Minute;
-    fn second(&self) -> Second;
+/// All data represented in DateInput should be locale-agnostic.
+pub trait DateInput {
+    /// Gets the era and year input.
+    fn year(&self) -> Option<Year>;
+
+    /// Gets the month input.
+    fn month(&self) -> Option<Month>;
+
+    /// Gets the day input.
+    fn day_of_month(&self) -> Option<DayOfMonth>;
+
+    /// Gets the weekday input.
+    fn iso_weekday(&self) -> Option<IsoWeekday>;
+
+    /// Gets information on the position of the day within the year.
+    fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
 }
 
-/// Temporary implementation of [`DateTimeType`],
-/// which is used in tests, benchmarks and examples of this component.
+/// Representation of a time of day according to ISO-8601 conventions. Always indexed from
+/// midnight, regardless of calendar system.
 ///
-/// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-/// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/master/docs/research/date_time.md)
-/// to develop core date and time APIs that will work as an input for this component.
+/// All fields are optional. If a field is not present but is required when formatting, an error
+/// result will be returned from the formatter.
 ///
-/// # Examples
-///
-/// ```
-/// use icu_datetime::date::MockDateTime;
-///
-/// let dt1 = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
-///     .expect("Failed to construct DateTime.");
-///
-/// let dt2: MockDateTime = "2020-10-14T13:21:00".parse()
-///     .expect("Failed to parse a date time.");
-/// ```
-/// [`DateTimeFormat`]: super::DateTimeFormat
-#[derive(Debug, Default)]
-pub struct MockDateTime {
-    pub year: usize,
-    pub month: Month,
-    pub day: Day,
-    pub hour: Hour,
-    pub minute: Minute,
-    pub second: Second,
+/// All data represented in IsoTimeInput should be locale-agnostic.
+pub trait IsoTimeInput {
+    /// Gets the hour input.
+    fn hour(&self) -> Option<IsoHour>;
+
+    /// Gets the minute input.
+    fn minute(&self) -> Option<IsoMinute>;
+
+    /// Gets the second input.
+    fn second(&self) -> Option<IsoSecond>;
+
+    /// Gets the fractional second input.
+    fn fraction(&self) -> Option<FractionalSecond>;
 }
 
-impl MockDateTime {
-    /// Creates a new `MockDateTime` from a list of already validated date/time parameters.
-    pub const fn new(
-        year: usize,
-        month: Month,
-        day: Day,
-        hour: Hour,
-        minute: Minute,
-        second: Second,
-    ) -> Self {
+/// A combination of a formattable calendar date and ISO time.
+pub trait DateTimeInput: DateInput + IsoTimeInput {}
+
+impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
+
+/// A formattable calendar date and ISO time that takes the locale into account.
+pub trait LocalizedDateTimeInput<T: DateTimeInput> {
+    /// A reference to this instance's DateTimeInput.
+    fn date_time(&self) -> &T;
+
+    /// The year number according to week numbering.
+    ///
+    /// For example, December 31, 2020 is part of the first week of 2021.
+    fn year_week(&self) -> Year;
+
+    /// The week of the month according to UTS 35.
+    fn week_of_month(&self) -> WeekOfMonth;
+
+    /// The week number of the year.
+    ///
+    /// For example, December 31, 2020 is part of the first week of 2021.
+    fn week_of_year(&self) -> WeekOfYear;
+
+    /// TODO(#487): Implement flexible day periods.
+    fn flexible_day_period(&self);
+}
+
+pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
+    data: &'s T,
+    _first_weekday: u8,
+    _anchor_weekday: u8,
+}
+
+impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
+    pub fn new(data: &'s T, _locale: &Locale) -> Self {
         Self {
-            year,
-            month,
-            day,
-            hour,
-            minute,
-            second,
+            data,
+            // TODO(#488): Implement week calculations.
+            _first_weekday: 1,
+            _anchor_weekday: 4,
         }
     }
+}
 
-    /// Constructor for the `MockDateTime`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_datetime::date::MockDateTime;
-    ///
-    /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
-    ///     .expect("Failed to construct a DateTime");
-    /// ```
-    pub fn try_new(
-        year: usize,
-        month: usize,
-        day: usize,
-        hour: usize,
-        minute: usize,
-        second: usize,
-    ) -> Result<Self, DateTimeError> {
-        Ok(Self {
-            year,
-            month: month.try_into()?,
-            day: day.try_into()?,
-            hour: hour.try_into()?,
-            minute: minute.try_into()?,
-            second: second.try_into()?,
-        })
+impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+    fn date_time(&self) -> &T {
+        self.data
+    }
+
+    fn year_week(&self) -> Year {
+        todo!("#488")
+    }
+
+    fn week_of_month(&self) -> WeekOfMonth {
+        todo!("#488")
+    }
+
+    fn week_of_year(&self) -> WeekOfYear {
+        todo!("#488")
+    }
+
+    fn flexible_day_period(&self) {
+        todo!("#487")
     }
 }
 
-impl DateTimeType for MockDateTime {
-    fn year(&self) -> usize {
-        self.year
-    }
-    fn month(&self) -> Month {
-        self.month
-    }
-    fn day(&self) -> Day {
-        self.day
-    }
-    fn hour(&self) -> Hour {
-        self.hour
-    }
-    fn minute(&self) -> Minute {
-        self.minute
-    }
-    fn second(&self) -> Second {
-        self.second
+/// TODO(#486): Implement era codes.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Era(pub TinyStr8);
+
+/// Representation of a formattable year.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Year {
+    /// The era containing the year.
+    pub era: Era,
+
+    /// Year number in the current era (usually 1-based).
+    pub number: i32,
+
+    /// Related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
+    /// overlap with the calendar year. It is used in certain date formatting patterns.
+    pub related_iso: i32,
+}
+
+/// TODO(#486): Implement month codes.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MonthCode(pub TinyStr8);
+
+/// Representation of a formattable month.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Month {
+    /// A month number in a year. In normal years, this is usually the 1-based month index. In leap
+    /// years, this is what the month number would have been in a non-leap year.
+    ///
+    /// For example:
+    ///
+    /// - January = 1
+    /// - December = 12
+    /// - Adar, Adar I, and Adar II = 6
+    ///
+    /// The `code` property is used to distinguish between unique months in leap years.
+    pub number: u32,
+
+    /// The month code, used to distinguish months during leap years.
+    pub code: MonthCode,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DayOfYearInfo {
+    pub day_of_year: u32,
+    pub days_in_year: u32,
+    pub prev_year: Year,
+    pub next_year: Year,
+}
+
+/// A weekday in a 7-day week, according to ISO-8601.
+///
+/// The discriminant values correspond to ISO-8601 weekday numbers (Monday = 1, Sunday = 7).
+///
+/// # Example
+///
+/// ```
+/// use icu_datetime::date::IsoWeekday;
+///
+/// assert_eq!(1, IsoWeekday::MONDAY as usize);
+/// assert_eq!(7, IsoWeekday::SUNDAY as usize);
+/// ```
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(i8)]
+pub enum IsoWeekday {
+    MONDAY = 1,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY,
+}
+
+impl From<usize> for IsoWeekday {
+    /// Convert from an ISO-8601 weekday number to an IsoWeekday enum. 0 is automatically converted
+    /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_datetime::date::IsoWeekday;
+    ///
+    /// assert_eq!(IsoWeekday::SUNDAY, IsoWeekday::from(0));
+    /// assert_eq!(IsoWeekday::MONDAY, IsoWeekday::from(1));
+    /// assert_eq!(IsoWeekday::SUNDAY, IsoWeekday::from(7));
+    /// assert_eq!(IsoWeekday::MONDAY, IsoWeekday::from(8));
+    /// ```
+    fn from(input: usize) -> IsoWeekday {
+        let mut ordinal = (input % 7) as i8;
+        if ordinal == 0 {
+            ordinal = 7;
+        }
+        unsafe { std::mem::transmute(ordinal) }
     }
 }
 
-impl FromStr for MockDateTime {
-    type Err = DateTimeError;
+/// A day number in a month. Usually 1-based.
+pub struct DayOfMonth(pub u32);
 
-    /// Parse a `MockDateTime` from a string.
-    ///
-    /// This utility is for easily creating dates, not a complete robust solution. The
-    /// string must take a specific form of the ISO 8601 format: `YYYY-MM-DDThh:mm:ss`.
-    ///
-    /// ```
-    /// use icu_datetime::date::MockDateTime;
-    ///
-    /// let date: MockDateTime = "2020-10-14T13:21:00".parse()
-    ///     .expect("Failed to parse a date time.");
-    /// ```
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let year: usize = input[0..4].parse()?;
-        let month: Month = input[5..7].parse()?;
-        let day: Day = input[8..10].parse()?;
-        let hour: Hour = input[11..13].parse()?;
-        let minute: Minute = input[14..16].parse()?;
-        let second: Second = input[17..19].parse()?;
-        Ok(Self {
-            year,
-            month: month - 1,
-            day: day - 1,
-            hour,
-            minute,
-            second,
-        })
-    }
-}
+/// A week number in a month. Usually 1-based.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WeekOfMonth(pub u32);
 
-/// This macro defines a struct for each type of unit to be used in a DateTime. Each
+/// A week number in a year. Usually 1-based.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WeekOfYear(pub u32);
+
+/// This macro defines a struct for 0-based date fields: hours, minutes, and seconds. Each
 /// unit is bounded by a range. The traits implemented here will return a Result on
 /// whether or not the unit is in range from the given input.
 macro_rules! dt_unit {
@@ -267,9 +338,16 @@ macro_rules! dt_unit {
     };
 }
 
-dt_unit!(Month, 12);
-dt_unit!(WeekDay, 7);
-dt_unit!(Day, 32);
-dt_unit!(Hour, 24);
-dt_unit!(Minute, 60);
-dt_unit!(Second, 60);
+dt_unit!(IsoHour, 24);
+
+dt_unit!(IsoMinute, 60);
+
+dt_unit!(IsoSecond, 61);
+
+// TODO(#485): Improve FractionalSecond.
+#[derive(Clone, Debug, PartialEq)]
+pub enum FractionalSecond {
+    Millisecond(u16),
+    Microsecond(u32),
+    Nanosecond(u32),
+}

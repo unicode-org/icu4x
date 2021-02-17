@@ -90,21 +90,29 @@
       "format": {
         "abbreviated": {
           "am": "pre podne",
-          "pm": "po podne"
+          "pm": "po podne",
+          "noon": "podne",
+          "midnight": "ponoć"
         },
         "narrow": {
           "am": "a",
-          "pm": "p"
+          "pm": "p",
+          "noon": "podne",
+          "midnight": "ponoć"
         },
         "wide": {
           "am": "pre podne",
-          "pm": "po podne"
+          "pm": "po podne",
+          "noon": "podne",
+          "midnight": "ponoć"
         }
       },
       "stand_alone": {
         "narrow": {
           "am": "pre podne",
-          "pm": "po podne"
+          "pm": "po podne",
+          "noon": "podne",
+          "midnight": "ponoć"
         }
       }
     }

@@ -19,13 +19,19 @@ include = [
     "README.md"
 ]
 
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
+tinystr = { version = "0.4.1" }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
@@ -36,14 +42,25 @@ serde_json = "1.0"
 bench = false  # This option is required for Benchmark CI
 
 [features]
-default = []
+default = ["provider_serde"]
 bench = []
+provider_serde = ["serde"]
+serialize_none = []
 
 [[bench]]
 name = "datetime"
 harness = false
+required-features = ["provider_serde"]
 
 [[bench]]
 name = "pattern"
 harness = false
 required-features = ["bench"]
+
+[[test]]
+name = "datetime"
+required-features = ["provider_serde"]
+
+[[example]]
+name = "work_log"
+required-features = ["provider_serde"]
