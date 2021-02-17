@@ -39,6 +39,16 @@ impl<K, V> VecMap<K, V> {
 
 impl<K: Ord, V> VecMap<K, V> {
     /// Get the value associated with `key`, if it exists.
+    ///
+    /// ```rust
+    /// use terrain::VecMap;
+    ///
+    /// let mut map = VecMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// assert_eq!(map.get(&1), Some(&"one"));
+    /// assert_eq!(map.get(&3), None);
+    /// ```
     pub fn get(&self, key: &K) -> Option<&V> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
             Ok(found) => {
@@ -51,11 +61,33 @@ impl<K: Ord, V> VecMap<K, V> {
     }
 
     /// Returns whether `key` is contained in this map
+    ///
+    /// ```rust
+    /// use terrain::VecMap;
+    ///
+    /// let mut map = VecMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// assert_eq!(map.contains(&1), true);
+    /// assert_eq!(map.contains(&3), false);
+    /// ```
     pub fn contains(&self, key: &K) -> bool {
         self.values.binary_search_by(|k| k.0.cmp(&key)).is_ok()
     }
 
     /// Get the value associated with `key`, if it exists, as a mutable reference.
+    ///
+    /// ```rust
+    /// use terrain::VecMap;
+    ///
+    /// let mut map = VecMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// if let Some(mut v) = map.get_mut(&1) {
+    ///     *v = "uno";   
+    /// }
+    /// assert_eq!(map.get(&1), Some(&"uno"));
+    /// ```
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
             Ok(found) => {
@@ -69,10 +101,26 @@ impl<K: Ord, V> VecMap<K, V> {
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
     /// `value` _if it failed_. Useful for extending with an existing sorted list.
+    ///
+    /// ```rust
+    /// use terrain::VecMap;
+    ///
+    /// let mut map = VecMap::new();
+    /// assert!(map.try_append(1, "uno").is_none());
+    /// assert!(map.try_append(3, "tres").is_none());
+    /// // out of order append:
+    /// assert!(map.try_append(2, "dos").is_some());
+    ///
+    /// assert_eq!(map.get(&1), Some(&"uno"));
+    /// // not appended since it wasn't in order
+    /// assert_eq!(map.get(&2), None);
+    /// ```
     pub fn try_append(&mut self, key: K, value: V) -> Option<V> {
-        if let Some(ref last) = self.values.get(self.values.len() - 1) {
-            if last.0 > key {
-                return Some(value)
+        if self.values.len() > 1 {
+            if let Some(ref last) = self.values.get(self.values.len() - 1) {
+                if last.0 > key {
+                    return Some(value)
+                }
             }
         }
 
@@ -81,6 +129,16 @@ impl<K: Ord, V> VecMap<K, V> {
     }
 
     /// Insert `value` with `key`, returning the existing value if it exists.
+    ///
+    /// ```rust
+    /// use terrain::VecMap;
+    ///
+    /// let mut map = VecMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// assert_eq!(map.get(&1), Some(&"one"));
+    /// assert_eq!(map.get(&3), None);
+    /// ```
     pub fn insert(&mut self, key: K, value: V) -> Option<V> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
             Ok(found) => {
@@ -94,6 +152,16 @@ impl<K: Ord, V> VecMap<K, V> {
     }
 
     /// Remove the value at `key`, returning it if it exists.
+    ///
+    /// ```rust
+    /// use terrain::VecMap;
+    ///
+    /// let mut map = VecMap::new();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// assert_eq!(map.remove(&1), Some("one"));
+    /// assert_eq!(map.get(&1), None);
+    /// ```
     pub fn remove(&mut self, key: &K) -> Option<V> {
         match self.values.binary_search_by(|k| k.0.cmp(key)) {
             Ok(found) => {
@@ -127,18 +195,22 @@ impl<K: Ord, V> IndexMut<&'_ K> for VecMap<K, V> {
 
 
 impl<K, V> VecMap<K, V> {
+    /// Produce an ordered iterator over key-value pairs
     pub fn iter(&self) -> impl Iterator<Item=(&K, &V)> {
         self.values.iter().map(|val| (&val.0, &val.1))
     }
 
+    /// Produce an ordered iterator over keys
     pub fn iter_keys(&self) -> impl Iterator<Item=&K> {
         self.values.iter().map(|val| &val.0)
     }
 
+    /// Produce an iterator over values, ordered by their keys
     pub fn iter_values(&self) -> impl Iterator<Item=&V> {
         self.values.iter().map(|val| &val.1)
     }
 
+    /// Produce an ordered mutable iterator over key-value pairs
     pub fn iter_mut(&mut self) -> impl Iterator<Item=(&K, &mut V)> {
         self.values.iter_mut().map(|val| (&val.0, &mut val.1))
     }
