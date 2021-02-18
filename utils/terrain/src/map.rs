@@ -72,10 +72,10 @@ impl<K: Ord, V> VecMap<K, V> {
     /// let mut map = VecMap::new();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
-    /// assert_eq!(map.contains(&1), true);
-    /// assert_eq!(map.contains(&3), false);
+    /// assert_eq!(map.contains_key(&1), true);
+    /// assert_eq!(map.contains_key(&3), false);
     /// ```
-    pub fn contains(&self, key: &K) -> bool {
+    pub fn contains_key(&self, key: &K) -> bool {
         self.values.binary_search_by(|k| k.0.cmp(&key)).is_ok()
     }
 
@@ -120,11 +120,9 @@ impl<K: Ord, V> VecMap<K, V> {
     /// assert_eq!(map.get(&2), None);
     /// ```
     pub fn try_append(&mut self, key: K, value: V) -> Option<V> {
-        if self.values.len() > 1 {
-            if let Some(ref last) = self.values.get(self.values.len() - 1) {
-                if last.0 > key {
-                    return Some(value)
-                }
+        if let Some(ref last) = self.values.last() {
+            if last.0 > key {
+                return Some(value)
             }
         }
 
