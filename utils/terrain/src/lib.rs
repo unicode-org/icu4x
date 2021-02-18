@@ -16,7 +16,6 @@
 //! and upgrades itself gracefully for larger inputs.
 //!
 
-
 mod map;
 
 pub use map::VecMap;

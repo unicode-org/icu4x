@@ -13,7 +13,7 @@ use std::ops::{Index, IndexMut};
 /// requires `Ord` instead of `Hash`.
 #[derive(Clone, Debug)]
 pub struct VecMap<K, V> {
-    values: Vec<(K, V)>
+    values: Vec<(K, V)>,
 }
 
 impl<K, V> VecMap<K, V> {
@@ -55,12 +55,8 @@ impl<K: Ord, V> VecMap<K, V> {
     /// ```
     pub fn get(&self, key: &K) -> Option<&V> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            Ok(found) => {
-                Some(&self.values[found].1)
-            }
-            Err(_) => {
-                None
-            }
+            Ok(found) => Some(&self.values[found].1),
+            Err(_) => None,
         }
     }
 
@@ -94,12 +90,8 @@ impl<K: Ord, V> VecMap<K, V> {
     /// ```
     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            Ok(found) => {
-                Some(&mut self.values[found].1)
-            }
-            Err(_) => {
-                None
-            }
+            Ok(found) => Some(&mut self.values[found].1),
+            Err(_) => None,
         }
     }
 
@@ -122,7 +114,7 @@ impl<K: Ord, V> VecMap<K, V> {
     pub fn try_append(&mut self, key: K, value: V) -> Option<V> {
         if let Some(ref last) = self.values.last() {
             if last.0 > key {
-                return Some(value)
+                return Some(value);
             }
         }
 
@@ -143,9 +135,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// ```
     pub fn insert(&mut self, key: K, value: V) -> Option<V> {
         match self.values.binary_search_by(|k| k.0.cmp(&key)) {
-            Ok(found) => {
-                Some(mem::replace(&mut self.values[found].1, value))
-            }
+            Ok(found) => Some(mem::replace(&mut self.values[found].1, value)),
             Err(ins) => {
                 self.values.insert(ins, (key, value));
                 None
@@ -166,21 +156,15 @@ impl<K: Ord, V> VecMap<K, V> {
     /// ```
     pub fn remove(&mut self, key: &K) -> Option<V> {
         match self.values.binary_search_by(|k| k.0.cmp(key)) {
-            Ok(found) => {
-                Some(self.values.remove(found).1)
-            }
-            Err(_) => {
-                None
-            }
+            Ok(found) => Some(self.values.remove(found).1),
+            Err(_) => None,
         }
     }
 }
 
 impl<K, V> Default for VecMap<K, V> {
     fn default() -> Self {
-        VecMap {
-            values: vec![]
-        }
+        VecMap { values: vec![] }
     }
 }
 impl<K: Ord, V> Index<&'_ K> for VecMap<K, V> {
@@ -195,25 +179,24 @@ impl<K: Ord, V> IndexMut<&'_ K> for VecMap<K, V> {
     }
 }
 
-
 impl<K, V> VecMap<K, V> {
     /// Produce an ordered iterator over key-value pairs
-    pub fn iter(&self) -> impl Iterator<Item=(&K, &V)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
         self.values.iter().map(|val| (&val.0, &val.1))
     }
 
     /// Produce an ordered iterator over keys
-    pub fn iter_keys(&self) -> impl Iterator<Item=&K> {
+    pub fn iter_keys(&self) -> impl Iterator<Item = &K> {
         self.values.iter().map(|val| &val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
-    pub fn iter_values(&self) -> impl Iterator<Item=&V> {
+    pub fn iter_values(&self) -> impl Iterator<Item = &V> {
         self.values.iter().map(|val| &val.1)
     }
 
     /// Produce an ordered mutable iterator over key-value pairs
-    pub fn iter_mut(&mut self) -> impl Iterator<Item=(&K, &mut V)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> {
         self.values.iter_mut().map(|val| (&val.0, &mut val.1))
     }
 }
