@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 [package]
-name = "terrain"
+name = "litemap"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
@@ -11,7 +11,7 @@ edition = "2018"
 license-file = "../../LICENSE"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
-documentation = "https://docs.rs/terrain"
+documentation = "https://docs.rs/litemap"
 readme = "./README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

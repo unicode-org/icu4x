@@ -1076,6 +1076,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
+name = "litemap"
+version = "0.1.0"
+
+[[package]]
 name = "log"
 version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2041,10 +2045,6 @@ dependencies = [
  "remove_dir_all",
  "winapi 0.3.9",
 ]
-
-[[package]]
-name = "terrain"
-version = "0.1.0"
 
 [[package]]
 name = "textwrap"

@@ -1,6 +1,6 @@
-## `terrain`
+## `litemap`
 
-`terrain` is a crate providing VecMap, a highly simplistic "flat" key-value map
+`litemap` is a crate providing VecMap, a highly simplistic "flat" key-value map
 based off of a single sorted vector.
 
 The goal of this crate is to provide a map that is good enough for small

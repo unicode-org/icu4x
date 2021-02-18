@@ -45,7 +45,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Get the value associated with `key`, if it exists.
     ///
     /// ```rust
-    /// use terrain::VecMap;
+    /// use litemap::VecMap;
     ///
     /// let mut map = VecMap::new();
     /// map.insert(1, "one");
@@ -63,7 +63,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust
-    /// use terrain::VecMap;
+    /// use litemap::VecMap;
     ///
     /// let mut map = VecMap::new();
     /// map.insert(1, "one");
@@ -78,7 +78,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Get the value associated with `key`, if it exists, as a mutable reference.
     ///
     /// ```rust
-    /// use terrain::VecMap;
+    /// use litemap::VecMap;
     ///
     /// let mut map = VecMap::new();
     /// map.insert(1, "one");
@@ -99,7 +99,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// `value` _if it failed_. Useful for extending with an existing sorted list.
     ///
     /// ```rust
-    /// use terrain::VecMap;
+    /// use litemap::VecMap;
     ///
     /// let mut map = VecMap::new();
     /// assert!(map.try_append(1, "uno").is_none());
@@ -125,7 +125,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Insert `value` with `key`, returning the existing value if it exists.
     ///
     /// ```rust
-    /// use terrain::VecMap;
+    /// use litemap::VecMap;
     ///
     /// let mut map = VecMap::new();
     /// map.insert(1, "one");
@@ -146,7 +146,7 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Remove the value at `key`, returning it if it exists.
     ///
     /// ```rust
-    /// use terrain::VecMap;
+    /// use litemap::VecMap;
     ///
     /// let mut map = VecMap::new();
     /// map.insert(1, "one");
