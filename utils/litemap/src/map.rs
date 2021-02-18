@@ -12,28 +12,28 @@ use std::ops::{Index, IndexMut};
 /// The API is roughly similar to that of [`std::collections::HashMap`], though it
 /// requires `Ord` instead of `Hash`.
 #[derive(Clone, Debug)]
-pub struct VecMap<K, V> {
+pub struct LiteMap<K, V> {
     values: Vec<(K, V)>,
 }
 
-impl<K, V> VecMap<K, V> {
-    /// Construct a new [`VecMap`]
+impl<K, V> LiteMap<K, V> {
+    /// Construct a new [`LiteMap`]
     pub fn new() -> Self {
         Self::default()
     }
 
-    /// The number of elements in the [`VecMap`]
+    /// The number of elements in the [`LiteMap`]
     pub fn len(&self) -> usize {
         self.values.len()
     }
 
-    /// Remove all elements from the [`VecMap`]
+    /// Remove all elements from the [`LiteMap`]
     pub fn clear(&mut self) {
         self.values.clear()
     }
 
     /// Reserve capacity for `additional` more elements to be inserted into
-    /// the [`VecMap`] to avoid frequent reallocations.
+    /// the [`LiteMap`] to avoid frequent reallocations.
     ///
     /// See [`Vec::reserve()`] for more information.
     pub fn reserve(&mut self, additional: usize) {
@@ -41,13 +41,13 @@ impl<K, V> VecMap<K, V> {
     }
 }
 
-impl<K: Ord, V> VecMap<K, V> {
+impl<K: Ord, V> LiteMap<K, V> {
     /// Get the value associated with `key`, if it exists.
     ///
     /// ```rust
-    /// use litemap::VecMap;
+    /// use litemap::LiteMap;
     ///
-    /// let mut map = VecMap::new();
+    /// let mut map = LiteMap::new();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.get(&1), Some(&"one"));
@@ -63,9 +63,9 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Returns whether `key` is contained in this map
     ///
     /// ```rust
-    /// use litemap::VecMap;
+    /// use litemap::LiteMap;
     ///
-    /// let mut map = VecMap::new();
+    /// let mut map = LiteMap::new();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.contains_key(&1), true);
@@ -78,9 +78,9 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Get the value associated with `key`, if it exists, as a mutable reference.
     ///
     /// ```rust
-    /// use litemap::VecMap;
+    /// use litemap::LiteMap;
     ///
-    /// let mut map = VecMap::new();
+    /// let mut map = LiteMap::new();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// if let Some(mut v) = map.get_mut(&1) {
@@ -99,9 +99,9 @@ impl<K: Ord, V> VecMap<K, V> {
     /// `value` _if it failed_. Useful for extending with an existing sorted list.
     ///
     /// ```rust
-    /// use litemap::VecMap;
+    /// use litemap::LiteMap;
     ///
-    /// let mut map = VecMap::new();
+    /// let mut map = LiteMap::new();
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
     /// // out of order append:
@@ -125,9 +125,9 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Insert `value` with `key`, returning the existing value if it exists.
     ///
     /// ```rust
-    /// use litemap::VecMap;
+    /// use litemap::LiteMap;
     ///
-    /// let mut map = VecMap::new();
+    /// let mut map = LiteMap::new();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.get(&1), Some(&"one"));
@@ -146,9 +146,9 @@ impl<K: Ord, V> VecMap<K, V> {
     /// Remove the value at `key`, returning it if it exists.
     ///
     /// ```rust
-    /// use litemap::VecMap;
+    /// use litemap::LiteMap;
     ///
-    /// let mut map = VecMap::new();
+    /// let mut map = LiteMap::new();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.remove(&1), Some("one"));
@@ -162,24 +162,24 @@ impl<K: Ord, V> VecMap<K, V> {
     }
 }
 
-impl<K, V> Default for VecMap<K, V> {
+impl<K, V> Default for LiteMap<K, V> {
     fn default() -> Self {
-        VecMap { values: vec![] }
+        LiteMap { values: vec![] }
     }
 }
-impl<K: Ord, V> Index<&'_ K> for VecMap<K, V> {
+impl<K: Ord, V> Index<&'_ K> for LiteMap<K, V> {
     type Output = V;
     fn index(&self, key: &K) -> &V {
-        self.get(key).expect("VecMap could not find key")
+        self.get(key).expect("LiteMap could not find key")
     }
 }
-impl<K: Ord, V> IndexMut<&'_ K> for VecMap<K, V> {
+impl<K: Ord, V> IndexMut<&'_ K> for LiteMap<K, V> {
     fn index_mut(&mut self, key: &K) -> &mut V {
-        self.get_mut(key).expect("VecMap could not find key")
+        self.get_mut(key).expect("LiteMap could not find key")
     }
 }
 
-impl<K, V> VecMap<K, V> {
+impl<K, V> LiteMap<K, V> {
     /// Produce an ordered iterator over key-value pairs
     pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
         self.values.iter().map(|val| (&val.0, &val.1))
