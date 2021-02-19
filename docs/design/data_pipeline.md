@@ -122,6 +122,36 @@ impl Default for SampleDataStructV1<'_> {
 }
 ```
 
+### Pre-Processing of Data
+
+Data represented by the ICU4X data schema and passed through the data provider pipeline as a hunk should be ready to use with minimal processing at runtime.
+
+For example, it is not recommended for ICU4X to request a pattern string such as `#,##0.00` for number formatting; instead, it should request a struct corresponding to the parsed version of that pattern string, such that ICU4X doesn't need to parse it at runtime.
+
+### Explicit Data Caching
+
+Caching of locale data is important for achieving optimal performance. For example, loading a locale data hunk may require expensive I/O operations such as reading from a filesystem or making a network request.
+
+However, different clients may have different needs when it comes to data caching:
+
+1. Resource-constrained environments may want a small cache with a naive eviction algorithm, whereas server environments may want a large cache with a more sophisticated eviction algorithm.
+2. Data coming from different sources may need different caching strategies. For example, data loaded over HTTP may wish to conform to the HTTP `Expires` header, whereas data loaded from the filesystem may be invalidated based on file modification time.
+3. Clients may wish to invalidate the entire cache if updated data becomes available during the lifecycle of the app.
+
+Since there is no "one size fits all" solution to data caching, ICU4X abstracts the operation into a separate component of the data pipeline. *ICU4X is stateless by design*; all caching is intended to be an explicit choice by the client of ICU4X.
+
+### Cache Invalidation
+
+Given the one centralized data cache explained above, it is possible to architect an app sitting on top of ICU4X with a standard reactivity framework to re-compute UI components when a locale data update is available. Best practices include:
+
+1. All UI elements that contain localizable data should subscribe to ICU4X data updates.
+2. When a locale data update is available, the data cache should be emptied, and all UI component subscribers should be re-rendered.
+3. UI components should create fresh ICU4X formatter objects, use them throughout the duration of rendering the component, and throw them away when done.
+
+Note that it is a *design goal* of ICU4X that clients should not need to create any other caches. There should be no reason to store a formatter object for longer than the time it takes to render the component.
+
+We have experience from ICU4C that there are two main reasons that object creation can be slow: (1) locale data lookup, including language negotiation + fallbacks, and (2) massaging of that locale data into a useful runtime form. ICU4X solves (1) by splitting the locale data provider into its own explicit component that caches data after language negotation and fallbacking is completed; see "Explicit Data Caching". ICU4X solves (2) by having an ICU4X data model that requires as little processing of data at runtime as possible; see "Pre-Processing of Data".
+
 ### Request Variables
 
 Requests made to data providers consist of a key and additional *request variables*.  The variables are:
@@ -189,8 +219,6 @@ The set of supported types is limited so that ICU4X implementations can be writt
 - struct with fixed keys and values of one of these types
 
 An open-ended map with string keys is discouraged, because in most cases, a struct with fixed keys can be used. If a map with variable keys is required, a LiteMap should be used in the Rust data struct definition.
-
-The data type should be appropriate for fast evaluation at runtime.  For example, it is not recommended for ICU4X to request a pattern string such as `#,##0.00` for number formatting; instead, it should request a struct corresponding to the parsed version of that pattern string, such that ICU4X doesn't need to parse it at runtime.
 
 ### Response Variables
 
