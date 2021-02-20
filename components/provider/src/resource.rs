@@ -26,6 +26,7 @@ pub enum ResourceCategory {
     Plurals,
     Dates,
     Uniset,
+    Decimal,
     PrivateUse(TinyStr4),
 }
 
@@ -38,6 +39,7 @@ impl ResourceCategory {
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::Dates => Cow::Borrowed("dates"),
             Self::Uniset => Cow::Borrowed("uniset"),
+            Self::Decimal => Cow::Borrowed("decimal"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());
@@ -109,6 +111,9 @@ macro_rules! resource_key {
     };
     (uniset, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Uniset, $sub_category, $version)
+    };
+    (decimal, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!($crate::ResourceCategory::Decimal, $sub_category, $version)
     };
     (x, $pu:literal, $sub_category:literal, $version:tt) => {
         $crate::resource_key!(

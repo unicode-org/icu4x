@@ -823,6 +823,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_decimal"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "smallstr",
+]
+
+[[package]]
 name = "icu_locale_canonicalizer"
 version = "0.1.0"
 dependencies = [
@@ -892,6 +902,7 @@ version = "0.1.0"
 dependencies = [
  "dirs",
  "icu_datetime",
+ "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
@@ -1885,9 +1896,9 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.117"
+version = "1.0.123"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b88fa983de7720629c9387e9f517353ed404164b1e482c970a90c1a4aaf7dc1a"
+checksum = "92d5161132722baa40d802cc70b15262b98258453e85e5d1d365c757c73869ae"
 dependencies = [
  "serde_derive",
 ]
@@ -1913,9 +1924,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.117"
+version = "1.0.123"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbd1ae72adb44aab48f325a02444a5fc079349a8d804c1fc922aed3f7454c74e"
+checksum = "9391c295d64fc0abb2c556bad848f33cb8296276b1ad2677d1ae1ace4f258f31"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1963,6 +1974,16 @@ name = "slab"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c111b5bd5695e56cffe5129854aa230b39c93a305372fdbb2668ca2394eea9f8"
+
+[[package]]
+name = "smallstr"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e922794d168678729ffc7e07182721a14219c65814e66e91b839a272fe5ae4f"
+dependencies = [
+ "serde",
+ "smallvec",
+]
 
 [[package]]
 name = "smallvec"
@@ -2017,9 +2038,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.58"
+version = "1.0.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc60a3d73ea6594cd712d830cc1f0390fd71542d8c8cd24e70cc54cdfd5e05d5"
+checksum = "c700597eca8a5a762beb35753ef6b94df201c81cca676604f547495a0d7f0081"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2068,10 +2089,11 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.4.1"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "939125669d4043772e1eb2e91e25d1f933679155d961149aa181519de131439f"
+checksum = "27aaed4540fcc2440c36fe3a98ca56450ee3da6d166da64369f40dc980aba459"
 dependencies = [
+ "serde",
  "tinystr-macros",
  "tinystr-raw",
 ]
@@ -2087,9 +2109,9 @@ dependencies = [
 
 [[package]]
 name = "tinystr-raw"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17bd7d3b696677c7844bf4ce7db7492c140b0922a553b6d285fe642e6d9934b5"
+checksum = "b975dd2af5824896acaeebf7336471fcafebfa417da0a290ded5509f297ccedb"
 
 [[package]]
 name = "tinytemplate"

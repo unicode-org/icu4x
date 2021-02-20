@@ -1,12 +1,15 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 mod dates;
 mod likelysubtags;
+mod numbers;
 mod plurals;
 
 pub use dates::DatesProvider;
 pub use likelysubtags::LikelySubtagsProvider;
+pub use numbers::NumbersProvider;
 pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
@@ -19,6 +22,7 @@ pub fn get_all_resc_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&dates::ALL_KEYS);
     result.extend(&likelysubtags::ALL_KEYS);
+    result.extend(&numbers::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result
 }
@@ -28,6 +32,7 @@ pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a dyn CldrPaths,
     dates: LazyCldrProvider<DatesProvider<'d>>,
     likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'d>>,
+    numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,
 }
 
@@ -37,6 +42,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
             cldr_paths,
             dates: Default::default(),
             likelysubtags: Default::default(),
+            numbers: Default::default(),
             plurals: Default::default(),
         }
     }
@@ -53,6 +59,12 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
         }
         if let Some(result) = self
             .likelysubtags
+            .try_load(req, receiver, self.cldr_paths)?
+        {
+            return Ok(result);
+        }
+        if let Some(result) = self
+            .numbers
             .try_load(req, receiver, self.cldr_paths)?
         {
             return Ok(result);
@@ -77,6 +89,12 @@ impl<'a, 'd> IterableDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
         }
         if let Some(resp) = self
             .likelysubtags
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
+            return Ok(resp);
+        }
+        if let Some(resp) = self
+            .numbers
             .try_supported_options(resc_key, self.cldr_paths)?
         {
             return Ok(resp);

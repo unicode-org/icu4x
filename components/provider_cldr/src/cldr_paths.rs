@@ -15,6 +15,10 @@ pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of cldr-dates:
     /// <https://github.com/unicode-cldr/cldr-dates-full>
     fn cldr_dates(&self) -> Result<PathBuf, Error>;
+
+    /// Path to checkout of cldr-numbers:
+    /// <https://github.com/unicode-cldr/cldr-numbers-full>
+    fn cldr_numbers(&self) -> Result<PathBuf, Error>;
 }
 
 /// Implementation of `CldrPaths` for data directories already downloaded.
@@ -37,6 +41,7 @@ pub trait CldrPaths: std::fmt::Debug {
 pub struct CldrPathsLocal {
     pub cldr_core: Result<PathBuf, MissingSourceError>,
     pub cldr_dates: Result<PathBuf, MissingSourceError>,
+    pub cldr_numbers: Result<PathBuf, MissingSourceError>,
 }
 
 impl CldrPaths for CldrPathsLocal {
@@ -46,6 +51,9 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_dates(&self) -> Result<PathBuf, Error> {
         self.cldr_dates.clone().map_err(|e| e.into())
     }
+    fn cldr_numbers(&self) -> Result<PathBuf, Error> {
+        self.cldr_numbers.clone().map_err(|e| e.into())
+    }
 }
 
 impl Default for CldrPathsLocal {
@@ -53,6 +61,7 @@ impl Default for CldrPathsLocal {
         Self {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
             cldr_dates: Err(MissingSourceError { src: "cldr-dates" }),
+            cldr_numbers: Err(MissingSourceError { src: "cldr-numbers" }),
         }
     }
 }

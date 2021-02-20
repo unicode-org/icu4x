@@ -78,6 +78,10 @@ impl CldrPaths for CldrAllInOneDownloader {
         self.download_and_unzip()
             .map(|p| p.join(format!("cldr-dates-{}", self.suffix)))
     }
+    fn cldr_numbers(&self) -> Result<PathBuf, crate::error::Error> {
+        self.download_and_unzip()
+            .map(|p| p.join(format!("cldr-numbers-{}", self.suffix)))
+    }
 }
 
 impl CldrAllInOneDownloader {

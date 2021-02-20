@@ -32,11 +32,12 @@ icu_locid = { version = "0.1", path = "../locid" }
 icu_plurals = { version = "0.1", path = "../plurals" }
 icu_datetime = { version = "0.1", path = "../datetime" }
 icu_locale_canonicalizer = { version = "0.1", path = "../locale_canonicalizer" }
+icu_decimal = { version = "0.1", path = "../decimal" }
 json = "0.12"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde-tuple-vec-map = "1.0"
-tinystr = "0.4"
+tinystr = { version = "0.4.3", features = ["serde"] }
 
 # Dependencies for the download feature
 urlencoding = { version = "1.1", optional = true }
