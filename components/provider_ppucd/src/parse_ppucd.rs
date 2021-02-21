@@ -10,6 +10,98 @@ use crate::support::UnicodeProperties;
 use icu_uniset::provider::UnicodeProperty;
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
+//
+// Enumerated properties - mapping subcategory string to `UnicodeProperty.name` field
+//
+
+// Cannot depend on heap allocation for a const value definition
+
+const LONG_ENUM_PROP_NAME_MAPPING: &[(&str, &str)] = &[
+    ("InPC=Bottom_And_Left", "InPC=BottomLeft"),
+    ("InPC=Bottom_And_Right", "InPC=BottomRight"),
+    ("InPC=Top_And_Bottom", "InPC=TopBottom"),
+    ("InPC=Top_And_Bottom_And_Left", "InPC=TopBotLeft"),
+    ("InPC=Top_And_Bottom_And_Right", "InPC=TopBotRight"),
+    ("InPC=Top_And_Left", "InPC=TopLeft"),
+    ("InPC=Top_And_Left_And_Right", "InPC=TopLR"),
+    ("InPC=Top_And_Right", "InPC=TopRight"),
+    ("InPC=Visual_Order_Left", "InPC=VisOrdLeft"),
+    ("InSC=Brahmi_Joining_Number", "InSC=BJoinNum"),
+    ("InSC=Cantillation_Mark", "InSC=CantillMark"),
+    ("InSC=Consonant_Dead", "InSC=ConsDead"),
+    ("InSC=Consonant_Final", "InSC=ConsFinal"),
+    ("InSC=Consonant_Head_Letter", "InSC=ConsHeadLet"),
+    ("InSC=Consonant_Initial_Postfixed", "InSC=CInitPost"),
+    ("InSC=Consonant_Killer", "InSC=ConsKiller"),
+    ("InSC=Consonant_Medial", "InSC=ConsMedial"),
+    ("InSC=Consonant_Placeholder", "InSC=ConsPholder"),
+    ("InSC=Consonant_Preceding_Repha", "InSC=ConsPreReph"),
+    ("InSC=Consonant_Prefixed", "InSC=ConsPre"),
+    ("InSC=Consonant_Subjoined", "InSC=ConsSubjoin"),
+    ("InSC=Consonant_Succeeding_Repha", "InSC=CSuccRepha"),
+    ("InSC=Consonant_With_Stacker", "InSC=ConsStacker"),
+    ("InSC=Gemination_Mark", "InSC=GeminMark"),
+    ("InSC=Invisible_Stacker", "InSC=InvisStack"),
+    ("InSC=Modifying_Letter", "InSC=ModLetter"),
+    ("InSC=Number_Joiner", "InSC=NumJoiner"),
+    ("InSC=Register_Shifter", "InSC=RegistShift"),
+    ("InSC=Syllable_Modifier", "InSC=SyllMod"),
+    ("InSC=Vowel_Dependent", "InSC=VowelDep"),
+    ("InSC=Vowel_Independent", "InSC=VowelIndep"),
+    ("jg=Burushaski_Yeh_Barree", "jg=BurushYehBarr"),
+    ("jg=Hanifi_Rohingya_Kinna_Ya", "jg=HRohingKinYa"),
+    ("jg=Hanifi_Rohingya_Pa", "jg=HRohingPa"),
+    ("jg=Malayalam_Nnna", "jg=Ma_Nnna"),
+    ("jg=Malayalam_Llla", "jg=Ma_Llla"),
+    ("jg=Manichaean_Aleph", "jg=Manich_Aleph"),
+    ("jg=Manichaean_Ayin", "jg=Manich_Ayin"),
+    ("jg=Manichaean_Beth", "jg=Manich_Beth"),
+    ("jg=Manichaean_Daleth", "jg=Manich_Daleth"),
+    ("jg=Manichaean_Dhamedh", "jg=ManichDhamedh"),
+    ("jg=Manichaean_Five", "jg=Manich_Five"),
+    ("jg=Manichaean_Gimel", "jg=Manich_Gimel"),
+    ("jg=Manichaean_Heth", "jg=Manich_Heth"),
+    ("jg=Manichaean_Hundred", "jg=ManichHundred"),
+    ("jg=Manichaean_Kaph", "jg=Manich_Kaph"),
+    ("jg=Manichaean_Lamedh", "jg=Manich_Lamedh"),
+    ("jg=Manichaean_Mem", "jg=Manich_Mem"),
+    ("jg=Manichaean_Nun", "jg=Manich_Nun"),
+    ("jg=Manichaean_One", "jg=Manich_One"),
+    ("jg=Manichaean_Pe", "jg=Manich_Pe"),
+    ("jg=Manichaean_Qoph", "jg=Manich_Qoph"),
+    ("jg=Manichaean_Resh", "jg=Manich_Resh"),
+    ("jg=Manichaean_Sadhe", "jg=Manich_Sadhe"),
+    ("jg=Manichaean_Samekh", "jg=Manich_Samekh"),
+    ("jg=Manichaean_Taw", "jg=Manich_Taw"),
+    ("jg=Manichaean_Ten", "jg=Manich_Ten"),
+    ("jg=Manichaean_Teth", "jg=Manich_Teth"),
+    ("jg=Manichaean_Thamedh", "jg=ManichThamedh"),
+    ("jg=Manichaean_Twenty", "jg=Manich_Twenty"),
+    ("jg=Manichaean_Waw", "jg=Manich_Waw"),
+    ("jg=Manichaean_Yodh", "jg=Manich_Yodh"),
+    ("jg=Manichaean_Zayin", "jg=Manich_Zayin"),
+    ("jg=No_Joining_Group", "jg=NoJoinGroup"),
+    ("jg=Teh_Marbuta_Goal", "jg=TehMarbGoal"),
+];
+
+/// Return the enum prop name=value string as a string that is 16 chars or
+/// less, using the manually created lookup data for shortened versions of enum
+/// prop name=value strings.
+fn get_shorter_name_for_long_enum_str(prop_name: &str) -> &str {
+    let result = LONG_ENUM_PROP_NAME_MAPPING
+        .binary_search_by(|(k, _)| k.cmp(&prop_name))
+        .map(|x| LONG_ENUM_PROP_NAME_MAPPING[x].1);
+    let opt = result.ok();
+    match opt {
+        Some(shortened_str) => shortened_str,
+        None => prop_name,
+    }
+}
+
+//
+// Provider-related structs and impl functions
+//
+
 fn split_line(line: &str) -> Vec<&str> {
     line.split(';').collect::<Vec<_>>()
 }
@@ -347,8 +439,12 @@ fn get_enum_prop_unisets<'s>(
     // Insert UnicodeSets into `result`, with a key like `"gc=Lo"`.
     for (canonical_prop_name, prop_val_builder_map) in m {
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
+            let enum_val_uniset_name: String =
+                format!("{}={}", canonical_prop_name, canonical_val_name);
+            let shortened_enum_val_uniset_name: &str =
+                get_shorter_name_for_long_enum_str(&enum_val_uniset_name);
             let enum_val_uniset_name: Cow<str> =
-                Cow::Owned(format!("{}={}", canonical_prop_name, canonical_val_name));
+                Cow::Owned(String::from(shortened_enum_val_uniset_name));
             let uniset = uniset_builder.build();
 
             result.insert(enum_val_uniset_name, uniset);
@@ -475,6 +571,21 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
 #[cfg(test)]
 mod gen_properties_test {
     use super::*;
+
+    #[test]
+    fn long_enum_prop_name_test() {
+        // An enum prop name=val string that is > 16 chars
+        let test_enum_prop_val_string_1 = "jg=Manichaean_Qoph";
+        let exp_tinystr_1 = "jg=Manich_Qoph";
+        let act_tinystr_1 = get_shorter_name_for_long_enum_str(test_enum_prop_val_string_1);
+        assert_eq!(exp_tinystr_1, act_tinystr_1);
+
+        // An enum prop name=val string that is <= 16 chars
+        let test_enum_prop_val_string_2 = "jg=Qaph";
+        let exp_tinystr_2 = "jg=Qaph";
+        let act_tinystr_2 = get_shorter_name_for_long_enum_str(test_enum_prop_val_string_2);
+        assert_eq!(exp_tinystr_2, act_tinystr_2);
+    }
 
     #[test]
     fn skip_ppucd_line_test() {
@@ -893,12 +1004,12 @@ mod gen_properties_test {
         };
         exp_uni_props_set.insert(insc_consonant);
         let insc_vowel_independent = UnicodeProperty {
-            name: Cow::Borrowed("InSC=Vowel_Independent"),
+            name: Cow::Borrowed("InSC=VowelIndep"),
             inv_list: vec![5888, 5891],
         };
         exp_uni_props_set.insert(insc_vowel_independent);
         let insc_vowel_dependent = UnicodeProperty {
-            name: Cow::Borrowed("InSC=Vowel_Dependent"),
+            name: Cow::Borrowed("InSC=VowelDep"),
             inv_list: vec![5906, 5908],
         };
         exp_uni_props_set.insert(insc_vowel_dependent);
@@ -1029,7 +1140,7 @@ mod gen_properties_test {
         };
         exp_uni_props_set.insert(nfkc_qc_y);
         let jg_no_joining_group = UnicodeProperty {
-            name: Cow::Borrowed("jg=No_Joining_Group"),
+            name: Cow::Borrowed("jg=NoJoinGroup"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(jg_no_joining_group);

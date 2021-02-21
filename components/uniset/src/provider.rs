@@ -903,10 +903,7 @@ pub mod key {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[cfg_attr(
-    feature = "testing",
-    derive(Hash, Eq)
-)]
+#[cfg_attr(feature = "testing", derive(Hash, Eq))]
 pub struct UnicodeProperty<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,
