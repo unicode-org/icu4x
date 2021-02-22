@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
+use std::borrow::Borrow;
 use std::mem;
 use std::ops::{Index, IndexMut};
 
@@ -53,8 +54,12 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map.get(&1), Some(&"one"));
     /// assert_eq!(map.get(&3), None);
     /// ```
-    pub fn get(&self, key: &K) -> Option<&V> {
-        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V>
+    where
+        K: Borrow<Q>,
+        Q: Ord,
+    {
+        match self.values.binary_search_by(|k| k.0.borrow().cmp(&key)) {
             Ok(found) => Some(&self.values[found].1),
             Err(_) => None,
         }
@@ -71,8 +76,14 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map.contains_key(&1), true);
     /// assert_eq!(map.contains_key(&3), false);
     /// ```
-    pub fn contains_key(&self, key: &K) -> bool {
-        self.values.binary_search_by(|k| k.0.cmp(&key)).is_ok()
+    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool
+    where
+        K: Borrow<Q>,
+        Q: Ord,
+    {
+        self.values
+            .binary_search_by(|k| k.0.borrow().cmp(&key))
+            .is_ok()
     }
 
     /// Get the value associated with `key`, if it exists, as a mutable reference.
@@ -88,8 +99,12 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// }
     /// assert_eq!(map.get(&1), Some(&"uno"));
     /// ```
-    pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
-        match self.values.binary_search_by(|k| k.0.cmp(&key)) {
+    pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
+    where
+        K: Borrow<Q>,
+        Q: Ord,
+    {
+        match self.values.binary_search_by(|k| k.0.borrow().cmp(&key)) {
             Ok(found) => Some(&mut self.values[found].1),
             Err(_) => None,
         }
@@ -154,8 +169,12 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map.remove(&1), Some("one"));
     /// assert_eq!(map.get(&1), None);
     /// ```
-    pub fn remove(&mut self, key: &K) -> Option<V> {
-        match self.values.binary_search_by(|k| k.0.cmp(key)) {
+    pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<V>
+    where
+        K: Borrow<Q>,
+        Q: Ord,
+    {
+        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
             Ok(found) => Some(self.values.remove(found).1),
             Err(_) => None,
         }
