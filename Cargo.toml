@@ -23,6 +23,7 @@ members = [
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "utils/fixed_decimal",
+    "utils/litemap",
     "utils/writeable",
 ]
 
