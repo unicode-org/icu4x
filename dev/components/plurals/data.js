@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614042396082,
+  "lastUpdate": 1614296446372,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3317,6 +3317,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 126033,
             "range": "± 6226",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d1e746357f79f9fcf2a63e50db15f365ab9b063b",
+          "message": "Switch locid::subtags::Language to be TinyStr4 (#506)\n\n* Switch locid::subtags::Language to be TinyStr4\r\n\r\n* Apply reviewers feedback\r\n\r\n* Fix cargo fmt linter error",
+          "timestamp": "2021-02-25T15:34:57-08:00",
+          "tree_id": "c40fb8c842f2cfe18053c1f7f1773a77d88017f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/d1e746357f79f9fcf2a63e50db15f365ab9b063b"
+        },
+        "date": 1614296445289,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1352,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6642,
+            "range": "± 375",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 93876,
+            "range": "± 7916",
             "unit": "ns/iter"
           }
         ]
