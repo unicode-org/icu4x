@@ -225,7 +225,10 @@ fn test_warehouse_owned_dyn_generic() {
 fn test_warehouse_owned_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let response = get_payload_alt(&warehouse as &dyn ErasedDataProvider);
-    assert!(matches!(response, Err(DataError::UnsupportedResourceKey { .. })));
+    assert!(matches!(
+        response,
+        Err(DataError::UnsupportedResourceKey { .. })
+    ));
 }
 
 #[test]
@@ -283,7 +286,10 @@ fn test_warehouse_ref_dyn_generic() {
 fn test_warehouse_ref_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let response = get_payload_alt(&&warehouse as &dyn ErasedDataProvider);
-    assert!(matches!(response, Err(DataError::UnsupportedResourceKey { .. })));
+    assert!(matches!(
+        response,
+        Err(DataError::UnsupportedResourceKey { .. })
+    ));
 }
 
 #[test]
@@ -332,10 +338,7 @@ fn test_borrowing_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider);
-    assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloAlt { .. }))
-    ));
+    assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
 }
 
 #[test]
@@ -356,10 +359,7 @@ fn test_borrowing_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAlt>);
-    assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloAlt { .. }))
-    ));
+    assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
 }
 
 #[test]
