@@ -5,7 +5,7 @@ use crate::parser::errors::ParserError;
 use std::fmt;
 use std::ops::RangeInclusive;
 use std::str::FromStr;
-use tinystr::TinyStr4;
+use tinystr::{tinystr4, TinyStr4};
 
 /// Language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
@@ -41,7 +41,7 @@ use tinystr::TinyStr4;
 pub struct Language(Option<TinyStr4>);
 
 const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
-const UND_VALUE: TinyStr4 = unsafe { TinyStr4::new_unchecked(6_581_877_u32) }; // "und"
+const UND_VALUE: TinyStr4 = tinystr4!("und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
