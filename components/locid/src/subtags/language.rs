@@ -1,12 +1,11 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
-use super::script::SCRIPT_LENGTH;
 use crate::parser::errors::ParserError;
 use std::fmt;
 use std::ops::RangeInclusive;
 use std::str::FromStr;
-use tinystr::TinyStr8;
+use tinystr::{tinystr4, TinyStr4};
 
 /// Language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
@@ -33,12 +32,16 @@ use tinystr::TinyStr8;
 /// assert_eq!(Language::default().as_str(), "und");
 /// ```
 ///
+/// `Notice`: ICU4X uses a narrow form of language subtag of 2-3 characters.
+/// The specification allows language subtag to optionally also be 5-8 characters
+/// but that form has not been used and ICU4X does not support it right now.
+///
 /// [`unicode_language_id`]: https://unicode.org/reports/tr35/#unicode_language_id
 #[derive(Default, Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-pub struct Language(Option<TinyStr8>);
+pub struct Language(Option<TinyStr4>);
 
-const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=8;
-const UND_VALUE: TinyStr8 = unsafe { TinyStr8::new_unchecked(6_581_877_u64) }; // "und"
+const LANGUAGE_LENGTH: RangeInclusive<usize> = 2..=3;
+const UND_VALUE: TinyStr4 = tinystr4!("und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
@@ -57,11 +60,11 @@ impl Language {
     pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         let slen = v.len();
 
-        if !LANGUAGE_LENGTH.contains(&slen) || slen == SCRIPT_LENGTH {
+        if !LANGUAGE_LENGTH.contains(&slen) {
             return Err(ParserError::InvalidLanguage);
         }
 
-        let s = TinyStr8::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
+        let s = TinyStr4::from_bytes(v).map_err(|_| ParserError::InvalidLanguage)?;
 
         if !s.is_ascii_alphabetic() {
             return Err(ParserError::InvalidLanguage);
@@ -91,8 +94,8 @@ impl Language {
     /// let lang = unsafe { Language::from_raw_unchecked(raw) };
     /// assert_eq!(lang, "en");
     /// ```
-    pub fn into_raw(self) -> Option<u64> {
-        self.0.map(Into::<u64>::into)
+    pub fn into_raw(self) -> Option<u32> {
+        self.0.map(Into::<u32>::into)
     }
 
     /// Constructor which takes a raw value returned by
@@ -113,11 +116,11 @@ impl Language {
     ///
     /// # Safety
     ///
-    /// This function accepts a `u64` that is expected to be a valid `TinyStr8`
+    /// This function accepts a `u32` that is expected to be a valid `TinyStr4`
     /// representing a `Language` subtag in canonical syntax.
-    pub const unsafe fn from_raw_unchecked(v: Option<u64>) -> Self {
+    pub const unsafe fn from_raw_unchecked(v: Option<u32>) -> Self {
         Self(match v {
-            Some(v) => Some(TinyStr8::new_unchecked(v)),
+            Some(v) => Some(TinyStr4::new_unchecked(v)),
             None => None,
         })
     }
