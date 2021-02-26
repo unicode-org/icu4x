@@ -61,7 +61,9 @@ impl Default for CldrPathsLocal {
         Self {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
             cldr_dates: Err(MissingSourceError { src: "cldr-dates" }),
-            cldr_numbers: Err(MissingSourceError { src: "cldr-numbers" }),
+            cldr_numbers: Err(MissingSourceError {
+                src: "cldr-numbers",
+            }),
         }
     }
 }

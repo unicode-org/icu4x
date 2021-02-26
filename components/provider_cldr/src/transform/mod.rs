@@ -63,10 +63,7 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
         {
             return Ok(result);
         }
-        if let Some(result) = self
-            .numbers
-            .try_load(req, receiver, self.cldr_paths)?
-        {
+        if let Some(result) = self.numbers.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
         }
         if let Some(result) = self.plurals.try_load(req, receiver, self.cldr_paths)? {

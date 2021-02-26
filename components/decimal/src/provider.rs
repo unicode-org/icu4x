@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use smallstr::SmallString;
+type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
 pub mod key {
     use icu_provider::{resource::ResourceKey, resource_key};
     pub const SYMBOLS_V1: ResourceKey = resource_key!(decimal, "symbols", 1);
 }
-
-type SmallString8 = SmallString<[u8; 8]>;
 
 /// A collection of strings to affix to a decimal number.
 #[derive(Debug, PartialEq, Clone)]

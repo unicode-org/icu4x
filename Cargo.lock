@@ -915,6 +915,7 @@ dependencies = [
  "serde",
  "serde-tuple-vec-map",
  "serde_json",
+ "smallstr",
  "tinystr",
  "unzip",
  "urlencoding",

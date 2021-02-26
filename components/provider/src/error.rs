@@ -78,6 +78,31 @@ impl From<Box<dyn std::error::Error>> for Error {
     }
 }
 
+struct StringResourceError(pub String);
+impl std::error::Error for StringResourceError {}
+impl fmt::Debug for StringResourceError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+impl fmt::Display for StringResourceError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl From<String> for Error {
+    fn from(err: String) -> Self {
+        Self::Resource(Box::new(StringResourceError(err)))
+    }
+}
+
+impl From<&str> for Error {
+    fn from(err: &str) -> Self {
+        Self::Resource(Box::new(StringResourceError(err.to_string())))
+    }
+}
+
 impl Error {
     pub fn new_resc_error<T>(err: T) -> Self
     where
