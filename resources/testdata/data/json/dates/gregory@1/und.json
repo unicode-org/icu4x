@@ -117,10 +117,130 @@
       "short": "HH:mm"
     },
     "date_time": {
-      "full": "{1} {0}",
-      "long": "{1} {0}",
-      "medium": "{1} {0}",
-      "short": "{1} {0}"
+      "style_patterns": {
+        "full": "{1} {0}",
+        "long": "{1} {0}",
+        "medium": "{1} {0}",
+        "short": "{1} {0}"
+      },
+      "skeletons": [
+        [
+          "y",
+          "y"
+        ],
+        [
+          "yM",
+          "y-MM"
+        ],
+        [
+          "yMd",
+          "y-MM-dd"
+        ],
+        [
+          "yMEd",
+          "y-MM-dd, E"
+        ],
+        [
+          "yMMM",
+          "y MMM"
+        ],
+        [
+          "yMMMd",
+          "y MMM d"
+        ],
+        [
+          "yMMMEd",
+          "y MMM d, E"
+        ],
+        [
+          "yMMMM",
+          "y MMMM"
+        ],
+        [
+          "M",
+          "L"
+        ],
+        [
+          "Md",
+          "MM-dd"
+        ],
+        [
+          "MEd",
+          "MM-dd, E"
+        ],
+        [
+          "MMM",
+          "LLL"
+        ],
+        [
+          "MMMd",
+          "MMM d"
+        ],
+        [
+          "MMMEd",
+          "MMM d, E"
+        ],
+        [
+          "MMMMd",
+          "MMMM d"
+        ],
+        [
+          "d",
+          "d"
+        ],
+        [
+          "E",
+          "ccc"
+        ],
+        [
+          "Ed",
+          "d, E"
+        ],
+        [
+          "Ehm",
+          "E h:mm a"
+        ],
+        [
+          "Ehms",
+          "E h:mm:ss a"
+        ],
+        [
+          "EHm",
+          "E HH:mm"
+        ],
+        [
+          "EHms",
+          "E HH:mm:ss"
+        ],
+        [
+          "h",
+          "h a"
+        ],
+        [
+          "hm",
+          "h:mm a"
+        ],
+        [
+          "hms",
+          "h:mm:ss a"
+        ],
+        [
+          "H",
+          "HH"
+        ],
+        [
+          "Hm",
+          "HH:mm"
+        ],
+        [
+          "Hms",
+          "HH:mm:ss"
+        ],
+        [
+          "ms",
+          "mm:ss"
+        ]
+      ]
     }
   }
 }
