@@ -86,10 +86,10 @@ impl DateTimeDates for provider::gregory::DatesV1 {
     ) -> Result<Pattern> {
         let date_time = &self.patterns.date_time;
         let s = match style {
-            style::Date::Full => &date_time.full,
-            style::Date::Long => &date_time.long,
-            style::Date::Medium => &date_time.medium,
-            style::Date::Short => &date_time.short,
+            style::Date::Full => &date_time.style_patterns.full,
+            style::Date::Long => &date_time.style_patterns.long,
+            style::Date::Medium => &date_time.style_patterns.medium,
+            style::Date::Short => &date_time.style_patterns.short,
         };
         Ok(Pattern::from_bytes_combination(s, date, time)?)
     }

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 use std::convert::TryFrom;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum SymbolError {
     /// Unknown field symbol
     Unknown(u8),
@@ -21,6 +21,43 @@ pub enum FieldSymbol {
     Hour(Hour),
     Minute,
     Second(Second),
+}
+
+impl FieldSymbol {
+    /// Skeletons are a Vec<Field>, and represent the Fields that can be used to match to a
+    /// specific pattern. The order of the Vec does not affect the Pattern that is output.
+    /// However, it's more performant when matching these fields, and it's more deterministic
+    /// when serializing them to present them in a consistent order.
+    ///
+    /// This ordering is taken by the order of the fields listed in the [UTS 35 Date Field Symbol Table]
+    /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
+    /// ordered most significant to least significant.
+    ///
+    pub fn get_canonical_order(&self) -> u8 {
+        match self {
+            FieldSymbol::Year(Year::Calendar) => 0,
+            FieldSymbol::Year(Year::WeekOf) => 1,
+            FieldSymbol::Month(Month::Format) => 2,
+            FieldSymbol::Month(Month::StandAlone) => 3,
+            FieldSymbol::Day(Day::DayOfMonth) => 4,
+            FieldSymbol::Day(Day::DayOfYear) => 5,
+            FieldSymbol::Day(Day::DayOfWeekInMonth) => 6,
+            FieldSymbol::Day(Day::ModifiedJulianDay) => 7,
+            FieldSymbol::Weekday(Weekday::Format) => 8,
+            FieldSymbol::Weekday(Weekday::Local) => 9,
+            FieldSymbol::Weekday(Weekday::StandAlone) => 10,
+            FieldSymbol::DayPeriod(DayPeriod::AmPm) => 11,
+            FieldSymbol::DayPeriod(DayPeriod::NoonMidnight) => 12,
+            FieldSymbol::Hour(Hour::H11) => 13,
+            FieldSymbol::Hour(Hour::H12) => 14,
+            FieldSymbol::Hour(Hour::H23) => 15,
+            FieldSymbol::Hour(Hour::H24) => 16,
+            FieldSymbol::Minute => 17,
+            FieldSymbol::Second(Second::Second) => 18,
+            FieldSymbol::Second(Second::FractionalSecond) => 19,
+            FieldSymbol::Second(Second::Millisecond) => 20,
+        }
+    }
 }
 
 impl TryFrom<u8> for FieldSymbol {
@@ -48,6 +85,48 @@ impl TryFrom<char> for FieldSymbol {
             Self::try_from(ch as u8)
         } else {
             Err(SymbolError::Invalid(ch))
+        }
+    }
+}
+
+impl From<FieldSymbol> for char {
+    fn from(symbol: FieldSymbol) -> Self {
+        match symbol {
+            FieldSymbol::Year(year) => match year {
+                Year::Calendar => 'y',
+                Year::WeekOf => 'Y',
+            },
+            FieldSymbol::Month(month) => match month {
+                Month::Format => 'M',
+                Month::StandAlone => 'L',
+            },
+            FieldSymbol::Day(day) => match day {
+                Day::DayOfMonth => 'd',
+                Day::DayOfYear => 'D',
+                Day::DayOfWeekInMonth => 'F',
+                Day::ModifiedJulianDay => 'g',
+            },
+            FieldSymbol::Weekday(weekday) => match weekday {
+                Weekday::Format => 'E',
+                Weekday::Local => 'e',
+                Weekday::StandAlone => 'c',
+            },
+            FieldSymbol::DayPeriod(dayperiod) => match dayperiod {
+                DayPeriod::AmPm => 'a',
+                DayPeriod::NoonMidnight => 'b',
+            },
+            FieldSymbol::Hour(hour) => match hour {
+                Hour::H11 => 'K',
+                Hour::H12 => 'h',
+                Hour::H23 => 'H',
+                Hour::H24 => 'k',
+            },
+            FieldSymbol::Minute => 'm',
+            FieldSymbol::Second(second) => match second {
+                Second::Second => 's',
+                Second::FractionalSecond => 'S',
+                Second::Millisecond => 'A',
+            },
         }
     }
 }

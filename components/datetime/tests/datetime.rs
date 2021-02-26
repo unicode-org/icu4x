@@ -20,7 +20,10 @@ use std::{borrow::Cow, fmt::Write};
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
 
-    for fx in fixtures::get_fixture(fixture_name).unwrap().0 {
+    for fx in fixtures::get_fixture(fixture_name)
+        .expect("Unable to get fixture.")
+        .0
+    {
         let locale: Locale = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
         let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
@@ -63,7 +66,13 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        *data.to_mut().patterns.date_time.long.to_mut() = String::from("{0}");
+        *data
+            .to_mut()
+            .patterns
+            .date_time
+            .style_patterns
+            .long
+            .to_mut() = String::from("{0}");
         for test_case in &test.test_cases {
             for dt_input in &test_case.date_times {
                 let date_time: MockDateTime = dt_input.parse().unwrap();
