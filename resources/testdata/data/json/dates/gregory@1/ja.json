@@ -123,10 +123,154 @@
       "short": "H:mm"
     },
     "date_time": {
-      "full": "{1} {0}",
-      "long": "{1} {0}",
-      "medium": "{1} {0}",
-      "short": "{1} {0}"
+      "style_patterns": {
+        "full": "{1} {0}",
+        "long": "{1} {0}",
+        "medium": "{1} {0}",
+        "short": "{1} {0}"
+      },
+      "skeletons": [
+        [
+          "y",
+          "y年"
+        ],
+        [
+          "yM",
+          "y/M"
+        ],
+        [
+          "yMd",
+          "y/M/d"
+        ],
+        [
+          "yMEd",
+          "y/M/d(E)"
+        ],
+        [
+          "yMEEEEd",
+          "y/M/dEEEE"
+        ],
+        [
+          "yMM",
+          "y/MM"
+        ],
+        [
+          "yMMM",
+          "y年M月"
+        ],
+        [
+          "yMMMd",
+          "y年M月d日"
+        ],
+        [
+          "yMMMEd",
+          "y年M月d日(E)"
+        ],
+        [
+          "yMMMEEEEd",
+          "y年M月d日EEEE"
+        ],
+        [
+          "yMMMM",
+          "y年M月"
+        ],
+        [
+          "M",
+          "M月"
+        ],
+        [
+          "Md",
+          "M/d"
+        ],
+        [
+          "MEd",
+          "M/d(E)"
+        ],
+        [
+          "MEEEEd",
+          "M/dEEEE"
+        ],
+        [
+          "MMM",
+          "M月"
+        ],
+        [
+          "MMMd",
+          "M月d日"
+        ],
+        [
+          "MMMEd",
+          "M月d日(E)"
+        ],
+        [
+          "MMMEEEEd",
+          "M月d日EEEE"
+        ],
+        [
+          "MMMMd",
+          "M月d日"
+        ],
+        [
+          "d",
+          "d日"
+        ],
+        [
+          "E",
+          "ccc"
+        ],
+        [
+          "Ed",
+          "d日(E)"
+        ],
+        [
+          "Ehm",
+          "aK:mm (E)"
+        ],
+        [
+          "Ehms",
+          "aK:mm:ss (E)"
+        ],
+        [
+          "EHm",
+          "H:mm (E)"
+        ],
+        [
+          "EHms",
+          "H:mm:ss (E)"
+        ],
+        [
+          "EEEEd",
+          "d日EEEE"
+        ],
+        [
+          "h",
+          "aK時"
+        ],
+        [
+          "hm",
+          "aK:mm"
+        ],
+        [
+          "hms",
+          "aK:mm:ss"
+        ],
+        [
+          "H",
+          "H時"
+        ],
+        [
+          "Hm",
+          "H:mm"
+        ],
+        [
+          "Hms",
+          "H:mm:ss"
+        ],
+        [
+          "ms",
+          "mm:ss"
+        ]
+      ]
     }
   }
 }
