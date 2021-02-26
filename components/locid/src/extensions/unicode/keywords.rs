@@ -132,6 +132,46 @@ impl Keywords {
             None
         }
     }
+
+    /// Returns a mutable reference to the [`Value`] corresponding to the [`Key`].
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
+    ///
+    /// let key: Key = "ca".parse()
+    ///     .expect("Failed to parse a Key.");
+    /// let value: Value = "buddhist".parse()
+    ///     .expect("Failed to parse a Value.");
+    /// let mut keywords = Keywords::from_vec_unchecked(vec![(key, value)]);
+    ///
+    /// let key: Key = "ca".parse()
+    ///     .expect("Failed to parse a Key.");
+    /// if let Some(value) = keywords.get_mut(key) {
+    ///     *value = "gregory".parse()
+    ///     .expect("Failed to parse a Value.");
+    /// }
+    /// assert_eq!(
+    ///     keywords.get(&key).map(|v| v.to_string()),
+    ///     Some("gregory".to_string())
+    /// );
+    /// ```
+    pub fn get_mut<Q>(&mut self, key: Q) -> Option<&mut Value>
+    where
+        Q: Borrow<Key>,
+    {
+        if let Ok(idx) = self.binary_search_by_key(key.borrow(), |(key, _)| *key) {
+            if let Some(ref mut data) = self.0 {
+                Some(&mut data[idx].1)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
 }
 
 impl_writeable_for_key_value!(Keywords, "ca", "islamic-civil", "aa", "aa");

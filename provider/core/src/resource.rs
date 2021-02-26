@@ -17,13 +17,14 @@ use tinystr::{TinyStr16, TinyStr4};
 #[non_exhaustive]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
+    Aliases,
+    Dates,
+    Decimal,
     Icu4x,
     LikelySubtags,
     Plurals,
-    Dates,
     TimeZones,
     Uniset,
-    Decimal,
     PrivateUse(TinyStr4),
 }
 
@@ -31,13 +32,14 @@ impl ResourceCategory {
     /// Gets or builds a string form of this [`ResourceCategory`].
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
+            Self::Aliases => Cow::Borrowed("aliases"),
+            Self::Dates => Cow::Borrowed("dates"),
+            Self::Decimal => Cow::Borrowed("decimal"),
             Self::Icu4x => Cow::Borrowed("icu4x"),
             Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
             Self::Plurals => Cow::Borrowed("plurals"),
-            Self::Dates => Cow::Borrowed("dates"),
-            Self::TimeZones => Cow::Borrowed("time_zones"),
+            Self::TimeZones => Cow::Borrowed("timezones"),
             Self::Uniset => Cow::Borrowed("uniset"),
-            Self::Decimal => Cow::Borrowed("decimal"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());
@@ -89,6 +91,9 @@ pub struct ResourceKey {
 /// ```
 #[macro_export]
 macro_rules! resource_key {
+    (aliases, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!($crate::ResourceCategory::Aliases, $sub_category, $version)
+    };
     (dates, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Dates, $sub_category, $version)
     };
