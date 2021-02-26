@@ -2,7 +2,10 @@
 
 2020-07-09
 
-Author: [filmil (Filip Filmar) · GitHub][ff]
+Authors: 
+
+* [filmil (Filip Filmar) · GitHub][ff]
+* [zbraniecki (Zibi Braniecki) · GitHub][zb]
 
 *tl;dr:* Generalize the [ICU4X Data Provider][dp] key space to include
 localized data from sources other than [CLDR.][cldr] More detail is in the
@@ -10,7 +13,7 @@ localized data from sources other than [CLDR.][cldr] More detail is in the
 by a few use cases.
 
 This document proposes a global, shared *hunkspace* (better names always
-welcome) of localized "[hunk][hunk]" data for the ICU4X Data Provider.  It
+welcome) of localized "[hunk]" data for the ICU4X Data Provider.  It
 doesn't necessarily affect the ICU4X data provider implementation, but does
 affect the data model.   Specifically the proposal is to make the data model
 more general and open to independent third party extensions.
@@ -23,6 +26,7 @@ more general and open to independent third party extensions.
 [ff]: https://github.com/filmil
 [hunk]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
 [icudp]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
+[zb]: https://github.com/zbraniecki
 
 ## Prior Art
 
@@ -443,10 +447,27 @@ JSON encoding:
 #### Example 3: Firefox Localization and localization contexts
 
 This section gives an example of query use in a software product with complex
-localization requirements.  See the [Mozilla documentation][ffl10n] for details on
-Firefox localization. The summary is that all the Firefox user
-interface is declarative, which is achieved using a mix of SGML-based
-technologies.  This includes localization.
+localization requirements.  See the [Mozilla documentation][ffl10n] for details
+on Firefox localization. The summary is that all the Firefox user interface is
+declarative, which is achieved using a mix of SGML-based technologies.  This
+includes localization.
+
+* **Note.** The intention of this section is not to give a definitive design
+  for the feature.  Instead, it is given to demonstrate how complex localization
+  requirements *could* be encoded in a hunkspace.  The precise form of the
+  requests and responses is subject to specific needs and design constraints.
+
+Some specific points of Mozilla's localization approach that are pertinent to
+the exposition below, as they provide requirements and constraints that an 
+implementor must apply.
+
+1. The localization is context-sensitive (see below), which means that the
+   requester needs to be able to initialize and maintain this context through
+   the lifeetime of the program.
+
+2. The volume of localization text may be large, and ferrying it as a sequence
+   of request-response pairs between the program and the provider may contend
+   with the latency budget of the program's user interface.
 
 [ffl10n]: https://firefox-source-docs.mozilla.org/intl/index.html
 
@@ -507,13 +528,17 @@ implementor, it nevertheless compels us to provide a way to address such
 a binding to the data provider.  That is, the data provider must be able
 to address a specific message.
 
-For this purpose, I propose using "context specifiers", which allow adding
-"auxiliary" data that allows disambiguation of the context.   Since the aim of
-the data provider is to form a flat key space, and the nature of the auxiliary
-data may have arbitrary internal structure, it compels us to move the auxiliary
-data outside of the "regular" key dimensions.  For this reason, the "auxiliary"
-data is specified as URI query parameters, or with JSON arguments that start
-with a "?" symbol.   The resulting URI and JSON forms are given below.
+##### Context specifiers
+
+When fewer messages are needed, I propose using "context specifiers", which
+allow adding "auxiliary" data that allows disambiguation of the context.
+ Since the aim of the data provider is to form a flat key space, and the nature
+of the auxiliary data may have arbitrary internal structure, it compels us to
+move the auxiliary data outside of the "regular" key dimensions.
+
+For this reason, the "auxiliary" data can be specified as URI query parameters,
+or with JSON arguments that start with a "?" symbol.   The resulting URI and
+JSON forms are given below.
 
 URI:
 
@@ -564,4 +589,132 @@ JSON:
   "?from": "browser/branding/brandings.ftl"
 }
 ```
+
+##### Complex context
+
+Performance concerns may dictate that batches of messages need to
+be transmitted in a limited number of requests, to handle the bandwidth and
+latency constraints imposed by other parts of the system, such as the user
+interface or the throughput of the connection used to ferry the communication.
+
+In this case, we may find a situation where a single URI will not encode 
+all the context information in a practical manner.
+
+JSON request:
+```
+{
+  "scheme": "mozilla-l10n",
+  "source": "mozilla.org",
+  "app": "firefox",
+  "locales": ["ru", "fr", "en-US"],
+  "resource_ids": [
+    "browser/preferences.ftl",
+    "toolkit/menu.ftl",
+    "branding/brands.ftl"
+  ],
+  "message_keys": [
+    {"id": "prefs-document-title", "args": null},
+    {"id": "prefs-open", "args": null},
+    {"id": "prefs-cancel", "args": null},
+    {"id": "prefs-header", "args": { "user": "John" }},
+  ]
+}
+```
+
+A major difference with respect to the previous approach, it is now impractical
+to encode the entire set of needed information as a URI, so will need to be
+formulated in terms of a message sent to the endpoint:
+
+```
+mozilla-l10n://mozilla.org/firefox
+{
+  "locales": ["ru", "fr", "en-US"],
+  "resource_ids": [
+    "browser/preferences.ftl",
+    "toolkit/menu.ftl",
+    "branding/brands.ftl"
+  ],
+  "message_keys": [
+    {"id": "prefs-document-title", "args": null},
+    {"id": "prefs-open", "args": null},
+    {"id": "prefs-cancel", "args": null},
+    {"id": "prefs-header", "args": { "user": "John" }},
+  ]
+}
+```
+
+The response:
+
+```
+{
+  "messages": [
+    {  "value": "Your Preferences", "attrs": [], "locale": "ru" },
+    {  "value": "Open", "attrs": { "accesskey": "o" }, "locale": "ru" },
+    {  "value": "Cancel", "attrs": { "accesskey": "c" }, "locale": "ru" },
+    {  "value": null, "attrs": { "label": "Hello, John" }, "locale": "en-US" },
+  ],
+  "errors": [],
+}
+```
+
+This can alternatively be encoded as a two-step process:
+
+```
+{
+  "scheme": "mozilla-l10n",
+  "source": "mozilla.org",
+  "app": "firefox",
+  "locales": ["ru", "fr", "en-US"],
+  "resource_ids": [
+    "browser/preferences.ftl",
+    "toolkit/menu.ftl",
+    "branding/brands.ftl"
+  ],
+}
+```
+
+Response:
+
+```
+{
+  "context_id": "34jf2n#3j3n1",
+  "errors": [],
+}
+```
+
+Then the request will specify the `context_id` to refer back to the information
+already transferred:
+
+```
+{
+  "scheme": "mozilla-l10n",
+  "source": "mozilla.org",
+  "app": "firefox",
+  "context_id": "34jf2n#3j3n1",
+  "message_keys": [
+    {"id": "prefs-document-title", "args": null},
+    {"id": "prefs-open", "args": null},
+    {"id": "prefs-cancel", "args": null},
+    {"id": "prefs-header", "args": { "user": "John" }},
+  ]
+}
+```
+
+This proposal glosses over the gritty detail of setting up the two-way
+communication over a common context, such as cache invalidation, context
+cleaning and availability concerns.  The designers would neeed to take them
+into account when developing a production version of this proposal.  The URI
+encoding approach still favors statically defined messaging where such
+messaging is viable.
+
+The upside remains, which is the ability to handle a reference to a repository
+of localized data in an uniform manner.
+
+## Conclusion
+
+This proposal describes an encoding of localization contexts to URIs as well as
+JSON requests.  The proposed benefit is the ability to identify uniquely
+individual localized messages, or batches of such messages in a uniform manner.
+The hope is that this approach would make it easier to produce generalized data
+providers that are able to serve pluggable, cross-application, localizations.
 
