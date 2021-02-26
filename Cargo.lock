@@ -940,6 +940,7 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_uniset",
+ "litemap",
  "tinystr",
 ]
 
