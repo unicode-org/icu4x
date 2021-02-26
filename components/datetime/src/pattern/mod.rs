@@ -7,8 +7,11 @@ mod parser;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 pub use error::Error;
 use parser::Parser;
-use std::convert::TryFrom;
 use std::iter::FromIterator;
+use std::{convert::TryFrom, fmt};
+
+#[cfg(feature = "provider_serde")]
+use serde::{de, ser, Deserialize, Deserializer, Serialize};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum PatternItem {
@@ -107,8 +110,174 @@ impl From<Vec<PatternItem>> for Pattern {
     }
 }
 
+impl From<&Pattern> for String {
+    fn from(pattern: &Pattern) -> Self {
+        let mut string = String::new();
+
+        for pattern_item in pattern.items().iter() {
+            match pattern_item {
+                PatternItem::Field(field) => {
+                    let ch: char = field.symbol.into();
+                    for _ in 0..field.length as usize {
+                        string.push(ch);
+                    }
+                }
+                PatternItem::Literal(literal) => {
+                    // Determine if the literal contains any characters that would need to be escaped.
+                    let mut needs_escaping = false;
+                    for ch in literal.chars() {
+                        if ch.is_ascii_alphabetic() || ch == '\'' {
+                            needs_escaping = true;
+                            break;
+                        }
+                    }
+
+                    if needs_escaping {
+                        let mut ch_iter = literal.trim_end().chars().peekable();
+
+                        // Do not escape the leading whitespace.
+                        while let Some(ch) = ch_iter.peek() {
+                            if ch.is_whitespace() {
+                                string.push(*ch);
+                                ch_iter.next();
+                            } else {
+                                break;
+                            }
+                        }
+
+                        // Wrap in "'" and escape "'".
+                        string.push('\'');
+                        for ch in ch_iter {
+                            if ch == '\'' {
+                                // Escape a single quote.
+                                string.push('\\');
+                            }
+                            string.push(ch);
+                        }
+                        string.push('\'');
+
+                        // Add the trailing whitespace
+                        for ch in literal.chars().rev() {
+                            if ch.is_whitespace() {
+                                string.push(ch);
+                            } else {
+                                break;
+                            }
+                        }
+                    } else {
+                        string.push_str(literal);
+                    }
+                }
+            }
+        }
+
+        string
+    }
+}
+
 impl FromIterator<PatternItem> for Pattern {
     fn from_iter<I: IntoIterator<Item = PatternItem>>(iter: I) -> Self {
         Self::from(iter.into_iter().collect::<Vec<_>>())
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+struct DeserializePatternVisitor;
+
+#[cfg(feature = "provider_serde")]
+impl<'de> de::Visitor<'de> for DeserializePatternVisitor {
+    type Value = Pattern;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "Expected to find a valid pattern.")
+    }
+
+    fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        // Parse a string into a list of fields.
+        let pattern = match Pattern::from_bytes(pattern_string) {
+            Ok(p) => p,
+            Err(err) => {
+                return Err(E::custom(format!(
+                    "The pattern \"{}\" could not be parsed: {:?}",
+                    pattern_string, err
+                )));
+            }
+        };
+        Ok(pattern)
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+impl<'de> Deserialize<'de> for Pattern {
+    fn deserialize<D>(deserializer: D) -> Result<Pattern, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_str(DeserializePatternVisitor)
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+impl Serialize for Pattern {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: ser::Serializer,
+    {
+        let string: String = String::from(self);
+        serializer.serialize_str(&string)
+    }
+}
+
+#[cfg(all(test, feature = "provider_serde"))]
+mod test {
+    use super::*;
+
+    // Provide a few patterns to sanity check serialization.
+    const PATTERNS: [&str; 6] = [
+        "d",
+        "E, M/d/y",
+        "h:mm:ss a",
+        // TODO(#502) - The W field isn't supported yet, so swap it out for a field we do know.
+        "'week' d 'of' MMMM",
+        // Arabic "week of" in the availableFormats.
+        "الأسبوع d من MMMM",
+        // Cherokee "week of" in the availableFormats.
+        "ᏒᎾᏙᏓᏆᏍᏗ’ d ’ᎾᎿ’ MMMM",
+    ];
+
+    #[test]
+    fn test_pattern_serialization_roundtrip() {
+        for pattern_string in &PATTERNS {
+            // Wrap the string in quotes so it's a JSON string.
+            let json_in: String = serde_json::to_string(pattern_string).unwrap();
+
+            let pattern: Pattern = match serde_json::from_str(&json_in) {
+                Ok(p) => p,
+                Err(err) => {
+                    panic!(
+                        "Unable to parse the pattern {:?}. {:?}",
+                        pattern_string, err
+                    );
+                }
+            };
+
+            let json_out = match serde_json::to_string(&pattern) {
+                Ok(s) => s,
+                Err(err) => {
+                    panic!(
+                        "Unable to re-serialize the pattern {:?}. {:?}",
+                        pattern_string, err
+                    );
+                }
+            };
+
+            assert_eq!(
+                json_in, json_out,
+                "The roundtrip serialization for the pattern matched."
+            );
+        }
     }
 }

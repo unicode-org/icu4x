@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 mod length;
-mod symbols;
+pub(crate) mod symbols;
 
-pub use length::FieldLength;
+pub use length::{FieldLength, LengthError};
 pub use symbols::*;
 
 use std::convert::{TryFrom, TryInto};
@@ -19,8 +19,6 @@ pub struct Field {
     pub symbol: FieldSymbol,
     pub length: FieldLength,
 }
-
-impl Field {}
 
 impl From<(FieldSymbol, FieldLength)> for Field {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {
