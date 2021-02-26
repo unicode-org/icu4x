@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-type SmallString8 = smallstr::SmallString<[u8; 8]>;
+pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
 pub mod key {
     use icu_provider::{resource::ResourceKey, resource_key};
@@ -63,4 +63,7 @@ pub struct DecimalSymbolsV1 {
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
+
+    /// Zero digit for the current numbering system.
+    pub zero_digit: char,
 }

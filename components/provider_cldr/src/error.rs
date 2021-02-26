@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+use icu_locid::LanguageIdentifier;
 use std::error;
 use std::fmt;
 use std::path::{Path, PathBuf};
@@ -13,6 +14,7 @@ use crate::download;
 pub enum Error {
     Io(std::io::Error, Option<PathBuf>),
     Json(serde_json::error::Error, Option<PathBuf>),
+    Custom(String, Option<LanguageIdentifier>),
     MissingSource(MissingSourceError),
     #[cfg(feature = "download")]
     Download(download::Error),
@@ -46,6 +48,22 @@ impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     }
 }
 
+/// To help with debugging, string errors should be paired with a locale.
+/// If a path is unavailable, create the error directly: `Error::Custom(err, None)`
+impl<L: AsRef<LanguageIdentifier>> From<(String, L)> for Error {
+    fn from(pieces: (String, L)) -> Self {
+        Self::Custom(pieces.0, Some(pieces.1.as_ref().clone()))
+    }
+}
+
+/// To help with debugging, string errors should be paired with a locale.
+/// If a path is unavailable, create the error directly: `Error::Custom(err, None)`
+impl<L: AsRef<LanguageIdentifier>> From<(&'static str, L)> for Error {
+    fn from(pieces: (&'static str, L)) -> Self {
+        Self::Custom(pieces.0.to_string(), Some(pieces.1.as_ref().clone()))
+    }
+}
+
 impl From<MissingSourceError> for Error {
     fn from(err: MissingSourceError) -> Self {
         Self::MissingSource(err)
@@ -67,10 +85,10 @@ impl fmt::Display for Error {
         match self {
             Self::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
             Self::Io(err, None) => err.fmt(f),
-            Self::Json(err, Some(filename)) => {
-                write!(f, "JSON parse error: {}: {:?}", err, filename)
-            }
-            Self::Json(err, None) => write!(f, "JSON parse error: {}", err),
+            Self::Json(err, Some(path)) => write!(f, "JSON error: {}: {:?}", err, path),
+            Self::Json(err, None) => write!(f, "JSON error: {}", err),
+            Self::Custom(s, Some(langid)) => write!(f, "{}: {:?}", s, langid),
+            Self::Custom(s, None) => write!(f, "{}", s),
             Self::MissingSource(err) => err.fmt(f),
             #[cfg(feature = "download")]
             Self::Download(err) => err.fmt(f),

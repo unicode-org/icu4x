@@ -1,0 +1,147 @@
+use crate::cldr_langid::CldrLangID;
+use serde::Deserialize;
+use serde_aux::prelude::*;
+use std::collections::HashMap;
+use tinystr::{TinyStr8, TinyStrAuto};
+
+pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
+
+pub mod numbers_json {
+    use super::*;
+
+    use serde::de::{Deserialize, Deserializer, Error, MapAccess, Unexpected, Visitor};
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct Symbols {
+        // This list is not comprehensive; add more fields when needed
+        pub decimal: SmallString8,
+        pub group: SmallString8,
+        #[serde(rename = "minusSign")]
+        pub minus_sign: SmallString8,
+        #[serde(rename = "plusSign")]
+        pub plus_sign: SmallString8,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct DecimalFormats {
+        pub standard: String,
+    }
+
+    #[derive(PartialEq, Debug, Default)]
+    pub struct NumberingSystemData {
+        /// Map from numbering system to symbols
+        pub symbols: HashMap<TinyStr8, Symbols>,
+        /// Map from numbering system to decimal formats
+        pub formats: HashMap<TinyStr8, DecimalFormats>,
+    }
+
+    pub struct NumberingSystemDataVisitor;
+
+    impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
+        type Value = NumberingSystemData;
+
+        // Format a message stating what data this Visitor expects to receive.
+        fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+            formatter.write_str("formatting data by numbering system")
+        }
+
+        fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
+        where
+            M: MapAccess<'de>,
+        {
+            let mut result = NumberingSystemData::default();
+            while let Some(key) = access.next_key::<String>()? {
+                // Key is of the form: "symbols-numberSystem-latn"
+                let mut key_it = key.split('-');
+                let stype = key_it.next();
+                let numsys: Option<Result<TinyStr8, M::Error>> = key_it.skip(1).next().map(|s| {
+                    s.parse().map_err(|_| {
+                        M::Error::invalid_value(
+                            Unexpected::Str(&key),
+                            &"numsys to be valid TinyStr8",
+                        )
+                    })
+                });
+                match (stype, numsys) {
+                    (Some("symbols"), Some(numsys)) => {
+                        let value: Symbols = access.next_value()?;
+                        result.symbols.insert(numsys?, value);
+                    }
+                    (Some("decimalFormats"), Some(numsys)) => {
+                        let value: DecimalFormats = access.next_value()?;
+                        result.formats.insert(numsys?, value);
+                    }
+                    _ => {
+                        // not symbols or decimalFormats: ignore silently
+                    }
+                }
+            }
+            Ok(result)
+        }
+    }
+
+    impl<'de> Deserialize<'de> for NumberingSystemData {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            deserializer.deserialize_map(NumberingSystemDataVisitor)
+        }
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct Numbers {
+        #[serde(rename = "defaultNumberingSystem")]
+        pub default_numbering_system: TinyStr8,
+        #[serde(rename = "minimumGroupingDigits")]
+        #[serde(deserialize_with = "deserialize_number_from_string")]
+        pub minimum_grouping_digits: u8,
+        #[serde(flatten)]
+        pub numsys_data: NumberingSystemData,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct LangNumbers {
+        pub numbers: Numbers,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct LangData(#[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LangNumbers)>);
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct Resource {
+        pub main: LangData,
+    }
+}
+
+pub mod numbering_systems_json {
+    use super::*;
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    #[serde(rename_all = "lowercase")]
+    pub enum NumberingSystemType {
+        Numeric,
+        Algorithmic,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct NumberingSystem {
+        #[serde(rename = "_type")]
+        pub nstype: NumberingSystemType,
+        #[serde(rename = "_digits")]
+        pub digits: Option<String>,
+        #[serde(rename = "_rules")]
+        pub rules: Option<TinyStrAuto>,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct SupplementalData {
+        #[serde(rename = "numberingSystems")]
+        pub numbering_systems: HashMap<String, NumberingSystem>,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct Resource {
+        pub supplemental: SupplementalData,
+    }
+}
