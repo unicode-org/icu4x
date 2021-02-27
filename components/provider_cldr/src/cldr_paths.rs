@@ -21,7 +21,7 @@ pub trait CldrPaths: std::fmt::Debug {
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
 }
 
-/// Implementation of `CldrPaths` for data directories already downloaded.
+/// Implementation of `CldrPaths` for multiple separate local CLDR JSON directories per component.
 ///
 /// # Example
 ///
@@ -65,5 +65,47 @@ impl Default for CldrPathsLocal {
                 src: "cldr-numbers",
             }),
         }
+    }
+}
+
+/// Implementation of `CldrPaths` for one combined local CLDR JSON directory.
+///
+/// # Example
+///
+/// ```
+/// use icu_provider_cldr::CldrPathsAllInOne;
+/// use icu_provider_cldr::CldrJsonDataProvider;
+/// use std::path::PathBuf;
+///
+/// let paths = CldrPathsAllInOne {
+///     cldr_json_root: PathBuf::from("/path/to/cldr-json"),
+///     suffix: "full",
+/// };
+///
+/// let data_provider = CldrJsonDataProvider::new(&paths);
+/// ```
+#[derive(Debug, PartialEq)]
+pub struct CldrPathsAllInOne {
+    /// Path to the CLDR JSON root directory
+    pub cldr_json_root: PathBuf,
+    /// CLDR JSON directory suffix: probably either "modern" or "full"
+    pub suffix: &'static str,
+}
+
+impl CldrPaths for CldrPathsAllInOne {
+    fn cldr_core(&self) -> Result<PathBuf, Error> {
+        Ok(self.cldr_json_root.clone().join("cldr-core"))
+    }
+    fn cldr_dates(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-dates-{}", self.suffix)))
+    }
+    fn cldr_numbers(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-numbers-{}", self.suffix)))
     }
 }

@@ -10,14 +10,13 @@ use icu_decimal::provider::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use std::path::Path;
 
 mod cldr_serde;
 mod decimal_pattern;
 
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 1] = [
-    key::SYMBOLS_V1, //
+pub const ALL_KEYS: [ResourceKey; 0] = [
+    // key::SYMBOLS_V1, //
 ];
 
 /// A data provider reading from CLDR JSON plural rule files.
@@ -42,19 +41,6 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.append(&mut resource.main.0);
         }
-
-        Ok(Self { data })
-    }
-}
-
-impl TryFrom<&str> for NumbersProvider {
-    type Error = Error;
-    fn try_from(input: &str) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let mut resource: cldr_serde::numbers_json::Resource =
-            serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
-        data.append(&mut resource.main.0);
 
         Ok(Self { data })
     }
@@ -105,7 +91,7 @@ icu_provider::impl_erased!(NumbersProvider, 'd);
 impl<'d> IterableDataProvider<'d> for NumbersProvider {
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         unimplemented!()
     }
@@ -116,24 +102,6 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
 
     fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, &'static str> {
         // TODO(#510): Select from non-default numbering systems
-        // let symbols: cldr_serde::numbers_json::Symbols = serde_json::from_value(
-        //     other
-        //         .symbols_for(other.default_numbering_system)
-        //         .ok_or("Could not find symbols for default numbering system")?
-        //         .clone(),
-        // )
-        // .map_err(DataError::new_resc_error)?;
-        // let formats: cldr_serde::numbers_json::DecimalFormats = serde_json::from_value(
-        //     other
-        //         .extra
-        //         .get(&format!(
-        //             "decimalFormats-numberSystem-{}",
-        //             other.default_numbering_system
-        //         ))
-        //         .ok_or("Could not find formats for default numbering system")?
-        //         .clone(),
-        // )
-        // .map_err(DataError::new_resc_error)?;
         let symbols = other
             .numsys_data
             .symbols
@@ -167,7 +135,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/my-numbers.json").unwrap();
+    // let json_str = std::fs::read_to_string("tests/testdata/my-numbers.json").unwrap();
+    /*
     let provider = NumbersProvider::try_from(json_str.as_str()).unwrap();
 
     println!("{:?}", provider);
@@ -188,7 +157,6 @@ fn test_basic() {
 
     println!("{:?}", my_decimal);
 
-    /*
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
 
     assert_eq!(

@@ -14,7 +14,7 @@ pub struct DecimalPatternParseResult {
 impl FromStr for DecimalPatternParseResult {
     type Err = &'static str;
 
-    fn from_str(pattern: &str) -> Result<Self, Self::Err> {
+    fn from_str(_pattern: &str) -> Result<Self, Self::Err> {
         // Example patterns:
         // #,##,##0.###
         // #,##0.00;#,##0.00-
