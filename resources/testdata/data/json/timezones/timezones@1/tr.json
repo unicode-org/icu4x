@@ -1,0 +1,2275 @@
+{
+  "hour_format": "+HH:mm;-HH:mm",
+  "gmt_format": "GMT{0}",
+  "gmt_zero_format": "GMT",
+  "region_format": "{0} Saati",
+  "region_format_daylight": "{0} Yaz Saati",
+  "region_format_standard": "{0} Standart Saati",
+  "fallback_format": "{1} ({0})",
+  "zones": {
+    "Abidjan": {
+      "exemplar_city": "Abidjan"
+    },
+    "Accra": {
+      "exemplar_city": "Akra"
+    },
+    "Adak": {
+      "exemplar_city": "Adak"
+    },
+    "Addis_Ababa": {
+      "exemplar_city": "Addis Ababa"
+    },
+    "Adelaide": {
+      "exemplar_city": "Adelaide"
+    },
+    "Aden": {
+      "exemplar_city": "Aden"
+    },
+    "Algiers": {
+      "exemplar_city": "Cezayir"
+    },
+    "Almaty": {
+      "exemplar_city": "Almatı"
+    },
+    "Amman": {
+      "exemplar_city": "Amman"
+    },
+    "Amsterdam": {
+      "exemplar_city": "Amsterdam"
+    },
+    "Anadyr": {
+      "exemplar_city": "Anadır"
+    },
+    "Anchorage": {
+      "exemplar_city": "Anchorage"
+    },
+    "Andorra": {
+      "exemplar_city": "Andorra"
+    },
+    "Anguilla": {
+      "exemplar_city": "Anguilla"
+    },
+    "Antananarivo": {
+      "exemplar_city": "Antananarivo"
+    },
+    "Antigua": {
+      "exemplar_city": "Antigua"
+    },
+    "Apia": {
+      "exemplar_city": "Apia"
+    },
+    "Aqtau": {
+      "exemplar_city": "Aktav"
+    },
+    "Aqtobe": {
+      "exemplar_city": "Aktöbe"
+    },
+    "Araguaina": {
+      "exemplar_city": "Araguaina"
+    },
+    "Aruba": {
+      "exemplar_city": "Aruba"
+    },
+    "Ashgabat": {
+      "exemplar_city": "Aşkabat"
+    },
+    "Asmera": {
+      "exemplar_city": "Asmara"
+    },
+    "Astrakhan": {
+      "exemplar_city": "Astrahan"
+    },
+    "Asuncion": {
+      "exemplar_city": "Asunción"
+    },
+    "Athens": {
+      "exemplar_city": "Atina"
+    },
+    "Atyrau": {
+      "exemplar_city": "Atırav"
+    },
+    "Auckland": {
+      "exemplar_city": "Auckland"
+    },
+    "Azores": {
+      "exemplar_city": "Azor Adaları"
+    },
+    "Baghdad": {
+      "exemplar_city": "Bağdat"
+    },
+    "Bahia": {
+      "exemplar_city": "Bahia"
+    },
+    "Bahia_Banderas": {
+      "exemplar_city": "Bahia Banderas"
+    },
+    "Bahrain": {
+      "exemplar_city": "Bahreyn"
+    },
+    "Baku": {
+      "exemplar_city": "Bakü"
+    },
+    "Bamako": {
+      "exemplar_city": "Bamako"
+    },
+    "Bangkok": {
+      "exemplar_city": "Bangkok"
+    },
+    "Bangui": {
+      "exemplar_city": "Bangui"
+    },
+    "Banjul": {
+      "exemplar_city": "Banjul"
+    },
+    "Barbados": {
+      "exemplar_city": "Barbados"
+    },
+    "Barnaul": {
+      "exemplar_city": "Barnaul"
+    },
+    "Beirut": {
+      "exemplar_city": "Beyrut"
+    },
+    "Belem": {
+      "exemplar_city": "Belem"
+    },
+    "Belgrade": {
+      "exemplar_city": "Belgrad"
+    },
+    "Belize": {
+      "exemplar_city": "Belize"
+    },
+    "Berlin": {
+      "exemplar_city": "Berlin"
+    },
+    "Bermuda": {
+      "exemplar_city": "Bermuda"
+    },
+    "Beulah": {
+      "exemplar_city": "Beulah, Kuzey Dakota"
+    },
+    "Bishkek": {
+      "exemplar_city": "Bişkek"
+    },
+    "Bissau": {
+      "exemplar_city": "Bissau"
+    },
+    "Blanc-Sablon": {
+      "exemplar_city": "Blanc-Sablon"
+    },
+    "Blantyre": {
+      "exemplar_city": "Blantyre"
+    },
+    "Boa_Vista": {
+      "exemplar_city": "Boa Vista"
+    },
+    "Bogota": {
+      "exemplar_city": "Bogota"
+    },
+    "Boise": {
+      "exemplar_city": "Boise"
+    },
+    "Bougainville": {
+      "exemplar_city": "Bougainville"
+    },
+    "Bratislava": {
+      "exemplar_city": "Bratislava"
+    },
+    "Brazzaville": {
+      "exemplar_city": "Brazzavil"
+    },
+    "Brisbane": {
+      "exemplar_city": "Brisbane"
+    },
+    "Broken_Hill": {
+      "exemplar_city": "Broken Hill"
+    },
+    "Brunei": {
+      "exemplar_city": "Brunei"
+    },
+    "Brussels": {
+      "exemplar_city": "Brüksel"
+    },
+    "Bucharest": {
+      "exemplar_city": "Bükreş"
+    },
+    "Budapest": {
+      "exemplar_city": "Budapeşte"
+    },
+    "Buenos_Aires": {
+      "exemplar_city": "Buenos Aires"
+    },
+    "Bujumbura": {
+      "exemplar_city": "Bujumbura"
+    },
+    "Busingen": {
+      "exemplar_city": "Büsingen"
+    },
+    "Cairo": {
+      "exemplar_city": "Kahire"
+    },
+    "Calcutta": {
+      "exemplar_city": "Kalküta"
+    },
+    "Cambridge_Bay": {
+      "exemplar_city": "Cambridge Bay"
+    },
+    "Campo_Grande": {
+      "exemplar_city": "Campo Grande"
+    },
+    "Canary": {
+      "exemplar_city": "Kanarya Adaları"
+    },
+    "Cancun": {
+      "exemplar_city": "Cancun"
+    },
+    "Cape_Verde": {
+      "exemplar_city": "Cape Verde"
+    },
+    "Caracas": {
+      "exemplar_city": "Caracas"
+    },
+    "Casablanca": {
+      "exemplar_city": "Kazablanka"
+    },
+    "Casey": {
+      "exemplar_city": "Casey"
+    },
+    "Catamarca": {
+      "exemplar_city": "Catamarca"
+    },
+    "Cayenne": {
+      "exemplar_city": "Cayenne"
+    },
+    "Cayman": {
+      "exemplar_city": "Cayman"
+    },
+    "Center": {
+      "exemplar_city": "Merkez, Kuzey Dakota"
+    },
+    "Ceuta": {
+      "exemplar_city": "Septe"
+    },
+    "Chagos": {
+      "exemplar_city": "Chagos"
+    },
+    "Chatham": {
+      "exemplar_city": "Chatham"
+    },
+    "Chicago": {
+      "exemplar_city": "Chicago"
+    },
+    "Chihuahua": {
+      "exemplar_city": "Chihuahua"
+    },
+    "Chisinau": {
+      "exemplar_city": "Kişinev"
+    },
+    "Chita": {
+      "exemplar_city": "Çita"
+    },
+    "Choibalsan": {
+      "exemplar_city": "Çoybalsan"
+    },
+    "Christmas": {
+      "exemplar_city": "Christmas"
+    },
+    "Cocos": {
+      "exemplar_city": "Cocos"
+    },
+    "Colombo": {
+      "exemplar_city": "Kolombo"
+    },
+    "Comoro": {
+      "exemplar_city": "Komor"
+    },
+    "Conakry": {
+      "exemplar_city": "Konakri"
+    },
+    "Copenhagen": {
+      "exemplar_city": "Kopenhag"
+    },
+    "Coral_Harbour": {
+      "exemplar_city": "Atikokan"
+    },
+    "Cordoba": {
+      "exemplar_city": "Cordoba"
+    },
+    "Costa_Rica": {
+      "exemplar_city": "Kosta Rika"
+    },
+    "Creston": {
+      "exemplar_city": "Creston"
+    },
+    "Cuiaba": {
+      "exemplar_city": "Cuiaba"
+    },
+    "Curacao": {
+      "exemplar_city": "Curaçao"
+    },
+    "Currie": {
+      "exemplar_city": "Currie"
+    },
+    "Dakar": {
+      "exemplar_city": "Dakar"
+    },
+    "Damascus": {
+      "exemplar_city": "Şam"
+    },
+    "Danmarkshavn": {
+      "exemplar_city": "Danmarkshavn"
+    },
+    "Dar_es_Salaam": {
+      "exemplar_city": "Darüsselam"
+    },
+    "Darwin": {
+      "exemplar_city": "Darwin"
+    },
+    "Davis": {
+      "exemplar_city": "Davis"
+    },
+    "Dawson": {
+      "exemplar_city": "Dawson"
+    },
+    "Dawson_Creek": {
+      "exemplar_city": "Dawson Creek"
+    },
+    "Denver": {
+      "exemplar_city": "Denver"
+    },
+    "Detroit": {
+      "exemplar_city": "Detroit"
+    },
+    "Dhaka": {
+      "exemplar_city": "Dakka"
+    },
+    "Dili": {
+      "exemplar_city": "Dili"
+    },
+    "Djibouti": {
+      "exemplar_city": "Cibuti"
+    },
+    "Dominica": {
+      "exemplar_city": "Dominika"
+    },
+    "Douala": {
+      "exemplar_city": "Douala"
+    },
+    "Dubai": {
+      "exemplar_city": "Dubai"
+    },
+    "Dublin": {
+      "long": {
+        "daylight": "İrlanda Standart Saati"
+      },
+      "exemplar_city": "Dublin"
+    },
+    "DumontDUrville": {
+      "exemplar_city": "Dumont d’Urville"
+    },
+    "Dushanbe": {
+      "exemplar_city": "Duşanbe"
+    },
+    "Easter": {
+      "exemplar_city": "Paskalya Adası"
+    },
+    "Edmonton": {
+      "exemplar_city": "Edmonton"
+    },
+    "Efate": {
+      "exemplar_city": "Efate"
+    },
+    "Eirunepe": {
+      "exemplar_city": "Eirunepe"
+    },
+    "El_Aaiun": {
+      "exemplar_city": "Layun"
+    },
+    "El_Salvador": {
+      "exemplar_city": "El Salvador"
+    },
+    "Enderbury": {
+      "exemplar_city": "Enderbury"
+    },
+    "Eucla": {
+      "exemplar_city": "Eucla"
+    },
+    "Faeroe": {
+      "exemplar_city": "Faroe"
+    },
+    "Fakaofo": {
+      "exemplar_city": "Fakaofo"
+    },
+    "Famagusta": {
+      "exemplar_city": "Gazimağusa"
+    },
+    "Fiji": {
+      "exemplar_city": "Fiji"
+    },
+    "Fort_Nelson": {
+      "exemplar_city": "Fort Nelson"
+    },
+    "Fortaleza": {
+      "exemplar_city": "Fortaleza"
+    },
+    "Freetown": {
+      "exemplar_city": "Freetown"
+    },
+    "Funafuti": {
+      "exemplar_city": "Funafuti"
+    },
+    "Gaborone": {
+      "exemplar_city": "Gaborone"
+    },
+    "Galapagos": {
+      "exemplar_city": "Galapagos"
+    },
+    "Gambier": {
+      "exemplar_city": "Gambier"
+    },
+    "Gaza": {
+      "exemplar_city": "Gazze"
+    },
+    "Gibraltar": {
+      "exemplar_city": "Cebelitarık"
+    },
+    "Glace_Bay": {
+      "exemplar_city": "Glace Bay"
+    },
+    "Godthab": {
+      "exemplar_city": "Nuuk"
+    },
+    "Goose_Bay": {
+      "exemplar_city": "Goose Bay"
+    },
+    "Grand_Turk": {
+      "exemplar_city": "Grand Turk"
+    },
+    "Grenada": {
+      "exemplar_city": "Grenada"
+    },
+    "Guadalcanal": {
+      "exemplar_city": "Guadalcanal"
+    },
+    "Guadeloupe": {
+      "exemplar_city": "Guadeloupe"
+    },
+    "Guam": {
+      "exemplar_city": "Guam"
+    },
+    "Guatemala": {
+      "exemplar_city": "Guatemala"
+    },
+    "Guayaquil": {
+      "exemplar_city": "Guayaquil"
+    },
+    "Guernsey": {
+      "exemplar_city": "Guernsey"
+    },
+    "Guyana": {
+      "exemplar_city": "Guyana"
+    },
+    "Halifax": {
+      "exemplar_city": "Halifax"
+    },
+    "Harare": {
+      "exemplar_city": "Harare"
+    },
+    "Havana": {
+      "exemplar_city": "Havana"
+    },
+    "Hebron": {
+      "exemplar_city": "El Halil"
+    },
+    "Helsinki": {
+      "exemplar_city": "Helsinki"
+    },
+    "Hermosillo": {
+      "exemplar_city": "Hermosillo"
+    },
+    "Hobart": {
+      "exemplar_city": "Hobart"
+    },
+    "Hong_Kong": {
+      "exemplar_city": "Hong Kong"
+    },
+    "Honolulu": {
+      "exemplar_city": "Honolulu"
+    },
+    "Hovd": {
+      "exemplar_city": "Hovd"
+    },
+    "Indianapolis": {
+      "exemplar_city": "Indianapolis"
+    },
+    "Inuvik": {
+      "exemplar_city": "Inuvik"
+    },
+    "Iqaluit": {
+      "exemplar_city": "Iqaluit"
+    },
+    "Irkutsk": {
+      "exemplar_city": "İrkutsk"
+    },
+    "Isle_of_Man": {
+      "exemplar_city": "Man Adası"
+    },
+    "Istanbul": {
+      "exemplar_city": "İstanbul"
+    },
+    "Jakarta": {
+      "exemplar_city": "Cakarta"
+    },
+    "Jamaica": {
+      "exemplar_city": "Jamaika"
+    },
+    "Jayapura": {
+      "exemplar_city": "Jayapura"
+    },
+    "Jersey": {
+      "exemplar_city": "Jersey"
+    },
+    "Jerusalem": {
+      "exemplar_city": "Kudüs"
+    },
+    "Johannesburg": {
+      "exemplar_city": "Johannesburg"
+    },
+    "Johnston": {
+      "exemplar_city": "Johnston"
+    },
+    "Juba": {
+      "exemplar_city": "Cuba"
+    },
+    "Jujuy": {
+      "exemplar_city": "Jujuy"
+    },
+    "Juneau": {
+      "exemplar_city": "Juneau"
+    },
+    "Kabul": {
+      "exemplar_city": "Kabil"
+    },
+    "Kaliningrad": {
+      "exemplar_city": "Kaliningrad"
+    },
+    "Kamchatka": {
+      "exemplar_city": "Kamçatka"
+    },
+    "Kampala": {
+      "exemplar_city": "Kampala"
+    },
+    "Karachi": {
+      "exemplar_city": "Karaçi"
+    },
+    "Katmandu": {
+      "exemplar_city": "Katmandu"
+    },
+    "Kerguelen": {
+      "exemplar_city": "Kerguelen"
+    },
+    "Khandyga": {
+      "exemplar_city": "Handiga"
+    },
+    "Khartoum": {
+      "exemplar_city": "Hartum"
+    },
+    "Kiev": {
+      "exemplar_city": "Kiev"
+    },
+    "Kigali": {
+      "exemplar_city": "Kigali"
+    },
+    "Kinshasa": {
+      "exemplar_city": "Kinşasa"
+    },
+    "Kiritimati": {
+      "exemplar_city": "Kiritimati"
+    },
+    "Kirov": {
+      "exemplar_city": "Kirov"
+    },
+    "Knox": {
+      "exemplar_city": "Knox, Indiana"
+    },
+    "Kosrae": {
+      "exemplar_city": "Kosrae"
+    },
+    "Kralendijk": {
+      "exemplar_city": "Kralendijk"
+    },
+    "Krasnoyarsk": {
+      "exemplar_city": "Krasnoyarsk"
+    },
+    "Kuala_Lumpur": {
+      "exemplar_city": "Kuala Lumpur"
+    },
+    "Kuching": {
+      "exemplar_city": "Kuçing"
+    },
+    "Kuwait": {
+      "exemplar_city": "Kuveyt"
+    },
+    "Kwajalein": {
+      "exemplar_city": "Kwajalein"
+    },
+    "La_Paz": {
+      "exemplar_city": "La Paz"
+    },
+    "La_Rioja": {
+      "exemplar_city": "La Rioja"
+    },
+    "Lagos": {
+      "exemplar_city": "Lagos"
+    },
+    "Libreville": {
+      "exemplar_city": "Librevil"
+    },
+    "Lima": {
+      "exemplar_city": "Lima"
+    },
+    "Lindeman": {
+      "exemplar_city": "Lindeman"
+    },
+    "Lisbon": {
+      "exemplar_city": "Lizbon"
+    },
+    "Ljubljana": {
+      "exemplar_city": "Ljubljana"
+    },
+    "Lome": {
+      "exemplar_city": "Lome"
+    },
+    "London": {
+      "long": {
+        "daylight": "İngiltere Yaz Saati"
+      },
+      "exemplar_city": "Londra"
+    },
+    "Longyearbyen": {
+      "exemplar_city": "Longyearbyen"
+    },
+    "Lord_Howe": {
+      "exemplar_city": "Lord Howe"
+    },
+    "Los_Angeles": {
+      "exemplar_city": "Los Angeles"
+    },
+    "Louisville": {
+      "exemplar_city": "Louisville"
+    },
+    "Lower_Princes": {
+      "exemplar_city": "Lower Prince’s Quarter"
+    },
+    "Luanda": {
+      "exemplar_city": "Luanda"
+    },
+    "Lubumbashi": {
+      "exemplar_city": "Lubumbashi"
+    },
+    "Lusaka": {
+      "exemplar_city": "Lusaka"
+    },
+    "Luxembourg": {
+      "exemplar_city": "Lüksemburg"
+    },
+    "Macau": {
+      "exemplar_city": "Makao"
+    },
+    "Maceio": {
+      "exemplar_city": "Maceio"
+    },
+    "Macquarie": {
+      "exemplar_city": "Macquarie"
+    },
+    "Madeira": {
+      "exemplar_city": "Madeira Adaları"
+    },
+    "Madrid": {
+      "exemplar_city": "Madrid"
+    },
+    "Magadan": {
+      "exemplar_city": "Magadan"
+    },
+    "Mahe": {
+      "exemplar_city": "Mahe"
+    },
+    "Majuro": {
+      "exemplar_city": "Majuro"
+    },
+    "Makassar": {
+      "exemplar_city": "Makassar"
+    },
+    "Malabo": {
+      "exemplar_city": "Malabo"
+    },
+    "Maldives": {
+      "exemplar_city": "Maldivler"
+    },
+    "Malta": {
+      "exemplar_city": "Malta"
+    },
+    "Managua": {
+      "exemplar_city": "Managua"
+    },
+    "Manaus": {
+      "exemplar_city": "Manaus"
+    },
+    "Manila": {
+      "exemplar_city": "Manila"
+    },
+    "Maputo": {
+      "exemplar_city": "Maputo"
+    },
+    "Marengo": {
+      "exemplar_city": "Marengo, Indiana"
+    },
+    "Mariehamn": {
+      "exemplar_city": "Mariehamn"
+    },
+    "Marigot": {
+      "exemplar_city": "Marigot"
+    },
+    "Marquesas": {
+      "exemplar_city": "Markiz Adaları"
+    },
+    "Martinique": {
+      "exemplar_city": "Martinique"
+    },
+    "Maseru": {
+      "exemplar_city": "Maseru"
+    },
+    "Matamoros": {
+      "exemplar_city": "Matamoros"
+    },
+    "Mauritius": {
+      "exemplar_city": "Mauritius"
+    },
+    "Mawson": {
+      "exemplar_city": "Mawson"
+    },
+    "Mayotte": {
+      "exemplar_city": "Mayotte"
+    },
+    "Mazatlan": {
+      "exemplar_city": "Mazatlan"
+    },
+    "Mbabane": {
+      "exemplar_city": "Mbabane"
+    },
+    "McMurdo": {
+      "exemplar_city": "McMurdo"
+    },
+    "Melbourne": {
+      "exemplar_city": "Melbourne"
+    },
+    "Mendoza": {
+      "exemplar_city": "Mendoza"
+    },
+    "Menominee": {
+      "exemplar_city": "Menominee"
+    },
+    "Merida": {
+      "exemplar_city": "Merida"
+    },
+    "Metlakatla": {
+      "exemplar_city": "Metlakatla"
+    },
+    "Mexico_City": {
+      "exemplar_city": "Mexico City"
+    },
+    "Midway": {
+      "exemplar_city": "Midway"
+    },
+    "Minsk": {
+      "exemplar_city": "Minsk"
+    },
+    "Miquelon": {
+      "exemplar_city": "Miquelon"
+    },
+    "Mogadishu": {
+      "exemplar_city": "Mogadişu"
+    },
+    "Monaco": {
+      "exemplar_city": "Monako"
+    },
+    "Moncton": {
+      "exemplar_city": "Moncton"
+    },
+    "Monrovia": {
+      "exemplar_city": "Monrovia"
+    },
+    "Monterrey": {
+      "exemplar_city": "Monterrey"
+    },
+    "Montevideo": {
+      "exemplar_city": "Montevideo"
+    },
+    "Monticello": {
+      "exemplar_city": "Monticello, Kentucky"
+    },
+    "Montserrat": {
+      "exemplar_city": "Montserrat"
+    },
+    "Moscow": {
+      "exemplar_city": "Moskova"
+    },
+    "Muscat": {
+      "exemplar_city": "Maskat"
+    },
+    "Nairobi": {
+      "exemplar_city": "Nairobi"
+    },
+    "Nassau": {
+      "exemplar_city": "Nassau"
+    },
+    "Nauru": {
+      "exemplar_city": "Nauru"
+    },
+    "Ndjamena": {
+      "exemplar_city": "Ndjamena"
+    },
+    "New_Salem": {
+      "exemplar_city": "New Salem, Kuzey Dakota"
+    },
+    "New_York": {
+      "exemplar_city": "New York"
+    },
+    "Niamey": {
+      "exemplar_city": "Niamey"
+    },
+    "Nicosia": {
+      "exemplar_city": "Lefkoşa"
+    },
+    "Nipigon": {
+      "exemplar_city": "Nipigon"
+    },
+    "Niue": {
+      "exemplar_city": "Niue"
+    },
+    "Nome": {
+      "exemplar_city": "Nome"
+    },
+    "Norfolk": {
+      "exemplar_city": "Norfolk"
+    },
+    "Noronha": {
+      "exemplar_city": "Noronha"
+    },
+    "Nouakchott": {
+      "exemplar_city": "Nouakchott"
+    },
+    "Noumea": {
+      "exemplar_city": "Noumea"
+    },
+    "Novokuznetsk": {
+      "exemplar_city": "Novokuznetsk"
+    },
+    "Novosibirsk": {
+      "exemplar_city": "Novosibirsk"
+    },
+    "Ojinaga": {
+      "exemplar_city": "Ojinaga"
+    },
+    "Omsk": {
+      "exemplar_city": "Omsk"
+    },
+    "Oral": {
+      "exemplar_city": "Oral"
+    },
+    "Oslo": {
+      "exemplar_city": "Oslo"
+    },
+    "Ouagadougou": {
+      "exemplar_city": "Ouagadougou"
+    },
+    "Pago_Pago": {
+      "exemplar_city": "Pago Pago"
+    },
+    "Palau": {
+      "exemplar_city": "Palau"
+    },
+    "Palmer": {
+      "exemplar_city": "Palmer"
+    },
+    "Panama": {
+      "exemplar_city": "Panama"
+    },
+    "Pangnirtung": {
+      "exemplar_city": "Pangnirtung"
+    },
+    "Paramaribo": {
+      "exemplar_city": "Paramaribo"
+    },
+    "Paris": {
+      "exemplar_city": "Paris"
+    },
+    "Perth": {
+      "exemplar_city": "Perth"
+    },
+    "Petersburg": {
+      "exemplar_city": "Petersburg, Indiana"
+    },
+    "Phnom_Penh": {
+      "exemplar_city": "Phnom Penh"
+    },
+    "Phoenix": {
+      "exemplar_city": "Phoenix"
+    },
+    "Pitcairn": {
+      "exemplar_city": "Pitcairn"
+    },
+    "Podgorica": {
+      "exemplar_city": "Podgorica"
+    },
+    "Ponape": {
+      "exemplar_city": "Pohnpei"
+    },
+    "Pontianak": {
+      "exemplar_city": "Pontianak"
+    },
+    "Port-au-Prince": {
+      "exemplar_city": "Port-au-Prince"
+    },
+    "Port_Moresby": {
+      "exemplar_city": "Port Moresby"
+    },
+    "Port_of_Spain": {
+      "exemplar_city": "Port of Spain"
+    },
+    "Porto-Novo": {
+      "exemplar_city": "Porto-Novo"
+    },
+    "Porto_Velho": {
+      "exemplar_city": "Porto Velho"
+    },
+    "Prague": {
+      "exemplar_city": "Prag"
+    },
+    "Puerto_Rico": {
+      "exemplar_city": "Porto Riko"
+    },
+    "Punta_Arenas": {
+      "exemplar_city": "Punta Arenas"
+    },
+    "Pyongyang": {
+      "exemplar_city": "Pyongyang"
+    },
+    "Qatar": {
+      "exemplar_city": "Katar"
+    },
+    "Qostanay": {
+      "exemplar_city": "Kostanay"
+    },
+    "Qyzylorda": {
+      "exemplar_city": "Kızılorda"
+    },
+    "Rainy_River": {
+      "exemplar_city": "Rainy River"
+    },
+    "Rangoon": {
+      "exemplar_city": "Yangon"
+    },
+    "Rankin_Inlet": {
+      "exemplar_city": "Rankin Inlet"
+    },
+    "Rarotonga": {
+      "exemplar_city": "Rarotonga"
+    },
+    "Recife": {
+      "exemplar_city": "Recife"
+    },
+    "Regina": {
+      "exemplar_city": "Regina"
+    },
+    "Resolute": {
+      "exemplar_city": "Resolute"
+    },
+    "Reunion": {
+      "exemplar_city": "Reunion"
+    },
+    "Reykjavik": {
+      "exemplar_city": "Reykjavik"
+    },
+    "Riga": {
+      "exemplar_city": "Riga"
+    },
+    "Rio_Branco": {
+      "exemplar_city": "Rio Branco"
+    },
+    "Rio_Gallegos": {
+      "exemplar_city": "Rio Gallegos"
+    },
+    "Riyadh": {
+      "exemplar_city": "Riyad"
+    },
+    "Rome": {
+      "exemplar_city": "Roma"
+    },
+    "Rothera": {
+      "exemplar_city": "Rothera"
+    },
+    "Saigon": {
+      "exemplar_city": "Ho Chi Minh Kenti"
+    },
+    "Saipan": {
+      "exemplar_city": "Saipan"
+    },
+    "Sakhalin": {
+      "exemplar_city": "Sahalin"
+    },
+    "Salta": {
+      "exemplar_city": "Salta"
+    },
+    "Samara": {
+      "exemplar_city": "Samara"
+    },
+    "Samarkand": {
+      "exemplar_city": "Semerkand"
+    },
+    "San_Juan": {
+      "exemplar_city": "San Juan"
+    },
+    "San_Luis": {
+      "exemplar_city": "San Luis"
+    },
+    "San_Marino": {
+      "exemplar_city": "San Marino"
+    },
+    "Santa_Isabel": {
+      "exemplar_city": "Santa Isabel"
+    },
+    "Santarem": {
+      "exemplar_city": "Santarem"
+    },
+    "Santiago": {
+      "exemplar_city": "Santiago"
+    },
+    "Santo_Domingo": {
+      "exemplar_city": "Santo Domingo"
+    },
+    "Sao_Paulo": {
+      "exemplar_city": "Sao Paulo"
+    },
+    "Sao_Tome": {
+      "exemplar_city": "Sao Tome"
+    },
+    "Sarajevo": {
+      "exemplar_city": "Saraybosna"
+    },
+    "Saratov": {
+      "exemplar_city": "Saratov"
+    },
+    "Scoresbysund": {
+      "exemplar_city": "Ittoqqortoormiit"
+    },
+    "Seoul": {
+      "exemplar_city": "Seul"
+    },
+    "Shanghai": {
+      "exemplar_city": "Şanghay"
+    },
+    "Simferopol": {
+      "exemplar_city": "Simferopol"
+    },
+    "Singapore": {
+      "exemplar_city": "Singapur"
+    },
+    "Sitka": {
+      "exemplar_city": "Sitka"
+    },
+    "Skopje": {
+      "exemplar_city": "Üsküp"
+    },
+    "Sofia": {
+      "exemplar_city": "Sofya"
+    },
+    "South_Georgia": {
+      "exemplar_city": "Güney Georgia"
+    },
+    "Srednekolymsk": {
+      "exemplar_city": "Srednekolymsk"
+    },
+    "St_Barthelemy": {
+      "exemplar_city": "Saint Barthelemy"
+    },
+    "St_Helena": {
+      "exemplar_city": "St. Helena"
+    },
+    "St_Johns": {
+      "exemplar_city": "St. John’s"
+    },
+    "St_Kitts": {
+      "exemplar_city": "St. Kitts"
+    },
+    "St_Lucia": {
+      "exemplar_city": "St. Lucia"
+    },
+    "St_Thomas": {
+      "exemplar_city": "St. Thomas"
+    },
+    "St_Vincent": {
+      "exemplar_city": "St. Vincent"
+    },
+    "Stanley": {
+      "exemplar_city": "Stanley"
+    },
+    "Stockholm": {
+      "exemplar_city": "Stokholm"
+    },
+    "Swift_Current": {
+      "exemplar_city": "Swift Current"
+    },
+    "Sydney": {
+      "exemplar_city": "Sidney"
+    },
+    "Syowa": {
+      "exemplar_city": "Showa"
+    },
+    "Tahiti": {
+      "exemplar_city": "Tahiti"
+    },
+    "Taipei": {
+      "exemplar_city": "Taipei"
+    },
+    "Tallinn": {
+      "exemplar_city": "Tallinn"
+    },
+    "Tarawa": {
+      "exemplar_city": "Tarawa"
+    },
+    "Tashkent": {
+      "exemplar_city": "Taşkent"
+    },
+    "Tbilisi": {
+      "exemplar_city": "Tiflis"
+    },
+    "Tegucigalpa": {
+      "exemplar_city": "Tegucigalpa"
+    },
+    "Tehran": {
+      "exemplar_city": "Tahran"
+    },
+    "Tell_City": {
+      "exemplar_city": "Tell City, Indiana"
+    },
+    "Thimphu": {
+      "exemplar_city": "Thimphu"
+    },
+    "Thule": {
+      "exemplar_city": "Thule"
+    },
+    "Thunder_Bay": {
+      "exemplar_city": "Thunder Bay"
+    },
+    "Tijuana": {
+      "exemplar_city": "Tijuana"
+    },
+    "Tirane": {
+      "exemplar_city": "Tiran"
+    },
+    "Tokyo": {
+      "exemplar_city": "Tokyo"
+    },
+    "Tomsk": {
+      "exemplar_city": "Tomsk"
+    },
+    "Tongatapu": {
+      "exemplar_city": "Tongatapu"
+    },
+    "Toronto": {
+      "exemplar_city": "Toronto"
+    },
+    "Tortola": {
+      "exemplar_city": "Tortola"
+    },
+    "Tripoli": {
+      "exemplar_city": "Trablus"
+    },
+    "Troll": {
+      "exemplar_city": "Troll"
+    },
+    "Truk": {
+      "exemplar_city": "Chuuk"
+    },
+    "Tucuman": {
+      "exemplar_city": "Tucuman"
+    },
+    "Tunis": {
+      "exemplar_city": "Tunus"
+    },
+    "UTC": {
+      "long": {
+        "standard": "Eş Güdümlü Evrensel Zaman"
+      },
+      "short": {
+        "standard": "UTC"
+      }
+    },
+    "Ulaanbaatar": {
+      "exemplar_city": "Ulan Batur"
+    },
+    "Ulyanovsk": {
+      "exemplar_city": "Ulyanovsk"
+    },
+    "Unknown": {
+      "exemplar_city": "Bilinmeyen Şehir"
+    },
+    "Urumqi": {
+      "exemplar_city": "Urumçi"
+    },
+    "Ushuaia": {
+      "exemplar_city": "Ushuaia"
+    },
+    "Ust-Nera": {
+      "exemplar_city": "Ust-Nera"
+    },
+    "Uzhgorod": {
+      "exemplar_city": "Ujgorod"
+    },
+    "Vaduz": {
+      "exemplar_city": "Vaduz"
+    },
+    "Vancouver": {
+      "exemplar_city": "Vancouver"
+    },
+    "Vatican": {
+      "exemplar_city": "Vatikan"
+    },
+    "Vevay": {
+      "exemplar_city": "Vevay, Indiana"
+    },
+    "Vienna": {
+      "exemplar_city": "Viyana"
+    },
+    "Vientiane": {
+      "exemplar_city": "Vientiane"
+    },
+    "Vilnius": {
+      "exemplar_city": "Vilnius"
+    },
+    "Vincennes": {
+      "exemplar_city": "Vincennes, Indiana"
+    },
+    "Vladivostok": {
+      "exemplar_city": "Vladivostok"
+    },
+    "Volgograd": {
+      "exemplar_city": "Volgograd"
+    },
+    "Vostok": {
+      "exemplar_city": "Vostok"
+    },
+    "Wake": {
+      "exemplar_city": "Wake"
+    },
+    "Wallis": {
+      "exemplar_city": "Wallis"
+    },
+    "Warsaw": {
+      "exemplar_city": "Varşova"
+    },
+    "Whitehorse": {
+      "exemplar_city": "Whitehorse"
+    },
+    "Winamac": {
+      "exemplar_city": "Winamac, Indiana"
+    },
+    "Windhoek": {
+      "exemplar_city": "Windhoek"
+    },
+    "Winnipeg": {
+      "exemplar_city": "Winnipeg"
+    },
+    "Yakutat": {
+      "exemplar_city": "Yakutat"
+    },
+    "Yakutsk": {
+      "exemplar_city": "Yakutsk"
+    },
+    "Yekaterinburg": {
+      "exemplar_city": "Yekaterinburg"
+    },
+    "Yellowknife": {
+      "exemplar_city": "Yellowknife"
+    },
+    "Yerevan": {
+      "exemplar_city": "Erivan"
+    },
+    "Zagreb": {
+      "exemplar_city": "Zagreb"
+    },
+    "Zaporozhye": {
+      "exemplar_city": "Zaporojye"
+    },
+    "Zurich": {
+      "exemplar_city": "Zürih"
+    }
+  },
+  "metazones": {
+    "Acre": {
+      "long": {
+        "generic": "Acre Saati",
+        "standard": "Acre Standart Saati",
+        "daylight": "Acre Yaz Saati"
+      }
+    },
+    "Afghanistan": {
+      "long": {
+        "standard": "Afganistan Saati"
+      }
+    },
+    "Africa_Central": {
+      "long": {
+        "standard": "Orta Afrika Saati"
+      }
+    },
+    "Africa_Eastern": {
+      "long": {
+        "standard": "Doğu Afrika Saati"
+      }
+    },
+    "Africa_Southern": {
+      "long": {
+        "standard": "Güney Afrika Standart Saati"
+      }
+    },
+    "Africa_Western": {
+      "long": {
+        "generic": "Batı Afrika Saati",
+        "standard": "Batı Afrika Standart Saati",
+        "daylight": "Batı Afrika Yaz Saati"
+      }
+    },
+    "Alaska": {
+      "long": {
+        "generic": "Alaska Saati",
+        "standard": "Alaska Standart Saati",
+        "daylight": "Alaska Yaz Saati"
+      }
+    },
+    "Almaty": {
+      "long": {
+        "generic": "Almatı Saati",
+        "standard": "Almatı Standart Saati",
+        "daylight": "Almatı Yaz Saati"
+      }
+    },
+    "Amazon": {
+      "long": {
+        "generic": "Amazon Saati",
+        "standard": "Amazon Standart Saati",
+        "daylight": "Amazon Yaz Saati"
+      }
+    },
+    "America_Central": {
+      "long": {
+        "generic": "Kuzey Amerika Merkezi Saati",
+        "standard": "Kuzey Amerika Merkezi Standart Saati",
+        "daylight": "Kuzey Amerika Merkezi Yaz Saati"
+      }
+    },
+    "America_Eastern": {
+      "long": {
+        "generic": "Kuzey Amerika Doğu Saati",
+        "standard": "Kuzey Amerika Doğu Standart Saati",
+        "daylight": "Kuzey Amerika Doğu Yaz Saati"
+      }
+    },
+    "America_Mountain": {
+      "long": {
+        "generic": "Kuzey Amerika Dağ Saati",
+        "standard": "Kuzey Amerika Dağ Standart Saati",
+        "daylight": "Kuzey Amerika Dağ Yaz Saati"
+      }
+    },
+    "America_Pacific": {
+      "long": {
+        "generic": "Kuzey Amerika Pasifik Saati",
+        "standard": "Kuzey Amerika Pasifik Standart Saati",
+        "daylight": "Kuzey Amerika Pasifik Yaz Saati"
+      }
+    },
+    "Anadyr": {
+      "long": {
+        "generic": "Anadyr Saati",
+        "standard": "Anadır Standart Saati",
+        "daylight": "Anadır Yaz Saati"
+      }
+    },
+    "Apia": {
+      "long": {
+        "generic": "Apia Saati",
+        "standard": "Apia Standart Saati",
+        "daylight": "Apia Yaz Saati"
+      }
+    },
+    "Aqtau": {
+      "long": {
+        "generic": "Aktav Saati",
+        "standard": "Aktav Standart Saati",
+        "daylight": "Aktav Yaz Saati"
+      }
+    },
+    "Aqtobe": {
+      "long": {
+        "generic": "Aktöbe Saati",
+        "standard": "Aktöbe Standart Saati",
+        "daylight": "Aktöbe Yaz Saati"
+      }
+    },
+    "Arabian": {
+      "long": {
+        "generic": "Arabistan Saati",
+        "standard": "Arabistan Standart Saati",
+        "daylight": "Arabistan Yaz Saati"
+      }
+    },
+    "Argentina": {
+      "long": {
+        "generic": "Arjantin Saati",
+        "standard": "Arjantin Standart Saati",
+        "daylight": "Arjantin Yaz Saati"
+      }
+    },
+    "Argentina_Western": {
+      "long": {
+        "generic": "Batı Arjantin Saati",
+        "standard": "Batı Arjantin Standart Saati",
+        "daylight": "Batı Arjantin Yaz Saati"
+      }
+    },
+    "Armenia": {
+      "long": {
+        "generic": "Ermenistan Saati",
+        "standard": "Ermenistan Standart Saati",
+        "daylight": "Ermenistan Yaz Saati"
+      }
+    },
+    "Atlantic": {
+      "long": {
+        "generic": "Atlantik Saati",
+        "standard": "Atlantik Standart Saati",
+        "daylight": "Atlantik Yaz Saati"
+      }
+    },
+    "Australia_Central": {
+      "long": {
+        "generic": "Orta Avustralya Saati",
+        "standard": "Orta Avustralya Standart Saati",
+        "daylight": "Orta Avustralya Yaz Saati"
+      }
+    },
+    "Australia_CentralWestern": {
+      "long": {
+        "generic": "İç Batı Avustralya Saati",
+        "standard": "İç Batı Avustralya Standart Saati",
+        "daylight": "İç Batı Avustralya Yaz Saati"
+      }
+    },
+    "Australia_Eastern": {
+      "long": {
+        "generic": "Doğu Avustralya Saati",
+        "standard": "Doğu Avustralya Standart Saati",
+        "daylight": "Doğu Avustralya Yaz Saati"
+      }
+    },
+    "Australia_Western": {
+      "long": {
+        "generic": "Batı Avustralya Saati",
+        "standard": "Batı Avustralya Standart Saati",
+        "daylight": "Batı Avustralya Yaz Saati"
+      }
+    },
+    "Azerbaijan": {
+      "long": {
+        "generic": "Azerbaycan Saati",
+        "standard": "Azerbaycan Standart Saati",
+        "daylight": "Azerbaycan Yaz Saati"
+      }
+    },
+    "Azores": {
+      "long": {
+        "generic": "Azorlar Saati",
+        "standard": "Azorlar Standart Saati",
+        "daylight": "Azorlar Yaz Saati"
+      }
+    },
+    "Bangladesh": {
+      "long": {
+        "generic": "Bangladeş Saati",
+        "standard": "Bangladeş Standart Saati",
+        "daylight": "Bangladeş Yaz Saati"
+      }
+    },
+    "Bhutan": {
+      "long": {
+        "standard": "Butan Saati"
+      }
+    },
+    "Bolivia": {
+      "long": {
+        "standard": "Bolivya Saati"
+      }
+    },
+    "Brasilia": {
+      "long": {
+        "generic": "Brasilia Saati",
+        "standard": "Brasilia Standart Saati",
+        "daylight": "Brasilia Yaz Saati"
+      }
+    },
+    "Brunei": {
+      "long": {
+        "standard": "Brunei Darü’s-Selam Saati"
+      }
+    },
+    "Cape_Verde": {
+      "long": {
+        "generic": "Cape Verde Saati",
+        "standard": "Cape Verde Standart Saati",
+        "daylight": "Cape Verde Yaz Saati"
+      }
+    },
+    "Casey": {
+      "long": {
+        "standard": "Casey Saati"
+      }
+    },
+    "Chamorro": {
+      "long": {
+        "standard": "Chamorro Saati"
+      }
+    },
+    "Chatham": {
+      "long": {
+        "generic": "Chatham Saati",
+        "standard": "Chatham Standart Saati",
+        "daylight": "Chatham Yaz Saati"
+      }
+    },
+    "Chile": {
+      "long": {
+        "generic": "Şili Saati",
+        "standard": "Şili Standart Saati",
+        "daylight": "Şili Yaz Saati"
+      }
+    },
+    "China": {
+      "long": {
+        "generic": "Çin Saati",
+        "standard": "Çin Standart Saati",
+        "daylight": "Çin Yaz Saati"
+      }
+    },
+    "Choibalsan": {
+      "long": {
+        "generic": "Çoybalsan Saati",
+        "standard": "Çoybalsan Standart Saati",
+        "daylight": "Çoybalsan Yaz Saati"
+      }
+    },
+    "Christmas": {
+      "long": {
+        "standard": "Christmas Adası Saati"
+      }
+    },
+    "Cocos": {
+      "long": {
+        "standard": "Cocos Adaları Saati"
+      }
+    },
+    "Colombia": {
+      "long": {
+        "generic": "Kolombiya Saati",
+        "standard": "Kolombiya Standart Saati",
+        "daylight": "Kolombiya Yaz Saati"
+      }
+    },
+    "Cook": {
+      "long": {
+        "generic": "Cook Adaları Saati",
+        "standard": "Cook Adaları Standart Saati",
+        "daylight": "Cook Adaları Yarı Yaz Saati"
+      }
+    },
+    "Cuba": {
+      "long": {
+        "generic": "Küba Saati",
+        "standard": "Küba Standart Saati",
+        "daylight": "Küba Yaz Saati"
+      }
+    },
+    "Davis": {
+      "long": {
+        "standard": "Davis Saati"
+      }
+    },
+    "DumontDUrville": {
+      "long": {
+        "standard": "Dumont-d’Urville Saati"
+      }
+    },
+    "East_Timor": {
+      "long": {
+        "standard": "Doğu Timor Saati"
+      }
+    },
+    "Easter": {
+      "long": {
+        "generic": "Paskalya Adası Saati",
+        "standard": "Paskalya Adası Standart Saati",
+        "daylight": "Paskalya Adası Yaz Saati"
+      }
+    },
+    "Ecuador": {
+      "long": {
+        "standard": "Ekvador Saati"
+      }
+    },
+    "Europe_Central": {
+      "long": {
+        "generic": "Orta Avrupa Saati",
+        "standard": "Orta Avrupa Standart Saati",
+        "daylight": "Orta Avrupa Yaz Saati"
+      }
+    },
+    "Europe_Eastern": {
+      "long": {
+        "generic": "Doğu Avrupa Saati",
+        "standard": "Doğu Avrupa Standart Saati",
+        "daylight": "Doğu Avrupa Yaz Saati"
+      }
+    },
+    "Europe_Further_Eastern": {
+      "long": {
+        "standard": "İleri Doğu Avrupa Saati"
+      }
+    },
+    "Europe_Western": {
+      "long": {
+        "generic": "Batı Avrupa Saati",
+        "standard": "Batı Avrupa Standart Saati",
+        "daylight": "Batı Avrupa Yaz Saati"
+      }
+    },
+    "Falkland": {
+      "long": {
+        "generic": "Falkland Adaları Saati",
+        "standard": "Falkland Adaları Standart Saati",
+        "daylight": "Falkland Adaları Yaz Saati"
+      }
+    },
+    "Fiji": {
+      "long": {
+        "generic": "Fiji Saati",
+        "standard": "Fiji Standart Saati",
+        "daylight": "Fiji Yaz Saati"
+      }
+    },
+    "French_Guiana": {
+      "long": {
+        "standard": "Fransız Guyanası Saati"
+      }
+    },
+    "French_Southern": {
+      "long": {
+        "standard": "Fransız Güney ve Antarktika Saati"
+      }
+    },
+    "GMT": {
+      "long": {
+        "standard": "Greenwich Ortalama Saati"
+      }
+    },
+    "Galapagos": {
+      "long": {
+        "standard": "Galapagos Saati"
+      }
+    },
+    "Gambier": {
+      "long": {
+        "standard": "Gambier Saati"
+      }
+    },
+    "Georgia": {
+      "long": {
+        "generic": "Gürcistan Saati",
+        "standard": "Gürcistan Standart Saati",
+        "daylight": "Gürcistan Yaz Saati"
+      }
+    },
+    "Gilbert_Islands": {
+      "long": {
+        "standard": "Gilbert Adaları Saati"
+      }
+    },
+    "Greenland_Eastern": {
+      "long": {
+        "generic": "Doğu Grönland Saati",
+        "standard": "Doğu Grönland Standart Saati",
+        "daylight": "Doğu Grönland Yaz Saati"
+      }
+    },
+    "Greenland_Western": {
+      "long": {
+        "generic": "Batı Grönland Saati",
+        "standard": "Batı Grönland Standart Saati",
+        "daylight": "Batı Grönland Yaz Saati"
+      }
+    },
+    "Guam": {
+      "long": {
+        "standard": "Guam Standart Saati"
+      }
+    },
+    "Gulf": {
+      "long": {
+        "standard": "Körfez Saati"
+      }
+    },
+    "Guyana": {
+      "long": {
+        "standard": "Guyana Saati"
+      }
+    },
+    "Hawaii_Aleutian": {
+      "long": {
+        "generic": "Hawaii-Aleut Saati",
+        "standard": "Hawaii-Aleut Standart Saati",
+        "daylight": "Hawaii-Aleut Yaz Saati"
+      }
+    },
+    "Hong_Kong": {
+      "long": {
+        "generic": "Hong Kong Saati",
+        "standard": "Hong Kong Standart Saati",
+        "daylight": "Hong Kong Yaz Saati"
+      }
+    },
+    "Hovd": {
+      "long": {
+        "generic": "Hovd Saati",
+        "standard": "Hovd Standart Saati",
+        "daylight": "Hovd Yaz Saati"
+      }
+    },
+    "India": {
+      "long": {
+        "standard": "Hindistan Standart Saati"
+      }
+    },
+    "Indian_Ocean": {
+      "long": {
+        "standard": "Hint Okyanusu Saati"
+      }
+    },
+    "Indochina": {
+      "long": {
+        "standard": "Hindiçin Saati"
+      }
+    },
+    "Indonesia_Central": {
+      "long": {
+        "standard": "Orta Endonezya Saati"
+      }
+    },
+    "Indonesia_Eastern": {
+      "long": {
+        "standard": "Doğu Endonezya Saati"
+      }
+    },
+    "Indonesia_Western": {
+      "long": {
+        "standard": "Batı Endonezya Saati"
+      }
+    },
+    "Iran": {
+      "long": {
+        "generic": "İran Saati",
+        "standard": "İran Standart Saati",
+        "daylight": "İran Yaz Saati"
+      }
+    },
+    "Irkutsk": {
+      "long": {
+        "generic": "İrkutsk Saati",
+        "standard": "İrkutsk Standart Saati",
+        "daylight": "İrkutsk Yaz Saati"
+      }
+    },
+    "Israel": {
+      "long": {
+        "generic": "İsrail Saati",
+        "standard": "İsrail Standart Saati",
+        "daylight": "İsrail Yaz Saati"
+      }
+    },
+    "Japan": {
+      "long": {
+        "generic": "Japonya Saati",
+        "standard": "Japonya Standart Saati",
+        "daylight": "Japonya Yaz Saati"
+      }
+    },
+    "Kamchatka": {
+      "long": {
+        "generic": "Petropavlovsk-Kamçatski Saati",
+        "standard": "Petropavlovsk-Kamçatski Standart Saati",
+        "daylight": "Petropavlovsk-Kamçatski Yaz Saati"
+      }
+    },
+    "Kazakhstan_Eastern": {
+      "long": {
+        "standard": "Doğu Kazakistan Saati"
+      }
+    },
+    "Kazakhstan_Western": {
+      "long": {
+        "standard": "Batı Kazakistan Saati"
+      }
+    },
+    "Korea": {
+      "long": {
+        "generic": "Kore Saati",
+        "standard": "Kore Standart Saati",
+        "daylight": "Kore Yaz Saati"
+      }
+    },
+    "Kosrae": {
+      "long": {
+        "standard": "Kosrae Saati"
+      }
+    },
+    "Krasnoyarsk": {
+      "long": {
+        "generic": "Krasnoyarsk Saati",
+        "standard": "Krasnoyarsk Standart Saati",
+        "daylight": "Krasnoyarsk Yaz Saati"
+      }
+    },
+    "Kyrgystan": {
+      "long": {
+        "standard": "Kırgızistan Saati"
+      }
+    },
+    "Lanka": {
+      "long": {
+        "standard": "Lanka Saati"
+      }
+    },
+    "Line_Islands": {
+      "long": {
+        "standard": "Line Adaları Saati"
+      }
+    },
+    "Lord_Howe": {
+      "long": {
+        "generic": "Lord Howe Saati",
+        "standard": "Lord Howe Standart Saati",
+        "daylight": "Lord Howe Yaz Saati"
+      }
+    },
+    "Macau": {
+      "long": {
+        "generic": "Makao Saati",
+        "standard": "Makao Standart Saati",
+        "daylight": "Makao Yaz Saati"
+      }
+    },
+    "Macquarie": {
+      "long": {
+        "standard": "Macquarie Adası Saati"
+      }
+    },
+    "Magadan": {
+      "long": {
+        "generic": "Magadan Saati",
+        "standard": "Magadan Standart Saati",
+        "daylight": "Magadan Yaz Saati"
+      }
+    },
+    "Malaysia": {
+      "long": {
+        "standard": "Malezya Saati"
+      }
+    },
+    "Maldives": {
+      "long": {
+        "standard": "Maldivler Saati"
+      }
+    },
+    "Marquesas": {
+      "long": {
+        "standard": "Markiz Adaları Saati"
+      }
+    },
+    "Marshall_Islands": {
+      "long": {
+        "standard": "Marshall Adaları Saati"
+      }
+    },
+    "Mauritius": {
+      "long": {
+        "generic": "Mauritius Saati",
+        "standard": "Mauritius Standart Saati",
+        "daylight": "Mauritius Yaz Saati"
+      }
+    },
+    "Mawson": {
+      "long": {
+        "standard": "Mawson Saati"
+      }
+    },
+    "Mexico_Northwest": {
+      "long": {
+        "generic": "Kuzeybatı Meksika Saati",
+        "standard": "Kuzeybatı Meksika Standart Saati",
+        "daylight": "Kuzeybatı Meksika Yaz Saati"
+      }
+    },
+    "Mexico_Pacific": {
+      "long": {
+        "generic": "Meksika Pasifik Kıyısı Saati",
+        "standard": "Meksika Pasifik Kıyısı Standart Saati",
+        "daylight": "Meksika Pasifik Kıyısı Yaz Saati"
+      }
+    },
+    "Mongolia": {
+      "long": {
+        "generic": "Ulan Batur Saati",
+        "standard": "Ulan Batur Standart Saati",
+        "daylight": "Ulan Batur Yaz Saati"
+      }
+    },
+    "Moscow": {
+      "long": {
+        "generic": "Moskova Saati",
+        "standard": "Moskova Standart Saati",
+        "daylight": "Moskova Yaz Saati"
+      }
+    },
+    "Myanmar": {
+      "long": {
+        "standard": "Myanmar Saati"
+      }
+    },
+    "Nauru": {
+      "long": {
+        "standard": "Nauru Saati"
+      }
+    },
+    "Nepal": {
+      "long": {
+        "standard": "Nepal Saati"
+      }
+    },
+    "New_Caledonia": {
+      "long": {
+        "generic": "Yeni Kaledonya Saati",
+        "standard": "Yeni Kaledonya Standart Saati",
+        "daylight": "Yeni Kaledonya Yaz Saati"
+      }
+    },
+    "New_Zealand": {
+      "long": {
+        "generic": "Yeni Zelanda Saati",
+        "standard": "Yeni Zelanda Standart Saati",
+        "daylight": "Yeni Zelanda Yaz Saati"
+      }
+    },
+    "Newfoundland": {
+      "long": {
+        "generic": "Newfoundland Saati",
+        "standard": "Newfoundland Standart Saati",
+        "daylight": "Newfoundland Yaz Saati"
+      }
+    },
+    "Niue": {
+      "long": {
+        "standard": "Niue Saati"
+      }
+    },
+    "Norfolk": {
+      "long": {
+        "generic": "Norfolk Adası Saati",
+        "standard": "Norfolk Adası Standart Saati",
+        "daylight": "Norfolk Adası Yaz Saati"
+      }
+    },
+    "Noronha": {
+      "long": {
+        "generic": "Fernando de Noronha Saati",
+        "standard": "Fernando de Noronha Standart Saati",
+        "daylight": "Fernando de Noronha Yaz Saati"
+      }
+    },
+    "North_Mariana": {
+      "long": {
+        "standard": "Kuzey Mariana Adaları Saati"
+      }
+    },
+    "Novosibirsk": {
+      "long": {
+        "generic": "Novosibirsk Saati",
+        "standard": "Novosibirsk Standart Saati",
+        "daylight": "Novosibirsk Yaz Saati"
+      }
+    },
+    "Omsk": {
+      "long": {
+        "generic": "Omsk Saati",
+        "standard": "Omsk Standart Saati",
+        "daylight": "Omsk Yaz Saati"
+      }
+    },
+    "Pakistan": {
+      "long": {
+        "generic": "Pakistan Saati",
+        "standard": "Pakistan Standart Saati",
+        "daylight": "Pakistan Yaz Saati"
+      }
+    },
+    "Palau": {
+      "long": {
+        "standard": "Palau Saati"
+      }
+    },
+    "Papua_New_Guinea": {
+      "long": {
+        "standard": "Papua Yeni Gine Saati"
+      }
+    },
+    "Paraguay": {
+      "long": {
+        "generic": "Paraguay Saati",
+        "standard": "Paraguay Standart Saati",
+        "daylight": "Paraguay Yaz Saati"
+      }
+    },
+    "Peru": {
+      "long": {
+        "generic": "Peru Saati",
+        "standard": "Peru Standart Saati",
+        "daylight": "Peru Yaz Saati"
+      }
+    },
+    "Philippines": {
+      "long": {
+        "generic": "Filipinler Saati",
+        "standard": "Filipinler Standart Saati",
+        "daylight": "Filipinler Yaz Saati"
+      }
+    },
+    "Phoenix_Islands": {
+      "long": {
+        "standard": "Phoenix Adaları Saati"
+      }
+    },
+    "Pierre_Miquelon": {
+      "long": {
+        "generic": "Saint Pierre ve Miquelon Saati",
+        "standard": "Saint Pierre ve Miquelon Standart Saati",
+        "daylight": "Saint Pierre ve Miquelon Yaz Saati"
+      }
+    },
+    "Pitcairn": {
+      "long": {
+        "standard": "Pitcairn Saati"
+      }
+    },
+    "Ponape": {
+      "long": {
+        "standard": "Ponape Saati"
+      }
+    },
+    "Pyongyang": {
+      "long": {
+        "standard": "Pyongyang Saati"
+      }
+    },
+    "Qyzylorda": {
+      "long": {
+        "generic": "Kızılorda Saati",
+        "standard": "Kızılorda Standart Saati",
+        "daylight": "Kızılorda Yaz Saati"
+      }
+    },
+    "Reunion": {
+      "long": {
+        "standard": "Reunion Saati"
+      }
+    },
+    "Rothera": {
+      "long": {
+        "standard": "Rothera Saati"
+      }
+    },
+    "Sakhalin": {
+      "long": {
+        "generic": "Sahalin Saati",
+        "standard": "Sahalin Standart Saati",
+        "daylight": "Sahalin Yaz Saati"
+      }
+    },
+    "Samara": {
+      "long": {
+        "generic": "Samara Saati",
+        "standard": "Samara Standart Saati",
+        "daylight": "Samara Yaz Saati"
+      }
+    },
+    "Samoa": {
+      "long": {
+        "generic": "Samoa Saati",
+        "standard": "Samoa Standart Saati",
+        "daylight": "Samoa Yaz Saati"
+      }
+    },
+    "Seychelles": {
+      "long": {
+        "standard": "Seyşeller Saati"
+      }
+    },
+    "Singapore": {
+      "long": {
+        "standard": "Singapur Standart Saati"
+      }
+    },
+    "Solomon": {
+      "long": {
+        "standard": "Solomon Adaları Saati"
+      }
+    },
+    "South_Georgia": {
+      "long": {
+        "standard": "Güney Georgia Saati"
+      }
+    },
+    "Suriname": {
+      "long": {
+        "standard": "Surinam Saati"
+      }
+    },
+    "Syowa": {
+      "long": {
+        "standard": "Showa Saati"
+      }
+    },
+    "Tahiti": {
+      "long": {
+        "standard": "Tahiti Saati"
+      }
+    },
+    "Taipei": {
+      "long": {
+        "generic": "Taipei Saati",
+        "standard": "Taipei Standart Saati",
+        "daylight": "Taipei Yaz Saati"
+      }
+    },
+    "Tajikistan": {
+      "long": {
+        "standard": "Tacikistan Saati"
+      }
+    },
+    "Tokelau": {
+      "long": {
+        "standard": "Tokelau Saati"
+      }
+    },
+    "Tonga": {
+      "long": {
+        "generic": "Tonga Saati",
+        "standard": "Tonga Standart Saati",
+        "daylight": "Tonga Yaz Saati"
+      }
+    },
+    "Truk": {
+      "long": {
+        "standard": "Chuuk Saati"
+      }
+    },
+    "Turkmenistan": {
+      "long": {
+        "generic": "Türkmenistan Saati",
+        "standard": "Türkmenistan Standart Saati",
+        "daylight": "Türkmenistan Yaz Saati"
+      }
+    },
+    "Tuvalu": {
+      "long": {
+        "standard": "Tuvalu Saati"
+      }
+    },
+    "Uruguay": {
+      "long": {
+        "generic": "Uruguay Saati",
+        "standard": "Uruguay Standart Saati",
+        "daylight": "Uruguay Yaz Saati"
+      }
+    },
+    "Uzbekistan": {
+      "long": {
+        "generic": "Özbekistan Saati",
+        "standard": "Özbekistan Standart Saati",
+        "daylight": "Özbekistan Yaz Saati"
+      }
+    },
+    "Vanuatu": {
+      "long": {
+        "generic": "Vanuatu Saati",
+        "standard": "Vanuatu Standart Saati",
+        "daylight": "Vanuatu Yaz Saati"
+      }
+    },
+    "Venezuela": {
+      "long": {
+        "standard": "Venezuela Saati"
+      }
+    },
+    "Vladivostok": {
+      "long": {
+        "generic": "Vladivostok Saati",
+        "standard": "Vladivostok Standart Saati",
+        "daylight": "Vladivostok Yaz Saati"
+      }
+    },
+    "Volgograd": {
+      "long": {
+        "generic": "Volgograd Saati",
+        "standard": "Volgograd Standart Saati",
+        "daylight": "Volgograd Yaz Saati"
+      }
+    },
+    "Vostok": {
+      "long": {
+        "standard": "Vostok Saati"
+      }
+    },
+    "Wake": {
+      "long": {
+        "standard": "Wake Adası Saati"
+      }
+    },
+    "Wallis": {
+      "long": {
+        "standard": "Wallis ve Futuna Saati"
+      }
+    },
+    "Yakutsk": {
+      "long": {
+        "generic": "Yakutsk Saati",
+        "standard": "Yakutsk Standart Saati",
+        "daylight": "Yakutsk Yaz Saati"
+      }
+    },
+    "Yekaterinburg": {
+      "long": {
+        "generic": "Yekaterinburg Saati",
+        "standard": "Yekaterinburg Standart Saati",
+        "daylight": "Yekaterinburg Yaz Saati"
+      }
+    }
+  }
+}

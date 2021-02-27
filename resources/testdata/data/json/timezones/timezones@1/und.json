@@ -1,0 +1,1295 @@
+{
+  "hour_format": "+HH:mm;-HH:mm",
+  "gmt_format": "GMT{0}",
+  "gmt_zero_format": "GMT",
+  "region_format": "{0}",
+  "region_format_daylight": "{0} (+1)",
+  "region_format_standard": "{0} (+0)",
+  "fallback_format": "{1} ({0})",
+  "zones": {
+    "Abidjan": {
+      "exemplar_city": "Abidjan"
+    },
+    "Accra": {
+      "exemplar_city": "Accra"
+    },
+    "Adak": {
+      "exemplar_city": "Adak"
+    },
+    "Addis_Ababa": {
+      "exemplar_city": "Addis Ababa"
+    },
+    "Adelaide": {
+      "exemplar_city": "Adelaide"
+    },
+    "Aden": {
+      "exemplar_city": "Aden"
+    },
+    "Algiers": {
+      "exemplar_city": "Algiers"
+    },
+    "Almaty": {
+      "exemplar_city": "Almaty"
+    },
+    "Amman": {
+      "exemplar_city": "Amman"
+    },
+    "Amsterdam": {
+      "exemplar_city": "Amsterdam"
+    },
+    "Anadyr": {
+      "exemplar_city": "Anadyr"
+    },
+    "Anchorage": {
+      "exemplar_city": "Anchorage"
+    },
+    "Andorra": {
+      "exemplar_city": "Andorra"
+    },
+    "Anguilla": {
+      "exemplar_city": "Anguilla"
+    },
+    "Antananarivo": {
+      "exemplar_city": "Antananarivo"
+    },
+    "Antigua": {
+      "exemplar_city": "Antigua"
+    },
+    "Apia": {
+      "exemplar_city": "Apia"
+    },
+    "Aqtau": {
+      "exemplar_city": "Aqtau"
+    },
+    "Aqtobe": {
+      "exemplar_city": "Aqtobe"
+    },
+    "Araguaina": {
+      "exemplar_city": "Araguaina"
+    },
+    "Aruba": {
+      "exemplar_city": "Aruba"
+    },
+    "Ashgabat": {
+      "exemplar_city": "Ashgabat"
+    },
+    "Asmera": {
+      "exemplar_city": "Asmara"
+    },
+    "Astrakhan": {
+      "exemplar_city": "Astrakhan"
+    },
+    "Asuncion": {
+      "exemplar_city": "Asuncion"
+    },
+    "Athens": {
+      "exemplar_city": "Athens"
+    },
+    "Atyrau": {
+      "exemplar_city": "Atyrau"
+    },
+    "Auckland": {
+      "exemplar_city": "Auckland"
+    },
+    "Azores": {
+      "exemplar_city": "Azores"
+    },
+    "Baghdad": {
+      "exemplar_city": "Baghdad"
+    },
+    "Bahia": {
+      "exemplar_city": "Bahia"
+    },
+    "Bahia_Banderas": {
+      "exemplar_city": "Bahia Banderas"
+    },
+    "Bahrain": {
+      "exemplar_city": "Bahrain"
+    },
+    "Baku": {
+      "exemplar_city": "Baku"
+    },
+    "Bamako": {
+      "exemplar_city": "Bamako"
+    },
+    "Bangkok": {
+      "exemplar_city": "Bangkok"
+    },
+    "Bangui": {
+      "exemplar_city": "Bangui"
+    },
+    "Banjul": {
+      "exemplar_city": "Banjul"
+    },
+    "Barbados": {
+      "exemplar_city": "Barbados"
+    },
+    "Barnaul": {
+      "exemplar_city": "Barnaul"
+    },
+    "Beirut": {
+      "exemplar_city": "Beirut"
+    },
+    "Belem": {
+      "exemplar_city": "Belem"
+    },
+    "Belgrade": {
+      "exemplar_city": "Belgrade"
+    },
+    "Belize": {
+      "exemplar_city": "Belize"
+    },
+    "Berlin": {
+      "exemplar_city": "Berlin"
+    },
+    "Bermuda": {
+      "exemplar_city": "Bermuda"
+    },
+    "Beulah": {
+      "exemplar_city": "Beulah, North Dakota"
+    },
+    "Bishkek": {
+      "exemplar_city": "Bishkek"
+    },
+    "Bissau": {
+      "exemplar_city": "Bissau"
+    },
+    "Blanc-Sablon": {
+      "exemplar_city": "Blanc-Sablon"
+    },
+    "Blantyre": {
+      "exemplar_city": "Blantyre"
+    },
+    "Boa_Vista": {
+      "exemplar_city": "Boa Vista"
+    },
+    "Bogota": {
+      "exemplar_city": "Bogota"
+    },
+    "Boise": {
+      "exemplar_city": "Boise"
+    },
+    "Bougainville": {
+      "exemplar_city": "Bougainville"
+    },
+    "Bratislava": {
+      "exemplar_city": "Bratislava"
+    },
+    "Brazzaville": {
+      "exemplar_city": "Brazzaville"
+    },
+    "Brisbane": {
+      "exemplar_city": "Brisbane"
+    },
+    "Broken_Hill": {
+      "exemplar_city": "Broken Hill"
+    },
+    "Brunei": {
+      "exemplar_city": "Brunei"
+    },
+    "Brussels": {
+      "exemplar_city": "Brussels"
+    },
+    "Bucharest": {
+      "exemplar_city": "Bucharest"
+    },
+    "Budapest": {
+      "exemplar_city": "Budapest"
+    },
+    "Buenos_Aires": {
+      "exemplar_city": "Buenos Aires"
+    },
+    "Bujumbura": {
+      "exemplar_city": "Bujumbura"
+    },
+    "Busingen": {
+      "exemplar_city": "Busingen"
+    },
+    "Cairo": {
+      "exemplar_city": "Cairo"
+    },
+    "Calcutta": {
+      "exemplar_city": "Kolkata"
+    },
+    "Cambridge_Bay": {
+      "exemplar_city": "Cambridge Bay"
+    },
+    "Campo_Grande": {
+      "exemplar_city": "Campo Grande"
+    },
+    "Canary": {
+      "exemplar_city": "Canary"
+    },
+    "Cancun": {
+      "exemplar_city": "Cancun"
+    },
+    "Cape_Verde": {
+      "exemplar_city": "Cape Verde"
+    },
+    "Caracas": {
+      "exemplar_city": "Caracas"
+    },
+    "Casablanca": {
+      "exemplar_city": "Casablanca"
+    },
+    "Casey": {
+      "exemplar_city": "Casey"
+    },
+    "Catamarca": {
+      "exemplar_city": "Catamarca"
+    },
+    "Cayenne": {
+      "exemplar_city": "Cayenne"
+    },
+    "Cayman": {
+      "exemplar_city": "Cayman"
+    },
+    "Center": {
+      "exemplar_city": "Center, North Dakota"
+    },
+    "Ceuta": {
+      "exemplar_city": "Ceuta"
+    },
+    "Chagos": {
+      "exemplar_city": "Chagos"
+    },
+    "Chatham": {
+      "exemplar_city": "Chatham"
+    },
+    "Chicago": {
+      "exemplar_city": "Chicago"
+    },
+    "Chihuahua": {
+      "exemplar_city": "Chihuahua"
+    },
+    "Chisinau": {
+      "exemplar_city": "Chisinau"
+    },
+    "Chita": {
+      "exemplar_city": "Chita"
+    },
+    "Choibalsan": {
+      "exemplar_city": "Choibalsan"
+    },
+    "Christmas": {
+      "exemplar_city": "Christmas"
+    },
+    "Cocos": {
+      "exemplar_city": "Cocos"
+    },
+    "Colombo": {
+      "exemplar_city": "Colombo"
+    },
+    "Comoro": {
+      "exemplar_city": "Comoro"
+    },
+    "Conakry": {
+      "exemplar_city": "Conakry"
+    },
+    "Copenhagen": {
+      "exemplar_city": "Copenhagen"
+    },
+    "Coral_Harbour": {
+      "exemplar_city": "Atikokan"
+    },
+    "Cordoba": {
+      "exemplar_city": "Cordoba"
+    },
+    "Costa_Rica": {
+      "exemplar_city": "Costa Rica"
+    },
+    "Creston": {
+      "exemplar_city": "Creston"
+    },
+    "Cuiaba": {
+      "exemplar_city": "Cuiaba"
+    },
+    "Curacao": {
+      "exemplar_city": "Curacao"
+    },
+    "Currie": {
+      "exemplar_city": "Currie"
+    },
+    "Dakar": {
+      "exemplar_city": "Dakar"
+    },
+    "Damascus": {
+      "exemplar_city": "Damascus"
+    },
+    "Danmarkshavn": {
+      "exemplar_city": "Danmarkshavn"
+    },
+    "Dar_es_Salaam": {
+      "exemplar_city": "Dar es Salaam"
+    },
+    "Darwin": {
+      "exemplar_city": "Darwin"
+    },
+    "Davis": {
+      "exemplar_city": "Davis"
+    },
+    "Dawson": {
+      "exemplar_city": "Dawson"
+    },
+    "Dawson_Creek": {
+      "exemplar_city": "Dawson Creek"
+    },
+    "Denver": {
+      "exemplar_city": "Denver"
+    },
+    "Detroit": {
+      "exemplar_city": "Detroit"
+    },
+    "Dhaka": {
+      "exemplar_city": "Dhaka"
+    },
+    "Dili": {
+      "exemplar_city": "Dili"
+    },
+    "Djibouti": {
+      "exemplar_city": "Djibouti"
+    },
+    "Dominica": {
+      "exemplar_city": "Dominica"
+    },
+    "Douala": {
+      "exemplar_city": "Douala"
+    },
+    "Dubai": {
+      "exemplar_city": "Dubai"
+    },
+    "Dublin": {
+      "exemplar_city": "Dublin"
+    },
+    "DumontDUrville": {
+      "exemplar_city": "Dumont d’Urville"
+    },
+    "Dushanbe": {
+      "exemplar_city": "Dushanbe"
+    },
+    "Easter": {
+      "exemplar_city": "Easter"
+    },
+    "Edmonton": {
+      "exemplar_city": "Edmonton"
+    },
+    "Efate": {
+      "exemplar_city": "Efate"
+    },
+    "Eirunepe": {
+      "exemplar_city": "Eirunepe"
+    },
+    "El_Aaiun": {
+      "exemplar_city": "El Aaiun"
+    },
+    "El_Salvador": {
+      "exemplar_city": "El Salvador"
+    },
+    "Enderbury": {
+      "exemplar_city": "Enderbury"
+    },
+    "Eucla": {
+      "exemplar_city": "Eucla"
+    },
+    "Faeroe": {
+      "exemplar_city": "Faroe"
+    },
+    "Fakaofo": {
+      "exemplar_city": "Fakaofo"
+    },
+    "Famagusta": {
+      "exemplar_city": "Famagusta"
+    },
+    "Fiji": {
+      "exemplar_city": "Fiji"
+    },
+    "Fort_Nelson": {
+      "exemplar_city": "Fort Nelson"
+    },
+    "Fortaleza": {
+      "exemplar_city": "Fortaleza"
+    },
+    "Freetown": {
+      "exemplar_city": "Freetown"
+    },
+    "Funafuti": {
+      "exemplar_city": "Funafuti"
+    },
+    "Gaborone": {
+      "exemplar_city": "Gaborone"
+    },
+    "Galapagos": {
+      "exemplar_city": "Galapagos"
+    },
+    "Gambier": {
+      "exemplar_city": "Gambier"
+    },
+    "Gaza": {
+      "exemplar_city": "Gaza"
+    },
+    "Gibraltar": {
+      "exemplar_city": "Gibraltar"
+    },
+    "Glace_Bay": {
+      "exemplar_city": "Glace Bay"
+    },
+    "Godthab": {
+      "exemplar_city": "Nuuk"
+    },
+    "Goose_Bay": {
+      "exemplar_city": "Goose Bay"
+    },
+    "Grand_Turk": {
+      "exemplar_city": "Grand Turk"
+    },
+    "Grenada": {
+      "exemplar_city": "Grenada"
+    },
+    "Guadalcanal": {
+      "exemplar_city": "Guadalcanal"
+    },
+    "Guadeloupe": {
+      "exemplar_city": "Guadeloupe"
+    },
+    "Guam": {
+      "exemplar_city": "Guam"
+    },
+    "Guatemala": {
+      "exemplar_city": "Guatemala"
+    },
+    "Guayaquil": {
+      "exemplar_city": "Guayaquil"
+    },
+    "Guernsey": {
+      "exemplar_city": "Guernsey"
+    },
+    "Guyana": {
+      "exemplar_city": "Guyana"
+    },
+    "Halifax": {
+      "exemplar_city": "Halifax"
+    },
+    "Harare": {
+      "exemplar_city": "Harare"
+    },
+    "Havana": {
+      "exemplar_city": "Havana"
+    },
+    "Hebron": {
+      "exemplar_city": "Hebron"
+    },
+    "Helsinki": {
+      "exemplar_city": "Helsinki"
+    },
+    "Hermosillo": {
+      "exemplar_city": "Hermosillo"
+    },
+    "Hobart": {
+      "exemplar_city": "Hobart"
+    },
+    "Hong_Kong": {
+      "exemplar_city": "Hong Kong"
+    },
+    "Hovd": {
+      "exemplar_city": "Hovd"
+    },
+    "Indianapolis": {
+      "exemplar_city": "Indianapolis"
+    },
+    "Inuvik": {
+      "exemplar_city": "Inuvik"
+    },
+    "Iqaluit": {
+      "exemplar_city": "Iqaluit"
+    },
+    "Irkutsk": {
+      "exemplar_city": "Irkutsk"
+    },
+    "Isle_of_Man": {
+      "exemplar_city": "Isle of Man"
+    },
+    "Istanbul": {
+      "exemplar_city": "Istanbul"
+    },
+    "Jakarta": {
+      "exemplar_city": "Jakarta"
+    },
+    "Jamaica": {
+      "exemplar_city": "Jamaica"
+    },
+    "Jayapura": {
+      "exemplar_city": "Jayapura"
+    },
+    "Jersey": {
+      "exemplar_city": "Jersey"
+    },
+    "Jerusalem": {
+      "exemplar_city": "Jerusalem"
+    },
+    "Johannesburg": {
+      "exemplar_city": "Johannesburg"
+    },
+    "Johnston": {
+      "exemplar_city": "Johnston"
+    },
+    "Juba": {
+      "exemplar_city": "Juba"
+    },
+    "Jujuy": {
+      "exemplar_city": "Jujuy"
+    },
+    "Juneau": {
+      "exemplar_city": "Juneau"
+    },
+    "Kabul": {
+      "exemplar_city": "Kabul"
+    },
+    "Kaliningrad": {
+      "exemplar_city": "Kaliningrad"
+    },
+    "Kamchatka": {
+      "exemplar_city": "Kamchatka"
+    },
+    "Kampala": {
+      "exemplar_city": "Kampala"
+    },
+    "Karachi": {
+      "exemplar_city": "Karachi"
+    },
+    "Katmandu": {
+      "exemplar_city": "Kathmandu"
+    },
+    "Kerguelen": {
+      "exemplar_city": "Kerguelen"
+    },
+    "Khandyga": {
+      "exemplar_city": "Khandyga"
+    },
+    "Khartoum": {
+      "exemplar_city": "Khartoum"
+    },
+    "Kiev": {
+      "exemplar_city": "Kiev"
+    },
+    "Kigali": {
+      "exemplar_city": "Kigali"
+    },
+    "Kinshasa": {
+      "exemplar_city": "Kinshasa"
+    },
+    "Kiritimati": {
+      "exemplar_city": "Kiritimati"
+    },
+    "Kirov": {
+      "exemplar_city": "Kirov"
+    },
+    "Knox": {
+      "exemplar_city": "Knox, Indiana"
+    },
+    "Kosrae": {
+      "exemplar_city": "Kosrae"
+    },
+    "Kralendijk": {
+      "exemplar_city": "Kralendijk"
+    },
+    "Krasnoyarsk": {
+      "exemplar_city": "Krasnoyarsk"
+    },
+    "Kuala_Lumpur": {
+      "exemplar_city": "Kuala Lumpur"
+    },
+    "Kuching": {
+      "exemplar_city": "Kuching"
+    },
+    "Kuwait": {
+      "exemplar_city": "Kuwait"
+    },
+    "Kwajalein": {
+      "exemplar_city": "Kwajalein"
+    },
+    "La_Paz": {
+      "exemplar_city": "La Paz"
+    },
+    "La_Rioja": {
+      "exemplar_city": "La Rioja"
+    },
+    "Lagos": {
+      "exemplar_city": "Lagos"
+    },
+    "Libreville": {
+      "exemplar_city": "Libreville"
+    },
+    "Lima": {
+      "exemplar_city": "Lima"
+    },
+    "Lindeman": {
+      "exemplar_city": "Lindeman"
+    },
+    "Lisbon": {
+      "exemplar_city": "Lisbon"
+    },
+    "Ljubljana": {
+      "exemplar_city": "Ljubljana"
+    },
+    "Lome": {
+      "exemplar_city": "Lome"
+    },
+    "London": {
+      "exemplar_city": "London"
+    },
+    "Longyearbyen": {
+      "exemplar_city": "Longyearbyen"
+    },
+    "Lord_Howe": {
+      "exemplar_city": "Lord Howe"
+    },
+    "Los_Angeles": {
+      "exemplar_city": "Los Angeles"
+    },
+    "Louisville": {
+      "exemplar_city": "Louisville"
+    },
+    "Lower_Princes": {
+      "exemplar_city": "Lower Prince’s Quarter"
+    },
+    "Luanda": {
+      "exemplar_city": "Luanda"
+    },
+    "Lubumbashi": {
+      "exemplar_city": "Lubumbashi"
+    },
+    "Lusaka": {
+      "exemplar_city": "Lusaka"
+    },
+    "Luxembourg": {
+      "exemplar_city": "Luxembourg"
+    },
+    "Macau": {
+      "exemplar_city": "Macao"
+    },
+    "Maceio": {
+      "exemplar_city": "Maceio"
+    },
+    "Macquarie": {
+      "exemplar_city": "Macquarie"
+    },
+    "Madeira": {
+      "exemplar_city": "Madeira"
+    },
+    "Madrid": {
+      "exemplar_city": "Madrid"
+    },
+    "Magadan": {
+      "exemplar_city": "Magadan"
+    },
+    "Mahe": {
+      "exemplar_city": "Mahe"
+    },
+    "Majuro": {
+      "exemplar_city": "Majuro"
+    },
+    "Makassar": {
+      "exemplar_city": "Makassar"
+    },
+    "Malabo": {
+      "exemplar_city": "Malabo"
+    },
+    "Maldives": {
+      "exemplar_city": "Maldives"
+    },
+    "Malta": {
+      "exemplar_city": "Malta"
+    },
+    "Managua": {
+      "exemplar_city": "Managua"
+    },
+    "Manaus": {
+      "exemplar_city": "Manaus"
+    },
+    "Manila": {
+      "exemplar_city": "Manila"
+    },
+    "Maputo": {
+      "exemplar_city": "Maputo"
+    },
+    "Marengo": {
+      "exemplar_city": "Marengo, Indiana"
+    },
+    "Mariehamn": {
+      "exemplar_city": "Mariehamn"
+    },
+    "Marigot": {
+      "exemplar_city": "Marigot"
+    },
+    "Marquesas": {
+      "exemplar_city": "Marquesas"
+    },
+    "Martinique": {
+      "exemplar_city": "Martinique"
+    },
+    "Maseru": {
+      "exemplar_city": "Maseru"
+    },
+    "Matamoros": {
+      "exemplar_city": "Matamoros"
+    },
+    "Mauritius": {
+      "exemplar_city": "Mauritius"
+    },
+    "Mawson": {
+      "exemplar_city": "Mawson"
+    },
+    "Mayotte": {
+      "exemplar_city": "Mayotte"
+    },
+    "Mazatlan": {
+      "exemplar_city": "Mazatlan"
+    },
+    "Mbabane": {
+      "exemplar_city": "Mbabane"
+    },
+    "McMurdo": {
+      "exemplar_city": "McMurdo"
+    },
+    "Melbourne": {
+      "exemplar_city": "Melbourne"
+    },
+    "Mendoza": {
+      "exemplar_city": "Mendoza"
+    },
+    "Menominee": {
+      "exemplar_city": "Menominee"
+    },
+    "Merida": {
+      "exemplar_city": "Merida"
+    },
+    "Metlakatla": {
+      "exemplar_city": "Metlakatla"
+    },
+    "Mexico_City": {
+      "exemplar_city": "Mexico City"
+    },
+    "Midway": {
+      "exemplar_city": "Midway"
+    },
+    "Minsk": {
+      "exemplar_city": "Minsk"
+    },
+    "Miquelon": {
+      "exemplar_city": "Miquelon"
+    },
+    "Mogadishu": {
+      "exemplar_city": "Mogadishu"
+    },
+    "Monaco": {
+      "exemplar_city": "Monaco"
+    },
+    "Moncton": {
+      "exemplar_city": "Moncton"
+    },
+    "Monrovia": {
+      "exemplar_city": "Monrovia"
+    },
+    "Monterrey": {
+      "exemplar_city": "Monterrey"
+    },
+    "Montevideo": {
+      "exemplar_city": "Montevideo"
+    },
+    "Monticello": {
+      "exemplar_city": "Monticello, Kentucky"
+    },
+    "Montserrat": {
+      "exemplar_city": "Montserrat"
+    },
+    "Moscow": {
+      "exemplar_city": "Moscow"
+    },
+    "Muscat": {
+      "exemplar_city": "Muscat"
+    },
+    "Nairobi": {
+      "exemplar_city": "Nairobi"
+    },
+    "Nassau": {
+      "exemplar_city": "Nassau"
+    },
+    "Nauru": {
+      "exemplar_city": "Nauru"
+    },
+    "Ndjamena": {
+      "exemplar_city": "Ndjamena"
+    },
+    "New_Salem": {
+      "exemplar_city": "New Salem, North Dakota"
+    },
+    "New_York": {
+      "exemplar_city": "New York"
+    },
+    "Niamey": {
+      "exemplar_city": "Niamey"
+    },
+    "Nicosia": {
+      "exemplar_city": "Nicosia"
+    },
+    "Nipigon": {
+      "exemplar_city": "Nipigon"
+    },
+    "Niue": {
+      "exemplar_city": "Niue"
+    },
+    "Nome": {
+      "exemplar_city": "Nome"
+    },
+    "Norfolk": {
+      "exemplar_city": "Norfolk"
+    },
+    "Noronha": {
+      "exemplar_city": "Noronha"
+    },
+    "Nouakchott": {
+      "exemplar_city": "Nouakchott"
+    },
+    "Noumea": {
+      "exemplar_city": "Noumea"
+    },
+    "Novokuznetsk": {
+      "exemplar_city": "Novokuznetsk"
+    },
+    "Novosibirsk": {
+      "exemplar_city": "Novosibirsk"
+    },
+    "Ojinaga": {
+      "exemplar_city": "Ojinaga"
+    },
+    "Omsk": {
+      "exemplar_city": "Omsk"
+    },
+    "Oral": {
+      "exemplar_city": "Oral"
+    },
+    "Oslo": {
+      "exemplar_city": "Oslo"
+    },
+    "Ouagadougou": {
+      "exemplar_city": "Ouagadougou"
+    },
+    "Pago_Pago": {
+      "exemplar_city": "Pago Pago"
+    },
+    "Palau": {
+      "exemplar_city": "Palau"
+    },
+    "Palmer": {
+      "exemplar_city": "Palmer"
+    },
+    "Panama": {
+      "exemplar_city": "Panama"
+    },
+    "Pangnirtung": {
+      "exemplar_city": "Pangnirtung"
+    },
+    "Paramaribo": {
+      "exemplar_city": "Paramaribo"
+    },
+    "Paris": {
+      "exemplar_city": "Paris"
+    },
+    "Perth": {
+      "exemplar_city": "Perth"
+    },
+    "Petersburg": {
+      "exemplar_city": "Petersburg, Indiana"
+    },
+    "Phnom_Penh": {
+      "exemplar_city": "Phnom Penh"
+    },
+    "Phoenix": {
+      "exemplar_city": "Phoenix"
+    },
+    "Pitcairn": {
+      "exemplar_city": "Pitcairn"
+    },
+    "Podgorica": {
+      "exemplar_city": "Podgorica"
+    },
+    "Ponape": {
+      "exemplar_city": "Pohnpei"
+    },
+    "Pontianak": {
+      "exemplar_city": "Pontianak"
+    },
+    "Port-au-Prince": {
+      "exemplar_city": "Port-au-Prince"
+    },
+    "Port_Moresby": {
+      "exemplar_city": "Port Moresby"
+    },
+    "Port_of_Spain": {
+      "exemplar_city": "Port of Spain"
+    },
+    "Porto-Novo": {
+      "exemplar_city": "Porto-Novo"
+    },
+    "Porto_Velho": {
+      "exemplar_city": "Porto Velho"
+    },
+    "Prague": {
+      "exemplar_city": "Prague"
+    },
+    "Puerto_Rico": {
+      "exemplar_city": "Puerto Rico"
+    },
+    "Punta_Arenas": {
+      "exemplar_city": "Punta Arenas"
+    },
+    "Pyongyang": {
+      "exemplar_city": "Pyongyang"
+    },
+    "Qatar": {
+      "exemplar_city": "Qatar"
+    },
+    "Qostanay": {
+      "exemplar_city": "Qostanay"
+    },
+    "Qyzylorda": {
+      "exemplar_city": "Qyzylorda"
+    },
+    "Rainy_River": {
+      "exemplar_city": "Rainy River"
+    },
+    "Rangoon": {
+      "exemplar_city": "Yangon"
+    },
+    "Rankin_Inlet": {
+      "exemplar_city": "Rankin Inlet"
+    },
+    "Rarotonga": {
+      "exemplar_city": "Rarotonga"
+    },
+    "Recife": {
+      "exemplar_city": "Recife"
+    },
+    "Regina": {
+      "exemplar_city": "Regina"
+    },
+    "Resolute": {
+      "exemplar_city": "Resolute"
+    },
+    "Reunion": {
+      "exemplar_city": "Reunion"
+    },
+    "Reykjavik": {
+      "exemplar_city": "Reykjavik"
+    },
+    "Riga": {
+      "exemplar_city": "Riga"
+    },
+    "Rio_Branco": {
+      "exemplar_city": "Rio Branco"
+    },
+    "Rio_Gallegos": {
+      "exemplar_city": "Rio Gallegos"
+    },
+    "Riyadh": {
+      "exemplar_city": "Riyadh"
+    },
+    "Rome": {
+      "exemplar_city": "Rome"
+    },
+    "Rothera": {
+      "exemplar_city": "Rothera"
+    },
+    "Saigon": {
+      "exemplar_city": "Ho Chi Minh"
+    },
+    "Saipan": {
+      "exemplar_city": "Saipan"
+    },
+    "Sakhalin": {
+      "exemplar_city": "Sakhalin"
+    },
+    "Salta": {
+      "exemplar_city": "Salta"
+    },
+    "Samara": {
+      "exemplar_city": "Samara"
+    },
+    "Samarkand": {
+      "exemplar_city": "Samarkand"
+    },
+    "San_Juan": {
+      "exemplar_city": "San Juan"
+    },
+    "San_Luis": {
+      "exemplar_city": "San Luis"
+    },
+    "San_Marino": {
+      "exemplar_city": "San Marino"
+    },
+    "Santarem": {
+      "exemplar_city": "Santarem"
+    },
+    "Santiago": {
+      "exemplar_city": "Santiago"
+    },
+    "Santo_Domingo": {
+      "exemplar_city": "Santo Domingo"
+    },
+    "Sao_Paulo": {
+      "exemplar_city": "Sao Paulo"
+    },
+    "Sao_Tome": {
+      "exemplar_city": "Sao Tome"
+    },
+    "Sarajevo": {
+      "exemplar_city": "Sarajevo"
+    },
+    "Saratov": {
+      "exemplar_city": "Saratov"
+    },
+    "Scoresbysund": {
+      "exemplar_city": "Ittoqqortoormiit"
+    },
+    "Seoul": {
+      "exemplar_city": "Seoul"
+    },
+    "Shanghai": {
+      "exemplar_city": "Shanghai"
+    },
+    "Simferopol": {
+      "exemplar_city": "Simferopol"
+    },
+    "Singapore": {
+      "exemplar_city": "Singapore"
+    },
+    "Sitka": {
+      "exemplar_city": "Sitka"
+    },
+    "Skopje": {
+      "exemplar_city": "Skopje"
+    },
+    "Sofia": {
+      "exemplar_city": "Sofia"
+    },
+    "South_Georgia": {
+      "exemplar_city": "South Georgia"
+    },
+    "Srednekolymsk": {
+      "exemplar_city": "Srednekolymsk"
+    },
+    "St_Barthelemy": {
+      "exemplar_city": "St. Barthelemy"
+    },
+    "St_Helena": {
+      "exemplar_city": "St. Helena"
+    },
+    "St_Johns": {
+      "exemplar_city": "St. John’s"
+    },
+    "St_Kitts": {
+      "exemplar_city": "St. Kitts"
+    },
+    "St_Lucia": {
+      "exemplar_city": "St. Lucia"
+    },
+    "St_Thomas": {
+      "exemplar_city": "St. Thomas"
+    },
+    "St_Vincent": {
+      "exemplar_city": "St. Vincent"
+    },
+    "Stanley": {
+      "exemplar_city": "Stanley"
+    },
+    "Stockholm": {
+      "exemplar_city": "Stockholm"
+    },
+    "Swift_Current": {
+      "exemplar_city": "Swift Current"
+    },
+    "Sydney": {
+      "exemplar_city": "Sydney"
+    },
+    "Syowa": {
+      "exemplar_city": "Syowa"
+    },
+    "Tahiti": {
+      "exemplar_city": "Tahiti"
+    },
+    "Taipei": {
+      "exemplar_city": "Taipei"
+    },
+    "Tallinn": {
+      "exemplar_city": "Tallinn"
+    },
+    "Tarawa": {
+      "exemplar_city": "Tarawa"
+    },
+    "Tashkent": {
+      "exemplar_city": "Tashkent"
+    },
+    "Tbilisi": {
+      "exemplar_city": "Tbilisi"
+    },
+    "Tegucigalpa": {
+      "exemplar_city": "Tegucigalpa"
+    },
+    "Tehran": {
+      "exemplar_city": "Tehran"
+    },
+    "Tell_City": {
+      "exemplar_city": "Tell City, Indiana"
+    },
+    "Thimphu": {
+      "exemplar_city": "Thimphu"
+    },
+    "Thule": {
+      "exemplar_city": "Thule"
+    },
+    "Thunder_Bay": {
+      "exemplar_city": "Thunder Bay"
+    },
+    "Tijuana": {
+      "exemplar_city": "Tijuana"
+    },
+    "Tirane": {
+      "exemplar_city": "Tirane"
+    },
+    "Tokyo": {
+      "exemplar_city": "Tokyo"
+    },
+    "Tomsk": {
+      "exemplar_city": "Tomsk"
+    },
+    "Tongatapu": {
+      "exemplar_city": "Tongatapu"
+    },
+    "Toronto": {
+      "exemplar_city": "Toronto"
+    },
+    "Tortola": {
+      "exemplar_city": "Tortola"
+    },
+    "Tripoli": {
+      "exemplar_city": "Tripoli"
+    },
+    "Troll": {
+      "exemplar_city": "Troll"
+    },
+    "Truk": {
+      "exemplar_city": "Chuuk"
+    },
+    "Tucuman": {
+      "exemplar_city": "Tucuman"
+    },
+    "Tunis": {
+      "exemplar_city": "Tunis"
+    },
+    "UTC": {
+      "short": {
+        "standard": "UTC"
+      }
+    },
+    "Ulaanbaatar": {
+      "exemplar_city": "Ulaanbaatar"
+    },
+    "Ulyanovsk": {
+      "exemplar_city": "Ulyanovsk"
+    },
+    "Unknown": {
+      "exemplar_city": "Unknown"
+    },
+    "Urumqi": {
+      "exemplar_city": "Urumqi"
+    },
+    "Ushuaia": {
+      "exemplar_city": "Ushuaia"
+    },
+    "Ust-Nera": {
+      "exemplar_city": "Ust-Nera"
+    },
+    "Uzhgorod": {
+      "exemplar_city": "Uzhgorod"
+    },
+    "Vaduz": {
+      "exemplar_city": "Vaduz"
+    },
+    "Vancouver": {
+      "exemplar_city": "Vancouver"
+    },
+    "Vatican": {
+      "exemplar_city": "Vatican"
+    },
+    "Vevay": {
+      "exemplar_city": "Vevay, Indiana"
+    },
+    "Vienna": {
+      "exemplar_city": "Vienna"
+    },
+    "Vientiane": {
+      "exemplar_city": "Vientiane"
+    },
+    "Vilnius": {
+      "exemplar_city": "Vilnius"
+    },
+    "Vincennes": {
+      "exemplar_city": "Vincennes, Indiana"
+    },
+    "Vladivostok": {
+      "exemplar_city": "Vladivostok"
+    },
+    "Volgograd": {
+      "exemplar_city": "Volgograd"
+    },
+    "Vostok": {
+      "exemplar_city": "Vostok"
+    },
+    "Wake": {
+      "exemplar_city": "Wake"
+    },
+    "Wallis": {
+      "exemplar_city": "Wallis"
+    },
+    "Warsaw": {
+      "exemplar_city": "Warsaw"
+    },
+    "Whitehorse": {
+      "exemplar_city": "Whitehorse"
+    },
+    "Winamac": {
+      "exemplar_city": "Winamac, Indiana"
+    },
+    "Windhoek": {
+      "exemplar_city": "Windhoek"
+    },
+    "Winnipeg": {
+      "exemplar_city": "Winnipeg"
+    },
+    "Yakutat": {
+      "exemplar_city": "Yakutat"
+    },
+    "Yakutsk": {
+      "exemplar_city": "Yakutsk"
+    },
+    "Yekaterinburg": {
+      "exemplar_city": "Yekaterinburg"
+    },
+    "Yellowknife": {
+      "exemplar_city": "Yellowknife"
+    },
+    "Yerevan": {
+      "exemplar_city": "Yerevan"
+    },
+    "Zagreb": {
+      "exemplar_city": "Zagreb"
+    },
+    "Zaporozhye": {
+      "exemplar_city": "Zaporozhye"
+    },
+    "Zurich": {
+      "exemplar_city": "Zurich"
+    }
+  },
+  "metazones": null
+}
