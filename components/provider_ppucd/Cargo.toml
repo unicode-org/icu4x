@@ -27,7 +27,6 @@ icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 icu_uniset = { version = "0.1", path = "../uniset" }
-litemap = { version = "0.1", path = "../../utils/litemap" }
 tinystr = "0.4"
 
 [dev-dependencies]

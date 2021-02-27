@@ -940,7 +940,6 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_uniset",
- "litemap",
  "tinystr",
 ]
 
@@ -979,6 +978,7 @@ dependencies = [
  "criterion",
  "icu_benchmark_macros",
  "icu_provider",
+ "litemap",
  "serde",
 ]
 

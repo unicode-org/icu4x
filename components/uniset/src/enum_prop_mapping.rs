@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use icu_uniset::enum_props::*;
+use crate::enum_props::*;
 use litemap::LiteMap;
 
 //
