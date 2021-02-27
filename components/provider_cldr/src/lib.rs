@@ -20,6 +20,7 @@
 //! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
+#![recursion_limit = "256"]
 
 mod cldr_langid;
 mod cldr_paths;
