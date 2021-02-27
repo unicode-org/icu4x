@@ -198,8 +198,6 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
         downloaded_cldr.cldr_json_root.clone(),
         &glob_patterns,
     )
-    .max_depth(4)
-    .follow_links(true)
     .case_insensitive(true)
     .build()?;
 
