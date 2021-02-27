@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614296446372,
+  "lastUpdate": 1614422755867,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3359,6 +3359,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 93876,
             "range": "± 7916",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df7b6edf44c3360d3ad4127c12ed03c5f039ff6b",
+          "message": "Update data_pipeline.md to discuss caching (#497)",
+          "timestamp": "2021-02-27T04:39:28-06:00",
+          "tree_id": "4d625493d15543672a3f6413db21e02a8d3e0c6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/df7b6edf44c3360d3ad4127c12ed03c5f039ff6b"
+        },
+        "date": 1614422754828,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1681,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8206,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 117603,
+            "range": "± 381",
             "unit": "ns/iter"
           }
         ]
