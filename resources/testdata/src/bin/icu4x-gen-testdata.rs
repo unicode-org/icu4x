@@ -159,8 +159,12 @@ fn main() -> Result<(), Error> {
 
     log::info!("Package metadata: {:?}", metadata);
 
-    download(&args, &metadata)?;
-    generate(&args, &metadata)?;
+    if args.value_of("MODE") == Some("download") || args.value_of("MODE") == Some("all") {
+        download(&args, &metadata)?;
+    }
+    if args.value_of("MODE") == Some("generate") || args.value_of("MODE") == Some("all") {
+        generate(&args, &metadata)?;
+    }
     Ok(())
 }
 
