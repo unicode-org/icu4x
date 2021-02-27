@@ -37,18 +37,6 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
     }
 }
 
-impl<'d> TryFrom<&'d str> for LikelySubtagsProvider<'d> {
-    type Error = serde_json::error::Error;
-    /// Attempt to parse a JSON string.
-    fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = serde_json::from_str(s)?;
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
-    }
-}
-
 impl<'d> KeyedDataProvider for LikelySubtagsProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::LikelySubtags {
@@ -197,8 +185,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/likelySubtags.json").unwrap();
-    let provider = LikelySubtagsProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let result: Cow<LikelySubtagsV1> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()

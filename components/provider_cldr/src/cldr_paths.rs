@@ -109,3 +109,11 @@ impl CldrPaths for CldrPathsAllInOne {
             .join(format!("cldr-numbers-{}", self.suffix)))
     }
 }
+
+#[cfg(test)]
+pub(crate) fn for_test() -> CldrPathsAllInOne {
+    CldrPathsAllInOne {
+        cldr_json_root: icu_testdata::paths::cldr_json_root(),
+        suffix: "full",
+    }
+}

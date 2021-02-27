@@ -48,6 +48,7 @@ log = { version = "0.4", optional = true }
 [dev-dependencies]
 mktemp = "0.4"
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 
 [features]
 # Serialize None values when exporting. Required for Bincode.

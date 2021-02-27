@@ -48,22 +48,6 @@ impl TryFrom<&dyn CldrPaths> for DatesProvider<'_> {
     }
 }
 
-impl TryFrom<&str> for DatesProvider<'_> {
-    type Error = Error;
-    fn try_from(input: &str) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let mut resource: cldr_json::Resource =
-            serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
-        data.append(&mut resource.main.0);
-
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
-    }
-}
-
 impl<'d> KeyedDataProvider for DatesProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::Dates {
@@ -432,8 +416,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
-    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
@@ -464,8 +448,8 @@ fn test_with_numbering_system() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
-    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
@@ -491,8 +475,8 @@ fn unalias_contexts() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
-    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
