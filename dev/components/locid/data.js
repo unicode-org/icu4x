@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614296407195,
+  "lastUpdate": 1614422724183,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3521,6 +3521,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4424,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df7b6edf44c3360d3ad4127c12ed03c5f039ff6b",
+          "message": "Update data_pipeline.md to discuss caching (#497)",
+          "timestamp": "2021-02-27T04:39:28-06:00",
+          "tree_id": "4d625493d15543672a3f6413db21e02a8d3e0c6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/df7b6edf44c3360d3ad4127c12ed03c5f039ff6b"
+        },
+        "date": 1614422721323,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3125,
+            "range": "± 277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4701,
+            "range": "± 751",
             "unit": "ns/iter"
           }
         ]
