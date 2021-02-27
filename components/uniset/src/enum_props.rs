@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 #[derive(Clone, PartialEq, Debug)]
-enum EnumeratedProperty {
+pub enum EnumeratedProperty {
     BidiClass,
     BidiPairedBracketType,
     CanonicalCombiningClass,
@@ -30,7 +30,7 @@ enum EnumeratedProperty {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum BidiClass {
+pub enum BidiClass {
     ArabicLetter,
     ArabicNumber,
     ParagraphSeparator,
@@ -57,14 +57,14 @@ enum BidiClass {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum BidiPairedBracketType {
+pub enum BidiPairedBracketType {
     Close,
     None,
     Open,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum CanonicalCombiningClass {
+pub enum CanonicalCombiningClass {
     NotReordered,
     Overlay,
     CCC10,
@@ -126,7 +126,7 @@ enum CanonicalCombiningClass {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum DecompositionType {
+pub enum DecompositionType {
     Can,
     Com,
     Enc,
@@ -148,7 +148,7 @@ enum DecompositionType {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum EastAsianWidth {
+pub enum EastAsianWidth {
     Ambiguous,
     Fullwidth,
     Halfwidth,
@@ -158,7 +158,7 @@ enum EastAsianWidth {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum GeneralCategory {
+pub enum GeneralCategory {
     Other,
     Cntrl,
     Format,
@@ -200,7 +200,7 @@ enum GeneralCategory {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum GraphemeClusterBreak {
+pub enum GraphemeClusterBreak {
     Control,
     CR,
     EBase,
@@ -222,7 +222,7 @@ enum GraphemeClusterBreak {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum HangulSyllableType {
+pub enum HangulSyllableType {
     LeadingJamo,
     LVSyllable,
     LVTSyllable,
@@ -232,7 +232,7 @@ enum HangulSyllableType {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum IndicPositionalCategory {
+pub enum IndicPositionalCategory {
     Bottom,
     BottomAndLeft,
     BottomAndRight,
@@ -252,7 +252,7 @@ enum IndicPositionalCategory {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum IndicSyllabicCategory {
+pub enum IndicSyllabicCategory {
     Avagraha,
     Bindu,
     BrahmiJoiningNumber,
@@ -292,7 +292,7 @@ enum IndicSyllabicCategory {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum JoiningGroup {
+pub enum JoiningGroup {
     AfricanFeh,
     AfricanNoon,
     AfricanQaf,
@@ -398,7 +398,7 @@ enum JoiningGroup {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum JoiningType {
+pub enum JoiningType {
     JoinCausing,
     DualJoining,
     LeftJoining,
@@ -408,7 +408,7 @@ enum JoiningType {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum LineBreak {
+pub enum LineBreak {
     Ambiguous,
     Alphabetic,
     BreakBoth,
@@ -455,7 +455,7 @@ enum LineBreak {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum LeadCanonicalCombiningClass {
+pub enum LeadCanonicalCombiningClass {
     NotReordered,
     Overlay,
     CCC10,
@@ -517,33 +517,33 @@ enum LeadCanonicalCombiningClass {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum NFCQuickCheck {
+pub enum NFCQuickCheck {
     Maybe,
     No,
     Yes,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum NFDQuickCheck {
+pub enum NFDQuickCheck {
     No,
     Yes,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum NFKCQuickCheck {
+pub enum NFKCQuickCheck {
     Maybe,
     No,
     Yes,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum NFKDQuickCheck {
+pub enum NFKDQuickCheck {
     No,
     Yes,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum NumericType {
+pub enum NumericType {
     Decimal,
     Digit,
     None,
@@ -551,7 +551,7 @@ enum NumericType {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum SentenceBreak {
+pub enum SentenceBreak {
     ATerm,
     Close,
     CR,
@@ -570,7 +570,7 @@ enum SentenceBreak {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum TrailCanonicalCombiningClass {
+pub enum TrailCanonicalCombiningClass {
     NotReordered,
     Overlay,
     CCC10,
@@ -632,7 +632,7 @@ enum TrailCanonicalCombiningClass {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum VerticalOrientation {
+pub enum VerticalOrientation {
     Rotated,
     TransformedRotated,
     TransformedUpright,
@@ -640,7 +640,7 @@ enum VerticalOrientation {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-enum WordBreak {
+pub enum WordBreak {
     CR,
     DoubleQuote,
     EBase,

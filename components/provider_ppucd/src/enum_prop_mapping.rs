@@ -8,244 +8,245 @@ use litemap::LiteMap;
 
 fn get_enum_property_enum(name: &str) -> Option<EnumeratedProperty> {
     let mut m: LiteMap<&str, EnumeratedProperty> = LiteMap::new();
-    m.insert("Bidi_Class", EnumeratedProperty::BidiClass);
-    m.insert("Bidi_Paired_Bracket_Type", EnumeratedProperty::BidiPairedBracketType);
-    m.insert("Canonical_Combining_Class", EnumeratedProperty::CanonicalCombiningClass);
-    m.insert("Decomposition_Type", EnumeratedProperty::DecompositionType);
-    m.insert("East_Asian_Width", EnumeratedProperty::EastAsianWidth);
-    m.insert("General_Category", EnumeratedProperty::GeneralCategory);
-    m.insert("Grapheme_Cluster_Break", EnumeratedProperty::GraphemeClusterBreak);
-    m.insert("Hangul_Syllable_Type", EnumeratedProperty::HangulSyllableType);
-    m.insert("Indic_Positional_Category", EnumeratedProperty::IndicPositionalCategory);
-    m.insert("Indic_Syllabic_Category", EnumeratedProperty::IndicSyllabicCategory);
-    m.insert("Joining_Group", EnumeratedProperty::JoiningGroup);
-    m.insert("Joining_Type", EnumeratedProperty::JoiningType);
-    m.insert("Line_Break", EnumeratedProperty::LineBreak);
-    m.insert("Lead_Canonical_Combining_Class", EnumeratedProperty::LeadCanonicalCombiningClass);
-    m.insert("NFC_Quick_Check", EnumeratedProperty::NFCQuickCheck);
-    m.insert("NFD_Quick_Check", EnumeratedProperty::NFDQuickCheck);
-    m.insert("NFKC_Quick_Check", EnumeratedProperty::NFKCQuickCheck);
-    m.insert("NFKD_Quick_Check", EnumeratedProperty::NFKDQuickCheck);
-    m.insert("Numeric_Type", EnumeratedProperty::NumericType);
-    m.insert("Sentence_Break", EnumeratedProperty::SentenceBreak);
-    m.insert("Trail_Canonical_Combining_Class", EnumeratedProperty::TrailCanonicalCombiningClass);
-    m.insert("Vertical_Orientation", EnumeratedProperty::VerticalOrientation);
-    m.insert("Word_Break", EnumeratedProperty::WordBreak);
+    m.insert("bc", EnumeratedProperty::BidiClass);
+    m.insert("bpt", EnumeratedProperty::BidiPairedBracketType);
+    m.insert("ccc", EnumeratedProperty::CanonicalCombiningClass);
+    m.insert("dt", EnumeratedProperty::DecompositionType);
+    m.insert("ea", EnumeratedProperty::EastAsianWidth);
+    m.insert("gc", EnumeratedProperty::GeneralCategory);
+    m.insert("GCB", EnumeratedProperty::GraphemeClusterBreak);
+    m.insert("hst", EnumeratedProperty::HangulSyllableType);
+    m.insert("InPC", EnumeratedProperty::IndicPositionalCategory);
+    m.insert("InSC", EnumeratedProperty::IndicSyllabicCategory);
+    m.insert("jg", EnumeratedProperty::JoiningGroup);
+    m.insert("jt", EnumeratedProperty::JoiningType);
+    m.insert("lb", EnumeratedProperty::LineBreak);
+    m.insert("lccc", EnumeratedProperty::LeadCanonicalCombiningClass);
+    m.insert("NFC_QC", EnumeratedProperty::NFCQuickCheck);
+    m.insert("NFD_QC", EnumeratedProperty::NFDQuickCheck);
+    m.insert("NFKC_QC", EnumeratedProperty::NFKCQuickCheck);
+    m.insert("NFKD_QC", EnumeratedProperty::NFKDQuickCheck);
+    m.insert("nt", EnumeratedProperty::NumericType);
+    m.insert("SB", EnumeratedProperty::SentenceBreak);
+    m.insert("tccc", EnumeratedProperty::TrailCanonicalCombiningClass);
+    m.insert("vo", EnumeratedProperty::VerticalOrientation);
+    m.insert("WB", EnumeratedProperty::WordBreak);
     m.get(name).cloned()
 }
 
 fn get_bidi_class_enum(name: &str) -> Option<BidiClass> {
     let mut m: LiteMap<&str, BidiClass> = LiteMap::new();
-    m.insert("Arabic_Letter", BidiClass::ArabicLetter);
-    m.insert("Arabic_Number", BidiClass::ArabicNumber);
-    m.insert("Paragraph_Separator", BidiClass::ParagraphSeparator);
-    m.insert("Boundary_Neutral", BidiClass::BoundaryNeutral);
-    m.insert("Common_Separator", BidiClass::CommonSeparator);
-    m.insert("European_Number", BidiClass::EuropeanNumber);
-    m.insert("European_Separator", BidiClass::EuropeanSeparator);
-    m.insert("European_Terminator", BidiClass::EuropeanTerminator);
-    m.insert("First_Strong_Isolate", BidiClass::FirstStrongIsolate);
-    m.insert("Left_To_Right", BidiClass::LeftToRight);
-    m.insert("Left_To_Right_Embedding", BidiClass::LeftToRightEmbedding);
-    m.insert("Left_To_Right_Isolate", BidiClass::LeftToRightIsolate);
-    m.insert("Left_To_Right_Override", BidiClass::LeftToRightOverride);
-    m.insert("Nonspacing_Mark", BidiClass::NonspacingMark);
-    m.insert("Other_Neutral", BidiClass::OtherNeutral);
-    m.insert("Pop_Directional_Format", BidiClass::PopDirectionalFormat);
-    m.insert("Pop_Directional_Isolate", BidiClass::PopDirectionalIsolate);
-    m.insert("Right_To_Left", BidiClass::RightToLeft);
-    m.insert("Right_To_Left_Embedding", BidiClass::RightToLeftEmbedding);
-    m.insert("Right_To_Left_Isolate", BidiClass::RightToLeftIsolate);
-    m.insert("Right_To_Left_Override", BidiClass::RightToLeftOverride);
-    m.insert("Segment_Separator", BidiClass::SegmentSeparator);
-    m.insert("White_Space", BidiClass::WhiteSpace,   );
+    m.insert("AL", BidiClass::ArabicLetter);
+    m.insert("AN", BidiClass::ArabicNumber);
+    m.insert("B", BidiClass::ParagraphSeparator);
+    m.insert("BN", BidiClass::BoundaryNeutral);
+    m.insert("CS", BidiClass::CommonSeparator);
+    m.insert("EN", BidiClass::EuropeanNumber);
+    m.insert("ES", BidiClass::EuropeanSeparator);
+    m.insert("ET", BidiClass::EuropeanTerminator);
+    m.insert("FSI", BidiClass::FirstStrongIsolate);
+    m.insert("L", BidiClass::LeftToRight);
+    m.insert("LRE", BidiClass::LeftToRightEmbedding);
+    m.insert("LRI", BidiClass::LeftToRightIsolate);
+    m.insert("LRO", BidiClass::LeftToRightOverride);
+    m.insert("NSM", BidiClass::NonspacingMark);
+    m.insert("ON", BidiClass::OtherNeutral);
+    m.insert("PDF", BidiClass::PopDirectionalFormat);
+    m.insert("PDI", BidiClass::PopDirectionalIsolate);
+    m.insert("R", BidiClass::RightToLeft);
+    m.insert("RLE", BidiClass::RightToLeftEmbedding);
+    m.insert("RLI", BidiClass::RightToLeftIsolate);
+    m.insert("RLO", BidiClass::RightToLeftOverride);
+    m.insert("S", BidiClass::SegmentSeparator);
+    m.insert("WS", BidiClass::WhiteSpace);
     m.get(name).cloned()
 }
 
 fn get_bidi_paired_bracket_type_enum(name: &str) -> Option<BidiPairedBracketType> {
     let mut m: LiteMap<&str, BidiPairedBracketType> = LiteMap::new();
-    m.insert("Clone", BidiPairedBracketType::Close);
-    m.insert("None", BidiPairedBracketType::None);
-    m.insert("Open", BidiPairedBracketType::Open);
+    m.insert("c", BidiPairedBracketType::Close);
+    m.insert("n", BidiPairedBracketType::None);
+    m.insert("o", BidiPairedBracketType::Open);
     m.get(name).cloned()
 }
 
 fn get_canonical_combining_class_enum(name: &str) -> Option<CanonicalCombiningClass> {
     let mut m: LiteMap<&str, CanonicalCombiningClass> = LiteMap::new();
-    m.insert("Not_Reordered", CanonicalCombiningClass::NotReordered);
-    m.insert("Overlay", CanonicalCombiningClass::Overlay);
-    m.insert("CCC10", CanonicalCombiningClass::CCC10);
-    m.insert("CCC103", CanonicalCombiningClass::CCC103);
-    m.insert("CCC107", CanonicalCombiningClass::CCC107);
-    m.insert("CCC11", CanonicalCombiningClass::CCC11);
-    m.insert("CCC118", CanonicalCombiningClass::CCC118);
-    m.insert("CCC12", CanonicalCombiningClass::CCC12);
-    m.insert("CCC122", CanonicalCombiningClass::CCC122);
-    m.insert("CCC129", CanonicalCombiningClass::CCC129);
-    m.insert("CCC13", CanonicalCombiningClass::CCC13);
-    m.insert("CCC130", CanonicalCombiningClass::CCC130);
-    m.insert("CCC132", CanonicalCombiningClass::CCC132);
-    m.insert("CCC133", CanonicalCombiningClass::CCC133);
-    m.insert("CCC14", CanonicalCombiningClass::CCC14);
-    m.insert("CCC15", CanonicalCombiningClass::CCC15);
-    m.insert("CCC16", CanonicalCombiningClass::CCC16);
-    m.insert("CCC17", CanonicalCombiningClass::CCC17);
-    m.insert("CCC18", CanonicalCombiningClass::CCC18);
-    m.insert("CCC19", CanonicalCombiningClass::CCC19);
-    m.insert("CCC20", CanonicalCombiningClass::CCC20);
-    m.insert("Attached_Below_Left", CanonicalCombiningClass::AttachedBelowLeft);
-    m.insert("Attached_Below", CanonicalCombiningClass::AttachedBelow);
-    m.insert("CCC21", CanonicalCombiningClass::CCC21);
-    m.insert("Attached_Above", CanonicalCombiningClass::AttachedAbove);
-    m.insert("Attached_Above_Right", CanonicalCombiningClass::AttachedAboveRight);
-    m.insert("Below_Left", CanonicalCombiningClass::BelowLeft);
-    m.insert("CCC22", CanonicalCombiningClass::CCC22);
-    m.insert("Below", CanonicalCombiningClass::Below);
-    m.insert("Below_Right", CanonicalCombiningClass::BelowRight);
-    m.insert("Left", CanonicalCombiningClass::Left);
-    m.insert("Right", CanonicalCombiningClass::Right);
-    m.insert("Above_Left", CanonicalCombiningClass::AboveLeft);
-    m.insert("CCC23", CanonicalCombiningClass::CCC23);
-    m.insert("Above", CanonicalCombiningClass::Above);
-    m.insert("Above_Right", CanonicalCombiningClass::AboveRight);
-    m.insert("Double_Below", CanonicalCombiningClass::DoubleBelow);
-    m.insert("Double_Above", CanonicalCombiningClass::DoubleAbove);
-    m.insert("CCC24", CanonicalCombiningClass::CCC24);
-    m.insert("Iota_Subscript", CanonicalCombiningClass::IotaSubscript);
-    m.insert("CCC25", CanonicalCombiningClass::CCC25);
-    m.insert("CCC26", CanonicalCombiningClass::CCC26);
-    m.insert("CCC27", CanonicalCombiningClass::CCC27);
-    m.insert("CCC28", CanonicalCombiningClass::CCC28);
-    m.insert("CCC29", CanonicalCombiningClass::CCC29);
-    m.insert("CCC30", CanonicalCombiningClass::CCC30);
-    m.insert("CCC31", CanonicalCombiningClass::CCC31);
-    m.insert("CCC32", CanonicalCombiningClass::CCC32);
-    m.insert("CCC33", CanonicalCombiningClass::CCC33);
-    m.insert("CCC34", CanonicalCombiningClass::CCC34);
-    m.insert("CCC35", CanonicalCombiningClass::CCC35);
-    m.insert("CCC36", CanonicalCombiningClass::CCC36);
-    m.insert("Han_Reading", CanonicalCombiningClass::HanReading);
-    m.insert("Nukta", CanonicalCombiningClass::Nukta);
-    m.insert("Kana_Voicing", CanonicalCombiningClass::KanaVoicing);
-    m.insert("CCC84", CanonicalCombiningClass::CCC84);
-    m.insert("Virama", CanonicalCombiningClass::Virama);
-    m.insert("CCC91", CanonicalCombiningClass::CCC91);
+    m.insert("0", CanonicalCombiningClass::NotReordered);
+    m.insert("1", CanonicalCombiningClass::Overlay);
+    m.insert("10", CanonicalCombiningClass::CCC10);
+    m.insert("103", CanonicalCombiningClass::CCC103);
+    m.insert("107", CanonicalCombiningClass::CCC107);
+    m.insert("11", CanonicalCombiningClass::CCC11);
+    m.insert("118", CanonicalCombiningClass::CCC118);
+    m.insert("12", CanonicalCombiningClass::CCC12);
+    m.insert("122", CanonicalCombiningClass::CCC122);
+    m.insert("129", CanonicalCombiningClass::CCC129);
+    m.insert("13", CanonicalCombiningClass::CCC13);
+    m.insert("130", CanonicalCombiningClass::CCC130);
+    m.insert("132", CanonicalCombiningClass::CCC132);
+    m.insert("133", CanonicalCombiningClass::CCC133);
+    m.insert("14", CanonicalCombiningClass::CCC14);
+    m.insert("15", CanonicalCombiningClass::CCC15);
+    m.insert("16", CanonicalCombiningClass::CCC16);
+    m.insert("17", CanonicalCombiningClass::CCC17);
+    m.insert("18", CanonicalCombiningClass::CCC18);
+    m.insert("19", CanonicalCombiningClass::CCC19);
+    m.insert("20", CanonicalCombiningClass::CCC20);
+    m.insert("200", CanonicalCombiningClass::AttachedBelowLeft);
+    m.insert("202", CanonicalCombiningClass::AttachedBelow);
+    m.insert("21", CanonicalCombiningClass::CCC21);
+    m.insert("214", CanonicalCombiningClass::AttachedAbove);
+    m.insert("216", CanonicalCombiningClass::AttachedAboveRight);
+    m.insert("218", CanonicalCombiningClass::BelowLeft);
+    m.insert("22", CanonicalCombiningClass::CCC22);
+    m.insert("220", CanonicalCombiningClass::Below);
+    m.insert("222", CanonicalCombiningClass::BelowRight);
+    m.insert("224", CanonicalCombiningClass::Left);
+    m.insert("226", CanonicalCombiningClass::Right);
+    m.insert("228", CanonicalCombiningClass::AboveLeft);
+    m.insert("23", CanonicalCombiningClass::CCC23);
+    m.insert("230", CanonicalCombiningClass::Above);
+    m.insert("232", CanonicalCombiningClass::AboveRight);
+    m.insert("233", CanonicalCombiningClass::DoubleBelow);
+    m.insert("234", CanonicalCombiningClass::DoubleAbove);
+    m.insert("24", CanonicalCombiningClass::CCC24);
+    m.insert("240", CanonicalCombiningClass::IotaSubscript);
+    m.insert("25", CanonicalCombiningClass::CCC25);
+    m.insert("26", CanonicalCombiningClass::CCC26);
+    m.insert("27", CanonicalCombiningClass::CCC27);
+    m.insert("28", CanonicalCombiningClass::CCC28);
+    m.insert("29", CanonicalCombiningClass::CCC29);
+    m.insert("30", CanonicalCombiningClass::CCC30);
+    m.insert("31", CanonicalCombiningClass::CCC31);
+    m.insert("32", CanonicalCombiningClass::CCC32);
+    m.insert("33", CanonicalCombiningClass::CCC33);
+    m.insert("34", CanonicalCombiningClass::CCC34);
+    m.insert("35", CanonicalCombiningClass::CCC35);
+    m.insert("36", CanonicalCombiningClass::CCC36);
+    m.insert("6", CanonicalCombiningClass::HanReading);
+    m.insert("7", CanonicalCombiningClass::Nukta);
+    m.insert("8", CanonicalCombiningClass::KanaVoicing);
+    m.insert("84", CanonicalCombiningClass::CCC84);
+    m.insert("9", CanonicalCombiningClass::Virama);
+    m.insert("91", CanonicalCombiningClass::CCC91);
     m.get(name).cloned()
 }
 
 fn get_decomposition_type_enum(name: &str) -> Option<DecompositionType> {
     let mut m: LiteMap<&str, DecompositionType> = LiteMap::new();
-    m.insert("can", DecompositionType::Can);
-    m.insert("com", DecompositionType::Com);
-    m.insert("enc", DecompositionType::Enc);
-    m.insert("fin", DecompositionType::Fin);
-    m.insert("font", DecompositionType::Font);
-    m.insert("fra", DecompositionType::Fra);
-    m.insert("init", DecompositionType::Init);
-    m.insert("iso", DecompositionType::Iso);
-    m.insert("med", DecompositionType::Med);
-    m.insert("nar", DecompositionType::Nar);
-    m.insert("nb", DecompositionType::Nb);
-    m.insert("none", DecompositionType::None);
-    m.insert("sml", DecompositionType::Sml);
-    m.insert("sqr", DecompositionType::Sqr);
-    m.insert("sub", DecompositionType::Sub);
-    m.insert("sup", DecompositionType::Sup);
-    m.insert("vert", DecompositionType::Vert);
-    m.insert("wide", DecompositionType::Wide);
+    m.insert("Can", DecompositionType::Can);
+    m.insert("Com", DecompositionType::Com);
+    m.insert("Enc", DecompositionType::Enc);
+    m.insert("Fin", DecompositionType::Fin);
+    m.insert("Font", DecompositionType::Font);
+    m.insert("Fra", DecompositionType::Fra);
+    m.insert("Init", DecompositionType::Init);
+    m.insert("Iso", DecompositionType::Iso);
+    m.insert("Med", DecompositionType::Med);
+    m.insert("Nar", DecompositionType::Nar);
+    m.insert("Nb", DecompositionType::Nb);
+    m.insert("None", DecompositionType::None);
+    m.insert("Sml", DecompositionType::Sml);
+    m.insert("Sqr", DecompositionType::Sqr);
+    m.insert("Sub", DecompositionType::Sub);
+    m.insert("Sup", DecompositionType::Sup);
+    m.insert("Vert", DecompositionType::Vert);
+    m.insert("Wide", DecompositionType::Wide);
     m.get(name).cloned()
 }
 
 fn get_east_asian_width_enum(name: &str) -> Option<EastAsianWidth> {
     let mut m: LiteMap<&str, EastAsianWidth> = LiteMap::new();
-    m.insert("Ambiguous", EastAsianWidth::Ambiguous);
-    m.insert("Fullwidth", EastAsianWidth::Fullwidth);
-    m.insert("Halfwidth", EastAsianWidth::Halfwidth);
-    m.insert("Neutral", EastAsianWidth::Neutral);
-    m.insert("Narrow", EastAsianWidth::Narrow);
-    m.insert("Wide", EastAsianWidth::Wide);
+    m.insert("A", EastAsianWidth::Ambiguous);
+    m.insert("F", EastAsianWidth::Fullwidth);
+    m.insert("H", EastAsianWidth::Halfwidth);
+    m.insert("N", EastAsianWidth::Neutral);
+    m.insert("Na", EastAsianWidth::Narrow);
+    m.insert("W", EastAsianWidth::Wide);
     m.get(name).cloned()
 }
 
 fn get_general_category_enum(name: &str) -> Option<GeneralCategory> {
     let mut m: LiteMap<&str, GeneralCategory> = LiteMap::new();
-    m.insert("Other", GeneralCategory::Other);
-    m.insert("cntrl", GeneralCategory::Cntrl);
-    m.insert("Format", GeneralCategory::Format);
-    m.insert("Unassigned", GeneralCategory::Unassigned);
-    m.insert("Private_Use", GeneralCategory::PrivateUse);
-    m.insert("Surrogate", GeneralCategory::Surrogate);
-    m.insert("Letter", GeneralCategory::Letter);
-    m.insert("Cased_Letter", GeneralCategory::CasedLetter);
-    m.insert("Lowercase_Letter", GeneralCategory::LowercaseLetter);
-    m.insert("Modifier_Letter", GeneralCategory::ModifierLetter);
-    m.insert("Other_Letter", GeneralCategory::OtherLetter);
-    m.insert("Titlecase_Letter", GeneralCategory::TitlecaseLetter);
-    m.insert("Uppercase_Letter", GeneralCategory::UppercaseLetter);
-    m.insert("Combining_Mark", GeneralCategory::CombiningMark);
-    m.insert("Spacing_Mark", GeneralCategory::SpacingMark);
-    m.insert("Enclosing_Mark", GeneralCategory::EnclosingMark);
-    m.insert("Nonspacing_Mark", GeneralCategory::NonspacingMark);
-    m.insert("Number", GeneralCategory::Number);
-    m.insert("digit", GeneralCategory::Digit);
-    m.insert("Letter_Number", GeneralCategory::LetterNumber);
-    m.insert("Other_Number", GeneralCategory::OtherNumber);
-    m.insert("punct", GeneralCategory::Punct);
-    m.insert("Connector_Punctuation", GeneralCategory::ConnectorPunctuation);
-    m.insert("Dash_Punctuation", GeneralCategory::DashPunctuation);
-    m.insert("Close_Punctuation", GeneralCategory::ClosePunctuation);
-    m.insert("Final_Punctuation", GeneralCategory::FinalPunctuation);
-    m.insert("Initial_Punctuation", GeneralCategory::InitialPunctuation);
-    m.insert("Other_Punctuation", GeneralCategory::OtherPunctuation);
-    m.insert("Open_Punctuation", GeneralCategory::OpenPunctuation);
-    m.insert("Symbol", GeneralCategory::Symbol);
-    m.insert("Currency_Symbol", GeneralCategory::CurrencySymbol);
-    m.insert("Modifier_Symbol", GeneralCategory::ModifierSymbol);
-    m.insert("Math_Symbol", GeneralCategory::MathSymbol);
-    m.insert("Other_Symbol", GeneralCategory::OtherSymbol);
-    m.insert("Separator", GeneralCategory::Separator);
-    m.insert("Line_Separator", GeneralCategory::LineSeparator);
-    m.insert("Paragraph_Separator", GeneralCategory::ParagraphSeparator);
-    m.insert("Space_Separator", GeneralCategory::SpaceSeparator);
+    m.insert("C", GeneralCategory::Other);
+    m.insert("Cc", GeneralCategory::Cntrl);
+    m.insert("Cf", GeneralCategory::Format);
+    m.insert("Cn", GeneralCategory::Unassigned);
+    m.insert("Co", GeneralCategory::PrivateUse);
+    m.insert("Cs", GeneralCategory::Surrogate);
+    m.insert("L", GeneralCategory::Letter);
+    m.insert("LC", GeneralCategory::CasedLetter);
+    m.insert("Ll", GeneralCategory::LowercaseLetter);
+    m.insert("Lm", GeneralCategory::ModifierLetter);
+    m.insert("Lo", GeneralCategory::OtherLetter);
+    m.insert("Lt", GeneralCategory::TitlecaseLetter);
+    m.insert("Lu", GeneralCategory::UppercaseLetter);
+    m.insert("M", GeneralCategory::CombiningMark);
+    m.insert("Mc", GeneralCategory::SpacingMark);
+    m.insert("Me", GeneralCategory::EnclosingMark);
+    m.insert("Mn", GeneralCategory::NonspacingMark);
+    m.insert("N", GeneralCategory::Number);
+    m.insert("Nd", GeneralCategory::Digit);
+    m.insert("Nl", GeneralCategory::LetterNumber);
+    m.insert("No", GeneralCategory::OtherNumber);
+    m.insert("P", GeneralCategory::Punct);
+    m.insert("Pc", GeneralCategory::ConnectorPunctuation);
+    m.insert("Pd", GeneralCategory::DashPunctuation);
+    m.insert("Pe", GeneralCategory::ClosePunctuation);
+    m.insert("Pf", GeneralCategory::FinalPunctuation);
+    m.insert("Pi", GeneralCategory::InitialPunctuation);
+    m.insert("Po", GeneralCategory::OtherPunctuation);
+    m.insert("Ps", GeneralCategory::OpenPunctuation);
+    m.insert("S", GeneralCategory::Symbol);
+    m.insert("Sc", GeneralCategory::CurrencySymbol);
+    m.insert("Sk", GeneralCategory::ModifierSymbol);
+    m.insert("Sm", GeneralCategory::MathSymbol);
+    m.insert("So", GeneralCategory::OtherSymbol);
+    m.insert("Z", GeneralCategory::Separator);
+    m.insert("Zl", GeneralCategory::LineSeparator);
+    m.insert("Zp", GeneralCategory::ParagraphSeparator);
+    m.insert("Zs", GeneralCategory::SpaceSeparator);
     m.get(name).cloned()
 }
 
 fn get_grapheme_cluster_break_enum(name: &str) -> Option<GraphemeClusterBreak> {
     let mut m: LiteMap<&str, GraphemeClusterBreak> = LiteMap::new();
-    m.insert("Control", GraphemeClusterBreak::Control);
+    m.insert("CN", GraphemeClusterBreak::Control);
     m.insert("CR", GraphemeClusterBreak::CR);
-    m.insert("E_Base", GraphemeClusterBreak::EBase);
-    m.insert("E_Base_GAZ", GraphemeClusterBreak::EBaseGAZ);
-    m.insert("E_Modifier", GraphemeClusterBreak::EModifier);
-    m.insert("Extend", GraphemeClusterBreak::Extend);
-    m.insert("Glue_After_Zwj", GraphemeClusterBreak::GlueAfterZwj);
+    m.insert("EB", GraphemeClusterBreak::EBase);
+    m.insert("EBG", GraphemeClusterBreak::EBaseGAZ);
+    m.insert("EM", GraphemeClusterBreak::EModifier);
+    m.insert("EX", GraphemeClusterBreak::Extend);
+    m.insert("GAZ", GraphemeClusterBreak::GlueAfterZwj);
     m.insert("L", GraphemeClusterBreak::L);
     m.insert("LF", GraphemeClusterBreak::LF);
     m.insert("LV", GraphemeClusterBreak::LV);
     m.insert("LVT", GraphemeClusterBreak::LVT);
-    m.insert("Prepend", GraphemeClusterBreak::Prepend);
-    m.insert("Regional_Indicator", GraphemeClusterBreak::RegionalIndicator);
-    m.insert("SpacingMark", GraphemeClusterBreak::SpacingMark);
+    m.insert("PP", GraphemeClusterBreak::Prepend);
+    m.insert("RI", GraphemeClusterBreak::RegionalIndicator);
+    m.insert("SM", GraphemeClusterBreak::SpacingMark);
     m.insert("T", GraphemeClusterBreak::T);
     m.insert("V", GraphemeClusterBreak::V);
-    m.insert("Other", GraphemeClusterBreak::Other);
+    m.insert("XX", GraphemeClusterBreak::Other);
     m.insert("ZWJ", GraphemeClusterBreak::ZWJ);
     m.get(name).cloned()
 }
 
 fn get_hangul_syllable_type_enum(name: &str) -> Option<HangulSyllableType> {
     let mut m: LiteMap<&str, HangulSyllableType> = LiteMap::new();
-    m.insert("Leading_Jamo", HangulSyllableType::LeadingJamo);
-    m.insert("LV_Syllable", HangulSyllableType::LVSyllable);
-    m.insert("LVT_Syllable", HangulSyllableType::LVTSyllable);
-    m.insert("Not_Applicable", HangulSyllableType::NotApplicable);
-    m.insert("Trailing_Jamo", HangulSyllableType::TrailingJamo);
-    m.insert("Vowel_Jamo", HangulSyllableType::VowelJamo);
+    m.insert("L", HangulSyllableType::LeadingJamo);
+    m.insert("LV", HangulSyllableType::LVSyllable);
+    m.insert("LVT", HangulSyllableType::LVTSyllable);
+    m.insert("NA", HangulSyllableType::NotApplicable);
+    m.insert("T", HangulSyllableType::TrailingJamo);
+    m.insert("V", HangulSyllableType::VowelJamo);
     m.get(name).cloned()
 }
 
 fn get_indic_positional_category_enum(name: &str) -> Option<IndicPositionalCategory> {
     let mut m: LiteMap<&str, IndicPositionalCategory> = LiteMap::new();
+
     m.insert("Bottom", IndicPositionalCategory::Bottom);
     m.insert("Bottom_And_Left", IndicPositionalCategory::BottomAndLeft);
     m.insert("Bottom_And_Right", IndicPositionalCategory::BottomAndRight);
@@ -415,281 +416,281 @@ fn get_joining_group_enum(name: &str) -> Option<JoiningGroup> {
 
 fn get_joining_type_enum(name: &str) -> Option<JoiningType> {
     let mut m: LiteMap<&str, JoiningType> = LiteMap::new();
-    m.insert("Join_Causing", JoiningType::JoinCausing);
-    m.insert("Dual_Joining", JoiningType::DualJoining);
-    m.insert("Left_Joining", JoiningType::LeftJoining);
-    m.insert("Right_Joining", JoiningType::RightJoining);
-    m.insert("Transparent", JoiningType::Transparent);
-    m.insert("Non_Joining", JoiningType::NonJoining,   );
+    m.insert("C", JoiningType::JoinCausing);
+    m.insert("D", JoiningType::DualJoining);
+    m.insert("L", JoiningType::LeftJoining);
+    m.insert("R", JoiningType::RightJoining);
+    m.insert("T", JoiningType::Transparent);
+    m.insert("U", JoiningType::NonJoining,   );
     m.get(name).cloned()
 }
 
 fn get_line_break_enum(name: &str) -> Option<LineBreak> {
     let mut m: LiteMap<&str, LineBreak> = LiteMap::new();
-    m.insert("Ambiguous", LineBreak::Ambiguous);
-    m.insert("Alphabetic", LineBreak::Alphabetic);
-    m.insert("Break_Both", LineBreak::BreakBoth);
-    m.insert("Break_After", LineBreak::BreakAfter);
-    m.insert("Break_Before", LineBreak::BreakBefore);
-    m.insert("Mandatory_Break", LineBreak::MandatoryBreak);
-    m.insert("Contingent_Break", LineBreak::ContingentBreak);
-    m.insert("Conditional_Japanese_Starter", LineBreak::ConditionalJapaneseStarter);
-    m.insert("Close_Punctuation", LineBreak::ClosePunctuation);
-    m.insert("Combining_Mark", LineBreak::CombiningMark);
-    m.insert("Close_Parenthesis", LineBreak::CloseParenthesis);
-    m.insert("Carriage_Return", LineBreak::CarriageReturn);
-    m.insert("E_Base", LineBreak::EBase);
-    m.insert("E_Modifier", LineBreak::EModifier);
-    m.insert("Exclamation", LineBreak::Exclamation);
-    m.insert("Glue", LineBreak::Glue);
+    m.insert("AI", LineBreak::Ambiguous);
+    m.insert("AL", LineBreak::Alphabetic);
+    m.insert("B2", LineBreak::BreakBoth);
+    m.insert("BA", LineBreak::BreakAfter);
+    m.insert("BB", LineBreak::BreakBefore);
+    m.insert("BK", LineBreak::MandatoryBreak);
+    m.insert("CB", LineBreak::ContingentBreak);
+    m.insert("CJ", LineBreak::ConditionalJapaneseStarter);
+    m.insert("CL", LineBreak::ClosePunctuation);
+    m.insert("CM", LineBreak::CombiningMark);
+    m.insert("CP", LineBreak::CloseParenthesis);
+    m.insert("CR", LineBreak::CarriageReturn);
+    m.insert("EB", LineBreak::EBase);
+    m.insert("EM", LineBreak::EModifier);
+    m.insert("EX", LineBreak::Exclamation);
+    m.insert("GL", LineBreak::Glue);
     m.insert("H2", LineBreak::H2);
     m.insert("H3", LineBreak::H3);
-    m.insert("Hebrew_Letter", LineBreak::HebrewLetter);
-    m.insert("Hyphen", LineBreak::Hyphen);
-    m.insert("Ideographic", LineBreak::Ideographic);
-    m.insert("Inseperable", LineBreak::Inseperable);
-    m.insert("Infix_Numeric", LineBreak::InfixNumeric);
+    m.insert("HL", LineBreak::HebrewLetter);
+    m.insert("HY", LineBreak::Hyphen);
+    m.insert("ID", LineBreak::Ideographic);
+    m.insert("IN", LineBreak::Inseperable);
+    m.insert("IS", LineBreak::InfixNumeric);
     m.insert("JL", LineBreak::JL);
     m.insert("JT", LineBreak::JT);
     m.insert("JV", LineBreak::JV);
-    m.insert("Line_Feed", LineBreak::LineFeed);
-    m.insert("Next_Line", LineBreak::NextLine);
-    m.insert("Nonstarter", LineBreak::Nonstarter);
-    m.insert("Numeric", LineBreak::Numeric);
-    m.insert("Open_Punctuation", LineBreak::OpenPunctuation);
-    m.insert("Postfix_Numeric", LineBreak::PostfixNumeric);
-    m.insert("Prefix_Numeric", LineBreak::PrefixNumeric);
-    m.insert("Quotation", LineBreak::Quotation);
-    m.insert("Regional_Indicator", LineBreak::RegionalIndicator);
-    m.insert("Complex_Context", LineBreak::ComplexContext);
-    m.insert("Surrogate", LineBreak::Surrogate);
-    m.insert("Space", LineBreak::Space);
-    m.insert("Break_Symbols", LineBreak::BreakSymbols);
-    m.insert("Word_Joiner", LineBreak::WordJoiner);
-    m.insert("Unknown", LineBreak::Unknown);
-    m.insert("ZWSpace", LineBreak::ZWSpace);
+    m.insert("LF", LineBreak::LineFeed);
+    m.insert("NL", LineBreak::NextLine);
+    m.insert("NS", LineBreak::Nonstarter);
+    m.insert("NU", LineBreak::Numeric);
+    m.insert("OP", LineBreak::OpenPunctuation);
+    m.insert("PO", LineBreak::PostfixNumeric);
+    m.insert("PR", LineBreak::PrefixNumeric);
+    m.insert("QU", LineBreak::Quotation);
+    m.insert("RI", LineBreak::RegionalIndicator);
+    m.insert("SA", LineBreak::ComplexContext);
+    m.insert("SG", LineBreak::Surrogate);
+    m.insert("SP", LineBreak::Space);
+    m.insert("SY", LineBreak::BreakSymbols);
+    m.insert("WJ", LineBreak::WordJoiner);
+    m.insert("XX", LineBreak::Unknown);
+    m.insert("ZW", LineBreak::ZWSpace);
     m.insert("ZWJ", LineBreak::ZWJ);
     m.get(name).cloned()
 }
 
 fn get_lead_canonical_combining_class_enum(name: &str) -> Option<LeadCanonicalCombiningClass> {
     let mut m: LiteMap<&str, LeadCanonicalCombiningClass> = LiteMap::new();
-    m.insert("Not_Reordered", LeadCanonicalCombiningClass::NotReordered);
-    m.insert("Overlay", LeadCanonicalCombiningClass::Overlay);
-    m.insert("CCC10", LeadCanonicalCombiningClass::CCC10);
-    m.insert("CCC103", LeadCanonicalCombiningClass::CCC103);
-    m.insert("CCC107", LeadCanonicalCombiningClass::CCC107);
-    m.insert("CCC11", LeadCanonicalCombiningClass::CCC11);
-    m.insert("CCC118", LeadCanonicalCombiningClass::CCC118);
-    m.insert("CCC12", LeadCanonicalCombiningClass::CCC12);
-    m.insert("CCC122", LeadCanonicalCombiningClass::CCC122);
-    m.insert("CCC129", LeadCanonicalCombiningClass::CCC129);
-    m.insert("CCC13", LeadCanonicalCombiningClass::CCC13);
-    m.insert("CCC130", LeadCanonicalCombiningClass::CCC130);
-    m.insert("CCC132", LeadCanonicalCombiningClass::CCC132);
-    m.insert("CCC133", LeadCanonicalCombiningClass::CCC133);
-    m.insert("CCC14", LeadCanonicalCombiningClass::CCC14);
-    m.insert("CCC15", LeadCanonicalCombiningClass::CCC15);
-    m.insert("CCC16", LeadCanonicalCombiningClass::CCC16);
-    m.insert("CCC17", LeadCanonicalCombiningClass::CCC17);
-    m.insert("CCC18", LeadCanonicalCombiningClass::CCC18);
-    m.insert("CCC19", LeadCanonicalCombiningClass::CCC19);
-    m.insert("CCC20", LeadCanonicalCombiningClass::CCC20);
-    m.insert("Attached_Below_Left", LeadCanonicalCombiningClass::AttachedBelowLeft);
-    m.insert("Attached_Below", LeadCanonicalCombiningClass::AttachedBelow);
-    m.insert("CCC21", LeadCanonicalCombiningClass::CCC21);
-    m.insert("Attached_Above", LeadCanonicalCombiningClass::AttachedAbove);
-    m.insert("Attached_Above_Right", LeadCanonicalCombiningClass::AttachedAboveRight);
-    m.insert("Below_Left", LeadCanonicalCombiningClass::BelowLeft);
-    m.insert("CCC22", LeadCanonicalCombiningClass::CCC22);
-    m.insert("Below", LeadCanonicalCombiningClass::Below);
-    m.insert("Below_Right", LeadCanonicalCombiningClass::BelowRight);
-    m.insert("Left", LeadCanonicalCombiningClass::Left);
-    m.insert("Right", LeadCanonicalCombiningClass::Right);
-    m.insert("Above_Left", LeadCanonicalCombiningClass::AboveLeft);
-    m.insert("CCC23", LeadCanonicalCombiningClass::CCC23);
-    m.insert("Above", LeadCanonicalCombiningClass::Above);
-    m.insert("Above_Right", LeadCanonicalCombiningClass::AboveRight);
-    m.insert("Double_Below", LeadCanonicalCombiningClass::DoubleBelow);
-    m.insert("Double_Above", LeadCanonicalCombiningClass::DoubleAbove);
-    m.insert("CCC24", LeadCanonicalCombiningClass::CCC24);
-    m.insert("Iota_Subscript", LeadCanonicalCombiningClass::IotaSubscript);
-    m.insert("CCC25", LeadCanonicalCombiningClass::CCC25);
-    m.insert("CCC26", LeadCanonicalCombiningClass::CCC26);
-    m.insert("CCC27", LeadCanonicalCombiningClass::CCC27);
-    m.insert("CCC28", LeadCanonicalCombiningClass::CCC28);
-    m.insert("CCC29", LeadCanonicalCombiningClass::CCC29);
-    m.insert("CCC30", LeadCanonicalCombiningClass::CCC30);
-    m.insert("CCC31", LeadCanonicalCombiningClass::CCC31);
-    m.insert("CCC32", LeadCanonicalCombiningClass::CCC32);
-    m.insert("CCC33", LeadCanonicalCombiningClass::CCC33);
-    m.insert("CCC34", LeadCanonicalCombiningClass::CCC34);
-    m.insert("CCC35", LeadCanonicalCombiningClass::CCC35);
-    m.insert("CCC36", LeadCanonicalCombiningClass::CCC36);
-    m.insert("Han_Reading", LeadCanonicalCombiningClass::HanReading);
-    m.insert("Nukta", LeadCanonicalCombiningClass::Nukta);
-    m.insert("Kana_Voicing", LeadCanonicalCombiningClass::KanaVoicing);
-    m.insert("CCC84", LeadCanonicalCombiningClass::CCC84);
-    m.insert("Virama", LeadCanonicalCombiningClass::Virama);
-    m.insert("CCC91", LeadCanonicalCombiningClass::CCC91);
+    m.insert("0", LeadCanonicalCombiningClass::NotReordered);
+    m.insert("1", LeadCanonicalCombiningClass::Overlay);
+    m.insert("10", LeadCanonicalCombiningClass::CCC10);
+    m.insert("103", LeadCanonicalCombiningClass::CCC103);
+    m.insert("107", LeadCanonicalCombiningClass::CCC107);
+    m.insert("11", LeadCanonicalCombiningClass::CCC11);
+    m.insert("118", LeadCanonicalCombiningClass::CCC118);
+    m.insert("12", LeadCanonicalCombiningClass::CCC12);
+    m.insert("122", LeadCanonicalCombiningClass::CCC122);
+    m.insert("129", LeadCanonicalCombiningClass::CCC129);
+    m.insert("13", LeadCanonicalCombiningClass::CCC13);
+    m.insert("130", LeadCanonicalCombiningClass::CCC130);
+    m.insert("132", LeadCanonicalCombiningClass::CCC132);
+    m.insert("133", LeadCanonicalCombiningClass::CCC133);
+    m.insert("14", LeadCanonicalCombiningClass::CCC14);
+    m.insert("15", LeadCanonicalCombiningClass::CCC15);
+    m.insert("16", LeadCanonicalCombiningClass::CCC16);
+    m.insert("17", LeadCanonicalCombiningClass::CCC17);
+    m.insert("18", LeadCanonicalCombiningClass::CCC18);
+    m.insert("19", LeadCanonicalCombiningClass::CCC19);
+    m.insert("20", LeadCanonicalCombiningClass::CCC20);
+    m.insert("200", LeadCanonicalCombiningClass::AttachedBelowLeft);
+    m.insert("202", LeadCanonicalCombiningClass::AttachedBelow);
+    m.insert("21", LeadCanonicalCombiningClass::CCC21);
+    m.insert("214", LeadCanonicalCombiningClass::AttachedAbove);
+    m.insert("216", LeadCanonicalCombiningClass::AttachedAboveRight);
+    m.insert("218", LeadCanonicalCombiningClass::BelowLeft);
+    m.insert("22", LeadCanonicalCombiningClass::CCC22);
+    m.insert("220", LeadCanonicalCombiningClass::Below);
+    m.insert("222", LeadCanonicalCombiningClass::BelowRight);
+    m.insert("224", LeadCanonicalCombiningClass::Left);
+    m.insert("226", LeadCanonicalCombiningClass::Right);
+    m.insert("228", LeadCanonicalCombiningClass::AboveLeft);
+    m.insert("23", LeadCanonicalCombiningClass::CCC23);
+    m.insert("230", LeadCanonicalCombiningClass::Above);
+    m.insert("232", LeadCanonicalCombiningClass::AboveRight);
+    m.insert("233", LeadCanonicalCombiningClass::DoubleBelow);
+    m.insert("234", LeadCanonicalCombiningClass::DoubleAbove);
+    m.insert("24", LeadCanonicalCombiningClass::CCC24);
+    m.insert("240", LeadCanonicalCombiningClass::IotaSubscript);
+    m.insert("25", LeadCanonicalCombiningClass::CCC25);
+    m.insert("26", LeadCanonicalCombiningClass::CCC26);
+    m.insert("27", LeadCanonicalCombiningClass::CCC27);
+    m.insert("28", LeadCanonicalCombiningClass::CCC28);
+    m.insert("29", LeadCanonicalCombiningClass::CCC29);
+    m.insert("30", LeadCanonicalCombiningClass::CCC30);
+    m.insert("31", LeadCanonicalCombiningClass::CCC31);
+    m.insert("32", LeadCanonicalCombiningClass::CCC32);
+    m.insert("33", LeadCanonicalCombiningClass::CCC33);
+    m.insert("34", LeadCanonicalCombiningClass::CCC34);
+    m.insert("35", LeadCanonicalCombiningClass::CCC35);
+    m.insert("36", LeadCanonicalCombiningClass::CCC36);
+    m.insert("6", LeadCanonicalCombiningClass::HanReading);
+    m.insert("7", LeadCanonicalCombiningClass::Nukta);
+    m.insert("8", LeadCanonicalCombiningClass::KanaVoicing);
+    m.insert("84", LeadCanonicalCombiningClass::CCC84);
+    m.insert("9", LeadCanonicalCombiningClass::Virama);
+    m.insert("91", LeadCanonicalCombiningClass::CCC91);
     m.get(name).cloned()
 }
 
 fn get_nfc_quick_check_enum(name: &str) -> Option<NFCQuickCheck> {
     let mut m: LiteMap<&str, NFCQuickCheck> = LiteMap::new();
-    m.insert("Maybe", NFCQuickCheck::Maybe);
-    m.insert("No", NFCQuickCheck::No);
-    m.insert("Yes", NFCQuickCheck::Yes);
+    m.insert("M", NFCQuickCheck::Maybe);
+    m.insert("N", NFCQuickCheck::No);
+    m.insert("Y", NFCQuickCheck::Yes);
     m.get(name).cloned()
 }
 
 fn get_nfd_quick_check_enum(name: &str) -> Option<NFDQuickCheck> {
     let mut m: LiteMap<&str, NFDQuickCheck> = LiteMap::new();
-    m.insert("No", NFDQuickCheck::No);
-    m.insert("Yes", NFDQuickCheck::Yes);
+    m.insert("N", NFDQuickCheck::No);
+    m.insert("Y", NFDQuickCheck::Yes);
     m.get(name).cloned()
 }
 
 fn get_nfkc_quick_check_enum(name: &str) -> Option<NFKCQuickCheck> {
     let mut m: LiteMap<&str, NFKCQuickCheck> = LiteMap::new();
-    m.insert("Maybe", NFKCQuickCheck::Maybe);
-    m.insert("No", NFKCQuickCheck::No);
-    m.insert("Yes", NFKCQuickCheck::Yes);
+    m.insert("M", NFKCQuickCheck::Maybe);
+    m.insert("N", NFKCQuickCheck::No);
+    m.insert("Y", NFKCQuickCheck::Yes);
     m.get(name).cloned()
 }
 
 fn get_nfkd_quick_check_enum(name: &str) -> Option<NFKDQuickCheck> {
     let mut m: LiteMap<&str, NFKDQuickCheck> = LiteMap::new();
-    m.insert("No", NFKDQuickCheck::No);
-    m.insert("Yes", NFKDQuickCheck::Yes);
+    m.insert("N", NFKDQuickCheck::No);
+    m.insert("Y", NFKDQuickCheck::Yes);
     m.get(name).cloned()
 }
 
 fn get_numeric_type_enum(name: &str) -> Option<NumericType> {
     let mut m: LiteMap<&str, NumericType> = LiteMap::new();
-    m.insert("Decimal", NumericType::Decimal);
-    m.insert("Digit", NumericType::Digit);
+    m.insert("De", NumericType::Decimal);
+    m.insert("Di", NumericType::Digit);
     m.insert("None", NumericType::None);
-    m.insert("Numeric", NumericType::Numeric);
+    m.insert("Nu", NumericType::Numeric);
     m.get(name).cloned()
 }
 
 fn get_sentence_break_enum(name: &str) -> Option<SentenceBreak> {
     let mut m: LiteMap<&str, SentenceBreak> = LiteMap::new();
-    m.insert("ATerm", SentenceBreak::ATerm);
-    m.insert("Close", SentenceBreak::Close);
+    m.insert("AT", SentenceBreak::ATerm);
+    m.insert("CL", SentenceBreak::Close);
     m.insert("CR", SentenceBreak::CR);
-    m.insert("Extend", SentenceBreak::Extend);
-    m.insert("Format", SentenceBreak::Format);
-    m.insert("OLetter", SentenceBreak::OLetter);
+    m.insert("EX", SentenceBreak::Extend);
+    m.insert("FO", SentenceBreak::Format);
+    m.insert("LE", SentenceBreak::OLetter);
     m.insert("LF", SentenceBreak::LF);
-    m.insert("Lower", SentenceBreak::Lower);
-    m.insert("Numeric", SentenceBreak::Numeric);
-    m.insert("SContinue", SentenceBreak::SContinue);
-    m.insert("Sep", SentenceBreak::Sep);
-    m.insert("Sp", SentenceBreak::Sp);
-    m.insert("STerm", SentenceBreak::STerm);
-    m.insert("Upper", SentenceBreak::Upper);
-    m.insert("Other", SentenceBreak::Other);
+    m.insert("LO", SentenceBreak::Lower);
+    m.insert("NU", SentenceBreak::Numeric);
+    m.insert("SC", SentenceBreak::SContinue);
+    m.insert("SE", SentenceBreak::Sep);
+    m.insert("SP", SentenceBreak::Sp);
+    m.insert("ST", SentenceBreak::STerm);
+    m.insert("UP", SentenceBreak::Upper);
+    m.insert("XX", SentenceBreak::Other);
     m.get(name).cloned()    
 }
 
 fn get_trail_canonical_combining_class_enum(name: &str) -> Option<TrailCanonicalCombiningClass> {
     let mut m: LiteMap<&str, TrailCanonicalCombiningClass> = LiteMap::new();
-    m.insert("Not_Reordered", TrailCanonicalCombiningClass::NotReordered);
-    m.insert("Overlay", TrailCanonicalCombiningClass::Overlay);
-    m.insert("CCC10", TrailCanonicalCombiningClass::CCC10);
-    m.insert("CCC103", TrailCanonicalCombiningClass::CCC103);
-    m.insert("CCC107", TrailCanonicalCombiningClass::CCC107);
-    m.insert("CCC11", TrailCanonicalCombiningClass::CCC11);
-    m.insert("CCC118", TrailCanonicalCombiningClass::CCC118);
-    m.insert("CCC12", TrailCanonicalCombiningClass::CCC12);
-    m.insert("CCC122", TrailCanonicalCombiningClass::CCC122);
-    m.insert("CCC129", TrailCanonicalCombiningClass::CCC129);
-    m.insert("CCC13", TrailCanonicalCombiningClass::CCC13);
-    m.insert("CCC130", TrailCanonicalCombiningClass::CCC130);
-    m.insert("CCC132", TrailCanonicalCombiningClass::CCC132);
-    m.insert("CCC133", TrailCanonicalCombiningClass::CCC133);
-    m.insert("CCC14", TrailCanonicalCombiningClass::CCC14);
-    m.insert("CCC15", TrailCanonicalCombiningClass::CCC15);
-    m.insert("CCC16", TrailCanonicalCombiningClass::CCC16);
-    m.insert("CCC17", TrailCanonicalCombiningClass::CCC17);
-    m.insert("CCC18", TrailCanonicalCombiningClass::CCC18);
-    m.insert("CCC19", TrailCanonicalCombiningClass::CCC19);
-    m.insert("CCC20", TrailCanonicalCombiningClass::CCC20);
-    m.insert("Attached_Below_Left", TrailCanonicalCombiningClass::AttachedBelowLeft);
-    m.insert("Attached_Below", TrailCanonicalCombiningClass::AttachedBelow);
-    m.insert("CCC21", TrailCanonicalCombiningClass::CCC21);
-    m.insert("Attached_Above", TrailCanonicalCombiningClass::AttachedAbove);
-    m.insert("Attached_Above_Right", TrailCanonicalCombiningClass::AttachedAboveRight);
-    m.insert("Below_Left", TrailCanonicalCombiningClass::BelowLeft);
-    m.insert("CCC22", TrailCanonicalCombiningClass::CCC22);
-    m.insert("Below", TrailCanonicalCombiningClass::Below);
-    m.insert("Below_Right", TrailCanonicalCombiningClass::BelowRight);
-    m.insert("Left", TrailCanonicalCombiningClass::Left);
-    m.insert("Right", TrailCanonicalCombiningClass::Right);
-    m.insert("Above_Left", TrailCanonicalCombiningClass::AboveLeft);
-    m.insert("CCC23", TrailCanonicalCombiningClass::CCC23);
-    m.insert("Above", TrailCanonicalCombiningClass::Above);
-    m.insert("Above_Right", TrailCanonicalCombiningClass::AboveRight);
-    m.insert("Double_Below", TrailCanonicalCombiningClass::DoubleBelow);
-    m.insert("Double_Above", TrailCanonicalCombiningClass::DoubleAbove);
-    m.insert("CCC24", TrailCanonicalCombiningClass::CCC24);
-    m.insert("Iota_Subscript", TrailCanonicalCombiningClass::IotaSubscript);
-    m.insert("CCC25", TrailCanonicalCombiningClass::CCC25);
-    m.insert("CCC26", TrailCanonicalCombiningClass::CCC26);
-    m.insert("CCC27", TrailCanonicalCombiningClass::CCC27);
-    m.insert("CCC28", TrailCanonicalCombiningClass::CCC28);
-    m.insert("CCC29", TrailCanonicalCombiningClass::CCC29);
-    m.insert("CCC30", TrailCanonicalCombiningClass::CCC30);
-    m.insert("CCC31", TrailCanonicalCombiningClass::CCC31);
-    m.insert("CCC32", TrailCanonicalCombiningClass::CCC32);
-    m.insert("CCC33", TrailCanonicalCombiningClass::CCC33);
-    m.insert("CCC34", TrailCanonicalCombiningClass::CCC34);
-    m.insert("CCC35", TrailCanonicalCombiningClass::CCC35);
-    m.insert("CCC36", TrailCanonicalCombiningClass::CCC36);
-    m.insert("Han_Reading", TrailCanonicalCombiningClass::HanReading);
-    m.insert("Nukta", TrailCanonicalCombiningClass::Nukta);
-    m.insert("Kana_Voicing", TrailCanonicalCombiningClass::KanaVoicing);
-    m.insert("CCC84", TrailCanonicalCombiningClass::CCC84);
-    m.insert("Virama", TrailCanonicalCombiningClass::Virama);
-    m.insert("CCC91", TrailCanonicalCombiningClass::CCC91);
+    m.insert("0", TrailCanonicalCombiningClass::NotReordered);
+    m.insert("1", TrailCanonicalCombiningClass::Overlay);
+    m.insert("10", TrailCanonicalCombiningClass::CCC10);
+    m.insert("103", TrailCanonicalCombiningClass::CCC103);
+    m.insert("107", TrailCanonicalCombiningClass::CCC107);
+    m.insert("11", TrailCanonicalCombiningClass::CCC11);
+    m.insert("118", TrailCanonicalCombiningClass::CCC118);
+    m.insert("12", TrailCanonicalCombiningClass::CCC12);
+    m.insert("122", TrailCanonicalCombiningClass::CCC122);
+    m.insert("129", TrailCanonicalCombiningClass::CCC129);
+    m.insert("13", TrailCanonicalCombiningClass::CCC13);
+    m.insert("130", TrailCanonicalCombiningClass::CCC130);
+    m.insert("132", TrailCanonicalCombiningClass::CCC132);
+    m.insert("133", TrailCanonicalCombiningClass::CCC133);
+    m.insert("14", TrailCanonicalCombiningClass::CCC14);
+    m.insert("15", TrailCanonicalCombiningClass::CCC15);
+    m.insert("16", TrailCanonicalCombiningClass::CCC16);
+    m.insert("17", TrailCanonicalCombiningClass::CCC17);
+    m.insert("18", TrailCanonicalCombiningClass::CCC18);
+    m.insert("19", TrailCanonicalCombiningClass::CCC19);
+    m.insert("20", TrailCanonicalCombiningClass::CCC20);
+    m.insert("200", TrailCanonicalCombiningClass::AttachedBelowLeft);
+    m.insert("202", TrailCanonicalCombiningClass::AttachedBelow);
+    m.insert("21", TrailCanonicalCombiningClass::CCC21);
+    m.insert("214", TrailCanonicalCombiningClass::AttachedAbove);
+    m.insert("216", TrailCanonicalCombiningClass::AttachedAboveRight);
+    m.insert("218", TrailCanonicalCombiningClass::BelowLeft);
+    m.insert("22", TrailCanonicalCombiningClass::CCC22);
+    m.insert("220", TrailCanonicalCombiningClass::Below);
+    m.insert("222", TrailCanonicalCombiningClass::BelowRight);
+    m.insert("224", TrailCanonicalCombiningClass::Left);
+    m.insert("226", TrailCanonicalCombiningClass::Right);
+    m.insert("228", TrailCanonicalCombiningClass::AboveLeft);
+    m.insert("23", TrailCanonicalCombiningClass::CCC23);
+    m.insert("230", TrailCanonicalCombiningClass::Above);
+    m.insert("232", TrailCanonicalCombiningClass::AboveRight);
+    m.insert("233", TrailCanonicalCombiningClass::DoubleBelow);
+    m.insert("234", TrailCanonicalCombiningClass::DoubleAbove);
+    m.insert("24", TrailCanonicalCombiningClass::CCC24);
+    m.insert("240", TrailCanonicalCombiningClass::IotaSubscript);
+    m.insert("25", TrailCanonicalCombiningClass::CCC25);
+    m.insert("26", TrailCanonicalCombiningClass::CCC26);
+    m.insert("27", TrailCanonicalCombiningClass::CCC27);
+    m.insert("28", TrailCanonicalCombiningClass::CCC28);
+    m.insert("29", TrailCanonicalCombiningClass::CCC29);
+    m.insert("30", TrailCanonicalCombiningClass::CCC30);
+    m.insert("31", TrailCanonicalCombiningClass::CCC31);
+    m.insert("32", TrailCanonicalCombiningClass::CCC32);
+    m.insert("33", TrailCanonicalCombiningClass::CCC33);
+    m.insert("34", TrailCanonicalCombiningClass::CCC34);
+    m.insert("35", TrailCanonicalCombiningClass::CCC35);
+    m.insert("36", TrailCanonicalCombiningClass::CCC36);
+    m.insert("6", TrailCanonicalCombiningClass::HanReading);
+    m.insert("7", TrailCanonicalCombiningClass::Nukta);
+    m.insert("8", TrailCanonicalCombiningClass::KanaVoicing);
+    m.insert("84", TrailCanonicalCombiningClass::CCC84);
+    m.insert("9", TrailCanonicalCombiningClass::Virama);
+    m.insert("91", TrailCanonicalCombiningClass::CCC91);
     m.get(name).cloned()
 }
 
 fn get_vertical_orientation_enum(name: &str) -> Option<VerticalOrientation> {
     let mut m: LiteMap<&str, VerticalOrientation> = LiteMap::new();
-    m.insert("Rotated", VerticalOrientation::Rotated);
-    m.insert("Transformed_Rotated", VerticalOrientation::TransformedRotated);
-    m.insert("Transformed_Upright", VerticalOrientation::TransformedUpright);
-    m.insert("Upright", VerticalOrientation::Upright);
+    m.insert("R", VerticalOrientation::Rotated);
+    m.insert("Tr", VerticalOrientation::TransformedRotated);
+    m.insert("Tu", VerticalOrientation::TransformedUpright);
+    m.insert("U", VerticalOrientation::Upright);
     m.get(name).cloned()
 }
 
 fn get_word_break_enum(name: &str) -> Option<WordBreak> {
     let mut m: LiteMap<&str, WordBreak> = LiteMap::new();
     m.insert("CR", WordBreak::CR);
-    m.insert("Double_Quote", WordBreak::DoubleQuote);
-    m.insert("E_Base", WordBreak::EBase);
-    m.insert("E_Base_GAZ", WordBreak::EBaseGAZ);
-    m.insert("E_Modifier", WordBreak::EModifier);
-    m.insert("ExtendNumLet", WordBreak::ExtendNumLet);
+    m.insert("DQ", WordBreak::DoubleQuote);
+    m.insert("EB", WordBreak::EBase);
+    m.insert("EBG", WordBreak::EBaseGAZ);
+    m.insert("EM", WordBreak::EModifier);
+    m.insert("EX", WordBreak::ExtendNumLet);
     m.insert("Extend", WordBreak::Extend);
-    m.insert("Format", WordBreak::Format);
-    m.insert("Glue_After_Zwj", WordBreak::GlueAfterZwj);
-    m.insert("Hebrew_Letter", WordBreak::HebrewLetter);
-    m.insert("Katakana", WordBreak::Katakana);
-    m.insert("ALetter", WordBreak::ALetter);
+    m.insert("FO", WordBreak::Format);
+    m.insert("GAZ", WordBreak::GlueAfterZwj);
+    m.insert("HL", WordBreak::HebrewLetter);
+    m.insert("KA", WordBreak::Katakana);
+    m.insert("LE", WordBreak::ALetter);
     m.insert("LF", WordBreak::LF);
-    m.insert("MidNumLet", WordBreak::MidNumLet);
-    m.insert("MidLetter", WordBreak::MidLetter);
-    m.insert("MidNum", WordBreak::MidNum);
-    m.insert("Newline", WordBreak::Newline);
-    m.insert("Numeric", WordBreak::Numeric);
-    m.insert("Regional_Indicator", WordBreak::RegionalIndicator);
-    m.insert("Single_Quote", WordBreak::SingleQuote);
+    m.insert("MB", WordBreak::MidNumLet);
+    m.insert("ML", WordBreak::MidLetter);
+    m.insert("MN", WordBreak::MidNum);
+    m.insert("NL", WordBreak::Newline);
+    m.insert("NU", WordBreak::Numeric);
+    m.insert("RI", WordBreak::RegionalIndicator);
+    m.insert("SQ", WordBreak::SingleQuote);
     m.insert("WSegSpace", WordBreak::WSegSpace);
-    m.insert("Other", WordBreak::Other);
+    m.insert("XX", WordBreak::Other);
     m.insert("ZWJ", WordBreak::ZWJ);
     m.get(name).cloned()
 }
@@ -700,11 +701,14 @@ mod enum_tests {
     use super::*;
 
     #[test]
-    fn str_to_enum_fn_test() {
-        assert_eq!(get_line_break_enum("Line_Feed"), Some(LineBreak::LineFeed));
+    fn prop_name_str_to_enum_fn_test() {
+        assert_eq!(get_line_break_enum("LF"), Some(LineBreak::LineFeed));
         assert_eq!(get_line_break_enum("cheezburger"), None);
+    }
 
-        assert_eq!(get_canonical_combining_class_enum("CCC21"), Some(CanonicalCombiningClass::CCC21));
+    #[test]
+    fn prop_value_str_to_enum_fn_test() {
+        assert_eq!(get_canonical_combining_class_enum("21"), Some(CanonicalCombiningClass::CCC21));
         assert_eq!(get_canonical_combining_class_enum("cheezburger"), None);
     }
 }
