@@ -174,7 +174,8 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
     fs::remove_dir_all(&cldr_json_root).map_err(|e| (e, &cldr_json_root))?;
 
     let locales_glob_substitute = format!(
-        "{{{}}}",
+        // Include "root" (locales array has "und" instead)
+        "{{{},root}}",
         metadata
             .package_metadata
             .locales
@@ -195,6 +196,7 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
     )
     .max_depth(4)
     .follow_links(true)
+    .case_insensitive(true)
     .build()?;
 
     for path in walker {
