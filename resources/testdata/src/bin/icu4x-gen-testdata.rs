@@ -195,8 +195,7 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
     )
     .max_depth(4)
     .follow_links(true)
-    .build()?
-    .into_iter();
+    .build()?;
 
     for path in walker {
         let old_path = path?.into_path();

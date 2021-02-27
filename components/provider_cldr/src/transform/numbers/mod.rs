@@ -132,8 +132,8 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
 
 #[test]
 fn test_basic() {
-    use icu_locid_macros::langid;
-    use std::borrow::Cow;
+    // use icu_locid_macros::langid;
+    // use std::borrow::Cow;
 
     // let json_str = std::fs::read_to_string("tests/testdata/my-numbers.json").unwrap();
     /*

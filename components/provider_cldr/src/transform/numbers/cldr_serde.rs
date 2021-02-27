@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
 use crate::cldr_langid::CldrLangID;
 use serde::Deserialize;
 use serde_aux::prelude::*;
@@ -54,7 +58,7 @@ pub mod numbers_json {
                 // Key is of the form: "symbols-numberSystem-latn"
                 let mut key_it = key.split('-');
                 let stype = key_it.next();
-                let numsys: Option<Result<TinyStr8, M::Error>> = key_it.skip(1).next().map(|s| {
+                let numsys: Option<Result<TinyStr8, M::Error>> = key_it.nth(2).map(|s| {
                     s.parse().map_err(|_| {
                         M::Error::invalid_value(
                             Unexpected::Str(&key),
