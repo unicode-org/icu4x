@@ -15,9 +15,13 @@ pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of cldr-dates:
     /// <https://github.com/unicode-cldr/cldr-dates-full>
     fn cldr_dates(&self) -> Result<PathBuf, Error>;
+
+    /// Path to checkout of cldr-numbers:
+    /// <https://github.com/unicode-cldr/cldr-numbers-full>
+    fn cldr_numbers(&self) -> Result<PathBuf, Error>;
 }
 
-/// Implementation of `CldrPaths` for data directories already downloaded.
+/// Implementation of `CldrPaths` for multiple separate local CLDR JSON directories per component.
 ///
 /// # Example
 ///
@@ -37,6 +41,7 @@ pub trait CldrPaths: std::fmt::Debug {
 pub struct CldrPathsLocal {
     pub cldr_core: Result<PathBuf, MissingSourceError>,
     pub cldr_dates: Result<PathBuf, MissingSourceError>,
+    pub cldr_numbers: Result<PathBuf, MissingSourceError>,
 }
 
 impl CldrPaths for CldrPathsLocal {
@@ -46,6 +51,9 @@ impl CldrPaths for CldrPathsLocal {
     fn cldr_dates(&self) -> Result<PathBuf, Error> {
         self.cldr_dates.clone().map_err(|e| e.into())
     }
+    fn cldr_numbers(&self) -> Result<PathBuf, Error> {
+        self.cldr_numbers.clone().map_err(|e| e.into())
+    }
 }
 
 impl Default for CldrPathsLocal {
@@ -53,6 +61,51 @@ impl Default for CldrPathsLocal {
         Self {
             cldr_core: Err(MissingSourceError { src: "cldr-core" }),
             cldr_dates: Err(MissingSourceError { src: "cldr-dates" }),
+            cldr_numbers: Err(MissingSourceError {
+                src: "cldr-numbers",
+            }),
         }
+    }
+}
+
+/// Implementation of `CldrPaths` for one combined local CLDR JSON directory.
+///
+/// # Example
+///
+/// ```
+/// use icu_provider_cldr::CldrPathsAllInOne;
+/// use icu_provider_cldr::CldrJsonDataProvider;
+/// use std::path::PathBuf;
+///
+/// let paths = CldrPathsAllInOne {
+///     cldr_json_root: PathBuf::from("/path/to/cldr-json"),
+///     suffix: "full",
+/// };
+///
+/// let data_provider = CldrJsonDataProvider::new(&paths);
+/// ```
+#[derive(Debug, PartialEq)]
+pub struct CldrPathsAllInOne {
+    /// Path to the CLDR JSON root directory
+    pub cldr_json_root: PathBuf,
+    /// CLDR JSON directory suffix: probably either "modern" or "full"
+    pub suffix: &'static str,
+}
+
+impl CldrPaths for CldrPathsAllInOne {
+    fn cldr_core(&self) -> Result<PathBuf, Error> {
+        Ok(self.cldr_json_root.clone().join("cldr-core"))
+    }
+    fn cldr_dates(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-dates-{}", self.suffix)))
+    }
+    fn cldr_numbers(&self) -> Result<PathBuf, Error> {
+        Ok(self
+            .cldr_json_root
+            .clone()
+            .join(format!("cldr-numbers-{}", self.suffix)))
     }
 }
