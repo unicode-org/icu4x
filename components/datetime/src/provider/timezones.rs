@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::borrow::Cow;
 pub type LiteMap<K, V> = std::collections::BTreeMap<K, V>;
 //use litemap::LiteMap;
@@ -6,7 +5,7 @@ pub type LiteMap<K, V> = std::collections::BTreeMap<K, V>;
 macro_rules! map_access {
     ($outer: ty => $inner: ty) => {
         impl $outer {
-            fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
+            pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
             where
                 Q: Ord,
                 Cow<'static, str>: std::borrow::Borrow<Q>,
