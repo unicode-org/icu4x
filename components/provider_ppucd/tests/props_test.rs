@@ -5,6 +5,7 @@
 
 use icu_provider_ppucd::support::*;
 use icu_uniset::UnicodeSet;
+use icu_uniset::enum_props::*;
 
 #[test]
 fn test_wspace_getter() {
@@ -29,7 +30,7 @@ fn test_enum_props_getters() {
 
     // lb=LF
     let lb_lf_uniset: UnicodeSet =
-        icu_uniset::props::get_line_break_line_feed(&ppucd_provider).unwrap();
+        icu_uniset::props::get_line_break_val_set(&ppucd_provider, LineBreak::LineFeed).unwrap();
     let exp_lb_lf_uniset: UnicodeSet = UnicodeSet::from_inversion_list(vec![10, 11]).unwrap();
     assert_eq!(lb_lf_uniset, exp_lb_lf_uniset);
 }
@@ -42,7 +43,7 @@ fn test_enum_props_getters_truncated_resc_key_subcategory() {
 
     // InPC=Top_And_Bottom_And_Left
     let inpc_topbotleft_uniset: UnicodeSet =
-        icu_uniset::props::get_indic_positional_category_top_and_bottom_and_left(&ppucd_provider)
+        icu_uniset::props::get_indic_positional_category_val_set(&ppucd_provider, IndicPositionalCategory::TopAndBottomAndLeft)
             .unwrap();
     let exp_inpc_topbotleft_uniset: UnicodeSet =
         UnicodeSet::from_inversion_list(vec![4156, 4157, 71454, 71455]).unwrap();
