@@ -219,3 +219,33 @@ impl<K, V> LiteMap<K, V> {
         self.values.iter_mut().map(|val| (&val.0, &mut val.1))
     }
 }
+
+#[cfg(feature = "serde")]
+impl<K: serde::Serialize, V: serde::Serialize> serde::Serialize for LiteMap<K, V> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.values.serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, K: Ord + serde::Deserialize<'de>, V: serde::Deserialize<'de>> serde::Deserialize<'de>
+    for LiteMap<K, V>
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let values = <Vec<(K, V)> as serde::Deserialize>::deserialize(deserializer)?;
+        if cfg!(debug_assertions) {
+            if values.windows(2).any(|window| window[0].0 > window[1].0) {
+                return Err(serde::de::Error::custom(
+                    "Found out-of-order values when deserializing LiteMap",
+                ));
+            }
+        }
+        Ok(Self { values })
+    }
+}
