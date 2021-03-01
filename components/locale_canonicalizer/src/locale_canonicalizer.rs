@@ -18,6 +18,18 @@ pub struct LocaleCanonicalizer<'a> {
     likely_subtags: Cow<'a, LikelySubtagsV1>,
 }
 
+fn update_langid(
+    entry: &LanguageIdentifier,
+    langid: &mut LanguageIdentifier,
+) -> CanonicalizationResult {
+    if langid.language.is_empty() {
+        langid.language = entry.language;
+    }
+    langid.script = langid.script.or(entry.script);
+    langid.region = langid.region.or(entry.region);
+    CanonicalizationResult::Modified
+}
+
 impl LocaleCanonicalizer<'_> {
     /// A constructor which takes a DataProvider and creates a
     /// LocaleCanonicalizer.
@@ -63,17 +75,6 @@ impl LocaleCanonicalizer<'_> {
     /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
-        let update_langid = |entry: &LanguageIdentifier,
-                             langid: &mut LanguageIdentifier|
-         -> CanonicalizationResult {
-            if langid.language.is_empty() {
-                langid.language = entry.language;
-            }
-            langid.script = langid.script.or(entry.script);
-            langid.region = langid.region.or(entry.region);
-            CanonicalizationResult::Modified
-        };
-
         let langid = langid.as_mut();
 
         if !langid.language.is_empty() && langid.script.is_some() && langid.region.is_some() {
