@@ -831,6 +831,7 @@ mod enum_tests {
     #[test]
     fn get_prop_name_identifier_test() {
         assert_eq!(get_prop_name_identifier("lb", "LF"), Some("12=26".to_string()));
+        assert_eq!(get_prop_name_identifier("ccc", "230"), Some("2=230".to_string()));
     }
 
 }

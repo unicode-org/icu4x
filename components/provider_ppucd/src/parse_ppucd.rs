@@ -1066,7 +1066,7 @@ mod gen_properties_test {
         };
         exp_uni_props_set.insert(vo_r);
         let ccc_9 = UnicodeProperty {
-            name: Cow::Borrowed("2=56"),
+            name: Cow::Borrowed("2=9"),
             inv_list: vec![5908, 5909],
         };
         exp_uni_props_set.insert(ccc_9);
