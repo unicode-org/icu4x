@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 #![allow(clippy::unreadable_literal, dead_code)]
 
-use crate::provider::*;
 use crate::enum_props::*;
+use crate::provider::*;
 use crate::{UnicodeSet, UnicodeSetError};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -462,8 +462,11 @@ pub fn get_xid_start_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
 // Enumerated property getter fns
 //
 
-
-pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: BidiClass) -> Result<UnicodeSet, UnicodeSetError> {
+/// Return a `UnicodeSet` for a particular value of the Bidi_Class Unicode enumerated property
+pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+    enum_val: BidiClass,
+) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         BidiClass::ArabicLetter => get_prop(provider, key::BIDI_CLASS_ARABIC_LETTER_V1),
         BidiClass::ArabicNumber => get_prop(provider, key::BIDI_CLASS_ARABIC_NUMBER_V1),
@@ -473,25 +476,50 @@ pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
         BidiClass::EuropeanNumber => get_prop(provider, key::BIDI_CLASS_EUROPEAN_NUMBER_V1),
         BidiClass::EuropeanSeparator => get_prop(provider, key::BIDI_CLASS_EUROPEAN_SEPARATOR_V1),
         BidiClass::EuropeanTerminator => get_prop(provider, key::BIDI_CLASS_EUROPEAN_TERMINATOR_V1),
-        BidiClass::FirstStrongIsolate => get_prop(provider, key::BIDI_CLASS_FIRST_STRONG_ISOLATE_V1),
+        BidiClass::FirstStrongIsolate => {
+            get_prop(provider, key::BIDI_CLASS_FIRST_STRONG_ISOLATE_V1)
+        }
         BidiClass::LeftToRight => get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_V1),
-        BidiClass::LeftToRightEmbedding => get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_EMBEDDING_V1),
-        BidiClass::LeftToRightIsolate => get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_ISOLATE_V1),
-        BidiClass::LeftToRightOverride => get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_OVERRIDE_V1),
+        BidiClass::LeftToRightEmbedding => {
+            get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_EMBEDDING_V1)
+        }
+        BidiClass::LeftToRightIsolate => {
+            get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_ISOLATE_V1)
+        }
+        BidiClass::LeftToRightOverride => {
+            get_prop(provider, key::BIDI_CLASS_LEFT_TO_RIGHT_OVERRIDE_V1)
+        }
         BidiClass::NonspacingMark => get_prop(provider, key::BIDI_CLASS_NONSPACING_MARK_V1),
         BidiClass::OtherNeutral => get_prop(provider, key::BIDI_CLASS_OTHER_NEUTRAL_V1),
-        BidiClass::PopDirectionalFormat => get_prop(provider, key::BIDI_CLASS_POP_DIRECTIONAL_FORMAT_V1),
-        BidiClass::PopDirectionalIsolate => get_prop(provider, key::BIDI_CLASS_POP_DIRECTIONAL_ISOLATE_V1),
+        BidiClass::PopDirectionalFormat => {
+            get_prop(provider, key::BIDI_CLASS_POP_DIRECTIONAL_FORMAT_V1)
+        }
+        BidiClass::PopDirectionalIsolate => {
+            get_prop(provider, key::BIDI_CLASS_POP_DIRECTIONAL_ISOLATE_V1)
+        }
         BidiClass::RightToLeft => get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_V1),
-        BidiClass::RightToLeftEmbedding => get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_EMBEDDING_V1),
-        BidiClass::RightToLeftIsolate => get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_ISOLATE_V1),
-        BidiClass::RightToLeftOverride => get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_OVERRIDE_V1),
+        BidiClass::RightToLeftEmbedding => {
+            get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_EMBEDDING_V1)
+        }
+        BidiClass::RightToLeftIsolate => {
+            get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_ISOLATE_V1)
+        }
+        BidiClass::RightToLeftOverride => {
+            get_prop(provider, key::BIDI_CLASS_RIGHT_TO_LEFT_OVERRIDE_V1)
+        }
         BidiClass::SegmentSeparator => get_prop(provider, key::BIDI_CLASS_SEGMENT_SEPARATOR_V1),
         BidiClass::WhiteSpace => get_prop(provider, key::BIDI_CLASS_WHITE_SPACE_V1),
     }
 }
 
-pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: BidiPairedBracketType) -> Result<UnicodeSet, UnicodeSetError> {
+/// Return a `UnicodeSet` for a particular value of the Bidi_Paired_Bracket_Type Unicode enumerated property
+pub fn get_bidi_paired_bracket_type_val_set<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
+    provider: &D,
+    enum_val: BidiPairedBracketType,
+) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         BidiPairedBracketType::Close => get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_CLOSE_V1),
         BidiPairedBracketType::None => get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_NONE_V1),
@@ -499,71 +527,196 @@ pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, UnicodePrope
     }
 }
 
-pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: CanonicalCombiningClass) -> Result<UnicodeSet, UnicodeSetError> {
-    match enum_val {       
-        CanonicalCombiningClass::NotReordered => get_prop(provider, key::CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
-        CanonicalCombiningClass::Overlay => get_prop(provider, key::CANONICAL_COMBINING_CLASS_OVERLAY_V1),
-        CanonicalCombiningClass::CCC10 => get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC10_V1),
-        CanonicalCombiningClass::CCC103 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC103_V1),
-        CanonicalCombiningClass::CCC107 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC107_V1),
-        CanonicalCombiningClass::CCC11 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC11_V1),
-        CanonicalCombiningClass::CCC118 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC118_V1),
-        CanonicalCombiningClass::CCC12 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC12_V1),
-        CanonicalCombiningClass::CCC122 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC122_V1),
-        CanonicalCombiningClass::CCC129 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC129_V1),
-        CanonicalCombiningClass::CCC13 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC13_V1),
-        CanonicalCombiningClass::CCC130 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC130_V1),
-        CanonicalCombiningClass::CCC132 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC132_V1),
-        CanonicalCombiningClass::CCC133 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC133_V1),
-        CanonicalCombiningClass::CCC14 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC14_V1),
-        CanonicalCombiningClass::CCC15 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC15_V1),
-        CanonicalCombiningClass::CCC16 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC16_V1),
-        CanonicalCombiningClass::CCC17 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC17_V1),
-        CanonicalCombiningClass::CCC18 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC18_V1),
-        CanonicalCombiningClass::CCC19 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC19_V1),
-        CanonicalCombiningClass::CCC20 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC20_V1),
-        CanonicalCombiningClass::AttachedBelowLeft => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1),
-        CanonicalCombiningClass::AttachedBelow => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1),
-        CanonicalCombiningClass::CCC21 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC21_V1),
-        CanonicalCombiningClass::AttachedAbove => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1),
-        CanonicalCombiningClass::AttachedAboveRight => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1),
-        CanonicalCombiningClass::BelowLeft => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1),
-        CanonicalCombiningClass::CCC22 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC22_V1),
-        CanonicalCombiningClass::Below => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_BELOW_V1),
-        CanonicalCombiningClass::BelowRight => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1),
-        CanonicalCombiningClass::Left => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_LEFT_V1),
-        CanonicalCombiningClass::Right => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_RIGHT_V1),
-        CanonicalCombiningClass::AboveLeft => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1),
-        CanonicalCombiningClass::CCC23 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC23_V1),
-        CanonicalCombiningClass::Above => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ABOVE_V1),
-        CanonicalCombiningClass::AboveRight => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1),
-        CanonicalCombiningClass::DoubleBelow => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1),
-        CanonicalCombiningClass::DoubleAbove => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1),
-        CanonicalCombiningClass::CCC24 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC24_V1),
-        CanonicalCombiningClass::IotaSubscript => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1),
-        CanonicalCombiningClass::CCC25 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC25_V1),
-        CanonicalCombiningClass::CCC26 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC26_V1),
-        CanonicalCombiningClass::CCC27 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC27_V1),
-        CanonicalCombiningClass::CCC28 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC28_V1),
-        CanonicalCombiningClass::CCC29 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC29_V1),
-        CanonicalCombiningClass::CCC30 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC30_V1),
-        CanonicalCombiningClass::CCC31 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC31_V1),
-        CanonicalCombiningClass::CCC32 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC32_V1),
-        CanonicalCombiningClass::CCC33 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC33_V1),
-        CanonicalCombiningClass::CCC34 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC34_V1),
-        CanonicalCombiningClass::CCC35 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC35_V1),
-        CanonicalCombiningClass::CCC36 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC36_V1),
-        CanonicalCombiningClass::HanReading => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_HAN_READING_V1),
-        CanonicalCombiningClass::Nukta => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_NUKTA_V1),
-        CanonicalCombiningClass::KanaVoicing => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_KANA_VOICING_V1),
-        CanonicalCombiningClass::CCC84 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC84_V1),
-        CanonicalCombiningClass::Virama => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_VIRAMA_V1),
-        CanonicalCombiningClass::CCC91 => get_prop(provider, key:: CANONICAL_COMBINING_CLASS_CCC91_V1),
+/// Return a `UnicodeSet` for a particular value of the Canonical_Combining_Class Unicode enumerated property
+pub fn get_canonical_combining_class_val_set<
+    'd,
+    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
+>(
+    provider: &D,
+    enum_val: CanonicalCombiningClass,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    match enum_val {
+        CanonicalCombiningClass::NotReordered => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1)
+        }
+        CanonicalCombiningClass::Overlay => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_OVERLAY_V1)
+        }
+        CanonicalCombiningClass::CCC10 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC10_V1)
+        }
+        CanonicalCombiningClass::CCC103 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC103_V1)
+        }
+        CanonicalCombiningClass::CCC107 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC107_V1)
+        }
+        CanonicalCombiningClass::CCC11 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC11_V1)
+        }
+        CanonicalCombiningClass::CCC118 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC118_V1)
+        }
+        CanonicalCombiningClass::CCC12 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC12_V1)
+        }
+        CanonicalCombiningClass::CCC122 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC122_V1)
+        }
+        CanonicalCombiningClass::CCC129 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC129_V1)
+        }
+        CanonicalCombiningClass::CCC13 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC13_V1)
+        }
+        CanonicalCombiningClass::CCC130 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC130_V1)
+        }
+        CanonicalCombiningClass::CCC132 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC132_V1)
+        }
+        CanonicalCombiningClass::CCC133 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC133_V1)
+        }
+        CanonicalCombiningClass::CCC14 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC14_V1)
+        }
+        CanonicalCombiningClass::CCC15 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC15_V1)
+        }
+        CanonicalCombiningClass::CCC16 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC16_V1)
+        }
+        CanonicalCombiningClass::CCC17 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC17_V1)
+        }
+        CanonicalCombiningClass::CCC18 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC18_V1)
+        }
+        CanonicalCombiningClass::CCC19 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC19_V1)
+        }
+        CanonicalCombiningClass::CCC20 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC20_V1)
+        }
+        CanonicalCombiningClass::AttachedBelowLeft => get_prop(
+            provider,
+            key::CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1,
+        ),
+        CanonicalCombiningClass::AttachedBelow => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1)
+        }
+        CanonicalCombiningClass::CCC21 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC21_V1)
+        }
+        CanonicalCombiningClass::AttachedAbove => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1)
+        }
+        CanonicalCombiningClass::AttachedAboveRight => get_prop(
+            provider,
+            key::CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1,
+        ),
+        CanonicalCombiningClass::BelowLeft => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1)
+        }
+        CanonicalCombiningClass::CCC22 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC22_V1)
+        }
+        CanonicalCombiningClass::Below => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_BELOW_V1)
+        }
+        CanonicalCombiningClass::BelowRight => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1)
+        }
+        CanonicalCombiningClass::Left => get_prop(provider, key::CANONICAL_COMBINING_CLASS_LEFT_V1),
+        CanonicalCombiningClass::Right => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_RIGHT_V1)
+        }
+        CanonicalCombiningClass::AboveLeft => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1)
+        }
+        CanonicalCombiningClass::CCC23 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC23_V1)
+        }
+        CanonicalCombiningClass::Above => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_ABOVE_V1)
+        }
+        CanonicalCombiningClass::AboveRight => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1)
+        }
+        CanonicalCombiningClass::DoubleBelow => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1)
+        }
+        CanonicalCombiningClass::DoubleAbove => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1)
+        }
+        CanonicalCombiningClass::CCC24 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC24_V1)
+        }
+        CanonicalCombiningClass::IotaSubscript => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1)
+        }
+        CanonicalCombiningClass::CCC25 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC25_V1)
+        }
+        CanonicalCombiningClass::CCC26 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC26_V1)
+        }
+        CanonicalCombiningClass::CCC27 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC27_V1)
+        }
+        CanonicalCombiningClass::CCC28 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC28_V1)
+        }
+        CanonicalCombiningClass::CCC29 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC29_V1)
+        }
+        CanonicalCombiningClass::CCC30 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC30_V1)
+        }
+        CanonicalCombiningClass::CCC31 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC31_V1)
+        }
+        CanonicalCombiningClass::CCC32 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC32_V1)
+        }
+        CanonicalCombiningClass::CCC33 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC33_V1)
+        }
+        CanonicalCombiningClass::CCC34 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC34_V1)
+        }
+        CanonicalCombiningClass::CCC35 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC35_V1)
+        }
+        CanonicalCombiningClass::CCC36 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC36_V1)
+        }
+        CanonicalCombiningClass::HanReading => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_HAN_READING_V1)
+        }
+        CanonicalCombiningClass::Nukta => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_NUKTA_V1)
+        }
+        CanonicalCombiningClass::KanaVoicing => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_KANA_VOICING_V1)
+        }
+        CanonicalCombiningClass::CCC84 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC84_V1)
+        }
+        CanonicalCombiningClass::Virama => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_VIRAMA_V1)
+        }
+        CanonicalCombiningClass::CCC91 => {
+            get_prop(provider, key::CANONICAL_COMBINING_CLASS_CCC91_V1)
+        }
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Decomposition_Type Unicode enumerated property
 pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: DecompositionType
+    provider: &D,
+    enum_val: DecompositionType,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         DecompositionType::Can => get_prop(provider, key::DECOMPOSITION_TYPE_CAN_V1),
@@ -587,8 +740,10 @@ pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the East_Asian_Width Unicode enumerated property
 pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: EastAsianWidth
+    provider: &D,
+    enum_val: EastAsianWidth,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         EastAsianWidth::Ambiguous => get_prop(provider, key::EAST_ASIAN_WIDTH_AMBIGUOUS_V1),
@@ -600,8 +755,10 @@ pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the General_Category Unicode enumerated property
 pub fn get_general_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: GeneralCategory
+    provider: &D,
+    enum_val: GeneralCategory,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         GeneralCategory::Other => get_prop(provider, key::GENERAL_CATEGORY_OTHER_V1),
@@ -612,154 +769,317 @@ pub fn get_general_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
         GeneralCategory::Surrogate => get_prop(provider, key::GENERAL_CATEGORY_SURROGATE_V1),
         GeneralCategory::Letter => get_prop(provider, key::GENERAL_CATEGORY_LETTER_V1),
         GeneralCategory::CasedLetter => get_prop(provider, key::GENERAL_CATEGORY_CASED_LETTER_V1),
-        GeneralCategory::LowercaseLetter => get_prop(provider, key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1),
-        GeneralCategory::ModifierLetter => get_prop(provider, key::GENERAL_CATEGORY_MODIFIER_LETTER_V1),
+        GeneralCategory::LowercaseLetter => {
+            get_prop(provider, key::GENERAL_CATEGORY_LOWERCASE_LETTER_V1)
+        }
+        GeneralCategory::ModifierLetter => {
+            get_prop(provider, key::GENERAL_CATEGORY_MODIFIER_LETTER_V1)
+        }
         GeneralCategory::OtherLetter => get_prop(provider, key::GENERAL_CATEGORY_OTHER_LETTER_V1),
-        GeneralCategory::TitlecaseLetter => get_prop(provider, key::GENERAL_CATEGORY_TITLECASE_LETTER_V1),
-        GeneralCategory::UppercaseLetter => get_prop(provider, key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1),
-        GeneralCategory::CombiningMark => get_prop(provider, key::GENERAL_CATEGORY_COMBINING_MARK_V1),
+        GeneralCategory::TitlecaseLetter => {
+            get_prop(provider, key::GENERAL_CATEGORY_TITLECASE_LETTER_V1)
+        }
+        GeneralCategory::UppercaseLetter => {
+            get_prop(provider, key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1)
+        }
+        GeneralCategory::CombiningMark => {
+            get_prop(provider, key::GENERAL_CATEGORY_COMBINING_MARK_V1)
+        }
         GeneralCategory::SpacingMark => get_prop(provider, key::GENERAL_CATEGORY_SPACING_MARK_V1),
-        GeneralCategory::EnclosingMark => get_prop(provider, key::GENERAL_CATEGORY_ENCLOSING_MARK_V1),
-        GeneralCategory::NonspacingMark => get_prop(provider, key::GENERAL_CATEGORY_NONSPACING_MARK_V1),
+        GeneralCategory::EnclosingMark => {
+            get_prop(provider, key::GENERAL_CATEGORY_ENCLOSING_MARK_V1)
+        }
+        GeneralCategory::NonspacingMark => {
+            get_prop(provider, key::GENERAL_CATEGORY_NONSPACING_MARK_V1)
+        }
         GeneralCategory::Number => get_prop(provider, key::GENERAL_CATEGORY_NUMBER_V1),
         GeneralCategory::Digit => get_prop(provider, key::GENERAL_CATEGORY_DIGIT_V1),
         GeneralCategory::LetterNumber => get_prop(provider, key::GENERAL_CATEGORY_LETTER_NUMBER_V1),
         GeneralCategory::OtherNumber => get_prop(provider, key::GENERAL_CATEGORY_OTHER_NUMBER_V1),
         GeneralCategory::Punct => get_prop(provider, key::GENERAL_CATEGORY_PUNCT_V1),
-        GeneralCategory::ConnectorPunctuation => get_prop(provider, key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1),
-        GeneralCategory::DashPunctuation => get_prop(provider, key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1),
-        GeneralCategory::ClosePunctuation => get_prop(provider, key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1),
-        GeneralCategory::FinalPunctuation => get_prop(provider, key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1),
-        GeneralCategory::InitialPunctuation => get_prop(provider, key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1),
-        GeneralCategory::OtherPunctuation => get_prop(provider, key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1),
-        GeneralCategory::OpenPunctuation => get_prop(provider, key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1),
+        GeneralCategory::ConnectorPunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1)
+        }
+        GeneralCategory::DashPunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_DASH_PUNCTUATION_V1)
+        }
+        GeneralCategory::ClosePunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1)
+        }
+        GeneralCategory::FinalPunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_FINAL_PUNCTUATION_V1)
+        }
+        GeneralCategory::InitialPunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1)
+        }
+        GeneralCategory::OtherPunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_OTHER_PUNCTUATION_V1)
+        }
+        GeneralCategory::OpenPunctuation => {
+            get_prop(provider, key::GENERAL_CATEGORY_OPEN_PUNCTUATION_V1)
+        }
         GeneralCategory::Symbol => get_prop(provider, key::GENERAL_CATEGORY_SYMBOL_V1),
-        GeneralCategory::CurrencySymbol => get_prop(provider, key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1),
-        GeneralCategory::ModifierSymbol => get_prop(provider, key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1),
+        GeneralCategory::CurrencySymbol => {
+            get_prop(provider, key::GENERAL_CATEGORY_CURRENCY_SYMBOL_V1)
+        }
+        GeneralCategory::ModifierSymbol => {
+            get_prop(provider, key::GENERAL_CATEGORY_MODIFIER_SYMBOL_V1)
+        }
         GeneralCategory::MathSymbol => get_prop(provider, key::GENERAL_CATEGORY_MATH_SYMBOL_V1),
         GeneralCategory::OtherSymbol => get_prop(provider, key::GENERAL_CATEGORY_OTHER_SYMBOL_V1),
         GeneralCategory::Separator => get_prop(provider, key::GENERAL_CATEGORY_SEPARATOR_V1),
-        GeneralCategory::LineSeparator => get_prop(provider, key::GENERAL_CATEGORY_LINE_SEPARATOR_V1),
-        GeneralCategory::ParagraphSeparator => get_prop(provider, key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1),
-        GeneralCategory::SpaceSeparator => get_prop(provider, key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1),
+        GeneralCategory::LineSeparator => {
+            get_prop(provider, key::GENERAL_CATEGORY_LINE_SEPARATOR_V1)
+        }
+        GeneralCategory::ParagraphSeparator => {
+            get_prop(provider, key::GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1)
+        }
+        GeneralCategory::SpaceSeparator => {
+            get_prop(provider, key::GENERAL_CATEGORY_SPACE_SEPARATOR_V1)
+        }
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Grapheme_Cluster_Break Unicode enumerated property
 pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: GraphemeClusterBreak
+    provider: &D,
+    enum_val: GraphemeClusterBreak,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         GraphemeClusterBreak::Control => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_CONTROL_V1),
         GraphemeClusterBreak::CR => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_CR_V1),
         GraphemeClusterBreak::EBase => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_BASE_V1),
-        GraphemeClusterBreak::EBaseGAZ => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_BASE_GAZ_V1),
-        GraphemeClusterBreak::EModifier => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_MODIFIER_V1),
+        GraphemeClusterBreak::EBaseGAZ => {
+            get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_BASE_GAZ_V1)
+        }
+        GraphemeClusterBreak::EModifier => {
+            get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_E_MODIFIER_V1)
+        }
         GraphemeClusterBreak::Extend => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_EXTEND_V1),
-        GraphemeClusterBreak::GlueAfterZwj => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_GLUE_AFTER_ZWJ_V1),
+        GraphemeClusterBreak::GlueAfterZwj => {
+            get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_GLUE_AFTER_ZWJ_V1)
+        }
         GraphemeClusterBreak::L => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_L_V1),
         GraphemeClusterBreak::LF => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_LF_V1),
         GraphemeClusterBreak::LV => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_LV_V1),
         GraphemeClusterBreak::LVT => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_LVT_V1),
         GraphemeClusterBreak::Prepend => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_PREPEND_V1),
-        GraphemeClusterBreak::RegionalIndicator => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_REGIONAL_INDICATOR_V1),
-        GraphemeClusterBreak::SpacingMark => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_SPACINGMARK_V1),
+        GraphemeClusterBreak::RegionalIndicator => {
+            get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_REGIONAL_INDICATOR_V1)
+        }
+        GraphemeClusterBreak::SpacingMark => {
+            get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_SPACINGMARK_V1)
+        }
         GraphemeClusterBreak::T => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_T_V1),
         GraphemeClusterBreak::V => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_V_V1),
         GraphemeClusterBreak::Other => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_OTHER_V1),
-        GraphemeClusterBreak::ZWJ => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_ZWJ_V1),        
-    }    
-}
-
-pub fn get_hangul_syllable_type_val_set<
-    'd,
-    D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
->(
-    provider: &D, enum_val: HangulSyllableType
-) -> Result<UnicodeSet, UnicodeSetError> {
-    match enum_val {
-        HangulSyllableType::LeadingJamo => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1),
-        HangulSyllableType::LVSyllable => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LV_SYLLABLE_V1),
-        HangulSyllableType::LVTSyllable => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LVT_SYLLABLE_V1),
-        HangulSyllableType::NotApplicable => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_NOT_APPLICABLE_V1),
-        HangulSyllableType::TrailingJamo => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_TRAILING_JAMO_V1),
-        HangulSyllableType::VowelJamo => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_VOWEL_JAMO_V1),
+        GraphemeClusterBreak::ZWJ => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_ZWJ_V1),
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Hangul_Syllable_Type Unicode enumerated property
+pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
+    provider: &D,
+    enum_val: HangulSyllableType,
+) -> Result<UnicodeSet, UnicodeSetError> {
+    match enum_val {
+        HangulSyllableType::LeadingJamo => {
+            get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1)
+        }
+        HangulSyllableType::LVSyllable => {
+            get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LV_SYLLABLE_V1)
+        }
+        HangulSyllableType::LVTSyllable => {
+            get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LVT_SYLLABLE_V1)
+        }
+        HangulSyllableType::NotApplicable => {
+            get_prop(provider, key::HANGUL_SYLLABLE_TYPE_NOT_APPLICABLE_V1)
+        }
+        HangulSyllableType::TrailingJamo => {
+            get_prop(provider, key::HANGUL_SYLLABLE_TYPE_TRAILING_JAMO_V1)
+        }
+        HangulSyllableType::VowelJamo => {
+            get_prop(provider, key::HANGUL_SYLLABLE_TYPE_VOWEL_JAMO_V1)
+        }
+    }
+}
+
+/// Return a `UnicodeSet` for a particular value of the Indic_Positional_Category Unicode enumerated property
 pub fn get_indic_positional_category_val_set<
     'd,
     D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
 >(
-    provider: &D, enum_val: IndicPositionalCategory
+    provider: &D,
+    enum_val: IndicPositionalCategory,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
-        IndicPositionalCategory::Bottom => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_V1),
-        IndicPositionalCategory::BottomAndLeft => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_LEFT_V1),
-        IndicPositionalCategory::BottomAndRight => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_RIGHT_V1),
+        IndicPositionalCategory::Bottom => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_V1)
+        }
+        IndicPositionalCategory::BottomAndLeft => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_LEFT_V1)
+        }
+        IndicPositionalCategory::BottomAndRight => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_RIGHT_V1)
+        }
         IndicPositionalCategory::Left => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_LEFT_V1),
-        IndicPositionalCategory::LeftAndRight => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_LEFT_AND_RIGHT_V1),
+        IndicPositionalCategory::LeftAndRight => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_LEFT_AND_RIGHT_V1)
+        }
         IndicPositionalCategory::NA => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_NA_V1),
-        IndicPositionalCategory::Overstruck => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_OVERSTRUCK_V1),
-        IndicPositionalCategory::Right => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_RIGHT_V1),
+        IndicPositionalCategory::Overstruck => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_OVERSTRUCK_V1)
+        }
+        IndicPositionalCategory::Right => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_RIGHT_V1)
+        }
         IndicPositionalCategory::Top => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_V1),
-        IndicPositionalCategory::TopAndBottom => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_V1),
-        IndicPositionalCategory::TopAndBottomAndLeft => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_LEFT_V1),
-        IndicPositionalCategory::TopAndBottomAndRight => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_RIGHT_V1),
-        IndicPositionalCategory::TopAndLeft => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_V1),
-        IndicPositionalCategory::TopAndLeftAndRight => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_AND_RIGHT_V1),
-        IndicPositionalCategory::TopAndRight => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_RIGHT_V1),
-        IndicPositionalCategory::VisualOrderLeft => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_VISUAL_ORDER_LEFT_V1),
+        IndicPositionalCategory::TopAndBottom => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_V1)
+        }
+        IndicPositionalCategory::TopAndBottomAndLeft => get_prop(
+            provider,
+            key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_LEFT_V1,
+        ),
+        IndicPositionalCategory::TopAndBottomAndRight => get_prop(
+            provider,
+            key::INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_RIGHT_V1,
+        ),
+        IndicPositionalCategory::TopAndLeft => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_V1)
+        }
+        IndicPositionalCategory::TopAndLeftAndRight => get_prop(
+            provider,
+            key::INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_AND_RIGHT_V1,
+        ),
+        IndicPositionalCategory::TopAndRight => {
+            get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_TOP_AND_RIGHT_V1)
+        }
+        IndicPositionalCategory::VisualOrderLeft => get_prop(
+            provider,
+            key::INDIC_POSITIONAL_CATEGORY_VISUAL_ORDER_LEFT_V1,
+        ),
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Indic_Syllabic_Category Unicode enumerated property
 pub fn get_indic_syllabic_category_val_set<
     'd,
     D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
 >(
-    provider: &D, enum_val: IndicSyllabicCategory
+    provider: &D,
+    enum_val: IndicSyllabicCategory,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
-        IndicSyllabicCategory::Avagraha => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1),
+        IndicSyllabicCategory::Avagraha => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1)
+        }
         IndicSyllabicCategory::Bindu => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_BINDU_V1),
-        IndicSyllabicCategory::BrahmiJoiningNumber => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_BRAHMI_JOINING_NUMBER_V1),
-        IndicSyllabicCategory::CantillationMark => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CANTILLATION_MARK_V1),
-        IndicSyllabicCategory::Consonant => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_V1),
-        IndicSyllabicCategory::ConsonantDead => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_DEAD_V1),
-        IndicSyllabicCategory::ConsonantFinal => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_FINAL_V1),
-        IndicSyllabicCategory::ConsonantHeadLetter => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_HEAD_LETTER_V1),
-        IndicSyllabicCategory::ConsonantInitialPostfixed => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_INITIAL_POSTFIXED_V1),
-        IndicSyllabicCategory::ConsonantKiller => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_KILLER_V1),
-        IndicSyllabicCategory::ConsonantMedial => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_MEDIAL_V1),
-        IndicSyllabicCategory::ConsonantPlaceholder => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PLACEHOLDER_V1),
-        IndicSyllabicCategory::ConsonantPrecedingRepha => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PRECEDING_REPHA_V1),
-        IndicSyllabicCategory::ConsonantPrefixed => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PREFIXED_V1),
-        IndicSyllabicCategory::ConsonantSubjoined => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUBJOINED_V1),
-        IndicSyllabicCategory::ConsonantSucceedingRepha => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUCCEEDING_REPHA_V1),
-        IndicSyllabicCategory::ConsonantWithStacker => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_WITH_STACKER_V1),
-        IndicSyllabicCategory::GeminationMark => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_GEMINATION_MARK_V1),
-        IndicSyllabicCategory::InvisibleStacker => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_INVISIBLE_STACKER_V1),
+        IndicSyllabicCategory::BrahmiJoiningNumber => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_BRAHMI_JOINING_NUMBER_V1,
+        ),
+        IndicSyllabicCategory::CantillationMark => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CANTILLATION_MARK_V1)
+        }
+        IndicSyllabicCategory::Consonant => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_V1)
+        }
+        IndicSyllabicCategory::ConsonantDead => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_DEAD_V1)
+        }
+        IndicSyllabicCategory::ConsonantFinal => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_FINAL_V1)
+        }
+        IndicSyllabicCategory::ConsonantHeadLetter => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_HEAD_LETTER_V1,
+        ),
+        IndicSyllabicCategory::ConsonantInitialPostfixed => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_INITIAL_POSTFIXED_V1,
+        ),
+        IndicSyllabicCategory::ConsonantKiller => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_KILLER_V1)
+        }
+        IndicSyllabicCategory::ConsonantMedial => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_MEDIAL_V1)
+        }
+        IndicSyllabicCategory::ConsonantPlaceholder => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PLACEHOLDER_V1,
+        ),
+        IndicSyllabicCategory::ConsonantPrecedingRepha => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PRECEDING_REPHA_V1,
+        ),
+        IndicSyllabicCategory::ConsonantPrefixed => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_CONSONANT_PREFIXED_V1)
+        }
+        IndicSyllabicCategory::ConsonantSubjoined => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUBJOINED_V1,
+        ),
+        IndicSyllabicCategory::ConsonantSucceedingRepha => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_SUCCEEDING_REPHA_V1,
+        ),
+        IndicSyllabicCategory::ConsonantWithStacker => get_prop(
+            provider,
+            key::INDIC_SYLLABIC_CATEGORY_CONSONANT_WITH_STACKER_V1,
+        ),
+        IndicSyllabicCategory::GeminationMark => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_GEMINATION_MARK_V1)
+        }
+        IndicSyllabicCategory::InvisibleStacker => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_INVISIBLE_STACKER_V1)
+        }
         IndicSyllabicCategory::Joiner => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_JOINER_V1),
-        IndicSyllabicCategory::ModifyingLetter => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_MODIFYING_LETTER_V1),
-        IndicSyllabicCategory::NonJoiner => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NON_JOINER_V1),
+        IndicSyllabicCategory::ModifyingLetter => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_MODIFYING_LETTER_V1)
+        }
+        IndicSyllabicCategory::NonJoiner => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NON_JOINER_V1)
+        }
         IndicSyllabicCategory::Nukta => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NUKTA_V1),
         IndicSyllabicCategory::Number => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NUMBER_V1),
-        IndicSyllabicCategory::NumberJoiner => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NUMBER_JOINER_V1),
+        IndicSyllabicCategory::NumberJoiner => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_NUMBER_JOINER_V1)
+        }
         IndicSyllabicCategory::Other => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_OTHER_V1),
-        IndicSyllabicCategory::PureKiller => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_PURE_KILLER_V1),
-        IndicSyllabicCategory::RegisterShifter => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_REGISTER_SHIFTER_V1),
-        IndicSyllabicCategory::SyllableModifier => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_SYLLABLE_MODIFIER_V1),
-        IndicSyllabicCategory::ToneLetter => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_TONE_LETTER_V1),
-        IndicSyllabicCategory::ToneMark => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_TONE_MARK_V1),
+        IndicSyllabicCategory::PureKiller => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_PURE_KILLER_V1)
+        }
+        IndicSyllabicCategory::RegisterShifter => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_REGISTER_SHIFTER_V1)
+        }
+        IndicSyllabicCategory::SyllableModifier => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_SYLLABLE_MODIFIER_V1)
+        }
+        IndicSyllabicCategory::ToneLetter => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_TONE_LETTER_V1)
+        }
+        IndicSyllabicCategory::ToneMark => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_TONE_MARK_V1)
+        }
         IndicSyllabicCategory::Virama => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VIRAMA_V1),
-        IndicSyllabicCategory::Visarga => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VISARGA_V1),
+        IndicSyllabicCategory::Visarga => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VISARGA_V1)
+        }
         IndicSyllabicCategory::Vowel => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_V1),
-        IndicSyllabicCategory::VowelDependent => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_DEPENDENT_V1),
-        IndicSyllabicCategory::VowelIndependent => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_INDEPENDENT_V1),
+        IndicSyllabicCategory::VowelDependent => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_DEPENDENT_V1)
+        }
+        IndicSyllabicCategory::VowelIndependent => {
+            get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_VOWEL_INDEPENDENT_V1)
+        }
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Joining_Group Unicode enumerated property
 pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: JoiningGroup
+    provider: &D,
+    enum_val: JoiningGroup,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         JoiningGroup::AfricanFeh => get_prop(provider, key::JOINING_GROUP_AFRICAN_FEH_V1),
@@ -770,7 +1090,9 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + 
         JoiningGroup::Alef => get_prop(provider, key::JOINING_GROUP_ALEF_V1),
         JoiningGroup::Beh => get_prop(provider, key::JOINING_GROUP_BEH_V1),
         JoiningGroup::Beth => get_prop(provider, key::JOINING_GROUP_BETH_V1),
-        JoiningGroup::BurushaskiYehBarree => get_prop(provider, key::JOINING_GROUP_BURUSHASKI_YEH_BARREE_V1),
+        JoiningGroup::BurushaskiYehBarree => {
+            get_prop(provider, key::JOINING_GROUP_BURUSHASKI_YEH_BARREE_V1)
+        }
         JoiningGroup::Dal => get_prop(provider, key::JOINING_GROUP_DAL_V1),
         JoiningGroup::DalathRish => get_prop(provider, key::JOINING_GROUP_DALATH_RISH_V1),
         JoiningGroup::E => get_prop(provider, key::JOINING_GROUP_E_V1),
@@ -781,8 +1103,12 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + 
         JoiningGroup::Gaf => get_prop(provider, key::JOINING_GROUP_GAF_V1),
         JoiningGroup::Gamal => get_prop(provider, key::JOINING_GROUP_GAMAL_V1),
         JoiningGroup::Hah => get_prop(provider, key::JOINING_GROUP_HAH_V1),
-        JoiningGroup::HanifiRohingyaKinnaYa => get_prop(provider, key::JOINING_GROUP_HANIFI_ROHINGYA_KINNA_YA_V1),
-        JoiningGroup::HanifiRohingyaPa => get_prop(provider, key::JOINING_GROUP_HANIFI_ROHINGYA_PA_V1),
+        JoiningGroup::HanifiRohingyaKinnaYa => {
+            get_prop(provider, key::JOINING_GROUP_HANIFI_ROHINGYA_KINNA_YA_V1)
+        }
+        JoiningGroup::HanifiRohingyaPa => {
+            get_prop(provider, key::JOINING_GROUP_HANIFI_ROHINGYA_PA_V1)
+        }
         JoiningGroup::He => get_prop(provider, key::JOINING_GROUP_HE_V1),
         JoiningGroup::Heh => get_prop(provider, key::JOINING_GROUP_HEH_V1),
         JoiningGroup::HehGoal => get_prop(provider, key::JOINING_GROUP_HEH_GOAL_V1),
@@ -807,14 +1133,22 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + 
         JoiningGroup::ManichaeanAleph => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_ALEPH_V1),
         JoiningGroup::ManichaeanAyin => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_AYIN_V1),
         JoiningGroup::ManichaeanBeth => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_BETH_V1),
-        JoiningGroup::ManichaeanDaleth => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_DALETH_V1),
-        JoiningGroup::ManichaeanDhamedh => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_DHAMEDH_V1),
+        JoiningGroup::ManichaeanDaleth => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_DALETH_V1)
+        }
+        JoiningGroup::ManichaeanDhamedh => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_DHAMEDH_V1)
+        }
         JoiningGroup::ManichaeanFive => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_FIVE_V1),
         JoiningGroup::ManichaeanGimel => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_GIMEL_V1),
         JoiningGroup::ManichaeanHeth => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_HETH_V1),
-        JoiningGroup::ManichaeanHundred => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_HUNDRED_V1),
+        JoiningGroup::ManichaeanHundred => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_HUNDRED_V1)
+        }
         JoiningGroup::ManichaeanKaph => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_KAPH_V1),
-        JoiningGroup::ManichaeanLamedh => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_LAMEDH_V1),
+        JoiningGroup::ManichaeanLamedh => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_LAMEDH_V1)
+        }
         JoiningGroup::ManichaeanMem => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_MEM_V1),
         JoiningGroup::ManichaeanNun => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_NUN_V1),
         JoiningGroup::ManichaeanOne => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_ONE_V1),
@@ -822,12 +1156,18 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + 
         JoiningGroup::ManichaeanQoph => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_QOPH_V1),
         JoiningGroup::ManichaeanResh => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_RESH_V1),
         JoiningGroup::ManichaeanSadhe => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_SADHE_V1),
-        JoiningGroup::ManichaeanSamekh => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_SAMEKH_V1),
+        JoiningGroup::ManichaeanSamekh => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_SAMEKH_V1)
+        }
         JoiningGroup::ManichaeanTaw => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TAW_V1),
         JoiningGroup::ManichaeanTen => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TEN_V1),
         JoiningGroup::ManichaeanTeth => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TETH_V1),
-        JoiningGroup::ManichaeanThamedh => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_THAMEDH_V1),
-        JoiningGroup::ManichaeanTwenty => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TWENTY_V1),
+        JoiningGroup::ManichaeanThamedh => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_THAMEDH_V1)
+        }
+        JoiningGroup::ManichaeanTwenty => {
+            get_prop(provider, key::JOINING_GROUP_MANICHAEAN_TWENTY_V1)
+        }
         JoiningGroup::ManichaeanWaw => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_WAW_V1),
         JoiningGroup::ManichaeanYodh => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_YODH_V1),
         JoiningGroup::ManichaeanZayin => get_prop(provider, key::JOINING_GROUP_MANICHAEAN_ZAYIN_V1),
@@ -867,8 +1207,10 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + 
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Joining_Type Unicode enumerated property
 pub fn get_joining_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: JoiningType
+    provider: &D,
+    enum_val: JoiningType,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         JoiningType::JoinCausing => get_prop(provider, key::JOINING_TYPE_JOIN_CAUSING_V1),
@@ -880,8 +1222,10 @@ pub fn get_joining_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Line_Break Unicode enumerated property
 pub fn get_line_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: LineBreak
+    provider: &D,
+    enum_val: LineBreak,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         LineBreak::Ambiguous => get_prop(provider, key::LINE_BREAK_AMBIGUOUS_V1),
@@ -891,7 +1235,9 @@ pub fn get_line_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
         LineBreak::BreakBefore => get_prop(provider, key::LINE_BREAK_BREAK_BEFORE_V1),
         LineBreak::MandatoryBreak => get_prop(provider, key::LINE_BREAK_MANDATORY_BREAK_V1),
         LineBreak::ContingentBreak => get_prop(provider, key::LINE_BREAK_CONTINGENT_BREAK_V1),
-        LineBreak::ConditionalJapaneseStarter => get_prop(provider, key::LINE_BREAK_CONDITIONAL_JAPANESE_STARTER_V1),
+        LineBreak::ConditionalJapaneseStarter => {
+            get_prop(provider, key::LINE_BREAK_CONDITIONAL_JAPANESE_STARTER_V1)
+        }
         LineBreak::ClosePunctuation => get_prop(provider, key::LINE_BREAK_CLOSE_PUNCTUATION_V1),
         LineBreak::CombiningMark => get_prop(provider, key::LINE_BREAK_COMBINING_MARK_V1),
         LineBreak::CloseParenthesis => get_prop(provider, key::LINE_BREAK_CLOSE_PARENTHESIS_V1),
@@ -930,87 +1276,217 @@ pub fn get_line_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
     }
 }
 
-
+/// Return a `UnicodeSet` for a particular value of the Lead_Canonical_Combining_Class Unicode enumerated property
 pub fn get_lead_canonical_combining_class_val_set<
     'd,
     D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
 >(
-    provider: &D, enum_val: LeadCanonicalCombiningClass
+    provider: &D,
+    enum_val: LeadCanonicalCombiningClass,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
-        LeadCanonicalCombiningClass::NotReordered => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
-        LeadCanonicalCombiningClass::Overlay => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_OVERLAY_V1),
-        LeadCanonicalCombiningClass::CCC10 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC10_V1),
-        LeadCanonicalCombiningClass::CCC103 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC103_V1),
-        LeadCanonicalCombiningClass::CCC107 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC107_V1),
-        LeadCanonicalCombiningClass::CCC11 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC11_V1),
-        LeadCanonicalCombiningClass::CCC118 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC118_V1),
-        LeadCanonicalCombiningClass::CCC12 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC12_V1),
-        LeadCanonicalCombiningClass::CCC122 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC122_V1),
-        LeadCanonicalCombiningClass::CCC129 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC129_V1),
-        LeadCanonicalCombiningClass::CCC13 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC13_V1),
-        LeadCanonicalCombiningClass::CCC130 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC130_V1),
-        LeadCanonicalCombiningClass::CCC132 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC132_V1),
-        LeadCanonicalCombiningClass::CCC133 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC133_V1),
-        LeadCanonicalCombiningClass::CCC14 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC14_V1),
-        LeadCanonicalCombiningClass::CCC15 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC15_V1),
-        LeadCanonicalCombiningClass::CCC16 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC16_V1),
-        LeadCanonicalCombiningClass::CCC17 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC17_V1),
-        LeadCanonicalCombiningClass::CCC18 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC18_V1),
-        LeadCanonicalCombiningClass::CCC19 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC19_V1),
-        LeadCanonicalCombiningClass::CCC20 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC20_V1),
-        LeadCanonicalCombiningClass::AttachedBelowLeft => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1),
-        LeadCanonicalCombiningClass::AttachedBelow => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1),
-        LeadCanonicalCombiningClass::CCC21 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC21_V1),
-        LeadCanonicalCombiningClass::AttachedAbove => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1),
-        LeadCanonicalCombiningClass::AttachedAboveRight => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1),
-        LeadCanonicalCombiningClass::BelowLeft => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1),
-        LeadCanonicalCombiningClass::CCC22 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC22_V1),
-        LeadCanonicalCombiningClass::Below => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_V1),
-        LeadCanonicalCombiningClass::BelowRight => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1),
-        LeadCanonicalCombiningClass::Left => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_LEFT_V1),
-        LeadCanonicalCombiningClass::Right => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_RIGHT_V1),
-        LeadCanonicalCombiningClass::AboveLeft => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1),
-        LeadCanonicalCombiningClass::CCC23 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC23_V1),
-        LeadCanonicalCombiningClass::Above => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_V1),
-        LeadCanonicalCombiningClass::AboveRight => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1),
-        LeadCanonicalCombiningClass::DoubleBelow => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1),
-        LeadCanonicalCombiningClass::DoubleAbove => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1),
-        LeadCanonicalCombiningClass::CCC24 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC24_V1),
-        LeadCanonicalCombiningClass::IotaSubscript => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1),
-        LeadCanonicalCombiningClass::CCC25 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC25_V1),
-        LeadCanonicalCombiningClass::CCC26 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC26_V1),
-        LeadCanonicalCombiningClass::CCC27 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC27_V1),
-        LeadCanonicalCombiningClass::CCC28 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC28_V1),
-        LeadCanonicalCombiningClass::CCC29 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC29_V1),
-        LeadCanonicalCombiningClass::CCC30 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC30_V1),
-        LeadCanonicalCombiningClass::CCC31 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC31_V1),
-        LeadCanonicalCombiningClass::CCC32 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC32_V1),
-        LeadCanonicalCombiningClass::CCC33 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC33_V1),
-        LeadCanonicalCombiningClass::CCC34 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC34_V1),
-        LeadCanonicalCombiningClass::CCC35 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC35_V1),
-        LeadCanonicalCombiningClass::CCC36 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC36_V1),
-        LeadCanonicalCombiningClass::HanReading => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_HAN_READING_V1),
-        LeadCanonicalCombiningClass::Nukta => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NUKTA_V1),
-        LeadCanonicalCombiningClass::KanaVoicing => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1),
-        LeadCanonicalCombiningClass::CCC84 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC84_V1),
-        LeadCanonicalCombiningClass::Virama => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_VIRAMA_V1),
-        LeadCanonicalCombiningClass::CCC91 => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC91_V1),
+        LeadCanonicalCombiningClass::NotReordered => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1,
+        ),
+        LeadCanonicalCombiningClass::Overlay => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_OVERLAY_V1)
+        }
+        LeadCanonicalCombiningClass::CCC10 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC10_V1)
+        }
+        LeadCanonicalCombiningClass::CCC103 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC103_V1)
+        }
+        LeadCanonicalCombiningClass::CCC107 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC107_V1)
+        }
+        LeadCanonicalCombiningClass::CCC11 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC11_V1)
+        }
+        LeadCanonicalCombiningClass::CCC118 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC118_V1)
+        }
+        LeadCanonicalCombiningClass::CCC12 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC12_V1)
+        }
+        LeadCanonicalCombiningClass::CCC122 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC122_V1)
+        }
+        LeadCanonicalCombiningClass::CCC129 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC129_V1)
+        }
+        LeadCanonicalCombiningClass::CCC13 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC13_V1)
+        }
+        LeadCanonicalCombiningClass::CCC130 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC130_V1)
+        }
+        LeadCanonicalCombiningClass::CCC132 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC132_V1)
+        }
+        LeadCanonicalCombiningClass::CCC133 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC133_V1)
+        }
+        LeadCanonicalCombiningClass::CCC14 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC14_V1)
+        }
+        LeadCanonicalCombiningClass::CCC15 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC15_V1)
+        }
+        LeadCanonicalCombiningClass::CCC16 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC16_V1)
+        }
+        LeadCanonicalCombiningClass::CCC17 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC17_V1)
+        }
+        LeadCanonicalCombiningClass::CCC18 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC18_V1)
+        }
+        LeadCanonicalCombiningClass::CCC19 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC19_V1)
+        }
+        LeadCanonicalCombiningClass::CCC20 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC20_V1)
+        }
+        LeadCanonicalCombiningClass::AttachedBelowLeft => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1,
+        ),
+        LeadCanonicalCombiningClass::AttachedBelow => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1,
+        ),
+        LeadCanonicalCombiningClass::CCC21 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC21_V1)
+        }
+        LeadCanonicalCombiningClass::AttachedAbove => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1,
+        ),
+        LeadCanonicalCombiningClass::AttachedAboveRight => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1,
+        ),
+        LeadCanonicalCombiningClass::BelowLeft => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1)
+        }
+        LeadCanonicalCombiningClass::CCC22 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC22_V1)
+        }
+        LeadCanonicalCombiningClass::Below => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_V1)
+        }
+        LeadCanonicalCombiningClass::BelowRight => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1)
+        }
+        LeadCanonicalCombiningClass::Left => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_LEFT_V1)
+        }
+        LeadCanonicalCombiningClass::Right => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_RIGHT_V1)
+        }
+        LeadCanonicalCombiningClass::AboveLeft => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1)
+        }
+        LeadCanonicalCombiningClass::CCC23 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC23_V1)
+        }
+        LeadCanonicalCombiningClass::Above => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_V1)
+        }
+        LeadCanonicalCombiningClass::AboveRight => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1)
+        }
+        LeadCanonicalCombiningClass::DoubleBelow => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1,
+        ),
+        LeadCanonicalCombiningClass::DoubleAbove => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1,
+        ),
+        LeadCanonicalCombiningClass::CCC24 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC24_V1)
+        }
+        LeadCanonicalCombiningClass::IotaSubscript => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1,
+        ),
+        LeadCanonicalCombiningClass::CCC25 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC25_V1)
+        }
+        LeadCanonicalCombiningClass::CCC26 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC26_V1)
+        }
+        LeadCanonicalCombiningClass::CCC27 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC27_V1)
+        }
+        LeadCanonicalCombiningClass::CCC28 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC28_V1)
+        }
+        LeadCanonicalCombiningClass::CCC29 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC29_V1)
+        }
+        LeadCanonicalCombiningClass::CCC30 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC30_V1)
+        }
+        LeadCanonicalCombiningClass::CCC31 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC31_V1)
+        }
+        LeadCanonicalCombiningClass::CCC32 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC32_V1)
+        }
+        LeadCanonicalCombiningClass::CCC33 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC33_V1)
+        }
+        LeadCanonicalCombiningClass::CCC34 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC34_V1)
+        }
+        LeadCanonicalCombiningClass::CCC35 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC35_V1)
+        }
+        LeadCanonicalCombiningClass::CCC36 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC36_V1)
+        }
+        LeadCanonicalCombiningClass::HanReading => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_HAN_READING_V1)
+        }
+        LeadCanonicalCombiningClass::Nukta => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NUKTA_V1)
+        }
+        LeadCanonicalCombiningClass::KanaVoicing => get_prop(
+            provider,
+            key::LEAD_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1,
+        ),
+        LeadCanonicalCombiningClass::CCC84 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC84_V1)
+        }
+        LeadCanonicalCombiningClass::Virama => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_VIRAMA_V1)
+        }
+        LeadCanonicalCombiningClass::CCC91 => {
+            get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_CCC91_V1)
+        }
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the NFC_Quick_Check Unicode enumerated property
 pub fn get_nfc_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: NFCQuickCheck
+    provider: &D,
+    enum_val: NFCQuickCheck,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         NFCQuickCheck::Maybe => get_prop(provider, key::NFC_QUICK_CHECK_MAYBE_V1),
         NFCQuickCheck::No => get_prop(provider, key::NFC_QUICK_CHECK_NO_V1),
-        NFCQuickCheck::Yes => get_prop(provider, key::NFC_QUICK_CHECK_YES_V1),        
+        NFCQuickCheck::Yes => get_prop(provider, key::NFC_QUICK_CHECK_YES_V1),
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the NFD_Quick_Check Unicode enumerated property
 pub fn get_nfd_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: NFDQuickCheck
+    provider: &D,
+    enum_val: NFDQuickCheck,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         NFDQuickCheck::No => get_prop(provider, key::NFD_QUICK_CHECK_NO_V1),
@@ -1018,8 +1494,10 @@ pub fn get_nfd_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> 
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the NFKC_Quick_Check Unicode enumerated property
 pub fn get_nfkc_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: NFKCQuickCheck
+    provider: &D,
+    enum_val: NFKCQuickCheck,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         NFKCQuickCheck::Maybe => get_prop(provider, key::NFKC_QUICK_CHECK_MAYBE_V1),
@@ -1028,17 +1506,21 @@ pub fn get_nfkc_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the NFKD_Quick_Check Unicode enumerated property
 pub fn get_nfkd_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: NFKDQuickCheck
+    provider: &D,
+    enum_val: NFKDQuickCheck,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         NFKDQuickCheck::No => get_prop(provider, key::NFKD_QUICK_CHECK_NO_V1),
-        NFKDQuickCheck::Yes => get_prop(provider, key::NFKD_QUICK_CHECK_YES_V1),        
+        NFKDQuickCheck::Yes => get_prop(provider, key::NFKD_QUICK_CHECK_YES_V1),
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Numeric_Type Unicode enumerated property
 pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: NumericType
+    provider: &D,
+    enum_val: NumericType,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         NumericType::Decimal => get_prop(provider, key::NUMERIC_TYPE_DECIMAL_V1),
@@ -1048,8 +1530,10 @@ pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Sentence_Break Unicode enumerated property
 pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: SentenceBreak
+    provider: &D,
+    enum_val: SentenceBreak,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         SentenceBreak::ATerm => get_prop(provider, key::SENTENCE_BREAK_ATERM_V1),
@@ -1066,91 +1550,229 @@ pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> +
         SentenceBreak::Sp => get_prop(provider, key::SENTENCE_BREAK_SP_V1),
         SentenceBreak::STerm => get_prop(provider, key::SENTENCE_BREAK_STERM_V1),
         SentenceBreak::Upper => get_prop(provider, key::SENTENCE_BREAK_UPPER_V1),
-        SentenceBreak::Other => get_prop(provider, key::SENTENCE_BREAK_OTHER_V1),        
+        SentenceBreak::Other => get_prop(provider, key::SENTENCE_BREAK_OTHER_V1),
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Trail_Canonical_Combining_Class Unicode enumerated property
 pub fn get_trail_canonical_combining_class_val_set<
     'd,
     D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized,
 >(
-    provider: &D, enum_val: TrailCanonicalCombiningClass
+    provider: &D,
+    enum_val: TrailCanonicalCombiningClass,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
-        TrailCanonicalCombiningClass::NotReordered => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
-        TrailCanonicalCombiningClass::Overlay => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_OVERLAY_V1),
-        TrailCanonicalCombiningClass::CCC10 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC10_V1),
-        TrailCanonicalCombiningClass::CCC103 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC103_V1),
-        TrailCanonicalCombiningClass::CCC107 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC107_V1),
-        TrailCanonicalCombiningClass::CCC11 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC11_V1),
-        TrailCanonicalCombiningClass::CCC118 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC118_V1),
-        TrailCanonicalCombiningClass::CCC12 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC12_V1),
-        TrailCanonicalCombiningClass::CCC122 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC122_V1),
-        TrailCanonicalCombiningClass::CCC129 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC129_V1),
-        TrailCanonicalCombiningClass::CCC13 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC13_V1),
-        TrailCanonicalCombiningClass::CCC130 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC130_V1),
-        TrailCanonicalCombiningClass::CCC132 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC132_V1),
-        TrailCanonicalCombiningClass::CCC133 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC133_V1),
-        TrailCanonicalCombiningClass::CCC14 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC14_V1),
-        TrailCanonicalCombiningClass::CCC15 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC15_V1),
-        TrailCanonicalCombiningClass::CCC16 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC16_V1),
-        TrailCanonicalCombiningClass::CCC17 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC17_V1),
-        TrailCanonicalCombiningClass::CCC18 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC18_V1),
-        TrailCanonicalCombiningClass::CCC19 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC19_V1),
-        TrailCanonicalCombiningClass::CCC20 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC20_V1),
-        TrailCanonicalCombiningClass::AttachedBelowLeft => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1),
-        TrailCanonicalCombiningClass::AttachedBelow => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1),
-        TrailCanonicalCombiningClass::CCC21 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC21_V1),
-        TrailCanonicalCombiningClass::AttachedAbove => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1),
-        TrailCanonicalCombiningClass::AttachedAboveRight => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1),
-        TrailCanonicalCombiningClass::BelowLeft => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1),
-        TrailCanonicalCombiningClass::CCC22 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC22_V1),
-        TrailCanonicalCombiningClass::Below => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_V1),
-        TrailCanonicalCombiningClass::BelowRight => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1),
-        TrailCanonicalCombiningClass::Left => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_LEFT_V1),
-        TrailCanonicalCombiningClass::Right => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_RIGHT_V1),
-        TrailCanonicalCombiningClass::AboveLeft => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1),
-        TrailCanonicalCombiningClass::CCC23 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC23_V1),
-        TrailCanonicalCombiningClass::Above => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_V1),
-        TrailCanonicalCombiningClass::AboveRight => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1),
-        TrailCanonicalCombiningClass::DoubleBelow => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1),
-        TrailCanonicalCombiningClass::DoubleAbove => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1),
-        TrailCanonicalCombiningClass::CCC24 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC24_V1),
-        TrailCanonicalCombiningClass::IotaSubscript => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1),
-        TrailCanonicalCombiningClass::CCC25 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC25_V1),
-        TrailCanonicalCombiningClass::CCC26 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC26_V1),
-        TrailCanonicalCombiningClass::CCC27 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC27_V1),
-        TrailCanonicalCombiningClass::CCC28 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC28_V1),
-        TrailCanonicalCombiningClass::CCC29 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC29_V1),
-        TrailCanonicalCombiningClass::CCC30 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC30_V1),
-        TrailCanonicalCombiningClass::CCC31 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC31_V1),
-        TrailCanonicalCombiningClass::CCC32 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC32_V1),
-        TrailCanonicalCombiningClass::CCC33 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC33_V1),
-        TrailCanonicalCombiningClass::CCC34 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC34_V1),
-        TrailCanonicalCombiningClass::CCC35 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC35_V1),
-        TrailCanonicalCombiningClass::CCC36 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC36_V1),
-        TrailCanonicalCombiningClass::HanReading => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_HAN_READING_V1),
-        TrailCanonicalCombiningClass::Nukta => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NUKTA_V1),
-        TrailCanonicalCombiningClass::KanaVoicing => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1),
-        TrailCanonicalCombiningClass::CCC84 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC84_V1),
-        TrailCanonicalCombiningClass::Virama => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_VIRAMA_V1),
-        TrailCanonicalCombiningClass::CCC91 => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC91_V1),
+        TrailCanonicalCombiningClass::NotReordered => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1,
+        ),
+        TrailCanonicalCombiningClass::Overlay => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_OVERLAY_V1)
+        }
+        TrailCanonicalCombiningClass::CCC10 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC10_V1)
+        }
+        TrailCanonicalCombiningClass::CCC103 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC103_V1)
+        }
+        TrailCanonicalCombiningClass::CCC107 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC107_V1)
+        }
+        TrailCanonicalCombiningClass::CCC11 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC11_V1)
+        }
+        TrailCanonicalCombiningClass::CCC118 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC118_V1)
+        }
+        TrailCanonicalCombiningClass::CCC12 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC12_V1)
+        }
+        TrailCanonicalCombiningClass::CCC122 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC122_V1)
+        }
+        TrailCanonicalCombiningClass::CCC129 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC129_V1)
+        }
+        TrailCanonicalCombiningClass::CCC13 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC13_V1)
+        }
+        TrailCanonicalCombiningClass::CCC130 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC130_V1)
+        }
+        TrailCanonicalCombiningClass::CCC132 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC132_V1)
+        }
+        TrailCanonicalCombiningClass::CCC133 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC133_V1)
+        }
+        TrailCanonicalCombiningClass::CCC14 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC14_V1)
+        }
+        TrailCanonicalCombiningClass::CCC15 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC15_V1)
+        }
+        TrailCanonicalCombiningClass::CCC16 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC16_V1)
+        }
+        TrailCanonicalCombiningClass::CCC17 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC17_V1)
+        }
+        TrailCanonicalCombiningClass::CCC18 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC18_V1)
+        }
+        TrailCanonicalCombiningClass::CCC19 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC19_V1)
+        }
+        TrailCanonicalCombiningClass::CCC20 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC20_V1)
+        }
+        TrailCanonicalCombiningClass::AttachedBelowLeft => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1,
+        ),
+        TrailCanonicalCombiningClass::AttachedBelow => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1,
+        ),
+        TrailCanonicalCombiningClass::CCC21 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC21_V1)
+        }
+        TrailCanonicalCombiningClass::AttachedAbove => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1,
+        ),
+        TrailCanonicalCombiningClass::AttachedAboveRight => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1,
+        ),
+        TrailCanonicalCombiningClass::BelowLeft => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1)
+        }
+        TrailCanonicalCombiningClass::CCC22 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC22_V1)
+        }
+        TrailCanonicalCombiningClass::Below => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_V1)
+        }
+        TrailCanonicalCombiningClass::BelowRight => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1,
+        ),
+        TrailCanonicalCombiningClass::Left => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_LEFT_V1)
+        }
+        TrailCanonicalCombiningClass::Right => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_RIGHT_V1)
+        }
+        TrailCanonicalCombiningClass::AboveLeft => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1)
+        }
+        TrailCanonicalCombiningClass::CCC23 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC23_V1)
+        }
+        TrailCanonicalCombiningClass::Above => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_V1)
+        }
+        TrailCanonicalCombiningClass::AboveRight => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1,
+        ),
+        TrailCanonicalCombiningClass::DoubleBelow => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1,
+        ),
+        TrailCanonicalCombiningClass::DoubleAbove => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1,
+        ),
+        TrailCanonicalCombiningClass::CCC24 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC24_V1)
+        }
+        TrailCanonicalCombiningClass::IotaSubscript => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1,
+        ),
+        TrailCanonicalCombiningClass::CCC25 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC25_V1)
+        }
+        TrailCanonicalCombiningClass::CCC26 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC26_V1)
+        }
+        TrailCanonicalCombiningClass::CCC27 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC27_V1)
+        }
+        TrailCanonicalCombiningClass::CCC28 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC28_V1)
+        }
+        TrailCanonicalCombiningClass::CCC29 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC29_V1)
+        }
+        TrailCanonicalCombiningClass::CCC30 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC30_V1)
+        }
+        TrailCanonicalCombiningClass::CCC31 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC31_V1)
+        }
+        TrailCanonicalCombiningClass::CCC32 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC32_V1)
+        }
+        TrailCanonicalCombiningClass::CCC33 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC33_V1)
+        }
+        TrailCanonicalCombiningClass::CCC34 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC34_V1)
+        }
+        TrailCanonicalCombiningClass::CCC35 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC35_V1)
+        }
+        TrailCanonicalCombiningClass::CCC36 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC36_V1)
+        }
+        TrailCanonicalCombiningClass::HanReading => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_HAN_READING_V1,
+        ),
+        TrailCanonicalCombiningClass::Nukta => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NUKTA_V1)
+        }
+        TrailCanonicalCombiningClass::KanaVoicing => get_prop(
+            provider,
+            key::TRAIL_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1,
+        ),
+        TrailCanonicalCombiningClass::CCC84 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC84_V1)
+        }
+        TrailCanonicalCombiningClass::Virama => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_VIRAMA_V1)
+        }
+        TrailCanonicalCombiningClass::CCC91 => {
+            get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_CCC91_V1)
+        }
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Vertical_Orientation Unicode enumerated property
 pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: VerticalOrientation
+    provider: &D,
+    enum_val: VerticalOrientation,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         VerticalOrientation::Rotated => get_prop(provider, key::VERTICAL_ORIENTATION_ROTATED_V1),
-        VerticalOrientation::TransformedRotated => get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_ROTATED_V1),
-        VerticalOrientation::TransformedUpright => get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_UPRIGHT_V1),
-        VerticalOrientation::Upright => get_prop(provider, key::VERTICAL_ORIENTATION_UPRIGHT_V1),        
+        VerticalOrientation::TransformedRotated => {
+            get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_ROTATED_V1)
+        }
+        VerticalOrientation::TransformedUpright => {
+            get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_UPRIGHT_V1)
+        }
+        VerticalOrientation::Upright => get_prop(provider, key::VERTICAL_ORIENTATION_UPRIGHT_V1),
     }
 }
 
+/// Return a `UnicodeSet` for a particular value of the Word_Break Unicode enumerated property
 pub fn get_word_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
-    provider: &D, enum_val: WordBreak
+    provider: &D,
+    enum_val: WordBreak,
 ) -> Result<UnicodeSet, UnicodeSetError> {
     match enum_val {
         WordBreak::CR => get_prop(provider, key::WORD_BREAK_CR_V1),
@@ -1175,6 +1797,6 @@ pub fn get_word_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
         WordBreak::SingleQuote => get_prop(provider, key::WORD_BREAK_SINGLE_QUOTE_V1),
         WordBreak::WSegSpace => get_prop(provider, key::WORD_BREAK_WSEGSPACE_V1),
         WordBreak::Other => get_prop(provider, key::WORD_BREAK_OTHER_V1),
-        WordBreak::ZWJ => get_prop(provider, key::WORD_BREAK_ZWJ_V1),        
+        WordBreak::ZWJ => get_prop(provider, key::WORD_BREAK_ZWJ_V1),
     }
 }

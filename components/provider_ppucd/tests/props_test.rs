@@ -4,8 +4,8 @@
 #![allow(clippy::unreadable_literal, dead_code)]
 
 use icu_provider_ppucd::support::*;
-use icu_uniset::UnicodeSet;
 use icu_uniset::enum_props::*;
+use icu_uniset::UnicodeSet;
 
 #[test]
 fn test_wspace_getter() {
@@ -43,8 +43,11 @@ fn test_enum_props_getters_truncated_resc_key_subcategory() {
 
     // InPC=Top_And_Bottom_And_Left
     let inpc_topbotleft_uniset: UnicodeSet =
-        icu_uniset::props::get_indic_positional_category_val_set(&ppucd_provider, IndicPositionalCategory::TopAndBottomAndLeft)
-            .unwrap();
+        icu_uniset::props::get_indic_positional_category_val_set(
+            &ppucd_provider,
+            IndicPositionalCategory::TopAndBottomAndLeft,
+        )
+        .unwrap();
     let exp_inpc_topbotleft_uniset: UnicodeSet =
         UnicodeSet::from_inversion_list(vec![4156, 4157, 71454, 71455]).unwrap();
     assert_eq!(inpc_topbotleft_uniset, exp_inpc_topbotleft_uniset);
