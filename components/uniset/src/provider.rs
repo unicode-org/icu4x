@@ -13,6 +13,7 @@ use std::convert::TryInto;
 pub mod key {
     use icu_provider::resource_key;
     use icu_provider::ResourceKey;
+    use crate::enum_prop_mapping::get_prop_name_identifier;
 
     //
     // Binary properties
@@ -88,814 +89,554 @@ pub mod key {
     // Enumerated properties
     //
 
-    pub const BIDI_CLASS_ARABIC_LETTER_V1: ResourceKey = resource_key!(uniset, "bc=AL", 1);
-    pub const BIDI_CLASS_ARABIC_NUMBER_V1: ResourceKey = resource_key!(uniset, "bc=AN", 1);
-    pub const BIDI_CLASS_PARAGRAPH_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "bc=B", 1);
-    pub const BIDI_CLASS_BOUNDARY_NEUTRAL_V1: ResourceKey = resource_key!(uniset, "bc=BN", 1);
-    pub const BIDI_CLASS_COMMON_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "bc=CS", 1);
-    pub const BIDI_CLASS_EUROPEAN_NUMBER_V1: ResourceKey = resource_key!(uniset, "bc=EN", 1);
-    pub const BIDI_CLASS_EUROPEAN_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "bc=ES", 1);
-    pub const BIDI_CLASS_EUROPEAN_TERMINATOR_V1: ResourceKey = resource_key!(uniset, "bc=ET", 1);
-    pub const BIDI_CLASS_FIRST_STRONG_ISOLATE_V1: ResourceKey = resource_key!(uniset, "bc=FSI", 1);
-    pub const BIDI_CLASS_LEFT_TO_RIGHT_V1: ResourceKey = resource_key!(uniset, "bc=L", 1);
-    pub const BIDI_CLASS_LEFT_TO_RIGHT_EMBEDDING_V1: ResourceKey =
-        resource_key!(uniset, "bc=LRE", 1);
-    pub const BIDI_CLASS_LEFT_TO_RIGHT_ISOLATE_V1: ResourceKey = resource_key!(uniset, "bc=LRI", 1);
-    pub const BIDI_CLASS_LEFT_TO_RIGHT_OVERRIDE_V1: ResourceKey =
-        resource_key!(uniset, "bc=LRO", 1);
-    pub const BIDI_CLASS_NONSPACING_MARK_V1: ResourceKey = resource_key!(uniset, "bc=NSM", 1);
-    pub const BIDI_CLASS_OTHER_NEUTRAL_V1: ResourceKey = resource_key!(uniset, "bc=ON", 1);
-    pub const BIDI_CLASS_POP_DIRECTIONAL_FORMAT_V1: ResourceKey =
-        resource_key!(uniset, "bc=PDF", 1);
-    pub const BIDI_CLASS_POP_DIRECTIONAL_ISOLATE_V1: ResourceKey =
-        resource_key!(uniset, "bc=PDI", 1);
-    pub const BIDI_CLASS_RIGHT_TO_LEFT_V1: ResourceKey = resource_key!(uniset, "bc=R", 1);
-    pub const BIDI_CLASS_RIGHT_TO_LEFT_EMBEDDING_V1: ResourceKey =
-        resource_key!(uniset, "bc=RLE", 1);
-    pub const BIDI_CLASS_RIGHT_TO_LEFT_ISOLATE_V1: ResourceKey = resource_key!(uniset, "bc=RLI", 1);
-    pub const BIDI_CLASS_RIGHT_TO_LEFT_OVERRIDE_V1: ResourceKey =
-        resource_key!(uniset, "bc=RLO", 1);
-    pub const BIDI_CLASS_SEGMENT_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "bc=S", 1);
-    pub const BIDI_CLASS_WHITE_SPACE_V1: ResourceKey = resource_key!(uniset, "bc=WS", 1);
-    pub const BIDI_PAIRED_BRACKET_TYPE_CLOSE_V1: ResourceKey = resource_key!(uniset, "bpt=c", 1);
-    pub const BIDI_PAIRED_BRACKET_TYPE_NONE_V1: ResourceKey = resource_key!(uniset, "bpt=n", 1);
-    pub const BIDI_PAIRED_BRACKET_TYPE_OPEN_V1: ResourceKey = resource_key!(uniset, "bpt=o", 1);
-    pub const CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1: ResourceKey =
-        resource_key!(uniset, "ccc=0", 1);
-    pub const CANONICAL_COMBINING_CLASS_OVERLAY_V1: ResourceKey = resource_key!(uniset, "ccc=1", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC10_V1: ResourceKey = resource_key!(uniset, "ccc=10", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC103_V1: ResourceKey =
-        resource_key!(uniset, "ccc=103", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC107_V1: ResourceKey =
-        resource_key!(uniset, "ccc=107", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC11_V1: ResourceKey = resource_key!(uniset, "ccc=11", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC118_V1: ResourceKey =
-        resource_key!(uniset, "ccc=118", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC12_V1: ResourceKey = resource_key!(uniset, "ccc=12", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC122_V1: ResourceKey =
-        resource_key!(uniset, "ccc=122", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC129_V1: ResourceKey =
-        resource_key!(uniset, "ccc=129", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC13_V1: ResourceKey = resource_key!(uniset, "ccc=13", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC130_V1: ResourceKey =
-        resource_key!(uniset, "ccc=130", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC132_V1: ResourceKey =
-        resource_key!(uniset, "ccc=132", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC133_V1: ResourceKey =
-        resource_key!(uniset, "ccc=133", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC14_V1: ResourceKey = resource_key!(uniset, "ccc=14", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC15_V1: ResourceKey = resource_key!(uniset, "ccc=15", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC16_V1: ResourceKey = resource_key!(uniset, "ccc=16", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC17_V1: ResourceKey = resource_key!(uniset, "ccc=17", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC18_V1: ResourceKey = resource_key!(uniset, "ccc=18", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC19_V1: ResourceKey = resource_key!(uniset, "ccc=19", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC20_V1: ResourceKey = resource_key!(uniset, "ccc=20", 1);
-    pub const CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=200", 1);
-    pub const CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "ccc=202", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC21_V1: ResourceKey = resource_key!(uniset, "ccc=21", 1);
-    pub const CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "ccc=214", 1);
-    pub const CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=216", 1);
-    pub const CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=218", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC22_V1: ResourceKey = resource_key!(uniset, "ccc=22", 1);
-    pub const CANONICAL_COMBINING_CLASS_BELOW_V1: ResourceKey = resource_key!(uniset, "ccc=220", 1);
-    pub const CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=222", 1);
-    pub const CANONICAL_COMBINING_CLASS_LEFT_V1: ResourceKey = resource_key!(uniset, "ccc=224", 1);
-    pub const CANONICAL_COMBINING_CLASS_RIGHT_V1: ResourceKey = resource_key!(uniset, "ccc=226", 1);
-    pub const CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=228", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC23_V1: ResourceKey = resource_key!(uniset, "ccc=23", 1);
-    pub const CANONICAL_COMBINING_CLASS_ABOVE_V1: ResourceKey = resource_key!(uniset, "ccc=230", 1);
-    pub const CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=232", 1);
-    pub const CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "ccc=233", 1);
-    pub const CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "ccc=234", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC24_V1: ResourceKey = resource_key!(uniset, "ccc=24", 1);
-    pub const CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1: ResourceKey =
-        resource_key!(uniset, "ccc=240", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC25_V1: ResourceKey = resource_key!(uniset, "ccc=25", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC26_V1: ResourceKey = resource_key!(uniset, "ccc=26", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC27_V1: ResourceKey = resource_key!(uniset, "ccc=27", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC28_V1: ResourceKey = resource_key!(uniset, "ccc=28", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC29_V1: ResourceKey = resource_key!(uniset, "ccc=29", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC30_V1: ResourceKey = resource_key!(uniset, "ccc=30", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC31_V1: ResourceKey = resource_key!(uniset, "ccc=31", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC32_V1: ResourceKey = resource_key!(uniset, "ccc=32", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC33_V1: ResourceKey = resource_key!(uniset, "ccc=33", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC34_V1: ResourceKey = resource_key!(uniset, "ccc=34", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC35_V1: ResourceKey = resource_key!(uniset, "ccc=35", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC36_V1: ResourceKey = resource_key!(uniset, "ccc=36", 1);
-    pub const CANONICAL_COMBINING_CLASS_HAN_READING_V1: ResourceKey =
-        resource_key!(uniset, "ccc=6", 1);
-    pub const CANONICAL_COMBINING_CLASS_NUKTA_V1: ResourceKey = resource_key!(uniset, "ccc=7", 1);
-    pub const CANONICAL_COMBINING_CLASS_KANA_VOICING_V1: ResourceKey =
-        resource_key!(uniset, "ccc=8", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC84_V1: ResourceKey = resource_key!(uniset, "ccc=84", 1);
-    pub const CANONICAL_COMBINING_CLASS_VIRAMA_V1: ResourceKey = resource_key!(uniset, "ccc=9", 1);
-    pub const CANONICAL_COMBINING_CLASS_CCC91_V1: ResourceKey = resource_key!(uniset, "ccc=91", 1);
-    pub const DECOMPOSITION_TYPE_CAN_V1: ResourceKey = resource_key!(uniset, "dt=Can", 1);
-    pub const DECOMPOSITION_TYPE_COM_V1: ResourceKey = resource_key!(uniset, "dt=Com", 1);
-    pub const DECOMPOSITION_TYPE_ENC_V1: ResourceKey = resource_key!(uniset, "dt=Enc", 1);
-    pub const DECOMPOSITION_TYPE_FIN_V1: ResourceKey = resource_key!(uniset, "dt=Fin", 1);
-    pub const DECOMPOSITION_TYPE_FONT_V1: ResourceKey = resource_key!(uniset, "dt=Font", 1);
-    pub const DECOMPOSITION_TYPE_FRA_V1: ResourceKey = resource_key!(uniset, "dt=Fra", 1);
-    pub const DECOMPOSITION_TYPE_INIT_V1: ResourceKey = resource_key!(uniset, "dt=Init", 1);
-    pub const DECOMPOSITION_TYPE_ISO_V1: ResourceKey = resource_key!(uniset, "dt=Iso", 1);
-    pub const DECOMPOSITION_TYPE_MED_V1: ResourceKey = resource_key!(uniset, "dt=Med", 1);
-    pub const DECOMPOSITION_TYPE_NAR_V1: ResourceKey = resource_key!(uniset, "dt=Nar", 1);
-    pub const DECOMPOSITION_TYPE_NB_V1: ResourceKey = resource_key!(uniset, "dt=Nb", 1);
-    pub const DECOMPOSITION_TYPE_NONE_V1: ResourceKey = resource_key!(uniset, "dt=None", 1);
-    pub const DECOMPOSITION_TYPE_SML_V1: ResourceKey = resource_key!(uniset, "dt=Sml", 1);
-    pub const DECOMPOSITION_TYPE_SQR_V1: ResourceKey = resource_key!(uniset, "dt=Sqr", 1);
-    pub const DECOMPOSITION_TYPE_SUB_V1: ResourceKey = resource_key!(uniset, "dt=Sub", 1);
-    pub const DECOMPOSITION_TYPE_SUP_V1: ResourceKey = resource_key!(uniset, "dt=Sup", 1);
-    pub const DECOMPOSITION_TYPE_VERT_V1: ResourceKey = resource_key!(uniset, "dt=Vert", 1);
-    pub const DECOMPOSITION_TYPE_WIDE_V1: ResourceKey = resource_key!(uniset, "dt=Wide", 1);
-    pub const EAST_ASIAN_WIDTH_AMBIGUOUS_V1: ResourceKey = resource_key!(uniset, "ea=A", 1);
-    pub const EAST_ASIAN_WIDTH_FULLWIDTH_V1: ResourceKey = resource_key!(uniset, "ea=F", 1);
-    pub const EAST_ASIAN_WIDTH_HALFWIDTH_V1: ResourceKey = resource_key!(uniset, "ea=H", 1);
-    pub const EAST_ASIAN_WIDTH_NEUTRAL_V1: ResourceKey = resource_key!(uniset, "ea=N", 1);
-    pub const EAST_ASIAN_WIDTH_NARROW_V1: ResourceKey = resource_key!(uniset, "ea=Na", 1);
-    pub const EAST_ASIAN_WIDTH_WIDE_V1: ResourceKey = resource_key!(uniset, "ea=W", 1);
-    pub const GENERAL_CATEGORY_OTHER_V1: ResourceKey = resource_key!(uniset, "gc=C", 1);
-    pub const GENERAL_CATEGORY_CNTRL_V1: ResourceKey = resource_key!(uniset, "gc=Cc", 1);
-    pub const GENERAL_CATEGORY_FORMAT_V1: ResourceKey = resource_key!(uniset, "gc=Cf", 1);
-    pub const GENERAL_CATEGORY_UNASSIGNED_V1: ResourceKey = resource_key!(uniset, "gc=Cn", 1);
-    pub const GENERAL_CATEGORY_PRIVATE_USE_V1: ResourceKey = resource_key!(uniset, "gc=Co", 1);
-    pub const GENERAL_CATEGORY_SURROGATE_V1: ResourceKey = resource_key!(uniset, "gc=Cs", 1);
-    pub const GENERAL_CATEGORY_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=L", 1);
-    pub const GENERAL_CATEGORY_CASED_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=LC", 1);
-    pub const GENERAL_CATEGORY_LOWERCASE_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=Ll", 1);
-    pub const GENERAL_CATEGORY_MODIFIER_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=Lm", 1);
-    pub const GENERAL_CATEGORY_OTHER_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=Lo", 1);
-    pub const GENERAL_CATEGORY_TITLECASE_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=Lt", 1);
-    pub const GENERAL_CATEGORY_UPPERCASE_LETTER_V1: ResourceKey = resource_key!(uniset, "gc=Lu", 1);
-    pub const GENERAL_CATEGORY_COMBINING_MARK_V1: ResourceKey = resource_key!(uniset, "gc=M", 1);
-    pub const GENERAL_CATEGORY_SPACING_MARK_V1: ResourceKey = resource_key!(uniset, "gc=Mc", 1);
-    pub const GENERAL_CATEGORY_ENCLOSING_MARK_V1: ResourceKey = resource_key!(uniset, "gc=Me", 1);
-    pub const GENERAL_CATEGORY_NONSPACING_MARK_V1: ResourceKey = resource_key!(uniset, "gc=Mn", 1);
-    pub const GENERAL_CATEGORY_NUMBER_V1: ResourceKey = resource_key!(uniset, "gc=N", 1);
-    pub const GENERAL_CATEGORY_DIGIT_V1: ResourceKey = resource_key!(uniset, "gc=Nd", 1);
-    pub const GENERAL_CATEGORY_LETTER_NUMBER_V1: ResourceKey = resource_key!(uniset, "gc=Nl", 1);
-    pub const GENERAL_CATEGORY_OTHER_NUMBER_V1: ResourceKey = resource_key!(uniset, "gc=No", 1);
-    pub const GENERAL_CATEGORY_PUNCT_V1: ResourceKey = resource_key!(uniset, "gc=P", 1);
-    pub const GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1: ResourceKey =
-        resource_key!(uniset, "gc=Pc", 1);
-    pub const GENERAL_CATEGORY_DASH_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "gc=Pd", 1);
-    pub const GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1: ResourceKey =
-        resource_key!(uniset, "gc=Pe", 1);
-    pub const GENERAL_CATEGORY_FINAL_PUNCTUATION_V1: ResourceKey =
-        resource_key!(uniset, "gc=Pf", 1);
-    pub const GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1: ResourceKey =
-        resource_key!(uniset, "gc=Pi", 1);
-    pub const GENERAL_CATEGORY_OTHER_PUNCTUATION_V1: ResourceKey =
-        resource_key!(uniset, "gc=Po", 1);
-    pub const GENERAL_CATEGORY_OPEN_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "gc=Ps", 1);
-    pub const GENERAL_CATEGORY_SYMBOL_V1: ResourceKey = resource_key!(uniset, "gc=S", 1);
-    pub const GENERAL_CATEGORY_CURRENCY_SYMBOL_V1: ResourceKey = resource_key!(uniset, "gc=Sc", 1);
-    pub const GENERAL_CATEGORY_MODIFIER_SYMBOL_V1: ResourceKey = resource_key!(uniset, "gc=Sk", 1);
-    pub const GENERAL_CATEGORY_MATH_SYMBOL_V1: ResourceKey = resource_key!(uniset, "gc=Sm", 1);
-    pub const GENERAL_CATEGORY_OTHER_SYMBOL_V1: ResourceKey = resource_key!(uniset, "gc=So", 1);
-    pub const GENERAL_CATEGORY_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "gc=Z", 1);
-    pub const GENERAL_CATEGORY_LINE_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "gc=Zl", 1);
-    pub const GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1: ResourceKey =
-        resource_key!(uniset, "gc=Zp", 1);
-    pub const GENERAL_CATEGORY_SPACE_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "gc=Zs", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_CONTROL_V1: ResourceKey = resource_key!(uniset, "GCB=CN", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_CR_V1: ResourceKey = resource_key!(uniset, "GCB=CR", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_E_BASE_V1: ResourceKey = resource_key!(uniset, "GCB=EB", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_E_BASE_GAZ_V1: ResourceKey =
-        resource_key!(uniset, "GCB=EBG", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_E_MODIFIER_V1: ResourceKey =
-        resource_key!(uniset, "GCB=EM", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_EXTEND_V1: ResourceKey = resource_key!(uniset, "GCB=EX", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_GLUE_AFTER_ZWJ_V1: ResourceKey =
-        resource_key!(uniset, "GCB=GAZ", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_L_V1: ResourceKey = resource_key!(uniset, "GCB=L", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_LF_V1: ResourceKey = resource_key!(uniset, "GCB=LF", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_LV_V1: ResourceKey = resource_key!(uniset, "GCB=LV", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_LVT_V1: ResourceKey = resource_key!(uniset, "GCB=LVT", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_PREPEND_V1: ResourceKey = resource_key!(uniset, "GCB=PP", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_REGIONAL_INDICATOR_V1: ResourceKey =
-        resource_key!(uniset, "GCB=RI", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_SPACINGMARK_V1: ResourceKey =
-        resource_key!(uniset, "GCB=SM", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_T_V1: ResourceKey = resource_key!(uniset, "GCB=T", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_V_V1: ResourceKey = resource_key!(uniset, "GCB=V", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_OTHER_V1: ResourceKey = resource_key!(uniset, "GCB=XX", 1);
-    pub const GRAPHEME_CLUSTER_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "GCB=ZWJ", 1);
-    pub const HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1: ResourceKey = resource_key!(uniset, "hst=L", 1);
-    pub const HANGUL_SYLLABLE_TYPE_LV_SYLLABLE_V1: ResourceKey = resource_key!(uniset, "hst=LV", 1);
-    pub const HANGUL_SYLLABLE_TYPE_LVT_SYLLABLE_V1: ResourceKey =
-        resource_key!(uniset, "hst=LVT", 1);
-    pub const HANGUL_SYLLABLE_TYPE_NOT_APPLICABLE_V1: ResourceKey =
-        resource_key!(uniset, "hst=NA", 1);
-    pub const HANGUL_SYLLABLE_TYPE_TRAILING_JAMO_V1: ResourceKey =
-        resource_key!(uniset, "hst=T", 1);
-    pub const HANGUL_SYLLABLE_TYPE_VOWEL_JAMO_V1: ResourceKey = resource_key!(uniset, "hst=V", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_BOTTOM_V1: ResourceKey =
-        resource_key!(uniset, "InPC=Bottom", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=BottomLeft", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=BottomRight", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=Left", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_LEFT_AND_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=LeftRight", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_NA_V1: ResourceKey = resource_key!(uniset, "InPC=NA", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_OVERSTRUCK_V1: ResourceKey =
-        resource_key!(uniset, "InPC=Overstruck", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=Right", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_V1: ResourceKey = resource_key!(uniset, "InPC=Top", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_V1: ResourceKey =
-        resource_key!(uniset, "InPC=TopBottom", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=TopBotLeft", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=TopBotRight", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=TopLeft", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_AND_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=TopLR", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=TopRight", 1);
-    pub const INDIC_POSITIONAL_CATEGORY_VISUAL_ORDER_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "InPC=VisOrdLeft", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Avagraha", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_BINDU_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Bindu", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_BRAHMI_JOINING_NUMBER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=BJoinNum", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CANTILLATION_MARK_V1: ResourceKey =
-        resource_key!(uniset, "InSC=CantillMark", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Consonant", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_DEAD_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsDead", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_FINAL_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsFinal", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_HEAD_LETTER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsHeadLet", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_INITIAL_POSTFIXED_V1: ResourceKey =
-        resource_key!(uniset, "InSC=CInitPost", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_KILLER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsKiller", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_MEDIAL_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsMedial", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_PLACEHOLDER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsPholder", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_PRECEDING_REPHA_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsPreReph", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_PREFIXED_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsPre", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_SUBJOINED_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsSubjoin", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_SUCCEEDING_REPHA_V1: ResourceKey =
-        resource_key!(uniset, "InSC=CSuccRepha", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_WITH_STACKER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ConsStacker", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_GEMINATION_MARK_V1: ResourceKey =
-        resource_key!(uniset, "InSC=GeminMark", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_INVISIBLE_STACKER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=InvisStack", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_JOINER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Joiner", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_MODIFYING_LETTER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=ModLetter", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_NON_JOINER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Non_Joiner", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_NUKTA_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Nukta", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_NUMBER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Number", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_NUMBER_JOINER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=NumJoiner", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_OTHER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Other", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_PURE_KILLER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Pure_Killer", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_REGISTER_SHIFTER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=RegistShift", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_SYLLABLE_MODIFIER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=SyllMod", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_TONE_LETTER_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Tone_Letter", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_TONE_MARK_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Tone_Mark", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_VIRAMA_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Virama", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_VISARGA_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Visarga", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_VOWEL_V1: ResourceKey =
-        resource_key!(uniset, "InSC=Vowel", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_VOWEL_DEPENDENT_V1: ResourceKey =
-        resource_key!(uniset, "InSC=VowelDep", 1);
-    pub const INDIC_SYLLABIC_CATEGORY_VOWEL_INDEPENDENT_V1: ResourceKey =
-        resource_key!(uniset, "InSC=VowelIndep", 1);
-    pub const JOINING_GROUP_AFRICAN_FEH_V1: ResourceKey =
-        resource_key!(uniset, "jg=African_Feh", 1);
-    pub const JOINING_GROUP_AFRICAN_NOON_V1: ResourceKey =
-        resource_key!(uniset, "jg=African_Noon", 1);
-    pub const JOINING_GROUP_AFRICAN_QAF_V1: ResourceKey =
-        resource_key!(uniset, "jg=African_Qaf", 1);
-    pub const JOINING_GROUP_AIN_V1: ResourceKey = resource_key!(uniset, "jg=Ain", 1);
-    pub const JOINING_GROUP_ALAPH_V1: ResourceKey = resource_key!(uniset, "jg=Alaph", 1);
-    pub const JOINING_GROUP_ALEF_V1: ResourceKey = resource_key!(uniset, "jg=Alef", 1);
-    pub const JOINING_GROUP_BEH_V1: ResourceKey = resource_key!(uniset, "jg=Beh", 1);
-    pub const JOINING_GROUP_BETH_V1: ResourceKey = resource_key!(uniset, "jg=Beth", 1);
-    pub const JOINING_GROUP_BURUSHASKI_YEH_BARREE_V1: ResourceKey =
-        resource_key!(uniset, "jg=BurushYehBarr", 1);
-    pub const JOINING_GROUP_DAL_V1: ResourceKey = resource_key!(uniset, "jg=Dal", 1);
-    pub const JOINING_GROUP_DALATH_RISH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Dalath_Rish", 1);
-    pub const JOINING_GROUP_E_V1: ResourceKey = resource_key!(uniset, "jg=E", 1);
-    pub const JOINING_GROUP_FARSI_YEH_V1: ResourceKey = resource_key!(uniset, "jg=Farsi_Yeh", 1);
-    pub const JOINING_GROUP_FE_V1: ResourceKey = resource_key!(uniset, "jg=Fe", 1);
-    pub const JOINING_GROUP_FEH_V1: ResourceKey = resource_key!(uniset, "jg=Feh", 1);
-    pub const JOINING_GROUP_FINAL_SEMKATH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Final_Semkath", 1);
-    pub const JOINING_GROUP_GAF_V1: ResourceKey = resource_key!(uniset, "jg=Gaf", 1);
-    pub const JOINING_GROUP_GAMAL_V1: ResourceKey = resource_key!(uniset, "jg=Gamal", 1);
-    pub const JOINING_GROUP_HAH_V1: ResourceKey = resource_key!(uniset, "jg=Hah", 1);
-    pub const JOINING_GROUP_HANIFI_ROHINGYA_KINNA_YA_V1: ResourceKey =
-        resource_key!(uniset, "jg=HRohingKinYa", 1);
-    pub const JOINING_GROUP_HANIFI_ROHINGYA_PA_V1: ResourceKey =
-        resource_key!(uniset, "jg=HRohingPa", 1);
-    pub const JOINING_GROUP_HE_V1: ResourceKey = resource_key!(uniset, "jg=He", 1);
-    pub const JOINING_GROUP_HEH_V1: ResourceKey = resource_key!(uniset, "jg=Heh", 1);
-    pub const JOINING_GROUP_HEH_GOAL_V1: ResourceKey = resource_key!(uniset, "jg=Heh_Goal", 1);
-    pub const JOINING_GROUP_HETH_V1: ResourceKey = resource_key!(uniset, "jg=Heth", 1);
-    pub const JOINING_GROUP_KAF_V1: ResourceKey = resource_key!(uniset, "jg=Kaf", 1);
-    pub const JOINING_GROUP_KAPH_V1: ResourceKey = resource_key!(uniset, "jg=Kaph", 1);
-    pub const JOINING_GROUP_KHAPH_V1: ResourceKey = resource_key!(uniset, "jg=Khaph", 1);
-    pub const JOINING_GROUP_KNOTTED_HEH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Knotted_Heh", 1);
-    pub const JOINING_GROUP_LAM_V1: ResourceKey = resource_key!(uniset, "jg=Lam", 1);
-    pub const JOINING_GROUP_LAMADH_V1: ResourceKey = resource_key!(uniset, "jg=Lamadh", 1);
-    pub const JOINING_GROUP_MALAYALAM_BHA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Bha", 1);
-    pub const JOINING_GROUP_MALAYALAM_JA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Ja", 1);
-    pub const JOINING_GROUP_MALAYALAM_LLA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Lla", 1);
-    pub const JOINING_GROUP_MALAYALAM_LLLA_V1: ResourceKey = resource_key!(uniset, "jg=Ma_Llla", 1);
-    pub const JOINING_GROUP_MALAYALAM_NGA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Nga", 1);
-    pub const JOINING_GROUP_MALAYALAM_NNA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Nna", 1);
-    pub const JOINING_GROUP_MALAYALAM_NNNA_V1: ResourceKey = resource_key!(uniset, "jg=Ma_Nnna", 1);
-    pub const JOINING_GROUP_MALAYALAM_NYA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Nya", 1);
-    pub const JOINING_GROUP_MALAYALAM_RA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Ra", 1);
-    pub const JOINING_GROUP_MALAYALAM_SSA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Ssa", 1);
-    pub const JOINING_GROUP_MALAYALAM_TTA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Malayalam_Tta", 1);
-    pub const JOINING_GROUP_MANICHAEAN_ALEPH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Aleph", 1);
-    pub const JOINING_GROUP_MANICHAEAN_AYIN_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Ayin", 1);
-    pub const JOINING_GROUP_MANICHAEAN_BETH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Beth", 1);
-    pub const JOINING_GROUP_MANICHAEAN_DALETH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Daleth", 1);
-    pub const JOINING_GROUP_MANICHAEAN_DHAMEDH_V1: ResourceKey =
-        resource_key!(uniset, "jg=ManichDhamedh", 1);
-    pub const JOINING_GROUP_MANICHAEAN_FIVE_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Five", 1);
-    pub const JOINING_GROUP_MANICHAEAN_GIMEL_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Gimel", 1);
-    pub const JOINING_GROUP_MANICHAEAN_HETH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Heth", 1);
-    pub const JOINING_GROUP_MANICHAEAN_HUNDRED_V1: ResourceKey =
-        resource_key!(uniset, "jg=ManichHundred", 1);
-    pub const JOINING_GROUP_MANICHAEAN_KAPH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Kaph", 1);
-    pub const JOINING_GROUP_MANICHAEAN_LAMEDH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Lamedh", 1);
-    pub const JOINING_GROUP_MANICHAEAN_MEM_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Mem", 1);
-    pub const JOINING_GROUP_MANICHAEAN_NUN_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Nun", 1);
-    pub const JOINING_GROUP_MANICHAEAN_ONE_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_One", 1);
-    pub const JOINING_GROUP_MANICHAEAN_PE_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Pe", 1);
-    pub const JOINING_GROUP_MANICHAEAN_QOPH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Qoph", 1);
-    pub const JOINING_GROUP_MANICHAEAN_RESH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Resh", 1);
-    pub const JOINING_GROUP_MANICHAEAN_SADHE_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Sadhe", 1);
-    pub const JOINING_GROUP_MANICHAEAN_SAMEKH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Samekh", 1);
-    pub const JOINING_GROUP_MANICHAEAN_TAW_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Taw", 1);
-    pub const JOINING_GROUP_MANICHAEAN_TEN_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Ten", 1);
-    pub const JOINING_GROUP_MANICHAEAN_TETH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Teth", 1);
-    pub const JOINING_GROUP_MANICHAEAN_THAMEDH_V1: ResourceKey =
-        resource_key!(uniset, "jg=ManichThamedh", 1);
-    pub const JOINING_GROUP_MANICHAEAN_TWENTY_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Twenty", 1);
-    pub const JOINING_GROUP_MANICHAEAN_WAW_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Waw", 1);
-    pub const JOINING_GROUP_MANICHAEAN_YODH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Yodh", 1);
-    pub const JOINING_GROUP_MANICHAEAN_ZAYIN_V1: ResourceKey =
-        resource_key!(uniset, "jg=Manich_Zayin", 1);
-    pub const JOINING_GROUP_MEEM_V1: ResourceKey = resource_key!(uniset, "jg=Meem", 1);
-    pub const JOINING_GROUP_MIM_V1: ResourceKey = resource_key!(uniset, "jg=Mim", 1);
-    pub const JOINING_GROUP_NO_JOINING_GROUP_V1: ResourceKey =
-        resource_key!(uniset, "jg=NoJoinGroup", 1);
-    pub const JOINING_GROUP_NOON_V1: ResourceKey = resource_key!(uniset, "jg=Noon", 1);
-    pub const JOINING_GROUP_NUN_V1: ResourceKey = resource_key!(uniset, "jg=Nun", 1);
-    pub const JOINING_GROUP_NYA_V1: ResourceKey = resource_key!(uniset, "jg=Nya", 1);
-    pub const JOINING_GROUP_PE_V1: ResourceKey = resource_key!(uniset, "jg=Pe", 1);
-    pub const JOINING_GROUP_QAF_V1: ResourceKey = resource_key!(uniset, "jg=Qaf", 1);
-    pub const JOINING_GROUP_QAPH_V1: ResourceKey = resource_key!(uniset, "jg=Qaph", 1);
-    pub const JOINING_GROUP_REH_V1: ResourceKey = resource_key!(uniset, "jg=Reh", 1);
-    pub const JOINING_GROUP_REVERSED_PE_V1: ResourceKey =
-        resource_key!(uniset, "jg=Reversed_Pe", 1);
-    pub const JOINING_GROUP_ROHINGYA_YEH_V1: ResourceKey =
-        resource_key!(uniset, "jg=Rohingya_Yeh", 1);
-    pub const JOINING_GROUP_SAD_V1: ResourceKey = resource_key!(uniset, "jg=Sad", 1);
-    pub const JOINING_GROUP_SADHE_V1: ResourceKey = resource_key!(uniset, "jg=Sadhe", 1);
-    pub const JOINING_GROUP_SEEN_V1: ResourceKey = resource_key!(uniset, "jg=Seen", 1);
-    pub const JOINING_GROUP_SEMKATH_V1: ResourceKey = resource_key!(uniset, "jg=Semkath", 1);
-    pub const JOINING_GROUP_SHIN_V1: ResourceKey = resource_key!(uniset, "jg=Shin", 1);
-    pub const JOINING_GROUP_STRAIGHT_WAW_V1: ResourceKey =
-        resource_key!(uniset, "jg=Straight_Waw", 1);
-    pub const JOINING_GROUP_SWASH_KAF_V1: ResourceKey = resource_key!(uniset, "jg=Swash_Kaf", 1);
-    pub const JOINING_GROUP_SYRIAC_WAW_V1: ResourceKey = resource_key!(uniset, "jg=Syriac_Waw", 1);
-    pub const JOINING_GROUP_TAH_V1: ResourceKey = resource_key!(uniset, "jg=Tah", 1);
-    pub const JOINING_GROUP_TAW_V1: ResourceKey = resource_key!(uniset, "jg=Taw", 1);
-    pub const JOINING_GROUP_TEH_MARBUTA_V1: ResourceKey =
-        resource_key!(uniset, "jg=Teh_Marbuta", 1);
-    pub const JOINING_GROUP_HAMZA_ON_HEH_GOAL_V1: ResourceKey =
-        resource_key!(uniset, "jg=TehMarbGoal", 1);
-    pub const JOINING_GROUP_TETH_V1: ResourceKey = resource_key!(uniset, "jg=Teth", 1);
-    pub const JOINING_GROUP_WAW_V1: ResourceKey = resource_key!(uniset, "jg=Waw", 1);
-    pub const JOINING_GROUP_YEH_V1: ResourceKey = resource_key!(uniset, "jg=Yeh", 1);
-    pub const JOINING_GROUP_YEH_BARREE_V1: ResourceKey = resource_key!(uniset, "jg=Yeh_Barree", 1);
-    pub const JOINING_GROUP_YEH_WITH_TAIL_V1: ResourceKey =
-        resource_key!(uniset, "jg=Yeh_With_Tail", 1);
-    pub const JOINING_GROUP_YUDH_V1: ResourceKey = resource_key!(uniset, "jg=Yudh", 1);
-    pub const JOINING_GROUP_YUDH_HE_V1: ResourceKey = resource_key!(uniset, "jg=Yudh_He", 1);
-    pub const JOINING_GROUP_ZAIN_V1: ResourceKey = resource_key!(uniset, "jg=Zain", 1);
-    pub const JOINING_GROUP_ZHAIN_V1: ResourceKey = resource_key!(uniset, "jg=Zhain", 1);
-    pub const JOINING_TYPE_JOIN_CAUSING_V1: ResourceKey = resource_key!(uniset, "jt=C", 1);
-    pub const JOINING_TYPE_DUAL_JOINING_V1: ResourceKey = resource_key!(uniset, "jt=D", 1);
-    pub const JOINING_TYPE_LEFT_JOINING_V1: ResourceKey = resource_key!(uniset, "jt=L", 1);
-    pub const JOINING_TYPE_RIGHT_JOINING_V1: ResourceKey = resource_key!(uniset, "jt=R", 1);
-    pub const JOINING_TYPE_TRANSPARENT_V1: ResourceKey = resource_key!(uniset, "jt=T", 1);
-    pub const JOINING_TYPE_NON_JOINING_V1: ResourceKey = resource_key!(uniset, "jt=U", 1);
-    pub const LINE_BREAK_AMBIGUOUS_V1: ResourceKey = resource_key!(uniset, "lb=AI", 1);
-    pub const LINE_BREAK_ALPHABETIC_V1: ResourceKey = resource_key!(uniset, "lb=AL", 1);
-    pub const LINE_BREAK_BREAK_BOTH_V1: ResourceKey = resource_key!(uniset, "lb=B2", 1);
-    pub const LINE_BREAK_BREAK_AFTER_V1: ResourceKey = resource_key!(uniset, "lb=BA", 1);
-    pub const LINE_BREAK_BREAK_BEFORE_V1: ResourceKey = resource_key!(uniset, "lb=BB", 1);
-    pub const LINE_BREAK_MANDATORY_BREAK_V1: ResourceKey = resource_key!(uniset, "lb=BK", 1);
-    pub const LINE_BREAK_CONTINGENT_BREAK_V1: ResourceKey = resource_key!(uniset, "lb=CB", 1);
-    pub const LINE_BREAK_CONDITIONAL_JAPANESE_STARTER_V1: ResourceKey =
-        resource_key!(uniset, "lb=CJ", 1);
-    pub const LINE_BREAK_CLOSE_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "lb=CL", 1);
-    pub const LINE_BREAK_COMBINING_MARK_V1: ResourceKey = resource_key!(uniset, "lb=CM", 1);
-    pub const LINE_BREAK_CLOSE_PARENTHESIS_V1: ResourceKey = resource_key!(uniset, "lb=CP", 1);
-    pub const LINE_BREAK_CARRIAGE_RETURN_V1: ResourceKey = resource_key!(uniset, "lb=CR", 1);
-    pub const LINE_BREAK_E_BASE_V1: ResourceKey = resource_key!(uniset, "lb=EB", 1);
-    pub const LINE_BREAK_E_MODIFIER_V1: ResourceKey = resource_key!(uniset, "lb=EM", 1);
-    pub const LINE_BREAK_EXCLAMATION_V1: ResourceKey = resource_key!(uniset, "lb=EX", 1);
-    pub const LINE_BREAK_GLUE_V1: ResourceKey = resource_key!(uniset, "lb=GL", 1);
-    pub const LINE_BREAK_H2_V1: ResourceKey = resource_key!(uniset, "lb=H2", 1);
-    pub const LINE_BREAK_H3_V1: ResourceKey = resource_key!(uniset, "lb=H3", 1);
-    pub const LINE_BREAK_HEBREW_LETTER_V1: ResourceKey = resource_key!(uniset, "lb=HL", 1);
-    pub const LINE_BREAK_HYPHEN_V1: ResourceKey = resource_key!(uniset, "lb=HY", 1);
-    pub const LINE_BREAK_IDEOGRAPHIC_V1: ResourceKey = resource_key!(uniset, "lb=ID", 1);
-    pub const LINE_BREAK_INSEPERABLE_V1: ResourceKey = resource_key!(uniset, "lb=IN", 1);
-    pub const LINE_BREAK_INFIX_NUMERIC_V1: ResourceKey = resource_key!(uniset, "lb=IS", 1);
-    pub const LINE_BREAK_JL_V1: ResourceKey = resource_key!(uniset, "lb=JL", 1);
-    pub const LINE_BREAK_JT_V1: ResourceKey = resource_key!(uniset, "lb=JT", 1);
-    pub const LINE_BREAK_JV_V1: ResourceKey = resource_key!(uniset, "lb=JV", 1);
-    pub const LINE_BREAK_LINE_FEED_V1: ResourceKey = resource_key!(uniset, "lb=LF", 1);
-    pub const LINE_BREAK_NEXT_LINE_V1: ResourceKey = resource_key!(uniset, "lb=NL", 1);
-    pub const LINE_BREAK_NONSTARTER_V1: ResourceKey = resource_key!(uniset, "lb=NS", 1);
-    pub const LINE_BREAK_NUMERIC_V1: ResourceKey = resource_key!(uniset, "lb=NU", 1);
-    pub const LINE_BREAK_OPEN_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "lb=OP", 1);
-    pub const LINE_BREAK_POSTFIX_NUMERIC_V1: ResourceKey = resource_key!(uniset, "lb=PO", 1);
-    pub const LINE_BREAK_PREFIX_NUMERIC_V1: ResourceKey = resource_key!(uniset, "lb=PR", 1);
-    pub const LINE_BREAK_QUOTATION_V1: ResourceKey = resource_key!(uniset, "lb=QU", 1);
-    pub const LINE_BREAK_REGIONAL_INDICATOR_V1: ResourceKey = resource_key!(uniset, "lb=RI", 1);
-    pub const LINE_BREAK_COMPLEX_CONTEXT_V1: ResourceKey = resource_key!(uniset, "lb=SA", 1);
-    pub const LINE_BREAK_SURROGATE_V1: ResourceKey = resource_key!(uniset, "lb=SG", 1);
-    pub const LINE_BREAK_SPACE_V1: ResourceKey = resource_key!(uniset, "lb=SP", 1);
-    pub const LINE_BREAK_BREAK_SYMBOLS_V1: ResourceKey = resource_key!(uniset, "lb=SY", 1);
-    pub const LINE_BREAK_WORD_JOINER_V1: ResourceKey = resource_key!(uniset, "lb=WJ", 1);
-    pub const LINE_BREAK_UNKNOWN_V1: ResourceKey = resource_key!(uniset, "lb=XX", 1);
-    pub const LINE_BREAK_ZWSPACE_V1: ResourceKey = resource_key!(uniset, "lb=ZW", 1);
-    pub const LINE_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "lb=ZWJ", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1: ResourceKey =
-        resource_key!(uniset, "lccc=0", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_OVERLAY_V1: ResourceKey =
-        resource_key!(uniset, "lccc=1", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC10_V1: ResourceKey =
-        resource_key!(uniset, "lccc=10", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC103_V1: ResourceKey =
-        resource_key!(uniset, "lccc=103", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC107_V1: ResourceKey =
-        resource_key!(uniset, "lccc=107", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC11_V1: ResourceKey =
-        resource_key!(uniset, "lccc=11", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC118_V1: ResourceKey =
-        resource_key!(uniset, "lccc=118", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC12_V1: ResourceKey =
-        resource_key!(uniset, "lccc=12", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC122_V1: ResourceKey =
-        resource_key!(uniset, "lccc=122", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC129_V1: ResourceKey =
-        resource_key!(uniset, "lccc=129", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC13_V1: ResourceKey =
-        resource_key!(uniset, "lccc=13", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC130_V1: ResourceKey =
-        resource_key!(uniset, "lccc=130", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC132_V1: ResourceKey =
-        resource_key!(uniset, "lccc=132", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC133_V1: ResourceKey =
-        resource_key!(uniset, "lccc=133", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC14_V1: ResourceKey =
-        resource_key!(uniset, "lccc=14", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC15_V1: ResourceKey =
-        resource_key!(uniset, "lccc=15", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC16_V1: ResourceKey =
-        resource_key!(uniset, "lccc=16", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC17_V1: ResourceKey =
-        resource_key!(uniset, "lccc=17", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC18_V1: ResourceKey =
-        resource_key!(uniset, "lccc=18", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC19_V1: ResourceKey =
-        resource_key!(uniset, "lccc=19", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC20_V1: ResourceKey =
-        resource_key!(uniset, "lccc=20", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=200", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "lccc=202", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC21_V1: ResourceKey =
-        resource_key!(uniset, "lccc=21", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "lccc=214", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=216", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=218", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC22_V1: ResourceKey =
-        resource_key!(uniset, "lccc=22", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "lccc=220", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=222", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=224", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=226", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=228", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC23_V1: ResourceKey =
-        resource_key!(uniset, "lccc=23", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "lccc=230", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=232", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "lccc=233", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "lccc=234", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC24_V1: ResourceKey =
-        resource_key!(uniset, "lccc=24", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1: ResourceKey =
-        resource_key!(uniset, "lccc=240", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC25_V1: ResourceKey =
-        resource_key!(uniset, "lccc=25", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC26_V1: ResourceKey =
-        resource_key!(uniset, "lccc=26", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC27_V1: ResourceKey =
-        resource_key!(uniset, "lccc=27", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC28_V1: ResourceKey =
-        resource_key!(uniset, "lccc=28", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC29_V1: ResourceKey =
-        resource_key!(uniset, "lccc=29", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC30_V1: ResourceKey =
-        resource_key!(uniset, "lccc=30", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC31_V1: ResourceKey =
-        resource_key!(uniset, "lccc=31", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC32_V1: ResourceKey =
-        resource_key!(uniset, "lccc=32", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC33_V1: ResourceKey =
-        resource_key!(uniset, "lccc=33", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC34_V1: ResourceKey =
-        resource_key!(uniset, "lccc=34", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC35_V1: ResourceKey =
-        resource_key!(uniset, "lccc=35", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC36_V1: ResourceKey =
-        resource_key!(uniset, "lccc=36", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_HAN_READING_V1: ResourceKey =
-        resource_key!(uniset, "lccc=6", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_NUKTA_V1: ResourceKey =
-        resource_key!(uniset, "lccc=7", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1: ResourceKey =
-        resource_key!(uniset, "lccc=8", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC84_V1: ResourceKey =
-        resource_key!(uniset, "lccc=84", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_VIRAMA_V1: ResourceKey =
-        resource_key!(uniset, "lccc=9", 1);
-    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC91_V1: ResourceKey =
-        resource_key!(uniset, "lccc=91", 1);
-    pub const NFC_QUICK_CHECK_MAYBE_V1: ResourceKey = resource_key!(uniset, "NFC_QC=M", 1);
-    pub const NFC_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "NFC_QC=N", 1);
-    pub const NFC_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "NFC_QC=Y", 1);
-    pub const NFD_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "NFD_QC=N", 1);
-    pub const NFD_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "NFD_QC=Y", 1);
-    pub const NFKC_QUICK_CHECK_MAYBE_V1: ResourceKey = resource_key!(uniset, "NFKC_QC=M", 1);
-    pub const NFKC_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "NFKC_QC=N", 1);
-    pub const NFKC_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "NFKC_QC=Y", 1);
-    pub const NFKD_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "NFKD_QC=N", 1);
-    pub const NFKD_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "NFKD_QC=Y", 1);
-    pub const NUMERIC_TYPE_DECIMAL_V1: ResourceKey = resource_key!(uniset, "nt=De", 1);
-    pub const NUMERIC_TYPE_DIGIT_V1: ResourceKey = resource_key!(uniset, "nt=Di", 1);
-    pub const NUMERIC_TYPE_NONE_V1: ResourceKey = resource_key!(uniset, "nt=None", 1);
-    pub const NUMERIC_TYPE_NUMERIC_V1: ResourceKey = resource_key!(uniset, "nt=Nu", 1);
-    pub const SENTENCE_BREAK_ATERM_V1: ResourceKey = resource_key!(uniset, "SB=AT", 1);
-    pub const SENTENCE_BREAK_CLOSE_V1: ResourceKey = resource_key!(uniset, "SB=CL", 1);
-    pub const SENTENCE_BREAK_CR_V1: ResourceKey = resource_key!(uniset, "SB=CR", 1);
-    pub const SENTENCE_BREAK_EXTEND_V1: ResourceKey = resource_key!(uniset, "SB=EX", 1);
-    pub const SENTENCE_BREAK_FORMAT_V1: ResourceKey = resource_key!(uniset, "SB=FO", 1);
-    pub const SENTENCE_BREAK_OLETTER_V1: ResourceKey = resource_key!(uniset, "SB=LE", 1);
-    pub const SENTENCE_BREAK_LF_V1: ResourceKey = resource_key!(uniset, "SB=LF", 1);
-    pub const SENTENCE_BREAK_LOWER_V1: ResourceKey = resource_key!(uniset, "SB=LO", 1);
-    pub const SENTENCE_BREAK_NUMERIC_V1: ResourceKey = resource_key!(uniset, "SB=NU", 1);
-    pub const SENTENCE_BREAK_SCONTINUE_V1: ResourceKey = resource_key!(uniset, "SB=SC", 1);
-    pub const SENTENCE_BREAK_SEP_V1: ResourceKey = resource_key!(uniset, "SB=SE", 1);
-    pub const SENTENCE_BREAK_SP_V1: ResourceKey = resource_key!(uniset, "SB=SP", 1);
-    pub const SENTENCE_BREAK_STERM_V1: ResourceKey = resource_key!(uniset, "SB=ST", 1);
-    pub const SENTENCE_BREAK_UPPER_V1: ResourceKey = resource_key!(uniset, "SB=UP", 1);
-    pub const SENTENCE_BREAK_OTHER_V1: ResourceKey = resource_key!(uniset, "SB=XX", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1: ResourceKey =
-        resource_key!(uniset, "tccc=0", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_OVERLAY_V1: ResourceKey =
-        resource_key!(uniset, "tccc=1", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC10_V1: ResourceKey =
-        resource_key!(uniset, "tccc=10", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC103_V1: ResourceKey =
-        resource_key!(uniset, "tccc=103", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC107_V1: ResourceKey =
-        resource_key!(uniset, "tccc=107", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC11_V1: ResourceKey =
-        resource_key!(uniset, "tccc=11", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC118_V1: ResourceKey =
-        resource_key!(uniset, "tccc=118", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC12_V1: ResourceKey =
-        resource_key!(uniset, "tccc=12", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC122_V1: ResourceKey =
-        resource_key!(uniset, "tccc=122", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC129_V1: ResourceKey =
-        resource_key!(uniset, "tccc=129", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC13_V1: ResourceKey =
-        resource_key!(uniset, "tccc=13", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC130_V1: ResourceKey =
-        resource_key!(uniset, "tccc=130", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC132_V1: ResourceKey =
-        resource_key!(uniset, "tccc=132", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC133_V1: ResourceKey =
-        resource_key!(uniset, "tccc=133", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC14_V1: ResourceKey =
-        resource_key!(uniset, "tccc=14", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC15_V1: ResourceKey =
-        resource_key!(uniset, "tccc=15", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC16_V1: ResourceKey =
-        resource_key!(uniset, "tccc=16", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC17_V1: ResourceKey =
-        resource_key!(uniset, "tccc=17", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC18_V1: ResourceKey =
-        resource_key!(uniset, "tccc=18", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC19_V1: ResourceKey =
-        resource_key!(uniset, "tccc=19", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC20_V1: ResourceKey =
-        resource_key!(uniset, "tccc=20", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=200", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "tccc=202", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC21_V1: ResourceKey =
-        resource_key!(uniset, "tccc=21", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "tccc=214", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=216", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=218", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC22_V1: ResourceKey =
-        resource_key!(uniset, "tccc=22", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "tccc=220", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=222", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=224", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=226", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=228", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC23_V1: ResourceKey =
-        resource_key!(uniset, "tccc=23", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "tccc=230", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=232", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1: ResourceKey =
-        resource_key!(uniset, "tccc=233", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1: ResourceKey =
-        resource_key!(uniset, "tccc=234", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC24_V1: ResourceKey =
-        resource_key!(uniset, "tccc=24", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1: ResourceKey =
-        resource_key!(uniset, "tccc=240", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC25_V1: ResourceKey =
-        resource_key!(uniset, "tccc=25", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC26_V1: ResourceKey =
-        resource_key!(uniset, "tccc=26", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC27_V1: ResourceKey =
-        resource_key!(uniset, "tccc=27", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC28_V1: ResourceKey =
-        resource_key!(uniset, "tccc=28", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC29_V1: ResourceKey =
-        resource_key!(uniset, "tccc=29", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC30_V1: ResourceKey =
-        resource_key!(uniset, "tccc=30", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC31_V1: ResourceKey =
-        resource_key!(uniset, "tccc=31", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC32_V1: ResourceKey =
-        resource_key!(uniset, "tccc=32", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC33_V1: ResourceKey =
-        resource_key!(uniset, "tccc=33", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC34_V1: ResourceKey =
-        resource_key!(uniset, "tccc=34", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC35_V1: ResourceKey =
-        resource_key!(uniset, "tccc=35", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC36_V1: ResourceKey =
-        resource_key!(uniset, "tccc=36", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_HAN_READING_V1: ResourceKey =
-        resource_key!(uniset, "tccc=6", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_NUKTA_V1: ResourceKey =
-        resource_key!(uniset, "tccc=7", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1: ResourceKey =
-        resource_key!(uniset, "tccc=8", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC84_V1: ResourceKey =
-        resource_key!(uniset, "tccc=84", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_VIRAMA_V1: ResourceKey =
-        resource_key!(uniset, "tccc=9", 1);
-    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC91_V1: ResourceKey =
-        resource_key!(uniset, "tccc=91", 1);
-    pub const VERTICAL_ORIENTATION_ROTATED_V1: ResourceKey = resource_key!(uniset, "vo=R", 1);
-    pub const VERTICAL_ORIENTATION_TRANSFORMED_ROTATED_V1: ResourceKey =
-        resource_key!(uniset, "vo=Tr", 1);
-    pub const VERTICAL_ORIENTATION_TRANSFORMED_UPRIGHT_V1: ResourceKey =
-        resource_key!(uniset, "vo=Tu", 1);
-    pub const VERTICAL_ORIENTATION_UPRIGHT_V1: ResourceKey = resource_key!(uniset, "vo=U", 1);
-    pub const WORD_BREAK_CR_V1: ResourceKey = resource_key!(uniset, "WB=CR", 1);
-    pub const WORD_BREAK_DOUBLE_QUOTE_V1: ResourceKey = resource_key!(uniset, "WB=DQ", 1);
-    pub const WORD_BREAK_E_BASE_V1: ResourceKey = resource_key!(uniset, "WB=EB", 1);
-    pub const WORD_BREAK_E_BASE_GAZ_V1: ResourceKey = resource_key!(uniset, "WB=EBG", 1);
-    pub const WORD_BREAK_E_MODIFIER_V1: ResourceKey = resource_key!(uniset, "WB=EM", 1);
-    pub const WORD_BREAK_EXTENDNUMLET_V1: ResourceKey = resource_key!(uniset, "WB=EX", 1);
-    pub const WORD_BREAK_EXTEND_V1: ResourceKey = resource_key!(uniset, "WB=Extend", 1);
-    pub const WORD_BREAK_FORMAT_V1: ResourceKey = resource_key!(uniset, "WB=FO", 1);
-    pub const WORD_BREAK_GLUE_AFTER_ZWJ_V1: ResourceKey = resource_key!(uniset, "WB=GAZ", 1);
-    pub const WORD_BREAK_HEBREW_LETTER_V1: ResourceKey = resource_key!(uniset, "WB=HL", 1);
-    pub const WORD_BREAK_KATAKANA_V1: ResourceKey = resource_key!(uniset, "WB=KA", 1);
-    pub const WORD_BREAK_ALETTER_V1: ResourceKey = resource_key!(uniset, "WB=LE", 1);
-    pub const WORD_BREAK_LF_V1: ResourceKey = resource_key!(uniset, "WB=LF", 1);
-    pub const WORD_BREAK_MIDNUMLET_V1: ResourceKey = resource_key!(uniset, "WB=MB", 1);
-    pub const WORD_BREAK_MIDLETTER_V1: ResourceKey = resource_key!(uniset, "WB=ML", 1);
-    pub const WORD_BREAK_MIDNUM_V1: ResourceKey = resource_key!(uniset, "WB=MN", 1);
-    pub const WORD_BREAK_NEWLINE_V1: ResourceKey = resource_key!(uniset, "WB=NL", 1);
-    pub const WORD_BREAK_NUMERIC_V1: ResourceKey = resource_key!(uniset, "WB=NU", 1);
-    pub const WORD_BREAK_REGIONAL_INDICATOR_V1: ResourceKey = resource_key!(uniset, "WB=RI", 1);
-    pub const WORD_BREAK_SINGLE_QUOTE_V1: ResourceKey = resource_key!(uniset, "WB=SQ", 1);
-    pub const WORD_BREAK_WSEGSPACE_V1: ResourceKey = resource_key!(uniset, "WB=WSegSpace", 1);
-    pub const WORD_BREAK_OTHER_V1: ResourceKey = resource_key!(uniset, "WB=XX", 1);
-    pub const WORD_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "WB=ZWJ", 1);
+    // Note: The ResourceKey subcategory strings are determined from the Rust enum
+    // integer representations of the Unicode enumerated property name and the
+    // Unicode enumerated property value.
+    pub const BIDI_CLASS_ARABIC_LETTER_V1: ResourceKey = resource_key!(uniset, "0=0", 1);
+    pub const BIDI_CLASS_ARABIC_NUMBER_V1: ResourceKey = resource_key!(uniset, "0=1", 1);
+    pub const BIDI_CLASS_PARAGRAPH_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "0=2", 1);
+    pub const BIDI_CLASS_BOUNDARY_NEUTRAL_V1: ResourceKey = resource_key!(uniset, "0=3", 1);
+    pub const BIDI_CLASS_COMMON_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "0=4", 1);
+    pub const BIDI_CLASS_EUROPEAN_NUMBER_V1: ResourceKey = resource_key!(uniset, "0=5", 1);
+    pub const BIDI_CLASS_EUROPEAN_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "0=6", 1);
+    pub const BIDI_CLASS_EUROPEAN_TERMINATOR_V1: ResourceKey = resource_key!(uniset, "0=7", 1);
+    pub const BIDI_CLASS_FIRST_STRONG_ISOLATE_V1: ResourceKey = resource_key!(uniset, "0=8", 1);
+    pub const BIDI_CLASS_LEFT_TO_RIGHT_V1: ResourceKey = resource_key!(uniset, "0=9", 1);
+    pub const BIDI_CLASS_LEFT_TO_RIGHT_EMBEDDING_V1: ResourceKey = resource_key!(uniset, "0=10", 1);
+    pub const BIDI_CLASS_LEFT_TO_RIGHT_ISOLATE_V1: ResourceKey = resource_key!(uniset, "0=11", 1);
+    pub const BIDI_CLASS_LEFT_TO_RIGHT_OVERRIDE_V1: ResourceKey = resource_key!(uniset, "0=12", 1);
+    pub const BIDI_CLASS_NONSPACING_MARK_V1: ResourceKey = resource_key!(uniset, "0=13", 1);
+    pub const BIDI_CLASS_OTHER_NEUTRAL_V1: ResourceKey = resource_key!(uniset, "0=14", 1);
+    pub const BIDI_CLASS_POP_DIRECTIONAL_FORMAT_V1: ResourceKey = resource_key!(uniset, "0=15", 1);
+    pub const BIDI_CLASS_POP_DIRECTIONAL_ISOLATE_V1: ResourceKey = resource_key!(uniset, "0=16", 1);
+    pub const BIDI_CLASS_RIGHT_TO_LEFT_V1: ResourceKey = resource_key!(uniset, "0=17", 1);
+    pub const BIDI_CLASS_RIGHT_TO_LEFT_EMBEDDING_V1: ResourceKey = resource_key!(uniset, "0=18", 1);
+    pub const BIDI_CLASS_RIGHT_TO_LEFT_ISOLATE_V1: ResourceKey = resource_key!(uniset, "0=19", 1);
+    pub const BIDI_CLASS_RIGHT_TO_LEFT_OVERRIDE_V1: ResourceKey = resource_key!(uniset, "0=20", 1);
+    pub const BIDI_CLASS_SEGMENT_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "0=21", 1);
+    pub const BIDI_CLASS_WHITE_SPACE_V1: ResourceKey = resource_key!(uniset, "0=22", 1);
+    pub const BIDI_PAIRED_BRACKET_TYPE_CLOSE_V1: ResourceKey = resource_key!(uniset, "1=0", 1);
+    pub const BIDI_PAIRED_BRACKET_TYPE_NONE_V1: ResourceKey = resource_key!(uniset, "1=1", 1);
+    pub const BIDI_PAIRED_BRACKET_TYPE_OPEN_V1: ResourceKey = resource_key!(uniset, "1=2", 1);
+    pub const CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1: ResourceKey = resource_key!(uniset, "2=0", 1);
+    pub const CANONICAL_COMBINING_CLASS_OVERLAY_V1: ResourceKey = resource_key!(uniset, "2=1", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC10_V1: ResourceKey = resource_key!(uniset, "2=2", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC103_V1: ResourceKey = resource_key!(uniset, "2=3", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC107_V1: ResourceKey = resource_key!(uniset, "2=4", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC11_V1: ResourceKey = resource_key!(uniset, "2=5", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC118_V1: ResourceKey = resource_key!(uniset, "2=6", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC12_V1: ResourceKey = resource_key!(uniset, "2=7", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC122_V1: ResourceKey = resource_key!(uniset, "2=8", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC129_V1: ResourceKey = resource_key!(uniset, "2=9", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC13_V1: ResourceKey = resource_key!(uniset, "2=10", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC130_V1: ResourceKey = resource_key!(uniset, "2=11", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC132_V1: ResourceKey = resource_key!(uniset, "2=12", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC133_V1: ResourceKey = resource_key!(uniset, "2=13", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC14_V1: ResourceKey = resource_key!(uniset, "2=14", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC15_V1: ResourceKey = resource_key!(uniset, "2=15", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC16_V1: ResourceKey = resource_key!(uniset, "2=16", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC17_V1: ResourceKey = resource_key!(uniset, "2=17", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC18_V1: ResourceKey = resource_key!(uniset, "2=18", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC19_V1: ResourceKey = resource_key!(uniset, "2=19", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC20_V1: ResourceKey = resource_key!(uniset, "2=20", 1);
+    pub const CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1: ResourceKey = resource_key!(uniset, "2=21", 1);
+    pub const CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1: ResourceKey = resource_key!(uniset, "2=22", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC21_V1: ResourceKey = resource_key!(uniset, "2=23", 1);
+    pub const CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1: ResourceKey = resource_key!(uniset, "2=24", 1);
+    pub const CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1: ResourceKey = resource_key!(uniset, "2=25", 1);
+    pub const CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1: ResourceKey = resource_key!(uniset, "2=26", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC22_V1: ResourceKey = resource_key!(uniset, "2=27", 1);
+    pub const CANONICAL_COMBINING_CLASS_BELOW_V1: ResourceKey = resource_key!(uniset, "2=28", 1);
+    pub const CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1: ResourceKey = resource_key!(uniset, "2=29", 1);
+    pub const CANONICAL_COMBINING_CLASS_LEFT_V1: ResourceKey = resource_key!(uniset, "2=30", 1);
+    pub const CANONICAL_COMBINING_CLASS_RIGHT_V1: ResourceKey = resource_key!(uniset, "2=31", 1);
+    pub const CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1: ResourceKey = resource_key!(uniset, "2=32", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC23_V1: ResourceKey = resource_key!(uniset, "2=33", 1);
+    pub const CANONICAL_COMBINING_CLASS_ABOVE_V1: ResourceKey = resource_key!(uniset, "2=34", 1);
+    pub const CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1: ResourceKey = resource_key!(uniset, "2=35", 1);
+    pub const CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1: ResourceKey = resource_key!(uniset, "2=36", 1);
+    pub const CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1: ResourceKey = resource_key!(uniset, "2=37", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC24_V1: ResourceKey = resource_key!(uniset, "2=38", 1);
+    pub const CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1: ResourceKey = resource_key!(uniset, "2=39", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC25_V1: ResourceKey = resource_key!(uniset, "2=40", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC26_V1: ResourceKey = resource_key!(uniset, "2=41", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC27_V1: ResourceKey = resource_key!(uniset, "2=42", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC28_V1: ResourceKey = resource_key!(uniset, "2=43", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC29_V1: ResourceKey = resource_key!(uniset, "2=44", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC30_V1: ResourceKey = resource_key!(uniset, "2=45", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC31_V1: ResourceKey = resource_key!(uniset, "2=46", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC32_V1: ResourceKey = resource_key!(uniset, "2=47", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC33_V1: ResourceKey = resource_key!(uniset, "2=48", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC34_V1: ResourceKey = resource_key!(uniset, "2=49", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC35_V1: ResourceKey = resource_key!(uniset, "2=50", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC36_V1: ResourceKey = resource_key!(uniset, "2=51", 1);
+    pub const CANONICAL_COMBINING_CLASS_HAN_READING_V1: ResourceKey = resource_key!(uniset, "2=52", 1);
+    pub const CANONICAL_COMBINING_CLASS_NUKTA_V1: ResourceKey = resource_key!(uniset, "2=53", 1);
+    pub const CANONICAL_COMBINING_CLASS_KANA_VOICING_V1: ResourceKey = resource_key!(uniset, "2=54", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC84_V1: ResourceKey = resource_key!(uniset, "2=55", 1);
+    pub const CANONICAL_COMBINING_CLASS_VIRAMA_V1: ResourceKey = resource_key!(uniset, "2=56", 1);
+    pub const CANONICAL_COMBINING_CLASS_CCC91_V1: ResourceKey = resource_key!(uniset, "2=57", 1);
+    pub const DECOMPOSITION_TYPE_CAN_V1: ResourceKey = resource_key!(uniset, "3=0", 1);
+    pub const DECOMPOSITION_TYPE_COM_V1: ResourceKey = resource_key!(uniset, "3=1", 1);
+    pub const DECOMPOSITION_TYPE_ENC_V1: ResourceKey = resource_key!(uniset, "3=2", 1);
+    pub const DECOMPOSITION_TYPE_FIN_V1: ResourceKey = resource_key!(uniset, "3=3", 1);
+    pub const DECOMPOSITION_TYPE_FONT_V1: ResourceKey = resource_key!(uniset, "3=4", 1);
+    pub const DECOMPOSITION_TYPE_FRA_V1: ResourceKey = resource_key!(uniset, "3=5", 1);
+    pub const DECOMPOSITION_TYPE_INIT_V1: ResourceKey = resource_key!(uniset, "3=6", 1);
+    pub const DECOMPOSITION_TYPE_ISO_V1: ResourceKey = resource_key!(uniset, "3=7", 1);
+    pub const DECOMPOSITION_TYPE_MED_V1: ResourceKey = resource_key!(uniset, "3=8", 1);
+    pub const DECOMPOSITION_TYPE_NAR_V1: ResourceKey = resource_key!(uniset, "3=9", 1);
+    pub const DECOMPOSITION_TYPE_NB_V1: ResourceKey = resource_key!(uniset, "3=10", 1);
+    pub const DECOMPOSITION_TYPE_NONE_V1: ResourceKey = resource_key!(uniset, "3=11", 1);
+    pub const DECOMPOSITION_TYPE_SML_V1: ResourceKey = resource_key!(uniset, "3=12", 1);
+    pub const DECOMPOSITION_TYPE_SQR_V1: ResourceKey = resource_key!(uniset, "3=13", 1);
+    pub const DECOMPOSITION_TYPE_SUB_V1: ResourceKey = resource_key!(uniset, "3=14", 1);
+    pub const DECOMPOSITION_TYPE_SUP_V1: ResourceKey = resource_key!(uniset, "3=15", 1);
+    pub const DECOMPOSITION_TYPE_VERT_V1: ResourceKey = resource_key!(uniset, "3=16", 1);
+    pub const DECOMPOSITION_TYPE_WIDE_V1: ResourceKey = resource_key!(uniset, "3=17", 1);
+    pub const EAST_ASIAN_WIDTH_AMBIGUOUS_V1: ResourceKey = resource_key!(uniset, "4=0", 1);
+    pub const EAST_ASIAN_WIDTH_FULLWIDTH_V1: ResourceKey = resource_key!(uniset, "4=1", 1);
+    pub const EAST_ASIAN_WIDTH_HALFWIDTH_V1: ResourceKey = resource_key!(uniset, "4=2", 1);
+    pub const EAST_ASIAN_WIDTH_NEUTRAL_V1: ResourceKey = resource_key!(uniset, "4=3", 1);
+    pub const EAST_ASIAN_WIDTH_NARROW_V1: ResourceKey = resource_key!(uniset, "4=4", 1);
+    pub const EAST_ASIAN_WIDTH_WIDE_V1: ResourceKey = resource_key!(uniset, "4=5", 1);
+    pub const GENERAL_CATEGORY_OTHER_V1: ResourceKey = resource_key!(uniset, "5=0", 1);
+    pub const GENERAL_CATEGORY_CNTRL_V1: ResourceKey = resource_key!(uniset, "5=1", 1);
+    pub const GENERAL_CATEGORY_FORMAT_V1: ResourceKey = resource_key!(uniset, "5=2", 1);
+    pub const GENERAL_CATEGORY_UNASSIGNED_V1: ResourceKey = resource_key!(uniset, "5=3", 1);
+    pub const GENERAL_CATEGORY_PRIVATE_USE_V1: ResourceKey = resource_key!(uniset, "5=4", 1);
+    pub const GENERAL_CATEGORY_SURROGATE_V1: ResourceKey = resource_key!(uniset, "5=5", 1);
+    pub const GENERAL_CATEGORY_LETTER_V1: ResourceKey = resource_key!(uniset, "5=6", 1);
+    pub const GENERAL_CATEGORY_CASED_LETTER_V1: ResourceKey = resource_key!(uniset, "5=7", 1);
+    pub const GENERAL_CATEGORY_LOWERCASE_LETTER_V1: ResourceKey = resource_key!(uniset, "5=8", 1);
+    pub const GENERAL_CATEGORY_MODIFIER_LETTER_V1: ResourceKey = resource_key!(uniset, "5=9", 1);
+    pub const GENERAL_CATEGORY_OTHER_LETTER_V1: ResourceKey = resource_key!(uniset, "5=10", 1);
+    pub const GENERAL_CATEGORY_TITLECASE_LETTER_V1: ResourceKey = resource_key!(uniset, "5=11", 1);
+    pub const GENERAL_CATEGORY_UPPERCASE_LETTER_V1: ResourceKey = resource_key!(uniset, "5=12", 1);
+    pub const GENERAL_CATEGORY_COMBINING_MARK_V1: ResourceKey = resource_key!(uniset, "5=13", 1);
+    pub const GENERAL_CATEGORY_SPACING_MARK_V1: ResourceKey = resource_key!(uniset, "5=14", 1);
+    pub const GENERAL_CATEGORY_ENCLOSING_MARK_V1: ResourceKey = resource_key!(uniset, "5=15", 1);
+    pub const GENERAL_CATEGORY_NONSPACING_MARK_V1: ResourceKey = resource_key!(uniset, "5=16", 1);
+    pub const GENERAL_CATEGORY_NUMBER_V1: ResourceKey = resource_key!(uniset, "5=17", 1);
+    pub const GENERAL_CATEGORY_DIGIT_V1: ResourceKey = resource_key!(uniset, "5=18", 1);
+    pub const GENERAL_CATEGORY_LETTER_NUMBER_V1: ResourceKey = resource_key!(uniset, "5=19", 1);
+    pub const GENERAL_CATEGORY_OTHER_NUMBER_V1: ResourceKey = resource_key!(uniset, "5=20", 1);
+    pub const GENERAL_CATEGORY_PUNCT_V1: ResourceKey = resource_key!(uniset, "5=21", 1);
+    pub const GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=22", 1);
+    pub const GENERAL_CATEGORY_DASH_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=23", 1);
+    pub const GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=24", 1);
+    pub const GENERAL_CATEGORY_FINAL_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=25", 1);
+    pub const GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=26", 1);
+    pub const GENERAL_CATEGORY_OTHER_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=27", 1);
+    pub const GENERAL_CATEGORY_OPEN_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "5=28", 1);
+    pub const GENERAL_CATEGORY_SYMBOL_V1: ResourceKey = resource_key!(uniset, "5=29", 1);
+    pub const GENERAL_CATEGORY_CURRENCY_SYMBOL_V1: ResourceKey = resource_key!(uniset, "5=30", 1);
+    pub const GENERAL_CATEGORY_MODIFIER_SYMBOL_V1: ResourceKey = resource_key!(uniset, "5=31", 1);
+    pub const GENERAL_CATEGORY_MATH_SYMBOL_V1: ResourceKey = resource_key!(uniset, "5=32", 1);
+    pub const GENERAL_CATEGORY_OTHER_SYMBOL_V1: ResourceKey = resource_key!(uniset, "5=33", 1);
+    pub const GENERAL_CATEGORY_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "5=34", 1);
+    pub const GENERAL_CATEGORY_LINE_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "5=35", 1);
+    pub const GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "5=36", 1);
+    pub const GENERAL_CATEGORY_SPACE_SEPARATOR_V1: ResourceKey = resource_key!(uniset, "5=37", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_CONTROL_V1: ResourceKey = resource_key!(uniset, "6=0", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_CR_V1: ResourceKey = resource_key!(uniset, "6=1", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_E_BASE_V1: ResourceKey = resource_key!(uniset, "6=2", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_E_BASE_GAZ_V1: ResourceKey = resource_key!(uniset, "6=3", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_E_MODIFIER_V1: ResourceKey = resource_key!(uniset, "6=4", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_EXTEND_V1: ResourceKey = resource_key!(uniset, "6=5", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_GLUE_AFTER_ZWJ_V1: ResourceKey = resource_key!(uniset, "6=6", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_L_V1: ResourceKey = resource_key!(uniset, "6=7", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_LF_V1: ResourceKey = resource_key!(uniset, "6=8", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_LV_V1: ResourceKey = resource_key!(uniset, "6=9", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_LVT_V1: ResourceKey = resource_key!(uniset, "6=10", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_PREPEND_V1: ResourceKey = resource_key!(uniset, "6=11", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_REGIONAL_INDICATOR_V1: ResourceKey = resource_key!(uniset, "6=12", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_SPACINGMARK_V1: ResourceKey = resource_key!(uniset, "6=13", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_T_V1: ResourceKey = resource_key!(uniset, "6=14", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_V_V1: ResourceKey = resource_key!(uniset, "6=15", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_OTHER_V1: ResourceKey = resource_key!(uniset, "6=16", 1);
+    pub const GRAPHEME_CLUSTER_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "6=17", 1);
+    pub const HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1: ResourceKey = resource_key!(uniset, "7=0", 1);
+    pub const HANGUL_SYLLABLE_TYPE_LV_SYLLABLE_V1: ResourceKey = resource_key!(uniset, "7=1", 1);
+    pub const HANGUL_SYLLABLE_TYPE_LVT_SYLLABLE_V1: ResourceKey = resource_key!(uniset, "7=2", 1);
+    pub const HANGUL_SYLLABLE_TYPE_NOT_APPLICABLE_V1: ResourceKey = resource_key!(uniset, "7=3", 1);
+    pub const HANGUL_SYLLABLE_TYPE_TRAILING_JAMO_V1: ResourceKey = resource_key!(uniset, "7=4", 1);
+    pub const HANGUL_SYLLABLE_TYPE_VOWEL_JAMO_V1: ResourceKey = resource_key!(uniset, "7=5", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_BOTTOM_V1: ResourceKey = resource_key!(uniset, "8=0", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_LEFT_V1: ResourceKey = resource_key!(uniset, "8=1", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_RIGHT_V1: ResourceKey = resource_key!(uniset, "8=2", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_LEFT_V1: ResourceKey = resource_key!(uniset, "8=3", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_LEFT_AND_RIGHT_V1: ResourceKey = resource_key!(uniset, "8=4", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_NA_V1: ResourceKey = resource_key!(uniset, "8=5", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_OVERSTRUCK_V1: ResourceKey = resource_key!(uniset, "8=6", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_RIGHT_V1: ResourceKey = resource_key!(uniset, "8=7", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_V1: ResourceKey = resource_key!(uniset, "8=8", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_V1: ResourceKey = resource_key!(uniset, "8=9", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_LEFT_V1: ResourceKey = resource_key!(uniset, "8=10", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_BOTTOM_AND_RIGHT_V1: ResourceKey = resource_key!(uniset, "8=11", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_V1: ResourceKey = resource_key!(uniset, "8=12", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_LEFT_AND_RIGHT_V1: ResourceKey = resource_key!(uniset, "8=13", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_TOP_AND_RIGHT_V1: ResourceKey = resource_key!(uniset, "8=14", 1);
+    pub const INDIC_POSITIONAL_CATEGORY_VISUAL_ORDER_LEFT_V1: ResourceKey = resource_key!(uniset, "8=15", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1: ResourceKey = resource_key!(uniset, "9=0", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_BINDU_V1: ResourceKey = resource_key!(uniset, "9=1", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_BRAHMI_JOINING_NUMBER_V1: ResourceKey = resource_key!(uniset, "9=2", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CANTILLATION_MARK_V1: ResourceKey = resource_key!(uniset, "9=3", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_V1: ResourceKey = resource_key!(uniset, "9=4", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_DEAD_V1: ResourceKey = resource_key!(uniset, "9=5", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_FINAL_V1: ResourceKey = resource_key!(uniset, "9=6", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_HEAD_LETTER_V1: ResourceKey = resource_key!(uniset, "9=7", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_INITIAL_POSTFIXED_V1: ResourceKey = resource_key!(uniset, "9=8", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_KILLER_V1: ResourceKey = resource_key!(uniset, "9=9", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_MEDIAL_V1: ResourceKey = resource_key!(uniset, "9=10", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_PLACEHOLDER_V1: ResourceKey = resource_key!(uniset, "9=11", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_PRECEDING_REPHA_V1: ResourceKey = resource_key!(uniset, "9=12", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_PREFIXED_V1: ResourceKey = resource_key!(uniset, "9=13", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_SUBJOINED_V1: ResourceKey = resource_key!(uniset, "9=14", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_SUCCEEDING_REPHA_V1: ResourceKey = resource_key!(uniset, "9=15", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_CONSONANT_WITH_STACKER_V1: ResourceKey = resource_key!(uniset, "9=16", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_GEMINATION_MARK_V1: ResourceKey = resource_key!(uniset, "9=17", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_INVISIBLE_STACKER_V1: ResourceKey = resource_key!(uniset, "9=18", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_JOINER_V1: ResourceKey = resource_key!(uniset, "9=19", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_MODIFYING_LETTER_V1: ResourceKey = resource_key!(uniset, "9=20", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_NON_JOINER_V1: ResourceKey = resource_key!(uniset, "9=21", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_NUKTA_V1: ResourceKey = resource_key!(uniset, "9=22", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_NUMBER_V1: ResourceKey = resource_key!(uniset, "9=23", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_NUMBER_JOINER_V1: ResourceKey = resource_key!(uniset, "9=24", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_OTHER_V1: ResourceKey = resource_key!(uniset, "9=25", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_PURE_KILLER_V1: ResourceKey = resource_key!(uniset, "9=26", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_REGISTER_SHIFTER_V1: ResourceKey = resource_key!(uniset, "9=27", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_SYLLABLE_MODIFIER_V1: ResourceKey = resource_key!(uniset, "9=28", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_TONE_LETTER_V1: ResourceKey = resource_key!(uniset, "9=29", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_TONE_MARK_V1: ResourceKey = resource_key!(uniset, "9=30", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_VIRAMA_V1: ResourceKey = resource_key!(uniset, "9=31", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_VISARGA_V1: ResourceKey = resource_key!(uniset, "9=32", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_VOWEL_V1: ResourceKey = resource_key!(uniset, "9=33", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_VOWEL_DEPENDENT_V1: ResourceKey = resource_key!(uniset, "9=34", 1);
+    pub const INDIC_SYLLABIC_CATEGORY_VOWEL_INDEPENDENT_V1: ResourceKey = resource_key!(uniset, "9=35", 1);
+    pub const JOINING_GROUP_AFRICAN_FEH_V1: ResourceKey = resource_key!(uniset, "10=0", 1);
+    pub const JOINING_GROUP_AFRICAN_NOON_V1: ResourceKey = resource_key!(uniset, "10=1", 1);
+    pub const JOINING_GROUP_AFRICAN_QAF_V1: ResourceKey = resource_key!(uniset, "10=2", 1);
+    pub const JOINING_GROUP_AIN_V1: ResourceKey = resource_key!(uniset, "10=3", 1);
+    pub const JOINING_GROUP_ALAPH_V1: ResourceKey = resource_key!(uniset, "10=4", 1);
+    pub const JOINING_GROUP_ALEF_V1: ResourceKey = resource_key!(uniset, "10=5", 1);
+    pub const JOINING_GROUP_BEH_V1: ResourceKey = resource_key!(uniset, "10=6", 1);
+    pub const JOINING_GROUP_BETH_V1: ResourceKey = resource_key!(uniset, "10=7", 1);
+    pub const JOINING_GROUP_BURUSHASKI_YEH_BARREE_V1: ResourceKey = resource_key!(uniset, "10=8", 1);
+    pub const JOINING_GROUP_DAL_V1: ResourceKey = resource_key!(uniset, "10=9", 1);
+    pub const JOINING_GROUP_DALATH_RISH_V1: ResourceKey = resource_key!(uniset, "10=10", 1);
+    pub const JOINING_GROUP_E_V1: ResourceKey = resource_key!(uniset, "10=11", 1);
+    pub const JOINING_GROUP_FARSI_YEH_V1: ResourceKey = resource_key!(uniset, "10=12", 1);
+    pub const JOINING_GROUP_FE_V1: ResourceKey = resource_key!(uniset, "10=13", 1);
+    pub const JOINING_GROUP_FEH_V1: ResourceKey = resource_key!(uniset, "10=14", 1);
+    pub const JOINING_GROUP_FINAL_SEMKATH_V1: ResourceKey = resource_key!(uniset, "10=15", 1);
+    pub const JOINING_GROUP_GAF_V1: ResourceKey = resource_key!(uniset, "10=16", 1);
+    pub const JOINING_GROUP_GAMAL_V1: ResourceKey = resource_key!(uniset, "10=17", 1);
+    pub const JOINING_GROUP_HAH_V1: ResourceKey = resource_key!(uniset, "10=18", 1);
+    pub const JOINING_GROUP_HANIFI_ROHINGYA_KINNA_YA_V1: ResourceKey = resource_key!(uniset, "10=19", 1);
+    pub const JOINING_GROUP_HANIFI_ROHINGYA_PA_V1: ResourceKey = resource_key!(uniset, "10=20", 1);
+    pub const JOINING_GROUP_HE_V1: ResourceKey = resource_key!(uniset, "10=21", 1);
+    pub const JOINING_GROUP_HEH_V1: ResourceKey = resource_key!(uniset, "10=22", 1);
+    pub const JOINING_GROUP_HEH_GOAL_V1: ResourceKey = resource_key!(uniset, "10=23", 1);
+    pub const JOINING_GROUP_HETH_V1: ResourceKey = resource_key!(uniset, "10=24", 1);
+    pub const JOINING_GROUP_KAF_V1: ResourceKey = resource_key!(uniset, "10=25", 1);
+    pub const JOINING_GROUP_KAPH_V1: ResourceKey = resource_key!(uniset, "10=26", 1);
+    pub const JOINING_GROUP_KHAPH_V1: ResourceKey = resource_key!(uniset, "10=27", 1);
+    pub const JOINING_GROUP_KNOTTED_HEH_V1: ResourceKey = resource_key!(uniset, "10=28", 1);
+    pub const JOINING_GROUP_LAM_V1: ResourceKey = resource_key!(uniset, "10=29", 1);
+    pub const JOINING_GROUP_LAMADH_V1: ResourceKey = resource_key!(uniset, "10=30", 1);
+    pub const JOINING_GROUP_MALAYALAM_BHA_V1: ResourceKey = resource_key!(uniset, "10=31", 1);
+    pub const JOINING_GROUP_MALAYALAM_JA_V1: ResourceKey = resource_key!(uniset, "10=32", 1);
+    pub const JOINING_GROUP_MALAYALAM_LLA_V1: ResourceKey = resource_key!(uniset, "10=33", 1);
+    pub const JOINING_GROUP_MALAYALAM_LLLA_V1: ResourceKey = resource_key!(uniset, "10=34", 1);
+    pub const JOINING_GROUP_MALAYALAM_NGA_V1: ResourceKey = resource_key!(uniset, "10=35", 1);
+    pub const JOINING_GROUP_MALAYALAM_NNA_V1: ResourceKey = resource_key!(uniset, "10=36", 1);
+    pub const JOINING_GROUP_MALAYALAM_NNNA_V1: ResourceKey = resource_key!(uniset, "10=37", 1);
+    pub const JOINING_GROUP_MALAYALAM_NYA_V1: ResourceKey = resource_key!(uniset, "10=38", 1);
+    pub const JOINING_GROUP_MALAYALAM_RA_V1: ResourceKey = resource_key!(uniset, "10=39", 1);
+    pub const JOINING_GROUP_MALAYALAM_SSA_V1: ResourceKey = resource_key!(uniset, "10=40", 1);
+    pub const JOINING_GROUP_MALAYALAM_TTA_V1: ResourceKey = resource_key!(uniset, "10=41", 1);
+    pub const JOINING_GROUP_MANICHAEAN_ALEPH_V1: ResourceKey = resource_key!(uniset, "10=42", 1);
+    pub const JOINING_GROUP_MANICHAEAN_AYIN_V1: ResourceKey = resource_key!(uniset, "10=43", 1);
+    pub const JOINING_GROUP_MANICHAEAN_BETH_V1: ResourceKey = resource_key!(uniset, "10=44", 1);
+    pub const JOINING_GROUP_MANICHAEAN_DALETH_V1: ResourceKey = resource_key!(uniset, "10=45", 1);
+    pub const JOINING_GROUP_MANICHAEAN_DHAMEDH_V1: ResourceKey = resource_key!(uniset, "10=46", 1);
+    pub const JOINING_GROUP_MANICHAEAN_FIVE_V1: ResourceKey = resource_key!(uniset, "10=47", 1);
+    pub const JOINING_GROUP_MANICHAEAN_GIMEL_V1: ResourceKey = resource_key!(uniset, "10=48", 1);
+    pub const JOINING_GROUP_MANICHAEAN_HETH_V1: ResourceKey = resource_key!(uniset, "10=49", 1);
+    pub const JOINING_GROUP_MANICHAEAN_HUNDRED_V1: ResourceKey = resource_key!(uniset, "10=50", 1);
+    pub const JOINING_GROUP_MANICHAEAN_KAPH_V1: ResourceKey = resource_key!(uniset, "10=51", 1);
+    pub const JOINING_GROUP_MANICHAEAN_LAMEDH_V1: ResourceKey = resource_key!(uniset, "10=52", 1);
+    pub const JOINING_GROUP_MANICHAEAN_MEM_V1: ResourceKey = resource_key!(uniset, "10=53", 1);
+    pub const JOINING_GROUP_MANICHAEAN_NUN_V1: ResourceKey = resource_key!(uniset, "10=54", 1);
+    pub const JOINING_GROUP_MANICHAEAN_ONE_V1: ResourceKey = resource_key!(uniset, "10=55", 1);
+    pub const JOINING_GROUP_MANICHAEAN_PE_V1: ResourceKey = resource_key!(uniset, "10=56", 1);
+    pub const JOINING_GROUP_MANICHAEAN_QOPH_V1: ResourceKey = resource_key!(uniset, "10=57", 1);
+    pub const JOINING_GROUP_MANICHAEAN_RESH_V1: ResourceKey = resource_key!(uniset, "10=58", 1);
+    pub const JOINING_GROUP_MANICHAEAN_SADHE_V1: ResourceKey = resource_key!(uniset, "10=59", 1);
+    pub const JOINING_GROUP_MANICHAEAN_SAMEKH_V1: ResourceKey = resource_key!(uniset, "10=60", 1);
+    pub const JOINING_GROUP_MANICHAEAN_TAW_V1: ResourceKey = resource_key!(uniset, "10=61", 1);
+    pub const JOINING_GROUP_MANICHAEAN_TEN_V1: ResourceKey = resource_key!(uniset, "10=62", 1);
+    pub const JOINING_GROUP_MANICHAEAN_TETH_V1: ResourceKey = resource_key!(uniset, "10=63", 1);
+    pub const JOINING_GROUP_MANICHAEAN_THAMEDH_V1: ResourceKey = resource_key!(uniset, "10=64", 1);
+    pub const JOINING_GROUP_MANICHAEAN_TWENTY_V1: ResourceKey = resource_key!(uniset, "10=65", 1);
+    pub const JOINING_GROUP_MANICHAEAN_WAW_V1: ResourceKey = resource_key!(uniset, "10=66", 1);
+    pub const JOINING_GROUP_MANICHAEAN_YODH_V1: ResourceKey = resource_key!(uniset, "10=67", 1);
+    pub const JOINING_GROUP_MANICHAEAN_ZAYIN_V1: ResourceKey = resource_key!(uniset, "10=68", 1);
+    pub const JOINING_GROUP_MEEM_V1: ResourceKey = resource_key!(uniset, "10=69", 1);
+    pub const JOINING_GROUP_MIM_V1: ResourceKey = resource_key!(uniset, "10=70", 1);
+    pub const JOINING_GROUP_NO_JOINING_GROUP_V1: ResourceKey = resource_key!(uniset, "10=71", 1);
+    pub const JOINING_GROUP_NOON_V1: ResourceKey = resource_key!(uniset, "10=72", 1);
+    pub const JOINING_GROUP_NUN_V1: ResourceKey = resource_key!(uniset, "10=73", 1);
+    pub const JOINING_GROUP_NYA_V1: ResourceKey = resource_key!(uniset, "10=74", 1);
+    pub const JOINING_GROUP_PE_V1: ResourceKey = resource_key!(uniset, "10=75", 1);
+    pub const JOINING_GROUP_QAF_V1: ResourceKey = resource_key!(uniset, "10=76", 1);
+    pub const JOINING_GROUP_QAPH_V1: ResourceKey = resource_key!(uniset, "10=77", 1);
+    pub const JOINING_GROUP_REH_V1: ResourceKey = resource_key!(uniset, "10=78", 1);
+    pub const JOINING_GROUP_REVERSED_PE_V1: ResourceKey = resource_key!(uniset, "10=79", 1);
+    pub const JOINING_GROUP_ROHINGYA_YEH_V1: ResourceKey = resource_key!(uniset, "10=80", 1);
+    pub const JOINING_GROUP_SAD_V1: ResourceKey = resource_key!(uniset, "10=81", 1);
+    pub const JOINING_GROUP_SADHE_V1: ResourceKey = resource_key!(uniset, "10=82", 1);
+    pub const JOINING_GROUP_SEEN_V1: ResourceKey = resource_key!(uniset, "10=83", 1);
+    pub const JOINING_GROUP_SEMKATH_V1: ResourceKey = resource_key!(uniset, "10=84", 1);
+    pub const JOINING_GROUP_SHIN_V1: ResourceKey = resource_key!(uniset, "10=85", 1);
+    pub const JOINING_GROUP_STRAIGHT_WAW_V1: ResourceKey = resource_key!(uniset, "10=86", 1);
+    pub const JOINING_GROUP_SWASH_KAF_V1: ResourceKey = resource_key!(uniset, "10=87", 1);
+    pub const JOINING_GROUP_SYRIAC_WAW_V1: ResourceKey = resource_key!(uniset, "10=88", 1);
+    pub const JOINING_GROUP_TAH_V1: ResourceKey = resource_key!(uniset, "10=89", 1);
+    pub const JOINING_GROUP_TAW_V1: ResourceKey = resource_key!(uniset, "10=90", 1);
+    pub const JOINING_GROUP_TEH_MARBUTA_V1: ResourceKey = resource_key!(uniset, "10=91", 1);
+    pub const JOINING_GROUP_HAMZA_ON_HEH_GOAL_V1: ResourceKey = resource_key!(uniset, "10=92", 1);
+    pub const JOINING_GROUP_TETH_V1: ResourceKey = resource_key!(uniset, "10=93", 1);
+    pub const JOINING_GROUP_WAW_V1: ResourceKey = resource_key!(uniset, "10=94", 1);
+    pub const JOINING_GROUP_YEH_V1: ResourceKey = resource_key!(uniset, "10=95", 1);
+    pub const JOINING_GROUP_YEH_BARREE_V1: ResourceKey = resource_key!(uniset, "10=96", 1);
+    pub const JOINING_GROUP_YEH_WITH_TAIL_V1: ResourceKey = resource_key!(uniset, "10=97", 1);
+    pub const JOINING_GROUP_YUDH_V1: ResourceKey = resource_key!(uniset, "10=98", 1);
+    pub const JOINING_GROUP_YUDH_HE_V1: ResourceKey = resource_key!(uniset, "10=99", 1);
+    pub const JOINING_GROUP_ZAIN_V1: ResourceKey = resource_key!(uniset, "10=100", 1);
+    pub const JOINING_GROUP_ZHAIN_V1: ResourceKey = resource_key!(uniset, "10=101", 1);
+    pub const JOINING_TYPE_JOIN_CAUSING_V1: ResourceKey = resource_key!(uniset, "11=0", 1);
+    pub const JOINING_TYPE_DUAL_JOINING_V1: ResourceKey = resource_key!(uniset, "11=1", 1);
+    pub const JOINING_TYPE_LEFT_JOINING_V1: ResourceKey = resource_key!(uniset, "11=2", 1);
+    pub const JOINING_TYPE_RIGHT_JOINING_V1: ResourceKey = resource_key!(uniset, "11=3", 1);
+    pub const JOINING_TYPE_TRANSPARENT_V1: ResourceKey = resource_key!(uniset, "11=4", 1);
+    pub const JOINING_TYPE_NON_JOINING_V1: ResourceKey = resource_key!(uniset, "11=5", 1);
+    pub const LINE_BREAK_AMBIGUOUS_V1: ResourceKey = resource_key!(uniset, "12=0", 1);
+    pub const LINE_BREAK_ALPHABETIC_V1: ResourceKey = resource_key!(uniset, "12=1", 1);
+    pub const LINE_BREAK_BREAK_BOTH_V1: ResourceKey = resource_key!(uniset, "12=2", 1);
+    pub const LINE_BREAK_BREAK_AFTER_V1: ResourceKey = resource_key!(uniset, "12=3", 1);
+    pub const LINE_BREAK_BREAK_BEFORE_V1: ResourceKey = resource_key!(uniset, "12=4", 1);
+    pub const LINE_BREAK_MANDATORY_BREAK_V1: ResourceKey = resource_key!(uniset, "12=5", 1);
+    pub const LINE_BREAK_CONTINGENT_BREAK_V1: ResourceKey = resource_key!(uniset, "12=6", 1);
+    pub const LINE_BREAK_CONDITIONAL_JAPANESE_STARTER_V1: ResourceKey = resource_key!(uniset, "12=7", 1);
+    pub const LINE_BREAK_CLOSE_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "12=8", 1);
+    pub const LINE_BREAK_COMBINING_MARK_V1: ResourceKey = resource_key!(uniset, "12=9", 1);
+    pub const LINE_BREAK_CLOSE_PARENTHESIS_V1: ResourceKey = resource_key!(uniset, "12=10", 1);
+    pub const LINE_BREAK_CARRIAGE_RETURN_V1: ResourceKey = resource_key!(uniset, "12=11", 1);
+    pub const LINE_BREAK_E_BASE_V1: ResourceKey = resource_key!(uniset, "12=12", 1);
+    pub const LINE_BREAK_E_MODIFIER_V1: ResourceKey = resource_key!(uniset, "12=13", 1);
+    pub const LINE_BREAK_EXCLAMATION_V1: ResourceKey = resource_key!(uniset, "12=14", 1);
+    pub const LINE_BREAK_GLUE_V1: ResourceKey = resource_key!(uniset, "12=15", 1);
+    pub const LINE_BREAK_H2_V1: ResourceKey = resource_key!(uniset, "12=16", 1);
+    pub const LINE_BREAK_H3_V1: ResourceKey = resource_key!(uniset, "12=17", 1);
+    pub const LINE_BREAK_HEBREW_LETTER_V1: ResourceKey = resource_key!(uniset, "12=18", 1);
+    pub const LINE_BREAK_HYPHEN_V1: ResourceKey = resource_key!(uniset, "12=19", 1);
+    pub const LINE_BREAK_IDEOGRAPHIC_V1: ResourceKey = resource_key!(uniset, "12=20", 1);
+    pub const LINE_BREAK_INSEPERABLE_V1: ResourceKey = resource_key!(uniset, "12=21", 1);
+    pub const LINE_BREAK_INFIX_NUMERIC_V1: ResourceKey = resource_key!(uniset, "12=22", 1);
+    pub const LINE_BREAK_JL_V1: ResourceKey = resource_key!(uniset, "12=23", 1);
+    pub const LINE_BREAK_JT_V1: ResourceKey = resource_key!(uniset, "12=24", 1);
+    pub const LINE_BREAK_JV_V1: ResourceKey = resource_key!(uniset, "12=25", 1);
+    pub const LINE_BREAK_LINE_FEED_V1: ResourceKey = resource_key!(uniset, "12=26", 1);
+    pub const LINE_BREAK_NEXT_LINE_V1: ResourceKey = resource_key!(uniset, "12=27", 1);
+    pub const LINE_BREAK_NONSTARTER_V1: ResourceKey = resource_key!(uniset, "12=28", 1);
+    pub const LINE_BREAK_NUMERIC_V1: ResourceKey = resource_key!(uniset, "12=29", 1);
+    pub const LINE_BREAK_OPEN_PUNCTUATION_V1: ResourceKey = resource_key!(uniset, "12=30", 1);
+    pub const LINE_BREAK_POSTFIX_NUMERIC_V1: ResourceKey = resource_key!(uniset, "12=31", 1);
+    pub const LINE_BREAK_PREFIX_NUMERIC_V1: ResourceKey = resource_key!(uniset, "12=32", 1);
+    pub const LINE_BREAK_QUOTATION_V1: ResourceKey = resource_key!(uniset, "12=33", 1);
+    pub const LINE_BREAK_REGIONAL_INDICATOR_V1: ResourceKey = resource_key!(uniset, "12=34", 1);
+    pub const LINE_BREAK_COMPLEX_CONTEXT_V1: ResourceKey = resource_key!(uniset, "12=35", 1);
+    pub const LINE_BREAK_SURROGATE_V1: ResourceKey = resource_key!(uniset, "12=36", 1);
+    pub const LINE_BREAK_SPACE_V1: ResourceKey = resource_key!(uniset, "12=37", 1);
+    pub const LINE_BREAK_BREAK_SYMBOLS_V1: ResourceKey = resource_key!(uniset, "12=38", 1);
+    pub const LINE_BREAK_WORD_JOINER_V1: ResourceKey = resource_key!(uniset, "12=39", 1);
+    pub const LINE_BREAK_UNKNOWN_V1: ResourceKey = resource_key!(uniset, "12=40", 1);
+    pub const LINE_BREAK_ZWSPACE_V1: ResourceKey = resource_key!(uniset, "12=41", 1);
+    pub const LINE_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "12=42", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1: ResourceKey = resource_key!(uniset, "13=0", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_OVERLAY_V1: ResourceKey = resource_key!(uniset, "13=1", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC10_V1: ResourceKey = resource_key!(uniset, "13=2", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC103_V1: ResourceKey = resource_key!(uniset, "13=3", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC107_V1: ResourceKey = resource_key!(uniset, "13=4", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC11_V1: ResourceKey = resource_key!(uniset, "13=5", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC118_V1: ResourceKey = resource_key!(uniset, "13=6", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC12_V1: ResourceKey = resource_key!(uniset, "13=7", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC122_V1: ResourceKey = resource_key!(uniset, "13=8", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC129_V1: ResourceKey = resource_key!(uniset, "13=9", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC13_V1: ResourceKey = resource_key!(uniset, "13=10", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC130_V1: ResourceKey = resource_key!(uniset, "13=11", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC132_V1: ResourceKey = resource_key!(uniset, "13=12", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC133_V1: ResourceKey = resource_key!(uniset, "13=13", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC14_V1: ResourceKey = resource_key!(uniset, "13=14", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC15_V1: ResourceKey = resource_key!(uniset, "13=15", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC16_V1: ResourceKey = resource_key!(uniset, "13=16", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC17_V1: ResourceKey = resource_key!(uniset, "13=17", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC18_V1: ResourceKey = resource_key!(uniset, "13=18", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC19_V1: ResourceKey = resource_key!(uniset, "13=19", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC20_V1: ResourceKey = resource_key!(uniset, "13=20", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1: ResourceKey = resource_key!(uniset, "13=21", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1: ResourceKey = resource_key!(uniset, "13=22", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC21_V1: ResourceKey = resource_key!(uniset, "13=23", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1: ResourceKey = resource_key!(uniset, "13=24", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1: ResourceKey = resource_key!(uniset, "13=25", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1: ResourceKey = resource_key!(uniset, "13=26", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC22_V1: ResourceKey = resource_key!(uniset, "13=27", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_BELOW_V1: ResourceKey = resource_key!(uniset, "13=28", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1: ResourceKey = resource_key!(uniset, "13=29", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_LEFT_V1: ResourceKey = resource_key!(uniset, "13=30", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_RIGHT_V1: ResourceKey = resource_key!(uniset, "13=31", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1: ResourceKey = resource_key!(uniset, "13=32", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC23_V1: ResourceKey = resource_key!(uniset, "13=33", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ABOVE_V1: ResourceKey = resource_key!(uniset, "13=34", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1: ResourceKey = resource_key!(uniset, "13=35", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1: ResourceKey = resource_key!(uniset, "13=36", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1: ResourceKey = resource_key!(uniset, "13=37", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC24_V1: ResourceKey = resource_key!(uniset, "13=38", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1: ResourceKey = resource_key!(uniset, "13=39", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC25_V1: ResourceKey = resource_key!(uniset, "13=40", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC26_V1: ResourceKey = resource_key!(uniset, "13=41", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC27_V1: ResourceKey = resource_key!(uniset, "13=42", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC28_V1: ResourceKey = resource_key!(uniset, "13=43", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC29_V1: ResourceKey = resource_key!(uniset, "13=44", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC30_V1: ResourceKey = resource_key!(uniset, "13=45", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC31_V1: ResourceKey = resource_key!(uniset, "13=46", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC32_V1: ResourceKey = resource_key!(uniset, "13=47", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC33_V1: ResourceKey = resource_key!(uniset, "13=48", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC34_V1: ResourceKey = resource_key!(uniset, "13=49", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC35_V1: ResourceKey = resource_key!(uniset, "13=50", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC36_V1: ResourceKey = resource_key!(uniset, "13=51", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_HAN_READING_V1: ResourceKey = resource_key!(uniset, "13=52", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_NUKTA_V1: ResourceKey = resource_key!(uniset, "13=53", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1: ResourceKey = resource_key!(uniset, "13=54", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC84_V1: ResourceKey = resource_key!(uniset, "13=55", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_VIRAMA_V1: ResourceKey = resource_key!(uniset, "13=56", 1);
+    pub const LEAD_CANONICAL_COMBINING_CLASS_CCC91_V1: ResourceKey = resource_key!(uniset, "13=57", 1);
+    pub const NFC_QUICK_CHECK_MAYBE_V1: ResourceKey = resource_key!(uniset, "14=0", 1);
+    pub const NFC_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "14=1", 1);
+    pub const NFC_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "14=2", 1);
+    pub const NFD_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "15=0", 1);
+    pub const NFD_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "15=1", 1);
+    pub const NFKC_QUICK_CHECK_MAYBE_V1: ResourceKey = resource_key!(uniset, "16=0", 1);
+    pub const NFKC_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "16=1", 1);
+    pub const NFKC_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "16=2", 1);
+    pub const NFKD_QUICK_CHECK_NO_V1: ResourceKey = resource_key!(uniset, "17=0", 1);
+    pub const NFKD_QUICK_CHECK_YES_V1: ResourceKey = resource_key!(uniset, "17=1", 1);
+    pub const NUMERIC_TYPE_DECIMAL_V1: ResourceKey = resource_key!(uniset, "18=0", 1);
+    pub const NUMERIC_TYPE_DIGIT_V1: ResourceKey = resource_key!(uniset, "18=1", 1);
+    pub const NUMERIC_TYPE_NONE_V1: ResourceKey = resource_key!(uniset, "18=2", 1);
+    pub const NUMERIC_TYPE_NUMERIC_V1: ResourceKey = resource_key!(uniset, "18=3", 1);
+    pub const SENTENCE_BREAK_ATERM_V1: ResourceKey = resource_key!(uniset, "19=0", 1);
+    pub const SENTENCE_BREAK_CLOSE_V1: ResourceKey = resource_key!(uniset, "19=1", 1);
+    pub const SENTENCE_BREAK_CR_V1: ResourceKey = resource_key!(uniset, "19=2", 1);
+    pub const SENTENCE_BREAK_EXTEND_V1: ResourceKey = resource_key!(uniset, "19=3", 1);
+    pub const SENTENCE_BREAK_FORMAT_V1: ResourceKey = resource_key!(uniset, "19=4", 1);
+    pub const SENTENCE_BREAK_OLETTER_V1: ResourceKey = resource_key!(uniset, "19=5", 1);
+    pub const SENTENCE_BREAK_LF_V1: ResourceKey = resource_key!(uniset, "19=6", 1);
+    pub const SENTENCE_BREAK_LOWER_V1: ResourceKey = resource_key!(uniset, "19=7", 1);
+    pub const SENTENCE_BREAK_NUMERIC_V1: ResourceKey = resource_key!(uniset, "19=8", 1);
+    pub const SENTENCE_BREAK_SCONTINUE_V1: ResourceKey = resource_key!(uniset, "19=9", 1);
+    pub const SENTENCE_BREAK_SEP_V1: ResourceKey = resource_key!(uniset, "19=10", 1);
+    pub const SENTENCE_BREAK_SP_V1: ResourceKey = resource_key!(uniset, "19=11", 1);
+    pub const SENTENCE_BREAK_STERM_V1: ResourceKey = resource_key!(uniset, "19=12", 1);
+    pub const SENTENCE_BREAK_UPPER_V1: ResourceKey = resource_key!(uniset, "19=13", 1);
+    pub const SENTENCE_BREAK_OTHER_V1: ResourceKey = resource_key!(uniset, "19=14", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1: ResourceKey = resource_key!(uniset, "20=0", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_OVERLAY_V1: ResourceKey = resource_key!(uniset, "20=1", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC10_V1: ResourceKey = resource_key!(uniset, "20=2", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC103_V1: ResourceKey = resource_key!(uniset, "20=3", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC107_V1: ResourceKey = resource_key!(uniset, "20=4", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC11_V1: ResourceKey = resource_key!(uniset, "20=5", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC118_V1: ResourceKey = resource_key!(uniset, "20=6", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC12_V1: ResourceKey = resource_key!(uniset, "20=7", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC122_V1: ResourceKey = resource_key!(uniset, "20=8", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC129_V1: ResourceKey = resource_key!(uniset, "20=9", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC13_V1: ResourceKey = resource_key!(uniset, "20=10", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC130_V1: ResourceKey = resource_key!(uniset, "20=11", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC132_V1: ResourceKey = resource_key!(uniset, "20=12", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC133_V1: ResourceKey = resource_key!(uniset, "20=13", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC14_V1: ResourceKey = resource_key!(uniset, "20=14", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC15_V1: ResourceKey = resource_key!(uniset, "20=15", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC16_V1: ResourceKey = resource_key!(uniset, "20=16", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC17_V1: ResourceKey = resource_key!(uniset, "20=17", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC18_V1: ResourceKey = resource_key!(uniset, "20=18", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC19_V1: ResourceKey = resource_key!(uniset, "20=19", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC20_V1: ResourceKey = resource_key!(uniset, "20=20", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_LEFT_V1: ResourceKey = resource_key!(uniset, "20=21", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_BELOW_V1: ResourceKey = resource_key!(uniset, "20=22", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC21_V1: ResourceKey = resource_key!(uniset, "20=23", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_V1: ResourceKey = resource_key!(uniset, "20=24", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ATTACHED_ABOVE_RIGHT_V1: ResourceKey = resource_key!(uniset, "20=25", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_BELOW_LEFT_V1: ResourceKey = resource_key!(uniset, "20=26", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC22_V1: ResourceKey = resource_key!(uniset, "20=27", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_BELOW_V1: ResourceKey = resource_key!(uniset, "20=28", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_BELOW_RIGHT_V1: ResourceKey = resource_key!(uniset, "20=29", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_LEFT_V1: ResourceKey = resource_key!(uniset, "20=30", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_RIGHT_V1: ResourceKey = resource_key!(uniset, "20=31", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_LEFT_V1: ResourceKey = resource_key!(uniset, "20=32", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC23_V1: ResourceKey = resource_key!(uniset, "20=33", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_V1: ResourceKey = resource_key!(uniset, "20=34", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_ABOVE_RIGHT_V1: ResourceKey = resource_key!(uniset, "20=35", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_BELOW_V1: ResourceKey = resource_key!(uniset, "20=36", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_DOUBLE_ABOVE_V1: ResourceKey = resource_key!(uniset, "20=37", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC24_V1: ResourceKey = resource_key!(uniset, "20=38", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_IOTA_SUBSCRIPT_V1: ResourceKey = resource_key!(uniset, "20=39", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC25_V1: ResourceKey = resource_key!(uniset, "20=40", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC26_V1: ResourceKey = resource_key!(uniset, "20=41", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC27_V1: ResourceKey = resource_key!(uniset, "20=42", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC28_V1: ResourceKey = resource_key!(uniset, "20=43", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC29_V1: ResourceKey = resource_key!(uniset, "20=44", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC30_V1: ResourceKey = resource_key!(uniset, "20=45", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC31_V1: ResourceKey = resource_key!(uniset, "20=46", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC32_V1: ResourceKey = resource_key!(uniset, "20=47", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC33_V1: ResourceKey = resource_key!(uniset, "20=48", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC34_V1: ResourceKey = resource_key!(uniset, "20=49", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC35_V1: ResourceKey = resource_key!(uniset, "20=50", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC36_V1: ResourceKey = resource_key!(uniset, "20=51", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_HAN_READING_V1: ResourceKey = resource_key!(uniset, "20=52", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_NUKTA_V1: ResourceKey = resource_key!(uniset, "20=53", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_KANA_VOICING_V1: ResourceKey = resource_key!(uniset, "20=54", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC84_V1: ResourceKey = resource_key!(uniset, "20=55", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_VIRAMA_V1: ResourceKey = resource_key!(uniset, "20=56", 1);
+    pub const TRAIL_CANONICAL_COMBINING_CLASS_CCC91_V1: ResourceKey = resource_key!(uniset, "20=57", 1);
+    pub const VERTICAL_ORIENTATION_ROTATED_V1: ResourceKey = resource_key!(uniset, "21=0", 1);
+    pub const VERTICAL_ORIENTATION_TRANSFORMED_ROTATED_V1: ResourceKey = resource_key!(uniset, "21=1", 1);
+    pub const VERTICAL_ORIENTATION_TRANSFORMED_UPRIGHT_V1: ResourceKey = resource_key!(uniset, "21=2", 1);
+    pub const VERTICAL_ORIENTATION_UPRIGHT_V1: ResourceKey = resource_key!(uniset, "21=3", 1);
+    pub const WORD_BREAK_CR_V1: ResourceKey = resource_key!(uniset, "22=0", 1);
+    pub const WORD_BREAK_DOUBLE_QUOTE_V1: ResourceKey = resource_key!(uniset, "22=1", 1);
+    pub const WORD_BREAK_E_BASE_V1: ResourceKey = resource_key!(uniset, "22=2", 1);
+    pub const WORD_BREAK_E_BASE_GAZ_V1: ResourceKey = resource_key!(uniset, "22=3", 1);
+    pub const WORD_BREAK_E_MODIFIER_V1: ResourceKey = resource_key!(uniset, "22=4", 1);
+    pub const WORD_BREAK_EXTENDNUMLET_V1: ResourceKey = resource_key!(uniset, "22=5", 1);
+    pub const WORD_BREAK_EXTEND_V1: ResourceKey = resource_key!(uniset, "22=6", 1);
+    pub const WORD_BREAK_FORMAT_V1: ResourceKey = resource_key!(uniset, "22=7", 1);
+    pub const WORD_BREAK_GLUE_AFTER_ZWJ_V1: ResourceKey = resource_key!(uniset, "22=8", 1);
+    pub const WORD_BREAK_HEBREW_LETTER_V1: ResourceKey = resource_key!(uniset, "22=9", 1);
+    pub const WORD_BREAK_KATAKANA_V1: ResourceKey = resource_key!(uniset, "22=10", 1);
+    pub const WORD_BREAK_ALETTER_V1: ResourceKey = resource_key!(uniset, "22=11", 1);
+    pub const WORD_BREAK_LF_V1: ResourceKey = resource_key!(uniset, "22=12", 1);
+    pub const WORD_BREAK_MIDNUMLET_V1: ResourceKey = resource_key!(uniset, "22=13", 1);
+    pub const WORD_BREAK_MIDLETTER_V1: ResourceKey = resource_key!(uniset, "22=14", 1);
+    pub const WORD_BREAK_MIDNUM_V1: ResourceKey = resource_key!(uniset, "22=15", 1);
+    pub const WORD_BREAK_NEWLINE_V1: ResourceKey = resource_key!(uniset, "22=16", 1);
+    pub const WORD_BREAK_NUMERIC_V1: ResourceKey = resource_key!(uniset, "22=17", 1);
+    pub const WORD_BREAK_REGIONAL_INDICATOR_V1: ResourceKey = resource_key!(uniset, "22=18", 1);
+    pub const WORD_BREAK_SINGLE_QUOTE_V1: ResourceKey = resource_key!(uniset, "22=19", 1);
+    pub const WORD_BREAK_WSEGSPACE_V1: ResourceKey = resource_key!(uniset, "22=20", 1);
+    pub const WORD_BREAK_OTHER_V1: ResourceKey = resource_key!(uniset, "22=21", 1);
+    pub const WORD_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "22=22", 1);
 }
 
 #[derive(Debug, PartialEq, Clone)]

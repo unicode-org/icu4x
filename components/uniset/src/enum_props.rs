@@ -385,7 +385,7 @@ pub enum JoiningGroup {
     Tah,
     Taw,
     TehMarbuta,
-    HamzaOnHehGoal,
+    TehMarbutaGoal,
     Teth,
     Waw,
     Yeh,

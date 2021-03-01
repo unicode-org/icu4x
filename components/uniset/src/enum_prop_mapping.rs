@@ -410,7 +410,7 @@ fn get_joining_group_enum(name: &str) -> Option<JoiningGroup> {
     m.insert("Tah", JoiningGroup::Tah);
     m.insert("Taw", JoiningGroup::Taw);
     m.insert("Teh_Marbuta", JoiningGroup::TehMarbuta);
-    m.insert("Hamza_On_Heh_Goal", JoiningGroup::HamzaOnHehGoal);
+    m.insert("Teh_Marbuta_Goal", JoiningGroup::TehMarbutaGoal);
     m.insert("Teth", JoiningGroup::Teth);
     m.insert("Waw", JoiningGroup::Waw);
     m.insert("Yeh", JoiningGroup::Yeh);
@@ -789,7 +789,7 @@ fn get_prop_name_val_as_i32(prop_name: &str, prop_val: &str) -> Option<(i32, i32
     }
 }
 
-fn get_prop_name_identifier(prop_name: &str, prop_val: &str) -> Option<String> {
+pub fn get_prop_name_identifier(prop_name: &str, prop_val: &str) -> Option<String> {
     let name_val_i32_opt = get_prop_name_val_as_i32(prop_name, prop_val);
     match name_val_i32_opt {
         Some((name_i32, val_i32)) => Some(format!("{}={}", name_i32, val_i32)),
@@ -832,4 +832,5 @@ mod enum_tests {
     fn get_prop_name_identifier_test() {
         assert_eq!(get_prop_name_identifier("lb", "LF"), Some("12=26".to_string()));
     }
+
 }
