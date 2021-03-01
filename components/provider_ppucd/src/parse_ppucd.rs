@@ -7,9 +7,9 @@ use std::iter::Iterator;
 use std::u32;
 
 use crate::support::UnicodeProperties;
+use icu_uniset::enum_prop_mapping::get_prop_name_identifier;
 use icu_uniset::provider::UnicodeProperty;
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-use icu_uniset::enum_prop_mapping::get_prop_name_identifier;
 
 //
 // Provider-related structs and impl functions
@@ -355,13 +355,14 @@ fn get_enum_prop_unisets<'s>(
     // enumerated property value (`Lo` or `Other_letter`).
     for (canonical_prop_name, prop_val_builder_map) in m {
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
-            let enum_val_uniset_name = get_prop_name_identifier(canonical_prop_name, canonical_val_name);
+            let enum_val_uniset_name =
+                get_prop_name_identifier(canonical_prop_name, canonical_val_name);
             match enum_val_uniset_name {
                 Some(name_str) => {
                     let enum_val_uniset_name: Cow<'s, str> = Cow::Owned(name_str);
                     let uniset = uniset_builder.build();
                     result.insert(enum_val_uniset_name, uniset);
-                },
+                }
                 None => {}
             }
         }

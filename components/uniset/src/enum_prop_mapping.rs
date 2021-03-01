@@ -266,12 +266,24 @@ fn get_indic_positional_category_enum(name: &str) -> Option<IndicPositionalCateg
     m.insert("Right", IndicPositionalCategory::Right);
     m.insert("Top", IndicPositionalCategory::Top);
     m.insert("Top_And_Bottom", IndicPositionalCategory::TopAndBottom);
-    m.insert("Top_And_Bottom_And_Left", IndicPositionalCategory::TopAndBottomAndLeft);
-    m.insert("Top_And_Bottom_And_Right", IndicPositionalCategory::TopAndBottomAndRight);
+    m.insert(
+        "Top_And_Bottom_And_Left",
+        IndicPositionalCategory::TopAndBottomAndLeft,
+    );
+    m.insert(
+        "Top_And_Bottom_And_Right",
+        IndicPositionalCategory::TopAndBottomAndRight,
+    );
     m.insert("Top_And_Left", IndicPositionalCategory::TopAndLeft);
-    m.insert("Top_And_Left_And_Right", IndicPositionalCategory::TopAndLeftAndRight);
+    m.insert(
+        "Top_And_Left_And_Right",
+        IndicPositionalCategory::TopAndLeftAndRight,
+    );
     m.insert("Top_And_Right", IndicPositionalCategory::TopAndRight);
-    m.insert("Visual_Order_Left", IndicPositionalCategory::VisualOrderLeft);
+    m.insert(
+        "Visual_Order_Left",
+        IndicPositionalCategory::VisualOrderLeft,
+    );
     m.get(name).cloned()
 }
 
@@ -279,21 +291,48 @@ fn get_indic_syllabic_category_enum(name: &str) -> Option<IndicSyllabicCategory>
     let mut m: LiteMap<&str, IndicSyllabicCategory> = LiteMap::new();
     m.insert("Avagraha", IndicSyllabicCategory::Avagraha);
     m.insert("Bindu", IndicSyllabicCategory::Bindu);
-    m.insert("Brahmi_Joining_Number", IndicSyllabicCategory::BrahmiJoiningNumber);
+    m.insert(
+        "Brahmi_Joining_Number",
+        IndicSyllabicCategory::BrahmiJoiningNumber,
+    );
     m.insert("Cantillation_Mark", IndicSyllabicCategory::CantillationMark);
     m.insert("Consonant", IndicSyllabicCategory::Consonant);
     m.insert("Consonant_Dead", IndicSyllabicCategory::ConsonantDead);
     m.insert("Consonant_Final", IndicSyllabicCategory::ConsonantFinal);
-    m.insert("Consonant_Head_Letter", IndicSyllabicCategory::ConsonantHeadLetter);
-    m.insert("Consonant_Initial_Postfixed", IndicSyllabicCategory::ConsonantInitialPostfixed);
+    m.insert(
+        "Consonant_Head_Letter",
+        IndicSyllabicCategory::ConsonantHeadLetter,
+    );
+    m.insert(
+        "Consonant_Initial_Postfixed",
+        IndicSyllabicCategory::ConsonantInitialPostfixed,
+    );
     m.insert("Consonant_Killer", IndicSyllabicCategory::ConsonantKiller);
     m.insert("Consonant_Medial", IndicSyllabicCategory::ConsonantMedial);
-    m.insert("Consonant_Placeholder", IndicSyllabicCategory::ConsonantPlaceholder);
-    m.insert("Consonant_Preceding_Repha", IndicSyllabicCategory::ConsonantPrecedingRepha);
-    m.insert("Consonant_Prefixed", IndicSyllabicCategory::ConsonantPrefixed);
-    m.insert("Consonant_Subjoined", IndicSyllabicCategory::ConsonantSubjoined);
-    m.insert("Consonant_Succeeding_Repha", IndicSyllabicCategory::ConsonantSucceedingRepha);
-    m.insert("Consonant_With_Stacker", IndicSyllabicCategory::ConsonantWithStacker);
+    m.insert(
+        "Consonant_Placeholder",
+        IndicSyllabicCategory::ConsonantPlaceholder,
+    );
+    m.insert(
+        "Consonant_Preceding_Repha",
+        IndicSyllabicCategory::ConsonantPrecedingRepha,
+    );
+    m.insert(
+        "Consonant_Prefixed",
+        IndicSyllabicCategory::ConsonantPrefixed,
+    );
+    m.insert(
+        "Consonant_Subjoined",
+        IndicSyllabicCategory::ConsonantSubjoined,
+    );
+    m.insert(
+        "Consonant_Succeeding_Repha",
+        IndicSyllabicCategory::ConsonantSucceedingRepha,
+    );
+    m.insert(
+        "Consonant_With_Stacker",
+        IndicSyllabicCategory::ConsonantWithStacker,
+    );
     m.insert("Gemination_Mark", IndicSyllabicCategory::GeminationMark);
     m.insert("Invisible_Stacker", IndicSyllabicCategory::InvisibleStacker);
     m.insert("Joiner", IndicSyllabicCategory::Joiner);
@@ -337,7 +376,10 @@ fn get_joining_group_enum(name: &str) -> Option<JoiningGroup> {
     m.insert("Gaf", JoiningGroup::Gaf);
     m.insert("Gamal", JoiningGroup::Gamal);
     m.insert("Hah", JoiningGroup::Hah);
-    m.insert("Hanifi_Rohingya_Kinna_Ya", JoiningGroup::HanifiRohingyaKinnaYa);
+    m.insert(
+        "Hanifi_Rohingya_Kinna_Ya",
+        JoiningGroup::HanifiRohingyaKinnaYa,
+    );
     m.insert("Hanifi_Rohingya_Pa", JoiningGroup::HanifiRohingyaPa);
     m.insert("He", JoiningGroup::He);
     m.insert("Heh", JoiningGroup::Heh);
@@ -420,7 +462,7 @@ fn get_joining_group_enum(name: &str) -> Option<JoiningGroup> {
     m.insert("Yudh_He", JoiningGroup::YudhHe);
     m.insert("Zain", JoiningGroup::Zain);
     m.insert("Zhain", JoiningGroup::Zhain);
-    m.get(name).cloned()        
+    m.get(name).cloned()
 }
 
 fn get_joining_type_enum(name: &str) -> Option<JoiningType> {
@@ -430,7 +472,7 @@ fn get_joining_type_enum(name: &str) -> Option<JoiningType> {
     m.insert("L", JoiningType::LeftJoining);
     m.insert("R", JoiningType::RightJoining);
     m.insert("T", JoiningType::Transparent);
-    m.insert("U", JoiningType::NonJoining,   );
+    m.insert("U", JoiningType::NonJoining);
     m.get(name).cloned()
 }
 
@@ -601,7 +643,7 @@ fn get_sentence_break_enum(name: &str) -> Option<SentenceBreak> {
     m.insert("ST", SentenceBreak::STerm);
     m.insert("UP", SentenceBreak::Upper);
     m.insert("XX", SentenceBreak::Other);
-    m.get(name).cloned()    
+    m.get(name).cloned()
 }
 
 fn get_trail_canonical_combining_class_enum(name: &str) -> Option<TrailCanonicalCombiningClass> {
@@ -711,81 +753,71 @@ fn get_word_break_enum(name: &str) -> Option<WordBreak> {
 fn get_prop_name_val_as_i32(prop_name: &str, prop_val: &str) -> Option<(i32, i32)> {
     let name_enum_opt = get_enum_property_enum(prop_name);
     let val_enum_i32_opt = match name_enum_opt {
-        Some(EnumeratedProperty::BidiClass) => {
-            get_bidi_class_enum(prop_val).map(|x| x as i32)
-        },
+        Some(EnumeratedProperty::BidiClass) => get_bidi_class_enum(prop_val).map(|x| x as i32),
         Some(EnumeratedProperty::BidiPairedBracketType) => {
             get_bidi_paired_bracket_type_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::CanonicalCombiningClass) => {
             get_canonical_combining_class_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::DecompositionType) => {
             get_decomposition_type_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::EastAsianWidth) => {
             get_east_asian_width_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::GeneralCategory) => {
             get_general_category_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::GraphemeClusterBreak) => {
             get_grapheme_cluster_break_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::HangulSyllableType) => {
             get_hangul_syllable_type_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::IndicPositionalCategory) => {
             get_indic_positional_category_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::IndicSyllabicCategory) => {
             get_indic_syllabic_category_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::JoiningGroup) => {
             get_joining_group_enum(prop_val).map(|x| x as i32)
-        },
-        Some(EnumeratedProperty::JoiningType) => {
-            get_joining_type_enum(prop_val).map(|x| x as i32)
-        },
-        Some(EnumeratedProperty::LineBreak) => {
-            get_line_break_enum(prop_val).map(|x| x as i32)
-        },
+        }
+        Some(EnumeratedProperty::JoiningType) => get_joining_type_enum(prop_val).map(|x| x as i32),
+        Some(EnumeratedProperty::LineBreak) => get_line_break_enum(prop_val).map(|x| x as i32),
         Some(EnumeratedProperty::LeadCanonicalCombiningClass) => {
             get_lead_canonical_combining_class_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::NFCQuickCheck) => {
             get_nfc_quick_check_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::NFDQuickCheck) => {
             get_nfd_quick_check_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::NFKCQuickCheck) => {
             get_nfkc_quick_check_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::NFKDQuickCheck) => {
             get_nfkd_quick_check_enum(prop_val).map(|x| x as i32)
-        },
-        Some(EnumeratedProperty::NumericType) => {
-            get_numeric_type_enum(prop_val).map(|x| x as i32)
-        },
+        }
+        Some(EnumeratedProperty::NumericType) => get_numeric_type_enum(prop_val).map(|x| x as i32),
         Some(EnumeratedProperty::SentenceBreak) => {
             get_sentence_break_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::TrailCanonicalCombiningClass) => {
             get_trail_canonical_combining_class_enum(prop_val).map(|x| x as i32)
-        },
+        }
         Some(EnumeratedProperty::VerticalOrientation) => {
             get_vertical_orientation_enum(prop_val).map(|x| x as i32)
-        },
-        Some(EnumeratedProperty::WordBreak) => {
-            get_word_break_enum(prop_val).map(|x| x as i32)
-        },
+        }
+        Some(EnumeratedProperty::WordBreak) => get_word_break_enum(prop_val).map(|x| x as i32),
         _ => None,
     };
     let name_enum_i32_opt = name_enum_opt.map(|x| x as i32);
     match (name_enum_i32_opt, val_enum_i32_opt) {
         (Some(name_i32), Some(val_i32)) => Some((name_i32, val_i32)),
-        _ => None
+        _ => None,
     }
 }
 
@@ -796,7 +828,6 @@ pub fn get_prop_name_identifier(prop_name: &str, prop_val: &str) -> Option<Strin
         _ => None,
     }
 }
-
 
 #[cfg(test)]
 mod enum_tests {
@@ -810,19 +841,22 @@ mod enum_tests {
 
     #[test]
     fn prop_value_str_to_enum_fn_test() {
-        assert_eq!(get_canonical_combining_class_enum("21"), Some(CanonicalCombiningClass::CCC21));
+        assert_eq!(
+            get_canonical_combining_class_enum("21"),
+            Some(CanonicalCombiningClass::CCC21)
+        );
         assert_eq!(get_canonical_combining_class_enum("cheezburger"), None);
     }
 
     #[test]
     fn get_prop_name_val_as_i32_test() {
         let act_prop_i32_tuple_opt_1 = get_prop_name_val_as_i32("lb", "LF");
-        let exp_prop_i32_tuple_opt_1 = Some(
-            (EnumeratedProperty::LineBreak as i32,
-            LineBreak::LineFeed as i32)
-        );
+        let exp_prop_i32_tuple_opt_1 = Some((
+            EnumeratedProperty::LineBreak as i32,
+            LineBreak::LineFeed as i32,
+        ));
         assert_eq!(act_prop_i32_tuple_opt_1, exp_prop_i32_tuple_opt_1);
-        
+
         assert_eq!(get_prop_name_val_as_i32("lb", "cheezburger"), None);
         assert_eq!(get_prop_name_val_as_i32("cheezburger", "LF"), None);
         assert_eq!(get_prop_name_val_as_i32("cheez", "cheez"), None);
@@ -830,8 +864,13 @@ mod enum_tests {
 
     #[test]
     fn get_prop_name_identifier_test() {
-        assert_eq!(get_prop_name_identifier("lb", "LF"), Some("12=26".to_string()));
-        assert_eq!(get_prop_name_identifier("ccc", "230"), Some("2=230".to_string()));
+        assert_eq!(
+            get_prop_name_identifier("lb", "LF"),
+            Some("12=26".to_string())
+        );
+        assert_eq!(
+            get_prop_name_identifier("ccc", "230"),
+            Some("2=230".to_string())
+        );
     }
-
 }

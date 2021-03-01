@@ -89,7 +89,7 @@ pub enum CanonicalCombiningClass {
     CCC19 = 19,
     CCC20 = 20,
     AttachedBelowLeft = 200,
-    AttachedBelow= 202,
+    AttachedBelow = 202,
     CCC21 = 21,
     AttachedAbove = 214,
     AttachedAboveRight = 216,
