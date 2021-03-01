@@ -357,13 +357,10 @@ fn get_enum_prop_unisets<'s>(
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
             let enum_val_uniset_name =
                 get_prop_name_identifier(canonical_prop_name, canonical_val_name);
-            match enum_val_uniset_name {
-                Some(name_str) => {
-                    let enum_val_uniset_name: Cow<'s, str> = Cow::Owned(name_str);
-                    let uniset = uniset_builder.build();
-                    result.insert(enum_val_uniset_name, uniset);
-                }
-                None => {}
+            if let Some(name_str) = enum_val_uniset_name {
+                let enum_val_uniset_name: Cow<'s, str> = Cow::Owned(name_str);
+                let uniset = uniset_builder.build();
+                result.insert(enum_val_uniset_name, uniset);
             }
         }
     }
