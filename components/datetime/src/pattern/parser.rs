@@ -100,7 +100,7 @@ impl<'p> Parser<'p> {
 
         while let Some(ch) = chars.next() {
             if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
-                if let Ok(new_symbol) = FieldSymbol::try_from(ch as u8) {
+                if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
                     match self.state {
                         Segment::Symbol {
                             ref symbol,
@@ -246,6 +246,7 @@ mod tests {
             ("ż'ół'ć", vec!["żółć".into()]),
             ("ż'ó''ł'ć", vec!["żó'łć".into()]),
             (" 'Ymd' ", vec![" Ymd ".into()]),
+            ("الأسبوع", vec!["الأسبوع".into()]),
         ];
 
         for (string, pattern) in samples {
