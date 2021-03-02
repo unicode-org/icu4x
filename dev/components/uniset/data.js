@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614645020962,
+  "lastUpdate": 1614656620056,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3509,6 +3509,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35422273,
             "range": "± 767666",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c308b40dbdb5018dd6c3ffec429e2dd002bb4066",
+          "message": "Add CLDR JSON data to testdata and remove from provider_cldr (#513)",
+          "timestamp": "2021-03-01T21:38:11-06:00",
+          "tree_id": "ade81acb58382bed3e53eeaf91f1eb688b93feb7",
+          "url": "https://github.com/unicode-org/icu4x/commit/c308b40dbdb5018dd6c3ffec429e2dd002bb4066"
+        },
+        "date": 1614656619467,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35680926,
+            "range": "± 887391",
             "unit": "ns/iter"
           }
         ]
