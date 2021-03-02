@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614422724183,
+  "lastUpdate": 1614645015107,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3557,6 +3557,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4701,
             "range": "± 751",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f9e74b767a215c490007361b23f9c45cf2d1b82",
+          "message": "Add serde to litemap (#514)",
+          "timestamp": "2021-03-01T16:24:22-08:00",
+          "tree_id": "dc24eebcd24cdd1bc8fe1b680e0d02c7d509ce7a",
+          "url": "https://github.com/unicode-org/icu4x/commit/3f9e74b767a215c490007361b23f9c45cf2d1b82"
+        },
+        "date": 1614645014516,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2950,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4287,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
