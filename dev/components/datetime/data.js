@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614656636456,
+  "lastUpdate": 1614666181386,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2519,6 +2519,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 810294,
             "range": "± 41706",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kpozin@google.com",
+            "name": "Konstantin Pozin",
+            "username": "kpozin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "64c143f402a3c2956f4aa172e903e1e159598b6d",
+          "message": "Fix date pattern parsing for non-ASCII literals (#503) (#515)\n\nFixes #503",
+          "timestamp": "2021-03-01T22:17:01-08:00",
+          "tree_id": "b171fbf1030491ae586af21032d1c76eaffe293b",
+          "url": "https://github.com/unicode-org/icu4x/commit/64c143f402a3c2956f4aa172e903e1e159598b6d"
+        },
+        "date": 1614666180682,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1053801,
+            "range": "± 54405",
             "unit": "ns/iter"
           }
         ]
