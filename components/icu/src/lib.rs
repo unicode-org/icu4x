@@ -34,12 +34,13 @@
 //! # Examples
 //!
 //! ```
+//! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
 //! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let locale = langid!("en").into();
+//! let locale: Locale = langid!("en").into();
 //!
 //! let options = style::Bag {
 //!     date: Some(style::Date::Long),
@@ -72,12 +73,13 @@ pub mod datetime {
     //! # Examples
     //!
     //! ```
+    //! use icu::locid::Locale;
     //! use icu::locid::macros::langid;
     //! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! let locale = langid!("en").into();
+    //! let locale: Locale = langid!("en").into();
     //!
     //! let options = style::Bag {
     //!     date: Some(style::Date::Medium),
@@ -130,13 +132,13 @@ pub mod locid {
     //! let region: Region = "US".parse()
     //!     .expect("Parsing failed.");
     //!
-    //! assert_eq!(loc.language, lang);
-    //! assert_eq!(loc.script, None);
-    //! assert_eq!(loc.region, Some(region));
-    //! assert_eq!(loc.variants.len(), 0);
+    //! assert_eq!(loc.id.language, lang);
+    //! assert_eq!(loc.id.script, None);
+    //! assert_eq!(loc.id.region, Some(region));
+    //! assert_eq!(loc.id.variants.len(), 0);
     //!
     //! let region: Region = "GB".parse().expect("Parsing failed.");
-    //! loc.region = Some(region);
+    //! loc.id.region = Some(region);
     //!
     //! assert_eq!(loc.to_string(), "en-GB");
     //! ```

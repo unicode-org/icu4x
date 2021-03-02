@@ -11,7 +11,7 @@ use icu_datetime::{
     provider::{gregory::DatesV1, key::GREGORY_V1},
     DateTimeFormat,
 };
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::{
     struct_provider::StructProvider, DataProvider, DataRequest, ResourceOptions, ResourcePath,
 };
@@ -21,9 +21,9 @@ fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
 
     for fx in fixtures::get_fixture(fixture_name).unwrap().0 {
-        let langid = fx.input.locale.parse().unwrap();
+        let locale: Locale = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
-        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
         let value: MockDateTime = fx.input.value.parse().unwrap();
 
@@ -74,12 +74,9 @@ fn test_dayperiod_patterns() {
                             key: GREGORY_V1,
                             data: data.as_ref(),
                         };
-                        let dtf = DateTimeFormat::try_new(
-                            langid.clone().into(),
-                            &provider,
-                            &format_options,
-                        )
-                        .unwrap();
+                        let dtf =
+                            DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
+                                .unwrap();
                         assert_eq!(
                             dtf.format(&date_time).to_string(),
                             *expected,

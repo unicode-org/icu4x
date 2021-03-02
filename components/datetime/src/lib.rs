@@ -14,12 +14,13 @@
 //!
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
+//! use icu_locid::Locale;
 //! use icu_locid_macros::langid;
 //! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let locale = langid!("en").into();
+//! let locale: Locale = langid!("en").into();
 //!
 //! // See the next code example for a more ergonomic example with .into().
 //! let options = DateTimeFormatOptions::Style(style::Bag {
@@ -45,10 +46,11 @@
 //!
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
+//! # use icu_locid::Locale;
 //! # use icu_locid_macros::langid;
 //! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
 //! # let provider = icu_testdata::get_provider();
-//! # let locale = langid!("en").into();
+//! # let locale: Locale = langid!("en").into();
 //! let options = style::Bag {
 //!     date: Some(style::Date::Medium),
 //!     time: Some(style::Time::Short),
@@ -104,12 +106,13 @@ use std::borrow::Cow;
 /// # Examples
 ///
 /// ```
+/// use icu_locid::Locale;
 /// use icu_locid_macros::langid;
 /// use icu_datetime::{DateTimeFormat, options::style};
 /// use icu_datetime::mock::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let locale = langid!("en").into();
+/// let locale: Locale = langid!("en").into();
 ///
 /// let provider = InvariantDataProvider;
 ///
@@ -143,12 +146,13 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
+    /// use icu_locid::Locale;
     /// use icu_locid_macros::langid;
     /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// use icu_datetime::mock::MockDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let locale = langid!("en").into();
+    /// let locale: Locale = langid!("en").into();
     ///
     /// let provider = InvariantDataProvider;
     ///
@@ -158,11 +162,12 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<D: DataProvider<'d, provider::gregory::DatesV1> + ?Sized>(
-        locale: Locale,
+    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::gregory::DatesV1> + ?Sized>(
+        locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
+        let locale = locale.into();
         let data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
@@ -190,11 +195,12 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
+    /// # use icu_locid::Locale;
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
-    /// # let locale = langid!("en").into();
+    /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
@@ -229,11 +235,12 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
+    /// # use icu_locid::Locale;
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
-    /// # let locale = langid!("en").into();
+    /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
@@ -263,11 +270,12 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
+    /// # use icu_locid::Locale;
     /// # use icu_locid_macros::langid;
     /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
     /// # use icu_datetime::mock::MockDateTime;
     /// # use icu_provider::inv::InvariantDataProvider;
-    /// # let locale = langid!("en").into();
+    /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())

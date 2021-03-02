@@ -32,13 +32,13 @@
 //! let region: Region = "US".parse()
 //!     .expect("Parsing failed.");
 //!
-//! assert_eq!(loc.language, lang);
-//! assert_eq!(loc.script, None);
-//! assert_eq!(loc.region, Some(region));
-//! assert_eq!(loc.variants.len(), 0);
+//! assert_eq!(loc.id.language, lang);
+//! assert_eq!(loc.id.script, None);
+//! assert_eq!(loc.id.region, Some(region));
+//! assert_eq!(loc.id.variants.len(), 0);
 //!
 //! let region: Region = "GB".parse().expect("Parsing failed.");
-//! loc.region = Some(region);
+//! loc.id.region = Some(region);
 //!
 //! assert_eq!(loc.to_string(), "en-GB");
 //! ```

@@ -10,6 +10,7 @@ icu_benchmark_macros::static_setup!();
 
 use icu_datetime::mock::MockDateTime;
 use icu_datetime::{options::style, DateTimeFormat};
+use icu_locid::Locale;
 use icu_locid_macros::langid;
 
 const DATES_ISO: &[&str] = &[
@@ -38,7 +39,7 @@ fn print(_input: &str, _value: Option<usize>) {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let locale = langid!("en").into();
+    let locale: Locale = langid!("en").into();
 
     let provider = icu_testdata::get_provider();
 

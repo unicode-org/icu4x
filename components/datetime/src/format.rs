@@ -23,11 +23,12 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
+/// # use icu_locid::Locale;
 /// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
 /// # use icu_datetime::mock::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
-/// # let locale = langid!("en").into();
+/// # let locale: Locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;
 /// # let options = DateTimeFormatOptions::default();
 /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
