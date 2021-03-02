@@ -23,6 +23,13 @@ impl<K, V> LiteMap<K, V> {
         Self::default()
     }
 
+    /// Construct a new [`LiteMap`] with a given capacity
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            values: Vec::with_capacity(capacity),
+        }
+    }
+
     /// The number of elements in the [`LiteMap`]
     pub fn len(&self) -> usize {
         self.values.len()
@@ -111,7 +118,8 @@ impl<K: Ord, V> LiteMap<K, V> {
     }
 
     /// Appends `value` with `key` to the end of the underlying vector, returning
-    /// `value` _if it failed_. Useful for extending with an existing sorted list.
+    /// `key` and `value` _if it failed_. Useful for extending with an existing
+    /// sorted list.
     ///
     /// ```rust
     /// use litemap::LiteMap;
@@ -126,10 +134,10 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// // not appended since it wasn't in order
     /// assert_eq!(map.get(&2), None);
     /// ```
-    pub fn try_append(&mut self, key: K, value: V) -> Option<V> {
+    pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
         if let Some(ref last) = self.values.last() {
             if last.0 > key {
-                return Some(value);
+                return Some((key, value));
             }
         }
 
@@ -221,31 +229,83 @@ impl<K, V> LiteMap<K, V> {
 }
 
 #[cfg(feature = "serde")]
-impl<K: serde::Serialize, V: serde::Serialize> serde::Serialize for LiteMap<K, V> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.values.serialize(serializer)
-    }
-}
+mod serde {
+    use super::LiteMap;
+    use serde::de::{MapAccess, Visitor};
+    use serde::ser::SerializeMap;
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    use std::fmt;
+    use std::marker::PhantomData;
 
-#[cfg(feature = "serde")]
-impl<'de, K: Ord + serde::Deserialize<'de>, V: serde::Deserialize<'de>> serde::Deserialize<'de>
-    for LiteMap<K, V>
-{
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let values = <Vec<(K, V)> as serde::Deserialize>::deserialize(deserializer)?;
-        if cfg!(debug_assertions) {
-            if values.windows(2).any(|window| window[0].0 > window[1].0) {
-                return Err(serde::de::Error::custom(
-                    "Found out-of-order values when deserializing LiteMap",
-                ));
+    impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            let mut map = serializer.serialize_map(Some(self.len()))?;
+            for (k, v) in self.iter() {
+                map.serialize_entry(k, v)?;
+            }
+            map.end()
+        }
+    }
+
+    /// Modified example from https://serde.rs/deserialize-map.html
+    struct LiteMapVisitor<K, V> {
+        marker: PhantomData<fn() -> LiteMap<K, V>>,
+    }
+
+    impl<K, V> LiteMapVisitor<K, V> {
+        fn new() -> Self {
+            LiteMapVisitor {
+                marker: PhantomData,
             }
         }
-        Ok(Self { values })
+    }
+
+    impl<'de, K, V> Visitor<'de> for LiteMapVisitor<K, V>
+    where
+        K: Deserialize<'de> + Ord,
+        V: Deserialize<'de>,
+    {
+        type Value = LiteMap<K, V>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a map produced by LiteMap")
+        }
+
+        fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
+        where
+            M: MapAccess<'de>,
+        {
+            let mut map = LiteMap::with_capacity(access.size_hint().unwrap_or(0));
+
+            // While there are entries remaining in the input, add them
+            // into our map.
+            while let Some((key, value)) = access.next_entry()? {
+                // Try to append it at the end, hoping for a sorted map.
+                // If not sorted, insert as usual.
+                // This allows for arbitrary maps (e.g. from user JSON)
+                // to be deserialized into LiteMap
+                // without impacting performance in the case of deserializing
+                // a serialized map that came from another LiteMap
+                if let Some((key, value)) = map.try_append(key, value) {
+                    // Note: this effectively selection sorts the map,
+                    // which isn't efficient for large maps
+                    map.insert(key, value);
+                }
+            }
+
+            Ok(map)
+        }
+    }
+
+    impl<'de, K: Ord + Deserialize<'de>, V: Deserialize<'de>> Deserialize<'de> for LiteMap<K, V> {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            deserializer.deserialize_map(LiteMapVisitor::new())
+        }
     }
 }
