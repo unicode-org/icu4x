@@ -46,6 +46,7 @@ impl fmt::Debug for Error {
 #[derive(Debug, Deserialize)]
 pub struct PackageMetadata {
     pub locales: Vec<LanguageIdentifier>,
+    pub cldr_json_glob: Vec<String>,
     pub gitref: String,
 }
 

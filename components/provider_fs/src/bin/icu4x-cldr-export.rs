@@ -231,7 +231,7 @@ fn main() -> Result<(), Error> {
     );
 
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_from_github_tag(tag)?)
+        Box::new(CldrAllInOneDownloader::try_new_from_github_tag(tag)?.download()?)
     } else {
         let mut cldr_paths_local = CldrPathsLocal::default();
         if let Some(path) = matches.value_of("CLDR_CORE") {
