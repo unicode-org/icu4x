@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614666151406,
+  "lastUpdate": 1614686968423,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3569,6 +3569,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36590747,
             "range": "± 539993",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b15c0b36901095406a67e3620a3d1d0e294b7692",
+          "message": "Make LanguageIdentifier a field of Locale (#492)\n\nMake LanguageIdentifier a field of Locale.\r\n\r\nFixes #447",
+          "timestamp": "2021-03-02T07:03:43-05:00",
+          "tree_id": "8c6d75a7dbcdd0015e8419882389c04863145644",
+          "url": "https://github.com/unicode-org/icu4x/commit/b15c0b36901095406a67e3620a3d1d0e294b7692"
+        },
+        "date": 1614686964714,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36101487,
+            "range": "± 850505",
             "unit": "ns/iter"
           }
         ]
