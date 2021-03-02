@@ -5,7 +5,10 @@ use std::convert::TryFrom;
 
 #[derive(Debug)]
 pub enum SymbolError {
+    /// Unknown field symbol
     Unknown(u8),
+    /// Invalid character for a field symbol
+    Invalid(char),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -33,6 +36,18 @@ impl TryFrom<u8> for FieldSymbol {
                 .or_else(|_| DayPeriod::try_from(b).map(Self::DayPeriod))
                 .or_else(|_| Hour::try_from(b).map(Self::Hour))
                 .or_else(|_| Second::try_from(b).map(Self::Second)),
+        }
+    }
+}
+
+impl TryFrom<char> for FieldSymbol {
+    type Error = SymbolError;
+
+    fn try_from(ch: char) -> Result<Self, Self::Error> {
+        if ch.is_ascii() {
+            Self::try_from(ch as u8)
+        } else {
+            Err(SymbolError::Invalid(ch))
         }
     }
 }
