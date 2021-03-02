@@ -12,7 +12,7 @@ use std::ops::{Index, IndexMut};
 ///
 /// The API is roughly similar to that of [`std::collections::HashMap`], though it
 /// requires `Ord` instead of `Hash`.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct LiteMap<K, V> {
     values: Vec<(K, V)>,
 }
