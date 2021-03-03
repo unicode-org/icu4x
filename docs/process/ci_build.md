@@ -41,7 +41,7 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
 ## Slightly Advanced Features Used in unicode-org repos
 
 * A "job matrix" allows you to run a collection of parameterized jobs, where you indicate which parts of the job configuration are the parameters (variables) and what values they are allowed to take. If the parameter is the OS of the VM, then you can run the same job on Linux, macOS, and Windows with little extra work
-  * The parameters are defined as fields under the `strategy.matrix.<param>` key within the job, and the range of allowed values are stored as arrays. The parameters are used (string interpolated) with `${{ matrix.<param> }}` syntax. [Example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L17-L21):
+  * The parameters are defined as fields under the `strategy.matrix.<param>` key within the job, and the range of allowed values are stored as arrays. The parameters are used (string interpolated) with `${{ matrix.<param> }}` syntax. [Example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L17-L21):
   ```yml
   jobs:
     test:
@@ -55,7 +55,7 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
       - ...
   ```
   Here, `os` is a parameter defined under `strategy.matrix.os` for the `test` job's job matrix. `os` takes on all values in the range defined by the array `[ ubuntu-latest, macos-latest, windows-latest ]`. Every time the `test` job is run, it is run 3 times, once per possible value.
-  * A job matrix can help decrease wall clock time for multiple independent long-running steps, like benchmarks. [Example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L115-L127):
+  * A job matrix can help decrease wall clock time for multiple independent long-running steps, like benchmarks. [Example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L115-L127):
   ```yml
   jobs:
     benchmark:
@@ -80,9 +80,9 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
   ```
   Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the [YAML array](https://stackoverflow.com/a/33136212) `[ components/locid, components/uniset, components/plurals, components/datetime, utils/fixed_decimal]`
 * Conditional execution of steps and jobs - you can use the `if` key to control more granularly whether a step or job can run.
-  * In this [example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `master`. However, when we look more granularly at the jobs within the workflow, some jobs, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute when they're fully finished, reviewed, and merged to `master`. We add the `if` key on the jobs to control the conditional execution in isolated instances that is more granular than the workflow-level triggers defined in the `on` key.
+  * In this [example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `master`. However, when we look more granularly at the jobs within the workflow, some jobs, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute when they're fully finished, reviewed, and merged to `master`. We add the `if` key on the jobs to control the conditional execution in isolated instances that is more granular than the workflow-level triggers defined in the `on` key.
 * "Uploading / downloading artifacts" is a mechanism that Github Actions provides to allow a persistence of files from one job to another within a single workflow. This can be useful since each job VM runner is created fresh, and inherits no previous state.
-  * [Example upload](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L213-L218):
+  * [Example upload](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L213-L218):
   ```
       - name: Upload updated benchmark data (merge to master only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -91,7 +91,7 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
   ```
-  * [Example download](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L246-L250):
+  * [Example download](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L246-L250):
   ```
     - name: Download previous content destined for GH pages
       uses: actions/download-artifact@v2

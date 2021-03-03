@@ -15,7 +15,7 @@ use tinystr::tinystr8;
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 /// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/master/docs/research/date_time.md)
+/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/date_time.md)
 /// to develop core date and time APIs that will work as an input for this component.
 ///
 /// # Examples
