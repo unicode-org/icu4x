@@ -20,3 +20,6 @@ wasmpkg/
 # Memory benchmarking output
 dhat-heap.json
 /benchmarks
+
+# Do not check-in bincode test data
+resources/testdata/data/bincode

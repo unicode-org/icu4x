@@ -30,6 +30,9 @@ quick = "make quick"
 # Run all lints and tests
 ci = "make ci"
 
+# Run all lints and tests
+bincode-gen-testdata = "make bincode-gen-testdata"
+
 ### WASM TASKS ###
 
 # Re-build standard library with panic=abort.
