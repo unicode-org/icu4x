@@ -92,6 +92,11 @@ jobs:
       with:
         command: license-check
 
+    - name: Build the bincode
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: bincode-gen-testdata
+
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
     runs-on: ubuntu-latest
