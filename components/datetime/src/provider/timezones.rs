@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+
 pub type LiteMap<K, V> = std::collections::BTreeMap<K, V>;
 //use litemap::LiteMap;
 
@@ -32,62 +33,13 @@ macro_rules! map_access {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZonesV1 {
+pub struct TimeZoneFormatsV1 {
     pub hour_format: Cow<'static, str>,
     pub gmt_format: Cow<'static, str>,
     pub gmt_zero_format: Cow<'static, str>,
     pub region_format: Cow<'static, str>,
-    pub region_format_daylight: Cow<'static, str>,
-    pub region_format_standard: Cow<'static, str>,
+    pub region_format_variants: LiteMap<Cow<'static, str>, Cow<'static, str>>,
     pub fallback_format: Cow<'static, str>,
-    pub zones: ZonesV1,
-    pub metazones: Option<MetaZonesV1>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub struct LocationV1 {
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub long: Option<ZoneFormatV1>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub short: Option<ZoneFormatV1>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub exemplar_city: Option<Cow<'static, str>>,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub struct ZoneFormatV1 {
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub generic: Option<Cow<'static, str>>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub standard: Option<Cow<'static, str>>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub daylight: Option<Cow<'static, str>>,
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -95,31 +47,38 @@ pub struct ZoneFormatV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct ZonesV1(pub LiteMap<Cow<'static, str>, LocationV1>);
-map_access!(ZonesV1 => LocationV1);
+pub struct TimeZoneNamesLongV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(TimeZoneNamesLongV1 => Cow<'static, str>);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct MetaZoneV1 {
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub long: Option<ZoneFormatV1>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
-    pub short: Option<ZoneFormatV1>,
-}
+pub struct TimeZoneNamesShortV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(TimeZoneNamesShortV1 => Cow<'static, str>);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct MetaZonesV1(pub LiteMap<Cow<'static, str>, MetaZoneV1>);
-map_access!(MetaZonesV1 => MetaZoneV1);
+pub struct TimeZoneNameVariantsLongV1(pub LiteMap<Cow<'static, str>, TimeZoneNameVariantsV1>);
+map_access!(TimeZoneNameVariantsLongV1 => TimeZoneNameVariantsV1);
+
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct TimeZoneNameVariantsShortV1(pub LiteMap<Cow<'static, str>, TimeZoneNameVariantsV1>);
+map_access!(TimeZoneNameVariantsShortV1 => TimeZoneNameVariantsV1);
+
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct TimeZoneNameVariantsV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(TimeZoneNameVariantsV1 => Cow<'static, str>);
+

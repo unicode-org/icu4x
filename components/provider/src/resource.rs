@@ -15,7 +15,7 @@ use tinystr::{TinyStr16, TinyStr4};
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
-#[derive(PartialEq, Eq, Copy, Clone, Debug)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
     Icu4x,
     LikelySubtags,
@@ -68,7 +68,7 @@ impl writeable::Writeable for ResourceCategory {
 /// The fields in a `ResourceKey` should generally be known at compile time.
 ///
 /// Use `resource_key!` as a shortcut to create resource keys in code.
-#[derive(PartialEq, Eq, Copy, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub struct ResourceKey {
     pub category: ResourceCategory,
     pub sub_category: TinyStr16,

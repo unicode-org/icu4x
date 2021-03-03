@@ -13,5 +13,11 @@ pub mod timezones;
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
     pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
-    pub const TIMEZONES_V1: ResourceKey = resource_key!(timezones, "timezones", 1);
+    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(timezones, "formats", 1);
+    pub const TIMEZONE_NAMES_LONG_V1: ResourceKey = resource_key!(timezones, "names-long", 1);
+    pub const TIMEZONE_NAMES_SHORT_V1: ResourceKey = resource_key!(timezones, "names-short", 1);
+    pub const TIMEZONE_NAME_VARIANTS_LONG_V1: ResourceKey =
+        resource_key!(timezones, "name-vars-long", 1);
+    pub const TIMEZONE_NAME_VARIANTS_SHORT_V1: ResourceKey =
+        resource_key!(timezones, "name-vars-short", 1);
 }
