@@ -12,7 +12,7 @@ use std::borrow::Cow;
 
 type Result<T> = std::result::Result<T, DateTimeFormatError>;
 
-pub trait DateTimeDates {
+pub trait DateTimePatterns {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>>;
     fn get_pattern_for_style_bag(&self, style: &style::Bag) -> Result<Option<Pattern>>;
     fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Pattern>;
@@ -23,6 +23,9 @@ pub trait DateTimeDates {
         date: Pattern,
         time: Pattern,
     ) -> Result<Pattern>;
+}
+
+pub trait DateTimeSymbols {
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
@@ -44,7 +47,7 @@ pub trait DateTimeDates {
     ) -> &Cow<str>;
 }
 
-impl DateTimeDates for provider::gregory::DatesV1 {
+impl DateTimePatterns for provider::gregory::PatternsV1 {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
         match options {
             DateTimeFormatOptions::Style(bag) => self.get_pattern_for_style_bag(bag),
@@ -68,7 +71,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
     }
 
     fn get_pattern_for_date_style(&self, style: style::Date) -> Result<Pattern> {
-        let date = &self.patterns.date;
+        let date = &self.date;
         let s = match style {
             style::Date::Full => &date.full,
             style::Date::Long => &date.long,
@@ -84,7 +87,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         date: Pattern,
         time: Pattern,
     ) -> Result<Pattern> {
-        let date_time = &self.patterns.date_time;
+        let date_time = &self.date_time;
         let s = match style {
             style::Date::Full => &date_time.full,
             style::Date::Long => &date_time.long,
@@ -95,7 +98,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
     }
 
     fn get_pattern_for_time_style(&self, style: style::Time) -> Result<Pattern> {
-        let time = &self.patterns.time;
+        let time = &self.time;
         let s = match style {
             style::Time::Full => &time.full,
             style::Time::Long => &time.long,
@@ -104,7 +107,9 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         };
         Ok(Pattern::from_bytes(s)?)
     }
+}
 
+impl DateTimeSymbols for provider::gregory::DateSymbolsV1 {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
@@ -112,9 +117,9 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         day: date::IsoWeekday,
     ) -> &Cow<str> {
         let widths = match weekday {
-            fields::Weekday::Format => &self.symbols.weekdays.format,
+            fields::Weekday::Format => &self.weekdays.format,
             fields::Weekday::StandAlone => {
-                if let Some(ref widths) = self.symbols.weekdays.stand_alone {
+                if let Some(ref widths) = self.weekdays.stand_alone {
                     let symbols = match length {
                         fields::FieldLength::Wide => widths.wide.as_ref(),
                         fields::FieldLength::Narrow => widths.narrow.as_ref(),
@@ -153,9 +158,9 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         // TODO(#493): Support symbols for non-Gregorian calendars.
         debug_assert!(num < 12);
         let widths = match month {
-            fields::Month::Format => &self.symbols.months.format,
+            fields::Month::Format => &self.months.format,
             fields::Month::StandAlone => {
-                if let Some(ref widths) = self.symbols.months.stand_alone {
+                if let Some(ref widths) = self.months.stand_alone {
                     let symbols = match length {
                         fields::FieldLength::Wide => widths.wide.as_ref(),
                         fields::FieldLength::Narrow => widths.narrow.as_ref(),
@@ -187,7 +192,7 @@ impl DateTimeDates for provider::gregory::DatesV1 {
         is_top_of_hour: bool,
     ) -> &Cow<str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};
-        let widths = &self.symbols.day_periods.format;
+        let widths = &self.day_periods.format;
         let symbols = match length {
             FieldLength::Wide => &widths.wide,
             FieldLength::Narrow => &widths.narrow,

@@ -8,7 +8,7 @@ use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
-use crate::provider::helpers::DateTimeDates;
+use crate::provider::helpers::DateTimeSymbols;
 use icu_locid::Locale;
 use std::fmt;
 use writeable::Writeable;
@@ -145,7 +145,7 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = data.get_symbol_for_month(
+                let symbol = data.symbols.get_symbol_for_month(
                     month,
                     length,
                     date_time
@@ -163,7 +163,9 @@ where
                 .date_time()
                 .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
-            let symbol = data.get_symbol_for_weekday(weekday, field.length, dow);
+            let symbol = data
+                .symbols
+                .get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
         }
         FieldSymbol::Day(..) => format_number(
@@ -224,7 +226,7 @@ where
             field.length,
         )?,
         FieldSymbol::DayPeriod(period) => {
-            let symbol = data.get_symbol_for_day_period(
+            let symbol = data.symbols.get_symbol_for_day_period(
                 period,
                 field.length,
                 date_time
