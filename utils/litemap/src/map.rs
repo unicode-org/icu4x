@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::Borrow;
 use std::mem;
@@ -95,7 +95,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// if let Some(mut v) = map.get_mut(&1) {
-    ///     *v = "uno";   
+    ///     *v = "uno";
     /// }
     /// assert_eq!(map.get(&1), Some(&"uno"));
     /// ```

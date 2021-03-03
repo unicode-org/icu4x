@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 /// An iterator over the decimal digits of an integer, from least to most significant
 pub struct IntIterator<T> {
     /// Digits remaining to be returned from the iterator
