@@ -12,7 +12,7 @@ In most cases, the first step is to find or file a new issue related to your pla
 
 ## Contributing a Pull Request
 
-The first step is to fork the repository to your namespace and create a branch off of the `master` branch to work with.
+The first step is to fork the repository to your namespace and create a branch off of the `main` branch to work with.
 
 That branch may end up containing one of more commits that are constituting the full scope of the pull request.
 
