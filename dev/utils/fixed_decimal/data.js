@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614879572730,
+  "lastUpdate": 1614881718403,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2579,6 +2579,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 134751,
             "range": "± 7593",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b0fa09152aea4de2f8a37628d0bebb9ebb50f3d",
+          "message": "litemap: Serialize to maps, add tests (#516)",
+          "timestamp": "2021-03-04T12:08:48-06:00",
+          "tree_id": "fac0d611c10d52bfd9390ec23ca617338358fd7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/9b0fa09152aea4de2f8a37628d0bebb9ebb50f3d"
+        },
+        "date": 1614881716296,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 153414,
+            "range": "± 6257",
             "unit": "ns/iter"
           }
         ]
