@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614885962273,
+  "lastUpdate": 1614890913066,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2729,6 +2729,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 968050,
             "range": "± 30939",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2179f6fee8764aec332b2d251514ac30970ec021",
+          "message": "Add a cargo make command and a CI check for bincode (#521)",
+          "timestamp": "2021-03-04T14:42:19-06:00",
+          "tree_id": "e3ca34ef3a4d4f167fe1688db94643a4d44d8ed7",
+          "url": "https://github.com/unicode-org/icu4x/commit/2179f6fee8764aec332b2d251514ac30970ec021"
+        },
+        "date": 1614890912335,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1014250,
+            "range": "± 12472",
             "unit": "ns/iter"
           }
         ]
