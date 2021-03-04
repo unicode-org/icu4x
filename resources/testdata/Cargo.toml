@@ -13,6 +13,7 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "data/json/**/*",
     "examples/**/*",
     "benches/**/*",
     "Cargo.toml",
