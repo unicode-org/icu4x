@@ -270,7 +270,7 @@ jobs:
       # then this line is no longer needed.
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2021-03-01
+          toolchain: nightly-2021-03-04
           override: true
 
       - name: Run the example with dhat-rs to collect memory information
