@@ -1,0 +1,10 @@
+{
+  "Argentina": {
+    "daylight": "ARST",
+    "standard": "ART"
+  },
+  "Argentina_Western": {
+    "daylight": "WARST",
+    "standard": "WART"
+  }
+}
