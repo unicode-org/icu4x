@@ -92,6 +92,24 @@ jobs:
       with:
         command: license-check
 
+  # Bincode job - Test that the bincode data provider can be generated correctly.
+  bincode:
+    runs-on: ubuntu-latest
+    # Wait for the initial build to finish. Note that this step does not currently re-use any
+    # artifacts from the build step. It's only waiting on the build to minimize resource use
+    # in case the build fails.
+    needs: [build]
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install cargo-make
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
     - name: Build the bincode
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -362,7 +380,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [build, lint, benchmark, memory]
+    needs: [build, lint, bincode, benchmark, memory]
 
     ## Only create docs for merges/pushes to master (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.

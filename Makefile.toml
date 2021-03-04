@@ -65,6 +65,7 @@ dependencies = [
     "quick",
     "test-docs",
     "test-all-features",
+    "bincode-gen-testdata",
 ]
 
 ### WASM TASKS ###
