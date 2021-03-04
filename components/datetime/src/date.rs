@@ -9,6 +9,8 @@ use std::ops::{Add, Sub};
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
+pub use super::mock::MockDateTime;
+
 #[derive(Debug)]
 pub enum DateTimeError {
     Parse(std::num::ParseIntError),
