@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614686996599,
+  "lastUpdate": 1614879577541,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2579,6 +2579,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1078920,
             "range": "± 45097",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40c5dd3205c8fa4beee91a9ac47b18f628a7e550",
+          "message": "Update tinytemplate to fix nightly breakage (#529)",
+          "timestamp": "2021-03-04T09:33:16-08:00",
+          "tree_id": "a408baa9d9867ae1aafe7557813ceaa087254972",
+          "url": "https://github.com/unicode-org/icu4x/commit/40c5dd3205c8fa4beee91a9ac47b18f628a7e550"
+        },
+        "date": 1614879575484,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1037293,
+            "range": "± 11059",
             "unit": "ns/iter"
           }
         ]
