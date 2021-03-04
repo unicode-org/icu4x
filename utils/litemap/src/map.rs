@@ -35,6 +35,11 @@ impl<K, V> LiteMap<K, V> {
         self.values.len()
     }
 
+    /// Whether the [`LiteMap`] is empty
+    pub fn is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
+
     /// Remove all elements from the [`LiteMap`]
     pub fn clear(&mut self) {
         self.values.clear()
