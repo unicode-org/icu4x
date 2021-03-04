@@ -12,7 +12,7 @@ used to quickly format any date and time provided.
 
 ```rust
 use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu_datetime::{DateTimeFormat, mock::MockDateTime, options::style};
 
 let provider = icu_testdata::get_provider();
 
