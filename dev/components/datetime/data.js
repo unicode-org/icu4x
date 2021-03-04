@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614882529499,
+  "lastUpdate": 1614882670364,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2669,6 +2669,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1016716,
             "range": "± 14794",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "68d6b2bdcfbf36c7d25848a71009a2159ea3d780",
+          "message": "Separate Patterns and Symbols trait methods in DateTimeFormat. (#517)",
+          "timestamp": "2021-03-04T10:25:02-08:00",
+          "tree_id": "6b5351a233b4d758cc95b5cd352a9bca13818898",
+          "url": "https://github.com/unicode-org/icu4x/commit/68d6b2bdcfbf36c7d25848a71009a2159ea3d780"
+        },
+        "date": 1614882669313,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1085069,
+            "range": "± 66546",
             "unit": "ns/iter"
           }
         ]
