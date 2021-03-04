@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614882656415,
+  "lastUpdate": 1614885940598,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3719,6 +3719,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32626653,
             "range": "± 2054458",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba3ea1deb32bbd6c5d7177d68db4b6f51531baad",
+          "message": "Rename master branch to main (#520)",
+          "timestamp": "2021-03-04T13:19:38-06:00",
+          "tree_id": "07c2754e5e1c5c81c3c8fb1545c77baa5c4d115a",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba3ea1deb32bbd6c5d7177d68db4b6f51531baad"
+        },
+        "date": 1614885939938,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32978735,
+            "range": "± 2325519",
             "unit": "ns/iter"
           }
         ]
