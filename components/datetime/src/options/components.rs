@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 //! Components is a model of encoding information on how to format date and time by specifying a list of components
 //! the user wants to be visible in the formatted string and how each field should be displayed.
 //!
