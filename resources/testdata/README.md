@@ -27,3 +27,11 @@ To monitor the progress, run with `-v`, `-vv`, or `-vvv`:
 ```bash
 $ cargo gen-testdata -vv
 ```
+
+## Generating the data with bincode
+
+The following command will generate the data in the folder `resources/testdata/data/bincode`.
+
+```bash
+cargo make bincode-gen-testdata
+```

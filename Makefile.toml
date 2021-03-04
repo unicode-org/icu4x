@@ -65,6 +65,7 @@ dependencies = [
     "quick",
     "test-docs",
     "test-all-features",
+    "bincode-gen-testdata",
 ]
 
 ### WASM TASKS ###
@@ -129,3 +130,39 @@ description = "Clean up WASM build artifacts"
 category = "ICU4X WASM"
 command = "rm"
 args = ["-rf", "wasmpkg"]
+
+[tasks.bincode-clean]
+description = "Clean out the bincode data."
+category = "ICU4X Bincode"
+script_runner = "@duckscript"
+script = '''
+# Use duckscript, rather than a unix command, so that this works on Windows.
+rm -r ./resources/testdata/data/bincode
+'''
+
+[tasks.bincode-gen-testdata-no-clean]
+description = "Generate bincode testdata without removing the old data"
+category = "ICU4X Bincode"
+cwd = "components/provider_fs"
+command = "cargo"
+args = [
+    "run",
+    "--features", "export-bin",
+    "--features", "bincode",
+    "--features", "serialize_none",
+    "--",
+    "--cldr-core", "../../resources/testdata/data/cldr/cldr-core",
+    "--cldr-dates", "../../resources/testdata/data/cldr/cldr-dates-full",
+    "--out", "../../resources/testdata/data/bincode",
+    "--all-keys",
+    "-s", "bincode",
+]
+
+[tasks.bincode-gen-testdata]
+description = "Generate bincode for the testdata"
+category = "ICU4X Bincode"
+run_task = [
+    # Running "bincode-clean" first ensures that this command won't fail because the data
+    # already exists at that location.
+    { name = ["bincode-clean", "bincode-gen-testdata-no-clean"] },
+]
