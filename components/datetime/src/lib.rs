@@ -84,7 +84,7 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 
-use crate::provider::helpers::DateTimeDates;
+use crate::provider::helpers::DateTimePatterns;
 use date::DateTimeInput;
 pub use error::DateTimeFormatError;
 use format::write_pattern;
@@ -180,7 +180,10 @@ impl<'d> DateTimeFormat<'d> {
             })?
             .take_payload()?;
 
-        let pattern = data.get_pattern_for_options(options)?.unwrap_or_default();
+        let pattern = data
+            .patterns
+            .get_pattern_for_options(options)?
+            .unwrap_or_default();
 
         Ok(Self {
             locale,
