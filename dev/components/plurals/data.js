@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614890944803,
+  "lastUpdate": 1614959204396,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3821,6 +3821,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 111072,
             "range": "± 1598",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2d6664a376df209f86d4af47f0a686b91b8172e0",
+          "message": "Move DTF to only store DateSymbols and a single pattern. (#518)",
+          "timestamp": "2021-03-05T07:40:03-08:00",
+          "tree_id": "c6e88347fda54bd0e73aba4c94510803800e4025",
+          "url": "https://github.com/unicode-org/icu4x/commit/2d6664a376df209f86d4af47f0a686b91b8172e0"
+        },
+        "date": 1614959201793,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1630,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7683,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 115171,
+            "range": "± 5939",
             "unit": "ns/iter"
           }
         ]
