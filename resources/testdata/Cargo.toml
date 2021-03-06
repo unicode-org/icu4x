@@ -4,7 +4,7 @@
 [package]
 name = "icu_testdata"
 description = "Test data for ICU4X, generated from CLDR"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
