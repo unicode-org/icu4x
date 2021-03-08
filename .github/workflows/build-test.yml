@@ -270,12 +270,12 @@ jobs:
       # then this line is no longer needed.
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2021-03-04
+          toolchain: nightly-2021-03-08
           override: true
 
       - name: Run the example with dhat-rs to collect memory information
         run: |
-          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2021-03-08
 
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
       # dashboard HTML in a commit of a branch of the local repo.

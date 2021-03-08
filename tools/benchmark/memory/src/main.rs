@@ -14,6 +14,7 @@ use std::{fs, io::BufReader};
 struct ProcessedArgs {
     os: Option<String>,
     examples: Vec<String>,
+    toolchain: String,
 }
 
 fn process_cli_args() -> ProcessedArgs {
@@ -26,14 +27,22 @@ fn process_cli_args() -> ProcessedArgs {
                 .required(true)
                 .help("The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>")
             )
-        .arg(
-            Arg::with_name("OS")
-                .long("os")
-                .takes_value(true)
-                .value_name("OS")
-                .required(false)
-                .help("Nests the results of the benchmark in a folder per-OS, primarily needed by CI.")
-        ).get_matches();
+            .arg(
+                Arg::with_name("OS")
+                    .long("os")
+                    .takes_value(true)
+                    .value_name("OS")
+                    .required(false)
+                    .help("Nests the results of the benchmark in a folder per-OS, primarily needed by CI.")
+            )
+            .arg(
+                Arg::with_name("TOOLCHAIN")
+                    .long("toolchain")
+                    .takes_value(true)
+                    .value_name("TOOLCHAIN")
+                    .required(false)
+                    .help("The toolchain for cargo to use. Defaults to nightly.")
+            ).get_matches();
 
     ProcessedArgs {
         // Validate the OS, and copy into an owned String.
@@ -61,6 +70,11 @@ fn process_cli_args() -> ProcessedArgs {
                 example.to_string()
             })
             .collect(),
+
+        toolchain: matches
+            .value_of("TOOLCHAIN")
+            .unwrap_or("nightly")
+            .to_string(),
     }
 }
 
@@ -121,7 +135,11 @@ fn get_meta_data(root_dir: &Path) -> Metadata {
 ///   d. Add the output to an `ndjson` file.
 ///   e. Move the dhat-heap.json file to the benchmark folder.
 fn main() {
-    let ProcessedArgs { os, examples } = process_cli_args();
+    let ProcessedArgs {
+        os,
+        examples,
+        toolchain,
+    } = process_cli_args();
 
     let root_dir = {
         let mut path = PathBuf::from(&env::var("CARGO_MANIFEST_DIR").expect("$CARGO_MANIFEST_DIR"));
@@ -206,8 +224,9 @@ fn main() {
         println!("[memory] Starting example {:?}", example);
 
         let mut run_example = Command::new("cargo")
-            // +nightly is required for unstable options.
-            .arg("+nightly")
+            // +nightly is required for unstable options. This option is used by the CI to provide
+            // a pinned version number for nightly.
+            .arg(format!("+{}", toolchain))
             .arg("run")
             .arg("--example")
             .arg(example)
