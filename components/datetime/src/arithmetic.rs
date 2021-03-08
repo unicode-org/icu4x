@@ -85,10 +85,11 @@ fn test_iso_date_to_weekday() {
 /// the top of the hour, otherwise returns `false`.
 /// e.g. `12:00:00` is at the top of the hour for hours, minutes, and seconds.
 /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
-pub fn is_top_of_hour(pattern: &Pattern, minute: u8, second: u8) -> bool {
+pub fn is_top_of_hour(pattern: &Pattern, minute: u8, second: u8, millisecond: u16) -> bool {
     match pattern.most_granular_time() {
         None | Some(TimeGranularity::Hours) => true,
         Some(TimeGranularity::Minutes) => minute == 0,
         Some(TimeGranularity::Seconds) => minute + second == 0,
+        Some(TimeGranularity::Milliseconds) => (minute as u16) + (second as u16) + millisecond == 0,
     }
 }

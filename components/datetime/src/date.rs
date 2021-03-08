@@ -344,9 +344,66 @@ dt_unit!(IsoMinute, 60);
 
 dt_unit!(IsoSecond, 61);
 
-// TODO(#485): Improve FractionalSecond.
-#[derive(Clone, Debug, PartialEq)]
-pub enum FractionalSecond {
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FractionalSecond(FractionalSecondInner);
+
+impl FractionalSecond {
+    pub fn from_millisecond(value: u16) -> Result<Self, DateTimeError> {
+        if value > 1000 {
+            return Err(DateTimeError::Overflow {
+                field: "Millisecond", // ? : not entirely sure on the semantics of `field`
+                max: 1000,
+            });
+        }
+
+        Ok(Self(FractionalSecondInner::Millisecond(value)))
+    }
+
+    pub fn from_microsecond(value: u32) -> Result<Self, DateTimeError> {
+        if value > 1_000_000 {
+            return Err(DateTimeError::Overflow {
+                field: "Microsecond",
+                max: 1_000_000,
+            });
+        }
+
+        Ok(Self(FractionalSecondInner::Microsecond(value)))
+    }
+
+    pub fn from_nanosecond(value: u32) -> Result<Self, DateTimeError> {
+        if value > 1_000_000_000 {
+            return Err(DateTimeError::Overflow {
+                field: "Nanosecond",
+                max: 1_000_000_000,
+            });
+        }
+
+        Ok(Self(FractionalSecondInner::Nanosecond(value)))
+    }
+
+    pub fn milliseconds(&self) -> u16 {
+        match self.0 {
+            FractionalSecondInner::Millisecond(m) => m,
+            FractionalSecondInner::Microsecond(m) => (m / 1000) as u16,
+            FractionalSecondInner::Nanosecond(n) => (n / 1_000_000) as u16,
+        }
+    }
+
+    pub const fn zero() -> Self {
+        Self(FractionalSecondInner::Millisecond(0))
+    }
+}
+
+impl Default for FractionalSecond {
+    fn default() -> Self {
+        Self::zero()
+    }
+}
+
+// ? - Should we change the implementation of PartialEq to one where
+// FractionalSecond::Millisecond(0) == FractionalSecond::Microsecond(0) == FractionalSecond::Nanosecond(0)
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum FractionalSecondInner {
     Millisecond(u16),
     Microsecond(u32),
     Nanosecond(u32),

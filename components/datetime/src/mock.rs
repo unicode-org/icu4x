@@ -49,6 +49,9 @@ pub struct MockDateTime {
 
     /// 0-based second.
     pub second: IsoSecond,
+
+    /// 0-based fractional second.
+    pub fractional_second: FractionalSecond,
 }
 
 impl MockDateTime {
@@ -68,6 +71,7 @@ impl MockDateTime {
             hour,
             minute,
             second,
+            fractional_second: FractionalSecond::zero(),
         }
     }
 
@@ -99,6 +103,7 @@ impl MockDateTime {
             hour: hour.try_into()?,
             minute: minute.try_into()?,
             second: second.try_into()?,
+            fractional_second: Default::default(),
         })
     }
 }
@@ -110,6 +115,8 @@ impl FromStr for MockDateTime {
     ///
     /// This utility is for easily creating dates, not a complete robust solution. The
     /// string must take a specific form of the ISO 8601 format: `YYYY-MM-DDThh:mm:ss`.
+    ///
+    /// An optional millisecond suffix can be provided of length 3 with the format `.SSS`.
     ///
     /// ```
     /// use icu_datetime::mock::MockDateTime;
@@ -124,6 +131,13 @@ impl FromStr for MockDateTime {
         let hour: IsoHour = input[11..13].parse()?;
         let minute: IsoMinute = input[14..16].parse()?;
         let second: IsoSecond = input[17..19].parse()?;
+
+        let fractional_second = if input.len() > 19 {
+            FractionalSecond::from_millisecond(input[20..23].parse()?)?
+        } else {
+            Default::default()
+        };
+
         Ok(Self {
             year,
             month: month - 1,
@@ -131,6 +145,7 @@ impl FromStr for MockDateTime {
             hour,
             minute,
             second,
+            fractional_second,
         })
     }
 }
@@ -179,6 +194,6 @@ impl IsoTimeInput for MockDateTime {
     }
 
     fn fraction(&self) -> Option<FractionalSecond> {
-        None
+        Some(self.fractional_second)
     }
 }

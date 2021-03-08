@@ -9,6 +9,7 @@ use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeSymbols;
+use fields::Second;
 use icu_locid::Locale;
 use std::fmt;
 use writeable::Writeable;
@@ -220,7 +221,7 @@ where
             ) as isize,
             field.length,
         )?,
-        FieldSymbol::Second(..) => format_number(
+        FieldSymbol::Second(Second::Second) => format_number(
             w,
             usize::from(
                 date_time
@@ -230,6 +231,18 @@ where
             ) as isize,
             field.length,
         )?,
+        FieldSymbol::Second(Second::FractionalSecond) => format_number(
+            w,
+            usize::from(
+                date_time
+                    .date_time()
+                    .fraction()
+                    .map(|f| f.milliseconds())
+                    .ok_or(Error::MissingInputField)?,
+            ) as isize,
+            field.length,
+        )?,
+        FieldSymbol::Second(Second::Millisecond) => todo!(), // ? : I think this is in fact milliseconds in day?
         FieldSymbol::DayPeriod(period) => {
             let symbol = symbols.get_symbol_for_day_period(
                 period,
@@ -242,6 +255,11 @@ where
                     &pattern,
                     date_time.date_time().minute().map(u8::from).unwrap_or(0),
                     date_time.date_time().second().map(u8::from).unwrap_or(0),
+                    date_time
+                        .date_time()
+                        .fraction()
+                        .map(|f| f.milliseconds())
+                        .unwrap_or(0),
                 ),
             );
             w.write_str(symbol)?

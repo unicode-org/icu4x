@@ -55,6 +55,7 @@ pub(super) enum TimeGranularity {
     Hours,
     Minutes,
     Seconds,
+    Milliseconds,
 }
 
 #[derive(Default, Debug, Clone, PartialEq)]
@@ -70,7 +71,13 @@ fn get_time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
         PatternItem::Field(field) => match field.symbol {
             fields::FieldSymbol::Hour(_) => Some(TimeGranularity::Hours),
             fields::FieldSymbol::Minute => Some(TimeGranularity::Minutes),
-            fields::FieldSymbol::Second(_) => Some(TimeGranularity::Seconds),
+            fields::FieldSymbol::Second(fields::Second::Second) => Some(TimeGranularity::Seconds),
+            fields::FieldSymbol::Second(fields::Second::Millisecond) => {
+                Some(TimeGranularity::Seconds)
+            }
+            fields::FieldSymbol::Second(fields::Second::FractionalSecond) => {
+                Some(TimeGranularity::Milliseconds)
+            }
             _ => None,
         },
         _ => None,

@@ -320,6 +320,111 @@
       },
       {
         "date_times": [
+          "2021-01-11T00:00:00.000"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss.SSS a"
+            ],
+            "expected": "12:00:00.000 AM"
+          },
+          {
+            "patterns": [
+              "h:mm:ss a"
+            ],
+            "expected": "12:00:00 AM"
+          },
+          {
+            "patterns": [
+              "h:mm a"
+            ],
+            "expected": "12:00 AM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 AM"
+          },
+          {
+            "patterns": [
+              "h:mm:ss.SSS b"
+            ],
+            "expected": "12:00:00.000 midnight"
+          },
+          {
+            "patterns": [
+              "h:mm:ss b"
+            ],
+            "expected": "12:00:00 midnight"
+          },
+          {
+            "patterns": [
+              "h:mm b"
+            ],
+            "expected": "12:00 midnight"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 midnight"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T00:00:00.001"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss.SSS a",
+              "h:mm:ss.SSS b"
+            ],
+            "expected": "12:00:00.001 AM"
+          },
+          {
+            "patterns": [
+              "h:mm:ss a"
+            ],
+            "expected": "12:00:00 AM"
+          },
+          {
+            "patterns": [
+              "h:mm a"
+            ],
+            "expected": "12:00 AM"
+          },
+          {
+            "patterns": [
+              "h a"
+            ],
+            "expected": "12 AM"
+          },
+          {
+            "patterns": [
+              "h:mm:ss b"
+            ],
+            "expected": "12:00:00 midnight"
+          },
+          {
+            "patterns": [
+              "h:mm b"
+            ],
+            "expected": "12:00 midnight"
+          },
+          {
+            "patterns": [
+              "h b"
+            ],
+            "expected": "12 midnight"
+          }
+        ]
+      },
+      {
+        "date_times": [
           "2021-01-11T00:00:00"
         ],
         "expectations": [
@@ -457,6 +562,19 @@
               "h b"
             ],
             "expected": "1 AM"
+          }
+        ]
+      },
+      {
+        "date_times": [
+          "2021-01-11T01:00:00.345"
+        ],
+        "expectations": [
+          {
+            "patterns": [
+              "h:mm:ss.SSS"
+            ],
+            "expected": "1:00:00.345"
           }
         ]
       }

@@ -164,7 +164,7 @@ impl TryFrom<u8> for Second {
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b's' => Ok(Self::Second),
-            b'S' => Ok(Self::FractionalSecond),
+            b'S' => Ok(Self::FractionalSecond), // ?: Is there a source-of-truth for the meaning of these symbols?
             b'A' => Ok(Self::Millisecond),
             b => Err(SymbolError::Unknown(b)),
         }
