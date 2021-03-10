@@ -15,6 +15,10 @@ pub enum Error {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct Field {
     pub symbol: FieldSymbol,
     pub length: FieldLength,

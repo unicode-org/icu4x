@@ -12,6 +12,10 @@ pub enum SymbolError {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum FieldSymbol {
     Year(Year),
     Month(Month),
@@ -132,6 +136,10 @@ impl From<FieldSymbol> for char {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Year {
     Calendar,
     WeekOf,
@@ -155,6 +163,10 @@ impl From<Year> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Month {
     Format,
     StandAlone,
@@ -178,6 +190,10 @@ impl From<Month> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Day {
     DayOfMonth,
     DayOfYear,
@@ -205,6 +221,10 @@ impl From<Day> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Hour {
     H11,
     H12,
@@ -232,6 +252,10 @@ impl From<Hour> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Second {
     Second,
     FractionalSecond,
@@ -257,6 +281,10 @@ impl From<Second> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Weekday {
     Format,
     Local,
@@ -282,6 +310,10 @@ impl From<Weekday> for FieldSymbol {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum DayPeriod {
     AmPm,
     NoonMidnight,

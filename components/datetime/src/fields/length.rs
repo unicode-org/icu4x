@@ -9,6 +9,10 @@ pub enum LengthError {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum FieldLength {
     One = 1,
     TwoDigit = 2,

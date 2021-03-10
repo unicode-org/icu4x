@@ -845,6 +845,7 @@ dependencies = [
 name = "icu_datetime"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "criterion",
  "icu_benchmark_macros",
  "icu_locid",

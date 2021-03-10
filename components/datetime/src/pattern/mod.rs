@@ -11,9 +11,17 @@ use std::iter::FromIterator;
 use std::{convert::TryFrom, fmt};
 
 #[cfg(feature = "provider_serde")]
-use serde::{de, ser, Deserialize, Deserializer, Serialize};
+use serde::{
+    de,
+    ser::{self, SerializeSeq},
+    Deserialize, Deserializer, Serialize,
+};
 
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum PatternItem {
     Field(fields::Field),
     Literal(String),
@@ -54,6 +62,10 @@ impl<'p> From<String> for PatternItem {
 /// The granularity of time represented in a pattern item.
 /// Ordered from least granular to most granular for comparsion.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(super) enum TimeGranularity {
     Hours,
     Minutes,
@@ -182,10 +194,10 @@ impl FromIterator<PatternItem> for Pattern {
 }
 
 #[cfg(feature = "provider_serde")]
-struct DeserializePatternVisitor;
+struct DeserializePatternUTS35String;
 
 #[cfg(feature = "provider_serde")]
-impl<'de> de::Visitor<'de> for DeserializePatternVisitor {
+impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
     type Value = Pattern;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -211,12 +223,39 @@ impl<'de> de::Visitor<'de> for DeserializePatternVisitor {
 }
 
 #[cfg(feature = "provider_serde")]
+struct DeserializePatternBincode;
+
+#[cfg(feature = "provider_serde")]
+impl<'de> de::Visitor<'de> for DeserializePatternBincode {
+    type Value = Pattern;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "Unable to deserialize a bincode Pattern.")
+    }
+
+    fn visit_seq<V>(self, mut seq: V) -> Result<Pattern, V::Error>
+    where
+        V: de::SeqAccess<'de>,
+    {
+        let mut items = Vec::new();
+        while let Some(item) = seq.next_element()? {
+            items.push(item)
+        }
+        Ok(Pattern::from(items))
+    }
+}
+
+#[cfg(feature = "provider_serde")]
 impl<'de> Deserialize<'de> for Pattern {
     fn deserialize<D>(deserializer: D) -> Result<Pattern, D::Error>
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_str(DeserializePatternVisitor)
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_str(DeserializePatternUTS35String)
+        } else {
+            deserializer.deserialize_seq(DeserializePatternBincode)
+        }
     }
 }
 
@@ -226,58 +265,18 @@ impl Serialize for Pattern {
     where
         S: ser::Serializer,
     {
-        let string: String = String::from(self);
-        serializer.serialize_str(&string)
-    }
-}
-
-#[cfg(all(test, feature = "provider_serde"))]
-mod test {
-    use super::*;
-
-    // Provide a few patterns to sanity check serialization.
-    const PATTERNS: [&str; 6] = [
-        "d",
-        "E, M/d/y",
-        "h:mm:ss a",
-        // TODO(#502) - The W field isn't supported yet, so swap it out for a field we do know.
-        "'week' d 'of' MMMM",
-        // Arabic "week of" in the availableFormats.
-        "الأسبوع d من MMMM",
-        // Cherokee "week of" in the availableFormats.
-        "ᏒᎾᏙᏓᏆᏍᏗ’ d ’ᎾᎿ’ MMMM",
-    ];
-
-    #[test]
-    fn test_pattern_serialization_roundtrip() {
-        for pattern_string in &PATTERNS {
-            // Wrap the string in quotes so it's a JSON string.
-            let json_in: String = serde_json::to_string(pattern_string).unwrap();
-
-            let pattern: Pattern = match serde_json::from_str(&json_in) {
-                Ok(p) => p,
-                Err(err) => {
-                    panic!(
-                        "Unable to parse the pattern {:?}. {:?}",
-                        pattern_string, err
-                    );
-                }
-            };
-
-            let json_out = match serde_json::to_string(&pattern) {
-                Ok(s) => s,
-                Err(err) => {
-                    panic!(
-                        "Unable to re-serialize the pattern {:?}. {:?}",
-                        pattern_string, err
-                    );
-                }
-            };
-
-            assert_eq!(
-                json_in, json_out,
-                "The roundtrip serialization for the pattern matched."
-            );
+        if serializer.is_human_readable() {
+            // Serialize into the UTS 35 string representation.
+            let string: String = String::from(self);
+            serializer.serialize_str(&string)
+        } else {
+            // Serialize into a bincode-friendly representation. This means that pattern parsing
+            // will not be needed when deserializing.
+            let mut seq = serializer.serialize_seq(Some(self.items.len()))?;
+            for item in self.items.iter() {
+                seq.serialize_element(item)?;
+            }
+            seq.end()
         }
     }
 }
