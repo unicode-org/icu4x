@@ -4,12 +4,12 @@ pub type LiteMap<K, V> = std::collections::BTreeMap<K, V>;
 //use litemap::LiteMap;
 
 macro_rules! map_access {
-    ($outer: ty => $inner: ty) => {
-        impl $outer {
+    ($outer: ty => $inner: ty: $lt: lifetime) => {
+        impl<$lt> $outer {
             pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
             where
                 Q: Ord,
-                Cow<'static, str>: std::borrow::Borrow<Q>,
+                Cow<'s, str>: std::borrow::Borrow<Q>,
             {
                 self.0.get(key)
             }
@@ -19,10 +19,10 @@ macro_rules! map_access {
             }
         }
 
-        impl<Q: ?Sized> std::ops::Index<&Q> for $outer
+        impl<$lt, Q: ?Sized> std::ops::Index<&Q> for $outer
         where
             Q: Ord,
-            Cow<'static, str>: std::borrow::Borrow<Q>,
+            Cow<'s, str>: std::borrow::Borrow<Q>,
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
@@ -37,13 +37,13 @@ macro_rules! map_access {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZoneFormatsV1 {
-    pub hour_format: Cow<'static, str>,
-    pub gmt_format: Cow<'static, str>,
-    pub gmt_zero_format: Cow<'static, str>,
-    pub region_format: Cow<'static, str>,
-    pub region_format_variants: LiteMap<Cow<'static, str>, Cow<'static, str>>,
-    pub fallback_format: Cow<'static, str>,
+pub struct TimeZoneFormatsV1<'s> {
+    pub hour_format: Cow<'s, str>,
+    pub gmt_format: Cow<'s, str>,
+    pub gmt_zero_format: Cow<'s, str>,
+    pub region_format: Cow<'s, str>,
+    pub region_format_variants: LiteMap<Cow<'s, str>, Cow<'s, str>>,
+    pub fallback_format: Cow<'s, str>,
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -51,52 +51,45 @@ pub struct TimeZoneFormatsV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct ExemplarCitiesV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(ExemplarCitiesV1 => Cow<'static, str>);
+pub struct ExemplarCitiesV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
+map_access!(ExemplarCitiesV1<'s> => Cow<'s, str>: 's);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct LocationV1 {}
+pub struct MetaZoneGenericNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
+map_access!(MetaZoneGenericNamesLongV1<'s> => Cow<'s, str>: 's);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct MetaZoneGenericNamesLongV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(MetaZoneGenericNamesLongV1 => Cow<'static, str>);
+pub struct MetaZoneGenericNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
+map_access!(MetaZoneGenericNamesShortV1<'s> => Cow<'s, str>: 's);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct MetaZoneGenericNamesShortV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(MetaZoneGenericNamesShortV1 => Cow<'static, str>);
+pub struct MetaZoneSpecificNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
+map_access!(MetaZoneSpecificNamesLongV1<'s> => MetaZoneSpecificNamesV1<'s>: 's);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct MetaZoneSpecificNamesLongV1(pub LiteMap<Cow<'static, str>, MetaZoneSpecificNamesV1>);
-map_access!(MetaZoneSpecificNamesLongV1 => MetaZoneSpecificNamesV1);
+pub struct MetaZoneSpecificNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
+map_access!(MetaZoneSpecificNamesShortV1<'s> => MetaZoneSpecificNamesV1<'s>: 's);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct MetaZoneSpecificNamesShortV1(pub LiteMap<Cow<'static, str>, MetaZoneSpecificNamesV1>);
-map_access!(MetaZoneSpecificNamesShortV1 => MetaZoneSpecificNamesV1);
-
-#[derive(PartialEq, Debug, Clone)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
-pub struct MetaZoneSpecificNamesV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(MetaZoneSpecificNamesV1 => Cow<'static, str>);
+pub struct MetaZoneSpecificNamesV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
+map_access!(MetaZoneSpecificNamesV1<'s> => Cow<'s, str>: 's);

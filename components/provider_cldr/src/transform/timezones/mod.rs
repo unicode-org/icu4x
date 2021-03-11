@@ -155,9 +155,9 @@ impl<'d> ErasedDataProvider<'d> for TimeZonesProvider<'d> {
 }
 
 macro_rules! impl_data_provider {
-    ($id: ident) => {
-        impl<'d> DataProvider<'d, $id> for TimeZonesProvider<'d> {
-            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, $id>, DataError> {
+    ($id: ident: $lt: lifetime) => {
+        impl<$lt, 'dp: $lt> DataProvider<'dp, $id<'dp>> for TimeZonesProvider<$lt> {
+            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'dp, $id<'dp>>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
                 let time_zones = match self
@@ -178,12 +178,12 @@ macro_rules! impl_data_provider {
     };
 }
 
-impl_data_provider!(TimeZoneFormatsV1);
-impl_data_provider!(ExemplarCitiesV1);
-impl_data_provider!(MetaZoneGenericNamesLongV1);
-impl_data_provider!(MetaZoneGenericNamesShortV1);
-impl_data_provider!(MetaZoneSpecificNamesLongV1);
-impl_data_provider!(MetaZoneSpecificNamesShortV1);
+impl_data_provider!(TimeZoneFormatsV1: 'd);
+impl_data_provider!(ExemplarCitiesV1: 'd);
+impl_data_provider!(MetaZoneGenericNamesLongV1: 'd);
+impl_data_provider!(MetaZoneGenericNamesShortV1: 'd);
+impl_data_provider!(MetaZoneSpecificNamesLongV1: 'd);
+impl_data_provider!(MetaZoneSpecificNamesShortV1: 'd);
 
 #[cfg(test)]
 mod tests {

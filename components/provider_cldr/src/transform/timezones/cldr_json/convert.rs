@@ -9,7 +9,7 @@ use icu_datetime::provider::timezones::{
 };
 use std::{borrow::Cow, collections::BTreeMap};
 
-impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1 {
+impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         Self {
             hour_format: other.hour_format.into(),
@@ -42,7 +42,7 @@ impl Location {
     }
 }
 
-impl<'d> From<TimeZoneNames> for ExemplarCitiesV1 {
+impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         Self(
             other
@@ -69,7 +69,7 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1 {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1 {
+impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(BTreeMap::new()),
@@ -96,7 +96,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1 {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1 {
+impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(BTreeMap::new()),
@@ -123,7 +123,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1 {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1 {
+impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(BTreeMap::new()),
@@ -144,7 +144,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1 {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1 {
+impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(BTreeMap::new()),
@@ -165,7 +165,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1 {
     }
 }
 
-impl<'d> From<ZoneFormat> for MetaZoneSpecificNamesV1 {
+impl<'d> From<ZoneFormat> for MetaZoneSpecificNamesV1<'d> {
     fn from(other: ZoneFormat) -> Self {
         let len = other.0.len();
         Self(
