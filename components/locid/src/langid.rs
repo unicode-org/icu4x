@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::str::FromStr;
 
@@ -139,6 +139,18 @@ impl LanguageIdentifier {
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
         let lang_id = Self::from_bytes(input.as_ref())?;
         Ok(lang_id.to_string())
+    }
+}
+
+impl AsRef<LanguageIdentifier> for LanguageIdentifier {
+    fn as_ref(&self) -> &LanguageIdentifier {
+        self
+    }
+}
+
+impl AsMut<LanguageIdentifier> for LanguageIdentifier {
+    fn as_mut(&mut self) -> &mut LanguageIdentifier {
+        self
     }
 }
 

@@ -1,6 +1,6 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
-# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 [package]
 name = "icu_testdata"
 description = "Test data for ICU4X, generated from CLDR"
@@ -13,6 +13,7 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "data/json/**/*",
     "examples/**/*",
     "benches/**/*",
     "Cargo.toml",
@@ -95,7 +96,10 @@ cldr_json_glob = [
     "cldr-core/supplemental/numberingSystems.json",
     "cldr-core/supplemental/ordinals.json",
     "cldr-core/supplemental/plurals.json",
-    "cldr-dates-full/main/$LOCALES/ca-gregorian.json"
+    "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
+    # Extra data for feature coverage in provider_cldr tests:
+    "cldr-dates-full/main/cs/ca-gregorian.json",
+    "cldr-dates-full/main/haw/ca-gregorian.json",
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.

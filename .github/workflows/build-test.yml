@@ -1,13 +1,13 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
-# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 name: Build and Test
 
 # TODO(#234) re-include cache steps, also using Rust version in cache key
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
     branches: '*'
 
@@ -92,6 +92,29 @@ jobs:
       with:
         command: license-check
 
+  # Bincode job - Test that the bincode data provider can be generated correctly.
+  bincode:
+    runs-on: ubuntu-latest
+    # Wait for the initial build to finish. Note that this step does not currently re-use any
+    # artifacts from the build step. It's only waiting on the build to minimize resource use
+    # in case the build fails.
+    needs: [build]
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install cargo-make
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    # TODO(#234) re-include cache steps, also using Rust version in cache key
+
+    - name: Build the bincode
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: bincode-gen-testdata
+
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
     runs-on: ubuntu-latest
@@ -164,8 +187,8 @@ jobs:
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
       - name: Store benchmark result & create dashboard (unmerged PR only)
-        # any action that is not a merge to master implies unfinished PR
-        if: github.event_name != 'push' || github.ref != 'refs/heads/master'
+        # any action that is not a merge to main implies unfinished PR
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
@@ -178,16 +201,16 @@ jobs:
           gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
                                                    # We could use another branch besides `gh-pages` to store this historical benchmark info.
           auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure
-                            # that the branch in `gh-pages-branch` is different from the branch used for merges to master/main branch.
+                            # that the branch in `gh-pages-branch` is different from the branch used for merges to main branch.
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
           alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
-      # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+      # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
-      - name: Store benchmark result & create dashboard (merge to master only)
-        # only merges to master (implies PR is finished and approved by this point)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Store benchmark result & create dashboard (merge to main only)
+        # only merges to main (implies PR is finished and approved by this point)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
@@ -206,12 +229,12 @@ jobs:
 
       # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the files across jobs within the same workflow.
 
-      - name: Switch branch to get result of benchmark pages output (merge to master only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Switch branch to get result of benchmark pages output (merge to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: git checkout gh-pages
 
-      - name: Upload updated benchmark data (merge to master only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Upload updated benchmark data (merge to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
@@ -279,8 +302,8 @@ jobs:
       # dashboard HTML in a commit of a branch of the local repo.
 
       - name: Store benchmark result & create dashboard (unmerged PR only)
-        # any action that is not a merge to master implies unfinished PR
-        if: github.event_name != 'push' || github.ref != 'refs/heads/master'
+        # any action that is not a merge to main implies unfinished PR
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
         # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
         # If the PR gets merged, this can be switched back to the main project.
         # https://github.com/rhysd/github-action-benchmark/pull/54
@@ -300,19 +323,19 @@ jobs:
 
           # Do not store historical benchmark info of unfinished PRs. Commits seem to get
           # made anyways, so make sure that the branch in `gh-pages-branch` is
-          # different from the branch used for merges to master/main branch.
+          # different from the branch used for merges to main branch.
           auto-push: false
 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
           alert-comment-cc-users: '@sffc,@zbraniecki,@echeran,@gregtatum'
 
-      # Benchmarking & dashboards job > (PR merge to master only) Convert benchmark output
+      # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output
       # into dashboard HTML in a commit of a branch of the local repo.
 
-      - name: Store benchmark result & create dashboard (merge to master only)
-        # only merges to master (implies PR is finished and approved by this point)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Store benchmark result & create dashboard (merge to main only)
+        # only merges to main (implies PR is finished and approved by this point)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
         # If the PR gets merged, this can be switched back to the main project.
         # https://github.com/rhysd/github-action-benchmark/pull/54
@@ -338,12 +361,12 @@ jobs:
       # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the
       # files across jobs within the same workflow.
 
-      - name: Switch branch to get result of benchmark pages output (merge to master only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Switch branch to get result of benchmark pages output (merge to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: git checkout gh-pages
 
-      - name: Upload updated benchmark data (merge to master only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Upload updated benchmark data (merge to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
           # Use wildcard pattern to preserve dir structure of uploaded files:
@@ -353,15 +376,15 @@ jobs:
   # Doc-GH-Pages job
 
   doc_gh_pages:
-    name: Copy GH pages to docs repo (merge to master only)
+    name: Copy GH pages to docs repo (merge to main only)
 
     runs-on: ubuntu-latest
 
-    needs: [build, lint, benchmark, memory]
+    needs: [build, lint, bincode, benchmark, memory]
 
-    ## Only create docs for merges/pushes to master (skip PRs).
+    ## Only create docs for merges/pushes to main (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
     - uses: actions/checkout@v2

@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 //! Unicode Extensions provide a mechanism to extend the [`LanguageIdentifier`] with
 //! additional bits of information - a combination of a [`LanguageIdentifier`] and `Extensions`
 //! is called [`Locale`].
@@ -25,10 +25,10 @@
 //! let loc: Locale = "en-US-u-ca-buddhist-t-en-US-h0-hybrid-x-foo".parse()
 //!     .expect("Failed to parse.");
 //!
-//! assert_eq!(loc.language, "en");
-//! assert_eq!(loc.script, None);
-//! assert_eq!(loc.region, Some("US".parse().unwrap()));
-//! assert_eq!(loc.variants.len(), 0);
+//! assert_eq!(loc.id.language, "en");
+//! assert_eq!(loc.id.script, None);
+//! assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+//! assert_eq!(loc.id.variants.len(), 0);
 //!
 //!
 //! let key: Key = "ca".parse().expect("Parsing key failed.");

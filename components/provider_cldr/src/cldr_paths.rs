@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::error::{Error, MissingSourceError};
 use std::default::Default;
 use std::path::PathBuf;
@@ -107,5 +107,13 @@ impl CldrPaths for CldrPathsAllInOne {
             .cldr_json_root
             .clone()
             .join(format!("cldr-numbers-{}", self.suffix)))
+    }
+}
+
+#[cfg(test)]
+pub(crate) fn for_test() -> CldrPathsAllInOne {
+    CldrPathsAllInOne {
+        cldr_json_root: icu_testdata::paths::cldr_json_root(),
+        suffix: "full",
     }
 }

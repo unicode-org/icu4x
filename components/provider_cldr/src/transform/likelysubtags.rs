@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -30,18 +30,6 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
                 .join("likelySubtags.json");
             serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
         };
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
-    }
-}
-
-impl<'d> TryFrom<&'d str> for LikelySubtagsProvider<'d> {
-    type Error = serde_json::error::Error;
-    /// Attempt to parse a JSON string.
-    fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = serde_json::from_str(s)?;
         Ok(Self {
             data,
             _phantom: PhantomData,
@@ -197,8 +185,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/likelySubtags.json").unwrap();
-    let provider = LikelySubtagsProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let result: Cow<LikelySubtagsV1> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()

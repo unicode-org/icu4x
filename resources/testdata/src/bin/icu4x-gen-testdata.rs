@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use clap::{App, Arg, ArgMatches};
 use icu_provider::iter::DataExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
@@ -159,8 +159,12 @@ fn main() -> Result<(), Error> {
 
     log::info!("Package metadata: {:?}", metadata);
 
-    download(&args, &metadata)?;
-    generate(&args, &metadata)?;
+    if args.value_of("MODE") == Some("download") || args.value_of("MODE") == Some("all") {
+        download(&args, &metadata)?;
+    }
+    if args.value_of("MODE") == Some("generate") || args.value_of("MODE") == Some("all") {
+        generate(&args, &metadata)?;
+    }
     Ok(())
 }
 
@@ -174,7 +178,8 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
     fs::remove_dir_all(&cldr_json_root).map_err(|e| (e, &cldr_json_root))?;
 
     let locales_glob_substitute = format!(
-        "{{{}}}",
+        // Include "root" (locales array has "und" instead)
+        "{{{},root}}",
         metadata
             .package_metadata
             .locales
@@ -193,8 +198,7 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
         downloaded_cldr.cldr_json_root.clone(),
         &glob_patterns,
     )
-    .max_depth(4)
-    .follow_links(true)
+    .case_insensitive(true)
     .build()?;
 
     for path in walker {

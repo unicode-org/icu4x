@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Data downloader for CLDR JSON versions 38 and later. Starting in CLDR 38, the JSON for all
 //! components is shipped in a single zip file.

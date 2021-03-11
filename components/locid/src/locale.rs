@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use std::str::FromStr;
@@ -24,10 +24,10 @@ use std::str::FromStr;
 /// let loc: Locale = "en-US-u-ca-buddhist".parse()
 ///     .expect("Failed to parse.");
 ///
-/// assert_eq!(loc.language, "en");
-/// assert_eq!(loc.script, None);
-/// assert_eq!(loc.region, Some("US".parse().unwrap()));
-/// assert_eq!(loc.variants.len(), 0);
+/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc.id.script, None);
+/// assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+/// assert_eq!(loc.id.variants.len(), 0);
 /// assert_eq!(loc, "en-US-u-ca-buddhist");
 ///
 /// let key: Key = "ca".parse().expect("Parsing key failed.");
@@ -58,22 +58,16 @@ use std::str::FromStr;
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12".parse()
 ///     .expect("Failed to parse.");
 ///
-/// assert_eq!(loc.language, "en");
-/// assert_eq!(loc.script, Some("Latn".parse().unwrap()));
-/// assert_eq!(loc.region, Some("US".parse().unwrap()));
-/// assert_eq!(loc.variants.get(0).unwrap(), "valencia");
+/// assert_eq!(loc.id.language, "en");
+/// assert_eq!(loc.id.script, Some("Latn".parse().unwrap()));
+/// assert_eq!(loc.id.region, Some("US".parse().unwrap()));
+/// assert_eq!(loc.id.variants.get(0).unwrap(), "valencia");
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Locale {
-    /// Language subtag of the Locale
-    pub language: subtags::Language,
-    /// Script subtag of the Locale
-    pub script: Option<subtags::Script>,
-    /// Region subtag of the Locale
-    pub region: Option<subtags::Region>,
-    /// Variant subtags of the Locale
-    pub variants: subtags::Variants,
+    // Language component of the Locale
+    pub id: LanguageIdentifier,
     // Unicode Locale Extensions
     pub extensions: extensions::Extensions,
 }
@@ -110,10 +104,7 @@ impl Locale {
     #[inline]
     pub const fn und() -> Self {
         Self {
-            language: subtags::Language::und(),
-            script: None,
-            region: None,
-            variants: subtags::Variants::new(),
+            id: LanguageIdentifier::und(),
             extensions: extensions::Extensions::new(),
         }
     }
@@ -147,10 +138,7 @@ impl FromStr for Locale {
 impl From<LanguageIdentifier> for Locale {
     fn from(id: LanguageIdentifier) -> Self {
         Self {
-            language: id.language,
-            script: id.script,
-            region: id.region,
-            variants: id.variants,
+            id,
             extensions: extensions::Extensions::default(),
         }
     }
@@ -158,12 +146,19 @@ impl From<LanguageIdentifier> for Locale {
 
 impl From<Locale> for LanguageIdentifier {
     fn from(loc: Locale) -> Self {
-        Self {
-            language: loc.language,
-            script: loc.script,
-            region: loc.region,
-            variants: loc.variants,
-        }
+        loc.id
+    }
+}
+
+impl AsRef<LanguageIdentifier> for Locale {
+    fn as_ref(&self) -> &LanguageIdentifier {
+        &self.id
+    }
+}
+
+impl AsMut<LanguageIdentifier> for Locale {
+    fn as_mut(&mut self) -> &mut LanguageIdentifier {
+        &mut self.id
     }
 }
 
@@ -181,34 +176,13 @@ impl std::fmt::Display for Locale {
 
 impl writeable::Writeable for Locale {
     fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
-        writeable::Writeable::write_to(&self.language, sink)?;
-        if let Some(ref script) = self.script {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(script, sink)?;
-        }
-        if let Some(ref region) = self.region {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(region, sink)?;
-        }
-        if !self.variants.is_empty() {
-            sink.write_char('-')?;
-            writeable::Writeable::write_to(&self.variants, sink)?;
-        }
+        writeable::Writeable::write_to(&self.id, sink)?;
         writeable::Writeable::write_to(&self.extensions, sink)?;
         Ok(())
     }
 
     fn write_len(&self) -> writeable::LengthHint {
-        let mut result = writeable::Writeable::write_len(&self.language);
-        if let Some(ref script) = self.script {
-            result += writeable::Writeable::write_len(script) + 1;
-        }
-        if let Some(ref region) = self.region {
-            result += writeable::Writeable::write_len(region) + 1;
-        }
-        if !self.variants.is_empty() {
-            result += writeable::Writeable::write_len(&self.variants) + 1;
-        }
+        let mut result = writeable::Writeable::write_len(&self.id);
         result += writeable::Writeable::write_len(&self.extensions);
         result
     }
@@ -261,20 +235,20 @@ macro_rules! subtag_matches {
 impl PartialEq<str> for Locale {
     fn eq(&self, other: &str) -> bool {
         let mut iter = get_subtag_iterator(other.as_bytes()).peekable();
-        if !subtag_matches!(subtags::Language, iter, self.language) {
+        if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }
-        if let Some(ref script) = self.script {
+        if let Some(ref script) = self.id.script {
             if !subtag_matches!(subtags::Script, iter, *script) {
                 return false;
             }
         }
-        if let Some(ref region) = self.region {
+        if let Some(ref region) = self.id.region {
             if !subtag_matches!(subtags::Region, iter, *region) {
                 return false;
             }
         }
-        for variant in self.variants.iter() {
+        for variant in self.id.variants.iter() {
             if !subtag_matches!(subtags::Variant, iter, *variant) {
                 return false;
             }
