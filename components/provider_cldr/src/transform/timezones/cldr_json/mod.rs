@@ -4,8 +4,14 @@
 mod convert;
 
 use crate::cldr_langid::CldrLangID;
-use serde::{Deserialize, Deserializer, de::{IgnoredAny, MapAccess, Visitor}};
+use serde::{
+    de::{IgnoredAny, MapAccess, Visitor},
+    Deserialize, Deserializer,
+};
 use std::collections::BTreeMap;
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct ZoneFormat(pub BTreeMap<String, String>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetaZone {
@@ -17,7 +23,49 @@ pub struct MetaZone {
 pub struct MetaZones(pub BTreeMap<String, MetaZone>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct ZoneFormat(pub BTreeMap<String, String>);
+pub struct LocationWithExemplarCity {
+    pub long: Option<ZoneFormat>,
+    pub short: Option<ZoneFormat>,
+    #[serde(rename = "exemplarCity")]
+    pub exemplar_city: String,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct LocationWithShort {
+    pub long: Option<ZoneFormat>,
+    pub short: ZoneFormat,
+    #[serde(rename = "exemplarCity")]
+    pub exemplar_city: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct LocationWithLong {
+    pub long: ZoneFormat,
+    pub short: Option<ZoneFormat>,
+    #[serde(rename = "exemplarCity")]
+    pub exemplar_city: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum Location {
+    LocationE(LocationWithExemplarCity),
+    LocationL(LocationWithLong),
+    LocationS(LocationWithShort),
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[serde(untagged)]
+pub enum LocationOrSubRegion {
+    Location(Location),
+    SubRegion(BTreeMap<String, Location>),
+}
+
+#[derive(PartialEq, Debug, Clone, Default, Deserialize)]
+pub struct Region(pub BTreeMap<String, LocationOrSubRegion>);
+
+#[derive(PartialEq, Debug, Clone, Default, Deserialize)]
+pub struct Zones(pub BTreeMap<String, Region>);
 
 #[derive(PartialEq, Debug, Default, Clone)]
 pub struct TimeZoneNames {
@@ -27,6 +75,7 @@ pub struct TimeZoneNames {
     pub region_format: String,
     pub region_format_variants: BTreeMap<String, String>,
     pub fallback_format: String,
+    pub zone: Zones,
     pub metazone: Option<MetaZones>,
 }
 
@@ -46,16 +95,16 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
     {
         let mut time_zone_names = TimeZoneNames::default();
         while let Some(key) = map.next_key::<String>()? {
-            if key.starts_with("hourFormat") {
+            if key.eq("hourFormat") {
                 let value = map.next_value::<String>()?;
                 time_zone_names.hour_format = value;
-            } else if key.starts_with("gmtFormat") {
+            } else if key.eq("gmtFormat") {
                 let value = map.next_value::<String>()?;
                 time_zone_names.gmt_format = value;
-            } else if key.starts_with("gmtZeroFormat") {
+            } else if key.eq("gmtZeroFormat") {
                 let value = map.next_value::<String>()?;
                 time_zone_names.gmt_zero_format = value;
-            } else if key.starts_with("fallbackFormat") {
+            } else if key.eq("fallbackFormat") {
                 let value = map.next_value::<String>()?;
                 time_zone_names.fallback_format = value;
             } else if key.starts_with("regionFormat") {
@@ -69,9 +118,12 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
                 } else {
                     time_zone_names.region_format = value
                 }
-            } else if key.starts_with("metazone") {
+            } else if key.eq("metazone") {
                 let value = map.next_value::<MetaZones>()?;
                 time_zone_names.metazone = Some(value);
+            } else if key.eq("zone") {
+                let value = map.next_value::<Zones>()?;
+                time_zone_names.zone = value;
             } else {
                 map.next_value::<IgnoredAny>()?;
             }

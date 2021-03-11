@@ -1,0 +1,346 @@
+{
+  "Acre": {
+    "daylight": "Hora de verano de Acre",
+    "standard": "Hora estándar de Acre"
+  },
+  "Africa_Western": {
+    "daylight": "hora de verano de África occidental",
+    "standard": "hora estándar de África occidental"
+  },
+  "Alaska": {
+    "daylight": "hora de verano de Alaska",
+    "standard": "hora estándar de Alaska"
+  },
+  "Amazon": {
+    "daylight": "hora de verano del Amazonas",
+    "standard": "hora estándar del Amazonas"
+  },
+  "America_Central": {
+    "daylight": "hora de verano central",
+    "standard": "hora estándar central"
+  },
+  "America_Eastern": {
+    "daylight": "hora de verano oriental",
+    "standard": "hora estándar oriental"
+  },
+  "America_Mountain": {
+    "daylight": "hora de verano de las Montañas Rocosas",
+    "standard": "hora estándar de las Montañas Rocosas"
+  },
+  "America_Pacific": {
+    "daylight": "hora de verano del Pacífico",
+    "standard": "hora estándar del Pacífico"
+  },
+  "Anadyr": {
+    "daylight": "hora de verano de Anadyr",
+    "standard": "hora estándar de Anadyr"
+  },
+  "Apia": {
+    "daylight": "horario de verano de Apia",
+    "standard": "hora estándar de Apia"
+  },
+  "Aqtau": {
+    "daylight": "Hora de verano de Aktau",
+    "standard": "Hora estándar de Aktau"
+  },
+  "Aqtobe": {
+    "daylight": "Hora de verano de Aktobe",
+    "standard": "Hora estándar de Aktobe"
+  },
+  "Arabian": {
+    "daylight": "hora de verano de Arabia",
+    "standard": "hora estándar de Arabia"
+  },
+  "Argentina": {
+    "daylight": "hora de verano de Argentina",
+    "standard": "hora estándar de Argentina"
+  },
+  "Argentina_Western": {
+    "daylight": "hora de verano de Argentina occidental",
+    "standard": "hora estándar de Argentina occidental"
+  },
+  "Armenia": {
+    "daylight": "hora de verano de Armenia",
+    "standard": "hora estándar de Armenia"
+  },
+  "Atlantic": {
+    "daylight": "hora de verano del Atlántico",
+    "standard": "hora estándar del Atlántico"
+  },
+  "Australia_Central": {
+    "daylight": "hora de verano de Australia central",
+    "standard": "hora estándar de Australia central"
+  },
+  "Australia_CentralWestern": {
+    "daylight": "hora de verano de Australia centroccidental",
+    "standard": "hora estándar de Australia centroccidental"
+  },
+  "Australia_Eastern": {
+    "daylight": "hora de verano de Australia oriental",
+    "standard": "hora estándar de Australia oriental"
+  },
+  "Australia_Western": {
+    "daylight": "hora de verano de Australia occidental",
+    "standard": "hora estándar de Australia occidental"
+  },
+  "Azerbaijan": {
+    "daylight": "hora de verano de Azerbaiyán",
+    "standard": "hora estándar de Azerbaiyán"
+  },
+  "Azores": {
+    "daylight": "hora de verano de las Azores",
+    "standard": "hora estándar de las Azores"
+  },
+  "Bangladesh": {
+    "daylight": "hora de verano de Bangladés",
+    "standard": "hora estándar de Bangladés"
+  },
+  "Brasilia": {
+    "daylight": "hora de verano de Brasilia",
+    "standard": "hora estándar de Brasilia"
+  },
+  "Cape_Verde": {
+    "daylight": "hora de verano de Cabo Verde",
+    "standard": "hora estándar de Cabo Verde"
+  },
+  "Chatham": {
+    "daylight": "hora de verano de Chatham",
+    "standard": "hora estándar de Chatham"
+  },
+  "Chile": {
+    "daylight": "hora de verano de Chile",
+    "standard": "hora estándar de Chile"
+  },
+  "China": {
+    "daylight": "hora de verano de China",
+    "standard": "hora estándar de China"
+  },
+  "Choibalsan": {
+    "daylight": "hora de verano de Choibalsan",
+    "standard": "hora estándar de Choibalsan"
+  },
+  "Colombia": {
+    "daylight": "hora de verano de Colombia",
+    "standard": "hora estándar de Colombia"
+  },
+  "Cook": {
+    "daylight": "hora de verano media de las Islas Cook",
+    "standard": "hora estándar de las Islas Cook"
+  },
+  "Cuba": {
+    "daylight": "hora de verano de Cuba",
+    "standard": "hora estándar de Cuba"
+  },
+  "Easter": {
+    "daylight": "hora de verano de la isla de Pascua",
+    "standard": "hora estándar de la isla de Pascua"
+  },
+  "Europe_Central": {
+    "daylight": "hora de verano de Europa central",
+    "standard": "hora estándar de Europa central"
+  },
+  "Europe_Eastern": {
+    "daylight": "hora de verano de Europa oriental",
+    "standard": "hora estándar de Europa oriental"
+  },
+  "Europe_Western": {
+    "daylight": "hora de verano de Europa occidental",
+    "standard": "hora estándar de Europa occidental"
+  },
+  "Falkland": {
+    "daylight": "hora de verano de las islas Malvinas",
+    "standard": "hora estándar de las islas Malvinas"
+  },
+  "Fiji": {
+    "daylight": "hora de verano de Fiyi",
+    "standard": "hora estándar de Fiyi"
+  },
+  "Georgia": {
+    "daylight": "hora de verano de Georgia",
+    "standard": "hora estándar de Georgia"
+  },
+  "Greenland_Eastern": {
+    "daylight": "hora de verano de Groenlandia oriental",
+    "standard": "hora estándar de Groenlandia oriental"
+  },
+  "Greenland_Western": {
+    "daylight": "hora de verano de Groenlandia occidental",
+    "standard": "hora estándar de Groenlandia occidental"
+  },
+  "Hawaii_Aleutian": {
+    "daylight": "hora de verano de Hawái-Aleutianas",
+    "standard": "hora estándar de Hawái-Aleutianas"
+  },
+  "Hong_Kong": {
+    "daylight": "hora de verano de Hong Kong",
+    "standard": "hora estándar de Hong Kong"
+  },
+  "Hovd": {
+    "daylight": "hora de verano de Hovd",
+    "standard": "hora estándar de Hovd"
+  },
+  "Iran": {
+    "daylight": "hora de verano de Irán",
+    "standard": "hora estándar de Irán"
+  },
+  "Irkutsk": {
+    "daylight": "hora de verano de Irkutsk",
+    "standard": "hora estándar de Irkutsk"
+  },
+  "Israel": {
+    "daylight": "hora de verano de Israel",
+    "standard": "hora estándar de Israel"
+  },
+  "Japan": {
+    "daylight": "hora de verano de Japón",
+    "standard": "hora estándar de Japón"
+  },
+  "Kamchatka": {
+    "daylight": "hora de verano de Kamchatka",
+    "standard": "hora estándar de Kamchatka"
+  },
+  "Korea": {
+    "daylight": "hora de verano de Corea",
+    "standard": "hora estándar de Corea"
+  },
+  "Krasnoyarsk": {
+    "daylight": "hora de verano de Krasnoyarsk",
+    "standard": "hora estándar de Krasnoyarsk"
+  },
+  "Lord_Howe": {
+    "daylight": "hora de verano de Lord Howe",
+    "standard": "hora estándar de Lord Howe"
+  },
+  "Macau": {
+    "daylight": "Hora de verano de Macao",
+    "standard": "Hora estándar de Macao"
+  },
+  "Magadan": {
+    "daylight": "hora de verano de Magadán",
+    "standard": "hora estándar de Magadán"
+  },
+  "Mauritius": {
+    "daylight": "hora de verano de Mauricio",
+    "standard": "hora estándar de Mauricio"
+  },
+  "Mexico_Northwest": {
+    "daylight": "hora de verano del noroeste de México",
+    "standard": "hora estándar del noroeste de México"
+  },
+  "Mexico_Pacific": {
+    "daylight": "hora de verano del Pacífico de México",
+    "standard": "hora estándar del Pacífico de México"
+  },
+  "Mongolia": {
+    "daylight": "hora de verano de Ulán Bator",
+    "standard": "hora estándar de Ulán Bator"
+  },
+  "Moscow": {
+    "daylight": "hora de verano de Moscú",
+    "standard": "hora estándar de Moscú"
+  },
+  "New_Caledonia": {
+    "daylight": "hora de verano de Nueva Caledonia",
+    "standard": "hora estándar de Nueva Caledonia"
+  },
+  "New_Zealand": {
+    "daylight": "hora de verano de Nueva Zelanda",
+    "standard": "hora estándar de Nueva Zelanda"
+  },
+  "Newfoundland": {
+    "daylight": "hora de verano de Terranova",
+    "standard": "hora estándar de Terranova"
+  },
+  "Norfolk": {
+    "daylight": "hora de verano de la isla Norfolk",
+    "standard": "hora estándar de la isla Norfolk"
+  },
+  "Noronha": {
+    "daylight": "hora de verano de Fernando de Noronha",
+    "standard": "hora estándar de Fernando de Noronha"
+  },
+  "Novosibirsk": {
+    "daylight": "hora de verano de Novosibirsk",
+    "standard": "hora estándar de Novosibirsk"
+  },
+  "Omsk": {
+    "daylight": "hora de verano de Omsk",
+    "standard": "hora estándar de Omsk"
+  },
+  "Pakistan": {
+    "daylight": "hora de verano de Pakistán",
+    "standard": "hora estándar de Pakistán"
+  },
+  "Paraguay": {
+    "daylight": "hora de verano de Paraguay",
+    "standard": "hora estándar de Paraguay"
+  },
+  "Peru": {
+    "daylight": "hora de verano de Perú",
+    "standard": "hora estándar de Perú"
+  },
+  "Philippines": {
+    "daylight": "hora de verano de Filipinas",
+    "standard": "hora estándar de Filipinas"
+  },
+  "Pierre_Miquelon": {
+    "daylight": "hora de verano de San Pedro y Miquelón",
+    "standard": "hora estándar de San Pedro y Miquelón"
+  },
+  "Qyzylorda": {
+    "daylight": "Hora de verano de Qyzylorda",
+    "standard": "Hora estándar de Qyzylorda"
+  },
+  "Sakhalin": {
+    "daylight": "hora de verano de Sajalín",
+    "standard": "hora estándar de Sajalín"
+  },
+  "Samara": {
+    "daylight": "hora de verano de Samara",
+    "standard": "hora estándar de Samara"
+  },
+  "Samoa": {
+    "daylight": "hora de verano de Samoa",
+    "standard": "hora estándar de Samoa"
+  },
+  "Taipei": {
+    "daylight": "hora de verano de Taipéi",
+    "standard": "hora estándar de Taipéi"
+  },
+  "Tonga": {
+    "daylight": "hora de verano de Tonga",
+    "standard": "hora estándar de Tonga"
+  },
+  "Turkmenistan": {
+    "daylight": "hora de verano de Turkmenistán",
+    "standard": "hora estándar de Turkmenistán"
+  },
+  "Uruguay": {
+    "daylight": "hora de verano de Uruguay",
+    "standard": "hora estándar de Uruguay"
+  },
+  "Uzbekistan": {
+    "daylight": "hora de verano de Uzbekistán",
+    "standard": "hora estándar de Uzbekistán"
+  },
+  "Vanuatu": {
+    "daylight": "hora de verano de Vanuatu",
+    "standard": "hora estándar de Vanuatu"
+  },
+  "Vladivostok": {
+    "daylight": "hora de verano de Vladivostok",
+    "standard": "hora estándar de Vladivostok"
+  },
+  "Volgograd": {
+    "daylight": "hora de verano de Volgogrado",
+    "standard": "hora estándar de Volgogrado"
+  },
+  "Yakutsk": {
+    "daylight": "hora de verano de Yakutsk",
+    "standard": "hora estándar de Yakutsk"
+  },
+  "Yekaterinburg": {
+    "daylight": "hora de verano de Ekaterimburgo",
+    "standard": "hora estándar de Ekaterimburgo"
+  }
+}

@@ -13,6 +13,10 @@ macro_rules! map_access {
             {
                 self.0.get(key)
             }
+
+            pub fn is_empty(&self) -> bool {
+                self.0.is_empty()
+            }
         }
 
         impl<Q: ?Sized> std::ops::Index<&Q> for $outer
@@ -47,38 +51,52 @@ pub struct TimeZoneFormatsV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZoneNamesLongV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(TimeZoneNamesLongV1 => Cow<'static, str>);
+pub struct ExemplarCitiesV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(ExemplarCitiesV1 => Cow<'static, str>);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZoneNamesShortV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(TimeZoneNamesShortV1 => Cow<'static, str>);
+pub struct LocationV1 {}
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZoneNameVariantsLongV1(pub LiteMap<Cow<'static, str>, TimeZoneNameVariantsV1>);
-map_access!(TimeZoneNameVariantsLongV1 => TimeZoneNameVariantsV1);
+pub struct MetaZoneGenericNamesLongV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(MetaZoneGenericNamesLongV1 => Cow<'static, str>);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZoneNameVariantsShortV1(pub LiteMap<Cow<'static, str>, TimeZoneNameVariantsV1>);
-map_access!(TimeZoneNameVariantsShortV1 => TimeZoneNameVariantsV1);
+pub struct MetaZoneGenericNamesShortV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(MetaZoneGenericNamesShortV1 => Cow<'static, str>);
 
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct TimeZoneNameVariantsV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
-map_access!(TimeZoneNameVariantsV1 => Cow<'static, str>);
+pub struct MetaZoneSpecificNamesLongV1(pub LiteMap<Cow<'static, str>, MetaZoneSpecificNamesV1>);
+map_access!(MetaZoneSpecificNamesLongV1 => MetaZoneSpecificNamesV1);
 
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct MetaZoneSpecificNamesShortV1(pub LiteMap<Cow<'static, str>, MetaZoneSpecificNamesV1>);
+map_access!(MetaZoneSpecificNamesShortV1 => MetaZoneSpecificNamesV1);
+
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct MetaZoneSpecificNamesV1(pub LiteMap<Cow<'static, str>, Cow<'static, str>>);
+map_access!(MetaZoneSpecificNamesV1 => Cow<'static, str>);

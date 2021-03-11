@@ -1,0 +1,350 @@
+{
+  "Acre": {
+    "daylight": "Acre Yaz Saati",
+    "standard": "Acre Standart Saati"
+  },
+  "Africa_Western": {
+    "daylight": "Batı Afrika Yaz Saati",
+    "standard": "Batı Afrika Standart Saati"
+  },
+  "Alaska": {
+    "daylight": "Alaska Yaz Saati",
+    "standard": "Alaska Standart Saati"
+  },
+  "Almaty": {
+    "daylight": "Almatı Yaz Saati",
+    "standard": "Almatı Standart Saati"
+  },
+  "Amazon": {
+    "daylight": "Amazon Yaz Saati",
+    "standard": "Amazon Standart Saati"
+  },
+  "America_Central": {
+    "daylight": "Kuzey Amerika Merkezi Yaz Saati",
+    "standard": "Kuzey Amerika Merkezi Standart Saati"
+  },
+  "America_Eastern": {
+    "daylight": "Kuzey Amerika Doğu Yaz Saati",
+    "standard": "Kuzey Amerika Doğu Standart Saati"
+  },
+  "America_Mountain": {
+    "daylight": "Kuzey Amerika Dağ Yaz Saati",
+    "standard": "Kuzey Amerika Dağ Standart Saati"
+  },
+  "America_Pacific": {
+    "daylight": "Kuzey Amerika Pasifik Yaz Saati",
+    "standard": "Kuzey Amerika Pasifik Standart Saati"
+  },
+  "Anadyr": {
+    "daylight": "Anadır Yaz Saati",
+    "standard": "Anadır Standart Saati"
+  },
+  "Apia": {
+    "daylight": "Apia Yaz Saati",
+    "standard": "Apia Standart Saati"
+  },
+  "Aqtau": {
+    "daylight": "Aktav Yaz Saati",
+    "standard": "Aktav Standart Saati"
+  },
+  "Aqtobe": {
+    "daylight": "Aktöbe Yaz Saati",
+    "standard": "Aktöbe Standart Saati"
+  },
+  "Arabian": {
+    "daylight": "Arabistan Yaz Saati",
+    "standard": "Arabistan Standart Saati"
+  },
+  "Argentina": {
+    "daylight": "Arjantin Yaz Saati",
+    "standard": "Arjantin Standart Saati"
+  },
+  "Argentina_Western": {
+    "daylight": "Batı Arjantin Yaz Saati",
+    "standard": "Batı Arjantin Standart Saati"
+  },
+  "Armenia": {
+    "daylight": "Ermenistan Yaz Saati",
+    "standard": "Ermenistan Standart Saati"
+  },
+  "Atlantic": {
+    "daylight": "Atlantik Yaz Saati",
+    "standard": "Atlantik Standart Saati"
+  },
+  "Australia_Central": {
+    "daylight": "Orta Avustralya Yaz Saati",
+    "standard": "Orta Avustralya Standart Saati"
+  },
+  "Australia_CentralWestern": {
+    "daylight": "İç Batı Avustralya Yaz Saati",
+    "standard": "İç Batı Avustralya Standart Saati"
+  },
+  "Australia_Eastern": {
+    "daylight": "Doğu Avustralya Yaz Saati",
+    "standard": "Doğu Avustralya Standart Saati"
+  },
+  "Australia_Western": {
+    "daylight": "Batı Avustralya Yaz Saati",
+    "standard": "Batı Avustralya Standart Saati"
+  },
+  "Azerbaijan": {
+    "daylight": "Azerbaycan Yaz Saati",
+    "standard": "Azerbaycan Standart Saati"
+  },
+  "Azores": {
+    "daylight": "Azorlar Yaz Saati",
+    "standard": "Azorlar Standart Saati"
+  },
+  "Bangladesh": {
+    "daylight": "Bangladeş Yaz Saati",
+    "standard": "Bangladeş Standart Saati"
+  },
+  "Brasilia": {
+    "daylight": "Brasilia Yaz Saati",
+    "standard": "Brasilia Standart Saati"
+  },
+  "Cape_Verde": {
+    "daylight": "Cape Verde Yaz Saati",
+    "standard": "Cape Verde Standart Saati"
+  },
+  "Chatham": {
+    "daylight": "Chatham Yaz Saati",
+    "standard": "Chatham Standart Saati"
+  },
+  "Chile": {
+    "daylight": "Şili Yaz Saati",
+    "standard": "Şili Standart Saati"
+  },
+  "China": {
+    "daylight": "Çin Yaz Saati",
+    "standard": "Çin Standart Saati"
+  },
+  "Choibalsan": {
+    "daylight": "Çoybalsan Yaz Saati",
+    "standard": "Çoybalsan Standart Saati"
+  },
+  "Colombia": {
+    "daylight": "Kolombiya Yaz Saati",
+    "standard": "Kolombiya Standart Saati"
+  },
+  "Cook": {
+    "daylight": "Cook Adaları Yarı Yaz Saati",
+    "standard": "Cook Adaları Standart Saati"
+  },
+  "Cuba": {
+    "daylight": "Küba Yaz Saati",
+    "standard": "Küba Standart Saati"
+  },
+  "Easter": {
+    "daylight": "Paskalya Adası Yaz Saati",
+    "standard": "Paskalya Adası Standart Saati"
+  },
+  "Europe_Central": {
+    "daylight": "Orta Avrupa Yaz Saati",
+    "standard": "Orta Avrupa Standart Saati"
+  },
+  "Europe_Eastern": {
+    "daylight": "Doğu Avrupa Yaz Saati",
+    "standard": "Doğu Avrupa Standart Saati"
+  },
+  "Europe_Western": {
+    "daylight": "Batı Avrupa Yaz Saati",
+    "standard": "Batı Avrupa Standart Saati"
+  },
+  "Falkland": {
+    "daylight": "Falkland Adaları Yaz Saati",
+    "standard": "Falkland Adaları Standart Saati"
+  },
+  "Fiji": {
+    "daylight": "Fiji Yaz Saati",
+    "standard": "Fiji Standart Saati"
+  },
+  "Georgia": {
+    "daylight": "Gürcistan Yaz Saati",
+    "standard": "Gürcistan Standart Saati"
+  },
+  "Greenland_Eastern": {
+    "daylight": "Doğu Grönland Yaz Saati",
+    "standard": "Doğu Grönland Standart Saati"
+  },
+  "Greenland_Western": {
+    "daylight": "Batı Grönland Yaz Saati",
+    "standard": "Batı Grönland Standart Saati"
+  },
+  "Hawaii_Aleutian": {
+    "daylight": "Hawaii-Aleut Yaz Saati",
+    "standard": "Hawaii-Aleut Standart Saati"
+  },
+  "Hong_Kong": {
+    "daylight": "Hong Kong Yaz Saati",
+    "standard": "Hong Kong Standart Saati"
+  },
+  "Hovd": {
+    "daylight": "Hovd Yaz Saati",
+    "standard": "Hovd Standart Saati"
+  },
+  "Iran": {
+    "daylight": "İran Yaz Saati",
+    "standard": "İran Standart Saati"
+  },
+  "Irkutsk": {
+    "daylight": "İrkutsk Yaz Saati",
+    "standard": "İrkutsk Standart Saati"
+  },
+  "Israel": {
+    "daylight": "İsrail Yaz Saati",
+    "standard": "İsrail Standart Saati"
+  },
+  "Japan": {
+    "daylight": "Japonya Yaz Saati",
+    "standard": "Japonya Standart Saati"
+  },
+  "Kamchatka": {
+    "daylight": "Petropavlovsk-Kamçatski Yaz Saati",
+    "standard": "Petropavlovsk-Kamçatski Standart Saati"
+  },
+  "Korea": {
+    "daylight": "Kore Yaz Saati",
+    "standard": "Kore Standart Saati"
+  },
+  "Krasnoyarsk": {
+    "daylight": "Krasnoyarsk Yaz Saati",
+    "standard": "Krasnoyarsk Standart Saati"
+  },
+  "Lord_Howe": {
+    "daylight": "Lord Howe Yaz Saati",
+    "standard": "Lord Howe Standart Saati"
+  },
+  "Macau": {
+    "daylight": "Makao Yaz Saati",
+    "standard": "Makao Standart Saati"
+  },
+  "Magadan": {
+    "daylight": "Magadan Yaz Saati",
+    "standard": "Magadan Standart Saati"
+  },
+  "Mauritius": {
+    "daylight": "Mauritius Yaz Saati",
+    "standard": "Mauritius Standart Saati"
+  },
+  "Mexico_Northwest": {
+    "daylight": "Kuzeybatı Meksika Yaz Saati",
+    "standard": "Kuzeybatı Meksika Standart Saati"
+  },
+  "Mexico_Pacific": {
+    "daylight": "Meksika Pasifik Kıyısı Yaz Saati",
+    "standard": "Meksika Pasifik Kıyısı Standart Saati"
+  },
+  "Mongolia": {
+    "daylight": "Ulan Batur Yaz Saati",
+    "standard": "Ulan Batur Standart Saati"
+  },
+  "Moscow": {
+    "daylight": "Moskova Yaz Saati",
+    "standard": "Moskova Standart Saati"
+  },
+  "New_Caledonia": {
+    "daylight": "Yeni Kaledonya Yaz Saati",
+    "standard": "Yeni Kaledonya Standart Saati"
+  },
+  "New_Zealand": {
+    "daylight": "Yeni Zelanda Yaz Saati",
+    "standard": "Yeni Zelanda Standart Saati"
+  },
+  "Newfoundland": {
+    "daylight": "Newfoundland Yaz Saati",
+    "standard": "Newfoundland Standart Saati"
+  },
+  "Norfolk": {
+    "daylight": "Norfolk Adası Yaz Saati",
+    "standard": "Norfolk Adası Standart Saati"
+  },
+  "Noronha": {
+    "daylight": "Fernando de Noronha Yaz Saati",
+    "standard": "Fernando de Noronha Standart Saati"
+  },
+  "Novosibirsk": {
+    "daylight": "Novosibirsk Yaz Saati",
+    "standard": "Novosibirsk Standart Saati"
+  },
+  "Omsk": {
+    "daylight": "Omsk Yaz Saati",
+    "standard": "Omsk Standart Saati"
+  },
+  "Pakistan": {
+    "daylight": "Pakistan Yaz Saati",
+    "standard": "Pakistan Standart Saati"
+  },
+  "Paraguay": {
+    "daylight": "Paraguay Yaz Saati",
+    "standard": "Paraguay Standart Saati"
+  },
+  "Peru": {
+    "daylight": "Peru Yaz Saati",
+    "standard": "Peru Standart Saati"
+  },
+  "Philippines": {
+    "daylight": "Filipinler Yaz Saati",
+    "standard": "Filipinler Standart Saati"
+  },
+  "Pierre_Miquelon": {
+    "daylight": "Saint Pierre ve Miquelon Yaz Saati",
+    "standard": "Saint Pierre ve Miquelon Standart Saati"
+  },
+  "Qyzylorda": {
+    "daylight": "Kızılorda Yaz Saati",
+    "standard": "Kızılorda Standart Saati"
+  },
+  "Sakhalin": {
+    "daylight": "Sahalin Yaz Saati",
+    "standard": "Sahalin Standart Saati"
+  },
+  "Samara": {
+    "daylight": "Samara Yaz Saati",
+    "standard": "Samara Standart Saati"
+  },
+  "Samoa": {
+    "daylight": "Samoa Yaz Saati",
+    "standard": "Samoa Standart Saati"
+  },
+  "Taipei": {
+    "daylight": "Taipei Yaz Saati",
+    "standard": "Taipei Standart Saati"
+  },
+  "Tonga": {
+    "daylight": "Tonga Yaz Saati",
+    "standard": "Tonga Standart Saati"
+  },
+  "Turkmenistan": {
+    "daylight": "Türkmenistan Yaz Saati",
+    "standard": "Türkmenistan Standart Saati"
+  },
+  "Uruguay": {
+    "daylight": "Uruguay Yaz Saati",
+    "standard": "Uruguay Standart Saati"
+  },
+  "Uzbekistan": {
+    "daylight": "Özbekistan Yaz Saati",
+    "standard": "Özbekistan Standart Saati"
+  },
+  "Vanuatu": {
+    "daylight": "Vanuatu Yaz Saati",
+    "standard": "Vanuatu Standart Saati"
+  },
+  "Vladivostok": {
+    "daylight": "Vladivostok Yaz Saati",
+    "standard": "Vladivostok Standart Saati"
+  },
+  "Volgograd": {
+    "daylight": "Volgograd Yaz Saati",
+    "standard": "Volgograd Standart Saati"
+  },
+  "Yakutsk": {
+    "daylight": "Yakutsk Yaz Saati",
+    "standard": "Yakutsk Standart Saati"
+  },
+  "Yekaterinburg": {
+    "daylight": "Yekaterinburg Yaz Saati",
+    "standard": "Yekaterinburg Standart Saati"
+  }
+}

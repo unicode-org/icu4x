@@ -7,9 +7,15 @@ use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::provider::{
     key,
-    timezones::{TimeZoneFormatsV1, TimeZoneNamesLongV1, TimeZoneNamesShortV1, TimeZoneNameVariantsLongV1, TimeZoneNameVariantsShortV1},
+    timezones::{
+        ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
+        MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneFormatsV1,
+    },
 };
-use icu_provider::{erased::{ErasedDataProvider, ErasedDataReceiver}, prelude::*};
+use icu_provider::{
+    erased::{ErasedDataProvider, ErasedDataReceiver},
+    prelude::*,
+};
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
@@ -17,12 +23,13 @@ use std::marker::PhantomData;
 mod cldr_json;
 
 /// All keys that this module is able to produce.
-pub const ALL_KEYS: [ResourceKey; 5] = [
+pub const ALL_KEYS: [ResourceKey; 6] = [
     key::TIMEZONE_FORMATS_V1,
-    key::TIMEZONE_NAMES_LONG_V1,
-    key::TIMEZONE_NAMES_SHORT_V1,
-    key::TIMEZONE_NAME_VARIANTS_LONG_V1,
-    key::TIMEZONE_NAME_VARIANTS_SHORT_V1,
+    key::TIMEZONE_EXEMPLAR_CITIES_V1,
+    key::TIMEZONE_GENERIC_NAMES_LONG_V1,
+    key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
+    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
+    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
 ];
 
 /// A data provider reading from CLDR JSON zones files.
@@ -113,23 +120,32 @@ impl<'d> ErasedDataProvider<'d> for TimeZonesProvider<'d> {
                 receiver.receive_payload(result.take_payload()?)?;
                 Ok(result.metadata)
             }
-            key::TIMEZONE_NAMES_LONG_V1 => {
-                let mut result: DataResponse<TimeZoneNamesLongV1> = self.load_payload(req)?;
+            key::TIMEZONE_EXEMPLAR_CITIES_V1 => {
+                let mut result: DataResponse<ExemplarCitiesV1> = self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;
                 Ok(result.metadata)
             }
-            key::TIMEZONE_NAMES_SHORT_V1 => {
-                let mut result: DataResponse<TimeZoneNamesShortV1> = self.load_payload(req)?;
+            key::TIMEZONE_GENERIC_NAMES_LONG_V1 => {
+                let mut result: DataResponse<MetaZoneGenericNamesLongV1> =
+                    self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;
                 Ok(result.metadata)
             }
-            key::TIMEZONE_NAME_VARIANTS_LONG_V1 => {
-                let mut result: DataResponse<TimeZoneNameVariantsLongV1> = self.load_payload(req)?;
+            key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => {
+                let mut result: DataResponse<MetaZoneGenericNamesShortV1> =
+                    self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;
                 Ok(result.metadata)
             }
-            key::TIMEZONE_NAME_VARIANTS_SHORT_V1 => {
-                let mut result: DataResponse<TimeZoneNameVariantsShortV1> = self.load_payload(req)?;
+            key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => {
+                let mut result: DataResponse<MetaZoneSpecificNamesLongV1> =
+                    self.load_payload(req)?;
+                receiver.receive_payload(result.take_payload()?)?;
+                Ok(result.metadata)
+            }
+            key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => {
+                let mut result: DataResponse<MetaZoneSpecificNamesShortV1> =
+                    self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;
                 Ok(result.metadata)
             }
@@ -141,13 +157,10 @@ impl<'d> ErasedDataProvider<'d> for TimeZonesProvider<'d> {
 macro_rules! impl_data_provider {
     ($id: ident) => {
         impl<'d> DataProvider<'d, $id> for TimeZonesProvider<'d> {
-            fn load_payload(
-                &self,
-                req: &DataRequest,
-            ) -> Result<DataResponse<'d, $id>, DataError> {
+            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, $id>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
-                let zones = match self
+                let time_zones = match self
                     .data
                     .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
                 {
@@ -158,7 +171,7 @@ macro_rules! impl_data_provider {
                     metadata: DataResponseMetadata {
                         data_langid: req.resource_path.options.langid.clone(),
                     },
-                    payload: Some(Cow::Owned($id::from(zones.clone()))),
+                    payload: Some(Cow::Owned($id::from(time_zones.clone()))),
                 })
             }
         }
@@ -166,10 +179,11 @@ macro_rules! impl_data_provider {
 }
 
 impl_data_provider!(TimeZoneFormatsV1);
-impl_data_provider!(TimeZoneNamesLongV1);
-impl_data_provider!(TimeZoneNamesShortV1);
-impl_data_provider!(TimeZoneNameVariantsLongV1);
-impl_data_provider!(TimeZoneNameVariantsShortV1);
+impl_data_provider!(ExemplarCitiesV1);
+impl_data_provider!(MetaZoneGenericNamesLongV1);
+impl_data_provider!(MetaZoneGenericNamesShortV1);
+impl_data_provider!(MetaZoneSpecificNamesLongV1);
+impl_data_provider!(MetaZoneSpecificNamesShortV1);
 
 #[cfg(test)]
 mod tests {
@@ -200,10 +214,10 @@ mod tests {
             .unwrap();
         dbg!(&time_zone_formats);
 
-        let time_zone_names_long: Cow<TimeZoneNamesLongV1> = provider
+        let time_zone_names_long: Cow<MetaZoneGenericNamesLongV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: key::TIMEZONE_NAMES_LONG_V1,
+                    key: key::TIMEZONE_GENERIC_NAMES_LONG_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid!("en")),
@@ -215,10 +229,10 @@ mod tests {
             .unwrap();
         dbg!(&time_zone_names_long);
 
-        let time_zone_name_variants_long: Cow<TimeZoneNameVariantsLongV1> = provider
+        let time_zone_name_variants_long: Cow<MetaZoneSpecificNamesLongV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: key::TIMEZONE_NAME_VARIANTS_LONG_V1,
+                    key: key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid!("en")),
@@ -230,10 +244,10 @@ mod tests {
             .unwrap();
         dbg!(&time_zone_name_variants_long);
 
-        let time_zone_name_variants_short: Cow<TimeZoneNameVariantsShortV1> = provider
+        let time_zone_name_variants_short: Cow<MetaZoneSpecificNamesShortV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: key::TIMEZONE_NAME_VARIANTS_SHORT_V1,
+                    key: key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid!("en")),
