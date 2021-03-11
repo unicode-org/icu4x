@@ -122,11 +122,11 @@ impl From<Vec<PatternItem>> for Pattern {
     }
 }
 
-impl From<&Pattern> for String {
-    fn from(pattern: &Pattern) -> Self {
+impl fmt::Display for Pattern {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         let mut string = String::new();
 
-        for pattern_item in pattern.items().iter() {
+        for pattern_item in self.items().iter() {
             match pattern_item {
                 PatternItem::Field(field) => {
                     let ch: char = field.symbol.into();
@@ -183,7 +183,7 @@ impl From<&Pattern> for String {
             }
         }
 
-        string
+        formatter.write_str(&string)
     }
 }
 
@@ -267,7 +267,7 @@ impl Serialize for Pattern {
     {
         if serializer.is_human_readable() {
             // Serialize into the UTS 35 string representation.
-            let string: String = String::from(self);
+            let string: String = self.to_string();
             serializer.serialize_str(&string)
         } else {
             // Serialize into a bincode-friendly representation. This means that pattern parsing
