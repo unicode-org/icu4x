@@ -193,11 +193,8 @@ mod tests {
     fn test_basic_cldr_timezones() {
         use icu_locid_macros::langid;
 
-        let json_str = std::fs::read_to_string(
-            "/Users/enordin/src/cldr-json/cldr-json/cldr-dates-full/main/en/timeZoneNames.json",
-        )
-        .unwrap();
-        let provider = TimeZonesProvider::try_from(json_str.as_str()).unwrap();
+        let cldr_paths = crate::cldr_paths::for_test();
+        let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
         let time_zone_formats: Cow<TimeZoneFormatsV1> = provider
             .load_payload(&DataRequest {
@@ -212,9 +209,24 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        dbg!(&time_zone_formats);
+        assert_eq!("GMT", time_zone_formats.gmt_zero_format);
 
-        let time_zone_names_long: Cow<MetaZoneGenericNamesLongV1> = provider
+        let exemplar_cities: Cow<ExemplarCitiesV1> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::TIMEZONE_EXEMPLAR_CITIES_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid!("en")),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        assert_eq!("Pohnpei", exemplar_cities["Ponape"]);
+
+        let generic_names_long: Cow<MetaZoneGenericNamesLongV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_GENERIC_NAMES_LONG_V1,
@@ -227,9 +239,12 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        dbg!(&time_zone_names_long);
+        assert_eq!(
+            "Australian Central Western Time",
+            generic_names_long["Australia_CentralWestern"]
+        );
 
-        let time_zone_name_variants_long: Cow<MetaZoneSpecificNamesLongV1> = provider
+        let specific_names_long: Cow<MetaZoneSpecificNamesLongV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
@@ -242,9 +257,27 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        dbg!(&time_zone_name_variants_long);
+        assert_eq!(
+            "Australian Central Western Standard Time",
+            specific_names_long["Australia_CentralWestern"]["standard"]
+        );
 
-        let time_zone_name_variants_short: Cow<MetaZoneSpecificNamesShortV1> = provider
+        let generic_names_short: Cow<MetaZoneGenericNamesShortV1> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid!("en")),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        assert_eq!("PT", generic_names_short["America_Pacific"]);
+
+        let specific_names_short: Cow<MetaZoneSpecificNamesShortV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
@@ -257,6 +290,6 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        dbg!(&time_zone_name_variants_short);
+        assert_eq!("PDT", specific_names_short["America_Pacific"]["daylight"]);
     }
 }
