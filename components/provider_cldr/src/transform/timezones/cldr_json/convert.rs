@@ -60,7 +60,7 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
                         .filter_map(|(key, place)| {
                             place
                                 .exemplar_city()
-                                .map(|value| (key.into(), value.into()))
+                                .map(|value| (key.into(), value))
                         })
                         .collect::<Vec<_>>(),
                 })

@@ -109,9 +109,9 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
                 time_zone_names.fallback_format = value;
             } else if key.starts_with("regionFormat") {
                 let value = map.next_value::<String>()?;
-                if key.contains("-") {
+                if key.contains('-') {
                     // key is of the form: "regionFormat-type-variant"
-                    let variant = key.split("-").last().unwrap();
+                    let variant = key.split('-').last().unwrap();
                     time_zone_names
                         .region_format_variants
                         .insert(variant.into(), value);
