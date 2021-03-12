@@ -248,8 +248,8 @@ impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
         let iter = iter.into_iter();
         let map = match iter.size_hint() {
-            (lower, None) => LiteMap::with_capacity(lower),
             (_, Some(upper)) => LiteMap::with_capacity(upper),
+            (lower, None) => LiteMap::with_capacity(lower),
         };
         match map.extend_from_sorted_iter(iter) {
             Ok(map) => map,
