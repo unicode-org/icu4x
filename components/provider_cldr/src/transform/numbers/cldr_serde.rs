@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_langid::CldrLangID;
+use itertools::Itertools;
 use serde::Deserialize;
 use serde_aux::prelude::*;
 use std::collections::HashMap;
 use tinystr::{TinyStr8, TinyStrAuto};
-use itertools::Itertools;
 
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
@@ -62,10 +62,7 @@ pub mod numbers_json {
                     None => continue, // Not what we were looking for; ignore.
                 };
                 let numsys: TinyStr8 = numsys.parse().map_err(|_| {
-                    M::Error::invalid_value(
-                        Unexpected::Str(&key),
-                        &"numsys to be valid TinyStr8",
-                    )
+                    M::Error::invalid_value(Unexpected::Str(&key), &"numsys to be valid TinyStr8")
                 })?;
                 match stype {
                     "symbols" => {
@@ -142,7 +139,7 @@ pub mod numbering_systems_json {
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct SupplementalData {
         #[serde(rename = "numberingSystems")]
-        pub numbering_systems: HashMap<String, NumberingSystem>,
+        pub numbering_systems: HashMap<TinyStr8, NumberingSystem>,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

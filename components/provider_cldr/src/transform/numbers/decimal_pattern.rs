@@ -8,9 +8,18 @@ use icu_decimal::provider::AffixesV1;
 use itertools::Itertools;
 
 #[derive(Debug, PartialEq)]
-pub enum DecimalPatternError {
+pub enum Error {
     NoBodyInSubpattern,
     UnknownPatternBody(String),
+}
+
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::NoBodyInSubpattern => write!(f, "No body in decimal subpattern"),
+            Self::UnknownPatternBody(s) => write!(f, "Unknown decimal body: {}", s),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -24,7 +33,7 @@ pub struct DecimalSubPattern {
 }
 
 impl FromStr for DecimalSubPattern {
-    type Err = DecimalPatternError;
+    type Err = Error;
 
     fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
         // Split the subpattern into prefix, body, and suffix.
@@ -33,16 +42,19 @@ impl FromStr for DecimalSubPattern {
         // j = boundary between body and suffix
         let i = subpattern.find(|c: char| match c {
             '#' | '0' | ',' | '.' => true,
-            _ => false
+            _ => false,
         });
         let i = match i {
             Some(i) => i,
-            None => return Err(DecimalPatternError::NoBodyInSubpattern)
+            None => return Err(Error::NoBodyInSubpattern),
         };
-        let j = subpattern[i..].find(|c: char| match c {
-            '#' | '0' | ',' | '.' => false,
-            _ => true
-        }).unwrap_or_else(|| subpattern.len() - i) + i;
+        let j = subpattern[i..]
+            .find(|c: char| match c {
+                '#' | '0' | ',' | '.' => false,
+                _ => true,
+            })
+            .unwrap_or_else(|| subpattern.len() - i)
+            + i;
         let prefix = &subpattern[..i];
         let body = &subpattern[i..j];
         let suffix = &subpattern[j..];
@@ -51,7 +63,9 @@ impl FromStr for DecimalSubPattern {
         // TODO: Generalize this to support all of UTS 35.
         let (a, b, c, d) = match body {
             "#,##0.###" => (3, 3, 0, 3),
-            _ => return Err(DecimalPatternError::UnknownPatternBody(body.to_string()))
+            "#,##,##0.###" => (2, 3, 0, 3),
+            "0.######" => (0, 0, 0, 6),
+            _ => return Err(Error::UnknownPatternBody(body.to_string())),
         };
         return Ok(Self {
             prefix: prefix.into(),
@@ -71,7 +85,7 @@ pub struct DecimalPattern {
 }
 
 impl FromStr for DecimalPattern {
-    type Err = DecimalPatternError;
+    type Err = Error;
 
     fn from_str(pattern: &str) -> Result<Self, Self::Err> {
         // Example patterns:
@@ -83,10 +97,7 @@ impl FromStr for DecimalPattern {
             Some((u, s)) => (u.parse()?, Some(s.parse()?)),
             None => (pattern.parse()?, None),
         };
-        Ok(Self {
-            positive,
-            negative
-        })
+        Ok(Self { positive, negative })
     }
 }
 
@@ -110,7 +121,7 @@ fn test_basic() {
     #[derive(Debug)]
     struct TestCase<'s> {
         pub pattern: &'s str,
-        pub expected: Result<DecimalPattern, DecimalPatternError>,
+        pub expected: Result<DecimalPattern, Error>,
     }
     let cases = [
         TestCase {
@@ -125,7 +136,7 @@ fn test_basic() {
                     max_fraction_digits: 3,
                 },
                 negative: None,
-            })
+            }),
         },
         TestCase {
             pattern: "a#,##0.###",
@@ -139,7 +150,7 @@ fn test_basic() {
                     max_fraction_digits: 3,
                 },
                 negative: None,
-            })
+            }),
         },
         TestCase {
             pattern: "#,##0.###b",
@@ -153,7 +164,7 @@ fn test_basic() {
                     max_fraction_digits: 3,
                 },
                 negative: None,
-            })
+            }),
         },
         TestCase {
             pattern: "aaa#,##0.###bbb",
@@ -167,7 +178,7 @@ fn test_basic() {
                     max_fraction_digits: 3,
                 },
                 negative: None,
-            })
+            }),
         },
         TestCase {
             pattern: "aaa#,##0.###bbb;ccc#,##0.###ddd",
@@ -188,19 +199,19 @@ fn test_basic() {
                     min_fraction_digits: 0,
                     max_fraction_digits: 3,
                 }),
-            })
+            }),
         },
         TestCase {
             pattern: "xyz",
-            expected: Err(DecimalPatternError::NoBodyInSubpattern),
+            expected: Err(Error::NoBodyInSubpattern),
         },
         TestCase {
             pattern: "xyz;abc",
-            expected: Err(DecimalPatternError::NoBodyInSubpattern),
+            expected: Err(Error::NoBodyInSubpattern),
         },
         TestCase {
             pattern: "aaa#0#bbb",
-            expected: Err(DecimalPatternError::UnknownPatternBody("#0#".to_string())),
+            expected: Err(Error::UnknownPatternBody("#0#".to_string())),
         },
     ];
     for cas in &cases {

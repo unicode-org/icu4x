@@ -49,7 +49,7 @@ impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
 }
 
 /// To help with debugging, string errors should be paired with a locale.
-/// If a path is unavailable, create the error directly: `Error::Custom(err, None)`
+/// If a locale is unavailable, create the error directly: `Error::Custom(err, None)`
 impl<L: AsRef<LanguageIdentifier>> From<(String, L)> for Error {
     fn from(pieces: (String, L)) -> Self {
         Self::Custom(pieces.0, Some(pieces.1.as_ref().clone()))
@@ -57,7 +57,7 @@ impl<L: AsRef<LanguageIdentifier>> From<(String, L)> for Error {
 }
 
 /// To help with debugging, string errors should be paired with a locale.
-/// If a path is unavailable, create the error directly: `Error::Custom(err, None)`
+/// If a locale is unavailable, create the error directly: `Error::Custom(err, None)`
 impl<L: AsRef<LanguageIdentifier>> From<(&'static str, L)> for Error {
     fn from(pieces: (&'static str, L)) -> Self {
         Self::Custom(pieces.0.to_string(), Some(pieces.1.as_ref().clone()))
