@@ -30,20 +30,22 @@ Basic concepts:
     * The preferred convention by Github Actions is that action repository maintainers use `v1` and `v2` as tags that point to the commits that are tagged with the latest version within that major version. (Ex: `v1` points to `v1.2.3`, `v2` points to `v2.8.9.1`). However, be aware that not all actions adhere to this guideline, and instead only have `vX.Y.Z` tags without a `vX` tag to the latest `vX.*.*`. As an example, this problem was [observed and worked around in the `unicode-org/cldr` repo](https://github.com/unicode-org/cldr/pull/813).
   * For this simplistic example, the way to improve it in order to allow a Pull Request to run the same checks after each new commit is pushed, in the same way that checks are run on merges to `master`, is to change `on.pull_request.branches` to [match all origin branch names](https://github.com/unicode-org/icu4x/commit/16ae4611738fbe94b36e17b77aee6cc541c0a171).
 
-## Testing a Workflow
+## Testing a Workflow in unicode-org/icu4x
 
 One nice aspect of Github Actions' integration in Github is that if there is a workflow that is triggered to run on pull requests, and if a pull request includes some modification to that workflow, then the pull request will be run _using the pending new changes to the workflow_.  For example, if an existing workflow (ex: `.github/workflows/build-test.yml`) is configured to run 5 benchmarks, and a pull request is made to add a 6th benchmark to that workflow, then the pull request will run 6 benchmarks, not 5.
 
 This means that most changes to a workflow can be tested in the PR that introduces the changes. The effects are visible to the PR author and reviewers alike.
 
-There might be reasons why you want or need to test changes to GH Actions on your personal fork. Less frequently, there might be specific changes that cannot be tested via a PR because they only happen on merges to the main branch `master`. For example, API docs changes and benchmark dashboard changes should only occur on merges to master. In this case, you can use your personal fork of the upstream repo as a testing ground. The naive approach is not recommended -- to directly modify your `master` branch -- because it requires awkwardly changing your git repo during and after testing in ways that are often confusing and opposite to "git-flow" habits. 
+## Testing a Workflow in Your Forked Repo
 
-So here are steps to test GH Actions change on your personal fork, with links to an example:
+There might be reasons why you want or need to test changes to Github Actions on your personal fork. Less frequently, there might be specific changes that cannot be tested via a PR because they only happen on merges to the main branch `master`. For example, API docs changes and benchmark dashboard changes should only occur on merges to master. In this case, you can use your personal fork of the upstream repo as a testing ground. The naive approach is not recommended -- to directly modify your `master` branch -- because it requires awkwardly changing your git repo during and after testing in ways that are often confusing and opposite to "git-flow" habits. 
 
-1. create a new testing-only branch that tacks on [an extra commit to make testing-appropriate changes](https://github.com/echeran/icu4x/pull/22/commits/538176500f54594cffa1844c0244c7135ea24b84)
-2. push the testing branch to the personal fork of `icu4x` and create a [testing PR targeting personal fork's master](https://github.com/echeran/icu4x/pull/22)
-3. watch [GH Actions execute b/c of testing PR satisfying the execution trigger conditions](https://github.com/echeran/icu4x/actions/runs/539462550)
-4. optional extra step - merge the testing PR to get GH Actions [execute the job that copies GH pages over to the fork of the docs repo](https://github.com/echeran/icu4x/actions/runs/539466271)
+So here are steps to test Github Actions change on your personal fork, with links to an example:
+
+1. Create a new testing-only branch that tacks on [an extra commit to make testing-appropriate changes](https://github.com/echeran/icu4x/pull/22/commits/538176500f54594cffa1844c0244c7135ea24b84).
+2. Push the testing branch to the personal fork of `icu4x` and create a [testing PR targeting personal fork's master](https://github.com/echeran/icu4x/pull/22).
+3. [GitHub Actions will run a new job]((https://github.com/echeran/icu4x/actions/runs/539462550)) because the testing PR satisfies the execution trigger conditions.
+4. Optional extra step - merge the testing PR to get Github Actions [execute the job that copies GH pages over to the fork of the docs repo](https://github.com/echeran/icu4x/actions/runs/539466271).
 
 Also, part of your testing-appropriate changes can be as primitive-yet-sufficient as adding lots of stdout debugging that gets captured in the logs ([example](https://github.com/echeran/icu4x/pull/13/commits/d6168715ac644b785c920b639cd5238e7a52f806)).
 
@@ -113,39 +115,41 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
 
 ## Examples of Various CI Functionality
 
+_Note: the `*.yml` workflow files should should provide detailed documentation for the individual steps. These are only broad examples of what the GitHub Actions can do._
+
 ### Copy API docs to separate repo
 
-- We maintain a separate repo to store API docs. This allows the generated output HTML, which is usually larger in size than the source code it is generate from, to be under version control without swelling up the size of the main repo. Also, changes to the APIs will cause larger diffs in the HTML.
-- The separate repo for `unicode-org/icu4x` is in `unicode-org/icu4x-docs`, similar to how `unicode-org/icu-docs` is used for API docs for `unicode-org/icu`.
-- We use the [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages) action to copy files destined for [Github Pages](https://pages.github.com/), which is Github's built-in HTML/website serving functionality. The action allows for copying to remote repos and handles permissions for doing so (default & user Github tokens, etc.).
-- After commits are pushed to the branch that is configured to hold Github Pages content in `unicode-org/icu4x-docs`, the results are visible in https://unicode-org.github.io/icu4x-docs/.
+We maintain a separate repo to store API docs. This allows the generated output HTML, which is usually larger in size than the source code it is generate from, to be under version control without swelling up the size of the main repo. Also, changes to the APIs will cause larger diffs in the HTML.
+The separate repo for `unicode-org/icu4x` is in `unicode-org/icu4x-docs`, similar to how `unicode-org/icu-docs` is used for API docs for `unicode-org/icu`.
+We use the [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages) action to copy files destined for [Github Pages](https://pages.github.com/), which is Github's built-in HTML/website serving functionality. The action allows for copying to remote repos and handles permissions for doing so (default & user Github tokens, etc.).
+After commits are pushed to the branch that is configured to hold Github Pages content in `unicode-org/icu4x-docs`, the results are visible in https://unicode-org.github.io/icu4x-docs/.
 
 ### Benchmarking
 
-- We use the [rhysd/github-action-benchmark](https://github.com/rhysd/github-action-benchmark). It does the following
+We use the [rhysd/github-action-benchmark](https://github.com/rhysd/github-action-benchmark). It does the following:
   1. For a handful of programming languages (including Rust), it runs the most common benchmark tool
   1. It converts the benchmark tool's output into a JSON file
   1. It stores the JSON file in a separate branch. It produces a static HTML that renders the JSON file as a dashboard.
   1. It commits the output JSON + HTML as a commit in a separate branch. This preserves the data for future invocations, when conversion of benchmark output to JSON is appended to the previous JSON to create the new JSON data file.
-- We copy the benchmark dashboards along with the API docs in `unicode-org/icu4x-docs`. This allows the GH Pages for the main repo to be used for general purposes, if needed (ex: landing page, blog, etc.).
+We copy the benchmark dashboards along with the API docs in `unicode-org/icu4x-docs`. This allows the GH Pages for the main repo to be used for general purposes, if needed (ex: landing page, blog, etc.).
 
 ### Run CI checks locally
 
-- Developers [need an easy way to run the same commands and options locally as they are run in CI](https://github.com/unicode-org/icu4x/issues/334)
-- Currently, there is no official way to invoke a Github Actions workflow locally
-- Since we run tests on all major OS types, we need a cross-platform solution to running commands
-- Rust's `cargo-makefile` is a plugin for the `cargo` build tool that allows creation of a sequence of commands and options using an alias
-- Using `cargo-makefile`, the CI commands were rewritten to use the new aliases
-- `cargo-makefile` has built-in support for the inline inclusion of scripts written in [Duckscript](https://github.com/sagiegurari/duckscript)
-  * [Example of an inline script in a `cargo-makefile` task](https://github.com/unicode-org/icu4x/pull/381/files#diff-9375fd04332c86472d7be397ef09428cb86babd8826880a5835bd1d1c1bdbc08R23-R48) that ensures that all new source files have a specific license header
+Developers [need an easy way to run the same commands and options locally as they are run in CI](https://github.com/unicode-org/icu4x/issues/334).
+Currently, there is no official way to invoke a Github Actions workflow locally.
+Since we run tests on all major OS types, we need a cross-platform solution to running commands.
+Rust's `cargo-makefile` is a plugin for the `cargo` build tool that allows creation of a sequence of commands and options using an alias.
+Using `cargo-makefile`, the CI commands were rewritten to use the new aliases.
+`cargo-makefile` has built-in support for the inline inclusion of scripts written in [Duckscript](https://github.com/sagiegurari/duckscript)
+[Here is an example of an inline script in a `cargo-makefile` task](https://github.com/unicode-org/icu4x/pull/381/files#diff-9375fd04332c86472d7be397ef09428cb86babd8826880a5835bd1d1c1bdbc08R23-R48) that ensures that all new source files have a specific license header.
 
 ### Code coverage
 
-- Code coverage is configured in a separate workflow since it is completely independent of the operations for build, test, format/style-checking, linting/error-prone-checking, API docs, benchmarking.
-- Two code coverage dashboard services exist:
+Code coverage is configured in a separate workflow since it is completely independent of the operations for build, test, format/style-checking, linting/error-prone-checking, API docs, benchmarking.
+Two code coverage dashboard services exist:
   * [Codecov](https://codecov.io/)
     - [config for Codecov](https://github.com/unicode-org/icu4x/commit/fd524a91df3f5aef2efb908adddd051827972328#diff-a2115d277b5ca5a2f09a999e53440839cf332b94da177f3d1766334555b0f7c6R49-R53)
   * [Coveralls](https://coveralls.io/)
     - [config for Coveralls](https://github.com/unicode-org/icu4x/commit/00c514f3a189787c4e77704eb98714e6b6430d37#diff-a2115d277b5ca5a2f09a999e53440839cf332b94da177f3d1766334555b0f7c6R36-R40)
-- Both code coverage dashboard services automatically support most output file formats for most programming languages' code coverage tools
-- The GH actions for both code coverage services are configured to automatically add a PR comment with the code coverage report for the PR's changes. The actions are smart enough to invalidate/close old comments and only leave the latest open comment for the latest state of code in the PR.
+Both code coverage dashboard services automatically support most output file formats for most programming languages' code coverage tools.
+The Github Actions for both code coverage services are configured to automatically add a PR comment with the code coverage report for the PR's changes. The actions are smart enough to invalidate/close old comments and only leave the latest open comment for the latest state of code in the PR.
