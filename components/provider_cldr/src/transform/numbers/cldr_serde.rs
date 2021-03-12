@@ -7,6 +7,7 @@ use serde::Deserialize;
 use serde_aux::prelude::*;
 use std::collections::HashMap;
 use tinystr::{TinyStr8, TinyStrAuto};
+use itertools::Itertools;
 
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
@@ -56,27 +57,27 @@ pub mod numbers_json {
             let mut result = NumberingSystemData::default();
             while let Some(key) = access.next_key::<String>()? {
                 // Key is of the form: "symbols-numberSystem-latn"
-                let mut key_it = key.split('-');
-                let stype = key_it.next();
-                let numsys: Option<Result<TinyStr8, M::Error>> = key_it.nth(1).map(|s| {
-                    s.parse().map_err(|_| {
-                        M::Error::invalid_value(
-                            Unexpected::Str(&key),
-                            &"numsys to be valid TinyStr8",
-                        )
-                    })
-                });
-                match (stype, numsys) {
-                    (Some("symbols"), Some(numsys)) => {
+                let (stype, _, numsys) = match key.split('-').next_tuple() {
+                    Some(v) => v,
+                    None => continue, // Not what we were looking for; ignore.
+                };
+                let numsys: TinyStr8 = numsys.parse().map_err(|_| {
+                    M::Error::invalid_value(
+                        Unexpected::Str(&key),
+                        &"numsys to be valid TinyStr8",
+                    )
+                })?;
+                match stype {
+                    "symbols" => {
                         let value: Symbols = access.next_value()?;
-                        result.symbols.insert(numsys?, value);
+                        result.symbols.insert(numsys, value);
                     }
-                    (Some("decimalFormats"), Some(numsys)) => {
+                    "decimalFormats" => {
                         let value: DecimalFormats = access.next_value()?;
-                        result.formats.insert(numsys?, value);
+                        result.formats.insert(numsys, value);
                     }
                     _ => {
-                        // not symbols or decimalFormats: ignore silently
+                        // not symbols or decimalFormats; ignore.
                     }
                 }
             }

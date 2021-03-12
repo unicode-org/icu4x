@@ -98,6 +98,7 @@ impl<'d> IterableDataProvider<'d> for NumbersProvider {
 }
 
 impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
+    // TODO: Use a more expressive error type
     type Error = &'static str;
 
     fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, &'static str> {
@@ -112,8 +113,8 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
             .formats
             .get(&other.default_numbering_system)
             .ok_or("Could not find formats for default numbering system")?;
-        let parsed_pattern: decimal_pattern::DecimalPatternParseResult =
-            formats.standard.parse()?;
+        let parsed_pattern: decimal_pattern::DecimalPattern =
+            formats.standard.parse().map_err(|_| "Could not parse decimal pattern")?;
 
         Ok(Self {
             minus_sign_affixes: parsed_pattern.localize_sign(&symbols.minus_sign),
@@ -121,8 +122,8 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
             decimal_separator: symbols.decimal.clone(),
             grouping_separator: symbols.group.clone(),
             grouping_sizes: GroupingSizesV1 {
-                primary: parsed_pattern.primary_grouping,
-                secondary: parsed_pattern.secondary_grouping,
+                primary: parsed_pattern.positive.primary_grouping,
+                secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: other.minimum_grouping_digits,
             },
             zero_digit: '0', // TODO

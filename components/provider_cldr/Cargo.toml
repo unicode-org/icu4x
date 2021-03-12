@@ -33,6 +33,7 @@ icu_plurals = { version = "0.1", path = "../plurals" }
 icu_datetime = { version = "0.1", path = "../datetime" }
 icu_locale_canonicalizer = { version = "0.1", path = "../locale_canonicalizer" }
 icu_decimal = { version = "0.1", path = "../decimal" }
+itertools = "0.10"
 json = "0.12"
 serde = { version = "1.0", features = ["derive"] }
 serde-aux = "2.1.1"

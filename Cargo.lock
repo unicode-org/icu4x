@@ -944,6 +944,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_testdata",
+ "itertools 0.10.0",
  "json",
  "log",
  "mktemp",
