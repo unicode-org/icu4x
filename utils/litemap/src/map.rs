@@ -198,8 +198,11 @@ impl<K: Ord, V> LiteMap<K, V> {
         }
     }
 
-    /// Extend the map's underlying vector  from the iterator as long as appended
-    /// items remain in sorted order.
+    /// Extend the map's underlying vector with the items in the iterator as long as
+    /// the appended keys remain in sorted order with the vector's existing keys.
+    ///
+    /// If successful, return the map with the appended items.
+    /// Otherwise return the map and the rest of the unsorted items.
     fn extend_from_sorted_iter<I, E>(mut self, iter: I) -> Result<Self, (Self, E)>
     where
         I: IntoIterator<Item = (K, V)> + IntoIterator<IntoIter = E>,
