@@ -1,6 +1,6 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
-# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 [package]
 name = "icu_testdata"
 description = "Test data for ICU4X, generated from CLDR"
@@ -13,6 +13,7 @@ license-file = "../../LICENSE"
 categories = ["internationalization"]
 include = [
     "src/**/*",
+    "data/json/**/*",
     "examples/**/*",
     "benches/**/*",
     "Cargo.toml",
@@ -88,7 +89,20 @@ locales = [
     "und",
 ]
 
-# Git tag or sha1 for the CLDR data used to generate the testdata
+# Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
+# The variable "$LOCALES" is replaced with the list of locales from above.
+cldr_json_glob = [
+    "cldr-core/supplemental/likelySubtags.json",
+    "cldr-core/supplemental/numberingSystems.json",
+    "cldr-core/supplemental/ordinals.json",
+    "cldr-core/supplemental/plurals.json",
+    "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
+    # Extra data for feature coverage in provider_cldr tests:
+    "cldr-dates-full/main/cs/ca-gregorian.json",
+    "cldr-dates-full/main/haw/ca-gregorian.json",
+]
+
+# Git tag or sha1 for the CLDR data used to generate the testdata.
 gitref = "38.1.0"
 
 [package.metadata.cargo-all-features]
@@ -113,6 +127,10 @@ clap = { version = "2.33", optional = true }
 icu_provider_cldr = { version = "0.1", path = "../../components/provider_cldr", optional = true, features = ["download"] }
 log = { version = "0.4", optional = true }
 simple_logger = { version = "1.11", optional = true }
+globwalk = { version = "0.8", optional = true }
+walkdir = { version = "2", optional = true }
+itertools = { version = "0.10", optional = true }
+writeable = { version = "0.2", path = "../../utils/writeable", optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
@@ -128,6 +146,10 @@ icu4x-gen-testdata = [
     "simple_logger",
     "icu_provider_fs/export",
     "metadata",
+    "globwalk",
+    "walkdir",
+    "itertools",
+    "writeable",
 ]
 
 [[bin]]

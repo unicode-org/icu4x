@@ -23,12 +23,12 @@ Basic concepts:
   * In the UI, for each workflow run instance, you can see each job of the workflow, and each step within each job.  For a job, you can see the console output (stdout, stderr) for each step with linkable line numbers and a search bar for searching the logs.
 
 * This example from an [old, experimental, preliminary ICU4X workflow](https://github.com/unicode-org/icu4x/commit/466eaa3a72635b01cfc1be33e1c899e33147301a) shows a really small task executed in a naive way:
-  * The `on` key config shows that the workflow is triggered only when a commit is made on `master`. Since the repository only allows commits to `master` through the Pull Request process, this workflow is unhelpful for Pull Request authors and reviewers because pull requests originating from any branch not called `master` (all of them) will not trigger the workflow.
+  * The `on` key config shows that the workflow is triggered only when a commit is made on `main`. Since the repository only allows commits to `main` through the Pull Request process, this workflow is unhelpful for Pull Request authors and reviewers because pull requests originating from any branch not called `main` (all of them) will not trigger the workflow.
   * There is one job, which is to build and run unit tests.
   * The first step of any job is usually to checkout the latest code in the repository. Otherwise, the fresh VM runner has an empty filesystem.
   * The first step of this job invokes `actions/checkout@v2`. These action coordinates indicate: invoke the Github Action kept in the repository https://www.github.com/actions/checkout, and use the state of that repository that the `v2` ref points to. Since `v2` is a git "ref", that means could be a git tag, a git branch name, or a git commit hash value.
     * The preferred convention by Github Actions is that action repository maintainers use `v1` and `v2` as tags that point to the commits that are tagged with the latest version within that major version. (Ex: `v1` points to `v1.2.3`, `v2` points to `v2.8.9.1`). However, be aware that not all actions adhere to this guideline, and instead only have `vX.Y.Z` tags without a `vX` tag to the latest `vX.*.*`. As an example, this problem was [observed and worked around in the `unicode-org/cldr` repo](https://github.com/unicode-org/cldr/pull/813).
-  * For this simplistic example, the way to improve it in order to allow a Pull Request to run the same checks after each new commit is pushed, in the same way that checks are run on merges to `master`, is to change `on.pull_request.branches` to [match all origin branch names](https://github.com/unicode-org/icu4x/commit/16ae4611738fbe94b36e17b77aee6cc541c0a171).
+  * For this simplistic example, the way to improve it in order to allow a Pull Request to run the same checks after each new commit is pushed, in the same way that checks are run on merges to `main`, is to change `on.pull_request.branches` to [match all origin branch names](https://github.com/unicode-org/icu4x/commit/16ae4611738fbe94b36e17b77aee6cc541c0a171).
 
 ## Testing a Workflow in unicode-org/icu4x
 
@@ -38,12 +38,12 @@ This means that most changes to a workflow can be tested in the PR that introduc
 
 ## Testing a Workflow in Your Forked Repo
 
-There might be reasons why you want or need to test changes to Github Actions on your personal fork. Less frequently, there might be specific changes that cannot be tested via a PR because they only happen on merges to the main branch `master`. For example, API docs changes and benchmark dashboard changes should only occur on merges to master. In this case, you can use your personal fork of the upstream repo as a testing ground. The naive approach is not recommended -- to directly modify your `master` branch -- because it requires awkwardly changing your git repo during and after testing in ways that are often confusing and opposite to "git-flow" habits. 
+There might be reasons why you want or need to test changes to Github Actions on your personal fork. Less frequently, there might be specific changes that cannot be tested via a PR because they only happen on merges to the main branch `main`. For example, API docs changes and benchmark dashboard changes should only occur on merges to main. In this case, you can use your personal fork of the upstream repo as a testing ground. The naive approach is not recommended -- to directly modify your `main` branch -- because it requires awkwardly changing your git repo during and after testing in ways that are often confusing and opposite to "git-flow" habits. 
 
 So here are steps to test Github Actions change on your personal fork, with links to an example:
 
 1. Create a new testing-only branch that tacks on [an extra commit to make testing-appropriate changes](https://github.com/echeran/icu4x/pull/22/commits/538176500f54594cffa1844c0244c7135ea24b84).
-2. Push the testing branch to the personal fork of `icu4x` and create a [testing PR targeting personal fork's master](https://github.com/echeran/icu4x/pull/22).
+2. Push the testing branch to the personal fork of `icu4x` and create a [testing PR targeting personal fork's main](https://github.com/echeran/icu4x/pull/22).
 3. [GitHub Actions will run a new job]((https://github.com/echeran/icu4x/actions/runs/539462550)) because the testing PR satisfies the execution trigger conditions.
 4. Optional extra step - merge the testing PR to get Github Actions [execute the job that copies GH pages over to the fork of the docs repo](https://github.com/echeran/icu4x/actions/runs/539466271).
 
@@ -52,7 +52,7 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
 ## Slightly Advanced Features Used in unicode-org repos
 
 * A "job matrix" allows you to run a collection of parameterized jobs, where you indicate which parts of the job configuration are the parameters (variables) and what values they are allowed to take. If the parameter is the OS of the VM, then you can run the same job on Linux, macOS, and Windows with little extra work
-  * The parameters are defined as fields under the `strategy.matrix.<param>` key within the job, and the range of allowed values are stored as arrays. The parameters are used (string interpolated) with `${{ matrix.<param> }}` syntax. [Example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L17-L21):
+  * The parameters are defined as fields under the `strategy.matrix.<param>` key within the job, and the range of allowed values are stored as arrays. The parameters are used (string interpolated) with `${{ matrix.<param> }}` syntax. [Example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L17-L21):
   ```yml
   jobs:
     test:
@@ -66,7 +66,7 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
       - ...
   ```
   Here, `os` is a parameter defined under `strategy.matrix.os` for the `test` job's job matrix. `os` takes on all values in the range defined by the array `[ ubuntu-latest, macos-latest, windows-latest ]`. Every time the `test` job is run, it is run 3 times, once per possible value.
-  * A job matrix can help decrease wall clock time for multiple independent long-running steps, like benchmarks. [Example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L115-L127):
+  * A job matrix can help decrease wall clock time for multiple independent long-running steps, like benchmarks. [Example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L115-L127):
   ```yml
   jobs:
     benchmark:
@@ -91,18 +91,18 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
   ```
   Here, `component` is a parameter defined under `strategy.matrix.component` for the `benchmark` job's job matrix. `component` takes on the values defined in the [YAML array](https://stackoverflow.com/a/33136212) `[ components/locid, components/uniset, components/plurals, components/datetime, utils/fixed_decimal]`
 * Conditional execution of steps and jobs - you can use the `if` key to control more granularly whether a step or job can run.
-  * In this [example](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `master`. However, when we look more granularly at the jobs within the workflow, some jobs, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute when they're fully finished, reviewed, and merged to `master`. We add the `if` key on the jobs to control the conditional execution in isolated instances that is more granular than the workflow-level triggers defined in the `on` key.
+  * In this [example](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L168), we want the workflow to trigger on all Pull Requests and successful merges to `main`. However, when we look more granularly at the jobs within the workflow, some jobs, like regenerating API docs or benchmark dashboards, make no sense on in-flight PRs and therefore should only execute when they're fully finished, reviewed, and merged to `main`. We add the `if` key on the jobs to control the conditional execution in isolated instances that is more granular than the workflow-level triggers defined in the `on` key.
 * "Uploading / downloading artifacts" is a mechanism that Github Actions provides to allow a persistence of files from one job to another within a single workflow. This can be useful since each job VM runner is created fresh, and inherits no previous state.
-  * [Example upload](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L213-L218):
+  * [Example upload](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L213-L218):
   ```
-      - name: Upload updated benchmark data (merge to master only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Upload updated benchmark data (merge to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
           path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
   ```
-  * [Example download](https://github.com/unicode-org/icu4x/blob/master/.github/workflows/build-test.yml#L246-L250):
+  * [Example download](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L246-L250):
   ```
     - name: Download previous content destined for GH pages
       uses: actions/download-artifact@v2

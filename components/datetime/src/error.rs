@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::pattern;
 use icu_provider::prelude::DataError;
 
@@ -14,6 +14,9 @@ pub enum DateTimeFormatError {
     Format(std::fmt::Error),
     /// An error originating inside of the DataProvider
     DataProvider(DataError),
+    /// Missing field in date time input
+    /// TODO: How can we return which field was missing?
+    MissingInputField,
 }
 
 impl From<DataError> for DateTimeFormatError {

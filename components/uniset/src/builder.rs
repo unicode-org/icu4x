@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use std::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
@@ -124,7 +124,7 @@ impl UnicodeSetBuilder {
     /// builder.add_range(&('A'..='Z'));
     /// let check = builder.build();
     /// assert_eq!(check.iter().next(), Some('A'));
-    /// ```  
+    /// ```
     pub fn add_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
         self.add(start, end);

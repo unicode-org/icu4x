@@ -1,10 +1,8 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::provider::*;
-use icu_locid::subtags;
 use icu_locid::LanguageIdentifier;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 
@@ -18,6 +16,18 @@ pub enum CanonicalizationResult {
 
 pub struct LocaleCanonicalizer<'a> {
     likely_subtags: Cow<'a, LikelySubtagsV1>,
+}
+
+fn update_langid(
+    entry: &LanguageIdentifier,
+    langid: &mut LanguageIdentifier,
+) -> CanonicalizationResult {
+    if langid.language.is_empty() {
+        langid.language = entry.language;
+    }
+    langid.script = langid.script.or(entry.script);
+    langid.region = langid.region.or(entry.region);
+    CanonicalizationResult::Modified
 }
 
 impl LocaleCanonicalizer<'_> {
@@ -64,87 +74,81 @@ impl LocaleCanonicalizer<'_> {
     /// assert_eq!(locale.to_string(), "en-Latn-DE");
     /// # } // feature = "provider_serde"
     /// ```
-    pub fn maximize(&self, locale: &mut Locale) -> CanonicalizationResult {
-        let mut key = LanguageIdentifier {
-            language: locale.language,
-            script: locale.script,
-            region: locale.region,
-            variants: subtags::Variants::default(),
-        };
+    pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
+        let langid = langid.as_mut();
 
-        let maybe_update_locale = |index: usize, locale: &mut Locale| -> CanonicalizationResult {
-            let entry = &self.likely_subtags.entries[index].1;
-            if locale.language.is_empty() || locale.script.is_none() || locale.region.is_none() {
-                if locale.language.is_empty() {
-                    locale.language = entry.language;
+        if !langid.language.is_empty() && langid.script.is_some() && langid.region.is_some() {
+            return CanonicalizationResult::Unmodified;
+        }
+
+        if !langid.language.is_empty() {
+            if langid.script.is_some() {
+                let key = (&langid.language, &langid.script);
+                if let Ok(index) = self
+                    .likely_subtags
+                    .language_script
+                    .binary_search_by_key(&key, |(l, _)| (&l.language, &l.script))
+                {
+                    let entry = &self.likely_subtags.language_script[index].1;
+                    return update_langid(entry, langid);
                 }
-                locale.script = locale.script.or(entry.script);
-                locale.region = locale.region.or(entry.region);
-                CanonicalizationResult::Modified
-            } else {
-                CanonicalizationResult::Unmodified
             }
-        };
 
-        // languages_scripts_regions
-        if locale.script.is_some() && locale.region.is_some() {
+            if langid.region.is_some() {
+                let key = (&langid.language, &langid.region);
+                if let Ok(index) = self
+                    .likely_subtags
+                    .language_region
+                    .binary_search_by_key(&key, |(l, _)| (&l.language, &l.region))
+                {
+                    let entry = &self.likely_subtags.language_region[index].1;
+                    return update_langid(entry, langid);
+                }
+            }
+
+            let key = &langid.language;
             if let Ok(index) = self
                 .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
+                .language
+                .binary_search_by_key(key, |(l, _)| l.language)
             {
-                return maybe_update_locale(index, locale);
+                let entry = &self.likely_subtags.language[index].1;
+                return update_langid(entry, langid);
             }
-        }
+        } else if langid.script.is_some() {
+            if langid.region.is_some() {
+                let key = (&langid.script, &langid.region);
+                if let Ok(index) = self
+                    .likely_subtags
+                    .script_region
+                    .binary_search_by_key(&key, |(l, _)| (&l.script, &l.region))
+                {
+                    let entry = &self.likely_subtags.script_region[index].1;
+                    return update_langid(entry, langid);
+                }
+            }
 
-        // languages_scripts
-        if locale.script.is_some() {
-            key.script = locale.script;
-            key.region = None;
+            let key = &langid.script;
             if let Ok(index) = self
                 .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
+                .script
+                .binary_search_by_key(&key, |(l, _)| &l.script)
             {
-                return maybe_update_locale(index, locale);
+                let entry = &self.likely_subtags.script[index].1;
+                return update_langid(entry, langid);
             }
-        }
-
-        // languages_regions
-        if locale.region.is_some() {
-            key.script = None;
+        } else if langid.region.is_some() {
+            let key = &langid.region;
             if let Ok(index) = self
                 .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
+                .region
+                .binary_search_by_key(&key, |(l, _)| &l.region)
             {
-                return maybe_update_locale(index, locale);
+                let entry = &self.likely_subtags.region[index].1;
+                return update_langid(entry, langid);
             }
-        }
-
-        // languages
-        key.script = None;
-        key.region = None;
-        if let Ok(index) = self
-            .likely_subtags
-            .entries
-            .binary_search_by_key(&&key, |(l, _)| l)
-        {
-            return maybe_update_locale(index, locale);
-        }
-
-        // und_scripts
-        if locale.script.is_some() {
-            key.language = subtags::Language::default();
-            key.script = locale.script;
-            key.region = None;
-            if let Ok(index) = self
-                .likely_subtags
-                .entries
-                .binary_search_by_key(&&key, |(l, _)| l)
-            {
-                return maybe_update_locale(index, locale);
-            }
+        } else {
+            return update_langid(&self.likely_subtags.und, langid);
         }
         CanonicalizationResult::Unmodified
     }
@@ -178,8 +182,10 @@ impl LocaleCanonicalizer<'_> {
     /// assert_eq!(locale.to_string(), "en");
     /// # } // feature = "provider_serde"
     /// ```
-    pub fn minimize(&self, locale: &mut Locale) -> CanonicalizationResult {
-        let mut max = locale.clone();
+    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
+        let langid = langid.as_mut();
+
+        let mut max = langid.clone();
         self.maximize(&mut max);
         max.variants.clear();
         let mut trial = max.clone();
@@ -188,9 +194,9 @@ impl LocaleCanonicalizer<'_> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if locale.script.is_some() || locale.script.is_some() {
-                locale.script = None;
-                locale.region = None;
+            if langid.script.is_some() || langid.script.is_some() {
+                langid.script = None;
+                langid.region = None;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
@@ -201,9 +207,9 @@ impl LocaleCanonicalizer<'_> {
         trial.region = max.region;
         self.maximize(&mut trial);
         if trial == max {
-            if locale.script.is_some() || locale.region != max.region {
-                locale.script = None;
-                locale.region = max.region;
+            if langid.script.is_some() || langid.region != max.region {
+                langid.script = None;
+                langid.region = max.region;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
@@ -214,18 +220,18 @@ impl LocaleCanonicalizer<'_> {
         trial.region = None;
         self.maximize(&mut trial);
         if trial == max {
-            if locale.script != max.script || locale.region.is_some() {
-                locale.script = max.script;
-                locale.region = None;
+            if langid.script != max.script || langid.region.is_some() {
+                langid.script = max.script;
+                langid.region = None;
                 return CanonicalizationResult::Modified;
             } else {
                 return CanonicalizationResult::Unmodified;
             }
         }
 
-        if locale.script != max.script || locale.region != max.region {
-            locale.script = max.script;
-            locale.region = max.region;
+        if langid.script != max.script || langid.region != max.region {
+            langid.script = max.script;
+            langid.region = max.region;
             CanonicalizationResult::Modified
         } else {
             CanonicalizationResult::Unmodified

@@ -1,13 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-use icu::datetime::{date::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
-use icu::locid::{macros::langid, LanguageIdentifier};
+use icu::datetime::{mock::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
+use icu::locid::{macros::langid, Locale};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu::uniset::UnicodeSetBuilder;
 use std::env;
@@ -23,10 +23,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let args: Vec<String> = env::args().collect();
 
-    let langid: LanguageIdentifier = args
+    let locale: Locale = args
         .get(1)
         .map(|s| s.parse().expect("Failed to parse language identifier"))
-        .unwrap_or(langid!("en"));
+        .unwrap_or_else(|| langid!("en").into());
 
     let user_name = args.get(2).cloned().unwrap_or_else(|| "John".to_string());
 
@@ -36,12 +36,12 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .parse()
         .expect("Could not parse unread email count as unsigned integer.");
 
-    print(format!("\nTextual User Interface Example ({})", langid));
+    print(format!("\nTextual User Interface Example ({})", locale));
     print("===================================");
     print(format!("User: {}", user_name));
 
     {
-        let dtf = DateTimeFormat::try_new(langid, &provider, &DateTimeFormatOptions::default())
+        let dtf = DateTimeFormat::try_new(locale, &provider, &DateTimeFormatOptions::default())
             .expect("Failed to create DateTimeFormat.");
         let today: MockDateTime = "2020-10-10T18:56:00".parse().expect("Failed to parse date");
 

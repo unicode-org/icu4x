@@ -1,6 +1,6 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
-# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 [package]
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
@@ -26,6 +26,7 @@ skip_optional_dependencies = true
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
+tinystr = { version = "0.4.1" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]

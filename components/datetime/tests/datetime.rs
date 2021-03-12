@@ -1,17 +1,17 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 #![cfg(all(not(feature = "serialize_none"), feature = "serde"))]
 
 mod fixtures;
 mod patterns;
 
-use icu_datetime::{date::MockDateTime, DateTimeFormatOptions};
+use icu_datetime::{mock::MockDateTime, DateTimeFormatOptions};
 use icu_datetime::{
     provider::{gregory::DatesV1, key::GREGORY_V1},
     DateTimeFormat,
 };
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::{
     struct_provider::StructProvider, DataProvider, DataRequest, ResourceOptions, ResourcePath,
 };
@@ -21,9 +21,9 @@ fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
 
     for fx in fixtures::get_fixture(fixture_name).unwrap().0 {
-        let langid = fx.input.locale.parse().unwrap();
+        let locale: Locale = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
-        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
         let value: MockDateTime = fx.input.value.parse().unwrap();
 

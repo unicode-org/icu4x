@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -30,18 +30,6 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
                 .join("likelySubtags.json");
             serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?
         };
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
-    }
-}
-
-impl<'d> TryFrom<&'d str> for LikelySubtagsProvider<'d> {
-    type Error = serde_json::error::Error;
-    /// Attempt to parse a JSON string.
-    fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = serde_json::from_str(s)?;
         Ok(Self {
             data,
             _phantom: PhantomData,
@@ -98,11 +86,80 @@ impl<'d> IterableDataProvider<'d> for LikelySubtagsProvider<'d> {
 
 impl From<&cldr_json::Resource> for LikelySubtagsV1 {
     fn from(other: &cldr_json::Resource) -> Self {
-        let mut entries = other.supplemental.likely_subtags.clone();
-        // We sort here because the ordering from sorting by LanguageIdentifier
-        // is not necessarily the order in the underlying CLDR data.
-        entries.sort_unstable();
-        Self { entries }
+        use icu_locid::LanguageIdentifier;
+
+        let mut language_script: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut language_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut language: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut script_region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut script: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut region: Vec<(LanguageIdentifier, LanguageIdentifier)> = Vec::new();
+        let mut und = LanguageIdentifier::default();
+
+        // Create a result LanguageIdentifier. We only need to store the delta
+        // between the search LanguageIdentifier and the result LanguageIdentifier.
+        let extract_result =
+            |entry: &(LanguageIdentifier, LanguageIdentifier)| -> LanguageIdentifier {
+                LanguageIdentifier {
+                    language: if entry.0.language != entry.1.language {
+                        entry.1.language
+                    } else {
+                        icu_locid::subtags::Language::und()
+                    },
+                    script: if entry.0.script != entry.1.script {
+                        entry.1.script
+                    } else {
+                        None
+                    },
+                    region: if entry.0.region != entry.1.region {
+                        entry.1.region
+                    } else {
+                        None
+                    },
+                    variants: icu_locid::subtags::Variants::default(),
+                }
+            };
+
+        for entry in other.supplemental.likely_subtags.iter() {
+            if !entry.0.language.is_empty() {
+                if entry.0.script.is_some() {
+                    language_script.push((entry.0.clone(), extract_result(entry)));
+                } else if entry.0.region.is_some() {
+                    language_region.push((entry.0.clone(), extract_result(entry)));
+                } else {
+                    language.push((entry.0.clone(), extract_result(entry)));
+                }
+            } else if entry.0.script.is_some() {
+                if entry.0.region.is_some() {
+                    script_region.push((entry.0.clone(), extract_result(entry)));
+                } else {
+                    script.push((entry.0.clone(), extract_result(entry)));
+                }
+            } else if entry.0.region.is_some() {
+                region.push((entry.0.clone(), extract_result(entry)));
+            } else {
+                und = entry.1.clone();
+            }
+        }
+
+        // We sort here to ensure that they are sorted properly by the subtags
+        // we will use to search the data. This is not necessary the order in
+        // the underlying CLDR data.
+        language_script.sort_unstable_by_key(|k| (k.0.language, k.0.script));
+        language_region.sort_unstable_by_key(|k| (k.0.language, k.0.region));
+        language.sort_unstable_by_key(|k| k.0.language);
+        script_region.sort_unstable_by_key(|k| (k.0.script, k.0.region));
+        script.sort_unstable_by_key(|k| k.0.script);
+        region.sort_unstable_by_key(|k| k.0.script);
+        Self {
+            language_script,
+            language_region,
+            language,
+            script_region,
+            script,
+            region,
+            und,
+        }
     }
 }
 
@@ -128,8 +185,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/likelySubtags.json").unwrap();
-    let provider = LikelySubtagsProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
     let result: Cow<LikelySubtagsV1> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
@@ -138,8 +195,12 @@ fn test_basic() {
 
     let langid = langid!("cu-Glag");
     let entry = result
-        .entries
-        .binary_search_by_key(&&langid, |(l, _)| l)
+        .language_script
+        .binary_search_by_key(&(langid.language, langid.script), |(l, _)| {
+            (l.language, l.script)
+        })
         .unwrap();
-    assert_eq!(result.entries[entry].1, "cu-Glag-BG");
+    assert!(result.language_script[entry].1.language.is_empty());
+    assert!(result.language_script[entry].1.script.is_none());
+    assert_eq!(result.language_script[entry].1.region.unwrap(), "BG");
 }
