@@ -58,7 +58,7 @@ pub mod numbers_json {
                 // Key is of the form: "symbols-numberSystem-latn"
                 let mut key_it = key.split('-');
                 let stype = key_it.next();
-                let numsys: Option<Result<TinyStr8, M::Error>> = key_it.nth(2).map(|s| {
+                let numsys: Option<Result<TinyStr8, M::Error>> = key_it.nth(1).map(|s| {
                     s.parse().map_err(|_| {
                         M::Error::invalid_value(
                             Unexpected::Str(&key),

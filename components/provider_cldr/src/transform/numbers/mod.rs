@@ -132,22 +132,19 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
 
 #[test]
 fn test_basic() {
-    // use icu_locid_macros::langid;
-    // use std::borrow::Cow;
+    use icu_locid_macros::langid;
+    use std::borrow::Cow;
 
-    // let json_str = std::fs::read_to_string("tests/testdata/my-numbers.json").unwrap();
-    /*
-    let provider = NumbersProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    println!("{:?}", provider);
-
-    let my_decimal: Cow<DecimalSymbolsV1> = provider
+    let ar_decimal: Cow<DecimalSymbolsV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::SYMBOLS_V1,
                 options: ResourceOptions {
                     variant: None,
-                    langid: Some(langid!("my")),
+                    langid: Some(langid!("ar")),
                 },
             },
         })
@@ -155,15 +152,5 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    println!("{:?}", my_decimal);
-
-    assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
-
-    assert_eq!(
-        "po",
-        cs_dates.symbols.weekdays.format.short.as_ref().unwrap().0[1]
-    );
-
-    assert_eq!("d. M. y", cs_dates.patterns.date.medium);
-    */
+    assert_eq!(ar_decimal.decimal_separator, "٫");
 }
