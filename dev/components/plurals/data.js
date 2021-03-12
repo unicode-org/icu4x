@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1614959204396,
+  "lastUpdate": 1615583284337,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3863,6 +3863,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 115171,
             "range": "± 5939",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c5104b3ab7cce22e11a71f9797d1dbaff9b40f2c",
+          "message": "Small quality-of-life fixes (#543)",
+          "timestamp": "2021-03-12T15:01:43-06:00",
+          "tree_id": "01203783bcee98b2dc8dd6e86af26e01f3a2da42",
+          "url": "https://github.com/unicode-org/icu4x/commit/c5104b3ab7cce22e11a71f9797d1dbaff9b40f2c"
+        },
+        "date": 1615583283686,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1295,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6192,
+            "range": "± 367",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 87417,
+            "range": "± 4233",
             "unit": "ns/iter"
           }
         ]
