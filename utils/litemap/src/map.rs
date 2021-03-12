@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Borrow;
 use std::mem;
 use std::ops::{Index, IndexMut};
+use std::{borrow::Borrow, iter::FromIterator};
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -126,6 +126,8 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// `key` and `value` _if it failed_. Useful for extending with an existing
     /// sorted list.
     ///
+    /// If the last key in the vector is equal to appended key, the key's value
+    /// will be overwritten with the appended value.
     /// ```rust
     /// use litemap::LiteMap;
     ///
@@ -143,6 +145,9 @@ impl<K: Ord, V> LiteMap<K, V> {
         if let Some(ref last) = self.values.last() {
             if last.0 > key {
                 return Some((key, value));
+            }
+            if last.0 == key {
+                self.values.pop();
             }
         }
 
@@ -192,6 +197,35 @@ impl<K: Ord, V> LiteMap<K, V> {
             Err(_) => None,
         }
     }
+
+    /// Extend the map's underlying vector  from the iterator as long as appended
+    /// items remain in sorted order.
+    fn extend_from_sorted_iter<I, E>(mut self, iter: I) -> Result<Self, (Self, E)>
+    where
+        I: IntoIterator<Item = (K, V)> + IntoIterator<IntoIter = E>,
+        E: Iterator<Item = (K, V)>,
+    {
+        let mut iter = iter.into_iter();
+        while let Some((k, v)) = iter.next() {
+            if let Some((k, v)) = self.try_append(k, v) {
+                self.insert(k, v);
+                return Err((self, iter));
+            }
+        }
+        Ok(self)
+    }
+
+    /// Extend the map's underlying vector with the items in the iterator,
+    /// Inserting the new items into the correct places as ncessary.
+    fn extend_from_unsorted_iter<I>(mut self, iter: I) -> Self
+    where
+        I: IntoIterator<Item = (K, V)>,
+    {
+        for (key, value) in iter {
+            self.insert(key, value);
+        }
+        self
+    }
 }
 
 impl<K, V> Default for LiteMap<K, V> {
@@ -208,6 +242,19 @@ impl<K: Ord, V> Index<&'_ K> for LiteMap<K, V> {
 impl<K: Ord, V> IndexMut<&'_ K> for LiteMap<K, V> {
     fn index_mut(&mut self, key: &K) -> &mut V {
         self.get_mut(key).expect("LiteMap could not find key")
+    }
+}
+impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
+    fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let iter = iter.into_iter();
+        let map = match iter.size_hint() {
+            (lower, None) => LiteMap::with_capacity(lower),
+            (_, Some(upper)) => LiteMap::with_capacity(upper),
+        };
+        match map.extend_from_sorted_iter(iter) {
+            Ok(map) => map,
+            Err((map, rest)) => map.extend_from_unsorted_iter(rest),
+        }
     }
 }
 
