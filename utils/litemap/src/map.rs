@@ -203,7 +203,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     ///
     /// If successful, return the map with the appended items.
     /// Otherwise return the map and the rest of the unsorted items.
-    fn extend_from_sorted_iter<I, E>(mut self, iter: I) -> Result<Self, (Self, E)>
+    fn extend_from_sorted<I, E>(mut self, iter: I) -> Result<Self, (Self, E)>
     where
         I: IntoIterator<Item = (K, V)> + IntoIterator<IntoIter = E>,
         E: Iterator<Item = (K, V)>,
@@ -220,7 +220,7 @@ impl<K: Ord, V> LiteMap<K, V> {
 
     /// Extend the map's underlying vector with the items in the iterator,
     /// Inserting the new items into the correct places as ncessary.
-    fn extend_from_unsorted_iter<I>(mut self, iter: I) -> Self
+    fn extend_from_unsorted<I>(mut self, iter: I) -> Self
     where
         I: IntoIterator<Item = (K, V)>,
     {
@@ -254,9 +254,9 @@ impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
             (_, Some(upper)) => LiteMap::with_capacity(upper),
             (lower, None) => LiteMap::with_capacity(lower),
         };
-        match map.extend_from_sorted_iter(iter) {
+        match map.extend_from_sorted(iter) {
             Ok(map) => map,
-            Err((map, rest)) => map.extend_from_unsorted_iter(rest),
+            Err((map, rest)) => map.extend_from_unsorted(rest),
         }
     }
 }
