@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1615583284337,
+  "lastUpdate": 1615584374044,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3905,6 +3905,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 87417,
             "range": "± 4233",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4a8e4a68a1e9c3b3b0517068bd46707f410bf2e",
+          "message": "Pin the nightly version in CI (#526)",
+          "timestamp": "2021-03-12T15:19:41-06:00",
+          "tree_id": "d6e37aaaa114fcc11a47423215a3457177fa66bb",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4a8e4a68a1e9c3b3b0517068bd46707f410bf2e"
+        },
+        "date": 1615584371565,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1648,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7770,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111538,
+            "range": "± 1156",
             "unit": "ns/iter"
           }
         ]
