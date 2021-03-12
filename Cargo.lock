@@ -980,6 +980,7 @@ dependencies = [
  "icu_provider",
  "litemap",
  "serde",
+ "tinystr",
 ]
 
 [[package]]

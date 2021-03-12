@@ -4,6 +4,8 @@
 
 use crate::enum_props::*;
 use litemap::LiteMap;
+use std::str::FromStr;
+use tinystr::TinyStr16;
 
 //
 // Single getter function for enumerated property name:
@@ -821,10 +823,14 @@ fn get_prop_name_val_as_i32(prop_name: &str, prop_val: &str) -> Option<(i32, i32
     }
 }
 
-pub fn get_prop_name_identifier(prop_name: &str, prop_val: &str) -> Option<String> {
+pub fn get_prop_name_identifier(prop_name: &str, prop_val: &str) -> Option<TinyStr16> {
     let name_val_i32_opt = get_prop_name_val_as_i32(prop_name, prop_val);
-    match name_val_i32_opt {
+    let name_val_string_opt = match name_val_i32_opt {
         Some((name_i32, val_i32)) => Some(format!("{}={}", name_i32, val_i32)),
+        _ => None,
+    };
+    match name_val_string_opt {
+        Some(id_str) => TinyStr16::from_str(&id_str).ok(),
         _ => None,
     }
 }
@@ -866,11 +872,11 @@ mod enum_tests {
     fn get_prop_name_identifier_test() {
         assert_eq!(
             get_prop_name_identifier("lb", "LF"),
-            Some("12=26".to_string())
+            TinyStr16::from_str("12=26").ok()
         );
         assert_eq!(
             get_prop_name_identifier("ccc", "230"),
-            Some("2=230".to_string())
+            TinyStr16::from_str("2=230").ok()
         );
     }
 }

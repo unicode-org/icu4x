@@ -25,6 +25,7 @@ skip_optional_dependencies = true
 icu_provider = { version = "0.1", path = "../provider" }
 litemap = { version = "0.1", path = "../../utils/litemap" }
 serde = { version = "1.0", features = ["derive"], optional = true }
+tinystr = "0.4"
 
 [dev-dependencies]
 criterion = "0.3.3"
