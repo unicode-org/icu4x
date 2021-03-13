@@ -125,9 +125,6 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Appends `value` with `key` to the end of the underlying vector, returning
     /// `key` and `value` _if it failed_. Useful for extending with an existing
     /// sorted list.
-    ///
-    /// If the last key in the vector is equal to appended key, the key's value
-    /// will be overwritten with the appended value.
     /// ```rust
     /// use litemap::LiteMap;
     ///
