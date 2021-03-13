@@ -143,11 +143,8 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// ```
     pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
         if let Some(ref last) = self.values.last() {
-            if last.0 > key {
+            if last.0 >= key {
                 return Some((key, value));
-            }
-            if last.0 == key {
-                self.values.pop();
             }
         }
 
