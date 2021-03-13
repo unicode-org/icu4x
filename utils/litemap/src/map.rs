@@ -4,7 +4,7 @@
 
 use std::ops::{Index, IndexMut};
 use std::{borrow::Borrow, iter::FromIterator};
-use std::{iter::Peekable, mem};
+use std::mem;
 
 /// A simple "flat" map based on a sorted vector
 ///
