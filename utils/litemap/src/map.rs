@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::mem;
 use std::ops::{Index, IndexMut};
 use std::{borrow::Borrow, iter::FromIterator};
+use std::{iter::Peekable, mem};
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -201,33 +201,52 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Extend the map's underlying vector with the items in the iterator as long as
     /// the appended keys remain in sorted order with the vector's existing keys.
     ///
-    /// If successful, return the map containing the appended items.
-    /// Otherwise return the map and the rest of the unsorted items.
-    fn try_extend_from_sorted<I, E>(mut self, iter: I) -> Result<Self, (Self, E)>
+    /// If all items were appended successfully, return `None`.
+    /// Otherwise, return an `Some` iterator over the rest of the unsorted items.
+    ///```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// let iter = [(2, "two"), (1, "one"), (3, "three")].iter().cloned();
+    /// let option = map.try_extend_from_sorted(iter);
+    ///
+    /// assert_eq!(map.get(&2), Some(&"two"));
+    /// assert_eq!(map.get(&1), None);
+    /// assert_eq!(option.unwrap().next(), Some((1, "one")));
+    ///```
+    pub fn try_extend_from_sorted<I>(&mut self, iter: I) -> Option<impl Iterator<Item = (K, V)>>
     where
-        I: IntoIterator<Item = (K, V)> + IntoIterator<IntoIter = E>,
-        E: Iterator<Item = (K, V)>,
+        I: IntoIterator<Item = (K, V)>,
     {
         let mut iter = iter.into_iter();
         while let Some((k, v)) = iter.next() {
             if let Some((k, v)) = self.try_append(k, v) {
-                self.insert(k, v);
-                return Err((self, iter));
+                return Some(std::iter::once((k, v)).chain(iter));
             }
         }
-        Ok(self)
+        None
     }
 
     /// Extend the map's underlying vector with the items in the iterator,
     /// Inserting the new items into the correct places as ncessary.
-    fn extend_from_unsorted<I>(mut self, iter: I) -> Self
+    ///```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new();
+    /// let iter = [(2, "two"), (1, "one"), (3, "three")].iter().cloned();
+    /// map.extend_from_unsorted(iter);
+    ///
+    /// assert_eq!(map.get(&2), Some(&"two"));
+    /// assert_eq!(map.get(&1), Some(&"one"));
+    /// assert_eq!(map.get(&3), Some(&"three"));
+    ///```
+    pub fn extend_from_unsorted<I>(&mut self, iter: I)
     where
         I: IntoIterator<Item = (K, V)>,
     {
         for (key, value) in iter {
             self.insert(key, value);
         }
-        self
     }
 }
 
@@ -250,14 +269,14 @@ impl<K: Ord, V> IndexMut<&'_ K> for LiteMap<K, V> {
 impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
         let iter = iter.into_iter();
-        let map = match iter.size_hint() {
+        let mut map = match iter.size_hint() {
             (_, Some(upper)) => LiteMap::with_capacity(upper),
             (lower, None) => LiteMap::with_capacity(lower),
         };
-        match map.try_extend_from_sorted(iter) {
-            Ok(map) => map,
-            Err((map, rest)) => map.extend_from_unsorted(rest),
+        if let Some(iter) = map.try_extend_from_sorted(iter) {
+            map.extend_from_unsorted(iter);
         }
+        map
     }
 }
 
