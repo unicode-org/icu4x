@@ -141,6 +141,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// // not appended since it wasn't in order
     /// assert_eq!(map.get(&2), None);
     /// ```
+    #[must_use]
     pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
         if let Some(ref last) = self.values.last() {
             if last.0 >= key {
@@ -212,6 +213,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert_eq!(map.get(&1), None);
     /// assert_eq!(option.unwrap().next(), Some((1, "one")));
     ///```
+    #[must_use]
     pub fn try_extend_from_sorted<I>(&mut self, iter: I) -> Option<impl Iterator<Item = (K, V)>>
     where
         I: IntoIterator<Item = (K, V)>,
