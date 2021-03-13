@@ -4,7 +4,7 @@
 
 use std::ops::{Index, IndexMut};
 use std::{borrow::Borrow, iter::FromIterator};
-use std::{iter::Peekable, mem};
+use std::mem;
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -207,10 +207,11 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// use litemap::LiteMap;
     ///
     /// let mut map = LiteMap::new();
-    /// let iter = [(2, "two"), (1, "one"), (3, "three")].iter().cloned();
+    /// let iter = [(2, "two"), (3, "three"), (1, "one")].iter().cloned();
     /// let option = map.try_extend_from_sorted(iter);
     ///
     /// assert_eq!(map.get(&2), Some(&"two"));
+    /// assert_eq!(map.get(&3), Some(&"three"));
     /// assert_eq!(map.get(&1), None);
     /// assert_eq!(option.unwrap().next(), Some((1, "one")));
     ///```
