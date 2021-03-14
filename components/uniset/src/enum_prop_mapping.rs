@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
 use crate::enum_props::*;
-use litemap::LiteMap;
 use std::str::FromStr;
 use tinystr::TinyStr16;
 
@@ -13,31 +12,32 @@ use tinystr::TinyStr16;
 //
 
 fn get_enum_property_enum(name: &str) -> Option<EnumeratedProperty> {
-    let mut m: LiteMap<&str, EnumeratedProperty> = LiteMap::new();
-    m.insert("bc", EnumeratedProperty::BidiClass);
-    m.insert("bpt", EnumeratedProperty::BidiPairedBracketType);
-    m.insert("ccc", EnumeratedProperty::CanonicalCombiningClass);
-    m.insert("dt", EnumeratedProperty::DecompositionType);
-    m.insert("ea", EnumeratedProperty::EastAsianWidth);
-    m.insert("gc", EnumeratedProperty::GeneralCategory);
-    m.insert("GCB", EnumeratedProperty::GraphemeClusterBreak);
-    m.insert("hst", EnumeratedProperty::HangulSyllableType);
-    m.insert("InPC", EnumeratedProperty::IndicPositionalCategory);
-    m.insert("InSC", EnumeratedProperty::IndicSyllabicCategory);
-    m.insert("jg", EnumeratedProperty::JoiningGroup);
-    m.insert("jt", EnumeratedProperty::JoiningType);
-    m.insert("lb", EnumeratedProperty::LineBreak);
-    m.insert("lccc", EnumeratedProperty::LeadCanonicalCombiningClass);
-    m.insert("NFC_QC", EnumeratedProperty::NFCQuickCheck);
-    m.insert("NFD_QC", EnumeratedProperty::NFDQuickCheck);
-    m.insert("NFKC_QC", EnumeratedProperty::NFKCQuickCheck);
-    m.insert("NFKD_QC", EnumeratedProperty::NFKDQuickCheck);
-    m.insert("nt", EnumeratedProperty::NumericType);
-    m.insert("SB", EnumeratedProperty::SentenceBreak);
-    m.insert("tccc", EnumeratedProperty::TrailCanonicalCombiningClass);
-    m.insert("vo", EnumeratedProperty::VerticalOrientation);
-    m.insert("WB", EnumeratedProperty::WordBreak);
-    m.get(name).cloned()
+    match name {
+        "bc" => Some(EnumeratedProperty::BidiClass),
+        "bpt" => Some(EnumeratedProperty::BidiPairedBracketType),
+        "ccc" => Some(EnumeratedProperty::CanonicalCombiningClass),
+        "dt" => Some(EnumeratedProperty::DecompositionType),
+        "ea" => Some(EnumeratedProperty::EastAsianWidth),
+        "gc" => Some(EnumeratedProperty::GeneralCategory),
+        "GCB" => Some(EnumeratedProperty::GraphemeClusterBreak),
+        "hst" => Some(EnumeratedProperty::HangulSyllableType),
+        "InPC" => Some(EnumeratedProperty::IndicPositionalCategory),
+        "InSC" => Some(EnumeratedProperty::IndicSyllabicCategory),
+        "jg" => Some(EnumeratedProperty::JoiningGroup),
+        "jt" => Some(EnumeratedProperty::JoiningType),
+        "lb" => Some(EnumeratedProperty::LineBreak),
+        "lccc" => Some(EnumeratedProperty::LeadCanonicalCombiningClass),
+        "NFC_QC" => Some(EnumeratedProperty::NFCQuickCheck),
+        "NFD_QC" => Some(EnumeratedProperty::NFDQuickCheck),
+        "NFKC_QC" => Some(EnumeratedProperty::NFKCQuickCheck),
+        "NFKD_QC" => Some(EnumeratedProperty::NFKDQuickCheck),
+        "nt" => Some(EnumeratedProperty::NumericType),
+        "SB" => Some(EnumeratedProperty::SentenceBreak),
+        "tccc" => Some(EnumeratedProperty::TrailCanonicalCombiningClass),
+        "vo" => Some(EnumeratedProperty::VerticalOrientation),
+        "WB" => Some(EnumeratedProperty::WordBreak),
+        _ => None,
+    }
 }
 
 //
@@ -46,706 +46,686 @@ fn get_enum_property_enum(name: &str) -> Option<EnumeratedProperty> {
 //
 
 fn get_bidi_class_enum(name: &str) -> Option<BidiClass> {
-    let mut m: LiteMap<&str, BidiClass> = LiteMap::new();
-    m.insert("AL", BidiClass::ArabicLetter);
-    m.insert("AN", BidiClass::ArabicNumber);
-    m.insert("B", BidiClass::ParagraphSeparator);
-    m.insert("BN", BidiClass::BoundaryNeutral);
-    m.insert("CS", BidiClass::CommonSeparator);
-    m.insert("EN", BidiClass::EuropeanNumber);
-    m.insert("ES", BidiClass::EuropeanSeparator);
-    m.insert("ET", BidiClass::EuropeanTerminator);
-    m.insert("FSI", BidiClass::FirstStrongIsolate);
-    m.insert("L", BidiClass::LeftToRight);
-    m.insert("LRE", BidiClass::LeftToRightEmbedding);
-    m.insert("LRI", BidiClass::LeftToRightIsolate);
-    m.insert("LRO", BidiClass::LeftToRightOverride);
-    m.insert("NSM", BidiClass::NonspacingMark);
-    m.insert("ON", BidiClass::OtherNeutral);
-    m.insert("PDF", BidiClass::PopDirectionalFormat);
-    m.insert("PDI", BidiClass::PopDirectionalIsolate);
-    m.insert("R", BidiClass::RightToLeft);
-    m.insert("RLE", BidiClass::RightToLeftEmbedding);
-    m.insert("RLI", BidiClass::RightToLeftIsolate);
-    m.insert("RLO", BidiClass::RightToLeftOverride);
-    m.insert("S", BidiClass::SegmentSeparator);
-    m.insert("WS", BidiClass::WhiteSpace);
-    m.get(name).cloned()
+    match name {
+        "AL" => Some(BidiClass::ArabicLetter),
+        "AN" => Some(BidiClass::ArabicNumber),
+        "B" => Some(BidiClass::ParagraphSeparator),
+        "BN" => Some(BidiClass::BoundaryNeutral),
+        "CS" => Some(BidiClass::CommonSeparator),
+        "EN" => Some(BidiClass::EuropeanNumber),
+        "ES" => Some(BidiClass::EuropeanSeparator),
+        "ET" => Some(BidiClass::EuropeanTerminator),
+        "FSI" => Some(BidiClass::FirstStrongIsolate),
+        "L" => Some(BidiClass::LeftToRight),
+        "LRE" => Some(BidiClass::LeftToRightEmbedding),
+        "LRI" => Some(BidiClass::LeftToRightIsolate),
+        "LRO" => Some(BidiClass::LeftToRightOverride),
+        "NSM" => Some(BidiClass::NonspacingMark),
+        "ON" => Some(BidiClass::OtherNeutral),
+        "PDF" => Some(BidiClass::PopDirectionalFormat),
+        "PDI" => Some(BidiClass::PopDirectionalIsolate),
+        "R" => Some(BidiClass::RightToLeft),
+        "RLE" => Some(BidiClass::RightToLeftEmbedding),
+        "RLI" => Some(BidiClass::RightToLeftIsolate),
+        "RLO" => Some(BidiClass::RightToLeftOverride),
+        "S" => Some(BidiClass::SegmentSeparator),
+        "WS" => Some(BidiClass::WhiteSpace),
+        _ => None,
+    }
 }
 
 fn get_bidi_paired_bracket_type_enum(name: &str) -> Option<BidiPairedBracketType> {
-    let mut m: LiteMap<&str, BidiPairedBracketType> = LiteMap::new();
-    m.insert("c", BidiPairedBracketType::Close);
-    m.insert("n", BidiPairedBracketType::None);
-    m.insert("o", BidiPairedBracketType::Open);
-    m.get(name).cloned()
+    match name {
+        "c" => Some(BidiPairedBracketType::Close),
+        "n" => Some(BidiPairedBracketType::None),
+        "o" => Some(BidiPairedBracketType::Open),
+        _ => None,
+    }
 }
 
 fn get_canonical_combining_class_enum(name: &str) -> Option<CanonicalCombiningClass> {
-    let mut m: LiteMap<&str, CanonicalCombiningClass> = LiteMap::new();
-    m.insert("0", CanonicalCombiningClass::NotReordered);
-    m.insert("1", CanonicalCombiningClass::Overlay);
-    m.insert("10", CanonicalCombiningClass::CCC10);
-    m.insert("103", CanonicalCombiningClass::CCC103);
-    m.insert("107", CanonicalCombiningClass::CCC107);
-    m.insert("11", CanonicalCombiningClass::CCC11);
-    m.insert("118", CanonicalCombiningClass::CCC118);
-    m.insert("12", CanonicalCombiningClass::CCC12);
-    m.insert("122", CanonicalCombiningClass::CCC122);
-    m.insert("129", CanonicalCombiningClass::CCC129);
-    m.insert("13", CanonicalCombiningClass::CCC13);
-    m.insert("130", CanonicalCombiningClass::CCC130);
-    m.insert("132", CanonicalCombiningClass::CCC132);
-    m.insert("133", CanonicalCombiningClass::CCC133);
-    m.insert("14", CanonicalCombiningClass::CCC14);
-    m.insert("15", CanonicalCombiningClass::CCC15);
-    m.insert("16", CanonicalCombiningClass::CCC16);
-    m.insert("17", CanonicalCombiningClass::CCC17);
-    m.insert("18", CanonicalCombiningClass::CCC18);
-    m.insert("19", CanonicalCombiningClass::CCC19);
-    m.insert("20", CanonicalCombiningClass::CCC20);
-    m.insert("200", CanonicalCombiningClass::AttachedBelowLeft);
-    m.insert("202", CanonicalCombiningClass::AttachedBelow);
-    m.insert("21", CanonicalCombiningClass::CCC21);
-    m.insert("214", CanonicalCombiningClass::AttachedAbove);
-    m.insert("216", CanonicalCombiningClass::AttachedAboveRight);
-    m.insert("218", CanonicalCombiningClass::BelowLeft);
-    m.insert("22", CanonicalCombiningClass::CCC22);
-    m.insert("220", CanonicalCombiningClass::Below);
-    m.insert("222", CanonicalCombiningClass::BelowRight);
-    m.insert("224", CanonicalCombiningClass::Left);
-    m.insert("226", CanonicalCombiningClass::Right);
-    m.insert("228", CanonicalCombiningClass::AboveLeft);
-    m.insert("23", CanonicalCombiningClass::CCC23);
-    m.insert("230", CanonicalCombiningClass::Above);
-    m.insert("232", CanonicalCombiningClass::AboveRight);
-    m.insert("233", CanonicalCombiningClass::DoubleBelow);
-    m.insert("234", CanonicalCombiningClass::DoubleAbove);
-    m.insert("24", CanonicalCombiningClass::CCC24);
-    m.insert("240", CanonicalCombiningClass::IotaSubscript);
-    m.insert("25", CanonicalCombiningClass::CCC25);
-    m.insert("26", CanonicalCombiningClass::CCC26);
-    m.insert("27", CanonicalCombiningClass::CCC27);
-    m.insert("28", CanonicalCombiningClass::CCC28);
-    m.insert("29", CanonicalCombiningClass::CCC29);
-    m.insert("30", CanonicalCombiningClass::CCC30);
-    m.insert("31", CanonicalCombiningClass::CCC31);
-    m.insert("32", CanonicalCombiningClass::CCC32);
-    m.insert("33", CanonicalCombiningClass::CCC33);
-    m.insert("34", CanonicalCombiningClass::CCC34);
-    m.insert("35", CanonicalCombiningClass::CCC35);
-    m.insert("36", CanonicalCombiningClass::CCC36);
-    m.insert("6", CanonicalCombiningClass::HanReading);
-    m.insert("7", CanonicalCombiningClass::Nukta);
-    m.insert("8", CanonicalCombiningClass::KanaVoicing);
-    m.insert("84", CanonicalCombiningClass::CCC84);
-    m.insert("9", CanonicalCombiningClass::Virama);
-    m.insert("91", CanonicalCombiningClass::CCC91);
-    m.get(name).cloned()
+    match name {
+        "0" => Some(CanonicalCombiningClass::NotReordered),
+        "1" => Some(CanonicalCombiningClass::Overlay),
+        "10" => Some(CanonicalCombiningClass::CCC10),
+        "103" => Some(CanonicalCombiningClass::CCC103),
+        "107" => Some(CanonicalCombiningClass::CCC107),
+        "11" => Some(CanonicalCombiningClass::CCC11),
+        "118" => Some(CanonicalCombiningClass::CCC118),
+        "12" => Some(CanonicalCombiningClass::CCC12),
+        "122" => Some(CanonicalCombiningClass::CCC122),
+        "129" => Some(CanonicalCombiningClass::CCC129),
+        "13" => Some(CanonicalCombiningClass::CCC13),
+        "130" => Some(CanonicalCombiningClass::CCC130),
+        "132" => Some(CanonicalCombiningClass::CCC132),
+        "133" => Some(CanonicalCombiningClass::CCC133),
+        "14" => Some(CanonicalCombiningClass::CCC14),
+        "15" => Some(CanonicalCombiningClass::CCC15),
+        "16" => Some(CanonicalCombiningClass::CCC16),
+        "17" => Some(CanonicalCombiningClass::CCC17),
+        "18" => Some(CanonicalCombiningClass::CCC18),
+        "19" => Some(CanonicalCombiningClass::CCC19),
+        "20" => Some(CanonicalCombiningClass::CCC20),
+        "200" => Some(CanonicalCombiningClass::AttachedBelowLeft),
+        "202" => Some(CanonicalCombiningClass::AttachedBelow),
+        "21" => Some(CanonicalCombiningClass::CCC21),
+        "214" => Some(CanonicalCombiningClass::AttachedAbove),
+        "216" => Some(CanonicalCombiningClass::AttachedAboveRight),
+        "218" => Some(CanonicalCombiningClass::BelowLeft),
+        "22" => Some(CanonicalCombiningClass::CCC22),
+        "220" => Some(CanonicalCombiningClass::Below),
+        "222" => Some(CanonicalCombiningClass::BelowRight),
+        "224" => Some(CanonicalCombiningClass::Left),
+        "226" => Some(CanonicalCombiningClass::Right),
+        "228" => Some(CanonicalCombiningClass::AboveLeft),
+        "23" => Some(CanonicalCombiningClass::CCC23),
+        "230" => Some(CanonicalCombiningClass::Above),
+        "232" => Some(CanonicalCombiningClass::AboveRight),
+        "233" => Some(CanonicalCombiningClass::DoubleBelow),
+        "234" => Some(CanonicalCombiningClass::DoubleAbove),
+        "24" => Some(CanonicalCombiningClass::CCC24),
+        "240" => Some(CanonicalCombiningClass::IotaSubscript),
+        "25" => Some(CanonicalCombiningClass::CCC25),
+        "26" => Some(CanonicalCombiningClass::CCC26),
+        "27" => Some(CanonicalCombiningClass::CCC27),
+        "28" => Some(CanonicalCombiningClass::CCC28),
+        "29" => Some(CanonicalCombiningClass::CCC29),
+        "30" => Some(CanonicalCombiningClass::CCC30),
+        "31" => Some(CanonicalCombiningClass::CCC31),
+        "32" => Some(CanonicalCombiningClass::CCC32),
+        "33" => Some(CanonicalCombiningClass::CCC33),
+        "34" => Some(CanonicalCombiningClass::CCC34),
+        "35" => Some(CanonicalCombiningClass::CCC35),
+        "36" => Some(CanonicalCombiningClass::CCC36),
+        "6" => Some(CanonicalCombiningClass::HanReading),
+        "7" => Some(CanonicalCombiningClass::Nukta),
+        "8" => Some(CanonicalCombiningClass::KanaVoicing),
+        "84" => Some(CanonicalCombiningClass::CCC84),
+        "9" => Some(CanonicalCombiningClass::Virama),
+        "91" => Some(CanonicalCombiningClass::CCC91),
+        _ => None,
+    }
 }
 
 fn get_decomposition_type_enum(name: &str) -> Option<DecompositionType> {
-    let mut m: LiteMap<&str, DecompositionType> = LiteMap::new();
-    m.insert("Can", DecompositionType::Can);
-    m.insert("Com", DecompositionType::Com);
-    m.insert("Enc", DecompositionType::Enc);
-    m.insert("Fin", DecompositionType::Fin);
-    m.insert("Font", DecompositionType::Font);
-    m.insert("Fra", DecompositionType::Fra);
-    m.insert("Init", DecompositionType::Init);
-    m.insert("Iso", DecompositionType::Iso);
-    m.insert("Med", DecompositionType::Med);
-    m.insert("Nar", DecompositionType::Nar);
-    m.insert("Nb", DecompositionType::Nb);
-    m.insert("None", DecompositionType::None);
-    m.insert("Sml", DecompositionType::Sml);
-    m.insert("Sqr", DecompositionType::Sqr);
-    m.insert("Sub", DecompositionType::Sub);
-    m.insert("Sup", DecompositionType::Sup);
-    m.insert("Vert", DecompositionType::Vert);
-    m.insert("Wide", DecompositionType::Wide);
-    m.get(name).cloned()
+    match name {
+        "Can" => Some(DecompositionType::Can),
+        "Com" => Some(DecompositionType::Com),
+        "Enc" => Some(DecompositionType::Enc),
+        "Fin" => Some(DecompositionType::Fin),
+        "Font" => Some(DecompositionType::Font),
+        "Fra" => Some(DecompositionType::Fra),
+        "Init" => Some(DecompositionType::Init),
+        "Iso" => Some(DecompositionType::Iso),
+        "Med" => Some(DecompositionType::Med),
+        "Nar" => Some(DecompositionType::Nar),
+        "Nb" => Some(DecompositionType::Nb),
+        "None" => Some(DecompositionType::None),
+        "Sml" => Some(DecompositionType::Sml),
+        "Sqr" => Some(DecompositionType::Sqr),
+        "Sub" => Some(DecompositionType::Sub),
+        "Sup" => Some(DecompositionType::Sup),
+        "Vert" => Some(DecompositionType::Vert),
+        "Wide" => Some(DecompositionType::Wide),
+        _ => None,
+    }
 }
 
 fn get_east_asian_width_enum(name: &str) -> Option<EastAsianWidth> {
-    let mut m: LiteMap<&str, EastAsianWidth> = LiteMap::new();
-    m.insert("A", EastAsianWidth::Ambiguous);
-    m.insert("F", EastAsianWidth::Fullwidth);
-    m.insert("H", EastAsianWidth::Halfwidth);
-    m.insert("N", EastAsianWidth::Neutral);
-    m.insert("Na", EastAsianWidth::Narrow);
-    m.insert("W", EastAsianWidth::Wide);
-    m.get(name).cloned()
+    match name {
+        "A" => Some(EastAsianWidth::Ambiguous),
+        "F" => Some(EastAsianWidth::Fullwidth),
+        "H" => Some(EastAsianWidth::Halfwidth),
+        "N" => Some(EastAsianWidth::Neutral),
+        "Na" => Some(EastAsianWidth::Narrow),
+        "W" => Some(EastAsianWidth::Wide),
+        _ => None,
+    }
 }
 
 fn get_general_category_enum(name: &str) -> Option<GeneralCategory> {
-    let mut m: LiteMap<&str, GeneralCategory> = LiteMap::new();
-    m.insert("C", GeneralCategory::Other);
-    m.insert("Cc", GeneralCategory::Cntrl);
-    m.insert("Cf", GeneralCategory::Format);
-    m.insert("Cn", GeneralCategory::Unassigned);
-    m.insert("Co", GeneralCategory::PrivateUse);
-    m.insert("Cs", GeneralCategory::Surrogate);
-    m.insert("L", GeneralCategory::Letter);
-    m.insert("LC", GeneralCategory::CasedLetter);
-    m.insert("Ll", GeneralCategory::LowercaseLetter);
-    m.insert("Lm", GeneralCategory::ModifierLetter);
-    m.insert("Lo", GeneralCategory::OtherLetter);
-    m.insert("Lt", GeneralCategory::TitlecaseLetter);
-    m.insert("Lu", GeneralCategory::UppercaseLetter);
-    m.insert("M", GeneralCategory::CombiningMark);
-    m.insert("Mc", GeneralCategory::SpacingMark);
-    m.insert("Me", GeneralCategory::EnclosingMark);
-    m.insert("Mn", GeneralCategory::NonspacingMark);
-    m.insert("N", GeneralCategory::Number);
-    m.insert("Nd", GeneralCategory::Digit);
-    m.insert("Nl", GeneralCategory::LetterNumber);
-    m.insert("No", GeneralCategory::OtherNumber);
-    m.insert("P", GeneralCategory::Punct);
-    m.insert("Pc", GeneralCategory::ConnectorPunctuation);
-    m.insert("Pd", GeneralCategory::DashPunctuation);
-    m.insert("Pe", GeneralCategory::ClosePunctuation);
-    m.insert("Pf", GeneralCategory::FinalPunctuation);
-    m.insert("Pi", GeneralCategory::InitialPunctuation);
-    m.insert("Po", GeneralCategory::OtherPunctuation);
-    m.insert("Ps", GeneralCategory::OpenPunctuation);
-    m.insert("S", GeneralCategory::Symbol);
-    m.insert("Sc", GeneralCategory::CurrencySymbol);
-    m.insert("Sk", GeneralCategory::ModifierSymbol);
-    m.insert("Sm", GeneralCategory::MathSymbol);
-    m.insert("So", GeneralCategory::OtherSymbol);
-    m.insert("Z", GeneralCategory::Separator);
-    m.insert("Zl", GeneralCategory::LineSeparator);
-    m.insert("Zp", GeneralCategory::ParagraphSeparator);
-    m.insert("Zs", GeneralCategory::SpaceSeparator);
-    m.get(name).cloned()
+    match name {
+        "C" => Some(GeneralCategory::Other),
+        "Cc" => Some(GeneralCategory::Cntrl),
+        "Cf" => Some(GeneralCategory::Format),
+        "Cn" => Some(GeneralCategory::Unassigned),
+        "Co" => Some(GeneralCategory::PrivateUse),
+        "Cs" => Some(GeneralCategory::Surrogate),
+        "L" => Some(GeneralCategory::Letter),
+        "LC" => Some(GeneralCategory::CasedLetter),
+        "Ll" => Some(GeneralCategory::LowercaseLetter),
+        "Lm" => Some(GeneralCategory::ModifierLetter),
+        "Lo" => Some(GeneralCategory::OtherLetter),
+        "Lt" => Some(GeneralCategory::TitlecaseLetter),
+        "Lu" => Some(GeneralCategory::UppercaseLetter),
+        "M" => Some(GeneralCategory::CombiningMark),
+        "Mc" => Some(GeneralCategory::SpacingMark),
+        "Me" => Some(GeneralCategory::EnclosingMark),
+        "Mn" => Some(GeneralCategory::NonspacingMark),
+        "N" => Some(GeneralCategory::Number),
+        "Nd" => Some(GeneralCategory::Digit),
+        "Nl" => Some(GeneralCategory::LetterNumber),
+        "No" => Some(GeneralCategory::OtherNumber),
+        "P" => Some(GeneralCategory::Punct),
+        "Pc" => Some(GeneralCategory::ConnectorPunctuation),
+        "Pd" => Some(GeneralCategory::DashPunctuation),
+        "Pe" => Some(GeneralCategory::ClosePunctuation),
+        "Pf" => Some(GeneralCategory::FinalPunctuation),
+        "Pi" => Some(GeneralCategory::InitialPunctuation),
+        "Po" => Some(GeneralCategory::OtherPunctuation),
+        "Ps" => Some(GeneralCategory::OpenPunctuation),
+        "S" => Some(GeneralCategory::Symbol),
+        "Sc" => Some(GeneralCategory::CurrencySymbol),
+        "Sk" => Some(GeneralCategory::ModifierSymbol),
+        "Sm" => Some(GeneralCategory::MathSymbol),
+        "So" => Some(GeneralCategory::OtherSymbol),
+        "Z" => Some(GeneralCategory::Separator),
+        "Zl" => Some(GeneralCategory::LineSeparator),
+        "Zp" => Some(GeneralCategory::ParagraphSeparator),
+        "Zs" => Some(GeneralCategory::SpaceSeparator),
+        _ => None,
+    }
 }
 
 fn get_grapheme_cluster_break_enum(name: &str) -> Option<GraphemeClusterBreak> {
-    let mut m: LiteMap<&str, GraphemeClusterBreak> = LiteMap::new();
-    m.insert("CN", GraphemeClusterBreak::Control);
-    m.insert("CR", GraphemeClusterBreak::CR);
-    m.insert("EB", GraphemeClusterBreak::EBase);
-    m.insert("EBG", GraphemeClusterBreak::EBaseGAZ);
-    m.insert("EM", GraphemeClusterBreak::EModifier);
-    m.insert("EX", GraphemeClusterBreak::Extend);
-    m.insert("GAZ", GraphemeClusterBreak::GlueAfterZwj);
-    m.insert("L", GraphemeClusterBreak::L);
-    m.insert("LF", GraphemeClusterBreak::LF);
-    m.insert("LV", GraphemeClusterBreak::LV);
-    m.insert("LVT", GraphemeClusterBreak::LVT);
-    m.insert("PP", GraphemeClusterBreak::Prepend);
-    m.insert("RI", GraphemeClusterBreak::RegionalIndicator);
-    m.insert("SM", GraphemeClusterBreak::SpacingMark);
-    m.insert("T", GraphemeClusterBreak::T);
-    m.insert("V", GraphemeClusterBreak::V);
-    m.insert("XX", GraphemeClusterBreak::Other);
-    m.insert("ZWJ", GraphemeClusterBreak::ZWJ);
-    m.get(name).cloned()
+    match name {
+        "CN" => Some(GraphemeClusterBreak::Control),
+        "CR" => Some(GraphemeClusterBreak::CR),
+        "EB" => Some(GraphemeClusterBreak::EBase),
+        "EBG" => Some(GraphemeClusterBreak::EBaseGAZ),
+        "EM" => Some(GraphemeClusterBreak::EModifier),
+        "EX" => Some(GraphemeClusterBreak::Extend),
+        "GAZ" => Some(GraphemeClusterBreak::GlueAfterZwj),
+        "L" => Some(GraphemeClusterBreak::L),
+        "LF" => Some(GraphemeClusterBreak::LF),
+        "LV" => Some(GraphemeClusterBreak::LV),
+        "LVT" => Some(GraphemeClusterBreak::LVT),
+        "PP" => Some(GraphemeClusterBreak::Prepend),
+        "RI" => Some(GraphemeClusterBreak::RegionalIndicator),
+        "SM" => Some(GraphemeClusterBreak::SpacingMark),
+        "T" => Some(GraphemeClusterBreak::T),
+        "V" => Some(GraphemeClusterBreak::V),
+        "XX" => Some(GraphemeClusterBreak::Other),
+        "ZWJ" => Some(GraphemeClusterBreak::ZWJ),
+        _ => None,
+    }
 }
 
 fn get_hangul_syllable_type_enum(name: &str) -> Option<HangulSyllableType> {
-    let mut m: LiteMap<&str, HangulSyllableType> = LiteMap::new();
-    m.insert("L", HangulSyllableType::LeadingJamo);
-    m.insert("LV", HangulSyllableType::LVSyllable);
-    m.insert("LVT", HangulSyllableType::LVTSyllable);
-    m.insert("NA", HangulSyllableType::NotApplicable);
-    m.insert("T", HangulSyllableType::TrailingJamo);
-    m.insert("V", HangulSyllableType::VowelJamo);
-    m.get(name).cloned()
+    match name {
+        "L" => Some(HangulSyllableType::LeadingJamo),
+        "LV" => Some(HangulSyllableType::LVSyllable),
+        "LVT" => Some(HangulSyllableType::LVTSyllable),
+        "NA" => Some(HangulSyllableType::NotApplicable),
+        "T" => Some(HangulSyllableType::TrailingJamo),
+        "V" => Some(HangulSyllableType::VowelJamo),
+        _ => None,
+    }
 }
 
 fn get_indic_positional_category_enum(name: &str) -> Option<IndicPositionalCategory> {
-    let mut m: LiteMap<&str, IndicPositionalCategory> = LiteMap::new();
-
-    m.insert("Bottom", IndicPositionalCategory::Bottom);
-    m.insert("Bottom_And_Left", IndicPositionalCategory::BottomAndLeft);
-    m.insert("Bottom_And_Right", IndicPositionalCategory::BottomAndRight);
-    m.insert("Left", IndicPositionalCategory::Left);
-    m.insert("Left_And_Right", IndicPositionalCategory::LeftAndRight);
-    m.insert("NA", IndicPositionalCategory::NA);
-    m.insert("Overstruck", IndicPositionalCategory::Overstruck);
-    m.insert("Right", IndicPositionalCategory::Right);
-    m.insert("Top", IndicPositionalCategory::Top);
-    m.insert("Top_And_Bottom", IndicPositionalCategory::TopAndBottom);
-    m.insert(
-        "Top_And_Bottom_And_Left",
-        IndicPositionalCategory::TopAndBottomAndLeft,
-    );
-    m.insert(
-        "Top_And_Bottom_And_Right",
-        IndicPositionalCategory::TopAndBottomAndRight,
-    );
-    m.insert("Top_And_Left", IndicPositionalCategory::TopAndLeft);
-    m.insert(
-        "Top_And_Left_And_Right",
-        IndicPositionalCategory::TopAndLeftAndRight,
-    );
-    m.insert("Top_And_Right", IndicPositionalCategory::TopAndRight);
-    m.insert(
-        "Visual_Order_Left",
-        IndicPositionalCategory::VisualOrderLeft,
-    );
-    m.get(name).cloned()
+    match name {
+        "Bottom" => Some(IndicPositionalCategory::Bottom),
+        "Bottom_And_Left" => Some(IndicPositionalCategory::BottomAndLeft),
+        "Bottom_And_Right" => Some(IndicPositionalCategory::BottomAndRight),
+        "Left" => Some(IndicPositionalCategory::Left),
+        "Left_And_Right" => Some(IndicPositionalCategory::LeftAndRight),
+        "NA" => Some(IndicPositionalCategory::NA),
+        "Overstruck" => Some(IndicPositionalCategory::Overstruck),
+        "Right" => Some(IndicPositionalCategory::Right),
+        "Top" => Some(IndicPositionalCategory::Top),
+        "Top_And_Bottom" => Some(IndicPositionalCategory::TopAndBottom),
+        "Top_And_Bottom_And_Left" => Some(IndicPositionalCategory::TopAndBottomAndLeft),
+        "Top_And_Bottom_And_Right" => Some(IndicPositionalCategory::TopAndBottomAndRight),
+        "Top_And_Left" => Some(IndicPositionalCategory::TopAndLeft),
+        "Top_And_Left_And_Right" => Some(IndicPositionalCategory::TopAndLeftAndRight),
+        "Top_And_Right" => Some(IndicPositionalCategory::TopAndRight),
+        "Visual_Order_Left" => Some(IndicPositionalCategory::VisualOrderLeft),
+        _ => None,
+    }
 }
 
 fn get_indic_syllabic_category_enum(name: &str) -> Option<IndicSyllabicCategory> {
-    let mut m: LiteMap<&str, IndicSyllabicCategory> = LiteMap::new();
-    m.insert("Avagraha", IndicSyllabicCategory::Avagraha);
-    m.insert("Bindu", IndicSyllabicCategory::Bindu);
-    m.insert(
-        "Brahmi_Joining_Number",
-        IndicSyllabicCategory::BrahmiJoiningNumber,
-    );
-    m.insert("Cantillation_Mark", IndicSyllabicCategory::CantillationMark);
-    m.insert("Consonant", IndicSyllabicCategory::Consonant);
-    m.insert("Consonant_Dead", IndicSyllabicCategory::ConsonantDead);
-    m.insert("Consonant_Final", IndicSyllabicCategory::ConsonantFinal);
-    m.insert(
-        "Consonant_Head_Letter",
-        IndicSyllabicCategory::ConsonantHeadLetter,
-    );
-    m.insert(
-        "Consonant_Initial_Postfixed",
-        IndicSyllabicCategory::ConsonantInitialPostfixed,
-    );
-    m.insert("Consonant_Killer", IndicSyllabicCategory::ConsonantKiller);
-    m.insert("Consonant_Medial", IndicSyllabicCategory::ConsonantMedial);
-    m.insert(
-        "Consonant_Placeholder",
-        IndicSyllabicCategory::ConsonantPlaceholder,
-    );
-    m.insert(
-        "Consonant_Preceding_Repha",
-        IndicSyllabicCategory::ConsonantPrecedingRepha,
-    );
-    m.insert(
-        "Consonant_Prefixed",
-        IndicSyllabicCategory::ConsonantPrefixed,
-    );
-    m.insert(
-        "Consonant_Subjoined",
-        IndicSyllabicCategory::ConsonantSubjoined,
-    );
-    m.insert(
-        "Consonant_Succeeding_Repha",
-        IndicSyllabicCategory::ConsonantSucceedingRepha,
-    );
-    m.insert(
-        "Consonant_With_Stacker",
-        IndicSyllabicCategory::ConsonantWithStacker,
-    );
-    m.insert("Gemination_Mark", IndicSyllabicCategory::GeminationMark);
-    m.insert("Invisible_Stacker", IndicSyllabicCategory::InvisibleStacker);
-    m.insert("Joiner", IndicSyllabicCategory::Joiner);
-    m.insert("Modifying_Letter", IndicSyllabicCategory::ModifyingLetter);
-    m.insert("Non_Joiner", IndicSyllabicCategory::NonJoiner);
-    m.insert("Nukta", IndicSyllabicCategory::Nukta);
-    m.insert("Number", IndicSyllabicCategory::Number);
-    m.insert("Number_Joiner", IndicSyllabicCategory::NumberJoiner);
-    m.insert("Other", IndicSyllabicCategory::Other);
-    m.insert("Pure_Killer", IndicSyllabicCategory::PureKiller);
-    m.insert("Register_Shifter", IndicSyllabicCategory::RegisterShifter);
-    m.insert("Syllable_Modifier", IndicSyllabicCategory::SyllableModifier);
-    m.insert("Tone_Letter", IndicSyllabicCategory::ToneLetter);
-    m.insert("Tone_Mark", IndicSyllabicCategory::ToneMark);
-    m.insert("Virama", IndicSyllabicCategory::Virama);
-    m.insert("Visarga", IndicSyllabicCategory::Visarga);
-    m.insert("Vowel", IndicSyllabicCategory::Vowel);
-    m.insert("Vowel_Dependent", IndicSyllabicCategory::VowelDependent);
-    m.insert("Vowel_Independent", IndicSyllabicCategory::VowelIndependent);
-    m.get(name).cloned()
+    match name {
+        "Avagraha" => Some(IndicSyllabicCategory::Avagraha),
+        "Bindu" => Some(IndicSyllabicCategory::Bindu),
+        "Brahmi_Joining_Number" => Some(IndicSyllabicCategory::BrahmiJoiningNumber),
+        "Cantillation_Mark" => Some(IndicSyllabicCategory::CantillationMark),
+        "Consonant" => Some(IndicSyllabicCategory::Consonant),
+        "Consonant_Dead" => Some(IndicSyllabicCategory::ConsonantDead),
+        "Consonant_Final" => Some(IndicSyllabicCategory::ConsonantFinal),
+        "Consonant_Head_Letter" => Some(IndicSyllabicCategory::ConsonantHeadLetter),
+        "Consonant_Initial_Postfixed" => Some(IndicSyllabicCategory::ConsonantInitialPostfixed,),
+        "Consonant_Killer" => Some(IndicSyllabicCategory::ConsonantKiller),
+        "Consonant_Medial" => Some(IndicSyllabicCategory::ConsonantMedial),
+        "Consonant_Placeholder" => Some(IndicSyllabicCategory::ConsonantPlaceholder),
+        "Consonant_Preceding_Repha" => Some(IndicSyllabicCategory::ConsonantPrecedingRepha),
+        "Consonant_Prefixed" => Some(IndicSyllabicCategory::ConsonantPrefixed),
+        "Consonant_Subjoined" => Some(IndicSyllabicCategory::ConsonantSubjoined),
+        "Consonant_Succeeding_Repha" => Some(IndicSyllabicCategory::ConsonantSucceedingRepha),
+        "Consonant_With_Stacker" => Some(IndicSyllabicCategory::ConsonantWithStacker),
+        "Gemination_Mark" => Some(IndicSyllabicCategory::GeminationMark),
+        "Invisible_Stacker" => Some(IndicSyllabicCategory::InvisibleStacker),
+        "Joiner" => Some(IndicSyllabicCategory::Joiner),
+        "Modifying_Letter" => Some(IndicSyllabicCategory::ModifyingLetter),
+        "Non_Joiner" => Some(IndicSyllabicCategory::NonJoiner),
+        "Nukta" => Some(IndicSyllabicCategory::Nukta),
+        "Number" => Some(IndicSyllabicCategory::Number),
+        "Number_Joiner" => Some(IndicSyllabicCategory::NumberJoiner),
+        "Other" => Some(IndicSyllabicCategory::Other),
+        "Pure_Killer" => Some(IndicSyllabicCategory::PureKiller),
+        "Register_Shifter" => Some(IndicSyllabicCategory::RegisterShifter),
+        "Syllable_Modifier" => Some(IndicSyllabicCategory::SyllableModifier),
+        "Tone_Letter" => Some(IndicSyllabicCategory::ToneLetter),
+        "Tone_Mark" => Some(IndicSyllabicCategory::ToneMark),
+        "Virama" => Some(IndicSyllabicCategory::Virama),
+        "Visarga" => Some(IndicSyllabicCategory::Visarga),
+        "Vowel" => Some(IndicSyllabicCategory::Vowel),
+        "Vowel_Dependent" => Some(IndicSyllabicCategory::VowelDependent),
+        "Vowel_Independent" => Some(IndicSyllabicCategory::VowelIndependent),
+        _ => None,
+    }
 }
 
 fn get_joining_group_enum(name: &str) -> Option<JoiningGroup> {
-    let mut m: LiteMap<&str, JoiningGroup> = LiteMap::new();
-    m.insert("African_Feh", JoiningGroup::AfricanFeh);
-    m.insert("African_Noon", JoiningGroup::AfricanNoon);
-    m.insert("African_Qaf", JoiningGroup::AfricanQaf);
-    m.insert("Ain", JoiningGroup::Ain);
-    m.insert("Alaph", JoiningGroup::Alaph);
-    m.insert("Alef", JoiningGroup::Alef);
-    m.insert("Beh", JoiningGroup::Beh);
-    m.insert("Beth", JoiningGroup::Beth);
-    m.insert("Burushaski_Yeh_Barree", JoiningGroup::BurushaskiYehBarree);
-    m.insert("Dal", JoiningGroup::Dal);
-    m.insert("Dalath_Rish", JoiningGroup::DalathRish);
-    m.insert("E", JoiningGroup::E);
-    m.insert("Farsi_Yeh", JoiningGroup::FarsiYeh);
-    m.insert("Fe", JoiningGroup::Fe);
-    m.insert("Feh", JoiningGroup::Feh);
-    m.insert("Final_Semkath", JoiningGroup::FinalSemkath);
-    m.insert("Gaf", JoiningGroup::Gaf);
-    m.insert("Gamal", JoiningGroup::Gamal);
-    m.insert("Hah", JoiningGroup::Hah);
-    m.insert(
-        "Hanifi_Rohingya_Kinna_Ya",
-        JoiningGroup::HanifiRohingyaKinnaYa,
-    );
-    m.insert("Hanifi_Rohingya_Pa", JoiningGroup::HanifiRohingyaPa);
-    m.insert("He", JoiningGroup::He);
-    m.insert("Heh", JoiningGroup::Heh);
-    m.insert("Heh_Goal", JoiningGroup::HehGoal);
-    m.insert("Heth", JoiningGroup::Heth);
-    m.insert("Kaf", JoiningGroup::Kaf);
-    m.insert("Kaph", JoiningGroup::Kaph);
-    m.insert("Khaph", JoiningGroup::Khaph);
-    m.insert("Knotted_Heh", JoiningGroup::KnottedHeh);
-    m.insert("Lam", JoiningGroup::Lam);
-    m.insert("Lamadh", JoiningGroup::Lamadh);
-    m.insert("Malayalam_Bha", JoiningGroup::MalayalamBha);
-    m.insert("Malayalam_Ja", JoiningGroup::MalayalamJa);
-    m.insert("Malayalam_Lla", JoiningGroup::MalayalamLla);
-    m.insert("Malayalam_Llla", JoiningGroup::MalayalamLlla);
-    m.insert("Malayalam_Nga", JoiningGroup::MalayalamNga);
-    m.insert("Malayalam_Nna", JoiningGroup::MalayalamNna);
-    m.insert("Malayalam_Nnna", JoiningGroup::MalayalamNnna);
-    m.insert("Malayalam_Nya", JoiningGroup::MalayalamNya);
-    m.insert("Malayalam_Ra", JoiningGroup::MalayalamRa);
-    m.insert("Malayalam_Ssa", JoiningGroup::MalayalamSsa);
-    m.insert("Malayalam_Tta", JoiningGroup::MalayalamTta);
-    m.insert("Manichaean_Aleph", JoiningGroup::ManichaeanAleph);
-    m.insert("Manichaean_Ayin", JoiningGroup::ManichaeanAyin);
-    m.insert("Manichaean_Beth", JoiningGroup::ManichaeanBeth);
-    m.insert("Manichaean_Daleth", JoiningGroup::ManichaeanDaleth);
-    m.insert("Manichaean_Dhamedh", JoiningGroup::ManichaeanDhamedh);
-    m.insert("Manichaean_Five", JoiningGroup::ManichaeanFive);
-    m.insert("Manichaean_Gimel", JoiningGroup::ManichaeanGimel);
-    m.insert("Manichaean_Heth", JoiningGroup::ManichaeanHeth);
-    m.insert("Manichaean_Hundred", JoiningGroup::ManichaeanHundred);
-    m.insert("Manichaean_Kaph", JoiningGroup::ManichaeanKaph);
-    m.insert("Manichaean_Lamedh", JoiningGroup::ManichaeanLamedh);
-    m.insert("Manichaean_Mem", JoiningGroup::ManichaeanMem);
-    m.insert("Manichaean_Nun", JoiningGroup::ManichaeanNun);
-    m.insert("Manichaean_One", JoiningGroup::ManichaeanOne);
-    m.insert("Manichaean_Pe", JoiningGroup::ManichaeanPe);
-    m.insert("Manichaean_Qoph", JoiningGroup::ManichaeanQoph);
-    m.insert("Manichaean_Resh", JoiningGroup::ManichaeanResh);
-    m.insert("Manichaean_Sadhe", JoiningGroup::ManichaeanSadhe);
-    m.insert("Manichaean_Samekh", JoiningGroup::ManichaeanSamekh);
-    m.insert("Manichaean_Taw", JoiningGroup::ManichaeanTaw);
-    m.insert("Manichaean_Ten", JoiningGroup::ManichaeanTen);
-    m.insert("Manichaean_Teth", JoiningGroup::ManichaeanTeth);
-    m.insert("Manichaean_Thamedh", JoiningGroup::ManichaeanThamedh);
-    m.insert("Manichaean_Twenty", JoiningGroup::ManichaeanTwenty);
-    m.insert("Manichaean_Waw", JoiningGroup::ManichaeanWaw);
-    m.insert("Manichaean_Yodh", JoiningGroup::ManichaeanYodh);
-    m.insert("Manichaean_Zayin", JoiningGroup::ManichaeanZayin);
-    m.insert("Meem", JoiningGroup::Meem);
-    m.insert("Mim", JoiningGroup::Mim);
-    m.insert("No_Joining_Group", JoiningGroup::NoJoiningGroup);
-    m.insert("Noon", JoiningGroup::Noon);
-    m.insert("Nun", JoiningGroup::Nun);
-    m.insert("Nya", JoiningGroup::Nya);
-    m.insert("Pe", JoiningGroup::Pe);
-    m.insert("Qaf", JoiningGroup::Qaf);
-    m.insert("Qaph", JoiningGroup::Qaph);
-    m.insert("Reh", JoiningGroup::Reh);
-    m.insert("Reversed_Pe", JoiningGroup::ReversedPe);
-    m.insert("Rohingya_Yeh", JoiningGroup::RohingyaYeh);
-    m.insert("Sad", JoiningGroup::Sad);
-    m.insert("Sadhe", JoiningGroup::Sadhe);
-    m.insert("Seen", JoiningGroup::Seen);
-    m.insert("Semkath", JoiningGroup::Semkath);
-    m.insert("Shin", JoiningGroup::Shin);
-    m.insert("Straight_Waw", JoiningGroup::StraightWaw);
-    m.insert("Swash_Kaf", JoiningGroup::SwashKaf);
-    m.insert("Syriac_Waw", JoiningGroup::SyriacWaw);
-    m.insert("Tah", JoiningGroup::Tah);
-    m.insert("Taw", JoiningGroup::Taw);
-    m.insert("Teh_Marbuta", JoiningGroup::TehMarbuta);
-    m.insert("Teh_Marbuta_Goal", JoiningGroup::TehMarbutaGoal);
-    m.insert("Teth", JoiningGroup::Teth);
-    m.insert("Waw", JoiningGroup::Waw);
-    m.insert("Yeh", JoiningGroup::Yeh);
-    m.insert("Yeh_Barree", JoiningGroup::YehBarree);
-    m.insert("Yeh_With_Tail", JoiningGroup::YehWithTail);
-    m.insert("Yudh", JoiningGroup::Yudh);
-    m.insert("Yudh_He", JoiningGroup::YudhHe);
-    m.insert("Zain", JoiningGroup::Zain);
-    m.insert("Zhain", JoiningGroup::Zhain);
-    m.get(name).cloned()
+    match name {
+        "African_Feh" => Some(JoiningGroup::AfricanFeh),
+        "African_Noon" => Some(JoiningGroup::AfricanNoon),
+        "African_Qaf" => Some(JoiningGroup::AfricanQaf),
+        "Ain" => Some(JoiningGroup::Ain),
+        "Alaph" => Some(JoiningGroup::Alaph),
+        "Alef" => Some(JoiningGroup::Alef),
+        "Beh" => Some(JoiningGroup::Beh),
+        "Beth" => Some(JoiningGroup::Beth),
+        "Burushaski_Yeh_Barree" => Some(JoiningGroup::BurushaskiYehBarree),
+        "Dal" => Some(JoiningGroup::Dal),
+        "Dalath_Rish" => Some(JoiningGroup::DalathRish),
+        "E" => Some(JoiningGroup::E),
+        "Farsi_Yeh" => Some(JoiningGroup::FarsiYeh),
+        "Fe" => Some(JoiningGroup::Fe),
+        "Feh" => Some(JoiningGroup::Feh),
+        "Final_Semkath" => Some(JoiningGroup::FinalSemkath),
+        "Gaf" => Some(JoiningGroup::Gaf),
+        "Gamal" => Some(JoiningGroup::Gamal),
+        "Hah" => Some(JoiningGroup::Hah),
+        "Hanifi_Rohingya_Kinna_Ya" => Some(JoiningGroup::HanifiRohingyaKinnaYa),
+        "Hanifi_Rohingya_Pa" => Some(JoiningGroup::HanifiRohingyaPa),
+        "He" => Some(JoiningGroup::He),
+        "Heh" => Some(JoiningGroup::Heh),
+        "Heh_Goal" => Some(JoiningGroup::HehGoal),
+        "Heth" => Some(JoiningGroup::Heth),
+        "Kaf" => Some(JoiningGroup::Kaf),
+        "Kaph" => Some(JoiningGroup::Kaph),
+        "Khaph" => Some(JoiningGroup::Khaph),
+        "Knotted_Heh" => Some(JoiningGroup::KnottedHeh),
+        "Lam" => Some(JoiningGroup::Lam),
+        "Lamadh" => Some(JoiningGroup::Lamadh),
+        "Malayalam_Bha" => Some(JoiningGroup::MalayalamBha),
+        "Malayalam_Ja" => Some(JoiningGroup::MalayalamJa),
+        "Malayalam_Lla" => Some(JoiningGroup::MalayalamLla),
+        "Malayalam_Llla" => Some(JoiningGroup::MalayalamLlla),
+        "Malayalam_Nga" => Some(JoiningGroup::MalayalamNga),
+        "Malayalam_Nna" => Some(JoiningGroup::MalayalamNna),
+        "Malayalam_Nnna" => Some(JoiningGroup::MalayalamNnna),
+        "Malayalam_Nya" => Some(JoiningGroup::MalayalamNya),
+        "Malayalam_Ra" => Some(JoiningGroup::MalayalamRa),
+        "Malayalam_Ssa" => Some(JoiningGroup::MalayalamSsa),
+        "Malayalam_Tta" => Some(JoiningGroup::MalayalamTta),
+        "Manichaean_Aleph" => Some(JoiningGroup::ManichaeanAleph),
+        "Manichaean_Ayin" => Some(JoiningGroup::ManichaeanAyin),
+        "Manichaean_Beth" => Some(JoiningGroup::ManichaeanBeth),
+        "Manichaean_Daleth" => Some(JoiningGroup::ManichaeanDaleth),
+        "Manichaean_Dhamedh" => Some(JoiningGroup::ManichaeanDhamedh),
+        "Manichaean_Five" => Some(JoiningGroup::ManichaeanFive),
+        "Manichaean_Gimel" => Some(JoiningGroup::ManichaeanGimel),
+        "Manichaean_Heth" => Some(JoiningGroup::ManichaeanHeth),
+        "Manichaean_Hundred" => Some(JoiningGroup::ManichaeanHundred),
+        "Manichaean_Kaph" => Some(JoiningGroup::ManichaeanKaph),
+        "Manichaean_Lamedh" => Some(JoiningGroup::ManichaeanLamedh),
+        "Manichaean_Mem" => Some(JoiningGroup::ManichaeanMem),
+        "Manichaean_Nun" => Some(JoiningGroup::ManichaeanNun),
+        "Manichaean_One" => Some(JoiningGroup::ManichaeanOne),
+        "Manichaean_Pe" => Some(JoiningGroup::ManichaeanPe),
+        "Manichaean_Qoph" => Some(JoiningGroup::ManichaeanQoph),
+        "Manichaean_Resh" => Some(JoiningGroup::ManichaeanResh),
+        "Manichaean_Sadhe" => Some(JoiningGroup::ManichaeanSadhe),
+        "Manichaean_Samekh" => Some(JoiningGroup::ManichaeanSamekh),
+        "Manichaean_Taw" => Some(JoiningGroup::ManichaeanTaw),
+        "Manichaean_Ten" => Some(JoiningGroup::ManichaeanTen),
+        "Manichaean_Teth" => Some(JoiningGroup::ManichaeanTeth),
+        "Manichaean_Thamedh" => Some(JoiningGroup::ManichaeanThamedh),
+        "Manichaean_Twenty" => Some(JoiningGroup::ManichaeanTwenty),
+        "Manichaean_Waw" => Some(JoiningGroup::ManichaeanWaw),
+        "Manichaean_Yodh" => Some(JoiningGroup::ManichaeanYodh),
+        "Manichaean_Zayin" => Some(JoiningGroup::ManichaeanZayin),
+        "Meem" => Some(JoiningGroup::Meem),
+        "Mim" => Some(JoiningGroup::Mim),
+        "No_Joining_Group" => Some(JoiningGroup::NoJoiningGroup),
+        "Noon" => Some(JoiningGroup::Noon),
+        "Nun" => Some(JoiningGroup::Nun),
+        "Nya" => Some(JoiningGroup::Nya),
+        "Pe" => Some(JoiningGroup::Pe),
+        "Qaf" => Some(JoiningGroup::Qaf),
+        "Qaph" => Some(JoiningGroup::Qaph),
+        "Reh" => Some(JoiningGroup::Reh),
+        "Reversed_Pe" => Some(JoiningGroup::ReversedPe),
+        "Rohingya_Yeh" => Some(JoiningGroup::RohingyaYeh),
+        "Sad" => Some(JoiningGroup::Sad),
+        "Sadhe" => Some(JoiningGroup::Sadhe),
+        "Seen" => Some(JoiningGroup::Seen),
+        "Semkath" => Some(JoiningGroup::Semkath),
+        "Shin" => Some(JoiningGroup::Shin),
+        "Straight_Waw" => Some(JoiningGroup::StraightWaw),
+        "Swash_Kaf" => Some(JoiningGroup::SwashKaf),
+        "Syriac_Waw" => Some(JoiningGroup::SyriacWaw),
+        "Tah" => Some(JoiningGroup::Tah),
+        "Taw" => Some(JoiningGroup::Taw),
+        "Teh_Marbuta" => Some(JoiningGroup::TehMarbuta),
+        "Teh_Marbuta_Goal" => Some(JoiningGroup::TehMarbutaGoal),
+        "Teth" => Some(JoiningGroup::Teth),
+        "Waw" => Some(JoiningGroup::Waw),
+        "Yeh" => Some(JoiningGroup::Yeh),
+        "Yeh_Barree" => Some(JoiningGroup::YehBarree),
+        "Yeh_With_Tail" => Some(JoiningGroup::YehWithTail),
+        "Yudh" => Some(JoiningGroup::Yudh),
+        "Yudh_He" => Some(JoiningGroup::YudhHe),
+        "Zain" => Some(JoiningGroup::Zain),
+        "Zhain" => Some(JoiningGroup::Zhain),
+        _ => None,
+    }
 }
 
 fn get_joining_type_enum(name: &str) -> Option<JoiningType> {
-    let mut m: LiteMap<&str, JoiningType> = LiteMap::new();
-    m.insert("C", JoiningType::JoinCausing);
-    m.insert("D", JoiningType::DualJoining);
-    m.insert("L", JoiningType::LeftJoining);
-    m.insert("R", JoiningType::RightJoining);
-    m.insert("T", JoiningType::Transparent);
-    m.insert("U", JoiningType::NonJoining);
-    m.get(name).cloned()
+    match name {
+        "C" => Some(JoiningType::JoinCausing),
+        "D" => Some(JoiningType::DualJoining),
+        "L" => Some(JoiningType::LeftJoining),
+        "R" => Some(JoiningType::RightJoining),
+        "T" => Some(JoiningType::Transparent),
+        "U" => Some(JoiningType::NonJoining),
+        _ => None,
+    }
 }
 
 fn get_line_break_enum(name: &str) -> Option<LineBreak> {
-    let mut m: LiteMap<&str, LineBreak> = LiteMap::new();
-    m.insert("AI", LineBreak::Ambiguous);
-    m.insert("AL", LineBreak::Alphabetic);
-    m.insert("B2", LineBreak::BreakBoth);
-    m.insert("BA", LineBreak::BreakAfter);
-    m.insert("BB", LineBreak::BreakBefore);
-    m.insert("BK", LineBreak::MandatoryBreak);
-    m.insert("CB", LineBreak::ContingentBreak);
-    m.insert("CJ", LineBreak::ConditionalJapaneseStarter);
-    m.insert("CL", LineBreak::ClosePunctuation);
-    m.insert("CM", LineBreak::CombiningMark);
-    m.insert("CP", LineBreak::CloseParenthesis);
-    m.insert("CR", LineBreak::CarriageReturn);
-    m.insert("EB", LineBreak::EBase);
-    m.insert("EM", LineBreak::EModifier);
-    m.insert("EX", LineBreak::Exclamation);
-    m.insert("GL", LineBreak::Glue);
-    m.insert("H2", LineBreak::H2);
-    m.insert("H3", LineBreak::H3);
-    m.insert("HL", LineBreak::HebrewLetter);
-    m.insert("HY", LineBreak::Hyphen);
-    m.insert("ID", LineBreak::Ideographic);
-    m.insert("IN", LineBreak::Inseperable);
-    m.insert("IS", LineBreak::InfixNumeric);
-    m.insert("JL", LineBreak::JL);
-    m.insert("JT", LineBreak::JT);
-    m.insert("JV", LineBreak::JV);
-    m.insert("LF", LineBreak::LineFeed);
-    m.insert("NL", LineBreak::NextLine);
-    m.insert("NS", LineBreak::Nonstarter);
-    m.insert("NU", LineBreak::Numeric);
-    m.insert("OP", LineBreak::OpenPunctuation);
-    m.insert("PO", LineBreak::PostfixNumeric);
-    m.insert("PR", LineBreak::PrefixNumeric);
-    m.insert("QU", LineBreak::Quotation);
-    m.insert("RI", LineBreak::RegionalIndicator);
-    m.insert("SA", LineBreak::ComplexContext);
-    m.insert("SG", LineBreak::Surrogate);
-    m.insert("SP", LineBreak::Space);
-    m.insert("SY", LineBreak::BreakSymbols);
-    m.insert("WJ", LineBreak::WordJoiner);
-    m.insert("XX", LineBreak::Unknown);
-    m.insert("ZW", LineBreak::ZWSpace);
-    m.insert("ZWJ", LineBreak::ZWJ);
-    m.get(name).cloned()
+    match name {
+        "AI" => Some(LineBreak::Ambiguous),
+        "AL" => Some(LineBreak::Alphabetic),
+        "B2" => Some(LineBreak::BreakBoth),
+        "BA" => Some(LineBreak::BreakAfter),
+        "BB" => Some(LineBreak::BreakBefore),
+        "BK" => Some(LineBreak::MandatoryBreak),
+        "CB" => Some(LineBreak::ContingentBreak),
+        "CJ" => Some(LineBreak::ConditionalJapaneseStarter),
+        "CL" => Some(LineBreak::ClosePunctuation),
+        "CM" => Some(LineBreak::CombiningMark),
+        "CP" => Some(LineBreak::CloseParenthesis),
+        "CR" => Some(LineBreak::CarriageReturn),
+        "EB" => Some(LineBreak::EBase),
+        "EM" => Some(LineBreak::EModifier),
+        "EX" => Some(LineBreak::Exclamation),
+        "GL" => Some(LineBreak::Glue),
+        "H2" => Some(LineBreak::H2),
+        "H3" => Some(LineBreak::H3),
+        "HL" => Some(LineBreak::HebrewLetter),
+        "HY" => Some(LineBreak::Hyphen),
+        "ID" => Some(LineBreak::Ideographic),
+        "IN" => Some(LineBreak::Inseperable),
+        "IS" => Some(LineBreak::InfixNumeric),
+        "JL" => Some(LineBreak::JL),
+        "JT" => Some(LineBreak::JT),
+        "JV" => Some(LineBreak::JV),
+        "LF" => Some(LineBreak::LineFeed),
+        "NL" => Some(LineBreak::NextLine),
+        "NS" => Some(LineBreak::Nonstarter),
+        "NU" => Some(LineBreak::Numeric),
+        "OP" => Some(LineBreak::OpenPunctuation),
+        "PO" => Some(LineBreak::PostfixNumeric),
+        "PR" => Some(LineBreak::PrefixNumeric),
+        "QU" => Some(LineBreak::Quotation),
+        "RI" => Some(LineBreak::RegionalIndicator),
+        "SA" => Some(LineBreak::ComplexContext),
+        "SG" => Some(LineBreak::Surrogate),
+        "SP" => Some(LineBreak::Space),
+        "SY" => Some(LineBreak::BreakSymbols),
+        "WJ" => Some(LineBreak::WordJoiner),
+        "XX" => Some(LineBreak::Unknown),
+        "ZW" => Some(LineBreak::ZWSpace),
+        "ZWJ" => Some(LineBreak::ZWJ),
+        _ => None,
+    }
 }
 
 fn get_lead_canonical_combining_class_enum(name: &str) -> Option<LeadCanonicalCombiningClass> {
-    let mut m: LiteMap<&str, LeadCanonicalCombiningClass> = LiteMap::new();
-    m.insert("0", LeadCanonicalCombiningClass::NotReordered);
-    m.insert("1", LeadCanonicalCombiningClass::Overlay);
-    m.insert("10", LeadCanonicalCombiningClass::CCC10);
-    m.insert("103", LeadCanonicalCombiningClass::CCC103);
-    m.insert("107", LeadCanonicalCombiningClass::CCC107);
-    m.insert("11", LeadCanonicalCombiningClass::CCC11);
-    m.insert("118", LeadCanonicalCombiningClass::CCC118);
-    m.insert("12", LeadCanonicalCombiningClass::CCC12);
-    m.insert("122", LeadCanonicalCombiningClass::CCC122);
-    m.insert("129", LeadCanonicalCombiningClass::CCC129);
-    m.insert("13", LeadCanonicalCombiningClass::CCC13);
-    m.insert("130", LeadCanonicalCombiningClass::CCC130);
-    m.insert("132", LeadCanonicalCombiningClass::CCC132);
-    m.insert("133", LeadCanonicalCombiningClass::CCC133);
-    m.insert("14", LeadCanonicalCombiningClass::CCC14);
-    m.insert("15", LeadCanonicalCombiningClass::CCC15);
-    m.insert("16", LeadCanonicalCombiningClass::CCC16);
-    m.insert("17", LeadCanonicalCombiningClass::CCC17);
-    m.insert("18", LeadCanonicalCombiningClass::CCC18);
-    m.insert("19", LeadCanonicalCombiningClass::CCC19);
-    m.insert("20", LeadCanonicalCombiningClass::CCC20);
-    m.insert("200", LeadCanonicalCombiningClass::AttachedBelowLeft);
-    m.insert("202", LeadCanonicalCombiningClass::AttachedBelow);
-    m.insert("21", LeadCanonicalCombiningClass::CCC21);
-    m.insert("214", LeadCanonicalCombiningClass::AttachedAbove);
-    m.insert("216", LeadCanonicalCombiningClass::AttachedAboveRight);
-    m.insert("218", LeadCanonicalCombiningClass::BelowLeft);
-    m.insert("22", LeadCanonicalCombiningClass::CCC22);
-    m.insert("220", LeadCanonicalCombiningClass::Below);
-    m.insert("222", LeadCanonicalCombiningClass::BelowRight);
-    m.insert("224", LeadCanonicalCombiningClass::Left);
-    m.insert("226", LeadCanonicalCombiningClass::Right);
-    m.insert("228", LeadCanonicalCombiningClass::AboveLeft);
-    m.insert("23", LeadCanonicalCombiningClass::CCC23);
-    m.insert("230", LeadCanonicalCombiningClass::Above);
-    m.insert("232", LeadCanonicalCombiningClass::AboveRight);
-    m.insert("233", LeadCanonicalCombiningClass::DoubleBelow);
-    m.insert("234", LeadCanonicalCombiningClass::DoubleAbove);
-    m.insert("24", LeadCanonicalCombiningClass::CCC24);
-    m.insert("240", LeadCanonicalCombiningClass::IotaSubscript);
-    m.insert("25", LeadCanonicalCombiningClass::CCC25);
-    m.insert("26", LeadCanonicalCombiningClass::CCC26);
-    m.insert("27", LeadCanonicalCombiningClass::CCC27);
-    m.insert("28", LeadCanonicalCombiningClass::CCC28);
-    m.insert("29", LeadCanonicalCombiningClass::CCC29);
-    m.insert("30", LeadCanonicalCombiningClass::CCC30);
-    m.insert("31", LeadCanonicalCombiningClass::CCC31);
-    m.insert("32", LeadCanonicalCombiningClass::CCC32);
-    m.insert("33", LeadCanonicalCombiningClass::CCC33);
-    m.insert("34", LeadCanonicalCombiningClass::CCC34);
-    m.insert("35", LeadCanonicalCombiningClass::CCC35);
-    m.insert("36", LeadCanonicalCombiningClass::CCC36);
-    m.insert("6", LeadCanonicalCombiningClass::HanReading);
-    m.insert("7", LeadCanonicalCombiningClass::Nukta);
-    m.insert("8", LeadCanonicalCombiningClass::KanaVoicing);
-    m.insert("84", LeadCanonicalCombiningClass::CCC84);
-    m.insert("9", LeadCanonicalCombiningClass::Virama);
-    m.insert("91", LeadCanonicalCombiningClass::CCC91);
-    m.get(name).cloned()
+    match name {
+        "0" => Some(LeadCanonicalCombiningClass::NotReordered),
+        "1" => Some(LeadCanonicalCombiningClass::Overlay),
+        "10" => Some(LeadCanonicalCombiningClass::CCC10),
+        "103" => Some(LeadCanonicalCombiningClass::CCC103),
+        "107" => Some(LeadCanonicalCombiningClass::CCC107),
+        "11" => Some(LeadCanonicalCombiningClass::CCC11),
+        "118" => Some(LeadCanonicalCombiningClass::CCC118),
+        "12" => Some(LeadCanonicalCombiningClass::CCC12),
+        "122" => Some(LeadCanonicalCombiningClass::CCC122),
+        "129" => Some(LeadCanonicalCombiningClass::CCC129),
+        "13" => Some(LeadCanonicalCombiningClass::CCC13),
+        "130" => Some(LeadCanonicalCombiningClass::CCC130),
+        "132" => Some(LeadCanonicalCombiningClass::CCC132),
+        "133" => Some(LeadCanonicalCombiningClass::CCC133),
+        "14" => Some(LeadCanonicalCombiningClass::CCC14),
+        "15" => Some(LeadCanonicalCombiningClass::CCC15),
+        "16" => Some(LeadCanonicalCombiningClass::CCC16),
+        "17" => Some(LeadCanonicalCombiningClass::CCC17),
+        "18" => Some(LeadCanonicalCombiningClass::CCC18),
+        "19" => Some(LeadCanonicalCombiningClass::CCC19),
+        "20" => Some(LeadCanonicalCombiningClass::CCC20),
+        "200" => Some(LeadCanonicalCombiningClass::AttachedBelowLeft),
+        "202" => Some(LeadCanonicalCombiningClass::AttachedBelow),
+        "21" => Some(LeadCanonicalCombiningClass::CCC21),
+        "214" => Some(LeadCanonicalCombiningClass::AttachedAbove),
+        "216" => Some(LeadCanonicalCombiningClass::AttachedAboveRight),
+        "218" => Some(LeadCanonicalCombiningClass::BelowLeft),
+        "22" => Some(LeadCanonicalCombiningClass::CCC22),
+        "220" => Some(LeadCanonicalCombiningClass::Below),
+        "222" => Some(LeadCanonicalCombiningClass::BelowRight),
+        "224" => Some(LeadCanonicalCombiningClass::Left),
+        "226" => Some(LeadCanonicalCombiningClass::Right),
+        "228" => Some(LeadCanonicalCombiningClass::AboveLeft),
+        "23" => Some(LeadCanonicalCombiningClass::CCC23),
+        "230" => Some(LeadCanonicalCombiningClass::Above),
+        "232" => Some(LeadCanonicalCombiningClass::AboveRight),
+        "233" => Some(LeadCanonicalCombiningClass::DoubleBelow),
+        "234" => Some(LeadCanonicalCombiningClass::DoubleAbove),
+        "24" => Some(LeadCanonicalCombiningClass::CCC24),
+        "240" => Some(LeadCanonicalCombiningClass::IotaSubscript),
+        "25" => Some(LeadCanonicalCombiningClass::CCC25),
+        "26" => Some(LeadCanonicalCombiningClass::CCC26),
+        "27" => Some(LeadCanonicalCombiningClass::CCC27),
+        "28" => Some(LeadCanonicalCombiningClass::CCC28),
+        "29" => Some(LeadCanonicalCombiningClass::CCC29),
+        "30" => Some(LeadCanonicalCombiningClass::CCC30),
+        "31" => Some(LeadCanonicalCombiningClass::CCC31),
+        "32" => Some(LeadCanonicalCombiningClass::CCC32),
+        "33" => Some(LeadCanonicalCombiningClass::CCC33),
+        "34" => Some(LeadCanonicalCombiningClass::CCC34),
+        "35" => Some(LeadCanonicalCombiningClass::CCC35),
+        "36" => Some(LeadCanonicalCombiningClass::CCC36),
+        "6" => Some(LeadCanonicalCombiningClass::HanReading),
+        "7" => Some(LeadCanonicalCombiningClass::Nukta),
+        "8" => Some(LeadCanonicalCombiningClass::KanaVoicing),
+        "84" => Some(LeadCanonicalCombiningClass::CCC84),
+        "9" => Some(LeadCanonicalCombiningClass::Virama),
+        "91" => Some(LeadCanonicalCombiningClass::CCC91),
+        _ => None,
+    }
 }
 
 fn get_nfc_quick_check_enum(name: &str) -> Option<NFCQuickCheck> {
-    let mut m: LiteMap<&str, NFCQuickCheck> = LiteMap::new();
-    m.insert("M", NFCQuickCheck::Maybe);
-    m.insert("N", NFCQuickCheck::No);
-    m.insert("Y", NFCQuickCheck::Yes);
-    m.get(name).cloned()
+    match name {
+        "M" => Some(NFCQuickCheck::Maybe),
+        "N" => Some(NFCQuickCheck::No),
+        "Y" => Some(NFCQuickCheck::Yes),
+        _ => None,
+    }
 }
 
 fn get_nfd_quick_check_enum(name: &str) -> Option<NFDQuickCheck> {
-    let mut m: LiteMap<&str, NFDQuickCheck> = LiteMap::new();
-    m.insert("N", NFDQuickCheck::No);
-    m.insert("Y", NFDQuickCheck::Yes);
-    m.get(name).cloned()
+    match name {
+        "N" => Some(NFDQuickCheck::No),
+        "Y" => Some(NFDQuickCheck::Yes),
+        _ => None,
+    }
 }
 
 fn get_nfkc_quick_check_enum(name: &str) -> Option<NFKCQuickCheck> {
-    let mut m: LiteMap<&str, NFKCQuickCheck> = LiteMap::new();
-    m.insert("M", NFKCQuickCheck::Maybe);
-    m.insert("N", NFKCQuickCheck::No);
-    m.insert("Y", NFKCQuickCheck::Yes);
-    m.get(name).cloned()
+    match name {
+        "M" => Some(NFKCQuickCheck::Maybe),
+        "N" => Some(NFKCQuickCheck::No),
+        "Y" => Some(NFKCQuickCheck::Yes),
+        _ => None,
+    }
 }
 
 fn get_nfkd_quick_check_enum(name: &str) -> Option<NFKDQuickCheck> {
-    let mut m: LiteMap<&str, NFKDQuickCheck> = LiteMap::new();
-    m.insert("N", NFKDQuickCheck::No);
-    m.insert("Y", NFKDQuickCheck::Yes);
-    m.get(name).cloned()
+    match name {
+        "N" => Some(NFKDQuickCheck::No),
+        "Y" => Some(NFKDQuickCheck::Yes),
+        _ => None,
+    }
 }
 
 fn get_numeric_type_enum(name: &str) -> Option<NumericType> {
-    let mut m: LiteMap<&str, NumericType> = LiteMap::new();
-    m.insert("De", NumericType::Decimal);
-    m.insert("Di", NumericType::Digit);
-    m.insert("None", NumericType::None);
-    m.insert("Nu", NumericType::Numeric);
-    m.get(name).cloned()
+    match name {
+        "De" => Some(NumericType::Decimal),
+        "Di" => Some(NumericType::Digit),
+        "None" => Some(NumericType::None),
+        "Nu" => Some(NumericType::Numeric),
+        _ => None,
+    }
 }
 
 fn get_sentence_break_enum(name: &str) -> Option<SentenceBreak> {
-    let mut m: LiteMap<&str, SentenceBreak> = LiteMap::new();
-    m.insert("AT", SentenceBreak::ATerm);
-    m.insert("CL", SentenceBreak::Close);
-    m.insert("CR", SentenceBreak::CR);
-    m.insert("EX", SentenceBreak::Extend);
-    m.insert("FO", SentenceBreak::Format);
-    m.insert("LE", SentenceBreak::OLetter);
-    m.insert("LF", SentenceBreak::LF);
-    m.insert("LO", SentenceBreak::Lower);
-    m.insert("NU", SentenceBreak::Numeric);
-    m.insert("SC", SentenceBreak::SContinue);
-    m.insert("SE", SentenceBreak::Sep);
-    m.insert("SP", SentenceBreak::Sp);
-    m.insert("ST", SentenceBreak::STerm);
-    m.insert("UP", SentenceBreak::Upper);
-    m.insert("XX", SentenceBreak::Other);
-    m.get(name).cloned()
+    match name {
+        "AT" => Some(SentenceBreak::ATerm),
+        "CL" => Some(SentenceBreak::Close),
+        "CR" => Some(SentenceBreak::CR),
+        "EX" => Some(SentenceBreak::Extend),
+        "FO" => Some(SentenceBreak::Format),
+        "LE" => Some(SentenceBreak::OLetter),
+        "LF" => Some(SentenceBreak::LF),
+        "LO" => Some(SentenceBreak::Lower),
+        "NU" => Some(SentenceBreak::Numeric),
+        "SC" => Some(SentenceBreak::SContinue),
+        "SE" => Some(SentenceBreak::Sep),
+        "SP" => Some(SentenceBreak::Sp),
+        "ST" => Some(SentenceBreak::STerm),
+        "UP" => Some(SentenceBreak::Upper),
+        "XX" => Some(SentenceBreak::Other),
+        _ => None,
+    }
 }
 
 fn get_trail_canonical_combining_class_enum(name: &str) -> Option<TrailCanonicalCombiningClass> {
-    let mut m: LiteMap<&str, TrailCanonicalCombiningClass> = LiteMap::new();
-    m.insert("0", TrailCanonicalCombiningClass::NotReordered);
-    m.insert("1", TrailCanonicalCombiningClass::Overlay);
-    m.insert("10", TrailCanonicalCombiningClass::CCC10);
-    m.insert("103", TrailCanonicalCombiningClass::CCC103);
-    m.insert("107", TrailCanonicalCombiningClass::CCC107);
-    m.insert("11", TrailCanonicalCombiningClass::CCC11);
-    m.insert("118", TrailCanonicalCombiningClass::CCC118);
-    m.insert("12", TrailCanonicalCombiningClass::CCC12);
-    m.insert("122", TrailCanonicalCombiningClass::CCC122);
-    m.insert("129", TrailCanonicalCombiningClass::CCC129);
-    m.insert("13", TrailCanonicalCombiningClass::CCC13);
-    m.insert("130", TrailCanonicalCombiningClass::CCC130);
-    m.insert("132", TrailCanonicalCombiningClass::CCC132);
-    m.insert("133", TrailCanonicalCombiningClass::CCC133);
-    m.insert("14", TrailCanonicalCombiningClass::CCC14);
-    m.insert("15", TrailCanonicalCombiningClass::CCC15);
-    m.insert("16", TrailCanonicalCombiningClass::CCC16);
-    m.insert("17", TrailCanonicalCombiningClass::CCC17);
-    m.insert("18", TrailCanonicalCombiningClass::CCC18);
-    m.insert("19", TrailCanonicalCombiningClass::CCC19);
-    m.insert("20", TrailCanonicalCombiningClass::CCC20);
-    m.insert("200", TrailCanonicalCombiningClass::AttachedBelowLeft);
-    m.insert("202", TrailCanonicalCombiningClass::AttachedBelow);
-    m.insert("21", TrailCanonicalCombiningClass::CCC21);
-    m.insert("214", TrailCanonicalCombiningClass::AttachedAbove);
-    m.insert("216", TrailCanonicalCombiningClass::AttachedAboveRight);
-    m.insert("218", TrailCanonicalCombiningClass::BelowLeft);
-    m.insert("22", TrailCanonicalCombiningClass::CCC22);
-    m.insert("220", TrailCanonicalCombiningClass::Below);
-    m.insert("222", TrailCanonicalCombiningClass::BelowRight);
-    m.insert("224", TrailCanonicalCombiningClass::Left);
-    m.insert("226", TrailCanonicalCombiningClass::Right);
-    m.insert("228", TrailCanonicalCombiningClass::AboveLeft);
-    m.insert("23", TrailCanonicalCombiningClass::CCC23);
-    m.insert("230", TrailCanonicalCombiningClass::Above);
-    m.insert("232", TrailCanonicalCombiningClass::AboveRight);
-    m.insert("233", TrailCanonicalCombiningClass::DoubleBelow);
-    m.insert("234", TrailCanonicalCombiningClass::DoubleAbove);
-    m.insert("24", TrailCanonicalCombiningClass::CCC24);
-    m.insert("240", TrailCanonicalCombiningClass::IotaSubscript);
-    m.insert("25", TrailCanonicalCombiningClass::CCC25);
-    m.insert("26", TrailCanonicalCombiningClass::CCC26);
-    m.insert("27", TrailCanonicalCombiningClass::CCC27);
-    m.insert("28", TrailCanonicalCombiningClass::CCC28);
-    m.insert("29", TrailCanonicalCombiningClass::CCC29);
-    m.insert("30", TrailCanonicalCombiningClass::CCC30);
-    m.insert("31", TrailCanonicalCombiningClass::CCC31);
-    m.insert("32", TrailCanonicalCombiningClass::CCC32);
-    m.insert("33", TrailCanonicalCombiningClass::CCC33);
-    m.insert("34", TrailCanonicalCombiningClass::CCC34);
-    m.insert("35", TrailCanonicalCombiningClass::CCC35);
-    m.insert("36", TrailCanonicalCombiningClass::CCC36);
-    m.insert("6", TrailCanonicalCombiningClass::HanReading);
-    m.insert("7", TrailCanonicalCombiningClass::Nukta);
-    m.insert("8", TrailCanonicalCombiningClass::KanaVoicing);
-    m.insert("84", TrailCanonicalCombiningClass::CCC84);
-    m.insert("9", TrailCanonicalCombiningClass::Virama);
-    m.insert("91", TrailCanonicalCombiningClass::CCC91);
-    m.get(name).cloned()
+    match name {
+        "0" => Some(TrailCanonicalCombiningClass::NotReordered),
+        "1" => Some(TrailCanonicalCombiningClass::Overlay),
+        "10" => Some(TrailCanonicalCombiningClass::CCC10),
+        "103" => Some(TrailCanonicalCombiningClass::CCC103),
+        "107" => Some(TrailCanonicalCombiningClass::CCC107),
+        "11" => Some(TrailCanonicalCombiningClass::CCC11),
+        "118" => Some(TrailCanonicalCombiningClass::CCC118),
+        "12" => Some(TrailCanonicalCombiningClass::CCC12),
+        "122" => Some(TrailCanonicalCombiningClass::CCC122),
+        "129" => Some(TrailCanonicalCombiningClass::CCC129),
+        "13" => Some(TrailCanonicalCombiningClass::CCC13),
+        "130" => Some(TrailCanonicalCombiningClass::CCC130),
+        "132" => Some(TrailCanonicalCombiningClass::CCC132),
+        "133" => Some(TrailCanonicalCombiningClass::CCC133),
+        "14" => Some(TrailCanonicalCombiningClass::CCC14),
+        "15" => Some(TrailCanonicalCombiningClass::CCC15),
+        "16" => Some(TrailCanonicalCombiningClass::CCC16),
+        "17" => Some(TrailCanonicalCombiningClass::CCC17),
+        "18" => Some(TrailCanonicalCombiningClass::CCC18),
+        "19" => Some(TrailCanonicalCombiningClass::CCC19),
+        "20" => Some(TrailCanonicalCombiningClass::CCC20),
+        "200" => Some(TrailCanonicalCombiningClass::AttachedBelowLeft),
+        "202" => Some(TrailCanonicalCombiningClass::AttachedBelow),
+        "21" => Some(TrailCanonicalCombiningClass::CCC21),
+        "214" => Some(TrailCanonicalCombiningClass::AttachedAbove),
+        "216" => Some(TrailCanonicalCombiningClass::AttachedAboveRight),
+        "218" => Some(TrailCanonicalCombiningClass::BelowLeft),
+        "22" => Some(TrailCanonicalCombiningClass::CCC22),
+        "220" => Some(TrailCanonicalCombiningClass::Below),
+        "222" => Some(TrailCanonicalCombiningClass::BelowRight),
+        "224" => Some(TrailCanonicalCombiningClass::Left),
+        "226" => Some(TrailCanonicalCombiningClass::Right),
+        "228" => Some(TrailCanonicalCombiningClass::AboveLeft),
+        "23" => Some(TrailCanonicalCombiningClass::CCC23),
+        "230" => Some(TrailCanonicalCombiningClass::Above),
+        "232" => Some(TrailCanonicalCombiningClass::AboveRight),
+        "233" => Some(TrailCanonicalCombiningClass::DoubleBelow),
+        "234" => Some(TrailCanonicalCombiningClass::DoubleAbove),
+        "24" => Some(TrailCanonicalCombiningClass::CCC24),
+        "240" => Some(TrailCanonicalCombiningClass::IotaSubscript),
+        "25" => Some(TrailCanonicalCombiningClass::CCC25),
+        "26" => Some(TrailCanonicalCombiningClass::CCC26),
+        "27" => Some(TrailCanonicalCombiningClass::CCC27),
+        "28" => Some(TrailCanonicalCombiningClass::CCC28),
+        "29" => Some(TrailCanonicalCombiningClass::CCC29),
+        "30" => Some(TrailCanonicalCombiningClass::CCC30),
+        "31" => Some(TrailCanonicalCombiningClass::CCC31),
+        "32" => Some(TrailCanonicalCombiningClass::CCC32),
+        "33" => Some(TrailCanonicalCombiningClass::CCC33),
+        "34" => Some(TrailCanonicalCombiningClass::CCC34),
+        "35" => Some(TrailCanonicalCombiningClass::CCC35),
+        "36" => Some(TrailCanonicalCombiningClass::CCC36),
+        "6" => Some(TrailCanonicalCombiningClass::HanReading),
+        "7" => Some(TrailCanonicalCombiningClass::Nukta),
+        "8" => Some(TrailCanonicalCombiningClass::KanaVoicing),
+        "84" => Some(TrailCanonicalCombiningClass::CCC84),
+        "9" => Some(TrailCanonicalCombiningClass::Virama),
+        "91" => Some(TrailCanonicalCombiningClass::CCC91),
+        _ => None,
+    }
 }
 
 fn get_vertical_orientation_enum(name: &str) -> Option<VerticalOrientation> {
-    let mut m: LiteMap<&str, VerticalOrientation> = LiteMap::new();
-    m.insert("R", VerticalOrientation::Rotated);
-    m.insert("Tr", VerticalOrientation::TransformedRotated);
-    m.insert("Tu", VerticalOrientation::TransformedUpright);
-    m.insert("U", VerticalOrientation::Upright);
-    m.get(name).cloned()
+    match name {
+        "R" => Some(VerticalOrientation::Rotated),
+        "Tr" => Some(VerticalOrientation::TransformedRotated),
+        "Tu" => Some(VerticalOrientation::TransformedUpright),
+        "U" => Some(VerticalOrientation::Upright),
+        _ => None,
+    }
 }
 
 fn get_word_break_enum(name: &str) -> Option<WordBreak> {
-    let mut m: LiteMap<&str, WordBreak> = LiteMap::new();
-    m.insert("CR", WordBreak::CR);
-    m.insert("DQ", WordBreak::DoubleQuote);
-    m.insert("EB", WordBreak::EBase);
-    m.insert("EBG", WordBreak::EBaseGAZ);
-    m.insert("EM", WordBreak::EModifier);
-    m.insert("EX", WordBreak::ExtendNumLet);
-    m.insert("Extend", WordBreak::Extend);
-    m.insert("FO", WordBreak::Format);
-    m.insert("GAZ", WordBreak::GlueAfterZwj);
-    m.insert("HL", WordBreak::HebrewLetter);
-    m.insert("KA", WordBreak::Katakana);
-    m.insert("LE", WordBreak::ALetter);
-    m.insert("LF", WordBreak::LF);
-    m.insert("MB", WordBreak::MidNumLet);
-    m.insert("ML", WordBreak::MidLetter);
-    m.insert("MN", WordBreak::MidNum);
-    m.insert("NL", WordBreak::Newline);
-    m.insert("NU", WordBreak::Numeric);
-    m.insert("RI", WordBreak::RegionalIndicator);
-    m.insert("SQ", WordBreak::SingleQuote);
-    m.insert("WSegSpace", WordBreak::WSegSpace);
-    m.insert("XX", WordBreak::Other);
-    m.insert("ZWJ", WordBreak::ZWJ);
-    m.get(name).cloned()
+    match name {
+        "CR" => Some(WordBreak::CR),
+        "DQ" => Some(WordBreak::DoubleQuote),
+        "EB" => Some(WordBreak::EBase),
+        "EBG" => Some(WordBreak::EBaseGAZ),
+        "EM" => Some(WordBreak::EModifier),
+        "EX" => Some(WordBreak::ExtendNumLet),
+        "Extend" => Some(WordBreak::Extend),
+        "FO" => Some(WordBreak::Format),
+        "GAZ" => Some(WordBreak::GlueAfterZwj),
+        "HL" => Some(WordBreak::HebrewLetter),
+        "KA" => Some(WordBreak::Katakana),
+        "LE" => Some(WordBreak::ALetter),
+        "LF" => Some(WordBreak::LF),
+        "MB" => Some(WordBreak::MidNumLet),
+        "ML" => Some(WordBreak::MidLetter),
+        "MN" => Some(WordBreak::MidNum),
+        "NL" => Some(WordBreak::Newline),
+        "NU" => Some(WordBreak::Numeric),
+        "RI" => Some(WordBreak::RegionalIndicator),
+        "SQ" => Some(WordBreak::SingleQuote),
+        "WSegSpace" => Some(WordBreak::WSegSpace),
+        "XX" => Some(WordBreak::Other),
+        "ZWJ" => Some(WordBreak::ZWJ),
+        _ => None,
+    }
 }
 
 //
