@@ -295,7 +295,7 @@ fn get_indic_syllabic_category_enum(name: &str) -> Option<IndicSyllabicCategory>
         "Consonant_Dead" => Some(IndicSyllabicCategory::ConsonantDead),
         "Consonant_Final" => Some(IndicSyllabicCategory::ConsonantFinal),
         "Consonant_Head_Letter" => Some(IndicSyllabicCategory::ConsonantHeadLetter),
-        "Consonant_Initial_Postfixed" => Some(IndicSyllabicCategory::ConsonantInitialPostfixed,),
+        "Consonant_Initial_Postfixed" => Some(IndicSyllabicCategory::ConsonantInitialPostfixed),
         "Consonant_Killer" => Some(IndicSyllabicCategory::ConsonantKiller),
         "Consonant_Medial" => Some(IndicSyllabicCategory::ConsonantMedial),
         "Consonant_Placeholder" => Some(IndicSyllabicCategory::ConsonantPlaceholder),
