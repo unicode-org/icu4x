@@ -339,7 +339,7 @@ mod test {
 
     #[test]
     fn from_iterator() {
-        let mut expected = LiteMap::with_capacity(3);
+        let mut expected = LiteMap::with_capacity(4);
         expected.insert(1, "updated-one");
         expected.insert(2, "original-two");
         expected.insert(3, "original-three");
