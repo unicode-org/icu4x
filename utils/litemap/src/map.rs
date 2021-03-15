@@ -131,8 +131,9 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// let mut map = LiteMap::new();
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
-    /// // out of order append:
-    /// assert!(map.try_append(2, "dos").is_some());
+    ///
+    /// assert!(map.try_append(2, "dos").is_some(), "append out of order");
+    /// assert!(map.try_append(3, "tres-updated").is_some(), "append duplicate key");
     ///
     /// assert_eq!(map.get(&1), Some(&"uno"));
     /// // not appended since it wasn't in order
