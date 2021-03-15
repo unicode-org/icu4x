@@ -10,6 +10,7 @@ use crate::support::UnicodeProperties;
 use icu_uniset::enum_prop_mapping::get_prop_name_identifier;
 use icu_uniset::provider::UnicodeProperty;
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use tinystr::TinyStr16;
 
 //
 // Provider-related structs and impl functions
@@ -302,7 +303,7 @@ fn get_enum_prop_unisets<'s>(
     enum_prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
     enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
-) -> HashMap<Cow<'s, str>, UnicodeSet> {
+) -> HashMap<Cow<'s, TinyStr16>, UnicodeSet> {
     let mut m: HashMap<&str, HashMap<&str, UnicodeSetBuilder>> = HashMap::new();
 
     let enum_val_mappings: HashMap<&str, HashMap<&str, &str>> =
@@ -347,7 +348,7 @@ fn get_enum_prop_unisets<'s>(
         }
     }
 
-    let mut result: HashMap<Cow<'s, str>, UnicodeSet> = HashMap::new();
+    let mut result: HashMap<Cow<'s, TinyStr16>, UnicodeSet> = HashMap::new();
 
     // Insert UnicodeSets into `result`, with a key like `"5=10"` that
     // is the integer representation of the Rust enums for the Unicode
@@ -357,9 +358,8 @@ fn get_enum_prop_unisets<'s>(
         for (canonical_val_name, uniset_builder) in prop_val_builder_map {
             let enum_val_uniset_name =
                 get_prop_name_identifier(canonical_prop_name, canonical_val_name);
-            let enum_val_uniset_name = enum_val_uniset_name.map(|tiny_str| tiny_str.to_string());
             if let Some(name_str) = enum_val_uniset_name {
-                let enum_val_uniset_name: Cow<'s, str> = Cow::Owned(name_str);
+                let enum_val_uniset_name: Cow<'s, TinyStr16> = Cow::Owned(name_str);
                 let uniset = uniset_builder.build();
                 result.insert(enum_val_uniset_name, uniset);
             }
@@ -466,7 +466,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
         get_binary_prop_unisets(&binary_prop_aliases, &code_points);
 
-    let enum_prop_unisets: HashMap<Cow<'s, str>, UnicodeSet> =
+    let enum_prop_unisets: HashMap<Cow<'s, TinyStr16>, UnicodeSet> =
         get_enum_prop_unisets(&enum_prop_aliases, &enum_val_aliases, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
@@ -476,7 +476,12 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     }
 
     for (key_val_tuple_name, uniset) in enum_prop_unisets {
-        let ppucd_prop: UnicodeProperty = UnicodeProperty::from_uniset(&uniset, key_val_tuple_name);
+        let key_val_tuple_name_str: Cow<'s, str> = match key_val_tuple_name {
+            Cow::Borrowed(tiny_str) => Cow::Borrowed(tiny_str.as_str()),
+            Cow::Owned(tiny_str) => Cow::Owned(tiny_str.to_string()),
+        };
+        let ppucd_prop: UnicodeProperty =
+            UnicodeProperty::from_uniset(&uniset, key_val_tuple_name_str);
         props.push(ppucd_prop);
     }
 
