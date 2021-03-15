@@ -332,3 +332,30 @@ mod serde {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_from_iterator() {
+        let mut expected = LiteMap::with_capacity(3);
+        expected.insert(1, "updated-one");
+        expected.insert(2, "original-two");
+        expected.insert(3, "original-three");
+        expected.insert(4, "updated-four");
+
+        let actual = vec![
+            (1, "original-one"),
+            (2, "original-two"),
+            (4, "original-four"),
+            (4, "updated-four"),
+            (1, "updated-one"),
+            (3, "original-three"),
+        ]
+        .into_iter()
+        .collect::<LiteMap<_, _>>();
+
+        assert_eq!(expected, actual);
+    }
+}
