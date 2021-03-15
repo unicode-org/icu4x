@@ -338,7 +338,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_from_iterator() {
+    fn from_iterator() {
         let mut expected = LiteMap::with_capacity(3);
         expected.insert(1, "updated-one");
         expected.insert(2, "original-two");
