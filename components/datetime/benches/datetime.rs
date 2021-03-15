@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
@@ -8,6 +8,7 @@ use std::fmt::Write;
 
 use icu_datetime::mock::MockDateTime;
 use icu_datetime::DateTimeFormat;
+use icu_locid::Locale;
 
 fn datetime_benches(c: &mut Criterion) {
     let fxs = fixtures::get_fixture("styles").unwrap();
@@ -25,9 +26,9 @@ fn datetime_benches(c: &mut Criterion) {
                     .map(|value| value.parse().unwrap())
                     .collect();
                 for setup in &fx.setups {
-                    let langid = setup.locale.parse().unwrap();
+                    let locale: Locale = setup.locale.parse().unwrap();
                     let options = fixtures::get_options(&setup.options);
-                    let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+                    let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
                     let mut result = String::new();
 
@@ -56,9 +57,9 @@ fn datetime_benches(c: &mut Criterion) {
                         .collect();
 
                     for setup in &fx.setups {
-                        let langid = setup.locale.parse().unwrap();
+                        let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+                        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
                         let mut result = String::new();
 
@@ -81,9 +82,9 @@ fn datetime_benches(c: &mut Criterion) {
                         .collect();
 
                     for setup in &fx.setups {
-                        let langid = setup.locale.parse().unwrap();
+                        let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+                        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
                         for dt in &datetimes {
                             let _ = dtf.format_to_string(dt);
@@ -103,9 +104,9 @@ fn datetime_benches(c: &mut Criterion) {
                         .collect();
 
                     for setup in &fx.setups {
-                        let langid = setup.locale.parse().unwrap();
+                        let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+                        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
                         let mut result = String::new();
 
@@ -129,9 +130,9 @@ fn datetime_benches(c: &mut Criterion) {
                         .collect();
 
                     for setup in &fx.setups {
-                        let langid = setup.locale.parse().unwrap();
+                        let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();
+                        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);

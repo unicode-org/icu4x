@@ -50,6 +50,12 @@ cargo run
   -s bincode
 ```
 
+To generate ICU4X's testdata using bincode rather than JSON, run:
+
+```bash
+cargo make bincode-gen-testdata
+```
+
 *Notice:* In order to use `bincode` encoded data in production, `icu_provider_fs` has to be
 added with `bincode` feature.
 

@@ -19,11 +19,21 @@ $ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
 From this directory, run:
 
 ```bash
-$ cargo gen-testdata
+$ cargo gen-testdata -v
 ```
 
-To monitor the progress, run with `-v`, `-vv`, or `-vvv`:
+Use `-v`, `-vv`, or `-vvv` for different verbosities of logging.
+
+Use `-m generate` to generate the testdata without downloading it first:
 
 ```bash
-$ cargo gen-testdata -vv
+$ cargo gen-testdata -v -m generate
+```
+
+## Generating the data with bincode
+
+The following command will generate the data in the folder `resources/testdata/data/bincode`.
+
+```bash
+cargo make bincode-gen-testdata
 ```

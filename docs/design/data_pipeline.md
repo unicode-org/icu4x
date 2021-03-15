@@ -12,12 +12,11 @@ The following terms are used throughout this document.
 - **Format Version:** A version of the file format, abstracted away from the schema version and data version.  For example, Protobuf 2 and Protobuf 3 are format versions.
 - **Format:** How the data is stored on disk or provided from a service.  Examples of data formats: JSON, YAML, Memory-Mapped, Protobuf.  The format is internal to the data provider.
 - **Hunk:** A small piece of locale data relating to a specific task.  For example, the name of January might be a hunk, and a list of all month names could also be considered a hunk.  A data piece is expected to reflect a specific type.
-- **LangID:** A tuple of language, script, and region.  LangID is a request variable.  Unicode Locale Extensions should be handled by the ICU4X code rather than the data provider.
+- **LangID:** A UTS 35 Language Identifier.  LangID is a request variable.  Unicode Locale Extensions should be handled by the ICU4X code rather than the data provider.
 - **Key:** An identifier corresponding to a specific hunk.
-- **Mapping:** A mechanism that a data provider should follow to read from the schema and serve a hunk that may have a different type.
 - **Request Variables:** Metadata that is sent along with a key when requesting data from a data provider.
 - **Response Variables:** Metadata that is sent along with a hunk when a data provider responds to a request.
-- **Schema Version:** A version of the schema, abstracted away from the format version and data version.  For example, data may be reorganied within the JSON file between schema versions.
+- **Schema Version:** A version of the schema, tied to a hunk and abstracted away from the format version and data version.  For example, data may be reorganied within the JSON file between schema versions.
 - **Schema:** The structure of locale data, abstracted away from the hunk types.  Data is stored in a particular format according to the schema.
 - **Type:** The structure of a hunk.  The type may be, for example, a number, string, list of numbers or strings, or another data type discussed in detail later in the document.
 
@@ -31,7 +30,7 @@ A JSON data provider might look something like this:
 
 ![JSON Data Provider](../assets/json_data_provider.svg)
 
-In the above diagram, ICU4X requests a specific key from the data provider.  The data provider uses a mapping to figure out what path to load from the JSON file corresponding to the key.  It then may use a mapping to convert the JSON object to the type expected for the hunk, and then finally it sends the hunk back to the ICU4X implementation.
+In the above diagram, ICU4X requests a specific key from the data provider.  The data provider uses the string components of the request figure out what path to load from the JSON file corresponding to the key.  It then loads the JSON sends the hunk back to the ICU4X implementation.
 
 Requests to the data provider consist not only of a key, but also additional request variables, such as a requested LangID and possibly other metadata. Responses consist not only of a hunk, but also additional response variables, such as a data version, actual LangID, and possibly other metadata.
 
@@ -72,11 +71,86 @@ A key is an integer from an enumeration.  Each key has a corresponding type, whi
 
 *Open Question:* Due to ongoing developments in [wrapper-layer.md](wrapper-layer.md), the above list of example keys may be more fine-grained than we will need in the final product.  It may be better to have more coarse-grained hunks, like "all decimal format symbols" instead of "grouping separator" and "decimal separator".  Main issue: [#26](https://github.com/unicode-org/omnicu/issues/26)
 
-### Data Key Struct Definitions
+### Resource Key Struct Definitions
 
-The actual resource keys and the structs to which they correspond should be defined in a central location in the repository: [components/provider/src](../../components/provider/src).  Follow conventions of existing data provider struct definitions when adding a new one.
+The actual resource keys and the structs to which they correspond should be defined in the `provider` module of the component in which they are used. For example, structs for DateTimeFormat should be defined in `icu_datetime::provider`. This file should also contain a submodule `keys` containing const-declared data key definitions.
 
-There should generally be a 1-to-1 relationship between components (number formatter, plural rules, date format) and modules in the data provider crate.  However, this is not strictly enforced; use your best judgement.
+Data provider structs should implement `Default`, returning generic, invariant data. This fallback data may be used for testing purposes or if the ICU4X environment does not have access to a locale data source. Note that `#[derive(Default)]` is not generally what you want here.
+
+The name of the data provider struct should include its schema version; for example, `SampleDataStructV1` has schema version 1. Data provider structs should *not* use `#[non_exhaustive]`. If new fields are to be added, a new schema version must be introduced, like `SampleDataStructV2`.
+
+There are two feature flags relevant to data struct definitions:
+
+1. `"provider_serde"` should be used to enable Serde on the data provider structs.
+2. `"serialize_none"` should be used in tandem with an `Option` field. This feature is necessary to support serialization formats such as Bincode that do not support Serde `skip_serializing_if`.
+
+Here is an example of a `provider.rs` boilerplate for a component:
+
+```rust
+use std::borrow::Cow;
+
+pub mod key {
+    use icu_provider::{resource::ResourceKey, resource_key};
+    pub const EXAMPLE_V1: ResourceKey = resource_key!(example, "example", 1);
+}
+
+/// This is a sample data struct.
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct SampleDataStructV1<'s> {
+    /// This field is always present, and it may be borrowed or owned.
+    pub normal_value: Cow<'s, str>,
+
+    /// This field may or may not be present in the data struct.
+    #[cfg_attr(
+        all(feature = "provider_serde", not(feature = "serialize_none")),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
+    pub option_value: Option<i32>,
+}
+
+impl Default for SampleDataStructV1<'_> {
+    fn default() -> Self {
+        SampleDataStructV1 {
+            normal_value: Cow::Borrowed("(undefined)"),
+            option_value: None,
+        }
+    }
+}
+```
+
+### Pre-Processing of Data
+
+Data represented by the ICU4X data schema and passed through the data provider pipeline as a hunk should be ready to use with minimal processing at runtime.
+
+For example, it is not recommended for ICU4X to request a pattern string such as `#,##0.00` for number formatting; instead, it should request a struct corresponding to the parsed version of that pattern string, such that ICU4X doesn't need to parse it at runtime.
+
+### Explicit Data Caching
+
+Caching of locale data is important for achieving optimal performance. For example, loading a locale data hunk may require expensive I/O operations such as reading from a filesystem or making a network request.
+
+However, different clients may have different needs when it comes to data caching:
+
+1. Resource-constrained environments may want a small cache with a naive eviction algorithm, whereas server environments may want a large cache with a more sophisticated eviction algorithm.
+2. Data coming from different sources may need different caching strategies. For example, data loaded over HTTP may wish to conform to the HTTP `Expires` header, whereas data loaded from the filesystem may be invalidated based on file modification time.
+3. Clients may wish to invalidate the entire cache if updated data becomes available during the lifecycle of the app.
+
+Since there is no "one size fits all" solution to data caching, ICU4X abstracts the operation into a separate component of the data pipeline. *ICU4X is stateless by design*; all caching is intended to be an explicit choice by the client of ICU4X.
+
+### Cache Invalidation
+
+Given the one centralized data cache explained above, it is possible to architect an app sitting on top of ICU4X with a standard reactivity framework to re-compute UI components when a locale data update is available. Best practices include:
+
+1. All UI elements that contain localizable data should subscribe to ICU4X data updates.
+2. When a locale data update is available, the data cache should be emptied, and all UI component subscribers should be re-rendered.
+3. UI components should create fresh ICU4X formatter objects, use them throughout the duration of rendering the component, and throw them away when done.
+
+Note that it is a *design goal* of ICU4X that clients should not need to create any other caches. There should be no reason to store a formatter object for longer than the time it takes to render the component.
+
+We have experience from ICU4C that there are two main reasons that object creation can be slow: (1) locale data lookup, including language negotiation + fallbacks, and (2) massaging of that locale data into a useful runtime form. ICU4X solves (1) by splitting the locale data provider into its own explicit component that caches data after language negotation and fallbacking is completed; see "Explicit Data Caching". ICU4X solves (2) by having an ICU4X data model that requires as little processing of data at runtime as possible; see "Pre-Processing of Data".
 
 ### Request Variables
 
@@ -84,11 +158,8 @@ Requests made to data providers consist of a key and additional *request variabl
 
 1. Requested LangID
 2. Optional String Identifier (explained below)
-3. String Encoding (UTF-8 or UTF-16, explained below)
 
 The optional string identifier should be a string corresponding to the key, such as the currency code when requesting `CURR_SYM_V1`.  Most keys will not require an optional string identifier.
-
-The string encoding corresponds to the encoding of the string identifier and also the preferred encoding of strings in the response object.  In other words, it is expected that the string encoding in the request should equal the string encoding in the response.
 
 ### Static Data Slicing
 
@@ -111,7 +182,7 @@ The data on disk may not reflect exactly the types required for a particular key
 }
 ```
 
-The mapping is responsible for translating that schema into the hunk type required for a particular key.  For example, the pseudocode of a mapping might be:
+Mappings are a way that a DataProvider could support many hunk schema versions without increasing locale data size. For example, the pseudocode of a mapping might be:
 
 ```
 switch (key) {
@@ -130,26 +201,24 @@ A data provider need not implement a mapping for all keys.  For example, if ICU4
 
 ### Schema Version
 
-A data file (such as JSON) should represent data conforming to a certain schema, and the data provider's mapping should map from a specific schema version to a specific set of supported keys.  The data file can be rebuilt with different data versions so long as it conforms to the same schema version.
+A data file (such as JSON) should represent data conforming to a certain schema.  The data file can be rebuilt with different data versions so long as it conforms to the same schema version.
 
-The expectation is that an offline tool transforms CLDR data into a specific data schema version and writes out a data file that the data provider uses at runtime.  It is also possible that a data provider could read from CLDR's raw XML or JSON files directly, although this might not be as efficient at runtime.
+The crate `provider_cldr` contains a DataProvider implementation that reads from CLDR JSON files and transforms them into ICU4X JSON at the latest schema version. At runtime, a different DataProvider implementation such as the one in `provider_fs` should be used for improved efficiency.
 
 ### Types
 
-The set of supported types is limited so that ICU4X implementations can be written to support them in a consistent way.  The supported types are:
+The set of supported types is limited so that ICU4X implementations can be written to support them in a consistent way.  The supported types include:
 
 - i8
 - i32 (includes code points)
 - double
-- string (either UTF-8 or UTF-16 according to request/response)
+- string
 - byte array
 - tuple of one of these types (fixed-length)
 - list of one of these types (variable-length)
 - struct with fixed keys and values of one of these types
 
-An open-ended map with string keys is not supported because hash map implementations vary from platform to platform, and they do not deliver guaranteed performance.  Instead, a struct with fixed fields can be used.
-
-The data type should be appropriate for fast evaluation at runtime.  For example, it is not recommended for ICU4X to request a pattern string such as `#,##0.00` for number formatting; instead, it should request a struct corresponding to the parsed version of that pattern string, such that ICU4X doesn't need to parse it at runtime.
+An open-ended map with string keys is discouraged, because in most cases, a struct with fixed keys can be used. If a map with variable keys is required, a LiteMap should be used in the Rust data struct definition.
 
 ### Response Variables
 
@@ -157,7 +226,6 @@ Along with the hunk, the data provider sends multiple *response variables*.  The
 
 1. Supported LangID (explained below)
 2. Data Version (explained below)
-3. String Encoding (UTF-8 or UTF-16)
 
 The supported LangID is expected to be the most specific LangID that had any data whatsoever, even if it is just an alias.  For example, if en_GB is present but empty, and the data is actually loaded from en_001, the Supported LangID should still be en_GB.  In other words, the fallback mechanism is considered an internal detail.
 

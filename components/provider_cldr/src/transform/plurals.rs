@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
@@ -49,19 +49,6 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
         Ok(PluralsProvider {
             cardinal_rules,
             ordinal_rules,
-            _phantom: PhantomData,
-        })
-    }
-}
-
-impl<'d> TryFrom<&'d str> for PluralsProvider<'d> {
-    type Error = serde_json::error::Error;
-    /// Attempt to parse a CLDR JSON string.
-    fn try_from(s: &'d str) -> Result<Self, Self::Error> {
-        let data: cldr_json::Resource = serde_json::from_str(s)?;
-        Ok(PluralsProvider {
-            cardinal_rules: data.supplemental.plurals_type_cardinal,
-            ordinal_rules: data.supplemental.plurals_type_ordinal,
             _phantom: PhantomData,
         })
     }
@@ -201,8 +188,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Borrow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/plurals.json").unwrap();
-    let provider = PluralsProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: Cow<PluralRuleStringsV1> = provider

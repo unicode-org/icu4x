@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use cargo_metadata::{self, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
@@ -46,6 +46,7 @@ impl fmt::Debug for Error {
 #[derive(Debug, Deserialize)]
 pub struct PackageMetadata {
     pub locales: Vec<LanguageIdentifier>,
+    pub cldr_json_glob: Vec<String>,
     pub gitref: String,
 }
 

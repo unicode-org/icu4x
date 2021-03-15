@@ -30,13 +30,13 @@ ICU4X is highly modular allowing users to easily select and chunk pieces of the 
 
 ### Flexible Data Management
 
-[Data management](https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md) is a complex subcomponent of every internationalization ecosystem. Inflexible data management forces users to select which data and which locales are going to be available to users, which is a practice that goes against the idea of universal access to the system.
+[Data management](https://github.com/unicode-org/icu4x/blob/main/docs/data-pipeline.md) is a complex subcomponent of every internationalization ecosystem. Inflexible data management forces users to select which data and which locales are going to be available to users, which is a practice that goes against the idea of universal access to the system.
 
 What’s more, such architecture forces trade-offs and compromises in which benefiting some users puts additional cost on other users, companies and degrades performance.
 
 ICU4X aims to tackle these issues with a flexible data management system which will allow for architectures to be more adaptable as code and data can be adjusted to the needs of an ecosystem, loaded synchronously and asynchronously, and updated over time.
 
-We hope this approach will allow more software to be accessible to the whole World without forcing tough compromises on the product and project decision makers. 
+We hope this approach will allow more software to be accessible to the whole World without forcing tough compromises on the product and project decision makers.
 
 ### Performance, Memory, Safety and Size
 
@@ -135,4 +135,4 @@ As a project in a highly-complex knowledge domain, the project’s ability to su
 
 We are looking for internationalization experts, linguists, programming language architects and software engineers to help us make ICU4X a reality.
 
-If you or your organization would like to contribute, you can find more information in the [CONTRIBUTING.md](https://github.com/unicode-org/icu4x/blob/master/CONTRIBUTING.md) document in [our github repository](https://github.com/unicode-org/icu4x).
+If you or your organization would like to contribute, you can find more information in the [CONTRIBUTING.md](https://github.com/unicode-org/icu4x/blob/main/CONTRIBUTING.md) document in [our github repository](https://github.com/unicode-org/icu4x).

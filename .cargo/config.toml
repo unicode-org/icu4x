@@ -1,6 +1,6 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
-# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 [alias]
 
 ### INDIVIDUAL TEST AND LINT TASKS ###
@@ -29,6 +29,9 @@ quick = "make quick"
 
 # Run all lints and tests
 ci = "make ci"
+
+# Run all lints and tests
+bincode-gen-testdata = "make bincode-gen-testdata"
 
 ### WASM TASKS ###
 

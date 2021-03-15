@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
@@ -39,22 +40,6 @@ impl TryFrom<&dyn CldrPaths> for DatesProvider<'_> {
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
             data.append(&mut resource.main.0);
         }
-
-        Ok(Self {
-            data,
-            _phantom: PhantomData,
-        })
-    }
-}
-
-impl TryFrom<&str> for DatesProvider<'_> {
-    type Error = Error;
-    fn try_from(input: &str) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let mut resource: cldr_json::Resource =
-            serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
-        data.append(&mut resource.main.0);
 
         Ok(Self {
             data,
@@ -431,8 +416,8 @@ fn test_basic() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
-    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
@@ -463,8 +448,8 @@ fn test_with_numbering_system() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/haw-ca-gregorian.json").unwrap();
-    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
@@ -490,8 +475,8 @@ fn unalias_contexts() {
     use icu_locid_macros::langid;
     use std::borrow::Cow;
 
-    let json_str = std::fs::read_to_string("tests/testdata/cs-ca-gregorian.json").unwrap();
-    let provider = DatesProvider::try_from(json_str.as_str()).unwrap();
+    let cldr_paths = crate::cldr_paths::for_test();
+    let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     let cs_dates: Cow<gregory::DatesV1> = provider
         .load_payload(&DataRequest {

@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -332,10 +332,7 @@ fn test_borrowing_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider);
-    assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloAlt { .. }))
-    ));
+    assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
 }
 
 #[test]
@@ -356,10 +353,7 @@ fn test_borrowing_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAlt>);
-    assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloAlt { .. }))
-    ));
+    assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
 }
 
 #[test]

@@ -12,7 +12,7 @@ In most cases, the first step is to find or file a new issue related to your pla
 
 ## Contributing a Pull Request
 
-The first step is to fork the repository to your namespace and create a branch off of the `master` branch to work with.
+The first step is to fork the repository to your namespace and create a branch off of the `main` branch to work with.
 
 That branch may end up containing one of more commits that are constituting the full scope of the pull request.
 
@@ -161,7 +161,7 @@ When adding a new Rust file, please ensure that it starts with this precise text
 ```
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 ```
 
 When adding a new TOML file, please ensure that it starts with this precise text:
@@ -169,7 +169,7 @@ When adding a new TOML file, please ensure that it starts with this precise text
 ```
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
-# (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 ```
 
 For non-Rust/TOML files that support comments, please include a comment with the above content using the comment syntax of the applicable file format near the top of the file as practical for the file format and use case.

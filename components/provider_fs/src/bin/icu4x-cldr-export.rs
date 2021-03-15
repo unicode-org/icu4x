@@ -1,6 +1,6 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
@@ -231,7 +231,7 @@ fn main() -> Result<(), Error> {
     );
 
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_from_github_tag(tag)?)
+        Box::new(CldrAllInOneDownloader::try_new_from_github_tag(tag)?.download()?)
     } else {
         let mut cldr_paths_local = CldrPathsLocal::default();
         if let Some(path) = matches.value_of("CLDR_CORE") {
