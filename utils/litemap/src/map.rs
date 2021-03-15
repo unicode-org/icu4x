@@ -132,10 +132,21 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
     ///
-    /// assert!(map.try_append(2, "dos").is_some(), "append out of order");
-    /// assert!(map.try_append(3, "tres-updated").is_some(), "append duplicate key");
+    /// assert!(
+    ///     matches!(map.try_append(3, "tres-updated"), Some((3, "tres-updated"))),
+    ///     "append duplicate of last key",
+    /// );
+    ///
+    /// assert!(
+    ///     matches!(map.try_append(2, "dos"), Some((2, "dos"))),
+    ///     "append out of order"
+    /// );
     ///
     /// assert_eq!(map.get(&1), Some(&"uno"));
+    ///
+    /// // contains the original value for the key: 3
+    /// assert_eq!(map.get(&3), Some(&"tres"));
+    ///
     /// // not appended since it wasn't in order
     /// assert_eq!(map.get(&2), None);
     /// ```
