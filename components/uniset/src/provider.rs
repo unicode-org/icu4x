@@ -638,9 +638,8 @@ pub mod key {
     pub const WORD_BREAK_ZWJ_V1: ResourceKey = resource_key!(uniset, "22=22", 1);
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "testing", derive(Hash, Eq))]
 pub struct UnicodeProperty<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,

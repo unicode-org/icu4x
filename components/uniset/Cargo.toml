@@ -39,7 +39,6 @@ default = ["provider_serde"]
 bench = []
 provider_serde = ["serde"]
 serialize_none = []
-testing = []
 
 [[bench]]
 name = "inv_list"
