@@ -38,8 +38,7 @@ impl UnicodeSetBuilder {
 
         if start_eq_end && start_pos_check && end_res.is_err() {
             let ins = &[start, end];
-            self.intervals
-                .splice(start_ind..end_ind, ins.iter().copied());
+            self.intervals.splice(start_ind..end_ind, ins.iter().copied());
         } else {
             if start_pos_check {
                 self.intervals[start_ind] = start;
