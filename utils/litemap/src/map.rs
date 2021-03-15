@@ -192,59 +192,6 @@ impl<K: Ord, V> LiteMap<K, V> {
             Err(_) => None,
         }
     }
-
-    /// Extend the map's underlying vector with the items in the iterator as long as
-    /// the appended keys remain in sorted order with the vector's existing keys.
-    ///
-    /// If all items were appended successfully, return `None`.
-    /// Otherwise, return an `Some` iterator over the rest of the unsorted items.
-    ///```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map = LiteMap::new();
-    /// let iter = [(2, "two"), (3, "three"), (1, "one")].iter().cloned();
-    /// let option = map.try_extend_from_sorted(iter);
-    ///
-    /// assert_eq!(map.get(&2), Some(&"two"));
-    /// assert_eq!(map.get(&3), Some(&"three"));
-    /// assert_eq!(map.get(&1), None);
-    /// assert_eq!(option.unwrap().next(), Some((1, "one")));
-    ///```
-    #[must_use]
-    pub fn try_extend_from_sorted<I>(&mut self, iter: I) -> Option<impl Iterator<Item = (K, V)>>
-    where
-        I: IntoIterator<Item = (K, V)>,
-    {
-        let mut iter = iter.into_iter();
-        while let Some((k, v)) = iter.next() {
-            if let Some((k, v)) = self.try_append(k, v) {
-                return Some(std::iter::once((k, v)).chain(iter));
-            }
-        }
-        None
-    }
-
-    /// Extend the map's underlying vector with the items in the iterator,
-    /// Inserting the new items into the correct places as ncessary.
-    ///```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map = LiteMap::new();
-    /// let iter = [(2, "two"), (1, "one"), (3, "three")].iter().cloned();
-    /// map.extend_from_unsorted(iter);
-    ///
-    /// assert_eq!(map.get(&2), Some(&"two"));
-    /// assert_eq!(map.get(&1), Some(&"one"));
-    /// assert_eq!(map.get(&3), Some(&"three"));
-    ///```
-    pub fn extend_from_unsorted<I>(&mut self, iter: I)
-    where
-        I: IntoIterator<Item = (K, V)>,
-    {
-        for (key, value) in iter {
-            self.insert(key, value);
-        }
-    }
 }
 
 impl<K, V> Default for LiteMap<K, V> {
@@ -270,9 +217,13 @@ impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
             (_, Some(upper)) => LiteMap::with_capacity(upper),
             (lower, None) => LiteMap::with_capacity(lower),
         };
-        if let Some(iter) = map.try_extend_from_sorted(iter) {
-            map.extend_from_unsorted(iter);
+
+        for (key, value) in iter {
+            if let Some((key, value)) = map.try_append(key, value) {
+                map.insert(key, value);
+            }
         }
+
         map
     }
 }
