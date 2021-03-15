@@ -1,4 +1,4 @@
-# Benchmarking
+# Performance Benchmarking
 
 ICU4X Benchmark Guideline
 =========================

@@ -88,7 +88,7 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
-          path: ./dev/**  # use wildcard pattern to preserve dir structure of uploaded files
+          path: ./benchmarks/perf/**  # use wildcard pattern to preserve dir structure of uploaded files
           name: benchmark-perf
   ```
   * [Example download](https://github.com/unicode-org/icu4x/blob/main/.github/workflows/build-test.yml#L246-L250):
@@ -96,7 +96,7 @@ Less frequently, there might be specific changes that cannot be tested via a PR 
     - name: Download previous content destined for GH pages
       uses: actions/download-artifact@v2
       with:
-        path: ./copy-to-ext-repo/dev
+        path: ./copy-to-ext-repo/benchmarks/perf
         name: benchmark-perf
   ```
   * There is no mechanism to persist data storage across workflow instantiations. The only way to persist / store data across workflow instances is through making commits on a branch within the git repo itself. A benchmark dashboard requires the accumulation of data points computed from each invocation. Therefore, the benchmark action that we use relies on creating git commits on a branch to store this historical information over time.
