@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1615584322279,
+  "lastUpdate": 1615829417019,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2819,6 +2819,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 133379,
             "range": "± 4848",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed9db541404a2cc36c0c1f813f0b365a136ac085",
+          "message": "Update testing instructions on CI doc (#482)\n\n* Update testing instructions on CI doc\r\n\r\n* Respond to PR feedback\r\n\r\n* Add section on caching to help ICU",
+          "timestamp": "2021-03-15T10:23:30-07:00",
+          "tree_id": "8641e96858fdad8258a651439f28f8a30b188fa4",
+          "url": "https://github.com/unicode-org/icu4x/commit/ed9db541404a2cc36c0c1f813f0b365a136ac085"
+        },
+        "date": 1615829414140,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 151544,
+            "range": "± 8630",
             "unit": "ns/iter"
           }
         ]
