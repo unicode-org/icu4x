@@ -6,8 +6,8 @@ use std::collections::{HashMap, HashSet};
 use std::iter::Iterator;
 use std::u32;
 
+use crate::enum_prop_mapping::get_prop_name_identifier;
 use crate::support::UnicodeProperties;
-use icu_uniset::enum_prop_mapping::get_prop_name_identifier;
 use icu_uniset::provider::UnicodeProperty;
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 use tinystr::TinyStr16;

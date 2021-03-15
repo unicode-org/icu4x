@@ -51,7 +51,6 @@
 #[macro_use]
 mod builder;
 mod conversions;
-pub mod enum_prop_mapping;
 pub mod enum_props;
 pub mod props;
 pub mod provider;

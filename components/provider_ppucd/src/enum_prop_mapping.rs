@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 
-use crate::enum_props::*;
+use icu_uniset::enum_props::*;
 use std::str::FromStr;
 use tinystr::TinyStr16;
 
@@ -736,27 +736,63 @@ fn get_prop_name_val_as_i32(prop_name: &str, prop_val: &str) -> Option<(i32, i32
     let name_enum_opt = get_enum_property_enum(prop_name);
     let val_enum_i32_opt = match name_enum_opt {
         Some(EnumeratedProperty::BidiClass) => get_bidi_class_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::BidiPairedBracketType) => get_bidi_paired_bracket_type_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::CanonicalCombiningClass) => get_canonical_combining_class_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::DecompositionType) => get_decomposition_type_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::EastAsianWidth) => get_east_asian_width_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::GeneralCategory) => get_general_category_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::GraphemeClusterBreak) => get_grapheme_cluster_break_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::HangulSyllableType) => get_hangul_syllable_type_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::IndicPositionalCategory) => get_indic_positional_category_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::IndicSyllabicCategory) => get_indic_syllabic_category_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::JoiningGroup) => get_joining_group_enum(prop_val).map(|x| x as i32),
+        Some(EnumeratedProperty::BidiPairedBracketType) => {
+            get_bidi_paired_bracket_type_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::CanonicalCombiningClass) => {
+            get_canonical_combining_class_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::DecompositionType) => {
+            get_decomposition_type_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::EastAsianWidth) => {
+            get_east_asian_width_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::GeneralCategory) => {
+            get_general_category_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::GraphemeClusterBreak) => {
+            get_grapheme_cluster_break_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::HangulSyllableType) => {
+            get_hangul_syllable_type_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::IndicPositionalCategory) => {
+            get_indic_positional_category_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::IndicSyllabicCategory) => {
+            get_indic_syllabic_category_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::JoiningGroup) => {
+            get_joining_group_enum(prop_val).map(|x| x as i32)
+        }
         Some(EnumeratedProperty::JoiningType) => get_joining_type_enum(prop_val).map(|x| x as i32),
         Some(EnumeratedProperty::LineBreak) => get_line_break_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::LeadCanonicalCombiningClass) => get_lead_canonical_combining_class_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::NFCQuickCheck) => get_nfc_quick_check_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::NFDQuickCheck) => get_nfd_quick_check_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::NFKCQuickCheck) => get_nfkc_quick_check_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::NFKDQuickCheck) => get_nfkd_quick_check_enum(prop_val).map(|x| x as i32),
+        Some(EnumeratedProperty::LeadCanonicalCombiningClass) => {
+            get_lead_canonical_combining_class_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::NFCQuickCheck) => {
+            get_nfc_quick_check_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::NFDQuickCheck) => {
+            get_nfd_quick_check_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::NFKCQuickCheck) => {
+            get_nfkc_quick_check_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::NFKDQuickCheck) => {
+            get_nfkd_quick_check_enum(prop_val).map(|x| x as i32)
+        }
         Some(EnumeratedProperty::NumericType) => get_numeric_type_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::SentenceBreak) => get_sentence_break_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::TrailCanonicalCombiningClass) => get_trail_canonical_combining_class_enum(prop_val).map(|x| x as i32),
-        Some(EnumeratedProperty::VerticalOrientation) => get_vertical_orientation_enum(prop_val).map(|x| x as i32),
+        Some(EnumeratedProperty::SentenceBreak) => {
+            get_sentence_break_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::TrailCanonicalCombiningClass) => {
+            get_trail_canonical_combining_class_enum(prop_val).map(|x| x as i32)
+        }
+        Some(EnumeratedProperty::VerticalOrientation) => {
+            get_vertical_orientation_enum(prop_val).map(|x| x as i32)
+        }
         Some(EnumeratedProperty::WordBreak) => get_word_break_enum(prop_val).map(|x| x as i32),
         _ => None,
     };
@@ -791,14 +827,20 @@ mod enum_tests {
 
     #[test]
     fn prop_value_str_to_enum_fn_test() {
-        assert_eq!(get_canonical_combining_class_enum("21"), Some(CanonicalCombiningClass::CCC21));
+        assert_eq!(
+            get_canonical_combining_class_enum("21"),
+            Some(CanonicalCombiningClass::CCC21)
+        );
         assert_eq!(get_canonical_combining_class_enum("cheezburger"), None);
     }
 
     #[test]
     fn get_prop_name_val_as_i32_test() {
         let act_prop_i32_tuple_opt_1 = get_prop_name_val_as_i32("lb", "LF");
-        let exp_prop_i32_tuple_opt_1 = Some((EnumeratedProperty::LineBreak as i32, LineBreak::LineFeed as i32));
+        let exp_prop_i32_tuple_opt_1 = Some((
+            EnumeratedProperty::LineBreak as i32,
+            LineBreak::LineFeed as i32,
+        ));
         assert_eq!(act_prop_i32_tuple_opt_1, exp_prop_i32_tuple_opt_1);
 
         assert_eq!(get_prop_name_val_as_i32("lb", "cheezburger"), None);
@@ -808,7 +850,13 @@ mod enum_tests {
 
     #[test]
     fn get_prop_name_identifier_test() {
-        assert_eq!(get_prop_name_identifier("lb", "LF"), TinyStr16::from_str("12=26").ok());
-        assert_eq!(get_prop_name_identifier("ccc", "230"), TinyStr16::from_str("2=230").ok());
+        assert_eq!(
+            get_prop_name_identifier("lb", "LF"),
+            TinyStr16::from_str("12=26").ok()
+        );
+        assert_eq!(
+            get_prop_name_identifier("ccc", "230"),
+            TinyStr16::from_str("2=230").ok()
+        );
     }
 }
