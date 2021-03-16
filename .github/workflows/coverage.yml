@@ -24,7 +24,7 @@ jobs:
 
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2021-03-08
+          toolchain:            nightly-2021-03-01
           override:             true
 
       - uses:                   actions-rs/cargo@v1
