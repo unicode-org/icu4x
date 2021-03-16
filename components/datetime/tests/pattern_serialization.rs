@@ -7,19 +7,39 @@
 use icu_datetime::pattern::Pattern;
 use std::{fs::File, io::BufReader};
 
-pub fn get_pattern_strings() -> Vec<String> {
+#[derive(serde::Serialize, serde::Deserialize)]
+struct InvalidPatternFixture {
+    pub pattern: String,
+    pub error: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct PatternFixtures {
+    pub valid_patterns: Vec<String>,
+    pub invalid_patterns: Vec<InvalidPatternFixture>,
+}
+
+fn get_pattern_fixtures() -> PatternFixtures {
     let file = File::open(format!("./tests/fixtures/tests/patterns.json"))
         .expect("Unable to open ./tests/fixtures/tests/patterns.json");
     let reader = BufReader::new(file);
-    serde_json::from_reader(reader).expect("Unable to deserialize pattern strings.")
+    serde_json::from_reader(reader).expect("Unable to deserialize pattern fixtures.")
 }
 
-pub fn get_pattern_bincode_write_handle() -> File {
+fn get_pattern_strings() -> Vec<String> {
+    get_pattern_fixtures().valid_patterns
+}
+
+fn get_invalid_pattern_strings() -> Vec<InvalidPatternFixture> {
+    get_pattern_fixtures().invalid_patterns
+}
+
+fn get_pattern_bincode_write_handle() -> File {
     File::create("./tests/fixtures/tests/patterns.bin")
         .expect("Unable to create ./tests/fixtures/tests/patterns.bin")
 }
 
-pub fn get_pattern_bincode_from_file() -> Vec<Vec<u8>> {
+fn get_pattern_bincode_from_file() -> Vec<Vec<u8>> {
     bincode::deserialize_from(
         File::open("./tests/fixtures/tests/patterns.bin")
             .expect("Unable to ./tests/fixtures/tests/patterns.bin"),
@@ -116,5 +136,23 @@ fn test_pattern_bincode_serialization_roundtrip() {
     if update_bincode {
         eprintln!("Writing the bincode into a file");
         bincode::serialize_into(&mut get_pattern_bincode_write_handle(), &result_vec).unwrap();
+    }
+}
+
+/// Test that pattern serialization produces sensible error messages given the Serde
+/// serde::de::Unexpected type and the use of fmt::Display traits on the Error objects.
+#[test]
+fn test_pattern_json_errors() {
+    for InvalidPatternFixture { pattern, error } in &get_invalid_pattern_strings() {
+        // Wrap the string in quotes so it's a JSON string.
+        let json_in: String = serde_json::to_string(pattern).unwrap();
+
+        // Wrap the string in quotes so it's a JSON string.
+        match serde_json::from_str::<Pattern>(&json_in) {
+            Ok(_) => panic!("Expected an invalid pattern. {}", json_in),
+            Err(serde_err) => {
+                assert_eq!(format!("{}", serde_err), *error);
+            }
+        };
     }
 }

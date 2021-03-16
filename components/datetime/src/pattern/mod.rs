@@ -214,16 +214,12 @@ impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
         E: de::Error,
     {
         // Parse a string into a list of fields.
-        let pattern = match Pattern::from_bytes(pattern_string) {
-            Ok(p) => p,
-            Err(err) => {
-                return Err(E::custom(format!(
-                    "The pattern \"{}\" could not be parsed: {:?}",
-                    pattern_string, err
-                )));
-            }
-        };
-        Ok(pattern)
+        Pattern::from_bytes(pattern_string).map_err(|err| {
+            de::Error::invalid_value(
+                de::Unexpected::Other(&format!("{}", err)),
+                &"a valid UTS 35 pattern string",
+            )
+        })
     }
 }
 
