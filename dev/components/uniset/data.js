@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1615829375117,
+  "lastUpdate": 1615915536757,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3899,6 +3899,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30853624,
             "range": "± 1468020",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "43360de1e53004d9a56d7f29a2573de03dd145fc",
+          "message": "Update Rust nightly version in CI (#554)\n\nUpdate to nightly-2021-03-15",
+          "timestamp": "2021-03-16T12:19:38-05:00",
+          "tree_id": "2dd2ddda3eb75c73dad705596b764977c5352b9c",
+          "url": "https://github.com/unicode-org/icu4x/commit/43360de1e53004d9a56d7f29a2573de03dd145fc"
+        },
+        "date": 1615915536042,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37554276,
+            "range": "± 965891",
             "unit": "ns/iter"
           }
         ]
