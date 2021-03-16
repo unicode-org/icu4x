@@ -46,7 +46,7 @@ where
     T: DateTimeInput,
 {
     pub(crate) pattern: &'l Pattern,
-    pub(crate) symbols: &'l provider::gregory::DateSymbolsV1,
+    pub(crate) data: &'l provider::gregory::DatesV1,
     pub(crate) date_time: &'l T,
     pub(crate) locale: &'l Locale,
 }
@@ -56,14 +56,8 @@ where
     T: DateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(
-            self.pattern,
-            self.symbols,
-            self.date_time,
-            self.locale,
-            sink,
-        )
-        .map_err(|_| std::fmt::Error)
+        write_pattern(self.pattern, self.data, self.date_time, self.locale, sink)
+            .map_err(|_| std::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -74,7 +68,7 @@ where
     T: DateTimeInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.pattern, self.symbols, self.date_time, self.locale, f)
+        write_pattern(self.pattern, self.data, self.date_time, self.locale, f)
             .map_err(|_| std::fmt::Error)
     }
 }
@@ -101,7 +95,7 @@ where
 
 pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
-    symbols: &provider::gregory::DateSymbolsV1,
+    data: &provider::gregory::DatesV1,
     date_time: &T,
     locale: &Locale,
     w: &mut W,
@@ -113,7 +107,7 @@ where
     let loc_date_time = DateTimeInputWithLocale::new(date_time, locale);
     for item in pattern.items() {
         match item {
-            PatternItem::Field(field) => write_field(pattern, &field, symbols, &loc_date_time, w)?,
+            PatternItem::Field(field) => write_field(pattern, &field, data, &loc_date_time, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }
@@ -123,7 +117,7 @@ where
 fn write_field<T, W>(
     pattern: &crate::pattern::Pattern,
     field: &fields::Field,
-    symbols: &crate::provider::gregory::DateSymbolsV1,
+    data: &crate::provider::gregory::DatesV1,
     date_time: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>
@@ -152,7 +146,7 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = symbols.get_symbol_for_month(
+                let symbol = data.symbols.get_symbol_for_month(
                     month,
                     length,
                     date_time
@@ -170,7 +164,9 @@ where
                 .date_time()
                 .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
-            let symbol = symbols.get_symbol_for_weekday(weekday, field.length, dow);
+            let symbol = data
+                .symbols
+                .get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
         }
         FieldSymbol::Day(..) => format_number(
@@ -231,7 +227,7 @@ where
             field.length,
         )?,
         FieldSymbol::DayPeriod(period) => {
-            let symbol = symbols.get_symbol_for_day_period(
+            let symbol = data.symbols.get_symbol_for_day_period(
                 period,
                 field.length,
                 date_time
@@ -258,11 +254,9 @@ mod tests {
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
         use crate::mock::MockDateTime;
-        use crate::provider::gregory::DatesV1;
         use icu_provider::prelude::*;
-        use std::borrow::Cow;
         let provider = icu_testdata::get_provider();
-        let data: Cow<'_, DatesV1> = provider
+        let data = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: provider::key::GREGORY_V1,
@@ -280,7 +274,7 @@ mod tests {
         let mut sink = String::new();
         write_pattern(
             &pattern,
-            &data.symbols,
+            &data,
             &date_time,
             &"und".parse().unwrap(),
             &mut sink,

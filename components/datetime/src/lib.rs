@@ -136,7 +136,7 @@ use std::borrow::Cow;
 pub struct DateTimeFormat<'d> {
     locale: Locale,
     pattern: Pattern,
-    symbols: Cow<'d, provider::gregory::DateSymbolsV1>,
+    data: Cow<'d, provider::gregory::DatesV1>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -185,15 +185,10 @@ impl<'d> DateTimeFormat<'d> {
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
-        let symbols = match data {
-            Cow::Borrowed(data) => Cow::Borrowed(&data.symbols),
-            Cow::Owned(data) => Cow::Owned(data.symbols),
-        };
-
         Ok(Self {
             locale,
             pattern,
-            symbols,
+            data,
         })
     }
 
@@ -231,7 +226,7 @@ impl<'d> DateTimeFormat<'d> {
     {
         FormattedDateTime {
             pattern: &self.pattern,
-            symbols: &self.symbols,
+            data: &self.data,
             date_time: value,
             locale: &self.locale,
         }
@@ -268,7 +263,7 @@ impl<'d> DateTimeFormat<'d> {
         w: &mut impl std::fmt::Write,
         value: &impl DateTimeInput,
     ) -> std::fmt::Result {
-        write_pattern(&self.pattern, &self.symbols, value, &self.locale, w)
+        write_pattern(&self.pattern, &self.data, value, &self.locale, w)
             .map_err(|_| std::fmt::Error)
     }
 
