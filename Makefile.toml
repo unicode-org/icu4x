@@ -26,13 +26,25 @@ exit_on_error true
 
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml"
 
+license_hash_line_1 = set "# This file is part of ICU4X. For terms of use, please see the file"
+license_hash_line_2 = set "# called LICENSE at the top level of the ICU4X source tree"
+license_hash_line_3 = set "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_hash_array = array ${license_hash_line_1} ${license_hash_line_2} ${license_hash_line_3}
+license_hash_str = array_join ${license_hash_array} "\n"
+
+license_slash_line_1 = set "// This file is part of ICU4X. For terms of use, please see the file"
+license_slash_line_2 = set "// called LICENSE at the top level of the ICU4X source tree"
+license_slash_line_3 = set "// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_slash_array = array ${license_slash_line_1} ${license_slash_line_2} ${license_slash_line_3}
+license_slash_str = array_join ${license_slash_array} "\n"
+
 for pattern in ${glob_pattern_array}
     handle = glob_array ${pattern}
     for path in ${handle}
         if not starts_with ${path} "target"  # skip paths in target dir
             text = readfile ${path}
-            result_hash = starts_with ${text} "# This file is part of ICU4X. For terms of use, please see the file"
-            result_slash = starts_with ${text} "// This file is part of ICU4X. For terms of use, please see the file"
+            result_hash = starts_with ${text} ${license_hash_str}
+            result_slash = starts_with ${text} ${license_slash_str}
             not_result_hash = not ${result_hash}
             not_result_slash = not ${result_slash}
             if ${not_result_hash} and ${not_result_slash}
