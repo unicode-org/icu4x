@@ -291,12 +291,14 @@ jobs:
 
       # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
       # then this line is no longer needed.
-      - name: Install nightly toolchain
-        run: rustup toolchain install nightly
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly-2021-03-15
+          override: true
 
       - name: Run the example with dhat-rs to collect memory information
         run: |
-          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2021-03-15
 
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
       # dashboard HTML in a commit of a branch of the local repo.
