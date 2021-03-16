@@ -153,6 +153,7 @@ args = [
     "--",
     "--cldr-core", "../../resources/testdata/data/cldr/cldr-core",
     "--cldr-dates", "../../resources/testdata/data/cldr/cldr-dates-full",
+    "--cldr-numbers", "../../resources/testdata/data/cldr/cldr-numbers-full",
     "--out", "../../resources/testdata/data/bincode",
     "--all-keys",
     "-s", "bincode",

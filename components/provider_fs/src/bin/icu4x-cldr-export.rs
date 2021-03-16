@@ -141,6 +141,16 @@ fn main() -> Result<(), Error> {
                 .takes_value(true),
         )
         .arg(
+            Arg::with_name("CLDR_NUMBERS")
+                .long("cldr-numbers")
+                .value_name("PATH")
+                .help(
+                    "Path to cldr-numbers. Ignored if '--cldr-tag' is present. \n\
+                    https://github.com/unicode-cldr/cldr-numbers-full",
+                )
+                .takes_value(true),
+        )
+        .arg(
             Arg::with_name("KEYS")
                 .short("k")
                 .long("keys")
@@ -239,6 +249,9 @@ fn main() -> Result<(), Error> {
         }
         if let Some(path) = matches.value_of("CLDR_DATES") {
             cldr_paths_local.cldr_dates = Ok(path.into());
+        }
+        if let Some(path) = matches.value_of("CLDR_NUMBERS") {
+            cldr_paths_local.cldr_numbers = Ok(path.into());
         }
         Box::new(cldr_paths_local)
     };
