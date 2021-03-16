@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1615915644449,
+  "lastUpdate": 1615918032007,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4031,6 +4031,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 139472,
             "range": "± 11537",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6ed6f058a0c3b6566eac78a58f47303bf48830f",
+          "message": "Implement FromIterator for LiteMap (#544)\n\n* Implement FromIterator for LiteMap\r\n\r\n* Fix ordering of size-hint match to be more intuitive\r\n\r\n* Update comments\r\n\r\n* Clean up function names\r\n\r\n* Update comments\r\n\r\n* Rename extend_from_sorted to try_extend_from_sorted\r\n\r\n- This better self-documents its fallibility\r\n\r\n* Make new try_extend_from_sorted() match try_append()\r\n\r\n- Rather than returning a result with Self, the function now\r\n  returns `None` on success and the reamaining elements on failure.\r\n- Make the extend functions take self by mut reference.\r\n- Make the extend functions public.\r\n- Add documentation tests.\r\n\r\n* Update documentation tests\r\n\r\n* Update try_append() to fail on equal keys\r\n\r\n* Add #[must_use] to try_append and try_extend_from_sorted\r\n\r\n* Run cargo fmt\r\n\r\n* Update try_append comment\r\n\r\n* Remove extend_from methods in favor using try_append directly\r\n\r\n* Add try_append duplicate key assertion to example\r\n\r\n* Add test for FromIterator\r\n\r\n* Remove redundant \"test\" from function name\r\n\r\n* Fix typo in test\r\n\r\n* Make try_append doc test more explicit",
+          "timestamp": "2021-03-16T11:00:03-07:00",
+          "tree_id": "f3444d407a7ff607c187d15f4aa9a6d452dd1045",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6ed6f058a0c3b6566eac78a58f47303bf48830f"
+        },
+        "date": 1615918031253,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1819,
+            "range": "± 202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8249,
+            "range": "± 900",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 120583,
+            "range": "± 10024",
             "unit": "ns/iter"
           }
         ]
