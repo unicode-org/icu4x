@@ -7,8 +7,8 @@ mod parser;
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 pub use error::Error;
 use parser::Parser;
-use std::iter::FromIterator;
 use std::{convert::TryFrom, fmt};
+use std::{fmt::Write, iter::FromIterator};
 
 #[cfg(feature = "provider_serde")]
 use serde::{
@@ -129,14 +129,12 @@ impl From<Vec<PatternItem>> for Pattern {
 /// the data providers and is not as performance sensitive.
 impl fmt::Display for Pattern {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        let mut string = String::new();
-
         for pattern_item in self.items().iter() {
             match pattern_item {
                 PatternItem::Field(field) => {
                     let ch: char = field.symbol.into();
                     for _ in 0..field.length as usize {
-                        string.push(ch);
+                        formatter.write_char(ch)?;
                     }
                 }
                 PatternItem::Literal(literal) => {
@@ -155,7 +153,7 @@ impl fmt::Display for Pattern {
                         // Do not escape the leading whitespace.
                         while let Some(ch) = ch_iter.peek() {
                             if ch.is_whitespace() {
-                                string.push(*ch);
+                                formatter.write_char(*ch)?;
                                 ch_iter.next();
                             } else {
                                 break;
@@ -163,32 +161,31 @@ impl fmt::Display for Pattern {
                         }
 
                         // Wrap in "'" and escape "'".
-                        string.push('\'');
+                        formatter.write_char('\'')?;
                         for ch in ch_iter {
                             if ch == '\'' {
                                 // Escape a single quote.
-                                string.push('\\');
+                                formatter.write_char('\\')?;
                             }
-                            string.push(ch);
+                            formatter.write_char(ch)?;
                         }
-                        string.push('\'');
+                        formatter.write_char('\'')?;
 
                         // Add the trailing whitespace
                         for ch in literal.chars().rev() {
                             if ch.is_whitespace() {
-                                string.push(ch);
+                                formatter.write_char(ch)?;
                             } else {
                                 break;
                             }
                         }
                     } else {
-                        string.push_str(literal);
+                        formatter.write_str(literal)?;
                     }
                 }
             }
         }
-
-        formatter.write_str(&string)
+        Ok(())
     }
 }
 
