@@ -8,20 +8,20 @@ use std::{mem, ptr, slice, str};
 
 #[repr(C)]
 /// Safety: This should only be constructed via `from_boxed`
-pub struct ICU4XErasedDataProvider {
+pub struct ICU4XDataProvider {
     /// Dummy fields to ensure this is the size of a trait object pointer
     /// Can be improved once the Metadata API stabilizes
     _field1: usize,
     _field2: usize,
 }
 
-impl ICU4XErasedDataProvider {
+impl ICU4XDataProvider {
     /// This is unsafe because zeroed() can be passed to other functions
     /// and cause UB
     ///
     /// This is necessary for returning uninitialized values to C
     pub unsafe fn zeroed() -> Self {
-        ICU4XErasedDataProvider {
+        ICU4XDataProvider {
             _field1: 0,
             _field2: 0,
         }
@@ -43,20 +43,20 @@ impl ICU4XErasedDataProvider {
         debug_assert!(self._field1 != 0);
         unsafe {
             // &dyn Trait and Box<dyn Trait> have the same layout
-            let borrowed_erased: ICU4XErasedDataProvider = ptr::read(self);
+            let borrowed_erased: ICU4XDataProvider = ptr::read(self);
             mem::transmute(borrowed_erased)
         }
     }
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_erased_data_provider_destroy(d: ICU4XErasedDataProvider) {
+pub unsafe extern "C" fn icu4x_erased_data_provider_destroy(d: ICU4XDataProvider) {
     let _ = d.into_boxed();
 }
 
 #[repr(C)]
 pub struct ICU4XCreateDataProviderResult {
-    provider: ICU4XErasedDataProvider,
+    provider: ICU4XDataProvider,
     success: bool,
 }
 
@@ -70,12 +70,12 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
         Ok(fs) => {
             let erased = Box::new(fs);
             ICU4XCreateDataProviderResult {
-                provider: ICU4XErasedDataProvider::from_boxed(erased),
+                provider: ICU4XDataProvider::from_boxed(erased),
                 success: true,
             }
         }
         Err(_) => ICU4XCreateDataProviderResult {
-            provider: ICU4XErasedDataProvider::zeroed(),
+            provider: ICU4XDataProvider::zeroed(),
             success: false,
         },
     }

@@ -6,7 +6,7 @@ use icu_locid::Locale as ICULocale;
 use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType};
 
 
-use crate::provider::ICU4XErasedDataProvider;
+use crate::provider::ICU4XDataProvider;
 
 use std::ptr;
 
@@ -22,7 +22,7 @@ pub struct ICU4XCreatePluralRulesResult {
 #[no_mangle]
 pub extern "C" fn icu4x_plural_rules_create(
     locale: &ICULocale,
-    provider: &ICU4XErasedDataProvider,
+    provider: &ICU4XDataProvider,
     ty: ICU4XPluralRuleType,
 ) -> ICU4XCreatePluralRulesResult {
     // cheap as long as there are no variants

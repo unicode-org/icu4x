@@ -10,13 +10,13 @@
 typedef struct {
     uintptr_t _field1;
     uintptr_t _field2;
-} ICU4XErasedDataProvider;
+} ICU4XDataProvider;
 
 typedef struct {
-    ICU4XErasedDataProvider provider;
+    ICU4XDataProvider provider;
     bool success;
 } ICU4XCreateDataProviderResult;
 
-void icu4x_erased_data_provider_destroy(ICU4XErasedDataProvider d);
+void icu4x_erased_data_provider_destroy(ICU4XDataProvider d);
 
 ICU4XCreateDataProviderResult icu4x_fs_data_provider_create(const char* path, size_t len);

@@ -14,7 +14,7 @@ int main() {
         printf("Failed to create FsDataProvider\n");
         return 1;
     }
-    ICU4XErasedDataProvider provider = result.provider;
+    ICU4XDataProvider provider = result.provider;
     ICU4XCreatePluralRulesResult plural_result = icu4x_plural_rules_create(locale, &provider, ICU4XPluralRuleType_Cardinal);
     if (!plural_result.success) {
         printf("Failed to create PluralRules\n");
