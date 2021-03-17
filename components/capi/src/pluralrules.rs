@@ -22,7 +22,7 @@ pub struct ICU4XCreatePluralRulesResult {
 #[no_mangle]
 pub extern "C" fn icu4x_plural_rules_create(
     locale: &ICULocale,
-    provider: &mut ICU4XErasedDataProvider,
+    provider: &ICU4XErasedDataProvider,
     ty: ICU4XPluralRuleType,
 ) -> ICU4XCreatePluralRulesResult {
     // cheap as long as there are no variants

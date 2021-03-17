@@ -41,6 +41,6 @@ typedef struct {
 } ICU4XPluralOperands;
 
 
-ICU4XCreatePluralRulesResult icu4x_plural_rules_create(ICU4XLocale* locale, ICU4XErasedDataProvider* provider, ICU4XPluralRuleType ty);
-ICU4XPluralCategory icu4x_plural_rules_select(const ICU4XPluralRules* rules, ICU4XPluralOperands* op);
+ICU4XCreatePluralRulesResult icu4x_plural_rules_create(const ICU4XLocale* locale, const ICU4XErasedDataProvider* provider, ICU4XPluralRuleType ty);
+ICU4XPluralCategory icu4x_plural_rules_select(const ICU4XPluralRules* rules, const ICU4XPluralOperands* op);
 void icu4x_plural_rules_destroy(ICU4XPluralRules* rules);

@@ -39,10 +39,10 @@ impl ICU4XErasedDataProvider {
         unsafe { mem::transmute(self) }
     }
 
-    pub fn as_dyn_ref(&mut self) -> &mut dyn ErasedDataProvider<'static> {
+    pub fn as_dyn_ref(&self) -> &dyn ErasedDataProvider<'static> {
         debug_assert!(self._field1 != 0);
         unsafe {
-            // &mut dyn Trait and Box<dyn Trait> have the same layout
+            // &dyn Trait and Box<dyn Trait> have the same layout
             let borrowed_erased: ICU4XErasedDataProvider = ptr::read(self);
             mem::transmute(borrowed_erased)
         }
