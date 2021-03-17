@@ -3,23 +3,35 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::Locale as ICULocale;
-use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType};
+use icu_plurals::{PluralRules, PluralCategory, PluralOperands, PluralRuleType};
 
 
 use crate::provider::ICU4XDataProvider;
 
 use std::ptr;
 
-// opaque type
-pub use icu_plurals::PluralRules as ICU4XPluralRules;
+/// Opaque type for use behind a pointer, is [`PluralRules`]
+///
+/// Can be obtained via [`icu4x_plural_rules_create()`] and destroyed via [`icu4x_plural_rules_destroy()`]
+pub type ICU4XPluralRules = PluralRules;
 
 #[repr(C)]
+/// This is the result returned by [`icu4x_plural_rules_create()`]
 pub struct ICU4XCreatePluralRulesResult {
-    rules: *mut ICU4XPluralRules,
-    success: bool,
+    /// Will be null if `success` is `false`
+    pub rules: *mut ICU4XPluralRules,
+    /// Currently just a boolean, but we might add a proper error enum
+    /// as necessary
+    pub success: bool,
 }
 
 #[no_mangle]
+/// FFI version of [`PluralRules::try_new()`] see its docs for more details
+///
+/// # Safety
+/// - `locale` should be constructed via [`icu4x_locale_create()`](crate::locale::icu4x_locale_create)
+/// - `provider` should be constructed via one of the functions in [`crate::locale`](crate::locale)
+/// - Only access `rules` in the result if `success` is true.
 pub extern "C" fn icu4x_plural_rules_create(
     locale: &ICULocale,
     provider: &ICU4XDataProvider,
@@ -44,17 +56,24 @@ pub extern "C" fn icu4x_plural_rules_create(
 }
 
 #[no_mangle]
+/// FFI version of [`PluralRules::select()`], see its docs for more details
 pub extern "C" fn icu4x_plural_rules_select(pr: &ICU4XPluralRules, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
     pr.select(*op).into()
 }
 
 #[no_mangle]
+/// Destructor for [`ICU4XPluralRules`]
+///
+/// # Safety
+/// `pr` must be a pointer to a valid [`ICU4XPluralRules`] constructed by
+/// [`icu4x_plural_rules_create()`].
 pub unsafe extern "C" fn icu4x_plural_rules_destroy(pr: *mut ICU4XPluralRules) {
     let _ = Box::from_raw(pr);
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
+/// FFI version of [`PluralOperands`], see its docs for more details
 pub struct ICU4XPluralOperands {
     pub i: u64,
     pub v: usize,
@@ -65,12 +84,14 @@ pub struct ICU4XPluralOperands {
 }
 
 #[repr(C)]
+/// FFI version of [`PluralRuleType`], see its docs for more details
 pub enum ICU4XPluralRuleType {
     Cardinal,
     Ordinal,
 }
 
 #[repr(C)]
+/// FFI version of [`PluralCategory`], see its docs for more details
 pub enum ICU4XPluralCategory {
     Zero,
     One,
