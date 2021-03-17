@@ -117,9 +117,8 @@ impl From<&cldr_json::StylePatterns> for gregory::patterns::StylePatternsV1 {
 
 impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::patterns::{
-            PatternV1, SkeletonFieldsV1, SkeletonFieldsV1Error, SkeletonTupleV1,
-        };
+        use gregory::patterns::{PatternV1, SkeletonFieldsV1, SkeletonFieldsV1Error, SkeletonsV1};
+        use litemap::LiteMap;
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -130,7 +129,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
                 short: other.short.get_pattern().clone(),
             },
             skeletons: {
-                let mut skeleton_tuples: Vec<SkeletonTupleV1> = Vec::new();
+                let mut skeletons = SkeletonsV1(LiteMap::new());
 
                 // The CLDR keys for available_formats can have duplicate skeletons with either
                 // an additional variant, or with multiple variants for different plurals.
@@ -178,12 +177,10 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
                     let pattern_v1 = PatternV1::try_from(pattern_str as &str)
                         .expect("Unable to parse a pattern");
 
-                    skeleton_tuples.push(SkeletonTupleV1(skeleton_fields_v1, pattern_v1));
+                    skeletons.0.insert(skeleton_fields_v1, pattern_v1);
                 }
 
-                // Sort the skeletons deterministically by their canonical sort order.
-                skeleton_tuples.sort_by(|a, b| a.0.compare_canonical_order(&b.0));
-                skeleton_tuples
+                skeletons
             },
         }
     }

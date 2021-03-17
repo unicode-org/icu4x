@@ -187,6 +187,7 @@ pub mod gregory {
             fields::{self, Field, FieldLength, FieldSymbol, LengthError, SymbolError},
             pattern::{self, Pattern},
         };
+        use litemap::LiteMap;
         use std::fmt;
         use std::{cmp::Ordering, convert::TryFrom};
 
@@ -208,12 +209,21 @@ pub mod gregory {
             pub short: Cow<'static, str>,
         }
 
-        #[derive(Debug, PartialEq, Clone, Default)]
+        /// This struct represents the serialization form of the skeleton fields. It contains
+        /// a single "exotic type", the fields::Field, which must remain stable between versions.
+        /// The skeletons are stored in a LiteMap, which is sorted according to the canonical
+        /// sort order.
+        #[derive(Debug, Eq, PartialEq, Clone, Default)]
         pub struct SkeletonFieldsV1(pub SmallVec<[fields::Field; 5]>);
 
         impl SkeletonFieldsV1 {
-            /// [`SkeletonTupleV1`] structs should be ordered by the `SkeletonFieldsV1` canonical
-            /// order. This helps ensure that the skeleton serialization is sorted deterministically.
+            /// The LiteMap<SkeletonFieldsV1, PatternV1> structs should be ordered by the
+            /// `SkeletonFieldsV1` canonical order. Thishelps  ensure that the skeleton
+            /// serialization is sorted deterministically. This order is determined by the order
+            /// of the fields listed in UTS 35, which is ordered from most significant, to least
+            /// significant.
+            ///
+            /// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
             pub fn compare_canonical_order(&self, other: &SkeletonFieldsV1) -> Ordering {
                 let fields_a = &self.0;
                 let fields_b = &other.0;
@@ -259,6 +269,18 @@ pub mod gregory {
                 }
 
                 Ordering::Equal
+            }
+        }
+
+        impl PartialOrd for SkeletonFieldsV1 {
+            fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+                Some(self.compare_canonical_order(other))
+            }
+        }
+
+        impl Ord for SkeletonFieldsV1 {
+            fn cmp(&self, other: &Self) -> Ordering {
+                self.compare_canonical_order(other)
             }
         }
 
@@ -442,7 +464,7 @@ pub mod gregory {
             feature = "provider_serde",
             derive(serde::Serialize, serde::Deserialize)
         )]
-        pub struct SkeletonTupleV1(pub SkeletonFieldsV1, pub PatternV1);
+        pub struct SkeletonsV1(pub LiteMap<SkeletonFieldsV1, PatternV1>);
 
         #[derive(Debug, PartialEq, Clone, Default)]
         #[cfg_attr(
@@ -451,7 +473,7 @@ pub mod gregory {
         )]
         pub struct DateTimeFormatsV1 {
             pub style_patterns: StylePatternsV1,
-            pub skeletons: Vec<SkeletonTupleV1>,
+            pub skeletons: SkeletonsV1,
         }
     }
 }
