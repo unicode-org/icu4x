@@ -6,7 +6,7 @@ use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
-use icu_datetime::provider::*;
+use icu_datetime::{provider::*, skeleton::SkeletonError};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -117,7 +117,7 @@ impl From<&cldr_json::StylePatterns> for gregory::patterns::StylePatternsV1 {
 
 impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::patterns::{PatternV1, SkeletonFieldsV1, SkeletonFieldsV1Error, SkeletonsV1};
+        use gregory::patterns::{PatternV1, SkeletonV1, SkeletonsV1};
         use litemap::LiteMap;
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -148,22 +148,12 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
 
                     let unique_skeleton = unique_skeleton.expect("Expected to find a skeleton.");
 
-                    let skeleton_fields_v1 = match SkeletonFieldsV1::try_from(unique_skeleton) {
+                    let skeleton_fields_v1 = match SkeletonV1::try_from(unique_skeleton) {
                         Ok(s) => s,
                         Err(err) => match err {
                             // Ignore unimplemented fields for now.
-                            SkeletonFieldsV1Error::SymbolUnimplemented(_) => continue,
-                            SkeletonFieldsV1Error::SymbolUnknown(symbol) => panic!(
-                                "Unknown symbol {:?} in skeleton {:?}",
-                                symbol, unique_skeleton
-                            ),
-                            SkeletonFieldsV1Error::FieldTooLong => {
-                                panic!("Field too long in skeleton {:?}", unique_skeleton)
-                            }
-                            SkeletonFieldsV1Error::SymbolInvalid(symbol) => panic!(
-                                "Symbol invalid {:?} in skeleton {:?}",
-                                symbol, unique_skeleton
-                            ),
+                            SkeletonError::SymbolUnimplemented(_) => continue,
+                            _ => panic!("TODO - {:?}", err),
                         },
                     };
 

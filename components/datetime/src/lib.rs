@@ -83,6 +83,7 @@ pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
+pub mod skeleton;
 
 use crate::provider::helpers::DateTimePatterns;
 use date::DateTimeInput;
