@@ -135,43 +135,40 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
                 // The CLDR keys for available_formats can have duplicate skeletons with either
                 // an additional variant, or with multiple variants for different plurals.
                 for (skeleton_str, pattern_str) in other.available_formats.0.iter() {
-                    let mut unique_skeleton = String::new();
-                    let mut variant_text = String::new();
+                    let mut unique_skeleton = None;
+                    let mut variant_parts = Vec::new();
 
-                    // Split out the unique skeleton component, and the variant text.
-                    //   "MMMMW-count-two"
-                    //   unique_skeleton: "MMMMW"
-                    //   variant_text: "-count-two"
-                    let chars = skeleton_str.chars();
-                    let mut target = &mut unique_skeleton;
-                    for ch in chars {
-                        if ch == '-' {
-                            target = &mut variant_text;
+                    for part in skeleton_str.split('-') {
+                        match unique_skeleton {
+                            None => {
+                                unique_skeleton = Some(part);
+                            }
+                            Some(_) => variant_parts.push(part),
                         }
-                        target.push(ch);
                     }
 
-                    let skeleton_fields_v1 =
-                        match SkeletonFieldsV1::try_from(unique_skeleton.as_str()) {
-                            Ok(s) => s,
-                            Err(err) => match err {
-                                // Ignore unimplemented fields for now.
-                                SkeletonFieldsV1Error::SymbolUnimplemented(_) => continue,
-                                SkeletonFieldsV1Error::SymbolUnknown(symbol) => panic!(
-                                    "Unknown symbol {:?} in skeleton {:?}",
-                                    symbol, unique_skeleton
-                                ),
-                                SkeletonFieldsV1Error::FieldTooLong => {
-                                    panic!("Field too long in skeleton {:?}", unique_skeleton)
-                                }
-                                SkeletonFieldsV1Error::SymbolInvalid(symbol) => panic!(
-                                    "Symbol invalid {:?} in skeleton {:?}",
-                                    symbol, unique_skeleton
-                                ),
-                            },
-                        };
+                    let unique_skeleton = unique_skeleton.expect("Expected to find a skeleton.");
 
-                    if !variant_text.is_empty() && variant_text != "-alt-variant" {
+                    let skeleton_fields_v1 = match SkeletonFieldsV1::try_from(unique_skeleton) {
+                        Ok(s) => s,
+                        Err(err) => match err {
+                            // Ignore unimplemented fields for now.
+                            SkeletonFieldsV1Error::SymbolUnimplemented(_) => continue,
+                            SkeletonFieldsV1Error::SymbolUnknown(symbol) => panic!(
+                                "Unknown symbol {:?} in skeleton {:?}",
+                                symbol, unique_skeleton
+                            ),
+                            SkeletonFieldsV1Error::FieldTooLong => {
+                                panic!("Field too long in skeleton {:?}", unique_skeleton)
+                            }
+                            SkeletonFieldsV1Error::SymbolInvalid(symbol) => panic!(
+                                "Symbol invalid {:?} in skeleton {:?}",
+                                symbol, unique_skeleton
+                            ),
+                        },
+                    };
+
+                    if !variant_parts.is_empty() {
                         unimplemented!(
                             "This skeleton string is not yet supported: {:?}",
                             skeleton_str
