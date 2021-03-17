@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::Locale as ICULocale;
-use icu_plurals::{PluralRules, PluralCategory, PluralOperands, PluralRuleType};
-
+use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules};
 
 use crate::provider::ICU4XDataProvider;
 
@@ -57,7 +56,10 @@ pub extern "C" fn icu4x_plural_rules_create(
 
 #[no_mangle]
 /// FFI version of [`PluralRules::select()`], see its docs for more details
-pub extern "C" fn icu4x_plural_rules_select(pr: &ICU4XPluralRules, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
+pub extern "C" fn icu4x_plural_rules_select(
+    pr: &ICU4XPluralRules,
+    op: &ICU4XPluralOperands,
+) -> ICU4XPluralCategory {
     pr.select(*op).into()
 }
 

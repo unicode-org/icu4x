@@ -16,7 +16,7 @@ pub type ICU4XLocale = Locale;
 ///
 /// # Safety
 /// `value` and `len` should point to a valid ASCII string of length `len`.
-/// 
+///
 /// It does not need to be be null terminated, and `len` should not include a null
 /// terminator (this will just cause the function to panic, and is not a safety requirement).
 pub unsafe extern "C" fn icu4x_locale_create(value: *const u8, len: usize) -> *mut ICU4XLocale {

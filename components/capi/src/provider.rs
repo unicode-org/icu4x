@@ -10,7 +10,7 @@ use std::{mem, ptr, slice, str};
 /// FFI version of [`ErasedDataProvider`]. See its docs for more details.
 ///
 /// # Safety
-/// 
+///
 /// This should only be constructed in Rust via [`ICU4XDataProvider::from_boxed()`], or,
 /// from the C side, via functions like [`icu4x_fs_data_provider_create()`].
 ///
