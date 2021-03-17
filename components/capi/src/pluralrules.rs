@@ -93,28 +93,27 @@ impl From<PluralOperands> for ICU4XPluralOperands {
     }
 }
 
-impl Into<PluralOperands> for ICU4XPluralOperands {
-    fn into(self) -> PluralOperands {
+impl From<ICU4XPluralOperands> for PluralOperands {
+    fn from(other: ICU4XPluralOperands) -> PluralOperands {
         PluralOperands {
-            i: self.i,
-            v: self.v,
-            w: self.w,
-            f: self.f,
-            t: self.t,
-            c: self.c,
+            i: other.i,
+            v: other.v,
+            w: other.w,
+            f: other.f,
+            t: other.t,
+            c: other.c,
         }
     }
 }
 
-impl Into<PluralRuleType> for ICU4XPluralRuleType {
-    fn into(self) -> PluralRuleType {
-        match self {
+impl From<ICU4XPluralRuleType> for PluralRuleType {
+    fn from(other: ICU4XPluralRuleType) -> Self {
+        match other {
             ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,
             ICU4XPluralRuleType::Ordinal => PluralRuleType::Ordinal,
         }
     }
 }
-
 impl From<PluralCategory> for ICU4XPluralCategory {
     fn from(other: PluralCategory) -> Self {
         match other {
