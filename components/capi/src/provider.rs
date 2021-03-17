@@ -15,7 +15,7 @@ use std::{mem, ptr, slice, str};
 /// from the C side, via functions like [`icu4x_fs_data_provider_create()`].
 ///
 /// This can be constructed by the functions in this module like [`icu4x_fs_data_provider_create()`],
-/// and must be destroyed by [`icu4x_erased_data_provider_destroy()`].
+/// and must be destroyed by [`icu4x_data_provider_destroy()`].
 pub struct ICU4XDataProvider {
     /// Dummy fields to ensure this is the size of a trait object pointer
     /// Can be improved once the Metadata API stabilizes
@@ -78,7 +78,7 @@ impl ICU4XDataProvider {
 ///
 /// Must be used with a valid [`ICU4XDataProvider`] constructed by functions like
 /// [`icu4x_fs_data_provider_create()`]
-pub unsafe extern "C" fn icu4x_erased_data_provider_destroy(d: ICU4XDataProvider) {
+pub unsafe extern "C" fn icu4x_data_provider_destroy(d: ICU4XDataProvider) {
     let _ = d.into_boxed();
 }
 

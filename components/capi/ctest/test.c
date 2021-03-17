@@ -30,7 +30,7 @@ int main() {
     printf("Plural Category %d (should be %d)\n", (int)cat, (int)ICU4XPluralCategory_Few);
 
     icu4x_plural_rules_destroy(rules);
-    icu4x_erased_data_provider_destroy(provider);
+    icu4x_data_provider_destroy(provider);
     icu4x_locale_destroy(locale);
 
     if (cat != ICU4XPluralCategory_Few) {
