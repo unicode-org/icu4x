@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#pragma once
+#ifndef ICU4X_PLURALRULES_H
+#define ICU4X_PLURALRULES_H
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -44,3 +46,5 @@ typedef struct {
 ICU4XCreatePluralRulesResult icu4x_plural_rules_create(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XPluralRuleType ty);
 ICU4XPluralCategory icu4x_plural_rules_select(const ICU4XPluralRules* rules, const ICU4XPluralOperands* op);
 void icu4x_plural_rules_destroy(ICU4XPluralRules* rules);
+
+#endif // ICU4X_PLURALRULES_H

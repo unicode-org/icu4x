@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#pragma once
+#ifndef ICU4X_PROVIDER_H
+#define ICU4X_PROVIDER_H
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -20,3 +22,5 @@ typedef struct {
 void icu4x_data_provider_destroy(ICU4XDataProvider d);
 
 ICU4XCreateDataProviderResult icu4x_fs_data_provider_create(const char* path, size_t len);
+
+#endif // ICU4X_PROVIDER_H
