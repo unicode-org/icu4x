@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::pattern;
+use crate::skeleton::SkeletonError;
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
@@ -18,6 +19,8 @@ pub enum DateTimeFormatError {
     /// Missing field in date time input
     /// TODO: How can we return which field was missing?
     MissingInputField,
+    /// An error from skeleton matching,
+    Skeleton(SkeletonError),
 }
 
 impl From<DataError> for DateTimeFormatError {

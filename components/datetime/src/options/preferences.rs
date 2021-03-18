@@ -20,6 +20,8 @@
 //! };
 //! ```
 use crate::fields;
+#[cfg(all(not(feature = "serialize_none"), feature = "serde"))]
+use serde::{Deserialize, Serialize};
 
 /// Bag of preferences stores user preferences which may affect the result of date and time formatting.
 ///
@@ -33,12 +35,24 @@ use crate::fields;
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    all(not(feature = "serialize_none"), feature = "serde"),
+    derive(Serialize, Deserialize)
+)]
 pub struct Bag {
+    #[cfg_attr(
+        all(not(feature = "serialize_none"), feature = "serde"),
+        serde(rename = "hourCycle")
+    )]
     pub hour_cycle: Option<HourCycle>,
 }
 
 /// User Preference for adjusting how hour component is displayed.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    all(not(feature = "serialize_none"), feature = "serde"),
+    derive(Serialize, Deserialize)
+)]
 pub enum HourCycle {
     /// Hour is formatted to be in range 1-24
     ///
@@ -50,6 +64,10 @@ pub enum HourCycle {
     /// "19:00";
     /// "23:21";
     /// ```
+    #[cfg_attr(
+        all(not(feature = "serialize_none"), feature = "serde"),
+        serde(rename = "h24")
+    )]
     H24,
     /// Hour is formatted to be in range 0-23
     ///
@@ -61,6 +79,10 @@ pub enum HourCycle {
     /// "19:00";
     /// "23:21";
     /// ```
+    #[cfg_attr(
+        all(not(feature = "serialize_none"), feature = "serde"),
+        serde(rename = "h23")
+    )]
     H23,
     /// Hour is formatted to be in range 1-12
     ///
@@ -72,6 +94,10 @@ pub enum HourCycle {
     /// "7:00";
     /// "11:21";
     /// ```
+    #[cfg_attr(
+        all(not(feature = "serialize_none"), feature = "serde"),
+        serde(rename = "h12")
+    )]
     H12,
     /// Hour is formatted to be in range 0-11
     ///
@@ -83,6 +109,10 @@ pub enum HourCycle {
     /// "7:00";
     /// "11:21";
     /// ```
+    #[cfg_attr(
+        all(not(feature = "serialize_none"), feature = "serde"),
+        serde(rename = "h11")
+    )]
     H11,
 }
 

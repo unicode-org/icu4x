@@ -32,7 +32,14 @@ fn test_fixture(fixture_name: &str) {
         let value: MockDateTime = fx.input.value.parse().unwrap();
 
         let result = dtf.format_to_string(&value);
-        assert_eq!(result, fx.output.value);
+        match fx.description {
+            Some(description) => assert_eq!(
+                result, fx.output.value,
+                "expected {:?} to equal {:?} – {}",
+                result, fx.output.value, description
+            ),
+            None => assert_eq!(result, fx.output.value),
+        }
 
         let mut s = String::new();
         dtf.format_to_write(&mut s, &value).unwrap();
@@ -108,13 +115,31 @@ fn test_dayperiod_patterns() {
 
 #[test]
 fn test_length_fixtures() {
+    // components/datetime/tests/fixtures/tests/lengths.json
     test_fixture("lengths");
 }
 
-// Expected panic: 'not implemented', components/datetime/src/provider.rs:49:53
-// https://github.com/unicode-org/icu4x/issues/272
+/// Tests component::Bag configurations that have exact matches to CLDR skeletons.
+#[test]
+fn test_components_exact_matches() {
+    // components/datetime/tests/fixtures/tests/components-exact-matches.json
+    test_fixture("components-exact-matches");
+}
+
+/// Tests that component::Bags can adjust for width differences in the final pattern.
+/// TODO(584) - This is unimplemented and will panic.
 #[test]
 #[should_panic]
-fn test_components_fixtures() {
-    test_fixture("components");
+fn test_components_width_differences() {
+    // components/datetime/tests/fixtures/tests/components-exact-matches.json
+    test_fixture("components-width-differences");
+}
+
+/// Tests that component::Bags can combine a date skeleton, and a time skeleton.
+/// TODO(585) - This is unimplemented and will panic.
+#[test]
+#[should_panic]
+fn test_components_combine_date_time() {
+    // components/datetime/tests/fixtures/tests/components-date-time.json
+    test_fixture("components-combine-date-time");
 }
