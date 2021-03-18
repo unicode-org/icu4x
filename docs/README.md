@@ -21,7 +21,7 @@ List of documents describing various aspects of the process which ICU4X project 
 
 Document | Summary
 ---------|---------
-[benchmarking.md](process/benchmarking.md) | Description of the model and facets of benchmarking that ICU4X is using.
+[benchmarking.md](process/benchmarking.md) | Description of the model and facets of performance benchmarking that ICU4X is using.
 [bylaws.md](process/bylaws.md) | ICU4X-SC abides by the bylaws listed in this document.
 [charter.md](process/charter.md) | ICU4X is a new project whose objective is to solve the needs of clients who wish to provide client-side i18n for their products in resource-constrained environments.
 [crate_ownership.md](process/crate_ownership.md) | Describes ownership rules for public crates (on crates.io).
