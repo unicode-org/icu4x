@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1615917969413,
+  "lastUpdate": 1616100996221,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3959,6 +3959,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35061754,
             "range": "± 1055486",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4dae1fa1ce36e35ea48d41343890a311dfb7ee49",
+          "message": "Re-organize the benchmark data (#546)",
+          "timestamp": "2021-03-18T15:49:59-05:00",
+          "tree_id": "74d02b07f4f7c8e5a8057a5200b61f4230ef4969",
+          "url": "https://github.com/unicode-org/icu4x/commit/4dae1fa1ce36e35ea48d41343890a311dfb7ee49"
+        },
+        "date": 1616100994227,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29422108,
+            "range": "± 1646020",
             "unit": "ns/iter"
           }
         ]
