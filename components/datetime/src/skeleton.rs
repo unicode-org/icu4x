@@ -49,24 +49,9 @@ impl Skeleton {
             match maybe_field_a {
                 Some(field_a) => match maybe_field_b {
                     Some(field_b) => {
-                        let order_a = field_a.symbol.get_canonical_order();
-                        let order_b = field_b.symbol.get_canonical_order();
-                        if order_a < order_b {
-                            return Ordering::Less;
-                        }
-                        if order_a > order_b {
-                            return Ordering::Greater;
-                        }
-
-                        // If the fields are equivalent, try to sort by field length.
-                        let length_a = field_a.length as u8;
-                        let length_b = field_b.length as u8;
-
-                        if length_a < length_b {
-                            return Ordering::Less;
-                        }
-                        if length_a > length_b {
-                            return Ordering::Greater;
+                        let ordering = compare_fields(field_a, field_b);
+                        if ordering != Ordering::Equal {
+                            return ordering;
                         }
                     }
                     None => {
@@ -83,6 +68,29 @@ impl Skeleton {
 
         Ordering::Equal
     }
+}
+
+fn compare_fields(field_a: &Field, field_b: &Field) -> Ordering {
+    let order_a = field_a.symbol.get_canonical_order();
+    let order_b = field_b.symbol.get_canonical_order();
+    if order_a < order_b {
+        return Ordering::Less;
+    }
+    if order_a > order_b {
+        return Ordering::Greater;
+    }
+
+    // If the fields are equivalent, try to sort by field length.
+    let length_a = field_a.length as u8;
+    let length_b = field_b.length as u8;
+
+    if length_a < length_b {
+        return Ordering::Less;
+    }
+    if length_a > length_b {
+        return Ordering::Greater;
+    }
+    return Ordering::Equal;
 }
 
 impl PartialOrd for Skeleton {
@@ -118,28 +126,11 @@ impl<'de> de::Visitor<'de> for SkeletonFieldsDeserializeVisitor {
     where
         E: de::Error,
     {
-        Skeleton::try_from(skeleton_string).map_err(|err| match err {
-            SkeletonError::SymbolUnknown(byte) => E::custom(format!(
-                "Skeleton {:?} contained an unknown symbol, {:?}",
-                skeleton_string, byte as char
-            )),
-            SkeletonError::SymbolUnimplemented(byte) => E::custom(format!(
-                "Skeleton {:?} contained an unimplemented symbol, {:?}",
-                skeleton_string, byte as char
-            )),
-            SkeletonError::FieldLengthTooLong => E::custom(format!(
-                "Skeleton \"{}\" contained a field that was too long.",
-                skeleton_string
-            )),
-            SkeletonError::SymbolInvalid(ch) => E::custom(format!(
-                "Skeleton {:?} contained an invalid symbol, {:?}",
-                skeleton_string, ch
-            )),
-            SkeletonError::FieldOutOfOrder
-            | SkeletonError::DuplicateField
-            | SkeletonError::UnimplementedField(_)
-            | SkeletonError::SkeletonFieldOutOfOrder
-            | SkeletonError::Fields(_) => E::custom("TODO - Following commit"),
+        Skeleton::try_from(skeleton_string).map_err(|err| {
+            de::Error::invalid_value(
+                de::Unexpected::Other(&format!("{:?} {}", skeleton_string, err)),
+                &"a UTS 35 sorted field symbols representing a skeleton",
+            )
         })
     }
 }
@@ -180,8 +171,8 @@ impl Serialize for Skeleton {
 impl TryFrom<&str> for Skeleton {
     type Error = SkeletonError;
     fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
-        // Parse a string into a list of fields.
-        let mut fields = SmallVec::new();
+        let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
+        let mut in_order = true;
 
         let mut iter = skeleton_string.bytes().peekable();
         while let Some(byte) = iter.next() {
@@ -198,6 +189,11 @@ impl TryFrom<&str> for Skeleton {
                 iter.next();
             }
 
+            if let Some(prev_field) = fields.last() {
+                in_order = in_order
+                    && prev_field.symbol.get_canonical_order() < field_symbol.get_canonical_order();
+            }
+
             // Add the field.
             fields.push(Field::from((
                 field_symbol,
@@ -205,7 +201,19 @@ impl TryFrom<&str> for Skeleton {
             )));
         }
 
-        Ok(Skeleton(fields))
+        if in_order {
+            Ok(Skeleton(fields))
+        } else {
+            Err(SkeletonError::FieldsOutOfOrder(fields))
+        }
+    }
+}
+
+/// Apply the sorting invarants for an unknown list of fields.
+impl From<SmallVec<[fields::Field; 5]>> for Skeleton {
+    fn from(mut fields: SmallVec<[fields::Field; 5]>) -> Skeleton {
+        fields.sort_by(compare_fields);
+        Skeleton(fields)
     }
 }
 
