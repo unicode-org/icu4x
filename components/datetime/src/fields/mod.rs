@@ -7,11 +7,22 @@ pub(crate) mod symbols;
 pub use length::{FieldLength, LengthError};
 pub use symbols::*;
 
-use std::convert::{TryFrom, TryInto};
+use std::{
+    convert::{TryFrom, TryInto},
+    fmt,
+};
 
 #[derive(Debug)]
 pub enum Error {
     TooLong(FieldSymbol),
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::TooLong(symbol) => write!(f, "field {:?} is too long", symbol),
+        }
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]

@@ -153,7 +153,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
                         Err(err) => match err {
                             // Ignore unimplemented fields for now.
                             SkeletonError::SymbolUnimplemented(_) => continue,
-                            _ => panic!("TODO - {:?}", err),
+                            _ => panic!("{:?} {}", unique_skeleton, err),
                         },
                     };
 

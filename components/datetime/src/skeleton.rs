@@ -212,14 +212,39 @@ impl TryFrom<&str> for Skeleton {
 #[derive(Debug)]
 pub enum SkeletonError {
     FieldLengthTooLong,
-    FieldOutOfOrder,
+    FieldsOutOfOrder(SmallVec<[fields::Field; 5]>),
     DuplicateField,
     SymbolUnknown(char),
     SymbolInvalid(char),
     SymbolUnimplemented(char),
     UnimplementedField(char),
-    SkeletonFieldOutOfOrder,
     Fields(fields::Error),
+}
+
+/// These strings follow the recommendations for the serde::de::Unexpected::Other type.
+/// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other
+///
+/// Serde will generate an error such as:
+/// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
+impl fmt::Display for SkeletonError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            SkeletonError::FieldLengthTooLong => write!(f, "field too long in skeleton"),
+            SkeletonError::DuplicateField => write!(f, "duplicate field in skeleton"),
+            SkeletonError::SymbolUnknown(ch) => write!(f, "symbol unknown {} in skeleton", ch),
+            SkeletonError::SymbolInvalid(ch) => write!(f, "symbol invalid {} in skeleton", ch),
+            SkeletonError::SymbolUnimplemented(ch) => {
+                write!(f, "symbol unimplemented {} in skeleton", ch)
+            }
+            SkeletonError::UnimplementedField(ch) => {
+                write!(f, "unimplemented field {} in skeleton", ch)
+            }
+            SkeletonError::FieldsOutOfOrder(fields) => {
+                write!(f, "skeleton fields {:?} out of order", fields)
+            }
+            SkeletonError::Fields(err) => write!(f, "{} in skeleton", err),
+        }
+    }
 }
 
 impl From<fields::Error> for SkeletonError {
@@ -324,7 +349,7 @@ mod test {
                     SkeletonError::SymbolUnimplemented(_) => {
                         // Every skeleton should return this error.
                     }
-                    _ => panic!("TODO - {:?}", err),
+                    _ => panic!("{}", err),
                 },
             }
         }
