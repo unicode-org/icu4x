@@ -5,19 +5,19 @@
 .DEFAULT_GOAL := test
 .PHONY: build test
 
-ALL_HEADERS := $(wildcard ../include/*.h)
-ALL_RUST := $(wildcard ../src/*.rs)
+ALL_HEADERS := $(wildcard ../../include/*.h)
+ALL_RUST := $(wildcard ../../src/*.rs)
 
 $(ALL_RUST):
 
 $(ALL_HEADERS):
 
 
-../../../target/debug/libicu_capi.a: $(ALL_RUST)
+../../../../target/debug/libicu_capi.a: $(ALL_RUST)
 	cargo build
 
-a.out: ../../../target/debug/libicu_capi.a $(ALL_HEADERS)
-	gcc test.c ../../../target/debug/libicu_capi.a -ldl -lpthread -lm
+a.out: ../../../../target/debug/libicu_capi.a $(ALL_HEADERS) test.c
+	gcc test.c ../../../../target/debug/libicu_capi.a -ldl -lpthread -lm
 
 build: a.out
 

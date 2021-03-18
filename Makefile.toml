@@ -21,7 +21,7 @@ args = ["test-all-features"]
 description = "Run C API tests"
 category = "ICU4X Development"
 script = '''
-cd components/capi/ctest;
+cd components/capi/examples/pluralrules;
 make
 '''
 
