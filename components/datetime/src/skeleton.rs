@@ -271,11 +271,11 @@ mod test {
 
     #[rustfmt::skip]
     const SUPPORTED_STRING_SKELETONS: [&str; 51] = [
-        "E", "EEEEd", "EHm", "EHms", "Ed", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
-        "MEEEEd", "MEd", "MMM", "MMMEEEEd", "MMMEd", "MMMM", "MMMMEEEEd", "MMMMEd", "MMMMd",
+        "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
+        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
-        "y", "yM", "yMEEEEd", "yMEd", "yMM", "yMMM", "yMMMEEEEd", "yMMMEd", "yMMMM", "yMMMMEEEEd",
-        "yMMMMEd", "yMMMMccccd", "yMMMMd", "yMMMd", "yMMdd", "yMd",
+        "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
+        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd",
     ];
 
     #[rustfmt::skip]
@@ -283,7 +283,7 @@ mod test {
         // TODO(#487) - Flexible day periods
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
         // TODO(#486) - Era
-        "Gy", "GyM", "GyMMM", "GyMMMEEEEd", "GyMMMEd", "GyMMMM", "GyMMMMEd", "GyMMMMd", "GyMMMd",
+        "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // TODO(#418) - Timezones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
         // TODO(#502) - Week of month
@@ -333,7 +333,7 @@ mod test {
     #[test]
     fn test_skeleton_deserialization() {
         assert_eq!(
-            Skeleton::try_from("MMMMEEEEd").unwrap(),
+            Skeleton::try_from("MMMMdEEEE").unwrap(),
             Skeleton(
                 vec![
                     Field {
@@ -341,13 +341,13 @@ mod test {
                         length: FieldLength::Wide
                     },
                     Field {
+                        symbol: Day::DayOfMonth.into(),
+                        length: FieldLength::One
+                    },
+                    Field {
                         symbol: Weekday::Format.into(),
                         length: FieldLength::Wide
                     },
-                    Field {
-                        symbol: Day::DayOfMonth.into(),
-                        length: FieldLength::One
-                    }
                 ]
                 .into()
             )
@@ -357,7 +357,7 @@ mod test {
     #[test]
     fn test_skeleton_tuple_ordering() {
         let skeletons_strings = Vec::from([
-            "y", "yM", "yMEd", "yMEEEEd", "yMMM", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h", "hm",
+            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h", "hm",
             "hms", "Hm", "Hms", "ms", "mmss",
         ]);
 
