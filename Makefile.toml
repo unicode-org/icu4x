@@ -17,6 +17,14 @@ command = "cargo"
 # Note: we need test-all-features (rather than build-all-features) for docs
 args = ["test-all-features"]
 
+[tasks.test-capi]
+description = "Run C API tests"
+category = "ICU4X Development"
+script = '''
+cd components/capi/examples/pluralrules;
+make
+'''
+
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
@@ -56,6 +64,7 @@ dependencies = [
     "fmt-check",
     "clippy-all",
     "license-header-check",
+    "test-capi",
 ]
 
 [tasks.ci]

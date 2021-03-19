@@ -8,6 +8,7 @@ members = [
     "experimental/segmenter_lstm",
     "components/datetime",
     "components/ecma402",
+    "components/capi",
     "components/icu",
     "components/icu4x",
     "components/locale_canonicalizer",
