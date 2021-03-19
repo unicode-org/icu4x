@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616101018558,
+  "lastUpdate": 1616177433996,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2969,6 +2969,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1141749,
             "range": "± 66583",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "91dab1ccae82a03a1c49116160dac11850fd913e",
+          "message": "Add basic C API for PluralRules (#552)\n\n* Add rust-side C API crate, with code for plural rules\r\n\r\n* Add headers\r\n\r\n* Add ctest\r\n\r\n* Make some things const\r\n\r\n* Rename ICU4XErasedDataProvider -> ICU4XDataProvider\r\n\r\n* Replace into with from\r\n\r\n* Add comments and docs\r\n\r\n* rename icu4x_erased_data_provider_destroy -> icu4x_data_provider_destroy\r\n\r\n* fmt\r\n\r\n* Add cargo-make target for ctest\r\n\r\n* Move pluralrules ctest to examples\r\n\r\n* goodby #pragma once :-'(",
+          "timestamp": "2021-03-19T11:04:50-07:00",
+          "tree_id": "f24bde84b4d5e616ff9539ed808820a7082a9fd0",
+          "url": "https://github.com/unicode-org/icu4x/commit/91dab1ccae82a03a1c49116160dac11850fd913e"
+        },
+        "date": 1616177430734,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 921601,
+            "range": "± 48938",
             "unit": "ns/iter"
           }
         ]
