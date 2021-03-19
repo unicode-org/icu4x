@@ -190,7 +190,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_basic_cldr_timezones() {
+    fn basic_cldr_time_zones() {
         use icu_locid_macros::langid;
 
         let cldr_paths = crate::cldr_paths::for_test();
@@ -224,7 +224,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("Pohnpei", exemplar_cities["Ponape"]);
+        assert_eq!("Pohnpei", exemplar_cities["Pacific/Ponape"]);
 
         let generic_names_long: Cow<MetaZoneGenericNamesLongV1> = provider
             .load_payload(&DataRequest {
