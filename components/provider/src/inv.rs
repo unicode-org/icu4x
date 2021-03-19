@@ -47,7 +47,7 @@ impl<'d> crate::erased::ErasedDataProvider<'d> for InvariantDataProvider {
     fn load_to_receiver(
         &self,
         _req: &DataRequest,
-        receiver: &mut dyn crate::erased::ErasedDataReceiver<'d, '_>,
+        receiver: &mut dyn crate::erased::ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, Error> {
         receiver.receive_default()?;
         Ok(DataResponseMetadata::default())

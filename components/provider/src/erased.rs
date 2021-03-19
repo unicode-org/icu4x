@@ -156,13 +156,12 @@ where
     }
 }
 
-/// An receiver capable of accepting type-erased data.
+/// A receiver capable of accepting data from a Serde Deserializer.
 ///
 /// Lifetimes:
 ///
-/// - `'d` = lifetime of borrowed data (Cow::Borrowed)
 /// - `'de` = deserializer lifetime; can usually be `'_`
-pub trait ErasedDataReceiver<'d, 'de> {
+pub trait SerdeDataReceiver<'de> {
     /// Consumes a Serde Deserializer into this ErasedDataReceiver as owned data.
     ///
     /// This method results in an owned payload, but the payload could have non-static references
@@ -190,7 +189,14 @@ pub trait ErasedDataReceiver<'d, 'de> {
         &mut self,
         deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error>;
+}
 
+/// An receiver capable of accepting type-erased data.
+///
+/// Lifetimes:
+///
+/// - `'d` = lifetime of borrowed data (Cow::Borrowed)
+pub trait ErasedDataReceiver<'d> {
     /// Sets the payload to the default value. Assumes Default is implemented for the type.
     ///
     /// This method results in an owned payload.
@@ -294,7 +300,7 @@ pub trait ErasedDataReceiver<'d, 'de> {
     fn reset(&mut self);
 }
 
-impl<'a, 'd> dyn ErasedDataReceiver<'d, '_> + 'a {
+impl<'a, 'd> dyn ErasedDataReceiver<'d> + 'a {
     /// Convenience method: sets the payload to the value contained in the given Cow of a concrete
     /// type. May be owned or borrowed.
     ///
@@ -332,10 +338,9 @@ impl<'a, 'd> dyn ErasedDataReceiver<'d, '_> + 'a {
     }
 }
 
-/// Concrete struct backing ErasedDataReceiver. Implemented for:
+/// Concrete struct backing SerdeDataReceiver and ErasedDataReceiver.
 ///
-/// - Sized `T` implementing Serde. All methods supported.
-/// - `dyn ErasedDataStruct`. Deserialization not supported.
+/// The two traits are implemented conditionally based on the type argument.
 ///
 /// # Example
 ///
@@ -384,10 +389,9 @@ where
     }
 }
 
-/// Implementation of DataReceiver for sized types.
-impl<'d, 'de, T> ErasedDataReceiver<'d, 'de> for DataReceiver<'d, T>
+impl<'d, 'de, T> SerdeDataReceiver<'de> for DataReceiver<'d, T>
 where
-    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Deserialize<'de> + Clone + Debug,
 {
     fn receive_deserializer(
         &mut self,
@@ -397,7 +401,12 @@ where
         self.payload = Some(Cow::Owned(obj));
         Ok(())
     }
+}
 
+impl<'d, T> ErasedDataReceiver<'d> for DataReceiver<'d, T>
+where
+    T: serde::Serialize + Clone + Debug + Any + Default,
+{
     fn receive_default(&mut self) -> Result<(), Error> {
         self.payload = Some(Cow::Owned(T::default()));
         Ok(())
@@ -454,14 +463,7 @@ where
 }
 
 /// Implementation of DataReceiver for ErasedDataStruct trait object.
-impl<'d, 'de> ErasedDataReceiver<'d, 'de> for DataReceiver<'d, dyn ErasedDataStruct> {
-    fn receive_deserializer(
-        &mut self,
-        _deserializer: &mut dyn erased_serde::Deserializer<'de>,
-    ) -> Result<(), Error> {
-        Err(Error::NeedsTypeInfo)
-    }
-
+impl<'d> ErasedDataReceiver<'d> for DataReceiver<'d, dyn ErasedDataStruct> {
     fn receive_default(&mut self) -> Result<(), Error> {
         Err(Error::NeedsTypeInfo)
     }
@@ -484,7 +486,20 @@ impl<'d, 'de> ErasedDataReceiver<'d, 'de> for DataReceiver<'d, dyn ErasedDataStr
     }
 }
 
-/// A type-erased data provider that loads a payload of any type.
+/// A type-erased data provider that loads paylads from a Serde Deserializer.
+pub trait SerdeDataProvider<'de> {
+    /// Query the provider for data, loading it into a ErasedDataReceiver.
+    ///
+    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Error with more information.
+    fn load_to_receiver(
+        &self,
+        req: &DataRequest,
+        receiver: &mut dyn SerdeDataReceiver<'de>,
+    ) -> Result<DataResponseMetadata, Error>;
+}
+
+/// A type-erased data provider that loads a payload of types implementing Any.
 pub trait ErasedDataProvider<'d> {
     /// Query the provider for data, loading it into a ErasedDataReceiver.
     ///
@@ -493,7 +508,7 @@ pub trait ErasedDataProvider<'d> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
+        receiver: &mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, Error>;
 }
 
@@ -506,7 +521,7 @@ macro_rules! impl_erased {
             fn load_to_receiver(
                 &self,
                 req: &$crate::prelude::DataRequest,
-                receiver: &mut dyn $crate::erased::ErasedDataReceiver<$lifetime, '_>,
+                receiver: &mut dyn $crate::erased::ErasedDataReceiver<$lifetime>,
             ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
                 let mut result = self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;

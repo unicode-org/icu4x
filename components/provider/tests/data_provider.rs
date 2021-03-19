@@ -116,7 +116,7 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     fn load_to_receiver<'a>(
         &self,
         req: &DataRequest,
-        receiver: &'a mut dyn ErasedDataReceiver<'d, '_>,
+        receiver: &'a mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, DataError> {
         match req.resource_path.key {
             hello_world::key::HELLO_WORLD_V1 => {
