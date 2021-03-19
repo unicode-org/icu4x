@@ -7,7 +7,8 @@ use icu_datetime::provider::timezones::{
     MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, MetaZoneSpecificNamesV1,
     TimeZoneFormatsV1,
 };
-use std::{borrow::Cow, collections::BTreeMap};
+use litemap::LiteMap;
+use std::borrow::Cow;
 
 impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
@@ -49,20 +50,30 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
                 .zone
                 .0
                 .into_iter()
-                .flat_map(|(_, region)| region.0)
-                .flat_map(|(key, place_or_region)| match place_or_region {
-                    super::LocationOrSubRegion::Location(place) => place
-                        .exemplar_city()
-                        .map(|city| vec![(key.into(), city)])
-                        .unwrap_or_default(),
-                    super::LocationOrSubRegion::SubRegion(region) => region
+                .flat_map(|(key, region)| {
+                    region
+                        .0
                         .into_iter()
-                        .filter_map(|(key, place)| {
-                            place
-                                .exemplar_city()
-                                .map(|value| (key.into(), value))
+                        .flat_map(move |(inner_key, place_or_region)| {
+                            let mut key = key.clone();
+                            key.push('/');
+                            key.push_str(&inner_key);
+                            match place_or_region {
+                                super::LocationOrSubRegion::Location(place) => place
+                                    .exemplar_city()
+                                    .map(|city| vec![(key.into(), city)])
+                                    .unwrap_or_default(),
+                                super::LocationOrSubRegion::SubRegion(region) => region
+                                    .into_iter()
+                                    .filter_map(|(inner_key, place)| {
+                                        let mut key = key.clone();
+                                        key.push('/');
+                                        key.push_str(&inner_key);
+                                        place.exemplar_city().map(|value| (key.into(), value))
+                                    })
+                                    .collect::<Vec<_>>(),
+                            }
                         })
-                        .collect::<Vec<_>>(),
                 })
                 .collect(),
         )
@@ -72,7 +83,7 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
 impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
-            None => Self(BTreeMap::new()),
+            None => Self(LiteMap::new()),
             Some(metazones) => Self(
                 metazones
                     .0
@@ -99,7 +110,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'d> {
 impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
-            None => Self(BTreeMap::new()),
+            None => Self(LiteMap::new()),
             Some(metazones) => Self(
                 metazones
                     .0
@@ -126,7 +137,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'d> {
 impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
-            None => Self(BTreeMap::new()),
+            None => Self(LiteMap::new()),
             Some(metazones) => Self(
                 metazones
                     .0
@@ -147,7 +158,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'d> {
 impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
-            None => Self(BTreeMap::new()),
+            None => Self(LiteMap::new()),
             Some(metazones) => Self(
                 metazones
                     .0

@@ -1,7 +1,5 @@
+use litemap::LiteMap;
 use std::borrow::Cow;
-
-pub type LiteMap<K, V> = std::collections::BTreeMap<K, V>;
-//use litemap::LiteMap;
 
 macro_rules! map_access {
     ($outer: ty => $inner: ty: $lt: lifetime) => {
@@ -26,7 +24,7 @@ macro_rules! map_access {
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
-                &self.0[key]
+                &self.0.get(key).unwrap()
             }
         }
     };
