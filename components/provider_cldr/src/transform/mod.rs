@@ -50,10 +50,7 @@ impl<'a, 'd> ErasedDataProviderV3<'d> for CldrJsonDataProvider<'a, 'd> {
         if let Some(result) = self.dates.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self
-            .likelysubtags
-            .try_load_payload(req, self.cldr_paths)?
-        {
+        if let Some(result) = self.likelysubtags.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
         if let Some(result) = self.plurals.try_load_payload(req, self.cldr_paths)? {

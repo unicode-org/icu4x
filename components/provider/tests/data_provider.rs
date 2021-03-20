@@ -118,18 +118,14 @@ impl<'d> ErasedDataProviderV3<'d> for DataProviderBorrowing<'d, 'static> {
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
         match req.resource_path.key {
-            hello_world::key::HELLO_WORLD_V1 => {
-                Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
-                })
-            }
-            HELLO_ALT_KEY => {
-                Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
-                })
-            }
+            hello_world::key::HELLO_WORLD_V1 => Ok(DataResponse {
+                metadata: DataResponseMetadata::default(),
+                payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
+            }),
+            HELLO_ALT_KEY => Ok(DataResponse {
+                metadata: DataResponseMetadata::default(),
+                payload: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
+            }),
             _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
         }
     }
@@ -337,7 +333,9 @@ fn test_mismatched_types() {
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
     let response: Result<DataResponse<HelloWorldV1>, DataError> =
-        ErasedDataProviderV3::load_payload(&provider, &get_request_alt()).unwrap().downcast();
+        ErasedDataProviderV3::load_payload(&provider, &get_request_alt())
+            .unwrap()
+            .downcast();
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
 

@@ -151,13 +151,12 @@ where
                     let boxed: Box<dyn ErasedDataStruct> = Box::new(v);
                     Cow::Owned(boxed)
                 }
-            })
+            }),
         }
     }
 }
 
-impl<'d> DataResponse<'d, dyn ErasedDataStruct>
-{
+impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
     /// Convert this DataResponse of an ErasedDataStruct into a DataResponse of a Sized type.
     ///
     /// Can be used to implement DataProvider on types implementing ErasedDataProvider.
@@ -168,7 +167,12 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct>
         let metadata = self.metadata;
         let cow = match self.payload {
             Some(cow) => cow,
-            None => return Ok(DataResponse{metadata, payload: None})
+            None => {
+                return Ok(DataResponse {
+                    metadata,
+                    payload: None,
+                })
+            }
         };
         let payload = match cow {
             Cow::Borrowed(erased) => {
@@ -194,7 +198,7 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct>
                 Some(Cow::Owned(*boxed))
             }
         };
-        Ok(DataResponse{metadata, payload})
+        Ok(DataResponse { metadata, payload })
     }
 }
 
@@ -352,8 +356,15 @@ pub trait ErasedDataProviderV3<'d> {
 macro_rules! impl_erased {
     ($provider:ty, $struct:ty, $lifetime:tt) => {
         impl<$lifetime> $crate::erased::ErasedDataProviderV3<$lifetime> for $provider {
-            fn load_payload(&self, req: &$crate::prelude::DataRequest) -> Result<$crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>, $crate::prelude::DataError> {
-                let result: $crate::prelude::DataResponse<$struct> = $crate::prelude::DataProvider::load_payload(self, req)?;
+            fn load_payload(
+                &self,
+                req: &$crate::prelude::DataRequest,
+            ) -> Result<
+                $crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>,
+                $crate::prelude::DataError,
+            > {
+                let result: $crate::prelude::DataResponse<$struct> =
+                    $crate::prelude::DataProvider::load_payload(self, req)?;
                 Ok(result.into_erased())
             }
         }

@@ -37,7 +37,7 @@ fn test_deserializer_static() {
 #[test]
 fn test_deserializer_borrowed() {
     // Deserialize from a local string to create non-static references.
-    let local_data = DATA_JSON.clone();
+    let local_data = DATA_JSON.to_string();
     let deserializer = &mut serde_json::Deserializer::from_str(&local_data);
     let mut receiver = DataReceiver::<DataStruct>::new();
     receiver
