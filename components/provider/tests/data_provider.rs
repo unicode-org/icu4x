@@ -52,7 +52,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_erased!(DataWarehouse<'static>, 'd);
+icu_provider::impl_erased!(DataWarehouse<'static>, HelloWorldV1<'static>, 'd);
 
 impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     fn load_payload(
@@ -69,7 +69,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_erased!(&'d DataWarehouse<'static>, 'd);
+icu_provider::impl_erased!(&'d DataWarehouse<'static>, HelloWorldV1<'static>, 'd);
 
 /// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT. Custom implementation of
 /// ErasedDataProvider.

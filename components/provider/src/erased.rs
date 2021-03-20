@@ -135,6 +135,27 @@ impl dyn ErasedDataStruct {
     }
 }
 
+impl<'d, T> DataResponse<'d, T>
+where
+    T: erased_serde::Serialize + Clone + Debug + Any,
+{
+    /// Convert this DataResponse of a Sized type into a DataResponse of an ErasedDataStruct.
+    ///
+    /// Mainly used to implement ErasedDataProvider on types already implementing DataProvider.
+    pub fn into_erased(self) -> DataResponse<'d, dyn ErasedDataStruct> {
+        DataResponse {
+            metadata: self.metadata,
+            payload: self.payload.map(|p| match p {
+                Cow::Borrowed(v) => Cow::Borrowed(v as &dyn ErasedDataStruct),
+                Cow::Owned(v) => {
+                    let boxed: Box<dyn ErasedDataStruct> = Box::new(v);
+                    Cow::Owned(boxed)
+                }
+            })
+        }
+    }
+}
+
 impl<T> ErasedDataStruct for T
 where
     T: erased_serde::Serialize + Clone + Debug + Any,
@@ -516,16 +537,23 @@ pub trait ErasedDataProvider<'d> {
 /// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
 #[macro_export]
 macro_rules! impl_erased {
-    ($type:ty, $lifetime:tt) => {
-        impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $type {
+    ($provider:ty, $struct:ty, $lifetime:tt) => {
+        impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
             fn load_to_receiver(
                 &self,
                 req: &$crate::prelude::DataRequest,
                 receiver: &mut dyn $crate::erased::ErasedDataReceiver<$lifetime>,
             ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
-                let mut result = self.load_payload(req)?;
+                let mut result: $crate::prelude::DataResponse<$struct> = self.load_payload(req)?;
                 receiver.receive_payload(result.take_payload()?)?;
                 Ok(result.metadata)
+            }
+        }
+
+        impl<$lifetime> $crate::prelude::DataProvider<$lifetime, dyn $crate::erased::ErasedDataStruct> for $provider {
+            fn load_payload(&self, req: &$crate::prelude::DataRequest) -> Result<$crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>, $crate::prelude::DataError> {
+                let result: $crate::prelude::DataResponse<$struct> = self.load_payload(req)?;
+                Ok(result.into_erased())
             }
         }
     };

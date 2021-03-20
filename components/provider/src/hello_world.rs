@@ -120,7 +120,7 @@ where
 }
 
 #[cfg(feature = "erased")]
-impl_erased!(HelloWorldProvider<'static>, 'd);
+impl_erased!(HelloWorldProvider<'static>, HelloWorldV1<'static>, 'd);
 
 impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
     fn supported_options_for_key(
