@@ -235,8 +235,6 @@ where
     }
 }
 
-
-
 // Note: Once trait aliases land, we could enable the following alias.
 // https://github.com/rust-lang/rust/issues/41517
 // pub trait ErasedDataProvider<'d> = DataProvider<'d, dyn ErasedDataStruct>;
