@@ -77,10 +77,12 @@ fn test_json_dyn_erased_serde() {
 fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
-    let mut receiver = DataReceiver::<PluralRuleStringsV1>::new();
+
+    type Provider<'d, 's> = dyn DataProvider<'d, PluralRuleStringsV1<'s>>;
 
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: key::CARDINAL_V1,
@@ -90,15 +92,13 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Ok(_)
     ));
 
-    receiver.reset();
-
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: key::CARDINAL_V1,
@@ -108,15 +108,13 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Err(DataError::UnavailableResourceOptions(_))
     ));
 
-    receiver.reset();
-
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: key::ORDINAL_V1,
@@ -126,15 +124,13 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Err(DataError::UnsupportedResourceKey(_))
     ));
 
-    receiver.reset();
-
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: icu_provider::hello_world::key::HELLO_WORLD_V1,
@@ -144,7 +140,6 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Err(DataError::UnsupportedCategory(_))
     ));

@@ -225,7 +225,7 @@ where
 ///
 /// - `'de` = deserializer lifetime; can usually be `'_`
 pub trait SerdeDataReceiver<'de> {
-    /// Consumes a Serde Deserializer into this ErasedDataReceiver as owned data.
+    /// Consumes a Serde Deserializer into this SerdeDataReceiver as owned data.
     ///
     /// This method results in an owned payload, but the payload could have non-static references
     /// according to the deserializer lifetime.
@@ -254,156 +254,7 @@ pub trait SerdeDataReceiver<'de> {
     ) -> Result<(), Error>;
 }
 
-/// An receiver capable of accepting type-erased data.
-///
-/// Lifetimes:
-///
-/// - `'d` = lifetime of borrowed data (Cow::Borrowed)
-pub trait ErasedDataReceiver<'d> {
-    /// Sets the payload to the default value. Assumes Default is implemented for the type.
-    ///
-    /// This method results in an owned payload.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// let mut receiver = DataReceiver::<String>::new();
-    /// receiver.receive_default().expect("Default is implemented for String");
-    ///
-    /// assert!(matches!(receiver.payload, Some(Cow::Owned(_))));
-    /// assert_eq!("", *receiver.borrow_payload().unwrap());
-    /// ```
-    fn receive_default(&mut self) -> Result<(), Error>;
-
-    /// Sets the payload to the value contained in the given Cow of `ErasedDataStruct`. May be
-    /// owned or borrowed.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// let local_data = "hello world".to_string();
-    ///
-    /// let mut receiver = DataReceiver::<String>::new();
-    /// receiver.receive_erased(Cow::Borrowed(&local_data)).expect("Types should match");
-    ///
-    /// assert!(matches!(receiver.payload, Some(Cow::Borrowed(_))));
-    /// assert_eq!("hello world", *receiver.borrow_payload().unwrap());
-    /// ```
-    fn receive_erased(&mut self, erased: Cow<'d, dyn ErasedDataStruct>) -> Result<(), Error>;
-
-    /// Takes the payload as a Cow of `ErasedDataStruct`. Error if not present.
-    ///
-    /// This method is useful if you have an ErasedDataReceiver trait object. If you have a fully
-    /// typed DataReceiver, you should use take_payload() instead.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// let mut receiver = DataReceiver::<String>::new();
-    /// receiver.receive_default().expect("Default is implemented for String");
-    ///
-    /// assert!(receiver.has_payload());
-    /// let erased_payload = receiver.take_erased().unwrap();
-    /// assert!(!receiver.has_payload());
-    ///
-    /// assert_eq!("", erased_payload.as_any().downcast_ref::<String>().unwrap());
-    /// ```
-    fn take_erased(&mut self) -> Result<Cow<'d, dyn ErasedDataStruct>, Error>;
-
-    /// Returns whether the receiver has a payload.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// let mut receiver = DataReceiver::<String>::new();
-    /// assert!(!receiver.has_payload());
-    ///
-    /// receiver.receive_default().expect("Default is implemented for String");
-    /// assert!(receiver.has_payload());
-    /// ```
-    fn has_payload(&self) -> bool;
-
-    /// Discards the payload if present.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// let mut receiver = DataReceiver::<String>::new();
-    /// receiver.receive_default().expect("Default is implemented for String");
-    ///
-    /// assert!(receiver.has_payload());
-    /// receiver.reset();
-    /// assert!(!receiver.has_payload());
-    /// ```
-    fn reset(&mut self);
-}
-
-impl<'a, 'd> dyn ErasedDataReceiver<'d> + 'a {
-    /// Convenience method: sets the payload to the value contained in the given Cow of a concrete
-    /// type. May be owned or borrowed.
-    ///
-    /// This method is useful for transferring payloads between receivers.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// let mut receiver1 = DataReceiver::<f64>::new();
-    /// let mut receiver2 = DataReceiver::<f64>::new();
-    ///
-    /// receiver1.receive_default();
-    /// assert!(receiver1.payload.is_some());
-    /// assert_eq!(0.0, *receiver1.borrow_payload().unwrap());
-    ///
-    /// (&mut receiver2 as &mut dyn ErasedDataReceiver)
-    ///     .receive_payload(receiver1.take_payload().unwrap());
-    ///
-    /// assert!(receiver1.payload.is_none());
-    /// assert_eq!(0.0, *receiver2.borrow_payload().unwrap());
-    /// ```
-    pub fn receive_payload<T>(&mut self, payload: Cow<'d, T>) -> Result<(), Error>
-    where
-        T: erased_serde::Serialize + Clone + Debug + Any,
-    {
-        self.receive_erased(match payload {
-            Cow::Borrowed(borrowed) => Cow::Borrowed(borrowed),
-            Cow::Owned(owned) => Cow::Owned(Box::new(owned) as Box<dyn ErasedDataStruct>),
-        })
-    }
-}
-
-/// Concrete struct backing SerdeDataReceiver and ErasedDataReceiver.
-///
-/// The two traits are implemented conditionally based on the type argument.
+/// Concrete struct backing SerdeDataReceiver.
 ///
 /// # Example
 ///
@@ -466,92 +317,9 @@ where
     }
 }
 
-impl<'d, T> ErasedDataReceiver<'d> for DataReceiver<'d, T>
-where
-    T: serde::Serialize + Clone + Debug + Any + Default,
-{
-    fn receive_default(&mut self) -> Result<(), Error> {
-        self.payload = Some(Cow::Owned(T::default()));
-        Ok(())
-    }
-
-    fn receive_erased(&mut self, cow: Cow<'d, dyn ErasedDataStruct>) -> Result<(), Error> {
-        match cow {
-            Cow::Borrowed(erased) => {
-                let borrowed: &'d T =
-                    erased
-                        .as_any()
-                        .downcast_ref()
-                        .ok_or_else(|| Error::MismatchedType {
-                            actual: Some(erased.type_id()),
-                            generic: Some(TypeId::of::<T>()),
-                        })?;
-                self.payload = Some(Cow::Borrowed(borrowed));
-            }
-            Cow::Owned(erased) => {
-                let boxed: Box<T> =
-                    erased
-                        .into_any()
-                        .downcast()
-                        .map_err(|any| Error::MismatchedType {
-                            actual: Some(any.type_id()),
-                            generic: Some(TypeId::of::<T>()),
-                        })?;
-                self.payload = Some(Cow::Owned(*boxed));
-            }
-        };
-        Ok(())
-    }
-
-    fn take_erased(&mut self) -> Result<Cow<'d, dyn ErasedDataStruct>, Error> {
-        match self.payload.take() {
-            Some(cow) => match cow {
-                Cow::Borrowed(borrowed) => Ok(Cow::Borrowed(borrowed)),
-                Cow::Owned(owned) => {
-                    let boxed: Box<dyn ErasedDataStruct> = Box::new(owned);
-                    Ok(Cow::Owned(boxed))
-                }
-            },
-            None => Err(Error::MissingPayload),
-        }
-    }
-
-    fn has_payload(&self) -> bool {
-        self.payload.is_some()
-    }
-
-    fn reset(&mut self) {
-        self.payload.take();
-    }
-}
-
-/// Implementation of DataReceiver for ErasedDataStruct trait object.
-impl<'d> ErasedDataReceiver<'d> for DataReceiver<'d, dyn ErasedDataStruct> {
-    fn receive_default(&mut self) -> Result<(), Error> {
-        Err(Error::NeedsTypeInfo)
-    }
-
-    fn receive_erased(&mut self, cow: Cow<'d, dyn ErasedDataStruct>) -> Result<(), Error> {
-        self.payload = Some(cow);
-        Ok(())
-    }
-
-    fn take_erased(&mut self) -> Result<Cow<'d, dyn ErasedDataStruct>, Error> {
-        self.payload.take().ok_or(Error::MissingPayload)
-    }
-
-    fn has_payload(&self) -> bool {
-        self.payload.is_some()
-    }
-
-    fn reset(&mut self) {
-        self.payload.take();
-    }
-}
-
 /// A type-erased data provider that loads paylads from a Serde Deserializer.
 pub trait SerdeDataProvider<'de> {
-    /// Query the provider for data, loading it into a ErasedDataReceiver.
+    /// Query the provider for data, loading it into a SerdeDataReceiver.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
@@ -568,7 +336,7 @@ pub trait SerdeDataProvider<'de> {
 
 /// A type-erased data provider that loads a payload of types implementing Any.
 pub trait ErasedDataProviderV3<'d> {
-    /// Query the provider for data, loading it into a ErasedDataReceiver.
+    /// Query the provider for data, returning the result as an ErasedDataStruct trait object.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.

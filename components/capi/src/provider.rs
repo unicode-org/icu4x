@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::erased::ErasedDataProvider;
+use icu_provider::erased::SerdeDataProvider;
 use icu_provider_fs::FsDataProvider;
 use std::{mem, ptr, slice, str};
 
 #[repr(C)]
-/// FFI version of [`ErasedDataProvider`]. See its docs for more details.
+/// FFI version of [`SerdeDataProvider`]. See its docs for more details.
 ///
 /// # Safety
 ///
@@ -39,8 +39,8 @@ impl ICU4XDataProvider {
         }
     }
 
-    /// Construct a [`ICU4XDataProvider`] this from a boxed [`ErasedDataProvider`]
-    pub fn from_boxed(x: Box<dyn ErasedDataProvider<'static>>) -> Self {
+    /// Construct a [`ICU4XDataProvider`] this from a boxed [`SerdeDataProvider`]
+    pub fn from_boxed(x: Box<dyn SerdeDataProvider<'static>>) -> Self {
         unsafe {
             // If the layout changes this will error
             // Once Rust gets pointer metadata APIs we should switch to using those
@@ -48,16 +48,16 @@ impl ICU4XDataProvider {
         }
     }
 
-    /// Obtain the original boxed Rust [`ErasedDataProvider`] for this
-    pub fn into_boxed(self) -> Box<dyn ErasedDataProvider<'static>> {
+    /// Obtain the original boxed Rust [`SerdeDataProvider`] for this
+    pub fn into_boxed(self) -> Box<dyn SerdeDataProvider<'static>> {
         debug_assert!(self._field1 != 0);
         // If the layout changes this will error
         // Once Rust gets pointer metadata APIs we should switch to using those
         unsafe { mem::transmute(self) }
     }
 
-    /// Convert a borrowed reference to a borrowed [`ErasedDataProvider`]
-    pub fn as_dyn_ref(&self) -> &dyn ErasedDataProvider<'static> {
+    /// Convert a borrowed reference to a borrowed [`SerdeDataProvider`]
+    pub fn as_dyn_ref(&self) -> &dyn SerdeDataProvider<'static> {
         debug_assert!(self._field1 != 0);
         unsafe {
             // &dyn Trait and Box<dyn Trait> have the same layout
