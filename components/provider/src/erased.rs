@@ -141,7 +141,7 @@ where
 {
     /// Convert this DataResponse of a Sized type into a DataResponse of an ErasedDataStruct.
     ///
-    /// Mainly used to implement ErasedDataProvider on types already implementing DataProvider.
+    /// Can be used to implement ErasedDataProvider on types implementing DataProvider.
     pub fn into_erased(self) -> DataResponse<'d, dyn ErasedDataStruct> {
         DataResponse {
             metadata: self.metadata,
@@ -153,6 +153,48 @@ where
                 }
             })
         }
+    }
+}
+
+impl<'d> DataResponse<'d, dyn ErasedDataStruct>
+{
+    /// Convert this DataResponse of an ErasedDataStruct into a DataResponse of a Sized type.
+    ///
+    /// Can be used to implement DataProvider on types implementing ErasedDataProvider.
+    pub fn downcast<T>(self) -> Result<DataResponse<'d, T>, Error>
+    where
+        T: erased_serde::Serialize + Clone + Debug + Any,
+    {
+        let metadata = self.metadata;
+        let cow = match self.payload {
+            Some(cow) => cow,
+            None => return Ok(DataResponse{metadata, payload: None})
+        };
+        let payload = match cow {
+            Cow::Borrowed(erased) => {
+                let borrowed: &'d T =
+                    erased
+                        .as_any()
+                        .downcast_ref()
+                        .ok_or_else(|| Error::MismatchedType {
+                            actual: Some(erased.type_id()),
+                            generic: Some(TypeId::of::<T>()),
+                        })?;
+                Some(Cow::Borrowed(borrowed))
+            }
+            Cow::Owned(erased) => {
+                let boxed: Box<T> =
+                    erased
+                        .into_any()
+                        .downcast()
+                        .map_err(|any| Error::MismatchedType {
+                            actual: Some(any.type_id()),
+                            generic: Some(TypeId::of::<T>()),
+                        })?;
+                Some(Cow::Owned(*boxed))
+            }
+        };
+        Ok(DataResponse{metadata, payload})
     }
 }
 
@@ -193,7 +235,7 @@ pub trait SerdeDataReceiver<'de> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::ErasedDataReceiver;
+    /// use icu_provider::erased::SerdeDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
@@ -520,17 +562,20 @@ pub trait SerdeDataProvider<'de> {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
+// Note: Once trait aliases land, we could enable the following alias.
+// https://github.com/rust-lang/rust/issues/41517
+// pub trait ErasedDataProvider<'d> = DataProvider<'d, dyn ErasedDataStruct>;
+
 /// A type-erased data provider that loads a payload of types implementing Any.
-pub trait ErasedDataProvider<'d> {
+pub trait ErasedDataProviderV3<'d> {
     /// Query the provider for data, loading it into a ErasedDataReceiver.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_to_receiver(
+    fn load_payload(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d>,
-    ) -> Result<DataResponseMetadata, Error>;
+    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error>;
 }
 
 /// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
@@ -538,39 +583,23 @@ pub trait ErasedDataProvider<'d> {
 #[macro_export]
 macro_rules! impl_erased {
     ($provider:ty, $struct:ty, $lifetime:tt) => {
-        impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
-            fn load_to_receiver(
-                &self,
-                req: &$crate::prelude::DataRequest,
-                receiver: &mut dyn $crate::erased::ErasedDataReceiver<$lifetime>,
-            ) -> Result<$crate::prelude::DataResponseMetadata, $crate::prelude::DataError> {
-                let mut result: $crate::prelude::DataResponse<$struct> = self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
-            }
-        }
-
-        impl<$lifetime> $crate::prelude::DataProvider<$lifetime, dyn $crate::erased::ErasedDataStruct> for $provider {
+        impl<$lifetime> $crate::erased::ErasedDataProviderV3<$lifetime> for $provider {
             fn load_payload(&self, req: &$crate::prelude::DataRequest) -> Result<$crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>, $crate::prelude::DataError> {
-                let result: $crate::prelude::DataResponse<$struct> = self.load_payload(req)?;
+                let result: $crate::prelude::DataResponse<$struct> = $crate::prelude::DataProvider::load_payload(self, req)?;
                 Ok(result.into_erased())
             }
         }
     };
 }
 
-/// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
+/// Convenience implementation of DataProvider<T> given an ErasedDataProviderV3 trait object.
+impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProviderV3<'d> + 'a
 where
     T: serde::Serialize + Clone + Debug + Any + Default,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        let mut receiver = DataReceiver::<T>::new();
-        let metadata = self.load_to_receiver(req, &mut receiver)?;
-        Ok(DataResponse {
-            metadata,
-            payload: receiver.payload,
-        })
+        let result = ErasedDataProviderV3::load_payload(self, req)?;
+        result.downcast()
     }
 }
 

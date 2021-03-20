@@ -42,18 +42,6 @@ where
     }
 }
 
-#[cfg(feature = "erased")]
-impl<'d> crate::erased::ErasedDataProvider<'d> for InvariantDataProvider {
-    fn load_to_receiver(
-        &self,
-        _req: &DataRequest,
-        receiver: &mut dyn crate::erased::ErasedDataReceiver<'d>,
-    ) -> Result<DataResponseMetadata, Error> {
-        receiver.receive_default()?;
-        Ok(DataResponseMetadata::default())
-    }
-}
-
 impl IterableDataProvider<'_> for InvariantDataProvider {
     fn supported_options_for_key(
         &self,
