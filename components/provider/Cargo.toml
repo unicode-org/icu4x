@@ -27,7 +27,10 @@ extra_features = ["serde"]
 [features]
 # Include the ErasedDataProvider, useful for type-agnostic data processing.
 # Also required for DataExporter.
-erased = ["serde", "erased-serde"]
+erased = []
+# Include the SerdeDataProvider, used by the C API.
+# Also enables as_serialize() in ErasedDataProvider.
+provider_serde = ["serde", "erased-serde"]
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
@@ -50,4 +53,4 @@ required-features = ["erased", "serde"]
 
 [[test]]
 name = "data_receiver"
-required-features = ["erased"]
+required-features = ["provider_serde"]

@@ -47,7 +47,7 @@
 //! For more information, see the `iter` module.
 //!
 //! ### `SerdeDataProvider`
-//! 
+//!
 //! The trait [`SerdeDataProvider`] removes the type argument from `DataProvider` and requires
 //! that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
@@ -93,7 +93,7 @@
 //! [`StructProvider`]: struct_provider::StructProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
-//! [`SerdeDataProvider`]: erased::SerdeDataProvider
+//! [`SerdeDataProvider`]: serde::SerdeDataProvider
 
 pub mod data_provider;
 #[macro_use]
@@ -104,6 +104,8 @@ pub mod erased;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
+#[cfg(feature = "provider_serde")]
+pub mod serde;
 pub mod struct_provider;
 
 mod error;

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::erased::*;
+use icu_provider::serde::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 

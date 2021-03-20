@@ -6,9 +6,9 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_locid_macros::langid;
 use icu_plurals::provider::*;
-#[cfg(feature = "bench")]
-use icu_provider::erased::*;
 use icu_provider::prelude::*;
+#[cfg(feature = "bench")]
+use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
 use std::borrow::Cow;
 

@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::manifest::SyntaxOption;
-use icu_provider::erased::SerdeDataReceiver;
 use icu_provider::prelude::*;
+use icu_provider::serde::SerdeDataReceiver;
 use std::io::Read;
 use std::path::Path;
 

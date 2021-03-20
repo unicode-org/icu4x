@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::erased::SerdeDataProvider;
+use icu_provider::serde::SerdeDataProvider;
 use icu_provider_fs::FsDataProvider;
 use std::{mem, ptr, slice, str};
 

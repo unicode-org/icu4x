@@ -10,9 +10,6 @@ use std::borrow::Cow;
 use std::default::Default;
 use std::fmt::Debug;
 
-/// Re-export erased_serde for the impl_erased! macro
-pub use erased_serde;
-
 /// Auto-implemented trait allowing for type erasure of data provider structs. Requires the
 /// static lifetime in order to be convertible to Any.
 pub trait ErasedDataStruct: 'static + Debug {
@@ -92,6 +89,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     /// ).expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
+    #[cfg(feature = "provider_serde")]
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
@@ -137,7 +135,7 @@ impl dyn ErasedDataStruct {
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: erased_serde::Serialize + Clone + Debug + Any,
+    T: ErasedDataStruct + Clone,
 {
     /// Convert this DataResponse of a Sized type into a DataResponse of an ErasedDataStruct.
     ///
@@ -162,7 +160,7 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
     /// Can be used to implement DataProvider on types implementing ErasedDataProvider.
     pub fn downcast<T>(self) -> Result<DataResponse<'d, T>, Error>
     where
-        T: erased_serde::Serialize + Clone + Debug + Any,
+        T: Clone + Debug + Any,
     {
         let metadata = self.metadata;
         let cow = match self.payload {
@@ -202,137 +200,42 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
     }
 }
 
+#[cfg(not(feature = "provider_serde"))]
 impl<T> ErasedDataStruct for T
 where
-    T: erased_serde::Serialize + Clone + Debug + Any,
+    T: Clone + Debug + Any,
 {
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
         Box::new(self.clone())
     }
-
     fn into_any(self: Box<Self>) -> Box<dyn Any> {
         self
     }
-
     fn as_any(&self) -> &dyn Any {
         self
     }
+}
 
+#[cfg(feature = "provider_serde")]
+impl<T> ErasedDataStruct for T
+where
+    T: serde::Serialize + Clone + Debug + Any,
+{
+    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
+        Box::new(self.clone())
+    }
+    fn into_any(self: Box<Self>) -> Box<dyn Any> {
+        self
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }
 
-/// A receiver capable of accepting data from a Serde Deserializer.
-///
-/// Lifetimes:
-///
-/// - `'de` = deserializer lifetime; can usually be `'_`
-pub trait SerdeDataReceiver<'de> {
-    /// Consumes a Serde Deserializer into this SerdeDataReceiver as owned data.
-    ///
-    /// This method results in an owned payload, but the payload could have non-static references
-    /// according to the deserializer lifetime.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::erased::DataReceiver;
-    /// use icu_provider::erased::SerdeDataReceiver;
-    /// use std::borrow::Cow;
-    ///
-    /// const JSON: &'static str = "\"hello world\"";
-    ///
-    /// let mut receiver = DataReceiver::<String>::new();
-    /// let mut d = serde_json::Deserializer::from_str(JSON);
-    /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))
-    ///     .expect("Deserialization should be successful");
-    ///
-    /// assert!(matches!(receiver.payload, Some(Cow::Owned(_))));
-    /// assert_eq!("hello world", *receiver.borrow_payload().unwrap());
-    /// ```
-    fn receive_deserializer(
-        &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'de>,
-    ) -> Result<(), Error>;
-}
 
-/// Concrete struct backing SerdeDataReceiver.
-///
-/// # Example
-///
-/// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::erased::DataReceiver;
-///
-/// let mut string_receiver = DataReceiver::<String>::new();
-/// // Now pass string_receiver as an argument to ErasedDataProvider
-/// ```
-#[derive(Debug)]
-pub struct DataReceiver<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
-    pub payload: Option<Cow<'d, T>>,
-}
-
-impl<'d, T> DataReceiver<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
-    /// Creates a new, empty DataReceiver.
-    ///
-    /// Default is not implemented because it would be misleading: does the DataReceiver start
-    /// empty, or does it start with the Default value of T?
-    #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
-        Self { payload: None }
-    }
-
-    /// Convenience method: borrows the payload from the underlying Cow. Error if not present.
-    pub fn borrow_payload(&self) -> Result<&T, Error> {
-        use std::borrow::Borrow;
-        self.payload
-            .as_ref()
-            .map(|cow| cow.borrow())
-            .ok_or(Error::MissingPayload)
-    }
-
-    /// Convenience method: takes ownership of the underlying payload. Error if not present.
-    pub fn take_payload(&mut self) -> Result<Cow<'d, T>, Error> {
-        self.payload.take().ok_or(Error::MissingPayload)
-    }
-}
-
-impl<'d, 'de, T> SerdeDataReceiver<'de> for DataReceiver<'d, T>
-where
-    T: serde::Deserialize<'de> + Clone + Debug,
-{
-    fn receive_deserializer(
-        &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'de>,
-    ) -> Result<(), Error> {
-        let obj: T = erased_serde::deserialize(deserializer)?;
-        self.payload = Some(Cow::Owned(obj));
-        Ok(())
-    }
-}
-
-/// A type-erased data provider that loads paylads from a Serde Deserializer.
-pub trait SerdeDataProvider<'de> {
-    /// Query the provider for data, loading it into a SerdeDataReceiver.
-    ///
-    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
-    /// Error with more information.
-    fn load_to_receiver(
-        &self,
-        req: &DataRequest,
-        receiver: &mut dyn SerdeDataReceiver<'de>,
-    ) -> Result<DataResponseMetadata, Error>;
-}
 
 // Note: Once trait aliases land, we could enable the following alias.
 // https://github.com/rust-lang/rust/issues/41517
@@ -374,25 +277,10 @@ macro_rules! impl_erased {
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
 impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: serde::Serialize + Clone + Debug + Any + Default,
+    T: Clone + Debug + Any + Default,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let result = ErasedDataProvider::load_payload(self, req)?;
         result.downcast()
-    }
-}
-
-/// Convenience implementation of DataProvider<T> given a SerdeDataProvider trait object.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn SerdeDataProvider<'de> + 'a
-where
-    T: serde::Deserialize<'de> + Clone + Debug,
-{
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        let mut receiver = DataReceiver::<T>::new();
-        let metadata = self.load_to_receiver(req, &mut receiver)?;
-        Ok(DataResponse {
-            metadata,
-            payload: receiver.payload,
-        })
     }
 }
