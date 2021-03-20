@@ -46,10 +46,17 @@
 //!
 //! For more information, see the `iter` module.
 //!
+//! ### `SerdeDataProvider`
+//! 
+//! The trait [`SerdeDataProvider`] removes the type argument from `DataProvider` and requires
+//! that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
+//! to be saved as a trait object without being specific to a data struct type.
+//!
 //! ### `ErasedDataProvider`
 //!
-//! The [`DataProvider`] trait has a type argument corresponding to the type being loaded. A peer
-//! trait [`ErasedDataProvider`] removes the type argument, using runtime type checking instead.
+//! The trait [`ErasedDataProvider`] removes the type argument from `DataProvider` and requires
+//! that all data structs be convertible to the `Any` type. This enables the processing of data
+//! without the caller knowing the underlying data struct.
 //!
 //! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for:
 //!
@@ -86,6 +93,7 @@
 //! [`StructProvider`]: struct_provider::StructProvider
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
+//! [`SerdeDataProvider`]: erased::SerdeDataProvider
 
 pub mod data_provider;
 #[macro_use]
