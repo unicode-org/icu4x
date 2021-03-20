@@ -32,7 +32,7 @@ fn map_poison<E>(_err: E) -> DataError {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, 'd, T> LazyCldrProvider<T>
 where
-    T: ErasedDataProviderV3<'d>
+    T: ErasedDataProvider<'d>
         + IterableDataProvider<'d>
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,

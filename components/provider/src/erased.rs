@@ -339,7 +339,7 @@ pub trait SerdeDataProvider<'de> {
 // pub trait ErasedDataProvider<'d> = DataProvider<'d, dyn ErasedDataStruct>;
 
 /// A type-erased data provider that loads a payload of types implementing Any.
-pub trait ErasedDataProviderV3<'d> {
+pub trait ErasedDataProvider<'d> {
     /// Query the provider for data, returning the result as an ErasedDataStruct trait object.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
@@ -355,7 +355,7 @@ pub trait ErasedDataProviderV3<'d> {
 #[macro_export]
 macro_rules! impl_erased {
     ($provider:ty, $struct:ty, $lifetime:tt) => {
-        impl<$lifetime> $crate::erased::ErasedDataProviderV3<$lifetime> for $provider {
+        impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
             fn load_payload(
                 &self,
                 req: &$crate::prelude::DataRequest,
@@ -371,13 +371,13 @@ macro_rules! impl_erased {
     };
 }
 
-/// Convenience implementation of DataProvider<T> given an ErasedDataProviderV3 trait object.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProviderV3<'d> + 'a
+/// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
+impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
     T: serde::Serialize + Clone + Debug + Any + Default,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        let result = ErasedDataProviderV3::load_payload(self, req)?;
+        let result = ErasedDataProvider::load_payload(self, req)?;
         result.downcast()
     }
 }

@@ -111,7 +111,7 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
     }
 }
 
-impl<'d> ErasedDataProviderV3<'d> for DataProviderBorrowing<'d, 'static> {
+impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     /// Loads JSON data. Returns borrowed data.
     fn load_payload<'a>(
         &self,
@@ -195,7 +195,7 @@ fn test_warehouse_owned() {
 #[test]
 fn test_warehouse_owned_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProviderV3);
+    let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         hello_data,
         Ok(Cow::Owned(HelloWorldV1 {
@@ -219,7 +219,7 @@ fn test_warehouse_owned_dyn_generic() {
 #[test]
 fn test_warehouse_owned_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
-    let response = get_payload_alt(&warehouse as &dyn ErasedDataProviderV3);
+    let response = get_payload_alt(&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         response,
         Err(DataError::UnsupportedResourceKey { .. })
@@ -241,7 +241,7 @@ fn test_warehouse_ref() {
 #[test]
 fn test_warehouse_ref_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn ErasedDataProviderV3);
+    let hello_data = get_payload_v1(&&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         hello_data,
         Ok(Cow::Borrowed(HelloWorldV1 {
@@ -265,7 +265,7 @@ fn test_warehouse_ref_dyn_generic() {
 #[test]
 fn test_warehouse_ref_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
-    let response = get_payload_alt(&&warehouse as &dyn ErasedDataProviderV3);
+    let response = get_payload_alt(&&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         response,
         Err(DataError::UnsupportedResourceKey { .. })
@@ -289,7 +289,7 @@ fn test_borrowing() {
 fn test_borrowing_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn ErasedDataProviderV3);
+    let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider);
     assert!(matches!(
         hello_data,
         Ok(Cow::Borrowed(HelloWorldV1 {
@@ -302,7 +302,7 @@ fn test_borrowing_dyn_erased() {
 fn test_borrowing_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn ErasedDataProviderV3);
+    let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider);
     assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
 }
 
@@ -333,7 +333,7 @@ fn test_mismatched_types() {
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
     let response: Result<DataResponse<HelloWorldV1>, DataError> =
-        ErasedDataProviderV3::load_payload(&provider, &get_request_alt())
+        ErasedDataProvider::load_payload(&provider, &get_request_alt())
             .unwrap()
             .downcast();
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
@@ -370,7 +370,7 @@ fn test_v1_v2_generic() {
 fn test_v1_v2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    check_v1_v2(&provider as &dyn ErasedDataProviderV3);
+    check_v1_v2(&provider as &dyn ErasedDataProvider);
 }
 
 #[test]

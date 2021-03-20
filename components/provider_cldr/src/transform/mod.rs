@@ -42,7 +42,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd> ErasedDataProviderV3<'d> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load_payload(
         &self,
         req: &DataRequest,

@@ -39,13 +39,13 @@ where
 /// for all types implementing both of those traits.
 #[cfg(feature = "erased")]
 pub trait IterableErasedDataProvider<'d>:
-    IterableDataProvider<'d> + crate::erased::ErasedDataProviderV3<'d>
+    IterableDataProvider<'d> + crate::erased::ErasedDataProvider<'d>
 {
 }
 
 #[cfg(feature = "erased")]
 impl<'d, S> IterableErasedDataProvider<'d> for S where
-    S: IterableDataProvider<'d> + crate::erased::ErasedDataProviderV3<'d>
+    S: IterableDataProvider<'d> + crate::erased::ErasedDataProvider<'d>
 {
 }
 
