@@ -89,7 +89,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     /// ).expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
-    #[cfg(feature = "provider_serde")]
+    #[cfg(feature = "eserde")]
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
@@ -200,7 +200,7 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
     }
 }
 
-#[cfg(not(feature = "provider_serde"))]
+#[cfg(not(feature = "eserde"))]
 impl<T> ErasedDataStruct for T
 where
     T: Clone + Debug + Any,
@@ -216,7 +216,7 @@ where
     }
 }
 
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "eserde")]
 impl<T> ErasedDataStruct for T
 where
     T: serde::Serialize + Clone + Debug + Any,

@@ -48,11 +48,15 @@
 //!
 //! ### `SerdeDataProvider`
 //!
+//! *Enabled with the "eserde" feature*
+//!
 //! The trait [`SerdeDataProvider`] removes the type argument from `DataProvider` and requires
 //! that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
 //!
 //! ### `ErasedDataProvider`
+//!
+//! *Enabled with the "erased" feature*
 //!
 //! The trait [`ErasedDataProvider`] removes the type argument from `DataProvider` and requires
 //! that all data structs be convertible to the `Any` type. This enables the processing of data
@@ -104,7 +108,7 @@ pub mod erased;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
-#[cfg(feature = "provider_serde")]
+#[cfg(feature = "eserde")]
 pub mod serde;
 pub mod struct_provider;
 

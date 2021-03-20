@@ -30,7 +30,7 @@ extra_features = ["serde"]
 erased = []
 # Include the SerdeDataProvider, used by the C API.
 # Also enables as_serialize() in ErasedDataProvider.
-provider_serde = ["serde", "erased-serde"]
+eserde = ["serde", "erased-serde"]
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
@@ -53,4 +53,4 @@ required-features = ["erased", "serde"]
 
 [[test]]
 name = "data_receiver"
-required-features = ["provider_serde"]
+required-features = ["eserde"]
