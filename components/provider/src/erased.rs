@@ -7,7 +7,6 @@ use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
 use std::borrow::Cow;
-use std::default::Default;
 use std::fmt::Debug;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs. Requires the
@@ -275,7 +274,7 @@ macro_rules! impl_erased {
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
 impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: Clone + Debug + Any + Default,
+    T: Clone + Debug + Any,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let result = ErasedDataProvider::load_payload(self, req)?;
