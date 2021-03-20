@@ -562,7 +562,22 @@ macro_rules! impl_erased {
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
 impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: serde::Deserialize<'de> + serde::Serialize + Clone + Debug + Any + Default,
+    T: serde::Serialize + Clone + Debug + Any + Default,
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+        let mut receiver = DataReceiver::<T>::new();
+        let metadata = self.load_to_receiver(req, &mut receiver)?;
+        Ok(DataResponse {
+            metadata,
+            payload: receiver.payload,
+        })
+    }
+}
+
+/// Convenience implementation of DataProvider<T> given a SerdeDataProvider trait object.
+impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn SerdeDataProvider<'de> + 'a
+where
+    T: serde::Deserialize<'de> + Clone + Debug,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let mut receiver = DataReceiver::<T>::new();

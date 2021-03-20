@@ -49,6 +49,20 @@ impl<'d, S> IterableErasedDataProvider<'d> for S where
 {
 }
 
+/// Super-trait combining ErasedDataProvider and IterableDataProvider, auto-implemented
+/// for all types implementing both of those traits.
+#[cfg(feature = "erased")]
+pub trait IterableErasedDataProviderV2<'d>:
+    IterableDataProvider<'d> + DataProvider<'d, dyn crate::erased::ErasedDataStruct>
+{
+}
+
+#[cfg(feature = "erased")]
+impl<'d, S> IterableErasedDataProviderV2<'d> for S where
+    S: IterableDataProvider<'d> + DataProvider<'d, dyn crate::erased::ErasedDataStruct>
+{
+}
+
 /// A DataProvider whose supported keys are known statically at compile time.
 ///
 /// Implementing this trait means that a DataProvider is built to support a specific set of
@@ -104,7 +118,7 @@ pub trait DataExporter {
 
     /// Auto-implemented function that loads data from an `IterableDataProvider` and dumps it
     /// into this `DataExporter`.
-    fn put_key_from_provider<'a, 'd>(
+    fn put_key_from_provider_v1<'a, 'd>(
         &mut self,
         resc_key: &ResourceKey,
         provider: &impl IterableErasedDataProvider<'d>,
@@ -123,6 +137,30 @@ pub trait DataExporter {
                 crate::erased::DataReceiver::<dyn crate::erased::ErasedDataStruct>::new();
             provider.load_to_receiver(&req, &mut receiver)?;
             self.put_payload(&req, receiver.borrow_payload()?)?;
+        }
+        Ok(())
+    }
+
+    /// Auto-implemented function that loads data from an `IterableDataProvider` and dumps it
+    /// into this `DataExporter`.
+    fn put_key_from_provider<'a, 'd>(
+        &mut self,
+        resc_key: &ResourceKey,
+        provider: &impl IterableErasedDataProviderV2<'d>,
+    ) -> Result<(), Error> {
+        use std::borrow::Borrow;
+        for resc_options in provider.supported_options_for_key(resc_key)? {
+            if !self.include_resource_options(&resc_options) {
+                continue;
+            }
+            let req = DataRequest {
+                resource_path: ResourcePath {
+                    key: *resc_key,
+                    options: resc_options,
+                },
+            };
+            let payload = provider.load_payload(&req)?.take_payload()?;
+            self.put_payload(&req, payload.borrow())?;
         }
         Ok(())
     }

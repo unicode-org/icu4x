@@ -46,7 +46,7 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
+        receiver: &mut dyn ErasedDataReceiver<'d>,
     ) -> Result<DataResponseMetadata, DataError> {
         if let Some(result) = self.dates.try_load(req, receiver, self.cldr_paths)? {
             return Ok(result);
@@ -58,6 +58,27 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
             return Ok(result);
         }
         if let Some(result) = self.plurals.try_load(req, receiver, self.cldr_paths)? {
+            return Ok(result);
+        }
+        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
+    }
+}
+
+impl<'a, 'd> DataProvider<'d, dyn ErasedDataStruct> for CldrJsonDataProvider<'a, 'd> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
+        if let Some(result) = self.dates.try_load_payload(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self
+            .likelysubtags
+            .try_load_payload(req, self.cldr_paths)?
+        {
+            return Ok(result);
+        }
+        if let Some(result) = self.plurals.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
         Err(DataError::UnsupportedResourceKey(req.resource_path.key))

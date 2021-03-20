@@ -61,11 +61,11 @@ fn test_json() {
 }
 
 #[test]
-fn test_json_dyn_erased() {
+fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn ErasedDataProvider)
+    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn SerdeDataProvider)
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
         .take_payload()
@@ -172,11 +172,11 @@ fn test_bincode() {
 
 #[test]
 #[cfg(feature = "bincode")]
-fn test_bincode_dyn_erased() {
+fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn ErasedDataProvider)
+    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn SerdeDataProvider)
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
         .take_payload()

@@ -102,11 +102,11 @@ where
     }
 }
 
-impl<'d> ErasedDataProvider<'d> for FsDataProvider {
+impl<'de> SerdeDataProvider<'de> for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
+        receiver: &mut dyn SerdeDataReceiver<'de>,
     ) -> Result<DataResponseMetadata, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)

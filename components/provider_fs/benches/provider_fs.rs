@@ -67,9 +67,9 @@ fn json_bench(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("json/erased", |b| {
+    c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn ErasedDataProvider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn SerdeDataProvider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -109,9 +109,9 @@ fn bincode_bench(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("bincode/erased", |b| {
+    c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn ErasedDataProvider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn SerdeDataProvider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,

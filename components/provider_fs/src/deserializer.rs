@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::manifest::SyntaxOption;
-use icu_provider::erased::ErasedDataReceiver;
+use icu_provider::erased::SerdeDataReceiver;
 use icu_provider::prelude::*;
 use std::io::Read;
 use std::path::Path;
@@ -100,11 +100,11 @@ where
     }
 }
 
-/// Deserialize into a receiver (ErasedDataProvider). Covers all supported data formats.
+/// Deserialize into a receiver (SerdeDataProvider). Covers all supported data formats.
 pub fn deserialize_into_receiver(
     rdr: impl Read,
     syntax_option: &SyntaxOption,
-    receiver: &mut dyn ErasedDataReceiver,
+    receiver: &mut dyn SerdeDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
         SyntaxOption::Json => {
