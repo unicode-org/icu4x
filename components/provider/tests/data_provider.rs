@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 
 use icu_provider::erased::*;
-use icu_provider::hello_world::{self, HelloWorldV1};
+use icu_provider::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1};
 use icu_provider::prelude::*;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
@@ -42,9 +42,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
-        req.resource_path
-            .key
-            .match_key(hello_world::key::HELLO_WORLD_V1)?;
+        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Owned(self.data.hello_v1.clone())),
@@ -59,9 +57,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
-        req.resource_path
-            .key
-            .match_key(hello_world::key::HELLO_WORLD_V1)?;
+        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.data.hello_v1)),
@@ -91,9 +87,7 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
-        req.resource_path
-            .key
-            .match_key(hello_world::key::HELLO_WORLD_V1)?;
+        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
@@ -111,23 +105,26 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
     }
 }
 
+// TODO(sffc): Make a macro out of this
 impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     /// Loads JSON data. Returns borrowed data.
     fn load_payload<'a>(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
-        match req.resource_path.key {
-            hello_world::key::HELLO_WORLD_V1 => Ok(DataResponse {
-                metadata: DataResponseMetadata::default(),
-                payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
-            }),
-            HELLO_ALT_KEY => Ok(DataResponse {
-                metadata: DataResponseMetadata::default(),
-                payload: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
-            }),
-            _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
-        }
+        let result: Result<DataResponse<HelloWorldV1>, DataError> =
+            DataProvider::load_payload(self, req);
+        match result {
+            Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
+            _ => return result.map(|r| r.into_erased()),
+        };
+        let result: Result<DataResponse<HelloAlt>, DataError> =
+            DataProvider::load_payload(self, req);
+        match result {
+            Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
+            _ => return result.map(|r| r.into_erased()),
+        };
+        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 
@@ -165,7 +162,7 @@ fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
 fn get_request_v1() -> DataRequest {
     DataRequest {
         resource_path: ResourcePath {
-            key: hello_world::key::HELLO_WORLD_V1,
+            key: HELLO_WORLD_V1,
             options: Default::default(),
         },
     }

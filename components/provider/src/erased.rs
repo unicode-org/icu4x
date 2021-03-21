@@ -3,6 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Collection of traits for providers that support type erasure of data structs.
+//!
+//! There are two traits for data structs, `ErasedDataStruct` and `SerdeSeDataStruct`.
+//! Both of these traits are compatible with DataProvider such that they can be returned
+//! from a call to load_payload.
+//!
+//! There are corresponding traits that a data provider can implement if it is capable of
+//! upcasting data into either of the data struct traits.
+//!
+//! There are convenience macros, `impl_erased!` and `impl_serde_se!`, to help implement
+//! the data provider traits.
 
 use crate::error::Error;
 use crate::prelude::*;
@@ -51,8 +61,6 @@ pub trait ErasedDataStruct: 'static + Debug {
     /// let borrowed: &HelloWorldV1 = erased.as_any().downcast_ref().expect("Types should match");
     /// ```
     fn as_any(&self) -> &dyn Any;
-
-    fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
 #[cfg(feature = "eserde")]
@@ -91,7 +99,7 @@ impl ToOwned for dyn ErasedDataStruct {
     type Owned = Box<dyn ErasedDataStruct>;
 
     fn to_owned(&self) -> Self::Owned {
-        self.clone_into_box()
+        ErasedDataStruct::clone_into_box(self)
     }
 }
 
@@ -106,14 +114,14 @@ impl<'s> ToOwned for dyn SerdeSeDataStruct<'s> + 's {
 
 impl Clone for Box<dyn ErasedDataStruct> {
     fn clone(&self) -> Box<dyn ErasedDataStruct> {
-        self.clone_into_box()
+        ErasedDataStruct::clone_into_box(self.as_ref())
     }
 }
 
 #[cfg(feature = "eserde")]
 impl<'s> Clone for Box<dyn SerdeSeDataStruct<'s> + 's> {
     fn clone(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
-        self.clone_into_box()
+        SerdeSeDataStruct::clone_into_box(self.as_ref())
     }
 }
 
@@ -232,7 +240,7 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
 
 impl<T> ErasedDataStruct for T
 where
-    T: serde::Serialize + Clone + Debug + Any,
+    T: Clone + Debug + Any,
 {
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
         Box::new(self.clone())
@@ -241,9 +249,6 @@ where
         self
     }
     fn as_any(&self) -> &dyn Any {
-        self
-    }
-    fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }
@@ -341,9 +346,12 @@ where
 
 impl<'d, T> DataProvider<'d, dyn ErasedDataStruct> for T
 where
-    T: ErasedDataProvider<'d>
+    T: ErasedDataProvider<'d>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error> {
         ErasedDataProvider::load_payload(self, req)
     }
 }
@@ -351,9 +359,12 @@ where
 #[cfg(feature = "eserde")]
 impl<'d, 's: 'd, T> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for T
 where
-    T: SerdeSeDataProvider<'d, 's>
+    T: SerdeSeDataProvider<'d, 's>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error> {
         SerdeSeDataProvider::load_payload(self, req)
     }
 }

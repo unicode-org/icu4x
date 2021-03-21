@@ -11,10 +11,10 @@ pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
-use icu_provider::erased::*;
-use icu_provider::prelude::*;
-use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::erased::SerdeSeDataStruct;
+use icu_provider::erased::*;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::prelude::*;
 
 /// Returns a list of all ResourceKeys that this provider can produce.
 pub fn get_all_resc_keys() -> Vec<ResourceKey> {
@@ -62,7 +62,9 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
+    for CldrJsonDataProvider<'a, 'd>
+{
     fn load_payload(
         &self,
         req: &DataRequest,
