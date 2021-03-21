@@ -8,9 +8,8 @@ use crate::manifest::AliasOption;
 use crate::manifest::LocalesOption;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
-use icu_provider::erased::ErasedDataStruct;
 use icu_provider::export::DataExporter;
-use icu_provider::export::serde::SerdeDataStruct;
+use icu_provider::erased::SerdeSeDataStruct;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -70,11 +69,11 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl<'d, 's: 'd> DataExporter<'d, dyn SerdeDataStruct<'s> + 's> for FilesystemExporter {
+impl<'d, 's: 'd> DataExporter<'d, dyn SerdeSeDataStruct<'s> + 's> for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: &DataRequest,
-        obj: &dyn SerdeDataStruct,
+        obj: &dyn SerdeSeDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());

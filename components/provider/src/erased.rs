@@ -15,20 +15,6 @@ use std::fmt::Debug;
 /// static lifetime in order to be convertible to Any.
 pub trait ErasedDataStruct: 'static + Debug {
     /// Clone this trait object reference, returning a boxed trait object.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::hello_world::HelloWorldV1;
-    ///
-    /// // Create type-erased reference
-    /// let data = HelloWorldV1::default();
-    /// let erased_reference: &dyn ErasedDataStruct = &data;
-    ///
-    /// // Create a new type-erased trait object
-    /// let erased_boxed: Box<dyn ErasedDataStruct> = erased_reference.clone_into_box();
-    /// ```
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
 
     /// Return this boxed trait object as Box<dyn Any>.
@@ -66,17 +52,25 @@ pub trait ErasedDataStruct: 'static + Debug {
     /// ```
     fn as_any(&self) -> &dyn Any;
 
+    fn as_serialize(&self) -> &dyn erased_serde::Serialize;
+}
+
+#[cfg(feature = "eserde")]
+pub trait SerdeSeDataStruct<'s>: 's + Debug {
+    /// Clone this trait object reference, returning a boxed trait object.
+    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;
+
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Example
     ///
     /// ```
-    /// use icu_provider::erased::ErasedDataStruct;
+    /// use icu_provider::erased::SerdeSeDataStruct;
     /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased reference
     /// let data = HelloWorldV1::default();
-    /// let erased: &dyn ErasedDataStruct = &data;
+    /// let erased: &dyn SerdeSeDataStruct = &data;
     ///
     /// // Borrow as serialize trait object
     /// let serialize: &dyn erased_serde::Serialize = erased.as_serialize();
@@ -90,7 +84,6 @@ pub trait ErasedDataStruct: 'static + Debug {
     /// ).expect("Serialization should succeed");
     /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
     /// ```
-    #[cfg(feature = "eserde")]
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
@@ -102,8 +95,24 @@ impl ToOwned for dyn ErasedDataStruct {
     }
 }
 
+#[cfg(feature = "eserde")]
+impl<'s> ToOwned for dyn SerdeSeDataStruct<'s> + 's {
+    type Owned = Box<dyn SerdeSeDataStruct<'s> + 's>;
+
+    fn to_owned(&self) -> Self::Owned {
+        SerdeSeDataStruct::clone_into_box(self)
+    }
+}
+
 impl Clone for Box<dyn ErasedDataStruct> {
     fn clone(&self) -> Box<dyn ErasedDataStruct> {
+        self.clone_into_box()
+    }
+}
+
+#[cfg(feature = "eserde")]
+impl<'s> Clone for Box<dyn SerdeSeDataStruct<'s> + 's> {
+    fn clone(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
         self.clone_into_box()
     }
 }
@@ -148,6 +157,26 @@ where
                 Cow::Borrowed(v) => Cow::Borrowed(v as &dyn ErasedDataStruct),
                 Cow::Owned(v) => {
                     let boxed: Box<dyn ErasedDataStruct> = Box::new(v);
+                    Cow::Owned(boxed)
+                }
+            }),
+        }
+    }
+}
+
+#[cfg(feature = "eserde")]
+impl<'d, 's: 'd, T> DataResponse<'d, T>
+where
+    T: SerdeSeDataStruct<'s> + Clone,
+{
+    /// Convert this DataResponse of a Sized type into a DataResponse of a SerdeSeDataStruct.
+    pub fn into_serde_se(self) -> DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's> {
+        DataResponse {
+            metadata: self.metadata,
+            payload: self.payload.map(|p| match p {
+                Cow::Borrowed(v) => Cow::Borrowed(v as &dyn SerdeSeDataStruct),
+                Cow::Owned(v) => {
+                    let boxed: Box<dyn SerdeSeDataStruct> = Box::new(v);
                     Cow::Owned(boxed)
                 }
             }),
@@ -201,23 +230,6 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
     }
 }
 
-#[cfg(not(feature = "eserde"))]
-impl<T> ErasedDataStruct for T
-where
-    T: Clone + Debug + Any,
-{
-    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
-        Box::new(self.clone())
-    }
-    fn into_any(self: Box<Self>) -> Box<dyn Any> {
-        self
-    }
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
-}
-
-#[cfg(feature = "eserde")]
 impl<T> ErasedDataStruct for T
 where
     T: serde::Serialize + Clone + Debug + Any,
@@ -230,6 +242,19 @@ where
     }
     fn as_any(&self) -> &dyn Any {
         self
+    }
+    fn as_serialize(&self) -> &dyn erased_serde::Serialize {
+        self
+    }
+}
+
+#[cfg(feature = "eserde")]
+impl<'s, T> SerdeSeDataStruct<'s> for T
+where
+    T: 's + serde::Serialize + Clone + Debug,
+{
+    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
+        Box::new(self.clone())
     }
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
@@ -252,39 +277,19 @@ pub trait ErasedDataProvider<'d> {
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error>;
 }
 
+#[cfg(feature = "eserde")]
+pub trait SerdeSeDataProvider<'d, 's: 'd> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error>;
+}
+
 /// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
 /// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
 #[macro_export]
 macro_rules! impl_erased {
     ($provider:ty, $struct:ty, $lifetime:tt) => {
-        impl<$lifetime> $crate::DataProvider<$lifetime, dyn $crate::erased::ErasedDataStruct> for $provider {
-            fn load_payload(
-                &self,
-                req: &$crate::prelude::DataRequest,
-            ) -> Result<
-                $crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>,
-                $crate::prelude::DataError,
-            > {
-                let result: $crate::prelude::DataResponse<$struct> =
-                    $crate::prelude::DataProvider::load_payload(self, req)?;
-                Ok(result.into_erased())
-            }
-        }
-
-        impl<$lifetime, 's: $lifetime> $crate::DataProvider<$lifetime, dyn $crate::export::serde::SerdeDataStruct<'s> + 's> for $provider {
-            fn load_payload(
-                &self,
-                req: &$crate::prelude::DataRequest,
-            ) -> Result<
-                $crate::prelude::DataResponse<'d, dyn $crate::export::serde::SerdeDataStruct<'s> + 's>,
-                $crate::prelude::DataError,
-            > {
-                let result: $crate::prelude::DataResponse<$struct> =
-                    $crate::prelude::DataProvider::load_payload(self, req)?;
-                Ok(result.into_serde())
-            }
-        }
-
         impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
             fn load_payload(
                 &self,
@@ -301,6 +306,28 @@ macro_rules! impl_erased {
     };
 }
 
+/// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
+/// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
+#[cfg(feature = "eserde")]
+#[macro_export]
+macro_rules! impl_serde_se {
+    ($provider:ty, $struct:ty, $lifetime:tt) => {
+        impl<$lifetime, 's: $lifetime> $crate::erased::SerdeSeDataProvider<$lifetime, 's> for $provider {
+            fn load_payload(
+                &self,
+                req: &$crate::prelude::DataRequest,
+            ) -> Result<
+                $crate::prelude::DataResponse<'d, dyn $crate::erased::SerdeSeDataStruct<'s> + 's>,
+                $crate::prelude::DataError,
+            > {
+                let result: $crate::prelude::DataResponse<$struct> =
+                    $crate::prelude::DataProvider::load_payload(self, req)?;
+                Ok(result.into_serde_se())
+            }
+        }
+    };
+}
+
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
 impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
@@ -309,5 +336,24 @@ where
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let result = ErasedDataProvider::load_payload(self, req)?;
         result.downcast()
+    }
+}
+
+impl<'d, T> DataProvider<'d, dyn ErasedDataStruct> for T
+where
+    T: ErasedDataProvider<'d>
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error> {
+        ErasedDataProvider::load_payload(self, req)
+    }
+}
+
+#[cfg(feature = "eserde")]
+impl<'d, 's: 'd, T> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for T
+where
+    T: SerdeSeDataProvider<'d, 's>
+{
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error> {
+        SerdeSeDataProvider::load_payload(self, req)
     }
 }

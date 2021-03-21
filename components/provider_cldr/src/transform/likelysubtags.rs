@@ -74,6 +74,7 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
 }
 
 icu_provider::impl_erased!(LikelySubtagsProvider<'d>, LikelySubtagsV1, 'd);
+icu_provider::impl_serde_se!(LikelySubtagsProvider<'d>, LikelySubtagsV1, 'd);
 
 impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {
     fn supported_options_for_key(

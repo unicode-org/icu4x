@@ -102,6 +102,7 @@ impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> 
 }
 
 icu_provider::impl_erased!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, 'd);
+icu_provider::impl_serde_se!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, 'd);
 
 impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
     fn supported_options_for_key(

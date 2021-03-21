@@ -7,7 +7,7 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
-use icu_provider::export::serde::SerdeDataStruct;
+use icu_provider::erased::SerdeSeDataStruct;
 
 pub trait ResourceKeySupport {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
@@ -35,7 +35,7 @@ fn map_poison<E>(_err: E) -> DataError {
 impl<'b, 'd, 's: 'd, T> LazyCldrProvider<T>
 where
     T: ErasedDataProvider<'d>
-        + DataProvider<'d, dyn SerdeDataStruct<'s> + 's>
+        + DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
         + IterableDataProviderCore
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,
@@ -68,7 +68,7 @@ where
         &self,
         req: &DataRequest,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<DataResponse<'d, dyn SerdeDataStruct<'s> + 's>>, DataError> {
+    ) -> Result<Option<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>>, DataError> {
         if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }

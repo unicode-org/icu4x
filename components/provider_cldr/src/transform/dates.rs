@@ -85,6 +85,7 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
 }
 
 icu_provider::impl_erased!(DatesProvider<'d>, gregory::DatesV1, 'd);
+icu_provider::impl_serde_se!(DatesProvider<'d>, gregory::DatesV1, 'd);
 
 impl<'d> IterableDataProviderCore for DatesProvider<'d> {
     fn supported_options_for_key(
