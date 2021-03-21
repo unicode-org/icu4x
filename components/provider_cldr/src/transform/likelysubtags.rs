@@ -9,6 +9,7 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 1] = [key::LIKELY_SUBTAGS_V1];
@@ -74,7 +75,7 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
 
 icu_provider::impl_erased!(LikelySubtagsProvider<'d>, LikelySubtagsV1, 'd);
 
-impl<'d> IterableDataProvider<'d> for LikelySubtagsProvider<'d> {
+impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

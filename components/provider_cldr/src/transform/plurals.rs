@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::marker::PhantomData;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 
 /// All keys that this module is able to produce.
 pub const ALL_KEYS: [ResourceKey; 2] = [
@@ -102,7 +103,7 @@ impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> 
 
 icu_provider::impl_erased!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, 'd);
 
-impl<'d> IterableDataProvider<'d> for PluralsProvider<'d> {
+impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

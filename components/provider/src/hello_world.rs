@@ -128,7 +128,7 @@ where
 #[cfg(feature = "erased")]
 impl_erased!(HelloWorldProvider<'static>, HelloWorldV1<'static>, 'd);
 
-impl<'d> IterableDataProviderCore<'d> for HelloWorldProvider<'d> {
+impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

@@ -6,6 +6,8 @@ use icu_provider::erased::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use std::sync::RwLock;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
+use icu_provider::export::serde::SerdeDataStruct;
 
 pub trait ResourceKeySupport {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError>;
@@ -30,10 +32,11 @@ fn map_poison<E>(_err: E) -> DataError {
 }
 
 /// A lazy-initialized CLDR JSON data provider.
-impl<'b, 'd, T> LazyCldrProvider<T>
+impl<'b, 'd, 's: 'd, T> LazyCldrProvider<T>
 where
     T: ErasedDataProvider<'d>
-        + IterableDataProvider<'d>
+        + DataProvider<'d, dyn SerdeDataStruct<'s> + 's>
+        + IterableDataProviderCore
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,
     <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
@@ -48,7 +51,7 @@ where
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
-            return data_provider.load_payload(req).map(Some);
+            return ErasedDataProvider::load_payload(data_provider, req).map(Some);
         }
         let mut src = self.src.write().map_err(map_poison)?;
         if src.is_none() {
@@ -57,7 +60,29 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        data_provider.load_payload(req).map(Some)
+        return ErasedDataProvider::load_payload(data_provider, req).map(Some);
+    }
+
+    /// Call `T::load`, initializing T if necessary.
+    pub fn try_load_serde(
+        &self,
+        req: &DataRequest,
+        cldr_paths: &'b dyn CldrPaths,
+    ) -> Result<Option<DataResponse<'d, dyn SerdeDataStruct<'s> + 's>>, DataError> {
+        if T::supports_key(&req.resource_path.key).is_err() {
+            return Ok(None);
+        }
+        if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
+            return DataProvider::load_payload(data_provider, req).map(Some);
+        }
+        let mut src = self.src.write().map_err(map_poison)?;
+        if src.is_none() {
+            src.replace(T::try_from(cldr_paths).map_err(DataError::new_resc_error)?);
+        }
+        let data_provider = src
+            .as_ref()
+            .expect("The RwLock must be populated at this point.");
+        return DataProvider::load_payload(data_provider, req).map(Some);
     }
 
     /// Call `T::supported_options_for_key`, initializing T if necessary.

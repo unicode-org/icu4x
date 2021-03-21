@@ -45,7 +45,7 @@ where
     }
 }
 
-impl IterableDataProviderCore<'_> for InvariantDataProvider {
+impl IterableDataProviderCore for InvariantDataProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

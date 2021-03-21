@@ -271,6 +271,20 @@ macro_rules! impl_erased {
             }
         }
 
+        impl<$lifetime, 's: $lifetime> $crate::DataProvider<$lifetime, dyn $crate::export::serde::SerdeDataStruct<'s> + 's> for $provider {
+            fn load_payload(
+                &self,
+                req: &$crate::prelude::DataRequest,
+            ) -> Result<
+                $crate::prelude::DataResponse<'d, dyn $crate::export::serde::SerdeDataStruct<'s> + 's>,
+                $crate::prelude::DataError,
+            > {
+                let result: $crate::prelude::DataResponse<$struct> =
+                    $crate::prelude::DataProvider::load_payload(self, req)?;
+                Ok(result.into_serde())
+            }
+        }
+
         impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
             fn load_payload(
                 &self,

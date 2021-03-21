@@ -12,7 +12,7 @@ use std::fmt::Debug;
 ///
 /// Implementing this trait means that a DataProvider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProviderCore<'d> {
+pub trait IterableDataProviderCore {
     /// Given a `ResourceKey`, returns a boxed iterator over `ResourceOptions`.
     fn supported_options_for_key(
         &self,
@@ -22,7 +22,7 @@ pub trait IterableDataProviderCore<'d> {
 
 /// Super-trait combining DataProvider and IterableDataProviderCore, auto-implemented
 /// for all types implementing both of those traits.
-pub trait IterableDataProvider<'d, T>: IterableDataProviderCore<'d> + DataProvider<'d, T>
+pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
@@ -31,7 +31,7 @@ where
 
 impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
-    S: IterableDataProviderCore<'d> + DataProvider<'d, T>,
+    S: IterableDataProviderCore + DataProvider<'d, T>,
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
