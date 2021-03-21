@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Collection of traits for providers that support *deserializing* data via Serde.
+//!
+//! See the `crate::export::serde` mod for APIs involving *serializing* data via Serde.
+
 use crate::error::Error;
 use crate::prelude::*;
 use std::borrow::Cow;

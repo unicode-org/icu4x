@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
@@ -37,21 +38,26 @@ impl Default for HelloWorldV1<'_> {
 /// # Example
 ///
 /// ```
-/// use icu_provider::hello_world::{key, HelloWorldProvider};
+/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
+/// use std::borrow::Cow;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
-/// let german_hello_world = provider.load_payload(&DataRequest {
-///     resource_path: ResourcePath {
-///         key: key::HELLO_WORLD_V1,
-///         options: ResourceOptions {
-///             variant: None,
-///             langid: Some(langid!("de")),
+/// let german_hello_world: Cow<HelloWorldV1> = provider
+///     .load_payload(&DataRequest {
+///         resource_path: ResourcePath {
+///             key: key::HELLO_WORLD_V1,
+///             options: ResourceOptions {
+///                 variant: None,
+///                 langid: Some(langid!("de")),
+///             }
 ///         }
-///     }
-/// }).unwrap().take_payload().unwrap();
+///     })
+///     .unwrap()
+///     .take_payload()
+///     .unwrap();
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.message);
 /// ```
@@ -122,7 +128,7 @@ where
 #[cfg(feature = "erased")]
 impl_erased!(HelloWorldProvider<'static>, HelloWorldV1<'static>, 'd);
 
-impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
+impl<'d> IterableDataProviderCore<'d> for HelloWorldProvider<'d> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -140,9 +146,11 @@ impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
     }
 }
 
-/// Adds entries to a HelloWorldProvider as a DataExporter
+/// Adds entries to a HelloWorldProvider as a SerdeDataExporter
 #[cfg(feature = "erased")]
-impl crate::iter::DataExporter for HelloWorldProvider<'static> {
+impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
+    for HelloWorldProvider<'static>
+{
     fn put_payload(
         &mut self,
         req: &DataRequest,

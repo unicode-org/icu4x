@@ -105,6 +105,7 @@ pub mod resource;
 #[cfg(feature = "erased")]
 #[macro_use]
 pub mod erased;
+pub mod export;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
@@ -123,8 +124,6 @@ pub mod prelude {
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
     pub use crate::error::Error as DataError;
-    pub use crate::iter::IterableDataProvider;
-    pub use crate::iter::KeyedDataProvider;
     pub use crate::resource::ResourceCategory;
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;

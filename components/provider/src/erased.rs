@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Collection of traits for providers that support type erasure of data structs.
+
 use crate::error::Error;
 use crate::prelude::*;
 use std::any::Any;
@@ -255,6 +257,20 @@ pub trait ErasedDataProvider<'d> {
 #[macro_export]
 macro_rules! impl_erased {
     ($provider:ty, $struct:ty, $lifetime:tt) => {
+        impl<$lifetime> $crate::DataProvider<$lifetime, dyn $crate::erased::ErasedDataStruct> for $provider {
+            fn load_payload(
+                &self,
+                req: &$crate::prelude::DataRequest,
+            ) -> Result<
+                $crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>,
+                $crate::prelude::DataError,
+            > {
+                let result: $crate::prelude::DataResponse<$struct> =
+                    $crate::prelude::DataProvider::load_payload(self, req)?;
+                Ok(result.into_erased())
+            }
+        }
+
         impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
             fn load_payload(
                 &self,

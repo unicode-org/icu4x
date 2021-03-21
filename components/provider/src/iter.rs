@@ -12,7 +12,7 @@ use std::fmt::Debug;
 ///
 /// Implementing this trait means that a DataProvider knows all of the data it can successfully
 /// return from a load request.
-pub trait IterableDataProvider<'d> {
+pub trait IterableDataProviderCore<'d> {
     /// Given a `ResourceKey`, returns a boxed iterator over `ResourceOptions`.
     fn supported_options_for_key(
         &self,
@@ -20,32 +20,20 @@ pub trait IterableDataProvider<'d> {
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error>;
 }
 
-/// Super-trait combining DataProvider and IterableDataProvider, auto-implemented
+/// Super-trait combining DataProvider and IterableDataProviderCore, auto-implemented
 /// for all types implementing both of those traits.
-pub trait IterableTypedDataProvider<'d, T>: IterableDataProvider<'d> + DataProvider<'d, T>
+pub trait IterableDataProvider<'d, T>: IterableDataProviderCore<'d> + DataProvider<'d, T>
 where
-    T: Clone + Debug + 'd,
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
 {
 }
 
-impl<'d, S, T> IterableTypedDataProvider<'d, T> for S
+impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
-    S: IterableDataProvider<'d> + DataProvider<'d, T>,
-    T: Clone + Debug + 'd,
-{
-}
-
-/// Super-trait combining ErasedDataProvider and IterableDataProvider, auto-implemented
-/// for all types implementing both of those traits.
-#[cfg(feature = "erased")]
-pub trait IterableErasedDataProvider<'d>:
-    IterableDataProvider<'d> + crate::erased::ErasedDataProvider<'d>
-{
-}
-
-#[cfg(feature = "erased")]
-impl<'d, S> IterableErasedDataProvider<'d> for S where
-    S: IterableDataProvider<'d> + crate::erased::ErasedDataProvider<'d>
+    S: IterableDataProviderCore<'d> + DataProvider<'d, T>,
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
 {
 }
 
@@ -83,46 +71,5 @@ pub trait KeyedDataProvider {
                 }
             }
         }
-    }
-}
-
-/// An object capable of storing/persisting data payloads to be read by a DataProvider.
-///
-/// A DataProvider by itself is "read-only"; this trait enables it to be "read-write".
-#[cfg(feature = "erased")]
-pub trait DataExporter {
-    /// Save a `payload` corresponding to the given data request (resource path).
-    fn put_payload(
-        &mut self,
-        req: &DataRequest,
-        payload: &dyn crate::erased::ErasedDataStruct,
-    ) -> Result<(), Box<dyn std::error::Error>>;
-
-    /// Whether to load and dump data for the given entry. This function enables the
-    /// `DataExporter` to filter out certain data entries.
-    fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool;
-
-    /// Auto-implemented function that loads data from an `IterableDataProvider` and dumps it
-    /// into this `DataExporter`.
-    fn put_key_from_provider<'a, 'd>(
-        &mut self,
-        resc_key: &ResourceKey,
-        provider: &impl IterableErasedDataProvider<'d>,
-    ) -> Result<(), Error> {
-        use std::borrow::Borrow;
-        for resc_options in provider.supported_options_for_key(resc_key)? {
-            if !self.include_resource_options(&resc_options) {
-                continue;
-            }
-            let req = DataRequest {
-                resource_path: ResourcePath {
-                    key: *resc_key,
-                    options: resc_options,
-                },
-            };
-            let payload = provider.load_payload(&req)?.take_payload()?;
-            self.put_payload(&req, payload.borrow())?;
-        }
-        Ok(())
     }
 }
