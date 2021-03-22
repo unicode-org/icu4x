@@ -56,8 +56,8 @@
 //!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(
-//!     source_response.payload,
-//!     fs_response.payload,
+//!     source_response.payload.cow,
+//!     fs_response.payload.cow,
 //! );
 //!
 //! // Clean up from demo

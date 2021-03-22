@@ -26,19 +26,18 @@ pub trait SerdeDeDataReceiver<'de> {
     ///
     /// ```
     /// use icu_provider::prelude::*;
-    /// use icu_provider::serde::DataReceiver;
     /// use icu_provider::serde::SerdeDeDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
     ///
-    /// let mut receiver = DataReceiver::<String>::new();
+    /// let mut receiver = DataPayload::<String>::new();
     /// let mut d = serde_json::Deserializer::from_str(JSON);
     /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))
     ///     .expect("Deserialization should be successful");
     ///
-    /// assert!(matches!(receiver.payload, Some(Cow::Owned(_))));
-    /// assert_eq!("hello world", *receiver.borrow_payload().unwrap());
+    /// assert!(matches!(receiver.cow, Some(Cow::Owned(_))));
+    /// assert_eq!("hello world", *receiver.borrow().unwrap());
     /// ```
     fn receive_deserializer(
         &mut self,
@@ -46,56 +45,7 @@ pub trait SerdeDeDataReceiver<'de> {
     ) -> Result<(), Error>;
 }
 
-/// Concrete struct backing SerdeDeDataReceiver.
-///
-/// # Example
-///
-/// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::serde::DataReceiver;
-///
-/// let mut string_receiver = DataReceiver::<String>::new();
-/// // Now pass string_receiver as an argument to SerdeDeDataProvider
-/// ```
-#[derive(Debug)]
-pub struct DataReceiver<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
-    pub payload: Option<Cow<'d, T>>,
-}
-
-impl<'d, T> DataReceiver<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
-    /// Creates a new, empty DataReceiver.
-    ///
-    /// Default is not implemented because it would be misleading: does the DataReceiver start
-    /// empty, or does it start with the Default value of T?
-    #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
-        Self { payload: None }
-    }
-
-    /// Convenience method: borrows the payload from the underlying Cow. Error if not present.
-    pub fn borrow_payload(&self) -> Result<&T, Error> {
-        use std::borrow::Borrow;
-        self.payload
-            .as_ref()
-            .map(|cow| cow.borrow())
-            .ok_or(Error::MissingPayload)
-    }
-
-    /// Convenience method: takes ownership of the underlying payload. Error if not present.
-    pub fn take_payload(&mut self) -> Result<Cow<'d, T>, Error> {
-        self.payload.take().ok_or(Error::MissingPayload)
-    }
-}
-
-impl<'d, 'de, T> SerdeDeDataReceiver<'de> for DataReceiver<'d, T>
+impl<'d, 'de, T> SerdeDeDataReceiver<'de> for DataPayload<'d, T>
 where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
@@ -104,7 +54,7 @@ where
         deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error> {
         let obj: T = erased_serde::deserialize(deserializer)?;
-        self.payload = Some(Cow::Owned(obj));
+        self.cow = Some(Cow::Owned(obj));
         Ok(())
     }
 }
@@ -130,13 +80,8 @@ where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        let mut receiver = DataReceiver::<T>::new();
-        let metadata = self.load_to_receiver(req, &mut receiver)?;
-        Ok(DataResponse {
-            metadata,
-            payload: DataPayload {
-                cow: receiver.payload,
-            },
-        })
+        let mut payload = DataPayload::<T>::new();
+        let metadata = self.load_to_receiver(req, &mut payload)?;
+        Ok(DataResponse { metadata, payload })
     }
 }
