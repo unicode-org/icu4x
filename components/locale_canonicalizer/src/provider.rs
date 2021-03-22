@@ -4,7 +4,7 @@
 use icu_locid::LanguageIdentifier;
 
 pub mod key {
-    use icu_provider::{ResourceKey, resource_key};
+    use icu_provider::{resource_key, ResourceKey};
     pub const LIKELY_SUBTAGS_V1: ResourceKey = resource_key!(likelysubtags, "likelysubtags", 1);
 }
 

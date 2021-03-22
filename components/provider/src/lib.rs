@@ -43,7 +43,7 @@
 //!
 //! Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
 //! returned by the DataProvider, which is a `Cow<'d, T>`.
-//! 
+//!
 //! Objects returned by DataProvider can have their own borrowed fields, which enables zero-copy
 //! deserialization. By convention, the lifetime `'s` is used to constrain data struct fields. In
 //! general, `'s` should exceed `'d` (i.e., `'s: 'd`), such that the data is valid for as long as
@@ -69,10 +69,10 @@
 //! ### `DataProvider<dyn SerdeSeDataStruct>`
 //!
 //! *Enabled with the "provider_serde" feature*
-//! 
+//!
 //! Data providers capable of returning opaque [`SerdeSeDataStruct`] trait objects can be used as
 //! input to a data exporter, such as when writing data to the filesystem.
-//! 
+//!
 //! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 //!
 //! ### `DataProvider<dyn ErasedDataStruct>`
@@ -83,7 +83,7 @@
 //!
 //! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
 //! other bulk data operations.
-//! 
+//!
 //! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -141,8 +141,8 @@ pub use prelude::*;
 
 pub mod internal {
     //! Macro dependencies; not intended to be used directly.
-    /// Re-export tinystr4 for macro resource_key!()
-    pub use tinystr::tinystr4;
     /// Re-export tinystr16 for macro resource_key!()
     pub use tinystr::tinystr16;
+    /// Re-export tinystr4 for macro resource_key!()
+    pub use tinystr::tinystr4;
 }

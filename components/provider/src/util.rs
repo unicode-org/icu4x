@@ -112,7 +112,10 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, $struct:ty, $struct_trait:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s: $d> $crate::prelude::DataProvider<$d, dyn $struct_trait + $s> for $provider {
+        impl<$d, $s> $crate::prelude::DataProvider<$d, dyn $struct_trait + $s> for $provider
+        where
+            $s: $d,
+        {
             fn load_payload(
                 &self,
                 req: &$crate::prelude::DataRequest,

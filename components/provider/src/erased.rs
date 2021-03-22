@@ -11,8 +11,9 @@ use std::any::TypeId;
 use std::borrow::Cow;
 use std::fmt::Debug;
 
-/// Auto-implemented trait allowing for type erasure of data provider structs. Requires the
-/// static lifetime in order to be convertible to Any.
+/// Auto-implemented trait allowing for type erasure of data provider structs.
+///
+/// Requires the static lifetime in order to be convertible to Any.
 pub trait ErasedDataStruct: 'static + Debug {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
@@ -86,8 +87,6 @@ impl dyn ErasedDataStruct {
 impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
     /// Convert this DataPayload of an ErasedDataStruct into a DataPayload of a Sized type. Returns
     /// an error if the type is not compatible.
-    ///
-    /// Can be used to implement DataProvider on types implementing ErasedDataProvider.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
         T: Clone + Debug + Any,
@@ -139,14 +138,14 @@ where
     }
 }
 
+/// A type-erased data provider that loads a payload of types implementing Any.
+///
 /// Note: This trait is redundant with `DataProvider<dyn ErasedDataStruct>` and auto-implemented
 /// for all types implementing that trait. This trait may eventually be removed when the following
 /// Rust issues are resolved:
 ///
-/// - https://github.com/rust-lang/rust/issues/41517 (trait aliases are not supported)
-/// - https://github.com/rust-lang/rust/issues/68636 (identical traits can't be auto-implemented)
-
-/// A type-erased data provider that loads a payload of types implementing Any.
+/// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
+/// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
 pub trait ErasedDataProvider<'d> {
     /// Query the provider for data, returning the result as an ErasedDataStruct trait object.
     ///
@@ -172,7 +171,7 @@ where
 }
 
 /// Serve `Sized` objects from an `ErasedDataProvider` via downcasting.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
+impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
     T: Clone + Debug + Any,
 {

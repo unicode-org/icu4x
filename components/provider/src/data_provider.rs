@@ -84,7 +84,18 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-/// A wrapper around the payload returned in a DataResponse.
+/// A wrapper around the payload returned in a [DataResponse].
+///
+/// # Example
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use std::borrow::Cow;
+///
+/// let payload = DataPayload { cow: Some(Cow::Borrowed("Demo")) };
+///
+/// assert_eq!("Demo", payload.borrow().expect("Payload is present"));
+/// ```
 #[derive(Debug, Clone)]
 pub struct DataPayload<'d, T>
 where
@@ -138,6 +149,12 @@ where
 }
 
 /// A generic data provider that loads a payload of a specific type.
+///
+/// See examples on some of the concrete implementations:
+///
+/// - [HelloWorldProvider](crate::hello_world::HelloWorldProvider)
+/// - [StructProvider](crate::struct_provider::StructProvider)
+/// - [InvariantDataProvider](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,

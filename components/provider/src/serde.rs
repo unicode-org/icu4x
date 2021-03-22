@@ -24,7 +24,7 @@ use crate::prelude::*;
 use std::borrow::Cow;
 use std::fmt::Debug;
 
-/// A receiver capable of accepting data from a Serde Deserializer.
+/// An object that receives data from a Serde Deserializer. Implemented by [DataPayload].
 ///
 /// Lifetimes:
 ///
@@ -87,8 +87,8 @@ pub trait SerdeDeDataProvider<'de> {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-/// Implementation of DataProvider<T> given a SerdeDeDataProvider trait object.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'a
+/// Serve objects implementing `serde::Deserialize<'de>` from a [SerdeDeDataProvider].
+impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
 where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
@@ -110,7 +110,7 @@ pub trait SerdeSeDataStruct<'s>: 's + Debug {
     /// # Example
     ///
     /// ```
-    /// use icu_provider::erased::SerdeSeDataStruct;
+    /// use icu_provider::serde::SerdeSeDataStruct;
     /// use icu_provider::hello_world::HelloWorldV1;
     ///
     /// // Create type-erased reference
