@@ -12,7 +12,7 @@
 //! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
-//! use icu_provider::iter::DataExporter;
+//! use icu_provider::export::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
