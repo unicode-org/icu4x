@@ -100,7 +100,7 @@ where
     }
 }
 
-/// Deserialize into a receiver (SerdeDataProvider). Covers all supported data formats.
+/// Deserialize into a receiver used by SerdeDeDataProvider. Covers all supported data formats.
 pub fn deserialize_into_receiver(
     rdr: impl Read,
     syntax_option: &SyntaxOption,
