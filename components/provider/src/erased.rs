@@ -63,7 +63,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     fn as_any(&self) -> &dyn Any;
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 pub trait SerdeSeDataStruct<'s>: 's + Debug {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;
@@ -103,7 +103,7 @@ impl ToOwned for dyn ErasedDataStruct {
     }
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 impl<'s> ToOwned for dyn SerdeSeDataStruct<'s> + 's {
     type Owned = Box<dyn SerdeSeDataStruct<'s> + 's>;
 
@@ -118,7 +118,7 @@ impl Clone for Box<dyn ErasedDataStruct> {
     }
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 impl<'s> Clone for Box<dyn SerdeSeDataStruct<'s> + 's> {
     fn clone(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
         SerdeSeDataStruct::clone_into_box(self.as_ref())
@@ -172,7 +172,7 @@ where
     }
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 impl<'d, 's: 'd, T> DataResponse<'d, T>
 where
     T: SerdeSeDataStruct<'s> + Clone,
@@ -253,7 +253,7 @@ where
     }
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 impl<'s, T> SerdeSeDataStruct<'s> for T
 where
     T: 's + serde::Serialize + Clone + Debug,
@@ -282,7 +282,7 @@ pub trait ErasedDataProvider<'d> {
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error>;
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 pub trait SerdeSeDataProvider<'d, 's: 'd> {
     fn load_payload(
         &self,
@@ -313,7 +313,7 @@ macro_rules! impl_erased {
 
 /// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
 /// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 #[macro_export]
 macro_rules! impl_serde_se {
     ($provider:ty, $struct:ty, $lifetime:tt) => {
@@ -356,7 +356,7 @@ where
     }
 }
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 impl<'d, 's: 'd, T> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for T
 where
     T: SerdeSeDataProvider<'d, 's>,

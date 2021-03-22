@@ -125,10 +125,9 @@ where
     }
 }
 
-#[cfg(feature = "erased")]
 impl_erased!(HelloWorldProvider<'static>, HelloWorldV1<'static>, 'd);
 
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 impl_serde_se!(HelloWorldProvider<'static>, HelloWorldV1<'static>, 'd);
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
@@ -149,8 +148,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     }
 }
 
-/// Adds entries to a HelloWorldProvider as a SerdeDataExporter
-#[cfg(feature = "erased")]
+/// Adds entries to a HelloWorldProvider from ErasedDataStruct
 impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
     for HelloWorldProvider<'static>
 {

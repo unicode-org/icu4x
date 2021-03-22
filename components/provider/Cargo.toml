@@ -25,19 +25,14 @@ skip_optional_dependencies = true
 extra_features = ["serde"]
 
 [features]
-# Include the ErasedDataProvider, useful for type-agnostic data processing.
-# Also required for DataExporter.
-erased = []
-# Include the SerdeDataProvider, used by the C API.
-# Also enables as_serialize() in ErasedDataProvider.
-eserde = ["serde", "erased-serde"]
+provider_serde = ["serde", "erased-serde"]
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
 tinystr = "0.4"
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
-# For "erased" feature
+# For "provider_serde" feature
 erased-serde = { version = "0.3", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 
@@ -49,8 +44,8 @@ icu_plurals = { version = "0.1", path = "../plurals" }
 
 [[test]]
 name = "data_provider"
-required-features = ["erased", "serde"]
+required-features = ["serde"]
 
 [[test]]
 name = "data_receiver"
-required-features = ["eserde"]
+required-features = ["provider_serde"]
