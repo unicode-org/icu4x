@@ -56,7 +56,7 @@ macro_rules! impl_dyn_from_payload {
 ///
 /// - `ErasedDataStruct` if your provider can return typed objects as `Any`
 /// - `SerdeSeDataStruct` if your provider returns objects implementing `serde::Serialize`
-/// 
+///
 /// The third argument can be either the trait expression, like `SerdeSeDataStruct<'s>`, or the
 /// shorthands `ERASED` or `SERDE_SE`.
 ///
@@ -103,7 +103,13 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!($provider, $struct, $crate::erased::ErasedDataStruct, $d, $s);
     };
     ($provider:ty, $struct:ty, SERDE_SE, $d:lifetime, $s:lifetime) => {
-        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::SerdeSeDataStruct<$s>, $d, $s);
+        $crate::impl_dyn_provider!(
+            $provider,
+            $struct,
+            $crate::serde::SerdeSeDataStruct<$s>,
+            $d,
+            $s
+        );
     };
     ($provider:ty, $struct:ty, $struct_trait:path, $d:lifetime, $s:lifetime) => {
         impl<$d, $s: $d> $crate::prelude::DataProvider<$d, dyn $struct_trait + $s> for $provider {

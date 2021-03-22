@@ -60,47 +60,9 @@ pub trait ErasedDataStruct: 'static + Debug {
     fn as_any(&self) -> &dyn Any;
 }
 
-#[cfg(feature = "provider_serde")]
-pub trait SerdeSeDataStruct<'s>: 's + Debug {
-    /// Clone this trait object reference, returning a boxed trait object.
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;
-
-    /// Return this trait object reference for Serde serialization.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu_provider::erased::SerdeSeDataStruct;
-    /// use icu_provider::hello_world::HelloWorldV1;
-    ///
-    /// // Create type-erased reference
-    /// let data = HelloWorldV1::default();
-    /// let erased: &dyn SerdeSeDataStruct = &data;
-    ///
-    /// // Borrow as serialize trait object
-    /// let serialize: &dyn erased_serde::Serialize = erased.as_serialize();
-    ///
-    /// // Serialize the object to a JSON string
-    /// let mut buffer: Vec<u8> = vec![];
-    /// serialize.erased_serialize(
-    ///     &mut erased_serde::Serializer::erase(
-    ///         &mut serde_json::Serializer::new(&mut buffer)
-    ///     )
-    /// ).expect("Serialization should succeed");
-    /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
-    /// ```
-    fn as_serialize(&self) -> &dyn erased_serde::Serialize;
-}
-
 impl_dyn_clone!(ErasedDataStruct);
 
-#[cfg(feature = "provider_serde")]
-impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
-
 impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
-
-#[cfg(feature = "provider_serde")]
-impl_dyn_from_payload!(SerdeSeDataStruct<'s>, 'd, 's);
 
 impl dyn ErasedDataStruct {
     /// Convenience function: Return a downcast reference, or an error if mismatched types.
@@ -136,17 +98,6 @@ where
     ///
     /// Can be used to implement ErasedDataProvider on types implementing DataProvider.
     pub fn into_erased(self) -> DataPayload<'d, dyn ErasedDataStruct> {
-        self.into()
-    }
-}
-
-#[cfg(feature = "provider_serde")]
-impl<'d, 's: 'd, T> DataPayload<'d, T>
-where
-    T: SerdeSeDataStruct<'s> + Clone,
-{
-    /// Convert this DataPayload of a Sized type into a DataPayload of a SerdeSeDataStruct.
-    pub fn into_serde_se(self) -> DataPayload<'d, dyn SerdeSeDataStruct<'s> + 's> {
         self.into()
     }
 }
@@ -203,19 +154,6 @@ where
         self
     }
     fn as_any(&self) -> &dyn Any {
-        self
-    }
-}
-
-#[cfg(feature = "provider_serde")]
-impl<'s, T> SerdeSeDataStruct<'s> for T
-where
-    T: 's + serde::Serialize + Clone + Debug,
-{
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
-        Box::new(self.clone())
-    }
-    fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }

@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::CldrPaths;
-use icu_provider::erased::SerdeSeDataStruct;
 use icu_provider::erased::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use icu_provider::serde::SerdeSeDataStruct;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
@@ -51,7 +51,7 @@ where
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
-            return ErasedDataProvider::load_payload(data_provider, req).map(Some);
+            return ErasedDataProvider::load_erased(data_provider, req).map(Some);
         }
         let mut src = self.src.write().map_err(map_poison)?;
         if src.is_none() {
@@ -60,7 +60,7 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        return ErasedDataProvider::load_payload(data_provider, req).map(Some);
+        return ErasedDataProvider::load_erased(data_provider, req).map(Some);
     }
 
     /// Call `T::load`, initializing T if necessary.
