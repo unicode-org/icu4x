@@ -37,6 +37,18 @@
 //! - [`StructProvider`] wraps a particular instance of a struct and returns it.
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
+//! ## Types and Lifetimes
+//!
+//! All types `T` compatible with `Cow` and `Debug` can be passed through the data provider.
+//!
+//! Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
+//! returned by the DataProvider, which is a `Cow<'d, T>`.
+//! 
+//! Objects returned by DataProvider can have their own borrowed fields, which enables zero-copy
+//! deserialization. By convention, the lifetime `'s` is used to constrain data struct fields. In
+//! general, `'s` should exceed `'d` (i.e., `'s: 'd`), such that the data is valid for as long as
+//! the `Cow<'d, T>` is valid.
+//!
 //! ## Additional Traits
 //!
 //! ### `IterableDataProvider`
@@ -54,34 +66,25 @@
 //! that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
 //!
-//! ### `ErasedDataProvider`
+//! ### `DataProvider<dyn SerdeSeDataStruct>`
+//!
+//! *Enabled with the "provider_serde" feature*
+//! 
+//! Data providers capable of returning opaque [`SerdeSeDataStruct`] trait objects can be used as
+//! input to a data exporter, such as when writing data to the filesystem.
+//! 
+//! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
+//!
+//! ### `DataProvider<dyn ErasedDataStruct>`
 //!
 //! The trait [`ErasedDataProvider`] removes the type argument from `DataProvider` and requires
 //! that all data structs be convertible to the `Any` type. This enables the processing of data
 //! without the caller knowing the underlying data struct.
 //!
-//! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for:
-//!
-//! - Caches
-//! - Bulk data operations
-//! - Transforming from one format to another
-//!
-//! ## Types and Lifetimes
-//!
-//! All types `T` compatible with `Cow` and `Debug` can be passed through the data provider.
-//!
-//! Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
-//! returned by the DataProvider.
-//!
-//! DataProvider returns data in the form of a `Cow<'d, T>`, where `'d` is the lifetime of the data
-//! if it is borrowed, and `T` is constrained by `T: 'd` such that if the data is owned, it may not
-//! have any fields whose lifetime subceeds `'d`.
-//!
-//! When using `ErasedDataProvider`, the following additional requirements are placed on `T`:
-//!
-//! - `T: 'static`, since `T` must be compatible with `Any`
-//! - `serde::Deserialize` and `serde::Serialize`, allowing for type-agnostic (de)serialization
-//! - `Default`, allowing `InvariantDataProvider` to work
+//! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
+//! other bulk data operations.
+//! 
+//! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
@@ -96,13 +99,15 @@
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
 //! [`SerdeDeDataProvider`]: serde::SerdeDeDataProvider
+//! [`SerdeSeDataStruct`]: serde::SerdeSeDataStruct
+//! [`impl_dyn_provider!`]: impl_dyn_provider
 
 #[macro_use]
 mod util;
 
-pub mod data_provider;
+mod data_provider;
 #[macro_use]
-pub mod resource;
+mod resource;
 #[macro_use]
 pub mod erased;
 pub mod export;
@@ -133,3 +138,11 @@ pub mod prelude {
 
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
+
+pub mod internal {
+    //! Macro dependencies; not intended to be used directly.
+    /// Re-export tinystr4 for macro resource_key!()
+    pub use tinystr::tinystr4;
+    /// Re-export tinystr16 for macro resource_key!()
+    pub use tinystr::tinystr16;
+}

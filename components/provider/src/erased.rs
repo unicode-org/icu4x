@@ -3,13 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Collection of traits for providers that support type erasure of data structs.
-//!
-//! There are two traits for data structs, `ErasedDataStruct` and `SerdeSeDataStruct`.
-//! Both of these traits are compatible with DataProvider such that they can be returned
-//! from a call to load_payload.
-//!
-//! There are corresponding traits that a data provider can implement if it is capable of
-//! upcasting data into either of the data struct traits.
 
 use crate::error::Error;
 use crate::prelude::*;
@@ -87,18 +80,6 @@ impl dyn ErasedDataStruct {
                 actual: Some(self.as_any().type_id()),
                 generic: Some(TypeId::of::<T>()),
             })
-    }
-}
-
-impl<'d, T> DataPayload<'d, T>
-where
-    T: ErasedDataStruct + Clone,
-{
-    /// Convert this DataPayload of a Sized type into a DataPayload of an ErasedDataStruct.
-    ///
-    /// Can be used to implement ErasedDataProvider on types implementing DataProvider.
-    pub fn into_erased(self) -> DataPayload<'d, dyn ErasedDataStruct> {
-        self.into()
     }
 }
 

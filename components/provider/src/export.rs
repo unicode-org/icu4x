@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Types having to do with the exporting of data.
+
 use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;

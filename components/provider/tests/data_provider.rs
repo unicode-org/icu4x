@@ -127,7 +127,7 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
             _ => {
                 return result.map(|r| DataResponse {
                     metadata: r.metadata,
-                    payload: r.payload.into_erased(),
+                    payload: r.payload.into(),
                 })
             }
         };
@@ -138,7 +138,7 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
             _ => {
                 return result.map(|r| DataResponse {
                     metadata: r.metadata,
-                    payload: r.payload.into_erased(),
+                    payload: r.payload.into(),
                 })
             }
         };

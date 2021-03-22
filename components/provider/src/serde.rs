@@ -2,9 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Collection of traits for providers that support *deserializing* data via Serde.
+//! Collection of traits for providers that support serializing or deserializing data.
 //!
-//! See the `crate::export::serde` mod for APIs involving *serializing* data via Serde.
+//! ## Deserializing
+//!
+//! Providers that involve a `serde::Deserializer` to produce data from an opaque source should
+//! implement `SerdeDeDataProvider`. For example, `FsDataProvider` implements `SerdeDeDataProvider`.
+//!
+//! `SerdeDeDataProvider` can be made into a trait object. It is used over FFI.
+//!
+//! ## Serializing
+//!
+//! Providers that have full type information should implement `DataProvider<dyn SerdeSeDataStruct>`.
+//! Note that a provider like `FsDataProvider` cannot implement that trait, because type information
+//! on the data structs is required in order to deserialize and then serialize them.
+//!
+//! `DataProvider<dyn SerdeSeDataStruct>` is used by data exporters such as `FilesystemExporter`.
 
 use crate::error::Error;
 use crate::prelude::*;
@@ -86,6 +99,8 @@ where
     }
 }
 
+/// Auto-implemented trait for all data structs that support `serde::Serialize`. This trait is
+/// usually used as a trait object in `DataProvider<dyn SerdeSeDataStruct>`.
 pub trait SerdeSeDataStruct<'s>: 's + Debug {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;
@@ -120,16 +135,6 @@ pub trait SerdeSeDataStruct<'s>: 's + Debug {
 impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
 
 impl_dyn_from_payload!(SerdeSeDataStruct<'s>, 'd, 's);
-
-impl<'d, 's: 'd, T> DataPayload<'d, T>
-where
-    T: SerdeSeDataStruct<'s> + Clone,
-{
-    /// Convert this DataPayload of a Sized type into a DataPayload of a SerdeSeDataStruct.
-    pub fn into_serde_se(self) -> DataPayload<'d, dyn SerdeSeDataStruct<'s> + 's> {
-        self.into()
-    }
-}
 
 impl<'s, T> SerdeSeDataStruct<'s> for T
 where

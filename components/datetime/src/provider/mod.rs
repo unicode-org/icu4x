@@ -9,7 +9,7 @@
 pub(crate) mod helpers;
 
 pub mod key {
-    use icu_provider::{resource::ResourceKey, resource_key};
+    use icu_provider::{ResourceKey, resource_key};
     pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
 }
 

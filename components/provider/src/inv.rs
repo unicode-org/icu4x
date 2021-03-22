@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Locale-invariant data provider that requires no I/O.
+
 use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
