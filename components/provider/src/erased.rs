@@ -10,9 +10,6 @@
 //!
 //! There are corresponding traits that a data provider can implement if it is capable of
 //! upcasting data into either of the data struct traits.
-//!
-//! There are convenience macros, `impl_erased!` and `impl_serde_se!`, to help implement
-//! the data provider traits.
 
 use crate::error::Error;
 use crate::prelude::*;
@@ -245,25 +242,6 @@ pub trait SerdeSeDataProvider<'d, 's: 'd> {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error>;
-}
-
-/// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
-/// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
-#[macro_export]
-macro_rules! impl_erased {
-    ($provider:ty, $struct:ty, $d:lifetime) => {
-        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::ErasedDataStruct, $d, 's);
-    };
-}
-
-/// Helper macro to implement ErasedDataProvider on an object implementing DataProvider for a
-/// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
-#[cfg(feature = "provider_serde")]
-#[macro_export]
-macro_rules! impl_serde_se {
-    ($provider:ty, $struct:ty, $d:lifetime) => {
-        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::SerdeSeDataStruct<'s>, $d, 's);
-    };
 }
 
 /// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.

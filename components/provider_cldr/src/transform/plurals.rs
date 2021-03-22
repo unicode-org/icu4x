@@ -79,12 +79,11 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-// Only returns owned data, so assert 'static for ErasedDataProvider compatibility.
-impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> {
+impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'static>>, DataError> {
+    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'s>>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req.try_langid()?.clone().into();
@@ -103,8 +102,8 @@ impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> 
     }
 }
 
-icu_provider::impl_erased!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, 'd);
-icu_provider::impl_serde_se!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, 'd);
+icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'s>, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
     fn supported_options_for_key(

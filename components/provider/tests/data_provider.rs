@@ -31,7 +31,7 @@ struct HelloCombined<'s> {
 
 /// A DataProvider that owns its data. DataProvider is implemented on `DataWarehouse`, returning
 /// owned data, and on `&'d DataWarehouse`, returning borrowed data. Both support only
-/// HELLO_WORLD_V1 and use `impl_erased!()`.
+/// HELLO_WORLD_V1 and use `impl_dyn_provider!()`.
 #[derive(Debug)]
 struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
@@ -52,7 +52,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_erased!(DataWarehouse<'static>, HelloWorldV1<'static>, 'd);
+icu_provider::impl_dyn_provider!(DataWarehouse<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
 
 impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     fn load_payload(
@@ -69,7 +69,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_erased!(&'d DataWarehouse<'static>, HelloWorldV1<'static>, 'd);
+icu_provider::impl_dyn_provider!(&'d DataWarehouse<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
 
 /// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT. Custom implementation of
 /// ErasedDataProvider.

@@ -51,14 +51,17 @@ macro_rules! impl_dyn_from_payload {
 
 /// Implement `DataProvider<dyn S>` on a type that already implements `DataProvider<T>` where `T`
 /// is a `Sized` type that implements the trait `S`.
-/// 
+///
 /// Use this macro to add support to your data provider for:
-/// 
+///
 /// - `ErasedDataProvider` if your provider can return typed objects as `Any`
 /// - `SerdeSeDataProvider` if your provider returns objects implementing `serde::Serialize`
 /// 
+/// The third argument can be either the trait expression, like `SerdeSeDataProvider<'s>`, or the
+/// shorthands `ERASED` or `SERDE_SE`.
+///
 /// Lifetimes:
-/// 
+///
 /// - `$d` is the lifetime parameter for `DataProvider`; usually `'d`
 /// - `$s` is the lifetime bound for the struct trait; usually `'s`
 ///
@@ -86,7 +89,7 @@ macro_rules! impl_dyn_from_payload {
 /// }
 ///
 /// // Since `String` is `'static`, we can implement `DataProvider<dyn ErasedDataStruct>`
-/// icu_provider::impl_dyn_provider!(MyProvider, String, ErasedDataStruct, 'd, 's);
+/// icu_provider::impl_dyn_provider!(MyProvider, String, ERASED, 'd, 's);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
@@ -96,6 +99,12 @@ macro_rules! impl_dyn_from_payload {
 /// ```
 #[macro_export]
 macro_rules! impl_dyn_provider {
+    ($provider:ty, $struct:ty, ERASED, $d:lifetime, $s:lifetime) => {
+        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::ErasedDataStruct, $d, $s);
+    };
+    ($provider:ty, $struct:ty, SERDE_SE, $d:lifetime, $s:lifetime) => {
+        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::SerdeSeDataStruct<$s>, $d, $s);
+    };
     ($provider:ty, $struct:ty, $struct_trait:path, $d:lifetime, $s:lifetime) => {
         impl<$d, $s: $d> $crate::prelude::DataProvider<$d, dyn $struct_trait + $s> for $provider {
             fn load_payload(
