@@ -97,6 +97,9 @@
 //! [`ErasedDataProvider`]: erased::ErasedDataProvider
 //! [`SerdeDataProvider`]: serde::SerdeDataProvider
 
+#[macro_use]
+mod util;
+
 pub mod data_provider;
 #[macro_use]
 pub mod resource;

@@ -95,35 +95,13 @@ pub trait SerdeSeDataStruct<'s>: 's + Debug {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
-impl ToOwned for dyn ErasedDataStruct {
-    type Owned = Box<dyn ErasedDataStruct>;
+impl_dyn_clone!(ErasedDataStruct);
 
-    fn to_owned(&self) -> Self::Owned {
-        ErasedDataStruct::clone_into_box(self)
-    }
-}
+impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
 
-#[cfg(feature = "provider_serde")]
-impl<'s> ToOwned for dyn SerdeSeDataStruct<'s> + 's {
-    type Owned = Box<dyn SerdeSeDataStruct<'s> + 's>;
+impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
 
-    fn to_owned(&self) -> Self::Owned {
-        SerdeSeDataStruct::clone_into_box(self)
-    }
-}
-
-impl Clone for Box<dyn ErasedDataStruct> {
-    fn clone(&self) -> Box<dyn ErasedDataStruct> {
-        ErasedDataStruct::clone_into_box(self.as_ref())
-    }
-}
-
-#[cfg(feature = "provider_serde")]
-impl<'s> Clone for Box<dyn SerdeSeDataStruct<'s> + 's> {
-    fn clone(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
-        SerdeSeDataStruct::clone_into_box(self.as_ref())
-    }
-}
+impl_dyn_from_payload!(SerdeSeDataStruct<'s>, 'd, 's);
 
 impl dyn ErasedDataStruct {
     /// Convenience function: Return a downcast reference, or an error if mismatched types.
@@ -159,15 +137,7 @@ where
     ///
     /// Can be used to implement ErasedDataProvider on types implementing DataProvider.
     pub fn into_erased(self) -> DataPayload<'d, dyn ErasedDataStruct> {
-        DataPayload {
-            cow: self.cow.map(|p| match p {
-                Cow::Borrowed(v) => Cow::Borrowed(v as &dyn ErasedDataStruct),
-                Cow::Owned(v) => {
-                    let boxed: Box<dyn ErasedDataStruct> = Box::new(v);
-                    Cow::Owned(boxed)
-                }
-            }),
-        }
+        self.into()
     }
 }
 
@@ -178,15 +148,7 @@ where
 {
     /// Convert this DataPayload of a Sized type into a DataPayload of a SerdeSeDataStruct.
     pub fn into_serde_se(self) -> DataPayload<'d, dyn SerdeSeDataStruct<'s> + 's> {
-        DataPayload {
-            cow: self.cow.map(|p| match p {
-                Cow::Borrowed(v) => Cow::Borrowed(v as &dyn SerdeSeDataStruct),
-                Cow::Owned(v) => {
-                    let boxed: Box<dyn SerdeSeDataStruct> = Box::new(v);
-                    Cow::Owned(boxed)
-                }
-            }),
-        }
+        self.into()
     }
 }
 
@@ -287,21 +249,24 @@ pub trait SerdeSeDataProvider<'d, 's: 'd> {
 /// single type. Calls to `self.load_to_receiver` delegate to `self.load_payload`.
 #[macro_export]
 macro_rules! impl_erased {
-    ($provider:ty, $struct:ty, $lifetime:tt) => {
-        impl<$lifetime> $crate::erased::ErasedDataProvider<$lifetime> for $provider {
+    ($provider:ty, $struct:ty, $d:lifetime) => {
+        $crate::impl_erased!($provider, $struct, (dyn $crate::erased::ErasedDataStruct), $d, 's);
+    };
+    ($provider:ty, $struct:ty, $struct_trait:tt, $d:lifetime, $s:lifetime) => {
+        impl<$d, $s: $d> $crate::prelude::DataProvider<$d, $struct_trait> for $provider {
             fn load_payload(
                 &self,
                 req: &$crate::prelude::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<'d, dyn $crate::erased::ErasedDataStruct>,
+                $crate::prelude::DataResponse<$d, $struct_trait>,
                 $crate::prelude::DataError,
             > {
                 let result: $crate::prelude::DataResponse<$struct> =
                     $crate::prelude::DataProvider::load_payload(self, req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into_erased(),
-                })
+                    Ok(DataResponse {
+                        metadata: result.metadata,
+                        payload: result.payload.into(),
+                    })
             }
         }
     };
@@ -312,7 +277,7 @@ macro_rules! impl_erased {
 #[cfg(feature = "provider_serde")]
 #[macro_export]
 macro_rules! impl_serde_se {
-    ($provider:ty, $struct:ty, $lifetime:tt) => {
+    ($provider:ty, $struct:ty, $lifetime:lifetime) => {
         impl<$lifetime, 's: $lifetime> $crate::erased::SerdeSeDataProvider<$lifetime, 's> for $provider {
             fn load_payload(
                 &self,
@@ -346,15 +311,15 @@ where
     }
 }
 
-impl<'d, T> DataProvider<'d, dyn ErasedDataStruct> for T
+impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: ErasedDataProvider<'d>,
+    T: DataProvider<'d, dyn ErasedDataStruct>,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error> {
-        ErasedDataProvider::load_payload(self, req)
+        DataProvider::<dyn ErasedDataStruct>::load_payload(self, req)
     }
 }
 
