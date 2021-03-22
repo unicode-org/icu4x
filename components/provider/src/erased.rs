@@ -220,9 +220,12 @@ where
     }
 }
 
-// Note: Once trait aliases land, we could enable the following alias.
-// https://github.com/rust-lang/rust/issues/41517
-// pub trait ErasedDataProvider<'d> = DataProvider<'d, dyn ErasedDataStruct>;
+/// Note: This trait is redundant with `DataProvider<dyn ErasedDataStruct>` and auto-implemented
+/// for all types implementing that trait. This trait may eventually be removed when the following
+/// Rust issues are resolved:
+///
+/// - https://github.com/rust-lang/rust/issues/41517 (trait aliases are not supported)
+/// - https://github.com/rust-lang/rust/issues/68636 (identical traits can't be auto-implemented)
 
 /// A type-erased data provider that loads a payload of types implementing Any.
 pub trait ErasedDataProvider<'d> {
@@ -230,39 +233,18 @@ pub trait ErasedDataProvider<'d> {
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(
+    fn load_erased(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error>;
 }
 
-#[cfg(feature = "provider_serde")]
-pub trait SerdeSeDataProvider<'d, 's: 'd> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error>;
-}
-
-/// Convenience implementation of DataProvider<T> given an ErasedDataProvider trait object.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
-where
-    T: Clone + Debug + Any,
-{
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        let result = ErasedDataProvider::load_payload(self, req)?;
-        Ok(DataResponse {
-            metadata: result.metadata,
-            payload: result.payload.downcast()?,
-        })
-    }
-}
-
+// Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
     T: DataProvider<'d, dyn ErasedDataStruct>,
 {
-    fn load_payload(
+    fn load_erased(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error> {
@@ -270,15 +252,16 @@ where
     }
 }
 
-#[cfg(feature = "provider_serde")]
-impl<'d, 's: 'd, T> SerdeSeDataProvider<'d, 's> for T
+/// Serve `Sized` objects from an `ErasedDataProvider` via downcasting.
+impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'a
 where
-    T: DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>,
+    T: Clone + Debug + Any,
 {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error> {
-        DataProvider::<dyn SerdeSeDataStruct<'s> + 's>::load_payload(self, req)
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+        let result = ErasedDataProvider::load_erased(self, req)?;
+        Ok(DataResponse {
+            metadata: result.metadata,
+            payload: result.payload.downcast()?,
+        })
     }
 }

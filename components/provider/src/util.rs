@@ -54,10 +54,10 @@ macro_rules! impl_dyn_from_payload {
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - `ErasedDataProvider` if your provider can return typed objects as `Any`
-/// - `SerdeSeDataProvider` if your provider returns objects implementing `serde::Serialize`
+/// - `ErasedDataStruct` if your provider can return typed objects as `Any`
+/// - `SerdeSeDataStruct` if your provider returns objects implementing `serde::Serialize`
 /// 
-/// The third argument can be either the trait expression, like `SerdeSeDataProvider<'s>`, or the
+/// The third argument can be either the trait expression, like `SerdeSeDataStruct<'s>`, or the
 /// shorthands `ERASED` or `SERDE_SE`.
 ///
 /// Lifetimes:

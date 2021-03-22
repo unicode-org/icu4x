@@ -116,7 +116,7 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
 // TODO(sffc): Make a macro out of this
 impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     /// Loads JSON data. Returns borrowed data.
-    fn load_payload<'a>(
+    fn load_erased<'a>(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
@@ -348,7 +348,7 @@ fn test_mismatched_types() {
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
     let response: Result<DataPayload<HelloWorldV1>, DataError> =
-        ErasedDataProvider::load_payload(&provider, &get_request_alt())
+        ErasedDataProvider::load_erased(&provider, &get_request_alt())
             .unwrap()
             .payload
             .downcast();
