@@ -17,9 +17,9 @@ pub mod key {
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HelloWorldV1<'s> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub message: Cow<'s, str>,
 }
 

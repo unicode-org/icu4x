@@ -21,8 +21,6 @@ include = [
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-# "serde" is an intentional feature, enabling serialization of HelloWorldV1:
-extra_features = ["serde"]
 
 [features]
 provider_serde = ["serde", "erased-serde"]

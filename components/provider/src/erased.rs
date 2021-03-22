@@ -97,10 +97,12 @@ pub trait SerdeSeDataStruct<'s>: 's + Debug {
 
 impl_dyn_clone!(ErasedDataStruct);
 
+#[cfg(feature = "provider_serde")]
 impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
 
 impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
 
+#[cfg(feature = "provider_serde")]
 impl_dyn_from_payload!(SerdeSeDataStruct<'s>, 'd, 's);
 
 impl dyn ErasedDataStruct {
@@ -250,25 +252,7 @@ pub trait SerdeSeDataProvider<'d, 's: 'd> {
 #[macro_export]
 macro_rules! impl_erased {
     ($provider:ty, $struct:ty, $d:lifetime) => {
-        $crate::impl_erased!($provider, $struct, (dyn $crate::erased::ErasedDataStruct), $d, 's);
-    };
-    ($provider:ty, $struct:ty, $struct_trait:tt, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s: $d> $crate::prelude::DataProvider<$d, $struct_trait> for $provider {
-            fn load_payload(
-                &self,
-                req: &$crate::prelude::DataRequest,
-            ) -> Result<
-                $crate::prelude::DataResponse<$d, $struct_trait>,
-                $crate::prelude::DataError,
-            > {
-                let result: $crate::prelude::DataResponse<$struct> =
-                    $crate::prelude::DataProvider::load_payload(self, req)?;
-                    Ok(DataResponse {
-                        metadata: result.metadata,
-                        payload: result.payload.into(),
-                    })
-            }
-        }
+        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::ErasedDataStruct, $d, 's);
     };
 }
 
@@ -277,23 +261,8 @@ macro_rules! impl_erased {
 #[cfg(feature = "provider_serde")]
 #[macro_export]
 macro_rules! impl_serde_se {
-    ($provider:ty, $struct:ty, $lifetime:lifetime) => {
-        impl<$lifetime, 's: $lifetime> $crate::erased::SerdeSeDataProvider<$lifetime, 's> for $provider {
-            fn load_payload(
-                &self,
-                req: &$crate::prelude::DataRequest,
-            ) -> Result<
-                $crate::prelude::DataResponse<'d, dyn $crate::erased::SerdeSeDataStruct<'s> + 's>,
-                $crate::prelude::DataError,
-            > {
-                let result: $crate::prelude::DataResponse<$struct> =
-                    $crate::prelude::DataProvider::load_payload(self, req)?;
-                    Ok(DataResponse {
-                        metadata: result.metadata,
-                        payload: result.payload.into_serde_se(),
-                    })
-            }
-        }
+    ($provider:ty, $struct:ty, $d:lifetime) => {
+        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::SerdeSeDataStruct<'s>, $d, 's);
     };
 }
 
@@ -324,14 +293,14 @@ where
 }
 
 #[cfg(feature = "provider_serde")]
-impl<'d, 's: 'd, T> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for T
+impl<'d, 's: 'd, T> SerdeSeDataProvider<'d, 's> for T
 where
-    T: SerdeSeDataProvider<'d, 's>,
+    T: DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, Error> {
-        SerdeSeDataProvider::load_payload(self, req)
+        DataProvider::<dyn SerdeSeDataStruct<'s> + 's>::load_payload(self, req)
     }
 }
