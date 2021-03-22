@@ -97,16 +97,18 @@ where
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(data)),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(data)),
+            },
         })
     }
 }
 
-impl<'de> SerdeDataProvider<'de> for FsDataProvider {
+impl<'de> SerdeDeDataProvider<'de> for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn SerdeDataReceiver<'de>,
+        receiver: &mut dyn SerdeDeDataReceiver<'de>,
     ) -> Result<DataResponseMetadata, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)

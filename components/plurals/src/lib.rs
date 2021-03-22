@@ -287,7 +287,8 @@ impl PluralRules {
                     },
                 },
             })?
-            .take_payload()?;
+            .payload
+            .take()?;
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 

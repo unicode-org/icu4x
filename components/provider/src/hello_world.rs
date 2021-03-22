@@ -56,7 +56,7 @@ impl Default for HelloWorldV1<'_> {
 ///         }
 ///     })
 ///     .unwrap()
-///     .take_payload()
+///     .payload.take()
 ///     .unwrap();
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.message);
@@ -120,7 +120,9 @@ where
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: Some(Cow::Owned(data)),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(data)),
+            },
         })
     }
 }

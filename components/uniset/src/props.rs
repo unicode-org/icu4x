@@ -25,7 +25,7 @@ fn get_prop<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     };
     let mut resp: DataResponse<UnicodeProperty> = ppucd_provider.load_payload(&data_req)?;
 
-    let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload()?;
+    let ppucd_property_cow: Cow<UnicodeProperty> = resp.payload.take()?;
     let ppucd_property: UnicodeProperty = ppucd_property_cow.into_owned();
     ppucd_property.try_into()
 }

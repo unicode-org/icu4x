@@ -79,7 +79,9 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(gregory::DatesV1::from(dates))),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(gregory::DatesV1::from(dates))),
+            },
         })
     }
 }
@@ -432,7 +434,8 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
@@ -464,7 +467,8 @@ fn test_with_numbering_system() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!("d MMM y", cs_dates.patterns.date.medium);
@@ -491,7 +495,8 @@ fn unalias_contexts() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     // Czech months are not unaliased because `wide` differs.

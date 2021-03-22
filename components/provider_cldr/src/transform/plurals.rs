@@ -96,7 +96,9 @@ impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> 
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
+            },
         })
     }
 }
@@ -205,7 +207,8 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!(None, cs_rules.zero);

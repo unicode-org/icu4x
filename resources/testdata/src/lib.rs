@@ -28,7 +28,7 @@
 //!         },
 //!     })
 //!     .unwrap()
-//!     .take_payload()
+//!     .payload.take()
 //!     .unwrap();
 //! assert_eq!(data.few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
 //! ```

@@ -26,7 +26,7 @@ use std::fmt::Debug;
 /// let result: Cow<HelloWorldV1> = provider
 ///     .load_payload(&DataRequest::from(key::HELLO_WORLD_V1))
 ///     .unwrap()
-///     .take_payload()
+///     .payload.take()
 ///     .unwrap();
 ///
 /// assert_eq!("(und) Hello World", result.message);
@@ -40,7 +40,9 @@ where
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Owned(T::default())),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(T::default())),
+            },
         })
     }
 }

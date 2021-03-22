@@ -61,7 +61,8 @@ fn test_dayperiod_patterns() {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         *data.to_mut().patterns.date_time.long.to_mut() = String::from("{0}");
         for test_case in &test.test_cases {

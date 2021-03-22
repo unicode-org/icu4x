@@ -39,7 +39,6 @@ fn test_supported_langids() {
     );
 }
 
-#[cfg(feature = "erased")]
 #[test]
 fn test_export() {
     use icu_provider::export::DataExporter;

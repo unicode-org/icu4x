@@ -29,7 +29,8 @@ fn overview_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .take_payload()
+                .payload
+                .take()
                 .expect("Loading was successful");
         });
     });
@@ -62,14 +63,15 @@ fn json_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .take_payload()
+                .payload
+                .take()
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn SerdeDataProvider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn SerdeDeDataProvider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -80,7 +82,8 @@ fn json_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .take_payload()
+                .payload
+                .take()
                 .expect("Loading was successful");
         });
     });
@@ -104,14 +107,15 @@ fn bincode_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .take_payload()
+                .payload
+                .take()
                 .expect("Loading was successful");
         });
     });
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn SerdeDataProvider)
+            let _: Cow<PluralRuleStringsV1> = black_box(&provider as &dyn SerdeDeDataProvider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -122,7 +126,8 @@ fn bincode_bench(c: &mut Criterion) {
                     },
                 })
                 .expect("The data should be valid")
-                .take_payload()
+                .payload
+                .take()
                 .expect("Loading was successful");
         });
     });

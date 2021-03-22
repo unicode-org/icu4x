@@ -178,7 +178,8 @@ impl<'d> DateTimeFormat<'d> {
                     },
                 },
             })?
-            .take_payload()?;
+            .payload
+            .take()?;
 
         let pattern = data
             .patterns

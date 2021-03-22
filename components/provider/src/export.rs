@@ -47,7 +47,7 @@ where
                     options: resc_options,
                 },
             };
-            let payload = provider.load_payload(&req)?.take_payload()?;
+            let payload = provider.load_payload(&req)?.payload.take()?;
             self.put_payload(&req, payload.borrow())?;
         }
         Ok(())

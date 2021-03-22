@@ -16,8 +16,8 @@ use std::fmt::Debug;
 /// Lifetimes:
 ///
 /// - `'de` = deserializer lifetime; can usually be `'_`
-pub trait SerdeDataReceiver<'de> {
-    /// Consumes a Serde Deserializer into this SerdeDataReceiver as owned data.
+pub trait SerdeDeDataReceiver<'de> {
+    /// Consumes a Serde Deserializer into this SerdeDeDataReceiver as owned data.
     ///
     /// This method results in an owned payload, but the payload could have non-static references
     /// according to the deserializer lifetime.
@@ -27,7 +27,7 @@ pub trait SerdeDataReceiver<'de> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::serde::DataReceiver;
-    /// use icu_provider::serde::SerdeDataReceiver;
+    /// use icu_provider::serde::SerdeDeDataReceiver;
     /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
@@ -46,7 +46,7 @@ pub trait SerdeDataReceiver<'de> {
     ) -> Result<(), Error>;
 }
 
-/// Concrete struct backing SerdeDataReceiver.
+/// Concrete struct backing SerdeDeDataReceiver.
 ///
 /// # Example
 ///
@@ -55,7 +55,7 @@ pub trait SerdeDataReceiver<'de> {
 /// use icu_provider::serde::DataReceiver;
 ///
 /// let mut string_receiver = DataReceiver::<String>::new();
-/// // Now pass string_receiver as an argument to SerdeDataProvider
+/// // Now pass string_receiver as an argument to SerdeDeDataProvider
 /// ```
 #[derive(Debug)]
 pub struct DataReceiver<'d, T>
@@ -95,7 +95,7 @@ where
     }
 }
 
-impl<'d, 'de, T> SerdeDataReceiver<'de> for DataReceiver<'d, T>
+impl<'d, 'de, T> SerdeDeDataReceiver<'de> for DataReceiver<'d, T>
 where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
@@ -112,20 +112,20 @@ where
 /// A type-erased data provider that loads payloads from a Serde Deserializer.
 ///
 /// Uses erased_serde to allow the trait to be object-safe.
-pub trait SerdeDataProvider<'de> {
-    /// Query the provider for data, loading it into a SerdeDataReceiver.
+pub trait SerdeDeDataProvider<'de> {
+    /// Query the provider for data, loading it into a SerdeDeDataReceiver.
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn SerdeDataReceiver<'de>,
+        receiver: &mut dyn SerdeDeDataReceiver<'de>,
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-/// Convenience implementation of DataProvider<T> given a SerdeDataProvider trait object.
-impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn SerdeDataProvider<'de> + 'a
+/// Implementation of DataProvider<T> given a SerdeDeDataProvider trait object.
+impl<'a, 'd, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'a
 where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
@@ -134,7 +134,9 @@ where
         let metadata = self.load_to_receiver(req, &mut receiver)?;
         Ok(DataResponse {
             metadata,
-            payload: receiver.payload,
+            payload: DataPayload {
+                cow: receiver.payload,
+            },
         })
     }
 }

@@ -151,17 +151,16 @@ impl dyn ErasedDataStruct {
     }
 }
 
-impl<'d, T> DataResponse<'d, T>
+impl<'d, T> DataPayload<'d, T>
 where
     T: ErasedDataStruct + Clone,
 {
-    /// Convert this DataResponse of a Sized type into a DataResponse of an ErasedDataStruct.
+    /// Convert this DataPayload of a Sized type into a DataPayload of an ErasedDataStruct.
     ///
     /// Can be used to implement ErasedDataProvider on types implementing DataProvider.
-    pub fn into_erased(self) -> DataResponse<'d, dyn ErasedDataStruct> {
-        DataResponse {
-            metadata: self.metadata,
-            payload: self.payload.map(|p| match p {
+    pub fn into_erased(self) -> DataPayload<'d, dyn ErasedDataStruct> {
+        DataPayload {
+            cow: self.cow.map(|p| match p {
                 Cow::Borrowed(v) => Cow::Borrowed(v as &dyn ErasedDataStruct),
                 Cow::Owned(v) => {
                     let boxed: Box<dyn ErasedDataStruct> = Box::new(v);
@@ -173,15 +172,14 @@ where
 }
 
 #[cfg(feature = "provider_serde")]
-impl<'d, 's: 'd, T> DataResponse<'d, T>
+impl<'d, 's: 'd, T> DataPayload<'d, T>
 where
     T: SerdeSeDataStruct<'s> + Clone,
 {
-    /// Convert this DataResponse of a Sized type into a DataResponse of a SerdeSeDataStruct.
-    pub fn into_serde_se(self) -> DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's> {
-        DataResponse {
-            metadata: self.metadata,
-            payload: self.payload.map(|p| match p {
+    /// Convert this DataPayload of a Sized type into a DataPayload of a SerdeSeDataStruct.
+    pub fn into_serde_se(self) -> DataPayload<'d, dyn SerdeSeDataStruct<'s> + 's> {
+        DataPayload {
+            cow: self.cow.map(|p| match p {
                 Cow::Borrowed(v) => Cow::Borrowed(v as &dyn SerdeSeDataStruct),
                 Cow::Owned(v) => {
                     let boxed: Box<dyn SerdeSeDataStruct> = Box::new(v);
@@ -192,25 +190,20 @@ where
     }
 }
 
-impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
-    /// Convert this DataResponse of an ErasedDataStruct into a DataResponse of a Sized type.
+impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
+    /// Convert this DataPayload of an ErasedDataStruct into a DataPayload of a Sized type. Returns
+    /// an error if the type is not compatible.
     ///
     /// Can be used to implement DataProvider on types implementing ErasedDataProvider.
-    pub fn downcast<T>(self) -> Result<DataResponse<'d, T>, Error>
+    pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
         T: Clone + Debug + Any,
     {
-        let metadata = self.metadata;
-        let cow = match self.payload {
+        let old_cow = match self.cow {
             Some(cow) => cow,
-            None => {
-                return Ok(DataResponse {
-                    metadata,
-                    payload: None,
-                })
-            }
+            None => return Ok(DataPayload { cow: None }),
         };
-        let payload = match cow {
+        let new_cow = match old_cow {
             Cow::Borrowed(erased) => {
                 let borrowed: &'d T =
                     erased
@@ -220,7 +213,7 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
                             actual: Some(erased.type_id()),
                             generic: Some(TypeId::of::<T>()),
                         })?;
-                Some(Cow::Borrowed(borrowed))
+                Cow::Borrowed(borrowed)
             }
             Cow::Owned(erased) => {
                 let boxed: Box<T> =
@@ -231,10 +224,10 @@ impl<'d> DataResponse<'d, dyn ErasedDataStruct> {
                             actual: Some(any.type_id()),
                             generic: Some(TypeId::of::<T>()),
                         })?;
-                Some(Cow::Owned(*boxed))
+                Cow::Owned(*boxed)
             }
         };
-        Ok(DataResponse { metadata, payload })
+        Ok(DataPayload { cow: Some(new_cow) })
     }
 }
 
@@ -305,7 +298,10 @@ macro_rules! impl_erased {
             > {
                 let result: $crate::prelude::DataResponse<$struct> =
                     $crate::prelude::DataProvider::load_payload(self, req)?;
-                Ok(result.into_erased())
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into_erased(),
+                })
             }
         }
     };
@@ -327,7 +323,10 @@ macro_rules! impl_serde_se {
             > {
                 let result: $crate::prelude::DataResponse<$struct> =
                     $crate::prelude::DataProvider::load_payload(self, req)?;
-                Ok(result.into_serde_se())
+                    Ok(DataResponse {
+                        metadata: result.metadata,
+                        payload: result.payload.into_serde_se(),
+                    })
             }
         }
     };
@@ -340,7 +339,10 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let result = ErasedDataProvider::load_payload(self, req)?;
-        result.downcast()
+        Ok(DataResponse {
+            metadata: result.metadata,
+            payload: result.payload.downcast()?,
+        })
     }
 }
 

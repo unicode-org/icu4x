@@ -45,7 +45,9 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Owned(self.data.hello_v1.clone())),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(self.data.hello_v1.clone())),
+            },
         })
     }
 }
@@ -60,7 +62,9 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(&self.data.hello_v1)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(&self.data.hello_v1)),
+            },
         })
     }
 }
@@ -90,7 +94,9 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
+            },
         })
     }
 }
@@ -100,7 +106,9 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
+            },
         })
     }
 }
@@ -116,13 +124,23 @@ impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
             DataProvider::load_payload(self, req);
         match result {
             Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
-            _ => return result.map(|r| r.into_erased()),
+            _ => {
+                return result.map(|r| DataResponse {
+                    metadata: r.metadata,
+                    payload: r.payload.into_erased(),
+                })
+            }
         };
         let result: Result<DataResponse<HelloAlt>, DataError> =
             DataProvider::load_payload(self, req);
         match result {
             Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
-            _ => return result.map(|r| r.into_erased()),
+            _ => {
+                return result.map(|r| DataResponse {
+                    metadata: r.metadata,
+                    payload: r.payload.into_erased(),
+                })
+            }
         };
         Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
@@ -150,13 +168,13 @@ fn get_payload_v1<'d, 's, P: DataProvider<'d, HelloWorldV1<'s>> + ?Sized + 'd>(
 where
     's: 'd,
 {
-    provider.load_payload(&get_request_v1())?.take_payload()
+    provider.load_payload(&get_request_v1())?.payload.take()
 }
 
 fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
-    d.load_payload(&get_request_alt())?.take_payload()
+    d.load_payload(&get_request_alt())?.payload.take()
 }
 
 fn get_request_v1() -> DataRequest {
@@ -329,9 +347,10 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataResponse<HelloWorldV1>, DataError> =
+    let response: Result<DataPayload<HelloWorldV1>, DataError> =
         ErasedDataProvider::load_payload(&provider, &get_request_alt())
             .unwrap()
+            .payload
             .downcast();
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
@@ -344,12 +363,14 @@ where
     let v1: Cow<'d, HelloWorldV1<'s>> = d
         .load_payload(&get_request_v1())
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
     let v2: Cow<'d, HelloAlt> = d
         .load_payload(&get_request_alt())
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
     if v1.message == v2.message {
         panic!()

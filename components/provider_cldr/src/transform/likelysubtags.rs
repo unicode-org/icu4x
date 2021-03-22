@@ -65,7 +65,9 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
                 },
-                payload: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
+                payload: DataPayload {
+                    cow: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
+                },
             })
         } else {
             Err(DataError::UnavailableResourceOptions(req.clone()))
@@ -192,7 +194,8 @@ fn test_basic() {
     let result: Cow<LikelySubtagsV1> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     let langid = langid!("cu-Glag");

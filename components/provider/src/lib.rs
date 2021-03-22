@@ -48,15 +48,13 @@
 //!
 //! ### `SerdeDataProvider`
 //!
-//! *Enabled with the "eserde" feature*
+//! *Enabled with the "provider_serde" feature*
 //!
 //! The trait [`SerdeDataProvider`] removes the type argument from `DataProvider` and requires
 //! that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
 //! to be saved as a trait object without being specific to a data struct type.
 //!
 //! ### `ErasedDataProvider`
-//!
-//! *Enabled with the "erased" feature*
 //!
 //! The trait [`ErasedDataProvider`] removes the type argument from `DataProvider` and requires
 //! that all data structs be convertible to the `Any` type. This enables the processing of data
@@ -102,14 +100,13 @@
 pub mod data_provider;
 #[macro_use]
 pub mod resource;
-#[cfg(feature = "erased")]
 #[macro_use]
 pub mod erased;
 pub mod export;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
-#[cfg(feature = "eserde")]
+#[cfg(feature = "provider_serde")]
 pub mod serde;
 pub mod struct_provider;
 
@@ -119,6 +116,7 @@ pub use error::Error as DataError;
 
 pub mod prelude {
     //! Core selection of APIs and structures for `DataProvider`.
+    pub use crate::data_provider::DataPayload;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;
     pub use crate::data_provider::DataResponse;

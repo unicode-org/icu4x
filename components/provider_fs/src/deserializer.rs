@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::manifest::SyntaxOption;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeDataReceiver;
+use icu_provider::serde::SerdeDeDataReceiver;
 use std::io::Read;
 use std::path::Path;
 
@@ -104,7 +104,7 @@ where
 pub fn deserialize_into_receiver(
     rdr: impl Read,
     syntax_option: &SyntaxOption,
-    receiver: &mut dyn SerdeDataReceiver,
+    receiver: &mut dyn SerdeDeDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
         SyntaxOption::Json => {

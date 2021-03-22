@@ -32,7 +32,7 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider", features = ["eserde"] }
+icu_provider = { version = "0.1", path = "../provider", features = ["provider_serde"] }
 icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 erased-serde = { version = "0.3" }
@@ -59,7 +59,7 @@ criterion = "0.3.3"
 
 [features]
 export = ["static_assertions", "log"]
-export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger", "icu_provider/erased"]
+export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
 serialize_none = ["icu_provider_cldr/serialize_none"]
 bench = []
 
