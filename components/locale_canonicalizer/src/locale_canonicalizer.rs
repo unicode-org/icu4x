@@ -38,7 +38,8 @@ impl LocaleCanonicalizer<'_> {
     ) -> Result<LocaleCanonicalizer<'d>, DataError> {
         let payload: Cow<LikelySubtagsV1> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
-            .take_payload()?;
+            .payload
+            .take()?;
 
         Ok(LocaleCanonicalizer {
             likely_subtags: payload,

@@ -273,7 +273,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
         let date_time = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();

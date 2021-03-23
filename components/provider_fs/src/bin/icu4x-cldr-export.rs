@@ -4,7 +4,7 @@
 use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::DataExporter;
+use icu_provider::export::DataExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;

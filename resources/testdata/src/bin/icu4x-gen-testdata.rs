@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use clap::{App, Arg, ArgMatches};
-use icu_provider::iter::DataExporter;
+use icu_provider::export::DataExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::{CldrJsonDataProvider, CldrPathsAllInOne};

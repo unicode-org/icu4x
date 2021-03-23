@@ -31,7 +31,8 @@ fn parser(c: &mut Criterion) {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
 
         let r = &[

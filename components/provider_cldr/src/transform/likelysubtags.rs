@@ -5,6 +5,7 @@ use crate::error::Error;
 use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -64,7 +65,9 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
                 },
-                payload: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
+                payload: DataPayload {
+                    cow: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
+                },
             })
         } else {
             Err(DataError::UnavailableResourceOptions(req.clone()))
@@ -72,9 +75,10 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
     }
 }
 
-icu_provider::impl_erased!(LikelySubtagsProvider<'d>, 'd);
+icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, LikelySubtagsV1, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, LikelySubtagsV1, SERDE_SE, 'd, 's);
 
-impl<'d> IterableDataProvider<'d> for LikelySubtagsProvider<'d> {
+impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -190,7 +194,8 @@ fn test_basic() {
     let result: Cow<LikelySubtagsV1> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     let langid = langid!("cu-Glag");

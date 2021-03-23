@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Data provider always serving the same struct.
+
 use crate::error::Error;
 use crate::prelude::*;
 use std::borrow::Cow;
@@ -36,7 +38,7 @@ use std::fmt::Debug;
 ///
 /// let payload: Cow<SampleDataStruct> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
-///     .take_payload()
+///     .payload.take()
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(*payload, local_data);
@@ -55,7 +57,9 @@ where
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(self.data)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(self.data)),
+            },
         })
     }
 }

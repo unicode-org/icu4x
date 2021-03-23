@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use crate::CldrPaths;
 use icu_provider::erased::*;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use icu_provider::serde::SerdeSeDataStruct;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
@@ -30,26 +32,26 @@ fn map_poison<E>(_err: E) -> DataError {
 }
 
 /// A lazy-initialized CLDR JSON data provider.
-impl<'b, 'd, T> LazyCldrProvider<T>
+impl<'b, 'd, 's: 'd, T> LazyCldrProvider<T>
 where
     T: ErasedDataProvider<'d>
-        + IterableDataProvider<'d>
+        + DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
+        + IterableDataProviderCore
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,
     <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
 {
     /// Call `T::load`, initializing T if necessary.
-    pub fn try_load(
+    pub fn try_load_payload(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<DataResponseMetadata>, DataError> {
+    ) -> Result<Option<DataResponse<'d, dyn ErasedDataStruct>>, DataError> {
         if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
-            return data_provider.load_to_receiver(req, receiver).map(Some);
+            return ErasedDataProvider::load_erased(data_provider, req).map(Some);
         }
         let mut src = self.src.write().map_err(map_poison)?;
         if src.is_none() {
@@ -58,7 +60,29 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        data_provider.load_to_receiver(req, receiver).map(Some)
+        return ErasedDataProvider::load_erased(data_provider, req).map(Some);
+    }
+
+    /// Call `T::load`, initializing T if necessary.
+    pub fn try_load_serde(
+        &self,
+        req: &DataRequest,
+        cldr_paths: &'b dyn CldrPaths,
+    ) -> Result<Option<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>>, DataError> {
+        if T::supports_key(&req.resource_path.key).is_err() {
+            return Ok(None);
+        }
+        if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
+            return DataProvider::load_payload(data_provider, req).map(Some);
+        }
+        let mut src = self.src.write().map_err(map_poison)?;
+        if src.is_none() {
+            src.replace(T::try_from(cldr_paths).map_err(DataError::new_resc_error)?);
+        }
+        let data_provider = src
+            .as_ref()
+            .expect("The RwLock must be populated at this point.");
+        return DataProvider::load_payload(data_provider, req).map(Some);
     }
 
     /// Call `T::supported_options_for_key`, initializing T if necessary.

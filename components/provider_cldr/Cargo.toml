@@ -27,7 +27,7 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider", features = ["erased"] }
+icu_provider = { version = "0.1", path = "../provider", features = ["provider_serde"] }
 icu_locid = { version = "0.1", path = "../locid" }
 icu_plurals = { version = "0.1", path = "../plurals" }
 icu_datetime = { version = "0.1", path = "../datetime" }

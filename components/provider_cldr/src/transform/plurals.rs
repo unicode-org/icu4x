@@ -6,6 +6,7 @@ use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::{parse, serialize};
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -78,12 +79,11 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-// Only returns owned data, so assert 'static for ErasedDataProvider compatibility.
-impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> {
+impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'static>>, DataError> {
+    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'s>>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req.try_langid()?.clone().into();
@@ -95,14 +95,17 @@ impl<'d> DataProvider<'d, PluralRuleStringsV1<'static>> for PluralsProvider<'d> 
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
+            },
         })
     }
 }
 
-icu_provider::impl_erased!(PluralsProvider<'d>, 'd);
+icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'s>, SERDE_SE, 'd, 's);
 
-impl<'d> IterableDataProvider<'d> for PluralsProvider<'d> {
+impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -203,7 +206,8 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!(None, cs_rules.zero);
