@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616177524519,
+  "lastUpdate": 1616542841218,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4157,6 +4157,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 124282,
             "range": "± 13591",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "43ad4cd4a13fea1878dc267ac18d5c681bc9fa8e",
+          "message": "Split type erasure logic from erased_serde logic in ErasedDataProvider (#564)",
+          "timestamp": "2021-03-23T18:34:30-05:00",
+          "tree_id": "1ffcb907aaa7c75722c21a5e3b17fe792ca72603",
+          "url": "https://github.com/unicode-org/icu4x/commit/43ad4cd4a13fea1878dc267ac18d5c681bc9fa8e"
+        },
+        "date": 1616542840525,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1314,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6886,
+            "range": "± 443",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 100254,
+            "range": "± 5223",
             "unit": "ns/iter"
           }
         ]
