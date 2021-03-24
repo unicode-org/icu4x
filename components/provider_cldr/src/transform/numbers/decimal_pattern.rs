@@ -35,24 +35,19 @@ pub struct DecimalSubPattern {
 impl FromStr for DecimalSubPattern {
     type Err = Error;
 
+    #[allow(clippy::many_single_char_names)]
     fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
         // Split the subpattern into prefix, body, and suffix.
         // TODO: Handle quoted literals in prefix and suffix.
         // i = boundary between prefix and body
         // j = boundary between body and suffix
-        let i = subpattern.find(|c: char| match c {
-            '#' | '0' | ',' | '.' => true,
-            _ => false,
-        });
+        let i = subpattern.find(|c: char| matches!(c, '#' | '0' | ',' | '.'));
         let i = match i {
             Some(i) => i,
             None => return Err(Error::NoBodyInSubpattern),
         };
         let j = subpattern[i..]
-            .find(|c: char| match c {
-                '#' | '0' | ',' | '.' => false,
-                _ => true,
-            })
+            .find(|c: char| !matches!(c, '#' | '0' | ',' | '.'))
             .unwrap_or_else(|| subpattern.len() - i)
             + i;
         let prefix = &subpattern[..i];
@@ -67,14 +62,14 @@ impl FromStr for DecimalSubPattern {
             "0.######" => (0, 0, 0, 6),
             _ => return Err(Error::UnknownPatternBody(body.to_string())),
         };
-        return Ok(Self {
+        Ok(Self {
             prefix: prefix.into(),
             suffix: suffix.into(),
             primary_grouping: a,
             secondary_grouping: b,
             min_fraction_digits: c,
             max_fraction_digits: d,
-        });
+        })
     }
 }
 
