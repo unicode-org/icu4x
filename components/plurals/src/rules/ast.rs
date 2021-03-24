@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 //! `AST` provides a set of Syntax Tree Nodes used to store
 //! the output of [`parse`] method that is used in [`test_condition`] method
 //! to evaluate whether a given [`PluralCategory`] should be used.
