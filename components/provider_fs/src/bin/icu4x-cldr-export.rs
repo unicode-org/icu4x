@@ -1,10 +1,11 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::manifest::LocalesOption;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
-use icu_provider::iter::DataExporter;
+use icu_provider::export::DataExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_resc_keys;
 use icu_provider_cldr::CldrJsonDataProvider;

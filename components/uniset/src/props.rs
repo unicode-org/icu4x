@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 #![allow(clippy::unreadable_literal, dead_code)]
 
 use crate::provider::*;
@@ -25,7 +26,7 @@ fn get_prop<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(
     };
     let mut resp: DataResponse<UnicodeProperty> = ppucd_provider.load_payload(&data_req)?;
 
-    let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload()?;
+    let ppucd_property_cow: Cow<UnicodeProperty> = resp.payload.take()?;
     let ppucd_property: UnicodeProperty = ppucd_property_cow.into_owned();
     ppucd_property.try_into()
 }

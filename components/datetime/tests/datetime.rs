@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 #![cfg(all(not(feature = "serialize_none"), feature = "serde"))]
 
 mod fixtures;
@@ -61,7 +62,8 @@ fn test_dayperiod_patterns() {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         *data.to_mut().patterns.date_time.long.to_mut() = String::from("{0}");
         for test_case in &test.test_cases {
