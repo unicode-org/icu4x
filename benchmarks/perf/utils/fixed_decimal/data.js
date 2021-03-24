@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616542809810,
+  "lastUpdate": 1616564302573,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2999,6 +2999,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 150186,
             "range": "± 12497",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c82cb379cc5662e2f63a617d77d37dca631a0d5",
+          "message": "Check all lines of license header (#551)",
+          "timestamp": "2021-03-23T22:32:37-07:00",
+          "tree_id": "4c8c7b9e06646502945f11ae2d531e983e416c5d",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c82cb379cc5662e2f63a617d77d37dca631a0d5"
+        },
+        "date": 1616564301377,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 131178,
+            "range": "± 4020",
             "unit": "ns/iter"
           }
         ]
