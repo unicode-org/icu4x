@@ -5,7 +5,7 @@
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
 pub mod key {
-    use icu_provider::{resource::ResourceKey, resource_key};
+    use icu_provider::{resource_key, ResourceKey};
     pub const SYMBOLS_V1: ResourceKey = resource_key!(decimal, "symbols", 1);
 }
 

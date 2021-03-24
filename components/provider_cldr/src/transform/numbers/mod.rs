@@ -7,6 +7,7 @@ use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_decimal::provider::*;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -113,14 +114,17 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(result)),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(result)),
+            },
         })
     }
 }
 
-icu_provider::impl_erased!(NumbersProvider, 'd);
+icu_provider::impl_dyn_provider!(NumbersProvider, DecimalSymbolsV1, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(NumbersProvider, DecimalSymbolsV1, SERDE_SE, 'd, 's);
 
-impl<'d> IterableDataProvider<'d> for NumbersProvider {
+impl<'d> IterableDataProviderCore for NumbersProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -192,7 +196,8 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!(ar_decimal.decimal_separator, "٫");
