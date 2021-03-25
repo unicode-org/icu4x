@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616564335902,
+  "lastUpdate": 1616638167871,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4277,6 +4277,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4863,
             "range": "± 318",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30a3909542955e156a11a979f57d8c38c1dbeac5",
+          "message": "Add PPUCD enumerated property parsing (#448)",
+          "timestamp": "2021-03-24T19:03:27-07:00",
+          "tree_id": "2bf1b3ea632a1a61377727188428b56fd2094669",
+          "url": "https://github.com/unicode-org/icu4x/commit/30a3909542955e156a11a979f57d8c38c1dbeac5"
+        },
+        "date": 1616638166601,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3265,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5016,
+            "range": "± 181",
             "unit": "ns/iter"
           }
         ]
