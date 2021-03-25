@@ -274,29 +274,8 @@ impl PluralRules {
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
-        let key = match type_ {
-            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
-            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
-        };
-        let plurals_data = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid.clone()),
-                    },
-                },
-            })?
-            .payload
-            .take()?;
-
-        let list: data::PluralRuleList = (&*plurals_data).try_into()?;
-
-        Ok(Self {
-            _langid: langid,
-            selector: list.into(),
-        })
+        let data = Self::get_plural_data(langid.clone(), data_provider, type_)?;
+        Ok(Self::new_from_data(langid, data))
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
@@ -358,5 +337,40 @@ impl PluralRules {
     /// [`Plural Operands`]: operands::PluralOperands
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
         self.selector.select(&input.into())
+    }
+
+    /// Lower level helper that allows extracting PluralRules-relevant data from a data provider
+    /// without constructing PluralRules
+    pub fn get_plural_data<'d, D: DataProvider<'d, provider::PluralRuleStringsV1<'d>> + ?Sized>(
+        langid: LanguageIdentifier,
+        data_provider: &D,
+        type_: PluralRuleType,
+    ) -> Result<data::PluralRuleList, PluralRulesError> {
+        let key = match type_ {
+            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
+            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
+        };
+        let data = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid),
+                    },
+                },
+            })?
+            .payload
+            .take()?;
+        (&*data).try_into()
+    }
+
+    /// Lower-level constructor that allows constructing a PluralRules directly from
+    /// data obtained from a provider
+    pub fn new_from_data(langid: LanguageIdentifier, data: data::PluralRuleList) -> Self {
+        Self {
+            _langid: langid,
+            selector: data.into(),
+        }
     }
 }
