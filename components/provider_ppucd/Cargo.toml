@@ -26,5 +26,5 @@ skip_optional_dependencies = true
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
-tinystr = "0.4"
 icu_uniset = { version = "0.1", path = "../uniset" }
+tinystr = "0.4"

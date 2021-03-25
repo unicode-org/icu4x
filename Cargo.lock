@@ -1026,7 +1026,9 @@ dependencies = [
  "criterion",
  "icu_benchmark_macros",
  "icu_provider",
+ "litemap",
  "serde",
+ "tinystr",
 ]
 
 [[package]]
