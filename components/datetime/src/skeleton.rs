@@ -10,7 +10,11 @@ use std::{cmp::Ordering, convert::TryFrom, fmt};
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 
 #[cfg(feature = "provider_serde")]
-use serde::{de, ser, Deserialize, Deserializer, Serialize};
+use serde::{
+    de,
+    ser::{self, SerializeSeq},
+    Deserialize, Deserializer, Serialize,
+};
 
 #[derive(Debug, PartialEq)]
 struct FieldIndex(usize);
@@ -31,6 +35,14 @@ struct FieldIndex(usize);
 pub struct Skeleton(SmallVec<[fields::Field; 5]>);
 
 impl Skeleton {
+    fn fields_iter<'a>(&'a self) -> impl Iterator<Item = &Field> + 'a {
+        self.0.iter()
+    }
+
+    fn fields_len(&self) -> usize {
+        self.0.len()
+    }
+
     /// The LiteMap<SkeletonV, PatternV1> structs should be ordered by the `Skeleton` canonical
     /// order. This helps ensure that the skeleton serialization is sorted deterministically.
     /// This order is determined by the order of the fields listed in UTS 35, which is ordered
@@ -107,10 +119,10 @@ impl Ord for Skeleton {
 
 /// This is an implementation of the serde deserialization visitor pattern.
 #[cfg(feature = "provider_serde")]
-struct SkeletonFieldsDeserializeVisitor;
+struct DeserializeSkeletonFieldsUTS35String;
 
 #[cfg(feature = "provider_serde")]
-impl<'de> de::Visitor<'de> for SkeletonFieldsDeserializeVisitor {
+impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
     type Value = Skeleton;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -136,12 +148,39 @@ impl<'de> de::Visitor<'de> for SkeletonFieldsDeserializeVisitor {
 }
 
 #[cfg(feature = "provider_serde")]
+struct DeserializeSkeletonBincode;
+
+#[cfg(feature = "provider_serde")]
+impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
+    type Value = Skeleton;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "Unable to deserialize a bincode Pattern.")
+    }
+
+    fn visit_seq<V>(self, mut seq: V) -> Result<Skeleton, V::Error>
+    where
+        V: de::SeqAccess<'de>,
+    {
+        let mut items: SmallVec<[fields::Field; 5]> = SmallVec::new();
+        while let Some(item) = seq.next_element()? {
+            items.push(item)
+        }
+        Ok(Skeleton(items))
+    }
+}
+
+#[cfg(feature = "provider_serde")]
 impl<'de> Deserialize<'de> for Skeleton {
     fn deserialize<D>(deserializer: D) -> Result<Skeleton, D::Error>
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_str(SkeletonFieldsDeserializeVisitor)
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_str(DeserializeSkeletonFieldsUTS35String)
+        } else {
+            deserializer.deserialize_seq(DeserializeSkeletonBincode)
+        }
     }
 }
 
@@ -151,16 +190,27 @@ impl Serialize for Skeleton {
     where
         S: ser::Serializer,
     {
-        let mut string = String::new();
+        if serializer.is_human_readable() {
+            // Serialize into the UTS 35 string representation.
+            let mut string = String::new();
 
-        for field in self.0.iter() {
-            let ch: char = field.symbol.into();
-            for _ in 0..field.length as usize {
-                string.push(ch);
+            for field in self.0.iter() {
+                let ch: char = field.symbol.into();
+                for _ in 0..field.length as usize {
+                    string.push(ch);
+                }
             }
-        }
 
-        serializer.serialize_str(&string)
+            serializer.serialize_str(&string)
+        } else {
+            // Serialize into a bincode-friendly representation. This means that pattern parsing
+            // will not be needed when deserializing.
+            let mut seq = serializer.serialize_seq(Some(self.fields_len()))?;
+            for item in self.fields_iter() {
+                seq.serialize_element(item)?;
+            }
+            seq.end()
+        }
     }
 }
 
