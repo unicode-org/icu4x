@@ -83,10 +83,16 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 
 ### Benchmark dashboards
 
-| Component     | Runtime                                                                  |
-|---------------|--------------------------------------------------------------------------|
-| locid         | [link](https://unicode-org.github.io/icu4x-docs/dev/components/locid)    |
-| uniset        | [link](https://unicode-org.github.io/icu4x-docs/dev/components/uniset)   |
-| fixed_decimal | [link](https://unicode-org.github.io/icu4x-docs/dev/utils/fixed_decimal) |
-| plurals       | [link](https://unicode-org.github.io/icu4x-docs/dev/components/plurals)  |
-| datetime      | [link](https://unicode-org.github.io/icu4x-docs/dev/components/datetime) |
+The [performance benchmarks](docs/process/benchmarking.md) are all run on Ubuntu, and are broken out by component.
+
+* [locid](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/locid)
+* [uniset](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/uniset)
+* [fixed_decimal](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/utils/fixed_decimal)
+* [plurals](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/plurals)
+* [datetime](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/datetime)
+
+The [memory benchmarks](tools/benchmark#icu_benchmark_memory) are run separately on each platform, and examples are individually instrumented.
+
+* [macOS](https://unicode-org.github.io/icu4x-docs/benchmarks/memory/macos-latest/)
+* [Ubuntu](https://unicode-org.github.io/icu4x-docs/benchmarks/memory/ubuntu-latest/)
+* [Windows](https://unicode-org.github.io/icu4x-docs/benchmarks/memory/windows-latest/)

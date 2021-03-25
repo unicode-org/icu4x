@@ -50,7 +50,9 @@ impl<'d, 's> DataProvider<'d, UnicodeProperty<'s>> for PpucdDataProvider<'s> {
         };
         Ok(DataResponse {
             metadata: DataResponseMetadata { data_langid: None },
-            payload: Some(Cow::Owned(prop)),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(prop)),
+            },
         })
     }
 }
@@ -72,7 +74,7 @@ fn test_ppucd_provider_parse() {
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
     let data_req = DataRequest {
         resource_path: ResourcePath {
-            key: key::WSPACE_V1,
+            key: key::WHITE_SPACE_V1,
             options: ResourceOptions {
                 variant: None,
                 langid: None,
@@ -81,7 +83,7 @@ fn test_ppucd_provider_parse() {
     };
     let mut resp: DataResponse<UnicodeProperty> = ppucd_provider.load_payload(&data_req).unwrap();
 
-    let ppucd_property_cow: Cow<UnicodeProperty> = resp.take_payload().unwrap();
+    let ppucd_property_cow: Cow<UnicodeProperty> = resp.payload.take().unwrap();
     let exp_prop_uniset: UnicodeProperty = UnicodeProperty {
         name: Cow::Borrowed("WSpace"),
         inv_list: vec![

@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use super::aliasing::{self, AliasCollection};
 use super::serializers::AbstractSerializer;
 use crate::error::Error;
@@ -8,9 +9,9 @@ use crate::manifest::AliasOption;
 use crate::manifest::LocalesOption;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
-use icu_provider::erased::ErasedDataStruct;
-use icu_provider::iter::DataExporter;
+use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
+use icu_provider::serde::SerdeSeDataStruct;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
@@ -69,11 +70,11 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl DataExporter for FilesystemExporter {
+impl<'d, 's: 'd> DataExporter<'d, dyn SerdeSeDataStruct<'s> + 's> for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: &DataRequest,
-        obj: &dyn ErasedDataStruct,
+        obj: &dyn SerdeSeDataStruct,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());

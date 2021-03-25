@@ -1,6 +1,7 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 [package]
 name = "icu_provider_cldr"
 description = "Data provider that reads from a CLDR JSON data source"
@@ -27,7 +28,7 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider", features = ["erased"] }
+icu_provider = { version = "0.1", path = "../provider", features = ["provider_serde"] }
 icu_locid = { version = "0.1", path = "../locid" }
 icu_plurals = { version = "0.1", path = "../plurals" }
 icu_datetime = { version = "0.1", path = "../datetime" }

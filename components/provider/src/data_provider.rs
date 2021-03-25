@@ -84,6 +84,27 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
+/// A wrapper around the payload returned in a [DataResponse].
+///
+/// # Example
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use std::borrow::Cow;
+///
+/// let payload = DataPayload { cow: Some(Cow::Borrowed("Demo")) };
+///
+/// assert_eq!("Demo", payload.borrow().expect("Payload is present"));
+/// ```
+#[derive(Debug, Clone)]
+pub struct DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    pub cow: Option<Cow<'d, T>>,
+}
+
 /// A response object containing an object as payload and metadata about it.
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
@@ -95,32 +116,45 @@ where
     pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
-    pub payload: Option<Cow<'d, T>>,
+    pub payload: DataPayload<'d, T>,
 }
 
-impl<'d, T> DataResponse<'d, T>
+impl<'d, T> DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    /// Convenience method: borrows the underlying payload. Error if not present.
-    pub fn borrow_payload(&self) -> Result<&T, Error> {
+    /// Creates a new, empty DataPayload.
+    ///
+    /// Default is not implemented because it would be misleading: does the DataPayload start
+    /// empty, or does it start with the Default value of T?
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self { cow: None }
+    }
+
+    /// Borrows the underlying payload. Error if not present.
+    pub fn borrow(&self) -> Result<&T, Error> {
         use std::borrow::Borrow;
-        self.payload
+        self.cow
             .as_ref()
             .map(|cow| cow.borrow())
             .ok_or(Error::MissingPayload)
     }
 
-    /// Convenience method: takes ownership of the underlying payload. Error if not present.
-    pub fn take_payload(&mut self) -> Result<Cow<'d, T>, Error> {
-        self.payload.take().ok_or(Error::MissingPayload)
+    /// Takes ownership of the underlying payload. Error if not present.
+    pub fn take(&mut self) -> Result<Cow<'d, T>, Error> {
+        self.cow.take().ok_or(Error::MissingPayload)
     }
 }
 
-// TODO(#434): Implement DataProvider<ErasedDataStruct>
-
 /// A generic data provider that loads a payload of a specific type.
+///
+/// See examples on some of the concrete implementations:
+///
+/// - [HelloWorldProvider](crate::hello_world::HelloWorldProvider)
+/// - [StructProvider](crate::struct_provider::StructProvider)
+/// - [InvariantDataProvider](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,

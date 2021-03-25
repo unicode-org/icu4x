@@ -842,6 +842,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_capi"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_plurals",
+ "icu_provider",
+ "icu_provider_fs",
+]
+
+[[package]]
 name = "icu_datetime"
 version = "0.1.0"
 dependencies = [
@@ -1021,7 +1031,9 @@ dependencies = [
  "criterion",
  "icu_benchmark_macros",
  "icu_provider",
+ "litemap",
  "serde",
+ "tinystr",
 ]
 
 [[package]]

@@ -7,6 +7,7 @@ use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::{provider::*, skeleton::SkeletonError};
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -78,14 +79,17 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(gregory::DatesV1::from(dates))),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(gregory::DatesV1::from(dates))),
+            },
         })
     }
 }
 
-icu_provider::impl_erased!(DatesProvider<'d>, 'd);
+icu_provider::impl_dyn_provider!(DatesProvider<'d>, gregory::DatesV1, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(DatesProvider<'d>, gregory::DatesV1, SERDE_SE, 'd, 's);
 
-impl<'d> IterableDataProvider<'d> for DatesProvider<'d> {
+impl<'d> IterableDataProviderCore for DatesProvider<'d> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -511,7 +515,8 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
@@ -543,7 +548,8 @@ fn test_with_numbering_system() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     assert_eq!("d MMM y", cs_dates.patterns.date.medium);
@@ -570,7 +576,8 @@ fn unalias_contexts() {
             },
         })
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
 
     // Czech months are not unaliased because `wide` differs.

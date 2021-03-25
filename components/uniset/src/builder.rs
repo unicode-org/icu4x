@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use std::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
@@ -38,8 +39,7 @@ impl UnicodeSetBuilder {
 
         if start_eq_end && start_pos_check && end_res.is_err() {
             let ins = &[start, end];
-            self.intervals
-                .splice(start_ind..end_ind, ins.iter().copied());
+            self.intervals.splice(start_ind..end_ind, ins.iter().copied());
         } else {
             if start_pos_check {
                 self.intervals[start_ind] = start;

@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 //! `icu_plurals` is one of the [`ICU4X`] components.
 //!
 //! This API provides functionality to determine the plural category
@@ -287,7 +288,8 @@ impl PluralRules {
                     },
                 },
             })?
-            .take_payload()?;
+            .payload
+            .take()?;
 
         let list: data::PluralRuleList = (&*plurals_data).try_into()?;
 

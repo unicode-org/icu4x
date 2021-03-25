@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use std::{
     char,
     ops::{Bound::*, RangeBounds},
@@ -9,10 +10,7 @@ use std::{
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
-    v.is_empty()
-        || (v.len() % 2 == 0
-            && v.windows(2).all(|chunk| chunk[0] < chunk[1])
-            && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
+    v.is_empty() || (v.len() % 2 == 0 && v.windows(2).all(|chunk| chunk[0] < chunk[1]) && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
 }
 
 /// Returns start (inclusive) and end (exclusive) bounds of `RangeBounds`
