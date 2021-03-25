@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Borrow;
 use std::mem;
 use std::ops::{Index, IndexMut};
+use std::{borrow::Borrow, iter::FromIterator};
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -125,23 +125,35 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// Appends `value` with `key` to the end of the underlying vector, returning
     /// `key` and `value` _if it failed_. Useful for extending with an existing
     /// sorted list.
-    ///
     /// ```rust
     /// use litemap::LiteMap;
     ///
     /// let mut map = LiteMap::new();
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
-    /// // out of order append:
-    /// assert!(map.try_append(2, "dos").is_some());
+    ///
+    /// assert!(
+    ///     matches!(map.try_append(3, "tres-updated"), Some((3, "tres-updated"))),
+    ///     "append duplicate of last key",
+    /// );
+    ///
+    /// assert!(
+    ///     matches!(map.try_append(2, "dos"), Some((2, "dos"))),
+    ///     "append out of order"
+    /// );
     ///
     /// assert_eq!(map.get(&1), Some(&"uno"));
+    ///
+    /// // contains the original value for the key: 3
+    /// assert_eq!(map.get(&3), Some(&"tres"));
+    ///
     /// // not appended since it wasn't in order
     /// assert_eq!(map.get(&2), None);
     /// ```
+    #[must_use]
     pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
         if let Some(ref last) = self.values.last() {
-            if last.0 > key {
+            if last.0 >= key {
                 return Some((key, value));
             }
         }
@@ -208,6 +220,23 @@ impl<K: Ord, V> Index<&'_ K> for LiteMap<K, V> {
 impl<K: Ord, V> IndexMut<&'_ K> for LiteMap<K, V> {
     fn index_mut(&mut self, key: &K) -> &mut V {
         self.get_mut(key).expect("LiteMap could not find key")
+    }
+}
+impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
+    fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let iter = iter.into_iter();
+        let mut map = match iter.size_hint() {
+            (_, Some(upper)) => LiteMap::with_capacity(upper),
+            (lower, None) => LiteMap::with_capacity(lower),
+        };
+
+        for (key, value) in iter {
+            if let Some((key, value)) = map.try_append(key, value) {
+                map.insert(key, value);
+            }
+        }
+
+        map
     }
 }
 
@@ -312,5 +341,32 @@ mod serde {
         {
             deserializer.deserialize_map(LiteMapVisitor::new())
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn from_iterator() {
+        let mut expected = LiteMap::with_capacity(4);
+        expected.insert(1, "updated-one");
+        expected.insert(2, "original-two");
+        expected.insert(3, "original-three");
+        expected.insert(4, "updated-four");
+
+        let actual = vec![
+            (1, "original-one"),
+            (2, "original-two"),
+            (4, "original-four"),
+            (4, "updated-four"),
+            (1, "updated-one"),
+            (3, "original-three"),
+        ]
+        .into_iter()
+        .collect::<LiteMap<_, _>>();
+
+        assert_eq!(expected, actual);
     }
 }

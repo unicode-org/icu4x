@@ -1,6 +1,7 @@
 # This file is part of ICU4X. For terms of use, please see the file
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 name:                           Coverage
 
 on:
@@ -24,7 +25,7 @@ jobs:
 
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2021-03-08
+          toolchain:            nightly-2021-03-15
           override:             true
 
       - uses:                   actions-rs/cargo@v1

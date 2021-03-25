@@ -5,8 +5,8 @@
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_plurals::provider::*;
-use icu_provider::erased::*;
 use icu_provider::prelude::*;
+use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
 use std::borrow::Cow;
 
@@ -55,20 +55,22 @@ fn test_json() {
     let plurals_data: Cow<PluralRuleStringsV1> = provider
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
-        .take_payload()
+        .payload
+        .take()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
 
 #[test]
-fn test_json_dyn_erased() {
+fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn ErasedDataProvider)
+    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
-        .take_payload()
+        .payload
+        .take()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
@@ -77,10 +79,12 @@ fn test_json_dyn_erased() {
 fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
-    let mut receiver = DataReceiver::<PluralRuleStringsV1>::new();
+
+    type Provider<'d, 's> = dyn DataProvider<'d, PluralRuleStringsV1<'s>>;
 
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: key::CARDINAL_V1,
@@ -90,15 +94,13 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Ok(_)
     ));
 
-    receiver.reset();
-
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: key::CARDINAL_V1,
@@ -108,15 +110,13 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Err(DataError::UnavailableResourceOptions(_))
     ));
 
-    receiver.reset();
-
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: key::ORDINAL_V1,
@@ -126,15 +126,13 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Err(DataError::UnsupportedResourceKey(_))
     ));
 
-    receiver.reset();
-
     assert!(matches!(
-        provider.load_to_receiver(
+        Provider::load_payload(
+            &provider,
             &DataRequest {
                 resource_path: ResourcePath {
                     key: icu_provider::hello_world::key::HELLO_WORLD_V1,
@@ -144,7 +142,6 @@ fn test_json_errors() {
                     }
                 }
             },
-            &mut receiver
         ),
         Err(DataError::UnsupportedCategory(_))
     ));
@@ -165,21 +162,23 @@ fn test_bincode() {
     let plurals_data: Cow<PluralRuleStringsV1> = provider
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
-        .take_payload()
+        .payload
+        .take()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }
 
 #[test]
 #[cfg(feature = "bincode")]
-fn test_bincode_dyn_erased() {
+fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn ErasedDataProvider)
+    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
-        .take_payload()
+        .payload
+        .take()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }

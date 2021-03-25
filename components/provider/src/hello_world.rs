@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Data provider returning multilingual "Hello World" strings for testing.
+
+use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
@@ -16,9 +19,12 @@ pub mod key {
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct HelloWorldV1<'s> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub message: Cow<'s, str>,
 }
 
@@ -37,21 +43,26 @@ impl Default for HelloWorldV1<'_> {
 /// # Example
 ///
 /// ```
-/// use icu_provider::hello_world::{key, HelloWorldProvider};
+/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
+/// use std::borrow::Cow;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
-/// let german_hello_world = provider.load_payload(&DataRequest {
-///     resource_path: ResourcePath {
-///         key: key::HELLO_WORLD_V1,
-///         options: ResourceOptions {
-///             variant: None,
-///             langid: Some(langid!("de")),
+/// let german_hello_world: Cow<HelloWorldV1> = provider
+///     .load_payload(&DataRequest {
+///         resource_path: ResourcePath {
+///             key: key::HELLO_WORLD_V1,
+///             options: ResourceOptions {
+///                 variant: None,
+///                 langid: Some(langid!("de")),
+///             }
 ///         }
-///     }
-/// }).unwrap().take_payload().unwrap();
+///     })
+///     .unwrap()
+///     .payload.take()
+///     .unwrap();
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.message);
 /// ```
@@ -114,15 +125,19 @@ where
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: Some(Cow::Owned(data)),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(data)),
+            },
         })
     }
 }
 
-#[cfg(feature = "erased")]
-impl_erased!(HelloWorldProvider<'static>, 'd);
+impl_dyn_provider!(HelloWorldProvider<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
 
-impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
+#[cfg(feature = "provider_serde")]
+impl_dyn_provider!(HelloWorldProvider<'s>, HelloWorldV1<'s>, SERDE_SE, 'd, 's);
+
+impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -140,9 +155,10 @@ impl<'d> IterableDataProvider<'d> for HelloWorldProvider<'d> {
     }
 }
 
-/// Adds entries to a HelloWorldProvider as a DataExporter
-#[cfg(feature = "erased")]
-impl crate::iter::DataExporter for HelloWorldProvider<'static> {
+/// Adds entries to a HelloWorldProvider from ErasedDataStruct
+impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
+    for HelloWorldProvider<'static>
+{
     fn put_payload(
         &mut self,
         req: &DataRequest,

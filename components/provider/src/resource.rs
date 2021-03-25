@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Resource paths and related types.
+
 use crate::error::Error;
 use icu_locid::LanguageIdentifier;
 use std::borrow::Borrow;
@@ -10,12 +12,6 @@ use std::default::Default;
 use std::fmt;
 use std::fmt::Write;
 use tinystr::{TinyStr16, TinyStr4};
-
-/// Re-export tinystr4 for crate macro resource_key!()
-pub use tinystr::tinystr4;
-
-/// Re-export tinystr16 for crate macro resource_key!()
-pub use tinystr::tinystr16;
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
@@ -112,7 +108,7 @@ macro_rules! resource_key {
     };
     (x, $pu:literal, $sub_category:literal, $version:tt) => {
         $crate::resource_key!(
-            $crate::ResourceCategory::PrivateUse($crate::resource::tinystr4!($pu)),
+            $crate::ResourceCategory::PrivateUse($crate::internal::tinystr4!($pu)),
             $sub_category,
             $version
         )
@@ -120,7 +116,7 @@ macro_rules! resource_key {
     ($category:expr, $sub_category:literal, $version:tt) => {
         $crate::ResourceKey {
             category: $category,
-            sub_category: $crate::resource::tinystr16!($sub_category),
+            sub_category: $crate::internal::tinystr16!($sub_category),
             version: $version,
         }
     };
@@ -420,7 +416,7 @@ mod tests {
             KeyTestCase {
                 resc_key: ResourceKey {
                     category: ResourceCategory::PrivateUse(tinystr4!("priv")),
-                    sub_category: tinystr16!("cardinal"),
+                    sub_category: tinystr::tinystr16!("cardinal"),
                     version: 1,
                 },
                 expected: "x-priv/cardinal@1",

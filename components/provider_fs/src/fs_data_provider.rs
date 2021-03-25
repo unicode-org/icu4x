@@ -1,12 +1,13 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::deserializer;
 use crate::error::Error;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
-use icu_provider::erased::*;
 use icu_provider::prelude::*;
+use icu_provider::serde::*;
 use std::borrow::Cow;
 use std::fmt::Debug;
 use std::fs;
@@ -97,16 +98,18 @@ where
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(Cow::Owned(data)),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(data)),
+            },
         })
     }
 }
 
-impl<'d> ErasedDataProvider<'d> for FsDataProvider {
+impl<'de> SerdeDeDataProvider<'de> for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
+        receiver: &mut dyn SerdeDeDataReceiver<'de>,
     ) -> Result<DataResponseMetadata, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         deserializer::deserialize_into_receiver(reader, &self.manifest.syntax, receiver)

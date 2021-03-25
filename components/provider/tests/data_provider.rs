@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 
 use icu_provider::erased::*;
-use icu_provider::hello_world::{self, HelloWorldV1};
+use icu_provider::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1};
 use icu_provider::prelude::*;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
@@ -31,7 +31,7 @@ struct HelloCombined<'s> {
 
 /// A DataProvider that owns its data. DataProvider is implemented on `DataWarehouse`, returning
 /// owned data, and on `&'d DataWarehouse`, returning borrowed data. Both support only
-/// HELLO_WORLD_V1 and use `impl_erased!()`.
+/// HELLO_WORLD_V1 and use `impl_dyn_provider!()`.
 #[derive(Debug)]
 struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
@@ -42,34 +42,34 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
-        req.resource_path
-            .key
-            .match_key(hello_world::key::HELLO_WORLD_V1)?;
+        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Owned(self.data.hello_v1.clone())),
+            payload: DataPayload {
+                cow: Some(Cow::Owned(self.data.hello_v1.clone())),
+            },
         })
     }
 }
 
-icu_provider::impl_erased!(DataWarehouse<'static>, 'd);
+icu_provider::impl_dyn_provider!(DataWarehouse<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
 
 impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
-        req.resource_path
-            .key
-            .match_key(hello_world::key::HELLO_WORLD_V1)?;
+        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(&self.data.hello_v1)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(&self.data.hello_v1)),
+            },
         })
     }
 }
 
-icu_provider::impl_erased!(&'d DataWarehouse<'static>, 'd);
+icu_provider::impl_dyn_provider!(&'d DataWarehouse<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
 
 /// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT. Custom implementation of
 /// ErasedDataProvider.
@@ -91,12 +91,12 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
-        req.resource_path
-            .key
-            .match_key(hello_world::key::HELLO_WORLD_V1)?;
+        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(&self.borrowed_data.hello_v1)),
+            },
         })
     }
 }
@@ -106,29 +106,43 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
+            payload: DataPayload {
+                cow: Some(Cow::Borrowed(&self.borrowed_data.hello_alt)),
+            },
         })
     }
 }
 
+// TODO(sffc): Make a macro out of this
 impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
     /// Loads JSON data. Returns borrowed data.
-    fn load_to_receiver<'a>(
+    fn load_erased<'a>(
         &self,
         req: &DataRequest,
-        receiver: &'a mut dyn ErasedDataReceiver<'d, '_>,
-    ) -> Result<DataResponseMetadata, DataError> {
-        match req.resource_path.key {
-            hello_world::key::HELLO_WORLD_V1 => {
-                receiver.receive_erased(Cow::Borrowed(&self.borrowed_data.hello_v1))?;
-                Ok(DataResponseMetadata::default())
+    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
+        let result: Result<DataResponse<HelloWorldV1>, DataError> =
+            DataProvider::load_payload(self, req);
+        match result {
+            Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
+            _ => {
+                return result.map(|r| DataResponse {
+                    metadata: r.metadata,
+                    payload: r.payload.into(),
+                })
             }
-            HELLO_ALT_KEY => {
-                receiver.receive_erased(Cow::Borrowed(&self.borrowed_data.hello_alt))?;
-                Ok(DataResponseMetadata::default())
+        };
+        let result: Result<DataResponse<HelloAlt>, DataError> =
+            DataProvider::load_payload(self, req);
+        match result {
+            Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
+            _ => {
+                return result.map(|r| DataResponse {
+                    metadata: r.metadata,
+                    payload: r.payload.into(),
+                })
             }
-            _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
-        }
+        };
+        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 
@@ -148,29 +162,25 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_receiver_v1<'d, 's>() -> DataReceiver<'d, HelloWorldV1<'s>> {
-    DataReceiver::new()
-}
-
 fn get_payload_v1<'d, 's, P: DataProvider<'d, HelloWorldV1<'s>> + ?Sized + 'd>(
     provider: &P,
 ) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError>
 where
     's: 'd,
 {
-    provider.load_payload(&get_request_v1())?.take_payload()
+    provider.load_payload(&get_request_v1())?.payload.take()
 }
 
 fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
-    d.load_payload(&get_request_alt())?.take_payload()
+    d.load_payload(&get_request_alt())?.payload.take()
 }
 
 fn get_request_v1() -> DataRequest {
     DataRequest {
         resource_path: ResourcePath {
-            key: hello_world::key::HELLO_WORLD_V1,
+            key: HELLO_WORLD_V1,
             options: Default::default(),
         },
     }
@@ -232,21 +242,6 @@ fn test_warehouse_owned_dyn_erased_alt() {
 }
 
 #[test]
-fn test_warehouse_owned_receiver() {
-    let warehouse = get_warehouse(DATA);
-    let mut receiver: DataReceiver<HelloWorldV1> = get_receiver_v1();
-    warehouse
-        .load_to_receiver(&get_request_v1(), &mut receiver)
-        .unwrap();
-    assert!(matches!(
-        receiver.payload,
-        Some(Cow::Owned(HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }))
-    ));
-}
-
-#[test]
 fn test_warehouse_ref() {
     let warehouse = get_warehouse(DATA);
     let hello_data = get_payload_v1(&&warehouse);
@@ -289,21 +284,6 @@ fn test_warehouse_ref_dyn_erased_alt() {
     assert!(matches!(
         response,
         Err(DataError::UnsupportedResourceKey { .. })
-    ));
-}
-
-#[test]
-fn test_warehouse_ref_receiver() {
-    let warehouse = get_warehouse(DATA);
-    let mut receiver: DataReceiver<HelloWorldV1> = get_receiver_v1();
-    (&&warehouse)
-        .load_to_receiver(&get_request_v1(), &mut receiver)
-        .unwrap();
-    assert!(matches!(
-        receiver.payload,
-        Some(Cow::Borrowed(HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }))
     ));
 }
 
@@ -367,8 +347,11 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataResponse<HelloWorldV1>, DataError> =
-        (&provider as &dyn ErasedDataProvider).load_payload(&get_request_alt());
+    let response: Result<DataPayload<HelloWorldV1>, DataError> =
+        ErasedDataProvider::load_erased(&provider, &get_request_alt())
+            .unwrap()
+            .payload
+            .downcast();
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
 
@@ -380,12 +363,14 @@ where
     let v1: Cow<'d, HelloWorldV1<'s>> = d
         .load_payload(&get_request_v1())
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
     let v2: Cow<'d, HelloAlt> = d
         .load_payload(&get_request_alt())
         .unwrap()
-        .take_payload()
+        .payload
+        .take()
         .unwrap();
     if v1.message == v2.message {
         panic!()

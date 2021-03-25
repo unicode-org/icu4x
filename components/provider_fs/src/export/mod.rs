@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 //! The `export` feature enables you to pull all data from some other data provider and persist it
 //! on the filesystem to be read by an FsDataProvider at runtime.
 //!
@@ -12,7 +13,7 @@
 //! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
-//! use icu_provider::iter::DataExporter;
+//! use icu_provider::export::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
@@ -56,8 +57,8 @@
 //!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(
-//!     source_response.payload,
-//!     fs_response.payload,
+//!     source_response.payload.cow,
+//!     fs_response.payload.cow,
 //! );
 //!
 //! // Clean up from demo

@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 mod dates;
 mod likelysubtags;
 mod plurals;
@@ -12,7 +13,9 @@ pub use plurals::PluralsProvider;
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
 use icu_provider::erased::*;
+use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
+use icu_provider::serde::SerdeSeDataStruct;
 
 /// Returns a list of all ResourceKeys that this provider can produce.
 pub fn get_all_resc_keys() -> Vec<ResourceKey> {
@@ -43,28 +46,44 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
 }
 
 impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
-    fn load_to_receiver(
+    fn load_erased(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
-    ) -> Result<DataResponseMetadata, DataError> {
-        if let Some(result) = self.dates.try_load(req, receiver, self.cldr_paths)? {
+    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
+        if let Some(result) = self.dates.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self
-            .likelysubtags
-            .try_load(req, receiver, self.cldr_paths)?
-        {
+        if let Some(result) = self.likelysubtags.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.plurals.try_load(req, receiver, self.cldr_paths)? {
+        if let Some(result) = self.plurals.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
         Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 
-impl<'a, 'd> IterableDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
+    for CldrJsonDataProvider<'a, 'd>
+{
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, DataError> {
+        if let Some(result) = self.dates.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self.likelysubtags.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self.plurals.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
+    }
+}
+
+impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

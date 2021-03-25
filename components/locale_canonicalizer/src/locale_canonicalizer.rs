@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -38,7 +39,8 @@ impl LocaleCanonicalizer<'_> {
     ) -> Result<LocaleCanonicalizer<'d>, DataError> {
         let payload: Cow<LikelySubtagsV1> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
-            .take_payload()?;
+            .payload
+            .take()?;
 
         Ok(LocaleCanonicalizer {
             likely_subtags: payload,
