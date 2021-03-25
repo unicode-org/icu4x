@@ -8,6 +8,7 @@ pub use length::{FieldLength, LengthError};
 pub use symbols::*;
 
 use std::{
+    cmp::{Ord, PartialOrd},
     convert::{TryFrom, TryInto},
     fmt,
 };
@@ -25,7 +26,7 @@ impl fmt::Display for Error {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

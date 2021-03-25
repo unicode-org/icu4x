@@ -251,11 +251,6 @@ pub mod gregory {
             fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
                 match Skeleton::try_from(skeleton_string) {
                     Ok(skeleton) => Ok(SkeletonV1(skeleton)),
-                    Err(SkeletonError::FieldsOutOfOrder(fields)) => {
-                        // The fields were out of order, converting fields to a skeleton will ensure
-                        // that these fields are sorted. This sorting is only done in the provider.
-                        Ok(SkeletonV1(Skeleton::from(fields)))
-                    }
                     Err(err) => Err(err),
                 }
             }

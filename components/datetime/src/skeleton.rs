@@ -5,7 +5,7 @@
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
 use smallvec::SmallVec;
-use std::{cmp::Ordering, convert::TryFrom, fmt};
+use std::{convert::TryFrom, fmt};
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 
@@ -31,7 +31,7 @@ struct FieldIndex(usize);
 ///
 /// The `Field`s are only sorted in the `Skeleton` in order to provide a deterministic
 /// serialization strategy, and to provide a faster `Skeleton` matching operation.
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone, Ord, PartialOrd)]
 pub struct Skeleton(SmallVec<[fields::Field; 5]>);
 
 impl Skeleton {
@@ -41,79 +41,6 @@ impl Skeleton {
 
     fn fields_len(&self) -> usize {
         self.0.len()
-    }
-
-    /// The LiteMap<SkeletonV, PatternV1> structs should be ordered by the `Skeleton` canonical
-    /// order. This helps ensure that the skeleton serialization is sorted deterministically.
-    /// This order is determined by the order of the fields listed in UTS 35, which is ordered
-    /// from most significant, to least significant.
-    ///
-    /// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-    pub fn compare_canonical_order(&self, other: &Skeleton) -> Ordering {
-        let fields_a = &self.0;
-        let fields_b = &other.0;
-        let max_len = fields_a.len().max(fields_b.len());
-
-        for i in 0..max_len {
-            let maybe_field_a = fields_a.get(i);
-            let maybe_field_b = fields_b.get(i);
-
-            match maybe_field_a {
-                Some(field_a) => match maybe_field_b {
-                    Some(field_b) => {
-                        let ordering = compare_fields(field_a, field_b);
-                        if ordering != Ordering::Equal {
-                            return ordering;
-                        }
-                    }
-                    None => {
-                        // Field A has more fields.
-                        return Ordering::Greater;
-                    }
-                },
-                None => {
-                    // Field B has more fields.
-                    return Ordering::Less;
-                }
-            };
-        }
-
-        Ordering::Equal
-    }
-}
-
-fn compare_fields(field_a: &Field, field_b: &Field) -> Ordering {
-    let order_a = field_a.symbol.get_canonical_order();
-    let order_b = field_b.symbol.get_canonical_order();
-    if order_a < order_b {
-        return Ordering::Less;
-    }
-    if order_a > order_b {
-        return Ordering::Greater;
-    }
-
-    // If the fields are equivalent, try to sort by field length.
-    let length_a = field_a.length as u8;
-    let length_b = field_b.length as u8;
-
-    if length_a < length_b {
-        return Ordering::Less;
-    }
-    if length_a > length_b {
-        return Ordering::Greater;
-    }
-    return Ordering::Equal;
-}
-
-impl PartialOrd for Skeleton {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.compare_canonical_order(other))
-    }
-}
-
-impl Ord for Skeleton {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.compare_canonical_order(other)
     }
 }
 
@@ -141,7 +68,7 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
         Skeleton::try_from(skeleton_string).map_err(|err| {
             de::Error::invalid_value(
                 de::Unexpected::Other(&format!("{:?} {}", skeleton_string, err)),
-                &"a UTS 35 sorted field symbols representing a skeleton",
+                &"field symbols representing a skeleton",
             )
         })
     }
@@ -222,7 +149,6 @@ impl TryFrom<&str> for Skeleton {
     type Error = SkeletonError;
     fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
-        let mut in_order = true;
 
         let mut iter = skeleton_string.bytes().peekable();
         while let Some(byte) = iter.next() {
@@ -239,30 +165,22 @@ impl TryFrom<&str> for Skeleton {
                 iter.next();
             }
 
-            if let Some(prev_field) = fields.last() {
-                in_order = in_order
-                    && prev_field.symbol.get_canonical_order() < field_symbol.get_canonical_order();
+            let field = Field::from((field_symbol, FieldLength::try_from(field_length)?));
+
+            match fields.binary_search(&field) {
+                Ok(_) => return Err(SkeletonError::DuplicateField),
+                Err(pos) => fields.insert(pos, field),
             }
-
-            // Add the field.
-            fields.push(Field::from((
-                field_symbol,
-                FieldLength::try_from(field_length)?,
-            )));
         }
 
-        if in_order {
-            Ok(Skeleton(fields))
-        } else {
-            Err(SkeletonError::FieldsOutOfOrder(fields))
-        }
+        Ok(Skeleton(fields))
     }
 }
 
 /// Apply the sorting invarants for an unknown list of fields.
 impl From<SmallVec<[fields::Field; 5]>> for Skeleton {
     fn from(mut fields: SmallVec<[fields::Field; 5]>) -> Skeleton {
-        fields.sort_by(compare_fields);
+        fields.sort();
         Skeleton(fields)
     }
 }
@@ -270,7 +188,6 @@ impl From<SmallVec<[fields::Field; 5]>> for Skeleton {
 #[derive(Debug)]
 pub enum SkeletonError {
     FieldLengthTooLong,
-    FieldsOutOfOrder(SmallVec<[fields::Field; 5]>),
     DuplicateField,
     SymbolUnknown(char),
     SymbolInvalid(char),
@@ -296,9 +213,6 @@ impl fmt::Display for SkeletonError {
             }
             SkeletonError::UnimplementedField(ch) => {
                 write!(f, "unimplemented field {} in skeleton", ch)
-            }
-            SkeletonError::FieldsOutOfOrder(fields) => {
-                write!(f, "skeleton fields {:?} out of order", fields)
             }
             SkeletonError::Fields(err) => write!(f, "{} in skeleton", err),
         }
@@ -450,9 +364,42 @@ mod test {
             .collect();
 
         for (strings, fields) in skeletons_strings.windows(2).zip(skeleton_fields.windows(2)) {
-            if fields[0].compare_canonical_order(&fields[1]) != Ordering::Less {
+            if fields[0].cmp(&fields[1]) != std::cmp::Ordering::Less {
                 panic!("Expected {:?} < {:?}", strings[0], strings[1]);
             }
         }
+    }
+
+    #[test]
+    fn test_skeleton_json_reordering() {
+        let unordered_skeleton = "EEEEyMd";
+        let ordered_skeleton = "yMdEEEE";
+
+        // Wrap the string in quotes so it's a JSON string.
+        let json: String = serde_json::to_string(unordered_skeleton).unwrap();
+
+        // Wrap the string in quotes so it's a JSON string.
+        let skeleton = serde_json::from_str::<Skeleton>(&json)
+            .expect("Unable to parse an unordered skeletons.");
+
+        assert_eq!(
+            serde_json::to_string(&skeleton).unwrap(),
+            serde_json::to_string(ordered_skeleton).unwrap()
+        );
+    }
+
+    /// This test handles a branch in the skeleton serialization code that takes into account
+    /// duplicate field errors when deserializing from string.
+    #[test]
+    fn test_skeleton_json_duplicate_fields() {
+        // Wrap the string in quotes so it's a JSON string.
+        let json: String = serde_json::to_string("EEEEyMdEEEE").unwrap();
+        let err =
+            serde_json::from_str::<Skeleton>(&json).expect_err("Expected a duplicate field error.");
+
+        assert_eq!(
+            format!("{}", err),
+            "invalid value: \"EEEEyMdEEEE\" duplicate field in skeleton, expected field symbols representing a skeleton at line 1 column 13"
+        );
     }
 }
