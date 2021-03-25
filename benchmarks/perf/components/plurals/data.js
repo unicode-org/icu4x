@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616564387511,
+  "lastUpdate": 1616638247716,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4241,6 +4241,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 115726,
             "range": "± 6844",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30a3909542955e156a11a979f57d8c38c1dbeac5",
+          "message": "Add PPUCD enumerated property parsing (#448)",
+          "timestamp": "2021-03-24T19:03:27-07:00",
+          "tree_id": "2bf1b3ea632a1a61377727188428b56fd2094669",
+          "url": "https://github.com/unicode-org/icu4x/commit/30a3909542955e156a11a979f57d8c38c1dbeac5"
+        },
+        "date": 1616638246606,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1665,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8249,
+            "range": "± 269",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 118806,
+            "range": "± 4708",
             "unit": "ns/iter"
           }
         ]
