@@ -24,15 +24,15 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
 pub struct NumbersProvider {
-    numsys_data: cldr_serde::numbering_systems_json::Resource,
-    locale_data: Vec<(CldrLangID, cldr_serde::numbers_json::LangNumbers)>,
+    cldr_numbering_systems_data: cldr_serde::numbering_systems_json::Resource,
+    cldr_numbers_data: Vec<(CldrLangID, cldr_serde::numbers_json::LangNumbers)>,
 }
 
 impl TryFrom<&dyn CldrPaths> for NumbersProvider {
     type Error = Error;
     fn try_from(cldr_paths: &dyn CldrPaths) -> Result<Self, Self::Error> {
         // Load common numbering system data:
-        let numsys_data: cldr_serde::numbering_systems_json::Resource = {
+        let cldr_numbering_systems_data: cldr_serde::numbering_systems_json::Resource = {
             let path = cldr_paths
                 .cldr_core()?
                 .join("supplemental")
@@ -41,19 +41,19 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
         };
 
         // Load data for each locale:
-        let mut locale_data = vec![];
+        let mut cldr_numbers_data = vec![];
         let path = cldr_paths.cldr_numbers()?.join("main");
         let locale_dirs = get_subdirectories(&path)?;
         for dir in locale_dirs {
             let path = dir.join("numbers.json");
             let mut resource: cldr_serde::numbers_json::Resource =
                 serde_json::from_reader(open_reader(&path)?).map_err(|e| (e, path))?;
-            locale_data.append(&mut resource.main.0);
+            cldr_numbers_data.append(&mut resource.main.0);
         }
 
         Ok(Self {
-            numsys_data,
-            locale_data,
+            cldr_numbering_systems_data,
+            cldr_numbers_data,
         })
     }
 }
@@ -71,9 +71,18 @@ impl KeyedDataProvider for NumbersProvider {
 }
 
 impl NumbersProvider {
-    /// Returns the zero digit for the given numbering system name
+    /// Returns the zero digit for the given numbering system name.
+    ///
+    /// All decimal numbering systems in Unicode have a contiguous set of 10 code points, starting
+    /// with the zero digit. For example, the zero digit for the Latin numbering system is "0", and
+    /// the zero digit for the Bengali numbering system is "০".
     fn get_zero_digit_for_numbering_system(&self, nsname: TinyStr8) -> Option<char> {
-        match self.numsys_data.supplemental.numbering_systems.get(&nsname) {
+        match self
+            .cldr_numbering_systems_data
+            .supplemental
+            .numbering_systems
+            .get(&nsname)
+        {
             Some(ns) => ns.digits.as_ref().and_then(|s| s.chars().next()),
             None => None,
         }
@@ -89,10 +98,10 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
         let langid = req.try_langid()?;
         let cldr_langid: CldrLangID = langid.clone().into();
         let numbers = match self
-            .locale_data
+            .cldr_numbers_data
             .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
         {
-            Ok(idx) => &self.locale_data[idx].1.numbers,
+            Ok(idx) => &self.cldr_numbers_data[idx].1.numbers,
             Err(_) => return Err(DataError::UnavailableResourceOptions(req.clone())),
         };
         let nsname = numbers.default_numbering_system;
@@ -130,11 +139,11 @@ impl<'d> IterableDataProviderCore for NumbersProvider {
         _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         let list: Vec<ResourceOptions> = self
-            .locale_data
+            .cldr_numbers_data
             .iter()
             .map(|(l, _)| ResourceOptions {
                 variant: None,
-                // TODO: Avoid the clone
+                // TODO(#568): Avoid the clone
                 langid: Some(l.langid.clone()),
             })
             .collect();

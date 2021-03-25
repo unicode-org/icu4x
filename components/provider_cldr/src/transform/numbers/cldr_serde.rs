@@ -12,6 +12,10 @@ use tinystr::{TinyStr8, TinyStrAuto};
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
 pub mod numbers_json {
+    //! Serde structs representing CLDR JSON numbers.json files.
+    //!
+    //! Sample file: https://git.io/JYkQQ
+
     use super::*;
 
     use serde::de::{Deserialize, Deserializer, Error, MapAccess, Unexpected, Visitor};
@@ -74,7 +78,8 @@ pub mod numbers_json {
                         result.formats.insert(numsys, value);
                     }
                     _ => {
-                        // not symbols or decimalFormats; ignore.
+                        // When needed, consume "scientificFormats", "percentFormats", ...
+                        // For now, ignore them.
                     }
                 }
             }
@@ -117,6 +122,10 @@ pub mod numbers_json {
 }
 
 pub mod numbering_systems_json {
+    //! Serde structs representing CLDR JSON numberingSystem.json files.
+    //!
+    //! Sample file: https://git.io/JYk7T
+
     use super::*;
 
     #[derive(PartialEq, Debug, Deserialize)]

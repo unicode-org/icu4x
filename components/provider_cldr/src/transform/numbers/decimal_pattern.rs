@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Functions for dealing with UTS 35 number patterns.
+//!
+//! Spec reference: https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns
+
 use std::str::FromStr;
 type SmallString8 = smallstr::SmallString<[u8; 8]>;
 use icu_decimal::provider::AffixesV1;
@@ -22,6 +26,7 @@ impl std::fmt::Display for Error {
     }
 }
 
+/// Representation of a UTS 35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
 pub struct DecimalSubPattern {
     pub prefix: SmallString8,
@@ -38,7 +43,7 @@ impl FromStr for DecimalSubPattern {
     #[allow(clippy::many_single_char_names)]
     fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
         // Split the subpattern into prefix, body, and suffix.
-        // TODO: Handle quoted literals in prefix and suffix.
+        // TODO(#567): Handle quoted literals in prefix and suffix.
         // i = boundary between prefix and body
         // j = boundary between body and suffix
         let i = subpattern.find(|c: char| matches!(c, '#' | '0' | ',' | '.'));
@@ -55,7 +60,7 @@ impl FromStr for DecimalSubPattern {
         let suffix = &subpattern[j..];
 
         // For now, we expect one of a handful of pattern bodies.
-        // TODO: Generalize this to support all of UTS 35.
+        // TODO(#567): Generalize this to support all of UTS 35.
         let (a, b, c, d) = match body {
             "#,##0.###" => (3, 3, 0, 3),
             "#,##,##0.###" => (2, 3, 0, 3),
@@ -73,6 +78,8 @@ impl FromStr for DecimalSubPattern {
     }
 }
 
+/// Representation of a UTS 35 number pattern, including positive subpattern (required) and negative
+/// subpattern (optional).
 #[derive(Debug, PartialEq)]
 pub struct DecimalPattern {
     pub positive: DecimalSubPattern,

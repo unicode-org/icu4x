@@ -2,10 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Data provider struct definitions for `icu_decimal`.
+//!
+//! Read more about data providers: [icu_provider]
+
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
 pub mod key {
+    //! Resource keys for `icu_decimal`.
     use icu_provider::{resource_key, ResourceKey};
+
+    /// Resource key: symbols used for basic decimal formatting.
     pub const SYMBOLS_V1: ResourceKey = resource_key!(decimal, "symbols", 1);
 }
 
@@ -31,7 +38,7 @@ pub struct AffixesV1 {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct GroupingSizesV1 {
-    /// The size of the first group.
+    /// The size of the first (lowest-magnitude) group.
     pub primary: u8,
 
     /// The size of groups after the first group.
