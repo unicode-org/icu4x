@@ -98,6 +98,12 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
                         &"ordered field symbols representing a skeleton",
                     ));
                 }
+                if prev_item == &item {
+                    return Err(de::Error::invalid_value(
+                        de::Unexpected::Other(&format!("duplicate field: {:?}", item)),
+                        &"ordered field symbols representing a skeleton",
+                    ));
+                }
             }
             items.push(item)
         }
@@ -400,6 +406,66 @@ mod test {
         assert_eq!(
             format!("{}", err),
             "invalid value: \"EEEEyMdEEEE\" duplicate field in skeleton, expected field symbols representing a skeleton at line 1 column 13"
+        );
+    }
+
+    /// Skeletons are represented in bincode as a vec of field, but bincode shouldn't be completely
+    /// trusted, test that the bincode gets validated correctly.
+    struct TestInvalidSkeleton(Vec<Field>);
+
+    #[cfg(feature = "provider_serde")]
+    impl Serialize for TestInvalidSkeleton {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: ser::Serializer,
+        {
+            let fields = &self.0;
+            let mut seq = serializer.serialize_seq(Some(fields.len()))?;
+            for item in fields.iter() {
+                seq.serialize_element(item)?;
+            }
+            seq.end()
+        }
+    }
+
+    #[test]
+    fn test_skeleton_bincode_reordering() {
+        let unordered_skeleton = TestInvalidSkeleton(vec![
+            Field::from((FieldSymbol::Day(Day::DayOfMonth), FieldLength::One)),
+            Field::from((FieldSymbol::Month(Month::Format), FieldLength::One)),
+        ]);
+
+        let mut buffer: Vec<u8> = Vec::new();
+
+        bincode::serialize_into(&mut buffer, &unordered_skeleton).unwrap();
+
+        let err =
+            bincode::deserialize::<Skeleton>(&buffer).expect_err("Expected an unordered error");
+
+        assert_eq!(
+            format!("{}", err),
+            "invalid value: field item out of order: Field { symbol: Month(Format), length: One }, expected ordered field symbols representing a skeleton"
+        );
+    }
+
+    #[test]
+    fn test_skeleton_bincode_duplicate_field() {
+        let unordered_skeleton = TestInvalidSkeleton(vec![
+            Field::from((FieldSymbol::Month(Month::Format), FieldLength::One)),
+            Field::from((FieldSymbol::Day(Day::DayOfMonth), FieldLength::One)),
+            Field::from((FieldSymbol::Day(Day::DayOfMonth), FieldLength::One)),
+        ]);
+
+        let mut buffer: Vec<u8> = Vec::new();
+
+        bincode::serialize_into(&mut buffer, &unordered_skeleton).unwrap();
+
+        let err = bincode::deserialize::<Skeleton>(&buffer)
+            .expect_err("Expected a duplicate field error");
+
+        assert_eq!(
+            format!("{}", err),
+            "invalid value: duplicate field: Field { symbol: Day(DayOfMonth), length: One }, expected ordered field symbols representing a skeleton"
         );
     }
 }
