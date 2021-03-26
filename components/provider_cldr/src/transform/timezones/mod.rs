@@ -13,8 +13,10 @@ use icu_datetime::provider::{
     },
 };
 use icu_provider::{
-    erased::{ErasedDataProvider, ErasedDataReceiver},
+    erased::ErasedDataProvider,
+    iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,
+    serde::SerdeSeDataStruct,
 };
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -91,7 +93,7 @@ impl<'d> KeyedDataProvider for TimeZonesProvider<'d> {
     }
 }
 
-impl<'d> IterableDataProvider<'d> for TimeZonesProvider<'d> {
+impl<'d> IterableDataProviderCore for TimeZonesProvider<'d> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -109,45 +111,52 @@ impl<'d> IterableDataProvider<'d> for TimeZonesProvider<'d> {
 }
 
 impl<'d> ErasedDataProvider<'d> for TimeZonesProvider<'d> {
-    fn load_to_receiver(
+    fn load_erased(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn ErasedDataReceiver<'d, '_>,
-    ) -> Result<DataResponseMetadata, DataError> {
+    ) -> Result<DataResponse<'d, dyn icu_provider::erased::ErasedDataStruct>, DataError> {
         match req.resource_path.key {
             key::TIMEZONE_FORMATS_V1 => {
-                let mut result: DataResponse<TimeZoneFormatsV1> = self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
+                let result: DataResponse<TimeZoneFormatsV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
             }
             key::TIMEZONE_EXEMPLAR_CITIES_V1 => {
-                let mut result: DataResponse<ExemplarCitiesV1> = self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
+                let result: DataResponse<ExemplarCitiesV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
             }
             key::TIMEZONE_GENERIC_NAMES_LONG_V1 => {
-                let mut result: DataResponse<MetaZoneGenericNamesLongV1> =
-                    self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
+                let result: DataResponse<MetaZoneGenericNamesLongV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
             }
             key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => {
-                let mut result: DataResponse<MetaZoneGenericNamesShortV1> =
-                    self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
+                let result: DataResponse<MetaZoneGenericNamesShortV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
             }
             key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => {
-                let mut result: DataResponse<MetaZoneSpecificNamesLongV1> =
-                    self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
+                let result: DataResponse<MetaZoneSpecificNamesLongV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
             }
             key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => {
-                let mut result: DataResponse<MetaZoneSpecificNamesShortV1> =
-                    self.load_payload(req)?;
-                receiver.receive_payload(result.take_payload()?)?;
-                Ok(result.metadata)
+                let result: DataResponse<MetaZoneSpecificNamesShortV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
             }
             _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
         }
@@ -171,11 +180,66 @@ macro_rules! impl_data_provider {
                     metadata: DataResponseMetadata {
                         data_langid: req.resource_path.options.langid.clone(),
                     },
-                    payload: Some(Cow::Owned($id::from(time_zones.clone()))),
+                    payload: DataPayload {
+                        cow: Some(Cow::Owned($id::from(time_zones.clone()))),
+                    },
                 })
             }
         }
     };
+}
+
+impl<'d, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for TimeZonesProvider<'d> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, DataError> {
+        match req.resource_path.key {
+            key::TIMEZONE_FORMATS_V1 => {
+                let result: DataResponse<TimeZoneFormatsV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
+            }
+            key::TIMEZONE_EXEMPLAR_CITIES_V1 => {
+                let result: DataResponse<ExemplarCitiesV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
+            }
+            key::TIMEZONE_GENERIC_NAMES_LONG_V1 => {
+                let result: DataResponse<MetaZoneGenericNamesLongV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
+            }
+            key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => {
+                let result: DataResponse<MetaZoneGenericNamesShortV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
+            }
+            key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => {
+                let result: DataResponse<MetaZoneSpecificNamesLongV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
+            }
+            key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => {
+                let result: DataResponse<MetaZoneSpecificNamesShortV1> = self.load_payload(req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.into(),
+                })
+            }
+            _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
+        }
+    }
 }
 
 impl_data_provider!(TimeZoneFormatsV1: 'd);
@@ -207,7 +271,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         assert_eq!("GMT", time_zone_formats.gmt_zero_format);
 
@@ -222,7 +287,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         assert_eq!("Pohnpei", exemplar_cities["Pacific/Ponape"]);
 
@@ -237,7 +303,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
@@ -255,7 +322,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
@@ -273,7 +341,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         assert_eq!("PT", generic_names_short["America_Pacific"]);
 
@@ -288,7 +357,8 @@ mod tests {
                 },
             })
             .unwrap()
-            .take_payload()
+            .payload
+            .take()
             .unwrap();
         assert_eq!("PDT", specific_names_short["America_Pacific"]["daylight"]);
     }

@@ -70,6 +70,9 @@ impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
         if let Some(result) = self.plurals.try_load_payload(req, self.cldr_paths)? {
             return Ok(result);
         }
+        if let Some(result) = self.timezones.try_load_payload(req, self.cldr_paths)? {
+            return Ok(result);
+        }
         Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
@@ -93,7 +96,7 @@ impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
         if let Some(result) = self.plurals.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.timezones.try_load(req, receiver, self.cldr_paths)? {
+        if let Some(result) = self.timezones.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
         Err(DataError::UnsupportedResourceKey(req.resource_path.key))

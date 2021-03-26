@@ -1,6 +1,11 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
+
+//! Data provider struct definitinos for mapping CLDR-JSON Time Zones.
+//! These provide in-memory stuctures into which `timeZoneNames.json` will be serialized.
+//! Here is the `en` [timeZoneNames.json](https://raw.githubusercontent.com/unicode-org/cldr-json/master/cldr-json/cldr-dates-full/main/en/timeZoneNames.json) for context.
+
 mod convert;
 
 use crate::cldr_langid::CldrLangID;

@@ -28,17 +28,11 @@ impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
 }
 
 impl Location {
-    fn exemplar_city(&self) -> Option<Cow<'static, str>> {
+    fn exemplar_city(&self) -> Option<String> {
         match self {
-            Location::LocationE(place) => Some(Cow::Owned(place.exemplar_city.clone())),
-            Location::LocationL(place) => place
-                .exemplar_city
-                .as_ref()
-                .map(|city| Cow::Owned(city.clone())),
-            Location::LocationS(place) => place
-                .exemplar_city
-                .as_ref()
-                .map(|city| Cow::Owned(city.clone())),
+            Location::LocationE(place) => Some(place.exemplar_city.clone()),
+            Location::LocationL(place) => place.exemplar_city.clone(),
+            Location::LocationS(place) => place.exemplar_city.clone(),
         }
     }
 }
@@ -61,7 +55,7 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
                             match place_or_region {
                                 super::LocationOrSubRegion::Location(place) => place
                                     .exemplar_city()
-                                    .map(|city| vec![(key.into(), city)])
+                                    .map(|city| vec![(key.into(), city.into())])
                                     .unwrap_or_default(),
                                 super::LocationOrSubRegion::SubRegion(region) => region
                                     .into_iter()
@@ -69,7 +63,7 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
                                         let mut key = key.clone();
                                         key.push('/');
                                         key.push_str(&inner_key);
-                                        place.exemplar_city().map(|value| (key.into(), value))
+                                        place.exemplar_city().map(|city| (key.into(), city.into()))
                                     })
                                     .collect::<Vec<_>>(),
                             }
