@@ -91,6 +91,14 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
     {
         let mut items: SmallVec<[fields::Field; 5]> = SmallVec::new();
         while let Some(item) = seq.next_element()? {
+            if let Some(prev_item) = items.last() {
+                if prev_item > &item {
+                    return Err(de::Error::invalid_value(
+                        de::Unexpected::Other(&format!("field item out of order: {:?}", item)),
+                        &"ordered field symbols representing a skeleton",
+                    ));
+                }
+            }
             items.push(item)
         }
         Ok(Skeleton(items))
@@ -174,14 +182,6 @@ impl TryFrom<&str> for Skeleton {
         }
 
         Ok(Skeleton(fields))
-    }
-}
-
-/// Apply the sorting invarants for an unknown list of fields.
-impl From<SmallVec<[fields::Field; 5]>> for Skeleton {
-    fn from(mut fields: SmallVec<[fields::Field; 5]>) -> Skeleton {
-        fields.sort();
-        Skeleton(fields)
     }
 }
 

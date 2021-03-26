@@ -38,7 +38,7 @@ impl FieldSymbol {
     /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
     /// ordered most significant to least significant.
     ///
-    pub fn get_canonical_order(&self) -> u8 {
+    fn get_canonical_order(&self) -> u8 {
         match self {
             FieldSymbol::Year(Year::Calendar) => 0,
             FieldSymbol::Year(Year::WeekOf) => 1,
