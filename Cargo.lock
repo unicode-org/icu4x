@@ -939,6 +939,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_pattern"
+version = "0.1.0"
+dependencies = [
+ "iai",
+ "thiserror",
+]
+
+[[package]]
 name = "icu_plurals"
 version = "0.1.0"
 dependencies = [
