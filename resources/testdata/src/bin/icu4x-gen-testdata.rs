@@ -278,7 +278,10 @@ fn export_ppucd(exporter: &mut FilesystemExporter) -> Result<(), Error> {
         let result = exporter.put_key_from_provider(key, &provider);
         // Ensure flush() is called, even when the result is an error
         exporter.flush()?;
-        result?;
+        match result {
+            Ok(_) => {},
+            Err(err) => log::warn!("Failed to dump key: {}: {}", key, err),
+        };
     }
 
     Ok(())
