@@ -15,7 +15,6 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
-use icu_provider_ppucd::get_all_ppucd_keys;
 use simple_logger::SimpleLogger;
 use std::fmt;
 use std::path::PathBuf;
@@ -306,12 +305,6 @@ fn export_cldr(cldr_paths: &dyn CldrPaths, exporter: &mut FilesystemExporter) ->
         exporter.flush()?;
         result?;
     }
-
-    Ok(())
-}
-
-fn export_ppucd(exporter: &mut FilesystemExporter) -> Result<(), Error> {
-    let keys = get_all_ppucd_keys();
 
     Ok(())
 }

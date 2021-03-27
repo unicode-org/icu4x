@@ -969,7 +969,6 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_provider_cldr",
- "icu_provider_ppucd",
  "log",
  "serde",
  "serde_json",
@@ -984,6 +983,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
+ "icu_testdata",
  "icu_uniset",
  "tinystr",
 ]
@@ -1011,6 +1011,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_cldr",
  "icu_provider_fs",
+ "icu_provider_ppucd",
  "itertools 0.10.0",
  "log",
  "serde",

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parse_ppucd;
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::provider::*;
 use std::borrow::Cow;
@@ -13,6 +14,35 @@ pub struct UnicodeProperties<'s> {
     pub props: Vec<UnicodeProperty<'s>>,
 }
 
+/// Provides Unicode binary properties by reading from a ppucd.txt data file.
+///
+/// # Example
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider_ppucd::PpucdDataProvider;
+/// use icu_uniset::provider::{key, UnicodeProperty};
+/// use std::borrow::Cow;
+///
+/// let ppucd_data = std::fs::read_to_string(icu_testdata::paths::ppucd_path())
+///     .expect("Data should be present");
+/// /*
+/// // TODO(#454): Enable this part of the docs test once PpucdDataProvider is made faster.
+/// let provider = PpucdDataProvider::new(&ppucd_data);
+///
+/// let result: Cow<UnicodeProperty> = provider
+///     .load_payload(&DataRequest::from(key::ASCII_HEX_DIGIT_V1))
+///     .expect("Data should be well-formed")
+///     .payload
+///     .take()
+///     .expect("Key should be present");
+///
+/// assert_eq!(result, Cow::Owned(UnicodeProperty {
+///     name: Cow::Borrowed("AHex"),
+///     inv_list: vec![48, 58, 65, 71, 97, 103],
+/// }));
+/// */
+/// ```
 #[derive(Debug)]
 pub struct PpucdDataProvider<'s> {
     pub ppucd_props: UnicodeProperties<'s>,
@@ -64,6 +94,18 @@ impl<'s> TryFrom<&'s str> for PpucdDataProvider<'s> {
         Ok(PpucdDataProvider {
             ppucd_props: props_data,
         })
+    }
+}
+
+icu_provider::impl_dyn_provider!(PpucdDataProvider<'s>, UnicodeProperty<'s>, SERDE_SE, 'd, 's);
+
+impl<'d> IterableDataProviderCore for PpucdDataProvider<'d> {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
+        Ok(Box::new(list.into_iter()))
     }
 }
 

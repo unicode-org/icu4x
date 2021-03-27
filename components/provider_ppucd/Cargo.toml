@@ -28,3 +28,6 @@ icu_provider = { version = "0.1", path = "../provider" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 icu_uniset = { version = "0.1", path = "../uniset" }
 tinystr = "0.4"
+
+[dev-dependencies]
+icu_testdata = { version = "0.1", path = "../../resources/testdata" }

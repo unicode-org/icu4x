@@ -50,7 +50,6 @@ static_assertions = { version = "1.1", optional = true }
 # Dependencies for the binary
 clap = { version = "2.33", optional = true }
 icu_provider_cldr = { version = "0.1", path = "../provider_cldr", features = ["download"], optional = true }
-icu_provider_ppucd = { version = "0.1", path = "../provider_ppucd", optional = true }
 simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
@@ -61,7 +60,7 @@ criterion = "0.3.3"
 
 [features]
 export = ["static_assertions", "log"]
-export-bin = ["export", "clap", "icu_provider_cldr", "icu_provider_ppucd", "simple_logger"]
+export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
 serialize_none = ["icu_provider_cldr/serialize_none"]
 bench = []
 

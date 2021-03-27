@@ -17,3 +17,11 @@ pub fn icu4x_json_root() -> PathBuf {
         .join("data")
         .join("json")
 }
+
+/// Returns the absolute path to ppucd.txt.
+pub fn ppucd_path() -> PathBuf {
+    PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
+        .join("data")
+        .join("ppucd")
+        .join("ppucd.txt")
+}
