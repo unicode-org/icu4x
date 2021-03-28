@@ -4,7 +4,7 @@
 
 mod error;
 pub use crate::replacement::ReplacementProvider;
-use crate::{parser::Parser, token::PatternToken};
+use crate::{pattern::PatternIterator, token::PatternToken};
 pub use error::InterpolatorError;
 use std::str::FromStr;
 
@@ -75,12 +75,9 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// ]);
 /// ```
 ///
-/// # Lifetimes
-///
-/// - `p`: The life time of an input parser, which is the life time of the string slice to be parsed.
-///
 /// # Type parameters
 ///
+/// - `P`: A type implementing [`PatternIterator`] trait, like [`Parser`] or [`IntoIterVec`].
 /// - `R`: A replacement provider type implementing [`ReplacementProvider`].
 /// - `K`: A key type used to retrieve associated replacement pattern in place of a placeholder.
 /// - `E`: An element type returned by the `Interpolator` which must implement
@@ -123,16 +120,18 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///
 /// [`Item`]: std::iter::Iterator::Item
 /// [`HashMap`]: std::collections::HashMap
-pub struct Interpolator<'p, R, K, E>
+/// [`Parser`]: crate::parser::Parser
+/// [`IntoIterVec`]: crate::pattern::IntoIterVec
+pub struct Interpolator<P, R, K, E>
 where
     R: ReplacementProvider<K, E>,
 {
-    pattern: Parser<'p>,
+    pattern: P,
     replacements: R,
     current_replacement: Option<R::Iter>,
 }
 
-impl<'p, R, K, E> Interpolator<'p, R, K, E>
+impl<P, R, K, E> Interpolator<P, R, K, E>
 where
     R: ReplacementProvider<K, E>,
 {
@@ -154,7 +153,7 @@ where
     ///     ]
     /// ]);
     /// ```
-    pub fn new(pattern: Parser<'p>, replacements: R) -> Self {
+    pub fn new(pattern: P, replacements: R) -> Self {
         Self {
             pattern,
             replacements,
@@ -201,9 +200,14 @@ where
     /// // … and then None once it's over.
     /// assert_eq!(Ok(None), interpolator.try_next());
     /// ```
-    pub fn try_next(&mut self) -> Result<E, K>
+    ///
+    /// # Lifetimes
+    ///
+    /// - `p`: The life time of an input parser, which is the life time of the string slice to be parsed.
+    pub fn try_next<'p>(&mut self) -> Result<E, K>
     where
         E: From<&'p str>,
+        P: PatternIterator<'p, K>,
         K: FromStr + std::fmt::Display,
         K::Err: std::fmt::Debug,
     {
@@ -215,11 +219,7 @@ where
                     self.current_replacement = None;
                 }
             }
-            match self
-                .pattern
-                .try_next()
-                .map_err(InterpolatorError::Parser)?
-            {
+            match self.pattern.try_next().map_err(InterpolatorError::Parser)? {
                 Some(PatternToken::Literal { content, .. }) => {
                     return Ok(Some(content.into()));
                 }

@@ -91,6 +91,7 @@
 //! [`FromStr`]: std::str::FromStr
 mod interpolator;
 mod parser;
+pub mod pattern;
 mod replacement;
 mod token;
 

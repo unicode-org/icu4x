@@ -4,7 +4,7 @@
 
 pub mod error;
 
-use crate::token::PatternToken;
+use crate::{pattern::PatternIterator, token::PatternToken};
 pub use error::ParserError;
 use std::{fmt::Debug, str::FromStr};
 
@@ -282,6 +282,18 @@ impl<'p> Parser<'p> {
                 }
             }
         }
+    }
+}
+
+impl<'p, P> PatternIterator<'p, P> for Parser<'p> {
+    fn try_next(
+        &mut self,
+    ) -> std::result::Result<Option<PatternToken<'p, P>>, ParserError<<P as FromStr>::Err>>
+    where
+        P: FromStr,
+        <P as FromStr>::Err: Debug,
+    {
+        Parser::try_next(self)
     }
 }
 
