@@ -38,7 +38,7 @@ pub struct PatternsV1 {
 
     pub time: patterns::StylePatternsV1,
 
-    pub date_time: patterns::StylePatternsV1,
+    pub date_time: patterns::DateTimeFormatsV1,
 }
 
 macro_rules! symbols {
