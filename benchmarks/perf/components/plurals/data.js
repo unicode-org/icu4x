@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616638247716,
+  "lastUpdate": 1617028893647,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4283,6 +4283,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 118806,
             "range": "± 4708",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19642c3500fe5ca50c7acbba82d33fc572ec0513",
+          "message": "Add support for the Gregorian Calendar availableFormats  (#480)",
+          "timestamp": "2021-03-29T09:34:25-05:00",
+          "tree_id": "79f7b132ee31b7181d044f6cb7a1e84069914e10",
+          "url": "https://github.com/unicode-org/icu4x/commit/19642c3500fe5ca50c7acbba82d33fc572ec0513"
+        },
+        "date": 1617028892900,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1553,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7850,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 114622,
+            "range": "± 1556",
             "unit": "ns/iter"
           }
         ]
