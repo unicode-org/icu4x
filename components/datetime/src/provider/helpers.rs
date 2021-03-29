@@ -15,10 +15,7 @@ type Result<T> = std::result::Result<T, DateTimeFormatError>;
 
 pub trait DateTimePatterns {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>>;
-    fn get_pattern_for_components_bag<'a>(
-        &'a self,
-        length: &components::Bag,
-    ) -> Result<Option<Pattern>>;
+    fn get_pattern_for_components_bag(&self, style: &components::Bag) -> Result<Option<Pattern>>;
     fn get_pattern_for_length_bag(&self, length: &length::Bag) -> Result<Option<Pattern>>;
     fn get_pattern_for_date_length(&self, length: length::Date) -> Result<Pattern>;
     fn get_pattern_for_time_length(&self, length: length::Time) -> Result<Pattern>;
@@ -62,8 +59,8 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
         }
     }
 
-    fn get_pattern_for_components_bag<'a>(
-        &'a self,
+    fn get_pattern_for_components_bag(
+        &self,
         components: &components::Bag,
     ) -> Result<Option<Pattern>> {
         // Not all skeletons are currently supported.
