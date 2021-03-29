@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617028853327,
+  "lastUpdate": 1617040660989,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4139,6 +4139,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39104890,
             "range": "± 80943",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "filmil@gmail.com",
+            "name": "Filip Filmar",
+            "username": "filmil"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f723c3ece94dec75f0c39166f34ff51c8d896b0",
+          "message": "CLDR \"Hunkspace\" proposal (#186)\n\n* Adds the \"CLDR hunkspace\" proposal\r\n\r\nThe CLDR hunkspace proposal gives one possible way to address an\r\narbitrary localized resource in the form of a Request, which can be\r\nencoded either as a plain old data object, or a JSON object, or an URI.\r\n\r\nExample URIs are given for some potentially interesting use cases.\r\n\r\nCloses #32\r\n\r\n* Handled the code review comments\r\n\r\n* Fixing a few more review comments.\r\n\r\n* Fixed headings and hyperlinks\r\n\r\n* Fixed more review comments\r\n\r\n* Added a link for Mozilla L10N\r\n\r\n* fixup: added zibi's mozilla clarification",
+          "timestamp": "2021-03-29T10:51:52-07:00",
+          "tree_id": "6247d6da65d6117da0c1da4e3b75346d20e23bce",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f723c3ece94dec75f0c39166f34ff51c8d896b0"
+        },
+        "date": 1617040658540,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29915966,
+            "range": "± 1861350",
             "unit": "ns/iter"
           }
         ]
