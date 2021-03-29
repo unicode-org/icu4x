@@ -6,7 +6,7 @@ use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
-use icu_datetime::provider::*;
+use icu_datetime::{provider::*, skeleton::SkeletonError};
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -115,6 +115,67 @@ impl From<&cldr_json::StylePatterns> for gregory::patterns::StylePatternsV1 {
             long: other.long.get_pattern().clone(),
             medium: other.medium.get_pattern().clone(),
             short: other.short.get_pattern().clone(),
+        }
+    }
+}
+
+impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 {
+    fn from(other: &cldr_json::DateTimeFormats) -> Self {
+        use gregory::patterns::{PatternV1, SkeletonV1, SkeletonsV1};
+        use litemap::LiteMap;
+
+        // TODO(#308): Support numbering system variations. We currently throw them away.
+        Self {
+            style_patterns: gregory::patterns::StylePatternsV1 {
+                full: other.full.get_pattern().clone(),
+                long: other.long.get_pattern().clone(),
+                medium: other.medium.get_pattern().clone(),
+                short: other.short.get_pattern().clone(),
+            },
+            skeletons: {
+                let mut skeletons = SkeletonsV1(LiteMap::new());
+
+                // The CLDR keys for available_formats can have duplicate skeletons with either
+                // an additional variant, or with multiple variants for different plurals.
+                for (skeleton_str, pattern_str) in other.available_formats.0.iter() {
+                    let mut unique_skeleton = None;
+                    let mut variant_parts = Vec::new();
+
+                    for part in skeleton_str.split('-') {
+                        match unique_skeleton {
+                            None => {
+                                unique_skeleton = Some(part);
+                            }
+                            Some(_) => variant_parts.push(part),
+                        }
+                    }
+
+                    let unique_skeleton = unique_skeleton.expect("Expected to find a skeleton.");
+
+                    let skeleton_fields_v1 = match SkeletonV1::try_from(unique_skeleton) {
+                        Ok(s) => s,
+                        Err(err) => match err {
+                            // Ignore unimplemented fields for now.
+                            SkeletonError::SymbolUnimplemented(_) => continue,
+                            _ => panic!("{:?} {}", unique_skeleton, err),
+                        },
+                    };
+
+                    if !variant_parts.is_empty() {
+                        unimplemented!(
+                            "This skeleton string is not yet supported: {:?}",
+                            skeleton_str
+                        );
+                    }
+
+                    let pattern_v1 = PatternV1::try_from(pattern_str as &str)
+                        .expect("Unable to parse a pattern");
+
+                    skeletons.0.insert(skeleton_fields_v1, pattern_v1);
+                }
+
+                skeletons
+            },
         }
     }
 }
@@ -379,6 +440,26 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
+    pub struct DateTimeFormats {
+        pub full: StylePattern,
+        pub long: StylePattern,
+        pub medium: StylePattern,
+        pub short: StylePattern,
+        #[serde(rename = "availableFormats")]
+        pub available_formats: AvailableFormats,
+    }
+
+    #[derive(PartialEq, Clone, Debug, Deserialize)]
+    pub struct AvailableFormats(
+        #[serde(with = "tuple_vec_map")] pub(crate) Vec<(Cow<'static, str>, Cow<'static, str>)>,
+    );
+
+    /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
+    /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
+    ///
+    /// e.g.
+    /// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
+    #[derive(PartialEq, Debug, Deserialize)]
     pub struct GregoryDates {
         pub months: months::Contexts,
         pub days: days::Contexts,
@@ -389,7 +470,7 @@ pub(self) mod cldr_json {
         #[serde(rename = "timeFormats")]
         pub time_formats: StylePatterns,
         #[serde(rename = "dateTimeFormats")]
-        pub date_time_formats: StylePatterns,
+        pub date_time_formats: DateTimeFormats,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

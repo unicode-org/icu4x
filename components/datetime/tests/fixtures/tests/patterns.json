@@ -1,0 +1,36 @@
+{
+  "valid_patterns": [
+    "d",
+    "E, M/d/y",
+    "h:mm:ss a",
+    "'week' d 'of' MMMM",
+    "الأسبوع d من MMMM",
+    "ᏒᎾᏙᏓᏆᏍᏗ’ d ’ᎾᎿ’ MMMM",
+    "y yy yyy yyyy yyyyy",
+    "Y YY YYY YYYY YYYYY",
+    "M MM MMM MMMM MMMMM",
+    "L LL LLL LLLL LLLLL",
+    "d dd",
+    "D DD DDD",
+    "F",
+    "g gg ggg gggg ggggg",
+    "e ee eee eeee eeeee eeeeee",
+    "c cc ccc cccc ccccc cccccc",
+    "a aa aaa aaaa aaaaa",
+    "b bb bbb bbbb bbbbb",
+    "m mm",
+    "s ss",
+    "S SS SSS SSSS SSSSS SSSSS",
+    "A AA AAA AAAA AAAAA AAAAA"
+  ],
+  "invalid_patterns": [
+    {
+      "pattern": "yyyyyyy",
+      "error": "invalid value: Year(Calendar) field too long in pattern, expected a valid UTS 35 pattern string at line 1 column 9"
+    },
+    {
+      "pattern": " 'unclosed",
+      "error": "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
+    }
+  ]
+}

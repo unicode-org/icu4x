@@ -2,14 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::convert::TryFrom;
+use std::{
+    cmp::{Ord, PartialOrd},
+    convert::TryFrom,
+};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum LengthError {
     TooLong,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum FieldLength {
     One = 1,
     TwoDigit = 2,

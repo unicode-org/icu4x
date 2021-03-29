@@ -3,25 +3,39 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod length;
-mod symbols;
+pub(crate) mod symbols;
 
-pub use length::FieldLength;
+pub use length::{FieldLength, LengthError};
 pub use symbols::*;
 
-use std::convert::{TryFrom, TryInto};
+use std::{
+    cmp::{Ord, PartialOrd},
+    convert::{TryFrom, TryInto},
+    fmt,
+};
 
 #[derive(Debug)]
 pub enum Error {
     TooLong(FieldSymbol),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::TooLong(symbol) => write!(f, "field {:?} is too long", symbol),
+        }
+    }
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct Field {
     pub symbol: FieldSymbol,
     pub length: FieldLength,
 }
-
-impl Field {}
 
 impl From<(FieldSymbol, FieldLength)> for Field {
     fn from(input: (FieldSymbol, FieldLength)) -> Self {
