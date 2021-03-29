@@ -2,23 +2,41 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Components is a model of encoding information on how to format date and time by specifying a list of components
-//! the user wants to be visible in the formatted string and how each field should be displayed.
+//! # Implementation status
 //!
-//! This model closely corresponds to `ECMA402` API and allows for high level of customization compared to `Length` model.
+//! This is currently only a partial implementation of the UTS 35 skeleton matching algorithm.
 //!
-//! Additionally, the bag contains an optional set of `Preferences` which represent user preferred adjustments
-//! that can be applied onto the pattern right before formatting.
+//! | Algorithm step | Status |
+//! |----------------|--------|
+//! | Match skeleton fields according to a ranking             | Implemented |
+//! | Adjust the matched pattern to have certain widths        | Not yet implemented. See [issue #584](https://github.com/unicode-org/icu4x/issues/584) |
+//! | Match date and times separately, and them combine them   | Not yet implemented. See [issue #585](https://github.com/unicode-org/icu4x/issues/585) |
+//! | Use appendItems to fill in a pattern with missing fields | Not yet, and may not be fully implemented. See [issue #586](https://github.com/unicode-org/icu4x/issues/586) |
 //!
-//! # Pattern Selection
+//! # Description
 //!
-//! It is important to understand that the components bag is a human-friendly way to describe a skeleton, not a pattern.
-//! That means that the components and their lengths provided by the user will be matched against available patterns for
-//! a given locale and the closest available pattern will be used for formatting.
+//! A [`components::Bag`](struct.Bag.html) is a model of encoding information on how to format date
+//! and time by specifying a list of components the user wants to be visible in the formatted string
+//! and how each field should be displayed.
 //!
-//! That means, that it is possible that if the user asks for a combination of fields or lengths that `CLDR` has no
-//! data associated with, the selected pattern may be different than the selection in the `Components` bag.
-//! Such scenarios should be rare.
+//! This model closely corresponds to `ECMA402` API and allows for high level of customization
+//! compared to `Length` model.
+//!
+//! Additionally, the bag contains an optional set of `Preferences` which represent user
+//! preferred adjustments that can be applied onto the pattern right before formatting.
+//!
+//! ## Pattern Selection
+//!
+//! The [`components::Bag`](struct.Bag.html) is a way for the developer to describe which components
+//! should be included in in a date time, and how they should be displayed. There is not a strict
+//! guarantee in how the final date will be displayed to the end user. The user's preferences and
+//! locale information can override the developer preferences.
+//!
+//! The fields in the [`components::Bag`](struct.Bag.html) are matched against available patterns in
+//! the `CLDR` locale data. A best fit is found, and presented to the user. This means that in
+//! certain situations, and component combinations, fields will not have a match, or the match will
+//! have a different type of presentation for a given locale.
+//!
 //!
 //! # Examples
 //!
@@ -58,6 +76,7 @@ use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
+/// See the [module-level](./index.html) docs for more information.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
