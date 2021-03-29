@@ -39,7 +39,7 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 #[derive(PartialEq, Debug)]
 pub struct TimeZonesProvider<'d> {
     data: Vec<(CldrLangID, cldr_json::LangTimeZones)>,
-    _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
+    phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
@@ -61,7 +61,7 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
 
         Ok(Self {
             data,
-            _phantom: PhantomData,
+            phantom: PhantomData,
         })
     }
 }
@@ -69,15 +69,11 @@ impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
 impl TryFrom<&str> for TimeZonesProvider<'_> {
     type Error = Error;
     fn try_from(input: &str) -> Result<Self, Self::Error> {
-        let mut data = vec![];
-
-        let mut resource: cldr_json::Resource =
+        let resource: cldr_json::Resource =
             serde_json::from_str(input).map_err(|e| Error::Json(e, None))?;
-        data.append(&mut resource.main.0);
-
         Ok(Self {
-            data,
-            _phantom: PhantomData,
+            data: resource.main.0,
+            phantom: PhantomData,
         })
     }
 }

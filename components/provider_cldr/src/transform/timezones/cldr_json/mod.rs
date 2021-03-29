@@ -54,9 +54,9 @@ pub struct LocationWithLong {
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum Location {
-    LocationE(LocationWithExemplarCity),
-    LocationL(LocationWithLong),
-    LocationS(LocationWithShort),
+    LocationWithCity(LocationWithExemplarCity),
+    LocationWithLong(LocationWithLong),
+    LocationWithShort(LocationWithShort),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
