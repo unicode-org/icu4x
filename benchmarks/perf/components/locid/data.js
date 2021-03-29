@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1616638167871,
+  "lastUpdate": 1617028869568,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4313,6 +4313,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5016,
             "range": "± 181",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19642c3500fe5ca50c7acbba82d33fc572ec0513",
+          "message": "Add support for the Gregorian Calendar availableFormats  (#480)",
+          "timestamp": "2021-03-29T09:34:25-05:00",
+          "tree_id": "79f7b132ee31b7181d044f6cb7a1e84069914e10",
+          "url": "https://github.com/unicode-org/icu4x/commit/19642c3500fe5ca50c7acbba82d33fc572ec0513"
+        },
+        "date": 1617028868858,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3688,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5228,
+            "range": "± 165",
             "unit": "ns/iter"
           }
         ]
