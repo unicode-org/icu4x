@@ -76,6 +76,7 @@ pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
+use provider::PluralRuleStringsV1;
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -269,13 +270,13 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProvider<'d, provider::PluralRuleStringsV1<'d>> + ?Sized>(
+    pub fn try_new<'d, D: DataProvider<'d, PluralRuleStringsV1<'d>> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
-        let data = Self::get_plural_data(langid.clone(), data_provider, type_)?;
-        Ok(Self::new_from_data(langid, data))
+        let data = PluralRuleStringsV1::new_from_provider(langid.clone(), data_provider, type_)?;
+        Self::new_from_data(langid, &data)
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
@@ -339,38 +340,16 @@ impl PluralRules {
         self.selector.select(&input.into())
     }
 
-    /// Lower level helper that allows extracting PluralRules-relevant data from a data provider
-    /// without constructing PluralRules
-    pub fn get_plural_data<'d, D: DataProvider<'d, provider::PluralRuleStringsV1<'d>> + ?Sized>(
-        langid: LanguageIdentifier,
-        data_provider: &D,
-        type_: PluralRuleType,
-    ) -> Result<data::PluralRuleList, PluralRulesError> {
-        let key = match type_ {
-            PluralRuleType::Cardinal => provider::key::CARDINAL_V1,
-            PluralRuleType::Ordinal => provider::key::ORDINAL_V1,
-        };
-        let data = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(langid),
-                    },
-                },
-            })?
-            .payload
-            .take()?;
-        (&*data).try_into()
-    }
-
     /// Lower-level constructor that allows constructing a PluralRules directly from
     /// data obtained from a provider
-    pub fn new_from_data(langid: LanguageIdentifier, data: data::PluralRuleList) -> Self {
-        Self {
+    pub fn new_from_data<'d>(
+        langid: LanguageIdentifier,
+        data: &PluralRuleStringsV1<'d>,
+    ) -> Result<Self, PluralRulesError> {
+        let data: data::PluralRuleList = data.try_into()?;
+        Ok(Self {
             _langid: langid,
             selector: data.into(),
-        }
+        })
     }
 }
