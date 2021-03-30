@@ -9,7 +9,7 @@ use thiserror::Error;
 #[derive(Error, Debug, PartialEq)]
 pub enum InterpolatorError<R>
 where
-    R: Debug,
+    R: Debug + 'static,
 {
     #[error("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(R),
@@ -20,7 +20,7 @@ where
     #[error("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
     #[error("Parser error: {0}")]
-    Parser(ParserError<R>),
+    Parser(#[from] ParserError<R>),
 }
 
 impl<R> From<R> for InterpolatorError<R>
@@ -29,14 +29,5 @@ where
 {
     fn from(input: R) -> Self {
         Self::InvalidPlaceholder(input)
-    }
-}
-
-impl<R> From<ParserError<R>> for InterpolatorError<R>
-where
-    R: Debug,
-{
-    fn from(err: ParserError<R>) -> Self {
-        Self::Parser(err)
     }
 }

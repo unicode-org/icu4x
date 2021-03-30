@@ -13,6 +13,7 @@ enum ParserState {
     Default,
     Placeholder,
     QuotedLiteral,
+    Apostrophe { quoted: bool },
 }
 
 impl Default for ParserState {
@@ -22,7 +23,7 @@ impl Default for ParserState {
 }
 
 macro_rules! advance_state {
-    ($self:ident, $idx:expr, $next_state:path) => {{
+    ($self:ident, $idx:expr, $next_state:expr) => {{
         let range = $self.start_idx..$idx;
         $self.idx = $idx + 1;
         $self.start_idx = $self.idx;
@@ -32,7 +33,7 @@ macro_rules! advance_state {
 }
 
 macro_rules! handle_literal {
-    ($self:ident, $quoted:expr, $next_state:path) => {{
+    ($self:ident, $quoted:expr, $next_state:expr) => {{
         let range = advance_state!($self, $self.idx, $next_state);
         if !range.is_empty() {
             return Ok(Some(PatternToken::Literal {
@@ -61,7 +62,7 @@ macro_rules! handle_literal {
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(input);
+/// let mut parser = Parser::new(input, false);
 ///
 /// let mut result = vec![];
 ///
@@ -86,7 +87,7 @@ macro_rules! handle_literal {
 ///
 /// let input = "{start}, {end}";
 ///
-/// let mut parser = Parser::new(input);
+/// let mut parser = Parser::new(input, false);
 ///
 /// let mut result = vec![];
 ///
@@ -137,7 +138,7 @@ macro_rules! handle_literal {
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut parser = Parser::new(input);
+/// let mut parser = Parser::new(input, false);
 ///
 /// let mut result = vec![];
 ///
@@ -175,7 +176,7 @@ macro_rules! handle_literal {
 /// is that a placeholder must be parsed from a string slice.
 /// At the moment of writing, Rust is [preparing to deprecate][`RFC 2924`] [`FromStr`] in favor of
 /// [`TryFrom<&str>`][`TryFrom`].
-/// Among many banfits of such transition would be the auto-trait behavior of [`From`] and
+/// Among many benfits of such transition would be the auto-trait behavior of [`From`] and
 /// a [`TryFrom<&str>`][`TryFrom`] for [`&str`] allowing for placeholders to be [`&str`] themselves.
 ///
 /// Unfortunately, at the moment [`TryFrom<&str>`][`TryFrom`] for [`usize`] is not implemented, which would
@@ -192,6 +193,8 @@ pub struct Parser<'p> {
     input: &'p str,
     len: usize,
 
+    allow_unquoted_letters: bool,
+
     start_idx: usize,
     idx: usize,
 
@@ -201,15 +204,20 @@ pub struct Parser<'p> {
 impl<'p> Parser<'p> {
     /// Creates a new `Parser`.
     ///
+    /// The `allow_unquoted_letters` controls whether the parser will support
+    /// ASCII letters without quotes.
+    ///
     /// # Examples
     /// ```
     /// use icu_pattern::Parser;
-    /// let mut parser = Parser::new("{0}, {1}");
+    /// let mut parser = Parser::new("{0}, {1}", false);
     /// ```
-    pub fn new(input: &'p str) -> Self {
+    pub fn new(input: &'p str, allow_unquoted_letters: bool) -> Self {
         Self {
             input,
             len: input.len(),
+
+            allow_unquoted_letters,
 
             start_idx: 0,
             idx: 0,
@@ -225,7 +233,7 @@ impl<'p> Parser<'p> {
     /// ```
     /// use icu_pattern::{Parser, PatternToken};
     ///
-    /// let mut parser = Parser::new("{0}, {1}");
+    /// let mut parser = Parser::new("{0}, {1}", false);
     ///
     /// // A call to try_next() returns the next value…
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(0))), parser.try_next());
@@ -252,16 +260,32 @@ impl<'p> Parser<'p> {
                         .map_err(ParserError::InvalidPlaceholder);
                 }
                 ParserState::QuotedLiteral if *b == b'\'' => {
-                    handle_literal!(self, true, ParserState::Default)
+                    if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
+                        handle_literal!(self, true, ParserState::Apostrophe { quoted: true })
+                    } else {
+                        handle_literal!(self, true, ParserState::Default)
+                    }
                 }
                 ParserState::Default if *b == b'{' => {
                     handle_literal!(self, false, ParserState::Placeholder)
                 }
                 ParserState::Default if *b == b'\'' => {
-                    handle_literal!(self, false, ParserState::QuotedLiteral)
+                    if self.input.as_bytes().get(self.idx + 1) == Some(&b'\'') {
+                        handle_literal!(self, false, ParserState::Apostrophe { quoted: false })
+                    } else {
+                        handle_literal!(self, false, ParserState::QuotedLiteral)
+                    }
                 }
-                ParserState::Default if b.is_ascii_alphabetic() => {
+                ParserState::Default if !self.allow_unquoted_letters && b.is_ascii_alphabetic() => {
                     return Err(ParserError::IllegalCharacter(*b as char));
+                }
+                ParserState::Apostrophe { quoted } => {
+                    self.start_idx -= 1;
+                    if quoted {
+                        handle_literal!(self, true, ParserState::QuotedLiteral)
+                    } else {
+                        handle_literal!(self, false, ParserState::Default)
+                    }
                 }
                 _ => self.idx += 1,
             }
@@ -269,6 +293,7 @@ impl<'p> Parser<'p> {
         match self.state {
             ParserState::Placeholder => Err(ParserError::UnclosedPlaceholder),
             ParserState::QuotedLiteral => Err(ParserError::UnclosedQuotedLiteral),
+            ParserState::Apostrophe { .. } => unreachable!(),
             ParserState::Default => {
                 let range = self.start_idx..self.len;
                 if !range.is_empty() {
@@ -304,7 +329,7 @@ mod tests {
     #[test]
     fn simple_parse() {
         let input = "'PRE' {0} 'and' {1} 'POST'";
-        let mut iter = Parser::new(&input);
+        let mut iter = Parser::new(&input, false);
         let mut result = vec![];
         while let Some(elem) = iter.try_next().unwrap() {
             result.push(elem);
@@ -321,6 +346,28 @@ mod tests {
                 PatternToken::Placeholder(1),
                 (" ", false).into(),
                 ("POST", true).into(),
+            ]
+        );
+    }
+
+    #[test]
+    fn apostrophe_literal() {
+        let input = "{0} o''clock and 'o''clock'";
+        let mut iter = Parser::new(&input, true);
+        let mut result = vec![];
+        while let Some(elem) = iter.try_next().unwrap() {
+            result.push(elem);
+        }
+        assert_eq!(
+            result,
+            vec![
+                PatternToken::Placeholder(0),
+                (" o", false).into(),
+                ("'", false).into(),
+                ("clock and ", false).into(),
+                ("o", true).into(),
+                ("'", true).into(),
+                ("clock", true).into(),
             ]
         );
     }

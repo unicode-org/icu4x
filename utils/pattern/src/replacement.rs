@@ -54,7 +54,7 @@ use std::collections::HashMap;
 ///     Element::TokenFive
 /// ]);
 ///
-/// let mut parser = Parser::new("{5}, {0}");
+/// let mut parser = Parser::new("{5}, {0}", false);
 /// let mut interpolator = Interpolator::new(parser, replacements);
 ///
 ///
@@ -127,7 +127,7 @@ use std::collections::HashMap;
 ///     }
 /// }
 ///
-/// let mut parser = Parser::new("{4}, {2}");
+/// let mut parser = Parser::new("{4}, {2}", false);
 /// let mut interpolator = Interpolator::new(parser, MyReplacementProvider);
 ///
 /// assert_eq!(Ok(Some(Element::Digit(1))), interpolator.try_next());
@@ -190,6 +190,18 @@ impl<E> ReplacementProvider<usize, E> for Vec<Vec<E>> {
     fn take_replacement(&mut self, input: &usize) -> Option<Self::Iter> {
         let r = self.get_mut(*input)?;
         Some(std::mem::take(r).into_iter())
+    }
+}
+
+impl<E> ReplacementProvider<usize, E> for Vec<E> {
+    type Iter = std::iter::Once<E>;
+
+    fn take_replacement(&mut self, input: &usize) -> Option<Self::Iter> {
+        if self.len() > *input {
+            Some(std::iter::once(self.remove(*input)))
+        } else {
+            None
+        }
     }
 }
 

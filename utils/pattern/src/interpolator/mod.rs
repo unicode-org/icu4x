@@ -24,14 +24,8 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// use icu_pattern::{Parser, Interpolator};
 ///
 /// #[derive(Debug, PartialEq)]
-/// enum Token {
-///     Variant1,
-///     Variant2
-/// }
-///
-/// #[derive(Debug, PartialEq)]
 /// enum Element<'s> {
-///     Token(Token),
+///     Value(usize),
 ///     Literal(&'s str),
 /// }
 ///
@@ -41,22 +35,15 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///     }
 /// }
 ///
-/// let mut parser = Parser::new("{0}, {1}");
+/// let mut parser = Parser::new("{0} days ago", true);
 ///
 /// let replacements = vec![
 ///     vec![
-///         Element::Token(Token::Variant1),
-///         Element::Literal(" foo "),
-///         Element::Token(Token::Variant2),
-///     ],
-///     vec![
-///         Element::Token(Token::Variant2),
-///         Element::Literal(" bar "),
-///         Element::Token(Token::Variant1),
+///         Element::Value(5),
 ///     ],
 /// ];
 ///
-/// let mut interpolator = Interpolator::new(parser, replacements);
+/// let mut interpolator = Interpolator::<_, _, _, Element>::new(parser, replacements);
 ///
 /// let mut result = vec![];
 ///
@@ -65,13 +52,8 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// }
 ///
 /// assert_eq!(result, &[
-///     Element::Token(Token::Variant1),
-///     Element::Literal(" foo "),
-///     Element::Token(Token::Variant2),
-///     Element::Literal(", "),
-///     Element::Token(Token::Variant2),
-///     Element::Literal(" bar "),
-///     Element::Token(Token::Variant1),
+///     Element::Value(5),
+///     Element::Literal(" days ago"),
 /// ]);
 /// ```
 ///
@@ -101,8 +83,6 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///
 /// The interpolator is written in an intentionally generic way to enable use against wide range
 /// of potential placeholder pattern models and use cases.
-///
-/// Serveral design decisions have been made that the reader should be aware of when using the API.
 ///
 /// ## Fallible Iterator
 ///
@@ -146,8 +126,8 @@ where
     ///     Token,
     /// }
     ///
-    /// let mut parser = Parser::new("{0}, {1}");
-    /// let mut interpolator = Interpolator::new(parser, vec![
+    /// let mut parser = Parser::new("{0}, {1}", false);
+    /// let mut interpolator = Interpolator::<_, _, _, Element>::new(parser, vec![
     ///     vec![
     ///         Element::Token
     ///     ]
@@ -181,7 +161,7 @@ where
     ///     }
     /// }
     ///
-    /// let mut parser = Parser::new("{0}, {1}");
+    /// let mut parser = Parser::new("{0}, {1}", false);
     /// let mut interpolator = Interpolator::new(parser, vec![
     ///     vec![
     ///         Element::TokenOne
@@ -279,14 +259,14 @@ mod tests {
     #[test]
     fn simple_interpolate() {
         for sample in SAMPLES.iter() {
-            let iter = Parser::new(&sample.0);
+            let iter = Parser::new(&sample.0, false);
 
             let replacements: Vec<Vec<Element>> = sample
                 .1
                 .iter()
                 .map(|r| r.iter().map(|&t| t.into()).collect())
                 .collect();
-            let mut i = Interpolator::new(iter, replacements);
+            let mut i = Interpolator::<_, _, _, Element<'_>>::new(iter, replacements);
             let mut result = String::new();
             while let Some(elem) = i.try_next().unwrap() {
                 write!(result, "{}", elem).unwrap();
@@ -307,7 +287,7 @@ mod tests {
         )];
 
         for sample in &named_samples {
-            let iter = Parser::new(&sample.0);
+            let iter = Parser::new(&sample.0, false);
 
             let replacements: std::collections::HashMap<String, Vec<Element>> = sample
                 .1

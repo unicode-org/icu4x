@@ -11,7 +11,7 @@ use thiserror::Error;
 /// ```
 /// use icu_pattern::{Parser, ParserError};
 ///
-/// let mut parser = Parser::new("{0");
+/// let mut parser = Parser::new("{0", false);
 /// assert_eq!(Err(ParserError::UnclosedPlaceholder), parser.try_next::<usize>());
 /// ```
 ///

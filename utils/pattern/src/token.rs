@@ -11,7 +11,7 @@
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(input);
+/// let mut parser = Parser::new(input, false);
 ///
 /// let mut result = vec![];
 ///

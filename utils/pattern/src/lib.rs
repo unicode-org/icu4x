@@ -39,7 +39,7 @@
 //!     }
 //! }
 //!
-//! let mut parser = Parser::new("{0}, {1}");
+//! let mut parser = Parser::new("{0}, {1}", true);
 //!
 //! let replacements = vec![
 //!     vec![
@@ -54,7 +54,7 @@
 //!     ],
 //! ];
 //!
-//! let mut interpolator = Interpolator::new(parser, replacements);
+//! let mut interpolator = Interpolator::<_, _, _, Element>::new(parser, replacements);
 //!
 //! let mut result = vec![];
 //!

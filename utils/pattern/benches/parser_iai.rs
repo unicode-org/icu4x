@@ -24,7 +24,7 @@ fn iai_parse() {
     ];
 
     for sample in &samples {
-        let mut p = Parser::new(&sample.0);
+        let mut p = Parser::new(&sample.0, false);
         while let Some(_) = p.try_next::<usize>().unwrap() {}
     }
 }
@@ -66,7 +66,7 @@ fn iai_interpolate() {
     ];
 
     for sample in &samples {
-        let iter = Parser::new(&sample.0);
+        let iter = Parser::new(&sample.0, false);
 
         let replacements: Vec<Vec<Element>> = sample
             .1
@@ -74,7 +74,7 @@ fn iai_interpolate() {
             .map(|r| r.iter().map(|&t| t.into()).collect())
             .collect();
 
-        let mut i = Interpolator::new(iter, replacements);
+        let mut i = Interpolator::<_, _, _, Element>::new(iter, replacements);
         let mut result = String::new();
         while let Some(elem) = i.try_next().unwrap() {
             write!(result, "{}", elem).unwrap();
@@ -93,7 +93,7 @@ fn iai_named_interpolate() {
     )];
 
     for sample in &named_samples {
-        let iter = Parser::new(&sample.0);
+        let iter = Parser::new(&sample.0, false);
 
         let replacements: std::collections::HashMap<String, Vec<Element>> = sample
             .1
