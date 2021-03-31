@@ -14,7 +14,8 @@ pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 pub mod numbers_json {
     //! Serde structs representing CLDR JSON numbers.json files.
     //!
-    //! Sample file: https://git.io/JYkQQ
+    //! Sample file:
+    //! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json
 
     use super::*;
 
@@ -124,7 +125,8 @@ pub mod numbers_json {
 pub mod numbering_systems_json {
     //! Serde structs representing CLDR JSON numberingSystem.json files.
     //!
-    //! Sample file: https://git.io/JYk7T
+    //! Sample file:
+    //! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-core/supplemental/numberingSystems.json
 
     use super::*;
 
