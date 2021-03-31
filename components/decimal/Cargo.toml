@@ -24,7 +24,15 @@ skip_optional_dependencies = true
 smallstr = { version = "0.2", features = ["serde"] }
 icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
+fixed_decimal = { version = "0.1", path = "../../utils/fixed_decimal" }
+writeable = { version = "0.2", path = "../../utils/writeable" }
 serde = { version = "1.0", features = ["derive"], optional = true }
+thiserror = "1.0"
+
+[dev-dependencies]
+icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
+icu_locid_macros = { version = "0.1", path = "../locid/macros" }
+icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 
 [features]
 default = ["provider_serde"]

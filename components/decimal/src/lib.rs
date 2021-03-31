@@ -16,4 +16,50 @@
 //!
 //! https://github.com/unicode-org/icu4x/issues/275
 
+pub mod error;
+pub mod format;
+pub mod options;
 pub mod provider;
+
+pub use error::Error as FixedDecimalFormatError;
+pub use format::FormattedFixedDecimal;
+
+use fixed_decimal::FixedDecimal;
+use icu_locid::Locale;
+use icu_provider::prelude::*;
+use std::borrow::Cow;
+
+pub struct FixedDecimalFormat<'d> {
+    options: options::FixedDecimalFormatOptions,
+    symbols: Cow<'d, provider::DecimalSymbolsV1>,
+}
+
+impl<'d> FixedDecimalFormat<'d> {
+    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::DecimalSymbolsV1> + ?Sized>(
+        locale: T,
+        data_provider: &D,
+        options: options::FixedDecimalFormatOptions,
+    ) -> Result<Self, FixedDecimalFormatError> {
+        let symbols = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::SYMBOLS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.into().into()),
+                    },
+                },
+            })?
+            .payload
+            .take()?;
+        Ok(Self { options, symbols })
+    }
+
+    pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {
+        FormattedFixedDecimal {
+            value,
+            options: &self.options,
+            symbols: &self.symbols,
+        }
+    }
+}
