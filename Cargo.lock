@@ -855,14 +855,17 @@ dependencies = [
 name = "icu_datetime"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "criterion",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
  "icu_testdata",
+ "litemap",
  "serde",
  "serde_json",
+ "smallvec",
  "tinystr",
  "writeable",
 ]
@@ -956,6 +959,7 @@ dependencies = [
  "icu_testdata",
  "itertools 0.10.0",
  "json",
+ "litemap",
  "log",
  "mktemp",
  "reqwest",
@@ -964,6 +968,7 @@ dependencies = [
  "serde-tuple-vec-map",
  "serde_json",
  "smallstr",
+ "smallvec",
  "tinystr",
  "unzip",
  "urlencoding",
@@ -1040,7 +1045,9 @@ dependencies = [
  "criterion",
  "icu_benchmark_macros",
  "icu_provider",
+ "litemap",
  "serde",
+ "tinystr",
 ]
 
 [[package]]

@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::convert::TryFrom;
+use std::{cmp::Ordering, convert::TryFrom};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum SymbolError {
     /// Unknown field symbol
     Unknown(u8),
@@ -12,7 +12,11 @@ pub enum SymbolError {
     Invalid(char),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum FieldSymbol {
     Year(Year),
     Month(Month),
@@ -22,6 +26,43 @@ pub enum FieldSymbol {
     Hour(Hour),
     Minute,
     Second(Second),
+}
+
+impl FieldSymbol {
+    /// Skeletons are a Vec<Field>, and represent the Fields that can be used to match to a
+    /// specific pattern. The order of the Vec does not affect the Pattern that is output.
+    /// However, it's more performant when matching these fields, and it's more deterministic
+    /// when serializing them to present them in a consistent order.
+    ///
+    /// This ordering is taken by the order of the fields listed in the [UTS 35 Date Field Symbol Table]
+    /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
+    /// ordered most significant to least significant.
+    ///
+    fn get_canonical_order(&self) -> u8 {
+        match self {
+            FieldSymbol::Year(Year::Calendar) => 0,
+            FieldSymbol::Year(Year::WeekOf) => 1,
+            FieldSymbol::Month(Month::Format) => 2,
+            FieldSymbol::Month(Month::StandAlone) => 3,
+            FieldSymbol::Day(Day::DayOfMonth) => 4,
+            FieldSymbol::Day(Day::DayOfYear) => 5,
+            FieldSymbol::Day(Day::DayOfWeekInMonth) => 6,
+            FieldSymbol::Day(Day::ModifiedJulianDay) => 7,
+            FieldSymbol::Weekday(Weekday::Format) => 8,
+            FieldSymbol::Weekday(Weekday::Local) => 9,
+            FieldSymbol::Weekday(Weekday::StandAlone) => 10,
+            FieldSymbol::DayPeriod(DayPeriod::AmPm) => 11,
+            FieldSymbol::DayPeriod(DayPeriod::NoonMidnight) => 12,
+            FieldSymbol::Hour(Hour::H11) => 13,
+            FieldSymbol::Hour(Hour::H12) => 14,
+            FieldSymbol::Hour(Hour::H23) => 15,
+            FieldSymbol::Hour(Hour::H24) => 16,
+            FieldSymbol::Minute => 17,
+            FieldSymbol::Second(Second::Second) => 18,
+            FieldSymbol::Second(Second::FractionalSecond) => 19,
+            FieldSymbol::Second(Second::Millisecond) => 20,
+        }
+    }
 }
 
 impl TryFrom<u8> for FieldSymbol {
@@ -53,7 +94,65 @@ impl TryFrom<char> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+impl From<FieldSymbol> for char {
+    fn from(symbol: FieldSymbol) -> Self {
+        match symbol {
+            FieldSymbol::Year(year) => match year {
+                Year::Calendar => 'y',
+                Year::WeekOf => 'Y',
+            },
+            FieldSymbol::Month(month) => match month {
+                Month::Format => 'M',
+                Month::StandAlone => 'L',
+            },
+            FieldSymbol::Day(day) => match day {
+                Day::DayOfMonth => 'd',
+                Day::DayOfYear => 'D',
+                Day::DayOfWeekInMonth => 'F',
+                Day::ModifiedJulianDay => 'g',
+            },
+            FieldSymbol::Weekday(weekday) => match weekday {
+                Weekday::Format => 'E',
+                Weekday::Local => 'e',
+                Weekday::StandAlone => 'c',
+            },
+            FieldSymbol::DayPeriod(dayperiod) => match dayperiod {
+                DayPeriod::AmPm => 'a',
+                DayPeriod::NoonMidnight => 'b',
+            },
+            FieldSymbol::Hour(hour) => match hour {
+                Hour::H11 => 'K',
+                Hour::H12 => 'h',
+                Hour::H23 => 'H',
+                Hour::H24 => 'k',
+            },
+            FieldSymbol::Minute => 'm',
+            FieldSymbol::Second(second) => match second {
+                Second::Second => 's',
+                Second::FractionalSecond => 'S',
+                Second::Millisecond => 'A',
+            },
+        }
+    }
+}
+
+impl PartialOrd for FieldSymbol {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for FieldSymbol {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.get_canonical_order().cmp(&other.get_canonical_order())
+    }
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Year {
     Calendar,
     WeekOf,
@@ -76,7 +175,11 @@ impl From<Year> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Month {
     Format,
     StandAlone,
@@ -99,7 +202,11 @@ impl From<Month> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Day {
     DayOfMonth,
     DayOfYear,
@@ -126,7 +233,11 @@ impl From<Day> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Hour {
     H11,
     H12,
@@ -153,7 +264,11 @@ impl From<Hour> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Second {
     Second,
     FractionalSecond,
@@ -178,7 +293,11 @@ impl From<Second> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum Weekday {
     Format,
     Local,
@@ -203,7 +322,11 @@ impl From<Weekday> for FieldSymbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum DayPeriod {
     AmPm,
     NoonMidnight,

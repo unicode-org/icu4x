@@ -131,10 +131,46 @@
       "short": "HH:mm"
     },
     "date_time": {
-      "full": "{1} {0}",
-      "long": "{1} {0}",
-      "medium": "{1} {0}",
-      "short": "{1} {0}"
+      "style_patterns": {
+        "full": "{1} {0}",
+        "long": "{1} {0}",
+        "medium": "{1} {0}",
+        "short": "{1} {0}"
+      },
+      "skeletons": {
+        "y": "y",
+        "yM": "MM/y",
+        "yMd": "dd.MM.y",
+        "yMdE": "d.M.y E",
+        "yMM": "MM.y",
+        "yMMM": "MMM y",
+        "yMMMd": "d MMM y",
+        "yMMMdE": "d MMM y E",
+        "yMMMM": "MMMM y",
+        "M": "L",
+        "Md": "d/M",
+        "MdE": "d/MM E",
+        "MMM": "LLL",
+        "MMMd": "d MMM",
+        "MMMdE": "d MMMM E",
+        "MMMMd": "d MMMM",
+        "MMMMdE": "d MMMM E",
+        "d": "d",
+        "dE": "d E",
+        "E": "ccc",
+        "Ehm": "E a h:mm",
+        "Ehms": "E a h:mm:ss",
+        "EHm": "E HH:mm",
+        "EHms": "E HH:mm:ss",
+        "h": "a h",
+        "hm": "a h:mm",
+        "hms": "a h:mm:ss",
+        "H": "HH",
+        "Hm": "HH:mm",
+        "Hms": "HH:mm:ss",
+        "ms": "mm:ss",
+        "mmss": "mm:ss"
+      }
     }
   }
 }

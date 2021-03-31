@@ -50,7 +50,7 @@ pub mod gregory {
 
         pub time: patterns::StylePatternsV1,
 
-        pub date_time: patterns::StylePatternsV1,
+        pub date_time: patterns::DateTimeFormatsV1,
     }
 
     macro_rules! symbols {
@@ -182,6 +182,13 @@ pub mod gregory {
 
     pub mod patterns {
         use super::*;
+        use crate::{
+            pattern::{self, Pattern},
+            skeleton::{Skeleton, SkeletonError},
+        };
+        use litemap::LiteMap;
+        use std::convert::TryFrom;
+
         #[derive(Debug, PartialEq, Clone, Default)]
         #[cfg_attr(
             feature = "provider_serde",
@@ -192,6 +199,78 @@ pub mod gregory {
             pub long: Cow<'static, str>,
             pub medium: Cow<'static, str>,
             pub short: Cow<'static, str>,
+        }
+
+        /// This struct is a public wrapper around the internal Pattern struct. This allows
+        /// access to the serialization and deserialization capabilities, without exposing the
+        /// internals of the pattern machinery.
+        ///
+        /// The Pattern is an "exotic type" in the serialization process, and handles its own
+        /// custom serialization practices.
+        #[derive(Debug, PartialEq, Clone, Default)]
+        #[cfg_attr(
+            feature = "provider_serde",
+            derive(serde::Serialize, serde::Deserialize)
+        )]
+        pub struct PatternV1(pub Pattern);
+
+        impl From<Pattern> for PatternV1 {
+            fn from(pattern: Pattern) -> Self {
+                Self(pattern)
+            }
+        }
+
+        impl TryFrom<&str> for PatternV1 {
+            type Error = pattern::Error;
+
+            fn try_from(pattern_string: &str) -> Result<Self, Self::Error> {
+                let pattern = Pattern::from_bytes(pattern_string);
+                match pattern {
+                    Ok(pattern) => Ok(PatternV1::from(pattern)),
+                    Err(err) => Err(err),
+                }
+            }
+        }
+
+        /// This struct is a public wrapper around the internal Skeleton struct. This allows
+        /// access to the serialization and deserialization capabilities, without exposing the
+        /// internals of the skeleton machinery.
+        ///
+        /// The Skeleton is an "exotic type" in the serialization process, and handles its own
+        /// custom serialization practices.
+        #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+        #[cfg_attr(
+            feature = "provider_serde",
+            derive(serde::Serialize, serde::Deserialize)
+        )]
+        pub struct SkeletonV1(pub Skeleton);
+
+        impl TryFrom<&str> for SkeletonV1 {
+            type Error = SkeletonError;
+
+            fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
+                match Skeleton::try_from(skeleton_string) {
+                    Ok(skeleton) => Ok(SkeletonV1(skeleton)),
+                    Err(err) => Err(err),
+                }
+            }
+        }
+
+        #[derive(Debug, PartialEq, Clone, Default)]
+        #[cfg_attr(
+            feature = "provider_serde",
+            derive(serde::Serialize, serde::Deserialize)
+        )]
+        pub struct SkeletonsV1(pub LiteMap<SkeletonV1, PatternV1>);
+
+        #[derive(Debug, PartialEq, Clone, Default)]
+        #[cfg_attr(
+            feature = "provider_serde",
+            derive(serde::Serialize, serde::Deserialize)
+        )]
+        pub struct DateTimeFormatsV1 {
+            pub style_patterns: StylePatternsV1,
+            pub skeletons: SkeletonsV1,
         }
     }
 }

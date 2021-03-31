@@ -36,11 +36,13 @@ icu_locale_canonicalizer = { version = "0.1", path = "../locale_canonicalizer" }
 icu_decimal = { version = "0.1", path = "../decimal" }
 itertools = "0.10"
 json = "0.12"
+litemap = { version = "0.1.1", path = "../../utils/litemap" }
 serde = { version = "1.0", features = ["derive"] }
 serde-aux = "2.1.1"
 serde_json = "1.0"
 serde-tuple-vec-map = "1.0"
 smallstr = { version = "0.2", features = ["serde"] }
+smallvec = "1.4"
 tinystr = { version = "0.4.3", features = ["serde"] }
 
 # Dependencies for the download feature

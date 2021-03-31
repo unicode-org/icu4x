@@ -74,7 +74,7 @@ fn test_ppucd_provider_parse() {
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
     let data_req = DataRequest {
         resource_path: ResourcePath {
-            key: key::WSPACE_V1,
+            key: key::WHITE_SPACE_V1,
             options: ResourceOptions {
                 variant: None,
                 langid: None,

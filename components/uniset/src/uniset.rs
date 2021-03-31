@@ -47,10 +47,7 @@ impl UnicodeSet {
     /// ```
     pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError> {
         if is_valid(&inv_list) {
-            let size: usize = inv_list
-                .chunks(2)
-                .map(|end_points| end_points[1] - end_points[0])
-                .sum::<u32>() as usize;
+            let size: usize = inv_list.chunks(2).map(|end_points| end_points[1] - end_points[0]).sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list))
@@ -108,10 +105,7 @@ impl UnicodeSet {
     /// assert_eq!(None, example_iter.next());
     /// ```
     pub fn iter(&self) -> impl Iterator<Item = char> + '_ {
-        self.inv_list
-            .chunks(2)
-            .flat_map(|pair| (pair[0]..pair[1]))
-            .filter_map(char::from_u32)
+        self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
     }
 
     /// Returns the number of elements of the `UnicodeSet`
@@ -286,10 +280,7 @@ impl UnicodeSet {
     /// assert_eq!(example.span("ABC", false), 0);
     /// ```
     pub fn span(&self, span_str: &str, contained: bool) -> usize {
-        span_str
-            .chars()
-            .take_while(|&x| self.contains(x) == contained)
-            .count()
+        span_str.chars().take_while(|&x| self.contains(x) == contained).count()
     }
 
     /// Returns the start of the trailing substring (starting from end of string) where the characters are
@@ -306,12 +297,7 @@ impl UnicodeSet {
     /// assert_eq!(example.span_back("CABXYZ", false), 3);
     /// ```
     pub fn span_back(&self, span_str: &str, contained: bool) -> usize {
-        span_str.len()
-            - span_str
-                .chars()
-                .rev()
-                .take_while(|&x| self.contains(x) == contained)
-                .count()
+        span_str.len() - span_str.chars().rev().take_while(|&x| self.contains(x) == contained).count()
     }
 }
 
@@ -342,20 +328,14 @@ mod tests {
     fn test_unicodeset_all() {
         let expected = vec![0, (char::MAX as u32) + 1];
         assert_eq!(UnicodeSet::all().inv_list, expected);
-        assert_eq!(
-            UnicodeSet::all().size(),
-            (expected[1] - expected[0]) as usize
-        )
+        assert_eq!(UnicodeSet::all().size(), (expected[1] - expected[0]) as usize)
     }
 
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0, BMP_MAX + 1];
         assert_eq!(UnicodeSet::bmp().inv_list, expected);
-        assert_eq!(
-            UnicodeSet::bmp().size(),
-            (expected[1] - expected[0]) as usize
-        );
+        assert_eq!(UnicodeSet::bmp().size(), (expected[1] - expected[0]) as usize);
     }
 
     // UnicodeSet membership functions
@@ -444,19 +424,13 @@ mod tests {
         let check = UnicodeSet::all();
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
-        let check = UnicodeSet {
-            inv_list: Vec::new(),
-            size: 0,
-        };
+        let check = UnicodeSet { inv_list: Vec::new(), size: 0 };
         assert_eq!(check.size(), 0);
     }
 
     #[test]
     fn test_unicodeset_is_empty() {
-        let check = UnicodeSet {
-            inv_list: vec![],
-            size: 0,
-        };
+        let check = UnicodeSet { inv_list: vec![], size: 0 };
         assert!(check.is_empty());
     }
 
@@ -512,10 +486,7 @@ mod tests {
 
     #[test]
     fn test_uniset_to_inv_list() {
-        let inv_list: Vec<u32> = vec![
-            9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
-            8287, 8288, 12288, 12289,
-        ];
+        let inv_list: Vec<u32> = vec![9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287, 8288, 12288, 12289];
         let inv_list_clone = (&inv_list).clone();
         let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();
         let round_trip_inv_list = s.get_inversion_list();
