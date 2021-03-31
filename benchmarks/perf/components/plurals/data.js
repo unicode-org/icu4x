@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617040741897,
+  "lastUpdate": 1617167154643,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4367,6 +4367,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 119555,
             "range": "± 6299",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1572a3a44792d820e3352d360696760da4300dfa",
+          "message": "Add FixedDecimalFormat data provider plumbing (#541)",
+          "timestamp": "2021-03-30T23:58:45-05:00",
+          "tree_id": "d5c2594d279e28f6f990694b1c9d322aa5f4bedb",
+          "url": "https://github.com/unicode-org/icu4x/commit/1572a3a44792d820e3352d360696760da4300dfa"
+        },
+        "date": 1617167153507,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1621,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7868,
+            "range": "± 289",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111172,
+            "range": "± 5692",
             "unit": "ns/iter"
           }
         ]
