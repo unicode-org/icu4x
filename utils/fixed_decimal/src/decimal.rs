@@ -337,17 +337,17 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Signum;
     ///
-    /// assert_eq!(Signum::Positive, FixedDecimal::from(42).signum());
+    /// assert_eq!(Signum::AboveZero, FixedDecimal::from(42).signum());
     /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
     /// assert_eq!(Signum::NegativeZero, FixedDecimal::from(0).negated().signum());
-    /// assert_eq!(Signum::Negative, FixedDecimal::from(-42).signum());
+    /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
     /// ```
     pub fn signum(&self) -> Signum {
         let is_zero = self.lower_magnitude == self.upper_magnitude;
         match (self.is_negative, is_zero) {
-            (false, false) => Signum::Positive,
+            (false, false) => Signum::AboveZero,
             (false, true) => Signum::PositiveZero,
-            (true, false) => Signum::Negative,
+            (true, false) => Signum::BelowZero,
             (true, true) => Signum::NegativeZero,
         }
     }

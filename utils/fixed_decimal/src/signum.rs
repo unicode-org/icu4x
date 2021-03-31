@@ -15,11 +15,11 @@
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Signum {
     /// A negative, nonzero value.
-    Negative,
+    BelowZero,
     /// A zero value with the sign bit set.
     NegativeZero,
     /// A zero value without the sign bit.
     PositiveZero,
     /// A positive, nonzero value.
-    Positive,
+    AboveZero,
 }
