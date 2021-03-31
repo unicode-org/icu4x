@@ -15,6 +15,7 @@
 //! # Example
 //!
 //! ```
+//! # #[cfg(feature = "provider_serde")] {
 //! use icu_decimal::FixedDecimalFormat;
 //! use icu_decimal::FormattedFixedDecimal;
 //! use icu_locid::Locale;
@@ -31,6 +32,7 @@
 //! let formatted_str = formatted_value.writeable_to_string();
 //!
 //! assert_eq!("১০,০০,০০৭", formatted_str);
+//! # } // feature = "provider_serde"
 //! ```
 //!
 //! [`FixedDecimalFormat`]: FixedDecimalFormat
