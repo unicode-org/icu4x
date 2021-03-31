@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617167070673,
+  "lastUpdate": 1617223885704,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4199,6 +4199,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 27024903,
             "range": "± 1371853",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6991943a7378dadc5284d2ff487edc09f553a8ce",
+          "message": "Simplify DeserializeSkeletonBincode with one less branch (#582)",
+          "timestamp": "2021-03-31T15:45:52-05:00",
+          "tree_id": "84ffa0d705f15e5fee280ffd3dfebc9239017f0c",
+          "url": "https://github.com/unicode-org/icu4x/commit/6991943a7378dadc5284d2ff487edc09f553a8ce"
+        },
+        "date": 1617223884178,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 28674042,
+            "range": "± 1207962",
             "unit": "ns/iter"
           }
         ]
