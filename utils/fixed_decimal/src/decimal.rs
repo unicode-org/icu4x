@@ -13,7 +13,8 @@ use std::str::FromStr;
 
 use static_assertions::const_assert;
 
-use super::uint_iterator::IntIterator;
+use crate::signum::Signum;
+use crate::uint_iterator::IntIterator;
 
 use crate::Error;
 
@@ -70,17 +71,7 @@ pub struct FixedDecimal {
     lower_magnitude: i16,
 
     /// Whether the number is negative. Negative zero is supported.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    ///
-    /// let mut dec: FixedDecimal = Default::default();
-    /// dec.is_negative = true;
-    /// assert_eq!("-0", dec.to_string());
-    /// ```
-    pub is_negative: bool,
+    is_negative: bool,
 }
 
 impl Default for FixedDecimal {
@@ -300,6 +291,64 @@ impl FixedDecimal {
         match self.multiply_pow10(delta) {
             Ok(()) => Ok(self),
             Err(err) => Err(err),
+        }
+    }
+
+    /// Change the value from negative to positive or from positive to negative, modifying self.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// dec.negate();
+    /// assert_eq!("-42", dec.to_string());
+    ///
+    /// dec.negate();
+    /// assert_eq!("42", dec.to_string());
+    /// ```
+    pub fn negate(&mut self) {
+        self.is_negative = !self.is_negative;
+    }
+
+    /// Change the value from negative to positive or from positive to negative, consuming self
+    /// and returning a new object.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// assert_eq!(FixedDecimal::from(-42), FixedDecimal::from(42).negated());
+    /// ```
+    pub fn negated(mut self) -> Self {
+        self.negate();
+        self
+    }
+
+    /// Returns the [Signum][Signum] of this FixedDecimal.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Signum;
+    ///
+    /// assert_eq!(Signum::Positive, FixedDecimal::from(42).signum());
+    /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
+    /// assert_eq!(Signum::NegativeZero, FixedDecimal::from(0).negated().signum());
+    /// assert_eq!(Signum::Negative, FixedDecimal::from(-42).signum());
+    /// ```
+    pub fn signum(&self) -> Signum {
+        let is_zero = self.lower_magnitude == self.upper_magnitude;
+        match (self.is_negative, is_zero) {
+            (false, false) => Signum::Positive,
+            (false, true) => Signum::PositiveZero,
+            (true, false) => Signum::Negative,
+            (true, true) => Signum::NegativeZero,
         }
     }
 
