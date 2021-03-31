@@ -104,7 +104,7 @@ impl Bag {
     pub(crate) fn to_vec_fields(&self) -> Vec<Field> {
         let mut fields = Vec::new();
         if let Some(_era) = self.era {
-            unimplemented!("FieldSymbol::Era is needed.")
+            unimplemented!("FieldSymbol::Era is needed. See issue #486.")
         }
 
         if let Some(year) = self.year {
@@ -128,7 +128,7 @@ impl Bag {
             });
         }
 
-        // Unimplemented quarter fields:
+        // TODO(#501) - Unimplemented quarter fields:
         // Q - Quarter number/name
         // q - Stand-alone quarter
 
@@ -152,12 +152,12 @@ impl Bag {
             });
         }
 
-        // Unimplemented week fields:
+        // TODO(#502) - Unimplemented week fields:
         // w - Week of year
         // W - Week of month
 
         if let Some(day) = self.day {
-            // Unimplemented day fields:
+            // TODO(#591,#592) Unimplemented day fields:
             // D - Day of year
             // F - Day of week in month
             // g - Modified Julian day.
@@ -174,7 +174,7 @@ impl Bag {
         }
 
         if let Some(weekday) = self.weekday {
-            // Unimplemented fields
+            // TODO(#593) Unimplemented fields
             // e - Local day of week.
             // c - Stand-alone local day of week.
             fields.push(Field {
@@ -193,16 +193,12 @@ impl Bag {
             });
         }
 
-        // Unimplemented period fields:
+        // The period fields are not included in skeletons:
         // a - AM, PM
         // b - am, pm, noon, midnight
         // c - flexible day periods
 
         if let Some(hour) = self.hour {
-            // Unimplemented fields
-            // e - Local day of week.
-            // c - Stand-alone local day of week.
-
             // fields::Hour::H11
             // fields::Hour::H12
             // fields::Hour::H23
@@ -225,8 +221,10 @@ impl Bag {
                         // K - symbol
                         preferences::HourCycle::H11 => fields::Hour::H11,
                     },
-                    // No preference
-                    // TODO - What should this default to?
+                    // TODO(#594) - This should default should be the locale default, which is
+                    // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
+                    // to load it as well as think about the best architecture for where that
+                    // data loading code should reside.
                     _ => fields::Hour::H24,
                 }),
                 length: match hour {
@@ -270,6 +268,11 @@ impl Bag {
         //     unimplemented!();
         // }
 
+        debug_assert!(
+            fields.windows(2).all(|f| f[0] < f[1]),
+            "The fields are sorted and unique."
+        );
+
         fields
     }
 }
@@ -303,16 +306,6 @@ pub enum Numeric {
     TwoDigit,
 }
 
-impl Numeric {
-    pub fn matches_field_length(&self, length: FieldLength) -> bool {
-        length
-            == match self {
-                Numeric::Numeric => FieldLength::One,
-                Numeric::TwoDigit => FieldLength::TwoDigit,
-            }
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Text {
@@ -337,19 +330,6 @@ pub enum Month {
     Short,
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
-}
-
-impl Month {
-    pub fn matches_field_length(&self, length: FieldLength) -> bool {
-        length
-            == match self {
-                Month::Numeric => FieldLength::One,
-                Month::TwoDigit => FieldLength::TwoDigit,
-                Month::Short => FieldLength::Abbreviated,
-                Month::Long => FieldLength::Wide,
-                Month::Narrow => FieldLength::Narrow,
-            }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

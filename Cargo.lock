@@ -880,7 +880,6 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "static_assertions",
  "tinystr",
  "writeable",
 ]

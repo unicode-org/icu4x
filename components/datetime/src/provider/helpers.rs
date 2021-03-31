@@ -72,12 +72,12 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
                 available_format_patterns,
                 &requested_fields,
             ) {
-                skeleton::BestSkeleton::AllFieldsMatch(skeleton)
-                | skeleton::BestSkeleton::MissingOrExtraFields(skeleton) => {
+                skeleton::BestSkeleton::AllFieldsMatch(available_format_pattern)
+                | skeleton::BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                     // In the short-term future, patterns can be dynamically generated to provide
                     // a better match than what is literally in the CLDR. For now, just clone the
                     // pattern.
-                    Some(skeleton.pattern.clone())
+                    Some(available_format_pattern.pattern.clone())
                 }
                 skeleton::BestSkeleton::NoMatch => None,
             },

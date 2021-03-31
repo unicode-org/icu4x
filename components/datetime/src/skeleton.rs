@@ -204,15 +204,14 @@ pub struct AvailableFormatPattern<'a> {
     pub pattern: &'a Pattern,
 }
 
-impl<'a> TryFrom<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
-    type Error = SkeletonError;
-    fn try_from(tuple: (&'a SkeletonV1, &'a PatternV1)) -> Result<Self, Self::Error> {
+impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
+    fn from(tuple: (&'a SkeletonV1, &'a PatternV1)) -> Self {
         let (skeleton_v1, pattern_v1) = tuple;
 
-        Ok(AvailableFormatPattern {
+        AvailableFormatPattern {
             skeleton: &skeleton_v1.0,
             pattern: &pattern_v1.0,
-        })
+        }
     }
 }
 
@@ -294,8 +293,12 @@ impl From<fields::SymbolError> for SkeletonError {
 // to be at minimum a multiple of the max length of fields. As of CLDR 38 (2021-01), the max length
 // of a skeleton in the "availableFormats" contained a total of 4 fields. The scores use a multiple
 // of 10, as a number that will contain the range, and be easy to reason with.
+//
+// The only exception is on the largest magnitude of values (MISSING_OR_SKELETON_EXTRA_SYMBOL). The
+// missing or extra count BOTH the requested fields and skeleton fields. This is fine since there
+// is no higher magnitude.
 
-const MAX_FIELDS: u16 = 10;
+const MAX_SKELETON_FIELDS: u32 = 10;
 
 // Per the skeleton matching algorithm:
 // https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons
@@ -317,26 +320,31 @@ const MAX_FIELDS: u16 = 10;
 // For step 2, the components::Bag will not produce "stand-alone" months, as no skeletons
 // contain stand-alone months.
 
-const NO_DISTANCE: u16 = 0;
+const NO_DISTANCE: u32 = 0;
 
 // B. Width differences among fields, other than those marking text vs numeric, are given small
 // distance from each other.
 // - MMM ≅ MMMM  (Sep ≅ September)
 //   MM ≅ M      (09 ≅ 9)
-const WIDTH_MISMATCH_DISTANCE: u16 = 1;
+const WIDTH_MISMATCH_DISTANCE: u32 = 1;
 
 // C. Numeric and text fields are given a larger distance from each other.
 // - MMM ≈ MM    (Sep ≈ 09)
 //   MMM
-const TEXT_VS_NUMERIC_DISTANCE: u16 = 10;
+const TEXT_VS_NUMERIC_DISTANCE: u32 = 10;
 
 // D. Symbols representing substantial differences (week of year vs week of month) are given much
 // larger a distances from each other.
 // - d ≋ D;     (12 ≋ 345) Day of month vs Day of year
-const SUBSTANTIAL_DIFFERENCES_DISTANCE: u16 = 100;
+const SUBSTANTIAL_DIFFERENCES_DISTANCE: u32 = 100;
 
-// Finally, missing or extra symbols are the biggest distance.
-const MISSING_OR_EXTRA_SYMBOL_DISTANCE: u16 = 1000;
+// A skeleton had more symbols than what was requested.
+const SKELETON_EXTRA_SYMBOL: u32 = 1000;
+
+// A requested symbol is missing in the skeleton. Note that this final value can be more than
+// MAX_SKELETON_FIELDS, as it's counting the missing requested fields, which can be longer than
+// the stored skeletons. There cannot be any cases higher than this one.
+const REQUESTED_SYMBOL_MISSING: u32 = 10000;
 
 /// According to the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
 /// there will be a guaranteed match for a skeleton. However, with this initial implementation,
@@ -372,20 +380,18 @@ pub fn get_best_available_format_pattern<'a>(
     fields: &[Field],
 ) -> BestSkeleton<'a> {
     let mut closest_format_pattern = None;
-    let mut closest_distance: u16 = u16::MAX;
+    let mut closest_distance: u32 = u32::MAX;
     let mut closest_missing_fields = 0;
 
     for available_format_pattern in available_format_patterns {
         let skeleton = &available_format_pattern.skeleton;
         debug_assert!(
-            skeleton.fields_len() <= MAX_FIELDS as usize,
-            "The distance mechanism assumes skeletons are less than MAX_FIELDS in length."
+            skeleton.fields_len() <= MAX_SKELETON_FIELDS as usize,
+            "The distance mechanism assumes skeletons are less than MAX_SKELETON_FIELDS in length."
         );
         let mut missing_fields = 0;
-        let mut distance: u16 = 0;
-        // The distance should fit into a u16.
-        #[cfg(test)]
-        static_assertions::const_assert!(MAX_FIELDS * MISSING_OR_EXTRA_SYMBOL_DISTANCE < u16::MAX);
+        let mut distance: u32 = 0;
+        // The distance should fit into a u32.
 
         let mut requested_fields = fields.iter().peekable();
         let mut skeleton_fields = skeleton.fields_iter().peekable();
@@ -406,13 +412,13 @@ pub fn get_best_available_format_pattern<'a>(
                     if skeleton_field.symbol > requested_field.symbol {
                         // Keep searching for a matching skeleton field.
                         skeleton_fields.next();
-                        distance += MISSING_OR_EXTRA_SYMBOL_DISTANCE;
+                        distance += SKELETON_EXTRA_SYMBOL;
                         continue;
                     }
 
                     if skeleton_field.symbol < requested_field.symbol {
-                        // The requested field is missing from the skeleton.
-                        distance += MISSING_OR_EXTRA_SYMBOL_DISTANCE;
+                        // The requested field symbol is missing from the skeleton.
+                        distance += REQUESTED_SYMBOL_MISSING;
                         missing_fields += 1;
                         requested_fields.next();
                         continue;
@@ -434,12 +440,12 @@ pub fn get_best_available_format_pattern<'a>(
                 }
                 (None, Some(_)) => {
                     // The skeleton has additional fields that we are not matching.
-                    distance += MISSING_OR_EXTRA_SYMBOL_DISTANCE;
+                    distance += SKELETON_EXTRA_SYMBOL;
                     skeleton_fields.next();
                 }
                 (Some(_), None) => {
                     // The skeleton is missing requested fields.
-                    distance += MISSING_OR_EXTRA_SYMBOL_DISTANCE;
+                    distance += REQUESTED_SYMBOL_MISSING;
                     requested_fields.next();
                     missing_fields += 1;
                 }
@@ -462,7 +468,7 @@ pub fn get_best_available_format_pattern<'a>(
     if closest_missing_fields == fields.len() {
         return BestSkeleton::NoMatch;
     }
-    if closest_distance >= MISSING_OR_EXTRA_SYMBOL_DISTANCE {
+    if closest_distance >= SKELETON_EXTRA_SYMBOL {
         return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
     }
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
@@ -471,14 +477,7 @@ pub fn get_best_available_format_pattern<'a>(
 pub fn get_available_format_patterns<'a>(
     skeletons: &'a SkeletonsV1,
 ) -> impl Iterator<Item = AvailableFormatPattern> + 'a {
-    skeletons
-        .0
-        .iter()
-        .map(AvailableFormatPattern::try_from)
-        .map(|available_format_pattern| {
-            available_format_pattern
-                .expect("The provider data should only contain valid available format patterns.")
-        })
+    skeletons.0.iter().map(AvailableFormatPattern::from)
 }
 
 #[cfg(all(test, feature = "provider_serde"))]
