@@ -53,9 +53,7 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
         match options {
             DateTimeFormatOptions::Length(bag) => self.get_pattern_for_length_bag(bag),
-            DateTimeFormatOptions::Components(bag) => self
-                .get_pattern_for_components_bag(bag)
-                .map(|maybe_pattern| maybe_pattern),
+            DateTimeFormatOptions::Components(bag) => self.get_pattern_for_components_bag(bag),
         }
     }
 
