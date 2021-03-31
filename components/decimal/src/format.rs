@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Lower-level types for decimal formatting.
+
 use crate::digit_char;
 use crate::grouper;
 use crate::options::*;
@@ -10,6 +12,9 @@ use crate::sign_selector;
 use fixed_decimal::FixedDecimal;
 use writeable::Writeable;
 
+/// An intermediate structure returned by FixedDecimalFormat. Use [`Writeable`][Writeable] to
+/// render the formatted decimal to a string or buffer.
+#[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatOptions,
@@ -53,10 +58,9 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
                 sink.write_str(&self.symbols.grouping_separator)?;
             }
         }
+        if let Some(affixes) = affixes {
+            sink.write_str(&affixes.suffix)?;
+        }
         Ok(())
     }
-
-    // fn write_len(&self) -> writeable::LengthHint {
-    //     todo!()
-    // }
 }

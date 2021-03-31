@@ -63,7 +63,7 @@ impl FromStr for DecimalSubPattern {
         // TODO(#567): Generalize this to support all of UTS 35.
         let (a, b, c, d) = match body {
             "#,##0.###" => (3, 3, 0, 3),
-            "#,##,##0.###" => (2, 3, 0, 3),
+            "#,##,##0.###" => (3, 2, 0, 3),
             "0.######" => (0, 0, 0, 6),
             _ => return Err(Error::UnknownPatternBody(body.to_string())),
         };

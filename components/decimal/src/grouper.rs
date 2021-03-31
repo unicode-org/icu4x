@@ -37,7 +37,7 @@ pub fn check(
     if magnitude_prime % (sizes.secondary as i16) == 0 {
         return true;
     }
-    return false;
+    false
 }
 
 #[test]
@@ -71,6 +71,7 @@ fn test_grouper() {
         // Expected results for numbers with magnitude 3, 4, 5, and 6
         expected: [&'static str; 4],
     }
+    #[allow(clippy::redundant_clone)]
     let cases = [
         TestCase {
             strategy: GroupingStrategy::Auto,
