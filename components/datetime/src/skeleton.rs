@@ -92,15 +92,12 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
         let mut items: SmallVec<[fields::Field; 5]> = SmallVec::new();
         while let Some(item) = seq.next_element()? {
             if let Some(prev_item) = items.last() {
-                if prev_item > &item {
+                if prev_item >= &item {
                     return Err(de::Error::invalid_value(
-                        de::Unexpected::Other(&format!("field item out of order: {:?}", item)),
-                        &"ordered field symbols representing a skeleton",
-                    ));
-                }
-                if prev_item == &item {
-                    return Err(de::Error::invalid_value(
-                        de::Unexpected::Other(&format!("duplicate field: {:?}", item)),
+                        de::Unexpected::Other(&format!(
+                            "field item out of order or duplicate: {:?}",
+                            item
+                        )),
                         &"ordered field symbols representing a skeleton",
                     ));
                 }
@@ -444,7 +441,7 @@ mod test {
 
         assert_eq!(
             format!("{}", err),
-            "invalid value: field item out of order: Field { symbol: Month(Format), length: One }, expected ordered field symbols representing a skeleton"
+            "invalid value: field item out of order or duplicate: Field { symbol: Month(Format), length: One }, expected ordered field symbols representing a skeleton"
         );
     }
 
@@ -465,7 +462,7 @@ mod test {
 
         assert_eq!(
             format!("{}", err),
-            "invalid value: duplicate field: Field { symbol: Day(DayOfMonth), length: One }, expected ordered field symbols representing a skeleton"
+            "invalid value: field item out of order or duplicate: Field { symbol: Day(DayOfMonth), length: One }, expected ordered field symbols representing a skeleton"
         );
     }
 }
