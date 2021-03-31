@@ -27,7 +27,7 @@ const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let locale: Locale = langid!("en").into();
+    let locale: Locale = langid!("bn").into();
 
     let provider = icu_testdata::get_provider();
 

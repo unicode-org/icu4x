@@ -16,10 +16,13 @@
 //!
 //! https://github.com/unicode-org/icu4x/issues/275
 
+mod digit_char;
 pub mod error;
 pub mod format;
+mod grouper;
 pub mod options;
 pub mod provider;
+mod sign_selector;
 
 pub use error::Error as FixedDecimalFormatError;
 pub use format::FormattedFixedDecimal;

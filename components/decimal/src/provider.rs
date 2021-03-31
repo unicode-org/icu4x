@@ -74,3 +74,26 @@ pub struct DecimalSymbolsV1 {
     /// Zero digit for the current numbering system.
     pub zero_digit: char,
 }
+
+impl Default for DecimalSymbolsV1 {
+    fn default() -> Self {
+        Self {
+            minus_sign_affixes: AffixesV1 {
+                prefix: "-".into(),
+                suffix: "".into(),
+            },
+            plus_sign_affixes: AffixesV1 {
+                prefix: "+".into(),
+                suffix: "".into(),
+            },
+            decimal_separator: ".".into(),
+            grouping_separator: ",".into(),
+            grouping_sizes: GroupingSizesV1 {
+                primary: 3,
+                secondary: 3,
+                min_grouping: 1,
+            },
+            zero_digit: '0',
+        }
+    }
+}
