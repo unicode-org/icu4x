@@ -8,6 +8,7 @@ members = [
     "experimental/bies",
     "experimental/segmenter_lstm",
     "components/datetime",
+    "components/decimal",
     "components/ecma402",
     "components/capi",
     "components/icu",

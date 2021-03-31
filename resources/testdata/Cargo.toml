@@ -98,6 +98,7 @@ cldr_json_glob = [
     "cldr-core/supplemental/ordinals.json",
     "cldr-core/supplemental/plurals.json",
     "cldr-dates-full/main/$LOCALES/ca-gregorian.json",
+    "cldr-numbers-full/main/$LOCALES/numbers.json",
     # Extra data for feature coverage in provider_cldr tests:
     "cldr-dates-full/main/cs/ca-gregorian.json",
     "cldr-dates-full/main/haw/ca-gregorian.json",

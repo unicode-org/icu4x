@@ -4,10 +4,12 @@
 
 mod dates;
 mod likelysubtags;
+mod numbers;
 mod plurals;
 
 pub use dates::DatesProvider;
 pub use likelysubtags::LikelySubtagsProvider;
+pub use numbers::NumbersProvider;
 pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
@@ -22,6 +24,7 @@ pub fn get_all_resc_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&dates::ALL_KEYS);
     result.extend(&likelysubtags::ALL_KEYS);
+    result.extend(&numbers::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
     result
 }
@@ -31,6 +34,7 @@ pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a dyn CldrPaths,
     dates: LazyCldrProvider<DatesProvider<'d>>,
     likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'d>>,
+    numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,
 }
 
@@ -40,6 +44,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
             cldr_paths,
             dates: Default::default(),
             likelysubtags: Default::default(),
+            numbers: Default::default(),
             plurals: Default::default(),
         }
     }
@@ -76,6 +81,9 @@ impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
         if let Some(result) = self.likelysubtags.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
+        if let Some(result) = self.numbers.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
         if let Some(result) = self.plurals.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
@@ -96,6 +104,12 @@ impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
         }
         if let Some(resp) = self
             .likelysubtags
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
+            return Ok(resp);
+        }
+        if let Some(resp) = self
+            .numbers
             .try_supported_options(resc_key, self.cldr_paths)?
         {
             return Ok(resp);
