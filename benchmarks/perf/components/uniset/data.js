@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617040660989,
+  "lastUpdate": 1617167070673,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4169,6 +4169,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 29915966,
             "range": "± 1861350",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1572a3a44792d820e3352d360696760da4300dfa",
+          "message": "Add FixedDecimalFormat data provider plumbing (#541)",
+          "timestamp": "2021-03-30T23:58:45-05:00",
+          "tree_id": "d5c2594d279e28f6f990694b1c9d322aa5f4bedb",
+          "url": "https://github.com/unicode-org/icu4x/commit/1572a3a44792d820e3352d360696760da4300dfa"
+        },
+        "date": 1617167069564,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 27024903,
+            "range": "± 1371853",
             "unit": "ns/iter"
           }
         ]
