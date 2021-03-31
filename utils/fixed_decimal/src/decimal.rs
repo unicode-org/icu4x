@@ -343,7 +343,7 @@ impl FixedDecimal {
     /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
     /// ```
     pub fn signum(&self) -> Signum {
-        let is_zero = self.lower_magnitude == self.upper_magnitude;
+        let is_zero = self.digits.is_empty();
         match (self.is_negative, is_zero) {
             (false, false) => Signum::AboveZero,
             (false, true) => Signum::PositiveZero,
@@ -950,5 +950,48 @@ fn test_syntax_error() {
                 assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
             }
         }
+    }
+}
+
+#[test]
+fn test_signum_zero() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub fixed_decimal: FixedDecimal,
+        pub expected_signum: Signum,
+    }
+    let cases = [
+        TestCase {
+            fixed_decimal: Default::default(),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from(0),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from(0).negated(),
+            expected_signum: Signum::NegativeZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("0").unwrap(),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("000").unwrap(),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("-0.000").unwrap(),
+            expected_signum: Signum::NegativeZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("000.000").unwrap(),
+            expected_signum: Signum::PositiveZero,
+        },
+    ];
+    for cas in &cases {
+        let signum = cas.fixed_decimal.signum();
+        assert_eq!(cas.expected_signum, signum, "{:?}", cas);
     }
 }
