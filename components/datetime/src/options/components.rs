@@ -12,7 +12,7 @@
 //! # Pattern Selection
 //!
 //! It is important to understand that the components bag is a human-friendly way to describe a skeleton, not a pattern.
-//! That means that the components and their styles provided by the user will be matched against available patterns for
+//! That means that the components and their lengths provided by the user will be matched against available patterns for
 //! a given locale and the closest available pattern will be used for formatting.
 //!
 //! That means, that it is possible that if the user asks for a combination of fields or lengths that `CLDR` has no

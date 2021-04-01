@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/master/LICENSE ).
 pub mod structs;
 
-use icu_datetime::options::style;
+use icu_datetime::options::length;
 use icu_datetime::DateTimeFormatOptions;
 use std::fs::File;
 use std::io::BufReader;
@@ -16,20 +16,20 @@ pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
 }
 
 pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
-    let style = style::Bag {
-        date: input.style.date.as_ref().map(|date| match date {
-            structs::TestStyleWidth::Full => style::Date::Full,
-            structs::TestStyleWidth::Long => style::Date::Long,
-            structs::TestStyleWidth::Medium => style::Date::Medium,
-            structs::TestStyleWidth::Short => style::Date::Short,
+    let length = length::Bag {
+        date: input.length.date.as_ref().map(|date| match date {
+            structs::TestStyleWidth::Full => length::Date::Full,
+            structs::TestStyleWidth::Long => length::Date::Long,
+            structs::TestStyleWidth::Medium => length::Date::Medium,
+            structs::TestStyleWidth::Short => length::Date::Short,
         }),
-        time: input.style.time.as_ref().map(|time| match time {
-            structs::TestStyleWidth::Full => style::Time::Full,
-            structs::TestStyleWidth::Long => style::Time::Long,
-            structs::TestStyleWidth::Medium => style::Time::Medium,
-            structs::TestStyleWidth::Short => style::Time::Short,
+        time: input.length.time.as_ref().map(|time| match time {
+            structs::TestStyleWidth::Full => length::Time::Full,
+            structs::TestStyleWidth::Long => length::Time::Long,
+            structs::TestStyleWidth::Medium => length::Time::Medium,
+            structs::TestStyleWidth::Short => length::Time::Short,
         }),
         ..Default::default()
     };
-    style.into()
+    length.into()
 }

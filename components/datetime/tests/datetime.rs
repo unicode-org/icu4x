@@ -11,7 +11,7 @@ use std::fmt::Write;
 fn test_fixtures() {
     let provider = icu_testdata::get_provider();
 
-    for fx in fixtures::get_fixture("styles").unwrap().0 {
+    for fx in fixtures::get_fixture("lengths").unwrap().0 {
         let langid = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
         let dtf = DateTimeFormat::try_new(langid, &provider, &options).unwrap();

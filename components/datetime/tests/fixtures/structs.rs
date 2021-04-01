@@ -21,7 +21,7 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOptions {
-    pub style: TestOptionsStyle,
+    pub length: TestOptionsStyle,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

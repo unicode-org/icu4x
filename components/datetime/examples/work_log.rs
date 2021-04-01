@@ -7,7 +7,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu_datetime::date::MockDateTime;
-use icu_datetime::{options::style, DateTimeFormat};
+use icu_datetime::{options::length, DateTimeFormat};
 use icu_locid_macros::langid;
 
 const DATES_ISO: &[&str] = &[
@@ -44,9 +44,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<MockDateTime>, _>>()
         .expect("Failed to parse dates.");
 
-    let options = style::Bag {
-        date: Some(style::Date::Medium),
-        time: Some(style::Time::Short),
+    let options = length::Bag {
+        date: Some(length::Date::Medium),
+        time: Some(length::Time::Short),
         ..Default::default()
     };
 

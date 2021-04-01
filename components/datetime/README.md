@@ -12,15 +12,15 @@ used to quickly format any date and time provided.
 
 ```rust
 use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu_datetime::{DateTimeFormat, date::MockDateTime, options::length};
 
 let provider = icu_testdata::get_provider();
 
 let lid = langid!("en");
 
-let options = style::Bag {
-    date: Some(style::Date::Medium),
-    time: Some(style::Time::Short),
+let options = length::Bag {
+    date: Some(length::Date::Medium),
+    time: Some(length::Time::Short),
     ..Default::default()
 }.into();
 
