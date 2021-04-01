@@ -65,21 +65,15 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
         components: &components::Bag,
     ) -> Result<Option<Pattern>> {
         // Not all skeletons are currently supported.
-        let available_format_patterns =
-            skeleton::get_available_format_patterns(&self.date_time.skeletons);
         let requested_fields = components.to_vec_fields();
         Ok(
-            match skeleton::get_best_available_format_pattern(
-                available_format_patterns,
+            match skeleton::create_best_pattern_for_fields(
+                &self.date_time.skeletons,
+                &self.date_time.length_patterns,
                 &requested_fields,
             ) {
-                skeleton::BestSkeleton::AllFieldsMatch(available_format_pattern)
-                | skeleton::BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
-                    // In the short-term future, patterns can be dynamically generated to provide
-                    // a better match than what is literally in the CLDR. For now, just clone the
-                    // pattern.
-                    Some(available_format_pattern.pattern.clone())
-                }
+                skeleton::BestSkeleton::AllFieldsMatch(pattern)
+                | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
                 skeleton::BestSkeleton::NoMatch => None,
             },
         )
