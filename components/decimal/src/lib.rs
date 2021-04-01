@@ -37,7 +37,6 @@
 //!
 //! [`FixedDecimalFormat`]: FixedDecimalFormat
 
-mod digit_char;
 pub mod error;
 pub mod format;
 mod grouper;

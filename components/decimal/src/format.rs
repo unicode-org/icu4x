@@ -4,7 +4,6 @@
 
 //! Lower-level types for decimal formatting.
 
-use crate::digit_char;
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
@@ -48,7 +47,7 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
                 sink.write_str(&self.symbols.decimal_separator)?;
             }
             let d = self.value.digit_at(m);
-            sink.write_char(digit_char::get(self.symbols.zero_digit, d))?;
+            sink.write_char(self.symbols.digits[d as usize])?;
             if grouper::check(
                 upper_magnitude,
                 m,

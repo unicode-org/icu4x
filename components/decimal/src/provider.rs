@@ -71,8 +71,9 @@ pub struct DecimalSymbolsV1 {
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
 
-    /// Zero digit for the current numbering system.
-    pub zero_digit: char,
+    /// Digit characters for the current numbering system. In most systems, these digits are
+    /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
+    pub digits: [char; 10],
 }
 
 impl Default for DecimalSymbolsV1 {
@@ -93,7 +94,7 @@ impl Default for DecimalSymbolsV1 {
                 secondary: 3,
                 min_grouping: 1,
             },
-            zero_digit: '0',
+            digits: ['0','1','2','3','4','5','6','7','8','9'],
         }
     }
 }

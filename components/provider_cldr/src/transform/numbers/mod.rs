@@ -71,19 +71,32 @@ impl KeyedDataProvider for NumbersProvider {
 }
 
 impl NumbersProvider {
-    /// Returns the zero digit for the given numbering system name.
-    ///
-    /// All decimal numbering systems in Unicode have a contiguous set of 10 code points, starting
-    /// with the zero digit. For example, the zero digit for the Latin numbering system is "0", and
-    /// the zero digit for the Bengali numbering system is "০".
-    fn get_zero_digit_for_numbering_system(&self, nsname: TinyStr8) -> Option<char> {
+    /// Returns the digits for the given numbering system name.
+    fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Option<[char; 10]> {
         match self
             .cldr_numbering_systems_data
             .supplemental
             .numbering_systems
             .get(&nsname)
         {
-            Some(ns) => ns.digits.as_ref().and_then(|s| s.chars().next()),
+            Some(ns) => match ns.digits.as_ref() {
+                Some(digits_str) => {
+                    let mut chars = digits_str.chars();
+                    Some([
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                        chars.next()?,
+                    ])
+                }
+                None => None,
+            },
             None => None,
         }
     }
@@ -109,8 +122,8 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
         let mut result = DecimalSymbolsV1::try_from(numbers)
             .map_err(|s| Error::Custom(s.to_string(), Some(langid.clone())))
             .map_err(DataError::new_resc_error)?;
-        result.zero_digit = self
-            .get_zero_digit_for_numbering_system(nsname)
+        result.digits = self
+            .get_digits_for_numbering_system(nsname)
             .ok_or_else(|| {
                 Error::Custom(
                     format!("Could not process numbering system: {:?}", nsname),
@@ -181,7 +194,7 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: other.minimum_grouping_digits,
             },
-            zero_digit: '\u{FFFD}', // to be filled in
+            digits: Default::default(), // to be filled in
         })
     }
 }
@@ -210,5 +223,5 @@ fn test_basic() {
         .unwrap();
 
     assert_eq!(ar_decimal.decimal_separator, "٫");
-    assert_eq!(ar_decimal.zero_digit, '٠');
+    assert_eq!(ar_decimal.digits[0], '٠');
 }
