@@ -109,11 +109,24 @@ impl DecimalPattern {
         let signed_affixes = self
             .negative
             .as_ref()
-            .map(|subpattern| (subpattern.prefix.clone(), subpattern.suffix.clone()))
-            .unwrap_or_else(|| ("-".into(), "".into()));
+            .map(|subpattern| {
+                (
+                    if subpattern.prefix.is_empty() {
+                        None
+                    } else {
+                        Some(subpattern.prefix.clone())
+                    },
+                    if subpattern.suffix.is_empty() {
+                        None
+                    } else {
+                        Some(subpattern.suffix.clone())
+                    },
+                )
+            })
+            .unwrap_or_else(|| (Some("-".into()), None));
         AffixesV1 {
-            prefix: signed_affixes.0.replace("-", sign_str).into(),
-            suffix: signed_affixes.1.replace("-", sign_str).into(),
+            prefix: signed_affixes.0.map(|s| s.replace("-", sign_str).into()),
+            suffix: signed_affixes.1.map(|s| s.replace("-", sign_str).into()),
         }
     }
 }

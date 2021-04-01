@@ -38,7 +38,9 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
     {
         let affixes = self.get_affixes();
         if let Some(affixes) = affixes {
-            sink.write_str(&affixes.prefix)?;
+            if let Some(prefix) = &affixes.prefix {
+                sink.write_str(&prefix)?;
+            }
         }
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
@@ -58,7 +60,9 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
             }
         }
         if let Some(affixes) = affixes {
-            sink.write_str(&affixes.suffix)?;
+            if let Some(suffix) = &affixes.suffix {
+                sink.write_str(&suffix)?;
+            }
         }
         Ok(())
     }
