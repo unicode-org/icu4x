@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617307290358,
+  "lastUpdate": 1617320313975,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4493,6 +4493,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5263,
             "range": "± 43",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03aef69d795d104f15b46371f063a943b77b7942",
+          "message": "Implementing FixedDecimalFormat (#590)",
+          "timestamp": "2021-04-01T18:32:20-05:00",
+          "tree_id": "7797c641efb1ff4cc2a65e6c2d2f55c8c357cc98",
+          "url": "https://github.com/unicode-org/icu4x/commit/03aef69d795d104f15b46371f063a943b77b7942"
+        },
+        "date": 1617320313195,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3486,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5359,
+            "range": "± 20",
             "unit": "ns/iter"
           }
         ]
