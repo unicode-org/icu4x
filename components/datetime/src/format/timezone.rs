@@ -74,13 +74,11 @@ where
                     FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
                         time_zone_format
                             .short_specific_non_location_format(time_zone)
-                            .unwrap_or_else(|| {
-                                time_zone_format.short_localized_gmt_format(time_zone)
-                            })
+                            .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone))
                     }
                     FieldLength::Wide => time_zone_format
                         .long_specific_non_location_format(time_zone)
-                        .unwrap_or_else(|| time_zone_format.long_localized_gmt_format(time_zone)),
+                        .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
                     _ => unreachable!("Invalid field length for `z`"),
                 };
                 w.write_str(&s)?;
