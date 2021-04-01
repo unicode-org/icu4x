@@ -8,6 +8,6 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("data provider")]
+    #[error("error loading data: {0}")]
     Data(#[from] icu_provider::DataError),
 }
