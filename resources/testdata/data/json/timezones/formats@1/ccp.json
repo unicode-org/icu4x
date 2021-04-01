@@ -1,5 +1,8 @@
 {
-  "hour_format": "+HH:mm;-HH:mm",
+  "hour_format": [
+    "+HH:mm",
+    "-HH:mm"
+  ],
   "gmt_format": "GMT {0}",
   "gmt_zero_format": "GMT",
   "region_format": "{0} 𑄃𑄧𑄇𑄴𑄖𑄧",

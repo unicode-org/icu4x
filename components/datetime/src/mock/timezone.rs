@@ -87,18 +87,16 @@ impl TimeZoneInput for MockTimeZone {
 pub struct GmtOffset(i32);
 
 impl GmtOffset {
-    // TODO(nordzilla) This is wrong for some locales. This needs to use the localized hour_format.
-    pub fn to_short_string(&self) -> String {
-        format!("{:>+.3}:{:.2}", self.0 / 3600, (self.0 % 3600 / 60).abs())
+    pub fn hours(&self) -> u8 {
+        (self.0 / 3600).abs() as u8
     }
 
-    // TODO(nordzilla) This is wrong for some locales. This needs to use the localized hour_format.
-    pub fn to_long_string(&self) -> String {
-        format!(
-            "{:>+03.3}:{:02.2}",
-            self.0 / 3600,
-            (self.0 % 3600 / 60).abs()
-        )
+    pub fn minutes(&self) -> u8 {
+        (self.0 % 3600 / 60).abs() as u8
+    }
+
+    pub fn is_positive(&self) -> bool {
+        self.0 > 0
     }
 
     pub fn is_zero(&self) -> bool {

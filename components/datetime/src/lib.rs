@@ -476,25 +476,45 @@ impl<'d> TimeZoneFormat<'d> {
     }
 
     pub fn short_localized_gmt_format(&self, time_zone: &impl TimeZoneInput) -> Cow<str> {
-        if time_zone.gmt_offset().is_zero() {
+        let gmt_offset = time_zone.gmt_offset();
+        if gmt_offset.is_zero() {
             self.zone_formats.gmt_zero_format.clone()
         } else {
             Cow::Owned(
                 self.zone_formats
                     .gmt_format
-                    .replace("{0}", &time_zone.gmt_offset().to_short_string()),
+                    .replace(
+                        "{0}",
+                        if gmt_offset.is_positive() {
+                            &self.zone_formats.hour_format.0
+                        } else {
+                            &self.zone_formats.hour_format.1
+                        },
+                    )
+                    .replace("HH", &gmt_offset.hours().to_string())
+                    .replace("mm", &gmt_offset.minutes().to_string()),
             )
         }
     }
 
     pub fn long_localized_gmt_format(&self, time_zone: &impl TimeZoneInput) -> Cow<str> {
-        if time_zone.gmt_offset().is_zero() {
+        let gmt_offset = time_zone.gmt_offset();
+        if gmt_offset.is_zero() {
             self.zone_formats.gmt_zero_format.clone()
         } else {
             Cow::Owned(
                 self.zone_formats
                     .gmt_format
-                    .replace("{0}", &time_zone.gmt_offset().to_long_string()),
+                    .replace(
+                        "{0}",
+                        if gmt_offset.is_positive() {
+                            &self.zone_formats.hour_format.0
+                        } else {
+                            &self.zone_formats.hour_format.1
+                        },
+                    )
+                    .replace("HH", &format!("{:02}", gmt_offset.hours()))
+                    .replace("mm", &format!("{:02}", gmt_offset.minutes())),
             )
         }
     }

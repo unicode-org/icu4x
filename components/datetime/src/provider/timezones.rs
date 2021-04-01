@@ -45,7 +45,7 @@ macro_rules! map_access {
 )]
 pub struct TimeZoneFormatsV1<'s> {
     /// The hour format for displaying GMT offsets.
-    pub hour_format: Cow<'s, str>,
+    pub hour_format: (Cow<'s, str>, Cow<'s, str>),
     /// The localized GMT-offset format.
     pub gmt_format: Cow<'s, str>,
     /// The localized GMT format with no offset.
