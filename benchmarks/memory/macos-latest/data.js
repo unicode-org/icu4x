@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617224163045,
+  "lastUpdate": 1617307426186,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Heap – macos-latest": [
@@ -6071,6 +6071,174 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6991943a7378dadc5284d2ff487edc09f553a8ce"
         },
         "date": 1617224161424,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "icu_datetime/work_log – Total Heap Allocations",
+            "value": 27656,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at Global Memory Max",
+            "value": 17375,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at End of Program Execution",
+            "value": 1112,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Total Heap Allocations",
+            "value": 514,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at Global Memory Max",
+            "value": 305,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Total Heap Allocations",
+            "value": 1223,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at Global Memory Max",
+            "value": 702,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Total Heap Allocations",
+            "value": 12739,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at Global Memory Max",
+            "value": 8984,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Total Heap Allocations",
+            "value": 13797,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at Global Memory Max",
+            "value": 9069,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Total Heap Allocations",
+            "value": 976,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at Global Memory Max",
+            "value": 388,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Total Heap Allocations",
+            "value": 7,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at Global Memory Max",
+            "value": 7,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Total Heap Allocations",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at Global Memory Max",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1941b7cccae9b39913f097a39b8ea6e4b7b1d790",
+          "message": "Implement ICU4X Timezones Data Provider (#512)\n\n* Make new try_extend_from_sorted() match try_append()\r\n\r\n- Rather than returning a result with Self, the function now\r\n  returns `None` on success and the reamaining elements on failure.\r\n- Make the extend functions take self by mut reference.\r\n- Make the extend functions public.\r\n- Add documentation tests.\r\n\r\n* Update documentation tests\r\n\r\n* Run cargo fmt\r\n\r\n* Add data provider for timezones\r\n\r\n* Add timezones test data\r\n\r\n* Remove old and unused file\r\n\r\n* Fix failing test due to private function generated by macro\r\n\r\n* Modularize TimeZonesProvider\r\n\r\nRather than having a single monolithic key, the TimeZonesProvider\r\nis now separated into five separate keys:\r\n\r\n- timezone formats\r\n- timezone names long\r\n- timezone names short\r\n- timezone name variants long\r\n- timezone name variants short\r\n\r\n* Re-generate test data with modular design\r\n\r\n* Redesign modular zones to match UTS-35\r\n\r\n* Remove 'static lifetimes from V1 structs\r\n\r\n* Update test to use generated test data\r\n\r\n* Run clippy\r\n\r\n* Use LiteMap instead of BTreeMap on ICU4X Side\r\n\r\n* Use the full CLDR Timezone IDs as keys, for now\r\n\r\nRegenerates the exemplar city data using the full time zone IDs as keys.\r\nWe will eventually change this to use BCP-47 identifiers.\r\n\r\n* Add license header to gregory.rs\r\n\r\n* Add license header to timezones.rs\r\n\r\n* Respond to review feedback\r\n\r\n* Fix license header in gregory.rs\r\n\r\n* Fix license haders in relevant files\r\n\r\n* Fix overlooked line from rebase\r\n\r\n- I missed one line that is causing a build error. This fixes it.\r\n\r\n* Respond to review feedback form zbraniecki",
+          "timestamp": "2021-04-01T12:55:04-07:00",
+          "tree_id": "ab0ea781bf21d6bb2b7af15151e27797e65ba2e2",
+          "url": "https://github.com/unicode-org/icu4x/commit/1941b7cccae9b39913f097a39b8ea6e4b7b1d790"
+        },
+        "date": 1617307424045,
         "tool": "ndjson",
         "benches": [
           {
