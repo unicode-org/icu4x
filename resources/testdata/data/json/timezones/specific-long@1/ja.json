@@ -1,0 +1,350 @@
+{
+  "Acre": {
+    "daylight": "アクレ夏時間",
+    "standard": "アクレ標準時"
+  },
+  "Africa_Western": {
+    "daylight": "西アフリカ夏時間",
+    "standard": "西アフリカ標準時"
+  },
+  "Alaska": {
+    "daylight": "アラスカ夏時間",
+    "standard": "アラスカ標準時"
+  },
+  "Almaty": {
+    "daylight": "アルマトイ夏時間",
+    "standard": "アルトマイ標準時"
+  },
+  "Amazon": {
+    "daylight": "アマゾン夏時間",
+    "standard": "アマゾン標準時"
+  },
+  "America_Central": {
+    "daylight": "アメリカ中部夏時間",
+    "standard": "アメリカ中部標準時"
+  },
+  "America_Eastern": {
+    "daylight": "アメリカ東部夏時間",
+    "standard": "アメリカ東部標準時"
+  },
+  "America_Mountain": {
+    "daylight": "アメリカ山地夏時間",
+    "standard": "アメリカ山地標準時"
+  },
+  "America_Pacific": {
+    "daylight": "アメリカ太平洋夏時間",
+    "standard": "アメリカ太平洋標準時"
+  },
+  "Anadyr": {
+    "daylight": "アナディリ夏時間",
+    "standard": "アナディリ標準時"
+  },
+  "Apia": {
+    "daylight": "アピア夏時間",
+    "standard": "アピア標準時"
+  },
+  "Aqtau": {
+    "daylight": "アクタウ夏時間",
+    "standard": "アクタウ標準時"
+  },
+  "Aqtobe": {
+    "daylight": "アクトベ夏時間",
+    "standard": "アクトベ標準時"
+  },
+  "Arabian": {
+    "daylight": "アラビア夏時間",
+    "standard": "アラビア標準時"
+  },
+  "Argentina": {
+    "daylight": "アルゼンチン夏時間",
+    "standard": "アルゼンチン標準時"
+  },
+  "Argentina_Western": {
+    "daylight": "西部アルゼンチン夏時間",
+    "standard": "西部アルゼンチン標準時"
+  },
+  "Armenia": {
+    "daylight": "アルメニア夏時間",
+    "standard": "アルメニア標準時"
+  },
+  "Atlantic": {
+    "daylight": "大西洋夏時間",
+    "standard": "大西洋標準時"
+  },
+  "Australia_Central": {
+    "daylight": "オーストラリア中部夏時間",
+    "standard": "オーストラリア中部標準時"
+  },
+  "Australia_CentralWestern": {
+    "daylight": "オーストラリア中西部夏時間",
+    "standard": "オーストラリア中西部標準時"
+  },
+  "Australia_Eastern": {
+    "daylight": "オーストラリア東部夏時間",
+    "standard": "オーストラリア東部標準時"
+  },
+  "Australia_Western": {
+    "daylight": "オーストラリア西部夏時間",
+    "standard": "オーストラリア西部標準時"
+  },
+  "Azerbaijan": {
+    "daylight": "アゼルバイジャン夏時間",
+    "standard": "アゼルバイジャン標準時"
+  },
+  "Azores": {
+    "daylight": "アゾレス夏時間",
+    "standard": "アゾレス標準時"
+  },
+  "Bangladesh": {
+    "daylight": "バングラデシュ夏時間",
+    "standard": "バングラデシュ標準時"
+  },
+  "Brasilia": {
+    "daylight": "ブラジリア夏時間",
+    "standard": "ブラジリア標準時"
+  },
+  "Cape_Verde": {
+    "daylight": "カーボベルデ夏時間",
+    "standard": "カーボベルデ標準時"
+  },
+  "Chatham": {
+    "daylight": "チャタム夏時間",
+    "standard": "チャタム標準時"
+  },
+  "Chile": {
+    "daylight": "チリ夏時間",
+    "standard": "チリ標準時"
+  },
+  "China": {
+    "daylight": "中国夏時間",
+    "standard": "中国標準時"
+  },
+  "Choibalsan": {
+    "daylight": "チョイバルサン夏時間",
+    "standard": "チョイバルサン標準時"
+  },
+  "Colombia": {
+    "daylight": "コロンビア夏時間",
+    "standard": "コロンビア標準時"
+  },
+  "Cook": {
+    "daylight": "クック諸島夏時間",
+    "standard": "クック諸島標準時"
+  },
+  "Cuba": {
+    "daylight": "キューバ夏時間",
+    "standard": "キューバ標準時"
+  },
+  "Easter": {
+    "daylight": "イースター島夏時間",
+    "standard": "イースター島標準時"
+  },
+  "Europe_Central": {
+    "daylight": "中央ヨーロッパ夏時間",
+    "standard": "中央ヨーロッパ標準時"
+  },
+  "Europe_Eastern": {
+    "daylight": "東ヨーロッパ夏時間",
+    "standard": "東ヨーロッパ標準時"
+  },
+  "Europe_Western": {
+    "daylight": "西ヨーロッパ夏時間",
+    "standard": "西ヨーロッパ標準時"
+  },
+  "Falkland": {
+    "daylight": "フォークランド諸島夏時間",
+    "standard": "フォークランド諸島標準時"
+  },
+  "Fiji": {
+    "daylight": "フィジー夏時間",
+    "standard": "フィジー標準時"
+  },
+  "Georgia": {
+    "daylight": "ジョージア夏時間",
+    "standard": "ジョージア標準時"
+  },
+  "Greenland_Eastern": {
+    "daylight": "グリーンランド東部夏時間",
+    "standard": "グリーンランド東部標準時"
+  },
+  "Greenland_Western": {
+    "daylight": "グリーンランド西部夏時間",
+    "standard": "グリーンランド西部標準時"
+  },
+  "Hawaii_Aleutian": {
+    "daylight": "ハワイ・アリューシャン夏時間",
+    "standard": "ハワイ・アリューシャン標準時"
+  },
+  "Hong_Kong": {
+    "daylight": "香港夏時間",
+    "standard": "香港標準時"
+  },
+  "Hovd": {
+    "daylight": "ホブド夏時間",
+    "standard": "ホブド標準時"
+  },
+  "Iran": {
+    "daylight": "イラン夏時間",
+    "standard": "イラン標準時"
+  },
+  "Irkutsk": {
+    "daylight": "イルクーツク夏時間",
+    "standard": "イルクーツク標準時"
+  },
+  "Israel": {
+    "daylight": "イスラエル夏時間",
+    "standard": "イスラエル標準時"
+  },
+  "Japan": {
+    "daylight": "日本夏時間",
+    "standard": "日本標準時"
+  },
+  "Kamchatka": {
+    "daylight": "ペトロパブロフスク・カムチャツキー夏時間",
+    "standard": "ペトロパブロフスク・カムチャツキー標準時"
+  },
+  "Korea": {
+    "daylight": "韓国夏時間",
+    "standard": "韓国標準時"
+  },
+  "Krasnoyarsk": {
+    "daylight": "クラスノヤルスク夏時間",
+    "standard": "クラスノヤルスク標準時"
+  },
+  "Lord_Howe": {
+    "daylight": "ロードハウ夏時間",
+    "standard": "ロードハウ標準時"
+  },
+  "Macau": {
+    "daylight": "マカオ夏時間",
+    "standard": "マカオ標準時"
+  },
+  "Magadan": {
+    "daylight": "マガダン夏時間",
+    "standard": "マガダン標準時"
+  },
+  "Mauritius": {
+    "daylight": "モーリシャス夏時間",
+    "standard": "モーリシャス標準時"
+  },
+  "Mexico_Northwest": {
+    "daylight": "メキシコ北西部夏時間",
+    "standard": "メキシコ北西部標準時"
+  },
+  "Mexico_Pacific": {
+    "daylight": "メキシコ太平洋夏時間",
+    "standard": "メキシコ太平洋標準時"
+  },
+  "Mongolia": {
+    "daylight": "ウランバートル夏時間",
+    "standard": "ウランバートル標準時"
+  },
+  "Moscow": {
+    "daylight": "モスクワ夏時間",
+    "standard": "モスクワ標準時"
+  },
+  "New_Caledonia": {
+    "daylight": "ニューカレドニア夏時間",
+    "standard": "ニューカレドニア標準時"
+  },
+  "New_Zealand": {
+    "daylight": "ニュージーランド夏時間",
+    "standard": "ニュージーランド標準時"
+  },
+  "Newfoundland": {
+    "daylight": "ニューファンドランド夏時間",
+    "standard": "ニューファンドランド標準時"
+  },
+  "Norfolk": {
+    "daylight": "ノーフォーク島夏時間",
+    "standard": "ノーフォーク島標準時"
+  },
+  "Noronha": {
+    "daylight": "フェルナンド・デ・ノローニャ夏時間",
+    "standard": "フェルナンド・デ・ノローニャ標準時"
+  },
+  "Novosibirsk": {
+    "daylight": "ノヴォシビルスク夏時間",
+    "standard": "ノヴォシビルスク標準時"
+  },
+  "Omsk": {
+    "daylight": "オムスク夏時間",
+    "standard": "オムスク標準時"
+  },
+  "Pakistan": {
+    "daylight": "パキスタン夏時間",
+    "standard": "パキスタン標準時"
+  },
+  "Paraguay": {
+    "daylight": "パラグアイ夏時間",
+    "standard": "パラグアイ標準時"
+  },
+  "Peru": {
+    "daylight": "ペルー夏時間",
+    "standard": "ペルー標準時"
+  },
+  "Philippines": {
+    "daylight": "フィリピン夏時間",
+    "standard": "フィリピン標準時"
+  },
+  "Pierre_Miquelon": {
+    "daylight": "サンピエール島・ミクロン島夏時間",
+    "standard": "サンピエール島・ミクロン島標準時"
+  },
+  "Qyzylorda": {
+    "daylight": "クズロルダ夏時間",
+    "standard": "クズロルダ標準時"
+  },
+  "Sakhalin": {
+    "daylight": "サハリン夏時間",
+    "standard": "サハリン標準時"
+  },
+  "Samara": {
+    "daylight": "サマラ夏時間",
+    "standard": "サマラ標準時"
+  },
+  "Samoa": {
+    "daylight": "サモア夏時間",
+    "standard": "サモア標準時"
+  },
+  "Taipei": {
+    "daylight": "台北夏時間",
+    "standard": "台北標準時"
+  },
+  "Tonga": {
+    "daylight": "トンガ夏時間",
+    "standard": "トンガ標準時"
+  },
+  "Turkmenistan": {
+    "daylight": "トルクメニスタン夏時間",
+    "standard": "トルクメニスタン標準時"
+  },
+  "Uruguay": {
+    "daylight": "ウルグアイ夏時間",
+    "standard": "ウルグアイ標準時"
+  },
+  "Uzbekistan": {
+    "daylight": "ウズベキスタン夏時間",
+    "standard": "ウズベキスタン標準時"
+  },
+  "Vanuatu": {
+    "daylight": "バヌアツ夏時間",
+    "standard": "バヌアツ標準時"
+  },
+  "Vladivostok": {
+    "daylight": "ウラジオストク夏時間",
+    "standard": "ウラジオストク標準時"
+  },
+  "Volgograd": {
+    "daylight": "ボルゴグラード夏時間",
+    "standard": "ボルゴグラード標準時"
+  },
+  "Yakutsk": {
+    "daylight": "ヤクーツク夏時間",
+    "standard": "ヤクーツク標準時"
+  },
+  "Yekaterinburg": {
+    "daylight": "エカテリンブルグ夏時間",
+    "standard": "エカテリンブルグ標準時"
+  }
+}

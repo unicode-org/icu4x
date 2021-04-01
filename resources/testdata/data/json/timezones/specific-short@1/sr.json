@@ -1,0 +1,14 @@
+{
+  "Europe_Central": {
+    "daylight": "CEST",
+    "standard": "CET"
+  },
+  "Europe_Eastern": {
+    "daylight": "EEST",
+    "standard": "EET"
+  },
+  "Europe_Western": {
+    "daylight": "WEST",
+    "standard": "WET"
+  }
+}

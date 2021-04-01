@@ -1,0 +1,350 @@
+{
+  "Acre": {
+    "daylight": "Akre letnje računanje vremena",
+    "standard": "Akre standardno vreme"
+  },
+  "Africa_Western": {
+    "daylight": "Zapadno-afričko letnje vreme",
+    "standard": "Zapadno-afričko standardno vreme"
+  },
+  "Alaska": {
+    "daylight": "Aljaska, letnje vreme",
+    "standard": "Aljaska, standardno vreme"
+  },
+  "Almaty": {
+    "daylight": "Almati letnje računanje vremena",
+    "standard": "Almati standardno vreme"
+  },
+  "Amazon": {
+    "daylight": "Amazon, letnje vreme",
+    "standard": "Amazon, standardno vreme"
+  },
+  "America_Central": {
+    "daylight": "Severnoameričko centralno letnje vreme",
+    "standard": "Severnoameričko centralno standardno vreme"
+  },
+  "America_Eastern": {
+    "daylight": "Severnoameričko istočno letnje vreme",
+    "standard": "Severnoameričko istočno standardno vreme"
+  },
+  "America_Mountain": {
+    "daylight": "Severnoameričko planinsko letnje vreme",
+    "standard": "Severnoameričko planinsko standardno vreme"
+  },
+  "America_Pacific": {
+    "daylight": "Severnoameričko pacifičko letnje vreme",
+    "standard": "Severnoameričko pacifičko standardno vreme"
+  },
+  "Anadyr": {
+    "daylight": "Anadir letnje računanje vremena",
+    "standard": "Anadir standardno vreme"
+  },
+  "Apia": {
+    "daylight": "Apija, letnje vreme",
+    "standard": "Apija, standardno vreme"
+  },
+  "Aqtau": {
+    "daylight": "Akvatau letnje računanje vremena",
+    "standard": "Akvatau standardno vreme"
+  },
+  "Aqtobe": {
+    "daylight": "Akutobe letnje računanje vremena",
+    "standard": "Akutobe standardno vreme"
+  },
+  "Arabian": {
+    "daylight": "Arabijsko letnje vreme",
+    "standard": "Arabijsko standardno vreme"
+  },
+  "Argentina": {
+    "daylight": "Argentina, letnje vreme",
+    "standard": "Argentina, standardno vreme"
+  },
+  "Argentina_Western": {
+    "daylight": "Zapadna Argentina, letnje vreme",
+    "standard": "Zapadna Argentina, standardno vreme"
+  },
+  "Armenia": {
+    "daylight": "Jermenija, letnje vreme",
+    "standard": "Jermenija, standardno vreme"
+  },
+  "Atlantic": {
+    "daylight": "Atlantsko letnje vreme",
+    "standard": "Atlantsko standardno vreme"
+  },
+  "Australia_Central": {
+    "daylight": "Australijsko centralno letnje vreme",
+    "standard": "Australijsko centralno standardno vreme"
+  },
+  "Australia_CentralWestern": {
+    "daylight": "Australijsko centralno zapadno letnje vreme",
+    "standard": "Australijsko centralno zapadno standardno vreme"
+  },
+  "Australia_Eastern": {
+    "daylight": "Australijsko istočno letnje vreme",
+    "standard": "Australijsko istočno standardno vreme"
+  },
+  "Australia_Western": {
+    "daylight": "Australijsko zapadno letnje vreme",
+    "standard": "Australijsko zapadno standardno vreme"
+  },
+  "Azerbaijan": {
+    "daylight": "Azerbejdžan, letnje vreme",
+    "standard": "Azerbejdžan, standardno vreme"
+  },
+  "Azores": {
+    "daylight": "Azori, letnje vreme",
+    "standard": "Azori, standardno vreme"
+  },
+  "Bangladesh": {
+    "daylight": "Bangladeš, letnje vreme",
+    "standard": "Bangladeš, standardno vreme"
+  },
+  "Brasilia": {
+    "daylight": "Brazilija, letnje vreme",
+    "standard": "Brazilija, standardno vreme"
+  },
+  "Cape_Verde": {
+    "daylight": "Zelenortska Ostrva, letnje vreme",
+    "standard": "Zelenortska Ostrva, standardno vreme"
+  },
+  "Chatham": {
+    "daylight": "Čatam, letnje vreme",
+    "standard": "Čatam, standardno vreme"
+  },
+  "Chile": {
+    "daylight": "Čile, letnje vreme",
+    "standard": "Čile, standardno vreme"
+  },
+  "China": {
+    "daylight": "Kina, letnje vreme",
+    "standard": "Kinesko standardno vreme"
+  },
+  "Choibalsan": {
+    "daylight": "Čojbalsan, letnje vreme",
+    "standard": "Čojbalsan, standardno vreme"
+  },
+  "Colombia": {
+    "daylight": "Kolumbija, letnje vreme",
+    "standard": "Kolumbija, standardno vreme"
+  },
+  "Cook": {
+    "daylight": "Kukova ostrva, polu-letnje vreme",
+    "standard": "Kukova ostrva, standardno vreme"
+  },
+  "Cuba": {
+    "daylight": "Kuba, letnje vreme",
+    "standard": "Kuba, standardno vreme"
+  },
+  "Easter": {
+    "daylight": "Uskršnja ostrva, letnje vreme",
+    "standard": "Uskršnja ostrva, standardno vreme"
+  },
+  "Europe_Central": {
+    "daylight": "Srednjeevropsko letnje vreme",
+    "standard": "Srednjeevropsko standardno vreme"
+  },
+  "Europe_Eastern": {
+    "daylight": "Istočnoevropsko letnje vreme",
+    "standard": "Istočnoevropsko standardno vreme"
+  },
+  "Europe_Western": {
+    "daylight": "Zapadnoevropsko letnje vreme",
+    "standard": "Zapadnoevropsko standardno vreme"
+  },
+  "Falkland": {
+    "daylight": "Folklandska Ostrva, letnje vreme",
+    "standard": "Folklandska Ostrva, standardno vreme"
+  },
+  "Fiji": {
+    "daylight": "Fidži, letnje vreme",
+    "standard": "Fidži, standardno vreme"
+  },
+  "Georgia": {
+    "daylight": "Gruzija, letnje vreme",
+    "standard": "Gruzija, standardno vreme"
+  },
+  "Greenland_Eastern": {
+    "daylight": "Istočni Grenland, letnje vreme",
+    "standard": "Istočni Grenland, standardno vreme"
+  },
+  "Greenland_Western": {
+    "daylight": "Zapadni Grenland, letnje vreme",
+    "standard": "Zapadni Grenland, standardno vreme"
+  },
+  "Hawaii_Aleutian": {
+    "daylight": "Havajsko-aleutsko letnje vreme",
+    "standard": "Havajsko-aleutsko standardno vreme"
+  },
+  "Hong_Kong": {
+    "daylight": "Hong Kong, letnje vreme",
+    "standard": "Hong Kong, standardno vreme"
+  },
+  "Hovd": {
+    "daylight": "Hovd, letnje vreme",
+    "standard": "Hovd, standardno vreme"
+  },
+  "Iran": {
+    "daylight": "Iran, letnje vreme",
+    "standard": "Iran, standardno vreme"
+  },
+  "Irkutsk": {
+    "daylight": "Irkuck, letnje vreme",
+    "standard": "Irkuck, standardno vreme"
+  },
+  "Israel": {
+    "daylight": "Izraelsko letnje vreme",
+    "standard": "Izraelsko standardno vreme"
+  },
+  "Japan": {
+    "daylight": "Japansko letnje vreme",
+    "standard": "Japansko standardno vreme"
+  },
+  "Kamchatka": {
+    "daylight": "Petropavlovsko-kamčatsko letnje računanje vremena",
+    "standard": "Petropavlovsko-kamčatsko standardno vreme"
+  },
+  "Korea": {
+    "daylight": "Korejsko letnje vreme",
+    "standard": "Korejsko standardno vreme"
+  },
+  "Krasnoyarsk": {
+    "daylight": "Krasnojarsk, letnje vreme",
+    "standard": "Krasnojarsk, standardno vreme"
+  },
+  "Lord_Howe": {
+    "daylight": "Lord Hov, letnje vreme",
+    "standard": "Lord Hov, standardno vreme"
+  },
+  "Macau": {
+    "daylight": "Makao letnje računanje vremena",
+    "standard": "Makao standardno vreme"
+  },
+  "Magadan": {
+    "daylight": "Magadan, letnje vreme",
+    "standard": "Magadan, standardno vreme"
+  },
+  "Mauritius": {
+    "daylight": "Mauricijus, letnje vreme",
+    "standard": "Mauricijus, standardno vreme"
+  },
+  "Mexico_Northwest": {
+    "daylight": "Severozapadni Meksiko, letnje vreme",
+    "standard": "Severozapadni Meksiko, standardno vreme"
+  },
+  "Mexico_Pacific": {
+    "daylight": "Meksički Pacifik, letnje vreme",
+    "standard": "Meksički Pacifik, standardno vreme"
+  },
+  "Mongolia": {
+    "daylight": "Ulan Bator, letnje vreme",
+    "standard": "Ulan Bator, standardno vreme"
+  },
+  "Moscow": {
+    "daylight": "Moskva, letnje vreme",
+    "standard": "Moskva, standardno vreme"
+  },
+  "New_Caledonia": {
+    "daylight": "Nova Kaledonija, letnje vreme",
+    "standard": "Nova Kaledonija, standardno vreme"
+  },
+  "New_Zealand": {
+    "daylight": "Novi Zeland, letnje vreme",
+    "standard": "Novi Zeland, standardno vreme"
+  },
+  "Newfoundland": {
+    "daylight": "Njufaundlend, letnje vreme",
+    "standard": "Njufaundlend, standardno vreme"
+  },
+  "Norfolk": {
+    "daylight": "Norfolk Ostrvo, letnje vreme",
+    "standard": "Norfolk Ostrvo, standardno vreme"
+  },
+  "Noronha": {
+    "daylight": "Fernando de Noronja, letnje vreme",
+    "standard": "Fernando de Noronja, standardno vreme"
+  },
+  "Novosibirsk": {
+    "daylight": "Novosibirsk, letnje vreme",
+    "standard": "Novosibirsk, standardno vreme"
+  },
+  "Omsk": {
+    "daylight": "Omsk, letnje vreme",
+    "standard": "Omsk, standardno vreme"
+  },
+  "Pakistan": {
+    "daylight": "Pakistan, letnje vreme",
+    "standard": "Pakistan, standardno vreme"
+  },
+  "Paraguay": {
+    "daylight": "Paragvaj, letnje vreme",
+    "standard": "Paragvaj, standardno vreme"
+  },
+  "Peru": {
+    "daylight": "Peru, letnje vreme",
+    "standard": "Peru, standardno vreme"
+  },
+  "Philippines": {
+    "daylight": "Filipini, letnje vreme",
+    "standard": "Filipini, standardno vreme"
+  },
+  "Pierre_Miquelon": {
+    "daylight": "Sen Pjer i Mikelon, letnje vreme",
+    "standard": "Sen Pjer i Mikelon, standardno vreme"
+  },
+  "Qyzylorda": {
+    "daylight": "Kizilorda letnje računanje vremena",
+    "standard": "Kizilorda standardno vreme"
+  },
+  "Sakhalin": {
+    "daylight": "Sahalin, letnje vreme",
+    "standard": "Sahalin, standardno vreme"
+  },
+  "Samara": {
+    "daylight": "Samara letnje računanje vremena",
+    "standard": "Samara standardno vreme"
+  },
+  "Samoa": {
+    "daylight": "Samoa, letnje vreme",
+    "standard": "Samoa, standardno vreme"
+  },
+  "Taipei": {
+    "daylight": "Tajpej, letnje vreme",
+    "standard": "Tajpej, standardno vreme"
+  },
+  "Tonga": {
+    "daylight": "Tonga, letnje vreme",
+    "standard": "Tonga, standardno vreme"
+  },
+  "Turkmenistan": {
+    "daylight": "Turkmenistan, letnje vreme",
+    "standard": "Turkmenistan, standardno vreme"
+  },
+  "Uruguay": {
+    "daylight": "Urugvaj, letnje vreme",
+    "standard": "Urugvaj, standardno vreme"
+  },
+  "Uzbekistan": {
+    "daylight": "Uzbekistan, letnje vreme",
+    "standard": "Uzbekistan, standardno vreme"
+  },
+  "Vanuatu": {
+    "daylight": "Vanuatu, letnje vreme",
+    "standard": "Vanuatu, standardno vreme"
+  },
+  "Vladivostok": {
+    "daylight": "Vladivostok, letnje vreme",
+    "standard": "Vladivostok, standardno vreme"
+  },
+  "Volgograd": {
+    "daylight": "Volgograd, letnje vreme",
+    "standard": "Volgograd, standardno vreme"
+  },
+  "Yakutsk": {
+    "daylight": "Jakutsk, letnje vreme",
+    "standard": "Jakutsk, standardno vreme"
+  },
+  "Yekaterinburg": {
+    "daylight": "Jekaterinburg, letnje vreme",
+    "standard": "Jekaterinburg, standardno vreme"
+  }
+}

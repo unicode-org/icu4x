@@ -15,12 +15,13 @@ use tinystr::{TinyStr16, TinyStr4};
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
-#[derive(PartialEq, Eq, Copy, Clone, Debug)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
     Icu4x,
     LikelySubtags,
     Plurals,
     Dates,
+    TimeZones,
     Uniset,
     Decimal,
     PrivateUse(TinyStr4),
@@ -34,6 +35,7 @@ impl ResourceCategory {
             Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::Dates => Cow::Borrowed("dates"),
+            Self::TimeZones => Cow::Borrowed("timezones"),
             Self::Uniset => Cow::Borrowed("uniset"),
             Self::Decimal => Cow::Borrowed("decimal"),
             Self::PrivateUse(id) => {
@@ -66,7 +68,7 @@ impl writeable::Writeable for ResourceCategory {
 /// The fields in a `ResourceKey` should generally be known at compile time.
 ///
 /// Use `resource_key!` as a shortcut to create resource keys in code.
-#[derive(PartialEq, Eq, Copy, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub struct ResourceKey {
     pub category: ResourceCategory,
     pub sub_category: TinyStr16,
@@ -102,8 +104,8 @@ macro_rules! resource_key {
     (plurals, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)
     };
-    (dates, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Dates, $sub_category, $version)
+    (timezones, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!($crate::ResourceCategory::TimeZones, $sub_category, $version)
     };
     (uniset, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Uniset, $sub_category, $version)
