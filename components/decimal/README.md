@@ -1,3 +1,5 @@
+# icu_decimal
+
 `icu_decimal` offers localized decimal number formatting.
 
 It will eventually support:
@@ -7,6 +9,7 @@ It will eventually support:
 - Measurement units
 - Compact notation
 
-Currently, the crate is a work in progress with extremely limited functionality. To track progress, follow this issue:
+Currently, the crate is a work in progress with extremely limited functionality. To track
+progress, follow this issue:
 
 https://github.com/unicode-org/icu4x/issues/275

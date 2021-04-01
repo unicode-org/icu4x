@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This crate provides an experimental implementation of the `ECMA-402` traits using `ICU4X` library.
+
 use icu::locid::LanguageIdentifier;
 
 /// Implements ECMA-402 [`Intl.PluralRules`][link].

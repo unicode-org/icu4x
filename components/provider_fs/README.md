@@ -1,11 +1,11 @@
 # icu_provider_fs [![crates.io](http://meritbadge.herokuapp.com/icu_provider_fs)](https://crates.io/crates/icu_provider_fs)
 
-`icu_fs_data_provider` is one of the `ICU4X` components.
+`icu_fs_data_provider` is one of the [`ICU4X`] components.
 
 It reads ICU4X data files from the filesystem in a given directory. It can also export data to
 the filesystem via an iterable data provider (see the `export` module).
 
-# Examples
+## Examples
 
 ```rust
 use icu_provider_fs::FsDataProvider;
@@ -14,20 +14,52 @@ let provider = FsDataProvider::try_new("/path/to/data/directory")
     .expect_err("Specify a real directory in the line above");
 ```
 
-# Resource Formats
+## Directory Structure
+
+The ICU4X data directory has a file named *manifest.json* at the root, and a nested structure
+with category (ResourceCategory), subcategory@version, optional variant, and language identifier
+as the leaf data files. For example, Arabic JSON data for cardinal plurals lives at
+*plurals/cardinal@1/ar.json*.
+
+The exact form of the directory structure may change over time. ICU4X uses metadata from
+*manifest.json* to dynamically interpret different versions of the directory structure.
+
+```
+├── manifest.json
+├── dates
+│   └── gregory@1
+│       ├── ar-EG.json
+│       ├── ar.json
+│       ├── be.json
+│       ⋮
+│       └── und.json
+└── plurals
+    ├── cardinal@1
+    │   ├── ar.json
+    │   ├── be.json
+    │   ⋮
+    │   └── und.json
+    └── ordinal@1
+        ├── ar.json
+        ├── be.json
+        ⋮
+        └── und.json
+```
+
+## Resource Formats
 
 `ICU4X` data can be stored in different formats. At the moment there are:
 
 * JSON - Textual format, easy to read
 * Bincode - Binary, fast resource format
 
-The directory passed to the `FsDataProvider` constructor may contain either of them.
+The directory passed to the [`FsDataProvider`] constructor may contain either of them.
 
-# Exporting data
+## Exporting data
 
-To generate the data required for `FsDataProvider`, use the following script:
+To generate the data required for [`FsDataProvider`], use the following script:
 
-```bash
+```
 cargo run
   --features export-bin
   --
@@ -38,7 +70,7 @@ cargo run
 
 To export `bincode` format, use
 
-```bash
+```
 cargo run
   --features export-bin
   --featuers bincode
@@ -49,14 +81,10 @@ cargo run
   -s bincode
 ```
 
-To generate ICU4X's testdata using bincode rather than JSON, run:
-
-```bash
-cargo make bincode-gen-testdata
-```
-
 *Notice:* In order to use `bincode` encoded data in production, `icu_provider_fs` has to be
 added with `bincode` feature.
+
+[`ICU4X`]: ../icu/index.html
 
 # More Information
 
