@@ -37,7 +37,8 @@ use std::collections::HashMap;
 ///     }
 /// }
 ///
-/// impl ReplacementProvider<usize, Element> for HashMap<usize, Vec<Element>> {
+/// impl ReplacementProvider<Element> for HashMap<usize, Vec<Element>> {
+///     type Key = usize;
 ///     type Iter = <Vec<Element> as IntoIterator>::IntoIter;
 ///
 ///     fn take_replacement(&mut self, key: &usize) -> Option<Self::Iter> {
@@ -119,7 +120,8 @@ use std::collections::HashMap;
 /// }
 ///
 ///
-/// impl ReplacementProvider<usize, Element> for MyReplacementProvider {
+/// impl ReplacementProvider<Element> for MyReplacementProvider {
+///     type Key = usize;
 ///     type Iter = MyIterator;
 ///
 ///     fn take_replacement(&mut self, key: &usize) -> Option<Self::Iter> {
@@ -139,7 +141,8 @@ use std::collections::HashMap;
 /// assert_eq!(Ok(Some(Element::Digit(2))), interpolator.try_next());
 /// assert_eq!(Ok(None), interpolator.try_next());
 /// ```
-pub trait ReplacementProvider<K, E> {
+pub trait ReplacementProvider<E> {
+    type Key;
     type Iter: Iterator<Item = E>;
 
     /// Retrieves a replacement iterator to be used by the [`Interpolator`] in
@@ -155,7 +158,8 @@ pub trait ReplacementProvider<K, E> {
     ///     TokenFive,
     /// }
     ///
-    /// impl ReplacementProvider<usize, Element> for HashMap<usize, Vec<Element>> {
+    /// impl ReplacementProvider<Element> for HashMap<usize, Vec<Element>> {
+    ///     type Key = usize;
     ///     type Iter = <Vec<Element> as IntoIterator>::IntoIter;
     ///
     ///     fn take_replacement(&mut self, key: &usize) -> Option<Self::Iter> {
@@ -181,10 +185,11 @@ pub trait ReplacementProvider<K, E> {
     /// ```
     ///
     /// [`Interpolator`]: crate::interpolator::Interpolator
-    fn take_replacement(&mut self, key: &K) -> Option<Self::Iter>;
+    fn take_replacement(&mut self, key: &Self::Key) -> Option<Self::Iter>;
 }
 
-impl<E> ReplacementProvider<usize, E> for Vec<Vec<E>> {
+impl<E> ReplacementProvider<E> for Vec<Vec<E>> {
+    type Key = usize;
     type Iter = <Vec<E> as IntoIterator>::IntoIter;
 
     fn take_replacement(&mut self, input: &usize) -> Option<Self::Iter> {
@@ -193,7 +198,8 @@ impl<E> ReplacementProvider<usize, E> for Vec<Vec<E>> {
     }
 }
 
-impl<E> ReplacementProvider<usize, E> for Vec<E> {
+impl<E> ReplacementProvider<E> for Vec<E> {
+    type Key = usize;
     type Iter = std::iter::Once<E>;
 
     fn take_replacement(&mut self, input: &usize) -> Option<Self::Iter> {
@@ -205,7 +211,8 @@ impl<E> ReplacementProvider<usize, E> for Vec<E> {
     }
 }
 
-impl<E> ReplacementProvider<String, E> for HashMap<String, Vec<E>> {
+impl<E> ReplacementProvider<E> for HashMap<String, Vec<E>> {
+    type Key = String;
     type Iter = <Vec<E> as IntoIterator>::IntoIter;
 
     fn take_replacement(&mut self, input: &String) -> Option<Self::Iter> {

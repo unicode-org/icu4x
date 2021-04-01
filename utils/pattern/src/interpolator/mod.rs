@@ -43,7 +43,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///     ],
 /// ];
 ///
-/// let mut interpolator = Interpolator::<_, _, _, Element>::new(parser, replacements);
+/// let mut interpolator = Interpolator::<_, _, Element>::new(parser, replacements);
 ///
 /// let mut result = vec![];
 ///
@@ -102,18 +102,18 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// [`HashMap`]: std::collections::HashMap
 /// [`Parser`]: crate::parser::Parser
 /// [`IntoIterVec`]: crate::pattern::IntoIterVec
-pub struct Interpolator<P, R, K, E>
+pub struct Interpolator<P, R, E>
 where
-    R: ReplacementProvider<K, E>,
+    R: ReplacementProvider<E>,
 {
     pattern: P,
     replacements: R,
     current_replacement: Option<R::Iter>,
 }
 
-impl<P, R, K, E> Interpolator<P, R, K, E>
+impl<P, R, E> Interpolator<P, R, E>
 where
-    R: ReplacementProvider<K, E>,
+    R: ReplacementProvider<E>,
 {
     /// Creates a new `Interpolator`.
     ///
@@ -127,7 +127,7 @@ where
     /// }
     ///
     /// let mut parser = Parser::new("{0}, {1}", false);
-    /// let mut interpolator = Interpolator::<_, _, _, Element>::new(parser, vec![
+    /// let mut interpolator = Interpolator::<_, _, Element>::new(parser, vec![
     ///     vec![
     ///         Element::Token
     ///     ]
@@ -184,12 +184,12 @@ where
     /// # Lifetimes
     ///
     /// - `p`: The life time of an input parser, which is the life time of the string slice to be parsed.
-    pub fn try_next<'p>(&mut self) -> Result<E, K>
+    pub fn try_next<'p>(&mut self) -> Result<E, R::Key>
     where
         E: From<&'p str>,
-        P: PatternIterator<'p, K>,
-        K: FromStr + std::fmt::Display,
-        K::Err: std::fmt::Debug,
+        P: PatternIterator<'p, R::Key>,
+        R::Key: FromStr + std::fmt::Display,
+        <R::Key as FromStr>::Err: std::fmt::Debug,
     {
         loop {
             if let Some(ref mut replacement) = &mut self.current_replacement {
@@ -266,7 +266,7 @@ mod tests {
                 .iter()
                 .map(|r| r.iter().map(|&t| t.into()).collect())
                 .collect();
-            let mut i = Interpolator::<_, _, _, Element<'_>>::new(iter, replacements);
+            let mut i = Interpolator::<_, _, Element<'_>>::new(iter, replacements);
             let mut result = String::new();
             while let Some(elem) = i.try_next().unwrap() {
                 write!(result, "{}", elem).unwrap();

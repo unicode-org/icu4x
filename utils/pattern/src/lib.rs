@@ -54,7 +54,7 @@
 //!     ],
 //! ];
 //!
-//! let mut interpolator = Interpolator::<_, _, _, Element>::new(parser, replacements);
+//! let mut interpolator = Interpolator::<_, _, Element>::new(parser, replacements);
 //!
 //! let mut result = vec![];
 //!

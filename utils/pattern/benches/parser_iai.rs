@@ -74,7 +74,7 @@ fn iai_interpolate() {
             .map(|r| r.iter().map(|&t| t.into()).collect())
             .collect();
 
-        let mut i = Interpolator::<_, _, _, Element>::new(iter, replacements);
+        let mut i = Interpolator::<_, _, Element>::new(iter, replacements);
         let mut result = String::new();
         while let Some(elem) = i.try_next().unwrap() {
             write!(result, "{}", elem).unwrap();
