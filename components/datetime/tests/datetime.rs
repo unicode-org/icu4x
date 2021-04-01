@@ -72,7 +72,7 @@ fn test_dayperiod_patterns() {
             .to_mut()
             .patterns
             .date_time
-            .style_patterns
+            .length_patterns
             .long
             .to_mut() = String::from("{0}");
         for test_case in &test.test_cases {
@@ -107,8 +107,8 @@ fn test_dayperiod_patterns() {
 }
 
 #[test]
-fn test_style_fixtures() {
-    test_fixture("styles");
+fn test_length_fixtures() {
+    test_fixture("lengths");
 }
 
 // Expected panic: 'not implemented', components/datetime/src/provider.rs:49:53

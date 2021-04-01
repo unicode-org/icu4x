@@ -34,15 +34,15 @@ an `FsDataProvider` with locally available subset of data.
 
 ```rust
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu::datetime::{DateTimeFormat, date::MockDateTime, options::length};
 
 let provider = icu_testdata::get_provider();
 
 let lid = langid!("en");
 
-let options = style::Bag {
-    date: Some(style::Date::Long),
-    time: Some(style::Time::Medium),
+let options = length::Bag {
+    date: Some(length::Date::Long),
+    time: Some(length::Time::Medium),
     ..Default::default()
 }.into();
 

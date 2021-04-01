@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Style is a model of encoding information on how to format date and time by specifying the preferred length
+//! Length is a model of encoding information on how to format date and time by specifying the preferred length
 //! of date and time fields.
 //!
 //! If either of the fields is omitted, the value will be formatted according to the pattern associated with the
@@ -19,23 +19,23 @@
 //!
 //! ```
 //! use icu_datetime::DateTimeFormatOptions;
-//! use icu_datetime::options::style;
+//! use icu_datetime::options::length;
 //!
-//! let bag = style::Bag {
-//!      date: Some(style::Date::Medium), // `Medium` length connector will be used
-//!      time: Some(style::Time::Short),
+//! let bag = length::Bag {
+//!      date: Some(length::Date::Medium), // `Medium` length connector will be used
+//!      time: Some(length::Time::Short),
 //!      preferences: None,
 //! };
 //!
-//! let options = DateTimeFormatOptions::Style(bag);
+//! let options = DateTimeFormatOptions::Length(bag);
 //! ```
 //!
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
 //! # use icu_datetime::DateTimeFormatOptions;
-//! # use icu_datetime::options::style;
-//! let options: DateTimeFormatOptions = style::Bag::default().into();
+//! # use icu_datetime::options::length;
+//! let options: DateTimeFormatOptions = length::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
@@ -44,7 +44,7 @@
 use super::preferences;
 #[cfg(all(not(feature = "serialize_none"), feature = "serde"))]
 use serde::{Deserialize, Serialize};
-/// `style::Bag` is a structure to represent the set of styles in which the `DateTime` should
+/// `length::Bag` is a structure to represent the set of lengths in which the `DateTime` should
 /// be formatted to.
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
@@ -53,23 +53,23 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu_datetime::DateTimeFormatOptions;
-/// use icu_datetime::options::style;
+/// use icu_datetime::options::length;
 ///
-/// let bag = style::Bag {
-///      date: Some(style::Date::Medium),
-///      time: Some(style::Time::Short),
+/// let bag = length::Bag {
+///      date: Some(length::Date::Medium),
+///      time: Some(length::Time::Short),
 ///      preferences: None,
 /// };
 ///
-/// let options = DateTimeFormatOptions::Style(bag);
+/// let options = DateTimeFormatOptions::Length(bag);
 /// ```
 ///
 /// Or the options can be inferred through the `.into()` trait.
 ///
 /// ```
 /// # use icu_datetime::DateTimeFormatOptions;
-/// # use icu_datetime::options::style;
-/// let options: DateTimeFormatOptions = style::Bag::default().into();
+/// # use icu_datetime::options::length;
+/// let options: DateTimeFormatOptions = length::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
@@ -99,16 +99,16 @@ impl Default for Bag {
     }
 }
 
-/// `Date` represents different length styles `DateTime` can be formatted into.
+/// `Date` represents different lengths `DateTime` can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::options::style;
+/// use icu_datetime::options::length;
 ///
-/// let bag = style::Bag {
-///     date: Some(style::Date::Long),
+/// let bag = length::Bag {
+///     date: Some(length::Date::Long),
 ///     time: None,
 ///
 ///     preferences: None,
@@ -196,17 +196,17 @@ pub enum Date {
     Short,
 }
 
-/// `Time` represents different length styles `DateTime` can be formatted into.
+/// `Time` represents different length lengths `DateTime` can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::options::style;
+/// use icu_datetime::options::length;
 ///
-/// let bag = style::Bag {
+/// let bag = length::Bag {
 ///     date: None,
-///     time: Some(style::Time::Medium),
+///     time: Some(length::Time::Medium),
 ///
 ///     preferences: None,
 /// };

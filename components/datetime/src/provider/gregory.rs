@@ -34,9 +34,9 @@ pub struct DateSymbolsV1 {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct PatternsV1 {
-    pub date: patterns::StylePatternsV1,
+    pub date: patterns::LengthPatternsV1,
 
-    pub time: patterns::StylePatternsV1,
+    pub time: patterns::LengthPatternsV1,
 
     pub date_time: patterns::DateTimeFormatsV1,
 }
@@ -182,7 +182,7 @@ pub mod patterns {
         feature = "provider_serde",
         derive(serde::Serialize, serde::Deserialize)
     )]
-    pub struct StylePatternsV1 {
+    pub struct LengthPatternsV1 {
         pub full: Cow<'static, str>,
         pub long: Cow<'static, str>,
         pub medium: Cow<'static, str>,
@@ -257,7 +257,7 @@ pub mod patterns {
         derive(serde::Serialize, serde::Deserialize)
     )]
     pub struct DateTimeFormatsV1 {
-        pub style_patterns: StylePatternsV1,
+        pub length_patterns: LengthPatternsV1,
         pub skeletons: SkeletonsV1,
     }
 }

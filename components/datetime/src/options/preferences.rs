@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Preferences is a bag of options to be associated with either `Style` or `Components` bag which provides
+//! Preferences is a bag of options to be associated with either `Length` or `Components` bag which provides
 //! information on user preferences that can affect the result of the formatting.
 //!
 //! # Unicode Extensions

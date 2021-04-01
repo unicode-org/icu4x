@@ -19,7 +19,7 @@ pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
 
 pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
     match input {
-        structs::TestOptions::Style(bag) => (*bag).clone().into(),
+        structs::TestOptions::Length(bag) => (*bag).clone().into(),
         structs::TestOptions::Components(bag) => (*bag).clone().into(),
     }
 }

@@ -37,15 +37,15 @@
 //! ```
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
-//! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
+//! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::length};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
 //! let locale: Locale = langid!("en").into();
 //!
-//! let options = style::Bag {
-//!     date: Some(style::Date::Long),
-//!     time: Some(style::Time::Medium),
+//! let options = length::Bag {
+//!     date: Some(length::Date::Long),
+//!     time: Some(length::Time::Medium),
 //!     ..Default::default()
 //! }.into();
 //!
@@ -76,15 +76,15 @@ pub mod datetime {
     //! ```
     //! use icu::locid::Locale;
     //! use icu::locid::macros::langid;
-    //! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::style};
+    //! use icu::datetime::{DateTimeFormat, mock::MockDateTime, options::length};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
     //! let locale: Locale = langid!("en").into();
     //!
-    //! let options = style::Bag {
-    //!     date: Some(style::Date::Medium),
-    //!     time: Some(style::Time::Short),
+    //! let options = length::Bag {
+    //!     date: Some(length::Date::Medium),
+    //!     time: Some(length::Time::Short),
     //!     ..Default::default()
     //! }.into();
     //!

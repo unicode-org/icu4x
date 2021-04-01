@@ -147,7 +147,7 @@
       "short": "h:mm a"
     },
     "date_time": {
-      "style_patterns": {
+      "length_patterns": {
         "full": "{1} {0}",
         "long": "{1} {0}",
         "medium": "{1} {0}",
