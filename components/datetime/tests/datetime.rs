@@ -7,7 +7,10 @@
 mod fixtures;
 mod patterns;
 
-use icu_datetime::{mock::MockDateTime, DateTimeFormatOptions};
+use icu_datetime::{
+    mock::{datetime::MockDateTime, zoned_datetime::MockZonedDateTime},
+    DateTimeFormatOptions, ZonedDateTimeFormat,
+};
 use icu_datetime::{
     provider::{gregory::DatesV1, key::GREGORY_V1},
     DateTimeFormat,
@@ -27,8 +30,8 @@ fn test_fixture(fixture_name: &str) {
     {
         let locale: Locale = fx.input.locale.parse().unwrap();
         let options = fixtures::get_options(&fx.input.options);
-        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
 
+        let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
         let value: MockDateTime = fx.input.value.parse().unwrap();
 
         let result = dtf.format_to_string(&value);
@@ -40,6 +43,35 @@ fn test_fixture(fixture_name: &str) {
             ),
             None => assert_eq!(result, fx.output.value),
         }
+
+        let mut s = String::new();
+        dtf.format_to_write(&mut s, &value).unwrap();
+        assert_eq!(s, fx.output.value);
+
+        let fdt = dtf.format(&value);
+        assert_eq!(fdt.to_string(), fx.output.value);
+
+        let mut s = String::new();
+        write!(s, "{}", fdt).unwrap();
+        assert_eq!(s, fx.output.value);
+    }
+}
+
+fn test_fixture_with_time_zones(fixture_name: &str) {
+    let provider = icu_testdata::get_provider();
+
+    for fx in fixtures::get_fixture(fixture_name)
+        .expect("Unable to get fixture.")
+        .0
+    {
+        let locale: Locale = fx.input.locale.parse().unwrap();
+        let options = fixtures::get_options(&fx.input.options);
+
+        let dtf = ZonedDateTimeFormat::try_new(locale, &provider, &provider, &options).unwrap();
+        let value: MockZonedDateTime = fx.input.value.parse().unwrap();
+
+        let result = dtf.format_to_string(&value);
+        assert_eq!(result, fx.output.value);
 
         let mut s = String::new();
         dtf.format_to_write(&mut s, &value).unwrap();
@@ -117,6 +149,7 @@ fn test_dayperiod_patterns() {
 fn test_length_fixtures() {
     // components/datetime/tests/fixtures/tests/lengths.json
     test_fixture("lengths");
+    test_fixture_with_time_zones("lengths_with_zones");
 }
 
 /// Tests component::Bag configurations that have exact matches to CLDR skeletons.

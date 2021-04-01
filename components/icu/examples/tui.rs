@@ -7,10 +7,11 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-use icu::datetime::{mock::MockDateTime, DateTimeFormat, DateTimeFormatOptions};
+use icu::datetime::DateTimeFormatOptions;
 use icu::locid::{macros::langid, Locale};
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 use icu::uniset::UnicodeSetBuilder;
+use icu_datetime::{mock::zoned_datetime::MockZonedDateTime, ZonedDateTimeFormat};
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -42,9 +43,16 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = DateTimeFormat::try_new(locale, &provider, &DateTimeFormatOptions::default())
-            .expect("Failed to create DateTimeFormat.");
-        let today: MockDateTime = "2020-10-10T18:56:00".parse().expect("Failed to parse date");
+        let dtf = ZonedDateTimeFormat::try_new(
+            locale,
+            &provider,
+            &provider,
+            &DateTimeFormatOptions::default(),
+        )
+        .expect("Failed to create DateTimeFormat.");
+        let today: MockZonedDateTime = "2020-10-10T18:56:00Z"
+            .parse()
+            .expect("Failed to parse date");
 
         let formatted_dt = dtf.format(&today);
 

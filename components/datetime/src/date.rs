@@ -9,10 +9,14 @@ use std::ops::{Add, Sub};
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
+use crate::mock::timezone::GmtOffset;
+
 #[derive(Debug)]
 pub enum DateTimeError {
     Parse(std::num::ParseIntError),
     Overflow { field: &'static str, max: usize },
+    UnexpectedSymbol { expected: char, found: char },
+    MissingTimeZoneOffset,
 }
 
 impl fmt::Display for DateTimeError {
@@ -20,6 +24,10 @@ impl fmt::Display for DateTimeError {
         match self {
             Self::Parse(err) => write!(f, "{}", err),
             Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
+            Self::UnexpectedSymbol { expected, found } => {
+                write!(f, "Expected {}, found {}", expected, found)
+            }
+            Self::MissingTimeZoneOffset => write!(f, "Expected time-zone offset but found none"),
         }
     }
 }
@@ -75,10 +83,38 @@ pub trait IsoTimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
+/// Representation of a time zone.
+///
+/// Only the GMT offset is reuired, since it is the final format fallback.
+///
+/// All data represented in TimeZoneInput should be locale-agnostic.
+pub trait TimeZoneInput {
+    /// The GMT offset in Nanoseconds.
+    fn gmt_offset(&self) -> GmtOffset;
+
+    /// The IANA TimeZone identifier.
+    /// TODO(nordzilla) switch this to BCP-47 identifier.
+    fn time_zone_id(&self) -> Option<String>;
+
+    /// The MetaZone identifier.
+    /// TODO(#528) switch to a compact, stable ID.
+    fn metazone(&self) -> Option<String>;
+
+    /// The time variant (e.g. "daylight", "standard")
+    fn variant(&self) -> Option<String>;
+
+    /// A country code associated with this time zone.
+    fn country_code(&self) -> Option<String>;
+}
+
 /// A combination of a formattable calendar date and ISO time.
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
+/// A combination of a formattable calendar date, ISO time, and time zone.
+pub trait ZonedDateTimeInput: TimeZoneInput + DateTimeInput {}
+
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
+impl<T> ZonedDateTimeInput for T where T: TimeZoneInput + DateTimeInput {}
 
 /// A formattable calendar date and ISO time that takes the locale into account.
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
@@ -119,7 +155,46 @@ impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
     }
 }
 
+pub(crate) struct ZonedDateTimeInputWithLocale<'s, T: ZonedDateTimeInput> {
+    data: &'s T,
+    _first_weekday: u8,
+    _anchor_weekday: u8,
+}
+
+impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
+    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+        Self {
+            data,
+            // TODO(#488): Implement week calculations.
+            _first_weekday: 1,
+            _anchor_weekday: 4,
+        }
+    }
+}
+
 impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+    fn date_time(&self) -> &T {
+        self.data
+    }
+
+    fn year_week(&self) -> Year {
+        todo!("#488")
+    }
+
+    fn week_of_month(&self) -> WeekOfMonth {
+        todo!("#488")
+    }
+
+    fn week_of_year(&self) -> WeekOfYear {
+        todo!("#488")
+    }
+
+    fn flexible_day_period(&self) {
+        todo!("#487")
+    }
+}
+
+impl<'s, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'s, T> {
     fn date_time(&self) -> &T {
         self.data
     }

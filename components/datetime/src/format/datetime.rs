@@ -26,7 +26,7 @@ use writeable::Writeable;
 /// # use icu_locid::Locale;
 /// # use icu_locid_macros::langid;
 /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-/// # use icu_datetime::mock::MockDateTime;
+/// # use icu_datetime::mock::datetime::MockDateTime;
 /// # use icu_provider::inv::InvariantDataProvider;
 /// # let locale: Locale = langid!("en").into();
 /// # let provider = InvariantDataProvider;
@@ -120,7 +120,7 @@ where
     Ok(())
 }
 
-fn write_field<T, W>(
+pub(super) fn write_field<T, W>(
     pattern: &crate::pattern::Pattern,
     field: &fields::Field,
     symbols: &crate::provider::gregory::DateSymbolsV1,
@@ -246,6 +246,7 @@ where
             );
             w.write_str(symbol)?
         }
+        field @ FieldSymbol::TimeZone(_) => return Err(Error::UnsupportedField(field)),
     };
     Ok(())
 }
@@ -257,7 +258,7 @@ mod tests {
     #[test]
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
-        use crate::mock::MockDateTime;
+        use crate::mock::datetime::MockDateTime;
         use crate::provider::gregory::DatesV1;
         use icu_provider::prelude::*;
         use std::borrow::Cow;

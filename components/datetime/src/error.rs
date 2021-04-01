@@ -4,6 +4,7 @@
 
 use crate::pattern;
 use crate::skeleton::SkeletonError;
+use crate::{fields::FieldSymbol, pattern};
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
@@ -21,6 +22,8 @@ pub enum DateTimeFormatError {
     MissingInputField,
     /// An error from skeleton matching,
     Skeleton(SkeletonError),
+    /// Field unsupported for this type of date time format
+    UnsupportedField(FieldSymbol),
 }
 
 impl From<DataError> for DateTimeFormatError {

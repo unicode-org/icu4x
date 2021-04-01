@@ -4,7 +4,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "full",
                         "time": null
                     }
@@ -13,7 +13,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "long",
                         "time": null
                     }
@@ -22,7 +22,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "medium",
                         "time": null
                     }
@@ -31,7 +31,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "short",
                         "time": null
                     }
@@ -40,7 +40,25 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
+                        "date": null,
+                        "time": "full"
+                    }
+                }
+            },
+            {
+                "locale": "ru",
+                "options": {
+                    "style": {
+                        "date": null,
+                        "time": "long"
+                    }
+                }
+            },
+            {
+                "locale": "ru",
+                "options": {
+                    "style": {
                         "date": null,
                         "time": "medium"
                     }
@@ -49,7 +67,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": null,
                         "time": "short"
                     }
@@ -58,25 +76,25 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "full",
-                        "time": "medium"
+                        "time": "full"
                     }
                 }
             },
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "long",
-                        "time": "short"
+                        "time": "long"
                     }
                 }
             },
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "medium",
                         "time": "medium"
                     }
@@ -85,7 +103,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "length": {
+                    "style": {
                         "date": "short",
                         "time": "short"
                     }
@@ -93,16 +111,16 @@
             }
         ],
         "values": [
-            "2001-09-08T18:46:40:000",
-            "2017-07-13T19:40:00:000",
-            "2020-09-13T05:26:40:000",
-            "2021-01-06T22:13:20:000",
-            "2021-05-02T17:00:00:000",
-            "2021-08-26T10:46:40:000",
-            "2021-11-20T03:33:20:000",
-            "2022-04-14T22:20:00:000",
-            "2022-08-08T16:06:40:000",
-            "2033-05-17T20:33:20:000"
+            "2001-09-08T18:46:40:000Z",
+            "2017-07-13T19:40:00:000+04:00",
+            "2020-09-13T05:26:40:000-04:00",
+            "2021-01-06T22:13:20:000+08:15",
+            "2021-05-02T17:00:00:000-08:15",
+            "2021-08-26T10:46:40:000+12:30",
+            "2021-11-20T03:33:20:000-12:30",
+            "2022-04-14T22:20:00:000+16:45",
+            "2022-08-08T16:06:40:000-16:45",
+            "2033-05-17T20:33:20:000+20:00"
         ]
     }
 ]

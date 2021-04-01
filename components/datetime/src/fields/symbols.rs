@@ -27,6 +27,7 @@ pub enum FieldSymbol {
     Hour(Hour),
     Minute,
     Second(Second),
+    TimeZone(TimeZone),
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -74,6 +75,14 @@ impl FieldSymbol {
             FieldSymbol::Second(Second::Second) => 18,
             FieldSymbol::Second(Second::FractionalSecond) => 19,
             FieldSymbol::Second(Second::Millisecond) => 20,
+            FieldSymbol::TimeZone(TimeZone::LowerZ) => 21,
+            FieldSymbol::TimeZone(TimeZone::UpperZ) => 22,
+            FieldSymbol::TimeZone(TimeZone::LowerO) => 23,
+            FieldSymbol::TimeZone(TimeZone::UpperO) => 24,
+            FieldSymbol::TimeZone(TimeZone::LowerV) => 25,
+            FieldSymbol::TimeZone(TimeZone::UpperV) => 26,
+            FieldSymbol::TimeZone(TimeZone::LowerX) => 27,
+            FieldSymbol::TimeZone(TimeZone::UpperX) => 28,
         }
     }
 }
@@ -90,7 +99,8 @@ impl TryFrom<u8> for FieldSymbol {
                 .or_else(|_| Weekday::try_from(b).map(Self::Weekday))
                 .or_else(|_| DayPeriod::try_from(b).map(Self::DayPeriod))
                 .or_else(|_| Hour::try_from(b).map(Self::Hour))
-                .or_else(|_| Second::try_from(b).map(Self::Second)),
+                .or_else(|_| Second::try_from(b).map(Self::Second))
+                .or_else(|_| TimeZone::try_from(b).map(Self::TimeZone)),
         }
     }
 }
@@ -144,6 +154,16 @@ impl From<FieldSymbol> for char {
                 Second::Second => 's',
                 Second::FractionalSecond => 'S',
                 Second::Millisecond => 'A',
+            },
+            FieldSymbol::TimeZone(time_zone) => match time_zone {
+                TimeZone::LowerZ => 'z',
+                TimeZone::UpperZ => 'Z',
+                TimeZone::LowerO => 'o',
+                TimeZone::UpperO => 'O',
+                TimeZone::LowerV => 'v',
+                TimeZone::UpperV => 'V',
+                TimeZone::LowerX => 'x',
+                TimeZone::UpperX => 'X',
             },
         }
     }
@@ -414,5 +434,37 @@ impl TryFrom<u8> for DayPeriod {
 impl From<DayPeriod> for FieldSymbol {
     fn from(input: DayPeriod) -> Self {
         Self::DayPeriod(input)
+    }
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub enum TimeZone {
+    LowerZ,
+    UpperZ,
+    LowerO,
+    UpperO,
+    LowerV,
+    UpperV,
+    LowerX,
+    UpperX,
+}
+
+impl TryFrom<u8> for TimeZone {
+    type Error = SymbolError;
+    fn try_from(b: u8) -> Result<Self, Self::Error> {
+        match b {
+            b'z' => Ok(Self::LowerZ),
+            b => Err(SymbolError::Unknown(b)),
+        }
+    }
+}
+
+impl From<TimeZone> for FieldSymbol {
+    fn from(input: TimeZone) -> Self {
+        Self::TimeZone(input)
     }
 }
