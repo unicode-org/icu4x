@@ -86,6 +86,93 @@ fn iai_interpolate() {
     }
 }
 
+fn iai_parsed_interpolate() {
+    let samples = &[
+        (
+            vec![
+                PatternToken::Placeholder(0),
+                PatternToken::Literal {
+                    content: " - ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(1),
+            ],
+            vec!["Hello", "World"],
+        ),
+        (
+            vec![
+                PatternToken::Placeholder(1),
+                PatternToken::Literal {
+                    content: " - ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(0),
+            ],
+            vec!["Hello", "World"],
+        ),
+        (
+            vec![
+                PatternToken::Placeholder(0),
+                PatternToken::Literal {
+                    content: ", ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(1),
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Literal {
+                    content: "and",
+                    quoted: true,
+                },
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(2),
+            ],
+            vec!["Start", "Middle", "End"],
+        ),
+        (
+            vec![
+                PatternToken::Placeholder(0),
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Literal {
+                    content: "at",
+                    quoted: true,
+                },
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(1),
+            ],
+            vec!["Hello", "World"],
+        ),
+    ];
+
+    for sample in samples {
+        let pattern: icu_pattern::pattern::IntoIterVec<_> = sample.0.clone().into();
+
+        let replacements: Vec<Option<Element>> = sample
+            .1
+            .iter()
+            .map(|r| Some(Element::from(*r)))
+            .collect();
+
+        let mut i = Interpolator::new(pattern, replacements);
+        let mut result = String::new();
+        while let Some(elem) = i.try_next().unwrap() {
+            write!(result, "{}", elem).unwrap();
+        }
+    }
+}
+
+
 fn iai_named_interpolate() {
     let named_samples = vec![(
         "{start}, {middle} 'and' {end}",
@@ -110,4 +197,4 @@ fn iai_named_interpolate() {
     }
 }
 
-iai::main!(iai_parse, iai_interpolate, iai_named_interpolate);
+iai::main!(iai_parse, iai_interpolate, iai_parsed_interpolate, iai_named_interpolate);

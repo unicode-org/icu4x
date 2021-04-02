@@ -198,13 +198,17 @@ impl<E> ReplacementProvider<E> for Vec<Vec<E>> {
     }
 }
 
-impl<E> ReplacementProvider<E> for Vec<E> {
+impl<E> ReplacementProvider<E> for Vec<Option<E>> {
     type Key = usize;
     type Iter = std::iter::Once<E>;
 
     fn take_replacement(&mut self, input: &usize) -> Option<Self::Iter> {
-        if self.len() > *input {
-            Some(std::iter::once(self.remove(*input)))
+        if let Some(elem) = self.get_mut(*input) {
+            if let Some(value) = elem.take() {
+                Some(std::iter::once(value))
+            } else {
+                None
+            }
         } else {
             None
         }
