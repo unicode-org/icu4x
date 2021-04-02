@@ -39,9 +39,11 @@
 //! [`ICU4X`]: ../icu/index.html
 
 pub mod decimal;
+pub mod signum;
 mod uint_iterator;
 
 pub use decimal::FixedDecimal;
+pub use signum::Signum;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {

@@ -24,10 +24,18 @@ pub mod key {
 )]
 pub struct AffixesV1 {
     /// String to prepend before the decimal number.
-    pub prefix: SmallString8,
+    #[cfg_attr(
+        all(feature = "provider_serde", not(feature = "serialize_none")),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
+    pub prefix: Option<SmallString8>,
 
     /// String to append after the decimal number.
-    pub suffix: SmallString8,
+    #[cfg_attr(
+        all(feature = "provider_serde", not(feature = "serialize_none")),
+        serde(skip_serializing_if = "Option::is_none")
+    )]
+    pub suffix: Option<SmallString8>,
 }
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
@@ -71,6 +79,30 @@ pub struct DecimalSymbolsV1 {
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
 
-    /// Zero digit for the current numbering system.
-    pub zero_digit: char,
+    /// Digit characters for the current numbering system. In most systems, these digits are
+    /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
+    pub digits: [char; 10],
+}
+
+impl Default for DecimalSymbolsV1 {
+    fn default() -> Self {
+        Self {
+            minus_sign_affixes: AffixesV1 {
+                prefix: Some("-".into()),
+                suffix: None,
+            },
+            plus_sign_affixes: AffixesV1 {
+                prefix: Some("+".into()),
+                suffix: None,
+            },
+            decimal_separator: ".".into(),
+            grouping_separator: ",".into(),
+            grouping_sizes: GroupingSizesV1 {
+                primary: 3,
+                secondary: 3,
+                min_grouping: 1,
+            },
+            digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        }
+    }
 }

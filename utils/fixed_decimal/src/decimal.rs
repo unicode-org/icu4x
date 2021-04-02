@@ -13,7 +13,8 @@ use std::str::FromStr;
 
 use static_assertions::const_assert;
 
-use super::uint_iterator::IntIterator;
+use crate::signum::Signum;
+use crate::uint_iterator::IntIterator;
 
 use crate::Error;
 
@@ -70,17 +71,7 @@ pub struct FixedDecimal {
     lower_magnitude: i16,
 
     /// Whether the number is negative. Negative zero is supported.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    ///
-    /// let mut dec: FixedDecimal = Default::default();
-    /// dec.is_negative = true;
-    /// assert_eq!("-0", dec.to_string());
-    /// ```
-    pub is_negative: bool,
+    is_negative: bool,
 }
 
 impl Default for FixedDecimal {
@@ -300,6 +291,64 @@ impl FixedDecimal {
         match self.multiply_pow10(delta) {
             Ok(()) => Ok(self),
             Err(err) => Err(err),
+        }
+    }
+
+    /// Change the value from negative to positive or from positive to negative, modifying self.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(42);
+    /// assert_eq!("42", dec.to_string());
+    ///
+    /// dec.negate();
+    /// assert_eq!("-42", dec.to_string());
+    ///
+    /// dec.negate();
+    /// assert_eq!("42", dec.to_string());
+    /// ```
+    pub fn negate(&mut self) {
+        self.is_negative = !self.is_negative;
+    }
+
+    /// Change the value from negative to positive or from positive to negative, consuming self
+    /// and returning a new object.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// assert_eq!(FixedDecimal::from(-42), FixedDecimal::from(42).negated());
+    /// ```
+    pub fn negated(mut self) -> Self {
+        self.negate();
+        self
+    }
+
+    /// Returns the [Signum][Signum] of this FixedDecimal.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Signum;
+    ///
+    /// assert_eq!(Signum::AboveZero, FixedDecimal::from(42).signum());
+    /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
+    /// assert_eq!(Signum::NegativeZero, FixedDecimal::from(0).negated().signum());
+    /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
+    /// ```
+    pub fn signum(&self) -> Signum {
+        let is_zero = self.digits.is_empty();
+        match (self.is_negative, is_zero) {
+            (false, false) => Signum::AboveZero,
+            (false, true) => Signum::PositiveZero,
+            (true, false) => Signum::BelowZero,
+            (true, true) => Signum::NegativeZero,
         }
     }
 
@@ -901,5 +950,48 @@ fn test_syntax_error() {
                 assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
             }
         }
+    }
+}
+
+#[test]
+fn test_signum_zero() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub fixed_decimal: FixedDecimal,
+        pub expected_signum: Signum,
+    }
+    let cases = [
+        TestCase {
+            fixed_decimal: Default::default(),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from(0),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from(0).negated(),
+            expected_signum: Signum::NegativeZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("0").unwrap(),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("000").unwrap(),
+            expected_signum: Signum::PositiveZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("-0.000").unwrap(),
+            expected_signum: Signum::NegativeZero,
+        },
+        TestCase {
+            fixed_decimal: FixedDecimal::from_str("000.000").unwrap(),
+            expected_signum: Signum::PositiveZero,
+        },
+    ];
+    for cas in &cases {
+        let signum = cas.fixed_decimal.signum();
+        assert_eq!(cas.expected_signum, signum, "{:?}", cas);
     }
 }
