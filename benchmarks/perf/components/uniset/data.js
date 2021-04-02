@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617320290627,
+  "lastUpdate": 1617393778318,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4289,6 +4289,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35355271,
             "range": "± 852514",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f55040c082e977103dcc22784bd5a2d414cf2d9d",
+          "message": "Fix some broken links due to the switch from master -> main (#604)",
+          "timestamp": "2021-04-02T12:57:08-07:00",
+          "tree_id": "75c5d3e62b85fd1be2d2c7f0e35c589a03ae4875",
+          "url": "https://github.com/unicode-org/icu4x/commit/f55040c082e977103dcc22784bd5a2d414cf2d9d"
+        },
+        "date": 1617393777409,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37675111,
+            "range": "± 198117",
             "unit": "ns/iter"
           }
         ]
