@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617320455648,
+  "lastUpdate": 1617393891758,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Heap – ubuntu-latest": [
@@ -6575,6 +6575,174 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/03aef69d795d104f15b46371f063a943b77b7942"
         },
         "date": 1617320451414,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "icu_datetime/work_log – Total Heap Allocations",
+            "value": 27638,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at Global Memory Max",
+            "value": 17372,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at End of Program Execution",
+            "value": 1112,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Total Heap Allocations",
+            "value": 514,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at Global Memory Max",
+            "value": 305,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Total Heap Allocations",
+            "value": 1223,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at Global Memory Max",
+            "value": 702,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Total Heap Allocations",
+            "value": 12721,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at Global Memory Max",
+            "value": 8981,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Total Heap Allocations",
+            "value": 13779,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at Global Memory Max",
+            "value": 9066,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Total Heap Allocations",
+            "value": 976,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at Global Memory Max",
+            "value": 388,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Total Heap Allocations",
+            "value": 7,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at Global Memory Max",
+            "value": 7,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Total Heap Allocations",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at Global Memory Max",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f55040c082e977103dcc22784bd5a2d414cf2d9d",
+          "message": "Fix some broken links due to the switch from master -> main (#604)",
+          "timestamp": "2021-04-02T12:57:08-07:00",
+          "tree_id": "75c5d3e62b85fd1be2d2c7f0e35c589a03ae4875",
+          "url": "https://github.com/unicode-org/icu4x/commit/f55040c082e977103dcc22784bd5a2d414cf2d9d"
+        },
+        "date": 1617393890470,
         "tool": "ndjson",
         "benches": [
           {
