@@ -70,16 +70,17 @@ where
     if let FieldSymbol::TimeZone(zone_symbol) = field.symbol {
         match zone_symbol {
             fields::TimeZone::LowerZ => {
-                let s = match field.length {
-                    FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
-                        time_zone_format
-                            .short_specific_non_location_format(time_zone)
-                            .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone))
-                    }
-                    FieldLength::Wide => time_zone_format
+                let s = match u8::from(field.length) {
+                    1..=3 => time_zone_format
+                        .short_specific_non_location_format(time_zone)
+                        .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                    4 => time_zone_format
                         .long_specific_non_location_format(time_zone)
                         .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
-                    _ => unreachable!("Invalid field length for `z`"),
+                    length => panic!(
+                        "Invalid time-zone pattern `{:?}` of length {}",
+                        zone_symbol, length
+                    ),
                 };
                 w.write_str(&s)?;
             }
