@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `DateTimeFormatOptions` is a bag of options which, together with `LanguageIdentifier`,
-//! define how dates will be formatted be a `DateTimeFormat` instance.
+//! `DateTimeFormatOptions` is a bag of options which, together with `Locale`,
+//! defines how dates will be formatted with a `DateTimeFormat` instance.
 //!
 //! Each variant of the bag is a combination of settings defining how to format
 //! the date, with an optional `Preferences` which represent user preferences and
@@ -25,11 +25,12 @@
 //!
 //! At the moment only the `Length` bag works, and we plan to extend that to support
 //! `ECMA 402` like components bag later.
+
 pub mod components;
 pub mod length;
 pub mod preferences;
-/// `DateTimeFormatOptions` is a bag of options which, together with `LanguageIdentifier`,
-/// define how dates will be formatted be a `DateTimeFormat` instance.
+/// `DateTimeFormatOptions` is a bag of options which, together with `Locale`,
+/// defines how dates will be formatted with a `DateTimeFormat` instance.
 ///
 /// Each variant of the bag is a combination of settings defining how to format
 /// the date, with an optional `Preferences` which represent user preferences and
