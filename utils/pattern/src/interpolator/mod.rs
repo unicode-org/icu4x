@@ -60,11 +60,14 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///
 /// # Type parameters
 ///
-/// - `P`: A type implementing [`PatternIterator`] trait, like [`Parser`] or [`IntoIterVec`].
 /// - `R`: A replacement provider type implementing [`ReplacementProvider`].
-/// - `K`: A key type used to retrieve associated replacement pattern in place of a placeholder.
 /// - `E`: An element type returned by the `Interpolator` which must implement
 /// [`From<&str>`][`From`]
+///
+/// # Lifetimes
+///
+/// - `i`: The life time of an input pattern slice.
+/// - `p`: The life time of an input [`PatternToken`], which is the life time of the string slice.
 ///
 /// # Element & Replacement Provider
 ///
@@ -185,10 +188,6 @@ where
     /// // … and then None once it's over.
     /// assert_eq!(Ok(None), interpolator.try_next());
     /// ```
-    ///
-    /// # Lifetimes
-    ///
-    /// - `p`: The life time of an input parser, which is the life time of the string slice to be parsed.
     pub fn try_next(&mut self) -> Result<E, R::Key>
     where
         E: From<&'p str>,

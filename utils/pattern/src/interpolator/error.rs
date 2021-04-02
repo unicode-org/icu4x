@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::ParserError;
 use std::fmt::Debug;
 use thiserror::Error;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum InterpolatorError<R>
 where
-    R: Debug + 'static,
+    R: Debug,
 {
     #[error("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(R),
@@ -19,8 +18,6 @@ where
     UnclosedPlaceholder,
     #[error("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
-    #[error("Parser error: {0}")]
-    Parser(#[from] ParserError<R>),
 }
 
 impl<R> From<R> for InterpolatorError<R>
