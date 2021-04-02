@@ -9,8 +9,8 @@ use std::str::FromStr;
 pub struct MockTimeZone {
     pub gmt_offset: GmtOffset,
     pub time_zone_id: Option<String>,
-    pub metazone: Option<String>,
-    pub variant: Option<String>,
+    pub metazone_id: Option<String>,
+    pub time_variant: Option<String>,
     pub country_code: Option<String>,
 }
 
@@ -18,15 +18,15 @@ impl MockTimeZone {
     pub const fn new(
         gmt_offset: GmtOffset,
         time_zone_id: Option<String>,
-        metazone: Option<String>,
-        variant: Option<String>,
+        metazone_id: Option<String>,
+        time_variant: Option<String>,
         country_code: Option<String>,
     ) -> Self {
         Self {
             gmt_offset,
             time_zone_id,
-            metazone,
-            variant,
+            metazone_id,
+            time_variant,
             country_code,
         }
     }
@@ -34,15 +34,15 @@ impl MockTimeZone {
     pub fn try_new(
         gmt_offset: GmtOffset,
         time_zone_id: Option<String>,
-        metazone: Option<String>,
-        variant: Option<String>,
+        metazone_id: Option<String>,
+        time_variant: Option<String>,
         country_code: Option<String>,
     ) -> Result<Self, DateTimeError> {
         Ok(Self {
             gmt_offset,
             time_zone_id,
-            metazone,
-            variant,
+            metazone_id,
+            time_variant,
             country_code,
         })
     }
@@ -54,8 +54,8 @@ impl FromStr for MockTimeZone {
         Ok(Self {
             gmt_offset,
             time_zone_id: None,
-            metazone: None,
-            variant: None,
+            metazone_id: None,
+            time_variant: None,
             country_code: None,
         })
     }
@@ -66,20 +66,20 @@ impl TimeZoneInput for MockTimeZone {
         self.gmt_offset
     }
 
-    fn time_zone_id(&self) -> Option<String> {
-        None
+    fn time_zone_id(&self) -> Option<&str> {
+        self.time_zone_id.as_ref().map(AsRef::as_ref)
     }
 
-    fn metazone(&self) -> Option<String> {
-        None
+    fn metazone_id(&self) -> Option<&str> {
+        self.metazone_id.as_ref().map(AsRef::as_ref)
     }
 
-    fn variant(&self) -> Option<String> {
-        None
+    fn time_variant(&self) -> Option<&str> {
+        self.time_variant.as_ref().map(AsRef::as_ref)
     }
 
-    fn country_code(&self) -> Option<String> {
-        None
+    fn country_code(&self) -> Option<&str> {
+        self.country_code.as_ref().map(AsRef::as_ref)
     }
 }
 

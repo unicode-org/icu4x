@@ -368,10 +368,10 @@ impl<'d> TimeZoneFormat<'d> {
             });
 
         let exemplar_cities: Option<Cow<ExemplarCitiesV1>> = None;
-        let mz_generic_short: Option<Cow<MetaZoneGenericNamesShortV1>> = None;
         let mz_generic_long: Option<Cow<MetaZoneGenericNamesLongV1>> = None;
-        let mz_specific_short: Option<Cow<MetaZoneSpecificNamesShortV1>> = None;
+        let mz_generic_short: Option<Cow<MetaZoneGenericNamesShortV1>> = None;
         let mut mz_specific_long: Option<Cow<MetaZoneSpecificNamesLongV1>> = None;
+        let mut mz_specific_short: Option<Cow<MetaZoneSpecificNamesShortV1>> = None;
 
         for zone_symbol in zone_symbols {
             match zone_symbol {
@@ -389,7 +389,21 @@ impl<'d> TimeZoneFormat<'d> {
                             })?
                             .payload
                             .take()?,
-                    )
+                    );
+                    mz_specific_short = Some(
+                        zone_provider
+                            .load_payload(&DataRequest {
+                                resource_path: ResourcePath {
+                                    key: provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
+                                    options: ResourceOptions {
+                                        variant: None,
+                                        langid: Some(locale.clone().into()),
+                                    },
+                                },
+                            })?
+                            .payload
+                            .take()?,
+                    );
                 }
                 TimeZone::UpperZ => todo!(),
                 TimeZone::LowerO => todo!(),
@@ -445,12 +459,12 @@ impl<'d> TimeZoneFormat<'d> {
             .as_ref()
             .and_then(|metazones| {
                 time_zone
-                    .metazone()
+                    .metazone_id()
                     .and_then(|mz| metazones.get::<str>(&mz))
             })
             .and_then(|specific_names| {
                 time_zone
-                    .variant()
+                    .time_variant()
                     .and_then(|variant| specific_names.get::<str>(&variant))
             })
             .map(Clone::clone)
@@ -464,12 +478,12 @@ impl<'d> TimeZoneFormat<'d> {
             .as_ref()
             .and_then(|metazones| {
                 time_zone
-                    .metazone()
+                    .metazone_id()
                     .and_then(|mz| metazones.get::<str>(&mz))
             })
             .and_then(|specific_names| {
                 time_zone
-                    .variant()
+                    .time_variant()
                     .and_then(|variant| specific_names.get::<str>(&variant))
             })
             .map(Clone::clone)

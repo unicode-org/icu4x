@@ -57,7 +57,15 @@ fn test_fixture(fixture_name: &str) {
     }
 }
 
-fn test_fixture_with_time_zones(fixture_name: &str) {
+#[derive(Default)]
+struct TimeZoneConfig {
+    pub time_zone_id: Option<String>,
+    pub metazone_id: Option<String>,
+    pub time_variant: Option<String>,
+    pub country_code: Option<String>,
+}
+
+fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
     let provider = icu_testdata::get_provider();
 
     for fx in fixtures::get_fixture(fixture_name)
@@ -68,7 +76,12 @@ fn test_fixture_with_time_zones(fixture_name: &str) {
         let options = fixtures::get_options(&fx.input.options);
 
         let dtf = ZonedDateTimeFormat::try_new(locale, &provider, &provider, &options).unwrap();
-        let value: MockZonedDateTime = fx.input.value.parse().unwrap();
+
+        let mut value: MockZonedDateTime = fx.input.value.parse().unwrap();
+        value.time_zone.time_zone_id = config.time_zone_id.clone();
+        value.time_zone.metazone_id = config.metazone_id.clone();
+        value.time_zone.time_variant = config.time_variant.clone();
+        value.time_zone.country_code = config.country_code.clone();
 
         let result = dtf.format_to_string(&value);
         assert_eq!(result, fx.output.value);
@@ -149,7 +162,15 @@ fn test_dayperiod_patterns() {
 fn test_length_fixtures() {
     // components/datetime/tests/fixtures/tests/lengths.json
     test_fixture("lengths");
-    test_fixture_with_time_zones("lengths_with_zones");
+    test_fixture_with_time_zones("lengths_with_zones", TimeZoneConfig::default());
+    test_fixture_with_time_zones(
+        "lengths_with_zones_from_pdt",
+        TimeZoneConfig {
+            metazone_id: Some(String::from("America_Pacific")),
+            time_variant: Some(String::from("daylight")),
+            ..TimeZoneConfig::default()
+        },
+    );
 }
 
 /// Tests component::Bag configurations that have exact matches to CLDR skeletons.

@@ -102,19 +102,19 @@ impl TimeZoneInput for MockZonedDateTime {
         self.time_zone.gmt_offset()
     }
 
-    fn time_zone_id(&self) -> Option<String> {
+    fn time_zone_id(&self) -> Option<&str> {
         self.time_zone.time_zone_id()
     }
 
-    fn metazone(&self) -> Option<String> {
-        self.time_zone.metazone()
+    fn metazone_id(&self) -> Option<&str> {
+        self.time_zone.metazone_id()
     }
 
-    fn variant(&self) -> Option<String> {
-        self.time_zone.variant()
+    fn time_variant(&self) -> Option<&str> {
+        self.time_zone.time_variant()
     }
 
-    fn country_code(&self) -> Option<String> {
+    fn country_code(&self) -> Option<&str> {
         self.time_zone.country_code()
     }
 }

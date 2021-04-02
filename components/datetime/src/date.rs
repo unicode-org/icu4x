@@ -94,17 +94,17 @@ pub trait TimeZoneInput {
 
     /// The IANA TimeZone identifier.
     /// TODO(nordzilla) switch this to BCP-47 identifier.
-    fn time_zone_id(&self) -> Option<String>;
+    fn time_zone_id(&self) -> Option<&str>;
 
     /// The MetaZone identifier.
     /// TODO(#528) switch to a compact, stable ID.
-    fn metazone(&self) -> Option<String>;
+    fn metazone_id(&self) -> Option<&str>;
 
     /// The time variant (e.g. "daylight", "standard")
-    fn variant(&self) -> Option<String>;
+    fn time_variant(&self) -> Option<&str>;
 
     /// A country code associated with this time zone.
-    fn country_code(&self) -> Option<String>;
+    fn country_code(&self) -> Option<&str>;
 }
 
 /// A combination of a formattable calendar date and ISO time.
