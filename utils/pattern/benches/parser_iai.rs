@@ -88,7 +88,7 @@ fn iai_parsed_interpolate() {
             vec![
                 PatternToken::Placeholder(0),
                 PatternToken::Literal {
-                    content: " - ",
+                    content: " - ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
@@ -99,7 +99,7 @@ fn iai_parsed_interpolate() {
             vec![
                 PatternToken::Placeholder(1),
                 PatternToken::Literal {
-                    content: " - ",
+                    content: " - ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(0),
@@ -110,20 +110,20 @@ fn iai_parsed_interpolate() {
             vec![
                 PatternToken::Placeholder(0),
                 PatternToken::Literal {
-                    content: ", ",
+                    content: ", ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Literal {
-                    content: "and",
+                    content: "and".into(),
                     quoted: true,
                 },
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(2),
@@ -134,15 +134,15 @@ fn iai_parsed_interpolate() {
             vec![
                 PatternToken::Placeholder(0),
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Literal {
-                    content: "at",
+                    content: "at".into(),
                     quoted: true,
                 },
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
@@ -171,7 +171,7 @@ fn iai_parsed_interpolate_composed() {
             vec![
                 PatternToken::Placeholder(0),
                 PatternToken::Literal {
-                    content: " - ",
+                    content: " - ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
@@ -182,7 +182,7 @@ fn iai_parsed_interpolate_composed() {
             vec![
                 PatternToken::Placeholder(1),
                 PatternToken::Literal {
-                    content: " - ",
+                    content: " - ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(0),
@@ -193,20 +193,20 @@ fn iai_parsed_interpolate_composed() {
             vec![
                 PatternToken::Placeholder(0),
                 PatternToken::Literal {
-                    content: ", ",
+                    content: ", ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Literal {
-                    content: "and",
+                    content: "and".into(),
                     quoted: true,
                 },
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(2),
@@ -217,15 +217,15 @@ fn iai_parsed_interpolate_composed() {
             vec![
                 PatternToken::Placeholder(0),
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Literal {
-                    content: "at",
+                    content: "at".into(),
                     quoted: true,
                 },
                 PatternToken::Literal {
-                    content: " ",
+                    content: " ".into(),
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),

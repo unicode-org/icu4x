@@ -6,7 +6,12 @@ pub mod error;
 
 use crate::token::PatternToken;
 pub use error::ParserError;
-use std::{convert::TryInto, fmt::Debug, str::FromStr};
+use std::{
+    convert::TryInto,
+    fmt::Debug,
+    str::FromStr,
+    borrow::Cow,
+};
 
 #[derive(PartialEq)]
 enum ParserState {
@@ -37,7 +42,7 @@ macro_rules! handle_literal {
         let range = advance_state!($self, $self.idx, $next_state);
         if !range.is_empty() {
             return Ok(Some(PatternToken::Literal {
-                content: &$self.input[range],
+                content: Cow::Borrowed(&$self.input[range]),
                 quoted: $quoted,
             }));
         } else {
@@ -72,7 +77,7 @@ macro_rules! handle_literal {
 ///
 /// assert_eq!(result, &[
 ///     PatternToken::Placeholder(0),
-///     PatternToken::Literal { content: ", ", quoted: false },
+///     PatternToken::Literal { content: ", ".into(), quoted: false },
 ///     PatternToken::Placeholder(1),
 /// ]);
 /// ```
@@ -97,7 +102,7 @@ macro_rules! handle_literal {
 ///
 /// assert_eq!(result, &[
 ///     PatternToken::Placeholder("start".to_string()),
-///     PatternToken::Literal { content: ", ", quoted: false },
+///     PatternToken::Literal { content: ", ".into(), quoted: false },
 ///     PatternToken::Placeholder("end".to_string()),
 /// ]);
 /// ```
@@ -148,9 +153,9 @@ macro_rules! handle_literal {
 ///
 /// assert_eq!(result, &[
 ///     PatternToken::Placeholder(0),
-///     PatternToken::Literal { content: " ", quoted: false },
-///     PatternToken::Literal { content: "and", quoted: true },
-///     PatternToken::Literal { content: " ", quoted: false },
+///     PatternToken::Literal { content: " ".into(), quoted: false },
+///     PatternToken::Literal { content: "and".into(), quoted: true },
+///     PatternToken::Literal { content: " ".into(), quoted: false },
 ///     PatternToken::Placeholder(1),
 /// ]);
 /// ```
@@ -237,7 +242,7 @@ impl<'p> Parser<'p> {
     ///
     /// // A call to try_next() returns the next value…
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(0))), parser.try_next());
-    /// assert_eq!(Ok(Some(PatternToken::Literal { content: ", ", quoted: false})), parser.try_next::<usize>());
+    /// assert_eq!(Ok(Some(PatternToken::Literal { content: ", ".into(), quoted: false})), parser.try_next::<usize>());
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(1))), parser.try_next());
     ///
     /// // … and then None once it's over.
@@ -299,7 +304,7 @@ impl<'p> Parser<'p> {
                 if !range.is_empty() {
                     self.start_idx = self.len;
                     Ok(Some(PatternToken::Literal {
-                        content: &self.input[range],
+                        content: Cow::Borrowed(&self.input[range]),
                         quoted: false,
                     }))
                 } else {

@@ -23,6 +23,7 @@ use std::collections::HashMap;
 /// use std::{
 ///     collections::HashMap,
 ///     convert::TryInto,
+///     borrow::Cow,
 /// };
 ///
 /// #[derive(Debug, PartialEq)]
@@ -34,8 +35,8 @@ use std::collections::HashMap;
 ///
 /// // This is necessary to allow for parser literals to be adopted into the final interpolation
 /// // return type.
-/// impl From<&str> for Element {
-///     fn from(input: &str) -> Self {
+/// impl From<Cow<'_, str>> for Element {
+///     fn from(input: Cow<'_, str>) -> Self {
 ///        Self::Literal(input.to_string())
 ///     }
 /// }
@@ -80,7 +81,10 @@ use std::collections::HashMap;
 /// ## Examples
 /// ```
 /// use icu_pattern::{Parser, Interpolator, ReplacementProvider};
-/// use std::convert::TryInto;
+/// use std::{
+///     convert::TryInto,
+///     borrow::Cow
+/// };
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
@@ -88,8 +92,8 @@ use std::collections::HashMap;
 ///     Literal(String)
 /// }
 ///
-/// impl From<&str> for Element {
-///     fn from(input: &str) -> Self {
+/// impl From<Cow<'_, str>> for Element {
+///     fn from(input: Cow<'_, str>) -> Self {
 ///         Self::Literal(input.to_string())
 ///     }
 /// }

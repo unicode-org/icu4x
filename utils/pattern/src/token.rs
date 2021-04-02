@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::borrow::Cow;
+
 /// A token returned by the [`Parser`].
 ///
 /// # Examples
@@ -21,7 +23,7 @@
 ///
 /// assert_eq!(result, &[
 ///     PatternToken::Placeholder(0),
-///     PatternToken::Literal { content: ", ", quoted: false },
+///     PatternToken::Literal { content: ", ".into(), quoted: false },
 ///     PatternToken::Placeholder(1),
 /// ]);
 /// ```
@@ -39,13 +41,13 @@
 #[derive(PartialEq, Debug, Clone)]
 pub enum PatternToken<'s, P> {
     Placeholder(P),
-    Literal { content: &'s str, quoted: bool },
+    Literal { content: Cow<'s, str>, quoted: bool },
 }
 
 impl<'s, P> From<(&'s str, bool)> for PatternToken<'s, P> {
     fn from(input: (&'s str, bool)) -> Self {
         Self::Literal {
-            content: input.0,
+            content: Cow::Borrowed(input.0),
             quoted: input.1,
         }
     }

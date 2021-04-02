@@ -3,12 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_pattern::{Interpolator, PatternToken};
-use std::fmt::{Display, Write};
+use std::{
+    fmt::{Display, Write},
+    borrow::Cow
+};
 
 #[derive(Debug)]
 enum Element<'s> {
     Token(usize),
-    Literal(&'s str),
+    Literal(Cow<'s, str>),
 }
 
 impl Display for Element<'_> {
@@ -20,8 +23,8 @@ impl Display for Element<'_> {
     }
 }
 
-impl<'s> From<&'s str> for Element<'s> {
-    fn from(input: &'s str) -> Self {
+impl<'s> From<Cow<'s, str>> for Element<'s> {
+    fn from(input: Cow<'s, str>) -> Self {
         Self::Literal(input)
     }
 }
@@ -35,7 +38,7 @@ fn main() {
         pattern: vec![
             PatternToken::Placeholder(0),
             PatternToken::Literal {
-                content: " days",
+                content: " days".into(),
                 quoted: false,
             },
         ],

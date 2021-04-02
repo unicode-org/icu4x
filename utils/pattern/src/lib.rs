@@ -20,7 +20,10 @@
 //!
 //! ```
 //! use icu_pattern::{Parser, Interpolator};
-//! use std::convert::TryInto;
+//! use std::{
+//!     convert::TryInto,
+//!     borrow::Cow
+//! };
 //!
 //! #[derive(Debug, PartialEq)]
 //! enum Token {
@@ -31,11 +34,11 @@
 //! #[derive(Debug, PartialEq)]
 //! enum Element<'s> {
 //!     Token(Token),
-//!     Literal(&'s str),
+//!     Literal(Cow<'s, str>),
 //! }
 //!
-//! impl<'s> From<&'s str> for Element<'s> {
-//!     fn from(input: &'s str) -> Self {
+//! impl<'s> From<Cow<'s, str>> for Element<'s> {
+//!     fn from(input: Cow<'s, str>) -> Self {
 //!         Self::Literal(input)
 //!     }
 //! }
@@ -45,12 +48,12 @@
 //! let replacements = vec![
 //!     vec![
 //!         Element::Token(Token::Variant1),
-//!         Element::Literal(" foo "),
+//!         Element::Literal(" foo ".into()),
 //!         Element::Token(Token::Variant2),
 //!     ],
 //!     vec![
 //!         Element::Token(Token::Variant2),
-//!         Element::Literal(" bar "),
+//!         Element::Literal(" bar ".into()),
 //!         Element::Token(Token::Variant1),
 //!     ],
 //! ];
@@ -65,11 +68,11 @@
 //!
 //! assert_eq!(result, &[
 //!     Element::Token(Token::Variant1),
-//!     Element::Literal(" foo "),
+//!     Element::Literal(" foo ".into()),
 //!     Element::Token(Token::Variant2),
-//!     Element::Literal(", "),
+//!     Element::Literal(", ".into()),
 //!     Element::Token(Token::Variant2),
-//!     Element::Literal(" bar "),
+//!     Element::Literal(" bar ".into()),
 //!     Element::Token(Token::Variant1),
 //! ]);
 //! ```

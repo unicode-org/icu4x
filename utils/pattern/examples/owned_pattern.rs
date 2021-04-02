@@ -6,12 +6,13 @@ use icu_pattern::{Interpolator, Parser};
 use std::{
     convert::TryInto,
     fmt::{Display, Write},
+    borrow::Cow,
 };
 
 #[derive(Debug)]
 enum Element<'s> {
     Token(usize),
-    Literal(&'s str),
+    Literal(Cow<'s, str>),
 }
 
 impl Display for Element<'_> {
@@ -23,8 +24,8 @@ impl Display for Element<'_> {
     }
 }
 
-impl<'s> From<&'s str> for Element<'s> {
-    fn from(input: &'s str) -> Self {
+impl<'s> From<Cow<'s, str>> for Element<'s> {
+    fn from(input: Cow<'s, str>) -> Self {
         Self::Literal(input)
     }
 }

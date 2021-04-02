@@ -6,7 +6,10 @@ mod error;
 pub use crate::replacement::ReplacementProvider;
 use crate::token::PatternToken;
 pub use error::InterpolatorError;
-use std::str::FromStr;
+use std::{
+    str::FromStr,
+    borrow::Cow
+};
 
 type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromStr>::Err>>;
 
@@ -22,16 +25,19 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// # Examples
 /// ```
 /// use icu_pattern::{Parser, Interpolator};
-/// use std::convert::TryInto;
+/// use std::{
+///     convert::TryInto,
+///     borrow::Cow
+/// };
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element<'s> {
 ///     Value(usize),
-///     Literal(&'s str),
+///     Literal(Cow<'s, str>),
 /// }
 ///
-/// impl<'s> From<&'s str> for Element<'s> {
-///     fn from(input: &'s str) -> Self {
+/// impl<'s> From<Cow<'s, str>> for Element<'s> {
+///     fn from(input: Cow<'s, str>) -> Self {
 ///         Self::Literal(input)
 ///     }
 /// }
@@ -54,7 +60,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///
 /// assert_eq!(result, &[
 ///     Element::Value(5),
-///     Element::Literal(" days ago"),
+///     Element::Literal(" days ago".into()),
 /// ]);
 /// ```
 ///
@@ -154,7 +160,10 @@ where
     /// # Examples
     /// ```
     /// use icu_pattern::{Parser, Interpolator};
-    /// use std::convert::TryInto;
+    /// use std::{
+    ///     convert::TryInto,
+    ///     borrow::Cow
+    /// };
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {
@@ -163,8 +172,8 @@ where
     ///     TokenTwo,
     /// }
     ///
-    /// impl From<&str> for Element {
-    ///     fn from(input: &str) -> Self {
+    /// impl From<Cow<'_, str>> for Element {
+    ///     fn from(input: Cow<'_, str>) -> Self {
     ///        Self::Literal(input.to_string())
     ///     }
     /// }
@@ -190,7 +199,7 @@ where
     /// ```
     pub fn try_next(&mut self) -> Result<E, R::Key>
     where
-        E: From<&'p str>,
+        E: From<Cow<'p, str>>,
         R::Key: FromStr + std::fmt::Display,
         <R::Key as FromStr>::Err: std::fmt::Debug,
     {
@@ -203,9 +212,9 @@ where
                 }
             }
             match self.pattern.get(self.pattern_idx) {
-                Some(&PatternToken::Literal { content, .. }) => {
+                Some(&PatternToken::Literal { ref content, .. }) => {
                     self.pattern_idx += 1;
-                    return Ok(Some(content.into()));
+                    return Ok(Some(content.clone().into()));
                 }
                 Some(&PatternToken::Placeholder(ref p)) => {
                     self.pattern_idx += 1;
@@ -227,7 +236,10 @@ mod tests {
     use super::*;
     use crate::Parser;
     use std::convert::TryInto;
-    use std::fmt::{Display, Write};
+    use std::{
+        fmt::{Display, Write},
+        borrow::Cow
+    };
 
     const SAMPLES: &[(&str, &[&[&str]], &str)] = &[
         (
@@ -245,7 +257,7 @@ mod tests {
 
     #[derive(Debug)]
     pub enum Element<'s> {
-        Literal(&'s str),
+        Literal(Cow<'s, str>),
     }
 
     impl Display for Element<'_> {
@@ -256,9 +268,15 @@ mod tests {
         }
     }
 
+    impl<'s> From<Cow<'s, str>> for Element<'s> {
+        fn from(input: Cow<'s, str>) -> Self {
+            Self::Literal(input)
+        }
+    }
+
     impl<'s> From<&'s str> for Element<'s> {
         fn from(input: &'s str) -> Self {
-            Self::Literal(input)
+            Self::Literal(Cow::Borrowed(input))
         }
     }
 
