@@ -4,8 +4,8 @@
 
 use icu_pattern::{Interpolator, PatternToken};
 use std::{
+    borrow::Cow,
     fmt::{Display, Write},
-    borrow::Cow
 };
 
 #[derive(Debug)]

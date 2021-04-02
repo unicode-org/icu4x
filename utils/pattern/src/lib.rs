@@ -4,9 +4,9 @@
 
 //! `icu_pattern` is a utility crate of the [`ICU4X`] project.
 //!
-//! It includes a [`Parser`]/[`Interpolator`] combinator. The pair can be
-//! used to parse and interpolatore ICU placeholder patterns with custom
-//! elements and string literals.
+//! It includes a [`Parser`]/[`Interpolator`] pair. The pair can be
+//! used to parse and interpolate ICU placeholder patterns, like "{0} days" or
+//! "{0}, {1}" with custom elements and string literals.
 //!
 //! # Placeholders & Elements
 //!
@@ -19,7 +19,7 @@
 //! and an `Element` type which will be either a `Token` or a string slice.
 //!
 //! ```
-//! use icu_pattern::{Parser, Interpolator};
+//! use icu_pattern::{Parser, ParserOptions, Interpolator};
 //! use std::{
 //!     convert::TryInto,
 //!     borrow::Cow
@@ -43,7 +43,9 @@
 //!     }
 //! }
 //!
-//! let pattern: Vec<_> = Parser::new("{0}, {1}", true).try_into().unwrap();
+//! let pattern: Vec<_> = Parser::new("{0}, {1}", ParserOptions {
+//!    allow_raw_letters: false
+//! }).try_into().unwrap();
 //!
 //! let replacements = vec![
 //!     vec![
@@ -58,7 +60,7 @@
 //!     ],
 //! ];
 //!
-//! let mut interpolator = Interpolator::<_, Element>::new(&pattern, replacements);
+//! let mut interpolator = Interpolator::new(&pattern, replacements);
 //!
 //! let mut result = vec![];
 //!
@@ -99,6 +101,6 @@ mod replacement;
 mod token;
 
 pub use interpolator::{Interpolator, InterpolatorError};
-pub use parser::{Parser, ParserError};
+pub use parser::{Parser, ParserError, ParserOptions};
 pub use replacement::ReplacementProvider;
 pub use token::PatternToken;

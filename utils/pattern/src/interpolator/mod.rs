@@ -6,10 +6,7 @@ mod error;
 pub use crate::replacement::ReplacementProvider;
 use crate::token::PatternToken;
 pub use error::InterpolatorError;
-use std::{
-    str::FromStr,
-    borrow::Cow
-};
+use std::{borrow::Cow, str::FromStr};
 
 type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromStr>::Err>>;
 
@@ -24,7 +21,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///
 /// # Examples
 /// ```
-/// use icu_pattern::{Parser, Interpolator};
+/// use icu_pattern::{Parser, ParserOptions, Interpolator};
 /// use std::{
 ///     convert::TryInto,
 ///     borrow::Cow
@@ -42,15 +39,15 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///     }
 /// }
 ///
-/// let pattern: Vec<_> = Parser::new("{0} days ago", true).try_into().unwrap();
+/// let pattern: Vec<_> = Parser::new("{0} days ago", ParserOptions {
+///     allow_raw_letters: true
+/// }).try_into().unwrap();
 ///
 /// let replacements = vec![
-///     vec![
-///         Element::Value(5),
-///     ],
+///     Some(Element::Value(5)),
 /// ];
 ///
-/// let mut interpolator = Interpolator::<_, Element>::new(&pattern, replacements);
+/// let mut interpolator = Interpolator::new(&pattern, replacements);
 ///
 /// let mut result = vec![];
 ///
@@ -130,7 +127,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, Interpolator};
+    /// use icu_pattern::{Parser, ParserOptions, Interpolator};
     /// use std::convert::TryInto;
     ///
     /// enum Element {
@@ -138,8 +135,10 @@ where
     ///     Token,
     /// }
     ///
-    /// let pattern: Vec<_> = Parser::new("{0}, {1}", false).try_into().unwrap();
-    /// let mut interpolator = Interpolator::<_, Element>::new(&pattern, vec![
+    /// let pattern: Vec<_> = Parser::new("{0}, {1}", ParserOptions {
+    ///     allow_raw_letters: false
+    /// }).try_into().unwrap();
+    /// let mut interpolator = Interpolator::new(&pattern, vec![
     ///     vec![
     ///         Element::Token
     ///     ]
@@ -159,7 +158,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, Interpolator};
+    /// use icu_pattern::{Parser, ParserOptions, Interpolator};
     /// use std::{
     ///     convert::TryInto,
     ///     borrow::Cow
@@ -178,7 +177,9 @@ where
     ///     }
     /// }
     ///
-    /// let mut pattern: Vec<_> = Parser::new("{0}, {1}", false).try_into().unwrap();
+    /// let mut pattern: Vec<_> = Parser::new("{0}, {1}", ParserOptions {
+    ///     allow_raw_letters: false
+    /// }).try_into().unwrap();
     /// let mut interpolator = Interpolator::new(&pattern, vec![
     ///     vec![
     ///         Element::TokenOne
@@ -234,11 +235,11 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Parser;
+    use crate::{Parser, ParserOptions};
     use std::convert::TryInto;
     use std::{
+        borrow::Cow,
         fmt::{Display, Write},
-        borrow::Cow
     };
 
     const SAMPLES: &[(&str, &[&[&str]], &str)] = &[
@@ -283,14 +284,21 @@ mod tests {
     #[test]
     fn simple_interpolate() {
         for sample in SAMPLES.iter() {
-            let pattern: Vec<_> = Parser::new(&sample.0, false).try_into().unwrap();
+            let pattern: Vec<_> = Parser::new(
+                &sample.0,
+                ParserOptions {
+                    allow_raw_letters: false,
+                },
+            )
+            .try_into()
+            .unwrap();
 
             let replacements: Vec<Vec<Element>> = sample
                 .1
                 .iter()
                 .map(|r| r.iter().map(|&t| t.into()).collect())
                 .collect();
-            let mut i = Interpolator::<_, Element<'_>>::new(&pattern, replacements);
+            let mut i = Interpolator::new(&pattern, replacements);
             let mut result = String::new();
             while let Some(elem) = i.try_next().unwrap() {
                 write!(result, "{}", elem).unwrap();
@@ -311,8 +319,14 @@ mod tests {
         )];
 
         for sample in &named_samples {
-            let pattern: Vec<PatternToken<String>> =
-                Parser::new(&sample.0, false).try_into().unwrap();
+            let pattern: Vec<PatternToken<String>> = Parser::new(
+                &sample.0,
+                ParserOptions {
+                    allow_raw_letters: false,
+                },
+            )
+            .try_into()
+            .unwrap();
 
             let replacements: std::collections::HashMap<String, Vec<Element>> = sample
                 .1

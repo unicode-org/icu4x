@@ -6,12 +6,7 @@ pub mod error;
 
 use crate::token::PatternToken;
 pub use error::ParserError;
-use std::{
-    convert::TryInto,
-    fmt::Debug,
-    str::FromStr,
-    borrow::Cow,
-};
+use std::{borrow::Cow, convert::TryInto, fmt::Debug, str::FromStr};
 
 #[derive(PartialEq)]
 enum ParserState {
@@ -51,6 +46,10 @@ macro_rules! handle_literal {
     }};
 }
 
+pub struct ParserOptions {
+    pub allow_raw_letters: bool,
+}
+
 /// Placeholder pattern parser.
 ///
 /// The parser allows for handling flexible range of generic patterns
@@ -63,11 +62,13 @@ macro_rules! handle_literal {
 /// # Examples
 ///
 /// ```
-/// use icu_pattern::{Parser, PatternToken};
+/// use icu_pattern::{Parser, ParserOptions, PatternToken};
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(input, false);
+/// let mut parser = Parser::new(input, ParserOptions {
+///    allow_raw_letters: false
+/// });
 ///
 /// let mut result = vec![];
 ///
@@ -88,11 +89,13 @@ macro_rules! handle_literal {
 ///
 /// ## Examples
 /// ```
-/// use icu_pattern::{Parser, PatternToken};
+/// use icu_pattern::{Parser, ParserOptions, PatternToken};
 ///
 /// let input = "{start}, {end}";
 ///
-/// let mut parser = Parser::new(input, false);
+/// let mut parser = Parser::new(input, ParserOptions {
+///     allow_raw_letters: false,
+/// });
 ///
 /// let mut result = vec![];
 ///
@@ -139,11 +142,13 @@ macro_rules! handle_literal {
 ///
 /// ### Examples
 /// ```
-/// use icu_pattern::{Parser, PatternToken};
+/// use icu_pattern::{Parser, ParserOptions, PatternToken};
 ///
 /// let input = "{0} 'and' {1}";
 ///
-/// let mut parser = Parser::new(input, false);
+/// let mut parser = Parser::new(input, ParserOptions {
+///     allow_raw_letters: false
+/// });
 ///
 /// let mut result = vec![];
 ///
@@ -198,7 +203,7 @@ pub struct Parser<'p> {
     input: &'p str,
     len: usize,
 
-    allow_unquoted_letters: bool,
+    allow_raw_letters: bool,
 
     start_idx: usize,
     idx: usize,
@@ -209,20 +214,22 @@ pub struct Parser<'p> {
 impl<'p> Parser<'p> {
     /// Creates a new `Parser`.
     ///
-    /// The `allow_unquoted_letters` controls whether the parser will support
+    /// The `allow_raw_letters` controls whether the parser will support
     /// ASCII letters without quotes.
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::Parser;
-    /// let mut parser = Parser::new("{0}, {1}", false);
+    /// use icu_pattern::{Parser, ParserOptions};
+    /// let mut parser = Parser::new("{0}, {1}", ParserOptions {
+    ///     allow_raw_letters: false
+    /// });
     /// ```
-    pub fn new(input: &'p str, allow_unquoted_letters: bool) -> Self {
+    pub fn new(input: &'p str, options: ParserOptions) -> Self {
         Self {
             input,
             len: input.len(),
 
-            allow_unquoted_letters,
+            allow_raw_letters: options.allow_raw_letters,
 
             start_idx: 0,
             idx: 0,
@@ -236,9 +243,11 @@ impl<'p> Parser<'p> {
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, PatternToken};
+    /// use icu_pattern::{Parser, ParserOptions, PatternToken};
     ///
-    /// let mut parser = Parser::new("{0}, {1}", false);
+    /// let mut parser = Parser::new("{0}, {1}", ParserOptions {
+    ///     allow_raw_letters: false
+    /// });
     ///
     /// // A call to try_next() returns the next value…
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(0))), parser.try_next());
@@ -281,7 +290,7 @@ impl<'p> Parser<'p> {
                         handle_literal!(self, false, ParserState::QuotedLiteral)
                     }
                 }
-                ParserState::Default if !self.allow_unquoted_letters && b.is_ascii_alphabetic() => {
+                ParserState::Default if !self.allow_raw_letters && b.is_ascii_alphabetic() => {
                     return Err(ParserError::IllegalCharacter(*b as char));
                 }
                 ParserState::Apostrophe { quoted } => {
@@ -338,7 +347,12 @@ mod tests {
     #[test]
     fn simple_parse() {
         let input = "'PRE' {0} 'and' {1} 'POST'";
-        let mut iter = Parser::new(&input, false);
+        let mut iter = Parser::new(
+            &input,
+            ParserOptions {
+                allow_raw_letters: false,
+            },
+        );
         let mut result = vec![];
         while let Some(elem) = iter.try_next().unwrap() {
             result.push(elem);
@@ -362,7 +376,12 @@ mod tests {
     #[test]
     fn apostrophe_literal() {
         let input = "{0} o''clock and 'o''clock'";
-        let mut iter = Parser::new(&input, true);
+        let mut iter = Parser::new(
+            &input,
+            ParserOptions {
+                allow_raw_letters: true,
+            },
+        );
         let mut result = vec![];
         while let Some(elem) = iter.try_next().unwrap() {
             result.push(elem);

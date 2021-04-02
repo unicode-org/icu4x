@@ -9,9 +9,11 @@ use thiserror::Error;
 ///
 /// # Examples
 /// ```
-/// use icu_pattern::{Parser, ParserError};
+/// use icu_pattern::{Parser, ParserOptions, ParserError};
 ///
-/// let mut parser = Parser::new("{0", false);
+/// let mut parser = Parser::new("{0", ParserOptions {
+///     allow_raw_letters: false,
+/// });
 /// assert_eq!(Err(ParserError::UnclosedPlaceholder), parser.try_next::<usize>());
 /// ```
 ///

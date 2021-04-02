@@ -9,11 +9,13 @@ use std::borrow::Cow;
 /// # Examples
 ///
 /// ```
-/// use icu_pattern::{Parser, PatternToken};
+/// use icu_pattern::{Parser, ParserOptions, PatternToken};
 ///
 /// let input = "{0}, {1}";
 ///
-/// let mut parser = Parser::new(input, false);
+/// let mut parser = Parser::new(input, ParserOptions {
+///     allow_raw_letters: false
+/// });
 ///
 /// let mut result = vec![];
 ///

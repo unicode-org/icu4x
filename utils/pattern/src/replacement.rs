@@ -19,7 +19,7 @@ use std::collections::HashMap;
 /// be disassociate.
 ///
 /// ```
-/// use icu_pattern::{Parser, Interpolator, ReplacementProvider};
+/// use icu_pattern::{Parser, ParserOptions, Interpolator, ReplacementProvider};
 /// use std::{
 ///     collections::HashMap,
 ///     convert::TryInto,
@@ -59,7 +59,9 @@ use std::collections::HashMap;
 ///     Element::TokenFive
 /// ]);
 ///
-/// let pattern: Vec<_> = Parser::new("{5}, {0}", false).try_into().unwrap();
+/// let pattern: Vec<_> = Parser::new("{5}, {0}", ParserOptions {
+///     allow_raw_letters: false
+/// }).try_into().unwrap();
 /// let mut interpolator = Interpolator::new(&pattern, replacements);
 ///
 ///
@@ -80,7 +82,7 @@ use std::collections::HashMap;
 ///
 /// ## Examples
 /// ```
-/// use icu_pattern::{Parser, Interpolator, ReplacementProvider};
+/// use icu_pattern::{Parser, ParserOptions, Interpolator, ReplacementProvider};
 /// use std::{
 ///     convert::TryInto,
 ///     borrow::Cow
@@ -137,7 +139,9 @@ use std::collections::HashMap;
 ///     }
 /// }
 ///
-/// let pattern: Vec<_> = Parser::new("{4}, {2}", false).try_into().unwrap();
+/// let pattern: Vec<_> = Parser::new("{4}, {2}", ParserOptions {
+///     allow_raw_letters: false
+/// }).try_into().unwrap();
 /// let mut interpolator = Interpolator::new(&pattern, MyReplacementProvider);
 ///
 /// assert_eq!(Ok(Some(Element::Digit(1))), interpolator.try_next());
