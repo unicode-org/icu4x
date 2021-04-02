@@ -77,12 +77,11 @@ impl FieldSymbol {
             FieldSymbol::Second(Second::Millisecond) => 20,
             FieldSymbol::TimeZone(TimeZone::LowerZ) => 21,
             FieldSymbol::TimeZone(TimeZone::UpperZ) => 22,
-            FieldSymbol::TimeZone(TimeZone::LowerO) => 23,
-            FieldSymbol::TimeZone(TimeZone::UpperO) => 24,
-            FieldSymbol::TimeZone(TimeZone::LowerV) => 25,
-            FieldSymbol::TimeZone(TimeZone::UpperV) => 26,
-            FieldSymbol::TimeZone(TimeZone::LowerX) => 27,
-            FieldSymbol::TimeZone(TimeZone::UpperX) => 28,
+            FieldSymbol::TimeZone(TimeZone::UpperO) => 23,
+            FieldSymbol::TimeZone(TimeZone::LowerV) => 24,
+            FieldSymbol::TimeZone(TimeZone::UpperV) => 25,
+            FieldSymbol::TimeZone(TimeZone::LowerX) => 26,
+            FieldSymbol::TimeZone(TimeZone::UpperX) => 27,
         }
     }
 }
@@ -158,7 +157,6 @@ impl From<FieldSymbol> for char {
             FieldSymbol::TimeZone(time_zone) => match time_zone {
                 TimeZone::LowerZ => 'z',
                 TimeZone::UpperZ => 'Z',
-                TimeZone::LowerO => 'o',
                 TimeZone::UpperO => 'O',
                 TimeZone::LowerV => 'v',
                 TimeZone::UpperV => 'V',
@@ -445,7 +443,6 @@ impl From<DayPeriod> for FieldSymbol {
 pub enum TimeZone {
     LowerZ,
     UpperZ,
-    LowerO,
     UpperO,
     LowerV,
     UpperV,

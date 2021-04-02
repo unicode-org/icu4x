@@ -84,7 +84,6 @@ where
                 w.write_str(&s)?;
             }
             fields::TimeZone::UpperZ => todo!(),
-            fields::TimeZone::LowerO => todo!(),
             fields::TimeZone::UpperO => todo!(),
             fields::TimeZone::LowerV => todo!(),
             fields::TimeZone::UpperV => todo!(),

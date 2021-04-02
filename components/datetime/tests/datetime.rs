@@ -46,14 +46,15 @@ fn test_fixture(fixture_name: &str) {
 
         let mut s = String::new();
         dtf.format_to_write(&mut s, &value).unwrap();
-        assert_eq!(s, fx.output.value);
+        assert_eq!(s, fx.output.value, "\n . file: {}.json\n", fixture_name);
 
         let fdt = dtf.format(&value);
-        assert_eq!(fdt.to_string(), fx.output.value);
+        let s = fdt.to_string();
+        assert_eq!(s, fx.output.value, "\n . file: {}.json\n", fixture_name);
 
         let mut s = String::new();
         write!(s, "{}", fdt).unwrap();
-        assert_eq!(s, fx.output.value);
+        assert_eq!(s, fx.output.value, "\n . file: {}.json\n", fixture_name);
     }
 }
 
@@ -84,18 +85,19 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         value.time_zone.country_code = config.country_code.clone();
 
         let result = dtf.format_to_string(&value);
-        assert_eq!(result, fx.output.value);
+        assert_eq!(result, fx.output.value, "\n  file: {}.json\n", fixture_name);
 
         let mut s = String::new();
         dtf.format_to_write(&mut s, &value).unwrap();
-        assert_eq!(s, fx.output.value);
+        assert_eq!(s, fx.output.value, "\n  file: {}.json\n", fixture_name);
 
         let fdt = dtf.format(&value);
-        assert_eq!(fdt.to_string(), fx.output.value);
+        let s = fdt.to_string();
+        assert_eq!(s, fx.output.value, "\n  file: {}.json\n", fixture_name);
 
         let mut s = String::new();
         write!(s, "{}", fdt).unwrap();
-        assert_eq!(s, fx.output.value);
+        assert_eq!(s, fx.output.value, "\n  file: {}.json\n", fixture_name);
     }
 }
 

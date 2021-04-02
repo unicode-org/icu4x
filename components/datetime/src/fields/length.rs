@@ -26,6 +26,19 @@ pub enum FieldLength {
     Six = 6,
 }
 
+impl From<FieldLength> for u8 {
+    fn from(length: FieldLength) -> u8 {
+        match length {
+            FieldLength::One => 1,
+            FieldLength::TwoDigit => 2,
+            FieldLength::Abbreviated => 3,
+            FieldLength::Wide => 4,
+            FieldLength::Narrow => 5,
+            FieldLength::Six => 6,
+        }
+    }
+}
+
 macro_rules! try_field_length {
     ($i:ty) => {
         impl TryFrom<$i> for FieldLength {
