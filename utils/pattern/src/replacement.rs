@@ -20,7 +20,10 @@ use std::collections::HashMap;
 ///
 /// ```
 /// use icu_pattern::{Parser, Interpolator, ReplacementProvider};
-/// use std::collections::HashMap;
+/// use std::{
+///     collections::HashMap,
+///     convert::TryInto,
+/// };
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
@@ -55,8 +58,8 @@ use std::collections::HashMap;
 ///     Element::TokenFive
 /// ]);
 ///
-/// let mut parser = Parser::new("{5}, {0}", false);
-/// let mut interpolator = Interpolator::new(parser, replacements);
+/// let pattern: Vec<_> = Parser::new("{5}, {0}", false).try_into().unwrap();
+/// let mut interpolator = Interpolator::new(&pattern, replacements);
 ///
 ///
 /// assert_eq!(Ok(Some(Element::TokenFive)), interpolator.try_next());
@@ -77,6 +80,7 @@ use std::collections::HashMap;
 /// ## Examples
 /// ```
 /// use icu_pattern::{Parser, Interpolator, ReplacementProvider};
+/// use std::convert::TryInto;
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
@@ -129,8 +133,8 @@ use std::collections::HashMap;
 ///     }
 /// }
 ///
-/// let mut parser = Parser::new("{4}, {2}", false);
-/// let mut interpolator = Interpolator::new(parser, MyReplacementProvider);
+/// let pattern: Vec<_> = Parser::new("{4}, {2}", false).try_into().unwrap();
+/// let mut interpolator = Interpolator::new(&pattern, MyReplacementProvider);
 ///
 /// assert_eq!(Ok(Some(Element::Digit(1))), interpolator.try_next());
 /// assert_eq!(Ok(Some(Element::Digit(2))), interpolator.try_next());
@@ -151,7 +155,10 @@ pub trait ReplacementProvider<E> {
     /// # Examples
     /// ```
     /// use icu_pattern::ReplacementProvider;
-    /// use std::collections::HashMap;
+    /// use std::{
+    ///     collections::HashMap,
+    ///     convert::TryInto
+    /// };
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {
@@ -222,5 +229,15 @@ impl<E> ReplacementProvider<E> for HashMap<String, Vec<E>> {
     fn take_replacement(&mut self, input: &String) -> Option<Self::Iter> {
         let r = self.remove(input)?;
         Some(r.into_iter())
+    }
+}
+
+impl<E> ReplacementProvider<E> for HashMap<String, E> {
+    type Key = String;
+    type Iter = std::iter::Once<E>;
+
+    fn take_replacement(&mut self, input: &String) -> Option<Self::Iter> {
+        let r = self.remove(input)?;
+        Some(std::iter::once(r))
     }
 }

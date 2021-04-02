@@ -20,6 +20,7 @@
 //!
 //! ```
 //! use icu_pattern::{Parser, Interpolator};
+//! use std::convert::TryInto;
 //!
 //! #[derive(Debug, PartialEq)]
 //! enum Token {
@@ -39,7 +40,7 @@
 //!     }
 //! }
 //!
-//! let mut parser = Parser::new("{0}, {1}", true);
+//! let pattern: Vec<_> = Parser::new("{0}, {1}", true).try_into().unwrap();
 //!
 //! let replacements = vec![
 //!     vec![
@@ -54,7 +55,7 @@
 //!     ],
 //! ];
 //!
-//! let mut interpolator = Interpolator::<_, _, Element>::new(parser, replacements);
+//! let mut interpolator = Interpolator::<_, Element>::new(&pattern, replacements);
 //!
 //! let mut result = vec![];
 //!
@@ -91,7 +92,6 @@
 //! [`FromStr`]: std::str::FromStr
 mod interpolator;
 mod parser;
-pub mod pattern;
 mod replacement;
 mod token;
 

@@ -4,9 +4,9 @@
 
 pub mod error;
 
-use crate::{pattern::PatternIterator, token::PatternToken};
+use crate::token::PatternToken;
 pub use error::ParserError;
-use std::{fmt::Debug, str::FromStr};
+use std::{convert::TryInto, fmt::Debug, str::FromStr};
 
 #[derive(PartialEq)]
 enum ParserState {
@@ -310,15 +310,19 @@ impl<'p> Parser<'p> {
     }
 }
 
-impl<'p, P> PatternIterator<'p, P> for Parser<'p> {
-    fn try_next(
-        &mut self,
-    ) -> std::result::Result<Option<PatternToken<'p, P>>, ParserError<<P as FromStr>::Err>>
-    where
-        P: FromStr,
-        <P as FromStr>::Err: Debug,
-    {
-        Parser::try_next(self)
+impl<'p, P> TryInto<Vec<PatternToken<'p, P>>> for Parser<'p>
+where
+    P: FromStr,
+    <P as FromStr>::Err: Debug,
+{
+    type Error = ParserError<<P as FromStr>::Err>;
+
+    fn try_into(mut self) -> Result<Vec<PatternToken<'p, P>>, Self::Error> {
+        let mut result = vec![];
+        while let Some(token) = self.try_next()? {
+            result.push(token);
+        }
+        Ok(result)
     }
 }
 

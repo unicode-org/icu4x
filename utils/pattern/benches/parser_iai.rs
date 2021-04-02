@@ -3,9 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_pattern::*;
-use std::borrow::Cow;
-use std::fmt::Display;
-use std::fmt::Write;
+use std::{
+    borrow::Cow,
+    convert::TryInto,
+    fmt::{Display, Write},
+};
 
 #[derive(Debug)]
 struct Token;
@@ -60,25 +62,19 @@ impl<'s> From<&'s str> for Element<'s> {
 
 fn iai_interpolate() {
     let samples = vec![
-        ("{0} - {1}", vec![vec!["Hello"], vec!["World"]]),
-        ("{1} - {0}", vec![vec!["Hello"], vec!["World"]]),
-        (
-            "{0}, {1} 'and' {2}",
-            vec![vec!["Start"], vec!["Middle"], vec!["End"]],
-        ),
-        ("{0} 'at' {1}", vec![vec!["Hello"], vec!["World"]]),
+        ("{0} - {1}", vec!["Hello", "World"]),
+        ("{1} - {0}", vec!["Hello", "World"]),
+        ("{0}, {1} 'and' {2}", vec!["Start", "Middle", "End"]),
+        ("{0} 'at' {1}", vec!["Hello", "World"]),
     ];
 
     for sample in &samples {
-        let iter = Parser::new(&sample.0, false);
+        let pattern: Vec<_> = Parser::new(&sample.0, false).try_into().unwrap();
 
-        let replacements: Vec<Vec<Element>> = sample
-            .1
-            .iter()
-            .map(|r| r.iter().map(|&t| t.into()).collect())
-            .collect();
+        let replacements: Vec<Option<Element>> =
+            sample.1.iter().map(|r| Some(Element::from(*r))).collect();
 
-        let mut i = Interpolator::<_, _, Element>::new(iter, replacements);
+        let mut i = Interpolator::<_, Element>::new(&pattern, replacements);
         let mut result = String::new();
         while let Some(elem) = i.try_next().unwrap() {
             write!(result, "{}", elem).unwrap();
@@ -156,13 +152,10 @@ fn iai_parsed_interpolate() {
     ];
 
     for sample in samples {
-        let pattern: icu_pattern::pattern::IntoIterVec<_> = sample.0.clone().into();
+        let pattern = &sample.0;
 
-        let replacements: Vec<Option<Element>> = sample
-            .1
-            .iter()
-            .map(|r| Some(Element::from(*r)))
-            .collect();
+        let replacements: Vec<Option<Element>> =
+            sample.1.iter().map(|r| Some(Element::from(*r))).collect();
 
         let mut i = Interpolator::new(pattern, replacements);
         let mut result = String::new();
@@ -172,29 +165,113 @@ fn iai_parsed_interpolate() {
     }
 }
 
+fn iai_parsed_interpolate_composed() {
+    let samples = &[
+        (
+            vec![
+                PatternToken::Placeholder(0),
+                PatternToken::Literal {
+                    content: " - ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(1),
+            ],
+            vec!["Hello", "World"],
+        ),
+        (
+            vec![
+                PatternToken::Placeholder(1),
+                PatternToken::Literal {
+                    content: " - ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(0),
+            ],
+            vec!["Hello", "World"],
+        ),
+        (
+            vec![
+                PatternToken::Placeholder(0),
+                PatternToken::Literal {
+                    content: ", ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(1),
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Literal {
+                    content: "and",
+                    quoted: true,
+                },
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(2),
+            ],
+            vec!["Start", "Middle", "End"],
+        ),
+        (
+            vec![
+                PatternToken::Placeholder(0),
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Literal {
+                    content: "at",
+                    quoted: true,
+                },
+                PatternToken::Literal {
+                    content: " ",
+                    quoted: false,
+                },
+                PatternToken::Placeholder(1),
+            ],
+            vec!["Hello", "World"],
+        ),
+    ];
+
+    for sample in samples {
+        let pattern = &sample.0;
+
+        let replacements: Vec<Vec<Element>> =
+            sample.1.iter().map(|r| vec![Element::from(*r)]).collect();
+
+        let mut i = Interpolator::new(pattern, replacements);
+        let mut result = String::new();
+        while let Some(elem) = i.try_next().unwrap() {
+            write!(result, "{}", elem).unwrap();
+        }
+    }
+}
 
 fn iai_named_interpolate() {
     let named_samples = vec![(
         "{start}, {middle} 'and' {end}",
-        vec![
-            ("start", vec!["Start"]),
-            ("middle", vec!["Middle"]),
-            ("end", vec!["End"]),
-        ],
+        vec![("start", "Start"), ("middle", "Middle"), ("end", "End")],
     )];
 
     for sample in &named_samples {
-        let iter = Parser::new(&sample.0, false);
+        let pattern: Vec<_> = Parser::new(&sample.0, false).try_into().unwrap();
 
-        let replacements: std::collections::HashMap<String, Vec<Element>> = sample
+        let replacements: std::collections::HashMap<String, Element> = sample
             .1
             .iter()
-            .map(|(k, v)| (k.to_string(), v.iter().map(|&t| t.into()).collect()))
+            .map(|(k, v)| (k.to_string(), Element::from(*v)))
             .collect();
 
-        let mut i = Interpolator::new(iter, replacements);
+        let mut i = Interpolator::new(&pattern, replacements);
         while let Some(_) = i.try_next().unwrap() {}
     }
 }
 
-iai::main!(iai_parse, iai_interpolate, iai_parsed_interpolate, iai_named_interpolate);
+iai::main!(
+    iai_parse,
+    iai_interpolate,
+    iai_parsed_interpolate,
+    iai_parsed_interpolate_composed,
+    iai_named_interpolate
+);
