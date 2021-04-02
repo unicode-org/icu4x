@@ -26,8 +26,8 @@
 //! At the moment only the `Length` bag works, and we plan to extend that to support
 //! `ECMA 402` like components bag later.
 pub mod components;
-pub mod preferences;
 pub mod length;
+pub mod preferences;
 /// `DateTimeFormatOptions` is a bag of options which, together with `LanguageIdentifier`,
 /// define how dates will be formatted be a `DateTimeFormat` instance.
 ///
