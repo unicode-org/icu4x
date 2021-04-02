@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617320326265,
+  "lastUpdate": 1617393840135,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4535,6 +4535,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 108000,
             "range": "± 3501",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f55040c082e977103dcc22784bd5a2d414cf2d9d",
+          "message": "Fix some broken links due to the switch from master -> main (#604)",
+          "timestamp": "2021-04-02T12:57:08-07:00",
+          "tree_id": "75c5d3e62b85fd1be2d2c7f0e35c589a03ae4875",
+          "url": "https://github.com/unicode-org/icu4x/commit/f55040c082e977103dcc22784bd5a2d414cf2d9d"
+        },
+        "date": 1617393838819,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1221,
+            "range": "± 124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7128,
+            "range": "± 522",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 111852,
+            "range": "± 7916",
             "unit": "ns/iter"
           }
         ]
