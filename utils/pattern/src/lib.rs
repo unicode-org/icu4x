@@ -26,18 +26,18 @@
 //! };
 //!
 //! #[derive(Debug, PartialEq)]
-//! enum Token {
+//! enum ExampleToken {
 //!     Variant1,
 //!     Variant2
 //! }
 //!
 //! #[derive(Debug, PartialEq)]
-//! enum Element<'s> {
-//!     Token(Token),
+//! enum ExampleElement<'s> {
+//!     Token(ExampleToken),
 //!     Literal(Cow<'s, str>),
 //! }
 //!
-//! impl<'s> From<Cow<'s, str>> for Element<'s> {
+//! impl<'s> From<Cow<'s, str>> for ExampleElement<'s> {
 //!     fn from(input: Cow<'s, str>) -> Self {
 //!         Self::Literal(input)
 //!     }
@@ -49,14 +49,14 @@
 //!
 //! let replacements = vec![
 //!     vec![
-//!         Element::Token(Token::Variant1),
-//!         Element::Literal(" foo ".into()),
-//!         Element::Token(Token::Variant2),
+//!         ExampleElement::Token(ExampleToken::Variant1),
+//!         ExampleElement::Literal(" foo ".into()),
+//!         ExampleElement::Token(ExampleToken::Variant2),
 //!     ],
 //!     vec![
-//!         Element::Token(Token::Variant2),
-//!         Element::Literal(" bar ".into()),
-//!         Element::Token(Token::Variant1),
+//!         ExampleElement::Token(ExampleToken::Variant2),
+//!         ExampleElement::Literal(" bar ".into()),
+//!         ExampleElement::Token(ExampleToken::Variant1),
 //!     ],
 //! ];
 //!
@@ -69,19 +69,19 @@
 //! }
 //!
 //! assert_eq!(result, &[
-//!     Element::Token(Token::Variant1),
-//!     Element::Literal(" foo ".into()),
-//!     Element::Token(Token::Variant2),
-//!     Element::Literal(", ".into()),
-//!     Element::Token(Token::Variant2),
-//!     Element::Literal(" bar ".into()),
-//!     Element::Token(Token::Variant1),
+//!     ExampleElement::Token(ExampleToken::Variant1),
+//!     ExampleElement::Literal(" foo ".into()),
+//!     ExampleElement::Token(ExampleToken::Variant2),
+//!     ExampleElement::Literal(", ".into()),
+//!     ExampleElement::Token(ExampleToken::Variant2),
+//!     ExampleElement::Literal(" bar ".into()),
+//!     ExampleElement::Token(ExampleToken::Variant1),
 //! ]);
 //! ```
 //!
 //! # Combinators
 //!
-//! In the example above, the replacements will be pre-computed and stored on a [`Vec`],
+//! In the example above, the replacements will be parsed at compile time and stored on a [`Vec`],
 //! which is a collection type that has an implementation for [`ReplacementProvider`]
 //! trait.
 //!
