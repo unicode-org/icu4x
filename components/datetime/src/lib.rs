@@ -489,21 +489,37 @@ impl<'d> TimeZoneFormat<'d> {
         s
     }
 
+    pub fn short_generic_non_location_format(
+        &self,
+        time_zone: &impl TimeZoneInput,
+    ) -> Option<Cow<str>> {
+        self.mz_generic_short
+            .as_ref()
+            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+            .map(Clone::clone)
+    }
+
+    pub fn long_generic_non_location_format(
+        &self,
+        time_zone: &impl TimeZoneInput,
+    ) -> Option<Cow<str>> {
+        self.mz_generic_long
+            .as_ref()
+            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+            .map(Clone::clone)
+    }
+
     pub fn short_specific_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
     ) -> Option<Cow<str>> {
         self.mz_specific_short
             .as_ref()
-            .and_then(|metazones| {
-                time_zone
-                    .metazone_id()
-                    .and_then(|mz| metazones.get::<str>(&mz))
-            })
+            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
             .and_then(|specific_names| {
                 time_zone
                     .time_variant()
-                    .and_then(|variant| specific_names.get::<str>(&variant))
+                    .and_then(|variant| specific_names.get(variant))
             })
             .map(Clone::clone)
     }
