@@ -11,6 +11,13 @@ use std::{
     str::FromStr,
 };
 
+/// The type returned by the [`Interpolator`] iterator.
+/// This enum stores references to string literals parsed as
+/// part of the pattern and elements returned by the [`ReplacementProvider`].
+///
+/// # Lifetimes
+///
+/// - `i`: The life time of an input pattern slice.
 #[derive(Debug, PartialEq)]
 pub enum InterpolatedKind<'i, 's, E> {
     Literal(&'i Cow<'s, str>),
@@ -90,8 +97,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 /// # Type parameters
 ///
 /// - `R`: A replacement provider type implementing [`ReplacementProvider`].
-/// - `E`: An element type returned by the `Interpolator` which must implement
-/// [`From<&str>`][`From`]
+/// - `E`: An element type returned by the [`ReplacementProvider`].
 ///
 /// # Lifetimes
 ///

@@ -5,6 +5,11 @@
 use std::{fmt::Debug, str::FromStr};
 use thiserror::Error;
 
+/// An error returned when interpolating a pattern.
+///
+/// # Type parameters
+///
+/// - `K`: A key for the replacement provider.
 #[derive(Error, Debug, PartialEq)]
 pub enum InterpolatorError<K>
 where

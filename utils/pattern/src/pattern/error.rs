@@ -6,6 +6,11 @@ use crate::interpolator::InterpolatorError;
 use std::{fmt::Debug, str::FromStr};
 use thiserror::Error;
 
+/// An error returned from a pattern.
+///
+/// # Type parameters
+///
+/// - `K`: A key for the replacement provider.
 #[derive(Error, Debug)]
 pub enum PatternError<K>
 where

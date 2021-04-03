@@ -18,9 +18,28 @@ use std::{
     str::FromStr,
 };
 
+/// `Pattern` stores the result of parsing operation as a vector
+/// of [`PatternToken`] elements.
+///
+/// # Type parameters
+///
+/// - `P`: The type of the placeholder used as a key for the [`ReplacementProvider`].
+///
+/// # Lifetimes
+///
+/// - `p`: The life time of an input string slice to be parsed.
+///
+/// [`ReplacementProvider`]: crate::ReplacementProvider
 pub struct Pattern<'s, P>(pub(crate) Vec<PatternToken<'s, P>>);
 
 impl<'s, P> Pattern<'s, P> {
+    /// Interpolates the `Pattern` with provided replacements and returns
+    /// a [`InterpolatedPattern`] structure.
+    ///
+    /// For allocation-free interpolation, see `interpolate_to_string` or
+    /// `interpolate_to_write`.
+    ///
+    /// For lower level interpolation iterator see [`Interpolator`].
     pub fn interpolate<'i, E, R>(
         &'i self,
         replacements: &'i R,
@@ -35,6 +54,12 @@ impl<'s, P> Pattern<'s, P> {
             .map_err(Into::into)
     }
 
+    /// Interpolates the `Pattern` with provided replacements and a new
+    /// [`String`].
+    ///
+    /// For buffer write interpolation, see `interpolate_to_write`.
+    ///
+    /// For lower level interpolation iterator see [`Interpolator`].
     pub fn interpolate_to_string<'i, E, R>(
         &'i self,
         replacements: &'i R,
@@ -50,6 +75,7 @@ impl<'s, P> Pattern<'s, P> {
         Ok(result)
     }
 
+    /// Interpolates the `Pattern` writing the result into a buffer.
     pub fn interpolate_to_write<'i, E, R, W>(
         &'i self,
         replacements: &'i R,
@@ -114,6 +140,19 @@ where
     }
 }
 
+/// `InterpolatedPattern` stores the result of parsing operation as a vector
+/// of [`InterpolatedKind`] elements.
+///
+/// # Type parameters
+///
+/// - `E`: An element type returned by the `ReplacementProvider`.
+///
+/// # Lifetimes
+///
+/// - `i`: The life time of `ReplacementProvider`.
+/// - `s`: The life time of literals stored in the `E`
+///
+/// [`ReplacementProvider`]: crate::ReplacementProvider
 pub struct InterpolatedPattern<'i, 's, E>(Vec<InterpolatedKind<'i, 's, E>>);
 
 impl<'i, 's, R, E> TryFrom<Interpolator<'i, 's, R, E>> for InterpolatedPattern<'i, 's, E>

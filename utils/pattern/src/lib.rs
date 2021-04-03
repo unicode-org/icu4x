@@ -26,14 +26,7 @@
 //! is being used.
 //!
 //! ```
-//! use icu_pattern::{
-//!     Pattern,
-//!     Parser,
-//!     ParserOptions,
-//!     PatternToken,
-//!     Interpolator,
-//!     InterpolatedKind,
-//! };
+//! use icu_pattern::Pattern;
 //! use std::{
 //!     convert::TryInto,
 //!     borrow::Cow,
@@ -120,6 +113,6 @@ mod token;
 
 pub use interpolator::{InterpolatedKind, Interpolator, InterpolatorError};
 pub use parser::{Parser, ParserError, ParserOptions};
-pub use pattern::Pattern;
+pub use pattern::{InterpolatedPattern, Pattern, PatternError};
 pub use replacement::ReplacementProvider;
 pub use token::PatternToken;

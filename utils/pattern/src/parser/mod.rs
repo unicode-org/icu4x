@@ -46,7 +46,16 @@ macro_rules! handle_literal {
     }};
 }
 
+/// Options passed to the constructor of [`Parser`].
 pub struct ParserOptions {
+    /// Controls whether ASCII letters can appear in the raw
+    /// pattern.
+    ///
+    /// If set to `true`, ASCII letters can be used directly in the pattern,
+    /// like "{0} days".
+    ///
+    /// If set to `false`, ASCII letters can only appear in quoted literals,
+    /// like "{0} 'days'".
     pub allow_raw_letters: bool,
 }
 
@@ -109,6 +118,10 @@ pub struct ParserOptions {
 ///     PatternToken::Placeholder("end".to_string()),
 /// ]);
 /// ```
+///
+/// # Type parameters
+///
+/// - `P`: The type of the placeholder used as a key for the [`ReplacementProvider`].
 ///
 /// # Lifetimes
 ///
@@ -199,6 +212,7 @@ pub struct ParserOptions {
 /// [`RFC 2924`]: https://github.com/rust-lang/rfcs/pull/2924
 /// [`Item`]: std::iter::Iterator::Item
 /// [`TryFrom`]: std::convert::TryFrom
+/// [`ReplacementProvider`]: crate::ReplacementProvider
 pub struct Parser<'p, P> {
     input: &'p str,
     len: usize,

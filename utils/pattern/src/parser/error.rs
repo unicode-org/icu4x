@@ -5,7 +5,7 @@
 use std::fmt::Debug;
 use thiserror::Error;
 
-/// An error which can be returned when parsing a pattern.
+/// An error returned when parsing a pattern.
 ///
 /// # Examples
 /// ```
