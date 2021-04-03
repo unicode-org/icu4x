@@ -4,9 +4,9 @@ Issue Triaging
 ICU4X uses GitHub for tracking feature requests and work items.  The following queries omit issues having the **discuss** label.
 
 - All *open* issues should have a type label.
-    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3AT-bug+-label%3AT-core+-label%3AT-docs+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3AT-tests+-label%3Aduplicate+-label%3Adiscuss)
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3AT-bug+-label%3AT-core+-label%3AT-docs-tests+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3Aduplicate+-label%3Adiscuss)
 - All valid issues should have a component label.
-    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-test-infra+-label%3AC-unicode+-label%3Ainvalid+-label%3Aduplicate)
+    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-segmentation+-label%3AC-test-infra+-label%3AC-unicode+-label%3Ainvalid+-label%3Aduplicate)
 - All *open* issues should have an assignee or the **help wanted** label.
     - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+-label%3Adiscuss+no%3Aassignee)
 - All *closed* issues should have a resolution, linked pull request, or the **T-task**, **question**, **invalid**, or **duplicate** label.
@@ -22,18 +22,18 @@ ICU4X uses GitHub for tracking feature requests and work items.  The following q
 
 Labels starting with `T-` are *type* labels, indicating the type of deliverable for the issue.  Every issue should have one:
 
-- **T-bug** = a defect in existing code.
-- **T-core** = a high-priority improvement or new feature.
-- **T-docs** = relates to documentation, including user guide, architecture design, team processes, and API docs.
+- **T-bug** = an unintended defect in existing code or infrastructure.
+- **T-core** = part of a high-priority improvement or new feature.
+- **T-docs-tests** = relates to architecture design, team processes, API docs, and small unit testing.
 - **T-enhancement** = a lower-priority improvement or new feature.
 - **T-task** = a task, not a code change.
-- **T-techdebt** = the issue has no user-facing effect
-- **T-tests** = the issue can be addressed by unit testing.
+- **T-techdebt** = code change with no impact on project scope.
 
 Additional labels that can be used in place of a type:
 
-- **T-invalid** = spam, etc.
-- **T-question** = an issue that can be addressed in the discussion thread without checking in any code or documentation.
+- **invalid** = spam, etc.
+- **discuss** = needs agreement before a type can be assigned.
+- **question** = an issue that can be addressed in the discussion thread without checking in any code or documentation.
 
 ### Component
 
@@ -70,5 +70,7 @@ An issue may have one or more *area* labels, indicating subject areas that the i
 The following labels are optional and can be applied to an issue if appropriate:
 
 - **backlog** = the issue is not fixed, but it could be revisited in the future.
+- **blocked** = the issue cannot be acted upon until a dependency is resolved.
 - **good first issue** = this would be good for a new contributor.
+- **tracking** = there is a corresponding issue in another project (ICU, CLDR, ECMA-402, etc).
 - **v1** = revisit this issue before launching ICU4X v1 stable.
