@@ -2,14 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::ZonedDateTimeInput;
+use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::PatternItem;
-use crate::{
-    date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale},
-    ZonedDateTimeFormat,
-};
+use crate::{date::ZonedDateTimeInput, zoned_datetime::ZonedDateTimeFormat};
 use std::fmt;
 use writeable::Writeable;
 

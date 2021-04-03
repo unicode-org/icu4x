@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::TimeZoneInput;
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::invalid_pattern_symbol;
 use crate::mock::timezone::{IsoFormat, IsoMinutes, IsoSeconds};
 use crate::pattern::PatternItem;
-use crate::TimeZoneFormat;
+use crate::{date::TimeZoneInput, timezone::TimeZoneFormat};
 use std::fmt;
 use writeable::Writeable;
 
