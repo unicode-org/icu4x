@@ -112,8 +112,8 @@ where
                 length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             fields::TimeZone::UpperV => match u8::from(field.length) {
-                1 => todo!("BCP-47 identifier"),
-                2 => todo!("IANA time-zone ID"),
+                1 => todo!("#606 (BCP-47 identifiers)"),
+                2 => todo!("#606 (BCP-47 identifiers)"),
                 3 => time_zone_format
                     .exemplar_city(time_zone)
                     .unwrap_or_else(|| time_zone_format.unknown_city()),

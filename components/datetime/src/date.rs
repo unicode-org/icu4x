@@ -93,7 +93,7 @@ pub trait TimeZoneInput {
     fn gmt_offset(&self) -> GmtOffset;
 
     /// The IANA TimeZone identifier.
-    /// TODO(nordzilla) switch this to BCP-47 identifier.
+    /// TODO(#606) switch this to BCP-47 identifier.
     fn time_zone_id(&self) -> Option<&str>;
 
     /// The MetaZone identifier.
