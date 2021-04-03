@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617433991210,
+  "lastUpdate": 1617434168207,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3329,6 +3329,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1365540,
             "range": "± 31616",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad53955ad557a1cd2c4e991f5df2b8ffe7bc15c5",
+          "message": "Update triaging.md",
+          "timestamp": "2021-04-03T02:09:16-05:00",
+          "tree_id": "a0a0cc572905030980fc3e7f9d5a8cc83c1d2511",
+          "url": "https://github.com/unicode-org/icu4x/commit/ad53955ad557a1cd2c4e991f5df2b8ffe7bc15c5"
+        },
+        "date": 1617434167006,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1493595,
+            "range": "± 54464",
             "unit": "ns/iter"
           }
         ]
