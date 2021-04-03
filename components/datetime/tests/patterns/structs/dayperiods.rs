@@ -5,22 +5,22 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Tests(pub Vec<Test>);
+pub struct DayPeriodTests(pub Vec<DayPeriodTest>);
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Test {
+pub struct DayPeriodTest {
     pub locale: String,
-    pub test_cases: Vec<TestCase>,
+    pub test_cases: Vec<DayPeriodTestCase>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestCase {
+pub struct DayPeriodTestCase {
     pub date_times: Vec<String>,
-    pub expectations: Vec<Expectation>,
+    pub expectations: Vec<DayPeriodExpectation>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Expectation {
+pub struct DayPeriodExpectation {
     pub patterns: Vec<String>,
     pub expected: String,
 }

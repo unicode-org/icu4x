@@ -1,0 +1,87 @@
+[
+  {
+    "locale": "en",
+    "config": {
+      "time_zone_id": "America/Los_Angeles",
+      "metazone_id": "America_Pacific",
+      "time_variant": "standard",
+      "country_code": null
+    },
+    "date_time": "2021-01-11T12:00:00.000-08:00",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz"
+        ],
+        "expected": "PST"
+      },
+      {
+        "patterns": [
+          "zzzz"
+        ],
+        "expected": "Pacific Standard Time"
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "expected": "-0800"
+      },
+      {
+        "patterns": [
+          "O",
+          "OOOO",
+          "ZZZZ"
+        ],
+        "expected": "GMT-08:00"
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "expected": "-08:00"
+      },
+      {
+        "patterns": [
+          "v"
+        ],
+        "expected": "PT"
+      },
+      {
+        "patterns": [
+          "vvvv"
+        ],
+        "expected": "Pacific Time"
+      },
+      {
+        "patterns": [
+          "x",
+          "X"
+        ],
+        "expected": "-08"
+      },
+      {
+        "patterns": [
+          "xx",
+          "XX",
+          "xxxx",
+          "XXXX"
+        ],
+        "expected": "-0800"
+      },
+      {
+        "patterns": [
+          "xxx",
+          "XXX",
+          "xxxxx",
+          "XXXXX"
+        ],
+        "expected": "-08:00"
+      }
+    ]
+  }
+]

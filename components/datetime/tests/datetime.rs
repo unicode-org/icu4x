@@ -19,6 +19,13 @@ use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::{
     struct_provider::StructProvider, DataProvider, DataRequest, ResourceOptions, ResourcePath,
 };
+use patterns::{
+    get_dayperiod_tests, get_time_zone_tests,
+    structs::{
+        dayperiods::DayPeriodExpectation,
+        timezones::{TimeZoneConfig, TimeZoneExpectation},
+    },
+};
 use std::{borrow::Cow, fmt::Write};
 
 fn test_fixture(fixture_name: &str) {
@@ -34,6 +41,7 @@ fn test_fixture(fixture_name: &str) {
         let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
         let value: MockDateTime = fx.input.value.parse().unwrap();
 
+<<<<<<< HEAD
         let result = dtf.format_to_string(&value);
         match fx.description {
             Some(description) => assert_eq!(
@@ -43,27 +51,23 @@ fn test_fixture(fixture_name: &str) {
             ),
             None => assert_eq!(result, fx.output.value),
         }
+=======
+        let s = dtf.format_to_string(&value);
+        assert_eq!(s, fx.output.value, "\n file: {}.json\n", fixture_name);
+>>>>>>> 2daabf83 (Add time-zone pattern tests)
 
         let mut s = String::new();
         dtf.format_to_write(&mut s, &value).unwrap();
-        assert_eq!(s, fx.output.value, "\n . file: {}.json\n", fixture_name);
+        assert_eq!(s, fx.output.value, "\n file: {}.json\n", fixture_name);
 
         let fdt = dtf.format(&value);
         let s = fdt.to_string();
-        assert_eq!(s, fx.output.value, "\n . file: {}.json\n", fixture_name);
+        assert_eq!(s, fx.output.value, "\n file: {}.json\n", fixture_name);
 
         let mut s = String::new();
         write!(s, "{}", fdt).unwrap();
-        assert_eq!(s, fx.output.value, "\n . file: {}.json\n", fixture_name);
+        assert_eq!(s, fx.output.value, "\n file: {}.json\n", fixture_name);
     }
-}
-
-#[derive(Default)]
-struct TimeZoneConfig {
-    pub time_zone_id: Option<String>,
-    pub metazone_id: Option<String>,
-    pub time_variant: Option<String>,
-    pub country_code: Option<String>,
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
@@ -103,10 +107,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
 
 #[test]
 fn test_dayperiod_patterns() {
-    use patterns::structs::Expectation;
     let provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatOptions::default();
-    for test in patterns::get_tests("dayperiods").unwrap().0 {
+    for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut data: Cow<DatesV1> = provider
             .load_payload(&DataRequest {
@@ -132,7 +135,7 @@ fn test_dayperiod_patterns() {
         for test_case in &test.test_cases {
             for dt_input in &test_case.date_times {
                 let date_time: MockDateTime = dt_input.parse().unwrap();
-                for Expectation { patterns, expected } in &test_case.expectations {
+                for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
                         let provider = StructProvider {
@@ -155,6 +158,76 @@ fn test_dayperiod_patterns() {
                         );
                     }
                 }
+            }
+        }
+    }
+}
+
+#[test]
+fn test_time_zone_patterns() {
+    let date_provider = icu_testdata::get_provider();
+    let zone_provider = icu_testdata::get_provider();
+    let format_options = DateTimeFormatOptions::default();
+
+    for test in get_time_zone_tests("timezones").unwrap().0 {
+        let langid: LanguageIdentifier = test.locale.parse().unwrap();
+        let mut config = test.config;
+        let mut date_time: MockZonedDateTime = test.date_time.parse().unwrap();
+        date_time.time_zone.time_zone_id = config.time_zone_id.take();
+        date_time.time_zone.metazone_id = config.metazone_id.take();
+        date_time.time_zone.time_variant = config.time_variant.take();
+        date_time.time_zone.country_code = config.country_code.take();
+
+        let mut data: Cow<DatesV1> = date_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .payload
+            .take()
+            .unwrap();
+
+        *data
+            .to_mut()
+            .patterns
+            .date_time
+            .style_patterns
+            .long
+            .to_mut() = String::from("{0}");
+
+        for TimeZoneExpectation { patterns, expected } in &test.expectations {
+            for pattern_input in patterns {
+                *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
+                let date_provider = StructProvider {
+                    key: GREGORY_V1,
+                    data: data.as_ref(),
+                };
+
+                let dtf = ZonedDateTimeFormat::try_new(
+                    langid.clone(),
+                    &date_provider,
+                    &zone_provider,
+                    &format_options,
+                )
+                .unwrap();
+
+                assert_eq!(
+                    dtf.format(&date_time).to_string(),
+                    *expected,
+                    "\n\
+                    locale:   `{}`,\n\
+                    datetime: `{}`,\n\
+                    pattern:  `{}`",
+                    langid,
+                    test.date_time,
+                    pattern_input,
+                );
             }
         }
     }
