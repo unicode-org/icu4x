@@ -313,6 +313,18 @@ impl<'d> DateTimeFormat<'d> {
     }
 }
 
+#[macro_export]
+macro_rules! invalid_pattern_symbol {
+    ($category: ident, $symbol: expr, $length: expr) => {
+        panic!(
+            "Invalid pattern symbol {}({:?}) of length {}",
+            stringify!($category),
+            $symbol,
+            $length
+        )
+    };
+}
+
 /// Produces an iterator over the time-zone resource keys required to format a pattern.
 fn required_time_zone_keys(pattern: &Pattern) -> impl Iterator<Item = ResourceKey> + '_ {
     pattern
@@ -330,27 +342,18 @@ fn required_time_zone_keys(pattern: &Pattern) -> impl Iterator<Item = ResourceKe
             TimeZone::LowerZ => match length {
                 1..=3 => Some(provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1),
                 4 => Some(provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1),
-                _ => panic!(
-                    "Invalid time-zone pattern `{:?}` of length {}",
-                    zone_symbol, length
-                ),
+                _ => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             TimeZone::LowerV => match length {
                 1 => Some(provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1),
                 4 => Some(provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1),
-                _ => panic!(
-                    "Invalid time-zone pattern `{:?}` of length {}",
-                    zone_symbol, length
-                ),
+                _ => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             TimeZone::UpperV => match length {
                 1 => None, // BCP-47 identifier, no CLDR-data necessary.
                 2 => None, // IANA time-zone ID, no CLDR data necessary.
                 3 | 4 => Some(provider::key::TIMEZONE_EXEMPLAR_CITIES_V1),
-                _ => panic!(
-                    "Invalid time-zone pattern `{:?}` of length {}",
-                    zone_symbol, length
-                ),
+                _ => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             // ISO-8601 or localized GMT formats. CLDR data is either unneeded or required by default.
             TimeZone::LowerX | TimeZone::UpperX | TimeZone::UpperZ | TimeZone::UpperO => None,
@@ -510,15 +513,11 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Option<Cow<str>> {
         self.mz_specific_long
             .as_ref()
-            .and_then(|metazones| {
-                time_zone
-                    .metazone_id()
-                    .and_then(|mz| metazones.get::<str>(&mz))
-            })
+            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
             .and_then(|specific_names| {
                 time_zone
                     .time_variant()
-                    .and_then(|variant| specific_names.get::<str>(&variant))
+                    .and_then(|variant| specific_names.get(variant))
             })
             .map(Clone::clone)
     }
@@ -545,6 +544,22 @@ impl<'d> TimeZoneFormat<'d> {
                     .replace("H", &gmt_offset.hours().to_string()),
             )
         }
+    }
+
+    pub fn exemplar_city(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
+        self.exemplar_cities
+            .as_ref()
+            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
+            .map(Clone::clone)
+    }
+
+    pub fn unknown_city(&self) -> Cow<str> {
+        self.exemplar_cities
+            .as_ref()
+            .unwrap()
+            .get("Etc/Unknown")
+            .map(Clone::clone)
+            .unwrap()
     }
 }
 

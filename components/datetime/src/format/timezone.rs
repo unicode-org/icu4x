@@ -4,7 +4,8 @@
 
 use crate::date::TimeZoneInput;
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, FieldLength, FieldSymbol};
+use crate::fields::{self, FieldSymbol};
+use crate::invalid_pattern_symbol;
 use crate::pattern::PatternItem;
 use crate::TimeZoneFormat;
 use std::fmt;
@@ -57,6 +58,8 @@ where
     Ok(())
 }
 
+/// Write fields according to the UTS-35 specification.
+/// https://unicode.org/reports/tr35/tr35-dates.html#dfst-zone
 pub(super) fn write_field<T, W>(
     field: &fields::Field,
     time_zone_format: &TimeZoneFormat,
@@ -68,29 +71,58 @@ where
     W: fmt::Write + ?Sized,
 {
     if let FieldSymbol::TimeZone(zone_symbol) = field.symbol {
-        match zone_symbol {
-            fields::TimeZone::LowerZ => {
-                let s = match u8::from(field.length) {
-                    1..=3 => time_zone_format
-                        .short_specific_non_location_format(time_zone)
-                        .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
-                    4 => time_zone_format
-                        .long_specific_non_location_format(time_zone)
-                        .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
-                    length => panic!(
-                        "Invalid time-zone pattern `{:?}` of length {}",
-                        zone_symbol, length
-                    ),
-                };
-                w.write_str(&s)?;
-            }
-            fields::TimeZone::UpperZ => todo!(),
-            fields::TimeZone::UpperO => todo!(),
-            fields::TimeZone::LowerV => todo!(),
-            fields::TimeZone::UpperV => todo!(),
-            fields::TimeZone::LowerX => todo!(),
-            fields::TimeZone::UpperX => todo!(),
-        }
+        let s = match zone_symbol {
+            fields::TimeZone::LowerZ => match u8::from(field.length) {
+                1..=3 => time_zone_format
+                    .short_specific_non_location_format(time_zone)
+                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                4 => time_zone_format
+                    .long_specific_non_location_format(time_zone)
+                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+            fields::TimeZone::UpperZ => match u8::from(field.length) {
+                1..=3 => todo!(),
+                4 => time_zone_format.localized_gmt_format(time_zone),
+                6 => todo!(),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+            fields::TimeZone::UpperO => match u8::from(field.length) {
+                1..=4 => time_zone_format.localized_gmt_format(time_zone),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+            fields::TimeZone::LowerV => match u8::from(field.length) {
+                1 => todo!("short generic non-location format"),
+                4 => todo!("long generic non-location format"),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+            fields::TimeZone::UpperV => match u8::from(field.length) {
+                1 => todo!("BCP-47 identifier"),
+                2 => todo!("IANA time-zone ID"),
+                3 => time_zone_format
+                    .exemplar_city(time_zone)
+                    .unwrap_or_else(|| time_zone_format.unknown_city()),
+                4 => todo!("generic location format"),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+            fields::TimeZone::LowerX => match u8::from(field.length) {
+                1 => todo!("ISO8601 basic format"),
+                2 => todo!("ISO8601 basic format with minutes"),
+                3 => todo!("ISO8601 extended format"),
+                4 => todo!("ISO8601 basic format with hours, minutes, and optional seconds"),
+                6 => todo!("ISO8601 extended format with hours, minutes, and optional seconds"),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+            fields::TimeZone::UpperX => match u8::from(field.length) {
+                1 => todo!("ISO8601 basic format"),
+                2 => todo!("ISO8601 basic format with minutes"),
+                3 => todo!("ISO8601 extended format"),
+                4 => todo!("ISO8601 basic format with hours, minutes, and optional seconds"),
+                6 => todo!("ISO8601 extended format with hours, minutes, and optional seconds"),
+                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+            },
+        };
+        w.write_str(&s)?;
     }
     Ok(())
 }
