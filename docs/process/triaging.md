@@ -39,6 +39,16 @@ Additional labels that can be used in place of a type:
 
 Labels starting with `C-` are *component* labels, indicating the functional component for the issue.  Every issue should have one.  Components may be added periodically; for the latest set of components, see the [label list](https://github.com/unicode-org/icu4x/labels?q=C-).
 
+### Size
+
+The size labels help us determine which issues to prioritize when triaging and scoping out work for a sprint. All issues should have a size label:
+
+- **S-tiny** = doable in less than an hour (updating API docs, trivial code fix)
+- **S-small** = doable in an afternoon (small bug fix or tech debt)
+- **S-medium** = doable in 1-3 days (smaller new feature, larger bug fix or tech debt)
+- **S-large** = doable in 1-2 weeks (larger new feature, major refactoring effort)
+- **S-epic** = tracking issue for major project (should have child issues for smaller pieces of work)
+
 ### Assignee
 
 The assignee is the user who is *accountable* for the issue: tracking its progress, obtaining the necessary approvals, and so forth.  The assignee is often the same as the reporter.  The assignee is not necesarilly the same as the user who is *responsible* for writing the necessary code fixes.  Users interested in being *informed* or *consulted* can subscribe to the issue.
