@@ -13,7 +13,6 @@ use crate::{
 };
 pub use error::PatternError;
 use std::{
-    borrow::Cow,
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Write},
     str::FromStr,
@@ -30,7 +29,6 @@ impl<'s, P> Pattern<'s, P> {
         R: ReplacementProvider<'i, E, Key = P>,
         P: Debug + FromStr + Clone,
         <P as FromStr>::Err: Debug,
-        E: From<Cow<'s, str>>,
     {
         Interpolator::new(self, replacements)
             .try_into()
@@ -45,7 +43,7 @@ impl<'s, P> Pattern<'s, P> {
         R: ReplacementProvider<'i, E, Key = P>,
         P: Debug + FromStr + Clone,
         <P as FromStr>::Err: Debug,
-        E: From<Cow<'s, str>> + 'i + Display,
+        E: 'i + Display,
     {
         let mut result = String::new();
         self.interpolate_to_write(replacements, &mut result)?;
@@ -61,7 +59,7 @@ impl<'s, P> Pattern<'s, P> {
         R: ReplacementProvider<'i, E, Key = P>,
         P: Debug + FromStr + Clone,
         <P as FromStr>::Err: Debug,
-        E: From<Cow<'s, str>> + 'i + Display,
+        E: 'i + Display,
         W: Write,
     {
         let mut interpolator = Interpolator::new(self, replacements);
@@ -123,7 +121,6 @@ where
     R: ReplacementProvider<'i, E>,
     R::Key: FromStr + Clone + Debug,
     <R::Key as FromStr>::Err: Debug,
-    E: From<Cow<'s, str>>,
 {
     type Error = InterpolatorError<R::Key>;
 

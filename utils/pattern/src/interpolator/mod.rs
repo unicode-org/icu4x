@@ -58,19 +58,11 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 /// use icu_pattern::{Parser, Pattern, ParserOptions, Interpolator, InterpolatedKind};
 /// use std::{
 ///     convert::TryInto,
-///     borrow::Cow
 /// };
 ///
 /// #[derive(Debug, PartialEq)]
-/// enum Element<'s> {
+/// enum Element {
 ///     Value(usize),
-///     Literal(Cow<'s, str>),
-/// }
-///
-/// impl<'s> From<Cow<'s, str>> for Element<'s> {
-///     fn from(input: Cow<'s, str>) -> Self {
-///         Self::Literal(input)
-///     }
 /// }
 ///
 /// let pattern: Pattern<_> = Parser::new("{0} days ago", ParserOptions {
@@ -196,20 +188,12 @@ where
     /// use icu_pattern::{Parser, ParserOptions, Pattern, Interpolator, InterpolatedKind};
     /// use std::{
     ///     convert::TryInto,
-    ///     borrow::Cow
     /// };
     ///
     /// #[derive(Debug, PartialEq)]
     /// enum Element {
-    ///     Literal(String),
     ///     TokenOne,
     ///     TokenTwo,
-    /// }
-    ///
-    /// impl From<Cow<'_, str>> for Element {
-    ///     fn from(input: Cow<'_, str>) -> Self {
-    ///        Self::Literal(input.to_string())
-    ///     }
     /// }
     ///
     /// let mut pattern: Pattern<_> = Parser::new("{0}, {1}", ParserOptions {
@@ -237,7 +221,6 @@ where
     /// ```
     pub fn try_next(&mut self) -> Result<InterpolatedKind<'i, 'p, E>, R::Key>
     where
-        E: From<Cow<'p, str>>,
         R::Key: Debug + FromStr + Clone,
         <R::Key as FromStr>::Err: Debug,
     {
@@ -300,12 +283,6 @@ mod tests {
             match self {
                 Self::Literal(s) => f.write_str(s),
             }
-        }
-    }
-
-    impl<'s> From<Cow<'s, str>> for Element<'s> {
-        fn from(input: Cow<'s, str>) -> Self {
-            Self::Literal(input)
         }
     }
 

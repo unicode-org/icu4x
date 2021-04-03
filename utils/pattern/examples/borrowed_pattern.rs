@@ -3,32 +3,24 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_pattern::{Pattern, PatternToken};
-use std::{borrow::Cow, fmt::Display};
+use std::fmt::Display;
 
 #[derive(Debug)]
-enum Element<'s> {
+enum Element {
     Token(usize),
-    Literal(Cow<'s, str>),
 }
 
-impl Display for Element<'_> {
+impl Display for Element {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Token(n) => write!(f, "{}", n),
-            Self::Literal(s) => f.write_str(s),
         }
-    }
-}
-
-impl<'s> From<Cow<'s, str>> for Element<'s> {
-    fn from(input: Cow<'s, str>) -> Self {
-        Self::Literal(input)
     }
 }
 
 struct Data<'s> {
     placeholder_pattern: Pattern<'s, usize>,
-    replacement_patterns: Vec<Element<'s>>,
+    replacement_patterns: Vec<Element>,
 }
 
 fn main() {

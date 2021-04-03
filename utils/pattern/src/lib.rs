@@ -4,19 +4,26 @@
 
 //! `icu_pattern` is a utility crate of the [`ICU4X`] project.
 //!
-//! It includes a [`Parser`]/[`Interpolator`] pair. The pair can be
-//! used to parse and interpolate ICU placeholder patterns, like "{0} days" or
+//! It includes a [`Pattern`] struct which wraps a paid of [`Parser`] and [`Interpolator`] allowing for parsing and interpolation of ICU placeholder patterns, like "{0} days" or
 //! "{0}, {1}" with custom elements and string literals.
 //!
 //! # Placeholders & Elements
 //!
-//! An `Element` may be any type that implements [`From<&str>`][`From`].
-//! A `Placeholder` may be any type that implements [`FromStr`].
+//! The [`Parser`] is generic over any `Placeholder` which implements [`FromStr`]
+//! allowing the consumer to parse placeholder patterns such as "{0}, {1}",
+//! "{date}, {time}" or any other.
+//!
+//! The [`Interpolator`] can interpolate the [`Pattern`] against any
+//! iterator over `Element`.
 //!
 //! # Examples
 //!
 //! In the following example we're going to use a custom `Token` type,
 //! and an `Element` type which will be either a `Token` or a string slice.
+//!
+//! For the purpose of the example, a higher level
+//! [`interpolate_to_string`](Pattern::interpolate_to_string) method
+//! is being used.
 //!
 //! ```
 //! use icu_pattern::{
@@ -35,13 +42,16 @@
 //!
 //! #[derive(Debug, PartialEq)]
 //! enum ExampleToken {
-//!     Variant1,
-//!     Variant2
+//!     Year,
+//!     Month,
+//!     Day,
+//!     Hour,
+//!     Minute
 //! }
 //!
 //! impl Display for ExampleToken {
 //!     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-//!         write!(f, "{:?}", self)
+//!         write!(f, "[{:?}]", self)
 //!     }
 //! }
 //!
@@ -60,32 +70,29 @@
 //!     }
 //! }
 //!
-//! impl<'s> From<Cow<'s, str>> for ExampleElement<'s> {
-//!     fn from(input: Cow<'s, str>) -> Self {
-//!         Self::Literal(input)
-//!     }
-//! }
-//!
 //! let pattern: Pattern<usize> = "{0}, {1}".try_into()
 //!     .expect("Failed to parse a pattern.");
 //!
 //! let replacements = vec![
 //!     vec![
-//!         ExampleElement::Token(ExampleToken::Variant1),
-//!         ExampleElement::Literal(" foo ".into()),
-//!         ExampleElement::Token(ExampleToken::Variant2),
+//!         ExampleElement::Token(ExampleToken::Year),
+//!         ExampleElement::Literal("-".into()),
+//!         ExampleElement::Token(ExampleToken::Month),
+//!         ExampleElement::Literal("-".into()),
+//!         ExampleElement::Token(ExampleToken::Day),
 //!     ],
 //!     vec![
-//!         ExampleElement::Token(ExampleToken::Variant2),
-//!         ExampleElement::Literal(" bar ".into()),
-//!         ExampleElement::Token(ExampleToken::Variant1),
+//!         ExampleElement::Token(ExampleToken::Hour),
+//!         ExampleElement::Literal(":".into()),
+//!         ExampleElement::Token(ExampleToken::Minute),
 //!     ],
 //! ];
 //!
 //! assert_eq!(
 //!     pattern.interpolate_to_string::<ExampleElement, _>(&replacements)
 //!         .expect("Failed to interpolate a pattern."),
-//!     "Variant1 foo Variant2, Variant2 bar Variant1"
+//!
+//!     "[Year]-[Month]-[Day], [Hour]:[Minute]"
 //! );
 //! ```
 //!

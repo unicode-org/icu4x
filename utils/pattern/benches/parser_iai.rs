@@ -49,12 +49,6 @@ impl Display for Element<'_> {
     }
 }
 
-impl<'s> From<Cow<'s, str>> for Element<'s> {
-    fn from(input: Cow<'s, str>) -> Self {
-        Self::Literal(input)
-    }
-}
-
 impl<'s> From<&'s str> for Element<'s> {
     fn from(input: &'s str) -> Self {
         Self::Literal(input.into())

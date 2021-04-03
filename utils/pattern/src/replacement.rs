@@ -32,17 +32,8 @@ use std::collections::HashMap;
 ///
 /// #[derive(Debug, PartialEq)]
 /// enum Element {
-///     Literal(String),
 ///     TokenZero,
 ///     TokenFive,
-/// }
-///
-/// // This is necessary to allow for parser literals to be adopted into the final interpolation
-/// // return type.
-/// impl From<Cow<'_, str>> for Element {
-///     fn from(input: Cow<'_, str>) -> Self {
-///        Self::Literal(input.to_string())
-///     }
 /// }
 ///
 /// impl<'r> ReplacementProvider<'r, Element> for HashMap<usize, Vec<Element>> {
