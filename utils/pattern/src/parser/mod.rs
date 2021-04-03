@@ -6,7 +6,7 @@ pub mod error;
 
 use crate::token::PatternToken;
 pub use error::ParserError;
-use std::{borrow::Cow, convert::TryInto, fmt::Debug, str::FromStr};
+use std::{borrow::Cow, fmt::Debug, marker::PhantomData, str::FromStr};
 
 #[derive(PartialEq)]
 enum ParserState {
@@ -199,7 +199,7 @@ pub struct ParserOptions {
 /// [`RFC 2924`]: https://github.com/rust-lang/rfcs/pull/2924
 /// [`Item`]: std::iter::Iterator::Item
 /// [`TryFrom`]: std::convert::TryFrom
-pub struct Parser<'p> {
+pub struct Parser<'p, P> {
     input: &'p str,
     len: usize,
 
@@ -209,9 +209,10 @@ pub struct Parser<'p> {
     idx: usize,
 
     state: ParserState,
+    marker: PhantomData<P>,
 }
 
-impl<'p> Parser<'p> {
+impl<'p, P> Parser<'p, P> {
     /// Creates a new `Parser`.
     ///
     /// The `allow_raw_letters` controls whether the parser will support
@@ -220,7 +221,7 @@ impl<'p> Parser<'p> {
     /// # Examples
     /// ```
     /// use icu_pattern::{Parser, ParserOptions};
-    /// let mut parser = Parser::new("{0}, {1}", ParserOptions {
+    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions {
     ///     allow_raw_letters: false
     /// });
     /// ```
@@ -235,6 +236,7 @@ impl<'p> Parser<'p> {
             idx: 0,
 
             state: ParserState::default(),
+            marker: PhantomData,
         }
     }
 
@@ -245,19 +247,19 @@ impl<'p> Parser<'p> {
     /// ```
     /// use icu_pattern::{Parser, ParserOptions, PatternToken};
     ///
-    /// let mut parser = Parser::new("{0}, {1}", ParserOptions {
+    /// let mut parser = Parser::<usize>::new("{0}, {1}", ParserOptions {
     ///     allow_raw_letters: false
     /// });
     ///
     /// // A call to try_next() returns the next value…
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(0))), parser.try_next());
-    /// assert_eq!(Ok(Some(PatternToken::Literal { content: ", ".into(), quoted: false})), parser.try_next::<usize>());
+    /// assert_eq!(Ok(Some(PatternToken::Literal { content: ", ".into(), quoted: false})), parser.try_next());
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(1))), parser.try_next());
     ///
     /// // … and then None once it's over.
-    /// assert_eq!(Ok(None), parser.try_next::<usize>());
+    /// assert_eq!(Ok(None), parser.try_next());
     /// ```
-    pub fn try_next<P>(
+    pub fn try_next(
         &mut self,
     ) -> Result<Option<PatternToken<'p, P>>, ParserError<<P as FromStr>::Err>>
     where
@@ -321,22 +323,6 @@ impl<'p> Parser<'p> {
                 }
             }
         }
-    }
-}
-
-impl<'p, P> TryInto<Vec<PatternToken<'p, P>>> for Parser<'p>
-where
-    P: FromStr,
-    <P as FromStr>::Err: Debug,
-{
-    type Error = ParserError<<P as FromStr>::Err>;
-
-    fn try_into(mut self) -> Result<Vec<PatternToken<'p, P>>, Self::Error> {
-        let mut result = vec![];
-        while let Some(token) = self.try_next()? {
-            result.push(token);
-        }
-        Ok(result)
     }
 }
 

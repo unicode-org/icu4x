@@ -21,6 +21,7 @@ use std::collections::HashMap;
 /// ```
 /// use icu_pattern::{
 ///     Parser, ParserOptions,
+///     Pattern,
 ///     Interpolator, InterpolatedKind, ReplacementProvider
 /// };
 /// use std::{
@@ -62,7 +63,7 @@ use std::collections::HashMap;
 ///     Element::TokenFive
 /// ]);
 ///
-/// let pattern: Vec<_> = Parser::new("{5}, {0}", ParserOptions {
+/// let pattern: Pattern<_> = Parser::new("{5}, {0}", ParserOptions {
 ///     allow_raw_letters: false
 /// }).try_into().unwrap();
 /// let mut interpolator = Interpolator::new(&pattern, &replacements);

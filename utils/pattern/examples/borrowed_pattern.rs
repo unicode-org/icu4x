@@ -2,11 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_pattern::{Interpolator, PatternToken};
-use std::{
-    borrow::Cow,
-    fmt::{Display, Write},
-};
+use icu_pattern::{Pattern, PatternToken};
+use std::{borrow::Cow, fmt::Display};
 
 #[derive(Debug)]
 enum Element<'s> {
@@ -30,7 +27,7 @@ impl<'s> From<Cow<'s, str>> for Element<'s> {
 }
 
 struct Data<'s> {
-    placeholder_pattern: Vec<PatternToken<'s, usize>>,
+    placeholder_pattern: Pattern<'s, usize>,
     replacement_patterns: Vec<Element<'s>>,
 }
 
@@ -42,16 +39,16 @@ fn main() {
                 content: " days".into(),
                 quoted: false,
             },
-        ],
+        ]
+        .into(),
         replacement_patterns: vec![Element::Token(5)],
     };
 
-    let mut interpolator = Interpolator::new(&data.placeholder_pattern, &data.replacement_patterns);
+    let interpolated_pattern = data
+        .placeholder_pattern
+        .interpolate(&data.replacement_patterns)
+        .expect("Failed to interpolate.");
+    let result = interpolated_pattern.to_string();
 
-    let mut result = String::new();
-
-    while let Some(ik) = interpolator.try_next().expect("Failed to interpolate") {
-        write!(result, "{}", ik).expect("Failed to write to a string");
-    }
     assert_eq!(result, "5 days");
 }

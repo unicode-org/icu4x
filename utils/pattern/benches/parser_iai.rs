@@ -3,11 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_pattern::*;
-use std::{
-    borrow::Cow,
-    convert::TryInto,
-    fmt::{Display, Write},
-};
+use std::{borrow::Cow, convert::TryInto, fmt::Display};
 
 #[derive(Debug)]
 struct Token;
@@ -30,13 +26,13 @@ fn iai_parse() {
     ];
 
     for sample in &samples {
-        let mut p = Parser::new(
+        let mut p = Parser::<usize>::new(
             &sample.0,
             ParserOptions {
                 allow_raw_letters: false,
             },
         );
-        while let Some(_) = p.try_next::<usize>().unwrap() {}
+        while let Some(_) = p.try_next().unwrap() {}
     }
 }
 
@@ -74,7 +70,7 @@ fn iai_interpolate() {
     ];
 
     for sample in &samples {
-        let pattern: Vec<_> = Parser::new(
+        let pattern: Pattern<usize> = Parser::new(
             &sample.0,
             ParserOptions {
                 allow_raw_letters: false,
@@ -85,18 +81,7 @@ fn iai_interpolate() {
 
         let replacements: Vec<Element> = sample.1.iter().map(|r| Element::from(*r)).collect();
 
-        let mut i = Interpolator::new(&pattern, &replacements);
-        let mut result = String::new();
-        while let Some(ik) = i.try_next().unwrap() {
-            match ik {
-                InterpolatedKind::Element(element) => {
-                    write!(result, "{}", element).expect("Failed to write to a string");
-                }
-                InterpolatedKind::Literal(token) => {
-                    write!(result, "{}", token).expect("Failed to write to a string");
-                }
-            }
-        }
+        let _ = pattern.interpolate_to_string(&replacements).unwrap();
     }
 }
 
@@ -110,7 +95,8 @@ fn iai_parsed_interpolate() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
-            ],
+            ]
+            .into(),
             vec!["Hello", "World"],
         ),
         (
@@ -121,7 +107,8 @@ fn iai_parsed_interpolate() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(0),
-            ],
+            ]
+            .into(),
             vec!["Hello", "World"],
         ),
         (
@@ -145,7 +132,8 @@ fn iai_parsed_interpolate() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(2),
-            ],
+            ]
+            .into(),
             vec!["Start", "Middle", "End"],
         ),
         (
@@ -164,28 +152,18 @@ fn iai_parsed_interpolate() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
-            ],
+            ]
+            .into(),
             vec!["Hello", "World"],
         ),
     ];
 
     for sample in samples {
-        let pattern = &sample.0;
+        let pattern: &Pattern<usize> = &sample.0;
 
         let replacements: Vec<Element> = sample.1.iter().map(|r| Element::from(*r)).collect();
 
-        let mut i = Interpolator::new(pattern, &replacements);
-        let mut result = String::new();
-        while let Some(ik) = i.try_next().unwrap() {
-            match ik {
-                InterpolatedKind::Element(element) => {
-                    write!(result, "{}", element).expect("Failed to write to a string");
-                }
-                InterpolatedKind::Literal(token) => {
-                    write!(result, "{}", token).expect("Failed to write to a string");
-                }
-            }
-        }
+        let _ = pattern.interpolate_to_string(&replacements).unwrap();
     }
 }
 
@@ -199,7 +177,8 @@ fn iai_parsed_interpolate_composed() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
-            ],
+            ]
+            .into(),
             vec!["Hello", "World"],
         ),
         (
@@ -210,7 +189,8 @@ fn iai_parsed_interpolate_composed() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(0),
-            ],
+            ]
+            .into(),
             vec!["Hello", "World"],
         ),
         (
@@ -234,7 +214,8 @@ fn iai_parsed_interpolate_composed() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(2),
-            ],
+            ]
+            .into(),
             vec!["Start", "Middle", "End"],
         ),
         (
@@ -253,22 +234,21 @@ fn iai_parsed_interpolate_composed() {
                     quoted: false,
                 },
                 PatternToken::Placeholder(1),
-            ],
+            ]
+            .into(),
             vec!["Hello", "World"],
         ),
     ];
 
     for sample in samples {
-        let pattern = &sample.0;
+        let pattern: &Pattern<usize> = &sample.0;
 
         let replacements: Vec<Vec<Element>> =
             sample.1.iter().map(|r| vec![Element::from(*r)]).collect();
 
-        let mut i = Interpolator::<Vec<Vec<_>>, Element>::new(pattern, &replacements);
-        let mut result = String::new();
-        while let Some(ik) = i.try_next().unwrap() {
-            write!(result, "{}", ik).expect("Failed to write to a string");
-        }
+        let _ = pattern
+            .interpolate_to_string::<'_, Element, _>(&replacements)
+            .unwrap();
     }
 }
 
@@ -279,7 +259,7 @@ fn iai_named_interpolate() {
     )];
 
     for sample in &named_samples {
-        let pattern: Vec<_> = Parser::new(
+        let pattern: Pattern<_> = Parser::new(
             &sample.0,
             ParserOptions {
                 allow_raw_letters: false,
@@ -294,8 +274,7 @@ fn iai_named_interpolate() {
             .map(|(k, v)| (k.to_string(), Element::from(*v)))
             .collect();
 
-        let mut i = Interpolator::new(&pattern, &replacements);
-        while let Some(_) = i.try_next().unwrap() {}
+        let _ = pattern.interpolate_to_string(&replacements).unwrap();
     }
 }
 

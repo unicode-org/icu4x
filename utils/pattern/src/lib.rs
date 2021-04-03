@@ -20,6 +20,7 @@
 //!
 //! ```
 //! use icu_pattern::{
+//!     Pattern,
 //!     Parser,
 //!     ParserOptions,
 //!     PatternToken,
@@ -28,7 +29,8 @@
 //! };
 //! use std::{
 //!     convert::TryInto,
-//!     borrow::Cow
+//!     borrow::Cow,
+//!     fmt::Display,
 //! };
 //!
 //! #[derive(Debug, PartialEq)]
@@ -37,10 +39,25 @@
 //!     Variant2
 //! }
 //!
+//! impl Display for ExampleToken {
+//!     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//!         write!(f, "{:?}", self)
+//!     }
+//! }
+//!
 //! #[derive(Debug, PartialEq)]
 //! enum ExampleElement<'s> {
 //!     Token(ExampleToken),
 //!     Literal(Cow<'s, str>),
+//! }
+//!
+//! impl Display for ExampleElement<'_> {
+//!     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//!         match self {
+//!             Self::Token(token) => token.fmt(f),
+//!             Self::Literal(lit) => lit.fmt(f),
+//!         }
+//!     }
 //! }
 //!
 //! impl<'s> From<Cow<'s, str>> for ExampleElement<'s> {
@@ -49,9 +66,8 @@
 //!     }
 //! }
 //!
-//! let pattern: Vec<PatternToken<'_, usize>> = Parser::new("{0}, {1}", ParserOptions {
-//!    allow_raw_letters: false
-//! }).try_into().unwrap();
+//! let pattern: Pattern<usize> = "{0}, {1}".try_into()
+//!     .expect("Failed to parse a pattern.");
 //!
 //! let replacements = vec![
 //!     vec![
@@ -66,23 +82,11 @@
 //!     ],
 //! ];
 //!
-//! let mut interpolator = Interpolator::<Vec<Vec<_>>, ExampleElement>::new(&pattern, &replacements);
-//!
-//! let mut result = vec![];
-//!
-//! while let Some(ik) = interpolator.try_next().expect("Failed to advance iterator") {
-//!     result.push(ik);
-//! }
-//!
-//! assert_eq!(result, &[
-//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant1)),
-//!     InterpolatedKind::Element(&ExampleElement::Literal(" foo ".into())),
-//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant2)),
-//!     InterpolatedKind::Literal(&", ".into()),
-//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant2)),
-//!     InterpolatedKind::Element(&ExampleElement::Literal(" bar ".into())),
-//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant1)),
-//! ]);
+//! assert_eq!(
+//!     pattern.interpolate_to_string::<ExampleElement, _>(&replacements)
+//!         .expect("Failed to interpolate a pattern."),
+//!     "Variant1 foo Variant2, Variant2 bar Variant1"
+//! );
 //! ```
 //!
 //! # Combinators
@@ -103,10 +107,12 @@
 //! [`FromStr`]: std::str::FromStr
 mod interpolator;
 mod parser;
+mod pattern;
 mod replacement;
 mod token;
 
 pub use interpolator::{InterpolatedKind, Interpolator, InterpolatorError};
 pub use parser::{Parser, ParserError, ParserOptions};
+pub use pattern::Pattern;
 pub use replacement::ReplacementProvider;
 pub use token::PatternToken;
