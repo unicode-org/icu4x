@@ -155,7 +155,7 @@ impl GmtOffset {
     }
 
     pub(crate) fn is_positive(&self) -> bool {
-        self.0 > 0
+        self.0 >= 0
     }
 
     pub(crate) fn is_zero(&self) -> bool {

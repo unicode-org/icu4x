@@ -103,9 +103,11 @@ where
             fields::TimeZone::LowerV => match u8::from(field.length) {
                 1 => time_zone_format
                     .short_generic_non_location_format(time_zone)
+                    .or_else(|| time_zone_format.generic_location_format(time_zone))
                     .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
                 4 => time_zone_format
                     .long_generic_non_location_format(time_zone)
+                    .or_else(|| time_zone_format.generic_location_format(time_zone))
                     .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
                 length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
@@ -115,7 +117,9 @@ where
                 3 => time_zone_format
                     .exemplar_city(time_zone)
                     .unwrap_or_else(|| time_zone_format.unknown_city()),
-                4 => todo!("generic location format"),
+                4 => time_zone_format
+                    .generic_location_format(time_zone)
+                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
                 length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             fields::TimeZone::LowerX => match u8::from(field.length) {

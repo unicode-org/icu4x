@@ -489,6 +489,11 @@ impl<'d> TimeZoneFormat<'d> {
         s
     }
 
+    pub fn generic_location_format(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
+        self.exemplar_city(time_zone)
+            .map(|location| Cow::Owned(self.zone_formats.region_format.replace("{0}", &location)))
+    }
+
     pub fn short_generic_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
