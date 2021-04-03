@@ -455,6 +455,12 @@ impl TryFrom<u8> for TimeZone {
     fn try_from(b: u8) -> Result<Self, Self::Error> {
         match b {
             b'z' => Ok(Self::LowerZ),
+            b'Z' => Ok(Self::UpperZ),
+            b'O' => Ok(Self::UpperO),
+            b'v' => Ok(Self::LowerV),
+            b'V' => Ok(Self::UpperV),
+            b'x' => Ok(Self::LowerX),
+            b'X' => Ok(Self::UpperX),
             b => Err(SymbolError::Unknown(b)),
         }
     }

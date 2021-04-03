@@ -97,6 +97,7 @@ use format::{
 };
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
+use mock::timezone::ZeroPadding;
 #[doc(inline)]
 pub use options::DateTimeFormatOptions;
 use pattern::{Pattern, PatternItem};
@@ -539,9 +540,9 @@ impl<'d> TimeZoneFormat<'d> {
                         },
                     )
                     // support all combos of "(HH|H):mm" by replacing longest patterns first.
-                    .replace("HH", &format!("{:02}", gmt_offset.hours()))
-                    .replace("mm", &format!("{:02}", gmt_offset.minutes()))
-                    .replace("H", &gmt_offset.hours().to_string()),
+                    .replace("HH", &gmt_offset.format_hours(ZeroPadding::On))
+                    .replace("mm", &gmt_offset.format_minutes())
+                    .replace("H", &gmt_offset.format_hours(ZeroPadding::Off)),
             )
         }
     }

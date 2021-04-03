@@ -623,22 +623,22 @@ mod test {
     // https://gist.github.com/gregtatum/1d76bbdb87132f71a969a10f0c1d2d9c
 
     #[rustfmt::skip]
-    const SUPPORTED_STRING_SKELETONS: [&str; 51] = [
+    const SUPPORTED_STRING_SKELETONS: [&str; 60] = [
         "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
         "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
         "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd",
+        // Timezones
+        "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
     ];
 
     #[rustfmt::skip]
-    const UNSUPPORTED_STRING_SKELETONS: [&str; 28] = [
+    const UNSUPPORTED_STRING_SKELETONS: [&str; 19] = [
         // TODO(#487) - Flexible day periods
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
         // TODO(#486) - Era
         "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
-        // TODO(#418) - Timezones
-        "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
         // TODO(#502) - Week of month
         "MMMMW",
         // TODO(#501) - Quarters
