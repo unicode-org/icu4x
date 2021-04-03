@@ -28,9 +28,9 @@ writeable = { version = "0.2", path = "../../utils/writeable" }
 [dev-dependencies]
 criterion = "0.3.3"
 icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
-rand = "0.8"
-rand_pcg = "0.3"
-rand_distr = "0.4"
+rand = "0.7"
+rand_pcg = "0.2"
+rand_distr = "0.3"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
