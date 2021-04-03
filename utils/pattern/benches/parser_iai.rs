@@ -83,13 +83,19 @@ fn iai_interpolate() {
         .try_into()
         .unwrap();
 
-        let replacements: Vec<Option<Element>> =
-            sample.1.iter().map(|r| Some(Element::from(*r))).collect();
+        let replacements: Vec<Element> = sample.1.iter().map(|r| Element::from(*r)).collect();
 
-        let mut i = Interpolator::new(&pattern, replacements);
+        let mut i = Interpolator::new(&pattern, &replacements);
         let mut result = String::new();
-        while let Some(elem) = i.try_next().unwrap() {
-            write!(result, "{}", elem).unwrap();
+        while let Some(ik) = i.try_next().unwrap() {
+            match ik {
+                InterpolatedKind::Element(element) => {
+                    write!(result, "{}", element).expect("Failed to write to a string");
+                }
+                InterpolatedKind::Literal(token) => {
+                    write!(result, "{}", token).expect("Failed to write to a string");
+                }
+            }
         }
     }
 }
@@ -166,13 +172,19 @@ fn iai_parsed_interpolate() {
     for sample in samples {
         let pattern = &sample.0;
 
-        let replacements: Vec<Option<Element>> =
-            sample.1.iter().map(|r| Some(Element::from(*r))).collect();
+        let replacements: Vec<Element> = sample.1.iter().map(|r| Element::from(*r)).collect();
 
-        let mut i = Interpolator::new(pattern, replacements);
+        let mut i = Interpolator::new(pattern, &replacements);
         let mut result = String::new();
-        while let Some(elem) = i.try_next().unwrap() {
-            write!(result, "{}", elem).unwrap();
+        while let Some(ik) = i.try_next().unwrap() {
+            match ik {
+                InterpolatedKind::Element(element) => {
+                    write!(result, "{}", element).expect("Failed to write to a string");
+                }
+                InterpolatedKind::Literal(token) => {
+                    write!(result, "{}", token).expect("Failed to write to a string");
+                }
+            }
         }
     }
 }
@@ -252,10 +264,10 @@ fn iai_parsed_interpolate_composed() {
         let replacements: Vec<Vec<Element>> =
             sample.1.iter().map(|r| vec![Element::from(*r)]).collect();
 
-        let mut i = Interpolator::new(pattern, replacements);
+        let mut i = Interpolator::<Vec<Vec<_>>, Element>::new(pattern, &replacements);
         let mut result = String::new();
-        while let Some(elem) = i.try_next().unwrap() {
-            write!(result, "{}", elem).unwrap();
+        while let Some(ik) = i.try_next().unwrap() {
+            write!(result, "{}", ik).expect("Failed to write to a string");
         }
     }
 }
@@ -282,7 +294,7 @@ fn iai_named_interpolate() {
             .map(|(k, v)| (k.to_string(), Element::from(*v)))
             .collect();
 
-        let mut i = Interpolator::new(&pattern, replacements);
+        let mut i = Interpolator::new(&pattern, &replacements);
         while let Some(_) = i.try_next().unwrap() {}
     }
 }

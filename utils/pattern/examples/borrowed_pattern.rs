@@ -30,28 +30,28 @@ impl<'s> From<Cow<'s, str>> for Element<'s> {
 }
 
 struct Data<'s> {
-    pattern: Vec<PatternToken<'s, usize>>,
+    placeholder_pattern: Vec<PatternToken<'s, usize>>,
+    replacement_patterns: Vec<Element<'s>>,
 }
 
 fn main() {
     let data = Data {
-        pattern: vec![
+        placeholder_pattern: vec![
             PatternToken::Placeholder(0),
             PatternToken::Literal {
                 content: " days".into(),
                 quoted: false,
             },
         ],
+        replacement_patterns: vec![Element::Token(5)],
     };
 
-    let replacements = vec![Some(Element::Token(5))];
-
-    let mut interpolator = Interpolator::new(&data.pattern, replacements);
+    let mut interpolator = Interpolator::new(&data.placeholder_pattern, &data.replacement_patterns);
 
     let mut result = String::new();
 
-    while let Some(element) = interpolator.try_next().expect("Failed to interpolate") {
-        write!(result, "{}", element).expect("Failed to write to a string");
+    while let Some(ik) = interpolator.try_next().expect("Failed to interpolate") {
+        write!(result, "{}", ik).expect("Failed to write to a string");
     }
     assert_eq!(result, "5 days");
 }

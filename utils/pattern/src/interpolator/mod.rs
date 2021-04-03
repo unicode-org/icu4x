@@ -6,7 +6,42 @@ mod error;
 pub use crate::replacement::ReplacementProvider;
 use crate::token::PatternToken;
 pub use error::InterpolatorError;
-use std::{borrow::Cow, str::FromStr};
+use std::{
+    borrow::Cow,
+    fmt::{Display, Formatter},
+    str::FromStr,
+};
+
+#[derive(Debug, PartialEq)]
+pub enum InterpolatedKind<'i, 's, E> {
+    Literal(&'i Cow<'s, str>),
+    Element(&'i E),
+}
+
+impl<E> PartialEq<E> for InterpolatedKind<'_, '_, E>
+where
+    E: PartialEq,
+{
+    fn eq(&self, other: &E) -> bool {
+        if let Self::Element(element) = self {
+            *element == other
+        } else {
+            false
+        }
+    }
+}
+
+impl<'i, 's, E> Display for InterpolatedKind<'i, 's, E>
+where
+    E: Display,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        match self {
+            Self::Literal(lit) => f.write_str(lit),
+            Self::Element(elem) => elem.fmt(f),
+        }
+    }
+}
 
 type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromStr>::Err>>;
 
@@ -21,7 +56,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 ///
 /// # Examples
 /// ```
-/// use icu_pattern::{Parser, ParserOptions, Interpolator};
+/// use icu_pattern::{Parser, ParserOptions, Interpolator, InterpolatedKind};
 /// use std::{
 ///     convert::TryInto,
 ///     borrow::Cow
@@ -44,10 +79,10 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// }).try_into().unwrap();
 ///
 /// let replacements = vec![
-///     Some(Element::Value(5)),
+///     Element::Value(5),
 /// ];
 ///
-/// let mut interpolator = Interpolator::new(&pattern, replacements);
+/// let mut interpolator = Interpolator::new(&pattern, &replacements);
 ///
 /// let mut result = vec![];
 ///
@@ -56,8 +91,8 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// }
 ///
 /// assert_eq!(result, &[
-///     Element::Value(5),
-///     Element::Literal(" days ago".into()),
+///     InterpolatedKind::Element(&Element::Value(5)),
+///     InterpolatedKind::Literal(&" days ago".into()),
 /// ]);
 /// ```
 ///
@@ -111,23 +146,23 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<<R as FromS
 /// [`IntoIterVec`]: crate::pattern::IntoIterVec
 pub struct Interpolator<'i, 'p, R, E>
 where
-    R: ReplacementProvider<E>,
+    R: ReplacementProvider<'i, E>,
 {
     pattern: &'i [PatternToken<'p, R::Key>],
     pattern_idx: usize,
-    replacements: R,
+    replacements: &'i R,
     current_replacement: Option<R::Iter>,
 }
 
 impl<'i, 'p, R, E> Interpolator<'i, 'p, R, E>
 where
-    R: ReplacementProvider<E>,
+    R: ReplacementProvider<'i, E>,
 {
     /// Creates a new `Interpolator`.
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, ParserOptions, Interpolator};
+    /// use icu_pattern::{Parser, PatternToken, ParserOptions, Interpolator};
     /// use std::convert::TryInto;
     ///
     /// enum Element {
@@ -135,16 +170,17 @@ where
     ///     Token,
     /// }
     ///
-    /// let pattern: Vec<_> = Parser::new("{0}, {1}", ParserOptions {
+    /// let pattern: Vec<PatternToken<usize>> = Parser::new("{0}, {1}", ParserOptions {
     ///     allow_raw_letters: false
     /// }).try_into().unwrap();
-    /// let mut interpolator = Interpolator::new(&pattern, vec![
+    /// let replacements = vec![
     ///     vec![
     ///         Element::Token
     ///     ]
-    /// ]);
+    /// ];
+    /// let mut interpolator = Interpolator::<Vec<Vec<_>>, Element>::new(&pattern, &replacements);
     /// ```
-    pub fn new(pattern: &'i [PatternToken<'p, R::Key>], replacements: R) -> Self {
+    pub fn new(pattern: &'i [PatternToken<'p, R::Key>], replacements: &'i R) -> Self {
         Self {
             pattern,
             pattern_idx: 0,
@@ -158,7 +194,7 @@ where
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{Parser, ParserOptions, Interpolator};
+    /// use icu_pattern::{Parser, ParserOptions, Interpolator, InterpolatedKind};
     /// use std::{
     ///     convert::TryInto,
     ///     borrow::Cow
@@ -180,25 +216,27 @@ where
     /// let mut pattern: Vec<_> = Parser::new("{0}, {1}", ParserOptions {
     ///     allow_raw_letters: false
     /// }).try_into().unwrap();
-    /// let mut interpolator = Interpolator::new(&pattern, vec![
+    ///
+    /// let replacements = vec![
     ///     vec![
     ///         Element::TokenOne
     ///     ],
     ///     vec![
     ///         Element::TokenTwo
     ///     ]
-    /// ]);
+    /// ];
+    /// let mut interpolator = Interpolator::new(&pattern, &replacements);
     ///
     ///
     /// // A call to try_next() returns the next value…
-    /// assert_eq!(Ok(Some(Element::TokenOne)), interpolator.try_next());
-    /// assert_eq!(Ok(Some(Element::Literal(", ".to_string()))), interpolator.try_next());
-    /// assert_eq!(Ok(Some(Element::TokenTwo)), interpolator.try_next());
+    /// assert_eq!(Ok(Some(InterpolatedKind::Element(&Element::TokenOne))), interpolator.try_next());
+    /// assert_eq!(Ok(Some(InterpolatedKind::Literal(&", ".into()))), interpolator.try_next());
+    /// assert_eq!(Ok(Some(InterpolatedKind::Element(&Element::TokenTwo))), interpolator.try_next());
     ///
     /// // … and then None once it's over.
     /// assert_eq!(Ok(None), interpolator.try_next());
     /// ```
-    pub fn try_next(&mut self) -> Result<E, R::Key>
+    pub fn try_next(&mut self) -> Result<InterpolatedKind<'i, 'p, E>, R::Key>
     where
         E: From<Cow<'p, str>>,
         R::Key: FromStr + std::fmt::Display,
@@ -207,7 +245,7 @@ where
         loop {
             if let Some(ref mut replacement) = &mut self.current_replacement {
                 if let Some(v) = replacement.next() {
-                    return Ok(Some(v));
+                    return Ok(Some(InterpolatedKind::Element(v)));
                 } else {
                     self.current_replacement = None;
                 }
@@ -215,7 +253,7 @@ where
             match self.pattern.get(self.pattern_idx) {
                 Some(&PatternToken::Literal { ref content, .. }) => {
                     self.pattern_idx += 1;
-                    return Ok(Some(content.clone().into()));
+                    return Ok(Some(InterpolatedKind::Literal(content)));
                 }
                 Some(&PatternToken::Placeholder(ref p)) => {
                     self.pattern_idx += 1;
@@ -284,7 +322,7 @@ mod tests {
     #[test]
     fn simple_interpolate() {
         for sample in SAMPLES.iter() {
-            let pattern: Vec<_> = Parser::new(
+            let pattern: Vec<PatternToken<'_, usize>> = Parser::new(
                 &sample.0,
                 ParserOptions {
                     allow_raw_letters: false,
@@ -298,7 +336,7 @@ mod tests {
                 .iter()
                 .map(|r| r.iter().map(|&t| t.into()).collect())
                 .collect();
-            let mut i = Interpolator::new(&pattern, replacements);
+            let mut i = Interpolator::<Vec<Vec<Element>>, Element>::new(&pattern, &replacements);
             let mut result = String::new();
             while let Some(elem) = i.try_next().unwrap() {
                 write!(result, "{}", elem).unwrap();
@@ -334,7 +372,7 @@ mod tests {
                 .map(|(k, v)| (k.to_string(), v.iter().map(|&t| Element::from(t)).collect()))
                 .collect();
 
-            let mut i = Interpolator::<_, Element>::new(&pattern, replacements);
+            let mut i = Interpolator::<_, Element>::new(&pattern, &replacements);
             while let Some(_) = i.try_next().unwrap() {}
         }
     }

@@ -31,7 +31,7 @@ impl<'s> From<Cow<'s, str>> for Element<'s> {
 }
 
 fn main() {
-    let replacements = vec![Some(Element::Token(5))];
+    let replacements = vec![Element::Token(5)];
 
     let pattern: Vec<_> = Parser::new(
         "{0} days",
@@ -42,12 +42,12 @@ fn main() {
     .try_into()
     .expect("Failed to parse a pattern.");
 
-    let mut interpolator = Interpolator::new(&pattern, replacements);
+    let mut interpolator = Interpolator::new(&pattern, &replacements);
 
     let mut result = String::new();
 
-    while let Some(element) = interpolator.try_next().expect("Failed to interpolate") {
-        write!(result, "{}", element).expect("Failed to write to a string");
+    while let Some(ik) = interpolator.try_next().expect("Failed to interpolate") {
+        write!(result, "{}", ik).expect("Failed to write to a string");
     }
     assert_eq!(result, "5 days");
 }

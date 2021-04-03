@@ -19,7 +19,13 @@
 //! and an `Element` type which will be either a `Token` or a string slice.
 //!
 //! ```
-//! use icu_pattern::{Parser, ParserOptions, Interpolator};
+//! use icu_pattern::{
+//!     Parser,
+//!     ParserOptions,
+//!     PatternToken,
+//!     Interpolator,
+//!     InterpolatedKind,
+//! };
 //! use std::{
 //!     convert::TryInto,
 //!     borrow::Cow
@@ -43,7 +49,7 @@
 //!     }
 //! }
 //!
-//! let pattern: Vec<_> = Parser::new("{0}, {1}", ParserOptions {
+//! let pattern: Vec<PatternToken<'_, usize>> = Parser::new("{0}, {1}", ParserOptions {
 //!    allow_raw_letters: false
 //! }).try_into().unwrap();
 //!
@@ -60,22 +66,22 @@
 //!     ],
 //! ];
 //!
-//! let mut interpolator = Interpolator::new(&pattern, replacements);
+//! let mut interpolator = Interpolator::<Vec<Vec<_>>, ExampleElement>::new(&pattern, &replacements);
 //!
 //! let mut result = vec![];
 //!
-//! while let Some(element) = interpolator.try_next().expect("Failed to advance iterator") {
-//!     result.push(element);
+//! while let Some(ik) = interpolator.try_next().expect("Failed to advance iterator") {
+//!     result.push(ik);
 //! }
 //!
 //! assert_eq!(result, &[
-//!     ExampleElement::Token(ExampleToken::Variant1),
-//!     ExampleElement::Literal(" foo ".into()),
-//!     ExampleElement::Token(ExampleToken::Variant2),
-//!     ExampleElement::Literal(", ".into()),
-//!     ExampleElement::Token(ExampleToken::Variant2),
-//!     ExampleElement::Literal(" bar ".into()),
-//!     ExampleElement::Token(ExampleToken::Variant1),
+//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant1)),
+//!     InterpolatedKind::Element(&ExampleElement::Literal(" foo ".into())),
+//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant2)),
+//!     InterpolatedKind::Literal(&", ".into()),
+//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant2)),
+//!     InterpolatedKind::Element(&ExampleElement::Literal(" bar ".into())),
+//!     InterpolatedKind::Element(&ExampleElement::Token(ExampleToken::Variant1)),
 //! ]);
 //! ```
 //!
@@ -100,7 +106,7 @@ mod parser;
 mod replacement;
 mod token;
 
-pub use interpolator::{Interpolator, InterpolatorError};
+pub use interpolator::{InterpolatedKind, Interpolator, InterpolatorError};
 pub use parser::{Parser, ParserError, ParserOptions};
 pub use replacement::ReplacementProvider;
 pub use token::PatternToken;
