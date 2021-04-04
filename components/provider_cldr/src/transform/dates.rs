@@ -86,7 +86,6 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
     }
 }
 
-icu_provider::impl_dyn_provider!(DatesProvider<'d>, gregory::DatesV1, ERASED, 'd, 's);
 icu_provider::impl_dyn_provider!(DatesProvider<'d>, gregory::DatesV1, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for DatesProvider<'d> {
@@ -111,10 +110,10 @@ impl From<&cldr_json::StylePatterns> for gregory::patterns::StylePatternsV1 {
     fn from(other: &cldr_json::StylePatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            full: other.full.get_pattern().clone(),
-            long: other.long.get_pattern().clone(),
-            medium: other.medium.get_pattern().clone(),
-            short: other.short.get_pattern().clone(),
+            full: Cow::Owned(other.full.get_pattern().clone()),
+            long: Cow::Owned(other.long.get_pattern().clone()),
+            medium: Cow::Owned(other.medium.get_pattern().clone()),
+            short: Cow::Owned(other.short.get_pattern().clone()),
         }
     }
 }
@@ -127,10 +126,10 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
             style_patterns: gregory::patterns::StylePatternsV1 {
-                full: other.full.get_pattern().clone(),
-                long: other.long.get_pattern().clone(),
-                medium: other.medium.get_pattern().clone(),
-                short: other.short.get_pattern().clone(),
+                full: Cow::Owned(other.full.get_pattern().clone()),
+                long: Cow::Owned(other.long.get_pattern().clone()),
+                medium: Cow::Owned(other.medium.get_pattern().clone()),
+                short: Cow::Owned(other.short.get_pattern().clone()),
             },
             skeletons: {
                 let mut skeletons = SkeletonsV1(LiteMap::new());
@@ -203,7 +202,7 @@ macro_rules! symbols_from {
             fn from(other: &cldr_json::$name::Symbols) -> Self {
                 Self([
                     $(
-                        other.$element.clone(),
+                        Cow::Owned(other.$element.clone()),
                     )*
                 ])
             }
@@ -376,31 +375,33 @@ pub(self) mod cldr_json {
 
     symbols!(
         months,
-        ["1", m1, Cow<'static, str>],
-        ["2", m2, Cow<'static, str>],
-        ["3", m3, Cow<'static, str>],
-        ["4", m4, Cow<'static, str>],
-        ["5", m5, Cow<'static, str>],
-        ["6", m6, Cow<'static, str>],
-        ["7", m7, Cow<'static, str>],
-        ["8", m8, Cow<'static, str>],
-        ["9", m9, Cow<'static, str>],
-        ["10", m10, Cow<'static, str>],
-        ["11", m11, Cow<'static, str>],
-        ["12", m12, Cow<'static, str>],
+        ["1", m1, String],
+        ["2", m2, String],
+        ["3", m3, String],
+        ["4", m4, String],
+        ["5", m5, String],
+        ["6", m6, String],
+        ["7", m7, String],
+        ["8", m8, String],
+        ["9", m9, String],
+        ["10", m10, String],
+        ["11", m11, String],
+        ["12", m12, String],
     );
 
     symbols!(
         days,
-        [sun, Cow<'static, str>],
-        [mon, Cow<'static, str>],
-        [tue, Cow<'static, str>],
-        [wed, Cow<'static, str>],
-        [thu, Cow<'static, str>],
-        [fri, Cow<'static, str>],
-        [sat, Cow<'static, str>],
+        [sun, String],
+        [mon, String],
+        [tue, String],
+        [wed, String],
+        [thu, String],
+        [fri, String],
+        [sat, String],
     );
 
+    // The day period symbols are Cow<'static, str> instead of String because the Option
+    // needs to be retained when converting them into Cow for the data provider.
     symbols!(
         day_periods,
         ["am", am, Cow<'static, str>],
@@ -412,18 +413,18 @@ pub(self) mod cldr_json {
     #[derive(PartialEq, Debug, Deserialize)]
     #[serde(untagged)]
     pub enum StylePattern {
-        Plain(Cow<'static, str>),
+        Plain(String),
         WithNumberingSystems {
             #[serde(rename = "_value")]
-            pattern: Cow<'static, str>,
+            pattern: String,
             #[serde(rename = "_numbers")]
-            numbering_systems: Cow<'static, str>,
+            numbering_systems: String,
         },
     }
 
     impl StylePattern {
         /// Get the pattern, dropping the numbering system if present.
-        pub fn get_pattern(&self) -> &Cow<'static, str> {
+        pub fn get_pattern(&self) -> &String {
             match self {
                 Self::Plain(pattern) => pattern,
                 Self::WithNumberingSystems { pattern, .. } => pattern,

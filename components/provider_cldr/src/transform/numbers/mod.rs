@@ -143,7 +143,6 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(NumbersProvider, DecimalSymbolsV1, ERASED, 'd, 's);
 icu_provider::impl_dyn_provider!(NumbersProvider, DecimalSymbolsV1, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for NumbersProvider {
