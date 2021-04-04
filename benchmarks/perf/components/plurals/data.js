@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617434324594,
+  "lastUpdate": 1617576219662,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4703,6 +4703,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 105928,
             "range": "± 1660",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41419a9b5b08f1408d6b72b08d0797de49ca5e3b",
+          "message": "Remove 'static requirement from CLDR transformers (#610)",
+          "timestamp": "2021-04-04T15:36:59-07:00",
+          "tree_id": "e86a91d176aa4a16fe82d8919bc5b2982a9972ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/41419a9b5b08f1408d6b72b08d0797de49ca5e3b"
+        },
+        "date": 1617576218527,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1249,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7882,
+            "range": "± 356",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 112382,
+            "range": "± 8818",
             "unit": "ns/iter"
           }
         ]
