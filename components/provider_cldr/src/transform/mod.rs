@@ -15,7 +15,6 @@ pub use plurals::PluralsProvider;
 
 use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
-use icu_provider::erased::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStruct;
@@ -53,27 +52,6 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
             plurals: Default::default(),
             timezones: Default::default(),
         }
-    }
-}
-
-impl<'a, 'd> ErasedDataProvider<'d> for CldrJsonDataProvider<'a, 'd> {
-    fn load_erased(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
-        if let Some(result) = self.dates.try_load_payload(req, self.cldr_paths)? {
-            return Ok(result);
-        }
-        if let Some(result) = self.likelysubtags.try_load_payload(req, self.cldr_paths)? {
-            return Ok(result);
-        }
-        if let Some(result) = self.plurals.try_load_payload(req, self.cldr_paths)? {
-            return Ok(result);
-        }
-        if let Some(result) = self.timezones.try_load_payload(req, self.cldr_paths)? {
-            return Ok(result);
-        }
-        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 

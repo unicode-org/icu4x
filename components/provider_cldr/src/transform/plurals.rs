@@ -103,7 +103,6 @@ impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
     }
 }
 
-icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'static>, ERASED, 'd, 's);
 icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'s>, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
@@ -127,13 +126,15 @@ impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
 
 impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
     fn from(other: &cldr_json::LocalePluralRules) -> Self {
+        /// Removes samples from plural rule strings. Takes an owned String reference and
+        /// returns a new String in a Cow::Owned.
         #[allow(clippy::ptr_arg)]
-        fn convert(s: &Cow<'static, str>) -> Cow<'static, str> {
+        fn convert(s: &String) -> Cow<'static, str> {
             let mut ast = parse(s.as_bytes()).expect("Rule parsing failed.");
             ast.samples = None;
             let mut result = String::with_capacity(s.len());
             serialize(&ast, &mut result).expect("Serialization failed.");
-            result.into()
+            Cow::Owned(result)
         }
         Self {
             zero: other.zero.as_ref().map(convert),
@@ -149,7 +150,6 @@ impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
 pub(self) mod cldr_json {
     use crate::cldr_langid::CldrLangID;
     use serde::Deserialize;
-    use std::borrow::Cow;
 
     // TODO: Use Serde Borrow throughout these structs. Blocked by:
     // https://stackoverflow.com/q/63201624/1407170
@@ -157,15 +157,15 @@ pub(self) mod cldr_json {
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct LocalePluralRules {
         #[serde(rename = "pluralRule-count-zero")]
-        pub zero: Option<Cow<'static, str>>,
+        pub zero: Option<String>,
         #[serde(rename = "pluralRule-count-one")]
-        pub one: Option<Cow<'static, str>>,
+        pub one: Option<String>,
         #[serde(rename = "pluralRule-count-two")]
-        pub two: Option<Cow<'static, str>>,
+        pub two: Option<String>,
         #[serde(rename = "pluralRule-count-few")]
-        pub few: Option<Cow<'static, str>>,
+        pub few: Option<String>,
         #[serde(rename = "pluralRule-count-many")]
-        pub many: Option<Cow<'static, str>>,
+        pub many: Option<String>,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
