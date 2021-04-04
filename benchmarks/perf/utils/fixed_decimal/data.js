@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617434308515,
+  "lastUpdate": 1617576172181,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3359,6 +3359,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 145322,
             "range": "± 5856",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "41419a9b5b08f1408d6b72b08d0797de49ca5e3b",
+          "message": "Remove 'static requirement from CLDR transformers (#610)",
+          "timestamp": "2021-04-04T15:36:59-07:00",
+          "tree_id": "e86a91d176aa4a16fe82d8919bc5b2982a9972ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/41419a9b5b08f1408d6b72b08d0797de49ca5e3b"
+        },
+        "date": 1617576171019,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155187,
+            "range": "± 1205",
             "unit": "ns/iter"
           }
         ]
