@@ -173,7 +173,6 @@ args = [
     "run",
     "--features", "export-bin",
     "--features", "bincode",
-    "--features", "serialize_none",
     "--",
     "--cldr-core", "../../resources/testdata/data/cldr/cldr-core",
     "--cldr-dates", "../../resources/testdata/data/cldr/cldr-dates-full",

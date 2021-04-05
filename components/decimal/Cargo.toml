@@ -42,7 +42,6 @@ rand_distr = "0.4"
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde"]
-serialize_none = []
 
 [[bench]]
 name = "fixed_decimal_format"

@@ -61,7 +61,6 @@ criterion = "0.3.3"
 [features]
 export = ["static_assertions", "log"]
 export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
-serialize_none = ["icu_provider_cldr/serialize_none"]
 bench = []
 
 [[bin]]

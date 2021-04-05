@@ -42,7 +42,7 @@
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use super::preferences;
-#[cfg(all(not(feature = "serialize_none"), feature = "serde"))]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 /// `length::Bag` is a structure to represent the set of lengths in which the `DateTime` should
 /// be formatted to.
@@ -75,17 +75,11 @@ use serde::{Deserialize, Serialize};
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(
-    all(not(feature = "serialize_none"), feature = "serde"),
-    derive(Serialize, Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
     pub date: Option<Date>,
     pub time: Option<Time>,
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(skip_serializing, skip_deserializing)
-    )]
+    #[cfg_attr(feature = "serde", serde(skip_serializing, skip_deserializing))]
     pub preferences: Option<preferences::Bag>,
 }
 
@@ -125,10 +119,7 @@ impl Default for Bag {
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(
-    all(not(feature = "serialize_none"), feature = "serde"),
-    derive(Serialize, Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Date {
     /// Full length, usually with weekday name.
     ///
@@ -141,10 +132,7 @@ pub enum Date {
     /// "вторник, 21 января 2020 г.";      // ru
     /// "2020年1月21日火曜日";               // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "full")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "full"))]
     Full,
     /// Long length, with wide month name.
     ///
@@ -157,10 +145,7 @@ pub enum Date {
     /// "10 сентября 2020 г.";    // ru
     /// "2020年9月10日";           // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "long")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
     /// Medium length.
     ///
@@ -173,10 +158,7 @@ pub enum Date {
     /// "20 февр. 2020 г.";    // ru
     /// "2020/02/20";          // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "medium")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "medium"))]
     Medium,
     /// Short length, usually with numeric month.
     ///
@@ -189,10 +171,7 @@ pub enum Date {
     /// "30.01.2020";   // ru
     /// "2020/01/30";   // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "short")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
 }
 
@@ -222,10 +201,7 @@ pub enum Date {
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
 /// [`DateTimeFormat`]: super::super::DateTimeFormat
 #[derive(Debug, Clone, Copy, PartialEq)]
-#[cfg_attr(
-    all(not(feature = "serialize_none"), feature = "serde"),
-    derive(Serialize, Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Time {
     /// Full length, with spelled out time zone name.
     ///
@@ -238,10 +214,7 @@ pub enum Time {
     /// "08:25:07 Тихоокеанское стандартное время";      // ru
     /// "8時25分07秒 アメリカ太平洋標準時";                  // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "full")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "full"))]
     Full,
     /// Full length, usually with short time zone code.
     ///
@@ -254,10 +227,7 @@ pub enum Time {
     /// "08:25:07 GMT-8";       // ru
     /// "8:25:07 GMT-8";        // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "long")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
     /// Full length, usually with seconds.
     ///
@@ -270,10 +240,7 @@ pub enum Time {
     /// "08:25:07";     // ru
     /// "8:25:07";      // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "medium")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "medium"))]
     Medium,
     /// Full length, usually without seconds.
     ///
@@ -286,9 +253,6 @@ pub enum Time {
     /// "08:25";     // ru
     /// "8:25";      // ja
     /// ```
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "short")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
 }

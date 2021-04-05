@@ -58,11 +58,5 @@ icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 
 [features]
-# Serialize None values when exporting. Required for Bincode.
-serialize_none = [
-    "icu_datetime/serialize_none",
-    "icu_plurals/serialize_none",
-]
-
 # Automatically download CLDR data from a host
 download = ["urlencoding", "reqwest", "unzip", "dirs", "log"]

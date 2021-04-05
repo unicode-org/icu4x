@@ -74,7 +74,7 @@
 //!
 //! ```text
 //! cargo run
-//!   --features export-bin,bincode,serialize_none
+//!   --features export-bin,bincode
 //!   --
 //!   --cldr-tag 37.0.0
 //!   --out ./icu4x-data

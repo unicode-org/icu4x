@@ -79,10 +79,7 @@ Data provider structs should implement `Default`, returning generic, invariant d
 
 The name of the data provider struct should include its schema version; for example, `SampleDataStructV1` has schema version 1. Data provider structs should *not* use `#[non_exhaustive]`. If new fields are to be added, a new schema version must be introduced, like `SampleDataStructV2`.
 
-There are two feature flags relevant to data struct definitions:
-
-1. `"provider_serde"` should be used to enable Serde on the data provider structs.
-2. `"serialize_none"` should be used in tandem with an `Option` field. This feature is necessary to support serialization formats such as Bincode that do not support Serde `skip_serializing_if`.
+The `"provider_serde"` feature flag is relevant to data struct construction: it should be used to enable Serde on the data provider structs.
 
 Here is an example of a `provider.rs` boilerplate for a component:
 
@@ -105,10 +102,9 @@ pub struct SampleDataStructV1<'s> {
     pub normal_value: Cow<'s, str>,
 
     /// This field may or may not be present in the data struct.
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
+    ///
+    /// Do _not_ use skip_serializing_if, see
+    /// https://github.com/serde-rs/serde/issues/1732
     pub option_value: Option<i32>,
 }
 
