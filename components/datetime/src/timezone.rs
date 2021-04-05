@@ -190,6 +190,9 @@ impl<'d> TimeZoneFormat<'d> {
         s
     }
 
+    /// Returns the time zone in generic location format as defined by the UTS-35 spec.
+    /// e.g. France Time
+    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
     pub(super) fn generic_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
@@ -198,6 +201,9 @@ impl<'d> TimeZoneFormat<'d> {
             .map(|location| Cow::Owned(self.zone_formats.region_format.replace("{0}", &location)))
     }
 
+    /// Returns the time zone in short generic non-location format as defined by the UTS-35 spec.
+    /// e.g. PT
+    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
     pub(super) fn short_generic_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
@@ -208,6 +214,9 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
+    /// Returns the time zone in long generic non-location format as defined by the UTS-35 spec.
+    /// e.g. Pacific Time
+    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
     pub(super) fn long_generic_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
@@ -218,6 +227,9 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
+    /// Returns the time zone in short specific non-location format as defined by the UTS-35 spec.
+    /// e.g. PDT
+    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
     pub(super) fn short_specific_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
@@ -233,6 +245,9 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
+    /// Returns the time zone in long specific non-location format as defined by the UTS-35 spec.
+    /// e.g. Pacific Daylight Time
+    /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
     pub(super) fn long_specific_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
@@ -248,6 +263,12 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
+    /// Returns the time zone in localized GMT format according to the CLDR localized hour format.
+    /// This goes explicitly against the UTS-35 spec, which specifies long or short localized
+    /// GMT formats regardless of locale.
+    ///
+    /// You can see more information about our decision to resolve this conflict here:
+    /// https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing
     pub(super) fn localized_gmt_format(&self, time_zone: &impl TimeZoneInput) -> Cow<str> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() {
@@ -272,6 +293,7 @@ impl<'d> TimeZoneFormat<'d> {
         }
     }
 
+    /// Returns the exemplar city associated with this time zone.
     pub(super) fn exemplar_city(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
         self.exemplar_cities
             .as_ref()
@@ -279,12 +301,17 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
+    /// Returns the unknown city. This is used as a fallback in case the time-zone's exemplar city
+    /// had no localized form in the current locale.
+    ///
+    /// This function is only invoked as a fallback, which means that we can guarantee that the
+    /// exemplar-city data is present, and all locales should have an entry for "Etc/Unknown".
     pub(super) fn unknown_city(&self) -> Cow<str> {
         self.exemplar_cities
             .as_ref()
-            .unwrap()
+            .expect("Exemplar City data was not present.")
             .get("Etc/Unknown")
             .map(Clone::clone)
-            .unwrap()
+            .expect("Etc/Unknown is not contained in exemplar city data.")
     }
 }
