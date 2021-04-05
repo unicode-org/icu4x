@@ -79,9 +79,9 @@ pub trait IsoTimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
-/// Representation of a time zone.
+/// Inputs relevant to formatting a time zone.
 ///
-/// Only the GMT offset is reuired, since it is the final format fallback.
+/// Only the GMT offset is required, since it is the final format fallback.
 ///
 /// All data represented in TimeZoneInput should be locale-agnostic.
 pub trait TimeZoneInput {
