@@ -273,10 +273,15 @@ impl FromStr for GmtOffset {
         };
 
         // Valid range is from GMT-12 to GMT+14 in seconds.
-        if seconds < -43200 || seconds > 50400 {
+        if seconds < -43200 {
+            Err(DateTimeError::Underflow {
+                field: "GmtOffset",
+                min: -43200,
+            })
+        } else if seconds > 50400 {
             Err(DateTimeError::Overflow {
                 field: "GmtOffset",
-                max: 97200,
+                max: 50400,
             })
         } else {
             Ok(Self(seconds))
