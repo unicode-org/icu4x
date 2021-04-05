@@ -34,9 +34,10 @@ criterion = "0.3"
 icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
-rand = "0.7"
-rand_pcg = "0.2"
-rand_distr = "0.3"
+rand = "0.8"
+rand_pcg = "0.3"
+rand_distr = "0.4"
+getrandom = { version = "0.2", features = ["js"] }
 
 [features]
 default = ["provider_serde"]
