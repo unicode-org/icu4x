@@ -90,15 +90,19 @@ impl TimeZoneInput for MockTimeZone {
 pub(crate) enum IsoFormat {
     /// ISO-8601 Basic Format.
     /// Formats zero-offset numerically.
+    /// e.g. +0500
     Basic,
     /// ISO-8601 Extended Format.
     /// Formats zero-offset numerically.
+    /// e.g. +05:00
     Extended,
     /// ISO-8601 Basic Format.
     /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
+    /// e.g. +0500
     UtcBasic,
     /// ISO-8601 Extended Format.
     /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
+    /// e.g. +05:00
     UtcExtended,
 }
 
