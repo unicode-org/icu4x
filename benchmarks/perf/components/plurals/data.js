@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617576219662,
+  "lastUpdate": 1617649312447,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4745,6 +4745,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112382,
             "range": "± 8818",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nciric@gmail.com",
+            "name": "Nebojša Ćirić",
+            "username": "nciric"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a3551b1eeaf742ec18555096c8b56879296b9ee3",
+          "message": "Rename style -> length for DateTimeFormat everywhere (#602)\n\n* Rename style -> length for DateTimeFormat everywhere\r\n\r\n* Change the name of the field to adhere to Rust rules.\r\n\r\n* lint: sort lines fixed",
+          "timestamp": "2021-04-05T11:54:33-07:00",
+          "tree_id": "b03964591881bb48d9daeaf87777baf1951c589b",
+          "url": "https://github.com/unicode-org/icu4x/commit/a3551b1eeaf742ec18555096c8b56879296b9ee3"
+        },
+        "date": 1617649311256,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1147,
+            "range": "± 92",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6755,
+            "range": "± 513",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 93487,
+            "range": "± 9893",
             "unit": "ns/iter"
           }
         ]
