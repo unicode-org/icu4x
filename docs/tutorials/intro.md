@@ -177,7 +177,7 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 
 ```rust
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu::datetime::{DateTimeFormat, date::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
@@ -189,9 +189,9 @@ fn main() {
     let provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
         .expect("Failed to initialize Data Provider.");
 
-    let options = style::Bag {
-        time: Some(style::Time::Medium),
-        date: Some(style::Date::Long),
+    let options = length::Bag {
+        time: Some(length::Time::Medium),
+        date: Some(length::Date::Long),
         ..Default::default()
     }.into();
 

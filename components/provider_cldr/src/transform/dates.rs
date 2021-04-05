@@ -106,8 +106,8 @@ impl<'d> IterableDataProviderCore for DatesProvider<'d> {
     }
 }
 
-impl From<&cldr_json::StylePatterns> for gregory::patterns::StylePatternsV1 {
-    fn from(other: &cldr_json::StylePatterns) -> Self {
+impl From<&cldr_json::LengthPatterns> for gregory::patterns::LengthPatternsV1 {
+    fn from(other: &cldr_json::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
             full: Cow::Owned(other.full.get_pattern().clone()),
@@ -125,7 +125,7 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            style_patterns: gregory::patterns::StylePatternsV1 {
+            length_patterns: gregory::patterns::LengthPatternsV1 {
                 full: Cow::Owned(other.full.get_pattern().clone()),
                 long: Cow::Owned(other.long.get_pattern().clone()),
                 medium: Cow::Owned(other.medium.get_pattern().clone()),
@@ -412,7 +412,7 @@ pub(self) mod cldr_json {
 
     #[derive(PartialEq, Debug, Deserialize)]
     #[serde(untagged)]
-    pub enum StylePattern {
+    pub enum LengthPattern {
         Plain(String),
         WithNumberingSystems {
             #[serde(rename = "_value")]
@@ -422,7 +422,7 @@ pub(self) mod cldr_json {
         },
     }
 
-    impl StylePattern {
+    impl LengthPattern {
         /// Get the pattern, dropping the numbering system if present.
         pub fn get_pattern(&self) -> &String {
             match self {
@@ -433,19 +433,19 @@ pub(self) mod cldr_json {
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct StylePatterns {
-        pub full: StylePattern,
-        pub long: StylePattern,
-        pub medium: StylePattern,
-        pub short: StylePattern,
+    pub struct LengthPatterns {
+        pub full: LengthPattern,
+        pub long: LengthPattern,
+        pub medium: LengthPattern,
+        pub short: LengthPattern,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct DateTimeFormats {
-        pub full: StylePattern,
-        pub long: StylePattern,
-        pub medium: StylePattern,
-        pub short: StylePattern,
+        pub full: LengthPattern,
+        pub long: LengthPattern,
+        pub medium: LengthPattern,
+        pub short: LengthPattern,
         #[serde(rename = "availableFormats")]
         pub available_formats: AvailableFormats,
     }
@@ -467,9 +467,9 @@ pub(self) mod cldr_json {
         #[serde(rename = "dayPeriods")]
         pub day_periods: day_periods::Contexts,
         #[serde(rename = "dateFormats")]
-        pub date_formats: StylePatterns,
+        pub date_formats: LengthPatterns,
         #[serde(rename = "timeFormats")]
-        pub time_formats: StylePatterns,
+        pub time_formats: LengthPatterns,
         #[serde(rename = "dateTimeFormats")]
         pub date_time_formats: DateTimeFormats,
     }

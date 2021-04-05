@@ -10,7 +10,7 @@
 icu_benchmark_macros::static_setup!();
 
 use icu_datetime::mock::MockDateTime;
-use icu_datetime::{options::style, DateTimeFormat};
+use icu_datetime::{options::length, DateTimeFormat};
 use icu_locid::Locale;
 use icu_locid_macros::langid;
 
@@ -50,9 +50,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .collect::<Result<Vec<MockDateTime>, _>>()
         .expect("Failed to parse dates.");
 
-    let options = style::Bag {
-        date: Some(style::Date::Medium),
-        time: Some(style::Time::Short),
+    let options = length::Bag {
+        date: Some(length::Date::Medium),
+        time: Some(length::Time::Short),
         ..Default::default()
     };
 

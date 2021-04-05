@@ -5,71 +5,70 @@
 //! `DateTimeFormatOptions` is a bag of options which, together with `Locale`,
 //! defines how dates will be formatted with a `DateTimeFormat` instance.
 //!
-//! Each variant of the bag is a combination of settings definiting how to format
+//! Each variant of the bag is a combination of settings defining how to format
 //! the date, with an optional `Preferences` which represent user preferences and
 //! may alter how the selected pattern is formatted.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu_datetime::{DateTimeFormatOptions, options::style};
+//! use icu_datetime::{DateTimeFormatOptions, options::length};
 //!
-//! let options = DateTimeFormatOptions::Style(
-//!     style::Bag {
-//!          date: Some(style::Date::Medium),
-//!          time: Some(style::Time::Short),
+//! let options = DateTimeFormatOptions::Length(
+//!     length::Bag {
+//!          date: Some(length::Date::Medium),
+//!          time: Some(length::Time::Short),
 //!         ..Default::default()
 //!     }
 //! );
 //! ```
 //!
-//! At the moment only the `Style` bag works, and we plan to extend that to support
+//! At the moment only the `Length` bag works, and we plan to extend that to support
 //! `ECMA 402` like components bag later.
 
 pub mod components;
+pub mod length;
 pub mod preferences;
-pub mod style;
-
 /// `DateTimeFormatOptions` is a bag of options which, together with `Locale`,
 /// defines how dates will be formatted with a `DateTimeFormat` instance.
 ///
-/// Each variant of the bag is a combination of settings definiting how to format
+/// Each variant of the bag is a combination of settings defining how to format
 /// the date, with an optional `Preferences` which represent user preferences and
 /// may alter how the selected pattern is formatted.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::{DateTimeFormatOptions, options::style};
+/// use icu_datetime::{DateTimeFormatOptions, options::length};
 ///
-/// let options = DateTimeFormatOptions::Style(
-///     style::Bag {
-///          date: Some(style::Date::Medium),
-///          time: Some(style::Time::Short),
+/// let options = DateTimeFormatOptions::Length(
+///     length::Bag {
+///          date: Some(length::Date::Medium),
+///          time: Some(length::Time::Short),
 ///         ..Default::default()
 ///     }
 /// );
 /// ```
 ///
-/// At the moment only the `Style` bag works, and we plan to extend that to support
+/// At the moment only the `Length` bag works, and we plan to extend that to support
 /// `ECMA 402` like components bag later.
 #[derive(Debug)]
 pub enum DateTimeFormatOptions {
-    /// Bag of styles for date and time
-    Style(style::Bag),
+    /// Bag of lengths for date and time
+    Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed
     Components(components::Bag),
 }
 
 impl Default for DateTimeFormatOptions {
     fn default() -> Self {
-        Self::Style(style::Bag::default())
+        Self::Length(length::Bag::default())
     }
 }
 
-impl From<style::Bag> for DateTimeFormatOptions {
-    fn from(input: style::Bag) -> Self {
-        Self::Style(input)
+impl From<length::Bag> for DateTimeFormatOptions {
+    fn from(input: length::Bag) -> Self {
+        Self::Length(input)
     }
 }
 

@@ -4,7 +4,7 @@
 
 #![cfg(all(not(feature = "serialize_none"), feature = "serde"))]
 
-use icu_datetime::options::{components, style};
+use icu_datetime::options::{components, length};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -25,8 +25,8 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TestOptions {
-    #[serde(rename = "style")]
-    Style(style::Bag),
+    #[serde(rename = "length")]
+    Length(length::Bag),
     #[serde(rename = "components")]
     Components(components::Bag),
 }

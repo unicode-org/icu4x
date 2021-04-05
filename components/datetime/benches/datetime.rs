@@ -12,7 +12,7 @@ use icu_datetime::DateTimeFormat;
 use icu_locid::Locale;
 
 fn datetime_benches(c: &mut Criterion) {
-    let fxs = fixtures::get_fixture("styles").unwrap();
+    let fxs = fixtures::get_fixture("lengths").unwrap();
 
     let provider = icu_testdata::get_provider();
 

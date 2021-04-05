@@ -131,20 +131,20 @@ While the scheme may feel repetitive when looking at the import lines, it pays o
 
 ```rust
 use icu_locid::Locale;
-use icu_datetime::{DateTimeFormat, DateTimeStyle, skeleton::{Skeleton, SkeletonField}};
+use icu_datetime::{DateTimeFormat, DateTimeLength, skeleton::{Skeleton, SkeletonField}};
 use icu_list::ListFormat;
 
 fn format() -> Result {
     let loc: Locale = "ru".parse()?;
 
     let mut dt_ops = Default::default();
-    dt_opts.date_style = DateTimeStyle::Long;
+    dt_opts.date_length = DateTimeLength::Long;
 
     let dtf = DateTimeFormat::try_new(loc.clone(), dt_opts)?;
 
     let lf = ListFormat::try_new(loc, Default::default())?;
 
-    assert_eq!(Skeleton::from_style(dt_opts.date_style).get(0), Some(SkeletonField::YYYY));
+    assert_eq!(Skeleton::from_length(dt_opts.date_length).get(0), Some(SkeletonField::YYYY));
 }
 ```
 
@@ -214,28 +214,28 @@ the setter is only assigning the value, then exposing a public field is recommen
 #### Example
 
 ```rust
-enum DateTimeStyle {
+enum DateTimeLength {
     Long,
     Short,
 }
 
 struct DateTimeOptions {
-    pub time_style: DateTimeStyle,
-    pub date_style: DateTimeStyle,
+    pub time_length: DateTimeLength,
+    pub date_length: DateTimeLength,
 }
 
 fn main() {
     let mut opts = DateTimeOptions {
-        time_style: DateTimeStyle::Short,
-        date_style: DateTimeStyle::Long,
+        time_length: DateTimeLength::Short,
+        date_length: DateTimeLength::Long,
     }
 
     // Override
-    opts.time_style = DateTimeStyle::Long;
+    opts.time_length = DateTimeLength::Long;
 }
 ```
 
-Since the `date_style` and `time_style` fields can accept only valid values, and the getter/setter methods
+Since the `date_length` and `time_length` fields can accept only valid values, and the getter/setter methods
 would not perform any additional operations, those fields can be exposed as public.
 
 In all other situations, where the getter/setter are fallible, perform additional computations or optimizations, or an invariant between the fields has to be achieved, it is advised to use an equivalent getter/setter model:

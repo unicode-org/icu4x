@@ -12,15 +12,15 @@ used to quickly format any date and time provided.
 
 ```rust
 use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu_datetime::{DateTimeFormat, date::MockDateTime, options::length};
 
 let provider = icu_testdata::get_provider();
 
 let lid = langid!("en");
 
-let options = style::Bag {
-    date: Some(style::Date::Medium),
-    time: Some(style::Time::Short),
+let options = length::Bag {
+    date: Some(length::Date::Medium),
+    time: Some(length::Time::Short),
     ..Default::default()
 }.into();
 
@@ -35,7 +35,7 @@ let formatted_date = dtf.format(&date);
 assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
 ```
 
-At the moment, the crate provides only options using the `Style` bag, but in the future,
+At the moment, the crate provides only options using the `Length` bag, but in the future,
 we expect to add more ways to customize the output, like skeletons, and components.
 
 *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing

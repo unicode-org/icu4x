@@ -16,16 +16,16 @@
 //! # #[cfg(feature = "provider_serde")] {
 //! use icu_locid::Locale;
 //! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
+//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::length};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
 //! let locale: Locale = langid!("en").into();
 //!
 //! // See the next code example for a more ergonomic example with .into().
-//! let options = DateTimeFormatOptions::Style(style::Bag {
-//!     date: Some(style::Date::Medium),
-//!     time: Some(style::Time::Short),
+//! let options = DateTimeFormatOptions::Length(length::Bag {
+//!     date: Some(length::Date::Medium),
+//!     time: Some(length::Time::Short),
 //!     ..Default::default()
 //! });
 //!
@@ -42,18 +42,18 @@
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
-//! convert a [`options::style::Bag`] into a [`DateTimeFormatOptions::Style`].
+//! convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 //!
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
 //! # use icu_locid::Locale;
 //! # use icu_locid_macros::langid;
-//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::style};
+//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::length};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale: Locale = langid!("en").into();
-//! let options = style::Bag {
-//!     date: Some(style::Date::Medium),
-//!     time: Some(style::Time::Short),
+//! let options = length::Bag {
+//!     date: Some(length::Date::Medium),
+//!     time: Some(length::Time::Short),
 //!     ..Default::default()
 //! }.into();
 //!
@@ -61,7 +61,7 @@
 //! # } // feature = "provider_serde"
 //! ```
 //!
-//! At the moment, the crate provides only options using the [`Style`] bag, but in the future,
+//! At the moment, the crate provides only options using the [`Length`] bag, but in the future,
 //! we expect to add more ways to customize the output, like skeletons, and components.
 //!
 //! *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
@@ -71,7 +71,7 @@
 //!
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`ICU4X`]: ../icu/index.html
-//! [`Style`]: options::style
+//! [`Length`]: options::length
 //! [`MockDateTime`]: mock::MockDateTime
 mod arithmetic;
 pub mod date;
@@ -109,7 +109,7 @@ use std::borrow::Cow;
 /// ```
 /// use icu_locid::Locale;
 /// use icu_locid_macros::langid;
-/// use icu_datetime::{DateTimeFormat, options::style};
+/// use icu_datetime::{DateTimeFormat, options::length};
 /// use icu_datetime::mock::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -117,9 +117,9 @@ use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let options = style::Bag {
-///     date: Some(style::Date::Medium),
-///     time: Some(style::Time::Short),
+/// let options = length::Bag {
+///     date: Some(length::Date::Medium),
+///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
 /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())

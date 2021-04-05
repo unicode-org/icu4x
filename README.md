@@ -33,7 +33,7 @@ icu_provider_fs = "0.1"
 
 ```rust
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, date::MockDateTime, options::style};
+use icu::datetime::{DateTimeFormat, date::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
@@ -45,9 +45,9 @@ fn main() {
     let provider = FsDataProvider::try_new("./icu4x-data")
         .expect("Failed to initialize Data Provider.");
 
-    let options = style::Bag {
-        time: Some(style::Time::Medium),
-        date: Some(style::Date::Long),
+    let options = length::Bag {
+        time: Some(length::Time::Medium),
+        date: Some(length::Date::Long),
         ..Default::default()
     }.into();
 

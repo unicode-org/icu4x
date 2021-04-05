@@ -21,17 +21,17 @@ pub struct TestInput {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TestOptions {
-    pub style: TestOptionsStyle,
+    pub length: TestOptionsLength,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestOptionsStyle {
-    pub date: Option<TestStyleWidth>,
-    pub time: Option<TestStyleWidth>,
+pub struct TestOptionsLength {
+    pub date: Option<TestLength>,
+    pub time: Option<TestLength>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestStyleWidth {
+pub enum TestLength {
     #[serde(rename = "short")]
     Short,
     #[serde(rename = "medium")]
