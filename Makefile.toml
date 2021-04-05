@@ -155,6 +155,46 @@ for src_path in ${handle}
 end
 '''
 
+[tasks.wasm-dcmp]
+description = "Create WebAssembly decompiled code files from the WASM files"
+category = "ICU4X WASM"
+dependencies = ["wasm-wasm"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+wasm-decompile = which wasm-decompile
+assert ${wasm-decompile} "Could not find 'wasm-decompile' in path.\n*** Please run 'npm install -g wabt' ***"
+
+mkdir wasmpkg/wasm-decompile
+
+handle = glob_array wasmpkg/*.wasm
+for src_path in ${handle}
+    path_no_extension = substring ${src_path} -5
+    basename = substring ${path_no_extension} 8
+    out_path = concat wasmpkg/wasm-decompile/ ${basename} ".dcmp"
+
+    out_exists = is_path_exists ${out_path}
+    up_to_date = set false
+    if ${out_exists}
+        src_time = get_last_modified_time ${src_path}
+        out_time = get_last_modified_time ${out_path}
+        up_to_date = less_than ${src_time} ${out_time}
+    end
+
+    if not ${up_to_date}
+        echo Writing ${out_path}
+        output = exec ${wasm-decompile} ${src_path} -o ${out_path}
+        stdout = trim ${output.stdout}
+        stderr = trim ${output.stderr}
+        if ${stdout} or ${stderr} or ${output.code}
+            echo ${stdout}\n${stderr}\nexit code: ${output.code}
+            assert_fail "wasm-decompile printed warnings (shown above)"
+        end
+    end
+end
+'''
+
 [tasks.wasm-opt]
 description = "Create optimized WASM files from the WASM files"
 category = "ICU4X WASM"
@@ -235,6 +275,7 @@ category = "ICU4X WASM"
 dependencies = [
     "wasm-wasm",
     "wasm-wat",
+    "wasm-dcmp",
     "wasm-opt",
     "wasm-twiggy-dominators",
 ]
