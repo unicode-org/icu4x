@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617651165328,
+  "lastUpdate": 1617663003367,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3449,6 +3449,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 109806,
             "range": "± 2547",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "653c3ec23b76715caf9e50bc248828fac2049ee2",
+          "message": "Remove serialize_none and usages of skip_serializing_if (#613)\n\n* Remove serialize_none\r\n\r\n* Remove bincode skip_feature_sets\r\n\r\n* Regenerate testdata",
+          "timestamp": "2021-04-05T15:44:12-07:00",
+          "tree_id": "191c2a55d460c5aa4127c58662c7ad782d73bb2f",
+          "url": "https://github.com/unicode-org/icu4x/commit/653c3ec23b76715caf9e50bc248828fac2049ee2"
+        },
+        "date": 1617663002610,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 135051,
+            "range": "± 7140",
             "unit": "ns/iter"
           }
         ]
