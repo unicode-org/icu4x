@@ -30,6 +30,7 @@
           "K",
           "A"
         ],
+        "short": null,
         "wide": [
           "Ocak",
           "Şubat",
@@ -44,7 +45,8 @@
           "Kasım",
           "Aralık"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,7 +86,8 @@
           "Cuma",
           "Cumartesi"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
@@ -100,6 +103,7 @@
           "noon": "ö",
           "midnight": "gece"
         },
+        "short": null,
         "wide": {
           "am": "ÖÖ",
           "pm": "ÖS",
@@ -108,12 +112,15 @@
         }
       },
       "stand_alone": {
+        "abbreviated": null,
         "narrow": {
           "am": "ÖÖ",
           "pm": "ÖS",
           "noon": "öğle",
           "midnight": "gece yarısı"
-        }
+        },
+        "short": null,
+        "wide": null
       }
     }
   },

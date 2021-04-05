@@ -24,17 +24,9 @@ pub mod key {
 )]
 pub struct AffixesV1 {
     /// String to prepend before the decimal number.
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub prefix: Option<SmallString8>,
 
     /// String to append after the decimal number.
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub suffix: Option<SmallString8>,
 }
 

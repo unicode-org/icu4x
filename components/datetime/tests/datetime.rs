@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(all(not(feature = "serialize_none"), feature = "serde"))]
+#![cfg(feature = "serde")]
 
 mod fixtures;
 mod patterns;

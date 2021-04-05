@@ -21,11 +21,6 @@ include = [
 ]
 
 [package.metadata.cargo-all-features]
-# Skip combinations of export with bincode, since they are designed to fail
-skip_feature_sets = [
-    ["export", "bincode"],
-    ["export-bin", "bincode"],
-]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 extra_features = [
@@ -61,7 +56,6 @@ criterion = "0.3.3"
 [features]
 export = ["static_assertions", "log"]
 export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
-serialize_none = ["icu_provider_cldr/serialize_none"]
 bench = []
 
 [[bin]]

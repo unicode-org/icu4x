@@ -30,6 +30,7 @@
           "ন",
           "ডি"
         ],
+        "short": null,
         "wide": [
           "জানুয়ারী",
           "ফেব্রুয়ারী",
@@ -59,7 +60,10 @@
           "অক্টোবর",
           "নভেম্বর",
           "ডিসেম্বর"
-        ]
+        ],
+        "narrow": null,
+        "short": null,
+        "wide": null
       }
     },
     "weekdays": {
@@ -100,23 +104,32 @@
           "শুক্রবার",
           "শনিবার"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
         "abbreviated": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": null,
+          "midnight": null
         },
         "narrow": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": null,
+          "midnight": null
         },
+        "short": null,
         "wide": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": null,
+          "midnight": null
         }
-      }
+      },
+      "stand_alone": null
     }
   },
   "patterns": {

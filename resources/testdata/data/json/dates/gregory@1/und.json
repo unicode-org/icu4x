@@ -30,6 +30,7 @@
           "11",
           "12"
         ],
+        "short": null,
         "wide": [
           "M01",
           "M02",
@@ -44,7 +45,8 @@
           "M11",
           "M12"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,23 +86,32 @@
           "Fri",
           "Sat"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
         "abbreviated": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": null,
+          "midnight": null
         },
         "narrow": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": null,
+          "midnight": null
         },
+        "short": null,
         "wide": {
           "am": "AM",
-          "pm": "PM"
+          "pm": "PM",
+          "noon": null,
+          "midnight": null
         }
-      }
+      },
+      "stand_alone": null
     }
   },
   "patterns": {

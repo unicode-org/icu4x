@@ -9,12 +9,6 @@ use bincode::config::Options as _;
 use std::io;
 use std::ops::Deref;
 
-// See https://github.com/unicode-org/icu4x/issues/335
-static_assertions::assert_cfg!(
-    feature = "serialize_none",
-    "The serialize_none feature must be enabled when exporting to bincode. See #335"
-);
-
 /// A serializer for Bincode.
 pub struct Serializer {
     syntax: SyntaxOption,

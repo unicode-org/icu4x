@@ -43,7 +43,6 @@ getrandom = { version = "0.2", features = ["js"] }
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde"]
-serialize_none = []
 
 [[bench]]
 name = "fixed_decimal_format"

@@ -39,7 +39,6 @@ bench = false  # This option is required for Benchmark CI
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde", "icu_locid/serde"]
-serialize_none = []
 
 [[bench]]
 name = "locale_canonicalizer"

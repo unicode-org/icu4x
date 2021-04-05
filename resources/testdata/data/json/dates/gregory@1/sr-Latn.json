@@ -30,6 +30,7 @@
           "n",
           "d"
         ],
+        "short": null,
         "wide": [
           "januar",
           "februar",
@@ -44,7 +45,8 @@
           "novembar",
           "decembar"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,7 +86,8 @@
           "petak",
           "subota"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
@@ -100,6 +103,7 @@
           "noon": "podne",
           "midnight": "ponoć"
         },
+        "short": null,
         "wide": {
           "am": "pre podne",
           "pm": "po podne",
@@ -108,12 +112,15 @@
         }
       },
       "stand_alone": {
+        "abbreviated": null,
         "narrow": {
           "am": "pre podne",
           "pm": "po podne",
           "noon": "podne",
           "midnight": "ponoć"
-        }
+        },
+        "short": null,
+        "wide": null
       }
     }
   },

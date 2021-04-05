@@ -30,6 +30,7 @@
           "N",
           "D"
         ],
+        "short": null,
         "wide": [
           "enero",
           "febrero",
@@ -44,7 +45,8 @@
           "noviembre",
           "diciembre"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -94,7 +96,10 @@
           "jue.",
           "vie.",
           "sáb."
-        ]
+        ],
+        "narrow": null,
+        "short": null,
+        "wide": null
       }
     },
     "day_periods": {
@@ -102,25 +107,33 @@
         "abbreviated": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "mediodía"
+          "noon": "mediodía",
+          "midnight": null
         },
         "narrow": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "del mediodía"
+          "noon": "del mediodía",
+          "midnight": null
         },
+        "short": null,
         "wide": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "mediodía"
+          "noon": "mediodía",
+          "midnight": null
         }
       },
       "stand_alone": {
+        "abbreviated": null,
         "narrow": {
           "am": "a. m.",
           "pm": "p. m.",
-          "noon": "m."
-        }
+          "noon": "m.",
+          "midnight": null
+        },
+        "short": null,
+        "wide": null
       }
     }
   },

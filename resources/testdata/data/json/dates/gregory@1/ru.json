@@ -30,6 +30,7 @@
           "Н",
           "Д"
         ],
+        "short": null,
         "wide": [
           "января",
           "февраля",
@@ -60,6 +61,8 @@
           "нояб.",
           "дек."
         ],
+        "narrow": null,
+        "short": null,
         "wide": [
           "январь",
           "февраль",
@@ -116,6 +119,7 @@
         ]
       },
       "stand_alone": {
+        "abbreviated": null,
         "narrow": [
           "В",
           "П",
@@ -124,7 +128,9 @@
           "Ч",
           "П",
           "С"
-        ]
+        ],
+        "short": null,
+        "wide": null
       }
     },
     "day_periods": {
@@ -141,13 +147,15 @@
           "noon": "полд.",
           "midnight": "полн."
         },
+        "short": null,
         "wide": {
           "am": "AM",
           "pm": "PM",
           "noon": "полдень",
           "midnight": "полночь"
         }
-      }
+      },
+      "stand_alone": null
     }
   },
   "patterns": {

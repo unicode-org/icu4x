@@ -20,29 +20,9 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct PluralRuleStringsV1<'s> {
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub zero: Option<Cow<'s, str>>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub one: Option<Cow<'s, str>>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub two: Option<Cow<'s, str>>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub few: Option<Cow<'s, str>>,
-    #[cfg_attr(
-        all(feature = "provider_serde", not(feature = "serialize_none")),
-        serde(skip_serializing_if = "Option::is_none")
-    )]
     pub many: Option<Cow<'s, str>>,
 }

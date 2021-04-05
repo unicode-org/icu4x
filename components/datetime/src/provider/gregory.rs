@@ -59,10 +59,6 @@ macro_rules! symbols {
         ($name: ident { $element: ident: Option<$ty: ty>, $($tokens: tt)+ } -> ($($members:tt)*)) => {
             symbols!($name { $($tokens)* } -> (
                 $($members)*
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub $element: Option<$ty>,
             ));
         };
@@ -75,10 +71,6 @@ macro_rules! symbols {
         ($name: ident { $element: ident: Option<$ty: ty> $(,)? } -> ($($members:tt)*)) => {
             symbols!($name { } -> (
                 $($members)*
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub $element: Option<$ty>,
             ));
         };
@@ -108,10 +100,6 @@ macro_rules! symbols {
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
                 pub narrow: SymbolsV1,
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub short: Option<SymbolsV1>,
                 pub wide: SymbolsV1,
             }
@@ -120,25 +108,9 @@ macro_rules! symbols {
             #[derive(Debug, PartialEq, Clone, Default)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct StandAloneWidthsV1 {
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub abbreviated: Option<SymbolsV1>,
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub narrow: Option<SymbolsV1>,
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub short: Option<SymbolsV1>,
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub wide: Option<SymbolsV1>,
             }
 
@@ -146,10 +118,6 @@ macro_rules! symbols {
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct ContextsV1 {
                 pub format: FormatWidthsV1,
-                #[cfg_attr(
-                    all(feature="provider_serde", not(feature="serialize_none")),
-                    serde(skip_serializing_if = "Option::is_none"))
-                ]
                 pub stand_alone: Option<StandAloneWidthsV1>,
             }
         };

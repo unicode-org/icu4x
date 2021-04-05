@@ -30,6 +30,7 @@
           "N",
           "D"
         ],
+        "short": null,
         "wide": [
           "janvier",
           "février",
@@ -44,7 +45,8 @@
           "novembre",
           "décembre"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,7 +86,8 @@
           "vendredi",
           "samedi"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
@@ -100,13 +103,15 @@
           "noon": "midi",
           "midnight": "minuit"
         },
+        "short": null,
         "wide": {
           "am": "AM",
           "pm": "PM",
           "noon": "midi",
           "midnight": "minuit"
         }
-      }
+      },
+      "stand_alone": null
     }
   },
   "patterns": {

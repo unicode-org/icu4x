@@ -30,6 +30,7 @@
           "ب",
           "د"
         ],
+        "short": null,
         "wide": [
           "يناير",
           "فبراير",
@@ -44,7 +45,8 @@
           "نوفمبر",
           "ديسمبر"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,27 +86,40 @@
           "الجمعة",
           "السبت"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
         "abbreviated": {
           "am": "ص",
-          "pm": "م"
+          "pm": "م",
+          "noon": null,
+          "midnight": null
         },
         "narrow": {
           "am": "ص",
-          "pm": "م"
+          "pm": "م",
+          "noon": null,
+          "midnight": null
         },
+        "short": null,
         "wide": {
           "am": "ص",
-          "pm": "م"
+          "pm": "م",
+          "noon": null,
+          "midnight": null
         }
       },
       "stand_alone": {
+        "abbreviated": null,
+        "narrow": null,
+        "short": null,
         "wide": {
           "am": "صباحًا",
-          "pm": "مساءً"
+          "pm": "مساءً",
+          "noon": null,
+          "midnight": null
         }
       }
     }

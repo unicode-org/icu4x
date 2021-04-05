@@ -43,8 +43,3 @@ provider_serde = [
     "icu_plurals/provider_serde",
     "icu_uniset/provider_serde",
 ]
-serialize_none = [
-    "icu_datetime/serialize_none",
-    "icu_plurals/serialize_none",
-    "icu_uniset/serialize_none",
-]

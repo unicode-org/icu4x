@@ -42,7 +42,6 @@ To export `bincode` format, use
 cargo run
   --features export-bin
   --featuers bincode
-  --features serialize_none
   --
   --cldr-tag 37.0.0
   --out ./icu4x-data
