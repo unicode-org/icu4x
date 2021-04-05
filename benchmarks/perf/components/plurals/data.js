@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617649312447,
+  "lastUpdate": 1617651212080,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4787,6 +4787,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 93487,
             "range": "± 9893",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee6501eca99d1f2fa0a5a920bc7c6ea3da972544",
+          "message": "Add examples to LiteMap and improve WASM build tooling (#609)",
+          "timestamp": "2021-04-05T14:27:04-05:00",
+          "tree_id": "caddd5dcd160e1cb5c0147b32683c1df2e8c82a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee6501eca99d1f2fa0a5a920bc7c6ea3da972544"
+        },
+        "date": 1617651210887,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1132,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6599,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 94569,
+            "range": "± 942",
             "unit": "ns/iter"
           }
         ]
