@@ -15,7 +15,6 @@ use crate::mock::timezone::GmtOffset;
 pub enum DateTimeError {
     Parse(std::num::ParseIntError),
     Overflow { field: &'static str, max: usize },
-    UnexpectedSymbol { expected: char, found: char },
     MissingTimeZoneOffset,
 }
 
@@ -24,9 +23,6 @@ impl fmt::Display for DateTimeError {
         match self {
             Self::Parse(err) => write!(f, "{}", err),
             Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
-            Self::UnexpectedSymbol { expected, found } => {
-                write!(f, "Expected {}, found {}", expected, found)
-            }
             Self::MissingTimeZoneOffset => write!(f, "Expected time-zone offset but found none"),
         }
     }

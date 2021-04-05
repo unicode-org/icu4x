@@ -218,13 +218,7 @@ impl FromStr for GmtOffset {
             /* ASCII */ Some('-') => offset_sign = -1,
             /* U+2212 */ Some('−') => offset_sign = -1,
             Some('Z') => return Ok(GmtOffset(0)),
-            Some(c) => {
-                return Err(DateTimeError::UnexpectedSymbol {
-                    expected: '±',
-                    found: c,
-                })
-            }
-            None => return Err(DateTimeError::MissingTimeZoneOffset),
+            _ => return Err(DateTimeError::MissingTimeZoneOffset),
         };
 
         let seconds = match input.chars().count() {
