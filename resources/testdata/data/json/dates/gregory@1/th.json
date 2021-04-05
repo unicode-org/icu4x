@@ -30,6 +30,7 @@
           "พ.ย.",
           "ธ.ค."
         ],
+        "short": null,
         "wide": [
           "มกราคม",
           "กุมภาพันธ์",
@@ -44,7 +45,8 @@
           "พฤศจิกายน",
           "ธันวาคม"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,7 +86,8 @@
           "วันศุกร์",
           "วันเสาร์"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
@@ -100,6 +103,7 @@
           "noon": "เที่ยง",
           "midnight": "เที่ยงคืน"
         },
+        "short": null,
         "wide": {
           "am": "ก่อนเที่ยง",
           "pm": "หลังเที่ยง",
@@ -108,12 +112,15 @@
         }
       },
       "stand_alone": {
+        "abbreviated": null,
         "narrow": {
           "am": "ก่อนเที่ยง",
           "pm": "หลังเที่ยง",
           "noon": "เที่ยง",
           "midnight": "เที่ยงคืน"
-        }
+        },
+        "short": null,
+        "wide": null
       }
     }
   },

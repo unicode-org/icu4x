@@ -30,6 +30,7 @@
           "н",
           "д"
         ],
+        "short": null,
         "wide": [
           "јануар",
           "фебруар",
@@ -44,7 +45,8 @@
           "новембар",
           "децембар"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "weekdays": {
       "format": {
@@ -84,7 +86,8 @@
           "петак",
           "субота"
         ]
-      }
+      },
+      "stand_alone": null
     },
     "day_periods": {
       "format": {
@@ -100,6 +103,7 @@
           "noon": "подне",
           "midnight": "поноћ"
         },
+        "short": null,
         "wide": {
           "am": "пре подне",
           "pm": "по подне",
@@ -108,12 +112,15 @@
         }
       },
       "stand_alone": {
+        "abbreviated": null,
         "narrow": {
           "am": "пре подне",
           "pm": "по подне",
           "noon": "подне",
           "midnight": "поноћ"
-        }
+        },
+        "short": null,
+        "wide": null
       }
     }
   },
