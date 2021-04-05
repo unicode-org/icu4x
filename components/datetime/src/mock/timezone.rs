@@ -248,8 +248,7 @@ impl FromStr for GmtOffset {
         let offset_sign;
         match input.chars().next() {
             Some('+') => offset_sign = 1,
-            /* ASCII */ Some('-') => offset_sign = -1,
-            /* U+2212 */ Some('−') => offset_sign = -1,
+            Some('-') => offset_sign = -1,
             Some('Z') => return Ok(GmtOffset(0)),
             _ => return Err(DateTimeError::MissingTimeZoneOffset),
         };
