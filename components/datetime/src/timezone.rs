@@ -190,12 +190,15 @@ impl<'d> TimeZoneFormat<'d> {
         s
     }
 
-    pub fn generic_location_format(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
+    pub(super) fn generic_location_format(
+        &self,
+        time_zone: &impl TimeZoneInput,
+    ) -> Option<Cow<str>> {
         self.exemplar_city(time_zone)
             .map(|location| Cow::Owned(self.zone_formats.region_format.replace("{0}", &location)))
     }
 
-    pub fn short_generic_non_location_format(
+    pub(super) fn short_generic_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
     ) -> Option<Cow<str>> {
@@ -205,7 +208,7 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
-    pub fn long_generic_non_location_format(
+    pub(super) fn long_generic_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
     ) -> Option<Cow<str>> {
@@ -215,7 +218,7 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
-    pub fn short_specific_non_location_format(
+    pub(super) fn short_specific_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
     ) -> Option<Cow<str>> {
@@ -230,7 +233,7 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
-    pub fn long_specific_non_location_format(
+    pub(super) fn long_specific_non_location_format(
         &self,
         time_zone: &impl TimeZoneInput,
     ) -> Option<Cow<str>> {
@@ -245,7 +248,7 @@ impl<'d> TimeZoneFormat<'d> {
             .map(Clone::clone)
     }
 
-    pub fn localized_gmt_format(&self, time_zone: &impl TimeZoneInput) -> Cow<str> {
+    pub(super) fn localized_gmt_format(&self, time_zone: &impl TimeZoneInput) -> Cow<str> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() {
             self.zone_formats.gmt_zero_format.clone()
@@ -269,14 +272,14 @@ impl<'d> TimeZoneFormat<'d> {
         }
     }
 
-    pub fn exemplar_city(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
+    pub(super) fn exemplar_city(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
         self.exemplar_cities
             .as_ref()
             .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
             .map(Clone::clone)
     }
 
-    pub fn unknown_city(&self) -> Cow<str> {
+    pub(super) fn unknown_city(&self) -> Cow<str> {
         self.exemplar_cities
             .as_ref()
             .unwrap()
