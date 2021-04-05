@@ -92,14 +92,17 @@ pub(crate) enum IsoFormat {
     /// Formats zero-offset numerically.
     /// e.g. +0500
     Basic,
+
     /// ISO-8601 Extended Format.
     /// Formats zero-offset numerically.
     /// e.g. +05:00
     Extended,
+
     /// ISO-8601 Basic Format.
     /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
     /// e.g. +0500
     UtcBasic,
+
     /// ISO-8601 Extended Format.
     /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
     /// e.g. +05:00
@@ -110,6 +113,7 @@ pub(crate) enum IsoFormat {
 pub(crate) enum IsoMinutes {
     /// Minutes are always displayed.
     Required,
+
     /// Minutes are displayed only if they are non-zero.
     Optional,
 }
@@ -118,6 +122,7 @@ pub(crate) enum IsoMinutes {
 pub(crate) enum IsoSeconds {
     /// Seconds are displayed only if they are non-zero.
     Optional,
+
     /// Seconds are not displayed.
     None,
 }
@@ -126,6 +131,7 @@ pub(crate) enum IsoSeconds {
 pub(crate) enum ZeroPadding {
     /// Add zero-padding.
     On,
+
     /// Do not add zero-padding.
     Off,
 }
