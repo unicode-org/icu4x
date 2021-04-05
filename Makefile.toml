@@ -98,7 +98,7 @@ dependencies = [
 description = "Build all examples as WASM into the target directory"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly"
+toolchain = "nightly-2021-03-15"
 command = "cargo"
 args = ["wasm-build", "--examples"]
 
@@ -118,26 +118,65 @@ dependencies = ["wasm-build", "wasm-dir"]
 [tasks.wasm-wat]
 description = "Create WebAssembly Text files from the WASM files"
 category = "ICU4X WASM"
-command = "find"
-args = ["wasmpkg/", "-name", "*.wasm", "-exec", "wasm2wat", "{}", "-o", "{}.wat", ";"]
 dependencies = ["wasm-wasm"]
-install_script = ["which wasm2wat || npm install -g wabt"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+wasm2wat = which wasm2wat
+assert ${wasm2wat} "Could not find 'wasm2wat' in path.\n*** Please run 'npm install -g wabt' ***"
+
+handle = glob_array wasmpkg/*.wasm
+for path in ${handle}
+    basename = substring ${path} -5
+    out_path = concat ${basename} ".wat"
+    exec --fail-on-error ${wasm2wat} ${path} -o ${out_path}
+end
+'''
 
 [tasks.wasm-opt]
 description = "Create optimized WASM files from the WASM files"
 category = "ICU4X WASM"
-command = "find"
-args = ["wasmpkg/", "-name", "*.wasm", "-exec", "wasm-opt", "{}", "-o", "{}.opt", ";"]
 dependencies = ["wasm-wasm"]
-install_script = ["which wasm-opt || npm install -g wasm-opt"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+wasm-opt = which wasm-opt
+assert ${wasm-opt} "Could not find 'wasm-opt' in path.\n*** Please run 'npm install -g wasm-opt' ***"
+
+handle = glob_array wasmpkg/*.wasm
+for path in ${handle}
+    basename = substring ${path} -5
+    out_path = concat ${basename} "+opt.wasm"
+    output = exec ${wasm-opt} ${path} -o ${out_path}
+    stdout = trim ${output.stdout}
+    stderr = trim ${output.stderr}
+    if ${stdout} or ${stderr} or ${output.code}
+        echo ${stdout}\n${stderr}\nexit code: ${output.code}
+        assert_fail "wasm-opt printed warnings (shown above)"
+    end
+end
+'''
 
 [tasks.wasm-twiggy-dominators]
 description = "Create Twiggy Dominator files from the WASM files"
 category = "ICU4X WASM"
-command = "find"
-args = ["wasmpkg/", "-name", "*.wasm", "-exec", "twiggy", "dominators", "{}", "-o", "{}.txt", ";"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+twiggy = which twiggy
+assert ${twiggy} "Could not find 'twiggy' in path.\n*** Please run 'cargo install twiggy' ***"
+
+handle = glob_array wasmpkg/*.wasm
+for path in ${handle}
+    basename = substring ${path} -5
+    out_path = concat ${basename} "+twiggy.txt"
+    exec --fail-on-error ${twiggy} dominators ${path} -o ${out_path}
+end
+'''
 dependencies = ["wasm-wasm"]
-install_crate = "twiggy"
 
 [tasks.wasm]
 description = "All-in-one command to build examples and supplements to wasmpkg"
