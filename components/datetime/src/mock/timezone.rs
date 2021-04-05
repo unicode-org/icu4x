@@ -84,27 +84,49 @@ impl TimeZoneInput for MockTimeZone {
         self.country_code.as_ref().map(AsRef::as_ref)
     }
 }
+
+/// An enum to determine which ISO-8601 format should be used to
+/// format the GMT offset.
 pub(crate) enum IsoFormat {
+    /// ISO-8601 Basic Format.
+    /// Formats zero-offset numerically.
     Basic,
+    /// ISO-8601 Extended Format.
+    /// Formats zero-offset numerically.
     Extended,
+    /// ISO-8601 Basic Format.
+    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
     UtcBasic,
+    /// ISO-8601 Extended Format.
+    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
     UtcExtended,
 }
+
+/// Whether the minutes field should be optional or required in ISO-8601 format.
 pub(crate) enum IsoMinutes {
+    /// Minutes are always displayed.
     Required,
+    /// Minutes are displayed only if they are non-zero.
     Optional,
 }
 
+/// Whether the seconds field should be optional or required ISO-8601 format.
 pub(crate) enum IsoSeconds {
+    /// Seconds are displayed only if they are non-zero.
     Optional,
+    /// Seconds are not displayed.
     None,
 }
 
+/// Whether a field should be zero-padded in ISO-8601 format.
 pub(crate) enum ZeroPadding {
+    /// Add zero-padding.
     On,
+    /// Do not add zeor-padding.
     Off,
 }
 
+/// The GMT offset in seconds for a `ZonedDateTime`.
 #[derive(Copy, Clone, Debug, Default)]
 pub struct GmtOffset(i32);
 
@@ -142,35 +164,43 @@ fn format_segment(n: u8, padding: ZeroPadding) -> TinyStr4 {
 }
 
 impl GmtOffset {
+    /// Formats the hours as a `TinyStr4` with optional zero-padding.
     pub(crate) fn format_hours(&self, padding: ZeroPadding) -> TinyStr4 {
         format_segment((self.0 / 3600).abs() as u8, padding)
     }
 
+    /// Formats the minutes as a `TinyStr4` with zero-padding.
     pub(crate) fn format_minutes(&self) -> TinyStr4 {
         format_segment((self.0 % 3600 / 60).abs() as u8, ZeroPadding::On)
     }
 
+    /// Formats the seconds as a `TinyStr4` with zero-padding.
     pub(crate) fn format_seconds(&self) -> TinyStr4 {
         format_segment((self.0 % 3600 % 60).abs() as u8, ZeroPadding::On)
     }
 
+    /// Whether the GMT offset is positive.
     pub(crate) fn is_positive(&self) -> bool {
         self.0 >= 0
     }
 
+    /// Whether the GMT offset is zero.
     pub(crate) fn is_zero(&self) -> bool {
         self.0 == 0
     }
 
+    /// Whether the GMT offset has non-zero minutes.
     pub(crate) fn has_minutes(&self) -> bool {
         self.0 % 3600 / 60 > 0
     }
 
+    /// Whether the GMT offset has non-zero seconds.
     pub(crate) fn has_seconds(&self) -> bool {
         self.0 % 3600 % 60 > 0
     }
 
-    pub(crate) fn iso_8601_format<'a>(
+    /// Formats a GMT offset in ISO-8601 format.
+    pub(crate) fn iso8601_format<'a>(
         self,
         format: IsoFormat,
         minutes: IsoMinutes,
@@ -242,7 +272,8 @@ impl FromStr for GmtOffset {
             _ => panic!("Invalid time-zone designator"),
         };
 
-        if seconds > 97200 || seconds < -97200 {
+        // Valid range is from GMT-12 to GMT+14 in seconds.
+        if seconds < -43200 || seconds > 50400 {
             Err(DateTimeError::Overflow {
                 field: "GmtOffset",
                 max: 97200,

@@ -82,13 +82,13 @@ where
                 length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             fields::TimeZone::UpperZ => match u8::from(field.length) {
-                1..=3 => time_zone.gmt_offset().iso_8601_format(
+                1..=3 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
                 4 => time_zone_format.localized_gmt_format(time_zone),
-                5 => time_zone.gmt_offset().iso_8601_format(
+                5 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
@@ -122,27 +122,27 @@ where
                 length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             fields::TimeZone::LowerX => match u8::from(field.length) {
-                1 => time_zone.gmt_offset().iso_8601_format(
+                1 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcBasic,
                     IsoMinutes::Optional,
                     IsoSeconds::None,
                 ),
-                2 => time_zone.gmt_offset().iso_8601_format(
+                2 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
                     IsoSeconds::None,
                 ),
-                3 => time_zone.gmt_offset().iso_8601_format(
+                3 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::None,
                 ),
-                4 => time_zone.gmt_offset().iso_8601_format(
+                4 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                5 => time_zone.gmt_offset().iso_8601_format(
+                5 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
@@ -150,27 +150,27 @@ where
                 length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
             },
             fields::TimeZone::UpperX => match u8::from(field.length) {
-                1 => time_zone.gmt_offset().iso_8601_format(
+                1 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,
                     IsoMinutes::Optional,
                     IsoSeconds::None,
                 ),
-                2 => time_zone.gmt_offset().iso_8601_format(
+                2 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::None,
                 ),
-                3 => time_zone.gmt_offset().iso_8601_format(
+                3 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Extended,
                     IsoMinutes::Required,
                     IsoSeconds::None,
                 ),
-                4 => time_zone.gmt_offset().iso_8601_format(
+                4 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                5 => time_zone.gmt_offset().iso_8601_format(
+                5 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Extended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
