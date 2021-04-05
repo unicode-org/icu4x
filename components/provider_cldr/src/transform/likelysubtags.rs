@@ -76,7 +76,6 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
     }
 }
 
-icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, LikelySubtagsV1, ERASED, 'd, 's);
 icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, LikelySubtagsV1, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {

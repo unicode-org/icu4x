@@ -22,10 +22,10 @@ more general and open to independent third party extensions.
 > inconsistent word use is a bug, and should be fixed.
 
 [cldr]: http://cldr.unicode.org
-[dp]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
+[dp]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
 [ff]: https://github.com/filmil
-[hunk]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
-[icudp]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
+[hunk]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
+[icudp]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
 [zb]: https://github.com/zbraniecki
 
 ## Prior Art
@@ -36,8 +36,8 @@ the API by using *Data Providers*.  The API is using the
 `key:request/value:response` pattern.  See [Request][rq] in the source code for
 the example key.
 
-[dm]: https://github.com/unicode-org/icu4x/blob/master/docs/data-pipeline.md
-[rq]: https://github.com/unicode-org/icu4x/blob/master/components/data-provider/src/lib.rs
+[dm]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
+[rq]: https://github.com/unicode-org/icu4x/blob/main/components/provider_cldr/src/lib.rs
 
 ## Use cases
 
@@ -219,7 +219,7 @@ CLDR][dpcldr] uses a 4-dimensional key space consisting of:
 - a Key;
 - a Payload.
 
-[dpcldr]: https://github.com/unicode-org/icu4x/blob/master/components/data-provider/src/lib.rs#L52
+[dpcldr]: https://github.com/unicode-org/icu4x/blob/main/components/provider_cldr/src/lib.rs
 
 This key space is intended to fit any CLDR resource according to the data
 mapping which is internally defined by CLDR rules.
