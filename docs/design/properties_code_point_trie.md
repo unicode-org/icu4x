@@ -12,7 +12,7 @@ Before considering the design of APIs and efficient data structures, we first ha
 
 The use cases, or manner of data access, inform the designs of APIs and data structures. For regular expression parsers (regex), we need to support a text description of a set of code points sharing a property. In this case, returning a [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) (a set of Unicode code points) provides the most efficient usable data. For binary properties, the property name is enough for input. For enumerated properties, the property name and a specific property value are required to uniquely determine a set of code points. In these cases, all dimensions except the code point dimension are fixed (given as inputs).
 
-In other cases, such as the implementation of internationalization algorithms, iteration through code points is a typical implementation strategy. During such iteration, the value of a code point property -- usually, an enumerated property -- can inform the algorithm in question. In such cases, the code point value and enumerated property name dimensions must be fixed (provided as inputs), and the return value is the remaining dimension -- the enumerated property value. To support this use case, the [`CodePointTrie`](https://sites.google.com/site/icusite/design/struct/utrie) data structure is an optimal implementation.
+In other cases, such as UAX 29 segmentation algorithms, iteration through code points is a typical implementation strategy. During such iteration, the value of a code point property -- usually, an enumerated property -- can inform the algorithm in question. In such cases, the code point value and enumerated property name dimensions must be fixed (provided as inputs), and the return value is the remaining dimension -- the enumerated property value. To support this use case, the [`CodePointTrie`](https://sites.google.com/site/icusite/design/struct/utrie) data structure is an optimal implementation.
 
 The `CodePointTrie` data structure also serves Unicode data lookups to serve algorithms for Unicode normalization, collation, etc.
 
@@ -32,19 +32,19 @@ See previous discussion in [issue 131](https://github.com/unicode-org/icu4x/issu
 
 ### Options
 
-#### Option 1: Re-implement `CodePointTrie` in Rust in ICU4X
+#### Option 1: Implement full-stack `CodePointTrie` (builder and reader) in Rust in ICU4X
 
 This option entails writing new Rust code that supports all of the functionality of the `CodePointTrie`.
 
-The advantages would be to have a Rust-native code that can compile entirely within ICU4X and potentially be used elsewhere.
+The advantage would be to have Rust-native code that can compile entirely within ICU4X and potentially be used elsewhere.
 
 The disadvantages would be the large amount of time to implement all of the complicated logic (largely located in the builder), and the possibility of losing feature parity 'sync' if/when ICU makes further improvements to the `CodePointTrie` implementation.
 
-#### Option 2: Implement a reader for the ICU4C `CodePointTrie` binary data directly in Rust in ICU4X
+#### Option 2: Implement the `CodePointTrie` reader in ICU4X Rust and import compiled data from ICU4C
 
-This option entails writing Rust code that can interpret the binary serialization of the `CodePointTrie` and navigate it directly. It would require also creating an "offline" step (relative to ICU4X) in which ICU4C binary data is exported as a companion package of data in the data downloads for new each ICU release.
+This option entails writing Rust code that can interpret the binary serialization of the `CodePointTrie` and navigate it directly. It would also require creating an "offline" step (relative to ICU4X) in which ICU4C binary data is exported as a companion package in the data downloads for new each ICU release.
 
-The advantages would be having code in ICU4X that shares the same precomputed optimized code point trie data, and it is therefore guaranteed to stay in sync with future improvements in `CodePointTrie` implementation in order to use new versions of data. Only the `CodePointTrie` reader code needs to be ported to read the serialized data, which is much smaller than the C++ code in ICU4C for the builder that builds the structure that gets serialized.
+The advantages would be having code in ICU4X that shares the same precomputed optimized code point trie data, and is therefore guaranteed to stay in sync with future improvements in `CodePointTrie` implementation in order to use new versions of data. Only the `CodePointTrie` reader code needs to be ported to read the serialized data, which is much smaller than the C++ code in ICU4C for the builder that builds the structure that gets serialized.
 
 The disadvantages would be similar to what are applicable for other external sources of data in ICU4X that go through a data provider (an extra data dependency that requires an offline step for downloading/exporting during build and/or installation time).
 
