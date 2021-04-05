@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// LiteMap is intended as a small and low-memory drop-in replacement for
-// HashMap. This example demonstrates how it compares to HashMap.
+// LiteMap is intended as a small and low-memory drop-in replacement for HashMap.
+//
+// This example does not use LiteMap. The reader may compare this HashMap example to the
+// LiteMap example to showcase analogous operations between HashMap and LiteMap.
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
