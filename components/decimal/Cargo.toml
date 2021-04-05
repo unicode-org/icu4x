@@ -37,6 +37,7 @@ icu_testdata = { version = "0.1", path = "../../resources/testdata" }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"
+getrandom = { version = "0.2", features = ["js"] }
 
 [features]
 default = ["provider_serde"]

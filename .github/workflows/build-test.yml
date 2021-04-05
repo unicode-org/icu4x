@@ -280,6 +280,7 @@ jobs:
               icu_uniset/unicode_bmp_blocks_selector
               fixed_decimal/permyriad
               writeable/writeable_message
+              litemap/language_names_lite_map
 
     runs-on: ${{ matrix.os }}
 

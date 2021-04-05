@@ -519,6 +519,7 @@ name = "fixed_decimal"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "getrandom 0.2.2",
  "icu_benchmark_macros",
  "rand 0.8.3",
  "rand_distr 0.4.0",
@@ -652,8 +653,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c9495705279e7140bf035dde1f6e750c162df8b625267cd52cc44e0b156732c8"
 dependencies = [
  "cfg-if 1.0.0",
+ "js-sys",
  "libc",
  "wasi 0.10.0+wasi-snapshot-preview1",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -887,6 +890,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "fixed_decimal",
+ "getrandom 0.2.2",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
@@ -1196,6 +1200,9 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 name = "litemap"
 version = "0.1.1"
 dependencies = [
+ "icu_benchmark_macros",
+ "icu_locid",
+ "icu_locid_macros",
  "serde",
  "serde_json",
 ]
