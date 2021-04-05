@@ -135,14 +135,13 @@ pub(crate) enum ZeroPadding {
 pub struct GmtOffset(i32);
 
 /// Get the ascii byte of a numeric digit.
-fn ascii_digit(digit: u8) -> u8 {
-    debug_assert!((0..=9).contains(&digit));
+/// Only called on digits from in range 0..=9.
+const fn ascii_digit(digit: u8) -> u8 {
     digit + b'0'
 }
 
 /// Formats a time segment with optional zero padding.
-fn format_segment(n: u8, padding: ZeroPadding) -> TinyStr4 {
-    debug_assert!((0..=60).contains(&n));
+const fn format_segment(n: u8, padding: ZeroPadding) -> TinyStr4 {
     // This section is safe because it operates on a finite set of 0..=60
     // and it ensures that all TinyStr4s are constructed from valid
     // little-endian bytes, which is the required internal representation.
