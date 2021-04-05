@@ -3,7 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    format::datetime, options::DateTimeFormatOptions, provider::helpers::DateTimePatterns,
+    fields::FieldSymbol,
+    format::datetime,
+    options::DateTimeFormatOptions,
+    pattern::PatternItem,
+    provider::{gregory::DatesV1, helpers::DateTimePatterns},
 };
 use icu_locid::Locale;
 use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
@@ -103,16 +107,50 @@ impl<'d> DateTimeFormat<'d> {
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
+        let time_zone_field = pattern
+            .items()
+            .iter()
+            .filter_map(|p| match p {
+                PatternItem::Field(field) => Some(field),
+                _ => None,
+            })
+            .find(|field| matches!(field.symbol, FieldSymbol::TimeZone(_)));
+
+        if let Some(field) = time_zone_field {
+            return Err(DateTimeFormatError::UnsupportedField(field.symbol));
+        }
+
+        Ok(Self::new(locale, pattern, data))
+    }
+
+    /// Creates a new `DateTimeFormat` regardless of whether there are time-zone symbols in the pattern.
+    ///
+    /// By contrast, the public `DateTimeFormat::try_new` function will return an `Err` if there are
+    /// time-zone symbols in the pattern.
+    ///
+    /// This function is only `pub(super)` (not `pub`) because it is needed by `ZonedDateTimeFormat`
+    /// to create a `DateTimeFormat` for use internally. `ZonedDateTimeFormat` maintains
+    /// the invariant that `DateTimeFormat` will not be used to format the time zone.
+    ///
+    /// Creating a `DateTimeFormat` with time-zone symbols should always be an error
+    /// in public contexts.
+    pub(super) fn new<T: Into<Locale>>(
+        locale: T,
+        pattern: Pattern,
+        data: Cow<'d, DatesV1>,
+    ) -> Self {
+        let locale = locale.into();
+
         let symbols = match data {
             Cow::Borrowed(data) => Cow::Borrowed(&data.symbols),
             Cow::Owned(data) => Cow::Owned(data.symbols),
         };
 
-        Ok(Self {
+        Self {
             locale,
             pattern,
             symbols,
-        })
+        }
     }
 
     /// `format` takes a `DateTime` value and returns an instance of a `FormattedDateTime` object
@@ -217,5 +255,33 @@ impl<'d> DateTimeFormat<'d> {
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");
         s
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn constructing_datetime_format_with_zones_is_err() {
+        use crate::options::style::{Bag, Time};
+        use crate::{DateTimeFormat, DateTimeFormatOptions};
+        use icu_locid::Locale;
+        use icu_locid_macros::langid;
+
+        let options = DateTimeFormatOptions::Style(Bag {
+            time: Some(Time::Full),
+            ..Default::default()
+        });
+
+        let locale: Locale = langid!("en").into();
+        let provider = icu_testdata::get_provider();
+        let result = DateTimeFormat::try_new(locale, &provider, &options.into());
+        assert!(matches!(
+            result,
+            Err(DateTimeFormatError::UnsupportedField(
+                FieldSymbol::TimeZone(_)
+            ))
+        ));
     }
 }

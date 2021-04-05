@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::Locale;
-use icu_provider::DataProvider;
+use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 
 use crate::{
     date::ZonedDateTimeInput,
     datetime::DateTimeFormat,
     format::zoned_datetime::{self, FormattedZonedDateTime},
     options::DateTimeFormatOptions,
-    provider,
+    provider::{self, helpers::DateTimePatterns},
     timezone::TimeZoneFormat,
     DateTimeFormatError,
 };
@@ -38,7 +38,26 @@ impl<'d> ZonedDateTimeFormat<'d> {
             + DataProvider<'d, provider::timezones::MetaZoneSpecificNamesShortV1<'d>>
             + ?Sized,
     {
-        let date_time_format = DateTimeFormat::try_new(locale, date_provider, options)?;
+        let locale = locale.into();
+        let data = date_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .payload
+            .take()?;
+
+        let pattern = data
+            .patterns
+            .get_pattern_for_options(options)?
+            .unwrap_or_default();
+
+        let date_time_format = DateTimeFormat::new(locale, pattern, data);
         let time_zone_format = TimeZoneFormat::try_new(
             date_time_format.locale.clone(),
             date_time_format.pattern.clone(),
