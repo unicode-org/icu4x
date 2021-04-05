@@ -126,7 +126,7 @@ pub(crate) enum IsoSeconds {
 pub(crate) enum ZeroPadding {
     /// Add zero-padding.
     On,
-    /// Do not add zeor-padding.
+    /// Do not add zero-padding.
     Off,
 }
 
