@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617651212080,
+  "lastUpdate": 1617663061082,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4829,6 +4829,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 94569,
             "range": "± 942",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "653c3ec23b76715caf9e50bc248828fac2049ee2",
+          "message": "Remove serialize_none and usages of skip_serializing_if (#613)\n\n* Remove serialize_none\r\n\r\n* Remove bincode skip_feature_sets\r\n\r\n* Regenerate testdata",
+          "timestamp": "2021-04-05T15:44:12-07:00",
+          "tree_id": "191c2a55d460c5aa4127c58662c7ad782d73bb2f",
+          "url": "https://github.com/unicode-org/icu4x/commit/653c3ec23b76715caf9e50bc248828fac2049ee2"
+        },
+        "date": 1617663054816,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1231,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7630,
+            "range": "± 444",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 121798,
+            "range": "± 10314",
             "unit": "ns/iter"
           }
         ]
