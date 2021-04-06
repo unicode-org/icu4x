@@ -180,7 +180,7 @@ impl Bag {
             fields.push(Field {
                 symbol: FieldSymbol::Weekday(fields::Weekday::Format),
                 length: match weekday {
-                    // Day of week name, format style.
+                    // Day of week name, format length.
                     //
                     // E..EEE   Tue      Abbreviated
                     // EEEE     Tuesday  Wide
