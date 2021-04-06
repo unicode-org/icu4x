@@ -265,6 +265,7 @@ impl From<fields::SymbolError> for SkeletonError {
             fields::SymbolError::Unknown(byte) => {
                 // NOTE: If you remove a symbol due to it now being supported,
                 //       make sure to regenerate the test data.
+                //       https://github.com/unicode-org/icu4x/blob/main/resources/testdata/README.md
                 match byte {
                     // TODO(#487) - Flexible day periods
                     b'B'
@@ -636,6 +637,7 @@ mod test {
     // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
     //       on your symbol from impl From<fields::SymbolError> for SkeletonError
     //       and then regenerate the test data.
+    //       https://github.com/unicode-org/icu4x/blob/main/resources/testdata/README.md
     #[rustfmt::skip]
     const UNSUPPORTED_STRING_SKELETONS: [&str; 19] = [
         // TODO(#487) - Flexible day periods
