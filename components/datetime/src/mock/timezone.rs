@@ -85,8 +85,7 @@ impl TimeZoneInput for MockTimeZone {
     }
 }
 
-/// An enum to determine which ISO-8601 format should be used to
-/// format the GMT offset.
+/// Determines which ISO-8601 format should be used to format a `GmtOffset`.
 pub(crate) enum IsoFormat {
     /// ISO-8601 Basic Format.
     /// Formats zero-offset numerically.
@@ -118,7 +117,7 @@ pub(crate) enum IsoMinutes {
     Optional,
 }
 
-/// Whether the seconds field should be optional or required ISO-8601 format.
+/// Whether the seconds field should be optional or excluded in ISO-8601 format.
 pub(crate) enum IsoSeconds {
     /// Seconds are displayed only if they are non-zero.
     Optional,
