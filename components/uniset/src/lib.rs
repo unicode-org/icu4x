@@ -22,7 +22,7 @@
 //! the [`UnicodeSetBuilder`], or from the TBA Properties API.
 //!
 //! ```
-//! use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+//! use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
 //!
 //! let mut builder = UnicodeSetBuilder::new();
 //! builder.add_range(&('A'..'Z'));
@@ -36,7 +36,7 @@
 //! Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
 //!
 //! ```
-//! use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+//! use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
 //!
 //! let mut builder = UnicodeSetBuilder::new();
 //! builder.add_range(&('A'..'Z'));

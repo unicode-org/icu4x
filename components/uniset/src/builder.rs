@@ -80,7 +80,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_char('a');
     /// let check = builder.build();
@@ -101,7 +101,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_u32(65);
     /// let check = builder.build();
@@ -119,7 +119,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// let check = builder.build();
@@ -135,7 +135,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+    /// use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 76]).unwrap();
     /// builder.add_set(&set);
@@ -170,7 +170,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_char('A');
@@ -186,7 +186,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_range(&('A'..='C'));
@@ -202,7 +202,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+    /// use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
@@ -220,7 +220,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_char('A');
@@ -240,7 +240,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_range(&('A'..='B'));
@@ -261,7 +261,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
@@ -323,7 +323,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![0, 65, 70, (std::char::MAX as u32) + 1]).unwrap();
     /// builder.add_set(&set);
@@ -351,7 +351,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='D'));
     /// builder.complement_char('A');
@@ -372,7 +372,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
+    /// use icu::uniset::UnicodeSetBuilder;
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='D'));
     /// builder.complement_range(&('C'..='F'));
@@ -392,7 +392,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let set = UnicodeSet::from_inversion_list(vec![65, 70, 75, 90]).unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
@@ -410,7 +410,7 @@ impl UnicodeSetBuilder {
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSetBuilder, UnicodeSet};
+    /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
     /// let check = builder.build();
     /// assert!(check.is_empty());

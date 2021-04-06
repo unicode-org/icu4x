@@ -1073,6 +1073,7 @@ name = "icu_uniset"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu",
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",
