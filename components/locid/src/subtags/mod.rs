@@ -23,7 +23,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid::subtags::{Language, Script, Region, Variant};
+//! use icu::locid::subtags::{Language, Script, Region, Variant};
 //!
 //! let language: Language = "en".parse()
 //!     .expect("Failed to parse a lanuage subtag.");

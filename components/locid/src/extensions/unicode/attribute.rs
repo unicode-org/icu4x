@@ -17,7 +17,7 @@ use tinystr::TinyStr8;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::unicode::Attribute;
+/// use icu::locid::extensions::unicode::Attribute;
 ///
 /// let attr: Attribute = "buddhist".parse()
 ///     .expect("Failed to parse an Attribute.");
@@ -36,7 +36,7 @@ impl Attribute {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::Attribute;
+    /// use icu::locid::extensions::unicode::Attribute;
     ///
     /// let attribute = Attribute::from_bytes(b"foobar")
     ///     .expect("Parsing failed.");
@@ -65,7 +65,7 @@ impl Attribute {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::Attribute;
+    /// use icu::locid::extensions::unicode::Attribute;
     ///
     /// let attribute = Attribute::from_bytes(b"foobar")
     ///     .expect("Parsing failed.");

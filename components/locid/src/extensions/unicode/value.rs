@@ -18,7 +18,7 @@ use tinystr::TinyStr8;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::unicode::Value;
+/// use icu::locid::extensions::unicode::Value;
 ///
 /// let value1: Value = "gregory".parse()
 ///     .expect("Failed to parse a Value.");
@@ -41,7 +41,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::Value;
+    /// use icu::locid::extensions::unicode::Value;
     ///
     /// let value = Value::from_bytes(b"buddhist")
     ///     .expect("Parsing failed.");

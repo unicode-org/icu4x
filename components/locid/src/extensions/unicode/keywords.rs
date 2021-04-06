@@ -23,7 +23,7 @@ use super::Value;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::unicode::{Keywords, Key, Value};
+/// use icu::locid::extensions::unicode::{Keywords, Key, Value};
 ///
 /// let key: Key = "hc".parse()
 ///     .expect("Failed to parse a Key.");
@@ -42,7 +42,7 @@ impl Keywords {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::Keywords;
+    /// use icu::locid::extensions::unicode::Keywords;
     ///
     /// assert_eq!(Keywords::new(), Keywords::default());
     /// ```
@@ -55,7 +55,7 @@ impl Keywords {
     ///
     ///
     /// # Examples
-    /// use icu_locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
@@ -79,7 +79,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");
@@ -105,7 +105,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::{Keywords, Key, Value};
+    /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
     ///
     /// let key: Key = "ca".parse()
     ///     .expect("Failed to parse a Key.");

@@ -14,7 +14,7 @@ use tinystr::TinyStr4;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Region;
+/// use icu::locid::subtags::Region;
 ///
 /// let region: Region = "DE".parse()
 ///     .expect("Failed to parse a region subtag.");
@@ -34,7 +34,7 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Region;
+    /// use icu::locid::subtags::Region;
     ///
     /// let region = Region::from_bytes(b"fr")
     ///     .expect("Parsing failed.");
@@ -67,7 +67,7 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Region;
+    /// use icu::locid::subtags::Region;
     ///
     /// let region = Region::from_bytes(b"us")
     ///     .expect("Parsing failed.");
@@ -86,7 +86,7 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Region;
+    /// use icu::locid::subtags::Region;
     ///
     /// let region = Region::from_bytes(b"us")
     ///     .expect("Parsing failed.");
@@ -110,7 +110,7 @@ impl Region {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Region;
+    /// use icu::locid::subtags::Region;
     ///
     /// let region = Region::from_bytes(b"it")
     ///     .expect("Parsing failed.");

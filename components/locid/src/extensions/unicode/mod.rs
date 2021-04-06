@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid::{LanguageIdentifier, Locale};
-//! use icu_locid::extensions::unicode::{Unicode, Key, Value, Attribute};
+//! use icu::locid::{LanguageIdentifier, Locale};
+//! use icu::locid::extensions::unicode::{Unicode, Key, Value, Attribute};
 //!
 //! let mut loc: Locale = "en-US-u-foobar-hc-h12".parse()
 //!     .expect("Parsing failed.");
@@ -61,8 +61,8 @@ use std::iter::Peekable;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu_locid::extensions::unicode::{Key, Value};
+/// use icu::locid::Locale;
+/// use icu::locid::extensions::unicode::{Key, Value};
 ///
 /// let mut loc: Locale = "de-u-hc-h12-ca-buddhist".parse()
 ///     .expect("Parsing failed.");
@@ -84,7 +84,7 @@ impl Unicode {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::Unicode;
+    /// use icu::locid::extensions::unicode::Unicode;
     ///
     /// assert_eq!(Unicode::new(), Unicode::default());
     /// ```
@@ -101,7 +101,7 @@ impl Unicode {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu::locid::Locale;
     ///
     /// let loc: Locale = "en-US-u-foo".parse()
     ///     .expect("Parsing failed.");

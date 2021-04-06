@@ -13,8 +13,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid::Locale;
-//! use icu_locid::extensions::private::{Private, Key};
+//! use icu::locid::Locale;
+//! use icu::locid::extensions::private::{Private, Key};
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse()
 //!     .expect("Parsing failed.");
@@ -44,7 +44,7 @@ use crate::parser::ParserError;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::private::{Private, Key};
+/// use icu::locid::extensions::private::{Private, Key};
 ///
 /// let key1: Key = "foo".parse()
 ///     .expect("Failed to parse a Key.");
@@ -66,7 +66,7 @@ impl Private {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::private::Private;
+    /// use icu::locid::extensions::private::Private;
     ///
     /// assert_eq!(Private::new(), Private::default());
     /// ```
@@ -80,7 +80,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::{Private, Key};
+    /// use icu::locid::extensions::private::{Private, Key};
     ///
     /// let key1: Key = "foo".parse()
     ///     .expect("Failed to parse a Key.");
@@ -103,7 +103,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::{Private, Key};
+    /// use icu::locid::extensions::private::{Private, Key};
     ///
     /// let key1: Key = "foo".parse()
     ///     .expect("Failed to parse a Key.");

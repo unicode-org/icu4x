@@ -925,6 +925,7 @@ name = "icu_locid"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu",
  "icu_benchmark_macros",
  "serde",
  "serde_json",
@@ -936,6 +937,7 @@ dependencies = [
 name = "icu_locid_macros"
 version = "0.1.0"
 dependencies = [
+ "icu",
  "icu_locid",
  "proc-macro-crate",
  "tinystr",

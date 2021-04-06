@@ -16,7 +16,7 @@ use tinystr::{tinystr4, TinyStr4};
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Language;
+/// use icu::locid::subtags::Language;
 ///
 /// let language: Language = "en".parse()
 ///     .expect("Failed to parse a language subtag.");
@@ -28,7 +28,7 @@ use tinystr::{tinystr4, TinyStr4};
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Language;
+/// use icu::locid::subtags::Language;
 ///
 /// assert_eq!(Language::default().as_str(), "und");
 /// ```
@@ -51,7 +51,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// let lang = Language::from_bytes(b"en")
     ///     .expect("Parsing failed.");
@@ -86,7 +86,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// let lang = Language::from_bytes(b"en")
     ///     .expect("Parsing failed.");
@@ -105,7 +105,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// let lang = Language::from_bytes(b"en")
     ///     .expect("Parsing failed.");
@@ -131,7 +131,7 @@ impl Language {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// const language: Language = Language::und();
     /// assert_eq!(Language::default(), language);
@@ -148,7 +148,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// let lang = Language::from_bytes(b"en")
     ///     .expect("Parsing failed.");
@@ -167,7 +167,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// let mut lang: Language = "csb".parse()
     ///     .expect("Parsing failed.");
@@ -187,7 +187,7 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Language;
+    /// use icu::locid::subtags::Language;
     ///
     /// let mut lang: Language = "und".parse()
     ///     .expect("Parsing failed.");

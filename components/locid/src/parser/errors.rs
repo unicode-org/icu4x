@@ -17,8 +17,8 @@ pub enum ParserError {
     /// ```
     /// use std::str::FromStr;
     ///
-    /// use icu_locid::subtags::Language;
-    /// use icu_locid::ParserError;
+    /// use icu::locid::subtags::Language;
+    /// use icu::locid::ParserError;
     ///
     /// assert_eq!(Language::from_str("x2"), Err(ParserError::InvalidLanguage));
     /// ```
@@ -31,8 +31,8 @@ pub enum ParserError {
     /// ```
     /// use std::str::FromStr;
     ///
-    /// use icu_locid::subtags::Region;
-    /// use icu_locid::ParserError;
+    /// use icu::locid::subtags::Region;
+    /// use icu::locid::ParserError;
     ///
     /// assert_eq!(Region::from_str("#@2X"), Err(ParserError::InvalidSubtag));
     /// ```
@@ -45,8 +45,8 @@ pub enum ParserError {
     /// ```
     /// use std::str::FromStr;
     ///
-    /// use icu_locid::extensions::unicode::Key;
-    /// use icu_locid::ParserError;
+    /// use icu::locid::extensions::unicode::Key;
+    /// use icu::locid::ParserError;
     ///
     /// assert_eq!(Key::from_str("#@2X"), Err(ParserError::InvalidExtension));
     /// ```

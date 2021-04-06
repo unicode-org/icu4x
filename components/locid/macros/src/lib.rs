@@ -51,8 +51,8 @@ fn get_value_from_token_stream(input: TokenStream) -> String {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Language;
-/// use icu_locid_macros::language;
+/// use icu::locid::subtags::Language;
+/// use icu::locid::macros::language;
 ///
 /// const DE: Language = language!("DE");
 ///
@@ -82,8 +82,8 @@ pub fn language(input: TokenStream) -> TokenStream {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Script;
-/// use icu_locid_macros::script;
+/// use icu::locid::subtags::Script;
+/// use icu::locid::macros::script;
 ///
 /// const ARAB: Script = script!("aRAB");
 ///
@@ -113,8 +113,8 @@ pub fn script(input: TokenStream) -> TokenStream {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Region;
-/// use icu_locid_macros::region;
+/// use icu::locid::subtags::Region;
+/// use icu::locid::macros::region;
 ///
 /// const CN: Region = region!("cn");
 ///
@@ -144,8 +144,8 @@ pub fn region(input: TokenStream) -> TokenStream {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Variant;
-/// use icu_locid_macros::variant;
+/// use icu::locid::subtags::Variant;
+/// use icu::locid::macros::variant;
 ///
 /// const POSIX: Variant = variant!("Posix");
 ///
@@ -175,8 +175,8 @@ pub fn variant(input: TokenStream) -> TokenStream {
 /// # Examples
 ///
 /// ```
-/// use icu_locid::LanguageIdentifier;
-/// use icu_locid_macros::langid;
+/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::macros::langid;
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
