@@ -17,9 +17,10 @@
 # Ephemeral output of `cargo make wasm`
 wasmpkg/
 
-# Memory benchmarking output
+# Benchmarking output
 dhat-heap.json
 /benchmarks
+/valgrind_out
 
 # Do not check-in bincode test data
 resources/testdata/data/bincode
