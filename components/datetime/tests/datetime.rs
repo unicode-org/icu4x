@@ -267,3 +267,25 @@ fn test_components_combine_date_time() {
     // components/datetime/tests/fixtures/tests/components-date-time.json
     test_fixture("components-combine-date-time");
 }
+
+#[test]
+fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
+    use icu_datetime::{
+        options::length::{Bag, Time},
+        DateTimeFormatOptions,
+    };
+    use icu_locid::Locale;
+    use icu_locid_macros::langid;
+
+    let options = DateTimeFormatOptions::Length(Bag {
+        // Full has time-zone symbols.
+        time: Some(Time::Full),
+        ..Default::default()
+    });
+
+    let locale: Locale = langid!("en").into();
+    let provider = icu_testdata::get_provider();
+    let result = DateTimeFormat::try_new(locale, &provider, &options);
+
+    assert!(result.is_err());
+}

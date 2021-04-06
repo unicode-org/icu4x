@@ -257,31 +257,3 @@ impl<'d> DateTimeFormat<'d> {
         s
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn constructing_datetime_format_with_zones_is_err() {
-        use crate::options::length::{Bag, Time};
-        use crate::{DateTimeFormat, DateTimeFormatOptions};
-        use icu_locid::Locale;
-        use icu_locid_macros::langid;
-
-        let options = DateTimeFormatOptions::Length(Bag {
-            time: Some(Time::Full),
-            ..Default::default()
-        });
-
-        let locale: Locale = langid!("en").into();
-        let provider = icu_testdata::get_provider();
-        let result = DateTimeFormat::try_new(locale, &provider, &options);
-        assert!(matches!(
-            result,
-            Err(DateTimeFormatError::UnsupportedField(
-                FieldSymbol::TimeZone(_)
-            ))
-        ));
-    }
-}
