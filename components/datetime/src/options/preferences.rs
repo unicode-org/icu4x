@@ -13,7 +13,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datetime::options::preferences;
+//! use icu::datetime::options::preferences;
 //!
 //! let prefs = preferences::Bag {
 //!     hour_cycle: Some(preferences::HourCycle::H23)
@@ -29,7 +29,7 @@ use serde::{Deserialize, Serialize};
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::options::preferences;
+/// use icu::datetime::options::preferences;
 ///
 /// let prefs = preferences::Bag {
 ///     hour_cycle: Some(preferences::HourCycle::H23)

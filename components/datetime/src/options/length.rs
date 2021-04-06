@@ -18,8 +18,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datetime::DateTimeFormatOptions;
-//! use icu_datetime::options::length;
+//! use icu::datetime::DateTimeFormatOptions;
+//! use icu::datetime::options::length;
 //!
 //! let bag = length::Bag {
 //!      date: Some(length::Date::Medium), // `Medium` length connector will be used
@@ -33,8 +33,8 @@
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
-//! # use icu_datetime::DateTimeFormatOptions;
-//! # use icu_datetime::options::length;
+//! use icu::datetime::DateTimeFormatOptions;
+//! use icu::datetime::options::length;
 //! let options: DateTimeFormatOptions = length::Bag::default().into();
 //! ```
 //!
@@ -52,8 +52,8 @@ use serde::{Deserialize, Serialize};
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::DateTimeFormatOptions;
-/// use icu_datetime::options::length;
+/// use icu::datetime::DateTimeFormatOptions;
+/// use icu::datetime::options::length;
 ///
 /// let bag = length::Bag {
 ///      date: Some(length::Date::Medium),
@@ -67,8 +67,8 @@ use serde::{Deserialize, Serialize};
 /// Or the options can be inferred through the `.into()` trait.
 ///
 /// ```
-/// # use icu_datetime::DateTimeFormatOptions;
-/// # use icu_datetime::options::length;
+/// use icu::datetime::DateTimeFormatOptions;
+/// use icu::datetime::options::length;
 /// let options: DateTimeFormatOptions = length::Bag::default().into();
 /// ```
 ///
@@ -99,7 +99,7 @@ impl Default for Bag {
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::options::length;
+/// use icu::datetime::options::length;
 ///
 /// let bag = length::Bag {
 ///     date: Some(length::Date::Long),
@@ -181,7 +181,7 @@ pub enum Date {
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::options::length;
+/// use icu::datetime::options::length;
 ///
 /// let bag = length::Bag {
 ///     date: None,

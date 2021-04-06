@@ -871,6 +871,7 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "criterion",
+ "icu",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",

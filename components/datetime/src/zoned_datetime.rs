@@ -31,10 +31,10 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu_locid_macros::langid;
-/// use icu_datetime::{ZonedDateTimeFormat, options::length};
-/// use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
+/// use icu::locid::Locale;
+/// use icu::locid::macros::langid;
+/// use icu::datetime::{ZonedDateTimeFormat, options::length};
+/// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale: Locale = langid!("en").into();
@@ -70,10 +70,10 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu_locid_macros::langid;
-    /// use icu_datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
-    /// use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let locale: Locale = langid!("en").into();
@@ -142,11 +142,11 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locid::Locale;
-    /// # use icu_locid_macros::langid;
-    /// # use icu_datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
-    /// # use icu_provider::inv::InvariantDataProvider;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
@@ -182,11 +182,11 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locid::Locale;
-    /// # use icu_locid_macros::langid;
-    /// # use icu_datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
-    /// # use icu_provider::inv::InvariantDataProvider;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
@@ -218,11 +218,11 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locid::Locale;
-    /// # use icu_locid_macros::langid;
-    /// # use icu_datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
-    /// # use icu_provider::inv::InvariantDataProvider;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{ZonedDateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let date_provider = InvariantDataProvider;
     /// # let zone_provider = InvariantDataProvider;
