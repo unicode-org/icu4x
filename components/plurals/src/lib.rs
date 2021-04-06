@@ -76,7 +76,7 @@ pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
-use provider::PluralRuleStringsV1;
+use provider::{resolver, PluralRuleStringsV1};
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -275,7 +275,7 @@ impl PluralRules {
         data_provider: &D,
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
-        let data = PluralRuleStringsV1::new_from_provider(langid.clone(), data_provider, type_)?;
+        let data = resolver::resolve_plural_data(langid.clone(), data_provider, type_)?;
         Self::new_from_data(langid, &data)
     }
 
