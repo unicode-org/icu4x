@@ -19,7 +19,7 @@ use std::str::FromStr;
 /// From int
 ///
 /// ```
-/// use icu_plurals::PluralOperands;
+/// use icu::plurals::PluralOperands;
 /// assert_eq!(PluralOperands {
 ///    i: 2,
 ///    v: 0,
@@ -34,7 +34,7 @@ use std::str::FromStr;
 ///
 /// ```
 /// use std::str::FromStr;
-/// use icu_plurals::PluralOperands;
+/// use icu::plurals::PluralOperands;
 /// assert_eq!(Ok(PluralOperands {
 ///    i: 1234,
 ///    v: 3,
@@ -49,7 +49,7 @@ use std::str::FromStr;
 ///
 /// ```
 /// use std::convert::TryFrom;
-/// use icu_plurals::PluralOperands;
+/// use icu::plurals::PluralOperands;
 /// assert_eq!(Ok(PluralOperands {
 ///    i: 123,
 ///    v: 2,

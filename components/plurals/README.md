@@ -22,8 +22,8 @@ appropriate [`Plural Category`].
 ## Examples
 
 ```rust
-use icu_locid_macros::langid;
-use icu_plurals::{PluralRules, PluralRuleType, PluralCategory};
+use icu::locid::macros::langid;
+use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 
 let lid = langid!("en");
 
