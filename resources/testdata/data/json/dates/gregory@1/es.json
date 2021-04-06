@@ -186,9 +186,15 @@
         "h": "h a",
         "hm": "h:mm a",
         "hms": "h:mm:ss a",
+        "hmsv": "h:mm:ss a v",
+        "hmsvvvv": "h:mm:ss a (vvvv)",
+        "hmv": "h:mm a v",
         "H": "H",
         "Hm": "H:mm",
         "Hms": "H:mm:ss",
+        "Hmsv": "H:mm:ss v",
+        "Hmsvvvv": "H:mm:ss (vvvv)",
+        "Hmv": "H:mm v",
         "ms": "mm:ss"
       }
     }

@@ -263,13 +263,13 @@ impl From<fields::SymbolError> for SkeletonError {
         match symbol_error {
             fields::SymbolError::Invalid(ch) => SkeletonError::SymbolInvalid(ch),
             fields::SymbolError::Unknown(byte) => {
+                // NOTE: If you remove a symbol due to it now being supported,
+                //       make sure to regenerate the test data.
                 match byte {
                     // TODO(#487) - Flexible day periods
                     b'B'
                     // TODO(#486) - Era
                     | b'G'
-                    // TODO(#418) - Timezones
-                    | b'Z' | b'v'
                     // TODO(#502) - Week of month
                     | b'W'
                     // TODO(#501) - Quarters
@@ -633,6 +633,9 @@ mod test {
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
     ];
 
+    // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
+    //       on your symbol from impl From<fields::SymbolError> for SkeletonError
+    //       and then regenerate the test data.
     #[rustfmt::skip]
     const UNSUPPORTED_STRING_SKELETONS: [&str; 19] = [
         // TODO(#487) - Flexible day periods
