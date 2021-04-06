@@ -41,7 +41,6 @@ fn test_fixture(fixture_name: &str) {
         let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
         let value: MockDateTime = fx.input.value.parse().unwrap();
 
-<<<<<<< HEAD
         let result = dtf.format_to_string(&value);
         match fx.description {
             Some(description) => assert_eq!(
@@ -51,10 +50,6 @@ fn test_fixture(fixture_name: &str) {
             ),
             None => assert_eq!(result, fx.output.value),
         }
-=======
-        let s = dtf.format_to_string(&value);
-        assert_eq!(s, fx.output.value, "\n file: {}.json\n", fixture_name);
->>>>>>> 2daabf83 (Add time-zone pattern tests)
 
         let mut s = String::new();
         dtf.format_to_write(&mut s, &value).unwrap();
@@ -197,7 +192,7 @@ fn test_time_zone_patterns() {
             .to_mut()
             .patterns
             .date_time
-            .style_patterns
+            .length_patterns
             .long
             .to_mut() = String::from("{0}");
 

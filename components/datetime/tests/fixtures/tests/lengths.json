@@ -64,15 +64,9 @@
             "locale": "ru",
             "value": "2020-03-21T08:25:07.000",
             "options": {
-<<<<<<< HEAD:components/datetime/tests/fixtures/tests/lengths.json
                 "length": {
-                    "time": "full",
-                    "date": "full"
-=======
-                "style": {
                     "time": "short",
                     "date": "medium"
->>>>>>> b2319863 (Implement Time Zone Formatting):components/datetime/tests/fixtures/tests/styles.json
                 }
             }
         },

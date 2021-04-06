@@ -4,7 +4,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "full",
                         "time": null
                     }
@@ -13,7 +13,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "long",
                         "time": null
                     }
@@ -22,7 +22,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "medium",
                         "time": null
                     }
@@ -31,7 +31,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "short",
                         "time": null
                     }
@@ -40,7 +40,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": null,
                         "time": "full"
                     }
@@ -49,7 +49,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": null,
                         "time": "long"
                     }
@@ -58,7 +58,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": null,
                         "time": "medium"
                     }
@@ -67,7 +67,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": null,
                         "time": "short"
                     }
@@ -76,7 +76,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "full",
                         "time": "full"
                     }
@@ -85,7 +85,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "long",
                         "time": "long"
                     }
@@ -94,7 +94,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "medium",
                         "time": "medium"
                     }
@@ -103,7 +103,7 @@
             {
                 "locale": "ru",
                 "options": {
-                    "style": {
+                    "length": {
                         "date": "short",
                         "time": "short"
                     }

@@ -29,7 +29,7 @@ use crate::{
 /// ```
 /// use icu_locid::Locale;
 /// use icu_locid_macros::langid;
-/// use icu_datetime::{DateTimeFormat, options::style};
+/// use icu_datetime::{DateTimeFormat, options::length};
 /// use icu_datetime::mock::datetime::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
@@ -37,9 +37,9 @@ use crate::{
 ///
 /// let provider = InvariantDataProvider;
 ///
-/// let options = style::Bag {
-///     date: Some(style::Date::Medium),
-///     time: Some(style::Time::Short),
+/// let options = length::Bag {
+///     date: Some(length::Date::Medium),
+///     time: Some(length::Time::Short),
 ///     ..Default::default()
 /// };
 /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
@@ -264,19 +264,19 @@ mod test {
 
     #[test]
     fn constructing_datetime_format_with_zones_is_err() {
-        use crate::options::style::{Bag, Time};
+        use crate::options::length::{Bag, Time};
         use crate::{DateTimeFormat, DateTimeFormatOptions};
         use icu_locid::Locale;
         use icu_locid_macros::langid;
 
-        let options = DateTimeFormatOptions::Style(Bag {
+        let options = DateTimeFormatOptions::Length(Bag {
             time: Some(Time::Full),
             ..Default::default()
         });
 
         let locale: Locale = langid!("en").into();
         let provider = icu_testdata::get_provider();
-        let result = DateTimeFormat::try_new(locale, &provider, &options.into());
+        let result = DateTimeFormat::try_new(locale, &provider, &options);
         assert!(matches!(
             result,
             Err(DateTimeFormatError::UnsupportedField(

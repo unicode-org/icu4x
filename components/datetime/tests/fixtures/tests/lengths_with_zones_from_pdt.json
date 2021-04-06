@@ -4,7 +4,7 @@
             "locale": "en",
             "value": "2020-01-21T08:25:07.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": "full"
                 }
@@ -19,7 +19,7 @@
             "locale": "ru",
             "value": "2020-09-10T13:34:59.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": "long"
                 }
@@ -34,7 +34,7 @@
             "locale": "fr",
             "value": "2020-02-20T00:12:00.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": "medium"
                 }
@@ -49,7 +49,7 @@
             "locale": "es",
             "value": "2000-01-30T22:15:11.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": "short"
                 }
@@ -64,7 +64,7 @@
             "locale": "sr",
             "value": "2045-02-01T18:45:10.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": "long"
                 }
@@ -79,7 +79,7 @@
             "locale": "ar",
             "value": "2045-02-01T18:45:10.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": null
                 }
@@ -94,7 +94,7 @@
             "locale": "ja",
             "value": "2020-03-21T08:25:07.000-07:00",
             "options": {
-                "style": {
+                "length": {
                     "time": "full",
                     "date": "full"
                 }
