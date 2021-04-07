@@ -99,8 +99,11 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 output = exec git status --porcelain=v1 -uno
-if contains ${output.stdout} README.md
-    trigger_error "Found non-automatically generated README.md:\n ${output.stdout}"
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    if contains ${output.stdout} README.md
+        trigger_error "Found non-automatically generated README.md:\n ${output.stdout}"
+    end
 end
 '''
 
