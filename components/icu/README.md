@@ -62,6 +62,6 @@ assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
 [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 
-# More Information
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

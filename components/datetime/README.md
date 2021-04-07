@@ -48,3 +48,7 @@ to develop core date and time APIs that will work as an input for this component
 [`ICU4X`]: ../icu/index.html
 [`Style`]: options::style
 [`MockDateTime`]: mock::MockDateTime
+
+## More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

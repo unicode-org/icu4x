@@ -63,6 +63,6 @@ Plural rules depend on the use case. This crate supports two types of plural rul
 [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 [`CLDR`]: http://cldr.unicode.org/
 
-# More Information
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

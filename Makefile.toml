@@ -69,6 +69,42 @@ end
 echo "License header check complete"
 '''
 
+[tasks.generate-readmes]
+description = "Automatically generate README.md for each component."
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+glob_pattern = set "./components/**/README.md"
+template = canonicalize README.tpl
+
+# If we specify install_crate we are expected to run a cargo command,
+# not a script, but cargo-readme is not happy with our workspace
+# configuration.
+exec cargo install cargo-readme --version 3.2.0
+
+handle = glob_array ${glob_pattern}
+for path in ${handle}
+    echo "Automatically generating ${path}"
+    root_dir = dirname ${path}
+    exec cargo readme -r ${root_dir} -o README.md -t ${template}
+end
+'''
+
+[tasks.generated-readme-check]
+description = "Check that README.md was properly generated for each component."
+category = "ICU4X Development"
+dependencies = [
+    "generate-readmes"
+]
+script_runner = "@duckscript"
+script = '''
+output = exec git status --porcelain=v1 -uno
+if contains ${output.stdout} README.md
+    trigger_error "Found non-automatically generated README.md:\n ${output.stdout}"
+end
+'''
+
+
 ### META TASKS ###
 
 [tasks.quick]
@@ -79,6 +115,7 @@ dependencies = [
     "fmt-check",
     "clippy-all",
     "license-header-check",
+    "generated-readme-check",
     "test-capi",
 ]
 

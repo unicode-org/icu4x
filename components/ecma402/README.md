@@ -2,6 +2,6 @@
 
 This crate provides an experimental implementation of the `ECMA-402` traits using `ICU4X` library.
 
-# More Information
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

@@ -21,6 +21,7 @@ include = [
 ]
 
 [lib]
+path = "src/lib.rs"
 proc_macro = true
 
 [dependencies]

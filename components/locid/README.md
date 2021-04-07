@@ -48,6 +48,6 @@ For more details, see [`Locale`] and [`LanguageIdentifier`].
 [`ICU4X`]: ../icu/index.html
 [`Unicode Extensions`]: extensions
 
-# More Information
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

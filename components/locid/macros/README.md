@@ -1,10 +1,10 @@
 # icu_locid_macros [![crates.io](http://meritbadge.herokuapp.com/icu_locid_macros)](https://crates.io/crates/icu_locid_macros)
 
-`icu_locid_macros` is one of the `ICU4X` components. 
+`icu_locid_macros` is one of the [`ICU4X`] components.
 
 This API provides convenience macros for `icu_locid`.
 
-# Examples
+## Examples
 
 ```rust
 use icu_locid_macros::{language, region, langid};
@@ -15,6 +15,6 @@ assert_eq!(lid.langauge, language!("en"));
 assert_eq!(loc.region, Some(region!("US")));
 ```
 
-# More Information
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

@@ -19,6 +19,6 @@ It is much more efficient if you use [`FsDataProvider`] instead.
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`CldrJsonDataProvider`]: transform::CldrJsonDataProvider
 
-# More Information
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

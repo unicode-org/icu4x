@@ -2,6 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! `icu_locid_macros` is one of the [`ICU4X`] components.
+//!
+//! This API provides convenience macros for `icu_locid`.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use icu_locid_macros::{language, region, langid};
+//!
+//! let lid = langid!("EN_US");
+//!
+//! assert_eq!(lid.langauge, language!("en"));
+//! assert_eq!(loc.region, Some(region!("US")));
+//! ```
+
 mod token_stream;
 
 extern crate proc_macro;
