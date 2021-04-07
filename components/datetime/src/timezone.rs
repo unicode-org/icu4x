@@ -7,6 +7,7 @@ use std::borrow::Cow;
 use crate::{
     date::TimeZoneInput,
     format::timezone::FormattedTimeZone,
+    pattern::Error as PatternError,
     provider::{
         self,
         timezones::{
@@ -16,15 +17,15 @@ use crate::{
     },
     DateTimeFormatError,
 };
-use crate::{format::timezone, invalid_pattern_symbol, mock::timezone::ZeroPadding};
+use crate::{format::timezone, mock::timezone::ZeroPadding};
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::{DataProvider, DataRequest, ResourceKey, ResourceOptions, ResourcePath};
 
 use crate::fields::{FieldSymbol, TimeZone};
 use crate::pattern::{Pattern, PatternItem};
 
-/// Produces an iterator over the time-zone resource keys required to format a pattern.
-fn required_time_zone_keys(pattern: &Pattern) -> impl Iterator<Item = ResourceKey> + '_ {
+/// Produces a vector containing the time-zone resource keys required to format a pattern.
+fn required_time_zone_keys(pattern: &Pattern) -> Result<Vec<ResourceKey>, DateTimeFormatError> {
     pattern
         .items()
         .iter()
@@ -36,26 +37,39 @@ fn required_time_zone_keys(pattern: &Pattern) -> impl Iterator<Item = ResourceKe
             FieldSymbol::TimeZone(zone) => Some((u8::from(field.length), zone)),
             _ => None,
         })
-        .filter_map(|(length, zone_symbol)| match zone_symbol {
+        .flat_map(|(length, zone_symbol)| match zone_symbol {
             TimeZone::LowerZ => match length {
-                1..=3 => Some(provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1),
-                4 => Some(provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1),
-                _ => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                1..=3 => vec![Ok(provider::key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1)],
+                4 => vec![Ok(provider::key::TIMEZONE_SPECIFIC_NAMES_LONG_V1)],
+                _ => vec![Err(DateTimeFormatError::Pattern(
+                    PatternError::FieldTooLong(FieldSymbol::TimeZone(zone_symbol)),
+                ))],
             },
             TimeZone::LowerV => match length {
-                1 => Some(provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1),
-                4 => Some(provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1),
-                _ => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                1 => vec![
+                    Ok(provider::key::TIMEZONE_GENERIC_NAMES_SHORT_V1),
+                    Ok(provider::key::TIMEZONE_EXEMPLAR_CITIES_V1),
+                ],
+                4 => vec![
+                    Ok(provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1),
+                    Ok(provider::key::TIMEZONE_EXEMPLAR_CITIES_V1),
+                ],
+                _ => vec![Err(DateTimeFormatError::Pattern(
+                    PatternError::FieldTooLong(FieldSymbol::TimeZone(zone_symbol)),
+                ))],
             },
             TimeZone::UpperV => match length {
-                1 => None, // BCP-47 identifier, no CLDR-data necessary.
-                2 => None, // IANA time-zone ID, no CLDR data necessary.
-                3 | 4 => Some(provider::key::TIMEZONE_EXEMPLAR_CITIES_V1),
-                _ => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                1 => vec![], // BCP-47 identifier, no CLDR-data necessary.
+                2 => vec![], // IANA time-zone ID, no CLDR data necessary.
+                3 | 4 => vec![Ok(provider::key::TIMEZONE_EXEMPLAR_CITIES_V1)],
+                _ => vec![Err(DateTimeFormatError::Pattern(
+                    PatternError::FieldTooLong(FieldSymbol::TimeZone(zone_symbol)),
+                ))],
             },
             // ISO-8601 or localized GMT formats. CLDR data is either unneeded or required by default.
-            TimeZone::LowerX | TimeZone::UpperX | TimeZone::UpperZ | TimeZone::UpperO => None,
+            TimeZone::LowerX | TimeZone::UpperX | TimeZone::UpperZ | TimeZone::UpperO => vec![],
         })
+        .collect()
 }
 
 /// Loads a resource into its destionation if the destionation has not already been filled.
@@ -140,7 +154,7 @@ impl<'d> TimeZoneFormat<'d> {
         let mut mz_specific_long: Option<Cow<MetaZoneSpecificNamesLongV1>> = None;
         let mut mz_specific_short: Option<Cow<MetaZoneSpecificNamesShortV1>> = None;
 
-        for resource_key in required_time_zone_keys(&pattern) {
+        for resource_key in required_time_zone_keys(&pattern)? {
             if resource_key.eq(&provider::key::TIMEZONE_EXEMPLAR_CITIES_V1) {
                 load_resource(&locale, resource_key, &mut exemplar_cities, zone_provider)?;
             } else if resource_key.eq(&provider::key::TIMEZONE_GENERIC_NAMES_LONG_V1) {

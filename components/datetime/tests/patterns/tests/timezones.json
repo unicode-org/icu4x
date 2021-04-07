@@ -146,7 +146,7 @@
         "patterns": [
           "v"
         ],
-        "expected": "GMT+09:00"
+        "expected": "東京時間"
       },
       {
         "patterns": [
@@ -243,7 +243,7 @@
         "patterns": [
           "v"
         ],
-        "expected": "GMT"
+        "expected": "Тролль"
       },
       {
         "patterns": [
@@ -355,7 +355,7 @@
         "patterns": [
           "v"
         ],
-        "expected": "GMT+05:45"
+        "expected": "Катманду"
       },
       {
         "patterns": [

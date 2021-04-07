@@ -94,15 +94,3 @@ pub use format::datetime::FormattedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use timezone::TimeZoneFormat;
 pub use zoned_datetime::ZonedDateTimeFormat;
-
-#[macro_export]
-macro_rules! invalid_pattern_symbol {
-    ($category: ident, $symbol: expr, $length: expr) => {
-        panic!(
-            "Invalid pattern symbol {}({:?}) of length {}",
-            stringify!($category),
-            $symbol,
-            $length
-        )
-    };
-}

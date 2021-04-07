@@ -4,9 +4,8 @@
 
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
-use crate::invalid_pattern_symbol;
 use crate::mock::timezone::{IsoFormat, IsoMinutes, IsoSeconds};
-use crate::pattern::PatternItem;
+use crate::pattern::{Error as PatternError, PatternItem};
 use crate::{date::TimeZoneInput, timezone::TimeZoneFormat};
 use std::fmt;
 use writeable::Writeable;
@@ -79,7 +78,11 @@ where
                 4 => time_zone_format
                     .long_specific_non_location_format(time_zone)
                     .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
             fields::TimeZone::UpperZ => match u8::from(field.length) {
                 1..=3 => time_zone.gmt_offset().iso8601_format(
@@ -93,11 +96,19 @@ where
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
             fields::TimeZone::UpperO => match u8::from(field.length) {
                 1..=4 => time_zone_format.localized_gmt_format(time_zone),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
             fields::TimeZone::LowerV => match u8::from(field.length) {
                 1 => time_zone_format
@@ -108,7 +119,11 @@ where
                     .long_generic_non_location_format(time_zone)
                     .or_else(|| time_zone_format.generic_location_format(time_zone))
                     .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
             fields::TimeZone::UpperV => match u8::from(field.length) {
                 1 => todo!("#606 (BCP-47 identifiers)"),
@@ -119,7 +134,11 @@ where
                 4 => time_zone_format
                     .generic_location_format(time_zone)
                     .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
             fields::TimeZone::LowerX => match u8::from(field.length) {
                 1 => time_zone.gmt_offset().iso8601_format(
@@ -147,7 +166,11 @@ where
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
             fields::TimeZone::UpperX => match u8::from(field.length) {
                 1 => time_zone.gmt_offset().iso8601_format(
@@ -175,7 +198,11 @@ where
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                length => invalid_pattern_symbol!(TimeZone, zone_symbol, length),
+                _ => {
+                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                        FieldSymbol::TimeZone(zone_symbol),
+                    )))
+                }
             },
         };
         w.write_str(&s)?;
