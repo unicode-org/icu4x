@@ -13,8 +13,8 @@
 //!
 //! let lid = langid!("EN_US");
 //!
-//! assert_eq!(lid.langauge, language!("en"));
-//! assert_eq!(loc.region, Some(region!("US")));
+//! assert_eq!(lid.language, language!("en"));
+//! assert_eq!(lid.region, Some(region!("US")));
 //! ```
 
 mod token_stream;
