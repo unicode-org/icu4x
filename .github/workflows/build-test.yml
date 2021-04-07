@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
     - name: Check
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -35,6 +37,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -57,6 +61,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
     - name: Install cargo-all-features
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -74,6 +80,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+
+    - name: Install rustfmt
+      run: rustup component add rustfmt
 
     - name: Install cargo-make
       uses: actions-rs/install@v0.1.2
@@ -103,6 +115,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+
     - name: Install cargo-make
       uses: actions-rs/install@v0.1.2
       with:
@@ -122,6 +137,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
 
     # Clippy job > Install and run clippy steps
 
@@ -161,6 +179,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Load the default Rust toolchain via the rust-toolchain file.
+        run: rustup show
 
       - name: Create output dir
         run: mkdir -p ./benchmarks/perf/${{ matrix.component }}
@@ -392,6 +413,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
