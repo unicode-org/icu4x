@@ -13,13 +13,14 @@ used to quickly format any date and time provided.
 ```rust
 use icu_locid::Locale;
 use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, date::MockDateTime, options::length};
+use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::length};
 
 let provider = icu_testdata::get_provider();
 
 let locale: Locale = langid!("en").into();
 
-let options = length::Bag {
+// See the next code example for a more ergonomic example with .into().
+let options = DateTimeFormatOptions::Length(length::Bag {
     date: Some(length::Date::Medium),
     time: Some(length::Time::Short),
     ..Default::default()
@@ -36,7 +37,20 @@ let formatted_date = dtf.format(&date);
 assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
 ```
 
-At the moment, the crate provides only options using the `Length` bag, but in the future,
+The options can be created more ergonomically using the `Into` trait to automatically
+convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
+
+```rust
+let options = length::Bag {
+    date: Some(length::Date::Medium),
+    time: Some(length::Time::Short),
+    ..Default::default()
+}.into();
+
+let dtf = DateTimeFormat::try_new(locale, &provider, &options);
+```
+
+At the moment, the crate provides only options using the [`Length`] bag, but in the future,
 we expect to add more ways to customize the output, like skeletons, and components.
 
 *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
@@ -46,7 +60,7 @@ to develop core date and time APIs that will work as an input for this component
 
 [`DataProvider`]: icu_provider::DataProvider
 [`ICU4X`]: ../icu/index.html
-[`Style`]: options::style
+[`Length`]: options::length
 [`MockDateTime`]: mock::MockDateTime
 
 ## More Information
