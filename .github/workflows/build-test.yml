@@ -93,6 +93,11 @@ jobs:
       with:
         command: license-check
 
+    - name: Check Generated README.md
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: readme-check
+
   # Bincode job - Test that the bincode data provider can be generated correctly.
   bincode:
     runs-on: ubuntu-latest
