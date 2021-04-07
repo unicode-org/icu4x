@@ -8,7 +8,6 @@ pub struct TimeZoneConfig {
     pub time_zone_id: Option<String>,
     pub metazone_id: Option<String>,
     pub time_variant: Option<String>,
-    pub country_code: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

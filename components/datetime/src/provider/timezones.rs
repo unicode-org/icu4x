@@ -10,12 +10,12 @@ use std::borrow::Cow;
 macro_rules! map_access {
     ($outer: ty => $inner: ty: $lt: lifetime) => {
         impl<$lt> $outer {
-            pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
+            pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<$inner>
             where
                 Q: Ord,
                 Cow<'s, str>: std::borrow::Borrow<Q>,
             {
-                self.0.get(key)
+                self.0.get(key).map(Clone::clone)
             }
 
             pub fn is_empty(&self) -> bool {
@@ -30,7 +30,7 @@ macro_rules! map_access {
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
-                &self.0.get(key).unwrap()
+                self.0.get(key).unwrap()
             }
         }
     };

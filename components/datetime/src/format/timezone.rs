@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::date::{IsoFormat, IsoMinutes, IsoSeconds};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
-use crate::mock::timezone::{IsoFormat, IsoMinutes, IsoSeconds};
 use crate::pattern::{Error as PatternError, PatternItem};
 use crate::{date::TimeZoneInput, timezone::TimeZoneFormat};
 use std::fmt;
@@ -144,17 +144,17 @@ where
                 1 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcBasic,
                     IsoMinutes::Optional,
-                    IsoSeconds::None,
+                    IsoSeconds::Never,
                 ),
                 2 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
-                    IsoSeconds::None,
+                    IsoSeconds::Never,
                 ),
                 3 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
-                    IsoSeconds::None,
+                    IsoSeconds::Never,
                 ),
                 4 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::UtcBasic,
@@ -176,17 +176,17 @@ where
                 1 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,
                     IsoMinutes::Optional,
-                    IsoSeconds::None,
+                    IsoSeconds::Never,
                 ),
                 2 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,
                     IsoMinutes::Required,
-                    IsoSeconds::None,
+                    IsoSeconds::Never,
                 ),
                 3 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Extended,
                     IsoMinutes::Required,
-                    IsoSeconds::None,
+                    IsoSeconds::Never,
                 ),
                 4 => time_zone.gmt_offset().iso8601_format(
                     IsoFormat::Basic,

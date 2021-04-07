@@ -81,7 +81,6 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         value.time_zone.time_zone_id = config.time_zone_id.clone();
         value.time_zone.metazone_id = config.metazone_id.clone();
         value.time_zone.time_variant = config.time_variant.clone();
-        value.time_zone.country_code = config.country_code.clone();
 
         let result = dtf.format_to_string(&value);
         assert_eq!(result, fx.output.value, "\n  file: {}.json\n", fixture_name);
@@ -171,7 +170,6 @@ fn test_time_zone_patterns() {
         date_time.time_zone.time_zone_id = config.time_zone_id.take();
         date_time.time_zone.metazone_id = config.metazone_id.take();
         date_time.time_zone.time_variant = config.time_variant.take();
-        date_time.time_zone.country_code = config.country_code.take();
 
         let mut data: Cow<DatesV1> = date_provider
             .load_payload(&DataRequest {

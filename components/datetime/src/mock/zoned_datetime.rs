@@ -2,15 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::arithmetic;
 use crate::date::*;
 use std::str::FromStr;
-use tinystr::tinystr8;
 
-use super::{
-    datetime::MockDateTime,
-    timezone::{GmtOffset, MockTimeZone},
-};
+use super::{datetime::MockDateTime, timezone::MockTimeZone};
 #[derive(Debug, Default)]
 pub struct MockZonedDateTime {
     pub datetime: MockDateTime,
@@ -37,7 +32,9 @@ impl FromStr for MockZonedDateTime {
     type Err = DateTimeError;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let datetime = MockDateTime::from_str(input)?;
-        let time_zone = match input.rfind(|c| c == '+' || c == '-' || c == 'Z') {
+        let time_zone = match input
+            .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
+        {
             Some(index) => MockTimeZone::from_str(&input[index..])?,
             None => return Err(DateTimeError::MissingTimeZoneOffset),
         };
@@ -51,49 +48,41 @@ impl FromStr for MockZonedDateTime {
 
 impl DateInput for MockZonedDateTime {
     fn year(&self) -> Option<Year> {
-        Some(arithmetic::iso_year_to_gregorian(self.datetime.year))
+        self.datetime.year()
     }
 
     fn month(&self) -> Option<Month> {
-        Some(Month {
-            number: self.datetime.month + 1,
-            // TODO(#486): Implement month codes
-            code: MonthCode(tinystr8!("TODO")),
-        })
+        self.datetime.month()
     }
 
     fn day_of_month(&self) -> Option<DayOfMonth> {
-        Some(DayOfMonth(self.datetime.day + 1))
+        self.datetime.day_of_month()
     }
 
     fn iso_weekday(&self) -> Option<IsoWeekday> {
-        Some(arithmetic::iso_date_to_weekday(
-            self.datetime.year,
-            self.datetime.month as usize,
-            self.datetime.day as usize,
-        ))
+        self.datetime.iso_weekday()
     }
 
     fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
-        unimplemented!()
+        self.datetime.day_of_year_info()
     }
 }
 
 impl IsoTimeInput for MockZonedDateTime {
     fn hour(&self) -> Option<IsoHour> {
-        Some(self.datetime.hour)
+        self.datetime.hour()
     }
 
     fn minute(&self) -> Option<IsoMinute> {
-        Some(self.datetime.minute)
+        self.datetime.minute()
     }
 
     fn second(&self) -> Option<IsoSecond> {
-        Some(self.datetime.second)
+        self.datetime.second()
     }
 
     fn fraction(&self) -> Option<FractionalSecond> {
-        None
+        self.datetime.fraction()
     }
 }
 
@@ -112,9 +101,5 @@ impl TimeZoneInput for MockZonedDateTime {
 
     fn time_variant(&self) -> Option<&str> {
         self.time_zone.time_variant()
-    }
-
-    fn country_code(&self) -> Option<&str> {
-        self.time_zone.country_code()
     }
 }
