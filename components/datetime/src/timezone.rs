@@ -48,7 +48,46 @@ where
     Ok(())
 }
 
-pub struct TimeZoneFormat<'d> {
+/// `TimeZoneFormat` uses data from the `DataProvider`, the selected `Locale`, and the provided
+/// pattern to collect all data necessary to format time zones into that locale.
+///
+/// The various time-zone pattern symbols specified in UTS-35 require different sets of data for
+/// formatting. As such,`TimeZoneFormat` will pull in only the resources needed to format the
+/// pattern that it is given upon construction.
+///
+/// For that reason, one should think of the process of formatting a time zone in two steps:
+/// first, a computationally heavy construction of `TimeZoneFormat`, and then fast formatting
+/// of the time-zone data using the instance.
+///
+/// # Examples
+///
+/// ```
+/// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+/// // use icu_locid::Locale;
+/// // use icu_locid_macros::langid;
+/// // use icu_datetime::TimeZoneFormat;
+/// // use icu_datetime::date::GmtOffset;
+/// // use icu_datetime::mock::timezone::MockTimeZone;
+/// // use icu_provider::inv::InvariantDataProvider;
+///
+/// // let locale: Locale = langid!("en").into();
+/// // let pattern = std::iter::empty().collect();
+/// // let provider = InvariantDataProvider;
+///
+/// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
+/// //     .expect("Failed to create TimeZoneFormat");
+///
+/// // let time_zone = MockTimeZone::new(
+/// //        GmtOffset::default(),
+/// //        None,
+/// //        None,
+/// //        None,
+/// // );
+///
+/// // let value = tzf.format_to_string(&time_zone);
+/// ```
+// TODO(#622) Make TimeZoneFormat public once we have a clean way to provide it options.
+pub(super) struct TimeZoneFormat<'d> {
     pub(super) pattern: Pattern,
     pub(super) zone_formats: Cow<'d, provider::timezones::TimeZoneFormatsV1<'d>>,
     pub(super) exemplar_cities: Option<Cow<'d, provider::timezones::ExemplarCitiesV1<'d>>>,
@@ -63,7 +102,29 @@ pub struct TimeZoneFormat<'d> {
 }
 
 impl<'d> TimeZoneFormat<'d> {
-    pub fn try_new<L, ZP>(
+    /// `TimeZoneFormat` constructor that selectively loads data based on what is required to
+    /// format the given pattern into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // use icu_locid::Locale;
+    /// // use icu_locid_macros::langid;
+    /// // use icu_datetime::TimeZoneFormat;
+    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// // let locale: Locale = langid!("en").into();
+    /// // let pattern = std::iter::empty().collect();
+    /// // let provider = InvariantDataProvider;
+    ///
+    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider);
+    ///
+    /// // assert!(tzf.is_ok());
+    /// ```
+    // TODO(#622) Make this public once TimeZoneFormat is public.
+    pub(super) fn try_new<L, ZP>(
         locale: L,
         pattern: Pattern,
         zone_provider: &ZP,
@@ -195,7 +256,40 @@ impl<'d> TimeZoneFormat<'d> {
         Ok(time_zone_format)
     }
 
-    pub fn format<'s: 'd, T>(&'s self, value: &'s T) -> FormattedTimeZone<'s, T>
+    /// `format` takes a `TimeZone` value and returns an instance of a `FormattedTimeZone` object
+    /// which contains all information necessary to display a formatted time zone and operate on it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // use icu_locid::Locale;
+    /// // use icu_locid_macros::langid;
+    /// // use icu_datetime::TimeZoneFormat;
+    /// // use icu_datetime::date::GmtOffset;
+    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// // # let locale: Locale = langid!("en").into();
+    /// // # let pattern = std::iter::empty().collect();
+    /// // # let provider = InvariantDataProvider;
+    ///
+    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
+    /// //     .expect("Failed to create TimeZoneFormat");
+    ///
+    /// // let time_zone = MockTimeZone::new(
+    /// //        GmtOffset::default(),
+    /// //        None,
+    /// //        None,
+    /// //        None,
+    /// // );
+    ///
+    /// // let _ = tzf.format(&time_zone);
+    /// ```
+    // TODO(#622) Make this public once TimeZoneFormat is public.
+    //           And remove #[allow(unused)]
+    #[allow(unused)]
+    pub(super) fn format<'s: 'd, T>(&'s self, value: &'s T) -> FormattedTimeZone<'s, T>
     where
         T: TimeZoneInput,
     {
@@ -205,7 +299,44 @@ impl<'d> TimeZoneFormat<'d> {
         }
     }
 
-    pub fn format_to_write(
+    /// `format_to_write` takes a mutable reference to anything that implements the `Write` trait
+    /// and a `TimeZone` value that populates the buffer with a formatted value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // use icu_locid::Locale;
+    /// // use icu_locid_macros::langid;
+    /// // use icu_datetime::TimeZoneFormat;
+    /// // use icu_datetime::date::GmtOffset;
+    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// // # let locale: Locale = langid!("en").into();
+    /// // # let pattern = std::iter::empty().collect();
+    /// // # let provider = InvariantDataProvider;
+    ///
+    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
+    /// //     .expect("Failed to create TimeZoneFormat");
+    ///
+    /// // let time_zone = MockTimeZone::new(
+    /// //        GmtOffset::default(),
+    /// //        None,
+    /// //        None,
+    /// //        None,
+    /// // );
+    ///
+    /// // let mut buffer = String::new();
+    /// // tzf.format_to_write(&mut buffer, &time_zone)
+    /// //     .expect("Failed to write to a buffer.");
+    ///
+    /// // let _ = format!("Time Zone: {}", buffer);
+    /// ```
+    // TODO(#622) Make this public once TimeZoneFormat is public.
+    //           And remove #[allow(unused)]
+    #[allow(unused)]
+    pub(super) fn format_to_write(
         &self,
         w: &mut impl std::fmt::Write,
         value: &impl TimeZoneInput,
@@ -213,7 +344,39 @@ impl<'d> TimeZoneFormat<'d> {
         timezone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
     }
 
-    pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
+    /// `format_to_string` takes a `TimeZone` value and returns a string with the formatted value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // use icu_locid::Locale;
+    /// // use icu_locid_macros::langid;
+    /// // use icu_datetime::TimeZoneFormat;
+    /// // use icu_datetime::date::GmtOffset;
+    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// // # let locale: Locale = langid!("en").into();
+    /// // # let pattern = std::iter::empty().collect();
+    /// // # let provider = InvariantDataProvider;
+    ///
+    /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider)
+    /// //     .expect("Failed to create TimeZoneFormat");
+    ///
+    /// // let time_zone = MockTimeZone::new(
+    /// //        GmtOffset::default(),
+    /// //        None,
+    /// //        None,
+    /// //        None,
+    /// // );
+    ///
+    /// // let _ = tzf.format_to_string(&time_zone);
+    /// ```
+    // TODO(#622) Make this public once TimeZoneFormat is public.
+    //           And remove #[allow(unused)]
+    #[allow(unused)]
+    pub(super) fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
         let mut s = String::new();
         self.format_to_write(&mut s, value)
             .expect("Failed to write to a String.");

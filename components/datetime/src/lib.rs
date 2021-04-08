@@ -92,5 +92,5 @@ pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
 pub use options::DateTimeFormatOptions;
-pub use timezone::TimeZoneFormat;
 pub use zoned_datetime::ZonedDateTimeFormat;
+// TODO(#622) re-export TimeZoneFormat once it is made public.

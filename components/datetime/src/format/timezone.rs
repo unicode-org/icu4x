@@ -38,7 +38,8 @@ where
     }
 }
 
-pub fn write_pattern<T, W>(
+// TODO(#622) Make this public once TimeZoneFormat is public.
+pub(crate) fn write_pattern<T, W>(
     time_zone_format: &TimeZoneFormat,
     time_zone: &T,
     w: &mut W,
