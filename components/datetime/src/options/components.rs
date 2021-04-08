@@ -346,8 +346,8 @@ mod test {
     use super::*;
 
     // Shorten these for terser tests.
-    type FS = FieldSymbol;
-    type FL = FieldLength;
+    type Symbol = FieldSymbol;
+    type Length = FieldLength;
 
     #[test]
     fn test_component_bag_to_vec_field() {
@@ -355,12 +355,12 @@ mod test {
         assert_eq!(
             bag.to_vec_fields(),
             vec![
-                (FS::Year(fields::Year::Calendar), FL::One).into(),
-                (FS::Month(fields::Month::Format), FL::Wide).into(),
-                (FS::Day(fields::Day::DayOfMonth), FL::One).into(),
-                (FS::Hour(fields::Hour::H24), FL::One).into(),
-                (FS::Minute, FL::One).into(),
-                (FS::Second(fields::Second::Second), FL::One).into(),
+                (Symbol::Year(fields::Year::Calendar), Length::One).into(),
+                (Symbol::Month(fields::Month::Format), Length::Wide).into(),
+                (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
+                (Symbol::Hour(fields::Hour::H24), Length::One).into(),
+                (Symbol::Minute, Length::One).into(),
+                (Symbol::Second(fields::Second::Second), Length::One).into(),
             ]
         );
     }
@@ -382,9 +382,9 @@ mod test {
         assert_eq!(
             bag.to_vec_fields(),
             vec![
-                (FS::Year(fields::Year::Calendar), FL::One).into(),
-                (FS::Month(fields::Month::Format), FL::TwoDigit).into(),
-                (FS::Day(fields::Day::DayOfMonth), FL::One).into(),
+                (Symbol::Year(fields::Year::Calendar), Length::One).into(),
+                (Symbol::Month(fields::Month::Format), Length::TwoDigit).into(),
+                (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
             ]
         );
     }
