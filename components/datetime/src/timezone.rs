@@ -475,9 +475,9 @@ impl<'d> TimeZoneFormat<'d> {
                         },
                     )
                     // support all combos of "(HH|H):mm" by replacing longest patterns first.
-                    .replace("HH", &self.format_hours(time_zone, ZeroPadding::On))
-                    .replace("mm", &self.format_minutes(time_zone))
-                    .replace("H", &self.format_hours(time_zone, ZeroPadding::Off)),
+                    .replace("HH", &self.format_offset_hours(time_zone, ZeroPadding::On))
+                    .replace("mm", &self.format_offset_minutes(time_zone))
+                    .replace("H", &self.format_offset_hours(time_zone, ZeroPadding::Off)),
             )
         }
     }
@@ -513,7 +513,7 @@ impl<'d> TimeZoneFormat<'d> {
     }
 
     /// Formats the hours as a `String` with optional zero-padding.
-    pub(super) fn format_hours(
+    pub(super) fn format_offset_hours(
         &self,
         time_zone: &impl TimeZoneInput,
         padding: ZeroPadding,
@@ -522,7 +522,7 @@ impl<'d> TimeZoneFormat<'d> {
     }
 
     /// Formats the minutes as a `String` with zero-padding.
-    pub(super) fn format_minutes(&self, time_zone: &impl TimeZoneInput) -> String {
+    pub(super) fn format_offset_minutes(&self, time_zone: &impl TimeZoneInput) -> String {
         Self::format_time_segment(
             (time_zone.gmt_offset().0 % 3600 / 60).abs() as u8,
             ZeroPadding::On,
@@ -530,7 +530,7 @@ impl<'d> TimeZoneFormat<'d> {
     }
 
     /// Formats the seconds as a `String` with zero-padding.
-    pub(super) fn format_seconds(&self, time_zone: &impl TimeZoneInput) -> String {
+    pub(super) fn format_offset_seconds(&self, time_zone: &impl TimeZoneInput) -> String {
         Self::format_time_segment(
             (time_zone.gmt_offset().0 % 3600 % 60).abs() as u8,
             ZeroPadding::On,
@@ -552,17 +552,17 @@ impl<'d> TimeZoneFormat<'d> {
 
         let extended_format = matches!(format, IsoFormat::Extended | IsoFormat::UtcExtended);
         let mut s = String::from(if gmt_offset.is_positive() { '+' } else { '-' });
-        s.push_str(&self.format_hours(time_zone, ZeroPadding::On));
+        s.push_str(&self.format_offset_hours(time_zone, ZeroPadding::On));
 
         match minutes {
             IsoMinutes::Required => {
                 extended_format.then(|| s.push(':'));
-                s.push_str(&self.format_minutes(time_zone));
+                s.push_str(&self.format_offset_minutes(time_zone));
             }
             IsoMinutes::Optional => {
                 if gmt_offset.has_minutes() {
                     extended_format.then(|| s.push(':'));
-                    s.push_str(&self.format_minutes(time_zone));
+                    s.push_str(&self.format_offset_minutes(time_zone));
                 }
             }
         }
@@ -570,7 +570,7 @@ impl<'d> TimeZoneFormat<'d> {
         if let IsoSeconds::Optional = seconds {
             if gmt_offset.has_seconds() {
                 extended_format.then(|| s.push(':'));
-                s.push_str(&self.format_seconds(time_zone));
+                s.push_str(&self.format_offset_seconds(time_zone));
             }
         }
 
