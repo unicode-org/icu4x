@@ -1,0 +1,17 @@
+[
+    {
+        "description": "Width difference: y vs yy",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "two-digit"
+                }
+            }
+        },
+        "output": {
+            "value": "20"
+        }
+    }
+]

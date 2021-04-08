@@ -4,6 +4,9 @@
 
 #![cfg(feature = "serde")]
 
+//! This file contains the serde representaitons of the JSON files located in
+//! components/datetime/tests/fixtures/tests
+
 use icu_datetime::options::{components, length};
 use serde::{Deserialize, Serialize};
 
@@ -12,6 +15,7 @@ pub struct Fixture(pub Vec<Test>);
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Test {
+    pub description: Option<String>,
     pub input: TestInput,
     pub output: TestOutput,
 }

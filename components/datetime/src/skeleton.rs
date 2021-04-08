@@ -7,7 +7,11 @@
 use smallvec::SmallVec;
 use std::{convert::TryFrom, fmt};
 
-use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::{
+    fields::{self, Field, FieldLength, FieldSymbol},
+    pattern::Pattern,
+    provider::gregory::patterns::{PatternV1, SkeletonV1, SkeletonsV1},
+};
 
 #[cfg(feature = "provider_serde")]
 use serde::{
@@ -188,6 +192,26 @@ impl TryFrom<&str> for Skeleton {
     }
 }
 
+/// The `AvailableFormatPattern` represents a specific pattern that is available for a given locale.
+/// A [`Skeleton`] is used to match against to find the best pattern.
+#[derive(Debug, PartialEq, Clone)]
+pub struct AvailableFormatPattern<'a> {
+    /// The skeleton is used to match against.
+    skeleton: &'a Skeleton,
+    pub pattern: &'a Pattern,
+}
+
+impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
+    fn from(tuple: (&'a SkeletonV1, &'a PatternV1)) -> Self {
+        let (skeleton_v1, pattern_v1) = tuple;
+
+        AvailableFormatPattern {
+            skeleton: &skeleton_v1.0,
+            pattern: &pattern_v1.0,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum SkeletonError {
     FieldLengthTooLong,
@@ -260,10 +284,339 @@ impl From<fields::SymbolError> for SkeletonError {
     }
 }
 
+// The following scalar values are for testing the suitability of a skeleton's field for the
+// given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
+// implementation each distance type is separated by an order of magnitiude. This magnitude needs
+// to be at minimum a multiple of the max length of fields. As of CLDR 38 (2021-01), the max length
+// of a skeleton in the "availableFormats" contained a total of 4 fields. The scores use a multiple
+// of 10, as a number that will contain the range, and be easy to reason with.
+//
+// The only exception is on the largest magnitude of values (MISSING_OR_SKELETON_EXTRA_SYMBOL). The
+// missing or extra count BOTH the requested fields and skeleton fields. This is fine since there
+// is no higher magnitude.
+
+const MAX_SKELETON_FIELDS: u32 = 10;
+
+// Per the skeleton matching algorithm:
+// https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons
+
+// > 1. "Input skeleton symbols" are replaced with the best match for a given locale.
+// >   - Hour: j → {H, k, h, K} + {a, b, B}
+// >           J → {H, k, h, K}
+// >           C → j + day period
+
+// The components::Bag does not support step 1
+
+// > 2. For fields with symbols representing the same type (year, month, day, etc):
+// >   A. Most symbols have a small distance from each other.
+// >     - Months: M ≅ L           (9 ≅ 9)  conjuction, vs stand-alone
+// >       Week:   E ≅ c           (Tue ≅ 2)
+// >       Period: a ≅ b ≅ B       (am. ≅ mid. ≅ at night)
+// >       Hour:   H ≅ k ≅ h ≅ K   (23, 24, 12, 11)
+
+// For step 2, the components::Bag will not produce "stand-alone" months, as no skeletons
+// contain stand-alone months.
+
+const NO_DISTANCE: u32 = 0;
+
+// B. Width differences among fields, other than those marking text vs numeric, are given small
+// distance from each other.
+// - MMM ≅ MMMM  (Sep ≅ September)
+//   MM ≅ M      (09 ≅ 9)
+const WIDTH_MISMATCH_DISTANCE: u32 = 1;
+
+// C. Numeric and text fields are given a larger distance from each other.
+// - MMM ≈ MM    (Sep ≈ 09)
+//   MMM
+const TEXT_VS_NUMERIC_DISTANCE: u32 = 10;
+
+// D. Symbols representing substantial differences (week of year vs week of month) are given much
+// larger a distances from each other.
+// - d ≋ D;     (12 ≋ 345) Day of month vs Day of year
+const SUBSTANTIAL_DIFFERENCES_DISTANCE: u32 = 100;
+
+// A skeleton had more symbols than what was requested.
+const SKELETON_EXTRA_SYMBOL: u32 = 1000;
+
+// A requested symbol is missing in the skeleton. Note that this final value can be more than
+// MAX_SKELETON_FIELDS, as it's counting the missing requested fields, which can be longer than
+// the stored skeletons. There cannot be any cases higher than this one.
+const REQUESTED_SYMBOL_MISSING: u32 = 10000;
+
+/// According to the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
+/// there will be a guaranteed match for a skeleton. However, with this initial implementation,
+/// there is no attempt to add on missing fields. This enum encodes the variants for the current
+/// search for a best skeleton.
+#[derive(Debug, PartialEq, Clone)]
+pub enum BestSkeleton<'a> {
+    AllFieldsMatch(AvailableFormatPattern<'a>),
+    MissingOrExtraFields(AvailableFormatPattern<'a>),
+    NoMatch,
+}
+
+/// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
+///
+/// The following is implemented:
+///
+///  * Compute a score based on the best possible match for the given fields.
+///  * Select the skeleton with highest score.
+///
+/// The following is not implemented:
+///
+///  * 2.6.2.1 Matching Skeletons
+///    - TODO(#584) - Modify the resulting pattern to have fields of the same length. For example requesting
+///      a skeleton "yMMMMd" can have a best match of ["yMMMd", "d MMM y"]. This pattern should
+///      then be modified to use the requested length to produce a pattern "d MMMM y".
+///      However, fields should not be changed from numeric to text.
+///  * 2.6.2.2 Missing Skeleton Fields
+///    - TODO(#585) - The mechanism to combine a date pattern and a time pattern.
+///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
+///      much of this step to implement. See the issue for more information.
+pub fn get_best_available_format_pattern<'a>(
+    available_format_patterns: impl Iterator<Item = AvailableFormatPattern<'a>> + 'a,
+    fields: &[Field],
+) -> BestSkeleton<'a> {
+    let mut closest_format_pattern = None;
+    let mut closest_distance: u32 = u32::MAX;
+    let mut closest_missing_fields = 0;
+
+    for available_format_pattern in available_format_patterns {
+        let skeleton = &available_format_pattern.skeleton;
+        debug_assert!(
+            skeleton.fields_len() <= MAX_SKELETON_FIELDS as usize,
+            "The distance mechanism assumes skeletons are less than MAX_SKELETON_FIELDS in length."
+        );
+        let mut missing_fields = 0;
+        let mut distance: u32 = 0;
+        // The distance should fit into a u32.
+
+        let mut requested_fields = fields.iter().peekable();
+        let mut skeleton_fields = skeleton.fields_iter().peekable();
+        loop {
+            let next = (requested_fields.peek(), skeleton_fields.peek());
+
+            // Try to find matching symbols.
+            match next {
+                (Some(requested_field), Some(skeleton_field)) => {
+                    debug_assert!(
+                        // As of the time of this writing, stand-alone months are not in the CLDR
+                        // skeleton data. The components::Bag could produce stand-alone month fields,
+                        // but since the CLDR does not have them, only Month::Format symbols are
+                        // used for matching.
+                        skeleton_field.symbol != FieldSymbol::Month(fields::Month::StandAlone)
+                    );
+
+                    if skeleton_field.symbol > requested_field.symbol {
+                        // Keep searching for a matching skeleton field.
+                        skeleton_fields.next();
+                        distance += SKELETON_EXTRA_SYMBOL;
+                        continue;
+                    }
+
+                    if skeleton_field.symbol < requested_field.symbol {
+                        // The requested field symbol is missing from the skeleton.
+                        distance += REQUESTED_SYMBOL_MISSING;
+                        missing_fields += 1;
+                        requested_fields.next();
+                        continue;
+                    }
+
+                    distance += if requested_field == skeleton_field {
+                        NO_DISTANCE
+                    } else if requested_field.symbol != skeleton_field.symbol {
+                        SUBSTANTIAL_DIFFERENCES_DISTANCE
+                    } else if requested_field.get_length_type() != skeleton_field.get_length_type()
+                    {
+                        TEXT_VS_NUMERIC_DISTANCE
+                    } else {
+                        WIDTH_MISMATCH_DISTANCE
+                    };
+
+                    requested_fields.next();
+                    skeleton_fields.next();
+                }
+                (None, Some(_)) => {
+                    // The skeleton has additional fields that we are not matching.
+                    distance += SKELETON_EXTRA_SYMBOL;
+                    skeleton_fields.next();
+                }
+                (Some(_), None) => {
+                    // The skeleton is missing requested fields.
+                    distance += REQUESTED_SYMBOL_MISSING;
+                    requested_fields.next();
+                    missing_fields += 1;
+                }
+                (None, None) => {
+                    break;
+                }
+            }
+        }
+
+        if distance < closest_distance {
+            closest_format_pattern = Some(available_format_pattern);
+            closest_distance = distance;
+            closest_missing_fields = missing_fields;
+        }
+    }
+
+    let closest_format_pattern =
+        closest_format_pattern.expect("At least one closest format pattern will always be found.");
+
+    if closest_missing_fields == fields.len() {
+        return BestSkeleton::NoMatch;
+    }
+    if closest_distance >= SKELETON_EXTRA_SYMBOL {
+        return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
+    }
+    BestSkeleton::AllFieldsMatch(closest_format_pattern)
+}
+
+pub fn get_available_format_patterns<'a>(
+    skeletons: &'a SkeletonsV1,
+) -> impl Iterator<Item = AvailableFormatPattern> + 'a {
+    skeletons.0.iter().map(AvailableFormatPattern::from)
+}
+
 #[cfg(all(test, feature = "provider_serde"))]
 mod test {
     use super::*;
-    use crate::fields::{Day, Field, FieldLength, Month, Weekday};
+
+    use icu_locid_macros::langid;
+    use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
+    use std::borrow::Cow;
+
+    use crate::{
+        fields::{Day, Field, FieldLength, Month, Weekday},
+        options::components,
+        provider::{gregory::DatesV1, key::GREGORY_V1},
+    };
+
+    fn get_data_provider() -> Cow<'static, DatesV1> {
+        let provider = icu_testdata::get_provider();
+        let langid = langid!("en");
+        provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid),
+                    },
+                },
+            })
+            .unwrap()
+            .payload
+            .take()
+            .unwrap()
+    }
+
+    /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
+    /// testing see components/datetime/tests/fixtures/tests/components-*.json
+    #[test]
+    fn test_skeleton_matching() {
+        let components = components::Bag::default();
+        let requested_fields = components.to_vec_fields();
+        let data_provider = get_data_provider();
+        let available_format_patterns =
+            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
+
+        match get_best_available_format_pattern(available_format_patterns, &requested_fields) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern)
+            | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+                assert_eq!(
+                    available_format_pattern.pattern.to_string(),
+                    String::from("MMM d, y")
+                )
+            }
+            BestSkeleton::NoMatch => {
+                panic!("No skeleton was found.")
+            }
+        };
+    }
+
+    #[test]
+    fn test_skeleton_matching_missing_fields() {
+        let components = components::Bag {
+            era: None,
+            year: None,
+            month: Some(components::Month::Numeric),
+            day: None,
+            weekday: Some(components::Text::Short),
+            hour: None,
+            minute: None,
+            second: None,
+            time_zone_name: None,
+            preferences: None,
+        };
+        let requested_fields = components.to_vec_fields();
+        let data_provider = get_data_provider();
+        let available_format_patterns =
+            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
+
+        match get_best_available_format_pattern(available_format_patterns, &requested_fields) {
+            BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+                assert_eq!(
+                    available_format_pattern.pattern.to_string(),
+                    String::from("L")
+                )
+            }
+            best => panic!("Unexpected {:?}", best),
+        };
+    }
+
+    #[test]
+    fn test_skeleton_empty_bag() {
+        let components = components::Bag {
+            era: None,
+            year: None,
+            month: None,
+            day: None,
+            weekday: None,
+            hour: None,
+            minute: None,
+            second: None,
+            time_zone_name: None,
+            preferences: None,
+        };
+        let requested_fields = components.to_vec_fields();
+        let data_provider = get_data_provider();
+        let available_format_patterns =
+            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
+
+        assert_eq!(
+            get_best_available_format_pattern(available_format_patterns, &requested_fields),
+            BestSkeleton::NoMatch,
+            "No match was found"
+        );
+    }
+
+    /// There are no skeletons that match just the timezone. They all rely on the appendItems
+    /// data from the CLDR.
+    #[test]
+    fn test_skeleton_no_match() {
+        let components = components::Bag {
+            era: None,
+            year: None,
+            month: None,
+            day: None,
+            weekday: None,
+            hour: None,
+            minute: None,
+            second: None,
+            time_zone_name: Some(components::TimeZoneName::Long),
+            preferences: None,
+        };
+        let requested_fields = components.to_vec_fields();
+        let data_provider = get_data_provider();
+        let available_format_patterns =
+            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
+
+        assert_eq!(
+            get_best_available_format_pattern(available_format_patterns, &requested_fields),
+            BestSkeleton::NoMatch,
+            "No match was found"
+        );
+    }
 
     // These were all of the skeletons from the "available formats" in the CLDR as of 2021-01
     // Generated with:

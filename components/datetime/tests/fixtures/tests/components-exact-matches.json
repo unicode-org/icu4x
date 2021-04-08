@@ -1,0 +1,485 @@
+[
+    {
+        "description": "Exact match for: y => y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "2020"
+        }
+    },
+    {
+        "description": "Exact match for: yM => M/y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "1/2020"
+        }
+    },
+    {
+        "description": "Exact match for: yMd => M/d/y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "numeric",
+                    "day": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "1/7/2020"
+        }
+    },
+    {
+        "description": "Exact match for: yMdE => E, M/d/y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "numeric",
+                    "day": "numeric",
+                    "weekday": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Tue, 1/7/2020"
+        }
+    },
+    {
+        "description": "Exact match for: yMMM => MMM y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Jan 2020"
+        }
+    },
+    {
+        "description": "Exact match for: yMMMd => MMM d, y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "short",
+                    "day": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "Jan 7, 2020"
+        }
+    },
+    {
+        "description": "Exact match for: yMMMdE => E, MMM d, y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "short",
+                    "day": "numeric",
+                    "weekday": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Tue, Jan 7, 2020"
+        }
+    },
+    {
+        "description": "Exact match for: yMMMM => MMMM y",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "long"
+                }
+            }
+        },
+        "output": {
+            "value": "January 2020"
+        }
+    },
+    {
+        "description": "Exact match for: M => M",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Jan"
+        }
+    },
+    {
+        "description": "Exact match for: Md => M/d",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "numeric",
+                    "day": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "1/7"
+        }
+    },
+    {
+        "description": "Exact match for: MdE => E, M/d",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "numeric",
+                    "day": "numeric",
+                    "weekday": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Tue, 1/7"
+        }
+    },
+    {
+        "description": "Exact match for: MMM => LLL",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Jan"
+        }
+    },
+    {
+        "description": "Exact match for: MMMd => MMM d",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "short",
+                    "day": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "Jan 7"
+        }
+    },
+    {
+        "description": "Exact match for: MMMdE => E, MMM d",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "short",
+                    "day": "numeric",
+                    "weekday": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Tue, Jan 7"
+        }
+    },
+    {
+        "description": "Exact match for: MMMMd => MMMM d",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "month": "long",
+                    "day": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "January 7"
+        }
+    },
+    {
+        "description": "Exact match for: d => d",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "day": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "7"
+        }
+    },
+    {
+        "description": "Exact match for: dE => d E",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "day": "numeric",
+                    "weekday": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "7 Tue"
+        }
+    },
+    {
+        "description": "Exact match for: E => ccc",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "weekday": "short"
+                }
+            }
+        },
+        "output": {
+            "value": "Tue"
+        }
+    },
+    {
+        "description": "Exact match for: Ehm => E h:mm a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "weekday": "short",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "Tue 8:25 AM"
+        }
+    },
+    {
+        "description": "Exact match for: Ehms => E h:mm:ss a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "weekday": "short",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "Tue 8:25:07 AM"
+        }
+    },
+    {
+        "description": "Exact match for: EHm => E h:mm a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "weekday": "short",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "preferences": { "hourCycle": "h23" }
+                }
+            }
+        },
+        "output": {
+            "value": "Tue 08:25"
+        }
+    },
+    {
+        "description": "Exact match for: EHms => E h:mm:ss a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "weekday": "short",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric",
+                    "preferences": { "hourCycle": "h23" }
+                }
+            }
+        },
+        "output": {
+            "value": "Tue 08:25:07"
+        }
+    },
+    {
+        "description": "Exact match for: h => h a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "8 AM"
+        }
+    },
+    {
+        "description": "Exact match for: hm => h:mm a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "8:25 AM"
+        }
+    },
+    {
+        "description": "Exact match for: hms => h:mm:ss a",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "8:25:07 AM"
+        }
+    },
+    {
+        "description": "Exact match for: H => HH",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "preferences": { "hourCycle": "h23" }
+                }
+            }
+        },
+        "output": {
+            "value": "08"
+        }
+    },
+    {
+        "description": "Exact match for: Hm => HH:mm",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "preferences": { "hourCycle": "h23" }
+                }
+            }
+        },
+        "output": {
+            "value": "08:25"
+        }
+    },
+    {
+        "description": "Exact match for: Hms => HH:mm:ss",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric",
+                    "preferences": { "hourCycle": "h23" }
+                }
+            }
+        },
+        "output": {
+            "value": "08:25:07"
+        }
+    },
+    {
+        "description": "Exact match for: ms => mm:ss",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "minute": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "value": "25:07"
+        }
+    }
+]

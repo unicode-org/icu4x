@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fields::FieldLength;
 use std::{cmp::Ordering, convert::TryFrom};
 
 #[derive(Debug, PartialEq)]
@@ -26,6 +27,18 @@ pub enum FieldSymbol {
     Hour(Hour),
     Minute,
     Second(Second),
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum TextOrNumeric {
+    Text,
+    Numeric,
+}
+
+/// FieldSymbols can be either text or numeric. This categorization is important when matching
+/// skeletons with a components::Bag.
+pub trait LengthType {
+    fn get_length_type(&self, length: &FieldLength) -> TextOrNumeric;
 }
 
 impl FieldSymbol {
@@ -158,6 +171,12 @@ pub enum Year {
     WeekOf,
 }
 
+impl LengthType for Year {
+    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+        TextOrNumeric::Numeric
+    }
+}
+
 impl TryFrom<u8> for Year {
     type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
@@ -183,6 +202,19 @@ impl From<Year> for FieldSymbol {
 pub enum Month {
     Format,
     StandAlone,
+}
+
+impl LengthType for Month {
+    fn get_length_type(&self, length: &FieldLength) -> TextOrNumeric {
+        match length {
+            FieldLength::One => TextOrNumeric::Numeric,
+            FieldLength::TwoDigit => TextOrNumeric::Numeric,
+            FieldLength::Abbreviated => TextOrNumeric::Text,
+            FieldLength::Wide => TextOrNumeric::Text,
+            FieldLength::Narrow => TextOrNumeric::Text,
+            FieldLength::Six => TextOrNumeric::Text,
+        }
+    }
 }
 
 impl TryFrom<u8> for Month {
@@ -212,6 +244,12 @@ pub enum Day {
     DayOfYear,
     DayOfWeekInMonth,
     ModifiedJulianDay,
+}
+
+impl LengthType for Day {
+    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+        TextOrNumeric::Numeric
+    }
 }
 
 impl TryFrom<u8> for Day {
@@ -245,6 +283,12 @@ pub enum Hour {
     H24,
 }
 
+impl LengthType for Hour {
+    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+        TextOrNumeric::Numeric
+    }
+}
+
 impl TryFrom<u8> for Hour {
     type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
@@ -273,6 +317,12 @@ pub enum Second {
     Second,
     FractionalSecond,
     Millisecond,
+}
+
+impl LengthType for Second {
+    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+        TextOrNumeric::Numeric
+    }
 }
 
 impl TryFrom<u8> for Second {
@@ -304,6 +354,18 @@ pub enum Weekday {
     StandAlone,
 }
 
+impl LengthType for Weekday {
+    fn get_length_type(&self, length: &FieldLength) -> TextOrNumeric {
+        match self {
+            Weekday::Format => TextOrNumeric::Text,
+            Weekday::Local | Weekday::StandAlone => match length {
+                FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Text,
+                _ => TextOrNumeric::Numeric,
+            },
+        }
+    }
+}
+
 impl TryFrom<u8> for Weekday {
     type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
@@ -330,6 +392,12 @@ impl From<Weekday> for FieldSymbol {
 pub enum DayPeriod {
     AmPm,
     NoonMidnight,
+}
+
+impl LengthType for DayPeriod {
+    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+        TextOrNumeric::Text
+    }
 }
 
 impl TryFrom<u8> for DayPeriod {

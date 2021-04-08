@@ -5,15 +5,20 @@
 use crate::date;
 use crate::error::DateTimeFormatError;
 use crate::fields;
-use crate::options::{length, DateTimeFormatOptions};
+use crate::options::{components, length, DateTimeFormatOptions};
 use crate::pattern::Pattern;
 use crate::provider;
+use crate::skeleton;
 use std::borrow::Cow;
 
 type Result<T> = std::result::Result<T, DateTimeFormatError>;
 
 pub trait DateTimePatterns {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>>;
+    fn get_pattern_for_components_bag(
+        &self,
+        components: &components::Bag,
+    ) -> Result<Option<Pattern>>;
     fn get_pattern_for_length_bag(&self, length: &length::Bag) -> Result<Option<Pattern>>;
     fn get_pattern_for_date_length(&self, length: length::Date) -> Result<Pattern>;
     fn get_pattern_for_time_length(&self, length: length::Time) -> Result<Pattern>;
@@ -51,8 +56,33 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>> {
         match options {
             DateTimeFormatOptions::Length(bag) => self.get_pattern_for_length_bag(bag),
-            DateTimeFormatOptions::Components(_) => unimplemented!(),
+            DateTimeFormatOptions::Components(bag) => self.get_pattern_for_components_bag(bag),
         }
+    }
+
+    fn get_pattern_for_components_bag(
+        &self,
+        components: &components::Bag,
+    ) -> Result<Option<Pattern>> {
+        // Not all skeletons are currently supported.
+        let available_format_patterns =
+            skeleton::get_available_format_patterns(&self.date_time.skeletons);
+        let requested_fields = components.to_vec_fields();
+        Ok(
+            match skeleton::get_best_available_format_pattern(
+                available_format_patterns,
+                &requested_fields,
+            ) {
+                skeleton::BestSkeleton::AllFieldsMatch(available_format_pattern)
+                | skeleton::BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+                    // In the short-term future, patterns can be dynamically generated to provide
+                    // a better match than what is literally in the CLDR. For now, just clone the
+                    // pattern.
+                    Some(available_format_pattern.pattern.clone())
+                }
+                skeleton::BestSkeleton::NoMatch => None,
+            },
+        )
     }
 
     fn get_pattern_for_length_bag(&self, length: &length::Bag) -> Result<Option<Pattern>> {
