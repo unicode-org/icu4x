@@ -38,10 +38,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
-    #[cfg_attr(
-        all(not(feature = "serialize_none"), feature = "serde"),
-        serde(rename = "hourCycle")
-    )]
+    #[cfg_attr(feature = "serde", serde(rename = "hourCycle"))]
     pub hour_cycle: Option<HourCycle>,
 }
 
