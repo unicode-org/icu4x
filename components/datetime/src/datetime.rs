@@ -181,7 +181,7 @@ impl<'d> DateTimeFormat<'d> {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but `FormattedDateTime` will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
-    pub fn format<'s, T>(&'s self, value: &'s T) -> FormattedDateTime<'s, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
         T: DateTimeInput,
     {

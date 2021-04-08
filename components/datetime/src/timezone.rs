@@ -287,7 +287,7 @@ impl<'d> TimeZoneFormat<'d> {
     // TODO(#622) Make this public once TimeZoneFormat is public.
     //           And remove #[allow(unused)]
     #[allow(unused)]
-    pub(super) fn format<'s: 'd, T>(&'s self, value: &'s T) -> FormattedTimeZone<'s, T>
+    pub(super) fn format<'l: 'd, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
     where
         T: TimeZoneInput,
     {

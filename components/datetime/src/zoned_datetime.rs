@@ -70,7 +70,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
         })
     }
 
-    pub fn format<'s: 'd, T>(&'s self, value: &'s T) -> FormattedZonedDateTime<'s, T>
+    pub fn format<'l: 'd, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
     where
         T: ZonedDateTimeInput,
     {
