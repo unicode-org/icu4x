@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617848228137,
+  "lastUpdate": 1617919292128,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4853,6 +4853,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4772,
             "range": "± 186",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6db4862fc54951249c6897c4fde64eb597b17cf7",
+          "message": "Components bag support with only skeleton matching (#587)",
+          "timestamp": "2021-04-08T16:55:06-05:00",
+          "tree_id": "86a16a67540721e83c3dfe9af01d06cc39f0378a",
+          "url": "https://github.com/unicode-org/icu4x/commit/6db4862fc54951249c6897c4fde64eb597b17cf7"
+        },
+        "date": 1617919290939,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3479,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5342,
+            "range": "± 209",
             "unit": "ns/iter"
           }
         ]
