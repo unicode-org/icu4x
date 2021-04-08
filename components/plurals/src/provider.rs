@@ -10,6 +10,8 @@ pub mod key {
     pub const ORDINAL_V1: ResourceKey = resource_key!(plurals, "ordinal", 1);
 }
 
+pub mod resolver;
+
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
