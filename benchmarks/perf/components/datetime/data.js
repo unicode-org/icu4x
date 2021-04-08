@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617663056330,
+  "lastUpdate": 1617848201188,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3509,6 +3509,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1658723,
             "range": "± 92613",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03be3a1f8fc383d9cb4723ab62bae367e645c32f",
+          "message": "Add lower-level data API to PluralRules (#575)\n\n* Add lower-level data API to PluralRules\r\n\r\n* Switch to using PluralRulesV1\r\n\r\n* Move code to resolver module; turn into free function",
+          "timestamp": "2021-04-07T19:10:56-07:00",
+          "tree_id": "b8b3ae11ef1176be9813f7712b8be164ec224a6b",
+          "url": "https://github.com/unicode-org/icu4x/commit/03be3a1f8fc383d9cb4723ab62bae367e645c32f"
+        },
+        "date": 1617848200069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1264134,
+            "range": "± 16462",
             "unit": "ns/iter"
           }
         ]
