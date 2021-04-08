@@ -194,10 +194,7 @@ impl TryFrom<&str> for Skeleton {
 
 /// The `AvailableFormatPattern` represents a specific pattern that is available for a given locale.
 /// A [`Skeleton`] is used to match against to find the best pattern.
-///
-/// This struct implements the [`Copy`] trait, as it's a collection of two references, which should
-/// be fairly cheap to copy.
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct AvailableFormatPattern<'a> {
     /// The skeleton is used to match against.
     skeleton: &'a Skeleton,
@@ -350,7 +347,7 @@ const REQUESTED_SYMBOL_MISSING: u32 = 10000;
 /// there will be a guaranteed match for a skeleton. However, with this initial implementation,
 /// there is no attempt to add on missing fields. This enum encodes the variants for the current
 /// search for a best skeleton.
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum BestSkeleton<'a> {
     AllFieldsMatch(AvailableFormatPattern<'a>),
     MissingOrExtraFields(AvailableFormatPattern<'a>),
