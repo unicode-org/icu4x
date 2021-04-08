@@ -35,6 +35,7 @@ getrandom = { version = "0.2", features = ["js"] }
 
 [lib]
 bench = false  # This option is required for Benchmark CI
+path = "src/lib.rs"
 
 [features]
 default = []

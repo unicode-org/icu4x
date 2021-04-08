@@ -81,6 +81,12 @@ jobs:
         crate: cargo-make
         version: latest
 
+    - name: Install cargo-readme
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-readme
+        version: latest
+
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
     - name: Check Format

@@ -34,6 +34,7 @@ rand_distr = "0.3"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
+path = "src/lib.rs"
 
 [features]
 default = []

@@ -1,3 +1,5 @@
+# writeable [![crates.io](http://meritbadge.herokuapp.com/writeable)](https://crates.io/crates/writeable)
+
 `writeable` is a utility crate of the [`ICU4X`] project.
 
 It includes [`Writeable`], a core trait representing an object that can be written to a
@@ -17,6 +19,7 @@ to wrap writeable_to_string.
 
 ```rust
 use writeable::Writeable;
+use writeable::LengthHint;
 use writeable::assert_writeable_eq;
 use std::fmt;
 
@@ -25,19 +28,25 @@ struct WelcomeMessage<'s>{
 }
 
 impl<'s> Writeable for WelcomeMessage<'s> {
-    fn write_to(&self, sink: &mut dyn fmt::Write) -> fmt::Result {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         sink.write_str("Hello, ")?;
         sink.write_str(self.name)?;
         sink.write_char('!')?;
         Ok(())
     }
 
-    fn write_len(&self) -> usize {
+    fn write_len(&self) -> LengthHint {
         // "Hello, " + '!' + length of name
-        8 + self.name.len()
+        LengthHint::Exact(8 + self.name.len())
     }
 }
 
 let message = WelcomeMessage { name: "Alice" };
 assert_writeable_eq!("Hello, Alice!", &message);
 ```
+
+[`ICU4X`]: ../icu/index.html
+
+## More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

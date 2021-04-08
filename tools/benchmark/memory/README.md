@@ -1,4 +1,4 @@
-# icu_segmenter_lstm [![crates.io](http://meritbadge.herokuapp.com/icu_segmenter_lstm)](https://crates.io/crates/icu_segmenter_lstm)
+# icu_benchmark_memory [![crates.io](http://meritbadge.herokuapp.com/icu_benchmark_memory)](https://crates.io/crates/icu_benchmark_memory)
 
 
 

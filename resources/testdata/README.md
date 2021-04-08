@@ -1,39 +1,39 @@
 # icu_testdata [![crates.io](http://meritbadge.herokuapp.com/icu_testdata)](https://crates.io/crates/icu_testdata)
 
-This project contains data used for ICU4X unit tests. The data is based on a CLDR tag and a short list of locales that, together, cover a range of scenarios that are useful in unit testing.
+`icu_testdata` is a unit testing package for [`ICU4X`].
 
-The list of locales and the current CLDR tag can be found in [Cargo.toml](./Cargo.toml).
+The package exposes a `DataProvider` with stable data useful for unit testing. The data is
+based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 
-The output data can be found in the [data](./data/) subdirectory.
+See README.md for instructions on re-generating the data from CLDR.
 
-## Pointing to custom test data
+## Examples
 
-If you wish to run ICU4X tests with custom test data, you may do so by setting the "ICU4X_TESTDATA_DIR" environment variable:
+```rust
+use std::borrow::Cow;
+use icu_provider::prelude::*;
+use icu_locid_macros::langid;
 
-```bash
-$ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
+let data_provider = icu_testdata::get_provider();
+
+let data: Cow<icu_plurals::provider::PluralRuleStringsV1> = data_provider
+    .load_payload(&DataRequest {
+        resource_path: ResourcePath {
+            key: icu_plurals::provider::key::CARDINAL_V1,
+            options: ResourceOptions {
+                langid: Some(langid!("ru")),
+                variant: None,
+            },
+        },
+    })
+    .unwrap()
+    .payload.take()
+    .unwrap();
+assert_eq!(data.few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
 ```
 
-## Re-generating the data
+[`ICU4X`]: ../icu/index.html
 
-From this directory, run:
+## More Information
 
-```bash
-$ cargo gen-testdata -v
-```
-
-Use `-v`, `-vv`, or `-vvv` for different verbosities of logging.
-
-Use `-m generate` to generate the testdata without downloading it first:
-
-```bash
-$ cargo gen-testdata -v -m generate
-```
-
-## Generating the data with bincode
-
-The following command will generate the data in the folder `resources/testdata/data/bincode`.
-
-```bash
-cargo make bincode-gen-testdata
-```
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

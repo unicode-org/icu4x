@@ -74,19 +74,21 @@ description = "Automatically generate README.md for each component."
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-glob_pattern = set "./components/**/README.md"
+glob_pattern = set "./**/Cargo.toml"
 template = canonicalize README.tpl
 
-# If we specify install_crate we are expected to run a cargo command,
-# not a script, but cargo-readme is not happy with our workspace
-# configuration.
-exec cargo install cargo-readme --version 3.2.0
+cargo_list = exec cargo --list
+if not contains ${cargo_list.stdout} "readme"
+    trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
+end
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
-    echo "Automatically generating ${path}"
     root_dir = dirname ${path}
-    exec cargo readme -r ${root_dir} -o README.md -t ${template}
+    if not is_empty ${root_dir}
+        echo "Automatically generating ${root_dir}/README.md"
+        exec cargo readme -r ${root_dir} -o README.md -t ${template}
+    end
 end
 '''
 

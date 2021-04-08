@@ -25,6 +25,7 @@ icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" 
 
 [lib]
 bench = false  # This option is required for Benchmark CI
+path = "src/lib.rs"
 
 [features]
 default = []

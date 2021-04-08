@@ -1,4 +1,4 @@
-# icu_segmenter_lstm [![crates.io](http://meritbadge.herokuapp.com/icu_segmenter_lstm)](https://crates.io/crates/icu_segmenter_lstm)
+# icu_locale_canonicalizer [![crates.io](http://meritbadge.herokuapp.com/icu_locale_canonicalizer)](https://crates.io/crates/icu_locale_canonicalizer)
 
 
 
