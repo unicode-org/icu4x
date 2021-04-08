@@ -42,6 +42,7 @@ impl MockTimeZone {
         })
     }
 }
+
 impl FromStr for MockTimeZone {
     type Err = DateTimeError;
     fn from_str(input: &str) -> Result<Self, Self::Err> {

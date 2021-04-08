@@ -2,12 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::{IsoFormat, IsoMinutes, IsoSeconds};
+use std::fmt;
+
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{Error as PatternError, PatternItem};
-use crate::{date::TimeZoneInput, timezone::TimeZoneFormat};
-use std::fmt;
+use crate::{
+    date::TimeZoneInput,
+    timezone::{IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat},
+};
 use writeable::Writeable;
 
 pub struct FormattedTimeZone<'l, T>
@@ -86,13 +89,15 @@ where
                 }
             },
             fields::TimeZone::UpperZ => match u8::from(field.length) {
-                1..=3 => time_zone.gmt_offset().iso8601_format(
+                1..=3 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
                 4 => time_zone_format.localized_gmt_format(time_zone),
-                5 => time_zone.gmt_offset().iso8601_format(
+                5 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
@@ -142,27 +147,32 @@ where
                 }
             },
             fields::TimeZone::LowerX => match u8::from(field.length) {
-                1 => time_zone.gmt_offset().iso8601_format(
+                1 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::UtcBasic,
                     IsoMinutes::Optional,
                     IsoSeconds::Never,
                 ),
-                2 => time_zone.gmt_offset().iso8601_format(
+                2 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
                 ),
-                3 => time_zone.gmt_offset().iso8601_format(
+                3 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
                 ),
-                4 => time_zone.gmt_offset().iso8601_format(
+                4 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                5 => time_zone.gmt_offset().iso8601_format(
+                5 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
@@ -174,27 +184,32 @@ where
                 }
             },
             fields::TimeZone::UpperX => match u8::from(field.length) {
-                1 => time_zone.gmt_offset().iso8601_format(
+                1 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Optional,
                     IsoSeconds::Never,
                 ),
-                2 => time_zone.gmt_offset().iso8601_format(
+                2 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
                 ),
-                3 => time_zone.gmt_offset().iso8601_format(
+                3 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::Extended,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
                 ),
-                4 => time_zone.gmt_offset().iso8601_format(
+                4 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
                 ),
-                5 => time_zone.gmt_offset().iso8601_format(
+                5 => time_zone_format.iso8601_format(
+                    time_zone,
                     IsoFormat::Extended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,

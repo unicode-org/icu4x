@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::Locale;
+use std::convert::TryFrom;
 use std::fmt;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
-use std::{borrow::Cow, convert::TryFrom};
-use tinystr::{TinyStr4, TinyStr8};
+use tinystr::TinyStr8;
 
 #[derive(Debug)]
 pub enum DateTimeError {
@@ -421,108 +421,11 @@ pub enum FractionalSecond {
     Nanosecond(u32),
 }
 
-/// Determines which ISO-8601 format should be used to format a `GmtOffset`.
-pub(crate) enum IsoFormat {
-    /// ISO-8601 Basic Format.
-    /// Formats zero-offset numerically.
-    /// e.g. +0500, +0000
-    Basic,
-
-    /// ISO-8601 Extended Format.
-    /// Formats zero-offset numerically.
-    /// e.g. +05:00, +00:00
-    Extended,
-
-    /// ISO-8601 Basic Format.
-    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
-    /// e.g. +0500, Z
-    UtcBasic,
-
-    /// ISO-8601 Extended Format.
-    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
-    /// e.g. +05:00, Z
-    UtcExtended,
-}
-
-/// Whether the minutes field should be optional or required in ISO-8601 format.
-pub(crate) enum IsoMinutes {
-    /// Minutes are always displayed.
-    Required,
-
-    /// Minutes are displayed only if they are non-zero.
-    Optional,
-}
-
-/// Whether the seconds field should be optional or excluded in ISO-8601 format.
-pub(crate) enum IsoSeconds {
-    /// Seconds are displayed only if they are non-zero.
-    Optional,
-
-    /// Seconds are not displayed.
-    Never,
-}
-
-/// Whether a field should be zero-padded in ISO-8601 format.
-pub(crate) enum ZeroPadding {
-    /// Add zero-padding.
-    On,
-
-    /// Do not add zero-padding.
-    Off,
-}
-
 /// The GMT offset in seconds for a `ZonedDateTime`.
 #[derive(Copy, Clone, Debug, Default)]
-pub struct GmtOffset(i32);
-
-/// Get the ascii byte of a numeric digit.
-/// Only called on digits from in range 0..=9.
-const fn ascii_digit(digit: u8) -> u8 {
-    digit + b'0'
-}
-
-/// Formats a time segment with optional zero padding.
-const fn format_segment(n: u8, padding: ZeroPadding) -> TinyStr4 {
-    // This section is safe because it operates on a finite set of 0..=60
-    // and it ensures that all TinyStr4s are constructed from valid
-    // little-endian bytes, which is the required internal representation.
-    unsafe {
-        if n >= 10 {
-            TinyStr4::new_unchecked(u32::from_le_bytes([
-                ascii_digit(n / 10),
-                ascii_digit(n % 10),
-                0,
-                0,
-            ]))
-        } else {
-            match padding {
-                ZeroPadding::On => {
-                    TinyStr4::new_unchecked(u32::from_le_bytes([b'0', ascii_digit(n), 0, 0]))
-                }
-                ZeroPadding::Off => {
-                    TinyStr4::new_unchecked(u32::from_le_bytes([ascii_digit(n), 0, 0, 0]))
-                }
-            }
-        }
-    }
-}
+pub struct GmtOffset(pub i32);
 
 impl GmtOffset {
-    /// Formats the hours as a `TinyStr4` with optional zero-padding.
-    pub(crate) fn format_hours(&self, padding: ZeroPadding) -> TinyStr4 {
-        format_segment((self.0 / 3600).abs() as u8, padding)
-    }
-
-    /// Formats the minutes as a `TinyStr4` with zero-padding.
-    pub(crate) fn format_minutes(&self) -> TinyStr4 {
-        format_segment((self.0 % 3600 / 60).abs() as u8, ZeroPadding::On)
-    }
-
-    /// Formats the seconds as a `TinyStr4` with zero-padding.
-    pub(crate) fn format_seconds(&self) -> TinyStr4 {
-        format_segment((self.0 % 3600 % 60).abs() as u8, ZeroPadding::On)
-    }
-
     /// Whether the GMT offset is positive.
     pub(crate) fn is_positive(&self) -> bool {
         self.0 >= 0
@@ -541,44 +444,6 @@ impl GmtOffset {
     /// Whether the GMT offset has non-zero seconds.
     pub(crate) fn has_seconds(&self) -> bool {
         self.0 % 3600 % 60 > 0
-    }
-
-    /// Formats a GMT offset in ISO-8601 format.
-    pub(crate) fn iso8601_format<'a>(
-        self,
-        format: IsoFormat,
-        minutes: IsoMinutes,
-        seconds: IsoSeconds,
-    ) -> Cow<'a, str> {
-        if self.is_zero() && matches!(format, IsoFormat::UtcBasic | IsoFormat::UtcExtended) {
-            return Cow::Owned(String::from("Z"));
-        }
-
-        let extended_format = matches!(format, IsoFormat::Extended | IsoFormat::UtcExtended);
-        let mut s = String::from(if self.is_positive() { '+' } else { '-' });
-        s.push_str(&self.format_hours(ZeroPadding::On));
-
-        match minutes {
-            IsoMinutes::Required => {
-                extended_format.then(|| s.push(':'));
-                s.push_str(&self.format_minutes());
-            }
-            IsoMinutes::Optional => {
-                if self.has_minutes() {
-                    extended_format.then(|| s.push(':'));
-                    s.push_str(&self.format_minutes());
-                }
-            }
-        }
-
-        if let IsoSeconds::Optional = seconds {
-            if self.has_seconds() {
-                extended_format.then(|| s.push(':'));
-                s.push_str(&self.format_seconds());
-            }
-        }
-
-        Cow::Owned(s)
     }
 }
 
@@ -617,15 +482,15 @@ impl FromStr for GmtOffset {
         };
 
         // Valid range is from GMT-12 to GMT+14 in seconds.
-        if seconds < -43200 {
+        if seconds < -(12 * 60 * 60) {
             Err(DateTimeError::Underflow {
                 field: "GmtOffset",
-                min: -43200,
+                min: -(12 * 60 * 60),
             })
-        } else if seconds > 50400 {
+        } else if seconds > (14 * 60 * 60) {
             Err(DateTimeError::Overflow {
                 field: "GmtOffset",
-                max: 50400,
+                max: (14 * 60 * 60),
             })
         } else {
             Ok(Self(seconds))

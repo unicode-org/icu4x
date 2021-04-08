@@ -5,9 +5,7 @@
 use std::borrow::Cow;
 
 use crate::{
-    date::{TimeZoneInput, ZeroPadding},
-    format::timezone::FormattedTimeZone,
-    pattern::Error as PatternError,
+    date::TimeZoneInput, format::timezone::FormattedTimeZone, pattern::Error as PatternError,
     provider, DateTimeFormatError,
 };
 use crate::{format::timezone, provider::timezones::TimeZoneFormatsV1};
@@ -477,9 +475,9 @@ impl<'d> TimeZoneFormat<'d> {
                         },
                     )
                     // support all combos of "(HH|H):mm" by replacing longest patterns first.
-                    .replace("HH", &gmt_offset.format_hours(ZeroPadding::On))
-                    .replace("mm", &gmt_offset.format_minutes())
-                    .replace("H", &gmt_offset.format_hours(ZeroPadding::Off)),
+                    .replace("HH", &self.format_hours(time_zone, ZeroPadding::On))
+                    .replace("mm", &self.format_minutes(time_zone))
+                    .replace("H", &self.format_hours(time_zone, ZeroPadding::Off)),
             )
         }
     }
@@ -491,16 +489,141 @@ impl<'d> TimeZoneFormat<'d> {
             .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
     }
 
-    /// Returns the unknown city. This is used as a fallback in case the time-zone's exemplar city
-    /// had no localized form in the current locale.
+    /// Returns the unknown city "Etc/Unknown" for the current locale.
     ///
-    /// This function is only invoked as a fallback, which means that we can guarantee that the
-    /// exemplar-city data is present, and all locales should have an entry for "Etc/Unknown".
+    /// If there is no localized form of "Etc/Unknown" for the current locale,
+    /// returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
+    ///
+    /// This can be used as a fallback if the `exemplar_city()` function is unable to produce
+    /// a localized form of the time zone's exemplar city in the current locale.
     pub(super) fn unknown_city(&self) -> Cow<str> {
         self.exemplar_cities
             .as_ref()
-            .expect("Exemplar City data was not present.")
-            .get("Etc/Unknown")
-            .expect("Etc/Unknown is not contained in exemplar city data.")
+            .and_then(|cities| cities.get("Etc/Unknown"))
+            .unwrap_or(Cow::Owned(String::from("Unknown")))
     }
+
+    /// Formats a time segment with optional zero padding.
+    fn format_time_segment(n: u8, padding: ZeroPadding) -> String {
+        debug_assert!((0..60).contains(&n));
+        match padding {
+            ZeroPadding::On => format!("{:>02}", n),
+            ZeroPadding::Off => format!("{}", n),
+        }
+    }
+
+    /// Formats the hours as a `String` with optional zero-padding.
+    pub(super) fn format_hours(
+        &self,
+        time_zone: &impl TimeZoneInput,
+        padding: ZeroPadding,
+    ) -> String {
+        Self::format_time_segment((time_zone.gmt_offset().0 / 3600).abs() as u8, padding)
+    }
+
+    /// Formats the minutes as a `String` with zero-padding.
+    pub(super) fn format_minutes(&self, time_zone: &impl TimeZoneInput) -> String {
+        Self::format_time_segment(
+            (time_zone.gmt_offset().0 % 3600 / 60).abs() as u8,
+            ZeroPadding::On,
+        )
+    }
+
+    /// Formats the seconds as a `String` with zero-padding.
+    pub(super) fn format_seconds(&self, time_zone: &impl TimeZoneInput) -> String {
+        Self::format_time_segment(
+            (time_zone.gmt_offset().0 % 3600 % 60).abs() as u8,
+            ZeroPadding::On,
+        )
+    }
+
+    /// Formats a GMT offset in ISO-8601 format.
+    pub(super) fn iso8601_format(
+        &self,
+        time_zone: &impl TimeZoneInput,
+        format: IsoFormat,
+        minutes: IsoMinutes,
+        seconds: IsoSeconds,
+    ) -> Cow<'d, str> {
+        let gmt_offset = time_zone.gmt_offset();
+        if gmt_offset.is_zero() && matches!(format, IsoFormat::UtcBasic | IsoFormat::UtcExtended) {
+            return Cow::Owned(String::from("Z"));
+        }
+
+        let extended_format = matches!(format, IsoFormat::Extended | IsoFormat::UtcExtended);
+        let mut s = String::from(if gmt_offset.is_positive() { '+' } else { '-' });
+        s.push_str(&self.format_hours(time_zone, ZeroPadding::On));
+
+        match minutes {
+            IsoMinutes::Required => {
+                extended_format.then(|| s.push(':'));
+                s.push_str(&self.format_minutes(time_zone));
+            }
+            IsoMinutes::Optional => {
+                if gmt_offset.has_minutes() {
+                    extended_format.then(|| s.push(':'));
+                    s.push_str(&self.format_minutes(time_zone));
+                }
+            }
+        }
+
+        if let IsoSeconds::Optional = seconds {
+            if gmt_offset.has_seconds() {
+                extended_format.then(|| s.push(':'));
+                s.push_str(&self.format_seconds(time_zone));
+            }
+        }
+
+        Cow::Owned(s)
+    }
+}
+
+/// Determines which ISO-8601 format should be used to format a `GmtOffset`.
+pub(super) enum IsoFormat {
+    /// ISO-8601 Basic Format.
+    /// Formats zero-offset numerically.
+    /// e.g. +0500, +0000
+    Basic,
+
+    /// ISO-8601 Extended Format.
+    /// Formats zero-offset numerically.
+    /// e.g. +05:00, +00:00
+    Extended,
+
+    /// ISO-8601 Basic Format.
+    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
+    /// e.g. +0500, Z
+    UtcBasic,
+
+    /// ISO-8601 Extended Format.
+    /// Formats zero-offset with the ISO-8601 UTC indicator: "Z"
+    /// e.g. +05:00, Z
+    UtcExtended,
+}
+
+/// Whether the minutes field should be optional or required in ISO-8601 format.
+pub(super) enum IsoMinutes {
+    /// Minutes are always displayed.
+    Required,
+
+    /// Minutes are displayed only if they are non-zero.
+    Optional,
+}
+
+/// Whether the seconds field should be optional or excluded in ISO-8601 format.
+pub(super) enum IsoSeconds {
+    /// Seconds are displayed only if they are non-zero.
+    Optional,
+
+    /// Seconds are not displayed.
+    Never,
+}
+
+/// Whether a field should be zero-padded in ISO-8601 format.
+pub(super) enum ZeroPadding {
+    /// Add zero-padding.
+    On,
+
+    /// Do not add zero-padding.
+    Off,
 }
