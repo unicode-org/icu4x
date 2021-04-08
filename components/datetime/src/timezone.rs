@@ -86,15 +86,22 @@ where
 /// ```
 // TODO(#622) Make TimeZoneFormat public once we have a clean way to provide it options.
 pub(super) struct TimeZoneFormat<'d> {
+    /// The pattern to format.
     pub(super) pattern: Pattern,
+    /// The data that contains meta information about how to display content.
     pub(super) zone_formats: Cow<'d, provider::timezones::TimeZoneFormatsV1<'d>>,
+    /// The exemplar cities for time zones.
     pub(super) exemplar_cities: Option<Cow<'d, provider::timezones::ExemplarCitiesV1<'d>>>,
+    /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
         Option<Cow<'d, provider::timezones::MetaZoneGenericNamesLongV1<'d>>>,
+    /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
         Option<Cow<'d, provider::timezones::MetaZoneGenericNamesShortV1<'d>>>,
+    /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
         Option<Cow<'d, provider::timezones::MetaZoneSpecificNamesLongV1<'d>>>,
+    /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
         Option<Cow<'d, provider::timezones::MetaZoneSpecificNamesShortV1<'d>>>,
 }
