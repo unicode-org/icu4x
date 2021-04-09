@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618002388842,
+  "lastUpdate": 1618002409686,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4649,6 +4649,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34253599,
             "range": "± 1153641",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca7cd105377e9ae6ee4f2649a9867e13075125d6",
+          "message": "Rename .iter() to .iter_chars() for UnicodeSet (#626)",
+          "timestamp": "2021-04-09T14:01:04-07:00",
+          "tree_id": "ac173cfac5564f177ec96e224ea05049976ef342",
+          "url": "https://github.com/unicode-org/icu4x/commit/ca7cd105377e9ae6ee4f2649a9867e13075125d6"
+        },
+        "date": 1618002408535,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31121601,
+            "range": "± 66654",
             "unit": "ns/iter"
           }
         ]
