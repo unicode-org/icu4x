@@ -38,7 +38,7 @@ pub enum TextOrNumeric {
 /// FieldSymbols can be either text or numeric. This categorization is important when matching
 /// skeletons with a components::Bag.
 pub trait LengthType {
-    fn get_length_type(&self, length: &FieldLength) -> TextOrNumeric;
+    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric;
 }
 
 impl FieldSymbol {
@@ -172,7 +172,7 @@ pub enum Year {
 }
 
 impl LengthType for Year {
-    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
         TextOrNumeric::Numeric
     }
 }
@@ -205,7 +205,7 @@ pub enum Month {
 }
 
 impl LengthType for Month {
-    fn get_length_type(&self, length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match length {
             FieldLength::One => TextOrNumeric::Numeric,
             FieldLength::TwoDigit => TextOrNumeric::Numeric,
@@ -247,7 +247,7 @@ pub enum Day {
 }
 
 impl LengthType for Day {
-    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
         TextOrNumeric::Numeric
     }
 }
@@ -284,7 +284,7 @@ pub enum Hour {
 }
 
 impl LengthType for Hour {
-    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
         TextOrNumeric::Numeric
     }
 }
@@ -320,7 +320,7 @@ pub enum Second {
 }
 
 impl LengthType for Second {
-    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
         TextOrNumeric::Numeric
     }
 }
@@ -355,7 +355,7 @@ pub enum Weekday {
 }
 
 impl LengthType for Weekday {
-    fn get_length_type(&self, length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match self {
             Weekday::Format => TextOrNumeric::Text,
             Weekday::Local | Weekday::StandAlone => match length {
@@ -395,7 +395,7 @@ pub enum DayPeriod {
 }
 
 impl LengthType for DayPeriod {
-    fn get_length_type(&self, _length: &FieldLength) -> TextOrNumeric {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
         TextOrNumeric::Text
     }
 }
