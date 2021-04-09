@@ -458,8 +458,7 @@ impl LengthType for TimeZone {
                 1..=3 => Numeric,
                 4 => Text,
                 5 => Numeric,
-                _ => panic!("Eear
-                pected field of valid length."),
+                _ => panic!("Expected field of valid length."),
             },
             TimeZone::UpperO => match u8::from(length) {
                 1 => Text,
