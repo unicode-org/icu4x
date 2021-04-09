@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Cow;
+use std::{borrow::Cow, fmt};
 
 use crate::{
     date::TimeZoneInput, format::timezone::FormattedTimeZone, pattern::Error as PatternError,
@@ -345,7 +345,7 @@ impl<'d> TimeZoneFormat<'d> {
         &self,
         w: &mut impl std::fmt::Write,
         value: &impl TimeZoneInput,
-    ) -> std::fmt::Result {
+    ) -> fmt::Result {
         timezone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
     }
 
@@ -388,90 +388,128 @@ impl<'d> TimeZoneFormat<'d> {
         s
     }
 
-    /// Returns the time zone in generic location format as defined by the UTS-35 spec.
+    /// Writes the time zone in generic location format as defined by the UTS-35 spec.
     /// e.g. France Time
     /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
-    pub(super) fn generic_location_format(
+    pub(super) fn generic_location_format<W: fmt::Write + ?Sized>(
         &self,
+        sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> Option<Cow<'d, str>> {
+    ) -> Result<(), DateTimeFormatError> {
         // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-        self.exemplar_city(time_zone)
-            .map(|location| Cow::Owned(self.zone_formats.region_format.replace("{0}", &location)))
+        sink.write_str(
+            &self
+                .exemplar_cities
+                .as_ref()
+                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
+                .map(|location| self.zone_formats.region_format.replace("{0}", &location))
+                .ok_or(fmt::Error)?,
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
-    /// Returns the time zone in short generic non-location format as defined by the UTS-35 spec.
+    /// Writes the time zone in short generic non-location format as defined by the UTS-35 spec.
     /// e.g. PT
     /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
-    pub(super) fn short_generic_non_location_format(
+    pub(super) fn short_generic_non_location_format<W: fmt::Write + ?Sized>(
         &self,
+        sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> Option<Cow<'d, str>> {
-        self.mz_generic_short
-            .as_ref()
-            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+    ) -> Result<(), DateTimeFormatError> {
+        sink.write_str(
+            &self
+                .mz_generic_short
+                .as_ref()
+                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .ok_or(fmt::Error)?,
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
-    /// Returns the time zone in long generic non-location format as defined by the UTS-35 spec.
+    /// Writes the time zone in long generic non-location format as defined by the UTS-35 spec.
     /// e.g. Pacific Time
     /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
-    pub(super) fn long_generic_non_location_format(
+    pub(super) fn long_generic_non_location_format<W: fmt::Write + ?Sized>(
         &self,
+        sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> Option<Cow<'d, str>> {
-        self.mz_generic_long
-            .as_ref()
-            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+    ) -> Result<(), DateTimeFormatError> {
+        sink.write_str(
+            &self
+                .mz_generic_long
+                .as_ref()
+                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .ok_or(fmt::Error)?,
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
-    /// Returns the time zone in short specific non-location format as defined by the UTS-35 spec.
+    /// Writes the time zone in short specific non-location format as defined by the UTS-35 spec.
     /// e.g. PDT
     /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
-    pub(super) fn short_specific_non_location_format(
+    pub(super) fn short_specific_non_location_format<W: fmt::Write + ?Sized>(
         &self,
+        sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> Option<Cow<'d, str>> {
-        self.mz_specific_short
-            .as_ref()
-            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
-            .and_then(|specific_names| {
-                time_zone
-                    .time_variant()
-                    .and_then(|variant| specific_names.get(variant))
-            })
+    ) -> Result<(), DateTimeFormatError> {
+        sink.write_str(
+            &self
+                .mz_specific_short
+                .as_ref()
+                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .and_then(|specific_names| {
+                    time_zone
+                        .time_variant()
+                        .and_then(|variant| specific_names.get(variant))
+                })
+                .ok_or(DateTimeFormatError::from(fmt::Error))?,
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
-    /// Returns the time zone in long specific non-location format as defined by the UTS-35 spec.
+    /// Writes the time zone in long specific non-location format as defined by the UTS-35 spec.
     /// e.g. Pacific Daylight Time
     /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology
-    pub(super) fn long_specific_non_location_format(
+    pub(super) fn long_specific_non_location_format<W: fmt::Write + ?Sized>(
         &self,
+        sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> Option<Cow<'d, str>> {
-        self.mz_specific_long
-            .as_ref()
-            .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
-            .and_then(|specific_names| {
-                time_zone
-                    .time_variant()
-                    .and_then(|variant| specific_names.get(variant))
-            })
+    ) -> Result<(), DateTimeFormatError> {
+        sink.write_str(
+            &self
+                .mz_specific_long
+                .as_ref()
+                .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
+                .and_then(|specific_names| {
+                    time_zone
+                        .time_variant()
+                        .and_then(|variant| specific_names.get(variant))
+                })
+                .ok_or(fmt::Error)?,
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
-    /// Returns the time zone in localized GMT format according to the CLDR localized hour format.
+    /// Writes the time zone in localized GMT format according to the CLDR localized hour format.
     /// This goes explicitly against the UTS-35 spec, which specifies long or short localized
     /// GMT formats regardless of locale.
     ///
     /// You can see more information about our decision to resolve this conflict here:
     /// https://docs.google.com/document/d/16GAqaDRS6hzL8jNYjus5MglSevGBflISM-BrIS7bd4A/edit?usp=sharing
-    pub(super) fn localized_gmt_format(&self, time_zone: &impl TimeZoneInput) -> Cow<str> {
+    pub(super) fn localized_gmt_format<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+        time_zone: &impl TimeZoneInput,
+    ) -> Result<(), DateTimeFormatError> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() {
-            self.zone_formats.gmt_zero_format.clone()
+            sink.write_str(&self.zone_formats.gmt_zero_format.clone())
+                .map_err(DateTimeFormatError::from)
         } else {
             // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-            Cow::Owned(
-                self.zone_formats
+            sink.write_str(
+                &self
+                    .zone_formats
                     .gmt_format
                     .replace(
                         "{0}",
@@ -486,28 +524,45 @@ impl<'d> TimeZoneFormat<'d> {
                     .replace("mm", &self.format_offset_minutes(time_zone))
                     .replace("H", &self.format_offset_hours(time_zone, ZeroPadding::Off)),
             )
+            .map_err(DateTimeFormatError::from)
         }
     }
 
-    /// Returns the exemplar city associated with this time zone.
-    pub(super) fn exemplar_city(&self, time_zone: &impl TimeZoneInput) -> Option<Cow<str>> {
-        self.exemplar_cities
-            .as_ref()
-            .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
+    /// Writes the exemplar city associated with this time zone.
+    pub(super) fn exemplar_city<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+        time_zone: &impl TimeZoneInput,
+    ) -> Result<(), DateTimeFormatError> {
+        sink.write_str(
+            &self
+                .exemplar_cities
+                .as_ref()
+                .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
+                .ok_or(fmt::Error)?,
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
-    /// Returns the unknown city "Etc/Unknown" for the current locale.
+    /// Writes the unknown city "Etc/Unknown" for the current locale.
     ///
     /// If there is no localized form of "Etc/Unknown" for the current locale,
     /// returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
     ///
     /// This can be used as a fallback if the `exemplar_city()` function is unable to produce
     /// a localized form of the time zone's exemplar city in the current locale.
-    pub(super) fn unknown_city(&self) -> Cow<str> {
-        self.exemplar_cities
-            .as_ref()
-            .and_then(|cities| cities.get("Etc/Unknown"))
-            .unwrap_or(Cow::Owned(String::from("Unknown")))
+    pub(super) fn unknown_city<W: fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> Result<(), DateTimeFormatError> {
+        sink.write_str(
+            &self
+                .exemplar_cities
+                .as_ref()
+                .and_then(|cities| cities.get("Etc/Unknown"))
+                .unwrap_or(Cow::Borrowed("Unknown")),
+        )
+        .map_err(DateTimeFormatError::from)
     }
 
     /// Formats a time segment with optional zero padding.
@@ -547,44 +602,60 @@ impl<'d> TimeZoneFormat<'d> {
         )
     }
 
-    /// Formats a GMT offset in ISO-8601 format.
-    pub(super) fn iso8601_format(
+    /// Writes a GMT offset in ISO8601 format according to the given formatting options.
+    ///
+    /// `IsoFormat` determines whether the format should be Basic or Extended,
+    /// and whether a zero-offset should be formatted numerically or with
+    /// The UTC indicator: "Z"
+    /// - Basic    e.g. +0800
+    /// - Extended e.g. +08:00
+    ///
+    /// `IsoMinutes` can be required or optional.
+    /// `IsoMinutes` can be optional or never.
+    pub(super) fn iso8601_format<W: fmt::Write + ?Sized>(
         &self,
+        sink: &mut W,
         time_zone: &impl TimeZoneInput,
         format: IsoFormat,
         minutes: IsoMinutes,
         seconds: IsoSeconds,
-    ) -> Cow<'d, str> {
+    ) -> Result<(), DateTimeFormatError> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() && matches!(format, IsoFormat::UtcBasic | IsoFormat::UtcExtended) {
-            return Cow::Owned(String::from("Z"));
+            return sink.write_char('Z').map_err(|err| err.into());
         }
 
         let extended_format = matches!(format, IsoFormat::Extended | IsoFormat::UtcExtended);
-        let mut s = String::from(if gmt_offset.is_positive() { '+' } else { '-' });
-        s.push_str(&self.format_offset_hours(time_zone, ZeroPadding::On));
+        sink.write_char(if gmt_offset.is_positive() { '+' } else { '-' })?;
+        sink.write_str(&self.format_offset_hours(time_zone, ZeroPadding::On))?;
 
         match minutes {
             IsoMinutes::Required => {
-                extended_format.then(|| s.push(':'));
-                s.push_str(&self.format_offset_minutes(time_zone));
+                if extended_format {
+                    sink.write_char(':')?;
+                }
+                sink.write_str(&self.format_offset_minutes(time_zone))?;
             }
             IsoMinutes::Optional => {
                 if gmt_offset.has_minutes() {
-                    extended_format.then(|| s.push(':'));
-                    s.push_str(&self.format_offset_minutes(time_zone));
+                    if extended_format {
+                        sink.write_char(':')?;
+                    }
+                    sink.write_str(&self.format_offset_minutes(time_zone))?;
                 }
             }
         }
 
         if let IsoSeconds::Optional = seconds {
             if gmt_offset.has_seconds() {
-                extended_format.then(|| s.push(':'));
-                s.push_str(&self.format_offset_seconds(time_zone));
+                if extended_format {
+                    sink.write_char(':')?;
+                }
+                sink.write_str(&self.format_offset_seconds(time_zone))?;
             }
         }
 
-        Cow::Owned(s)
+        Ok(())
     }
 }
 

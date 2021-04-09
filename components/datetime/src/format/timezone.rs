@@ -74,14 +74,14 @@ where
     W: fmt::Write + ?Sized,
 {
     if let FieldSymbol::TimeZone(zone_symbol) = field.symbol {
-        let s = match zone_symbol {
+        match zone_symbol {
             fields::TimeZone::LowerZ => match u8::from(field.length) {
                 1..=3 => time_zone_format
-                    .short_specific_non_location_format(time_zone)
-                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                    .short_specific_non_location_format(w, time_zone)
+                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 4 => time_zone_format
-                    .long_specific_non_location_format(time_zone)
-                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                    .long_specific_non_location_format(w, time_zone)
+                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
@@ -90,18 +90,20 @@ where
             },
             fields::TimeZone::UpperZ => match u8::from(field.length) {
                 1..=3 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
-                ),
-                4 => time_zone_format.localized_gmt_format(time_zone),
+                )?,
+                4 => time_zone_format.localized_gmt_format(w, time_zone)?,
                 5 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
-                ),
+                )?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
@@ -109,7 +111,7 @@ where
                 }
             },
             fields::TimeZone::UpperO => match u8::from(field.length) {
-                1..=4 => time_zone_format.localized_gmt_format(time_zone),
+                1..=4 => time_zone_format.localized_gmt_format(w, time_zone)?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
@@ -118,13 +120,13 @@ where
             },
             fields::TimeZone::LowerV => match u8::from(field.length) {
                 1 => time_zone_format
-                    .short_generic_non_location_format(time_zone)
-                    .or_else(|| time_zone_format.generic_location_format(time_zone))
-                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                    .short_generic_non_location_format(w, time_zone)
+                    .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
+                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 4 => time_zone_format
-                    .long_generic_non_location_format(time_zone)
-                    .or_else(|| time_zone_format.generic_location_format(time_zone))
-                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                    .long_generic_non_location_format(w, time_zone)
+                    .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
+                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
@@ -135,11 +137,11 @@ where
                 1 => todo!("#606 (BCP-47 identifiers)"),
                 2 => todo!("#606 (BCP-47 identifiers)"),
                 3 => time_zone_format
-                    .exemplar_city(time_zone)
-                    .unwrap_or_else(|| time_zone_format.unknown_city()),
+                    .exemplar_city(w, time_zone)
+                    .or_else(|_| time_zone_format.unknown_city(w))?,
                 4 => time_zone_format
-                    .generic_location_format(time_zone)
-                    .unwrap_or_else(|| time_zone_format.localized_gmt_format(time_zone)),
+                    .generic_location_format(w, time_zone)
+                    .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
@@ -148,35 +150,40 @@ where
             },
             fields::TimeZone::LowerX => match u8::from(field.length) {
                 1 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::UtcBasic,
                     IsoMinutes::Optional,
                     IsoSeconds::Never,
-                ),
+                )?,
                 2 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
-                ),
+                )?,
                 3 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
-                ),
+                )?,
                 4 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::UtcBasic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
-                ),
+                )?,
                 5 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::UtcExtended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
-                ),
+                )?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
@@ -185,43 +192,47 @@ where
             },
             fields::TimeZone::UpperX => match u8::from(field.length) {
                 1 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Optional,
                     IsoSeconds::Never,
-                ),
+                )?,
                 2 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
-                ),
+                )?,
                 3 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::Extended,
                     IsoMinutes::Required,
                     IsoSeconds::Never,
-                ),
+                )?,
                 4 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::Basic,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
-                ),
+                )?,
                 5 => time_zone_format.iso8601_format(
+                    w,
                     time_zone,
                     IsoFormat::Extended,
                     IsoMinutes::Required,
                     IsoSeconds::Optional,
-                ),
+                )?,
                 _ => {
                     return Err(Error::Pattern(PatternError::FieldTooLong(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
             },
-        };
-        w.write_str(&s)?;
+        }
     }
     Ok(())
 }
