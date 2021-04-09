@@ -53,7 +53,7 @@
 mod builder;
 mod conversions;
 pub mod enum_props;
-mod props;
+pub mod props;
 pub mod provider;
 mod uniset;
 mod utils;
