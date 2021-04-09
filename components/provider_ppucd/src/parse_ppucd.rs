@@ -450,7 +450,7 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
             // can't clone UnicodeSet, so recomputing code point range
             // TODO: can we allow UnicodeSet to derive Clone ?
             let (code_point_range, _) = get_code_point_overrides(&line);
-            for code_point_char in code_point_range.iter() {
+            for code_point_char in code_point_range.iter_chars() {
                 let code_point = code_point_char as u32;
                 let code_point_prop_vals =
                     get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
@@ -644,7 +644,7 @@ mod gen_properties_test {
 
         let (code_point_range, _) = get_code_point_overrides(&code_point_line);
         let mut code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
-        for code_point_char in code_point_range.iter() {
+        for code_point_char in code_point_range.iter_chars() {
             let code_point = code_point_char as u32;
             let code_point_prop_vals =
                 get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);
@@ -734,7 +734,7 @@ mod gen_properties_test {
 
         let (code_point_range, _) = get_code_point_overrides(&code_point_line);
         let mut code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
-        for code_point_char in code_point_range.iter() {
+        for code_point_char in code_point_range.iter_chars() {
             let code_point = code_point_char as u32;
             let code_point_prop_vals =
                 get_code_point_prop_vals(code_point, &code_point_overrides, &blocks, &defaults);

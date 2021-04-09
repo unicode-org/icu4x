@@ -16,19 +16,19 @@ fn uniset_bench(c: &mut Criterion) {
         #[allow(clippy::suspicious_map)]
         b.iter(|| {
             best_sample
-                .iter()
+                .iter_chars()
                 .map(|ch| best_sample.contains(ch))
                 .count();
             worst_sample
-                .iter()
+                .iter_chars()
                 .map(|ch| worst_sample.contains(ch))
                 .count();
             best_sample
-                .iter()
+                .iter_chars()
                 .map(|ch| best_sample.contains_range(&('A'..ch)))
                 .count();
             worst_sample
-                .iter()
+                .iter_chars()
                 .take(100)
                 .map(|ch| worst_sample.contains_range(&(char::from_u32(0).unwrap()..ch)))
                 .count();
@@ -39,21 +39,25 @@ fn uniset_bench(c: &mut Criterion) {
     {
         let mut group = c.benchmark_group("uniset/contains");
         group.bench_with_input("best", &best_sample, |b, sample| {
-            b.iter(|| sample.iter().map(|ch| sample.contains(ch)))
+            b.iter(|| sample.iter_chars().map(|ch| sample.contains(ch)))
         });
         group.bench_with_input("worst", &worst_sample, |b, sample| {
-            b.iter(|| sample.iter().take(100).map(|ch| sample.contains(ch)))
+            b.iter(|| sample.iter_chars().take(100).map(|ch| sample.contains(ch)))
         });
         group.finish();
 
         let mut group = c.benchmark_group("uniset/contains_range");
         group.bench_with_input("best", &best_sample, |b, sample| {
-            b.iter(|| sample.iter().map(|ch| sample.contains_range(&('A'..ch))))
+            b.iter(|| {
+                sample
+                    .iter_chars()
+                    .map(|ch| sample.contains_range(&('A'..ch)))
+            })
         });
         group.bench_with_input("worst", &worst_sample, |b, sample| {
             b.iter(|| {
                 sample
-                    .iter()
+                    .iter_chars()
                     .take(100)
                     .map(|ch| sample.contains_range(&(char::from_u32(0).unwrap()..ch)))
             })
