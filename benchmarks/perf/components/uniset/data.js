@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617919253481,
+  "lastUpdate": 1617943911941,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4589,6 +4589,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36208007,
             "range": "± 853160",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d75f52dd9ae556097d1c7c44a5e642a9cbce859e",
+          "message": "Pass FieldLength by value in Field trait (#625)\n\nFieldLength is a simple numeric enum, and a copy type.\r\nWe should utilize that quality and pass it by value\r\nunless a reference is explicitly needed.",
+          "timestamp": "2021-04-08T21:45:22-07:00",
+          "tree_id": "0234581a2b8db3e2dd400ed8c87a48d6f8d8b5c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/d75f52dd9ae556097d1c7c44a5e642a9cbce859e"
+        },
+        "date": 1617943909596,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31657856,
+            "range": "± 1135532",
             "unit": "ns/iter"
           }
         ]
