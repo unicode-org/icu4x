@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617943961364,
+  "lastUpdate": 1618002445434,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4997,6 +4997,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 122005,
             "range": "± 437",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "39275619a07e8d1662ffd5f3802ab43ad0c50702",
+          "message": "Design doc of code point tries for properties (#559)",
+          "timestamp": "2021-04-09T14:00:04-07:00",
+          "tree_id": "a4fac7a33af7fc071002ee05a9cbc8baa502d7cc",
+          "url": "https://github.com/unicode-org/icu4x/commit/39275619a07e8d1662ffd5f3802ab43ad0c50702"
+        },
+        "date": 1618002442918,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1218,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7585,
+            "range": "± 483",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 115652,
+            "range": "± 5070",
             "unit": "ns/iter"
           }
         ]
