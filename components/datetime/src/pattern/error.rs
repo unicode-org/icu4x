@@ -34,7 +34,7 @@ impl fmt::Display for Error {
 impl From<fields::Error> for Error {
     fn from(input: fields::Error) -> Self {
         match input {
-            fields::Error::TooLong(symbol) => Self::FieldLengthInvalid(symbol),
+            fields::Error::InvalidLength(symbol) => Self::FieldLengthInvalid(symbol),
         }
     }
 }

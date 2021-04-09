@@ -9,7 +9,7 @@ use std::{
 
 #[derive(Debug, PartialEq)]
 pub enum LengthError {
-    TooLong,
+    InvalidLength,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
@@ -52,7 +52,7 @@ macro_rules! try_field_length {
                     4 => Self::Wide,
                     5 => Self::Narrow,
                     6 => Self::Six,
-                    _ => return Err(LengthError::TooLong),
+                    _ => return Err(LengthError::InvalidLength),
                 })
             }
         }

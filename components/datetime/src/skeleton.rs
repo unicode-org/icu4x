@@ -214,7 +214,7 @@ impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
 
 #[derive(Debug)]
 pub enum SkeletonError {
-    FieldLengthTooLong,
+    InvalidFieldLength,
     DuplicateField,
     SymbolUnknown(char),
     SymbolInvalid(char),
@@ -231,7 +231,7 @@ pub enum SkeletonError {
 impl fmt::Display for SkeletonError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            SkeletonError::FieldLengthTooLong => write!(f, "field too long in skeleton"),
+            SkeletonError::InvalidFieldLength => write!(f, "field too long in skeleton"),
             SkeletonError::DuplicateField => write!(f, "duplicate field in skeleton"),
             SkeletonError::SymbolUnknown(ch) => write!(f, "symbol unknown {} in skeleton", ch),
             SkeletonError::SymbolInvalid(ch) => write!(f, "symbol invalid {} in skeleton", ch),
@@ -254,7 +254,7 @@ impl From<fields::Error> for SkeletonError {
 
 impl From<fields::LengthError> for SkeletonError {
     fn from(_: fields::LengthError) -> Self {
-        SkeletonError::FieldLengthTooLong
+        SkeletonError::InvalidFieldLength
     }
 }
 

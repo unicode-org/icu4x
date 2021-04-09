@@ -26,7 +26,7 @@
   "invalid_patterns": [
     {
       "pattern": "yyyyyyy",
-      "error": "invalid value: Year(Calendar) field too long in pattern, expected a valid UTS 35 pattern string at line 1 column 9"
+      "error": "invalid value: Year(Calendar) invalid field length in pattern, expected a valid UTS 35 pattern string at line 1 column 9"
     },
     {
       "pattern": " 'unclosed",

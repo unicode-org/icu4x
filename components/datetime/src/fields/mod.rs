@@ -16,13 +16,13 @@ use std::{
 
 #[derive(Debug)]
 pub enum Error {
-    TooLong(FieldSymbol),
+    InvalidLength(FieldSymbol),
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::TooLong(symbol) => write!(f, "field {:?} is too long", symbol),
+            Error::InvalidLength(symbol) => write!(f, "field {:?} is is not a valid length", symbol),
         }
     }
 }
@@ -70,7 +70,7 @@ impl TryFrom<(FieldSymbol, usize)> for Field {
             input
                 .1
                 .try_into()
-                .map_err(|_| Self::Error::TooLong(input.0))?,
+                .map_err(|_| Self::Error::InvalidLength(input.0))?,
         );
         Ok(Self { symbol, length })
     }
