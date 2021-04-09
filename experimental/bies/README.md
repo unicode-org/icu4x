@@ -8,7 +8,7 @@ These algorithms always produce valid breakpoint positions (at grapheme cluster 
 
 For example, suppose you had the following BIES matrix:
 
-```not-actually-code
+<pre>
 |   B   |   I   |   E   |   S   |
 |-------|-------|-------|-------|
 | 0.01  | 0.01  | 0.01  | 0.97  |
@@ -19,14 +19,14 @@ For example, suppose you had the following BIES matrix:
 | 0.01  | 0.01  | 0.01  | 0.97  |
 | 0.97  | 0.01  | 0.01  | 0.01  |
 | 0.01  | 0.01  | 0.97  | 0.01  |
-```not-actually-code
+</pre>
 
 This matrix resolves to:
 
-```not-actually-code
+<pre>
 01234567
 SBIIESBE
-```not-actually-code
+</pre>
 
 The breakpoints are then: 0, 1, 5, and 8 (four segments).
 
