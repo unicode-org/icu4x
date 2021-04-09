@@ -25,6 +25,14 @@ From this directory, run:
 $ cargo gen-testdata -v
 ```
 
+Use `-v`, `-vv`, or `-vvv` for different verbosities of logging.
+
+Use `-m generate` to generate the testdata without downloading it first:
+
+```bash
+$ cargo gen-testdata -v -m generate
+```
+
 ## Examples
 
 ```rust

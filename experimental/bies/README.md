@@ -19,14 +19,14 @@ For example, suppose you had the following BIES matrix:
 | 0.01  | 0.01  | 0.01  | 0.97  |
 | 0.97  | 0.01  | 0.01  | 0.01  |
 | 0.01  | 0.01  | 0.97  | 0.01  |
-```rust
+```not-actually-code
 
 This matrix resolves to:
 
 ```not-actually-code
 01234567
 SBIIESBE
-```
+```not-actually-code
 
 The breakpoints are then: 0, 1, 5, and 8 (four segments).
 
