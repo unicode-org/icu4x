@@ -22,7 +22,9 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::InvalidLength(symbol) => write!(f, "field {:?} is is not a valid length", symbol),
+            Error::InvalidLength(symbol) => {
+                write!(f, "field {:?} is is not a valid length", symbol)
+            }
         }
     }
 }
