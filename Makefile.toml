@@ -74,6 +74,8 @@ description = "Automatically generate README.md for each component."
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
+exit_on_error true
+
 glob_pattern = set "./**/Cargo.toml"
 template = canonicalize README.tpl
 
@@ -87,7 +89,10 @@ for path in ${handle}
     root_dir = dirname ${path}
     if not is_empty ${root_dir}
         echo "Automatically generating ${root_dir}/README.md"
-        exec cargo readme -r ${root_dir} -o README.md -t ${template}
+        output = exec cargo readme -r ${root_dir} -o README.md -t ${template}
+        if not equals ${output.code} 0
+            trigger_error "Running cargo readme failed with error: ${output.stderr}"
+        end
     end
 end
 '''
@@ -100,6 +105,8 @@ dependencies = [
 ]
 script_runner = "@duckscript"
 script = '''
+exit_on_error true
+
 output = exec git status --porcelain=v1 -uno
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
