@@ -97,14 +97,14 @@ impl UnicodeSet {
     /// use icu_uniset::UnicodeSet;
     /// let example_list = vec![65, 68, 69, 70];
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
-    /// let mut example_iter = example.iter();
+    /// let mut example_iter = example.iter_chars();
     /// assert_eq!(Some('A'), example_iter.next());
     /// assert_eq!(Some('B'), example_iter.next());
     /// assert_eq!(Some('C'), example_iter.next());
     /// assert_eq!(Some('E'), example_iter.next());
     /// assert_eq!(None, example_iter.next());
     /// ```
-    pub fn iter(&self) -> impl Iterator<Item = char> + '_ {
+    pub fn iter_chars(&self) -> impl Iterator<Item = char> + '_ {
         self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
     }
 
@@ -444,7 +444,7 @@ mod tests {
     fn test_unicodeset_iter() {
         let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
-        let mut iter = check.iter();
+        let mut iter = check.iter_chars();
         assert_eq!(Some('A'), iter.next());
         assert_eq!(Some('B'), iter.next());
         assert_eq!(Some('C'), iter.next());

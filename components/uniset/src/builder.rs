@@ -84,7 +84,7 @@ impl UnicodeSetBuilder {
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_char('a');
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('a'));
+    /// assert_eq!(check.iter_chars().next(), Some('a'));
     /// ```
     pub fn add_char(&mut self, c: char) {
         let to_add = c as u32;
@@ -123,7 +123,7 @@ impl UnicodeSetBuilder {
     /// let mut builder = UnicodeSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('A'));
+    /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
     pub fn add_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
@@ -140,7 +140,7 @@ impl UnicodeSetBuilder {
     /// let set = UnicodeSet::from_inversion_list(vec![65, 76]).unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('A'));
+    /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
     pub fn add_set(&mut self, set: &UnicodeSet) {
         for range in set.as_inversion_list().chunks(2) {
@@ -175,7 +175,7 @@ impl UnicodeSetBuilder {
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_char('A');
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('B'));
+    /// assert_eq!(check.iter_chars().next(), Some('B'));
     pub fn remove_char(&mut self, c: char) {
         let to_remove = c as u32;
         self.remove(to_remove, to_remove + 1);
@@ -191,7 +191,7 @@ impl UnicodeSetBuilder {
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_range(&('A'..='C'));
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('D'));
+    /// assert_eq!(check.iter_chars().next(), Some('D'));
     pub fn remove_range(&mut self, range: &impl RangeBounds<char>) {
         let (start, end) = deconstruct_range(range);
         self.remove(start, end);
@@ -208,7 +208,7 @@ impl UnicodeSetBuilder {
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('F'));
+    /// assert_eq!(check.iter_chars().next(), Some('F'));
     pub fn remove_set(&mut self, set: &UnicodeSet) {
         for range in set.as_inversion_list().chunks(2) {
             self.remove(range[0], range[1]);
@@ -225,7 +225,7 @@ impl UnicodeSetBuilder {
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_char('A');
     /// let set = builder.build();
-    /// let mut check = set.iter();
+    /// let mut check = set.iter_chars();
     /// assert_eq!(check.next(), Some('A'));
     /// assert_eq!(check.next(), None);
     /// ```
@@ -245,7 +245,7 @@ impl UnicodeSetBuilder {
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_range(&('A'..='B'));
     /// let set = builder.build();
-    /// let mut check = set.iter();
+    /// let mut check = set.iter_chars();
     /// assert_eq!(check.next(), Some('A'));
     /// assert_eq!(check.next(), Some('B'));
     /// assert_eq!(check.next(), None);
@@ -329,7 +329,7 @@ impl UnicodeSetBuilder {
     /// builder.add_set(&set);
     /// builder.complement();
     /// let check = builder.build();
-    /// assert_eq!(check.iter().next(), Some('A'));
+    /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
     pub fn complement(&mut self) {
         if !self.intervals.is_empty() {
@@ -443,7 +443,7 @@ mod tests {
         let mut builder = UnicodeSetBuilder::new();
         builder.add(65, 66);
         let check: UnicodeSet = builder.build();
-        assert_eq!(check.iter().next(), Some('A'));
+        assert_eq!(check.iter_chars().next(), Some('A'));
     }
 
     #[test]
