@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1617943909427,
+  "lastUpdate": 1618002434111,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3599,6 +3599,36 @@ window.BENCHMARK_DATA = {
             "name": "datetime/overview",
             "value": 1459137,
             "range": "± 19944",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "39275619a07e8d1662ffd5f3802ab43ad0c50702",
+          "message": "Design doc of code point tries for properties (#559)",
+          "timestamp": "2021-04-09T14:00:04-07:00",
+          "tree_id": "a4fac7a33af7fc071002ee05a9cbc8baa502d7cc",
+          "url": "https://github.com/unicode-org/icu4x/commit/39275619a07e8d1662ffd5f3802ab43ad0c50702"
+        },
+        "date": 1618002432716,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/overview",
+            "value": 1684253,
+            "range": "± 45981",
             "unit": "ns/iter"
           }
         ]
