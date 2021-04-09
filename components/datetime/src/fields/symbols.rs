@@ -454,19 +454,26 @@ impl LengthType for TimeZone {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         use TextOrNumeric::*;
         match self {
+            // It is reasonable to default to Text on release builds instead of panicking.
+            //
+            // Erroneous symbols are gracefully handled by returning error Results
+            // in the formatting code.
+            //
+            // The default cases may want to be updated to return errors themselves
+            // if the skeleton matching code ever becomes fallible.
             TimeZone::UpperZ => match u8::from(length) {
                 1..=3 => Numeric,
                 4 => Text,
                 5 => Numeric,
-                _ => panic!("Expected field of valid length."),
+                _ => Text,
             },
             TimeZone::UpperO => match u8::from(length) {
                 1 => Text,
                 4 => Numeric,
-                _ => panic!("Expected field of valid length."),
+                _ => Text,
             },
-            TimeZone::LowerZ | TimeZone::LowerV | TimeZone::UpperV => Text,
             TimeZone::LowerX | TimeZone::UpperX => Numeric,
+            TimeZone::LowerZ | TimeZone::LowerV | TimeZone::UpperV => Text,
         }
     }
 }
