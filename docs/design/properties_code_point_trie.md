@@ -65,7 +65,7 @@ The disadvantages would be the large amount of time to implement all of the comp
 
 #### Option 2: Implement the `CodePointTrie` reader in ICU4X Rust and import compiled data from ICU4C
 
-This option entails writing Rust code that can interpret the binary serialization of the `CodePointTrie` and navigate it directly. It would also require creating an "offline" step (relative to ICU4X) in which ICU4C binary data is exported as a companion package in the data downloads for new each ICU release.
+This option entails writing Rust code that can interpret the binary serialization of the `CodePointTrie` and navigate it directly. It would also require creating an "offline" step (relative to ICU4X) in which [ICU4C binary data is exported](https://github.com/unicode-org/icu4x/issues/509) as a companion package in the data downloads for new each ICU release.
 
 The advantages would be having code in ICU4X that shares the same precomputed optimized code point trie data, and is therefore guaranteed to stay in sync with future improvements in `CodePointTrie` implementation in order to use new versions of data. Only the `CodePointTrie` reader code needs to be ported to read the serialized data, which is much smaller than the C++ code in ICU4C for the builder that builds the structure that gets serialized.
 
