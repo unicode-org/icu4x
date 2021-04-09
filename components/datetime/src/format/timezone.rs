@@ -83,7 +83,7 @@ where
                     .long_specific_non_location_format(w, time_zone)
                     .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
@@ -105,7 +105,7 @@ where
                     IsoSeconds::Optional,
                 )?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
@@ -113,7 +113,7 @@ where
             fields::TimeZone::UpperO => match u8::from(field.length) {
                 1..=4 => time_zone_format.localized_gmt_format(w, time_zone)?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
@@ -128,7 +128,7 @@ where
                     .or_else(|_| time_zone_format.generic_location_format(w, time_zone))
                     .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
@@ -143,7 +143,7 @@ where
                     .generic_location_format(w, time_zone)
                     .or_else(|_| time_zone_format.localized_gmt_format(w, time_zone))?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
@@ -185,7 +185,7 @@ where
                     IsoSeconds::Optional,
                 )?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }
@@ -227,7 +227,7 @@ where
                     IsoSeconds::Optional,
                 )?,
                 _ => {
-                    return Err(Error::Pattern(PatternError::FieldTooLong(
+                    return Err(Error::Pattern(PatternError::FieldLengthInvalid(
                         FieldSymbol::TimeZone(zone_symbol),
                     )))
                 }

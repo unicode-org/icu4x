@@ -428,7 +428,7 @@ mod tests {
 
         let broken = vec![(
             "yyyyyyy",
-            Error::FieldTooLong(FieldSymbol::Year(fields::Year::Calendar)),
+            Error::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
         )];
 
         for (string, error) in broken {

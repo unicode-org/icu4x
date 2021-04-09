@@ -198,9 +198,9 @@ impl<'d> TimeZoneFormat<'d> {
                         zone_provider,
                     )?,
                     _ => {
-                        return Err(DateTimeFormatError::Pattern(PatternError::FieldTooLong(
-                            FieldSymbol::TimeZone(symbol),
-                        )))
+                        return Err(DateTimeFormatError::Pattern(
+                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
+                        ))
                     }
                 },
                 TimeZone::LowerV => match length {
@@ -233,9 +233,9 @@ impl<'d> TimeZoneFormat<'d> {
                         )?;
                     }
                     _ => {
-                        return Err(DateTimeFormatError::Pattern(PatternError::FieldTooLong(
-                            FieldSymbol::TimeZone(symbol),
-                        )))
+                        return Err(DateTimeFormatError::Pattern(
+                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
+                        ))
                     }
                 },
                 TimeZone::UpperV => match length {
@@ -248,9 +248,9 @@ impl<'d> TimeZoneFormat<'d> {
                         zone_provider,
                     )?,
                     _ => {
-                        return Err(DateTimeFormatError::Pattern(PatternError::FieldTooLong(
-                            FieldSymbol::TimeZone(symbol),
-                        )))
+                        return Err(DateTimeFormatError::Pattern(
+                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
+                        ))
                     }
                 },
                 // ISO-8601 or localized GMT formats. CLDR data is either unneeded or required by default.
