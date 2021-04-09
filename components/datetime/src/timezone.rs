@@ -525,13 +525,16 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone: &impl TimeZoneInput,
         padding: ZeroPadding,
     ) -> String {
-        Self::format_time_segment((time_zone.gmt_offset().0 / 3600).abs() as u8, padding)
+        Self::format_time_segment(
+            (time_zone.gmt_offset().raw_offset_seconds() / 3600).abs() as u8,
+            padding,
+        )
     }
 
     /// Formats the minutes as a `String` with zero-padding.
     pub(super) fn format_offset_minutes(&self, time_zone: &impl TimeZoneInput) -> String {
         Self::format_time_segment(
-            (time_zone.gmt_offset().0 % 3600 / 60).abs() as u8,
+            (time_zone.gmt_offset().raw_offset_seconds() % 3600 / 60).abs() as u8,
             ZeroPadding::On,
         )
     }
@@ -539,7 +542,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// Formats the seconds as a `String` with zero-padding.
     pub(super) fn format_offset_seconds(&self, time_zone: &impl TimeZoneInput) -> String {
         Self::format_time_segment(
-            (time_zone.gmt_offset().0 % 3600 % 60).abs() as u8,
+            (time_zone.gmt_offset().raw_offset_seconds() % 3600 % 60).abs() as u8,
             ZeroPadding::On,
         )
     }

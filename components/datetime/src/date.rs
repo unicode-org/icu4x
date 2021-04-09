@@ -14,7 +14,7 @@ pub enum DateTimeError {
     Parse(std::num::ParseIntError),
     Overflow { field: &'static str, max: usize },
     Underflow { field: &'static str, min: isize },
-    MissingTimeZoneOffset,
+    InvalidTimeZoneOffset,
 }
 
 impl fmt::Display for DateTimeError {
@@ -23,7 +23,7 @@ impl fmt::Display for DateTimeError {
             Self::Parse(err) => write!(f, "{}", err),
             Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
             Self::Underflow { field, min } => write!(f, "{} must be between {}-0", field, min),
-            Self::MissingTimeZoneOffset => write!(f, "Expected time-zone offset but found none"),
+            Self::InvalidTimeZoneOffset => write!(f, "Failed to parse time-zone offset"),
         }
     }
 }
@@ -423,26 +423,48 @@ pub enum FractionalSecond {
 
 /// The GMT offset in seconds for a `ZonedDateTime`.
 #[derive(Copy, Clone, Debug, Default)]
-pub struct GmtOffset(pub i32);
+pub struct GmtOffset(i32);
 
 impl GmtOffset {
-    /// Whether the GMT offset is positive.
-    pub(crate) fn is_positive(&self) -> bool {
+    pub fn try_new(seconds: i32) -> Result<Self, DateTimeError> {
+        // Valid range is from GMT-12 to GMT+14 in seconds.
+        if seconds < -(12 * 60 * 60) {
+            Err(DateTimeError::Underflow {
+                field: "GmtOffset",
+                min: -(12 * 60 * 60),
+            })
+        } else if seconds > (14 * 60 * 60) {
+            Err(DateTimeError::Overflow {
+                field: "GmtOffset",
+                max: (14 * 60 * 60),
+            })
+        } else {
+            Ok(Self(seconds))
+        }
+    }
+
+    /// Returns the raw offset value in seconds.
+    pub fn raw_offset_seconds(&self) -> i32 {
+        self.0
+    }
+
+    /// Returns `true` if the GMT offset is positive, otherwise `false`.
+    pub fn is_positive(&self) -> bool {
         self.0 >= 0
     }
 
-    /// Whether the GMT offset is zero.
-    pub(crate) fn is_zero(&self) -> bool {
+    /// Returns `true` if the GMT offset is zero, otherwise `false`.
+    pub fn is_zero(&self) -> bool {
         self.0 == 0
     }
 
-    /// Whether the GMT offset has non-zero minutes.
-    pub(crate) fn has_minutes(&self) -> bool {
+    /// Returns `true` if the GMT offset has non-zero minutes, otherwise `false`.
+    pub fn has_minutes(&self) -> bool {
         self.0 % 3600 / 60 > 0
     }
 
-    /// Whether the GMT offset has non-zero seconds.
-    pub(crate) fn has_seconds(&self) -> bool {
+    /// Returns `true` if the GMT offset has non-zero seconds, otherwise `false`.
+    pub fn has_seconds(&self) -> bool {
         self.0 % 3600 % 60 > 0
     }
 }
@@ -450,6 +472,25 @@ impl GmtOffset {
 impl FromStr for GmtOffset {
     type Err = DateTimeError;
 
+    /// Parse a `GmtOffset` from a string.
+    ///
+    /// The offset must range from GMT-12 to GMT+14.
+    /// The string must be an ISO 8601 time zone designator:
+    /// e.g. Z
+    /// e.g. +05
+    /// e.g. +0500
+    /// e.g. +05:00
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_datetime::date::GmtOffset;
+    ///
+    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset.");
+    /// let offset1: GmtOffset = "-09".parse().expect("Failed to parse a GMT offset.");
+    /// let offset2: GmtOffset = "-0930".parse().expect("Failed to parse a GMT offset.");
+    /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
+    /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let offset_sign;
         match input.chars().next() {
@@ -457,7 +498,7 @@ impl FromStr for GmtOffset {
             /* ASCII  */ Some('-') => offset_sign = -1,
             /* U+2212 */ Some('−') => offset_sign = -1,
             Some('Z') => return Ok(GmtOffset(0)),
-            _ => return Err(DateTimeError::MissingTimeZoneOffset),
+            _ => return Err(DateTimeError::InvalidTimeZoneOffset),
         };
 
         let seconds = match input.chars().count() {
@@ -481,19 +522,6 @@ impl FromStr for GmtOffset {
             _ => panic!("Invalid time-zone designator"),
         };
 
-        // Valid range is from GMT-12 to GMT+14 in seconds.
-        if seconds < -(12 * 60 * 60) {
-            Err(DateTimeError::Underflow {
-                field: "GmtOffset",
-                min: -(12 * 60 * 60),
-            })
-        } else if seconds > (14 * 60 * 60) {
-            Err(DateTimeError::Overflow {
-                field: "GmtOffset",
-                max: (14 * 60 * 60),
-            })
-        } else {
-            Ok(Self(seconds))
-        }
+        Self::try_new(seconds)
     }
 }
