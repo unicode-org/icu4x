@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! *** Note: DO NOT USE THESE APIs FOR NOW. ****
-//!  Performance improvements and other fixes are still needed on this component.
-//!
 //! `icu_uniset` is one of the [`ICU4X`] components.
 //!
 //! This API provides necessary functionality for highly efficient querying of sets of Unicode characters.
