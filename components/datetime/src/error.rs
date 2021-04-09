@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fields::FieldSymbol;
 use crate::pattern;
 use crate::skeleton::SkeletonError;
-use crate::{fields::FieldSymbol, pattern};
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.

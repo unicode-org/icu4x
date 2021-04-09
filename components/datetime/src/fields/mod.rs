@@ -48,6 +48,7 @@ impl Field {
             FieldSymbol::Hour(hour) => hour.get_length_type(self.length),
             FieldSymbol::Minute => TextOrNumeric::Numeric,
             FieldSymbol::Second(second) => second.get_length_type(self.length),
+            FieldSymbol::TimeZone(zone) => zone.get_length_type(self.length),
         }
     }
 }

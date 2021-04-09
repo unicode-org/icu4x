@@ -450,6 +450,28 @@ pub enum TimeZone {
     UpperX,
 }
 
+impl LengthType for TimeZone {
+    fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
+        use TextOrNumeric::*;
+        match self {
+            TimeZone::UpperZ => match u8::from(length) {
+                1..=3 => Numeric,
+                4 => Text,
+                5 => Numeric,
+                _ => panic!("Eear
+                pected field of valid length."),
+            },
+            TimeZone::UpperO => match u8::from(length) {
+                1 => Text,
+                4 => Numeric,
+                _ => panic!("Expected field of valid length."),
+            },
+            TimeZone::LowerZ | TimeZone::LowerV | TimeZone::UpperV => Text,
+            TimeZone::LowerX | TimeZone::UpperX => Numeric,
+        }
+    }
+}
+
 impl TryFrom<u8> for TimeZone {
     type Error = SymbolError;
     fn try_from(b: u8) -> Result<Self, Self::Error> {
