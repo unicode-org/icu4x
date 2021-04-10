@@ -10,6 +10,8 @@ version = "0.1.0"
 
 [dependencies]
 dhat = { version = "0.2", optional = true }
+dlmalloc = { version = "0.2", optional = true, features = ["global"] }
 
 [features]
 benchmark_memory = ["dhat"]
+rust_global_allocator = ["dlmalloc"]
