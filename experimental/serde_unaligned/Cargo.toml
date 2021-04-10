@@ -9,3 +9,5 @@ edition = "2018"
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 
+[features]
+benchmark_memory = ["icu_benchmark_macros/benchmark_memory"]
