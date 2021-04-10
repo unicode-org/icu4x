@@ -81,6 +81,34 @@ where
     }
 }
 
+impl<'a, T> UVec<'a, T>
+where
+    T: Copy + Default + std::ops::AddAssign + From<ByteSliceLE<'a, 4>>,
+{
+    pub fn sum(&self) -> T {
+        use UVecInner::*;
+        let mut result: T = Default::default();
+        match &self.0 {
+            Owned(vec) => {
+                for value in vec.iter() {
+                    result += *value;
+                }
+            }
+            Aligned(slice) => {
+                for value in slice.iter() {
+                    result += *value;
+                }
+            }
+            UnalignedLE(bytes) => {
+                for chunk in bytes.as_chunks::<4>().0 {
+                    result += T::from(ByteSliceLE::<4>::from(chunk));
+                }
+            }
+        };
+        result
+    }
+}
+
 #[repr(align(8))]
 struct Aligned<T>(pub T);
 
@@ -94,6 +122,14 @@ const ALIGNED_TEST_BUFFER_LE: Aligned<[u8; 80]> = Aligned([
 ]);
 
 pub const TEST_BUFFER_LE: &[u8] = &ALIGNED_TEST_BUFFER_LE.0;
+
+pub const TEST_SLICE: &[u32] = &[
+    0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f,
+    0x10111213, 0x14151617, 0x18191a1b, 0x1c1d1e1f,
+    0x20212223, 0x24252627, 0x28292a2b, 0x2c2d2e2f,
+    0x30313233, 0x34353637, 0x38393a3b, 0x3c3d3e3f,
+    0x40414243, 0x44454647, 0x48494a4b, 0x4c4d4e4f,
+];
 
 #[cfg(test)]
 mod tests {

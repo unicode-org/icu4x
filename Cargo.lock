@@ -2135,6 +2135,7 @@ dependencies = [
 name = "serde_unaligned"
 version = "0.1.0"
 dependencies = [
+ "criterion",
  "icu_benchmark_macros",
 ]
 
