@@ -560,7 +560,7 @@ impl<'d> TimeZoneFormat<'d> {
                 .exemplar_cities
                 .as_ref()
                 .and_then(|cities| cities.get("Etc/Unknown"))
-                .unwrap_or(Cow::Borrowed("Unknown")),
+                .unwrap_or(&Cow::Borrowed("Unknown")),
         )
         .map_err(DateTimeFormatError::from)
     }
