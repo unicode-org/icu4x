@@ -1,36 +1,4 @@
-pub struct ByteSliceLE<'a, const N: usize>(pub &'a [u8; N]);
-
-impl<'a> From<ByteSliceLE<'a, 4>> for u32 {
-    fn from(byte_slice: ByteSliceLE<'a, 4>) -> u32 {
-        u32::from_le_bytes(*byte_slice.0)
-    }
-}
-
-impl<'a> From<&'a [u8; 4]> for ByteSliceLE<'a, 4> {
-    fn from(le_bytes: &'a [u8; 4]) -> Self {
-        Self(le_bytes)
-    }
-}
-
-pub struct ByteArrayLE<const N: usize>(pub [u8; N]);
-
-impl From<u32> for ByteArrayLE<4> {
-    fn from(value: u32) -> Self {
-        Self(value.to_le_bytes())
-    }
-}
-
-impl From<[u8; 4]> for ByteArrayLE<4> {
-    fn from(le_bytes: [u8; 4]) -> Self {
-        Self(le_bytes)
-    }
-}
-
-impl ByteArrayLE<4> {
-    fn as_bytes(&self) -> &[u8] {
-        &self.0
-    }
-}
+use crate::byte_slice::*;
 
 enum UVecInner<'a, T> {
     Owned(Vec<T>),
@@ -41,11 +9,28 @@ enum UVecInner<'a, T> {
     // UnalignedNE(&'a [u8]),
 }
 
+/// A vector that may be borrowed and may point at unaligned data.
 pub struct UVec<'a, T>(UVecInner<'a, T>);
+
+impl<T> From<Vec<T>> for UVec<'_, T> {
+    fn from(vec: Vec<T>) -> Self {
+        Self(UVecInner::Owned(vec))
+    }
+}
+
+impl<'a, T> From<&'a [T]> for UVec<'a, T> {
+    fn from(slice: &'a [T]) -> Self {
+        Self(UVecInner::Aligned(slice))
+    }
+}
 
 impl<'a, T> UVec<'a, T> {
     pub fn from_unaligned_le_bytes(bytes: &'a [u8]) -> Self {
         Self(UVecInner::UnalignedLE(bytes))
+    }
+
+    pub fn from_unaligned_ne_bytes(_bytes: &'a [u8]) -> Self {
+        unimplemented!()
     }
 }
 
@@ -114,54 +99,54 @@ pub const TEST_BUFFER_LE: &[u8] = &ALIGNED_TEST_BUFFER_LE.0;
 mod tests {
     use super::*;
 
-    const a: u32 = 0x03020100;
-    const b: u32 = 0x07060504;
-    const c: u32 = 0x0b0a0908;
+    const A: u32 = 0x03020100;
+    const B: u32 = 0x07060504;
+    const C: u32 = 0x0b0a0908;
 
     #[test]
     fn test_get() {
         {
-            let vec = vec![a, b, c];
+            let vec = vec![A, B, C];
             let uvec = UVec(UVecInner::Owned(vec));
-            assert_eq!(uvec.get(0), Some(a));
-            assert_eq!(uvec.get(1), Some(b));
-            assert_eq!(uvec.get(2), Some(c));
+            assert_eq!(uvec.get(0), Some(A));
+            assert_eq!(uvec.get(1), Some(B));
+            assert_eq!(uvec.get(2), Some(C));
         }
         {
-            let slice = [a, b, c];
+            let slice = [A, B, C];
             let uvec = UVec(UVecInner::Aligned(&slice));
-            assert_eq!(uvec.get(0), Some(a));
-            assert_eq!(uvec.get(1), Some(b));
-            assert_eq!(uvec.get(2), Some(c));
+            assert_eq!(uvec.get(0), Some(A));
+            assert_eq!(uvec.get(1), Some(B));
+            assert_eq!(uvec.get(2), Some(C));
         }
         {
             let uvec = UVec::<u32>(UVecInner::UnalignedLE(&TEST_BUFFER_LE));
-            assert_eq!(uvec.get(0), Some(a));
-            assert_eq!(uvec.get(1), Some(b));
-            assert_eq!(uvec.get(2), Some(c));
+            assert_eq!(uvec.get(0), Some(A));
+            assert_eq!(uvec.get(1), Some(B));
+            assert_eq!(uvec.get(2), Some(C));
         }
     }
 
     #[test]
     fn test_to_stream() {
         {
-            let vec = vec![a, b, c];
+            let vec = vec![A, B, C];
             let uvec = UVec(UVecInner::Owned(vec));
             let mut buffer: Vec<u8> = vec![];
-            uvec.write_to_stream_le(&mut buffer);
+            uvec.write_to_stream_le(&mut buffer).unwrap();
             assert_eq!(TEST_BUFFER_LE[0..12], buffer);
         }
         {
-            let slice = [a, b, c];
+            let slice = [A, B, C];
             let uvec = UVec(UVecInner::Aligned(&slice));
             let mut buffer: Vec<u8> = vec![];
-            uvec.write_to_stream_le(&mut buffer);
+            uvec.write_to_stream_le(&mut buffer).unwrap();
             assert_eq!(TEST_BUFFER_LE[0..12], buffer);
         }
         {
             let uvec = UVec::<u32>(UVecInner::UnalignedLE(&TEST_BUFFER_LE));
             let mut buffer: Vec<u8> = vec![];
-            uvec.write_to_stream_le(&mut buffer);
+            uvec.write_to_stream_le(&mut buffer).unwrap();
             assert_eq!(TEST_BUFFER_LE, buffer);
         }
     }
