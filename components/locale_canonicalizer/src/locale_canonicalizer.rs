@@ -19,6 +19,7 @@ pub struct LocaleCanonicalizer<'a> {
     likely_subtags: Cow<'a, LikelySubtagsV1>,
 }
 
+#[inline]
 fn update_langid(
     entry: &LanguageIdentifier,
     langid: &mut LanguageIdentifier,
@@ -29,6 +30,21 @@ fn update_langid(
     langid.script = langid.script.or(entry.script);
     langid.region = langid.region.or(entry.region);
     CanonicalizationResult::Modified
+}
+
+macro_rules! maximize_locale {
+    ( $langid:ident, $table:expr, $key:expr ) => {{
+        if let Ok(index) = $table.binary_search_by_key(&&$key, |(i1, _)| i1) {
+            let entry = &$table[index].1;
+            return update_langid(entry, $langid);
+        }
+    }};
+    ( $langid:ident, $table:expr, $key1:expr, $key2:expr ) => {{
+        if let Ok(index) = $table.binary_search_by_key(&(&$key1, &$key2), |(i1, i2, _)| (i1, i2)) {
+            let entry = &$table[index].2;
+            return update_langid(entry, $langid);
+        }
+    }};
 }
 
 impl LocaleCanonicalizer<'_> {
@@ -83,76 +99,38 @@ impl LocaleCanonicalizer<'_> {
             return CanonicalizationResult::Unmodified;
         }
 
-        if !langid.language.is_empty() {
-            if langid.script.is_some() {
-                let key = (&langid.language, &langid.script);
-                if let Ok(index) = self
-                    .likely_subtags
-                    .language_script
-                    .binary_search_by_key(&key, |(l, _)| (&l.language, &l.script))
-                {
-                    let entry = &self.likely_subtags.language_script[index].1;
-                    return update_langid(entry, langid);
-                }
+        if let Some(language) = langid.language.into() {
+            if let Some(region) = langid.region {
+                maximize_locale!(
+                    langid,
+                    self.likely_subtags.language_region,
+                    language,
+                    region.into()
+                );
             }
-
-            if langid.region.is_some() {
-                let key = (&langid.language, &langid.region);
-                if let Ok(index) = self
-                    .likely_subtags
-                    .language_region
-                    .binary_search_by_key(&key, |(l, _)| (&l.language, &l.region))
-                {
-                    let entry = &self.likely_subtags.language_region[index].1;
-                    return update_langid(entry, langid);
-                }
+            if let Some(script) = langid.script {
+                maximize_locale!(
+                    langid,
+                    self.likely_subtags.language_script,
+                    language,
+                    script.into()
+                );
             }
-
-            let key = &langid.language;
-            if let Ok(index) = self
-                .likely_subtags
-                .language
-                .binary_search_by_key(key, |(l, _)| l.language)
-            {
-                let entry = &self.likely_subtags.language[index].1;
-                return update_langid(entry, langid);
+            maximize_locale!(langid, self.likely_subtags.language, language);
+        } else if let Some(script) = langid.script {
+            if let Some(region) = langid.region {
+                maximize_locale!(
+                    langid,
+                    self.likely_subtags.script_region,
+                    script.into(),
+                    region.into()
+                );
             }
-        } else if langid.script.is_some() {
-            if langid.region.is_some() {
-                let key = (&langid.script, &langid.region);
-                if let Ok(index) = self
-                    .likely_subtags
-                    .script_region
-                    .binary_search_by_key(&key, |(l, _)| (&l.script, &l.region))
-                {
-                    let entry = &self.likely_subtags.script_region[index].1;
-                    return update_langid(entry, langid);
-                }
-            }
-
-            let key = &langid.script;
-            if let Ok(index) = self
-                .likely_subtags
-                .script
-                .binary_search_by_key(&key, |(l, _)| &l.script)
-            {
-                let entry = &self.likely_subtags.script[index].1;
-                return update_langid(entry, langid);
-            }
-        } else if langid.region.is_some() {
-            let key = &langid.region;
-            if let Ok(index) = self
-                .likely_subtags
-                .region
-                .binary_search_by_key(&key, |(l, _)| &l.region)
-            {
-                let entry = &self.likely_subtags.region[index].1;
-                return update_langid(entry, langid);
-            }
-        } else {
-            return update_langid(&self.likely_subtags.und, langid);
+            maximize_locale!(langid, self.likely_subtags.script, script.into());
+        } else if let Some(region) = langid.region {
+            maximize_locale!(langid, self.likely_subtags.region, region.into());
         }
-        CanonicalizationResult::Unmodified
+        update_langid(&self.likely_subtags.und, langid)
     }
 
     /// This returns a new Locale that is the result of running the

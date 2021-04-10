@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::LanguageIdentifier;
+use tinystr::TinyStr4;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
@@ -15,11 +16,11 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct LikelySubtagsV1 {
-    pub language_script: Vec<(LanguageIdentifier, LanguageIdentifier)>,
-    pub language_region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
-    pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
-    pub script_region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
-    pub script: Vec<(LanguageIdentifier, LanguageIdentifier)>,
-    pub region: Vec<(LanguageIdentifier, LanguageIdentifier)>,
+    pub language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
+    pub language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
+    pub language: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub script_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
+    pub script: Vec<(TinyStr4, LanguageIdentifier)>,
+    pub region: Vec<(TinyStr4, LanguageIdentifier)>,
     pub und: LanguageIdentifier,
 }
