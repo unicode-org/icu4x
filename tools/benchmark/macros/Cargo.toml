@@ -10,6 +10,9 @@ version = "0.1.0"
 
 [dependencies]
 dhat = { version = "0.2", optional = true }
+
+# This cfg originates in dlmalloc/lib.rs
+[target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
 dlmalloc = { version = "0.2", optional = true, features = ["global"] }
 
 [features]
