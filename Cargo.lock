@@ -2132,6 +2132,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_unaligned"
+version = "0.1.0"
+dependencies = [
+ "icu_benchmark_macros",
+]
+
+[[package]]
 name = "serde_urlencoded"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
