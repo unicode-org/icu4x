@@ -20,13 +20,13 @@ mod default {
 
 // Enable DHat if the "benchmark_memory" feature is present alone
 #[cfg(all(feature = "benchmark_memory", not(feature = "rust_global_allocator")))]
-mod benchmark_memory {
-    // Re-export tools so that macros can access it without needing a dependency.
+pub mod benchmark_memory {
+    /// Re-export tools so that macros can access it without needing a dependency.
     pub use dhat;
     #[macro_export]
     macro_rules! static_setup {
         () => {
-            use icu_benchmark_macros::dhat::{Dhat, DhatAlloc};
+            use $crate::benchmark_memory::dhat::{Dhat, DhatAlloc};
             // Use the DhatAlloc global allocator to instrument memory usage.
             #[global_allocator]
             static ALLOCATOR: DhatAlloc = DhatAlloc;
@@ -45,13 +45,13 @@ mod benchmark_memory {
 
 // Enable Dlmalloc if the "rust_global_allocator" feature is present alone
 #[cfg(all(feature = "rust_global_allocator", not(feature = "benchmark_memory")))]
-mod rust_global_allocator {
-    // Re-export tools so that macros can access it without needing a dependency.
+pub mod rust_global_allocator {
+    /// Re-export tools so that macros can access it without needing a dependency.
     pub use dlmalloc;
     #[macro_export]
     macro_rules! static_setup {
         () => {
-            use icu_benchmark_macros::dlmalloc::GlobalDlmalloc;
+            use $crate::rust_global_allocator::dlmalloc::GlobalDlmalloc;
             // Use Dlmalloc to remove the system allocator dependency
             #[global_allocator]
             static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;

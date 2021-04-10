@@ -298,7 +298,8 @@ exit_on_error true
 valgrind = which valgrind
 assert ${valgrind} "Could not find 'valgrind' in path.\n*** Please run 'apt-get install valgrind' ***"
 
-mkdir valgrind_out
+mkdir benchmarks
+mkdir benchmarks/valgrind
 
 output = exec cargo +nightly-2021-02-28 build --examples --message-format=json --features icu_benchmark_macros/rust_global_allocator --profile bench -Z unstable-options
 if ${output.code}
@@ -312,7 +313,7 @@ for json_message in ${json_messages}
     is_compiler_artifact = eq ${json_obj.reason} "compiler-artifact"
     is_example = eq ${json_obj.target.kind[0]} "example"
     if ${is_compiler_artifact} and ${is_example}
-        out_file = concat "valgrind_out/" ${json_obj.target.name} ".out"
+        out_file = concat "benchmarks/valgrind/" ${json_obj.target.name} ".out"
         set_env LD_BIND_NOW "y"
         vg_output = exec ${valgrind} --tool=callgrind --zero-before=_start --callgrind-out-file=${out_file} ${json_obj.executable}
         if ${vg_output.code}
