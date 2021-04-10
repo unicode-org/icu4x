@@ -153,3 +153,9 @@ impl<'l> From<&'l Variant> for &'l str {
         input.as_str()
     }
 }
+
+impl From<Variant> for TinyStr8 {
+    fn from(input: Variant) -> Self {
+        input.0.into()
+    }
+}

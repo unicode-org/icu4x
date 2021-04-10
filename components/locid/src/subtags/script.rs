@@ -137,3 +137,9 @@ impl<'l> From<&'l Script> for &'l str {
         input.as_str()
     }
 }
+
+impl From<Script> for TinyStr4 {
+    fn from(input: Script) -> Self {
+        input.0.into()
+    }
+}
