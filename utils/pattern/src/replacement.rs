@@ -9,7 +9,7 @@ use std::collections::HashMap;
 ///
 /// # Examples
 ///
-/// Since the trait comes with implementations for [`Vec`] and [`HashMap<String, E>`][`HashMap`],
+/// Since the trait comes with implementations for [`Vec<E>`] and [`HashMap<String, E>`][`HashMap`],
 /// most common cases are already covered and manual implementation of the trait
 /// is not needed.
 ///

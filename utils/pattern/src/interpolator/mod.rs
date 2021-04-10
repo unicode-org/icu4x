@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod error;
-use crate::{pattern::Pattern, replacement::ReplacementProvider, token::PatternToken};
+use crate::{replacement::ReplacementProvider, token::PatternToken};
 pub use error::InterpolatorError;
 use std::{
     borrow::Cow,
     fmt::{Debug, Display, Formatter},
     str::FromStr,
 };
+use writeable::Writeable;
 
 /// The type returned by the [`Interpolator`] iterator.
 /// This enum stores references to string literals parsed as
@@ -17,7 +18,8 @@ use std::{
 ///
 /// # Lifetimes
 ///
-/// - `i`: The life time of an input pattern slice.
+/// - `i`: The life time of a kind that is being interpolated.
+/// - `s`: The life time of a string slice literal.
 #[derive(Debug, PartialEq)]
 pub enum InterpolatedKind<'i, 's, E> {
     Literal(&'i Cow<'s, str>),
@@ -33,6 +35,21 @@ where
             *element == other
         } else {
             false
+        }
+    }
+}
+
+impl<'i, 's, E> Writeable for InterpolatedKind<'i, 's, E>
+where
+    E: Writeable,
+{
+    fn write_to<W>(&self, sink: &mut W) -> std::result::Result<(), std::fmt::Error>
+    where
+        W: std::fmt::Write + ?Sized,
+    {
+        match self {
+            Self::Literal(lit) => sink.write_str(lit),
+            Self::Element(elem) => elem.write_to(sink),
         }
     }
 }
@@ -145,8 +162,8 @@ pub struct Interpolator<'i, 'p, R, E>
 where
     R: ReplacementProvider<'i, E>,
 {
-    pattern: &'i Pattern<'p, R::Key>,
-    pattern_idx: usize,
+    tokens: &'i [PatternToken<'p, R::Key>],
+    token_idx: usize,
     replacements: &'i R,
     current_replacement: Option<R::Iter>,
 }
@@ -177,10 +194,10 @@ where
     /// ];
     /// let mut interpolator = Interpolator::<Vec<Vec<_>>, Element>::new(&pattern, &replacements);
     /// ```
-    pub fn new(pattern: &'i Pattern<'p, R::Key>, replacements: &'i R) -> Self {
+    pub fn new(tokens: &'i [PatternToken<'p, R::Key>], replacements: &'i R) -> Self {
         Self {
-            pattern,
-            pattern_idx: 0,
+            tokens,
+            token_idx: 0,
             replacements,
             current_replacement: None,
         }
@@ -238,13 +255,13 @@ where
                     self.current_replacement = None;
                 }
             }
-            match self.pattern.0.get(self.pattern_idx) {
+            match self.tokens.get(self.token_idx) {
                 Some(&PatternToken::Literal { ref content, .. }) => {
-                    self.pattern_idx += 1;
+                    self.token_idx += 1;
                     return Ok(Some(InterpolatedKind::Literal(content)));
                 }
                 Some(&PatternToken::Placeholder(ref p)) => {
-                    self.pattern_idx += 1;
+                    self.token_idx += 1;
                     self.current_replacement = self.replacements.take_replacement(&p);
                     if self.current_replacement.is_none() {
                         return Err(InterpolatorError::MissingPlaceholder(p.clone()));

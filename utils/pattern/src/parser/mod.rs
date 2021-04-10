@@ -22,19 +22,9 @@ impl Default for ParserState {
     }
 }
 
-macro_rules! advance_state {
-    ($self:ident, $idx:expr, $next_state:expr) => {{
-        let range = $self.start_idx..$idx;
-        $self.idx = $idx + 1;
-        $self.start_idx = $self.idx;
-        $self.state = $next_state;
-        range
-    }};
-}
-
 macro_rules! handle_literal {
     ($self:ident, $quoted:expr, $next_state:expr) => {{
-        let range = advance_state!($self, $self.idx, $next_state);
+        let range = $self.advance_state($self.idx, $next_state);
         if !range.is_empty() {
             return Ok(Some(PatternToken::Literal {
                 content: Cow::Borrowed(&$self.input[range]),
@@ -283,7 +273,7 @@ impl<'p, P> Parser<'p, P> {
         while let Some(b) = self.input.as_bytes().get(self.idx) {
             match self.state {
                 ParserState::Placeholder if *b == b'}' => {
-                    let range = advance_state!(self, self.idx, ParserState::Default);
+                    let range = self.advance_state(self.idx, ParserState::Default);
                     return self.input[range]
                         .parse()
                         .map(|ret| Some(PatternToken::Placeholder(ret)))
@@ -337,6 +327,14 @@ impl<'p, P> Parser<'p, P> {
                 }
             }
         }
+    }
+
+    fn advance_state(&mut self, idx: usize, next_state: ParserState) -> std::ops::Range<usize> {
+        let range = self.start_idx..idx;
+        self.idx = idx + 1;
+        self.start_idx = self.idx;
+        self.state = next_state;
+        range
     }
 }
 

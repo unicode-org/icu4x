@@ -4,19 +4,20 @@
 
 mod error;
 
-use crate::parser::error::ParserError;
-use crate::token::PatternToken;
 use crate::{
-    interpolator::{InterpolatedKind, Interpolator, InterpolatorError},
-    parser::{Parser, ParserOptions},
+    interpolator::{InterpolatedKind, Interpolator},
+    parser::{Parser, ParserError, ParserOptions},
     replacement::ReplacementProvider,
+    token::PatternToken,
 };
 pub use error::PatternError;
 use std::{
     convert::{TryFrom, TryInto},
     fmt::{Debug, Display, Write},
+    ops::Deref,
     str::FromStr,
 };
+use writeable::Writeable;
 
 /// `Pattern` stores the result of parsing operation as a vector
 /// of [`PatternToken`] elements.
@@ -49,9 +50,13 @@ impl<'s, P> Pattern<'s, P> {
         P: Debug + FromStr + Clone,
         <P as FromStr>::Err: Debug,
     {
-        Interpolator::new(self, replacements)
-            .try_into()
-            .map_err(Into::into)
+        let mut interpolator = Interpolator::new(&self.0, replacements);
+
+        let mut result = vec![];
+        while let Some(ik) = interpolator.try_next()? {
+            result.push(ik);
+        }
+        Ok(InterpolatedPattern(result))
     }
 
     /// Interpolates the `Pattern` with provided replacements and a new
@@ -79,7 +84,7 @@ impl<'s, P> Pattern<'s, P> {
     pub fn interpolate_to_write<'i, E, R, W>(
         &'i self,
         replacements: &'i R,
-        f: &mut W,
+        sink: &mut W,
     ) -> Result<(), PatternError<R::Key>>
     where
         R: ReplacementProvider<'i, E, Key = P>,
@@ -88,9 +93,29 @@ impl<'s, P> Pattern<'s, P> {
         E: 'i + Display,
         W: Write,
     {
-        let mut interpolator = Interpolator::new(self, replacements);
+        let mut interpolator = Interpolator::new(&self.0, replacements);
         while let Some(ik) = interpolator.try_next()? {
-            write!(f, "{}", ik)?;
+            write!(sink, "{}", ik)?;
+        }
+        Ok(())
+    }
+
+    /// Interpolates the `Pattern` writing the result into a buffer.
+    pub fn interpolate_to_writeable<'i, E, R, W>(
+        &'i self,
+        replacements: &'i R,
+        sink: &mut W,
+    ) -> Result<(), PatternError<R::Key>>
+    where
+        R: ReplacementProvider<'i, E, Key = P>,
+        P: Debug + FromStr + Clone,
+        <P as FromStr>::Err: Debug,
+        E: 'i + Writeable,
+        W: Write,
+    {
+        let mut interpolator = Interpolator::new(&self.0, replacements);
+        while let Some(ik) = interpolator.try_next()? {
+            ik.write_to(sink)?;
         }
         Ok(())
     }
@@ -140,6 +165,14 @@ where
     }
 }
 
+impl<'p, P> Deref for Pattern<'p, P> {
+    type Target = [PatternToken<'p, P>];
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 /// `InterpolatedPattern` stores the result of parsing operation as a vector
 /// of [`InterpolatedKind`] elements.
 ///
@@ -155,20 +188,18 @@ where
 /// [`ReplacementProvider`]: crate::ReplacementProvider
 pub struct InterpolatedPattern<'i, 's, E>(Vec<InterpolatedKind<'i, 's, E>>);
 
-impl<'i, 's, R, E> TryFrom<Interpolator<'i, 's, R, E>> for InterpolatedPattern<'i, 's, E>
+impl<'i, 's, E> Writeable for InterpolatedPattern<'i, 's, E>
 where
-    R: ReplacementProvider<'i, E>,
-    R::Key: FromStr + Clone + Debug,
-    <R::Key as FromStr>::Err: Debug,
+    E: Writeable,
 {
-    type Error = InterpolatorError<R::Key>;
-
-    fn try_from(mut interpolator: Interpolator<'i, 's, R, E>) -> Result<Self, Self::Error> {
-        let mut result = vec![];
-        while let Some(ik) = interpolator.try_next()? {
-            result.push(ik);
+    fn write_to<W>(&self, sink: &mut W) -> std::result::Result<(), std::fmt::Error>
+    where
+        W: std::fmt::Write + ?Sized,
+    {
+        for elem in &self.0 {
+            elem.write_to(sink)?;
         }
-        Ok(Self(result))
+        Ok(())
     }
 }
 

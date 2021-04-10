@@ -21,6 +21,7 @@ include = [
 
 [dependencies]
 thiserror = "1"
+writeable = { path = "../writeable" }
 
 [dev-dependencies]
 iai = "0.1"
