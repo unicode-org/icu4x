@@ -5,7 +5,6 @@ icu_benchmark_macros::static_setup!();
 
 use serde_unaligned::uvec::{UVec, TEST_BUFFER_LE};
 
-
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();

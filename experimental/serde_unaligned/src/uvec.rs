@@ -165,4 +165,56 @@ mod tests {
             assert_eq!(TEST_BUFFER_LE, buffer);
         }
     }
+
+    #[test]
+    fn test_odd_alignment() {
+        assert_eq!(
+            Some(0x03020100),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(0)
+        );
+        assert_eq!(
+            Some(0x04030201),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[1..]).get(0)
+        );
+        assert_eq!(
+            Some(0x05040302),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[2..]).get(0)
+        );
+        assert_eq!(
+            Some(0x06050403),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(0)
+        );
+        assert_eq!(
+            Some(0x07060504),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[4..]).get(0)
+        );
+        assert_eq!(
+            Some(0x4e4d4c4b),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[75..]).get(0)
+        );
+        assert_eq!(
+            Some(0x4e4d4c4b),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(18)
+        );
+        assert_eq!(
+            Some(0x4f4e4d4c),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[76..]).get(0)
+        );
+        assert_eq!(
+            Some(0x4f4e4d4c),
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(19)
+        );
+        assert_eq!(
+            None,
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[77..]).get(0)
+        );
+        assert_eq!(
+            None,
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(20)
+        );
+        assert_eq!(
+            None,
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(19)
+        );
+    }
 }
