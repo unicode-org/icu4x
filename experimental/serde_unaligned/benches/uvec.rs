@@ -22,27 +22,19 @@ fn overview_bench(c: &mut Criterion) {
 #[cfg(feature = "bench")]
 fn sum_benches(c: &mut Criterion) {
     c.bench_function("uvec/sum/u32_slice", |b| {
-        b.iter(|| {
-            UVec::from(black_box(TEST_SLICE)).sum()
-        });
+        b.iter(|| UVec::from(black_box(TEST_SLICE)).sum());
     });
 
     c.bench_function("uvec/sum/u8_buffer", |b| {
-        b.iter(|| {
-            UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum()
-        });
+        b.iter(|| UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum());
     });
 
     c.bench_function("uvec/sum_u32/u32_slice", |b| {
-        b.iter(|| {
-            UVec::from(black_box(TEST_SLICE)).sum_u32()
-        });
+        b.iter(|| UVec::from(black_box(TEST_SLICE)).sum_u32());
     });
 
     c.bench_function("uvec/sum_u32/u8_buffer", |b| {
-        b.iter(|| {
-            UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum_u32()
-        });
+        b.iter(|| UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum_u32());
     });
 }
 
