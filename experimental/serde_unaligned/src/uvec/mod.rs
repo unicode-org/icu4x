@@ -1,6 +1,18 @@
-use crate::byte_slice::*;
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-enum UVecInner<'a, T> {
+#[cfg(feature = "serde")]
+mod serde;
+
+use crate::byte_slice::*;
+use std::borrow::Cow;
+
+/// The inner representation of a `UVec`. A `UVec` cannot be constructed directly from a
+/// `UVecInner` because data may need validation; use the `From` impls on `UVec` instead.
+// TODO: Consider a custom Debug impl
+#[derive(Debug)]
+pub enum UVecInner<'a, T> {
     Owned(Vec<T>),
     Aligned(&'a [T]),
     /// Buffer with little-endian data
@@ -10,6 +22,7 @@ enum UVecInner<'a, T> {
 }
 
 /// A vector that may be borrowed and may point at unaligned data.
+#[derive(Debug)]
 pub struct UVec<'a, T>(UVecInner<'a, T>);
 
 impl<T> From<Vec<T>> for UVec<'_, T> {
@@ -24,6 +37,24 @@ impl<'a, T> From<&'a [T]> for UVec<'a, T> {
     }
 }
 
+impl<'a, 'b, T> PartialEq<UVec<'b, T>> for UVec<'a, T>
+where
+    for<'h> T: Copy + From<ByteSliceLE<'h, 4>> + PartialEq,
+{
+    fn eq(&self, other: &UVec<'b, T>) -> bool {
+        if self.len() != other.len() {
+            return false;
+        }
+        // TODO: Use an iterator here
+        for i in 0..self.len() {
+            if self.get(i) != other.get(i) {
+                return false;
+            }
+        }
+        true
+    }
+}
+
 impl<'a, T> UVec<'a, T> {
     pub fn from_unaligned_le_bytes(bytes: &'a [u8]) -> Self {
         Self(UVecInner::UnalignedLE(bytes))
@@ -32,12 +63,25 @@ impl<'a, T> UVec<'a, T> {
     pub fn from_unaligned_ne_bytes(_bytes: &'a [u8]) -> Self {
         unimplemented!()
     }
+
+    pub fn len(&self) -> usize {
+        use UVecInner::*;
+        match &self.0 {
+            Owned(vec) => vec.len(),
+            Aligned(slice) => slice.len(),
+            UnalignedLE(bytes) => bytes.len() / std::mem::size_of::<T>(),
+        }
+    }
+
+    pub fn into_inner(self) -> UVecInner<'a, T> {
+        self.0
+    }
 }
 
 // TODO: I guess we can't implement std::ops::Index because that returns references, right?
 impl<'a, T> UVec<'a, T>
 where
-    T: Copy + From<ByteSliceLE<'a, 4>>,
+    for<'h> T: Copy + From<ByteSliceLE<'h, 4>>,
 {
     pub fn get(&self, index: usize) -> Option<T> {
         use UVecInner::*;
@@ -78,6 +122,17 @@ where
             }
         };
         Ok(result)
+    }
+
+    pub fn to_le_bytes(&self) -> Cow<'a, [u8]> {
+        use UVecInner::*;
+        if let UnalignedLE(bytes) = self.0 {
+            return Cow::Borrowed(bytes);
+        }
+        let mut bytes: Vec<u8> = Vec::with_capacity(self.len() * std::mem::size_of::<T>());
+        self.write_to_stream_le(&mut bytes)
+            .expect("Writing to memory buffer");
+        Cow::Owned(bytes)
     }
 }
 

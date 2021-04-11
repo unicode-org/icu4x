@@ -2005,9 +2005,12 @@ dependencies = [
 name = "serde_unaligned"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "criterion",
  "iai",
  "icu_benchmark_macros",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
