@@ -171,17 +171,17 @@ impl<'a> UVec<'a, u32> {
         match &self.0 {
             Owned(vec) => {
                 for value in vec.iter() {
-                    result += *value;
+                    result = value.wrapping_add(result);
                 }
             }
             Aligned(slice) => {
                 for value in slice.iter() {
-                    result += *value;
+                    result = value.wrapping_add(result);
                 }
             }
             UnalignedLE(bytes) => {
                 for chunk in bytes.array_chunks::<4>() {
-                    result += u32::from_le_bytes(*chunk);
+                    result = u32::from_le_bytes(*chunk).wrapping_add(result);
                 }
             }
         };
@@ -194,28 +194,30 @@ struct Aligned<T>(pub T);
 
 // This is aligned so that we can test unaligned behavior at odd offsets
 const ALIGNED_TEST_BUFFER_LE: Aligned<[u8; 80]> = Aligned([
-    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-    0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
-    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
-    0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+    0x00, 0x01, 0x02, 0x00, 0x04, 0x05, 0x06, 0x00, 0x08, 0x09, 0x0a, 0x00, 0x0c, 0x0d, 0x0e, 0x00,
+    0x10, 0x11, 0x12, 0x00, 0x14, 0x15, 0x16, 0x00, 0x18, 0x19, 0x1a, 0x00, 0x1c, 0x1d, 0x1e, 0x00,
+    0x20, 0x21, 0x22, 0x00, 0x24, 0x25, 0x26, 0x00, 0x28, 0x29, 0x2a, 0x00, 0x2c, 0x2d, 0x2e, 0x00,
+    0x30, 0x31, 0x32, 0x00, 0x34, 0x35, 0x36, 0x00, 0x38, 0x39, 0x3a, 0x00, 0x3c, 0x3d, 0x3e, 0x00,
+    0x40, 0x41, 0x42, 0x00, 0x44, 0x45, 0x46, 0x00, 0x48, 0x49, 0x4a, 0x00, 0x4c, 0x4d, 0x4e, 0x00,
 ]);
 
 pub const TEST_BUFFER_LE: &[u8] = &ALIGNED_TEST_BUFFER_LE.0;
 
 pub const TEST_SLICE: &[u32] = &[
-    0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c, 0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c,
-    0x23222120, 0x27262524, 0x2b2a2928, 0x2f2e2d2c, 0x33323130, 0x37363534, 0x3b3a3938, 0x3f3e3d3c,
-    0x43424140, 0x47464544, 0x4b4a4948, 0x4f4e4d4c,
+    0x020100, 0x060504, 0x0a0908, 0x0e0d0c, 0x121110, 0x161514, 0x1a1918, 0x1e1d1c, 0x222120,
+    0x262524, 0x2a2928, 0x2e2d2c, 0x323130, 0x363534, 0x3a3938, 0x3e3d3c, 0x424140, 0x464544,
+    0x4a4948, 0x4e4d4c,
 ];
+
+pub const TEST_SUM: u32 = 52629240;
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    const A: u32 = 0x03020100;
-    const B: u32 = 0x07060504;
-    const C: u32 = 0x0b0a0908;
+    const A: u32 = 0x020100;
+    const B: u32 = 0x060504;
+    const C: u32 = 0x0a0908;
 
     #[test]
     fn test_get() {
@@ -268,39 +270,39 @@ mod tests {
     #[test]
     fn test_odd_alignment() {
         assert_eq!(
-            Some(0x03020100),
+            Some(0x020100),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(0)
         );
         assert_eq!(
-            Some(0x04030201),
+            Some(0x04000201),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[1..]).get(0)
         );
         assert_eq!(
-            Some(0x05040302),
+            Some(0x05040002),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[2..]).get(0)
         );
         assert_eq!(
-            Some(0x06050403),
+            Some(0x06050400),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(0)
         );
         assert_eq!(
-            Some(0x07060504),
+            Some(0x060504),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[4..]).get(0)
         );
         assert_eq!(
-            Some(0x4e4d4c4b),
+            Some(0x4e4d4c00),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[75..]).get(0)
         );
         assert_eq!(
-            Some(0x4e4d4c4b),
+            Some(0x4e4d4c00),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(18)
         );
         assert_eq!(
-            Some(0x4f4e4d4c),
+            Some(0x4e4d4c),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[76..]).get(0)
         );
         assert_eq!(
-            Some(0x4f4e4d4c),
+            Some(0x4e4d4c),
             UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(19)
         );
         assert_eq!(

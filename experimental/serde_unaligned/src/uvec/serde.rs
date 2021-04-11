@@ -4,7 +4,7 @@
 
 use super::UVec;
 use crate::byte_slice::*;
-use serde::de::{self, Deserialize, DeserializeOwned, Deserializer, SeqAccess, Visitor};
+use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 use std::fmt;
 use std::marker::PhantomData;
@@ -113,13 +113,13 @@ where
 mod test {
     use super::super::*;
 
-    const JSON_STR: &'static str = "[50462976,117835012,185207048,252579084,319951120,387323156,454695192,522067228,589439264,656811300,724183336,791555372,858927408,926299444,993671480,1061043516,1128415552,1195787588,1263159624,1330531660]";
+    const JSON_STR: &'static str = "[131328,394500,657672,920844,1184016,1447188,1710360,1973532,2236704,2499876,2763048,3026220,3289392,3552564,3815736,4078908,4342080,4605252,4868424,5131596]";
 
     const BINCODE_BUF: &[u8] = &[
-        80, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-        19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-        42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
-        65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+        80, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 4, 5, 6, 0, 8, 9, 10, 0, 12, 13, 14, 0, 16, 17, 18, 0,
+        20, 21, 22, 0, 24, 25, 26, 0, 28, 29, 30, 0, 32, 33, 34, 0, 36, 37, 38, 0, 40, 41, 42, 0,
+        44, 45, 46, 0, 48, 49, 50, 0, 52, 53, 54, 0, 56, 57, 58, 0, 60, 61, 62, 0, 64, 65, 66, 0,
+        68, 69, 70, 0, 72, 73, 74, 0, 76, 77, 78, 0,
     ];
 
     #[test]
@@ -143,8 +143,7 @@ mod test {
         let bincode_buf = bincode::serialize(&uvec_orig).expect("serialize");
         assert_eq!(BINCODE_BUF, bincode_buf);
         // UVec should deserialize from Bincode to UVec but not Vec
-        bincode::deserialize::<Vec<u32>>(&bincode_buf)
-            .expect_err("deserialize from buffer to Vec");
+        bincode::deserialize::<Vec<u32>>(&bincode_buf).expect_err("deserialize from buffer to Vec");
         let uvec_new: UVec<u32> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to UVec");
         assert_eq!(uvec_orig, uvec_new);
