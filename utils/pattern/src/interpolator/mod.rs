@@ -244,8 +244,8 @@ where
     /// ```
     pub fn try_next(&mut self) -> Result<InterpolatedKind<'i, 'p, E>, R::Key>
     where
-        R::Key: Debug + FromStr + Clone,
-        <R::Key as FromStr>::Err: Debug,
+        R::Key: Debug + FromStr + PartialEq + Clone,
+        <R::Key as FromStr>::Err: Debug + PartialEq,
     {
         loop {
             if let Some(ref mut replacement) = &mut self.current_replacement {
@@ -278,7 +278,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Parser, ParserOptions, Pattern};
+    use crate::{Parser, ParserOptions, Pattern, PatternError};
     use std::convert::TryInto;
     use std::{borrow::Cow, fmt::Display};
 
@@ -296,7 +296,7 @@ mod tests {
         ("{0} 'at' {1}", &[&["Hello"], &["World"]], "Hello at World"),
     ];
 
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq)]
     pub enum Element<'s> {
         Literal(Cow<'s, str>),
     }
@@ -371,6 +371,30 @@ mod tests {
                 .interpolate::<'_, Element, _>(&replacements)
                 .unwrap();
             let _ = interpolated_pattern.to_string();
+        }
+    }
+
+    #[test]
+    fn missing_placeholder() {
+        let samples: Vec<(&str, Vec<Element>)> = vec![("{0} days", vec![])];
+
+        for sample in &samples {
+            let pattern: Pattern<usize> = Parser::new(
+                &sample.0,
+                ParserOptions {
+                    allow_raw_letters: true,
+                },
+            )
+            .try_into()
+            .expect("Failed to parse a sample");
+
+            let interpolated_pattern = pattern.interpolate::<'_, Element, _>(&sample.1);
+            assert_eq!(
+                interpolated_pattern,
+                Err(PatternError::Interpolator(
+                    InterpolatorError::MissingPlaceholder(0)
+                )),
+            );
         }
     }
 }

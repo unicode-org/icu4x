@@ -11,11 +11,11 @@ use thiserror::Error;
 /// # Type parameters
 ///
 /// - `K`: A key for the replacement provider.
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq)]
 pub enum PatternError<K>
 where
-    K: Debug + FromStr,
-    K::Err: Debug,
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
 {
     #[error("Interpolator error: {0:?}")]
     Interpolator(InterpolatorError<K>),
@@ -25,8 +25,8 @@ where
 
 impl<K> From<InterpolatorError<K>> for PatternError<K>
 where
-    K: Debug + FromStr,
-    K::Err: Debug,
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
 {
     fn from(err: InterpolatorError<K>) -> Self {
         Self::Interpolator(err)
@@ -35,8 +35,8 @@ where
 
 impl<K> From<std::fmt::Error> for PatternError<K>
 where
-    K: Debug + FromStr,
-    K::Err: Debug,
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
 {
     fn from(err: std::fmt::Error) -> Self {
         Self::Format(err)

@@ -19,13 +19,13 @@ use thiserror::Error;
 ///
 /// # Type parameters
 ///
-/// - `P`: A replacement type which implements [`FromStr`].
+/// - `E`: An error of the replacement type which implements [`FromStr`].
 ///
 /// [`FromStr`]: std::str::FromStr
 #[derive(Error, Debug, PartialEq)]
-pub enum ParserError<P>
+pub enum ParserError<E>
 where
-    P: Debug,
+    E: Debug,
 {
     /// Encountered an illegal character.
     #[error("Illegal character: {0}.")]
@@ -33,7 +33,7 @@ where
 
     /// Placeholder hould not be parsed from the given string slice.
     #[error("Invalid placeholder: {0:?}")]
-    InvalidPlaceholder(P),
+    InvalidPlaceholder(E),
 
     /// The pattern contains an unclosed placeholder.
     #[error("Unclosed placeholder")]
@@ -42,13 +42,4 @@ where
     /// The pattern contains an unclosed quoted literal.
     #[error("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
-}
-
-impl<R> From<R> for ParserError<R>
-where
-    R: Debug,
-{
-    fn from(input: R) -> Self {
-        Self::InvalidPlaceholder(input)
-    }
 }

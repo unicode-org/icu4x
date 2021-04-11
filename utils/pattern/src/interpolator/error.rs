@@ -13,8 +13,8 @@ use thiserror::Error;
 #[derive(Error, Debug, PartialEq)]
 pub enum InterpolatorError<K>
 where
-    K: Debug + FromStr,
-    K::Err: Debug,
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
 {
     #[error("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(K::Err),

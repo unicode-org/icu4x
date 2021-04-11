@@ -341,60 +341,187 @@ impl<'p, P> Parser<'p, P> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::pattern::Pattern;
+    use std::{convert::TryInto, ops::Deref};
 
     #[test]
-    fn simple_parse() {
-        let input = "'PRE' {0} 'and' {1} 'POST'";
-        let mut iter = Parser::new(
-            &input,
-            ParserOptions {
-                allow_raw_letters: false,
-            },
-        );
-        let mut result = vec![];
-        while let Some(elem) = iter.try_next().unwrap() {
-            result.push(elem);
-        }
-        assert_eq!(
-            result,
-            vec![
-                ("PRE", true).into(),
-                (" ", false).into(),
-                PatternToken::Placeholder(0),
-                (" ", false).into(),
-                ("and", true).into(),
-                (" ", false).into(),
-                PatternToken::Placeholder(1),
-                (" ", false).into(),
-                ("POST", true).into(),
-            ]
-        );
-    }
+    fn pattern_parse_placeholders() {
+        let samples = vec![
+            ("{0}", vec![PatternToken::Placeholder(0)]),
+            (
+                "{0}{1}",
+                vec![PatternToken::Placeholder(0), PatternToken::Placeholder(1)],
+            ),
+            (
+                "{0} 'at' {1}",
+                vec![
+                    PatternToken::Placeholder(0),
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "at".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Placeholder(1),
+                ],
+            ),
+            (
+                "{0}'at'{1}",
+                vec![
+                    PatternToken::Placeholder(0),
+                    PatternToken::Literal {
+                        content: "at".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Placeholder(1),
+                ],
+            ),
+            (
+                "'{0}' 'at' '{1}'",
+                vec![
+                    PatternToken::Literal {
+                        content: "{0}".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "at".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "{1}".into(),
+                        quoted: true,
+                    },
+                ],
+            ),
+            (
+                "'PRE' {0} 'and' {1} 'POST'",
+                vec![
+                    PatternToken::Literal {
+                        content: "PRE".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Placeholder(0),
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "and".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Placeholder(1),
+                    PatternToken::Literal {
+                        content: " ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "POST".into(),
+                        quoted: true,
+                    },
+                ],
+            ),
+            (
+                "{0} o''clock and 'o''clock'",
+                vec![
+                    PatternToken::Placeholder(0),
+                    PatternToken::Literal {
+                        content: " o".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "'".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "clock and ".into(),
+                        quoted: false,
+                    },
+                    PatternToken::Literal {
+                        content: "o".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: "'".into(),
+                        quoted: true,
+                    },
+                    PatternToken::Literal {
+                        content: "clock".into(),
+                        quoted: true,
+                    },
+                ],
+            ),
+        ];
 
-    #[test]
-    fn apostrophe_literal() {
-        let input = "{0} o''clock and 'o''clock'";
-        let mut iter = Parser::new(
-            &input,
-            ParserOptions {
-                allow_raw_letters: true,
-            },
-        );
-        let mut result = vec![];
-        while let Some(elem) = iter.try_next().unwrap() {
-            result.push(elem);
+        for (input, expected) in samples {
+            let parser = Parser::new(
+                &input,
+                ParserOptions {
+                    allow_raw_letters: true,
+                },
+            );
+            let result: Pattern<_> = parser.try_into().expect("Failed to parse a pattern");
+            assert_eq!(result.deref(), expected,);
         }
-        assert_eq!(
-            result,
-            vec![
-                PatternToken::Placeholder(0),
-                (" o", false).into(),
-                ("'", false).into(),
-                ("clock and ", false).into(),
-                ("o", true).into(),
-                ("'", true).into(),
-                ("clock", true).into(),
-            ]
-        );
+
+        let broken: Vec<(_, Option<ParserError<std::num::ParseIntError>>)> = vec![
+            ("{", Some(ParserError::UnclosedPlaceholder)),
+            ("{0", Some(ParserError::UnclosedPlaceholder)),
+            ("{01", Some(ParserError::UnclosedPlaceholder)),
+            (
+                "{date}",
+                // This should be:
+                // ```
+                // ParserError::InvalidPlaceholder(
+                //     ParseIntError {
+                //         kind: std::num::IntErrorKind::InvalidDigit
+                //     }
+                // ),
+                // ```
+                // Pending: https://github.com/rust-lang/rust/issues/22639
+                //
+                // Once that is fixed, we can stop using an `Option` here.
+                None,
+            ),
+            ("{date} 'days'", None),
+            ("'{00}", Some(ParserError::UnclosedQuotedLiteral)),
+            ("d", Some(ParserError::IllegalCharacter('d'))),
+        ];
+
+        for (input, error) in broken {
+            let parser = Parser::<usize>::new(
+                &input,
+                ParserOptions {
+                    allow_raw_letters: false,
+                },
+            );
+            let result: Result<Pattern<_>, _> = parser.try_into();
+            if let Some(error) = error {
+                assert_eq!(result.expect_err("Should have failed."), error,);
+            } else {
+                assert!(result.is_err());
+            }
+        }
     }
 }

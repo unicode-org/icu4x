@@ -31,11 +31,43 @@ use writeable::Writeable;
 /// - `p`: The life time of an input string slice to be parsed.
 ///
 /// [`ReplacementProvider`]: crate::ReplacementProvider
+#[derive(Debug)]
 pub struct Pattern<'s, P>(pub(crate) Vec<PatternToken<'s, P>>);
 
 impl<'s, P> Pattern<'s, P> {
     /// Interpolates the `Pattern` with provided replacements and returns
     /// a [`InterpolatedPattern`] structure.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_pattern::{Pattern, InterpolatedKind};
+    /// use std::{
+    ///     convert::TryFrom,
+    ///     ops::Deref
+    /// };
+    ///
+    /// #[derive(Debug, PartialEq)]
+    /// struct Element(usize);
+    ///
+    /// let pattern = Pattern::try_from("${0}")
+    ///     .expect("Failed to parse a pattern");
+    ///
+    /// let replacements = vec![
+    ///     Element(5)
+    /// ];
+    ///
+    /// let interpolated_pattern = pattern.interpolate(&replacements)
+    ///     .expect("Failed to interpolate");
+    ///
+    /// assert_eq!(
+    ///     interpolated_pattern.deref(),
+    ///     &[
+    ///         InterpolatedKind::Literal(&"$".into()),
+    ///         InterpolatedKind::Element(&Element(5)),
+    ///     ],
+    /// );
+    /// ```
     ///
     /// For allocation-free interpolation, see `interpolate_to_string` or
     /// `interpolate_to_write`.
@@ -47,8 +79,8 @@ impl<'s, P> Pattern<'s, P> {
     ) -> Result<InterpolatedPattern<'i, 's, E>, PatternError<R::Key>>
     where
         R: ReplacementProvider<'i, E, Key = P>,
-        P: Debug + FromStr + Clone,
-        <P as FromStr>::Err: Debug,
+        P: Debug + FromStr + PartialEq + Clone,
+        <P as FromStr>::Err: Debug + PartialEq,
     {
         let mut interpolator = Interpolator::new(&self.0, replacements);
 
@@ -62,6 +94,40 @@ impl<'s, P> Pattern<'s, P> {
     /// Interpolates the `Pattern` with provided replacements and a new
     /// [`String`].
     ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use std::{
+    ///     convert::TryFrom,
+    ///     fmt::Display
+    /// };
+    ///
+    /// #[derive(Debug, PartialEq)]
+    /// struct Element(usize);
+    ///
+    /// impl Display for Element {
+    ///     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    ///         self.0.fmt(f)
+    ///     }
+    /// }
+    ///
+    /// let pattern = Pattern::try_from("${0}")
+    ///     .expect("Failed to parse a pattern");
+    ///
+    /// let replacements = vec![
+    ///     Element(5)
+    /// ];
+    ///
+    /// let interpolated_pattern = pattern.interpolate_to_string(&replacements)
+    ///     .expect("Failed to interpolate");
+    ///
+    /// assert_eq!(
+    ///     interpolated_pattern,
+    ///     "$5",
+    /// );
+    /// ```
+    ///
     /// For buffer write interpolation, see `interpolate_to_write`.
     ///
     /// For lower level interpolation iterator see [`Interpolator`].
@@ -71,8 +137,8 @@ impl<'s, P> Pattern<'s, P> {
     ) -> Result<String, PatternError<R::Key>>
     where
         R: ReplacementProvider<'i, E, Key = P>,
-        P: Debug + FromStr + Clone,
-        <P as FromStr>::Err: Debug,
+        P: Debug + FromStr + PartialEq + Clone,
+        <P as FromStr>::Err: Debug + PartialEq,
         E: 'i + Display,
     {
         let mut result = String::new();
@@ -81,6 +147,41 @@ impl<'s, P> Pattern<'s, P> {
     }
 
     /// Interpolates the `Pattern` writing the result into a buffer.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use std::{
+    ///     convert::TryFrom,
+    ///     fmt::Display
+    /// };
+    ///
+    /// #[derive(Debug, PartialEq)]
+    /// struct Element(usize);
+    ///
+    /// impl Display for Element {
+    ///     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    ///         self.0.fmt(f)
+    ///     }
+    /// }
+    ///
+    /// let pattern = Pattern::try_from("${0}")
+    ///     .expect("Failed to parse a pattern");
+    ///
+    /// let replacements = vec![
+    ///     Element(5)
+    /// ];
+    ///
+    /// let mut result = String::new();
+    /// pattern.interpolate_to_write(&replacements, &mut result)
+    ///     .expect("Failed to interpolate");
+    ///
+    /// assert_eq!(
+    ///     result,
+    ///     "$5",
+    /// );
+    /// ```
     pub fn interpolate_to_write<'i, E, R, W>(
         &'i self,
         replacements: &'i R,
@@ -88,8 +189,8 @@ impl<'s, P> Pattern<'s, P> {
     ) -> Result<(), PatternError<R::Key>>
     where
         R: ReplacementProvider<'i, E, Key = P>,
-        P: Debug + FromStr + Clone,
-        <P as FromStr>::Err: Debug,
+        P: Debug + FromStr + PartialEq + Clone,
+        <P as FromStr>::Err: Debug + PartialEq,
         E: 'i + Display,
         W: Write,
     {
@@ -100,7 +201,45 @@ impl<'s, P> Pattern<'s, P> {
         Ok(())
     }
 
-    /// Interpolates the `Pattern` writing the result into a buffer.
+    /// Interpolates the `Pattern` writing the result into a [`Writeable`] buffer.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_pattern::Pattern;
+    /// use writeable::Writeable;
+    /// use std::{
+    ///     convert::TryFrom,
+    /// };
+    ///
+    /// #[derive(Debug, PartialEq)]
+    /// struct Element(usize);
+    ///
+    /// impl Writeable for Element {
+    ///     fn write_to<W>(&self, sink: &mut W) -> Result<(), std::fmt::Error>
+    ///     where
+    ///         W: std::fmt::Write + ?Sized,
+    ///     {
+    ///         sink.write_str(&self.0.to_string())
+    ///     }
+    /// }
+    ///
+    /// let pattern = Pattern::try_from("${0}")
+    ///     .expect("Failed to parse a pattern");
+    ///
+    /// let replacements = vec![
+    ///     Element(5)
+    /// ];
+    ///
+    /// let mut result = String::new();
+    /// pattern.interpolate_to_writeable(&replacements, &mut result)
+    ///     .expect("Failed to interpolate");
+    ///
+    /// assert_eq!(
+    ///     result,
+    ///     "$5",
+    /// );
+    /// ```
     pub fn interpolate_to_writeable<'i, E, R, W>(
         &'i self,
         replacements: &'i R,
@@ -108,8 +247,8 @@ impl<'s, P> Pattern<'s, P> {
     ) -> Result<(), PatternError<R::Key>>
     where
         R: ReplacementProvider<'i, E, Key = P>,
-        P: Debug + FromStr + Clone,
-        <P as FromStr>::Err: Debug,
+        P: Debug + FromStr + PartialEq + Clone,
+        <P as FromStr>::Err: Debug + PartialEq,
         E: 'i + Writeable,
         W: Write,
     {
@@ -186,6 +325,7 @@ impl<'p, P> Deref for Pattern<'p, P> {
 /// - `s`: The life time of literals stored in the `E`
 ///
 /// [`ReplacementProvider`]: crate::ReplacementProvider
+#[derive(Debug, PartialEq)]
 pub struct InterpolatedPattern<'i, 's, E>(Vec<InterpolatedKind<'i, 's, E>>);
 
 impl<'i, 's, E> Writeable for InterpolatedPattern<'i, 's, E>
@@ -212,5 +352,13 @@ where
             write!(f, "{}", elem)?;
         }
         Ok(())
+    }
+}
+
+impl<'i, 's, E> Deref for InterpolatedPattern<'i, 's, E> {
+    type Target = [InterpolatedKind<'i, 's, E>];
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
