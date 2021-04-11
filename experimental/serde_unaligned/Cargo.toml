@@ -9,6 +9,7 @@ edition = "2018"
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 criterion = "0.3.3"
+iai = "0.1"
 
 [features]
 benchmark_memory = ["icu_benchmark_macros/benchmark_memory"]
@@ -16,4 +17,8 @@ bench = []
 
 [[bench]]
 name = "uvec"
+harness = false
+
+[[bench]]
+name = "uvec_iai"
 harness = false

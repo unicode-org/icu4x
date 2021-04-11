@@ -32,6 +32,18 @@ fn sum_benches(c: &mut Criterion) {
             UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum()
         });
     });
+
+    c.bench_function("uvec/sum_u32/u32_slice", |b| {
+        b.iter(|| {
+            UVec::from(black_box(TEST_SLICE)).sum_u32()
+        });
+    });
+
+    c.bench_function("uvec/sum_u32/u8_buffer", |b| {
+        b.iter(|| {
+            UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum_u32()
+        });
+    });
 }
 
 criterion_group!(benches, overview_bench,);

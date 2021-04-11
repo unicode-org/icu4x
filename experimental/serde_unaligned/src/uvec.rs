@@ -100,8 +100,33 @@ where
                 }
             }
             UnalignedLE(bytes) => {
-                for chunk in bytes.as_chunks::<4>().0 {
+                for chunk in bytes.array_chunks::<4>() {
                     result += T::from(ByteSliceLE::<4>::from(chunk));
+                }
+            }
+        };
+        result
+    }
+}
+
+impl<'a> UVec<'a, u32> {
+    pub fn sum_u32(&self) -> u32 {
+        use UVecInner::*;
+        let mut result = 0;
+        match &self.0 {
+            Owned(vec) => {
+                for value in vec.iter() {
+                    result += *value;
+                }
+            }
+            Aligned(slice) => {
+                for value in slice.iter() {
+                    result += *value;
+                }
+            }
+            UnalignedLE(bytes) => {
+                for chunk in bytes.array_chunks::<4>() {
+                    result += u32::from_le_bytes(*chunk);
                 }
             }
         };
@@ -124,11 +149,11 @@ const ALIGNED_TEST_BUFFER_LE: Aligned<[u8; 80]> = Aligned([
 pub const TEST_BUFFER_LE: &[u8] = &ALIGNED_TEST_BUFFER_LE.0;
 
 pub const TEST_SLICE: &[u32] = &[
-    0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f,
-    0x10111213, 0x14151617, 0x18191a1b, 0x1c1d1e1f,
-    0x20212223, 0x24252627, 0x28292a2b, 0x2c2d2e2f,
-    0x30313233, 0x34353637, 0x38393a3b, 0x3c3d3e3f,
-    0x40414243, 0x44454647, 0x48494a4b, 0x4c4d4e4f,
+    0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c,
+    0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c,
+    0x23222120, 0x27262524, 0x2b2a2928, 0x2f2e2d2c,
+    0x33323130, 0x37363534, 0x3b3a3938, 0x3f3e3d3c,
+    0x43424140, 0x47464544, 0x4b4a4948, 0x4f4e4d4c,
 ];
 
 #[cfg(test)]
