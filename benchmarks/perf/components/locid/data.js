@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618242194811,
+  "lastUpdate": 1618270137188,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5033,6 +5033,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4641,
             "range": "± 727",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d861fc03ba78bfcf9da37136ef4685d590857e9",
+          "message": "Make all crates use the same `include` keys (#635)\n\n* Give all crates identical include keys\r\n\r\n* Add exception for testdata",
+          "timestamp": "2021-04-12T16:22:39-07:00",
+          "tree_id": "31ce6a4ce292aecaa1174be265edd7e6e0173f01",
+          "url": "https://github.com/unicode-org/icu4x/commit/6d861fc03ba78bfcf9da37136ef4685d590857e9"
+        },
+        "date": 1618270135975,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2918,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4369,
+            "range": "± 25",
             "unit": "ns/iter"
           }
         ]
