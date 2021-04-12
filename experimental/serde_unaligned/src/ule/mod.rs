@@ -1,5 +1,7 @@
+mod chars;
 mod plain;
 
+pub use chars::CharULE;
 pub use plain::PlainOldULE;
 
 pub trait ULE
@@ -8,8 +10,8 @@ where
 {
     type Error;
 
-    fn parse_bytes(bytes: &[u8]) -> Result<&[Self], Self::Error>;
-    fn as_bytes(slice: &[Self]) -> &[u8];
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error>;
+    fn as_byte_slice(slice: &[Self]) -> &[u8];
 }
 
 pub trait AsULE {

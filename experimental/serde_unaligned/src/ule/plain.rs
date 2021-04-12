@@ -1,8 +1,10 @@
-use crate::ule::*;
+//! ULE implementation for Plain Old Data types, including all sized integers.
+
+use super::*;
 
 /// A u8 array of little-endian data with infallible conversions to and from &[u8].
-#[derive(Debug)]
 #[repr(transparent)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct PlainOldULE<const N: usize>(pub [u8; N]);
 
 macro_rules! impl_byte_slice_size {
@@ -22,17 +24,17 @@ macro_rules! impl_byte_slice_size {
         impl ULE for PlainOldULE<$size> {
             type Error = std::convert::Infallible;
             #[inline(always)]
-            fn parse_bytes(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+            fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
                 let data = bytes.as_ptr();
                 let len = bytes.len() / $size;
-                // Safe because PlainOldULE is transparent over [u8; $size]
+                // Safe because Self is transparent over [u8; $size]
                 Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
             }
             #[inline(always)]
-            fn as_bytes(slice: &[Self]) -> &[u8] {
+            fn as_byte_slice(slice: &[Self]) -> &[u8] {
                 let data = slice.as_ptr();
                 let len = slice.len() * $size;
-                // Safe because PlainOldULE is transparent over [u8; $size]
+                // Safe because Self is transparent over [u8; $size]
                 unsafe { std::slice::from_raw_parts(data as *const u8, len) }
             }
         }

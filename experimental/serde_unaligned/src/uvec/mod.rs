@@ -105,7 +105,7 @@ where
     pub fn from_unaligned_le_bytes(
         bytes: &'a [u8],
     ) -> Result<Self, <<T as AsULE>::ULE as ULE>::Error> {
-        let parsed = T::ULE::parse_bytes(bytes)?;
+        let parsed = T::ULE::parse_byte_slice(bytes)?;
         Ok(Self {
             inner: UVecInner::UnalignedLE(parsed),
         })
@@ -153,16 +153,16 @@ where
         match &self.inner {
             Owned(vec) => {
                 let unaligned: Vec<T::ULE> = vec.iter().map(|t| t.as_unaligned()).collect();
-                let bytes = T::ULE::as_bytes(&unaligned);
+                let bytes = T::ULE::as_byte_slice(&unaligned);
                 stream.write(bytes)
             }
             Aligned(slice) => {
                 let unaligned: Vec<T::ULE> = slice.iter().map(|t| t.as_unaligned()).collect();
-                let bytes = T::ULE::as_bytes(&unaligned);
+                let bytes = T::ULE::as_byte_slice(&unaligned);
                 stream.write(bytes)
             }
             UnalignedLE(slice) => {
-                let bytes = T::ULE::as_bytes(slice);
+                let bytes = T::ULE::as_byte_slice(slice);
                 stream.write(bytes)
             }
         }
@@ -171,7 +171,7 @@ where
     pub fn to_le_bytes(&self) -> Cow<'a, [u8]> {
         use UVecInner::*;
         if let UnalignedLE(slice) = self.inner {
-            return Cow::Borrowed(T::ULE::as_bytes(slice));
+            return Cow::Borrowed(T::ULE::as_byte_slice(slice));
         }
         // FIXME
         let mut bytes: Vec<u8> = Vec::with_capacity(self.len() * std::mem::size_of::<T>());

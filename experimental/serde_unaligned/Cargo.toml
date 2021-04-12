@@ -27,10 +27,15 @@ name = "uvec"
 harness = false
 
 [[bench]]
+name = "uvec_serde"
+harness = false
+required_features = ["serde"]
+
+[[bench]]
 name = "uvec_iai"
 harness = false
 
 [[bench]]
-name = "uvec_serde"
+name = "uvec_serde_iai"
 harness = false
 required_features = ["serde"]

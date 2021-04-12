@@ -147,12 +147,30 @@ mod test {
         let uvec_new: UVec<u32> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to UVec");
         assert_eq!(uvec_orig, uvec_new);
-        /*
         assert!(matches!(uvec_new.into_inner(), UVecInner::UnalignedLE(_)));
         // Fallback behavior when we can't keep a reference to the Bincode buffer
         // TODO: This doesn't work yet. See #632
         // let uvec_owned: UVec<u32> = bincode::deserialize_from(bincode_buf.as_slice())
         //     .expect("deserialize from Reader to UVec");
-        */
+    }
+
+    #[test]
+    fn test_chars_valid() {
+        // 1-byte, 2-byte, 3-byte, and 4-byte character in UTF-8 (not as relevant in UTF-32)
+        let uvec_orig = UVec::from(vec!['w', 'ω', '文', '𑄃']);
+        let bincode_buf = bincode::serialize(&uvec_orig).expect("serialize");
+        let uvec_new: UVec<char> =
+            bincode::deserialize(&bincode_buf).expect("deserialize from buffer to UVec");
+        assert_eq!(uvec_orig, uvec_new);
+        assert!(matches!(uvec_new.into_inner(), UVecInner::UnalignedLE(_)));
+    }
+
+    #[test]
+    fn test_chars_invalid() {
+        // 119 and 120 are valid, but not 0xD800 (high surrogate)
+        let uvec_orig: UVec<u32> = UVec::from(vec![119, 0xD800, 120]);
+        let bincode_buf = bincode::serialize(&uvec_orig).expect("serialize");
+        let uvec_result = bincode::deserialize::<UVec<char>>(&bincode_buf);
+        assert!(matches!(uvec_result, Err(_)));
     }
 }
