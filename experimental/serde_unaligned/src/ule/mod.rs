@@ -1,3 +1,7 @@
+mod plain;
+
+pub use plain::PlainOldULE;
+
 pub trait ULE
 where
     Self: Sized,
