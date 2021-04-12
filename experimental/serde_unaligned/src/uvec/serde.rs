@@ -130,7 +130,7 @@ mod test {
         // UVec should deserialize from JSON to either Vec or UVec
         let vec_new: Vec<u32> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to Vec");
-        assert_eq!(uvec_orig, vec_new.into());
+        assert_eq!(uvec_orig, UVec::<u32>::from(vec_new));
         let uvec_new: UVec<u32> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to UVec");
         assert_eq!(uvec_orig, uvec_new);

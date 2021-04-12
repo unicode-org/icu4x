@@ -2088,8 +2088,12 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "criterion",
+ "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",
+ "rand 0.8.3",
+ "rand_distr 0.4.0",
+ "rand_pcg 0.3.0",
  "rkyv",
  "serde",
  "serde_json",

@@ -98,6 +98,24 @@ where
     }
 }
 
+impl<'a, T> PartialEq<&[T]> for UVec<'a, T>
+where
+    T: AsULE + Copy + PartialEq,
+{
+    fn eq(&self, other: &&[T]) -> bool {
+        if self.len() != other.len() {
+            return false;
+        }
+        // TODO: Use an iterator here
+        for i in 0..self.len() {
+            if self.get(i).as_ref() != other.get(i) {
+                return false;
+            }
+        }
+        true
+    }
+}
+
 impl<'a, T> UVec<'a, T>
 where
     T: AsULE,
@@ -140,6 +158,20 @@ where
             Owned(vec) => vec.get(index).copied(),
             Aligned(slice) => slice.get(index).copied(),
             UnalignedLE(slice) => slice.get(index).map(|u| T::from_unaligned(u)),
+        }
+    }
+}
+
+impl<'a, T> UVec<'a, T>
+where
+    T: AsULE + Ord,
+{
+    pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
+        use UVecInner::*;
+        match &self.inner {
+            Owned(vec) => vec.binary_search(x),
+            Aligned(slice) => slice.binary_search(x),
+            UnalignedLE(slice) => slice.binary_search_by(|probe| T::from_unaligned(probe).cmp(x)),
         }
     }
 }
@@ -285,6 +317,26 @@ mod tests {
             assert_eq!(uvec.get(0), Some(A));
             assert_eq!(uvec.get(1), Some(B));
             assert_eq!(uvec.get(2), Some(C));
+        }
+    }
+
+    #[test]
+    fn test_binary_search() {
+        {
+            let vec = Vec::from(TEST_SLICE);
+            let uvec = UVec::from(vec);
+            assert_eq!(Ok(3), uvec.binary_search(&0x0e0d0c));
+            assert_eq!(Err(3), uvec.binary_search(&0x0c0d0c));
+        }
+        {
+            let uvec = UVec::from(TEST_SLICE);
+            assert_eq!(Ok(3), uvec.binary_search(&0x0e0d0c));
+            assert_eq!(Err(3), uvec.binary_search(&0x0c0d0c));
+        }
+        {
+            let uvec = UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).unwrap();
+            assert_eq!(Ok(3), uvec.binary_search(&0x0e0d0c));
+            assert_eq!(Err(3), uvec.binary_search(&0x0c0d0c));
         }
     }
 
