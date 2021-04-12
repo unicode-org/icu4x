@@ -19,6 +19,9 @@ include = [
     "tests/**/*",
     "Cargo.toml",
     "README.md",
+    # Exception: We want to be able to run tests, so
+    # we include the test data
+    "data/**/*",
 ]
 
 # icu4x_testdata metadata: schema defined in ./src/metadata.rs
