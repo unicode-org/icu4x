@@ -12,13 +12,16 @@ readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "../../LICENSE"
 categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
-    "data/json/**/*",
     "examples/**/*",
-    "benches/**/*",
+    "tests/**/*",
     "Cargo.toml",
-    "README.md"
+    "README.md",
+    # Exception: We want to be able to run tests, so
+    # we include the test data
+    "data/**/*",
 ]
 
 # icu4x_testdata metadata: schema defined in ./src/metadata.rs

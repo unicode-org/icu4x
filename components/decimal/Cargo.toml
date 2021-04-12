@@ -10,9 +10,11 @@ edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "../../LICENSE"
 categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
-    "benches/**/*",
+    "tests/**/*",
+    "examples/**/*",
     "Cargo.toml",
     "README.md"
 ]

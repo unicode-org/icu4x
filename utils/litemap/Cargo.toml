@@ -13,7 +13,14 @@ keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
 readme = "./README.md"
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "README.md"
+]
 
 [dependencies]
 serde = {version = "1", optional = true}
