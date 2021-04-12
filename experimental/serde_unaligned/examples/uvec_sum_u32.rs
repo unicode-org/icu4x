@@ -1,4 +1,3 @@
-#![feature(test)]
 #![no_main]
 
 icu_benchmark_macros::static_setup!();
@@ -7,12 +6,12 @@ use serde_unaligned::uvec::{UVec, TEST_BUFFER_LE, TEST_SLICE};
 
 #[no_mangle]
 fn sum_u32_slice() -> u32 {
-    UVec::from(std::hint::black_box(TEST_SLICE)).sum()
+    UVec::from(iai::black_box(TEST_SLICE)).sum()
 }
 
 #[no_mangle]
 fn sum_u8_buffer() -> u32 {
-    UVec::<u32>::from_unaligned_le_bytes(std::hint::black_box(&TEST_BUFFER_LE))
+    UVec::<u32>::from_unaligned_le_bytes(iai::black_box(&TEST_BUFFER_LE))
         .unwrap()
         .sum()
 }
