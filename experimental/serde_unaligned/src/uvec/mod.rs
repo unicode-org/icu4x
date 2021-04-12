@@ -226,7 +226,7 @@ impl<'a> UVec<'a, u32> {
             }
             UnalignedLE(slice) => {
                 for value in slice.iter() {
-                    result += u32::from_unaligned(value).wrapping_add(result);
+                    result = u32::from_unaligned(value).wrapping_add(result);
                 }
             }
         };

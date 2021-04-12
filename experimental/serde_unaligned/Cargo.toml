@@ -19,7 +19,6 @@ bincode = "1.0"
 rkyv = { version = "0.5", features = ["validation"] }
 
 [features]
-benchmark_memory = ["icu_benchmark_macros/benchmark_memory"]
 bench = []
 
 [[bench]]

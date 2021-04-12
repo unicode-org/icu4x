@@ -20,13 +20,7 @@ fn sum_u8_buffer() -> u32 {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let mut total = 0;
-    for _ in 0..100000000 {
-        total += sum_u32_slice();
-        total += sum_u8_buffer();
-    }
-
-    if total > 0 {
+    if sum_u32_slice() == sum_u8_buffer() {
         0
     } else {
         1
