@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618002470303,
+  "lastUpdate": 1618242194811,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4997,6 +4997,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5625,
             "range": "± 166",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5079646bf049b3fd9a9ca75aa7ae913dbac173dc",
+          "message": "Pin the stable version of Rust with rust-toolchain (#618)",
+          "timestamp": "2021-04-12T10:36:45-05:00",
+          "tree_id": "84e47ae208c5c912eb2edf4013993ea3d9c2db0c",
+          "url": "https://github.com/unicode-org/icu4x/commit/5079646bf049b3fd9a9ca75aa7ae913dbac173dc"
+        },
+        "date": 1618242193617,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2988,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4641,
+            "range": "± 727",
             "unit": "ns/iter"
           }
         ]
