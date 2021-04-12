@@ -385,7 +385,7 @@ pub fn create_best_pattern_for_fields<'a>(
     if date.is_empty() || time.is_empty() {
         return match first_pattern_match {
             BestSkeleton::AllFieldsMatch(_) => {
-                panic!("Logic error in implementation. AllFieldsMatch handled above.")
+                unreachable!("Logic error in implementation. AllFieldsMatch handled above.")
             }
             BestSkeleton::MissingOrExtraFields(pattern) => {
                 BestSkeleton::MissingOrExtraFields(pattern.clone())
@@ -431,9 +431,10 @@ pub fn create_best_pattern_for_fields<'a>(
                             .iter()
                             .find(|f| matches!(f.symbol, FieldSymbol::Weekday(_)));
 
-                        match weekday {
-                            Some(_) => length::Date::Full,
-                            None => length::Date::Long,
+                        if weekday.is_some() {
+                            length::Date::Full
+                        } else {
+                            length::Date::Long
                         }
                     }
                     FieldLength::Abbreviated => length::Date::Medium,
@@ -483,26 +484,29 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
     let other = Vec::new();
 
     for field in fields {
-        let vec = match field.symbol {
-            FieldSymbol::Year(_) => &mut date,
-            FieldSymbol::Month(_) => &mut date,
-            FieldSymbol::Day(_) => &mut date,
-            // Weekdays are included in both time and date skeletons.
-            // Time examples: "EBhm" "EBhms" "Ed" "Ehm" "EHm" "Ehms" "EHms"
-            // Date examples: "GyMMMEd" "MEd" "MMMEd" "MMMMEd" "yMEd" "yMMMEd"
-            // Solo example: "E"
-            FieldSymbol::Weekday(_) => &mut date,
-            FieldSymbol::DayPeriod(_) => &mut time,
-            FieldSymbol::Hour(_) => &mut time,
-            FieldSymbol::Minute => &mut time,
-            FieldSymbol::Second(_) => &mut time,
+        match field.symbol {
+            // Date components:
+            // Note: Weekdays are included in both time and date skeletons.
+            //  - Time examples: "EBhm" "EBhms" "Ed" "Ehm" "EHm" "Ehms" "EHms"
+            //  - Date examples: "GyMMMEd" "MEd" "MMMEd" "MMMMEd" "yMEd" "yMMMEd"
+            //  - Solo example: "E"
+            FieldSymbol::Year(_)
+            | FieldSymbol::Month(_)
+            | FieldSymbol::Day(_)
+            | FieldSymbol::Weekday(_) => date.push(*field),
+
+            // Time components:
+            FieldSymbol::DayPeriod(_)
+            | FieldSymbol::Hour(_)
+            | FieldSymbol::Minute
+            | FieldSymbol::Second(_) => time.push(*field),
+            // Other components
             // TODO(#418)
-            // FieldSymbol::TimeZone(_) => &mut other,
+            // FieldSymbol::TimeZone(_) => other.push(*field),
             // TODO(#486)
-            // FieldSymbol::Era(_) => &mut other,
+            // FieldSymbol::Era(_) => other.push(*field),
             // Plus others...
         };
-        vec.push(*field)
     }
 
     FieldsByType { date, time, other }
