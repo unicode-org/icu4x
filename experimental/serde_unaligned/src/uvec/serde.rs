@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::UVec;
-use crate::byte_slice::*;
+use crate::ule::*;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 use std::fmt;
@@ -23,7 +23,8 @@ impl<T> Default for UVecVisitor<T> {
 
 impl<'de, T> Visitor<'de> for UVecVisitor<T>
 where
-    T: 'de + Deserialize<'de>,
+    T: 'de + Deserialize<'de> + AsULE,
+    <<T as AsULE>::ULE as ULE>::Error: fmt::Display,
 {
     type Value = UVec<'de, T>;
 
@@ -42,7 +43,7 @@ where
     where
         E: de::Error,
     {
-        Ok(UVec::from_unaligned_le_bytes(bytes))
+        UVec::from_unaligned_le_bytes(bytes).map_err(de::Error::custom)
     }
 
     fn visit_byte_buf<E>(self, _bytes: Vec<u8>) -> Result<Self::Value, E>
@@ -70,7 +71,8 @@ where
 
 impl<'de, 'a, T> Deserialize<'de> for UVec<'a, T>
 where
-    T: 'de + Deserialize<'de>,
+    T: 'de + Deserialize<'de> + AsULE,
+    <<T as AsULE>::ULE as ULE>::Error: fmt::Display,
     'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -88,9 +90,7 @@ where
 
 impl<T> Serialize for UVec<'_, T>
 where
-    // TODO: Generalize over all N
-    for<'h> T: Serialize + Copy + From<ByteSliceLE<'h, 4>>,
-    ByteArrayLE<4>: From<T>,
+    T: Serialize + AsULE + Copy,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -147,10 +147,12 @@ mod test {
         let uvec_new: UVec<u32> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to UVec");
         assert_eq!(uvec_orig, uvec_new);
+        /*
         assert!(matches!(uvec_new.into_inner(), UVecInner::UnalignedLE(_)));
         // Fallback behavior when we can't keep a reference to the Bincode buffer
         // TODO: This doesn't work yet. See #632
         // let uvec_owned: UVec<u32> = bincode::deserialize_from(bincode_buf.as_slice())
         //     .expect("deserialize from Reader to UVec");
+        */
     }
 }

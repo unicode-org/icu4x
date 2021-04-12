@@ -5,41 +5,84 @@
 #[cfg(feature = "serde")]
 mod serde;
 
-use crate::byte_slice::*;
+use crate::ule::*;
 use std::borrow::Cow;
+use std::fmt;
 
 /// The inner representation of a `UVec`. A `UVec` cannot be constructed directly from a
 /// `UVecInner` because data may need validation; use the `From` impls on `UVec` instead.
 // TODO: Consider a custom Debug impl
-#[derive(Debug)]
-pub enum UVecInner<'a, T> {
+pub enum UVecInner<'a, T>
+where
+    T: AsULE,
+{
     Owned(Vec<T>),
     Aligned(&'a [T]),
     /// Buffer with little-endian data
-    UnalignedLE(&'a [u8]),
+    UnalignedLE(&'a [T::ULE]),
     // Buffer with native-endian data (TODO)
     // UnalignedNE(&'a [u8]),
 }
 
-/// A vector that may be borrowed and may point at unaligned data.
-#[derive(Debug)]
-pub struct UVec<'a, T>(UVecInner<'a, T>);
-
-impl<T> From<Vec<T>> for UVec<'_, T> {
-    fn from(vec: Vec<T>) -> Self {
-        Self(UVecInner::Owned(vec))
+impl<T> fmt::Debug for UVecInner<'_, T>
+where
+    T: AsULE + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        use UVecInner::*;
+        match self {
+            Owned(vec) => write!(f, "UVec::Owned({:?})", vec),
+            Aligned(slice) => write!(f, "UVec::Aligned({:?})", slice),
+            UnalignedLE(slice) => {
+                let vec: Vec<T> = slice.iter().map(|u| T::from_unaligned(u)).collect();
+                write!(f, "UVec::UnalignedLE({:?})", vec)
+            }
+        }
     }
 }
 
-impl<'a, T> From<&'a [T]> for UVec<'a, T> {
+/// A vector that may be borrowed and may point at unaligned data.
+pub struct UVec<'a, T: AsULE>
+where
+    T: AsULE,
+{
+    inner: UVecInner<'a, T>,
+}
+
+impl<T> fmt::Debug for UVec<'_, T>
+where
+    T: AsULE + fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        self.inner.fmt(f)
+    }
+}
+
+impl<T> From<Vec<T>> for UVec<'_, T>
+where
+    T: AsULE,
+{
+    fn from(vec: Vec<T>) -> Self {
+        Self {
+            inner: UVecInner::Owned(vec),
+        }
+    }
+}
+
+impl<'a, T> From<&'a [T]> for UVec<'a, T>
+where
+    T: AsULE,
+{
     fn from(slice: &'a [T]) -> Self {
-        Self(UVecInner::Aligned(slice))
+        Self {
+            inner: UVecInner::Aligned(slice),
+        }
     }
 }
 
 impl<'a, 'b, T> PartialEq<UVec<'b, T>> for UVec<'a, T>
 where
-    for<'h> T: Copy + From<ByteSliceLE<'h, 4>> + PartialEq,
+    T: AsULE + Copy + PartialEq,
 {
     fn eq(&self, other: &UVec<'b, T>) -> bool {
         if self.len() != other.len() {
@@ -55,9 +98,17 @@ where
     }
 }
 
-impl<'a, T> UVec<'a, T> {
-    pub fn from_unaligned_le_bytes(bytes: &'a [u8]) -> Self {
-        Self(UVecInner::UnalignedLE(bytes))
+impl<'a, T> UVec<'a, T>
+where
+    T: AsULE,
+{
+    pub fn from_unaligned_le_bytes(
+        bytes: &'a [u8],
+    ) -> Result<Self, <<T as AsULE>::ULE as ULE>::Error> {
+        let parsed = T::ULE::parse_bytes(bytes)?;
+        Ok(Self {
+            inner: UVecInner::UnalignedLE(parsed),
+        })
     }
 
     pub fn from_unaligned_ne_bytes(_bytes: &'a [u8]) -> Self {
@@ -66,69 +117,63 @@ impl<'a, T> UVec<'a, T> {
 
     pub fn len(&self) -> usize {
         use UVecInner::*;
-        match &self.0 {
+        match &self.inner {
             Owned(vec) => vec.len(),
             Aligned(slice) => slice.len(),
-            UnalignedLE(bytes) => bytes.len() / std::mem::size_of::<T>(),
+            UnalignedLE(slice) => slice.len(),
         }
     }
 
     pub fn into_inner(self) -> UVecInner<'a, T> {
-        self.0
+        self.inner
     }
 }
 
 // TODO: I guess we can't implement std::ops::Index because that returns references, right?
 impl<'a, T> UVec<'a, T>
 where
-    for<'h> T: Copy + From<ByteSliceLE<'h, 4>>,
+    T: AsULE + Copy,
 {
     pub fn get(&self, index: usize) -> Option<T> {
         use UVecInner::*;
-        match &self.0 {
+        match &self.inner {
             Owned(vec) => vec.get(index).copied(),
             Aligned(slice) => slice.get(index).copied(),
-            UnalignedLE(bytes) => bytes
-                .as_chunks::<4>()
-                .0
-                .get(index)
-                .map(ByteSliceLE::<4>::from)
-                .map(T::from),
+            UnalignedLE(slice) => slice.get(index).map(|u| T::from_unaligned(u)),
         }
     }
 }
 
 impl<'a, T> UVec<'a, T>
 where
-    T: Copy,
-    ByteArrayLE<4>: From<T>,
+    T: AsULE,
 {
     pub fn write_to_stream_le(&self, stream: &mut dyn std::io::Write) -> std::io::Result<usize> {
         use UVecInner::*;
-        let mut result: usize = 0;
-        match &self.0 {
+        match &self.inner {
             Owned(vec) => {
-                for value in vec.iter() {
-                    result += stream.write(&ByteArrayLE::<4>::from(*value).as_bytes())?;
-                }
+                let unaligned: Vec<T::ULE> = vec.iter().map(|t| t.as_unaligned()).collect();
+                let bytes = T::ULE::as_bytes(&unaligned);
+                stream.write(bytes)
             }
             Aligned(slice) => {
-                for value in slice.iter() {
-                    result += stream.write(&ByteArrayLE::<4>::from(*value).as_bytes())?;
-                }
+                let unaligned: Vec<T::ULE> = slice.iter().map(|t| t.as_unaligned()).collect();
+                let bytes = T::ULE::as_bytes(&unaligned);
+                stream.write(bytes)
             }
-            UnalignedLE(bytes) => {
-                result += stream.write(bytes)?;
+            UnalignedLE(slice) => {
+                let bytes = T::ULE::as_bytes(slice);
+                stream.write(bytes)
             }
-        };
-        Ok(result)
+        }
     }
 
     pub fn to_le_bytes(&self) -> Cow<'a, [u8]> {
         use UVecInner::*;
-        if let UnalignedLE(bytes) = self.0 {
-            return Cow::Borrowed(bytes);
+        if let UnalignedLE(slice) = self.inner {
+            return Cow::Borrowed(T::ULE::as_bytes(slice));
         }
+        // FIXME
         let mut bytes: Vec<u8> = Vec::with_capacity(self.len() * std::mem::size_of::<T>());
         self.write_to_stream_le(&mut bytes)
             .expect("Writing to memory buffer");
@@ -138,12 +183,12 @@ where
 
 impl<'a, T> UVec<'a, T>
 where
-    T: Copy + Default + std::ops::AddAssign + From<ByteSliceLE<'a, 4>>,
+    T: AsULE + Copy + Default + std::ops::AddAssign,
 {
     pub fn sum(&self) -> T {
         use UVecInner::*;
         let mut result: T = Default::default();
-        match &self.0 {
+        match &self.inner {
             Owned(vec) => {
                 for value in vec.iter() {
                     result += *value;
@@ -154,9 +199,9 @@ where
                     result += *value;
                 }
             }
-            UnalignedLE(bytes) => {
-                for chunk in bytes.array_chunks::<4>() {
-                    result += T::from(ByteSliceLE::<4>::from(chunk));
+            UnalignedLE(slice) => {
+                for value in slice.iter() {
+                    result += T::from_unaligned(value)
                 }
             }
         };
@@ -168,7 +213,7 @@ impl<'a> UVec<'a, u32> {
     pub fn sum_u32(&self) -> u32 {
         use UVecInner::*;
         let mut result = 0;
-        match &self.0 {
+        match &self.inner {
             Owned(vec) => {
                 for value in vec.iter() {
                     result = value.wrapping_add(result);
@@ -179,9 +224,9 @@ impl<'a> UVec<'a, u32> {
                     result = value.wrapping_add(result);
                 }
             }
-            UnalignedLE(bytes) => {
-                for chunk in bytes.array_chunks::<4>() {
-                    result = u32::from_le_bytes(*chunk).wrapping_add(result);
+            UnalignedLE(slice) => {
+                for value in slice.iter() {
+                    result += u32::from_unaligned(value).wrapping_add(result);
                 }
             }
         };
@@ -223,20 +268,20 @@ mod tests {
     fn test_get() {
         {
             let vec = vec![A, B, C];
-            let uvec = UVec(UVecInner::Owned(vec));
+            let uvec = UVec::from(vec);
             assert_eq!(uvec.get(0), Some(A));
             assert_eq!(uvec.get(1), Some(B));
             assert_eq!(uvec.get(2), Some(C));
         }
         {
-            let slice = [A, B, C];
-            let uvec = UVec(UVecInner::Aligned(&slice));
+            let slice: &[u32] = &[A, B, C];
+            let uvec = UVec::from(slice);
             assert_eq!(uvec.get(0), Some(A));
             assert_eq!(uvec.get(1), Some(B));
             assert_eq!(uvec.get(2), Some(C));
         }
         {
-            let uvec = UVec::<u32>(UVecInner::UnalignedLE(&TEST_BUFFER_LE));
+            let uvec = UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).unwrap();
             assert_eq!(uvec.get(0), Some(A));
             assert_eq!(uvec.get(1), Some(B));
             assert_eq!(uvec.get(2), Some(C));
@@ -247,20 +292,20 @@ mod tests {
     fn test_to_stream() {
         {
             let vec = vec![A, B, C];
-            let uvec = UVec(UVecInner::Owned(vec));
+            let uvec = UVec::from(vec);
             let mut buffer: Vec<u8> = vec![];
             uvec.write_to_stream_le(&mut buffer).unwrap();
             assert_eq!(TEST_BUFFER_LE[0..12], buffer);
         }
         {
-            let slice = [A, B, C];
-            let uvec = UVec(UVecInner::Aligned(&slice));
+            let slice: &[u32] = &[A, B, C];
+            let uvec = UVec::from(slice);
             let mut buffer: Vec<u8> = vec![];
             uvec.write_to_stream_le(&mut buffer).unwrap();
             assert_eq!(TEST_BUFFER_LE[0..12], buffer);
         }
         {
-            let uvec = UVec::<u32>(UVecInner::UnalignedLE(&TEST_BUFFER_LE));
+            let uvec = UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).unwrap();
             let mut buffer: Vec<u8> = vec![];
             uvec.write_to_stream_le(&mut buffer).unwrap();
             assert_eq!(TEST_BUFFER_LE, buffer);
@@ -271,51 +316,75 @@ mod tests {
     fn test_odd_alignment() {
         assert_eq!(
             Some(0x020100),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE)
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x04000201),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[1..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[1..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x05040002),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[2..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[2..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x06050400),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x060504),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[4..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[4..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[75..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[75..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c00),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(18)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..])
+                .unwrap()
+                .get(18)
         );
         assert_eq!(
             Some(0x4e4d4c),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[76..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[76..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             Some(0x4e4d4c),
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(19)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE)
+                .unwrap()
+                .get(19)
         );
         assert_eq!(
             None,
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[77..]).get(0)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[77..])
+                .unwrap()
+                .get(0)
         );
         assert_eq!(
             None,
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE).get(20)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE)
+                .unwrap()
+                .get(20)
         );
         assert_eq!(
             None,
-            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..]).get(19)
+            UVec::<u32>::from_unaligned_le_bytes(&TEST_BUFFER_LE[3..])
+                .unwrap()
+                .get(19)
         );
     }
 }

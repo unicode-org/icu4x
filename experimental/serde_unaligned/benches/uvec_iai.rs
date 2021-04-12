@@ -11,7 +11,9 @@ fn uvec_sum_u32_slice() -> u32 {
 }
 
 fn uvec_sum_u8_buffer() -> u32 {
-    UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum()
+    UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE))
+        .unwrap()
+        .sum()
 }
 
 fn uvec_sum_u32_u32_slice() -> u32 {
@@ -19,7 +21,9 @@ fn uvec_sum_u32_u32_slice() -> u32 {
 }
 
 fn uvec_sum_u32_u8_buffer() -> u32 {
-    UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE)).sum_u32()
+    UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE))
+        .unwrap()
+        .sum_u32()
 }
 
 iai::main!(

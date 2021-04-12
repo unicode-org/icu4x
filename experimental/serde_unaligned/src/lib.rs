@@ -5,6 +5,6 @@
 #![feature(slice_as_chunks)]
 #![feature(array_chunks)]
 
-pub mod as_unaligned;
 pub mod byte_slice;
+pub mod ule;
 pub mod uvec;

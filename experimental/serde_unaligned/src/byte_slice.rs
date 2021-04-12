@@ -1,15 +1,19 @@
-use crate::as_unaligned::*;
+use crate::ule::*;
 
 /// A borrowed u8 slice of little-endian data
+#[derive(Debug)]
 pub struct ByteSliceLE<'a, const N: usize>(pub &'a [u8; N]);
 
 /// An owned u8 array of little-endian data
+#[derive(Debug)]
 pub struct ByteArrayLE<const N: usize>(pub [u8; N]);
 
 /// A borrowed u8 slice of native-endian data
+#[derive(Debug)]
 pub struct ByteSliceNE<'a, const N: usize>(pub &'a [u8; N]);
 
 /// An owned u8 array of native-endian data
+#[derive(Debug)]
 pub struct ByteArrayNE<const N: usize>(pub [u8; N]);
 
 macro_rules! impl_byte_slice_size {
@@ -32,15 +36,19 @@ macro_rules! impl_byte_slice_size {
                 &self.0
             }
         }
-        impl UnalignedLE for ByteArrayLE<$size> {
-            type Error = ();
+        impl ULE for ByteArrayLE<$size> {
+            type Error = std::convert::Infallible;
             #[inline(always)]
-            fn parse_bytes(_bytes: &[u8]) -> Result<&[Self], Self::Error> {
-                todo!()
+            fn parse_bytes(bytes: &[u8]) -> Result<&[Self], Self::Error> {
+                let data = bytes.as_ptr();
+                let len = bytes.len() / $size;
+                Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
             }
             #[inline(always)]
-            fn as_bytes(_slice: &[Self]) -> &[u8] {
-                todo!()
+            fn as_bytes(slice: &[Self]) -> &[u8] {
+                let data = slice.as_ptr();
+                let len = slice.len() * $size;
+                unsafe { std::slice::from_raw_parts(data as *const u8, len) }
             }
         }
     };
@@ -60,14 +68,14 @@ macro_rules! impl_byte_slice_type {
                 Self(value.to_le_bytes())
             }
         }
-        impl AsUnalignedLE for $type {
-            type UnalignedLE = ByteArrayLE<$size>;
+        impl AsULE for $type {
+            type ULE = ByteArrayLE<$size>;
             #[inline(always)]
-            fn into_unaligned(self) -> Self::UnalignedLE {
+            fn as_unaligned(&self) -> Self::ULE {
                 ByteArrayLE(self.to_le_bytes())
             }
             #[inline(always)]
-            fn from_unaligned(unaligned: Self::UnalignedLE) -> Self {
+            fn from_unaligned(unaligned: &Self::ULE) -> Self {
                 <$type>::from_le_bytes(unaligned.0)
             }
         }

@@ -1,8 +1,7 @@
 use rkyv::{
     check_archived_root,
-    de::deserializers::AllocDeserializer,
     ser::{serializers::WriteSerializer, Serializer},
-    Aligned, AlignedVec, Archive, Archived, Deserialize, Serialize,
+    Aligned, AlignedVec,
 };
 
 use serde_unaligned::uvec::*;
