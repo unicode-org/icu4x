@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618002480656,
+  "lastUpdate": 1618242238846,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5081,6 +5081,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 118360,
             "range": "± 7382",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5079646bf049b3fd9a9ca75aa7ae913dbac173dc",
+          "message": "Pin the stable version of Rust with rust-toolchain (#618)",
+          "timestamp": "2021-04-12T10:36:45-05:00",
+          "tree_id": "84e47ae208c5c912eb2edf4013993ea3d9c2db0c",
+          "url": "https://github.com/unicode-org/icu4x/commit/5079646bf049b3fd9a9ca75aa7ae913dbac173dc"
+        },
+        "date": 1618242237609,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1170,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6920,
+            "range": "± 640",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 115507,
+            "range": "± 8196",
             "unit": "ns/iter"
           }
         ]
