@@ -1,3 +1,5 @@
+use crate::as_unaligned::*;
+
 /// A borrowed u8 slice of little-endian data
 pub struct ByteSliceLE<'a, const N: usize>(pub &'a [u8; N]);
 
@@ -30,6 +32,17 @@ macro_rules! impl_byte_slice_size {
                 &self.0
             }
         }
+        impl UnalignedLE for ByteArrayLE<$size> {
+            type Error = ();
+            #[inline(always)]
+            fn parse_bytes(_bytes: &[u8]) -> Result<&[Self], Self::Error> {
+                todo!()
+            }
+            #[inline(always)]
+            fn as_bytes(_slice: &[Self]) -> &[u8] {
+                todo!()
+            }
+        }
     };
 }
 
@@ -45,6 +58,17 @@ macro_rules! impl_byte_slice_type {
             #[inline(always)]
             fn from(value: $type) -> Self {
                 Self(value.to_le_bytes())
+            }
+        }
+        impl AsUnalignedLE for $type {
+            type UnalignedLE = ByteArrayLE<$size>;
+            #[inline(always)]
+            fn into_unaligned(self) -> Self::UnalignedLE {
+                ByteArrayLE(self.to_le_bytes())
+            }
+            #[inline(always)]
+            fn from_unaligned(unaligned: Self::UnalignedLE) -> Self {
+                <$type>::from_le_bytes(unaligned.0)
             }
         }
     };
