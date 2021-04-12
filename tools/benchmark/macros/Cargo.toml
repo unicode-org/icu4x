@@ -7,6 +7,14 @@ name = "icu_benchmark_macros"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 version = "0.1.0"
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "README.md"
+]
 
 [dependencies]
 dhat = { version = "0.2", optional = true }
