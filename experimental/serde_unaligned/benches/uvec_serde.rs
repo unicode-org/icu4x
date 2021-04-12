@@ -16,16 +16,17 @@ fn overview_bench(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         u32_benches(c);
+        char_benches(c);
     }
 }
 
 #[cfg(feature = "bench")]
 fn u32_benches(c: &mut Criterion) {
-    c.bench_function("serde/vec/serialize_u32", |b| {
+    c.bench_function("serde/u32/vec/serialize", |b| {
         b.iter(|| bincode::serialize(&Vec::from(black_box(TEST_SLICE))));
     });
 
-    c.bench_function("serde/vec/deserialize_u32_sum", |b| {
+    c.bench_function("serde/u32/vec/deserialize_sum", |b| {
         let buffer = bincode::serialize(&Vec::from(TEST_SLICE)).unwrap();
         b.iter(|| {
             bincode::deserialize::<Vec<u32>>(&buffer)
@@ -35,13 +36,38 @@ fn u32_benches(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("serde/uvec/serialize_u32", |b| {
+    c.bench_function("serde/u32/uvec/serialize", |b| {
         b.iter(|| bincode::serialize(&UVec::from(black_box(TEST_SLICE))));
     });
 
-    c.bench_function("serde/uvec/deserialize_u32_sum", |b| {
+    c.bench_function("serde/u32/uvec/deserialize_sum", |b| {
         let buffer = bincode::serialize(&UVec::from(TEST_SLICE)).unwrap();
         b.iter(|| bincode::deserialize::<UVec<u32>>(&buffer).unwrap().sum());
+    });
+}
+
+#[cfg(feature = "bench")]
+fn char_benches(c: &mut Criterion) {
+    const ORIGINAL_CHARS: &[char] = &[
+        'ⶢ', '⺇', 'Ⱜ', '◁', '◩', '⌂', '⼅', '⏻', '⢜', '◊', 'ⲫ', '⏷', '◢', '⟉', '℞',
+    ];
+
+    c.bench_function("serde/char/vec/serialize", |b| {
+        b.iter(|| bincode::serialize(&Vec::from(black_box(ORIGINAL_CHARS))));
+    });
+
+    c.bench_function("serde/char/vec/deserialize", |b| {
+        let buffer = bincode::serialize(&Vec::from(ORIGINAL_CHARS)).unwrap();
+        b.iter(|| bincode::deserialize::<Vec<char>>(&buffer));
+    });
+
+    c.bench_function("serde/char/uvec/serialize", |b| {
+        b.iter(|| bincode::serialize(&UVec::from(black_box(ORIGINAL_CHARS))));
+    });
+
+    c.bench_function("serde/char/uvec/deserialize", |b| {
+        let buffer = bincode::serialize(&UVec::from(ORIGINAL_CHARS)).unwrap();
+        b.iter(|| bincode::deserialize::<UVec<char>>(&buffer));
     });
 }
 
