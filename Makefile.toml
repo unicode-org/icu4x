@@ -89,10 +89,7 @@ for path in ${handle}
     root_dir = dirname ${path}
     if not is_empty ${root_dir}
         echo "Automatically generating ${root_dir}/README.md"
-        output = exec cargo readme -r ${root_dir} -o README.md -t ${template}
-        if not equals ${output.code} 0
-            trigger_error "Running cargo readme failed with error: ${output.stderr}"
-        end
+        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
     end
 end
 '''
