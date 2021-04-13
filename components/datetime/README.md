@@ -13,7 +13,7 @@ used to quickly format any date and time provided.
 ```rust
 use icu_locid::Locale;
 use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::MockDateTime, options::length};
+use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
 
 let provider = icu_testdata::get_provider();
 
@@ -61,7 +61,7 @@ to develop core date and time APIs that will work as an input for this component
 [`DataProvider`]: icu_provider::DataProvider
 [`ICU4X`]: ../icu/index.html
 [`Length`]: options::length
-[`MockDateTime`]: mock::MockDateTime
+[`MockDateTime`]: mock::datetime::MockDateTime
 
 ## More Information
 
