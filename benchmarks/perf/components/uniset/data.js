@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618295228859,
+  "lastUpdate": 1618312270248,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4799,6 +4799,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34593993,
             "range": "± 894339",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "23c599e2352a8fe8f549053ff26567008a41ed7b",
+          "message": "Use cargo-readme to generate README.md files (#601)\n\nUse cargo-readme to generate README.md files",
+          "timestamp": "2021-04-13T07:04:58-04:00",
+          "tree_id": "bf5602ebe0b0ffd3427543e8f8ced7e64e1b0551",
+          "url": "https://github.com/unicode-org/icu4x/commit/23c599e2352a8fe8f549053ff26567008a41ed7b"
+        },
+        "date": 1618312269385,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36338891,
+            "range": "± 865649",
             "unit": "ns/iter"
           }
         ]
