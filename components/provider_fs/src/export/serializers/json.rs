@@ -55,12 +55,12 @@ impl AbstractSerializer for Serializer {
     ) -> Result<(), Error> {
         match self.style {
             StyleOption::Compact => {
-                obj.erased_serialize(&mut erased_serde::Serializer::erase(
+                obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
                     &mut serde_json::Serializer::new(&mut sink),
                 ))?;
             }
             StyleOption::Pretty => {
-                obj.erased_serialize(&mut erased_serde::Serializer::erase(
+                obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
                     &mut serde_json::Serializer::pretty(&mut sink),
                 ))?;
             }

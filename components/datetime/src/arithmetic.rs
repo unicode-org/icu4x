@@ -75,10 +75,10 @@ pub fn iso_date_to_weekday(year: i32, month: usize, day: usize) -> IsoWeekday {
 
 #[test]
 fn test_iso_date_to_weekday() {
-    assert_eq!(IsoWeekday::SATURDAY, iso_date_to_weekday(2000, 0, 0));
-    assert_eq!(IsoWeekday::WEDNESDAY, iso_date_to_weekday(2021, 1, 2));
-    assert_eq!(IsoWeekday::SATURDAY, iso_date_to_weekday(-400, 0, 0));
-    assert_eq!(IsoWeekday::WEDNESDAY, iso_date_to_weekday(-379, 1, 2));
+    assert_eq!(IsoWeekday::Saturday, iso_date_to_weekday(2000, 0, 0));
+    assert_eq!(IsoWeekday::Wednesday, iso_date_to_weekday(2021, 1, 2));
+    assert_eq!(IsoWeekday::Saturday, iso_date_to_weekday(-400, 0, 0));
+    assert_eq!(IsoWeekday::Wednesday, iso_date_to_weekday(-379, 1, 2));
 }
 
 /// Returns `true` if the most granular time being displayed will align with

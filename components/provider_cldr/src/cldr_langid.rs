@@ -9,6 +9,7 @@ use tinystr::TinyStr8;
 
 /// A struct similar to `LanguageIdentifier` that supports "root"
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+#[allow(clippy::upper_case_acronyms)]
 pub struct CldrLangID {
     /// CLDR `LanguageIdentifier` (root => "root")
     cldr_language: TinyStr8,

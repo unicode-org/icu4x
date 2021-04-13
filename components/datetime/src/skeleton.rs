@@ -51,6 +51,7 @@ impl Skeleton {
 
 /// This is an implementation of the serde deserialization visitor pattern.
 #[cfg(feature = "provider_serde")]
+#[allow(clippy::upper_case_acronyms)]
 struct DeserializeSkeletonFieldsUTS35String;
 
 #[cfg(feature = "provider_serde")]

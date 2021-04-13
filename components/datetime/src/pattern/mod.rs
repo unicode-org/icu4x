@@ -198,6 +198,7 @@ impl FromIterator<PatternItem> for Pattern {
 }
 
 #[cfg(feature = "provider_serde")]
+#[allow(clippy::upper_case_acronyms)]
 struct DeserializePatternUTS35String;
 
 #[cfg(feature = "provider_serde")]
