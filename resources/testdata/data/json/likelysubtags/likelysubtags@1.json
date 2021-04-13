@@ -1,293 +1,365 @@
 {
   "language_script": [
     [
-      "arc-Nbat",
+      "arc",
+      "Nbat",
       "und-JO"
     ],
     [
-      "arc-Palm",
+      "arc",
+      "Palm",
       "und-SY"
     ],
     [
-      "az-Arab",
+      "az",
+      "Arab",
       "und-IR"
     ],
     [
-      "cu-Glag",
+      "cu",
+      "Glag",
       "und-BG"
     ],
     [
-      "en-Shaw",
+      "en",
+      "Shaw",
       "und-GB"
     ],
     [
-      "ff-Adlm",
+      "ff",
+      "Adlm",
       "und-GN"
     ],
     [
-      "grc-Linb",
+      "grc",
+      "Linb",
       "und-GR"
     ],
     [
-      "kk-Arab",
+      "kk",
+      "Arab",
       "und-CN"
     ],
     [
-      "ku-Arab",
+      "ku",
+      "Arab",
       "und-IQ"
     ],
     [
-      "ku-Yezi",
+      "ku",
+      "Yezi",
       "und-GE"
     ],
     [
-      "ky-Arab",
+      "ky",
+      "Arab",
       "und-CN"
     ],
     [
-      "ky-Latn",
+      "ky",
+      "Latn",
       "und-TR"
     ],
     [
-      "lif-Limb",
+      "lif",
+      "Limb",
       "und-IN"
     ],
     [
-      "man-Nkoo",
+      "man",
+      "Nkoo",
       "und-GN"
     ],
     [
-      "mis-Medf",
+      "mis",
+      "Medf",
       "und-NG"
     ],
     [
-      "mn-Mong",
+      "mn",
+      "Mong",
       "und-CN"
     ],
     [
-      "pa-Arab",
+      "pa",
+      "Arab",
       "und-PK"
     ],
     [
-      "pal-Phlp",
+      "pal",
+      "Phlp",
       "und-CN"
     ],
     [
-      "sd-Deva",
+      "sd",
+      "Deva",
       "und-IN"
     ],
     [
-      "sd-Khoj",
+      "sd",
+      "Khoj",
       "und-IN"
     ],
     [
-      "sd-Sind",
+      "sd",
+      "Sind",
       "und-IN"
     ],
     [
-      "tg-Arab",
+      "tg",
+      "Arab",
       "und-PK"
     ],
     [
-      "ug-Cyrl",
+      "ug",
+      "Cyrl",
       "und-KZ"
     ],
     [
-      "unr-Deva",
+      "unr",
+      "Deva",
       "und-NP"
     ],
     [
-      "uz-Arab",
+      "uz",
+      "Arab",
       "und-AF"
     ],
     [
-      "yue-Hans",
+      "yue",
+      "Hans",
       "und-CN"
     ],
     [
-      "zh-Bopo",
+      "zh",
+      "Bopo",
       "und-TW"
     ],
     [
-      "zh-Hanb",
+      "zh",
+      "Hanb",
       "und-TW"
     ],
     [
-      "zh-Hant",
+      "zh",
+      "Hant",
       "und-TW"
     ]
   ],
   "language_region": [
     [
-      "az-IQ",
+      "az",
+      "IQ",
       "und-Arab"
     ],
     [
-      "az-IR",
+      "az",
+      "IR",
       "und-Arab"
     ],
     [
-      "az-RU",
+      "az",
+      "RU",
       "und-Cyrl"
     ],
     [
-      "ha-CM",
+      "ha",
+      "CM",
       "und-Arab"
     ],
     [
-      "ha-SD",
+      "ha",
+      "SD",
       "und-Arab"
     ],
     [
-      "kk-AF",
+      "kk",
+      "AF",
       "und-Arab"
     ],
     [
-      "kk-CN",
+      "kk",
+      "CN",
       "und-Arab"
     ],
     [
-      "kk-IR",
+      "kk",
+      "IR",
       "und-Arab"
     ],
     [
-      "kk-MN",
+      "kk",
+      "MN",
       "und-Arab"
     ],
     [
-      "ku-LB",
+      "ku",
+      "LB",
       "und-Arab"
     ],
     [
-      "ky-CN",
+      "ky",
+      "CN",
       "und-Arab"
     ],
     [
-      "ky-TR",
+      "ky",
+      "TR",
       "und-Latn"
     ],
     [
-      "man-GN",
+      "man",
+      "GN",
       "und-Nkoo"
     ],
     [
-      "mn-CN",
+      "mn",
+      "CN",
       "und-Mong"
     ],
     [
-      "ms-CC",
+      "ms",
+      "CC",
       "und-Arab"
     ],
     [
-      "pa-PK",
+      "pa",
+      "PK",
       "und-Arab"
     ],
     [
-      "rif-NL",
+      "rif",
+      "NL",
       "und-Latn"
     ],
     [
-      "sr-ME",
+      "sr",
+      "ME",
       "und-Latn"
     ],
     [
-      "sr-RO",
+      "sr",
+      "RO",
       "und-Latn"
     ],
     [
-      "sr-RU",
+      "sr",
+      "RU",
       "und-Latn"
     ],
     [
-      "sr-TR",
+      "sr",
+      "TR",
       "und-Latn"
     ],
     [
-      "tg-PK",
+      "tg",
+      "PK",
       "und-Arab"
     ],
     [
-      "ug-KZ",
+      "ug",
+      "KZ",
       "und-Cyrl"
     ],
     [
-      "ug-MN",
+      "ug",
+      "MN",
       "und-Cyrl"
     ],
     [
-      "unr-NP",
+      "unr",
+      "NP",
       "und-Deva"
     ],
     [
-      "uz-AF",
+      "uz",
+      "AF",
       "und-Arab"
     ],
     [
-      "uz-CN",
+      "uz",
+      "CN",
       "und-Cyrl"
     ],
     [
-      "yue-CN",
+      "yue",
+      "CN",
       "und-Hans"
     ],
     [
-      "zh-AU",
+      "zh",
+      "AU",
       "und-Hant"
     ],
     [
-      "zh-BN",
+      "zh",
+      "BN",
       "und-Hant"
     ],
     [
-      "zh-GB",
+      "zh",
+      "GB",
       "und-Hant"
     ],
     [
-      "zh-GF",
+      "zh",
+      "GF",
       "und-Hant"
     ],
     [
-      "zh-HK",
+      "zh",
+      "HK",
       "und-Hant"
     ],
     [
-      "zh-ID",
+      "zh",
+      "ID",
       "und-Hant"
     ],
     [
-      "zh-MO",
+      "zh",
+      "MO",
       "und-Hant"
     ],
     [
-      "zh-PA",
+      "zh",
+      "PA",
       "und-Hant"
     ],
     [
-      "zh-PF",
+      "zh",
+      "PF",
       "und-Hant"
     ],
     [
-      "zh-PH",
+      "zh",
+      "PH",
       "und-Hant"
     ],
     [
-      "zh-SR",
+      "zh",
+      "SR",
       "und-Hant"
     ],
     [
-      "zh-TH",
+      "zh",
+      "TH",
       "und-Hant"
     ],
     [
-      "zh-TW",
+      "zh",
+      "TW",
       "und-Hant"
     ],
     [
-      "zh-US",
+      "zh",
+      "US",
       "und-Hant"
     ],
     [
-      "zh-VN",
+      "zh",
+      "VN",
       "und-Hant"
     ]
   ],
@@ -5655,1783 +5727,1842 @@
   ],
   "script_region": [
     [
-      "und-Arab-CC",
+      "Arab",
+      "CC",
       "ms"
     ],
     [
-      "und-Arab-CN",
+      "Arab",
+      "CN",
       "ug"
     ],
     [
-      "und-Arab-GB",
+      "Arab",
+      "GB",
       "ks"
     ],
     [
-      "und-Arab-ID",
+      "Arab",
+      "ID",
       "ms"
     ],
     [
-      "und-Arab-IN",
+      "Arab",
+      "IN",
       "ur"
     ],
     [
-      "und-Arab-KH",
+      "Arab",
+      "KH",
       "cja"
     ],
     [
-      "und-Arab-MM",
+      "Arab",
+      "MM",
       "rhg"
     ],
     [
-      "und-Arab-MN",
+      "Arab",
+      "MN",
       "kk"
     ],
     [
-      "und-Arab-MU",
+      "Arab",
+      "MU",
       "ur"
     ],
     [
-      "und-Arab-NG",
+      "Arab",
+      "NG",
       "ha"
     ],
     [
-      "und-Arab-PK",
+      "Arab",
+      "PK",
       "ur"
     ],
     [
-      "und-Arab-TG",
+      "Arab",
+      "TG",
       "apd"
     ],
     [
-      "und-Arab-TH",
+      "Arab",
+      "TH",
       "mfa"
     ],
     [
-      "und-Arab-TJ",
+      "Arab",
+      "TJ",
       "fa"
     ],
     [
-      "und-Arab-TR",
+      "Arab",
+      "TR",
       "az"
     ],
     [
-      "und-Arab-YT",
+      "Arab",
+      "YT",
       "swb"
     ],
     [
-      "und-Cyrl-AL",
+      "Cyrl",
+      "AL",
       "mk"
     ],
     [
-      "und-Cyrl-BA",
+      "Cyrl",
+      "BA",
       "sr"
     ],
     [
-      "und-Cyrl-GE",
+      "Cyrl",
+      "GE",
       "os"
     ],
     [
-      "und-Cyrl-GR",
+      "Cyrl",
+      "GR",
       "mk"
     ],
     [
-      "und-Cyrl-MD",
+      "Cyrl",
+      "MD",
       "uk"
     ],
     [
-      "und-Cyrl-RO",
+      "Cyrl",
+      "RO",
       "bg"
     ],
     [
-      "und-Cyrl-SK",
+      "Cyrl",
+      "SK",
       "uk"
     ],
     [
-      "und-Cyrl-TR",
+      "Cyrl",
+      "TR",
       "kbd"
     ],
     [
-      "und-Cyrl-XK",
+      "Cyrl",
+      "XK",
       "sr"
     ],
     [
-      "und-Deva-BT",
+      "Deva",
+      "BT",
       "ne"
     ],
     [
-      "und-Deva-FJ",
+      "Deva",
+      "FJ",
       "hif"
     ],
     [
-      "und-Deva-MU",
+      "Deva",
+      "MU",
       "bho"
     ],
     [
-      "und-Deva-PK",
+      "Deva",
+      "PK",
       "btv"
     ],
     [
-      "und-Grek-TR",
+      "Grek",
+      "TR",
       "bgx"
     ],
     [
-      "und-Hebr-CA",
+      "Hebr",
+      "CA",
       "yi"
     ],
     [
-      "und-Hebr-GB",
+      "Hebr",
+      "GB",
       "yi"
     ],
     [
-      "und-Hebr-SE",
+      "Hebr",
+      "SE",
       "yi"
     ],
     [
-      "und-Hebr-UA",
+      "Hebr",
+      "UA",
       "yi"
     ],
     [
-      "und-Hebr-US",
+      "Hebr",
+      "US",
       "yi"
     ],
     [
-      "und-Latn-AF",
+      "Latn",
+      "AF",
       "tk"
     ],
     [
-      "und-Latn-AM",
+      "Latn",
+      "AM",
       "ku"
     ],
     [
-      "und-Latn-CN",
+      "Latn",
+      "CN",
       "za"
     ],
     [
-      "und-Latn-CY",
+      "Latn",
+      "CY",
       "tr"
     ],
     [
-      "und-Latn-DZ",
+      "Latn",
+      "DZ",
       "fr"
     ],
     [
-      "und-Latn-ET",
+      "Latn",
+      "ET",
       "en"
     ],
     [
-      "und-Latn-GE",
+      "Latn",
+      "GE",
       "ku"
     ],
     [
-      "und-Latn-IR",
+      "Latn",
+      "IR",
       "tk"
     ],
     [
-      "und-Latn-KM",
+      "Latn",
+      "KM",
       "fr"
     ],
     [
-      "und-Latn-MA",
+      "Latn",
+      "MA",
       "fr"
     ],
     [
-      "und-Latn-MK",
+      "Latn",
+      "MK",
       "sq"
     ],
     [
-      "und-Latn-MM",
+      "Latn",
+      "MM",
       "kac"
     ],
     [
-      "und-Latn-MO",
+      "Latn",
+      "MO",
       "pt"
     ],
     [
-      "und-Latn-MR",
+      "Latn",
+      "MR",
       "fr"
     ],
     [
-      "und-Latn-RU",
+      "Latn",
+      "RU",
       "krl"
     ],
     [
-      "und-Latn-SY",
+      "Latn",
+      "SY",
       "fr"
     ],
     [
-      "und-Latn-TN",
+      "Latn",
+      "TN",
       "fr"
     ],
     [
-      "und-Latn-TW",
+      "Latn",
+      "TW",
       "trv"
     ],
     [
-      "und-Latn-UA",
+      "Latn",
+      "UA",
       "pl"
     ],
     [
-      "und-Mymr-IN",
+      "Mymr",
+      "IN",
       "kht"
     ],
     [
-      "und-Mymr-TH",
+      "Mymr",
+      "TH",
       "mnw"
     ],
     [
-      "und-Thai-CN",
+      "Thai",
+      "CN",
       "lcp"
     ],
     [
-      "und-Thai-KH",
+      "Thai",
+      "KH",
       "kdt"
     ],
     [
-      "und-Thai-LA",
+      "Thai",
+      "LA",
       "kdt"
     ]
   ],
   "script": [
     [
-      "und-Adlm",
+      "Adlm",
       "ff-GN"
     ],
     [
-      "und-Aghb",
+      "Aghb",
       "lez-RU"
     ],
     [
-      "und-Ahom",
+      "Ahom",
       "aho-IN"
     ],
     [
-      "und-Arab",
+      "Arab",
       "ar-EG"
     ],
     [
-      "und-Armi",
+      "Armi",
       "arc-IR"
     ],
     [
-      "und-Armn",
+      "Armn",
       "hy-AM"
     ],
     [
-      "und-Avst",
+      "Avst",
       "ae-IR"
     ],
     [
-      "und-Bali",
+      "Bali",
       "ban-ID"
     ],
     [
-      "und-Bamu",
+      "Bamu",
       "bax-CM"
     ],
     [
-      "und-Bass",
+      "Bass",
       "bsq-LR"
     ],
     [
-      "und-Batk",
+      "Batk",
       "bbc-ID"
     ],
     [
-      "und-Beng",
+      "Beng",
       "bn-BD"
     ],
     [
-      "und-Bhks",
+      "Bhks",
       "sa-IN"
     ],
     [
-      "und-Bopo",
+      "Bopo",
       "zh-TW"
     ],
     [
-      "und-Brah",
+      "Brah",
       "pka-IN"
     ],
     [
-      "und-Brai",
+      "Brai",
       "fr-FR"
     ],
     [
-      "und-Bugi",
+      "Bugi",
       "bug-ID"
     ],
     [
-      "und-Buhd",
+      "Buhd",
       "bku-PH"
     ],
     [
-      "und-Cakm",
+      "Cakm",
       "ccp-BD"
     ],
     [
-      "und-Cans",
+      "Cans",
       "cr-CA"
     ],
     [
-      "und-Cari",
+      "Cari",
       "xcr-TR"
     ],
     [
-      "und-Cham",
+      "Cham",
       "cjm-VN"
     ],
     [
-      "und-Cher",
+      "Cher",
       "chr-US"
     ],
     [
-      "und-Chrs",
+      "Chrs",
       "xco-UZ"
     ],
     [
-      "und-Copt",
+      "Copt",
       "cop-EG"
     ],
     [
-      "und-Cprt",
+      "Cprt",
       "grc-CY"
     ],
     [
-      "und-Cyrl",
+      "Cyrl",
       "ru-RU"
     ],
     [
-      "und-Deva",
+      "Deva",
       "hi-IN"
     ],
     [
-      "und-Diak",
+      "Diak",
       "dv-MV"
     ],
     [
-      "und-Dogr",
+      "Dogr",
       "doi-IN"
     ],
     [
-      "und-Dupl",
+      "Dupl",
       "fr-FR"
     ],
     [
-      "und-Egyp",
+      "Egyp",
       "egy-EG"
     ],
     [
-      "und-Elba",
+      "Elba",
       "sq-AL"
     ],
     [
-      "und-Elym",
+      "Elym",
       "arc-IR"
     ],
     [
-      "und-Ethi",
+      "Ethi",
       "am-ET"
     ],
     [
-      "und-Geor",
+      "Geor",
       "ka-GE"
     ],
     [
-      "und-Glag",
+      "Glag",
       "cu-BG"
     ],
     [
-      "und-Gong",
+      "Gong",
       "wsg-IN"
     ],
     [
-      "und-Gonm",
+      "Gonm",
       "esg-IN"
     ],
     [
-      "und-Goth",
+      "Goth",
       "got-UA"
     ],
     [
-      "und-Gran",
+      "Gran",
       "sa-IN"
     ],
     [
-      "und-Grek",
+      "Grek",
       "el-GR"
     ],
     [
-      "und-Gujr",
+      "Gujr",
       "gu-IN"
     ],
     [
-      "und-Guru",
+      "Guru",
       "pa-IN"
     ],
     [
-      "und-Hanb",
+      "Hanb",
       "zh-TW"
     ],
     [
-      "und-Hang",
+      "Hang",
       "ko-KR"
     ],
     [
-      "und-Hani",
+      "Hani",
       "zh-CN"
     ],
     [
-      "und-Hano",
+      "Hano",
       "hnn-PH"
     ],
     [
-      "und-Hans",
+      "Hans",
       "zh-CN"
     ],
     [
-      "und-Hant",
+      "Hant",
       "zh-TW"
     ],
     [
-      "und-Hatr",
+      "Hatr",
       "mis-IQ"
     ],
     [
-      "und-Hebr",
+      "Hebr",
       "he-IL"
     ],
     [
-      "und-Hira",
+      "Hira",
       "ja-JP"
     ],
     [
-      "und-Hluw",
+      "Hluw",
       "hlu-TR"
     ],
     [
-      "und-Hmng",
+      "Hmng",
       "hnj-LA"
     ],
     [
-      "und-Hmnp",
+      "Hmnp",
       "mww-US"
     ],
     [
-      "und-Hung",
+      "Hung",
       "hu-HU"
     ],
     [
-      "und-Ital",
+      "Ital",
       "ett-IT"
     ],
     [
-      "und-Jamo",
+      "Jamo",
       "ko-KR"
     ],
     [
-      "und-Java",
+      "Java",
       "jv-ID"
     ],
     [
-      "und-Jpan",
+      "Jpan",
       "ja-JP"
     ],
     [
-      "und-Kali",
+      "Kali",
       "eky-MM"
     ],
     [
-      "und-Kana",
+      "Kana",
       "ja-JP"
     ],
     [
-      "und-Khar",
+      "Khar",
       "pra-PK"
     ],
     [
-      "und-Khmr",
+      "Khmr",
       "km-KH"
     ],
     [
-      "und-Khoj",
+      "Khoj",
       "sd-IN"
     ],
     [
-      "und-Kits",
+      "Kits",
       "zkt-CN"
     ],
     [
-      "und-Knda",
+      "Knda",
       "kn-IN"
     ],
     [
-      "und-Kore",
+      "Kore",
       "ko-KR"
     ],
     [
-      "und-Kthi",
+      "Kthi",
       "bho-IN"
     ],
     [
-      "und-Lana",
+      "Lana",
       "nod-TH"
     ],
     [
-      "und-Laoo",
+      "Laoo",
       "lo-LA"
     ],
     [
-      "und-Lepc",
+      "Lepc",
       "lep-IN"
     ],
     [
-      "und-Limb",
+      "Limb",
       "lif-IN"
     ],
     [
-      "und-Lina",
+      "Lina",
       "lab-GR"
     ],
     [
-      "und-Linb",
+      "Linb",
       "grc-GR"
     ],
     [
-      "und-Lisu",
+      "Lisu",
       "lis-CN"
     ],
     [
-      "und-Lyci",
+      "Lyci",
       "xlc-TR"
     ],
     [
-      "und-Lydi",
+      "Lydi",
       "xld-TR"
     ],
     [
-      "und-Mahj",
+      "Mahj",
       "hi-IN"
     ],
     [
-      "und-Maka",
+      "Maka",
       "mak-ID"
     ],
     [
-      "und-Mand",
+      "Mand",
       "myz-IR"
     ],
     [
-      "und-Mani",
+      "Mani",
       "xmn-CN"
     ],
     [
-      "und-Marc",
+      "Marc",
       "bo-CN"
     ],
     [
-      "und-Medf",
+      "Medf",
       "mis-NG"
     ],
     [
-      "und-Mend",
+      "Mend",
       "men-SL"
     ],
     [
-      "und-Merc",
+      "Merc",
       "xmr-SD"
     ],
     [
-      "und-Mero",
+      "Mero",
       "xmr-SD"
     ],
     [
-      "und-Mlym",
+      "Mlym",
       "ml-IN"
     ],
     [
-      "und-Modi",
+      "Modi",
       "mr-IN"
     ],
     [
-      "und-Mong",
+      "Mong",
       "mn-CN"
     ],
     [
-      "und-Mroo",
+      "Mroo",
       "mro-BD"
     ],
     [
-      "und-Mtei",
+      "Mtei",
       "mni-IN"
     ],
     [
-      "und-Mult",
+      "Mult",
       "skr-PK"
     ],
     [
-      "und-Mymr",
+      "Mymr",
       "my-MM"
     ],
     [
-      "und-Nand",
+      "Nand",
       "sa-IN"
     ],
     [
-      "und-Narb",
+      "Narb",
       "xna-SA"
     ],
     [
-      "und-Nbat",
+      "Nbat",
       "arc-JO"
     ],
     [
-      "und-Newa",
+      "Newa",
       "new-NP"
     ],
     [
-      "und-Nkoo",
+      "Nkoo",
       "man-GN"
     ],
     [
-      "und-Nshu",
+      "Nshu",
       "zhx-CN"
     ],
     [
-      "und-Ogam",
+      "Ogam",
       "sga-IE"
     ],
     [
-      "und-Olck",
+      "Olck",
       "sat-IN"
     ],
     [
-      "und-Orkh",
+      "Orkh",
       "otk-MN"
     ],
     [
-      "und-Orya",
+      "Orya",
       "or-IN"
     ],
     [
-      "und-Osge",
+      "Osge",
       "osa-US"
     ],
     [
-      "und-Osma",
+      "Osma",
       "so-SO"
     ],
     [
-      "und-Palm",
+      "Palm",
       "arc-SY"
     ],
     [
-      "und-Pauc",
+      "Pauc",
       "ctd-MM"
     ],
     [
-      "und-Perm",
+      "Perm",
       "kv-RU"
     ],
     [
-      "und-Phag",
+      "Phag",
       "lzh-CN"
     ],
     [
-      "und-Phli",
+      "Phli",
       "pal-IR"
     ],
     [
-      "und-Phlp",
+      "Phlp",
       "pal-CN"
     ],
     [
-      "und-Phnx",
+      "Phnx",
       "phn-LB"
     ],
     [
-      "und-Plrd",
+      "Plrd",
       "hmd-CN"
     ],
     [
-      "und-Prti",
+      "Prti",
       "xpr-IR"
     ],
     [
-      "und-Rjng",
+      "Rjng",
       "rej-ID"
     ],
     [
-      "und-Rohg",
+      "Rohg",
       "rhg-MM"
     ],
     [
-      "und-Runr",
+      "Runr",
       "non-SE"
     ],
     [
-      "und-Samr",
+      "Samr",
       "smp-IL"
     ],
     [
-      "und-Sarb",
+      "Sarb",
       "xsa-YE"
     ],
     [
-      "und-Saur",
+      "Saur",
       "saz-IN"
     ],
     [
-      "und-Sgnw",
+      "Sgnw",
       "ase-US"
     ],
     [
-      "und-Shaw",
+      "Shaw",
       "en-GB"
     ],
     [
-      "und-Shrd",
+      "Shrd",
       "sa-IN"
     ],
     [
-      "und-Sidd",
+      "Sidd",
       "sa-IN"
     ],
     [
-      "und-Sind",
+      "Sind",
       "sd-IN"
     ],
     [
-      "und-Sinh",
+      "Sinh",
       "si-LK"
     ],
     [
-      "und-Sogd",
+      "Sogd",
       "sog-UZ"
     ],
     [
-      "und-Sogo",
+      "Sogo",
       "sog-UZ"
     ],
     [
-      "und-Sora",
+      "Sora",
       "srb-IN"
     ],
     [
-      "und-Soyo",
+      "Soyo",
       "cmg-MN"
     ],
     [
-      "und-Sund",
+      "Sund",
       "su-ID"
     ],
     [
-      "und-Sylo",
+      "Sylo",
       "syl-BD"
     ],
     [
-      "und-Syrc",
+      "Syrc",
       "syr-IQ"
     ],
     [
-      "und-Tagb",
+      "Tagb",
       "tbw-PH"
     ],
     [
-      "und-Takr",
+      "Takr",
       "doi-IN"
     ],
     [
-      "und-Tale",
+      "Tale",
       "tdd-CN"
     ],
     [
-      "und-Talu",
+      "Talu",
       "khb-CN"
     ],
     [
-      "und-Taml",
+      "Taml",
       "ta-IN"
     ],
     [
-      "und-Tang",
+      "Tang",
       "txg-CN"
     ],
     [
-      "und-Tavt",
+      "Tavt",
       "blt-VN"
     ],
     [
-      "und-Telu",
+      "Telu",
       "te-IN"
     ],
     [
-      "und-Tfng",
+      "Tfng",
       "zgh-MA"
     ],
     [
-      "und-Tglg",
+      "Tglg",
       "fil-PH"
     ],
     [
-      "und-Thaa",
+      "Thaa",
       "dv-MV"
     ],
     [
-      "und-Thai",
+      "Thai",
       "th-TH"
     ],
     [
-      "und-Tibt",
+      "Tibt",
       "bo-CN"
     ],
     [
-      "und-Tirh",
+      "Tirh",
       "mai-IN"
     ],
     [
-      "und-Ugar",
+      "Ugar",
       "uga-SY"
     ],
     [
-      "und-Vaii",
+      "Vaii",
       "vai-LR"
     ],
     [
-      "und-Wara",
+      "Wara",
       "hoc-IN"
     ],
     [
-      "und-Wcho",
+      "Wcho",
       "nnp-IN"
     ],
     [
-      "und-Xpeo",
+      "Xpeo",
       "peo-IR"
     ],
     [
-      "und-Xsux",
+      "Xsux",
       "akk-IQ"
     ],
     [
-      "und-Yezi",
+      "Yezi",
       "ku-GE"
     ],
     [
-      "und-Yiii",
+      "Yiii",
       "ii-CN"
     ],
     [
-      "und-Zanb",
+      "Zanb",
       "cmg-MN"
     ]
   ],
   "region": [
     [
-      "und-002",
+      "002",
       "en-Latn-NG"
     ],
     [
-      "und-003",
+      "003",
       "en-Latn-US"
     ],
     [
-      "und-005",
+      "005",
       "pt-Latn-BR"
     ],
     [
-      "und-009",
+      "009",
       "en-Latn-AU"
     ],
     [
-      "und-011",
+      "011",
       "en-Latn-NG"
     ],
     [
-      "und-013",
+      "013",
       "es-Latn-MX"
     ],
     [
-      "und-014",
+      "014",
       "sw-Latn-TZ"
     ],
     [
-      "und-015",
+      "015",
       "ar-Arab-EG"
     ],
     [
-      "und-017",
+      "017",
       "sw-Latn-CD"
     ],
     [
-      "und-018",
+      "018",
       "en-Latn-ZA"
     ],
     [
-      "und-019",
+      "019",
       "en-Latn-US"
     ],
     [
-      "und-021",
+      "021",
       "en-Latn-US"
     ],
     [
-      "und-029",
+      "029",
       "es-Latn-CU"
     ],
     [
-      "und-030",
+      "030",
       "zh-Hans-CN"
     ],
     [
-      "und-034",
+      "034",
       "hi-Deva-IN"
     ],
     [
-      "und-035",
+      "035",
       "id-Latn-ID"
     ],
     [
-      "und-039",
+      "039",
       "it-Latn-IT"
     ],
     [
-      "und-053",
+      "053",
       "en-Latn-AU"
     ],
     [
-      "und-054",
+      "054",
       "en-Latn-PG"
     ],
     [
-      "und-057",
+      "057",
       "en-Latn-GU"
     ],
     [
-      "und-061",
+      "061",
       "sm-Latn-WS"
     ],
     [
-      "und-142",
+      "142",
       "zh-Hans-CN"
     ],
     [
-      "und-143",
+      "143",
       "uz-Latn-UZ"
     ],
     [
-      "und-145",
+      "145",
       "ar-Arab-SA"
     ],
     [
-      "und-150",
+      "150",
       "ru-Cyrl-RU"
     ],
     [
-      "und-151",
+      "151",
       "ru-Cyrl-RU"
     ],
     [
-      "und-154",
+      "154",
       "en-Latn-GB"
     ],
     [
-      "und-155",
+      "155",
       "de-Latn-DE"
     ],
     [
-      "und-202",
+      "202",
       "en-Latn-NG"
     ],
     [
-      "und-419",
+      "419",
       "es-Latn"
     ],
     [
-      "und-AD",
+      "AD",
       "ca-Latn"
     ],
     [
-      "und-AE",
+      "AE",
       "ar-Arab"
     ],
     [
-      "und-AF",
+      "AF",
       "fa-Arab"
     ],
     [
-      "und-AL",
+      "AL",
       "sq-Latn"
     ],
     [
-      "und-AM",
+      "AM",
       "hy-Armn"
     ],
     [
-      "und-AO",
+      "AO",
       "pt-Latn"
     ],
     [
-      "und-AQ",
+      "AQ",
       "und-Latn"
     ],
     [
-      "und-AR",
+      "AR",
       "es-Latn"
     ],
     [
-      "und-AS",
+      "AS",
       "sm-Latn"
     ],
     [
-      "und-AT",
+      "AT",
       "de-Latn"
     ],
     [
-      "und-AW",
+      "AW",
       "nl-Latn"
     ],
     [
-      "und-AX",
+      "AX",
       "sv-Latn"
     ],
     [
-      "und-AZ",
+      "AZ",
       "az-Latn"
     ],
     [
-      "und-BA",
+      "BA",
       "bs-Latn"
     ],
     [
-      "und-BD",
+      "BD",
       "bn-Beng"
     ],
     [
-      "und-BE",
+      "BE",
       "nl-Latn"
     ],
     [
-      "und-BF",
+      "BF",
       "fr-Latn"
     ],
     [
-      "und-BG",
+      "BG",
       "bg-Cyrl"
     ],
     [
-      "und-BH",
+      "BH",
       "ar-Arab"
     ],
     [
-      "und-BI",
+      "BI",
       "rn-Latn"
     ],
     [
-      "und-BJ",
+      "BJ",
       "fr-Latn"
     ],
     [
-      "und-BL",
+      "BL",
       "fr-Latn"
     ],
     [
-      "und-BN",
+      "BN",
       "ms-Latn"
     ],
     [
-      "und-BO",
+      "BO",
       "es-Latn"
     ],
     [
-      "und-BQ",
+      "BQ",
       "pap-Latn"
     ],
     [
-      "und-BR",
+      "BR",
       "pt-Latn"
     ],
     [
-      "und-BT",
+      "BT",
       "dz-Tibt"
     ],
     [
-      "und-BV",
+      "BV",
       "und-Latn"
     ],
     [
-      "und-BY",
+      "BY",
       "be-Cyrl"
     ],
     [
-      "und-CD",
+      "CD",
       "sw-Latn"
     ],
     [
-      "und-CF",
+      "CF",
       "fr-Latn"
     ],
     [
-      "und-CG",
+      "CG",
       "fr-Latn"
     ],
     [
-      "und-CH",
+      "CH",
       "de-Latn"
     ],
     [
-      "und-CI",
+      "CI",
       "fr-Latn"
     ],
     [
-      "und-CL",
+      "CL",
       "es-Latn"
     ],
     [
-      "und-CM",
+      "CM",
       "fr-Latn"
     ],
     [
-      "und-CN",
+      "CN",
       "zh-Hans"
     ],
     [
-      "und-CO",
+      "CO",
       "es-Latn"
     ],
     [
-      "und-CP",
+      "CP",
       "und-Latn"
     ],
     [
-      "und-CR",
+      "CR",
       "es-Latn"
     ],
     [
-      "und-CU",
+      "CU",
       "es-Latn"
     ],
     [
-      "und-CV",
+      "CV",
       "pt-Latn"
     ],
     [
-      "und-CW",
+      "CW",
       "pap-Latn"
     ],
     [
-      "und-CY",
+      "CY",
       "el-Grek"
     ],
     [
-      "und-CZ",
+      "CZ",
       "cs-Latn"
     ],
     [
-      "und-DE",
+      "DE",
       "de-Latn"
     ],
     [
-      "und-DJ",
+      "DJ",
       "aa-Latn"
     ],
     [
-      "und-DK",
+      "DK",
       "da-Latn"
     ],
     [
-      "und-DO",
+      "DO",
       "es-Latn"
     ],
     [
-      "und-DZ",
+      "DZ",
       "ar-Arab"
     ],
     [
-      "und-EA",
+      "EA",
       "es-Latn"
     ],
     [
-      "und-EC",
+      "EC",
       "es-Latn"
     ],
     [
-      "und-EE",
+      "EE",
       "et-Latn"
     ],
     [
-      "und-EG",
+      "EG",
       "ar-Arab"
     ],
     [
-      "und-EH",
+      "EH",
       "ar-Arab"
     ],
     [
-      "und-ER",
+      "ER",
       "ti-Ethi"
     ],
     [
-      "und-ES",
+      "ES",
       "es-Latn"
     ],
     [
-      "und-ET",
+      "ET",
       "am-Ethi"
     ],
     [
-      "und-EU",
+      "EU",
       "en-Latn-IE"
     ],
     [
-      "und-EZ",
+      "EZ",
       "de-Latn"
     ],
     [
-      "und-FI",
+      "FI",
       "fi-Latn"
     ],
     [
-      "und-FO",
+      "FO",
       "fo-Latn"
     ],
     [
-      "und-FR",
+      "FR",
       "fr-Latn"
     ],
     [
-      "und-GA",
+      "GA",
       "fr-Latn"
     ],
     [
-      "und-GE",
+      "GE",
       "ka-Geor"
     ],
     [
-      "und-GF",
+      "GF",
       "fr-Latn"
     ],
     [
-      "und-GH",
+      "GH",
       "ak-Latn"
     ],
     [
-      "und-GL",
+      "GL",
       "kl-Latn"
     ],
     [
-      "und-GN",
+      "GN",
       "fr-Latn"
     ],
     [
-      "und-GP",
+      "GP",
       "fr-Latn"
     ],
     [
-      "und-GQ",
+      "GQ",
       "es-Latn"
     ],
     [
-      "und-GR",
+      "GR",
       "el-Grek"
     ],
     [
-      "und-GS",
+      "GS",
       "und-Latn"
     ],
     [
-      "und-GT",
+      "GT",
       "es-Latn"
     ],
     [
-      "und-GW",
+      "GW",
       "pt-Latn"
     ],
     [
-      "und-HK",
+      "HK",
       "zh-Hant"
     ],
     [
-      "und-HM",
+      "HM",
       "und-Latn"
     ],
     [
-      "und-HN",
+      "HN",
       "es-Latn"
     ],
     [
-      "und-HR",
+      "HR",
       "hr-Latn"
     ],
     [
-      "und-HT",
+      "HT",
       "ht-Latn"
     ],
     [
-      "und-HU",
+      "HU",
       "hu-Latn"
     ],
     [
-      "und-IC",
+      "IC",
       "es-Latn"
     ],
     [
-      "und-ID",
+      "ID",
       "id-Latn"
     ],
     [
-      "und-IL",
+      "IL",
       "he-Hebr"
     ],
     [
-      "und-IN",
+      "IN",
       "hi-Deva"
     ],
     [
-      "und-IQ",
+      "IQ",
       "ar-Arab"
     ],
     [
-      "und-IR",
+      "IR",
       "fa-Arab"
     ],
     [
-      "und-IS",
+      "IS",
       "is-Latn"
     ],
     [
-      "und-IT",
+      "IT",
       "it-Latn"
     ],
     [
-      "und-JO",
+      "JO",
       "ar-Arab"
     ],
     [
-      "und-JP",
+      "JP",
       "ja-Jpan"
     ],
     [
-      "und-KE",
+      "KE",
       "sw-Latn"
     ],
     [
-      "und-KG",
+      "KG",
       "ky-Cyrl"
     ],
     [
-      "und-KH",
+      "KH",
       "km-Khmr"
     ],
     [
-      "und-KM",
+      "KM",
       "ar-Arab"
     ],
     [
-      "und-KP",
+      "KP",
       "ko-Kore"
     ],
     [
-      "und-KR",
+      "KR",
       "ko-Kore"
     ],
     [
-      "und-KW",
+      "KW",
       "ar-Arab"
     ],
     [
-      "und-KZ",
+      "KZ",
       "ru-Cyrl"
     ],
     [
-      "und-LA",
+      "LA",
       "lo-Laoo"
     ],
     [
-      "und-LB",
+      "LB",
       "ar-Arab"
     ],
     [
-      "und-LI",
+      "LI",
       "de-Latn"
     ],
     [
-      "und-LK",
+      "LK",
       "si-Sinh"
     ],
     [
-      "und-LS",
+      "LS",
       "st-Latn"
     ],
     [
-      "und-LT",
+      "LT",
       "lt-Latn"
     ],
     [
-      "und-LU",
+      "LU",
       "fr-Latn"
     ],
     [
-      "und-LV",
+      "LV",
       "lv-Latn"
     ],
     [
-      "und-LY",
+      "LY",
       "ar-Arab"
     ],
     [
-      "und-MA",
+      "MA",
       "ar-Arab"
     ],
     [
-      "und-MC",
+      "MC",
       "fr-Latn"
     ],
     [
-      "und-MD",
+      "MD",
       "ro-Latn"
     ],
     [
-      "und-ME",
+      "ME",
       "sr-Latn"
     ],
     [
-      "und-MF",
+      "MF",
       "fr-Latn"
     ],
     [
-      "und-MG",
+      "MG",
       "mg-Latn"
     ],
     [
-      "und-MK",
+      "MK",
       "mk-Cyrl"
     ],
     [
-      "und-ML",
+      "ML",
       "bm-Latn"
     ],
     [
-      "und-MM",
+      "MM",
       "my-Mymr"
     ],
     [
-      "und-MN",
+      "MN",
       "mn-Cyrl"
     ],
     [
-      "und-MO",
+      "MO",
       "zh-Hant"
     ],
     [
-      "und-MQ",
+      "MQ",
       "fr-Latn"
     ],
     [
-      "und-MR",
+      "MR",
       "ar-Arab"
     ],
     [
-      "und-MT",
+      "MT",
       "mt-Latn"
     ],
     [
-      "und-MU",
+      "MU",
       "mfe-Latn"
     ],
     [
-      "und-MV",
+      "MV",
       "dv-Thaa"
     ],
     [
-      "und-MX",
+      "MX",
       "es-Latn"
     ],
     [
-      "und-MY",
+      "MY",
       "ms-Latn"
     ],
     [
-      "und-MZ",
+      "MZ",
       "pt-Latn"
     ],
     [
-      "und-NA",
+      "NA",
       "af-Latn"
     ],
     [
-      "und-NC",
+      "NC",
       "fr-Latn"
     ],
     [
-      "und-NE",
+      "NE",
       "ha-Latn"
     ],
     [
-      "und-NI",
+      "NI",
       "es-Latn"
     ],
     [
-      "und-NL",
+      "NL",
       "nl-Latn"
     ],
     [
-      "und-NO",
+      "NO",
       "nb-Latn"
     ],
     [
-      "und-NP",
+      "NP",
       "ne-Deva"
     ],
     [
-      "und-OM",
+      "OM",
       "ar-Arab"
     ],
     [
-      "und-PA",
+      "PA",
       "es-Latn"
     ],
     [
-      "und-PE",
+      "PE",
       "es-Latn"
     ],
     [
-      "und-PF",
+      "PF",
       "fr-Latn"
     ],
     [
-      "und-PG",
+      "PG",
       "tpi-Latn"
     ],
     [
-      "und-PH",
+      "PH",
       "fil-Latn"
     ],
     [
-      "und-PK",
+      "PK",
       "ur-Arab"
     ],
     [
-      "und-PL",
+      "PL",
       "pl-Latn"
     ],
     [
-      "und-PM",
+      "PM",
       "fr-Latn"
     ],
     [
-      "und-PR",
+      "PR",
       "es-Latn"
     ],
     [
-      "und-PS",
+      "PS",
       "ar-Arab"
     ],
     [
-      "und-PT",
+      "PT",
       "pt-Latn"
     ],
     [
-      "und-PW",
+      "PW",
       "pau-Latn"
     ],
     [
-      "und-PY",
+      "PY",
       "gn-Latn"
     ],
     [
-      "und-QA",
+      "QA",
       "ar-Arab"
     ],
     [
-      "und-QO",
+      "QO",
       "en-Latn-DG"
     ],
     [
-      "und-RE",
+      "RE",
       "fr-Latn"
     ],
     [
-      "und-RO",
+      "RO",
       "ro-Latn"
     ],
     [
-      "und-RS",
+      "RS",
       "sr-Cyrl"
     ],
     [
-      "und-RU",
+      "RU",
       "ru-Cyrl"
     ],
     [
-      "und-RW",
+      "RW",
       "rw-Latn"
     ],
     [
-      "und-SA",
+      "SA",
       "ar-Arab"
     ],
     [
-      "und-SC",
+      "SC",
       "fr-Latn"
     ],
     [
-      "und-SD",
+      "SD",
       "ar-Arab"
     ],
     [
-      "und-SE",
+      "SE",
       "sv-Latn"
     ],
     [
-      "und-SI",
+      "SI",
       "sl-Latn"
     ],
     [
-      "und-SJ",
+      "SJ",
       "nb-Latn"
     ],
     [
-      "und-SK",
+      "SK",
       "sk-Latn"
     ],
     [
-      "und-SM",
+      "SM",
       "it-Latn"
     ],
     [
-      "und-SN",
+      "SN",
       "fr-Latn"
     ],
     [
-      "und-SO",
+      "SO",
       "so-Latn"
     ],
     [
-      "und-SR",
+      "SR",
       "nl-Latn"
     ],
     [
-      "und-ST",
+      "ST",
       "pt-Latn"
     ],
     [
-      "und-SV",
+      "SV",
       "es-Latn"
     ],
     [
-      "und-SY",
+      "SY",
       "ar-Arab"
     ],
     [
-      "und-TD",
+      "TD",
       "fr-Latn"
     ],
     [
-      "und-TF",
+      "TF",
       "fr-Latn"
     ],
     [
-      "und-TG",
+      "TG",
       "fr-Latn"
     ],
     [
-      "und-TH",
+      "TH",
       "th-Thai"
     ],
     [
-      "und-TJ",
+      "TJ",
       "tg-Cyrl"
     ],
     [
-      "und-TK",
+      "TK",
       "tkl-Latn"
     ],
     [
-      "und-TL",
+      "TL",
       "pt-Latn"
     ],
     [
-      "und-TM",
+      "TM",
       "tk-Latn"
     ],
     [
-      "und-TN",
+      "TN",
       "ar-Arab"
     ],
     [
-      "und-TO",
+      "TO",
       "to-Latn"
     ],
     [
-      "und-TR",
+      "TR",
       "tr-Latn"
     ],
     [
-      "und-TV",
+      "TV",
       "tvl-Latn"
     ],
     [
-      "und-TW",
+      "TW",
       "zh-Hant"
     ],
     [
-      "und-TZ",
+      "TZ",
       "sw-Latn"
     ],
     [
-      "und-UA",
+      "UA",
       "uk-Cyrl"
     ],
     [
-      "und-UG",
+      "UG",
       "sw-Latn"
     ],
     [
-      "und-UY",
+      "UY",
       "es-Latn"
     ],
     [
-      "und-UZ",
+      "UZ",
       "uz-Latn"
     ],
     [
-      "und-VA",
+      "VA",
       "it-Latn"
     ],
     [
-      "und-VE",
+      "VE",
       "es-Latn"
     ],
     [
-      "und-VN",
+      "VN",
       "vi-Latn"
     ],
     [
-      "und-VU",
+      "VU",
       "bi-Latn"
     ],
     [
-      "und-WF",
+      "WF",
       "fr-Latn"
     ],
     [
-      "und-WS",
+      "WS",
       "sm-Latn"
     ],
     [
-      "und-XK",
+      "XK",
       "sq-Latn"
     ],
     [
-      "und-YE",
+      "YE",
       "ar-Arab"
     ],
     [
-      "und-YT",
+      "YT",
       "fr-Latn"
     ],
     [
-      "und-ZW",
+      "ZW",
       "sn-Latn"
     ]
   ],

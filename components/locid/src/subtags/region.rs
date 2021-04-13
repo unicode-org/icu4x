@@ -146,3 +146,9 @@ impl<'l> From<&'l Region> for &'l str {
         input.as_str()
     }
 }
+
+impl From<Region> for TinyStr4 {
+    fn from(input: Region) -> Self {
+        input.0.into()
+    }
+}

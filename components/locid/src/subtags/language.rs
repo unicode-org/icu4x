@@ -246,3 +246,9 @@ impl<'l> From<&'l Language> for &'l str {
         input.as_str()
     }
 }
+
+impl From<Language> for Option<TinyStr4> {
+    fn from(input: Language) -> Self {
+        input.0.map(Into::into)
+    }
+}
