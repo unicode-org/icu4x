@@ -39,7 +39,7 @@ impl AbstractSerializer for Serializer {
         obj: &dyn erased_serde::Serialize,
         mut sink: &mut dyn io::Write,
     ) -> Result<(), Error> {
-        obj.erased_serialize(&mut erased_serde::Serializer::erase(
+        obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
             &mut bincode::Serializer::new(
                 &mut sink,
                 bincode::config::DefaultOptions::new().with_fixint_encoding(),

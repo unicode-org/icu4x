@@ -199,19 +199,19 @@ pub struct DayOfYearInfo {
 /// ```
 /// use icu_datetime::date::IsoWeekday;
 ///
-/// assert_eq!(1, IsoWeekday::MONDAY as usize);
-/// assert_eq!(7, IsoWeekday::SUNDAY as usize);
+/// assert_eq!(1, IsoWeekday::Monday as usize);
+/// assert_eq!(7, IsoWeekday::Sunday as usize);
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(i8)]
 pub enum IsoWeekday {
-    MONDAY = 1,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY,
+    Monday = 1,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
 }
 
 impl From<usize> for IsoWeekday {
@@ -223,10 +223,10 @@ impl From<usize> for IsoWeekday {
     /// ```
     /// use icu_datetime::date::IsoWeekday;
     ///
-    /// assert_eq!(IsoWeekday::SUNDAY, IsoWeekday::from(0));
-    /// assert_eq!(IsoWeekday::MONDAY, IsoWeekday::from(1));
-    /// assert_eq!(IsoWeekday::SUNDAY, IsoWeekday::from(7));
-    /// assert_eq!(IsoWeekday::MONDAY, IsoWeekday::from(8));
+    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
+    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));
+    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(7));
+    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
     /// ```
     fn from(input: usize) -> IsoWeekday {
         let mut ordinal = (input % 7) as i8;

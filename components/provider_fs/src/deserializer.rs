@@ -110,13 +110,13 @@ pub fn deserialize_into_receiver(
     match syntax_option {
         SyntaxOption::Json => {
             let mut d = get_json_deserializer!(rdr);
-            receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
+            receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
             Ok(())
         }
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => {
             let mut d = get_bincode_deserializer!(rdr);
-            receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))?;
+            receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
             Ok(())
         }
         #[cfg(not(feature = "bincode"))]
