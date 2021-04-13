@@ -258,11 +258,9 @@ fn test_components_width_differences() {
 }
 
 /// Tests that component::Bags can combine a date skeleton, and a time skeleton.
-/// TODO(585) - This is unimplemented and will panic.
 #[test]
-#[should_panic]
 fn test_components_combine_date_time() {
-    // components/datetime/tests/fixtures/tests/components-date-time.json
+    // components/datetime/tests/fixtures/tests/components-combine-date-time.json
     test_fixture("components-combine-date-time");
 }
 

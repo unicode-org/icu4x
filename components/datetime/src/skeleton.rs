@@ -9,8 +9,9 @@ use std::{convert::TryFrom, fmt};
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
+    options::length,
     pattern::Pattern,
-    provider::gregory::patterns::{PatternV1, SkeletonV1, SkeletonsV1},
+    provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
 
 #[cfg(feature = "provider_serde")]
@@ -349,10 +350,167 @@ const REQUESTED_SYMBOL_MISSING: u32 = 10000;
 /// there is no attempt to add on missing fields. This enum encodes the variants for the current
 /// search for a best skeleton.
 #[derive(Debug, PartialEq, Clone)]
-pub enum BestSkeleton<'a> {
-    AllFieldsMatch(AvailableFormatPattern<'a>),
-    MissingOrExtraFields(AvailableFormatPattern<'a>),
+pub enum BestSkeleton<T> {
+    AllFieldsMatch(T),
+    MissingOrExtraFields(T),
     NoMatch,
+}
+
+// TODO - This could return a Cow<'a, Pattern>, but it affects every other part of the API to
+// add a lifetime here. The pattern returned here could be one that we've already constructed in
+// the CLDR as an exotic type, or it could be one that was modified to meet the requirements of
+// the components bag.
+pub fn create_best_pattern_for_fields<'a>(
+    skeletons: &'a SkeletonsV1,
+    length_patterns: &LengthPatternsV1,
+    fields: &[Field],
+) -> BestSkeleton<Pattern> {
+    let first_pattern_match = get_best_available_format_pattern(&skeletons, fields);
+
+    // Try to match a skeleton to all of the fields.
+    if let BestSkeleton::AllFieldsMatch(pattern) = first_pattern_match {
+        return BestSkeleton::AllFieldsMatch(pattern.clone());
+    }
+
+    let FieldsByType { date, time, other } = group_fields_by_type(&fields);
+
+    if !other.is_empty() {
+        // TODO(#418) - TimeZones
+        // TODO(#486) - Eras,
+        // ... etc.
+        unimplemented!(
+            "There are no \"other\" fields supported, these need to be appended to the pattern."
+        );
+    }
+
+    if date.is_empty() || time.is_empty() {
+        return match first_pattern_match {
+            BestSkeleton::AllFieldsMatch(_) => {
+                unreachable!("Logic error in implementation. AllFieldsMatch handled above.")
+            }
+            BestSkeleton::MissingOrExtraFields(pattern) => {
+                BestSkeleton::MissingOrExtraFields(pattern.clone())
+            }
+            BestSkeleton::NoMatch => BestSkeleton::NoMatch,
+        };
+    }
+
+    // Match the date and time, and then simplify the combinatorial logic of the results into
+    // an optional values of the results, and a boolean value.
+    let (date_pattern, date_missing_or_extra) =
+        match get_best_available_format_pattern(&skeletons, &date) {
+            BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
+            BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
+            BestSkeleton::NoMatch => (None, true),
+        };
+
+    let (time_pattern, time_missing_or_extra) =
+        match get_best_available_format_pattern(&skeletons, &time) {
+            BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
+            BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
+            BestSkeleton::NoMatch => (None, true),
+        };
+
+    // Determine how to combine the date and time.
+    let pattern: Option<Pattern> = match (date_pattern, time_pattern) {
+        (Some(date_pattern), Some(time_pattern)) => {
+            let month_field = fields
+                .iter()
+                .find(|f| matches!(f.symbol, FieldSymbol::Month(_)));
+
+            // Per UTS-35, choose a "length" pattern for combining the date and time.
+            // https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons
+            //
+            // 1. If the requested date fields include Wide month and weekday name of any length, use length::Date::Full
+            // 2. Otherwise, if the requested date fields include wide month, use length::Date::Long
+            // 3. Otherwise, if the requested date fields include abbreviated month, use length::Date::Medium
+            // 4. Otherwise use length::Date::Short
+            let length = match month_field {
+                Some(field) => match field.length {
+                    FieldLength::Wide => {
+                        let weekday = fields
+                            .iter()
+                            .find(|f| matches!(f.symbol, FieldSymbol::Weekday(_)));
+
+                        if weekday.is_some() {
+                            length::Date::Full
+                        } else {
+                            length::Date::Long
+                        }
+                    }
+                    FieldLength::Abbreviated => length::Date::Medium,
+                    _ => length::Date::Short,
+                },
+                None => length::Date::Short,
+            };
+
+            let bytes = match length {
+                length::Date::Full => &length_patterns.full,
+                length::Date::Long => &length_patterns.long,
+                length::Date::Medium => &length_patterns.medium,
+                length::Date::Short => &length_patterns.short,
+            };
+
+            Some(
+                Pattern::from_bytes_combination(bytes, date_pattern.clone(), time_pattern.clone())
+                    .expect("TODO"),
+            )
+        }
+        (None, Some(pattern)) => Some(pattern.clone()),
+        (Some(pattern), None) => Some(pattern.clone()),
+        (None, None) => None,
+    };
+
+    match pattern {
+        Some(pattern) => {
+            if date_missing_or_extra || time_missing_or_extra {
+                BestSkeleton::MissingOrExtraFields(pattern)
+            } else {
+                BestSkeleton::AllFieldsMatch(pattern)
+            }
+        }
+        None => BestSkeleton::NoMatch,
+    }
+}
+
+struct FieldsByType {
+    pub date: Vec<Field>,
+    pub time: Vec<Field>,
+    pub other: Vec<Field>,
+}
+
+fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
+    let mut date = Vec::new();
+    let mut time = Vec::new();
+    let other = Vec::new();
+
+    for field in fields {
+        match field.symbol {
+            // Date components:
+            // Note: Weekdays are included in both time and date skeletons.
+            //  - Time examples: "EBhm" "EBhms" "Ed" "Ehm" "EHm" "Ehms" "EHms"
+            //  - Date examples: "GyMMMEd" "MEd" "MMMEd" "MMMMEd" "yMEd" "yMMMEd"
+            //  - Solo example: "E"
+            FieldSymbol::Year(_)
+            | FieldSymbol::Month(_)
+            | FieldSymbol::Day(_)
+            | FieldSymbol::Weekday(_) => date.push(*field),
+
+            // Time components:
+            FieldSymbol::DayPeriod(_)
+            | FieldSymbol::Hour(_)
+            | FieldSymbol::Minute
+            | FieldSymbol::Second(_) => time.push(*field),
+            // Other components
+            // TODO(#418)
+            // FieldSymbol::TimeZone(_) => other.push(*field),
+            // TODO(#486)
+            // FieldSymbol::Era(_) => other.push(*field),
+            // Plus others...
+        };
+    }
+
+    FieldsByType { date, time, other }
 }
 
 /// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
@@ -374,14 +532,14 @@ pub enum BestSkeleton<'a> {
 ///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
 ///      much of this step to implement. See the issue for more information.
 pub fn get_best_available_format_pattern<'a>(
-    available_format_patterns: impl Iterator<Item = AvailableFormatPattern<'a>> + 'a,
+    skeletons: &'a SkeletonsV1,
     fields: &[Field],
-) -> BestSkeleton<'a> {
+) -> BestSkeleton<&'a Pattern> {
     let mut closest_format_pattern = None;
     let mut closest_distance: u32 = u32::MAX;
     let mut closest_missing_fields = 0;
 
-    for available_format_pattern in available_format_patterns {
+    for available_format_pattern in get_available_format_patterns(skeletons) {
         let skeleton = &available_format_pattern.skeleton;
         debug_assert!(
             skeleton.fields_len() <= MAX_SKELETON_FIELDS as usize,
@@ -454,7 +612,7 @@ pub fn get_best_available_format_pattern<'a>(
         }
 
         if distance < closest_distance {
-            closest_format_pattern = Some(available_format_pattern);
+            closest_format_pattern = Some(available_format_pattern.pattern);
             closest_distance = distance;
             closest_missing_fields = missing_fields;
         }
@@ -467,7 +625,7 @@ pub fn get_best_available_format_pattern<'a>(
         return BestSkeleton::NoMatch;
     }
     if closest_distance >= SKELETON_EXTRA_SYMBOL {
-        return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
+        return BestSkeleton::MissingOrExtraFields(&closest_format_pattern);
     }
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
 }
@@ -518,14 +676,15 @@ mod test {
         let components = components::Bag::default();
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
-        let available_format_patterns =
-            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
 
-        match get_best_available_format_pattern(available_format_patterns, &requested_fields) {
+        match get_best_available_format_pattern(
+            &data_provider.patterns.date_time.skeletons,
+            &requested_fields,
+        ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
-                    available_format_pattern.pattern.to_string(),
+                    available_format_pattern.to_string(),
                     String::from("MMM d, y")
                 )
             }
@@ -551,15 +710,13 @@ mod test {
         };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
-        let available_format_patterns =
-            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
 
-        match get_best_available_format_pattern(available_format_patterns, &requested_fields) {
+        match get_best_available_format_pattern(
+            &data_provider.patterns.date_time.skeletons,
+            &requested_fields,
+        ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
-                assert_eq!(
-                    available_format_pattern.pattern.to_string(),
-                    String::from("L")
-                )
+                assert_eq!(available_format_pattern.to_string(), String::from("L"))
             }
             best => panic!("Unexpected {:?}", best),
         };
@@ -581,11 +738,12 @@ mod test {
         };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
-        let available_format_patterns =
-            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
 
         assert_eq!(
-            get_best_available_format_pattern(available_format_patterns, &requested_fields),
+            get_best_available_format_pattern(
+                &data_provider.patterns.date_time.skeletons,
+                &requested_fields
+            ),
             BestSkeleton::NoMatch,
             "No match was found"
         );
@@ -609,11 +767,12 @@ mod test {
         };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
-        let available_format_patterns =
-            get_available_format_patterns(&data_provider.patterns.date_time.skeletons);
 
         assert_eq!(
-            get_best_available_format_pattern(available_format_patterns, &requested_fields),
+            get_best_available_format_pattern(
+                &data_provider.patterns.date_time.skeletons,
+                &requested_fields
+            ),
             BestSkeleton::NoMatch,
             "No match was found"
         );
