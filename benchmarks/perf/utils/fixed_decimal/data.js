@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618333929167,
+  "lastUpdate": 1618338369806,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3839,6 +3839,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 156047,
             "range": "± 2024",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6d1401e9b965cb457c74c4776ffe8c833f003a7",
+          "message": "Updating to CLDR JSON 39.0.0-BETA2 (#640)",
+          "timestamp": "2021-04-13T13:19:44-05:00",
+          "tree_id": "c600d8d68f585239bff14ac35f1f20125449c25a",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6d1401e9b965cb457c74c4776ffe8c833f003a7"
+        },
+        "date": 1618338367806,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 153495,
+            "range": "± 2405",
             "unit": "ns/iter"
           }
         ]
