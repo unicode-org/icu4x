@@ -145,9 +145,7 @@ impl Transform {
                     }
                     tfields.push((
                         tkey,
-                        Value::from_vec_unchecked(
-                            current_tvalue.drain(..).flatten().collect(),
-                        ),
+                        Value::from_vec_unchecked(current_tvalue.drain(..).flatten().collect()),
                     ));
                     current_tkey = None;
                     continue;
