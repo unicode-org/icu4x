@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618332430017,
+  "lastUpdate": 1618333912493,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4859,6 +4859,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37370071,
             "range": "± 130699",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "180d4e5a43780ab078b462c00dc8f0328b5cc00b",
+          "message": "Optimize performance of LocaleCanonicalizer::maximize. (#504)\n\n* Add From<Subtag> for TinyStr.\r\n\r\n* Optimize performance of LocaleCanonicalizer by storing resources in custom data structures.",
+          "timestamp": "2021-04-13T10:05:36-07:00",
+          "tree_id": "a5a6b61f4fd777a23b2707a291d281b1845fba71",
+          "url": "https://github.com/unicode-org/icu4x/commit/180d4e5a43780ab078b462c00dc8f0328b5cc00b"
+        },
+        "date": 1618333911115,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33691394,
+            "range": "± 1117283",
             "unit": "ns/iter"
           }
         ]
