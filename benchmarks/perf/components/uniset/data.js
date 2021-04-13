@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618312270248,
+  "lastUpdate": 1618332430017,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4829,6 +4829,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36338891,
             "range": "± 865649",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9fae0980aa20781a223cc0647a7d9d06cdf607b2",
+          "message": "Fix the CI because of a components::Bag and Time Zone conflict (#639)",
+          "timestamp": "2021-04-13T11:40:58-05:00",
+          "tree_id": "98d433bad078190e2310a7d142c15366d82a060b",
+          "url": "https://github.com/unicode-org/icu4x/commit/9fae0980aa20781a223cc0647a7d9d06cdf607b2"
+        },
+        "date": 1618332429134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37370071,
+            "range": "± 130699",
             "unit": "ns/iter"
           }
         ]
