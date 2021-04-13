@@ -1,0 +1,87 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 1be0dbe..2c3d7bb 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -880,6 +880,7 @@ dependencies = [
+  "icu_benchmark_macros",
+  "icu_locid",
+  "icu_locid_macros",
++ "icu_pattern",
+  "icu_provider",
+  "icu_testdata",
+  "litemap",
+diff --git a/components/datetime/Cargo.toml b/components/datetime/Cargo.toml
+index 4a0a47a..1511f6a 100644
+--- a/components/datetime/Cargo.toml
++++ b/components/datetime/Cargo.toml
+@@ -31,6 +31,7 @@ litemap = { version = "0.1.1", path = "../../utils/litemap", features = ["serde"
+ tinystr = { version = "0.4.1" }
+ serde = { version = "1.0", features = ["derive"], optional = true }
+ smallvec = "1.4"
++icu_pattern = { path = "../../utils/pattern" }
+ 
+ [dev-dependencies]
+ criterion = "0.3"
+diff --git a/components/datetime/src/provider/helpers.rs b/components/datetime/src/provider/helpers.rs
+index 73ead0d..dcd1a76 100644
+--- a/components/datetime/src/provider/helpers.rs
++++ b/components/datetime/src/provider/helpers.rs
+@@ -94,7 +94,36 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
+             length::Date::Medium => &date_time.length_patterns.medium,
+             length::Date::Short => &date_time.length_patterns.short,
+         };
+-        Ok(Pattern::from_bytes_combination(s, date, time)?)
++        use std::convert::TryFrom;
++        use icu_pattern::InterpolatedKind;
++        use icu_pattern::InterpolatedPattern;
++        use crate::pattern::PatternItem;
++
++        let s: &str = &s;
++        let pattern = icu_pattern::Pattern::<usize>::try_from(s)
++            .unwrap();
++        let replacements: Vec<&[PatternItem]> = vec![
++            time.items(),
++            date.items(),
++        ];
++        let interpolated_pattern: InterpolatedPattern<PatternItem> = pattern.interpolate(&replacements)
++            .unwrap();
++
++        let mut result_pattern: Vec<PatternItem> = vec![];
++        for item in interpolated_pattern.into_iter() {
++            match item {
++                &InterpolatedKind::Element(ref elem) => {
++                    let elem: PatternItem = elem.clone().to_owned();
++                    result_pattern.push(elem);
++                },
++                &InterpolatedKind::Literal(lit) => {
++                    let s: String = lit.to_string();
++                    result_pattern.push(s.into());
++                }
++            }
++        }
++        Ok(result_pattern.into())
++        // Ok(Pattern::from_bytes_combination(s, date, time)?)
+     }
+ 
+     fn get_pattern_for_time_length(&self, length: length::Time) -> Result<Pattern> {
+diff --git a/utils/pattern/src/replacement.rs b/utils/pattern/src/replacement.rs
+index 9a0510d..e60f53d 100644
+--- a/utils/pattern/src/replacement.rs
++++ b/utils/pattern/src/replacement.rs
+@@ -125,6 +125,16 @@ impl<'r, E: 'r> ReplacementProvider<'r, E> for Vec<Vec<E>> {
+     }
+ }
+ 
++impl<'r, E: 'r> ReplacementProvider<'r, E> for Vec<&[E]> {
++    type Key = usize;
++    type Iter = std::slice::Iter<'r, E>;
++
++    fn take_replacement(&'r self, input: &usize) -> Option<Self::Iter> {
++        let replacement = self.get(*input)?;
++        Some(replacement.iter())
++    }
++}
++
+ impl<'r, E: 'r> ReplacementProvider<'r, E> for Vec<E> {
+     type Key = usize;
+     type Iter = std::iter::Once<&'r E>;
