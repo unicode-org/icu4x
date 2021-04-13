@@ -2,36 +2,6 @@
     {
         "input": {
             "locale": "en",
-            "value": "2020-01-21T08:25:07.000",
-            "options": {
-                "length": {
-                    "time": "full",
-                    "date": "full"
-                }
-            }
-        },
-        "output": {
-            "value": "Tuesday, January 21, 2020 at 8:25:07 AM zzzz"
-        }
-    },
-    {
-        "input": {
-            "locale": "en",
-            "value": "2020-09-10T13:34:59.000",
-            "options": {
-                "length": {
-                    "time": "long",
-                    "date": "long"
-                }
-            }
-        },
-        "output": {
-            "value": "September 10, 2020 at 1:34:59 PM z"
-        }
-    },
-    {
-        "input": {
-            "locale": "en",
             "value": "2020-02-20T00:12:00.000",
             "options": {
                 "length": {
@@ -95,13 +65,13 @@
             "value": "2020-03-21T08:25:07.000",
             "options": {
                 "length": {
-                    "time": "full",
-                    "date": "full"
+                    "time": "short",
+                    "date": "medium"
                 }
             }
         },
         "output": {
-            "value": "суббота, 21 марта 2020 г., 08:25:07 zzzz"
+            "value": "21 мар. 2020 г., 08:25"
         }
     }
 ]

@@ -3,24 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use serde::{Deserialize, Serialize};
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TimeZoneConfig {
+    pub time_zone_id: Option<String>,
+    pub metazone_id: Option<String>,
+    pub time_variant: Option<String>,
+}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Tests(pub Vec<Test>);
+pub struct TimeZoneTests(pub Vec<TimeZoneTest>);
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Test {
+pub struct TimeZoneTest {
     pub locale: String,
-    pub test_cases: Vec<TestCase>,
+    pub config: TimeZoneConfig,
+    pub date_time: String,
+    pub expectations: Vec<TimeZoneExpectation>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestCase {
-    pub date_times: Vec<String>,
-    pub expectations: Vec<Expectation>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Expectation {
+pub struct TimeZoneExpectation {
     pub patterns: Vec<String>,
     pub expected: String,
 }

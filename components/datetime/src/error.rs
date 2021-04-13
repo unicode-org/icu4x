@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fields::FieldSymbol;
 use crate::pattern;
 use crate::skeleton::SkeletonError;
 use icu_provider::prelude::DataError;
@@ -21,6 +22,8 @@ pub enum DateTimeFormatError {
     MissingInputField,
     /// An error from skeleton matching,
     Skeleton(SkeletonError),
+    /// Field unsupported for this type of date time format
+    UnsupportedField(FieldSymbol),
 }
 
 impl From<DataError> for DateTimeFormatError {

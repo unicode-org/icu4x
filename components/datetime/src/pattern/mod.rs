@@ -40,7 +40,8 @@ impl From<(FieldSymbol, FieldLength)> for PatternItem {
 impl TryFrom<(FieldSymbol, u8)> for PatternItem {
     type Error = Error;
     fn try_from(input: (FieldSymbol, u8)) -> Result<Self, Self::Error> {
-        let length = FieldLength::try_from(input.1).map_err(|_| Error::FieldTooLong(input.0))?;
+        let length =
+            FieldLength::try_from(input.1).map_err(|_| Error::FieldLengthInvalid(input.0))?;
         Ok(Self::Field(Field {
             symbol: input.0,
             length,

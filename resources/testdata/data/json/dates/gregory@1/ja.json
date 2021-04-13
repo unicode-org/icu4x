@@ -166,9 +166,13 @@
         "h": "aK時",
         "hm": "aK:mm",
         "hms": "aK:mm:ss",
+        "hmsv": "aK:mm:ss v",
+        "hmv": "aK:mm v",
         "H": "H時",
         "Hm": "H:mm",
         "Hms": "H:mm:ss",
+        "Hmsv": "H:mm:ss v",
+        "Hmv": "H:mm v",
         "ms": "mm:ss"
       }
     }

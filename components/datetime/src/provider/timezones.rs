@@ -30,7 +30,7 @@ macro_rules! map_access {
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
-                &self.0.get(key).unwrap()
+                self.0.get(key).unwrap()
             }
         }
     };
@@ -38,14 +38,14 @@ macro_rules! map_access {
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct TimeZoneFormatsV1<'s> {
     /// The hour format for displaying GMT offsets.
-    pub hour_format: Cow<'s, str>,
+    pub hour_format: (Cow<'s, str>, Cow<'s, str>),
     /// The localized GMT-offset format.
     pub gmt_format: Cow<'s, str>,
     /// The localized GMT format with no offset.
@@ -61,7 +61,7 @@ pub struct TimeZoneFormatsV1<'s> {
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -71,7 +71,7 @@ map_access!(ExemplarCitiesV1<'s> => Cow<'s, str>: 's);
 
 /// An ICU4X mapping to the long-form generic MetaZone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -81,7 +81,7 @@ map_access!(MetaZoneGenericNamesLongV1<'s> => Cow<'s, str>: 's);
 
 /// An ICU4X mapping to the short-form generic MetaZone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -92,7 +92,7 @@ map_access!(MetaZoneGenericNamesShortV1<'s> => Cow<'s, str>: 's);
 /// An ICU4X mapping to the long-form specific MetaZone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -103,7 +103,7 @@ map_access!(MetaZoneSpecificNamesLongV1<'s> => MetaZoneSpecificNamesV1<'s>: 's);
 /// An ICU4X mapping to the short-form specific MetaZone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -114,7 +114,7 @@ map_access!(MetaZoneSpecificNamesShortV1<'s> => MetaZoneSpecificNamesV1<'s>: 's)
 /// A general struct to hold MetaZone specific name variants.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

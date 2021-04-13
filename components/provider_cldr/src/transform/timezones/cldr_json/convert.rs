@@ -11,10 +11,18 @@ use icu_datetime::provider::timezones::{
 use litemap::LiteMap;
 use std::borrow::Cow;
 
+fn parse_hour_format<'d>(hour_format: &str) -> (Cow<'d, str>, Cow<'d, str>) {
+    // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
+    let index = hour_format.rfind(';').unwrap();
+    let positive = String::from(&hour_format[0..index]);
+    let negative = String::from(&hour_format[index + 1..]);
+    (Cow::Owned(positive), Cow::Owned(negative))
+}
+
 impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
     fn from(other: TimeZoneNames) -> Self {
         Self {
-            hour_format: other.hour_format.into(),
+            hour_format: parse_hour_format(&other.hour_format),
             gmt_format: other.gmt_format.into(),
             gmt_zero_format: other.gmt_zero_format.into(),
             region_format: other.region_format.into(),

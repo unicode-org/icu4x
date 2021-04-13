@@ -13,6 +13,8 @@ use tinystr::TinyStr8;
 pub enum DateTimeError {
     Parse(std::num::ParseIntError),
     Overflow { field: &'static str, max: usize },
+    Underflow { field: &'static str, min: isize },
+    InvalidTimeZoneOffset,
 }
 
 impl fmt::Display for DateTimeError {
@@ -20,6 +22,8 @@ impl fmt::Display for DateTimeError {
         match self {
             Self::Parse(err) => write!(f, "{}", err),
             Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
+            Self::Underflow { field, min } => write!(f, "{} must be between {}-0", field, min),
+            Self::InvalidTimeZoneOffset => write!(f, "Failed to parse time-zone offset"),
         }
     }
 }
@@ -75,10 +79,36 @@ pub trait IsoTimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
+/// Inputs relevant to formatting a time zone.
+///
+/// Only the GMT offset is required, since it is the final format fallback.
+///
+/// All data represented in TimeZoneInput should be locale-agnostic.
+pub trait TimeZoneInput {
+    /// The GMT offset in Nanoseconds.
+    fn gmt_offset(&self) -> GmtOffset;
+
+    /// The IANA TimeZone identifier.
+    /// TODO(#606) switch this to BCP-47 identifier.
+    fn time_zone_id(&self) -> Option<&str>;
+
+    /// The MetaZone identifier.
+    /// TODO(#528) switch to a compact, stable ID.
+    fn metazone_id(&self) -> Option<&str>;
+
+    /// The time variant (e.g. "daylight", "standard")
+    /// TODO(#619) use TinyStr for time variants.
+    fn time_variant(&self) -> Option<&str>;
+}
+
 /// A combination of a formattable calendar date and ISO time.
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
+/// A combination of a formattable calendar date, ISO time, and time zone.
+pub trait ZonedDateTimeInput: TimeZoneInput + DateTimeInput {}
+
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
+impl<T> ZonedDateTimeInput for T where T: TimeZoneInput + DateTimeInput {}
 
 /// A formattable calendar date and ISO time that takes the locale into account.
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
@@ -119,7 +149,46 @@ impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
     }
 }
 
+pub(crate) struct ZonedDateTimeInputWithLocale<'s, T: ZonedDateTimeInput> {
+    data: &'s T,
+    _first_weekday: u8,
+    _anchor_weekday: u8,
+}
+
+impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
+    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+        Self {
+            data,
+            // TODO(#488): Implement week calculations.
+            _first_weekday: 1,
+            _anchor_weekday: 4,
+        }
+    }
+}
+
 impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+    fn date_time(&self) -> &T {
+        self.data
+    }
+
+    fn year_week(&self) -> Year {
+        todo!("#488")
+    }
+
+    fn week_of_month(&self) -> WeekOfMonth {
+        todo!("#488")
+    }
+
+    fn week_of_year(&self) -> WeekOfYear {
+        todo!("#488")
+    }
+
+    fn flexible_day_period(&self) {
+        todo!("#487")
+    }
+}
+
+impl<'s, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'s, T> {
     fn date_time(&self) -> &T {
         self.data
     }
@@ -350,4 +419,109 @@ pub enum FractionalSecond {
     Millisecond(u16),
     Microsecond(u32),
     Nanosecond(u32),
+}
+
+/// The GMT offset in seconds for a `ZonedDateTime`.
+#[derive(Copy, Clone, Debug, Default)]
+pub struct GmtOffset(i32);
+
+impl GmtOffset {
+    pub fn try_new(seconds: i32) -> Result<Self, DateTimeError> {
+        // Valid range is from GMT-12 to GMT+14 in seconds.
+        if seconds < -(12 * 60 * 60) {
+            Err(DateTimeError::Underflow {
+                field: "GmtOffset",
+                min: -(12 * 60 * 60),
+            })
+        } else if seconds > (14 * 60 * 60) {
+            Err(DateTimeError::Overflow {
+                field: "GmtOffset",
+                max: (14 * 60 * 60),
+            })
+        } else {
+            Ok(Self(seconds))
+        }
+    }
+
+    /// Returns the raw offset value in seconds.
+    pub fn raw_offset_seconds(&self) -> i32 {
+        self.0
+    }
+
+    /// Returns `true` if the GMT offset is positive, otherwise `false`.
+    pub fn is_positive(&self) -> bool {
+        self.0 >= 0
+    }
+
+    /// Returns `true` if the GMT offset is zero, otherwise `false`.
+    pub fn is_zero(&self) -> bool {
+        self.0 == 0
+    }
+
+    /// Returns `true` if the GMT offset has non-zero minutes, otherwise `false`.
+    pub fn has_minutes(&self) -> bool {
+        self.0 % 3600 / 60 > 0
+    }
+
+    /// Returns `true` if the GMT offset has non-zero seconds, otherwise `false`.
+    pub fn has_seconds(&self) -> bool {
+        self.0 % 3600 % 60 > 0
+    }
+}
+
+impl FromStr for GmtOffset {
+    type Err = DateTimeError;
+
+    /// Parse a `GmtOffset` from a string.
+    ///
+    /// The offset must range from GMT-12 to GMT+14.
+    /// The string must be an ISO 8601 time zone designator:
+    /// e.g. Z
+    /// e.g. +05
+    /// e.g. +0500
+    /// e.g. +05:00
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_datetime::date::GmtOffset;
+    ///
+    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset.");
+    /// let offset1: GmtOffset = "-09".parse().expect("Failed to parse a GMT offset.");
+    /// let offset2: GmtOffset = "-0930".parse().expect("Failed to parse a GMT offset.");
+    /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
+    /// ```
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let offset_sign;
+        match input.chars().next() {
+            Some('+') => offset_sign = 1,
+            /* ASCII  */ Some('-') => offset_sign = -1,
+            /* U+2212 */ Some('−') => offset_sign = -1,
+            Some('Z') => return Ok(GmtOffset(0)),
+            _ => return Err(DateTimeError::InvalidTimeZoneOffset),
+        };
+
+        let seconds = match input.chars().count() {
+            /* ±hh */
+            3 => {
+                let hour: u8 = input[1..3].parse()?;
+                offset_sign * (hour as i32 * 60 * 60)
+            }
+            /* ±hhmm */
+            5 => {
+                let hour: u8 = input[1..3].parse()?;
+                let minute: u8 = input[3..5].parse()?;
+                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+            }
+            /* ±hh:mm */
+            6 => {
+                let hour: u8 = input[1..3].parse()?;
+                let minute: u8 = input[4..6].parse()?;
+                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+            }
+            _ => panic!("Invalid time-zone designator"),
+        };
+
+        Self::try_new(seconds)
+    }
 }

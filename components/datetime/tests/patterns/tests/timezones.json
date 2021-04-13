@@ -1,0 +1,401 @@
+[
+  {
+    "locale": "en",
+    "config": {
+      "time_zone_id": "America/Los_Angeles",
+      "metazone_id": "America_Pacific",
+      "time_variant": "daylight"
+    },
+    "date_time": "2021-01-11T12:00:00.000-07:00",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz"
+        ],
+        "expected": "PDT"
+      },
+      {
+        "patterns": [
+          "zzzz"
+        ],
+        "expected": "Pacific Daylight Time"
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "expected": "-0700"
+      },
+      {
+        "patterns": [
+          "O",
+          "OOOO",
+          "ZZZZ"
+        ],
+        "expected": "GMT-07:00"
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "expected": "-07:00"
+      },
+      {
+        "patterns": [
+          "v"
+        ],
+        "expected": "PT"
+      },
+      {
+        "patterns": [
+          "vvvv"
+        ],
+        "expected": "Pacific Time"
+      },
+      {
+        "patterns": [
+          "VVV"
+        ],
+        "expected": "Los Angeles"
+      },
+      {
+        "patterns": [
+          "VVVV"
+        ],
+        "expected": "Los Angeles Time"
+      },
+      {
+        "patterns": [
+          "x",
+          "X"
+        ],
+        "expected": "-07"
+      },
+      {
+        "patterns": [
+          "xx",
+          "XX",
+          "xxxx",
+          "XXXX"
+        ],
+        "expected": "-0700"
+      },
+      {
+        "patterns": [
+          "xxx",
+          "XXX",
+          "xxxxx",
+          "XXXXX"
+        ],
+        "expected": "-07:00"
+      }
+    ]
+  },
+  {
+    "locale": "ja",
+    "config": {
+      "time_zone_id": "Asia/Tokyo",
+      "metazone_id": "Japan",
+      "time_variant": null
+    },
+    "date_time": "2021-01-11T12:00:00.000+09:00",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz"
+        ],
+        "expected": "GMT+09:00"
+      },
+      {
+        "patterns": [
+          "zzzz"
+        ],
+        "expected": "GMT+09:00"
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "expected": "+0900"
+      },
+      {
+        "patterns": [
+          "O",
+          "OOOO",
+          "ZZZZ"
+        ],
+        "expected": "GMT+09:00"
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "expected": "+09:00"
+      },
+      {
+        "patterns": [
+          "v"
+        ],
+        "expected": "東京時間"
+      },
+      {
+        "patterns": [
+          "vvvv"
+        ],
+        "expected": "日本時間"
+      },
+      {
+        "patterns": [
+          "VVV"
+        ],
+        "expected": "東京"
+      },
+      {
+        "patterns": [
+          "VVVV"
+        ],
+        "expected": "東京時間"
+      },
+      {
+        "patterns": [
+          "x",
+          "X"
+        ],
+        "expected": "+09"
+      },
+      {
+        "patterns": [
+          "xx",
+          "XX",
+          "xxxx",
+          "XXXX"
+        ],
+        "expected": "+0900"
+      },
+      {
+        "patterns": [
+          "xxx",
+          "XXX",
+          "xxxxx",
+          "XXXXX"
+        ],
+        "expected": "+09:00"
+      }
+    ]
+  },
+  {
+    "locale": "ru",
+    "config": {
+      "time_zone_id": "Antarctica/Troll",
+      "metazone_id": "GMT",
+      "time_variant": null
+    },
+    "date_time": "2021-01-11T12:00:00.000Z",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz"
+        ],
+        "expected": "GMT"
+      },
+      {
+        "patterns": [
+          "zzzz"
+        ],
+        "expected": "GMT"
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "expected": "+0000"
+      },
+      {
+        "patterns": [
+          "O",
+          "OOOO",
+          "ZZZZ"
+        ],
+        "expected": "GMT"
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "expected": "Z"
+      },
+      {
+        "patterns": [
+          "v"
+        ],
+        "expected": "Тролль"
+      },
+      {
+        "patterns": [
+          "vvvv"
+        ],
+        "expected": "Среднее время по Гринвичу"
+      },
+      {
+        "patterns": [
+          "VVV"
+        ],
+        "expected": "Тролль"
+      },
+      {
+        "patterns": [
+          "VVVV"
+        ],
+        "expected": "Тролль"
+      },
+      {
+        "patterns": [
+          "x"
+        ],
+        "expected": "Z"
+      },
+      {
+        "patterns": [
+          "X"
+        ],
+        "expected": "+00"
+      },
+      {
+        "patterns": [
+          "xx",
+          "xxxx"
+        ],
+        "expected": "Z"
+      },
+      {
+        "patterns": [
+          "XX",
+          "XXXX"
+        ],
+        "expected": "+0000"
+      },
+      {
+        "patterns": [
+          "xxx",
+          "xxxxx"
+        ],
+        "expected": "Z"
+      },
+      {
+        "patterns": [
+          "XXX",
+          "XXXXX"
+        ],
+        "expected": "+00:00"
+      }
+    ]
+  },
+  {
+    "locale": "sr-Cyrl",
+    "config": {
+      "time_zone_id": "Asia/Katmandu",
+      "metazone_id": "Nepal",
+      "time_variant": null
+    },
+    "date_time": "2021-01-11T12:00:00.000+05:45",
+    "expectations": [
+      {
+        "patterns": [
+          "z",
+          "zz",
+          "zzz"
+        ],
+        "expected": "GMT+05:45"
+      },
+      {
+        "patterns": [
+          "zzzz"
+        ],
+        "expected": "GMT+05:45"
+      },
+      {
+        "patterns": [
+          "Z",
+          "ZZ",
+          "ZZZ"
+        ],
+        "expected": "+0545"
+      },
+      {
+        "patterns": [
+          "O",
+          "OOOO",
+          "ZZZZ"
+        ],
+        "expected": "GMT+05:45"
+      },
+      {
+        "patterns": [
+          "ZZZZZ"
+        ],
+        "expected": "+05:45"
+      },
+      {
+        "patterns": [
+          "v"
+        ],
+        "expected": "Катманду"
+      },
+      {
+        "patterns": [
+          "vvvv"
+        ],
+        "expected": "Непал време"
+      },
+      {
+        "patterns": [
+          "VVV"
+        ],
+        "expected": "Катманду"
+      },
+      {
+        "patterns": [
+          "VVVV"
+        ],
+        "expected": "Катманду"
+      },
+      {
+        "patterns": [
+          "x",
+          "X"
+        ],
+        "expected": "+0545"
+      },
+      {
+        "patterns": [
+          "xx",
+          "XX",
+          "xxxx",
+          "XXXX"
+        ],
+        "expected": "+0545"
+      },
+      {
+        "patterns": [
+          "xxx",
+          "XXX",
+          "xxxxx",
+          "XXXXX"
+        ],
+        "expected": "+05:45"
+      }
+    ]
+  }
+]

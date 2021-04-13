@@ -9,7 +9,7 @@ use std::{
 
 #[derive(Debug, PartialEq)]
 pub enum LengthError {
-    TooLong,
+    InvalidLength,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
@@ -26,6 +26,19 @@ pub enum FieldLength {
     Six = 6,
 }
 
+impl From<FieldLength> for u8 {
+    fn from(length: FieldLength) -> u8 {
+        match length {
+            FieldLength::One => 1,
+            FieldLength::TwoDigit => 2,
+            FieldLength::Abbreviated => 3,
+            FieldLength::Wide => 4,
+            FieldLength::Narrow => 5,
+            FieldLength::Six => 6,
+        }
+    }
+}
+
 macro_rules! try_field_length {
     ($i:ty) => {
         impl TryFrom<$i> for FieldLength {
@@ -39,7 +52,7 @@ macro_rules! try_field_length {
                     4 => Self::Wide,
                     5 => Self::Narrow,
                     6 => Self::Six,
-                    _ => return Err(LengthError::TooLong),
+                    _ => return Err(LengthError::InvalidLength),
                 })
             }
         }

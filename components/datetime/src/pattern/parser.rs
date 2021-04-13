@@ -387,6 +387,34 @@ mod tests {
                     (fields::DayPeriod::NoonMidnight.into(), FieldLength::One).into(),
                 ],
             ),
+            (
+                "z",
+                vec![(fields::TimeZone::LowerZ.into(), FieldLength::One).into()],
+            ),
+            (
+                "Z",
+                vec![(fields::TimeZone::UpperZ.into(), FieldLength::One).into()],
+            ),
+            (
+                "O",
+                vec![(fields::TimeZone::UpperO.into(), FieldLength::One).into()],
+            ),
+            (
+                "v",
+                vec![(fields::TimeZone::LowerV.into(), FieldLength::One).into()],
+            ),
+            (
+                "V",
+                vec![(fields::TimeZone::UpperV.into(), FieldLength::One).into()],
+            ),
+            (
+                "x",
+                vec![(fields::TimeZone::LowerX.into(), FieldLength::One).into()],
+            ),
+            (
+                "X",
+                vec![(fields::TimeZone::UpperX.into(), FieldLength::One).into()],
+            ),
         ];
 
         for (string, pattern) in samples {
@@ -400,7 +428,7 @@ mod tests {
 
         let broken = vec![(
             "yyyyyyy",
-            Error::FieldTooLong(FieldSymbol::Year(fields::Year::Calendar)),
+            Error::FieldLengthInvalid(FieldSymbol::Year(fields::Year::Calendar)),
         )];
 
         for (string, error) in broken {

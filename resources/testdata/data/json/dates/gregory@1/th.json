@@ -177,9 +177,13 @@
         "h": "h a",
         "hm": "h:mm a",
         "hms": "h:mm:ss a",
+        "hmsv": "h:mm:ss a v",
+        "hmv": "h:mm น. a v",
         "H": "HH",
         "Hm": "HH:mm น.",
         "Hms": "HH:mm:ss",
+        "Hmsv": "HH:mm:ss v",
+        "Hmv": "HH:mm v",
         "ms": "mm:ss",
         "mmss": "mm:ss"
       }

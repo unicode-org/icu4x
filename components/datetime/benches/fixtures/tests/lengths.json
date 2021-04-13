@@ -42,24 +42,6 @@
                 "options": {
                     "length": {
                         "date": null,
-                        "time": "full"
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": null,
-                        "time": "long"
-                    }
-                }
-            },
-            {
-                "locale": "ru",
-                "options": {
-                    "length": {
-                        "date": null,
                         "time": "medium"
                     }
                 }
@@ -78,7 +60,7 @@
                 "options": {
                     "length": {
                         "date": "full",
-                        "time": "full"
+                        "time": "medium"
                     }
                 }
             },
@@ -87,7 +69,7 @@
                 "options": {
                     "length": {
                         "date": "long",
-                        "time": "long"
+                        "time": "short"
                     }
                 }
             },

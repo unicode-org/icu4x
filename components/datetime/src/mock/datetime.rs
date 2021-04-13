@@ -21,7 +21,7 @@ use tinystr::tinystr8;
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::mock::MockDateTime;
+/// use icu_datetime::mock::datetime::MockDateTime;
 ///
 /// let dt1 = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
 ///     .expect("Failed to construct DateTime.");
@@ -76,7 +76,7 @@ impl MockDateTime {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::mock::MockDateTime;
+    /// use icu_datetime::mock::datetime::MockDateTime;
     ///
     /// let dt = MockDateTime::try_new(2020, 9, 24, 13, 21, 0)
     ///     .expect("Failed to construct a DateTime");
@@ -112,7 +112,7 @@ impl FromStr for MockDateTime {
     /// string must take a specific form of the ISO 8601 format: `YYYY-MM-DDThh:mm:ss`.
     ///
     /// ```
-    /// use icu_datetime::mock::MockDateTime;
+    /// use icu_datetime::mock::datetime::MockDateTime;
     ///
     /// let date: MockDateTime = "2020-10-14T13:21:00".parse()
     ///     .expect("Failed to parse a date time.");

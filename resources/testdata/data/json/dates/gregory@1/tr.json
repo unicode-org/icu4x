@@ -172,9 +172,13 @@
         "h": "a h",
         "hm": "a h:mm",
         "hms": "a h:mm:ss",
+        "hmsv": "a h:mm:ss v",
+        "hmv": "a h:mm v",
         "H": "HH",
         "Hm": "HH:mm",
         "Hms": "HH:mm:ss",
+        "Hmsv": "HH:mm:ss v",
+        "Hmv": "HH:mm v",
         "ms": "mm:ss",
         "mmss": "mm:ss"
       }
