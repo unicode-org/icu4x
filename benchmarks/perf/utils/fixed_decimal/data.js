@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618294779489,
+  "lastUpdate": 1618295217538,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3719,6 +3719,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 114445,
             "range": "± 4548",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "076a9194e1d28f1cbbaad6b9ae75969404d54e59",
+          "message": "Add comment discouraging use of uniset::props (#627)",
+          "timestamp": "2021-04-13T01:19:59-05:00",
+          "tree_id": "23a139523c994f11ba25715f8f6f4424a9868110",
+          "url": "https://github.com/unicode-org/icu4x/commit/076a9194e1d28f1cbbaad6b9ae75969404d54e59"
+        },
+        "date": 1618295216689,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155738,
+            "range": "± 489",
             "unit": "ns/iter"
           }
         ]
