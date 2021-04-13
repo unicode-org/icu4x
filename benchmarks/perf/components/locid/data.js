@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618338386888,
+  "lastUpdate": 1618339040175,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5285,6 +5285,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4758,
             "range": "± 175",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d99323dc945a09af01d1147477584b469b6fe4b",
+          "message": "Mute clippy warnings in a few places, apply the suggestions in remaining cases. (#642)\n\n* Mute clippy warnings in a few places, apply the suggestions in remaining cases.\r\n\r\n* Fix clippy fmt\r\n\r\n* Separate line after license header\r\n\r\n* Remove accidentally added diffs",
+          "timestamp": "2021-04-13T11:30:56-07:00",
+          "tree_id": "b3ec6302e8f8bfcb8fea56433fbc548249ed7289",
+          "url": "https://github.com/unicode-org/icu4x/commit/6d99323dc945a09af01d1147477584b469b6fe4b"
+        },
+        "date": 1618339036508,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2830,
+            "range": "± 221",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4503,
+            "range": "± 277",
             "unit": "ns/iter"
           }
         ]
