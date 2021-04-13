@@ -69,6 +69,51 @@ end
 echo "License header check complete"
 '''
 
+[tasks.generate-readmes]
+description = "Automatically generate README.md for each component."
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern = set "./**/Cargo.toml"
+template = canonicalize README.tpl
+
+cargo_list = exec cargo --list
+if not contains ${cargo_list.stdout} "readme"
+    trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
+end
+
+handle = glob_array ${glob_pattern}
+for path in ${handle}
+    root_dir = dirname ${path}
+    if not is_empty ${root_dir}
+        echo "Automatically generating ${root_dir}/README.md"
+        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+    end
+end
+'''
+
+[tasks.generated-readme-check]
+description = "Check that README.md was properly generated for each component."
+category = "ICU4X Development"
+dependencies = [
+    "generate-readmes"
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1 -uno
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    if contains ${output.stdout} README.md
+        trigger_error "Found non-automatically generated README.md:\n ${output.stdout}"
+    end
+end
+'''
+
+
 ### META TASKS ###
 
 [tasks.quick]
@@ -79,6 +124,7 @@ dependencies = [
     "fmt-check",
     "clippy-all",
     "license-header-check",
+    "generated-readme-check",
     "test-capi",
 ]
 

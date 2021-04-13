@@ -1,12 +1,12 @@
 # fixed_decimal [![crates.io](http://meritbadge.herokuapp.com/fixed_decimal)](https://crates.io/crates/fixed_decimal)
 
-`fixed_decimal` is a utility crate of the `ICU4X` project.
+`fixed_decimal` is a utility crate of the [`ICU4X`] project.
 
-It includes `FixedDecimal`, a core API for representing numbers in a human-readable form
+It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
 appropriate for formatting and plural rule selection. It is optimized for operations involving
 the individual digits of a number.
 
-# Example
+## Example
 
 ```rust
 use fixed_decimal::FixedDecimal;
@@ -34,6 +34,8 @@ assert_eq!(
 );
 ```
 
-# More Information
+[`ICU4X`]: ../icu/index.html
+
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

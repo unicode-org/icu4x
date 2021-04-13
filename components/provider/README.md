@@ -1,62 +1,106 @@
 # icu_provider [![crates.io](http://meritbadge.herokuapp.com/icu_provider)](https://crates.io/crates/icu_provider)
 
-`icu_provider` is one of the `ICU4X` components.
+`icu_provider` is one of the [`ICU4X`] components.
 
 It defines traits and structs for transmitting data through the ICU4X locale data pipeline.
-The primary trait is `DataProvider`. It has one method, which transforms a `Request` into
-a `Response`:
+The primary trait is [`DataProvider`]. It has one method, which transforms a [`Request`] into
+a [`Response`]:
 
-```
-fn load(&self, req: &DataRequest) -> Result<DataResponseMetadata<'d>, DataError>
+```rust
+fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
 ```
 
-A Request contains a `ResourceKey` (a composition of a `Category` and sub-category, e.g.,
-"plurals/cardinal@1") and `ResourceOptions` (a language identifier and optional variant, e.g.,
+A [`Request`] contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,
+"plurals/cardinal@1") and [`ResourceOptions`] (a language identifier and optional variant, e.g.,
 "fr") being requested. The Response contains the data payload corresponding to the Request.
 
-The most common types required for ICU4X `DataProvider` are included via the prelude:
+The most common types required for ICU4X [`DataProvider`] are included via the prelude:
 
 ```rust
 use icu_provider::prelude::*;
-use std::any::TypeId;
-
-// Types included:
-println!("{:?}", TypeId::of::<DataProvider>());
-println!("{:?}", TypeId::of::<DataError>());
-println!("{:?}", TypeId::of::<ResourceKey>());
-println!("{:?}", TypeId::of::<ResourceOptions>());
-println!("{:?}", TypeId::of::<ResourceCategory>());
-println!("{:?}", TypeId::of::<DataRequest>());
-println!("{:?}", TypeId::of::<DataResponse>());
-println!("{:?}", TypeId::of::<DataResponseBuilder>());
-
-// Macros included:
-assert_eq!("plurals/cardinal@1", icu_resc_key!(plurals: cardinal@1).to_string());
 ```
 
-## Types of Data Providers
+### Concrete Implementations of Data Providers
 
-Any object implementing `DataProvider` can be used to supply ICU4X with locale data. ICU4X ships
+Any object implementing [`DataProvider`] can be used to supply ICU4X with locale data. ICU4X ships
 with some pre-built data providers:
 
-- `FsDataProvider` reads structured data from the
-  filesystem. It can also write out that filesystem structure.
-- `CldrJsonDataProvider` reads structured
+- [`CldrJsonDataProvider`](../icu_provider_cldr/transform/struct.CldrJsonDataProvider.html) reads structured
   data directly from CLDR source files.
+- [`FsDataProvider`](../icu_provider_fs/struct.FsDataProvider.html) reads structured data from the
+  filesystem. It can also write out that filesystem structure. More efficient than CldrJsonDataProvider.
 
-## Iterable Data Providers
+This crate also contains some concrete implementations for testing purposes:
 
-Data providers can implement `ResourceOptionsCollection`, allowing them to be used via the
-auto-implemented trait `IterableDataProvider`. This allows iteration over all `ResourceOptions`
-instances supported for a certain key in the data provider. This can be useful when
-transforming data between storage formats. For more information, see the `iter` module.
+- [`InvariantDataProvider`] returns fixed data that does not vary by locale.
+- [`StructProvider`] wraps a particular instance of a struct and returns it.
+- [`HelloWorldProvider`] returns "hello world" strings in several languages.
 
-## `InvariantDataProvider`
+### Types and Lifetimes
 
-For testing or development purposes, this crate also offers `InvariantDataProvider`, which
-returns fixed data that does not vary by locale. You must enable `InvariantDataProvider` via the
-`"invariant"` feature in your Cargo.toml file.
+All types `T` compatible with `Cow` and `Debug` can be passed through the data provider.
 
-# More Information
+Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
+returned by the DataProvider, which is a `Cow<'d, T>`.
+
+Objects returned by DataProvider can have their own borrowed fields, which enables zero-copy
+deserialization. By convention, the lifetime `'s` is used to constrain data struct fields. In
+general, `'s` should exceed `'d` (i.e., `'s: 'd`), such that the data is valid for as long as
+the `Cow<'d, T>` is valid.
+
+### Additional Traits
+
+#### `IterableDataProvider`
+
+Data providers can implement [`IterableDataProvider`], allowing iteration over all [`ResourceOptions`]
+instances supported for a certain key in the data provider.
+
+For more information, see the `iter` module.
+
+#### `SerdeDeDataProvider`
+
+*Enabled with the "provider_serde" feature*
+
+The trait [`SerdeDeDataProvider`] removes the type argument from `DataProvider` and requires
+that all data structs be deserializable via Serde. This allows for a Serde-enabled provider
+to be saved as a trait object without being specific to a data struct type.
+
+#### `DataProvider<dyn SerdeSeDataStruct>`
+
+*Enabled with the "provider_serde" feature*
+
+Data providers capable of returning opaque [`SerdeSeDataStruct`] trait objects can be used as
+input to a data exporter, such as when writing data to the filesystem.
+
+This trait is normally implemented using the [`impl_dyn_provider!`] macro.
+
+#### `DataProvider<dyn ErasedDataStruct>`
+
+The trait [`ErasedDataProvider`] removes the type argument from `DataProvider` and requires
+that all data structs be convertible to the `Any` type. This enables the processing of data
+without the caller knowing the underlying data struct.
+
+Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
+other bulk data operations.
+
+This trait is normally implemented using the [`impl_dyn_provider!`] macro.
+
+[`ICU4X`]: ../icu/index.html
+[`DataProvider`]: data_provider::DataProvider
+[`Request`]: data_provider::DataRequest
+[`Response`]: data_provider::DataResponse
+[`ResourceKey`]: resource::ResourceKey
+[`Category`]: resource::ResourceCategory
+[`ResourceOptions`]: resource::ResourceOptions
+[`IterableDataProvider`]: iter::IterableDataProvider
+[`InvariantDataProvider`]: inv::InvariantDataProvider
+[`StructProvider`]: struct_provider::StructProvider
+[`HelloWorldProvider`]: hello_world::HelloWorldProvider
+[`ErasedDataProvider`]: erased::ErasedDataProvider
+[`SerdeDeDataProvider`]: serde::SerdeDeDataProvider
+[`SerdeSeDataStruct`]: serde::SerdeSeDataStruct
+[`impl_dyn_provider!`]: impl_dyn_provider
+
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

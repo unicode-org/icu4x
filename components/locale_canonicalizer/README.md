@@ -1,6 +1,6 @@
-# icu4x [![crates.io](http://meritbadge.herokuapp.com/icu4x)](https://crates.io/crates/icu4x)
+# icu_locale_canonicalizer [![crates.io](http://meritbadge.herokuapp.com/icu_locale_canonicalizer)](https://crates.io/crates/icu_locale_canonicalizer)
 
-`icu4x` is an alias to the [`icu`](../icu/index.html) package.
+
 
 ## More Information
 

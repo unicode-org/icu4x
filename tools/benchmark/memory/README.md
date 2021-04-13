@@ -1,6 +1,6 @@
-# icu4x [![crates.io](http://meritbadge.herokuapp.com/icu4x)](https://crates.io/crates/icu4x)
+# icu_benchmark_memory [![crates.io](http://meritbadge.herokuapp.com/icu_benchmark_memory)](https://crates.io/crates/icu_benchmark_memory)
 
-`icu4x` is an alias to the [`icu`](../icu/index.html) package.
+
 
 ## More Information
 

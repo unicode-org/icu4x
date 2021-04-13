@@ -4,7 +4,8 @@
 
 //! `icu` is the main meta-package of the `ICU4X` project.
 //!
-//! It provides a comperhensive selection of Unicode Internationalization Components
+//! It provides a comprehensive selection of
+//! [Unicode Internationalization Components](http://site.icu-project.org/)
 //! in their canonical configurations intended to enable software
 //! internationalization capabilities.
 //!

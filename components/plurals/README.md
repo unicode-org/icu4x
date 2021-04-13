@@ -1,6 +1,6 @@
 # icu_plurals [![crates.io](http://meritbadge.herokuapp.com/icu_plurals)](https://crates.io/crates/icu_plurals)
 
-`icu_plurals` is one of the `ICU4X` components.
+`icu_plurals` is one of the [`ICU4X`] components.
 
 This API provides functionality to determine the plural category
 appropriate for a given number in a given language.
@@ -15,11 +15,11 @@ two variants of the message:
 The former variant is used when the placeholder variable has value `1`,
 while the latter is used for all other values of the variable.
 
-Unicode defines `Language Plural Rules` as a mechanism to codify those
+Unicode defines [`Language Plural Rules`] as a mechanism to codify those
 variants and provides data and algorithms to calculate
-appropriate `Plural Category`.
+appropriate [`Plural Category`].
 
-# Examples
+## Examples
 
 ```rust
 use icu_locid_macros::langid;
@@ -35,28 +35,34 @@ let pr = PluralRules::try_new(lid, &provider, PluralRuleType::Cardinal)
 assert_eq!(pr.select(5_usize), PluralCategory::Other);
 ```
 
-## Plural Rules
+### Plural Rules
 
-The crate provides the main struct `PluralRules` which handles selection
-of the correct `Plural Category` for a given language and `Plural Type`.
+The crate provides the main struct [`PluralRules`] which handles selection
+of the correct [`Plural Category`] for a given language and [`Plural Type`].
 
-## Plural Category
+### Plural Category
 
-Every number in every language belongs to a certain `Plural Category`.
+Every number in every language belongs to a certain [`Plural Category`].
 For example, Polish language uses four:
 
-* `One`: `1 miesiąc`
-* `Few`: `2 miesiące`
-* `Many`: `5 miesięcy`
-* `Other`: `1.5 miesiąca`
+* [`One`](PluralCategory::One): `1 miesiąc`
+* [`Few`](PluralCategory::Few): `2 miesiące`
+* [`Many`](PluralCategory::Many): `5 miesięcy`
+* [`Other`](PluralCategory::Other): `1.5 miesiąca`
 
-## Plural Rule Type
+### Plural Rule Type
 
 Plural rules depend on the use case. This crate supports two types of plural rules:
 
-* `Cardinal`: `3 doors`, `1 month`, `10 dollars`
-* `Ordinal`: `1st place`, `10th day`, `11th floor`
+* [`Cardinal`](PluralRuleType::Cardinal): `3 doors`, `1 month`, `10 dollars`
+* [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
 
-# More Information
+[`ICU4X`]: ../icu/index.html
+[`Plural Type`]: PluralRuleType
+[`Plural Category`]: PluralCategory
+[`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
+[`CLDR`]: http://cldr.unicode.org/
+
+## More Information
 
 For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

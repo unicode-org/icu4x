@@ -12,6 +12,7 @@ edition = "2018"
 
 [lib]
 crate-type = ["staticlib", "rlib"]
+path = "src/lib.rs"
 
 [dependencies]
 icu_locid = { path = "../locid" }

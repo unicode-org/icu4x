@@ -18,6 +18,9 @@ fmt-check = "fmt -- --check"
 # Check for license headers
 license-check = "make license-header-check"
 
+# Check for generated README.md
+readme-check = "make generated-readme-check"
+
 # Run Clippy on all code paths
 # unknown-clippy-lints: to allow us to work with nightly clippy lints that we don't CI
 # field-reassign-with-default: https://github.com/rust-lang/rust-clippy/issues/6559 (fixed in nightly but not stable)

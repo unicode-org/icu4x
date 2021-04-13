@@ -59,8 +59,12 @@ export = ["static_assertions", "log"]
 export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
 bench = []
 
+[lib]
+path = "src/lib.rs"
+
 [[bin]]
 name = "icu4x-cldr-export"
+path = "src/bin/icu4x-cldr-export.rs"
 required-features = [ "export-bin" ]
 
 [[bench]]

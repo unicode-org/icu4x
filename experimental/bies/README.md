@@ -1,5 +1,4 @@
-BIES Algorithms
-===============
+# bies [![crates.io](http://meritbadge.herokuapp.com/bies)](https://crates.io/crates/bies)
 
 The algorithms in this project convert from a BIES matrix (the output of the LSTM segmentation neural network) to concrete segment boundaries.  In BIES, B = beginning of segment; I = inside segment; E = end of segment; and S = single segment (both beginning and end).
 
@@ -9,7 +8,7 @@ These algorithms always produce valid breakpoint positions (at grapheme cluster 
 
 For example, suppose you had the following BIES matrix:
 
-```
+<pre>
 |   B   |   I   |   E   |   S   |
 |-------|-------|-------|-------|
 | 0.01  | 0.01  | 0.01  | 0.97  |
@@ -20,14 +19,14 @@ For example, suppose you had the following BIES matrix:
 | 0.01  | 0.01  | 0.01  | 0.97  |
 | 0.97  | 0.01  | 0.01  | 0.01  |
 | 0.01  | 0.01  | 0.97  | 0.01  |
-```
+</pre>
 
 This matrix resolves to:
 
-```
+<pre>
 01234567
 SBIIESBE
-```
+</pre>
 
 The breakpoints are then: 0, 1, 5, and 8 (four segments).
 
@@ -44,3 +43,8 @@ The following algorithms are implemented:
 **2a:** Step through each element in the BIES sequence. For each element, look at the triplet containing the element and both of its neighbors. By induction, assume the first element in the triplet is correct. Now, depending on whether there is a code point boundary following the element, calculate the probabilities of all valid BIES for the triplet, and based on those results, pick the most likely value for the current element.
 
 **3a:** Exhaustively check the probabilities of all possible BIES for the string. This algorithm has exponential runtime.
+
+
+## More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).

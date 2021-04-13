@@ -163,3 +163,4 @@ icu4x-gen-testdata = [
 [[bin]]
 name = "icu4x-gen-testdata"
 required-features = ["icu4x-gen-testdata"]
+path = "src/bin/icu4x-gen-testdata.rs"
