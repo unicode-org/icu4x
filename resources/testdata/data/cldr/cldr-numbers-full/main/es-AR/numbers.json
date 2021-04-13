@@ -3,7 +3,7 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "38"
+          "_cldrVersion": "39"
         },
         "language": "es",
         "territory": "AR"
@@ -13,7 +13,7 @@
         "otherNumberingSystems": {
           "native": "latn"
         },
-        "minimumGroupingDigits": "2",
+        "minimumGroupingDigits": "1",
         "symbols-numberSystem-latn": {
           "decimal": ",",
           "group": ".",

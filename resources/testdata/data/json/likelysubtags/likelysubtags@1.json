@@ -71,11 +71,6 @@
       "und-GN"
     ],
     [
-      "mis",
-      "Medf",
-      "und-NG"
-    ],
-    [
       "mn",
       "Mong",
       "und-CN"
@@ -1483,6 +1478,10 @@
     [
       "dje",
       "und-Latn-NE"
+    ],
+    [
+      "dmf",
+      "und-Medf-NG"
     ],
     [
       "dnj",
@@ -3465,10 +3464,6 @@
       "und-Latn-ID"
     ],
     [
-      "mis",
-      "und-Hatr-IQ"
-    ],
-    [
       "miw",
       "und-Latn-ZZ"
     ],
@@ -5177,6 +5172,10 @@
       "und-Latn-ZZ"
     ],
     [
+      "udi",
+      "und-Aghb-RU"
+    ],
+    [
       "udm",
       "und-Cyrl-RU"
     ],
@@ -6029,7 +6028,7 @@
     ],
     [
       "Aghb",
-      "lez-RU"
+      "udi-RU"
     ],
     [
       "Ahom",
@@ -6224,10 +6223,6 @@
       "zh-TW"
     ],
     [
-      "Hatr",
-      "mis-IQ"
-    ],
-    [
       "Hebr",
       "he-IL"
     ],
@@ -6361,7 +6356,7 @@
     ],
     [
       "Medf",
-      "mis-NG"
+      "dmf-NG"
     ],
     [
       "Mend",

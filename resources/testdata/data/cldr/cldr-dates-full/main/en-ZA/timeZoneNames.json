@@ -3,7 +3,7 @@
     "en-ZA": {
       "identity": {
         "version": {
-          "_cldrVersion": "38"
+          "_cldrVersion": "39"
         },
         "language": "en",
         "territory": "ZA"
@@ -1143,9 +1143,6 @@
               },
               "Broken_Hill": {
                 "exemplarCity": "Broken Hill"
-              },
-              "Currie": {
-                "exemplarCity": "Currie"
               },
               "Darwin": {
                 "exemplarCity": "Darwin"

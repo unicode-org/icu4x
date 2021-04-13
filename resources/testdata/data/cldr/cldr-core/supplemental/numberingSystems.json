@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "13.0.0",
-      "_cldrVersion": "38"
+      "_cldrVersion": "39"
     },
     "numberingSystems": {
       "adlm": {
