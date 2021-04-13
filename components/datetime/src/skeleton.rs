@@ -375,11 +375,12 @@ pub fn create_best_pattern_for_fields<'a>(
     let FieldsByType { date, time, other } = group_fields_by_type(&fields);
 
     if !other.is_empty() {
-        // TODO(#418) - TimeZones
+        // These require "append items" support, see #586.
+        // TODO(#583) - TimeZones
         // TODO(#486) - Eras,
         // ... etc.
         unimplemented!(
-            "There are no \"other\" fields supported, these need to be appended to the pattern."
+            "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
         );
     }
 
@@ -482,7 +483,7 @@ struct FieldsByType {
 fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
     let mut date = Vec::new();
     let mut time = Vec::new();
-    let other = Vec::new();
+    let mut other = Vec::new();
 
     for field in fields {
         match field.symbol {
@@ -501,9 +502,9 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             | FieldSymbol::Hour(_)
             | FieldSymbol::Minute
             | FieldSymbol::Second(_) => time.push(*field),
+
             // Other components
-            // TODO(#418)
-            // FieldSymbol::TimeZone(_) => other.push(*field),
+            FieldSymbol::TimeZone(_) => other.push(*field),
             // TODO(#486)
             // FieldSymbol::Era(_) => other.push(*field),
             // Plus others...
@@ -717,6 +718,42 @@ mod test {
         ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(available_format_pattern.to_string(), String::from("L"))
+            }
+            best => panic!("Unexpected {:?}", best),
+        };
+    }
+
+    // TODO(#586) - Append items support needs to be added.
+    #[test]
+    fn test_missing_append_items_support() {
+        let components = components::Bag {
+            era: None,
+            year: Some(components::Numeric::Numeric),
+            month: Some(components::Month::Long),
+            day: Some(components::Numeric::Numeric),
+            weekday: None,
+            hour: None,
+            minute: None,
+            second: None,
+            // This will be appended.
+            time_zone_name: Some(components::TimeZoneName::Long),
+            preferences: None,
+        };
+        let requested_fields = components.to_vec_fields();
+        let data_provider = get_data_provider();
+
+        match create_best_pattern_for_fields(
+            &data_provider.patterns.date_time.skeletons,
+            &data_provider.patterns.date_time.length_patterns,
+            &requested_fields,
+        ) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+                // TODO - This needs to support the "Z" pattern. This test will begin to fail
+                // once support is added.
+                assert_eq!(
+                    available_format_pattern.to_string(),
+                    String::from("MMM d, y")
+                )
             }
             best => panic!("Unexpected {:?}", best),
         };
