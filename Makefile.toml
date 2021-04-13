@@ -108,7 +108,16 @@ output = exec git status --porcelain=v1 -uno
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     if contains ${output.stdout} README.md
-        trigger_error "Found non-automatically generated README.md:\n ${output.stdout}"
+        msg = array "" ""
+        array_push ${msg} "The README.md files were re-generated, and they differed from the committed files."
+        array_push ${msg} ""
+        array_push ${msg} "If you modified the README.md file directly, then revert your changes. If the README.md"
+        array_push ${msg} "was automatically updated, then the changes need to be committed."
+        array_push ${msg} ""
+        array_push ${msg} "The modified files were:"
+        array_push ${msg} "${output.stdout}"
+        msg = array_join ${msg} "\n"
+        trigger_error ${msg}
     end
 end
 '''
