@@ -12,7 +12,7 @@
   "grouping_sizes": {
     "primary": 3,
     "secondary": 3,
-    "min_grouping": 2
+    "min_grouping": 1
   },
   "digits": [
     "0",

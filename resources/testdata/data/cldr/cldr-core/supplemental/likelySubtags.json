@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "13.0.0",
-      "_cldrVersion": "38"
+      "_cldrVersion": "39"
     },
     "likelySubtags": {
       "aa": "aa-Latn-ET",
@@ -292,6 +292,7 @@
       "dgz": "dgz-Latn-ZZ",
       "dia": "dia-Latn-ZZ",
       "dje": "dje-Latn-NE",
+      "dmf": "dmf-Medf-NG",
       "dnj": "dnj-Latn-CI",
       "dob": "dob-Latn-ZZ",
       "doi": "doi-Deva-IN",
@@ -807,8 +808,6 @@
       "mi": "mi-Latn-NZ",
       "mif": "mif-Latn-ZZ",
       "min": "min-Latn-ID",
-      "mis": "mis-Hatr-IQ",
-      "mis-Medf": "mis-Medf-NG",
       "miw": "miw-Latn-ZZ",
       "mk": "mk-Cyrl-MK",
       "mki": "mki-Arab-ZZ",
@@ -1252,6 +1251,7 @@
       "tyv": "tyv-Cyrl-RU",
       "tzm": "tzm-Latn-MA",
       "ubu": "ubu-Latn-ZZ",
+      "udi": "udi-Aghb-RU",
       "udm": "udm-Cyrl-RU",
       "ug": "ug-Arab-CN",
       "ug-Cyrl": "ug-Cyrl-KZ",
@@ -1296,7 +1296,7 @@
       "und-Adlm": "ff-Adlm-GN",
       "und-AE": "ar-Arab-AE",
       "und-AF": "fa-Arab-AF",
-      "und-Aghb": "lez-Aghb-RU",
+      "und-Aghb": "udi-Aghb-RU",
       "und-Ahom": "aho-Ahom-IN",
       "und-AL": "sq-Latn-AL",
       "und-AM": "hy-Armn-AM",
@@ -1447,7 +1447,6 @@
       "und-Hano": "hnn-Hano-PH",
       "und-Hans": "zh-Hans-CN",
       "und-Hant": "zh-Hant-TW",
-      "und-Hatr": "mis-Hatr-IQ",
       "und-Hebr": "he-Hebr-IL",
       "und-Hebr-CA": "yi-Hebr-CA",
       "und-Hebr-GB": "yi-Hebr-GB",
@@ -1542,7 +1541,7 @@
       "und-MC": "fr-Latn-MC",
       "und-MD": "ro-Latn-MD",
       "und-ME": "sr-Latn-ME",
-      "und-Medf": "mis-Medf-NG",
+      "und-Medf": "dmf-Medf-NG",
       "und-Mend": "men-Mend-SL",
       "und-Merc": "xmr-Merc-SD",
       "und-Mero": "xmr-Mero-SD",
