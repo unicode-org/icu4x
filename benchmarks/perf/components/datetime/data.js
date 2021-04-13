@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618333965981,
+  "lastUpdate": 1618338417700,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3899,6 +3899,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2641332,
             "range": "± 103140",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6d1401e9b965cb457c74c4776ffe8c833f003a7",
+          "message": "Updating to CLDR JSON 39.0.0-BETA2 (#640)",
+          "timestamp": "2021-04-13T13:19:44-05:00",
+          "tree_id": "c600d8d68f585239bff14ac35f1f20125449c25a",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6d1401e9b965cb457c74c4776ffe8c833f003a7"
+        },
+        "date": 1618338416386,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1388980,
+            "range": "± 48363",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2630808,
+            "range": "± 108513",
             "unit": "ns/iter"
           }
         ]
