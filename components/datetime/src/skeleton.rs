@@ -375,11 +375,12 @@ pub fn create_best_pattern_for_fields<'a>(
     let FieldsByType { date, time, other } = group_fields_by_type(&fields);
 
     if !other.is_empty() {
-        // TODO(#418) - TimeZones
+        // These require "append items" support, see #586.
+        // TODO(#583) - TimeZones
         // TODO(#486) - Eras,
         // ... etc.
-        unimplemented!(
-            "There are no \"other\" fields supported, these need to be appended to the pattern."
+        eprintln!(
+            "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
         );
     }
 
@@ -482,7 +483,7 @@ struct FieldsByType {
 fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
     let mut date = Vec::new();
     let mut time = Vec::new();
-    let other = Vec::new();
+    let mut other = Vec::new();
 
     for field in fields {
         match field.symbol {
@@ -501,9 +502,9 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             | FieldSymbol::Hour(_)
             | FieldSymbol::Minute
             | FieldSymbol::Second(_) => time.push(*field),
+
             // Other components
-            // TODO(#418)
-            // FieldSymbol::TimeZone(_) => other.push(*field),
+            FieldSymbol::TimeZone(_) => other.push(*field),
             // TODO(#486)
             // FieldSymbol::Era(_) => other.push(*field),
             // Plus others...
