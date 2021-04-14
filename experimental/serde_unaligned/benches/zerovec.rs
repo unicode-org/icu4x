@@ -8,9 +8,9 @@ use rand_distr::{Distribution, LogNormal};
 use rand_pcg::Lcg64Xsh32;
 use std::fmt;
 
+use serde_unaligned::ule::samples::*;
 use serde_unaligned::ule::*;
 use serde_unaligned::ZeroVec;
-use serde_unaligned::ule::samples::*;
 
 #[repr(align(8))]
 #[derive(Default)]
@@ -23,7 +23,9 @@ where
 {
     // Pad with zero to ensure it is not aligned
     buffer.0.push(0);
-    buffer.0.extend(ZeroVec::from_aligned(vec.as_slice()).as_bytes());
+    buffer
+        .0
+        .extend(ZeroVec::from_aligned(vec.as_slice()).as_bytes());
     ZeroVec::<T>::try_from_bytes(&buffer.0[1..]).unwrap()
 }
 
@@ -52,7 +54,10 @@ fn sum_benches(c: &mut Criterion) {
 
     c.bench_function("zerovec/sum/sample/zerovec", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap().iter().sum::<u32>()
+            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE))
+                .unwrap()
+                .iter()
+                .sum::<u32>()
         });
     });
 }

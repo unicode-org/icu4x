@@ -25,7 +25,7 @@ use std::ops::Deref;
 /// value.
 ///
 /// Benchmarks can be found in the project repository. We found that for common operations on small
-/// and large vectors, `ZeroVec<T>` takes a small performance hit of about 10% relative to `Vec<T>`.
+/// and large vectors, `ZeroVec<T>` performs slightly faster or up to 15% slower than `Vec<T>`.
 ///
 /// # Safety
 ///
@@ -71,24 +71,6 @@ where
     }
 }
 
-impl<T> Deref for ZeroVec<'_, T>
-where
-    T: AsULE + ?Sized,
-{
-    type Target = [T::ULE];
-
-    /// Dereferences this `ZeroVec<T>` as `&[T::ULE]`. Most other functions on `ZeroVec<T>` use
-    /// this function as a building block.
-    #[inline(always)]
-    fn deref(&self) -> &Self::Target {
-        use ZeroVec::*;
-        match self {
-            Owned(vec) => vec.as_slice(),
-            Borrowed(slice) => slice,
-        }
-    }
-}
-
 impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
     T: AsULE + Copy + PartialEq,
@@ -97,16 +79,6 @@ where
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
         // Note: T implements PartialEq but not T::ULE
         self.iter().eq(other.iter())
-    }
-}
-
-impl<T> PartialEq<&[T]> for ZeroVec<'_, T>
-where
-    T: AsULE + Copy + PartialEq,
-{
-    #[inline(always)]
-    fn eq(&self, other: &&[T]) -> bool {
-        self.iter().eq(other.iter().copied())
     }
 }
 
@@ -157,8 +129,20 @@ where
     ///
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
+    #[inline(always)]
     pub fn as_bytes(&self) -> &[u8] {
-        T::ULE::as_byte_slice(self.deref())
+        T::ULE::as_byte_slice(self.as_slice())
+    }
+
+    /// Dereferences this `ZeroVec<T>` as `&[T::ULE]`. Most other functions on `ZeroVec<T>` use
+    /// this function as a building block.
+    #[inline(always)]
+    pub fn as_slice(&self) -> &[T::ULE] {
+        use ZeroVec::*;
+        match self {
+            Owned(vec) => vec.as_slice(),
+            Borrowed(slice) => slice,
+        }
     }
 
     /// Returns the number of elements in this `ZeroVec<T>`.
@@ -244,7 +228,7 @@ where
     /// ```
     #[inline(always)]
     pub fn to_vec(&self) -> Vec<T> {
-        self.deref().iter().map(T::from_unaligned).collect()
+        self.as_slice().iter().map(T::from_unaligned).collect()
     }
 }
 
@@ -269,7 +253,7 @@ where
     /// ```
     #[inline(always)]
     pub fn get(&self, index: usize) -> Option<T> {
-        self.deref().get(index).map(T::from_unaligned)
+        self.as_slice().get(index).map(T::from_unaligned)
     }
 
     /// Gets the first element. Returns None if empty.
@@ -288,7 +272,7 @@ where
     /// ```
     #[inline(always)]
     pub fn first(&self) -> Option<T> {
-        self.deref().first().map(T::from_unaligned)
+        self.as_slice().first().map(T::from_unaligned)
     }
 
     /// Gets the last element. Returns None if empty.
@@ -307,7 +291,7 @@ where
     /// ```
     #[inline(always)]
     pub fn last(&self) -> Option<T> {
-        self.deref().last().map(T::from_unaligned)
+        self.as_slice().last().map(T::from_unaligned)
     }
 
     /// Gets an iterator over the elements.
@@ -331,7 +315,7 @@ where
     /// ```
     #[inline(always)]
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = T> + 'b {
-        self.deref().iter().map(T::from_unaligned)
+        self.as_slice().iter().map(T::from_unaligned)
     }
 
     /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
@@ -382,7 +366,7 @@ where
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
     #[inline(always)]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
-        self.deref()
+        self.as_slice()
             .binary_search_by(|probe| T::from_unaligned(probe).cmp(x))
     }
 }
