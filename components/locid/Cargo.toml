@@ -27,7 +27,7 @@ skip_optional_dependencies = true
 extra_features = ["serde"]
 
 [dependencies]
-tinystr = "0.4"
+tinystr = "0.4.4"
 serde = { version = "1.0", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
