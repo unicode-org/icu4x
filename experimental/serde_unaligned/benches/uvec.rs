@@ -47,11 +47,11 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn sum_benches(c: &mut Criterion) {
-    c.bench_function("sum/uvec/test_slice", |b| {
+    c.bench_function("sum/sum/uvec/test_slice", |b| {
         b.iter(|| UVec::from(black_box(TEST_SLICE)).sum());
     });
 
-    c.bench_function("sum/uvec/test_buffer_le", |b| {
+    c.bench_function("sum/sum/uvec/test_buffer_le", |b| {
         b.iter(|| {
             UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE))
                 .unwrap()
@@ -59,11 +59,20 @@ fn sum_benches(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("sum_u32/uvec/test_slice", |b| {
+    c.bench_function("sum/iter/uvec/test_buffer_le", |b| {
+        b.iter(|| {
+            UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE))
+                .unwrap()
+                .iter()
+                .sum::<u32>()
+        });
+    });
+
+    c.bench_function("sum/sum_u32/uvec/test_slice", |b| {
         b.iter(|| UVec::from(black_box(TEST_SLICE)).sum_u32());
     });
 
-    c.bench_function("sum_u32/uvec/test_buffer_le", |b| {
+    c.bench_function("sum/sum_u32/uvec/test_buffer_le", |b| {
         b.iter(|| {
             UVec::<u32>::from_unaligned_le_bytes(black_box(&TEST_BUFFER_LE))
                 .unwrap()

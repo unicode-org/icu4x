@@ -160,6 +160,16 @@ where
             UnalignedLE(slice) => slice.get(index).map(|u| T::from_unaligned(u)),
         }
     }
+
+    #[inline(always)]
+    pub fn iter(&self) -> impl Iterator<Item = T> + 'a {
+        use UVecInner::*;
+        match &self.inner {
+            Owned(_) => unimplemented!(),
+            Aligned(_) => unimplemented!(),
+            UnalignedLE(slice) => slice.iter().map(T::from_unaligned),
+        }
+    }
 }
 
 impl<'a, T> UVec<'a, T>
