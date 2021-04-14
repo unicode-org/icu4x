@@ -20,8 +20,8 @@ If in doubt, use [`Locale`].
 ## Examples
 
 ```rust
-use icu_locid::Locale;
-use icu_locid::subtags::{Language, Region};
+use icu::locid::Locale;
+use icu::locid::subtags::{Language, Region};
 
 let mut loc: Locale = "en-US".parse()
     .expect("Parsing failed.");

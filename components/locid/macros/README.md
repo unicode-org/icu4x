@@ -7,7 +7,7 @@ This API provides convenience macros for `icu_locid`.
 ## Examples
 
 ```rust
-use icu::locid::macros::{language, region, langid};
+use icu_locid_macros::{language, region, langid};
 
 let lid = langid!("EN_US");
 

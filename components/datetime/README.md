@@ -11,9 +11,9 @@ used to quickly format any date and time provided.
 ## Examples
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_macros::langid;
-use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
+use icu::locid::Locale;
+use icu::locid::macros::langid;
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
 
 let provider = icu_testdata::get_provider();
 
@@ -41,6 +41,9 @@ The options can be created more ergonomically using the `Into` trait to automati
 convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 
 ```rust
+use icu::locid::Locale;
+use icu::locid::macros::langid;
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
 let options = length::Bag {
     date: Some(length::Date::Medium),
     time: Some(length::Time::Short),
