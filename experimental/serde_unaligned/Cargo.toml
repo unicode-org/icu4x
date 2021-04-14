@@ -38,6 +38,11 @@ required_features = ["serde"]
 name = "zerovec"
 harness = false
 
+[[bench]]
+name = "zerovec_serde"
+harness = false
+required_features = ["serde"]
+
 # [[bench]]
 # name = "uvec_iai"
 # harness = false

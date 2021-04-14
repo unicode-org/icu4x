@@ -25,7 +25,10 @@ use std::ops::Deref;
 /// value.
 ///
 /// Benchmarks can be found in the project repository. We found that for common operations on small
-/// and large vectors, `ZeroVec<T>` performs slightly faster or up to 15% slower than `Vec<T>`.
+/// and large vectors, `ZeroVec<T>` performs from slightly faster to 15% slower than `Vec<T>`.
+/// However, the main performance improvement on `ZeroVec<T>` is when deserializing from a byte
+/// array; `ZeroVec<T>` deserializes 80% faster than `Vec<T>` in Serde Bincode, and it does not
+/// require any heap allocations.
 ///
 /// # Safety
 ///
@@ -79,6 +82,16 @@ where
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
         // Note: T implements PartialEq but not T::ULE
         self.iter().eq(other.iter())
+    }
+}
+
+impl<T> PartialEq<&[T]> for ZeroVec<'_, T>
+where
+    T: AsULE + Copy + PartialEq,
+{
+    #[inline(always)]
+    fn eq(&self, other: &&[T]) -> bool {
+        self.iter().eq(other.iter().copied())
     }
 }
 
