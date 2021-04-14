@@ -4,3 +4,6 @@
 
 pub mod ule;
 pub mod uvec;
+mod zerovec;
+
+pub use zerovec::ZeroVec;
