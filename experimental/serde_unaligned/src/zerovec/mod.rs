@@ -24,9 +24,8 @@ use std::ops::Deref;
 /// items from `ZeroVec<T>`, we fetch the `T::ULE`, convert it on the fly to `T`, and return `T` by
 /// value.
 ///
-/// Benchmarks can be found in the project repository. We found that for common operations on both
-/// small and large vectors, there is little performance difference between operating on a `Vec<T>`
-/// and operating on a `ZeroVec<T>`.
+/// Benchmarks can be found in the project repository. We found that for common operations on small
+/// and large vectors, `ZeroVec<T>` takes a small performance hit of about 10% relative to `Vec<T>`.
 ///
 /// # Safety
 ///

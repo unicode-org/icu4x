@@ -1,5 +1,6 @@
 mod chars;
 mod plain;
+pub mod samples;
 
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
