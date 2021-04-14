@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "serde")]
+mod serde;
+
 use crate::ule::*;
 use std::fmt;
 use std::ops::Deref;
@@ -330,6 +333,31 @@ where
     #[inline(always)]
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = T> + 'b {
         self.deref().iter().map(T::from_unaligned)
+    }
+
+    /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use serde_unaligned::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
+    ///
+    /// let owned = zerovec.into_owned();
+    /// assert!(matches!(owned, ZeroVec::Owned(_)));
+    /// ```
+    pub fn into_owned(self) -> ZeroVec<'static, T> {
+        use ZeroVec::*;
+        match self {
+            Owned(vec) => ZeroVec::Owned(vec),
+            Borrowed(_) => {
+                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
+                ZeroVec::Owned(vec)
+            }
+        }
     }
 }
 
