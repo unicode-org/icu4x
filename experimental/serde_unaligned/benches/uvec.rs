@@ -22,7 +22,7 @@ where
 {
     // Pad with zero to ensure it is not aligned
     buffer.0.push(0);
-    UVec::from(black_box(vec.as_slice()))
+    UVec::from(vec.as_slice())
         .write_to_stream_le(&mut buffer.0)
         .unwrap();
     let uvec = UVec::<T>::from_unaligned_le_bytes(&buffer.0[1..]).unwrap();
@@ -114,9 +114,9 @@ fn binary_search_benches(c: &mut Criterion) {
         let uvec = UVec::from(black_box(haystack.as_slice()));
         assert_eq!(uvec, haystack.as_slice());
         b.iter(|| {
-            needles
+            black_box(&needles)
                 .iter()
-                .map(|needle| uvec.binary_search(&needle))
+                .map(|needle| black_box(&uvec).binary_search(&needle))
                 .filter(|r| r.is_ok())
                 .count()
         });
@@ -124,12 +124,12 @@ fn binary_search_benches(c: &mut Criterion) {
 
     c.bench_function("binary_search/uvec/log_normal/unaligned", |b| {
         let mut buffer = AlignedBuffer::default();
-        let uvec = vec_to_unaligned_uvec(&haystack, &mut buffer);
+        let uvec = vec_to_unaligned_uvec(black_box(&haystack), &mut buffer);
         assert_eq!(uvec, haystack.as_slice());
         b.iter(|| {
-            needles
+            black_box(&needles)
                 .iter()
-                .map(|needle| uvec.binary_search(&needle))
+                .map(|needle| black_box(&uvec).binary_search(&needle))
                 .filter(|r| r.is_ok())
                 .count()
         });
@@ -138,9 +138,9 @@ fn binary_search_benches(c: &mut Criterion) {
     c.bench_function("binary_search/vec/log_normal", |b| {
         let slice = black_box(haystack.as_slice());
         b.iter(|| {
-            needles
+            black_box(&needles)
                 .iter()
-                .map(|needle| slice.binary_search(&needle))
+                .map(|needle| black_box(&slice).binary_search(&needle))
                 .filter(|r| r.is_ok())
                 .count()
         });
