@@ -37,7 +37,7 @@ pub enum LexerError {
 /// # Examples
 ///
 /// ```
-/// use icu_plurals::rules::Lexer;
+/// use icu::plurals::rules::Lexer;
 ///
 /// let input = b"i = 5";
 /// let lexer = Lexer::new(input);
@@ -54,7 +54,7 @@ impl<'l> Lexer<'l> {
     /// # Examples
     ///
     /// ```
-    /// use icu_plurals::rules::Lexer;
+    /// use icu::plurals::rules::Lexer;
     ///
     /// Lexer::new(b"n = 1");
     /// ```

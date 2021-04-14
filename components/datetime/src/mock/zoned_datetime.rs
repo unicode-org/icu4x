@@ -20,9 +20,9 @@ use super::{datetime::MockDateTime, timezone::MockTimeZone};
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::mock::datetime::MockDateTime;
-/// use icu_datetime::mock::timezone::MockTimeZone;
-/// use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
+/// use icu::datetime::mock::datetime::MockDateTime;
+/// use icu::datetime::mock::timezone::MockTimeZone;
+/// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 ///
 /// let dt: MockDateTime = "2020-10-14T13:21:00".parse()
 ///     .expect("Failed to parse a datetime.");
@@ -67,7 +67,7 @@ impl FromStr for MockZonedDateTime {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     ///
     /// let date: MockZonedDateTime = "2020-10-14T13:21:00+05:30".parse()
     ///     .expect("Failed to parse a zoned datetime.");

@@ -12,7 +12,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datetime::{DateTimeFormatOptions, options::length};
+//! use icu::datetime::{DateTimeFormatOptions, options::length};
 //!
 //! let options = DateTimeFormatOptions::Length(
 //!     length::Bag {
@@ -39,7 +39,7 @@ pub mod preferences;
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::{DateTimeFormatOptions, options::length};
+/// use icu::datetime::{DateTimeFormatOptions, options::length};
 ///
 /// let options = DateTimeFormatOptions::Length(
 ///     length::Bag {

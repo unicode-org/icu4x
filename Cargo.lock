@@ -871,6 +871,7 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "criterion",
+ "icu",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
@@ -924,6 +925,7 @@ name = "icu_locid"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu",
  "icu_benchmark_macros",
  "serde",
  "serde_json",
@@ -935,6 +937,7 @@ dependencies = [
 name = "icu_locid_macros"
 version = "0.1.0"
 dependencies = [
+ "icu",
  "icu_locid",
  "proc-macro-crate",
  "tinystr",
@@ -946,6 +949,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "fixed_decimal",
+ "icu",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
@@ -1069,6 +1073,7 @@ name = "icu_uniset"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "icu",
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",

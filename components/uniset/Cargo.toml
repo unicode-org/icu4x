@@ -32,6 +32,7 @@ tinystr = "0.4"
 
 [dev-dependencies]
 criterion = "0.3.3"
+icu = { path = "../icu" }
 icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
 
 [lib]

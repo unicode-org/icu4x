@@ -27,10 +27,10 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu_locid_macros::langid;
-/// use icu_datetime::{DateTimeFormat, options::length};
-/// use icu_datetime::mock::datetime::MockDateTime;
+/// use icu::locid::Locale;
+/// use icu::locid::macros::langid;
+/// use icu::datetime::{DateTimeFormat, options::length};
+/// use icu::datetime::mock::datetime::MockDateTime;
 /// use icu_provider::inv::InvariantDataProvider;
 ///
 /// let locale: Locale = langid!("en").into();
@@ -67,10 +67,10 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
-    /// use icu_locid_macros::langid;
-    /// use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// use icu_datetime::mock::datetime::MockDateTime;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::datetime::MockDateTime;
     /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let locale: Locale = langid!("en").into();
@@ -159,11 +159,11 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locid::Locale;
-    /// # use icu_locid_macros::langid;
-    /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::mock::datetime::MockDateTime;
-    /// # use icu_provider::inv::InvariantDataProvider;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::datetime::MockDateTime;
+    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -199,11 +199,11 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locid::Locale;
-    /// # use icu_locid_macros::langid;
-    /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::mock::datetime::MockDateTime;
-    /// # use icu_provider::inv::InvariantDataProvider;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::datetime::MockDateTime;
+    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();
@@ -234,11 +234,11 @@ impl<'d> DateTimeFormat<'d> {
     /// # Examples
     ///
     /// ```
-    /// # use icu_locid::Locale;
-    /// # use icu_locid_macros::langid;
-    /// # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions};
-    /// # use icu_datetime::mock::datetime::MockDateTime;
-    /// # use icu_provider::inv::InvariantDataProvider;
+    /// use icu::locid::Locale;
+    /// use icu::locid::macros::langid;
+    /// use icu::datetime::{DateTimeFormat, DateTimeFormatOptions};
+    /// use icu::datetime::mock::datetime::MockDateTime;
+    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale: Locale = langid!("en").into();
     /// # let provider = InvariantDataProvider;
     /// # let options = DateTimeFormatOptions::default();

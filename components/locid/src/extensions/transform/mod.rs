@@ -12,8 +12,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid::{LanguageIdentifier, Locale};
-//! use icu_locid::extensions::transform::{Transform, Fields, Key, Value};
+//! use icu::locid::{LanguageIdentifier, Locale};
+//! use icu::locid::extensions::transform::{Transform, Fields, Key, Value};
 //!
 //! let mut loc: Locale = "en-US-t-es-AR-h0-hybrid".parse()
 //!     .expect("Parsing failed.");
@@ -56,8 +56,8 @@ use std::iter::Peekable;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::{Locale, LanguageIdentifier};
-/// use icu_locid::extensions::transform::{Key, Value};
+/// use icu::locid::{Locale, LanguageIdentifier};
+/// use icu::locid::extensions::transform::{Key, Value};
 ///
 /// let mut loc: Locale = "de-t-en-US-h0-hybrid".parse()
 ///     .expect("Parsing failed.");
@@ -88,7 +88,7 @@ impl Transform {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::transform::Transform;
+    /// use icu::locid::extensions::transform::Transform;
     ///
     /// assert_eq!(Transform::new(), Transform::default());
     /// ```
@@ -106,7 +106,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "en-US-t-es-AR".parse()
     ///     .expect("Parsing failed.");

@@ -12,7 +12,7 @@ use crate::subtags;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::LanguageIdentifier;
+/// use icu::locid::LanguageIdentifier;
 ///
 /// let li: LanguageIdentifier = "en-US".parse()
 ///     .expect("Failed to parse.");
@@ -41,7 +41,7 @@ use crate::subtags;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::LanguageIdentifier;
+/// use icu::locid::LanguageIdentifier;
 ///
 /// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse()
 ///     .expect("Failed to parse.");
@@ -72,7 +72,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::LanguageIdentifier;
+    /// use icu::locid::LanguageIdentifier;
     ///
     /// let li = LanguageIdentifier::from_bytes(b"en-US")
     ///     .expect("Parsing failed.");
@@ -89,7 +89,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::LanguageIdentifier;
+    /// use icu::locid::LanguageIdentifier;
     ///
     /// let li = LanguageIdentifier::from_locale_bytes(b"en-US-x-posix")
     ///     .expect("Parsing failed.");
@@ -108,7 +108,7 @@ impl LanguageIdentifier {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::LanguageIdentifier;
+    /// use icu::locid::LanguageIdentifier;
     ///
     /// const langid: LanguageIdentifier = LanguageIdentifier::und();
     /// assert_eq!(LanguageIdentifier::default(), langid);
@@ -132,7 +132,7 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::LanguageIdentifier;
+    /// use icu::locid::LanguageIdentifier;
     ///
     /// assert_eq!(LanguageIdentifier::canonicalize("pL_latn_pl"), Ok("pl-Latn-PL".to_string()));
     /// ```

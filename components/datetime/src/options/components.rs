@@ -41,8 +41,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datetime::DateTimeFormatOptions;
-//! use icu_datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
+//! use icu::datetime::options::components;
 //!
 //! let bag = components::Bag {
 //!     year: Some(components::Numeric::Numeric),
@@ -64,8 +64,8 @@
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
-//! # use icu_datetime::DateTimeFormatOptions;
-//! # use icu_datetime::options::components;
+//! use icu::datetime::DateTimeFormatOptions;
+//! use icu::datetime::options::components;
 //! let options: DateTimeFormatOptions = components::Bag::default().into();
 //! ```
 //!

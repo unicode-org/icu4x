@@ -14,7 +14,7 @@ use tinystr::TinyStr4;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Script;
+/// use icu::locid::subtags::Script;
 ///
 /// let script: Script = "Latn".parse()
 ///     .expect("Failed to parse a script subtag.");
@@ -33,7 +33,7 @@ impl Script {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Script;
+    /// use icu::locid::subtags::Script;
     ///
     /// let script = Script::from_bytes(b"Latn")
     ///     .expect("Parsing failed.");
@@ -58,7 +58,7 @@ impl Script {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Script;
+    /// use icu::locid::subtags::Script;
     ///
     /// let script = Script::from_bytes(b"Latn")
     ///     .expect("Parsing failed.");
@@ -77,7 +77,7 @@ impl Script {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Script;
+    /// use icu::locid::subtags::Script;
     ///
     /// let script = Script::from_bytes(b"Latn")
     ///     .expect("Parsing failed.");
@@ -101,7 +101,7 @@ impl Script {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Script;
+    /// use icu::locid::subtags::Script;
     ///
     /// let script = Script::from_bytes(b"Latn")
     ///     .expect("Parsing failed.");

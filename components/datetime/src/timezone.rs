@@ -62,7 +62,7 @@ where
 /// ```
 /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
 /// // use icu_locid::Locale;
-/// // use icu_locid_macros::langid;
+/// // use icu_locid::macros::langid;
 /// // use icu_datetime::TimeZoneFormat;
 /// // use icu_datetime::date::GmtOffset;
 /// // use icu_datetime::mock::timezone::MockTimeZone;
@@ -115,7 +115,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
     /// // use icu_locid::Locale;
-    /// // use icu_locid_macros::langid;
+    /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::mock::timezone::MockTimeZone;
     /// // use icu_provider::inv::InvariantDataProvider;
@@ -269,7 +269,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
     /// // use icu_locid::Locale;
-    /// // use icu_locid_macros::langid;
+    /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::date::GmtOffset;
     /// // use icu_datetime::mock::timezone::MockTimeZone;
@@ -312,7 +312,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
     /// // use icu_locid::Locale;
-    /// // use icu_locid_macros::langid;
+    /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::date::GmtOffset;
     /// // use icu_datetime::mock::timezone::MockTimeZone;
@@ -356,7 +356,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
     /// // use icu_locid::Locale;
-    /// // use icu_locid_macros::langid;
+    /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::date::GmtOffset;
     /// // use icu_datetime::mock::timezone::MockTimeZone;

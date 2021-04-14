@@ -11,9 +11,9 @@ use std::ops::RangeInclusive;
 /// # Examples
 ///
 /// ```
-/// use icu_plurals::rules::parse;
-/// use icu_plurals::rules::ast;
-/// use icu_plurals::rules::serialize;
+/// use icu::plurals::rules::parse;
+/// use icu::plurals::rules::ast;
+/// use icu::plurals::rules::serialize;
 ///
 /// let input = "i = 0 or n = 1 @integer 0, 1 @decimal 0.0~1.0, 0.00~0.04";
 ///

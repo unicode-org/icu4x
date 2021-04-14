@@ -16,7 +16,7 @@ use tinystr::TinyStr8;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::private::Key;
+/// use icu::locid::extensions::private::Key;
 ///
 /// let key1: Key = "Foo".parse()
 ///     .expect("Failed to parse a Key.");
@@ -35,7 +35,7 @@ impl Key {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::Key;
+    /// use icu::locid::extensions::private::Key;
     ///
     /// let key = Key::from_bytes(b"foobar")
     ///     .expect("Parsing failed.");
@@ -62,7 +62,7 @@ impl Key {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::Key;
+    /// use icu::locid::extensions::private::Key;
     ///
     /// let key = Key::from_bytes(b"foobar")
     ///     .expect("Parsing failed.");

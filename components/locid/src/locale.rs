@@ -19,8 +19,8 @@ use std::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
-/// use icu_locid::extensions::unicode::{Key, Value};
+/// use icu::locid::Locale;
+/// use icu::locid::extensions::unicode::{Key, Value};
 ///
 /// let loc: Locale = "en-US-u-ca-buddhist".parse()
 ///     .expect("Failed to parse.");
@@ -54,7 +54,7 @@ use std::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
+/// use icu::locid::Locale;
 ///
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12".parse()
 ///     .expect("Failed to parse.");
@@ -80,7 +80,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu::locid::Locale;
     ///
     /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes())
     ///     .expect("Parsing failed.");
@@ -96,7 +96,7 @@ impl Locale {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu::locid::Locale;
     ///
     /// const loc: Locale = Locale::und();
     /// assert_eq!(Locale::default(), loc);
@@ -118,7 +118,7 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu::locid::Locale;
     ///
     /// assert_eq!(Locale::canonicalize("pL_latn_pl-U-HC-H12"), Ok("pl-Latn-PL-u-hc-h12".to_string()));
     /// ```

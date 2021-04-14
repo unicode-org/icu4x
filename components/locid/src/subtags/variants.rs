@@ -13,7 +13,7 @@ use std::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::{Variant, Variants};
+/// use icu::locid::subtags::{Variant, Variants};
 ///
 /// let variant1: Variant = "posix".parse()
 ///     .expect("Failed to parse a variant subtag.");
@@ -37,7 +37,7 @@ impl Variants {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::subtags::Variants;
+    /// use icu::locid::subtags::Variants;
     ///
     /// assert_eq!(Variants::new(), Variants::default());
     /// ```
@@ -53,7 +53,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::{Variant, Variants};
+    /// use icu::locid::subtags::{Variant, Variants};
     ///
     /// let variant1: Variant = "posix".parse()
     ///     .expect("Parsing failed.");
@@ -82,7 +82,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::{Variant, Variants};
+    /// use icu::locid::subtags::{Variant, Variants};
     ///
     /// let variant1: Variant = "posix".parse()
     ///     .expect("Parsing failed.");
@@ -108,7 +108,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::{Variant, Variants};
+    /// use icu::locid::subtags::{Variant, Variants};
     ///
     /// let variant1: Variant = "posix".parse()
     ///     .expect("Parsing failed.");
@@ -141,7 +141,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::{Variant, Variants};
+    /// use icu::locid::subtags::{Variant, Variants};
     ///
     /// let variant1: Variant = "posix".parse()
     ///     .expect("Parsing failed.");

@@ -23,7 +23,7 @@ use super::Value;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::transform::{Fields, Key, Value};
+/// use icu::locid::extensions::transform::{Fields, Key, Value};
 ///
 /// let key: Key = "h0".parse()
 ///     .expect("Failed to parse a Key.");
@@ -42,7 +42,7 @@ impl Fields {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::transform::Fields;
+    /// use icu::locid::extensions::transform::Fields;
     ///
     /// assert_eq!(Fields::new(), Fields::default());
     /// ```
@@ -57,7 +57,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::transform::{Fields, Key, Value};
+    /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");
@@ -80,7 +80,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::transform::{Fields, Key, Value};
+    /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");
@@ -104,7 +104,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::transform::{Fields, Key, Value};
+    /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");
@@ -130,7 +130,7 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::transform::{Fields, Key, Value};
+    /// use icu::locid::extensions::transform::{Fields, Key, Value};
     ///
     /// let key: Key = "h0".parse()
     ///     .expect("Failed to parse a Key.");

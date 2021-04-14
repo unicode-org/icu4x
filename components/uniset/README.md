@@ -20,7 +20,7 @@ represented by [inversion lists](http://userguide.icu-project.org/strings/proper
 the [`UnicodeSetBuilder`], or from the TBA Properties API.
 
 ```rust
-use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
 
 let mut builder = UnicodeSetBuilder::new();
 builder.add_range(&('A'..'Z'));
@@ -34,7 +34,7 @@ assert!(set.contains('A'));
 Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
 
 ```rust
-use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
 
 let mut builder = UnicodeSetBuilder::new();
 builder.add_range(&('A'..'Z'));

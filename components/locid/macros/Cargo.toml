@@ -29,3 +29,6 @@ proc_macro = true
 proc-macro-crate = "0.1.5"
 icu_locid = { version = "0.1", path = "../" }
 tinystr = "0.4"
+
+[dev-dependencies]
+icu = { path = "../../icu" }

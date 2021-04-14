@@ -14,9 +14,9 @@
 //!
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
-//! use icu_locid::Locale;
-//! use icu_locid_macros::langid;
-//! use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
+//! use icu::locid::Locale;
+//! use icu::locid::macros::langid;
+//! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -46,9 +46,9 @@
 //!
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
-//! # use icu_locid::Locale;
-//! # use icu_locid_macros::langid;
-//! # use icu_datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
+//! use icu::locid::Locale;
+//! use icu::locid::macros::langid;
+//! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale: Locale = langid!("en").into();
 //! let options = length::Bag {

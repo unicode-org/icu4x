@@ -266,7 +266,7 @@ pub struct DayOfYearInfo {
 /// # Example
 ///
 /// ```
-/// use icu_datetime::date::IsoWeekday;
+/// use icu::datetime::date::IsoWeekday;
 ///
 /// assert_eq!(1, IsoWeekday::Monday as usize);
 /// assert_eq!(7, IsoWeekday::Sunday as usize);
@@ -290,7 +290,7 @@ impl From<usize> for IsoWeekday {
     /// # Example
     ///
     /// ```
-    /// use icu_datetime::date::IsoWeekday;
+    /// use icu::datetime::date::IsoWeekday;
     ///
     /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));
@@ -484,7 +484,7 @@ impl FromStr for GmtOffset {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
+    /// use icu::datetime::date::GmtOffset;
     ///
     /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset.");
     /// let offset1: GmtOffset = "-09".parse().expect("Failed to parse a GMT offset.");

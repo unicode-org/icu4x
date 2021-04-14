@@ -24,7 +24,7 @@ const TRUE_TVALUE: TinyStr8 = tinystr::tinystr8!("true");
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::transform::Value;
+/// use icu::locid::extensions::transform::Value;
 ///
 /// let value1: Value = "hybrid".parse()
 ///     .expect("Failed to parse a Value.");
@@ -41,7 +41,7 @@ impl Value {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::transform::Value;
+    /// use icu::locid::extensions::transform::Value;
     ///
     /// let value = Value::from_bytes(b"hybrid")
     ///     .expect("Parsing failed.");

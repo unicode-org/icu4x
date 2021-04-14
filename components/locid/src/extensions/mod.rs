@@ -20,8 +20,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid::Locale;
-//! use icu_locid::extensions::unicode::{Key, Value};
+//! use icu::locid::Locale;
+//! use icu::locid::extensions::unicode::{Key, Value};
 //!
 //! let loc: Locale = "en-US-u-ca-buddhist-t-en-US-h0-hybrid-x-foo".parse()
 //!     .expect("Failed to parse.");
@@ -93,7 +93,7 @@ impl Extensions {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::Extensions;
+    /// use icu::locid::extensions::Extensions;
     ///
     /// assert_eq!(Extensions::new(), Extensions::default());
     /// ```
@@ -111,7 +111,7 @@ impl Extensions {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu::locid::Locale;
     ///
     /// let loc: Locale = "en-US-u-foo".parse()
     ///     .expect("Parsing failed.");

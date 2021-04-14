@@ -12,7 +12,7 @@ use std::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::extensions::unicode::{Attribute, Attributes};
+/// use icu::locid::extensions::unicode::{Attribute, Attributes};
 ///
 /// let attribute1: Attribute = "foobar".parse()
 ///     .expect("Failed to parse a variant subtag.");
@@ -36,7 +36,7 @@ impl Attributes {
     /// # Example
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::Attributes;
+    /// use icu::locid::extensions::unicode::Attributes;
     ///
     /// assert_eq!(Attributes::new(), Attributes::default());
     /// ```
@@ -51,7 +51,7 @@ impl Attributes {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::{Attribute, Attributes};
+    /// use icu::locid::extensions::unicode::{Attribute, Attributes};
     ///
     /// let attribute1: Attribute = "foobar".parse()
     ///     .expect("Parsing failed.");
@@ -79,7 +79,7 @@ impl Attributes {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::unicode::{Attribute, Attributes};
+    /// use icu::locid::extensions::unicode::{Attribute, Attributes};
     ///
     /// let attribute1: Attribute = "foobar".parse()
     ///     .expect("Parsing failed.");

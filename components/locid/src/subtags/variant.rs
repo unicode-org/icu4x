@@ -15,7 +15,7 @@ use tinystr::TinyStr8;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::subtags::Variant;
+/// use icu::locid::subtags::Variant;
 ///
 /// let variant: Variant = "macos".parse()
 ///     .expect("Failed to parse a variant subtag.");
@@ -35,7 +35,7 @@ impl Variant {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Variant;
+    /// use icu::locid::subtags::Variant;
     ///
     /// let variant = Variant::from_bytes(b"posix")
     ///     .expect("Parsing failed.");
@@ -68,7 +68,7 @@ impl Variant {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Variant;
+    /// use icu::locid::subtags::Variant;
     ///
     /// let variant = Variant::from_bytes(b"posix")
     ///     .expect("Parsing failed.");
@@ -87,7 +87,7 @@ impl Variant {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Variant;
+    /// use icu::locid::subtags::Variant;
     ///
     /// let variant = Variant::from_bytes(b"posix")
     ///     .expect("Parsing failed.");
@@ -111,7 +111,7 @@ impl Variant {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::subtags::Variant;
+    /// use icu::locid::subtags::Variant;
     ///
     /// let variant = Variant::from_bytes(b"macos")
     ///     .expect("Parsing failed.");
