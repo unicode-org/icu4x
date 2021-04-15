@@ -16,7 +16,9 @@ dhat = { version = "0.2", optional = true }
 dlmalloc = { version = "0.2", optional = true, features = ["global"] }
 
 [features]
-# Enables `dhat` in example files to analyze memory allocations
+
+# Enables `dhat` in example files to analyze memory allocations.
 benchmark_memory = ["dhat"]
-# Enables `dlmalloc` in example files to bypass the system allocator
+
+# Enables `dlmalloc` in example files to bypass the system allocator.
 rust_global_allocator = ["dlmalloc"]
