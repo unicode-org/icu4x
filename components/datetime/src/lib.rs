@@ -85,7 +85,7 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub mod skeleton;
-pub mod timezone;
+pub mod time_zone;
 pub mod zoned_datetime;
 
 pub use datetime::DateTimeFormat;

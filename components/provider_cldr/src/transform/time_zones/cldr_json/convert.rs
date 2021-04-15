@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{Location, TimeZoneNames, ZoneFormat};
-use icu_datetime::provider::timezones::{
+use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
     MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, MetaZoneSpecificNamesV1,
     TimeZoneFormatsV1,

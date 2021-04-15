@@ -11,7 +11,7 @@ use crate::{
     format::zoned_datetime::{self, FormattedZonedDateTime},
     options::DateTimeFormatOptions,
     provider::{self, helpers::DateTimePatterns},
-    timezone::TimeZoneFormat,
+    time_zone::TimeZoneFormat,
     DateTimeFormatError,
 };
 
@@ -96,12 +96,12 @@ impl<'d> ZonedDateTimeFormat<'d> {
     where
         L: Into<Locale>,
         DP: DataProvider<'d, provider::gregory::DatesV1> + ?Sized,
-        ZP: DataProvider<'d, provider::timezones::TimeZoneFormatsV1<'d>>
-            + DataProvider<'d, provider::timezones::ExemplarCitiesV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneGenericNamesLongV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneGenericNamesShortV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneSpecificNamesLongV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneSpecificNamesShortV1<'d>>
+        ZP: DataProvider<'d, provider::time_zones::TimeZoneFormatsV1<'d>>
+            + DataProvider<'d, provider::time_zones::ExemplarCitiesV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>
             + ?Sized,
     {
         let locale = locale.into();

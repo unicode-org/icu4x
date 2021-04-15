@@ -16,7 +16,7 @@ use std::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::mock::timezone::MockTimeZone;
+/// use icu::datetime::mock::time_zone::MockTimeZone;
 /// use icu::datetime::date::GmtOffset;
 ///
 /// let tz1 = MockTimeZone::new(
@@ -80,7 +80,7 @@ impl FromStr for MockTimeZone {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::mock::timezone::MockTimeZone;
+    /// use icu::datetime::mock::time_zone::MockTimeZone;
     ///
     /// let tz0: MockTimeZone = "Z".parse().expect("Failed to parse a time zone.");
     /// let tz1: MockTimeZone = "+02".parse().expect("Failed to parse a time zone.");

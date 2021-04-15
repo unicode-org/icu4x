@@ -5,7 +5,7 @@
 use crate::date::*;
 use std::str::FromStr;
 
-use super::{datetime::MockDateTime, timezone::MockTimeZone};
+use super::{datetime::MockDateTime, time_zone::MockTimeZone};
 
 /// Temporary implementation of [`ZonedDateTimeInput`],
 /// which is used in tests, benchmarks and examples of this component.
@@ -21,7 +21,7 @@ use super::{datetime::MockDateTime, timezone::MockTimeZone};
 ///
 /// ```
 /// use icu::datetime::mock::datetime::MockDateTime;
-/// use icu::datetime::mock::timezone::MockTimeZone;
+/// use icu::datetime::mock::time_zone::MockTimeZone;
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
 ///
 /// let dt: MockDateTime = "2020-10-14T13:21:00".parse()

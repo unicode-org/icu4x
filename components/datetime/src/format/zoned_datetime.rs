@@ -11,7 +11,7 @@ use std::fmt;
 use writeable::Writeable;
 
 use super::datetime;
-use super::timezone;
+use super::time_zone;
 
 pub struct FormattedZonedDateTime<'l, T>
 where
@@ -80,7 +80,7 @@ where
     let symbols = &zoned_datetime_format.datetime_format.symbols;
 
     match field.symbol {
-        FieldSymbol::TimeZone(_timezone) => timezone::write_field(
+        FieldSymbol::TimeZone(_time_zone) => time_zone::write_field(
             field,
             &zoned_datetime_format.time_zone_format,
             loc_datetime.datetime(),

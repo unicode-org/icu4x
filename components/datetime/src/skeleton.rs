@@ -787,7 +787,7 @@ mod test {
         );
     }
 
-    /// There are no skeletons that match just the timezone. They all rely on the appendItems
+    /// There are no skeletons that match just the time zone. They all rely on the appendItems
     /// data from the CLDR.
     #[test]
     fn test_skeleton_no_match() {

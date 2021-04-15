@@ -23,7 +23,7 @@ use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
         dayperiods::DayPeriodExpectation,
-        timezones::{TimeZoneConfig, TimeZoneExpectation},
+        time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
 use std::{borrow::Cow, fmt::Write};
@@ -163,7 +163,7 @@ fn test_time_zone_patterns() {
     let zone_provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatOptions::default();
 
-    for test in get_time_zone_tests("timezones").unwrap().0 {
+    for test in get_time_zone_tests("time_zones").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut config = test.config;
         let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();

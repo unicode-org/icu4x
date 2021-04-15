@@ -5,10 +5,10 @@
 use std::{borrow::Cow, fmt};
 
 use crate::{
-    date::TimeZoneInput, format::timezone::FormattedTimeZone, pattern::Error as PatternError,
+    date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
     provider, DateTimeFormatError,
 };
-use crate::{format::timezone, provider::timezones::TimeZoneFormatsV1};
+use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1};
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::{DataProvider, DataRequest, ResourceKey, ResourceOptions, ResourcePath};
 
@@ -65,7 +65,7 @@ where
 /// // use icu_locid::macros::langid;
 /// // use icu_datetime::TimeZoneFormat;
 /// // use icu_datetime::date::GmtOffset;
-/// // use icu_datetime::mock::timezone::MockTimeZone;
+/// // use icu_datetime::mock::time_zone::MockTimeZone;
 /// // use icu_provider::inv::InvariantDataProvider;
 ///
 /// // let locale: Locale = langid!("en").into();
@@ -89,21 +89,21 @@ pub(super) struct TimeZoneFormat<'d> {
     /// The pattern to format.
     pub(super) pattern: Pattern,
     /// The data that contains meta information about how to display content.
-    pub(super) zone_formats: Cow<'d, provider::timezones::TimeZoneFormatsV1<'d>>,
+    pub(super) zone_formats: Cow<'d, provider::time_zones::TimeZoneFormatsV1<'d>>,
     /// The exemplar cities for time zones.
-    pub(super) exemplar_cities: Option<Cow<'d, provider::timezones::ExemplarCitiesV1<'d>>>,
+    pub(super) exemplar_cities: Option<Cow<'d, provider::time_zones::ExemplarCitiesV1<'d>>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
-        Option<Cow<'d, provider::timezones::MetaZoneGenericNamesLongV1<'d>>>,
+        Option<Cow<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>>,
     /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
-        Option<Cow<'d, provider::timezones::MetaZoneGenericNamesShortV1<'d>>>,
+        Option<Cow<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
-        Option<Cow<'d, provider::timezones::MetaZoneSpecificNamesLongV1<'d>>>,
+        Option<Cow<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
-        Option<Cow<'d, provider::timezones::MetaZoneSpecificNamesShortV1<'d>>>,
+        Option<Cow<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>>,
 }
 
 impl<'d> TimeZoneFormat<'d> {
@@ -117,7 +117,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // use icu_locid::Locale;
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
-    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_datetime::mock::time_zone::MockTimeZone;
     /// // use icu_provider::inv::InvariantDataProvider;
     ///
     /// // let locale: Locale = langid!("en").into();
@@ -136,12 +136,12 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        ZP: DataProvider<'d, provider::timezones::TimeZoneFormatsV1<'d>>
-            + DataProvider<'d, provider::timezones::ExemplarCitiesV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneGenericNamesLongV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneGenericNamesShortV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneSpecificNamesLongV1<'d>>
-            + DataProvider<'d, provider::timezones::MetaZoneSpecificNamesShortV1<'d>>
+        ZP: DataProvider<'d, provider::time_zones::TimeZoneFormatsV1<'d>>
+            + DataProvider<'d, provider::time_zones::ExemplarCitiesV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>
+            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>
             + ?Sized,
     {
         let locale = locale.into();
@@ -272,7 +272,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::date::GmtOffset;
-    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_datetime::mock::time_zone::MockTimeZone;
     /// // use icu_provider::inv::InvariantDataProvider;
     ///
     /// // # let locale: Locale = langid!("en").into();
@@ -315,7 +315,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::date::GmtOffset;
-    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_datetime::mock::time_zone::MockTimeZone;
     /// // use icu_provider::inv::InvariantDataProvider;
     ///
     /// // # let locale: Locale = langid!("en").into();
@@ -346,7 +346,7 @@ impl<'d> TimeZoneFormat<'d> {
         w: &mut impl std::fmt::Write,
         value: &impl TimeZoneInput,
     ) -> fmt::Result {
-        timezone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
+        time_zone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
     }
 
     /// `format_to_string` takes a `TimeZone` value and returns a string with the formatted value.
@@ -359,7 +359,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
     /// // use icu_datetime::date::GmtOffset;
-    /// // use icu_datetime::mock::timezone::MockTimeZone;
+    /// // use icu_datetime::mock::time_zone::MockTimeZone;
     /// // use icu_provider::inv::InvariantDataProvider;
     ///
     /// // # let locale: Locale = langid!("en").into();

@@ -35,7 +35,7 @@ impl ResourceCategory {
             Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
             Self::Plurals => Cow::Borrowed("plurals"),
             Self::Dates => Cow::Borrowed("dates"),
-            Self::TimeZones => Cow::Borrowed("timezones"),
+            Self::TimeZones => Cow::Borrowed("time_zones"),
             Self::Uniset => Cow::Borrowed("uniset"),
             Self::Decimal => Cow::Borrowed("decimal"),
             Self::PrivateUse(id) => {
@@ -104,7 +104,7 @@ macro_rules! resource_key {
     (plurals, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)
     };
-    (timezones, $sub_category:literal, $version:tt) => {
+    (time_zones, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::TimeZones, $sub_category, $version)
     };
     (uniset, $sub_category:literal, $version:tt) => {
