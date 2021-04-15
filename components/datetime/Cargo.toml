@@ -29,7 +29,7 @@ icu_locid = { version = "0.1", path = "../locid" }
 icu_provider = { version = "0.1", path = "../provider" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 litemap = { version = "0.1.1", path = "../../utils/litemap", features = ["serde"] }
-tinystr = { version = "0.4.4" }
+tinystr = { version = "0.4.5" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 smallvec = "1.4"
 
