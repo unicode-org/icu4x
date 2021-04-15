@@ -177,7 +177,7 @@ where
     /// ```
     #[inline(always)]
     pub fn len(&self) -> usize {
-        self.deref().len()
+        self.as_slice().len()
     }
 
     /// Returns whether the vec is empty.
@@ -196,7 +196,7 @@ where
     /// ```
     #[inline(always)]
     pub fn is_empty(&self) -> bool {
-        self.deref().is_empty()
+        self.as_slice().is_empty()
     }
 }
 
