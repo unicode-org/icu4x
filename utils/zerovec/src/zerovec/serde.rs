@@ -97,7 +97,7 @@ where
 #[cfg(test)]
 mod test {
     use super::super::*;
-    use crate::ule::samples::*;
+    use crate::samples::*;
 
     #[test]
     fn test_serde_json() {

@@ -4,7 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use zerovec::ule::samples::*;
+use zerovec::samples::*;
 use zerovec::ZeroVec;
 
 fn overview_bench(c: &mut Criterion) {

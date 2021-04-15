@@ -4,7 +4,7 @@
 
 use iai::black_box;
 
-use zerovec::ule::samples::*;
+use zerovec::samples::*;
 use zerovec::ZeroVec;
 
 fn sum_slice() -> u32 {

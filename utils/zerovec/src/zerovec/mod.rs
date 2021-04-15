@@ -8,13 +8,13 @@ mod serde;
 use crate::ule::*;
 use std::fmt;
 
-/// A zero-copy vector for fixed-length types.
+/// A zero-copy vector for fixed-width types.
 ///
 /// `ZeroVec<T>` is designed as a drop-in replacement for `Vec<T>` in situations where it is
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization.
 ///
 /// `T` must implement [`AsULE`], which is auto-implemented for a number of built-in types,
-/// including all fixed-length multibyte integers.
+/// including all fixed-width multibyte integers.
 ///
 /// # How it Works
 ///
@@ -50,6 +50,8 @@ use std::fmt;
 /// assert_eq!(zerovec.get(2), Some(421));
 /// assert_eq!(zerovec, nums);
 /// ```
+///
+/// [`ule`]: crate::ule
 #[non_exhaustive]
 #[derive(Clone)]
 pub enum ZeroVec<'a, T>
@@ -102,6 +104,8 @@ where
     ///
     /// This function is infallible for built-in integer types, but fallible for other types,
     /// such as `char`. For more information, see [`ULE::parse_byte_slice`].
+    ///
+    /// The bytes within the byte buffer must remain constant for the life of the ZeroVec.
     ///
     /// # Endianness
     ///
@@ -386,7 +390,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ule::samples::*;
+    use crate::samples::*;
 
     #[test]
     fn test_get() {

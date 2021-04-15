@@ -8,6 +8,9 @@ use super::*;
 use std::convert::TryFrom;
 
 /// A u8 array of little-endian data corresponding to a Unicode code point.
+///
+/// The bytes of a `CharULE` are guaranteed to represent a little-endian-encoded u32 that is a
+/// valid `char` and can be converted without validation.
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct CharULE([u8; 4]);

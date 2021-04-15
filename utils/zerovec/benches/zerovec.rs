@@ -8,7 +8,7 @@ use rand_distr::{Distribution, LogNormal};
 use rand_pcg::Lcg64Xsh32;
 use std::fmt;
 
-use zerovec::ule::samples::*;
+use zerovec::samples::*;
 use zerovec::ule::*;
 use zerovec::ZeroVec;
 
