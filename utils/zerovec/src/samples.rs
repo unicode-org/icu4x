@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Example data useful for testing PlainOldULE.
+//! Example data useful for testing ZeroVec.
 
 #[repr(align(8))]
 struct Aligned<T>(pub T);
