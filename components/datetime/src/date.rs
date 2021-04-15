@@ -113,7 +113,7 @@ impl<T> ZonedDateTimeInput for T where T: TimeZoneInput + DateTimeInput {}
 /// A formattable calendar date and ISO time that takes the locale into account.
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// A reference to this instance's DateTimeInput.
-    fn date_time(&self) -> &T;
+    fn datetime(&self) -> &T;
 
     /// The year number according to week numbering.
     ///
@@ -167,7 +167,7 @@ impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
 }
 
 impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
-    fn date_time(&self) -> &T {
+    fn datetime(&self) -> &T {
         self.data
     }
 
@@ -189,7 +189,7 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
 }
 
 impl<'s, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'s, T> {
-    fn date_time(&self) -> &T {
+    fn datetime(&self) -> &T {
         self.data
     }
 

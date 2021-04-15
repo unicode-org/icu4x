@@ -17,12 +17,12 @@ pub enum DateTimeFormatError {
     Format(std::fmt::Error),
     /// An error originating inside of the DataProvider
     DataProvider(DataError),
-    /// Missing field in date time input
+    /// Missing field in datetime input
     /// TODO: How can we return which field was missing?
     MissingInputField,
     /// An error from skeleton matching,
     Skeleton(SkeletonError),
-    /// Field unsupported for this type of date time format
+    /// Field unsupported for this type of datetime format
     UnsupportedField(FieldSymbol),
 }
 

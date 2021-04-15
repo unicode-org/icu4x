@@ -17,7 +17,7 @@ pub struct FormattedZonedDateTime<'l, T>
 where
     T: ZonedDateTimeInput,
 {
-    pub(crate) zoned_date_time_format: &'l ZonedDateTimeFormat<'l>,
+    pub(crate) zoned_datetime_format: &'l ZonedDateTimeFormat<'l>,
     pub(crate) zoned_datetime: &'l T,
 }
 
@@ -26,7 +26,7 @@ where
     T: ZonedDateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.zoned_date_time_format, self.zoned_datetime, sink)
+        write_pattern(self.zoned_datetime_format, self.zoned_datetime, sink)
             .map_err(|_| std::fmt::Error)
     }
 
@@ -38,13 +38,13 @@ where
     T: ZonedDateTimeInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.zoned_date_time_format, self.zoned_datetime, f)
+        write_pattern(self.zoned_datetime_format, self.zoned_datetime, f)
             .map_err(|_| std::fmt::Error)
     }
 }
 
 pub fn write_pattern<T, W>(
-    zoned_date_time_format: &ZonedDateTimeFormat,
+    zoned_datetime_format: &ZonedDateTimeFormat,
     zoned_datetime: &T,
     w: &mut W,
 ) -> Result<(), Error>
@@ -52,13 +52,13 @@ where
     T: ZonedDateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let locale = &zoned_date_time_format.date_time_format.locale;
-    let pattern = &zoned_date_time_format.date_time_format.pattern;
-    let loc_date_time = ZonedDateTimeInputWithLocale::new(zoned_datetime, locale);
+    let locale = &zoned_datetime_format.datetime_format.locale;
+    let pattern = &zoned_datetime_format.datetime_format.pattern;
+    let loc_datetime = ZonedDateTimeInputWithLocale::new(zoned_datetime, locale);
     for item in pattern.items() {
         match item {
             PatternItem::Field(field) => {
-                write_field(&field, zoned_date_time_format, &loc_date_time, w)?
+                write_field(&field, zoned_datetime_format, &loc_datetime, w)?
             }
             PatternItem::Literal(l) => w.write_str(l)?,
         }
@@ -68,25 +68,25 @@ where
 
 fn write_field<T, W>(
     field: &fields::Field,
-    zoned_date_time_format: &ZonedDateTimeFormat,
-    loc_date_time: &impl LocalizedDateTimeInput<T>,
+    zoned_datetime_format: &ZonedDateTimeFormat,
+    loc_datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>
 where
     T: ZonedDateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let pattern = &zoned_date_time_format.date_time_format.pattern;
-    let symbols = &zoned_date_time_format.date_time_format.symbols;
+    let pattern = &zoned_datetime_format.datetime_format.pattern;
+    let symbols = &zoned_datetime_format.datetime_format.symbols;
 
     match field.symbol {
         FieldSymbol::TimeZone(_timezone) => timezone::write_field(
             field,
-            &zoned_date_time_format.time_zone_format,
-            loc_date_time.date_time(),
+            &zoned_datetime_format.time_zone_format,
+            loc_datetime.datetime(),
             w,
         )?,
-        _ => datetime::write_field(pattern, field, symbols, loc_date_time, w)?,
+        _ => datetime::write_field(pattern, field, symbols, loc_datetime, w)?,
     }
     Ok(())
 }

@@ -51,14 +51,14 @@ use crate::{
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
-/// let zoned_date_time: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
+/// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
 ///     .parse()
 ///     .expect("Failed to parse zoned datetime");
 ///
-/// let value = zdtf.format_to_string(&zoned_date_time);
+/// let value = zdtf.format_to_string(&zoned_datetime);
 /// ```
 pub struct ZonedDateTimeFormat<'d> {
-    pub(super) date_time_format: DateTimeFormat<'d>,
+    pub(super) datetime_format: DateTimeFormat<'d>,
     pub(super) time_zone_format: TimeZoneFormat<'d>,
 }
 
@@ -123,15 +123,15 @@ impl<'d> ZonedDateTimeFormat<'d> {
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
-        let date_time_format = DateTimeFormat::new(locale, pattern, data);
+        let datetime_format = DateTimeFormat::new(locale, pattern, data);
         let time_zone_format = TimeZoneFormat::try_new(
-            date_time_format.locale.clone(),
-            date_time_format.pattern.clone(),
+            datetime_format.locale.clone(),
+            datetime_format.pattern.clone(),
             zone_provider,
         )?;
 
         Ok(Self {
-            date_time_format,
+            datetime_format,
             time_zone_format,
         })
     }
@@ -154,11 +154,11 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options)
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
-    /// let zoned_date_time: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
+    /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let formatted_date = zdtf.format(&zoned_date_time);
+    /// let formatted_date = zdtf.format(&zoned_datetime);
     ///
     /// let _ = format!("Date: {}", formatted_date);
     /// ```
@@ -171,7 +171,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
         T: ZonedDateTimeInput,
     {
         FormattedZonedDateTime {
-            zoned_date_time_format: self,
+            zoned_datetime_format: self,
             zoned_datetime: value,
         }
     }
@@ -194,12 +194,12 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
-    /// let zoned_date_time: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
+    /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
     /// let mut buffer = String::new();
-    /// zdtf.format_to_write(&mut buffer, &zoned_date_time)
+    /// zdtf.format_to_write(&mut buffer, &zoned_datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// let _ = format!("Date: {}", buffer);
@@ -230,11 +230,11 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// let zdtf = ZonedDateTimeFormat::try_new(locale, &date_provider, &zone_provider, &options.into())
     ///     .expect("Failed to create ZonedDateTimeFormat instance.");
     ///
-    /// let zoned_date_time: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
+    /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let _ = zdtf.format_to_string(&zoned_date_time);
+    /// let _ = zdtf.format_to_string(&zoned_datetime);
     /// ```
     pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
         let mut s = String::new();

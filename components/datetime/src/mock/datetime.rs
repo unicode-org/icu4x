@@ -15,7 +15,7 @@ use tinystr::tinystr8;
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 /// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/date_time.md)
+/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
 /// to develop core date and time APIs that will work as an input for this component.
 ///
 /// # Examples
@@ -27,7 +27,7 @@ use tinystr::tinystr8;
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let dt2: MockDateTime = "2020-10-14T13:21:00".parse()
-///     .expect("Failed to parse a date time.");
+///     .expect("Failed to parse a datetime.");
 /// ```
 /// [`DateTimeFormat`]: super::DateTimeFormat
 #[derive(Debug, Default)]
@@ -115,7 +115,7 @@ impl FromStr for MockDateTime {
     /// use icu::datetime::mock::datetime::MockDateTime;
     ///
     /// let date: MockDateTime = "2020-10-14T13:21:00".parse()
-    ///     .expect("Failed to parse a date time.");
+    ///     .expect("Failed to parse a datetime.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let year: i32 = input[0..4].parse()?;

@@ -34,10 +34,10 @@ use writeable::Writeable;
 /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
-/// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// let formatted_date = dtf.format(&date_time);
+/// let formatted_date = dtf.format(&datetime);
 ///
 /// let _ = format!("Date: {}", formatted_date);
 /// ```
@@ -47,7 +47,7 @@ where
 {
     pub(crate) pattern: &'l Pattern,
     pub(crate) symbols: &'l provider::gregory::DateSymbolsV1,
-    pub(crate) date_time: &'l T,
+    pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
 }
 
@@ -59,7 +59,7 @@ where
         write_pattern(
             self.pattern,
             self.symbols,
-            self.date_time,
+            self.datetime,
             self.locale,
             sink,
         )
@@ -74,7 +74,7 @@ where
     T: DateTimeInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.pattern, self.symbols, self.date_time, self.locale, f)
+        write_pattern(self.pattern, self.symbols, self.datetime, self.locale, f)
             .map_err(|_| std::fmt::Error)
     }
 }
@@ -102,7 +102,7 @@ where
 pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
     symbols: &provider::gregory::DateSymbolsV1,
-    date_time: &T,
+    datetime: &T,
     locale: &Locale,
     w: &mut W,
 ) -> Result<(), Error>
@@ -110,10 +110,10 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_date_time = DateTimeInputWithLocale::new(date_time, locale);
+    let loc_datetime = DateTimeInputWithLocale::new(datetime, locale);
     for item in pattern.items() {
         match item {
-            PatternItem::Field(field) => write_field(pattern, &field, symbols, &loc_date_time, w)?,
+            PatternItem::Field(field) => write_field(pattern, &field, symbols, &loc_datetime, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }
@@ -124,7 +124,7 @@ pub(super) fn write_field<T, W>(
     pattern: &crate::pattern::Pattern,
     field: &fields::Field,
     symbols: &crate::provider::gregory::DateSymbolsV1,
-    date_time: &impl LocalizedDateTimeInput<T>,
+    datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -134,8 +134,8 @@ where
     match field.symbol {
         FieldSymbol::Year(..) => format_number(
             w,
-            date_time
-                .date_time()
+            datetime
+                .datetime()
                 .year()
                 .ok_or(Error::MissingInputField)?
                 .number as isize,
@@ -144,8 +144,8 @@ where
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
                 w,
-                date_time
-                    .date_time()
+                datetime
+                    .datetime()
                     .month()
                     .ok_or(Error::MissingInputField)?
                     .number as isize,
@@ -155,8 +155,8 @@ where
                 let symbol = symbols.get_symbol_for_month(
                     month,
                     length,
-                    date_time
-                        .date_time()
+                    datetime
+                        .datetime()
                         .month()
                         .ok_or(Error::MissingInputField)?
                         .number as usize
@@ -166,8 +166,8 @@ where
             }
         },
         FieldSymbol::Weekday(weekday) => {
-            let dow = date_time
-                .date_time()
+            let dow = datetime
+                .datetime()
                 .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
             let symbol = symbols.get_symbol_for_weekday(weekday, field.length, dow);
@@ -175,8 +175,8 @@ where
         }
         FieldSymbol::Day(..) => format_number(
             w,
-            date_time
-                .date_time()
+            datetime
+                .datetime()
                 .day_of_month()
                 .ok_or(Error::MissingInputField)?
                 .0 as isize,
@@ -184,8 +184,8 @@ where
         )?,
         FieldSymbol::Hour(hour) => {
             let h = usize::from(
-                date_time
-                    .date_time()
+                datetime
+                    .datetime()
                     .hour()
                     .ok_or(Error::MissingInputField)?,
             ) as isize;
@@ -213,8 +213,8 @@ where
         FieldSymbol::Minute => format_number(
             w,
             usize::from(
-                date_time
-                    .date_time()
+                datetime
+                    .datetime()
                     .minute()
                     .ok_or(Error::MissingInputField)?,
             ) as isize,
@@ -223,8 +223,8 @@ where
         FieldSymbol::Second(..) => format_number(
             w,
             usize::from(
-                date_time
-                    .date_time()
+                datetime
+                    .datetime()
                     .second()
                     .ok_or(Error::MissingInputField)?,
             ) as isize,
@@ -234,14 +234,14 @@ where
             let symbol = symbols.get_symbol_for_day_period(
                 period,
                 field.length,
-                date_time
-                    .date_time()
+                datetime
+                    .datetime()
                     .hour()
                     .ok_or(Error::MissingInputField)?,
                 arithmetic::is_top_of_hour(
                     &pattern,
-                    date_time.date_time().minute().map(u8::from).unwrap_or(0),
-                    date_time.date_time().second().map(u8::from).unwrap_or(0),
+                    datetime.datetime().minute().map(u8::from).unwrap_or(0),
+                    datetime.datetime().second().map(u8::from).unwrap_or(0),
                 ),
             );
             w.write_str(symbol)?
@@ -278,12 +278,12 @@ mod tests {
             .take()
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
-        let date_time = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
+        let datetime = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         write_pattern(
             &pattern,
             &data.symbols,
-            &date_time,
+            &datetime,
             &"und".parse().unwrap(),
             &mut sink,
         )

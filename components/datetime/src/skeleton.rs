@@ -66,7 +66,7 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
     /// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
     /// This string consists of a symbol that is repeated N times. This string is
     /// deserialized here into the Skeleton format which is used in memory
-    /// when working with formatting date times.
+    /// when working with formatting datetimes.
     fn visit_str<E>(self, skeleton_string: &str) -> Result<Self::Value, E>
     where
         E: de::Error,
@@ -680,7 +680,7 @@ mod test {
         let data_provider = get_data_provider();
 
         match get_best_available_format_pattern(
-            &data_provider.patterns.date_time.skeletons,
+            &data_provider.patterns.datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
@@ -714,7 +714,7 @@ mod test {
         let data_provider = get_data_provider();
 
         match get_best_available_format_pattern(
-            &data_provider.patterns.date_time.skeletons,
+            &data_provider.patterns.datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
@@ -744,8 +744,8 @@ mod test {
         let data_provider = get_data_provider();
 
         match create_best_pattern_for_fields(
-            &data_provider.patterns.date_time.skeletons,
-            &data_provider.patterns.date_time.length_patterns,
+            &data_provider.patterns.datetime.skeletons,
+            &data_provider.patterns.datetime.length_patterns,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
@@ -779,7 +779,7 @@ mod test {
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.patterns.date_time.skeletons,
+                &data_provider.patterns.datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,
@@ -808,7 +808,7 @@ mod test {
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.patterns.date_time.skeletons,
+                &data_provider.patterns.datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,

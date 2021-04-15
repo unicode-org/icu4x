@@ -17,7 +17,7 @@ pub struct TimeZoneTests(pub Vec<TimeZoneTest>);
 pub struct TimeZoneTest {
     pub locale: String,
     pub config: TimeZoneConfig,
-    pub date_time: String,
+    pub datetime: String,
     pub expectations: Vec<TimeZoneExpectation>,
 }
 

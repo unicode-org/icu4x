@@ -46,7 +46,7 @@ List of research documenting ICU4X's findings and architectural explorations.
 
 Document | Summary
 ---------|---------
-[date_time.md](research/date_time.md) | High-level outline of how ICU4X sees Date & Time formatting separation of concerns between Internationalization and Date & Time management.
+[datetime.md](research/datetime.md) | High-level outline of how ICU4X sees Date & Time formatting separation of concerns between Internationalization and Date & Time management.
 [datetime_input.md](research/datetime_input.md) | Exploration of potential design models for Date & Time APIs with support for calendar systems and open to strong integration with internationalization.
 [format_to_parts.md](research/datetime_input.md) | Discussion on alternate data models to support ECMA-402 formatToParts
 [wasm_vs_transpiler.md](research/wasm_vs_transpiler.md) | We've considered two approaches to a problem of write logic once, deploy it on multiple platforms/languages with minimal effort.

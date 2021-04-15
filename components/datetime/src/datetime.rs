@@ -46,10 +46,10 @@ use crate::{
 ///     .expect("Failed to create DateTimeFormat instance.");
 ///
 ///
-/// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+/// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// let value = dtf.format_to_string(&date_time);
+/// let value = dtf.format_to_string(&datetime);
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402` and in the future will get even more pronounce when we introduce
@@ -170,10 +170,10 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options)
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted_date = dtf.format(&date_time);
+    /// let formatted_date = dtf.format(&datetime);
     ///
     /// let _ = format!("Date: {}", formatted_date);
     /// ```
@@ -188,7 +188,7 @@ impl<'d> DateTimeFormat<'d> {
         FormattedDateTime {
             pattern: &self.pattern,
             symbols: &self.symbols,
-            date_time: value,
+            datetime: value,
             locale: &self.locale,
         }
     }
@@ -210,11 +210,11 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// let mut buffer = String::new();
-    /// dtf.format_to_write(&mut buffer, &date_time)
+    /// dtf.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// let _ = format!("Date: {}", buffer);
@@ -245,10 +245,10 @@ impl<'d> DateTimeFormat<'d> {
     /// let dtf = DateTimeFormat::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormat instance.");
     ///
-    /// let date_time = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
+    /// let datetime = MockDateTime::try_new(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let _ = dtf.format_to_string(&date_time);
+    /// let _ = dtf.format_to_string(&datetime);
     /// ```
     pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
         let mut s = String::new();

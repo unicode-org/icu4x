@@ -15,7 +15,7 @@ pub struct DayPeriodTest {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DayPeriodTestCase {
-    pub date_times: Vec<String>,
+    pub datetimes: Vec<String>,
     pub expectations: Vec<DayPeriodExpectation>,
 }
 

@@ -137,7 +137,7 @@
       "medium": "h:mm:ss a",
       "short": "h:mm a"
     },
-    "date_time": {
+    "datetime": {
       "length_patterns": {
         "full": "{1} في {0}",
         "long": "{1} في {0}",
