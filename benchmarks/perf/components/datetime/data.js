@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618461586665,
+  "lastUpdate": 1618513991989,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4043,6 +4043,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2277208,
             "range": "± 243521",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nmihai_2000@yahoo.com",
+            "name": "Mihai Nita",
+            "username": "mihnita"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c4abd70d98c9240cb9df99453c077b073ee8559a",
+          "message": "First iteration of horizontal fallback doc (#629)",
+          "timestamp": "2021-04-15T12:06:10-07:00",
+          "tree_id": "cea7507f81a6033eb38767a71c6121b36e84db42",
+          "url": "https://github.com/unicode-org/icu4x/commit/c4abd70d98c9240cb9df99453c077b073ee8559a"
+        },
+        "date": 1618513989504,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1309339,
+            "range": "± 10099",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2512325,
+            "range": "± 8060",
             "unit": "ns/iter"
           }
         ]
