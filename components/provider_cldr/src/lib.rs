@@ -36,5 +36,5 @@ pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
-pub use transform::get_all_resc_keys;
+pub use transform::get_all_cldr_keys;
 pub use transform::CldrJsonDataProvider;
