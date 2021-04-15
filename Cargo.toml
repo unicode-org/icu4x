@@ -6,6 +6,7 @@
 
 members = [
     "experimental/bies",
+    "experimental/provider_ppucd",
     "experimental/segmenter_lstm",
     "components/datetime",
     "components/decimal",
@@ -19,7 +20,6 @@ members = [
     "components/plurals",
     "components/provider_cldr",
     "components/provider_fs",
-    "components/provider_ppucd",
     "components/provider",
     "components/uniset",
     "resources/testdata",
