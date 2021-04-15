@@ -813,12 +813,16 @@ dependencies = [
 name = "icu"
 version = "0.1.0"
 dependencies = [
+ "fixed_decimal",
  "icu_datetime",
+ "icu_decimal",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
+ "icu_provider",
  "icu_testdata",
  "icu_uniset",
+ "writeable",
 ]
 
 [[package]]

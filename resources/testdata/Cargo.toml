@@ -145,7 +145,9 @@ icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.1", path = "../../components/plurals" }
 
 [features]
+# Enables programmatic access to this Cargo.toml file
 metadata = ["cargo_metadata", "serde", "serde_json", "icu_locid/serde"]
+# Enables the `icu4x-gen-testdata` binary to re-generate the test data
 icu4x-gen-testdata = [
     "cargo_metadata",
     "clap",

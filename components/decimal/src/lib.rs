@@ -12,14 +12,15 @@
 //!
 //! https://github.com/unicode-org/icu4x/issues/275
 //!
-//! # Example
+//! # Examples
+//!
+//! ## Format a number with Bengali digits
 //!
 //! ```
 //! # #[cfg(feature = "provider_serde")] {
-//! use icu_decimal::FixedDecimalFormat;
-//! use icu_decimal::FormattedFixedDecimal;
-//! use icu_locid::Locale;
-//! use icu_locid_macros::langid;
+//! use icu::decimal::FixedDecimalFormat;
+//! use icu::locid::Locale;
+//! use icu::locid_macros::langid;
 //! use writeable::Writeable;
 //!
 //! let locale: Locale = langid!("bn").into();
@@ -33,6 +34,26 @@
 //!
 //! assert_eq!("১০,০০,০০৭", formatted_str);
 //! # } // feature = "provider_serde"
+//! ```
+//!
+//! ## Format a number with digits after the decimal separator
+//!
+//! ```
+//! use fixed_decimal::FixedDecimal;
+//! use icu::decimal::FixedDecimalFormat;
+//! use icu::locid::Locale;
+//! use writeable::Writeable;
+//!
+//! let locale = Locale::und();
+//! let provider = icu_provider::inv::InvariantDataProvider;
+//! let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+//!     .expect("Data should load successfully");
+//!
+//! let fixed_decimal = FixedDecimal::from(200050)
+//!     .multiplied_pow10(-2)
+//!     .expect("Operation is fully in range");
+//!
+//! assert_eq!("2,000.50", fdf.format(&fixed_decimal).writeable_to_string());
 //! ```
 //!
 //! [`FixedDecimalFormat`]: FixedDecimalFormat
