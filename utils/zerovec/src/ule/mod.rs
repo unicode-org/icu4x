@@ -6,6 +6,7 @@
 
 mod chars;
 mod plain;
+mod string;
 
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
@@ -69,4 +70,20 @@ pub trait AsULE {
     /// was first constructed. An implementation may therefore involve an `unsafe{}` block, like
     /// `from_bytes_unchecked()`.
     fn from_unaligned(unaligned: &Self::ULE) -> Self;
+}
+
+pub trait AsVarULE {
+    type VarULE: VarULE + ?Sized;
+    fn as_unaligned(&self) -> &Self::VarULE;
+    fn from_unaligned(unaligned: &Self::VarULE) -> Self;
+}
+
+pub trait VarULE: 'static {
+    type Error;
+
+    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error>;
+    /// Invariant: must be safe to call when called on a slice that previously
+    /// succeeded with `parse_byte_slice`
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
+    fn as_byte_slice(&self) -> &[u8];
 }

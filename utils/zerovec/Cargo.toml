@@ -22,6 +22,7 @@ include = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+either = "1.6.1"
 serde = { version = "1.0", optional = true }
 
 [dev-dependencies]

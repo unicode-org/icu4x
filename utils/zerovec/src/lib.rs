@@ -47,4 +47,5 @@ pub mod samples;
 pub mod ule;
 mod zerovec;
 
+pub use crate::zerovec::var::{VarZeroVec, VarZeroVecError};
 pub use crate::zerovec::ZeroVec;

@@ -5,6 +5,8 @@
 #[cfg(feature = "serde")]
 mod serde;
 
+pub(crate) mod var;
+
 use crate::ule::*;
 use std::fmt;
 
