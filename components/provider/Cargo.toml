@@ -29,7 +29,7 @@ provider_serde = ["serde", "erased-serde"]
 
 [dependencies]
 icu_locid = { version = "0.1", path = "../locid" }
-tinystr = "0.4"
+tinystr = "0.4.5"
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 # For "provider_serde" feature

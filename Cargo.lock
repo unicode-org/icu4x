@@ -2311,9 +2311,9 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.4.3"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27aaed4540fcc2440c36fe3a98ca56450ee3da6d166da64369f40dc980aba459"
+checksum = "5b0bc8f45dc08e13992f1596a7cbd410e3cdcac1d165ca909ab6ae5568566cbb"
 dependencies = [
  "serde",
  "tinystr-macros",
