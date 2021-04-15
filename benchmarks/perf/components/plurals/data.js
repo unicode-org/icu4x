@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618513976602,
+  "lastUpdate": 1618523266254,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5585,6 +5585,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 103112,
             "range": "± 561",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b328f8a4cff123fc48416c7a03d0f96cc9c2ab0",
+          "message": "Adding ZeroVec, zero-copy vector abstraction over a byte buffer (#647)",
+          "timestamp": "2021-04-15T16:41:00-05:00",
+          "tree_id": "f3eadaebeff876cfbe022497a6417c1756993eec",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b328f8a4cff123fc48416c7a03d0f96cc9c2ab0"
+        },
+        "date": 1618523264986,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1138,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6690,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 103479,
+            "range": "± 1012",
             "unit": "ns/iter"
           }
         ]
