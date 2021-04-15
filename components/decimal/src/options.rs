@@ -15,7 +15,7 @@ pub struct FixedDecimalFormatOptions {
 
 /// Configuration for how often to render grouping separators.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_decimal::FixedDecimalFormat;
@@ -66,7 +66,7 @@ impl Default for GroupingStrategy {
 
 /// Configuration for when to render the minus sign or plus sign.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_decimal::FixedDecimalFormat;

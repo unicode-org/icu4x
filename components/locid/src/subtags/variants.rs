@@ -34,7 +34,7 @@ pub struct Variants(Option<Box<[Variant]>>);
 impl Variants {
     /// Returns a new empty list of variants. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::subtags::Variants;

@@ -40,7 +40,7 @@ impl Default for HelloWorldV1<'_> {
 ///
 /// Mostly useful for testing.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};

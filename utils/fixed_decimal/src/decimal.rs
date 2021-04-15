@@ -181,7 +181,7 @@ impl FixedDecimal {
     /// Gets the digit at the specified order of magnitude. Returns 0 if the magnitude is out of
     /// range of the currently visible digits.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -212,7 +212,7 @@ impl FixedDecimal {
     /// on the return value to get the range in descending order. Magnitude 0 is always included,
     /// even if the number has leading or trailing zeros.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -232,7 +232,7 @@ impl FixedDecimal {
     /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
     /// digits should fit in an i16.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -279,7 +279,7 @@ impl FixedDecimal {
     /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
     /// digits should fit in an i16.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -296,7 +296,7 @@ impl FixedDecimal {
 
     /// Change the value from negative to positive or from positive to negative, modifying self.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -317,7 +317,7 @@ impl FixedDecimal {
     /// Change the value from negative to positive or from positive to negative, consuming self
     /// and returning a new object.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -331,7 +331,7 @@ impl FixedDecimal {
 
     /// Returns the [Signum][Signum] of this FixedDecimal.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -377,7 +377,7 @@ impl FixedDecimal {
 impl writeable::Writeable for FixedDecimal {
     /// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
@@ -405,7 +405,7 @@ impl writeable::Writeable for FixedDecimal {
     /// The number of bytes that will be written by `FixedDecimal::write_to`. Use this function to
     /// pre-allocate capacity in the destination buffer.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;

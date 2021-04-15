@@ -41,7 +41,7 @@ impl From<ResourceKey> for DataRequest {
 impl DataRequest {
     /// Returns the LanguageIdentifier for this DataRequest, or an error if it is not present.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
@@ -86,7 +86,7 @@ pub struct DataResponseMetadata {
 
 /// A wrapper around the payload returned in a [DataResponse].
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;

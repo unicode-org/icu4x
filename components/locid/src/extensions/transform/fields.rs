@@ -39,7 +39,7 @@ pub struct Fields(Option<Box<[(Key, Value)]>>);
 impl Fields {
     /// Returns a new empty list of key-value pairs. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::transform::Fields;

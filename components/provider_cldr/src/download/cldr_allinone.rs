@@ -16,7 +16,7 @@ use std::path::PathBuf;
 ///
 /// Downloads a single zip file for all components, as used in CLDR 38 and later.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;

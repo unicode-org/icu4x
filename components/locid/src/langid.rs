@@ -105,7 +105,7 @@ impl LanguageIdentifier {
 
     /// Returns the default undefined language "und". Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::LanguageIdentifier;

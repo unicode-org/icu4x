@@ -17,7 +17,7 @@
 //!
 //! Notice: `Other` extension type is currently not supported.
 //!
-//! # Examples
+//! # Exampless
 //!
 //! ```
 //! use icu::locid::Locale;
@@ -90,7 +90,7 @@ pub struct Extensions {
 impl Extensions {
     /// Returns a new empty map of extensions. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::Extensions;
@@ -108,7 +108,7 @@ impl Extensions {
 
     /// Returns whether there are no extensions present.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::Locale;

@@ -20,7 +20,7 @@ pub trait ErasedDataStruct: 'static + Debug {
 
     /// Return this boxed trait object as Box<dyn Any>.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
@@ -38,7 +38,7 @@ pub trait ErasedDataStruct: 'static + Debug {
     ///
     /// Also see associated method downcast_ref().
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
@@ -61,7 +61,7 @@ impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
 impl dyn ErasedDataStruct {
     /// Convenience function: Return a downcast reference, or an error if mismatched types.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;

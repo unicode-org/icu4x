@@ -77,7 +77,7 @@ pub struct ResourceKey {
 
 /// Shortcut to construct a const resource identifier.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -176,7 +176,7 @@ impl ResourceKey {
     /// Gets the standard path components of this `ResourceKey`. These components should be used when
     /// persisting the `ResourceKey` on the filesystem or in structured data.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
@@ -197,7 +197,7 @@ impl ResourceKey {
     ///
     /// Convenience method for data providers that support a single ResourceKey.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
@@ -312,7 +312,7 @@ impl ResourceOptions {
     /// Gets the standard path components of this `ResourceOptions`. These components should be used when
     /// persisting the `ResourceOptions` on the filesystem or in structured data.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use std::borrow::Cow;

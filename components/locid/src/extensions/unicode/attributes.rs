@@ -33,7 +33,7 @@ pub struct Attributes(Option<Box<[Attribute]>>);
 impl Attributes {
     /// Returns a new empty set of attributes. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Attributes;

@@ -65,7 +65,7 @@ macro_rules! impl_dyn_from_payload {
 /// - `$d` is the lifetime parameter for `DataProvider`; usually `'d`
 /// - `$s` is the lifetime bound for the struct trait; usually `'s`
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;

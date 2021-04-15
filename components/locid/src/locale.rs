@@ -93,7 +93,7 @@ impl Locale {
 
     /// Returns the default undefined locale "und". Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::Locale;

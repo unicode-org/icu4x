@@ -16,7 +16,7 @@ use std::fmt::Debug;
 /// The objects returned by `InvariantDataProvider` are guaranteed to conform to the correct struct
 /// definition, so `InvariantDataProvider` can also be used to validate unknown data providers.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;

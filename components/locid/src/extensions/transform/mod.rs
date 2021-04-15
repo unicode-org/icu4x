@@ -85,7 +85,7 @@ pub struct Transform {
 impl Transform {
     /// Returns a new empty map of Transform extensions. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::transform::Transform;

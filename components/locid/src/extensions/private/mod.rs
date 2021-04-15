@@ -63,7 +63,7 @@ pub struct Private(Option<Box<[Key]>>);
 impl Private {
     /// Returns a new empty list of private-use extensions. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::private::Private;

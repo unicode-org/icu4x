@@ -53,7 +53,7 @@ pub trait KeyedDataProvider {
     /// Auto-implemented function that enables chaining of KeyedDataProviders while preserving
     /// UnsupportedResourceKey.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```ignore
     /// DataProviderA::supports_key(resc_key)

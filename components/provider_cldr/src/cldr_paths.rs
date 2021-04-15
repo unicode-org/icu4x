@@ -24,7 +24,7 @@ pub trait CldrPaths: std::fmt::Debug {
 
 /// Implementation of `CldrPaths` for multiple separate local CLDR JSON directories per component.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider_cldr::CldrPathsLocal;
@@ -71,7 +71,7 @@ impl Default for CldrPathsLocal {
 
 /// Implementation of `CldrPaths` for one combined local CLDR JSON directory.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider_cldr::CldrPathsAllInOne;

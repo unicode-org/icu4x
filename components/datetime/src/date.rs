@@ -263,7 +263,7 @@ pub struct DayOfYearInfo {
 ///
 /// The discriminant values correspond to ISO-8601 weekday numbers (Monday = 1, Sunday = 7).
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::datetime::date::IsoWeekday;
@@ -287,7 +287,7 @@ impl From<usize> for IsoWeekday {
     /// Convert from an ISO-8601 weekday number to an IsoWeekday enum. 0 is automatically converted
     /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::datetime::date::IsoWeekday;

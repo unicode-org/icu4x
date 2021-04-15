@@ -35,7 +35,7 @@ pub trait SerdeDeDataReceiver<'de> {
     /// This method results in an owned payload, but the payload could have non-static references
     /// according to the deserializer lifetime.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
@@ -107,7 +107,7 @@ pub trait SerdeSeDataStruct<'s>: 's + Debug {
 
     /// Return this trait object reference for Serde serialization.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::serde::SerdeSeDataStruct;

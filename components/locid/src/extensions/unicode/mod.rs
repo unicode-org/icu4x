@@ -81,7 +81,7 @@ pub struct Unicode {
 impl Unicode {
     /// Returns a new empty map of Unicode extensions. Same as `Default`, but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Unicode;
