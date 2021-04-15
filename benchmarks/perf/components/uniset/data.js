@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618513967102,
+  "lastUpdate": 1618523263059,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5039,6 +5039,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34314628,
             "range": "± 5474084",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b328f8a4cff123fc48416c7a03d0f96cc9c2ab0",
+          "message": "Adding ZeroVec, zero-copy vector abstraction over a byte buffer (#647)",
+          "timestamp": "2021-04-15T16:41:00-05:00",
+          "tree_id": "f3eadaebeff876cfbe022497a6417c1756993eec",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b328f8a4cff123fc48416c7a03d0f96cc9c2ab0"
+        },
+        "date": 1618523261576,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32615999,
+            "range": "± 1136921",
             "unit": "ns/iter"
           }
         ]
