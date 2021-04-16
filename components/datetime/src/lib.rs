@@ -85,12 +85,14 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub mod skeleton;
-pub mod time_zone;
+// TODO(#622) make the time_zone module public once TimeZoneFormat is public.
+pub(crate) mod time_zone;
 pub mod zoned_datetime;
 
 pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
+pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use zoned_datetime::ZonedDateTimeFormat;
 // TODO(#622) re-export TimeZoneFormat once it is made public.

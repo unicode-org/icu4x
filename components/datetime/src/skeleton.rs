@@ -24,17 +24,17 @@ use serde::{
 #[derive(Debug, PartialEq)]
 struct FieldIndex(usize);
 
-/// A `Skeleton` is used to represent what types of `Field`s are present in a `Pattern`. The
-/// ordering of the `Skeleton`'s `Field`s have no bearing on the ordering of the `Field`s and
+/// A [`Skeleton`] is used to represent what types of `Field`s are present in a `Pattern`. The
+/// ordering of the [`Skeleton`]'s `Field`s have no bearing on the ordering of the `Field`s and
 /// `Literal`s in the `Pattern`.
 ///
-/// A `Skeleton` is a `Vec<Field>`, but with the invariant that it is sorted according to the canonical
+/// A [`Skeleton`] is a `Vec<Field>`, but with the invariant that it is sorted according to the canonical
 /// sort order. This order is sorted according to the most significant `Field` to the least significant.
 /// For example, a field with a `Minute` symbol would preceed a field with a `Second` symbol.
 /// This order is documented as the order of fields as presented in the
 /// [UTS 35 Date Field Symbol Table](https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table)
 ///
-/// The `Field`s are only sorted in the `Skeleton` in order to provide a deterministic
+/// The `Field`s are only sorted in the [`Skeleton`] in order to provide a deterministic
 /// serialization strategy, and to provide a faster `Skeleton` matching operation.
 #[derive(Debug, Eq, PartialEq, Clone, Ord, PartialOrd)]
 pub struct Skeleton(SmallVec<[fields::Field; 5]>);
@@ -62,7 +62,7 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
         write!(formatter, "Expected to find a valid skeleton.")
     }
 
-    /// A skeleton serialized into a string follows UTS 35.
+    /// A [`Skeleton`] serialized into a string follows UTS-35.
     /// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
     /// This string consists of a symbol that is repeated N times. This string is
     /// deserialized here into the Skeleton format which is used in memory
@@ -194,11 +194,11 @@ impl TryFrom<&str> for Skeleton {
     }
 }
 
-/// The `AvailableFormatPattern` represents a specific pattern that is available for a given locale.
+/// Represents a specific pattern that is available for a given locale.
 /// A [`Skeleton`] is used to match against to find the best pattern.
 #[derive(Debug, PartialEq, Clone)]
 pub struct AvailableFormatPattern<'a> {
-    /// The skeleton is used to match against.
+    /// The skeleton that is used to match against.
     skeleton: &'a Skeleton,
     pub pattern: &'a Pattern,
 }

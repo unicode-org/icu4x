@@ -13,8 +13,8 @@ use icu_locid::Locale;
 use std::fmt;
 use writeable::Writeable;
 
-/// `FormattedDateTime` is a intermediate structure which can be retrieved as
-/// an output from `DateTimeFormat`.
+/// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
+/// an output from [`DateTimeFormat`](crate::DateTimeFormat).
 ///
 /// The structure contains all the information needed to display formatted value,
 /// and it will also contain additional methods allowing the user to introspect

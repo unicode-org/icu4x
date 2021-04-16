@@ -80,8 +80,8 @@ pub struct Pattern {
     time_granularity: Option<TimeGranularity>,
 }
 
-/// Retrieves the granularity of time represented by a `PatternItem`.
-/// If the `PatternItem` is not time-related, returns `None`.
+/// Retrieves the granularity of time represented by a [`PatternItem`].
+/// If the [`PatternItem`] is not time-related, returns [`None`].
 fn get_time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
     match item {
         PatternItem::Field(field) => match field.symbol {

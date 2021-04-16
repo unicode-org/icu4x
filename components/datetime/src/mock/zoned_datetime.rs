@@ -7,10 +7,10 @@ use std::str::FromStr;
 
 use super::{datetime::MockDateTime, time_zone::MockTimeZone};
 
-/// Temporary implementation of [`ZonedDateTimeInput`],
-/// which is used in tests, benchmarks and examples of this component.
+/// A temporary struct that implements [`ZonedDateTimeInput`]
+/// and is used in tests, benchmarks and examples of this component.
 ///
-/// MockZonedDateTime is the composition of MockDateTime and MockTimeZone.
+/// The composition of [`MockDateTime`] and [`MockTimeZone`].
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 /// `MockZonedDateTime` as an example of the data necessary for ICU [`ZonedDateTimeFormat`] to work, and
@@ -34,7 +34,7 @@ use super::{datetime::MockDateTime, time_zone::MockTimeZone};
 /// let zdt2: MockZonedDateTime = "2020-10-14T13:21:00+05:00".parse()
 ///     .expect("Failed to parse a zoned datetime.");
 /// ```
-/// [`ZonedDateTimeFormat`]: super::ZonedDateTimeFormat
+/// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
 #[derive(Debug, Default)]
 pub struct MockZonedDateTime {
     /// The datetime component.
@@ -44,7 +44,7 @@ pub struct MockZonedDateTime {
 }
 
 impl MockZonedDateTime {
-    /// Creates a new `MockZonedDateTime` from an already validated `MockDateTime` and `MockTimeZone`.
+    /// Creates a new [`MockZonedDateTime`] from an already validated [`MockDateTime`] and [`MockTimeZone`].
     pub const fn new(datetime: MockDateTime, time_zone: MockTimeZone) -> Self {
         Self {
             datetime,
@@ -55,7 +55,7 @@ impl MockZonedDateTime {
 
 impl FromStr for MockZonedDateTime {
     type Err = DateTimeError;
-    /// Parse a `MockZonedDateTime` from a string.
+    /// Parse a [`MockZonedDateTime`] from a string.
     ///
     /// This utility is for easily creating dates, not a complete robust solution. The
     /// string must take a specific form of the ISO 8601 format:

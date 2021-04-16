@@ -157,11 +157,11 @@ pub mod patterns {
         pub short: Cow<'static, str>,
     }
 
-    /// This struct is a public wrapper around the internal Pattern struct. This allows
+    /// This struct is a public wrapper around the internal `Pattern` struct. This allows
     /// access to the serialization and deserialization capabilities, without exposing the
     /// internals of the pattern machinery.
     ///
-    /// The Pattern is an "exotic type" in the serialization process, and handles its own
+    /// The `Pattern` is an "exotic type" in the serialization process, and handles its own
     /// custom serialization practices.
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(
@@ -188,11 +188,11 @@ pub mod patterns {
         }
     }
 
-    /// This struct is a public wrapper around the internal Skeleton struct. This allows
+    /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
     /// access to the serialization and deserialization capabilities, without exposing the
     /// internals of the skeleton machinery.
     ///
-    /// The Skeleton is an "exotic type" in the serialization process, and handles its own
+    /// The `Skeleton` is an "exotic type" in the serialization process, and handles its own
     /// custom serialization practices.
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
     #[cfg_attr(

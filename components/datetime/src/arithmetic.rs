@@ -83,7 +83,7 @@ fn test_iso_date_to_weekday() {
 
 /// Returns `true` if the most granular time being displayed will align with
 /// the top of the hour, otherwise returns `false`.
-/// e.g. `12:00:00` is at the top of the hour for hours, minutes, and seconds.
+/// e.g. `12:00:00` is at the top of the hour for any display granularity.
 /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
 pub fn is_top_of_hour(pattern: &Pattern, minute: u8, second: u8) -> bool {
     match pattern.most_granular_time() {

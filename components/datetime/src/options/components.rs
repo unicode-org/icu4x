@@ -4,7 +4,7 @@
 
 //! # Implementation status
 //!
-//! This is currently only a partial implementation of the UTS 35 skeleton matching algorithm.
+//! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
 //!
 //! | Algorithm step | Status |
 //! |----------------|--------|

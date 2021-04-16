@@ -15,17 +15,18 @@ use crate::{
     DateTimeFormatError,
 };
 
-/// `ZonedDateTimeFormat` is the composition of `DateTimeFormat` and `TimeZoneFormat`.
+// TODO(#622) link [`TimeZoneFormat`] once it is public.
+/// The composition of [`DateTimeFormat`] and `TimeZoneFormat`.
 ///
-/// `ZonedDateTimeFormat` uses data from the `DataProvider`s, the selected `Locale`, and the provided
-/// pattern to collect all data necessary to format a datetime with time zones into that locale.
+/// [`ZonedDateTimeFormat`] uses data from the [`DataProvider`]s, the selected [`Locale`], and the
+/// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
 /// As such, `TimeZoneFormat` will pull in only the resources it needs to format that pattern
-/// that is derived from the provided `DateTimeFormatOptions`.
+/// that is derived from the provided [`DateTimeFormatOptions`].
 ///
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
-/// first, a computationally heavy construction of `ZonedDateTimeFormat`, and then fast formatting
+/// first, a computationally heavy construction of [`ZonedDateTimeFormat`], and then fast formatting
 /// of the data using the instance.
 ///
 /// # Examples
@@ -63,9 +64,9 @@ pub struct ZonedDateTimeFormat<'d> {
 }
 
 impl<'d> ZonedDateTimeFormat<'d> {
-    /// `ZonedDateTimeFormat` constructor which takes a selected `Locale`, reference to a `DataProvider` for
-    /// dates, a `DataProvider` for time zones, and a list of options. It collects all data necessary to
-    /// format zoned datetime values into the given locale.
+    /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
+    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
+    /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// # Examples
     ///
@@ -136,8 +137,8 @@ impl<'d> ZonedDateTimeFormat<'d> {
         })
     }
 
-    /// `format` takes a `ZonedDateTime` value and returns an instance of a `FormattedZonedDateTime`,
-    /// which contains all information necessary to display a formatted zoned datetime and operate on it.
+    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     ///
     /// # Examples
     ///
@@ -164,7 +165,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
-    /// but `FormattedZonedDateTime` will grow with methods for iterating over fields, extracting information
+    /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     pub fn format<'l: 'd, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
     where
@@ -176,8 +177,8 @@ impl<'d> ZonedDateTimeFormat<'d> {
         }
     }
 
-    /// `format_to_write` takes a mutable reference to anything that implements the `Write` trait
-    /// and a `ZonedDateTime` value, then populates the buffer with a formatted value.
+    /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
+    /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -212,8 +213,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
         zoned_datetime::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
     }
 
-    /// `format_to_string` takes a `ZonedDateTime` value and returns it formatted
-    /// as a string.
+    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
     ///
     /// # Examples
     ///

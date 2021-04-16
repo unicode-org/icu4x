@@ -46,7 +46,7 @@ where
     Ok(())
 }
 
-/// `TimeZoneFormat` uses data from the `DataProvider`, the selected `Locale`, and the provided
+/// [`TimeZoneFormat`] uses data from the [`DataProvider`], the selected [`Locale`], and the provided
 /// pattern to collect all data necessary to format time zones into that locale.
 ///
 /// The various time-zone pattern symbols specified in UTS-35 require different sets of data for
@@ -54,7 +54,7 @@ where
 /// pattern that it is given upon construction.
 ///
 /// For that reason, one should think of the process of formatting a time zone in two steps:
-/// first, a computationally heavy construction of `TimeZoneFormat`, and then fast formatting
+/// first, a computationally heavy construction of [`TimeZoneFormat`], and then fast formatting
 /// of the time-zone data using the instance.
 ///
 /// # Examples
@@ -107,7 +107,7 @@ pub(super) struct TimeZoneFormat<'d> {
 }
 
 impl<'d> TimeZoneFormat<'d> {
-    /// `TimeZoneFormat` constructor that selectively loads data based on what is required to
+    /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
     ///
     /// # Examples
@@ -261,8 +261,8 @@ impl<'d> TimeZoneFormat<'d> {
         Ok(time_zone_format)
     }
 
-    /// `format` takes a `TimeZone` value and returns an instance of a `FormattedTimeZone` object
-    /// which contains all information necessary to display a formatted time zone and operate on it.
+    /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
+    /// that contains all information necessary to display a formatted time zone and operate on it.
     ///
     /// # Examples
     ///
@@ -304,8 +304,8 @@ impl<'d> TimeZoneFormat<'d> {
         }
     }
 
-    /// `format_to_write` takes a mutable reference to anything that implements the `Write` trait
-    /// and a `TimeZone` value that populates the buffer with a formatted value.
+    /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write)
+    /// trait and a [`TimeZoneInput`] implementer that populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -349,7 +349,7 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
     }
 
-    /// `format_to_string` takes a `TimeZone` value and returns a string with the formatted value.
+    /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
     ///
     /// # Examples
     ///
@@ -549,7 +549,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// If there is no localized form of "Etc/Unknown" for the current locale,
     /// returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
     ///
-    /// This can be used as a fallback if the `exemplar_city()` function is unable to produce
+    /// This can be used as a fallback if `exemplar_city()` is unable to produce
     /// a localized form of the time zone's exemplar city in the current locale.
     pub(super) fn unknown_city<W: fmt::Write + ?Sized>(
         &self,
@@ -565,7 +565,7 @@ impl<'d> TimeZoneFormat<'d> {
         .map_err(DateTimeFormatError::from)
     }
 
-    /// Formats a time segment with optional zero padding.
+    /// Formats a time segment with optional zero-padding.
     fn format_time_segment(n: u8, padding: ZeroPadding) -> String {
         debug_assert!((0..60).contains(&n));
         match padding {
@@ -574,7 +574,7 @@ impl<'d> TimeZoneFormat<'d> {
         }
     }
 
-    /// Formats the hours as a `String` with optional zero-padding.
+    /// Formats the hours as a [`String`] with optional zero-padding.
     pub(super) fn format_offset_hours(
         &self,
         time_zone: &impl TimeZoneInput,
@@ -586,7 +586,7 @@ impl<'d> TimeZoneFormat<'d> {
         )
     }
 
-    /// Formats the minutes as a `String` with zero-padding.
+    /// Formats the minutes as a [`String`] with zero-padding.
     pub(super) fn format_offset_minutes(&self, time_zone: &impl TimeZoneInput) -> String {
         Self::format_time_segment(
             (time_zone.gmt_offset().raw_offset_seconds() % 3600 / 60).abs() as u8,
@@ -594,7 +594,7 @@ impl<'d> TimeZoneFormat<'d> {
         )
     }
 
-    /// Formats the seconds as a `String` with zero-padding.
+    /// Formats the seconds as a [`String`] with zero-padding.
     pub(super) fn format_offset_seconds(&self, time_zone: &impl TimeZoneInput) -> String {
         Self::format_time_segment(
             (time_zone.gmt_offset().raw_offset_seconds() % 3600 % 60).abs() as u8,
@@ -602,16 +602,17 @@ impl<'d> TimeZoneFormat<'d> {
         )
     }
 
-    /// Writes a GMT offset in ISO8601 format according to the given formatting options.
+    /// Writes a [`GmtOffset`](crate::date::GmtOffset) in ISO-8601 format according to the
+    /// given formatting options.
     ///
-    /// `IsoFormat` determines whether the format should be Basic or Extended,
+    /// [`IsoFormat`] determines whether the format should be Basic or Extended,
     /// and whether a zero-offset should be formatted numerically or with
     /// The UTC indicator: "Z"
     /// - Basic    e.g. +0800
     /// - Extended e.g. +08:00
     ///
-    /// `IsoMinutes` can be required or optional.
-    /// `IsoMinutes` can be optional or never.
+    /// [`IsoMinutes`] can be required or optional.
+    /// [`IsoSeconds`] can be optional or never.
     pub(super) fn iso8601_format<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,

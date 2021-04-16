@@ -17,12 +17,15 @@ use crate::{
     date::DateTimeInput, pattern::Pattern, provider, DateTimeFormatError, FormattedDateTime,
 };
 
-/// `DateTimeFormat` is the main structure of the `icu_datetime` component.
-/// When constructed, it uses data from the `DataProvider`, selected `Locale` and provided options to
+/// [`DateTimeFormat`] is the main structure of the [`icu_datetime`] component.
+/// When constructed, it uses data from the [`DataProvider`], selected [`Locale`] and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of `DateTimeFormat`, and then fast formatting of `DateTime` data using the instance.
+/// heavy construction of [`DateTimeFormat`], and then fast formatting of [`DateTimeInput`] data using the instance.
+///
+/// [`icu_datetime`]: crate
+/// [`DateTimeFormat`]: crate::datetime::DateTimeFormat
 ///
 /// # Examples
 ///
@@ -52,8 +55,8 @@ use crate::{
 /// let value = dtf.format_to_string(&datetime);
 /// ```
 ///
-/// This model replicates that of `ICU` and `ECMA402` and in the future will get even more pronounce when we introduce
-/// asynchronous `DataProvider` and corresponding asynchronous constructor.
+/// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
+/// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
@@ -61,8 +64,8 @@ pub struct DateTimeFormat<'d> {
 }
 
 impl<'d> DateTimeFormat<'d> {
-    /// `DateTimeFormat` constructor which takes a selected `Locale`, reference to a `DataProvider` and
-    /// a list of options and collects all data necessary to format date and time values into the given locale.
+    /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
     /// # Examples
     ///
@@ -123,17 +126,19 @@ impl<'d> DateTimeFormat<'d> {
         Ok(Self::new(locale, pattern, data))
     }
 
-    /// Creates a new `DateTimeFormat` regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
     ///
-    /// By contrast, the public `DateTimeFormat::try_new` function will return an `Err` if there are
+    /// By contrast, the public [`DateTimeFormat::try_new()`] function will return an error if there are
     /// time-zone symbols in the pattern.
     ///
-    /// This function is only `pub(super)` (not `pub`) because it is needed by `ZonedDateTimeFormat`
-    /// to create a `DateTimeFormat` for use internally. `ZonedDateTimeFormat` maintains
-    /// the invariant that `DateTimeFormat` will not be used to format the time zone.
+    /// This function is only `pub(super)` (not `pub`) because it is needed by [`ZonedDateTimeFormat`]
+    /// to create a [`DateTimeFormat`] for use internally. [`ZonedDateTimeFormat`] maintains
+    /// the invariant that [`DateTimeFormat`] will not be used to format the time zone.
     ///
-    /// Creating a `DateTimeFormat` with time-zone symbols should always be an error
+    /// Creating a [`DateTimeFormat`] with time-zone symbols should always be an error
     /// in public contexts.
+    ///
+    /// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
@@ -153,8 +158,8 @@ impl<'d> DateTimeFormat<'d> {
         }
     }
 
-    /// `format` takes a `DateTime` value and returns an instance of a `FormattedDateTime` object
-    /// which contains all information necessary to display a formatted date and operate on it.
+    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// # Examples
     ///
@@ -179,7 +184,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
-    /// but `FormattedDateTime` will grow with methods for iterating over fields, extracting information
+    /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l, T>
     where
@@ -193,8 +198,8 @@ impl<'d> DateTimeFormat<'d> {
         }
     }
 
-    /// `format_to_write` takes a mutable reference to anything that implements `Write` trait
-    /// and a `DateTime` value and populates the buffer with a formatted value.
+    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
+    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -228,8 +233,7 @@ impl<'d> DateTimeFormat<'d> {
             .map_err(|_| std::fmt::Error)
     }
 
-    /// `format_to_string` takes a `DateTime` value and returns it formatted
-    /// as a string.
+    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
     ///
     /// # Examples
     ///

@@ -8,21 +8,20 @@ use crate::skeleton::SkeletonError;
 use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
-///
 #[derive(Debug)]
 pub enum DateTimeFormatError {
-    /// An error coming from a pattern parsing
+    /// An error originating from parsing a pattern.
     Pattern(pattern::Error),
-    /// An error originating from fmt::Write trait
+    /// An error originating from the [`Write`](std::fmt::Write) trait.
     Format(std::fmt::Error),
-    /// An error originating inside of the DataProvider
+    /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
     DataProvider(DataError),
-    /// Missing field in datetime input
+    /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     MissingInputField,
-    /// An error from skeleton matching,
+    /// An error originating from skeleton matching.
     Skeleton(SkeletonError),
-    /// Field unsupported for this type of datetime format
+    /// An error originating from an unsupported field in a datetime format.
     UnsupportedField(FieldSymbol),
 }
 

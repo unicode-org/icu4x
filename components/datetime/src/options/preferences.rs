@@ -2,13 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Preferences is a bag of options to be associated with either `Length` or `Components` bag which provides
-//! information on user preferences that can affect the result of the formatting.
+//! Preferences is a bag of options to be associated with either [`length::Bag`] or [`components::Bag`]
+//! which provides information on user preferences that can affect the result of the formatting.
+//!
+//! [`length::Bag`]: crate::options::length::Bag
+//! [`components::Bag`]: crate::options::components::Bag
 //!
 //! # Unicode Extensions
-//! User preferences will often be stored as part of the `Locale` identified as `Unicode Extensions`, but
+//! User preferences will often be stored as part of the [`Locale`] identified as `Unicode Extensions`, but
 //! for scenarios where the application stores information about user preferences they can be also provided via
 //! this bag (and if they are, they will take precedence over unicode extensions from the locale).
+//!
+//! [`Locale`]: icu_locid::Locale
 //!
 //! # Examples
 //!
@@ -24,7 +29,7 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// Bag of preferences stores user preferences which may affect the result of date and time formatting.
+/// Stores user preferences which may affect the result of date and time formatting.
 ///
 /// # Examples
 ///
@@ -42,7 +47,7 @@ pub struct Bag {
     pub hour_cycle: Option<HourCycle>,
 }
 
-/// User Preference for adjusting how hour component is displayed.
+/// A user preference for adjusting how the hour component is displayed.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum HourCycle {
