@@ -56,14 +56,8 @@ where
     T: DateTimeInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(
-            self.pattern,
-            self.symbols,
-            self.datetime,
-            self.locale,
-            sink,
-        )
-        .map_err(|_| std::fmt::Error)
+        write_pattern(self.pattern, self.symbols, self.datetime, self.locale, sink)
+            .map_err(|_| std::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -183,12 +177,8 @@ where
             field.length,
         )?,
         FieldSymbol::Hour(hour) => {
-            let h = usize::from(
-                datetime
-                    .datetime()
-                    .hour()
-                    .ok_or(Error::MissingInputField)?,
-            ) as isize;
+            let h =
+                usize::from(datetime.datetime().hour().ok_or(Error::MissingInputField)?) as isize;
             let value = match hour {
                 fields::Hour::H11 => h % 12,
                 fields::Hour::H12 => {
@@ -234,10 +224,7 @@ where
             let symbol = symbols.get_symbol_for_day_period(
                 period,
                 field.length,
-                datetime
-                    .datetime()
-                    .hour()
-                    .ok_or(Error::MissingInputField)?,
+                datetime.datetime().hour().ok_or(Error::MissingInputField)?,
                 arithmetic::is_top_of_hour(
                     &pattern,
                     datetime.datetime().minute().map(u8::from).unwrap_or(0),
