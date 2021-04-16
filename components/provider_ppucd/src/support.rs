@@ -18,7 +18,9 @@ pub struct UnicodeProperties<'s> {
 ///
 /// # Example
 ///
-/// ```
+/// Note: The following example shows a proof of councept of how PpucdDataProvider _could_ work.
+///
+/// ```ignore
 /// use icu_provider::prelude::*;
 /// use icu_provider_ppucd::PpucdDataProvider;
 /// use icu_uniset::provider::{key, UnicodeProperty};
@@ -26,7 +28,6 @@ pub struct UnicodeProperties<'s> {
 ///
 /// let ppucd_data = std::fs::read_to_string(icu_testdata::paths::ppucd_path())
 ///     .expect("Data should be present");
-/// /*
 /// // TODO(#454): Enable this part of the docs test once PpucdDataProvider is made faster.
 /// let provider = PpucdDataProvider::new(&ppucd_data);
 ///
@@ -41,7 +42,6 @@ pub struct UnicodeProperties<'s> {
 ///     name: Cow::Borrowed("AHex"),
 ///     inv_list: vec![48, 58, 65, 71, 97, 103],
 /// }));
-/// */
 /// ```
 #[derive(Debug)]
 pub struct PpucdDataProvider<'s> {
