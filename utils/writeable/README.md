@@ -15,7 +15,7 @@ Types implementing Writeable have a defaulted writeable_to_string function.
 If desired, types implementing Writeable can manually implement ToString
 to wrap writeable_to_string.
 
-## Example
+## Examples
 
 ```rust
 use writeable::Writeable;

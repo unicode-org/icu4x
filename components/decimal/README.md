@@ -1,8 +1,8 @@
 # icu_decimal [![crates.io](http://meritbadge.herokuapp.com/icu_decimal)](https://crates.io/crates/icu_decimal)
 
-`icu_decimal` offers localized decimal number formatting.
+[`icu_decimal`](crate) offers localized decimal number formatting.
 
-Currently, `icu_decimal` provides [`FixedDecimalFormat`], which renders basic decimal numbers
+Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormat`], which renders basic decimal numbers
 in a locale-sensitive way.
 
 Support for currencies, measurement units, and compact notation is planned. To track progress,
@@ -30,8 +30,6 @@ let formatted_str = formatted_value.writeable_to_string();
 
 assert_eq!("১০,০০,০০৭", formatted_str);
 ```
-
-[`FixedDecimalFormat`]: FixedDecimalFormat
 
 ## More Information
 

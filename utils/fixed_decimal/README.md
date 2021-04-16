@@ -6,7 +6,7 @@ It includes [`FixedDecimal`], a core API for representing numbers in a human-rea
 appropriate for formatting and plural rule selection. It is optimized for operations involving
 the individual digits of a number.
 
-## Example
+## Examples
 
 ```rust
 use fixed_decimal::FixedDecimal;
