@@ -33,7 +33,7 @@ pub struct FsDataProvider {
 }
 
 impl FsDataProvider {
-    /// Create a new `FsDataProvider` given a filesystem directory.
+    /// Create a new [`FsDataProvider`] given a filesystem directory.
     ///
     /// # Examples
     ///

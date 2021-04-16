@@ -17,7 +17,7 @@ pub enum Error {
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: `Error::Io(err, None)`
+/// If a path is unavailable, create the error directly: [`Error::Io`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
     fn from(pieces: (std::io::Error, P)) -> Self {
         Self::Io(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
@@ -25,7 +25,7 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 }
 
 /// To help with debugging, JSON errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: `Error::Json(err, None)`
+/// If a path is unavailable, create the error directly: [`Error::Deserializer`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
         Self::Deserializer(Box::new(pieces.0), Some(pieces.1.as_ref().to_path_buf()))
@@ -51,7 +51,7 @@ impl<P: AsRef<Path>> From<(crate::export::serializers::Error, P)> for Error {
 }
 
 impl Error {
-    /// Conversion from serializers::Error when the path is unavailable
+    /// Conversion from [`serializers::Error`](crate::export::serializers::Error) when the path is unavailable
     #[cfg(feature = "export")]
     pub fn from_serializers_error(err: crate::export::serializers::Error) -> Self {
         use crate::export::serializers::Error;

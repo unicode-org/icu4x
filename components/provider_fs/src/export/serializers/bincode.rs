@@ -14,7 +14,7 @@ pub struct Serializer {
     syntax: SyntaxOption,
 }
 
-/// Options bag for initializing a bincode::Serializer.
+/// Options bag for initializing a [`bincode::Serializer`].
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Options {}
