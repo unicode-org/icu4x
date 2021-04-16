@@ -29,8 +29,8 @@ mod serde;
 /// `VarZeroVec<T>`, when used with non-human-readable serializers (like `bincode`), will
 /// serialize to a specially formatted list of bytes. The format is:
 ///
-/// - 4 bytes for `length` (interpreted as a little-endian u64)
-/// - `4 * length` bytes of `indices` (interpreted as little-endian u64s)
+/// - 4 bytes for `length` (interpreted as a little-endian u32)
+/// - `4 * length` bytes of `indices` (interpreted as little-endian u32)
 /// - Remaining bytes for actual `data`
 ///
 /// Each element in the `indices` array points to the starting index of its corresponding
@@ -52,8 +52,8 @@ mod serde;
 /// // The little-endian bytes correspond to the list of strings.
 /// let strings = vec!["w".to_owned(), "ω".to_owned(), "文".to_owned(), "𑄃".to_owned()];
 /// let bytes = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
-///     0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,  3, 0, 0, 0,
+///     6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
 /// ];
 ///
 /// let zerovec: VarZeroVec<String> = VarZeroVec::try_from_bytes(bytes)?;
@@ -77,8 +77,8 @@ pub struct VarZeroVec<'a, T>(VarZeroVecInner<'a, T>);
 /// The format of the slice is conceptually:
 /// ```rust,ignore
 /// struct SliceFormat {
-///     len: u64::ULE,
-///     lens: [u64::ULE],
+///     len: u32::ULE,
+///     lens: [u32::ULE],
 ///     things: [u8]
 /// }
 /// ```
@@ -155,7 +155,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
     ///                    "baz".to_owned(), "quux".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     /// assert_eq!(vec.len(), 4);
@@ -180,7 +180,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
     ///                    "baz".to_owned(), "quux".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     /// assert_eq!(&vec[0], "foo");
@@ -211,7 +211,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
     ///                    "baz".to_owned(), "quux".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     ///
     /// let mut iter_results: Vec<&str> = vec.iter().collect();
@@ -243,7 +243,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
     ///                    "baz".to_owned(), "quux".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     ///
     /// let mut iter_results: Vec<&str> = vec.iter().collect();
@@ -273,7 +273,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
     ///                    "baz".to_owned(), "quux".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     ///
     /// assert_eq!(vec.len(), 4);
@@ -328,6 +328,9 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// For a slice of `T`, get a list of bytes that can be passed to
     /// `try_from_bytes` to recoup the same data.
     ///
+    /// Returns `None` if the slice is too large to be represented in a list of
+    /// bytes whose length fits in a `u32`.
+    ///
     /// # Example
     ///
     /// ```rust
@@ -336,7 +339,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # use zerovec::VarZeroVec;
     ///
     /// let strings = vec!["foo".to_owned(), "bar".to_owned(), "baz".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut borrowed: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     /// assert_eq!(borrowed.to_owned(), strings);
@@ -344,7 +347,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     ///
-    pub fn get_serializable_bytes(elements: &[T]) -> Vec<u8> {
+    pub fn get_serializable_bytes(elements: &[T]) -> Option<Vec<u8>> {
         components::get_serializable_bytes(elements)
     }
 }
@@ -366,7 +369,7 @@ where
     ///
     /// let strings = vec!["a".to_owned(), "b".to_owned(),
     ///                    "f".to_owned(), "g".to_owned()];
-    /// let bytes = VarZeroVec::get_serializable_bytes(&strings);
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
     ///
     /// assert_eq!(vec.binary_search("f"), Ok(2));

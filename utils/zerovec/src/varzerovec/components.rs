@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use std::convert::TryInto;
 use std::marker::PhantomData;
 use std::{iter, mem};
 
-fn usizeify(x: PlainOldULE<8>) -> usize {
-    u64::from_unaligned(&x) as usize
+fn usizeify(x: PlainOldULE<4>) -> usize {
+    u32::from_unaligned(&x) as usize
 }
 
 /// A logical representation of the backing `&[u8]` buffer.
@@ -17,7 +18,7 @@ fn usizeify(x: PlainOldULE<8>) -> usize {
 /// See [`SliceComponents::try_from_bytes()`] for information on the internal invariants involved
 pub struct SliceComponents<'a, T> {
     /// The list of indices into the `things` slice
-    indices: &'a [PlainOldULE<8>],
+    indices: &'a [PlainOldULE<4>],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
     /// The original slice this was constructed from
@@ -58,18 +59,18 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..8).ok_or(VarZeroVecError::FormatError)?;
-        let len_ule = PlainOldULE::<8>::parse_byte_slice(len_bytes)
+        let len_bytes = slice.get(0..4).ok_or(VarZeroVecError::FormatError)?;
+        let len_ule = PlainOldULE::<4>::parse_byte_slice(len_bytes)
             .map_err(|_| VarZeroVecError::FormatError)?;
 
-        let len = u64::from_unaligned(len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
+        let len = u32::from_unaligned(len_ule.get(0).ok_or(VarZeroVecError::FormatError)?) as usize;
         let indices_bytes = slice
-            .get(8..8 * len + 8)
+            .get(4..4 * len + 4)
             .ok_or(VarZeroVecError::FormatError)?;
-        let indices = PlainOldULE::<8>::parse_byte_slice(indices_bytes)
+        let indices = PlainOldULE::<4>::parse_byte_slice(indices_bytes)
             .map_err(|_| VarZeroVecError::FormatError)?;
         let things = slice
-            .get(8 * len + 8..)
+            .get(4 * len + 4..)
             .ok_or(VarZeroVecError::FormatError)?;
 
         let components = SliceComponents {
@@ -218,9 +219,9 @@ where
 
         let zero_index = self.indices.as_ptr() as *const _ as usize;
         self.indices.binary_search_by(|probe: &_| {
-            // `self.indices` is a vec of unaligned u64s, so we divide by sizeof(u64)
+            // `self.indices` is a vec of unaligned u32s, so we divide by sizeof(u32)
             // to get the actual index
-            let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u64>();
+            let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
             actual_probe.cmp(x)
@@ -228,16 +229,18 @@ where
     }
 }
 
-pub fn get_serializable_bytes<T: AsVarULE>(elements: &[T]) -> Vec<u8> {
+pub fn get_serializable_bytes<T: AsVarULE>(elements: &[T]) -> Option<Vec<u8>> {
     let mut vec = Vec::new();
-    vec.extend(&(elements.len() as u64).as_unaligned().0);
-    let mut offset = 0;
+    let len_u32: u32 = elements.len().try_into().ok()?;
+    vec.extend(&len_u32.as_unaligned().0);
+    let mut offset: usize = 0;
     for element in elements {
-        vec.extend(&(offset as u64).as_unaligned().0);
+        let offset_u32: u32 = offset.try_into().ok()?;
+        vec.extend(&offset_u32.as_unaligned().0);
         offset += element.as_unaligned().as_byte_slice().len();
     }
     for element in elements {
         vec.extend(element.as_unaligned().as_byte_slice())
     }
-    vec
+    Some(vec)
 }

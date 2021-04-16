@@ -5,7 +5,7 @@
 use super::VarZeroVec;
 use crate::ule::*;
 use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
-use serde::ser::{Serialize, SerializeSeq, Serializer};
+use serde::ser::{self, Serialize, SerializeSeq, Serializer};
 use std::fmt;
 use std::marker::PhantomData;
 
@@ -101,7 +101,8 @@ where
                 // VarZeroVec::to_owned()'s. The alternative is to write a different
                 // implementation of get_serializable_bytes() which enables us to pull
                 // out the byte buffer components bit by bit and use serialize_seq + serialize_element
-                let vec = VarZeroVec::get_serializable_bytes(&self.to_owned());
+                let vec = VarZeroVec::get_serializable_bytes(&self.to_owned())
+                    .ok_or_else(|| ser::Error::custom("VarZeroVec too large to be serialized"))?;
                 serializer.serialize_bytes(&vec)
             }
         }
@@ -114,24 +115,22 @@ mod test {
 
     // ["foo", "bar", "baz", "dolor", "quux", "lorem ipsum"];
     const BYTES: &[u8] = &[
-        6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0,
-        0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 102, 111,
-        111, 98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113, 117, 117, 120, 108, 111, 114,
-        101, 109, 32, 105, 112, 115, 117, 109,
+        6, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 9, 0, 0, 0, 14, 0, 0, 0, 18, 0, 0, 0, 102,
+        111, 111, 98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113, 117, 117, 120, 108, 111,
+        114, 101, 109, 32, 105, 112, 115, 117, 109,
     ];
     const JSON_STR: &str = "[\"foo\",\"bar\",\"baz\",\"dolor\",\"quux\",\"lorem ipsum\"]";
     const BINCODE_BUF: &[u8] = &[
-        85, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
-        0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0,
-        0, 0, 0, 0, 102, 111, 111, 98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113, 117,
-        117, 120, 108, 111, 114, 101, 109, 32, 105, 112, 115, 117, 109,
+        57, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 9, 0, 0, 0, 14, 0,
+        0, 0, 18, 0, 0, 0, 102, 111, 111, 98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113,
+        117, 117, 120, 108, 111, 114, 101, 109, 32, 105, 112, 115, 117, 109,
     ];
 
     // ["w", "ω", "文", "𑄃"]
     const NONASCII_STR: &[&str] = &["w", "ω", "文", "𑄃"];
     const NONASCII_BYTES: &[u8] = &[
-        4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
-        0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
+        4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 119, 207, 137, 230, 150, 135,
+        240, 145, 132, 131,
     ];
     #[test]
     fn test_serde_json() {
