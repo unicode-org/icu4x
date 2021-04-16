@@ -7,8 +7,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 
-/// CanonicalizationResult is used to track the result of a canonicalization
-/// operation that potentially modifies its argument in place.
+/// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
 pub enum CanonicalizationResult {
     Modified,
@@ -48,8 +47,7 @@ macro_rules! maximize_locale {
 }
 
 impl LocaleCanonicalizer<'_> {
-    /// A constructor which takes a DataProvider and creates a
-    /// LocaleCanonicalizer.
+    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
     pub fn new<'d>(
         provider: &(impl DataProvider<'d, LikelySubtagsV1> + ?Sized),
     ) -> Result<LocaleCanonicalizer<'d>, DataError> {
@@ -69,8 +67,8 @@ impl LocaleCanonicalizer<'_> {
     ///
     /// If the result of running the algorithm would result in a new locale, the
     /// locale argument is updated in place to match the result, and the method
-    /// returns `CanonicalizationResult::Modified`. Otherwise, the method
-    /// returns `CanonicalizationResult::Unmodified` and the locale argument is
+    /// returns [`CanonicalizationResult::Modified`]. Otherwise, the method
+    /// returns [`CanonicalizationResult::Unmodified`] and the locale argument is
     /// unchanged.
     ///
     /// # Examples
@@ -139,8 +137,8 @@ impl LocaleCanonicalizer<'_> {
     ///
     /// If the result of running the algorithm would result in a new locale, the
     /// locale argument is updated in place to match the result, and the method
-    /// returns `CanonicalizationResult::Modified`. Otherwise, the method
-    /// returns `CanonicalizationResult::Unmodified` and the locale argument is
+    /// returns [`CanonicalizationResult::Modified`]. Otherwise, the method
+    /// returns [`CanonicalizationResult::Unmodified`] and the locale argument is
     /// unchanged.
     ///
     /// # Examples
