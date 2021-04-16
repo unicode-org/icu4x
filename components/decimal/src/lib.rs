@@ -20,7 +20,7 @@
 //! # #[cfg(feature = "provider_serde")] {
 //! use icu::decimal::FixedDecimalFormat;
 //! use icu::locid::Locale;
-//! use icu::locid_macros::langid;
+//! use icu::locid::macros::langid;
 //! use writeable::Writeable;
 //!
 //! let locale: Locale = langid!("bn").into();
