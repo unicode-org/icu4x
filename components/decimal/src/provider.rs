@@ -4,7 +4,7 @@
 
 //! Data provider struct definitions for [`icu_decimal`](crate).
 //!
-//! Read more about data providers: [icu_provider]
+//! Read more about data providers: [`icu_provider`]
 
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 

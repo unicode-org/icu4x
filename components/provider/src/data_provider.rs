@@ -152,9 +152,9 @@ where
 ///
 /// See examples on some of the concrete implementations:
 ///
-/// - [HelloWorldProvider](crate::hello_world::HelloWorldProvider)
-/// - [StructProvider](crate::struct_provider::StructProvider)
-/// - [InvariantDataProvider](crate::inv::InvariantDataProvider)
+/// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
+/// - [`StructProvider`](crate::struct_provider::StructProvider)
+/// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,
