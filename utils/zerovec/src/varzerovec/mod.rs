@@ -195,7 +195,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
             return Ok(VarZeroVecInner::Owned(Vec::new()).into());
         }
 
-        let components = SliceComponents::<T>::new(slice)?;
+        let components = SliceComponents::<T>::try_from_bytes(slice)?;
 
         Ok(VarZeroVecInner::Borrowed(components).into())
     }
