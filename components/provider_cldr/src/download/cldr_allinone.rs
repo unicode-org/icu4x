@@ -69,8 +69,8 @@ pub struct CldrAllInOneDownloader {
 }
 
 impl CldrAllInOneDownloader {
-    /// Creates a CldrAllInOneDownloader that downloads files to the system cache directory
-    /// as determined by dirs::cache_dir().
+    /// Creates a [`CldrAllInOneDownloader`] that downloads files to the system cache directory as determined by
+    /// [`dirs::cache_dir()`](dirs::cache_dir()).
     ///
     /// github_tag should be a tag in the CLDR JSON repositories, such as "38.1.0":
     /// https://github.com/unicode-cldr/cldr-json/tags

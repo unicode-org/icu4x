@@ -21,7 +21,7 @@ use icu_provider::serde::SerdeSeDataStruct;
 
 use self::time_zones::TimeZonesProvider;
 
-/// Returns a list of all ResourceKeys that this provider can produce.
+/// Returns a list of all [`ResourceKeys`](ResourceKey) that this provider can produce.
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&dates::ALL_KEYS);

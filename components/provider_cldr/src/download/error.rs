@@ -16,7 +16,7 @@ pub enum Error {
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: Error::Io(err, None)
+/// If a path is unavailable, create the error directly: [`Error::Io`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
     fn from(pieces: (std::io::Error, P)) -> Self {
         Self::Io(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
