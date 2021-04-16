@@ -19,18 +19,17 @@ pub type ICU4XPluralRules = PluralRules;
 pub struct ICU4XCreatePluralRulesResult {
     /// Will be null if `success` is `false`
     pub rules: *mut ICU4XPluralRules,
-    /// Currently just a boolean, but we might add a proper error enum
-    /// as necessary
+    /// Currently just a boolean, but we might add a proper error enum as necessary
     pub success: bool,
 }
 
 #[no_mangle]
-/// FFI version of [`PluralRules::try_new()`] see its docs for more details
+/// FFI version of [`PluralRules::try_new()`]. See its docs for more details.
 ///
 /// # Safety
 /// - `locale` should be constructed via [`icu4x_locale_create()`](crate::locale::icu4x_locale_create)
 /// - `provider` should be constructed via one of the functions in [`crate::locale`](crate::locale)
-/// - Only access `rules` in the result if `success` is true.
+/// - Only access `rules` in the result if `success` is `true`.
 pub extern "C" fn icu4x_plural_rules_create(
     locale: &ICULocale,
     provider: &ICU4XDataProvider,
@@ -55,7 +54,7 @@ pub extern "C" fn icu4x_plural_rules_create(
 }
 
 #[no_mangle]
-/// FFI version of [`PluralRules::select()`], see its docs for more details
+/// FFI version of [`PluralRules::select()`]. See its docs for more details.
 pub extern "C" fn icu4x_plural_rules_select(
     pr: &ICU4XPluralRules,
     op: &ICU4XPluralOperands,
@@ -75,7 +74,7 @@ pub unsafe extern "C" fn icu4x_plural_rules_destroy(pr: *mut ICU4XPluralRules) {
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-/// FFI version of [`PluralOperands`], see its docs for more details
+/// FFI version of [`PluralOperands`]. See its docs for more details.
 pub struct ICU4XPluralOperands {
     pub i: u64,
     pub v: usize,
@@ -86,14 +85,14 @@ pub struct ICU4XPluralOperands {
 }
 
 #[repr(C)]
-/// FFI version of [`PluralRuleType`], see its docs for more details
+/// FFI version of [`PluralRuleType`]. See its docs for more details.
 pub enum ICU4XPluralRuleType {
     Cardinal,
     Ordinal,
 }
 
 #[repr(C)]
-/// FFI version of [`PluralCategory`], see its docs for more details
+/// FFI version of [`PluralCategory`]. See its docs for more details.
 pub enum ICU4XPluralCategory {
     Zero,
     One,

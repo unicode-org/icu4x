@@ -24,8 +24,7 @@ pub struct ICU4XDataProvider {
 }
 
 impl ICU4XDataProvider {
-    /// This is unsafe because zeroed() can be passed to other functions
-    /// and cause UB
+    /// This is unsafe because `zeroed()` can be passed to other functions and cause UB
     ///
     /// This is necessary for returning uninitialized values to C.
     ///
@@ -100,7 +99,7 @@ pub struct ICU4XCreateDataProviderResult {
 /// `path` and `len` must point to a valid UTF-8 string, with `len` not including
 /// a null terminator if any.
 ///
-/// Only access `provider` in the result if `success` is true.
+/// Only access `provider` in the result if `success` is `true`.
 pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     path: *const u8,
     len: usize,
