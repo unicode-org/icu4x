@@ -59,8 +59,8 @@ where
 ///
 /// # Examples
 ///
-/// ```
 /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+/// // ```
 /// // use icu_locid::Locale;
 /// // use icu_locid::macros::langid;
 /// // use icu_datetime::TimeZoneFormat;
@@ -83,7 +83,7 @@ where
 /// // );
 ///
 /// // let value = tzf.format_to_string(&time_zone);
-/// ```
+/// // ```
 // TODO(#622) Make TimeZoneFormat public once we have a clean way to provide it options.
 pub(super) struct TimeZoneFormat<'d> {
     /// The pattern to format.
@@ -112,8 +112,8 @@ impl<'d> TimeZoneFormat<'d> {
     ///
     /// # Examples
     ///
-    /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // ```
     /// // use icu_locid::Locale;
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
@@ -127,7 +127,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // let tzf = TimeZoneFormat::try_new(locale, pattern, &provider);
     ///
     /// // assert!(tzf.is_ok());
-    /// ```
+    /// // ```
     // TODO(#622) Make this public once TimeZoneFormat is public.
     pub(super) fn try_new<L, ZP>(
         locale: L,
@@ -266,8 +266,8 @@ impl<'d> TimeZoneFormat<'d> {
     ///
     /// # Examples
     ///
-    /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // ```
     /// // use icu_locid::Locale;
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
@@ -290,7 +290,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // );
     ///
     /// // let _ = tzf.format(&time_zone);
-    /// ```
+    /// // ```
     // TODO(#622) Make this public once TimeZoneFormat is public.
     //           And remove #[allow(unused)]
     #[allow(unused)]
@@ -309,8 +309,8 @@ impl<'d> TimeZoneFormat<'d> {
     ///
     /// # Examples
     ///
-    /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // ```
     /// // use icu_locid::Locale;
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
@@ -337,9 +337,9 @@ impl<'d> TimeZoneFormat<'d> {
     /// //     .expect("Failed to write to a buffer.");
     ///
     /// // let _ = format!("Time Zone: {}", buffer);
-    /// ```
+    /// // ```
     // TODO(#622) Make this public once TimeZoneFormat is public.
-    //           And remove #[allow(unused)]
+    //            And remove #[allow(unused)]
     #[allow(unused)]
     pub(super) fn format_to_write(
         &self,
@@ -353,8 +353,8 @@ impl<'d> TimeZoneFormat<'d> {
     ///
     /// # Examples
     ///
-    /// ```
     /// // TODO(#622) Uncomment and update example once TimeZoneFormat is public.
+    /// // ```
     /// // use icu_locid::Locale;
     /// // use icu_locid::macros::langid;
     /// // use icu_datetime::TimeZoneFormat;
@@ -377,7 +377,7 @@ impl<'d> TimeZoneFormat<'d> {
     /// // );
     ///
     /// // let _ = tzf.format_to_string(&time_zone);
-    /// ```
+    /// // ```
     // TODO(#622) Make this public once TimeZoneFormat is public.
     //           And remove #[allow(unused)]
     #[allow(unused)]

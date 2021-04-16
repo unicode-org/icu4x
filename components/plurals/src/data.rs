@@ -10,7 +10,7 @@ use crate::{PluralCategory, PluralRulesError};
 use std::borrow::Cow;
 use std::convert::TryInto;
 
-/// A raw function pointer to a [`PluralRulesFn`]
+/// A raw function pointer to a `PluralRulesFn`
 // pub type PluralRulesFn = fn(&PluralOperands) -> PluralCategory;
 
 /// A structure holding a list of [`ast::Condition`] for a given locale and type.
@@ -63,7 +63,7 @@ impl<'s> TryInto<PluralRuleList> for &PluralRuleStringsV1<'s> {
 /// An enum storing models of
 /// handling plural rules selection.
 pub enum RulesSelector {
-    /// A raw function pointer to a [`PluralRulesFn`]
+    /// A raw function pointer to a `PluralRulesFn`
     ///
     /// This variant is used by providers which store rules as native Rust functions.
     // Function(PluralRulesFn),
