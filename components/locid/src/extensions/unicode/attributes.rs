@@ -31,7 +31,7 @@ use std::ops::Deref;
 pub struct Attributes(Option<Box<[Attribute]>>);
 
 impl Attributes {
-    /// Returns a new empty set of attributes. Same as `Default`, but is `const`.
+    /// Returns a new empty set of attributes. Same as [`default()`](Default::default()), but is `const`.
     ///
     /// # Examples
     ///
@@ -64,8 +64,9 @@ impl Attributes {
     /// let attributes = Attributes::from_vec_unchecked(v);
     /// ```
     ///
-    /// Notice: For performance and memory constraint environments, it is recommended
-    /// for the caller to use `slice::binary_search` instead of `sort` and `dedup`.
+    /// Notice: For performance- and memory-constrained environments, it is recommended
+    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
+    /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Attribute>) -> Self {
         if input.is_empty() {
             Self(None)
@@ -74,7 +75,7 @@ impl Attributes {
         }
     }
 
-    /// Empties the `Attributes` list.
+    /// Empties the [`Attributes`] list.
     ///
     /// # Examples
     ///

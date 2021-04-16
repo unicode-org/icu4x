@@ -6,9 +6,9 @@ use crate::parser::errors::ParserError;
 use std::str::FromStr;
 use tinystr::TinyStr4;
 
-/// Region subtag (examples: `"US"`, `"CN"`, `"AR"` etc.)
+/// A region subtag (examples: `"US"`, `"CN"`, `"AR"` etc.)
 ///
-/// `Region` represents a Unicode base language code conformat to the
+/// [`Region`] represents a Unicode base language code conformat to the
 /// [`unicode_region_id`] field of the Language and Locale Identifier.
 ///
 /// # Examples
@@ -29,7 +29,7 @@ const REGION_NUM_LENGTH: usize = 3;
 
 impl Region {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Region`.
+    /// produces a well-formed [`Region`].
     ///
     /// # Examples
     ///
@@ -61,8 +61,8 @@ impl Region {
         }
     }
 
-    /// Deconstructs the `Region` into raw format to be consumed
-    /// by `from_raw_unchecked`.
+    /// Deconstructs the [`Region`] into raw format to be consumed
+    /// by [`from_raw_unchecked()`](Region::from_raw_unchecked()).
     ///
     /// # Examples
     ///
@@ -81,7 +81,7 @@ impl Region {
     }
 
     /// Constructor which takes a raw value returned by
-    /// `into_raw`.
+    /// [`into_raw()`](Region::into_raw()).
     ///
     /// # Examples
     ///
@@ -98,14 +98,14 @@ impl Region {
     ///
     /// # Safety
     ///
-    /// This function accepts a `u32` that is expected to be a valid `TinyStr4`
-    /// representing a `Region` subtag in canonical syntax.
+    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// representing a [`Region`] subtag in canonical syntax.
     pub const unsafe fn from_raw_unchecked(v: u32) -> Self {
         Self(TinyStr4::new_unchecked(v))
     }
 
     /// A helper function for displaying
-    /// a `Region` subtag as a `&str`.
+    /// a [`Region`] subtag as a `&`[`str`].
     ///
     /// # Examples
     ///
@@ -119,7 +119,7 @@ impl Region {
     /// ```
     ///
     /// `Notice`: For many use cases, such as comparison,
-    /// `Region` implements `PartialEq<&str>` which allows for direct comparisons.
+    /// [`Region`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }

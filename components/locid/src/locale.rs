@@ -6,13 +6,13 @@ use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
 use std::str::FromStr;
 
-/// `Locale` is a core struct representing a [`Unicode Locale Identifier`].
+/// A core struct representing a [`Unicode Locale Identifier`].
 ///
 /// A locale is made of two parts:
 ///  * Unicode Language Identifier
 ///  * A set of Unicode Extensions
 ///
-/// `Locale` exposes all of the same fields and methods as [`LanguageIdentifier`], and
+/// [`Locale`] exposes all of the same fields and methods as [`LanguageIdentifier`], and
 /// on top of that is able to parse, manipulate and serialize unicode extension fields.
 ///
 ///
@@ -75,7 +75,7 @@ pub struct Locale {
 
 impl Locale {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Locale`.
+    /// produces a well-formed [`Locale`].
     ///
     /// # Examples
     ///
@@ -91,7 +91,7 @@ impl Locale {
         parse_locale(v)
     }
 
-    /// Returns the default undefined locale "und". Same as `Default`, but is `const`.
+    /// Returns the default undefined locale "und". Same as [`default()`](Default::default()), but is `const`.
     ///
     /// # Examples
     ///

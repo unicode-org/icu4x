@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_locid_macros` is one of the [`ICU4X`] components.
+//! [`icu_locid_macros`](crate) is one of the ICU4X components.
 //!
-//! This API provides convenience macros for `icu_locid`.
+//! This API provides convenience macros for [`icu_locid`].
 //!
 //! # Examples
 //!

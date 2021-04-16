@@ -79,7 +79,7 @@ pub struct Unicode {
 }
 
 impl Unicode {
-    /// Returns a new empty map of Unicode extensions. Same as `Default`, but is `const`.
+    /// Returns a new empty map of Unicode extensions. Same as [`default()`](Default::default()), but is `const`.
     ///
     /// # Examples
     ///

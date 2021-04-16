@@ -31,7 +31,7 @@ const ATTR_LENGTH: RangeInclusive<usize> = 3..=8;
 
 impl Attribute {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Attribute`.
+    /// produces a well-formed [`Attribute`].
     ///
     /// # Examples
     ///
@@ -60,7 +60,7 @@ impl Attribute {
     }
 
     /// A helper function for displaying
-    /// a `Attribute` subtag as a `&str`.
+    /// a [`Attribute`] subtag as a `&`[`str`].
     ///
     /// # Examples
     ///
@@ -74,7 +74,7 @@ impl Attribute {
     /// ```
     ///
     /// `Notice`: For many use cases, such as comparison,
-    /// `Attribute` implements `PartialEq<&str>` which allows for direct comparisons.
+    /// [`Attribute`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }

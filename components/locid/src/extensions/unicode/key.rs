@@ -30,7 +30,7 @@ const KEY_LENGTH: usize = 2;
 
 impl Key {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Key`.
+    /// produces a well-formed [`Key`].
     ///
     /// # Examples
     ///
@@ -55,7 +55,7 @@ impl Key {
     }
 
     /// A helper function for displaying
-    /// a `Key` subtag as a `&str`.
+    /// a [`Key`] subtag as a `&`[`str`].
     ///
     /// # Examples
     ///
@@ -68,7 +68,7 @@ impl Key {
     /// ```
     ///
     /// `Notice`: For many use cases, such as comparison,
-    /// `Key` implements `PartialEq<&str>` which allows for direct comparisons.
+    /// [`Key`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }

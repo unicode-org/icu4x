@@ -36,7 +36,7 @@ const TRUE_VALUE: TinyStr8 = tinystr::tinystr8!("true");
 
 impl Value {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Value`.
+    /// produces a well-formed [`Value`].
     ///
     /// # Examples
     ///

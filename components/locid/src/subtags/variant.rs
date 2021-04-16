@@ -7,9 +7,9 @@ use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
-/// Variant subtag (examples: `"macos"`, `"posix"`, `"1996"` etc.)
+/// A variant subtag (examples: `"macos"`, `"posix"`, `"1996"` etc.)
 ///
-/// `Variant` represents a Unicode base language code conformat to the
+/// [`Variant`] represents a Unicode base language code conformat to the
 /// [`unicode_variant_id`] field of the Language and Locale Identifier.
 ///
 /// # Examples
@@ -30,7 +30,7 @@ const VARIANT_NUM_ALPHA_LENGTH: usize = 4;
 
 impl Variant {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Variant`.
+    /// produces a well-formed [`Variant`].
     ///
     /// # Examples
     ///
@@ -62,8 +62,8 @@ impl Variant {
         Ok(Self(s.to_ascii_lowercase()))
     }
 
-    /// Deconstructs the `Variant` into raw format to be consumed
-    /// by `from_raw_unchecked`.
+    /// Deconstructs the [`Variant`] into raw format to be consumed
+    /// by [`from_raw_unchecked()`](Variant::from_raw_unchecked()).
     ///
     /// # Examples
     ///
@@ -82,7 +82,7 @@ impl Variant {
     }
 
     /// Constructor which takes a raw value returned by
-    /// `into_raw`.
+    /// [`into_raw()`](Variant::into_raw()).
     ///
     /// # Examples
     ///
@@ -99,14 +99,14 @@ impl Variant {
     ///
     /// # Safety
     ///
-    /// This function accepts a `u64` that is expected to be a valid `TinyStr8`
-    /// representing a `Variant` subtag in canonical syntax.
+    /// This function accepts a [`u64`] that is expected to be a valid [`TinyStr8`]
+    /// representing a [`Variant`] subtag in canonical syntax.
     pub const unsafe fn from_raw_unchecked(v: u64) -> Self {
         Self(TinyStr8::new_unchecked(v))
     }
 
     /// A helper function for displaying
-    /// a `Variant` subtag as a `&str`.
+    /// a [`Variant`] subtag as a `&`[`str`].
     ///
     /// # Examples
     ///
@@ -120,7 +120,7 @@ impl Variant {
     /// ```
     ///
     /// `Notice`: For many use cases, such as comparison,
-    /// `Variant` implements `PartialEq<&str>` which allows for direct comparisons.
+    /// [`Variant`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }

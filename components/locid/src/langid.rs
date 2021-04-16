@@ -7,7 +7,7 @@ use std::str::FromStr;
 use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
 use crate::subtags;
 
-/// `LanguageIdentifier` is a core struct representing a [`Unicode BCP47 Language Identifier`].
+/// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
 /// # Examples
 ///
@@ -55,19 +55,19 @@ use crate::subtags;
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct LanguageIdentifier {
-    /// Language subtag of the LanguageIdentifier
+    /// Language subtag of the language identifier.
     pub language: subtags::Language,
-    /// Script subtag of the LanguageIdentifier
+    /// Script subtag of the language identifier.
     pub script: Option<subtags::Script>,
-    /// Region subtag of the LanguageIdentifier
+    /// Region subtag of the language identifier.
     pub region: Option<subtags::Region>,
-    /// Variant subtags of the LanguageIdentifier
+    /// Variant subtags of the language identifier.
     pub variants: subtags::Variants,
 }
 
 impl LanguageIdentifier {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `LanguageIdentifier`.
+    /// produces a well-formed [`LanguageIdentifier`].
     ///
     /// # Examples
     ///
@@ -84,7 +84,7 @@ impl LanguageIdentifier {
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
-    /// parses it and produces a well-formed `LanguageIdentifier`.
+    /// parses it and produces a well-formed [`LanguageIdentifier`].
     ///
     /// # Examples
     ///
@@ -103,7 +103,7 @@ impl LanguageIdentifier {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
-    /// Returns the default undefined language "und". Same as `Default`, but is `const`.
+    /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
     ///
     /// # Examples
     ///
