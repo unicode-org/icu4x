@@ -8,19 +8,19 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::fmt::Debug;
 
-/// A provider that can iterate over all supported `ResourceOptions` for a certain key.
+/// A provider that can iterate over all supported [`ResourceOptions`] for a certain key.
 ///
-/// Implementing this trait means that a DataProvider knows all of the data it can successfully
+/// Implementing this trait means that a [`DataProvider`] knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDataProviderCore {
-    /// Given a `ResourceKey`, returns a boxed iterator over `ResourceOptions`.
+    /// Given a [`ResourceKey`], returns a boxed iterator over [`ResourceOptions`].
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error>;
 }
 
-/// Super-trait combining DataProvider and IterableDataProviderCore, auto-implemented
+/// A super-trait combining [`DataProvider`] and [`IterableDataProviderCore`], auto-implemented
 /// for all types implementing both of those traits.
 pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
@@ -37,21 +37,27 @@ where
 {
 }
 
-/// A DataProvider whose supported keys are known statically at compile time.
+/// A [`DataProvider`] whose supported keys are known statically at compile time.
 ///
-/// Implementing this trait means that a DataProvider is built to support a specific set of
+/// Implementing this trait means that a [`DataProvider`] is built to support a specific set of
 /// keys; for example, by transforming those keys from an external data source.
 ///
 /// TODO: When const_trait_impl is stable, most implementations of this trait should be const.
 pub trait KeyedDataProvider {
-    /// Given a `ResourceKey`, checks whether this type of DataProvider supports it.
+    /// Given a [`ResourceKey`], checks whether this type of [`DataProvider`] supports it.
     ///
     /// Returns Ok if the key is supported, or an Error with more information if not. The Error
-    /// should be either UnsupportedCategory or UnsupportedResourceKey.
+    /// should be either [`UnsupportedCategory`] or [`UnsupportedResourceKey`].
+    ///
+    /// [`UnsupportedCategory`]: crate::error::Error::UnsupportedCategory
+    /// [`UnsupportedResourceKey`]: crate::error::Error::UnsupportedResourceKey
     fn supports_key(resc_key: &ResourceKey) -> Result<(), Error>;
 
-    /// Auto-implemented function that enables chaining of KeyedDataProviders while preserving
-    /// UnsupportedResourceKey.
+    /// Auto-implemented function that enables chaining of [`KeyedDataProviders`] while preserving
+    /// [`UnsupportedResourceKey`].
+    ///
+    /// [`KeyedDataProviders`]: KeyedDataProvider
+    /// [`UnsupportedResourceKey`]: crate::error::Error::UnsupportedResourceKey
     ///
     /// # Examples
     ///

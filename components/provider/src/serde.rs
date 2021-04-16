@@ -6,25 +6,25 @@
 //!
 //! ## Deserializing
 //!
-//! Providers that involve a `serde::Deserializer` to produce data from an opaque source should
-//! implement `SerdeDeDataProvider`. For example, `FsDataProvider` implements `SerdeDeDataProvider`.
+//! Providers that involve a [`serde::Deserializer`] to produce data from an opaque source should
+//! implement [`SerdeDeDataProvider`]. For example, `FsDataProvider` implements [`SerdeDeDataProvider`].
 //!
-//! `SerdeDeDataProvider` can be made into a trait object. It is used over FFI.
+//! [`SerdeDeDataProvider`] can be made into a trait object. It is used over FFI.
 //!
 //! ## Serializing
 //!
-//! Providers that have full type information should implement `DataProvider<dyn SerdeSeDataStruct>`.
+//! Providers that have full type information should implement [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
 //! Note that a provider like `FsDataProvider` cannot implement that trait, because type information
 //! on the data structs is required in order to deserialize and then serialize them.
 //!
-//! `DataProvider<dyn SerdeSeDataStruct>` is used by data exporters such as `FilesystemExporter`.
+//! [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>` is used by data exporters such as `FilesystemExporter`.
 
 use crate::error::Error;
 use crate::prelude::*;
 use std::borrow::Cow;
 use std::fmt::Debug;
 
-/// An object that receives data from a Serde Deserializer. Implemented by [DataPayload].
+/// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
 ///
 /// Lifetimes:
 ///
@@ -74,9 +74,9 @@ where
 
 /// A type-erased data provider that loads payloads from a Serde Deserializer.
 ///
-/// Uses erased_serde to allow the trait to be object-safe.
+/// Uses [`erased_serde`] to allow the trait to be object-safe.
 pub trait SerdeDeDataProvider<'de> {
-    /// Query the provider for data, loading it into a SerdeDeDataReceiver.
+    /// Query the provider for data, loading it into a [`SerdeDeDataReceiver`].
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
@@ -87,11 +87,11 @@ pub trait SerdeDeDataProvider<'de> {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-/// Serve objects implementing `serde::Deserialize<'de>` from a [SerdeDeDataProvider].
 impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
 where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
+    /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let mut payload = DataPayload::<T>::new();
         let metadata = self.load_to_receiver(req, &mut payload)?;

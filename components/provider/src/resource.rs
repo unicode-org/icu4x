@@ -28,7 +28,7 @@ pub enum ResourceCategory {
 }
 
 impl ResourceCategory {
-    /// Gets or builds a string form of this `ResourceCategory`.
+    /// Gets or builds a string form of this [`ResourceCategory`].
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
             Self::Icu4x => Cow::Borrowed("icu4x"),
@@ -63,11 +63,12 @@ impl writeable::Writeable for ResourceCategory {
     }
 }
 
-/// A category, subcategory, and version, used for requesting data from a `DataProvider`.
+/// A category, subcategory, and version, used for requesting data from a
+/// [`DataProvider`](crate::DataProvider).
 ///
-/// The fields in a `ResourceKey` should generally be known at compile time.
+/// The fields in a [`ResourceKey`] should generally be known at compile time.
 ///
-/// Use `resource_key!` as a shortcut to create resource keys in code.
+/// Use [`resource_key!`] as a shortcut to create resource keys in code.
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub struct ResourceKey {
     pub category: ResourceCategory,
@@ -173,8 +174,8 @@ impl writeable::Writeable for ResourceKey {
 }
 
 impl ResourceKey {
-    /// Gets the standard path components of this `ResourceKey`. These components should be used when
-    /// persisting the `ResourceKey` on the filesystem or in structured data.
+    /// Gets the standard path components of this [`ResourceKey`]. These components should be used when
+    /// persisting the [`ResourceKey`] on the filesystem or in structured data.
     ///
     /// # Examples
     ///
@@ -193,9 +194,9 @@ impl ResourceKey {
         self.into()
     }
 
-    /// Returns Ok if this DataKey matches the argument, or the appropriate error.
+    /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
     ///
-    /// Convenience method for data providers that support a single ResourceKey.
+    /// Convenience method for data providers that support a single [`ResourceKey`].
     ///
     /// # Examples
     ///
@@ -221,7 +222,7 @@ impl ResourceKey {
     }
 }
 
-/// The standard components of a `ResourceKey` path.
+/// The standard components of a [`ResourceKey`] path.
 pub struct ResourceKeyComponents {
     components: [Cow<'static, str>; 2],
 }
@@ -248,9 +249,10 @@ impl From<&ResourceKey> for ResourceKeyComponents {
     }
 }
 
-/// A variant and language identifier, used for requesting data from a `DataProvider`.
+/// A variant and language identifier, used for requesting data from a
+/// [`DataProvider`](crate::DataProvider).
 ///
-/// The fields in a `ResourceOptions` are not generally known until runtime.
+/// The fields in a [`ResourceOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone)]
 pub struct ResourceOptions {
     // TODO: Consider making multiple variant fields.
@@ -309,8 +311,8 @@ impl Default for ResourceOptions {
 }
 
 impl ResourceOptions {
-    /// Gets the standard path components of this `ResourceOptions`. These components should be used when
-    /// persisting the `ResourceOptions` on the filesystem or in structured data.
+    /// Gets the standard path components of this [`ResourceOptions`]. These components should be used when
+    /// persisting the [`ResourceOptions`] on the filesystem or in structured data.
     ///
     /// # Examples
     ///
@@ -340,7 +342,7 @@ impl ResourceOptions {
     }
 }
 
-/// The standard components of a ResourceOptions path.
+/// The standard components of a [`ResourceOptions`] path.
 pub struct ResourceOptionsComponents {
     components: [Option<Cow<'static, str>>; 2],
 }
