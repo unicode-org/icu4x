@@ -23,7 +23,7 @@ to the APIs.
 handle data management.
 
 There can be many different heuristics for handling data management and
-this meta-package does not supply any default `DataProvider`.
+this meta-package does not supply any default [`DataProvider`].
 
 When using `ICU4X` users are expected to decide which provider they want to use
 and instrument it to point at the correct location where the data files are stored.
