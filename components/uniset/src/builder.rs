@@ -181,7 +181,7 @@ impl UnicodeSetBuilder {
         self.remove(to_remove, to_remove + 1);
     }
 
-    /// Remove the range of characters from the `UnicodeSetBuilder`
+    /// Remove the range of characters from the [`UnicodeSetBuilder`]
     ///
     /// # Examples
     ///

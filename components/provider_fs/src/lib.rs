@@ -82,7 +82,7 @@
 //!   -s bincode
 //! ```
 //!
-//! *Notice:* In order to use `bincode` encoded data in production, `icu_provider_fs` has to be
+//! *Notice:* In order to use `bincode` encoded data in production, [`icu_provider_fs`](crate) has to be
 //! added with `bincode` feature.
 //!
 //! [`ICU4X`]: ../icu/index.html

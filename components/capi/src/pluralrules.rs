@@ -17,7 +17,7 @@ pub type ICU4XPluralRules = PluralRules;
 #[repr(C)]
 /// This is the result returned by [`icu4x_plural_rules_create()`]
 pub struct ICU4XCreatePluralRulesResult {
-    /// Will be null if `success` is `false`
+    /// Will be null if `success` is [`false`]
     pub rules: *mut ICU4XPluralRules,
     /// Currently just a boolean, but we might add a proper error enum as necessary
     pub success: bool,
@@ -29,7 +29,7 @@ pub struct ICU4XCreatePluralRulesResult {
 /// # Safety
 /// - `locale` should be constructed via [`icu4x_locale_create()`](crate::locale::icu4x_locale_create)
 /// - `provider` should be constructed via one of the functions in [`crate::locale`](crate::locale)
-/// - Only access `rules` in the result if `success` is `true`.
+/// - Only access `rules` in the result if `success` is [`true`].
 pub extern "C" fn icu4x_plural_rules_create(
     locale: &ICULocale,
     provider: &ICU4XDataProvider,

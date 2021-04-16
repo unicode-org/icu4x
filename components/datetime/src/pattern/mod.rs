@@ -124,10 +124,10 @@ impl From<Vec<PatternItem>> for Pattern {
     }
 }
 
-/// This trait is implemented in order to provide the machinery to convert a `Pattern` to a UTS 35
+/// This trait is implemented in order to provide the machinery to convert a [`Pattern`] to a UTS 35
 /// pattern string. It could also be implemented as the Writeable trait, but at the time of writing
-/// this was not done, as this code would need to implement the `write_len` method, which would
-/// need to duplicate the branching logic of the `fmt` method here. This code is used in generating
+/// this was not done, as this code would need to implement the [`write_len()`] method, which would
+/// need to duplicate the branching logic of the [`fmt`](std::fmt) method here. This code is used in generating
 /// the data providers and is not as performance sensitive.
 impl fmt::Display for Pattern {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

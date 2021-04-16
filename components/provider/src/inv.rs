@@ -14,7 +14,7 @@ use std::fmt::Debug;
 /// production environments.
 ///
 /// The objects returned by [`InvariantDataProvider`] are guaranteed to conform to the correct struct
-/// definition, so `InvariantDataProvider`] can also be used to validate unknown data providers.
+/// definition, so [`InvariantDataProvider`] can also be used to validate unknown data providers.
 ///
 /// # Examples
 ///

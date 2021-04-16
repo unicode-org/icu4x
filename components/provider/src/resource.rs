@@ -336,7 +336,7 @@ impl ResourceOptions {
         self.into()
     }
 
-    /// Returns whether this `ResourceOptions` has all empty fields (no components).
+    /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
     }

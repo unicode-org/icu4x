@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// Implement ToOwned on a trait object, enabling it to be used in a Cow. Requires the trait to
-/// have a method named `clone_into_boxed()`.
+/// Implement [`ToOwned`](std::borrow::ToOwned) on a trait object, enabling it to be used in a [`Cow`](std::borrow::Cow).
+/// Requires the trait to have a method named `clone_into_box()`.
 macro_rules! impl_dyn_clone {
     ($trait:path) => {
         impl_dyn_clone!($trait, 's);
@@ -23,7 +23,7 @@ macro_rules! impl_dyn_clone {
     };
 }
 
-/// Implement `From<DataPayload<T>>` for `DataPayload<dyn S>` where `T` implements the trait `S`.
+/// Implement [`From`](std::convert::From)`<`[`DataPayload<T>`]`>` for [DataPayload<dyn S>`] where `T` implements the trait `S`.
 macro_rules! impl_dyn_from_payload {
     ($trait:path, $d:lifetime, $s:lifetime) => {
         impl<$d, $s: $d, T> From<$crate::prelude::DataPayload<$d, T>>
@@ -49,20 +49,20 @@ macro_rules! impl_dyn_from_payload {
     };
 }
 
-/// Implement `DataProvider<dyn S>` on a type that already implements `DataProvider<T>` where `T`
-/// is a `Sized` type that implements the trait `S`.
+/// Implement [`DataProvider<dyn S>`](crate::DataProvider) on a type that already implements [`DataProvider<T>`](crate::DataProvider)
+/// where `T` is a [`Sized`] type that implements the trait `S`.
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - `ErasedDataStruct` if your provider can return typed objects as `Any`
-/// - `SerdeSeDataStruct` if your provider returns objects implementing `serde::Serialize`
+/// - [`ErasedDataStruct`](crate::erased::ErasedDataStruct) if your provider can return typed objects as [`Any`](std::any::Any)
+/// - [`SerdeSeDataStruct`](crate::serde::SerdeSeDataStruct) if your provider returns objects implementing [`serde::Serialize`]
 ///
-/// The third argument can be either the trait expression, like `SerdeSeDataStruct<'s>`, or the
+/// The third argument can be either the trait expression, like [SerdeSeDataStruct<'s>`], or the
 /// shorthands `ERASED` or `SERDE_SE`.
 ///
 /// Lifetimes:
 ///
-/// - `$d` is the lifetime parameter for `DataProvider`; usually `'d`
+/// - `$d` is the lifetime parameter for [`DataProvider`](crate::DataProvider); usually `'d`
 /// - `$s` is the lifetime bound for the struct trait; usually `'s`
 ///
 /// # Examples

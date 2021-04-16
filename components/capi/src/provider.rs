@@ -84,7 +84,7 @@ pub unsafe extern "C" fn icu4x_data_provider_destroy(d: ICU4XDataProvider) {
 #[repr(C)]
 /// A result type for [`icu4x_fs_data_provider_create`].
 pub struct ICU4XCreateDataProviderResult {
-    /// Will be zeroed if `success` is `false`, do not use in that case
+    /// Will be zeroed if `success` is [`false`], do not use in that case
     pub provider: ICU4XDataProvider,
     // May potentially add a better error type in the future
     pub success: bool,
@@ -99,7 +99,7 @@ pub struct ICU4XCreateDataProviderResult {
 /// `path` and `len` must point to a valid UTF-8 string, with `len` not including
 /// a null terminator if any.
 ///
-/// Only access `provider` in the result if `success` is `true`.
+/// Only access `provider` in the result if `success` is [`true`].
 pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     path: *const u8,
     len: usize,

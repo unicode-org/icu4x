@@ -124,7 +124,7 @@ impl UnicodeSet {
     /// Wrapper for contains
     ///
     /// Returns an [`Option`] as to whether or not it is possible for the query to be contained.
-    /// The value in the `Option` is the start index of the range that contains the query.
+    /// The value in the [`Option`] is the start index of the range that contains the query.
     fn contains_query(&self, query: u32) -> Option<usize> {
         match self.inv_list.binary_search(&query) {
             Ok(pos) => {
@@ -202,7 +202,7 @@ impl UnicodeSet {
     /// assert!(!example.contains_range(&('A'..='C')));
     /// ```
     ///
-    /// Surrogate points (`0xD800 -> 0xDFFF`) will return false if the Range contains them but the
+    /// Surrogate points (`0xD800 -> 0xDFFF`) will return [`false`] if the Range contains them but the
     /// [`UnicodeSet`] does not.
     ///
     /// Note: when comparing to ICU4C/J, keep in mind that ranges in Rust are

@@ -50,7 +50,7 @@ where
 /// pattern to collect all data necessary to format time zones into that locale.
 ///
 /// The various time-zone pattern symbols specified in UTS-35 require different sets of data for
-/// formatting. As such,`TimeZoneFormat` will pull in only the resources needed to format the
+/// formatting. As such,[`TimeZoneFormat`] will pull in only the resources needed to format the
 /// pattern that it is given upon construction.
 ///
 /// For that reason, one should think of the process of formatting a time zone in two steps:
@@ -549,8 +549,8 @@ impl<'d> TimeZoneFormat<'d> {
     /// If there is no localized form of "Etc/Unknown" for the current locale,
     /// returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
     ///
-    /// This can be used as a fallback if `exemplar_city()` is unable to produce
-    /// a localized form of the time zone's exemplar city in the current locale.
+    /// This can be used as a fallback if [`exemplar_city()`](TimeZoneFormat::exemplar_city())
+    /// is unable to produce a localized form of the time zone's exemplar city in the current locale.
     pub(super) fn unknown_city<W: fmt::Write + ?Sized>(
         &self,
         sink: &mut W,
@@ -660,7 +660,7 @@ impl<'d> TimeZoneFormat<'d> {
     }
 }
 
-/// Determines which ISO-8601 format should be used to format a `GmtOffset`.
+/// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
 pub(super) enum IsoFormat {
     /// ISO-8601 Basic Format.
     /// Formats zero-offset numerically.

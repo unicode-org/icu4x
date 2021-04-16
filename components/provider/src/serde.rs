@@ -99,8 +99,8 @@ where
     }
 }
 
-/// Auto-implemented trait for all data structs that support `serde::Serialize`. This trait is
-/// usually used as a trait object in `DataProvider<dyn SerdeSeDataStruct>`.
+/// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
+/// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
 pub trait SerdeSeDataStruct<'s>: 's + Debug {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;

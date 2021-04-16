@@ -77,8 +77,8 @@ impl Variants {
         }
     }
 
-    /// Deconstructs the `Variants` into raw format to be consumed
-    /// by `from_raw_unchecked`.
+    /// Deconstructs the [`Variants`] into raw format to be consumed
+    /// by [`from_raw_unchecked()`](Variants::from_raw_unchecked()).
     ///
     /// # Examples
     ///
@@ -103,8 +103,7 @@ impl Variants {
         self.0
     }
 
-    /// Constructor which takes a raw value returned by
-    /// `into_raw`.
+    /// Constructor which takes a raw value returned by [`into_raw()`](Variants::into_raw()).
     ///
     /// # Examples
     ///
@@ -138,7 +137,7 @@ impl Variants {
         Self(input)
     }
 
-    /// Empties the `Variants` list.
+    /// Empties the [`Variants`] list.
     ///
     /// # Examples
     ///

@@ -52,7 +52,7 @@ pub struct MockDateTime {
 }
 
 impl MockDateTime {
-    /// Creates a new `MockDateTime` from a list of already validated date/time parameters.
+    /// Creates a new [`MockDateTime`] from a list of already validated date/time parameters.
     pub const fn new(
         year: i32,
         month: u32,

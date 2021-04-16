@@ -96,7 +96,7 @@ impl Unicode {
         }
     }
 
-    /// Returns `true` if there list of keywords and attributes is empty.
+    /// Returns [`true`] if there list of keywords and attributes is empty.
     ///
     /// # Examples
     ///
