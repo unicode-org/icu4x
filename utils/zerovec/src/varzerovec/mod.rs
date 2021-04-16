@@ -375,7 +375,7 @@ where
     /// ```
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
-    #[inline(always)]
+    #[inline]
     pub fn binary_search(&self, x: &T::VarULE) -> Result<usize, usize> {
         match self.0 {
             VarZeroVecInner::Owned(ref vec) => {
@@ -398,7 +398,7 @@ where
     T: AsVarULE,
     T::VarULE: PartialEq,
 {
-    #[inline(always)]
+    #[inline]
     fn eq(&self, other: &VarZeroVec<'b, T>) -> bool {
         // Note: T implements PartialEq but not T::ULE
         self.iter().eq(other.iter())
@@ -410,7 +410,7 @@ where
     T: AsVarULE,
     T::VarULE: PartialEq,
 {
-    #[inline(always)]
+    #[inline]
     fn eq(&self, other: &&[T]) -> bool {
         self.iter().eq(other.iter().map(|t| t.as_unaligned()))
     }

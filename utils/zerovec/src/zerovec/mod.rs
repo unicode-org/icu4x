@@ -79,7 +79,7 @@ impl<'a, 'b, T> PartialEq<ZeroVec<'b, T>> for ZeroVec<'a, T>
 where
     T: AsULE + Copy + PartialEq,
 {
-    #[inline(always)]
+    #[inline]
     fn eq(&self, other: &ZeroVec<'b, T>) -> bool {
         // Note: T implements PartialEq but not T::ULE
         self.iter().eq(other.iter())
@@ -90,7 +90,7 @@ impl<T> PartialEq<&[T]> for ZeroVec<'_, T>
 where
     T: AsULE + Copy + PartialEq,
 {
-    #[inline(always)]
+    #[inline]
     fn eq(&self, other: &&[T]) -> bool {
         self.iter().eq(other.iter().copied())
     }
@@ -145,14 +145,14 @@ where
     ///
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn as_bytes(&self) -> &[u8] {
         T::ULE::as_byte_slice(self.as_slice())
     }
 
     /// Dereferences this `ZeroVec<T>` as `&[T::ULE]`. Most other functions on `ZeroVec<T>` use
     /// this function as a building block.
-    #[inline(always)]
+    #[inline]
     pub fn as_slice(&self) -> &[T::ULE] {
         use ZeroVec::*;
         match self {
@@ -178,7 +178,7 @@ where
     ///     zerovec.len() * std::mem::size_of::<<u16 as AsULE>::ULE>()
     /// );
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn len(&self) -> usize {
         self.as_slice().len()
     }
@@ -197,7 +197,7 @@ where
     /// let emptyvec: ZeroVec<u16> = ZeroVec::try_from_bytes(&[]).expect("infallible");
     /// assert!(emptyvec.is_empty());
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.as_slice().is_empty()
     }
@@ -225,7 +225,7 @@ where
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn from_aligned(other: &[T]) -> Self {
         Self::Owned(other.iter().map(T::as_unaligned).collect())
     }
@@ -242,7 +242,7 @@ where
     ///
     /// assert_eq!(nums, vec.as_slice());
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn to_vec(&self) -> Vec<T> {
         self.as_slice().iter().map(T::from_unaligned).collect()
     }
@@ -267,7 +267,7 @@ where
     /// assert_eq!(zerovec.get(2), Some(421));
     /// assert_eq!(zerovec.get(4), None);
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn get(&self, index: usize) -> Option<T> {
         self.as_slice().get(index).map(T::from_unaligned)
     }
@@ -286,7 +286,7 @@ where
     ///
     /// assert_eq!(zerovec.first(), Some(211));
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn first(&self) -> Option<T> {
         self.as_slice().first().map(T::from_unaligned)
     }
@@ -305,7 +305,7 @@ where
     ///
     /// assert_eq!(zerovec.last(), Some(461));
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn last(&self) -> Option<T> {
         self.as_slice().last().map(T::from_unaligned)
     }
@@ -329,7 +329,7 @@ where
     /// assert_eq!(it.next(), Some(461));
     /// assert_eq!(it.next(), None);
     /// ```
-    #[inline(always)]
+    #[inline]
     pub fn iter<'b>(&'b self) -> impl Iterator<Item = T> + 'b {
         self.as_slice().iter().map(T::from_unaligned)
     }
@@ -380,7 +380,7 @@ where
     /// ```
     ///
     /// [`binary_search`]: https://doc.rust-lang.org/std/primitive.slice.html#method.binary_search
-    #[inline(always)]
+    #[inline]
     pub fn binary_search(&self, x: &T) -> Result<usize, usize> {
         self.as_slice()
             .binary_search_by(|probe| T::from_unaligned(probe).cmp(x))

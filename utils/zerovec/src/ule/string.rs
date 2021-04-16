@@ -7,9 +7,11 @@ use std::str;
 
 impl AsVarULE for String {
     type VarULE = str;
+    #[inline]
     fn as_unaligned(&self) -> &str {
         &self
     }
+    #[inline]
     fn from_unaligned(unaligned: &str) -> Self {
         unaligned.into()
     }
@@ -18,14 +20,17 @@ impl AsVarULE for String {
 impl VarULE for str {
     type Error = str::Utf8Error;
 
+    #[inline]
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
         str::from_utf8(bytes)
     }
     /// Invariant: must be safe to call when called on a slice that previously
     /// succeeded with `parse_byte_slice`
+    #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         str::from_utf8_unchecked(bytes)
     }
+    #[inline]
     fn as_byte_slice(&self) -> &[u8] {
         self.as_bytes()
     }
