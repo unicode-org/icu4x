@@ -44,3 +44,4 @@ lto = true
 # https://github.com/rust-lang/cargo/issues/6988
 [profile.bench]
 debug = true
+debug-assertions = false

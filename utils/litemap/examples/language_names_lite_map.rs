@@ -39,9 +39,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         map.try_append(lang, name).ok_or(()).unwrap_err();
     }
 
-    debug_assert_eq!(11, map.len());
-    debug_assert_eq!(Some(&&"Thai"), map.get(&language!("th")));
-    debug_assert_eq!(None, map.get(&language!("de")));
+    assert_eq!(11, map.len());
+    assert_eq!(Some(&&"Thai"), map.get(&language!("th")));
+    assert_eq!(None, map.get(&language!("de")));
 
     0
 }

@@ -464,6 +464,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "dlmalloc"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "332570860c2edf2d57914987bf9e24835425f75825086b6ba7d1e6a3e4f1f254"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "dtoa"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -829,6 +838,7 @@ name = "icu_benchmark_macros"
 version = "0.1.0"
 dependencies = [
  "dhat",
+ "dlmalloc",
 ]
 
 [[package]]

@@ -2,41 +2,63 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Re-export dhat so that macros can access it without needing dhat as a dependency.
-#[cfg(feature = "benchmark_memory")]
-pub use dhat;
-
-#[cfg(not(feature = "benchmark_memory"))]
-#[macro_export]
-macro_rules! static_setup {
-    () => {};
+// If no features or all features are present, define empty macros
+#[cfg(any(
+    not(any(feature = "benchmark_memory", feature = "rust_global_allocator")),
+    all(feature = "benchmark_memory", feature = "rust_global_allocator"),
+))]
+mod default {
+    #[macro_export]
+    macro_rules! static_setup {
+        () => {};
+    }
+    #[macro_export]
+    macro_rules! main_setup {
+        () => {};
+    }
 }
 
-#[cfg(feature = "benchmark_memory")]
-#[macro_export]
-macro_rules! static_setup {
-    () => {
-        use icu_benchmark_macros::dhat::{Dhat, DhatAlloc};
-
-        // Use the DhatAlloc global allocator to instrument memory usage.
-        #[global_allocator]
-        static ALLOCATOR: DhatAlloc = DhatAlloc;
-    };
+// Enable DHat if the "benchmark_memory" feature is present alone
+#[cfg(all(feature = "benchmark_memory", not(feature = "rust_global_allocator")))]
+pub mod benchmark_memory {
+    /// Re-export tools so that macros can access it without needing a dependency.
+    pub use dhat;
+    #[macro_export]
+    macro_rules! static_setup {
+        () => {
+            use $crate::benchmark_memory::dhat::{Dhat, DhatAlloc};
+            // Use the DhatAlloc global allocator to instrument memory usage.
+            #[global_allocator]
+            static ALLOCATOR: DhatAlloc = DhatAlloc;
+        };
+    }
+    #[macro_export]
+    macro_rules! main_setup {
+        () => {
+            // The dhat instance will be alive for the life of the main function, and when dropped,
+            // it will output heap usage information.
+            let _dhat = Dhat::start_heap_profiling();
+            eprintln!("Feature");
+        };
+    }
 }
 
-#[cfg(not(feature = "benchmark_memory"))]
-#[macro_export]
-macro_rules! main_setup {
-    () => {};
-}
-
-#[cfg(feature = "benchmark_memory")]
-#[macro_export]
-macro_rules! main_setup {
-    () => {
-        // The dhat instance will be alive for the life of the main function, and when dropped,
-        // it will output heap usage information.
-        let _dhat = Dhat::start_heap_profiling();
-        eprintln!("Feature");
-    };
+// Enable Dlmalloc if the "rust_global_allocator" feature is present alone
+#[cfg(all(feature = "rust_global_allocator", not(feature = "benchmark_memory")))]
+pub mod rust_global_allocator {
+    /// Re-export tools so that macros can access it without needing a dependency.
+    pub use dlmalloc;
+    #[macro_export]
+    macro_rules! static_setup {
+        () => {
+            use $crate::rust_global_allocator::dlmalloc::GlobalDlmalloc;
+            // Use Dlmalloc to remove the system allocator dependency
+            #[global_allocator]
+            static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
+        };
+    }
+    #[macro_export]
+    macro_rules! main_setup {
+        () => {};
+    }
 }
