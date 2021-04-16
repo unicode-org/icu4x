@@ -9,9 +9,9 @@ use crate::utils::{deconstruct_range, is_valid};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
-/// `UnicodeSet` membership wrapper
+/// A membership wrapper for [`UnicodeSet`].
 ///
-/// Provides exposure to membership functions and constructors from serialized `UnicodeSets`
+/// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
 #[derive(Debug, PartialEq, Hash, Eq)]
 pub struct UnicodeSet {
@@ -27,8 +27,8 @@ pub struct UnicodeSet {
 }
 
 impl UnicodeSet {
-    /// Returns `UnicodeSet` from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    /// represented by a `Vec<u32>` of codepoints.
+    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
@@ -54,7 +54,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Returns an owned inversion list representing the current `UnicodeSet`
+    /// Returns an owned inversion list representing the current [`UnicodeSet`]
     pub fn get_inversion_list(&self) -> Vec<u32> {
         let result: Vec<u32> = self
             .as_inversion_list() // Only crate public, to not leak impl
@@ -62,7 +62,7 @@ impl UnicodeSet {
         result
     }
 
-    /// Returns `UnicodeSet` spanning entire Unicode range
+    /// Returns [`UnicodeSet`] spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
@@ -72,7 +72,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Returns `UnicodeSet` spanning BMP range
+    /// Returns [`UnicodeSet`] spanning BMP range
     ///
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
@@ -89,7 +89,7 @@ impl UnicodeSet {
         &self.inv_list
     }
 
-    /// Yields an iterator going through the character set in the `UnicodeSet`
+    /// Yields an iterator going through the character set in the [`UnicodeSet`]
     ///
     /// # Examples
     ///
@@ -108,7 +108,7 @@ impl UnicodeSet {
         self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
     }
 
-    /// Returns the number of elements of the `UnicodeSet`
+    /// Returns the number of elements of the [`UnicodeSet`]
     pub fn size(&self) -> usize {
         if self.is_empty() {
             return 0;
@@ -116,14 +116,14 @@ impl UnicodeSet {
         self.size
     }
 
-    /// Returns whether or not the `UnicodeSet` is empty
+    /// Returns whether or not the [`UnicodeSet`] is empty
     pub fn is_empty(&self) -> bool {
         self.inv_list.is_empty()
     }
 
     /// Wrapper for contains
     ///
-    /// Returns an `Option` as to whether or not it is possible for the query to be contained.
+    /// Returns an [`Option`] as to whether or not it is possible for the query to be contained.
     /// The value in the `Option` is the start index of the range that contains the query.
     fn contains_query(&self, query: u32) -> Option<usize> {
         match self.inv_list.binary_search(&query) {
@@ -144,10 +144,10 @@ impl UnicodeSet {
         }
     }
 
-    /// Checks to see the query is in the `UnicodeSet`
+    /// Checks to see the query is in the [`UnicodeSet`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using `std` implementation
+    /// in the set using [`std`] implementation
     ///
     /// # Examples
     ///
@@ -162,15 +162,15 @@ impl UnicodeSet {
         self.contains_query(query as u32).is_some()
     }
 
-    /// Checks to see the unsigned int is in the `UnicodeSet`.all()
+    /// Checks to see the unsigned int is in the [`UnicodeSet::all()`](UnicodeSet::all())
     ///
-    /// Note: Even though `u32` and `char` in Rust are non-negative 4-byte
-    /// values, there is an important difference. A `u32` can take values up to
-    /// a very large integer value, while a `char` in Rust is defined to be in
+    /// Note: Even though [`u32`] and [`prim@char`] in Rust are non-negative 4-byte
+    /// values, there is an important difference. A [`u32`] can take values up to
+    /// a very large integer value, while a [`prim@char`] in Rust is defined to be in
     /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using `std` implementation
+    /// in the set using [`std`] implementation
     ///
     /// # Examples
     ///
@@ -185,11 +185,11 @@ impl UnicodeSet {
         self.contains_query(query).is_some()
     }
 
-    /// Checks to see if the range is in the UnicodeSet, returns a Result
+    /// Checks to see if the range is in the [`UnicodeSet`], returns a [`Result`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using `std::vec::Vec` implementation Only runs the search once on the `start`
-    /// parameter, while the `end` parameter is checked in a single `O(1)` step
+    /// in the set using [`Vec`] implementation. Only runs the search once on the `start`
+    /// parameter, while the `end` parameter is checked in a single `O(1)` step.
     ///
     /// # Examples
     ///
@@ -203,7 +203,7 @@ impl UnicodeSet {
     /// ```
     ///
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return false if the Range contains them but the
-    /// `UnicodeSet` does not.
+    /// [`UnicodeSet`] does not.
     ///
     /// Note: when comparing to ICU4C/J, keep in mind that ranges in Rust are
     /// constructed inclusive of start boundary and exclusive of end boundary.
@@ -231,7 +231,7 @@ impl UnicodeSet {
         }
     }
 
-    /// Check if the calling `UnicodeSet` contains all the characters of the given `UnicodeSet`
+    /// Check if the calling [`UnicodeSet`] contains all the characters of the given [`UnicodeSet`]
     ///
     /// # Examples
     ///
