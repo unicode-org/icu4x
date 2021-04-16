@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for `icu_decimal`.
+//! Data provider struct definitions for [`icu_decimal`](crate).
 //!
 //! Read more about data providers: [icu_provider]
 
 pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
 
 pub mod key {
-    //! Resource keys for `icu_decimal`.
+    //! Resource keys for [`icu_decimal`](crate).
     use icu_provider::{resource_key, ResourceKey};
 
     /// Resource key: symbols used for basic decimal formatting.
@@ -49,7 +49,7 @@ pub struct GroupingSizesV1 {
     pub min_grouping: u8,
 }
 
-/// Symbols and metadata required for formatting a FixedDecimal.
+/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
