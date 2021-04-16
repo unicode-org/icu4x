@@ -194,7 +194,7 @@ where
     T: AsVarULE,
     T::VarULE: Ord,
 {
-    pub fn binary_search(&self, x: &T::VarULE) -> Result<usize, usize> {
+    pub fn binary_search(&self, needle: &T::VarULE) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
         //
@@ -224,13 +224,13 @@ where
             let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
-            actual_probe.cmp(x)
+            actual_probe.cmp(needle)
         })
     }
 }
 
 pub fn get_serializable_bytes<T: AsVarULE>(elements: &[T]) -> Option<Vec<u8>> {
-    let mut vec = Vec::new();
+    let mut vec = Vec::with_capacity(4 + 4 * elements.len());
     let len_u32: u32 = elements.len().try_into().ok()?;
     vec.extend(&len_u32.as_unaligned().0);
     let mut offset: usize = 0;
@@ -239,6 +239,7 @@ pub fn get_serializable_bytes<T: AsVarULE>(elements: &[T]) -> Option<Vec<u8>> {
         vec.extend(&offset_u32.as_unaligned().0);
         offset += element.as_unaligned().as_byte_slice().len();
     }
+    vec.reserve(offset);
     for element in elements {
         vec.extend(element.as_unaligned().as_byte_slice())
     }
