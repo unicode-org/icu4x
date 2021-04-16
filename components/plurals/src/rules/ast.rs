@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `AST` provides a set of Syntax Tree Nodes used to store
+//! [`AST`](self) provides a set of Syntax Tree Nodes used to store
 //! the output of [`parse`] method that is used in [`test_condition`] method
 //! to evaluate whether a given [`PluralCategory`] should be used.
 //!
@@ -41,7 +41,7 @@
 use std::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
-/// Comprises a vector of `AndConditions` and optionally a set of Samples.
+/// Comprises a vector of [`AndConditions`] and optionally a set of [`Samples`].
 ///
 /// # Examples
 ///
@@ -80,13 +80,15 @@ use std::ops::RangeInclusive;
 ///          .expect("Parsing failed")
 /// )
 /// ```
+///
+/// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
 pub struct Rule {
     pub condition: Condition,
     pub samples: Option<Samples>,
 }
 
-/// A complete AST representation of a plural rule's condition. Comprises a vector of `AndConditions`.
+/// A complete AST representation of a plural rule's condition. Comprises a vector of [`AndConditions`].
 ///
 /// # Examples
 ///
@@ -119,14 +121,17 @@ pub struct Rule {
 ///          .expect("Parsing failed")
 /// )
 /// ```
+///
+/// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
 pub struct Condition(pub Box<[AndCondition]>);
 
-/// An incomplete AST representation of a plural rule. Comprises a vector of Relations.
+/// An incomplete AST representation of a plural rule. Comprises a vector of [`Relations`].
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
+/// AST using the [`parse()`](crate::rules::parser::parse()) function.
 ///
 /// ```text
 /// "i = 3 and v = 0"
@@ -157,14 +162,17 @@ pub struct Condition(pub Box<[AndCondition]>);
 /// ]));
 ///
 /// ```
+///
+/// [`Relations`]: Relation
 #[derive(Debug, Clone, PartialEq)]
 pub struct AndCondition(pub Box<[Relation]>);
 
-/// An incomplete AST representation of a plural rule. Comprises an `Expression`, an `Operator`, and a `RangeList`.
+/// An incomplete AST representation of a plural rule. Comprises an [`Expression`], an [`Operator`], and a [`RangeList`].
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
+/// AST using the [`parse()`](crate::rules::parser::parse()) function.
 ///
 /// ```text
 /// "i = 3"
@@ -192,7 +200,7 @@ pub struct Relation {
     pub range_list: RangeList,
 }
 
-/// An enum of Relation operators for plural rules.
+/// An enum of [`Relation`] operators for plural rules.
 ///
 /// Each Operator enumeration belongs to the corresponding symbolic operators:
 ///
@@ -207,11 +215,12 @@ pub enum Operator {
     NotEq,
 }
 
-/// An incomplete AST representation of a plural rule. Comprises an Operand and an optional Modulo.
+/// An incomplete AST representation of a plural rule. Comprises an [`Operand`] and an optional modulo.
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
+/// AST using the [`parse()`](crate::rules::parser::parse()) function.
 ///
 /// ```text
 /// "i % 100"
@@ -234,11 +243,12 @@ pub struct Expression {
     pub modulus: Option<Value>,
 }
 
-/// An incomplete AST representation of a plural rule. Comprises a char.
+/// An incomplete AST representation of a plural rule. Comprises a [`char`].
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
+/// AST using the [`parse()`](crate::rules::parser::parse()) function.
 ///
 /// ```text
 /// "i"
@@ -272,11 +282,12 @@ pub enum Operand {
     E,
 }
 
-/// An incomplete AST representation of a plural rule. Comprises a vector of `RangeListItems`.
+/// An incomplete AST representation of a plural rule. Comprises a vector of [`RangeListItems`].
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
+/// AST using the [`parse()`](crate::rules::parser::parse()) function.
 ///
 /// ```text
 /// "5, 7, 9"
@@ -293,13 +304,15 @@ pub enum Operand {
 ///     RangeListItem::Value(Value(9)),
 /// ]));
 /// ```
+///
+/// [`RangeListItems`]: RangeListItem
 #[derive(Debug, Clone, PartialEq)]
 pub struct RangeList(pub Box<[RangeListItem]>);
 
-/// An enum of items that appear in a `RangeList`: `Range` or a `Value`.
+/// An enum of items that appear in a [`RangeList`]: `Range` or a `Value`.
 ///
-/// See Range and Value for additional details.
-/// A range comprises two Values: an inclusive lower and upper limit.
+/// See [`RangeInclusive`] and [`Value`] for additional details.
+/// A range comprises two values: an inclusive lower and upper limit.
 ///
 /// # Examples
 ///
@@ -326,7 +339,8 @@ pub enum RangeListItem {
 ///
 /// # Examples
 ///
-/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the AST using the `parse_plural_rule` function.
+/// All AST nodes can be built explicitly, as seen in the example. However, due to its complexity, it is preferred to build the
+/// AST using the [`parse()`](crate::rules::parser::parse()) function.
 ///
 /// ```text
 /// "99"
