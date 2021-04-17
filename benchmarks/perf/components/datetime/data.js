@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618552997000,
+  "lastUpdate": 1618619502083,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4151,6 +4151,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2522869,
             "range": "± 75806",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c9590b53ef98322b903308ff5b4c57d621222e35",
+          "message": "Small cleanups to prepare for data source abstraction (#649)",
+          "timestamp": "2021-04-16T19:24:01-05:00",
+          "tree_id": "f303e309927a4c804d80979b3bd94c308745d80d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c9590b53ef98322b903308ff5b4c57d621222e35"
+        },
+        "date": 1618619501066,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1654577,
+            "range": "± 121502",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 3141427,
+            "range": "± 250270",
             "unit": "ns/iter"
           }
         ]
