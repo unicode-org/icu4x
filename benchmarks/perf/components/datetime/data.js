@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618624042233,
+  "lastUpdate": 1618625405744,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4259,6 +4259,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2192510,
             "range": "± 111538",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a46f3336d0a2f0c9c9193fc2e0893c8834e30fcf",
+          "message": "Remove .DS_Store files and add them to the .gitignore (#655)",
+          "timestamp": "2021-04-16T19:03:34-07:00",
+          "tree_id": "1b73a4ca319bae725e66ef371f86f6b667f77836",
+          "url": "https://github.com/unicode-org/icu4x/commit/a46f3336d0a2f0c9c9193fc2e0893c8834e30fcf"
+        },
+        "date": 1618625402997,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1254604,
+            "range": "± 23487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2450961,
+            "range": "± 40822",
             "unit": "ns/iter"
           }
         ]
