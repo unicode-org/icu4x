@@ -11,6 +11,29 @@ use std::convert::TryFrom;
 ///
 /// The bytes of a `CharULE` are guaranteed to represent a little-endian-encoded u32 that is a
 /// valid `char` and can be converted without validation.
+///
+/// # Examples
+///
+/// Convert a `char` to a `CharULE` and back again:
+///
+/// ```
+/// use zerovec::ule::{ULE, AsULE, CharULE};
+///
+/// let c1 = '𑄃';
+/// let ule = c1.as_unaligned();
+/// assert_eq!(CharULE::as_byte_slice(&[ule]), &[0x03, 0x11, 0x01, 0x00]);
+/// let c2 = char::from_unaligned(&ule);
+/// assert_eq!(c1, c2);
+/// ```
+///
+/// Attempt to parse invalid bytes to a `CharULE`:
+///
+/// ```
+/// use zerovec::ule::{ULE, CharULE};
+///
+/// let bytes: &[u8] = &[0xFF, 0xFF, 0xFF, 0xFF];
+/// CharULE::parse_byte_slice(bytes).expect_err("Invalid bytes");
+/// ```
 #[repr(transparent)]
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct CharULE([u8; 4]);

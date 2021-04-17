@@ -67,10 +67,9 @@ where
     T: AsULE + fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use ZeroVec::*;
         match self {
-            Owned(_) => write!(f, "ZeroVec::Owned({:?})", self.to_vec()),
-            Borrowed(_) => write!(f, "ZeroVec::Borrowed({:?})", self.to_vec()),
+            Self::Owned(_) => write!(f, "ZeroVec::Owned({:?})", self.to_vec()),
+            Self::Borrowed(_) => write!(f, "ZeroVec::Borrowed({:?})", self.to_vec()),
         }
     }
 }
@@ -154,10 +153,9 @@ where
     /// this function as a building block.
     #[inline]
     pub fn as_slice(&self) -> &[T::ULE] {
-        use ZeroVec::*;
         match self {
-            Owned(vec) => vec.as_slice(),
-            Borrowed(slice) => slice,
+            Self::Owned(vec) => vec.as_slice(),
+            Self::Borrowed(slice) => slice,
         }
     }
 
@@ -349,10 +347,9 @@ where
     /// assert!(matches!(owned, ZeroVec::Owned(_)));
     /// ```
     pub fn into_owned(self) -> ZeroVec<'static, T> {
-        use ZeroVec::*;
         match self {
-            Owned(vec) => ZeroVec::Owned(vec),
-            Borrowed(_) => {
+            Self::Owned(vec) => ZeroVec::Owned(vec),
+            Self::Borrowed(_) => {
                 let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
                 ZeroVec::Owned(vec)
             }
