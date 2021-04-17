@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618552937896,
+  "lastUpdate": 1618619432344,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5099,6 +5099,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 26478103,
             "range": "± 1012905",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c9590b53ef98322b903308ff5b4c57d621222e35",
+          "message": "Small cleanups to prepare for data source abstraction (#649)",
+          "timestamp": "2021-04-16T19:24:01-05:00",
+          "tree_id": "f303e309927a4c804d80979b3bd94c308745d80d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c9590b53ef98322b903308ff5b4c57d621222e35"
+        },
+        "date": 1618619428785,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31985435,
+            "range": "± 1930875",
             "unit": "ns/iter"
           }
         ]
