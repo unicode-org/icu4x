@@ -7,7 +7,7 @@ shipped by CLDR. You create a [`CldrPaths`] and then pass it into [`CldrJsonData
 
 This crate contains two implementations of [`CldrPaths`]:
 
-- `CldrPathsLocal` points to local copies of the CLDR JSON repositories.
+- [`CldrPathsLocal`] points to local copies of the CLDR JSON repositories.
 - `CldrPathsDownload` downloads and caches the CLDR JSON repositories. Requires the
   "download" feature.
 

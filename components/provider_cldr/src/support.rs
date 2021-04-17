@@ -40,7 +40,7 @@ where
         + TryFrom<&'b dyn CldrPaths>,
     <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
 {
-    /// Call `T::load`, initializing T if necessary.
+    /// Call [`DataProvider::load_payload()`], initializing `T` if necessary.
     pub fn try_load_serde(
         &self,
         req: &DataRequest,
@@ -62,7 +62,7 @@ where
         return DataProvider::load_payload(data_provider, req).map(Some);
     }
 
-    /// Call `T::supported_options_for_key`, initializing T if necessary.
+    /// Call [`IterableDataProviderCore::supported_options_for_key()`], initializing `T` if necessary.
     pub fn try_supported_options(
         &self,
         resc_key: &ResourceKey,

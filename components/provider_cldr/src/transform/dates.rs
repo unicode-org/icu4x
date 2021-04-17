@@ -190,7 +190,7 @@ impl From<&cldr_json::Dates> for gregory::DatesV1 {
             patterns: gregory::PatternsV1 {
                 date: (&other.calendars.gregorian.date_formats).into(),
                 time: (&other.calendars.gregorian.time_formats).into(),
-                date_time: (&other.calendars.gregorian.date_time_formats).into(),
+                datetime: (&other.calendars.gregorian.datetime_formats).into(),
             },
         }
     }
@@ -471,7 +471,7 @@ pub(self) mod cldr_json {
         #[serde(rename = "timeFormats")]
         pub time_formats: LengthPatterns,
         #[serde(rename = "dateTimeFormats")]
-        pub date_time_formats: DateTimeFormats,
+        pub datetime_formats: DateTimeFormats,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

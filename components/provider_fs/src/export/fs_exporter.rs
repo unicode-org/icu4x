@@ -28,7 +28,7 @@ pub enum OverwriteOption {
     RemoveAndReplace,
 }
 
-/// Options bag for initializing a FilesystemExporter.
+/// Options bag for initializing a [`FilesystemExporter`].
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ExporterOptions {
@@ -138,8 +138,8 @@ impl FilesystemExporter {
         Ok(result)
     }
 
-    /// This function must be called before the FilesystemExporter leaves scope.
-    /// It is recommended to flush after exporting each ResourceKey.
+    /// This function must be called before the [`FilesystemExporter`] leaves scope.
+    /// It is recommended to flush after exporting each [`ResourceKey`].
     pub fn flush(&mut self) -> Result<(), Error> {
         if let Some(mut alias_collection) = self.alias_collection.take() {
             alias_collection.flush()?;

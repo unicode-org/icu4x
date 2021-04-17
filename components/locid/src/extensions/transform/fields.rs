@@ -37,9 +37,9 @@ use super::Value;
 pub struct Fields(Option<Box<[(Key, Value)]>>);
 
 impl Fields {
-    /// Returns a new empty list of key-value pairs. Same as `Default`, but is `const`.
+    /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::transform::Fields;
@@ -51,7 +51,7 @@ impl Fields {
         Self(None)
     }
 
-    /// A constructor which takes a pre-sorted list of `(Key, Value)` tuples.
+    /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
     ///
     ///
     /// # Examples
@@ -75,7 +75,7 @@ impl Fields {
         }
     }
 
-    /// Empties the `Fields` list.
+    /// Empties the [`Fields`] list.
     ///
     /// # Examples
     ///

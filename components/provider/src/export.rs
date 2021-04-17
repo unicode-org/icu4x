@@ -9,9 +9,9 @@ use crate::iter::IterableDataProvider;
 use crate::prelude::*;
 use std::fmt::Debug;
 
-/// An object capable of serializing data payloads to be read by a DataProvider.
+/// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
-/// A DataProvider by itself is "read-only"; this trait enables it to be "read-write".
+/// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
 pub trait DataExporter<'s, T>
 where
     T: 's + ToOwned + ?Sized,
@@ -25,11 +25,11 @@ where
     ) -> Result<(), Box<dyn std::error::Error>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
-    /// `DataExporter` to filter out certain data entries.
+    /// [`DataExporter`] to filter out certain data entries.
     fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool;
 
-    /// Auto-implemented function that loads data from an `IterableDataProvider` and dumps it
-    /// into this `DataExporter`.
+    /// Auto-implemented function that loads data from an [`IterableDataProvider`] and dumps it
+    /// into this [`DataExporter`].
     fn put_key_from_provider<'d>(
         &mut self,
         resc_key: &ResourceKey,

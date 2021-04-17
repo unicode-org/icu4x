@@ -66,7 +66,7 @@
 //!
 //! *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
 //! [`MockDateTime`] as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-//! [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/date_time.md)
+//! [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
 //! to develop core date and time APIs that will work as an input for this component.
 //!
 //! [`DataProvider`]: icu_provider::DataProvider
@@ -85,12 +85,14 @@ pub mod options;
 pub mod pattern;
 pub mod provider;
 pub mod skeleton;
-pub mod timezone;
+// TODO(#622) make the time_zone module public once TimeZoneFormat is public.
+pub(crate) mod time_zone;
 pub mod zoned_datetime;
 
 pub use datetime::DateTimeFormat;
 pub use error::DateTimeFormatError;
 pub use format::datetime::FormattedDateTime;
+pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatOptions;
 pub use zoned_datetime::ZonedDateTimeFormat;
 // TODO(#622) re-export TimeZoneFormat once it is made public.

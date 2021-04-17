@@ -8,7 +8,7 @@ use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::provider::{
     key,
-    timezones::{
+    time_zones::{
         ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
         MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneFormatsV1,
     },

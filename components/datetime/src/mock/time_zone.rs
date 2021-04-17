@@ -5,18 +5,19 @@
 use crate::date::*;
 use std::str::FromStr;
 
-/// Temporary implementation of [`TimeZoneInput`],
-/// which is used in tests, benchmarks and examples of this component.
+// TODO(#622) link [`TimeZoneFormat`] appropriately once it is public.
+/// A temporary struct that implements [`TimeZoneInput`]
+/// and is used in tests, benchmarks and examples of this component.
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent time zones. We are introducing
-/// `MockTimeZone` as an example of the data necessary for ICU [`TimeZoneFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/date_time.md)
+/// [`MockTimeZone`] as an example of the data necessary for ICU `TimeZoneFormat` to work, and
+/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
 /// to develop core date and time APIs that will work as an input for this component.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::mock::timezone::MockTimeZone;
+/// use icu::datetime::mock::time_zone::MockTimeZone;
 /// use icu::datetime::date::GmtOffset;
 ///
 /// let tz1 = MockTimeZone::new(
@@ -29,7 +30,6 @@ use std::str::FromStr;
 /// let tz2: MockTimeZone = "+05:00".parse()
 ///     .expect("Failed to parse a time zone.");
 /// ```
-/// [`TimeZoneFormat`]: super::TimeZoneFormat
 #[derive(Debug, Default)]
 pub struct MockTimeZone {
     /// The GMT offset in seconds.
@@ -45,7 +45,7 @@ pub struct MockTimeZone {
 }
 
 impl MockTimeZone {
-    /// Creates a new `MockTimeZone`.
+    /// Creates a new [`MockTimeZone`].
     /// A GMT offset is required, as it is used as a final fallback for formatting.
     /// The other arguments optionally allow access to more robust formats.
     pub const fn new(
@@ -66,12 +66,12 @@ impl MockTimeZone {
 impl FromStr for MockTimeZone {
     type Err = DateTimeError;
 
-    /// Parse a `MockTimeZone` from a string.
+    /// Parse a [`MockTimeZone`] from a string.
     ///
     /// This utility is for easily creating time zones, not a complete robust solution.
     ///
     /// The offset must range from GMT-12 to GMT+14.
-    /// The string must be an ISO 8601 time zone designator:
+    /// The string must be an ISO-8601 time zone designator:
     /// e.g. Z
     /// e.g. +05
     /// e.g. +0500
@@ -80,7 +80,7 @@ impl FromStr for MockTimeZone {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::mock::timezone::MockTimeZone;
+    /// use icu::datetime::mock::time_zone::MockTimeZone;
     ///
     /// let tz0: MockTimeZone = "Z".parse().expect("Failed to parse a time zone.");
     /// let tz1: MockTimeZone = "+02".parse().expect("Failed to parse a time zone.");

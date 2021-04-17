@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Options for FixedDecimalFormat.
+//! Options for [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 
-/// A bag of options defining how numbers will be formatted by `FixedDecimalFormat`.
+/// A bag of options defining how numbers will be formatted by
+/// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 pub struct FixedDecimalFormatOptions {
     /// When to render grouping separators.
@@ -15,7 +16,7 @@ pub struct FixedDecimalFormatOptions {
 
 /// Configuration for how often to render grouping separators.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_decimal::FixedDecimalFormat;
@@ -48,8 +49,8 @@ pub enum GroupingStrategy {
 
     /// Always render grouping separators.
     ///
-    /// For `FixedDecimalFormat`, `GroupingStrategy::Always` has the same behavior as
-    /// `GroupingStrategy::Auto`.
+    /// For [`FixedDecimalFormat`](crate::FixedDecimalFormat), [`GroupingStrategy::Always`]
+    /// has the same behavior as [`GroupingStrategy::Auto`].
     Always,
 
     /// Render grouping separators only if there are at least 2 digits before the final grouping
@@ -66,7 +67,7 @@ impl Default for GroupingStrategy {
 
 /// Configuration for when to render the minus sign or plus sign.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_decimal::FixedDecimalFormat;
@@ -111,7 +112,7 @@ pub enum SignDisplay {
     /// Show a minus sign on strictly negative numbers. Do not show a sign on positive numbers or
     /// on positive or negative zero.
     ///
-    /// This differs from `Auto` in that it does not render a sign on negative zero.
+    /// This differs from [`Auto`](SignDisplay::Auto) in that it does not render a sign on negative zero.
     Negative,
 }
 

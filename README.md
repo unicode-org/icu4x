@@ -40,7 +40,7 @@ fn main() {
     let lid = langid!("ar");
 
     let date: MockDateTime = "2020-10-14T13:21:00".parse()
-        .expect("Failed to parse a date time.");
+        .expect("Failed to parse a datetime.");
 
     let provider = FsDataProvider::try_new("./icu4x-data")
         .expect("Failed to initialize Data Provider.");
@@ -52,7 +52,7 @@ fn main() {
     }.into();
 
     let dtf = DateTimeFormat::try_new(lid, &provider, &options)
-        .expect("Failed to initialize Date Time Format");
+        .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);
 

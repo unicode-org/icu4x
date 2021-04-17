@@ -1,0 +1,46 @@
+[
+    {
+        "description": "Combine date and time: yMMMd + Ehm",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "short",
+                    "day": "numeric",
+
+                    "weekday": "short",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "Tue, Jan 7, 2020, 8:25 AM"
+        }
+    },
+    {
+        "description": "Combine date and time with a \"full\" length glue pattern",
+        "input": {
+            "locale": "en",
+            "value": "2020-01-07T08:25:07.000",
+            "options": {
+                "components": {
+                    "year": "numeric",
+                    "month": "long",
+                    "day": "numeric",
+
+                    "weekday": "long",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "preferences": { "hourCycle": "h12" }
+                }
+            }
+        },
+        "output": {
+            "value": "Tue, Jan 7, 2020 at 8:25 AM"
+        }
+    }
+]

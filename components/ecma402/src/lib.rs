@@ -11,15 +11,15 @@ use icu::locid::LanguageIdentifier;
 /// [link]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRulres/PluralRules
 pub mod pluralrules;
 
-/// An adapter between `icu_locid` and `ecma402_traits`.
+/// An adapter between [`icu::locid`] and [`ecma402_traits`].
 ///
 /// Specifically, adds an implementation of [`ecma402_traits::Locale`], which is
 /// rudimentary at the moment.
 #[derive(Debug, Hash, Clone, PartialEq)]
 pub enum Locale {
-    /// An ECMA402 compatible [Locale] created from icu4x [LanguageIdentifier].
+    /// An ECMA402 compatible [`Locale`] created from icu4x [`LanguageIdentifier`].
     FromLangid(LanguageIdentifier),
-    /// An ECMA402 [Locale] created from icu4x [icu::locid::Locale].
+    /// An ECMA402 [Locale] created from ICU4X's [`icu::locid::Locale`].
     FromLocale(icu::locid::Locale),
 }
 

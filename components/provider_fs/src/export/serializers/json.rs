@@ -23,7 +23,7 @@ pub struct Serializer {
     style: StyleOption,
 }
 
-/// Options bag for initializing a json::Serializer.
+/// Options bag for initializing a [`serde_json::Serializer`].
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Options {

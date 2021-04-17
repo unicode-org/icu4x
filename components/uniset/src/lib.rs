@@ -9,7 +9,7 @@
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!
 //! # Architecture
-//! ICU4X `UnicodeSet` is split up into independent levels, with [`UnicodeSet`] representing the membership/query API,
+//! ICU4X [`UnicodeSet`] is split up into independent levels, with [`UnicodeSet`] representing the membership/query API,
 //! and [`UnicodeSetBuilder`] representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
 //! is in future works.
 //!
@@ -17,7 +17,7 @@
 //!
 //! ## Creating a `UnicodeSet`
 //!
-//! UnicodeSets are created from either serialized UnicodeSets,
+//! UnicodeSets are created from either serialized [`UnicodeSets`](UnicodeSet),
 //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
 //! the [`UnicodeSetBuilder`], or from the TBA Properties API.
 //!
@@ -33,7 +33,7 @@
 //!
 //! ## Querying a `UnicodeSet`
 //!
-//! Currently, you can check if a character/range of characters exists in the UnicodeSet, or iterate through the characters.
+//! Currently, you can check if a character/range of characters exists in the [`UnicodeSet`], or iterate through the characters.
 //!
 //! ```
 //! use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
@@ -65,7 +65,7 @@ pub use std::fmt;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 
-/// Custom Errors for `UnicodeSet`.
+/// Custom Errors for [`UnicodeSet`].
 #[derive(Debug)]
 pub enum UnicodeSetError {
     InvalidSet(Vec<u32>),

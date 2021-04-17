@@ -6,9 +6,9 @@ use crate::parser::errors::ParserError;
 use std::str::FromStr;
 use tinystr::TinyStr4;
 
-/// Script subtag (examples: `"Latn"`, `"Arab"`, etc.)
+/// A script subtag (examples: `"Latn"`, `"Arab"`, etc.)
 ///
-/// `Script` represents a Unicode base language code conformat to the
+/// [`Script`] represents a Unicode base language code conformat to the
 /// [`unicode_script_id`] field of the Language and Locale Identifier.
 ///
 /// # Examples
@@ -28,7 +28,7 @@ pub const SCRIPT_LENGTH: usize = 4;
 
 impl Script {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Script`.
+    /// produces a well-formed [`Script`].
     ///
     /// # Examples
     ///
@@ -52,8 +52,8 @@ impl Script {
         Ok(Self(s.to_ascii_titlecase()))
     }
 
-    /// Deconstructs the `Script` into raw format to be consumed
-    /// by `from_raw_unchecked`.
+    /// Deconstructs the [`Script`] into raw format to be consumed
+    /// by [`from_raw_unchecked()`](Script::from_raw_unchecked()).
     ///
     /// # Examples
     ///
@@ -72,7 +72,7 @@ impl Script {
     }
 
     /// Constructor which takes a raw value returned by
-    /// `into_raw`.
+    /// [`into_raw`](Script::into_raw()).
     ///
     /// # Examples
     ///
@@ -89,14 +89,14 @@ impl Script {
     ///
     /// # Safety
     ///
-    /// This function accepts a `u32` that is expected to be a valid `TinyStr4`
-    /// representing a `Script` subtag in canonical syntax.
+    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// representing a [`Script`] subtag in canonical syntax.
     pub const unsafe fn from_raw_unchecked(v: u32) -> Self {
         Self(TinyStr4::new_unchecked(v))
     }
 
     /// A helper function for displaying
-    /// a `Script` subtag as a `&str`.
+    /// a [`Script`] subtag as a `&`[`str`].
     ///
     /// # Examples
     ///
@@ -110,7 +110,7 @@ impl Script {
     /// ```
     ///
     /// `Notice`: For many use cases, such as comparison,
-    /// `Script` implements `PartialEq<&str>` which allows for direct comparisons.
+    /// [`Script`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }

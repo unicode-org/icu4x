@@ -26,7 +26,7 @@ impl fmt::Display for DataRequest {
     }
 }
 
-/// Create a DataRequest to a particular ResourceKey with default options.
+/// Create a [`DataRequest`] to a particular [`ResourceKey`] with default options.
 impl From<ResourceKey> for DataRequest {
     fn from(key: ResourceKey) -> Self {
         DataRequest {
@@ -39,9 +39,9 @@ impl From<ResourceKey> for DataRequest {
 }
 
 impl DataRequest {
-    /// Returns the LanguageIdentifier for this DataRequest, or an error if it is not present.
+    /// Returns the [`LanguageIdentifier`] for this [`DataRequest`], or an error if it is not present.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
@@ -84,9 +84,9 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-/// A wrapper around the payload returned in a [DataResponse].
+/// A wrapper around the payload returned in a [`DataResponse`].
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -124,7 +124,7 @@ where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    /// Creates a new, empty DataPayload.
+    /// Creates a new, empty [`DataPayload`].
     ///
     /// Default is not implemented because it would be misleading: does the DataPayload start
     /// empty, or does it start with the Default value of T?
@@ -152,9 +152,9 @@ where
 ///
 /// See examples on some of the concrete implementations:
 ///
-/// - [HelloWorldProvider](crate::hello_world::HelloWorldProvider)
-/// - [StructProvider](crate::struct_provider::StructProvider)
-/// - [InvariantDataProvider](crate::inv::InvariantDataProvider)
+/// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
+/// - [`StructProvider`](crate::struct_provider::StructProvider)
+/// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,
@@ -162,7 +162,7 @@ where
 {
     /// Query the provider for data, returning the result.
     ///
-    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error>;
 }

@@ -61,9 +61,9 @@ use crate::parser::ParserError;
 pub struct Private(Option<Box<[Key]>>);
 
 impl Private {
-    /// Returns a new empty list of private-use extensions. Same as `Default`, but is `const`.
+    /// Returns a new empty list of private-use extensions. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::private::Private;
@@ -75,7 +75,7 @@ impl Private {
         Self(None)
     }
 
-    /// A constructor which takes a pre-sorted list of `Key`.
+    /// A constructor which takes a pre-sorted list of [`Key`].
     ///
     /// # Examples
     ///
@@ -98,7 +98,7 @@ impl Private {
         }
     }
 
-    /// Empties the `Private` list.
+    /// Empties the [`Private`] list.
     ///
     /// # Examples
     ///

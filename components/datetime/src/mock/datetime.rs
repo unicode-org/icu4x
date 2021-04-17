@@ -8,14 +8,14 @@ use std::convert::TryInto;
 use std::str::FromStr;
 use tinystr::tinystr8;
 
-/// Temporary implementation of [`DateTimeInput`],
-/// which is used in tests, benchmarks and examples of this component.
+/// A temporary struct that implements [`DateTimeInput`]
+/// and is used in tests, benchmarks and examples of this component.
 ///
-/// All fields in MockDateTime are zero-based. For example, January is represented as 0, not 1.
+/// All fields in [`MockDateTime`] are 0-based. For example, January is represented as 0, not 1.
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-/// `MockDateTime` as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
-/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/date_time.md)
+/// [`MockDateTime`] as an example of the data necessary for ICU [`DateTimeFormat`] to work, and
+/// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
 /// to develop core date and time APIs that will work as an input for this component.
 ///
 /// # Examples
@@ -27,9 +27,9 @@ use tinystr::tinystr8;
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let dt2: MockDateTime = "2020-10-14T13:21:00".parse()
-///     .expect("Failed to parse a date time.");
+///     .expect("Failed to parse a datetime.");
 /// ```
-/// [`DateTimeFormat`]: super::DateTimeFormat
+/// [`DateTimeFormat`]: crate::datetime::DateTimeFormat
 #[derive(Debug, Default)]
 pub struct MockDateTime {
     /// ISO-8601 year (proleptic Gregorian).
@@ -52,7 +52,7 @@ pub struct MockDateTime {
 }
 
 impl MockDateTime {
-    /// Creates a new `MockDateTime` from a list of already validated date/time parameters.
+    /// Creates a new [`MockDateTime`] from a list of already validated date/time parameters.
     pub const fn new(
         year: i32,
         month: u32,
@@ -71,7 +71,7 @@ impl MockDateTime {
         }
     }
 
-    /// Constructor for the `MockDateTime`.
+    /// Constructor for [`MockDateTime`].
     ///
     /// # Examples
     ///
@@ -106,16 +106,16 @@ impl MockDateTime {
 impl FromStr for MockDateTime {
     type Err = DateTimeError;
 
-    /// Parse a `MockDateTime` from a string.
+    /// Parse a [`MockDateTime`] from a string.
     ///
     /// This utility is for easily creating dates, not a complete robust solution. The
-    /// string must take a specific form of the ISO 8601 format: `YYYY-MM-DDThh:mm:ss`.
+    /// string must take a specific form of the ISO-8601 format: `YYYY-MM-DDThh:mm:ss`.
     ///
     /// ```
     /// use icu::datetime::mock::datetime::MockDateTime;
     ///
     /// let date: MockDateTime = "2020-10-14T13:21:00".parse()
-    ///     .expect("Failed to parse a date time.");
+    ///     .expect("Failed to parse a datetime.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let year: i32 = input[0..4].parse()?;

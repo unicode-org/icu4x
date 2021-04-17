@@ -5,9 +5,9 @@
 use super::Variant;
 use std::ops::Deref;
 
-/// Variants is a list of variants (examples: `["macos", "posix"]`, etc.)
+/// A list of variants (examples: `["macos", "posix"]`, etc.)
 ///
-/// `Variants` stores a list of [`Variant`] subtags in a canonical form
+/// [`Variants`] stores a list of [`Variant`] subtags in a canonical form
 /// by sorting and deduplicating them.
 ///
 /// # Examples
@@ -32,9 +32,9 @@ use std::ops::Deref;
 pub struct Variants(Option<Box<[Variant]>>);
 
 impl Variants {
-    /// Returns a new empty list of variants. Same as `Default`, but is `const`.
+    /// Returns a new empty list of variants. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::subtags::Variants;
@@ -46,7 +46,7 @@ impl Variants {
         Self(None)
     }
 
-    /// Creates a new `Variants` set from a vector.
+    /// Creates a new [`Variants`] set from a [`Vec`].
     /// The caller is expected to provide sorted and deduplicated vector as
     /// an input.
     ///
@@ -66,8 +66,9 @@ impl Variants {
     /// let variants = Variants::from_vec_unchecked(v);
     /// ```
     ///
-    /// For performance and memory constraint environments, it is recommended
-    /// for the caller to use `slice::binary_search` instead of `sort` and `dedup`.
+    /// Notice: For performance- and memory-constrained environments, it is recommended
+    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
+    /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Variant>) -> Self {
         if input.is_empty() {
             Self(None)
@@ -76,8 +77,8 @@ impl Variants {
         }
     }
 
-    /// Deconstructs the `Variants` into raw format to be consumed
-    /// by `from_raw_unchecked`.
+    /// Deconstructs the [`Variants`] into raw format to be consumed
+    /// by [`from_raw_unchecked()`](Variants::from_raw_unchecked()).
     ///
     /// # Examples
     ///
@@ -102,8 +103,7 @@ impl Variants {
         self.0
     }
 
-    /// Constructor which takes a raw value returned by
-    /// `into_raw`.
+    /// Constructor which takes a raw value returned by [`into_raw()`](Variants::into_raw()).
     ///
     /// # Examples
     ///
@@ -125,18 +125,19 @@ impl Variants {
     /// assert_eq!(variants.len(), 2);
     /// ```
     ///
-    /// For performance and memory constraint environments, it is recommended
-    /// for the caller to use `slice::binary_search` instead of `sort` and `dedup`.
+    /// Notice: For performance- and memory-constrained environments, it is recommended
+    /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
+    /// and [`dedup`](Vec::dedup()).
     ///
     /// # Safety
     ///
-    /// This function accepts any `Box<[Variant]>` that is expected to be a
+    /// This function accepts any [`Box`]`<`[`Variant`]`>` that is expected to be a
     /// valid list of sorted variants.
     pub const unsafe fn from_raw_unchecked(input: Option<Box<[Variant]>>) -> Self {
         Self(input)
     }
 
-    /// Empties the `Variants` list.
+    /// Empties the [`Variants`] list.
     ///
     /// # Examples
     ///

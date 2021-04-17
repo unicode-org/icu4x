@@ -11,8 +11,8 @@ use crate::sign_selector;
 use fixed_decimal::FixedDecimal;
 use writeable::Writeable;
 
-/// An intermediate structure returned by FixedDecimalFormat. Use [`Writeable`][Writeable] to
-/// render the formatted decimal to a string or buffer.
+/// An intermediate structure returned by [`FixedDecimalFormat`](crate::FixedDecimalFormat).
+/// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,

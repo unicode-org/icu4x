@@ -4,7 +4,7 @@
 
 //! # Implementation status
 //!
-//! This is currently only a partial implementation of the UTS 35 skeleton matching algorithm.
+//! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
 //!
 //! | Algorithm step | Status |
 //! |----------------|--------|
@@ -28,7 +28,7 @@
 //! ## Pattern Selection
 //!
 //! The [`components::Bag`](struct.Bag.html) is a way for the developer to describe which components
-//! should be included in in a date time, and how they should be displayed. There is not a strict
+//! should be included in in a datetime, and how they should be displayed. There is not a strict
 //! guarantee in how the final date will be displayed to the end user. The user's preferences and
 //! locale information can override the developer preferences.
 //!

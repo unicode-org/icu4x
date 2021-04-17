@@ -11,7 +11,7 @@ use crate::manifest::SyntaxOption;
 use std::io;
 use std::ops::Deref;
 
-/// An Error type specifically for the Serializer that doesn't carry filenames
+/// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 pub enum Error {
     Io(io::Error),
     Serializer(erased_serde::Error),

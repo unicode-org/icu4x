@@ -40,15 +40,16 @@
 //!
 //! ## Types and Lifetimes
 //!
-//! All types `T` compatible with `Cow` and `Debug` can be passed through the data provider.
+//! All types `T` compatible with [`Cow`](std::borrow::Cow) and [`Debug`](std::fmt::Debug) can be passed through
+//! the data provider.
 //!
-//! Most DataProvider traits take a lifetime argument `'d`. This represents the lifetime of data
-//! returned by the DataProvider, which is a `Cow<'d, T>`.
+//! Most [`DataProvider`] traits take a lifetime argument `'d`. This represents the lifetime of data
+//! returned by the [`DataProvider`], which is a [`Cow<'d, T>`](std::borrow::Cow).
 //!
-//! Objects returned by DataProvider can have their own borrowed fields, which enables zero-copy
+//! Objects returned by [`DataProvider`] can have their own borrowed fields, which enables zero-copy
 //! deserialization. By convention, the lifetime `'s` is used to constrain data struct fields. In
 //! general, `'s` should exceed `'d` (i.e., `'s: 'd`), such that the data is valid for as long as
-//! the `Cow<'d, T>` is valid.
+//! the [`Cow<'d, T>`](std::borrow::Cow) is valid.
 //!
 //! ## Additional Traits
 //!
@@ -57,7 +58,7 @@
 //! Data providers can implement [`IterableDataProvider`], allowing iteration over all [`ResourceOptions`]
 //! instances supported for a certain key in the data provider.
 //!
-//! For more information, see the `iter` module.
+//! For more information, see the [`iter`] module.
 //!
 //! ### `SerdeDeDataProvider`
 //!
@@ -78,8 +79,8 @@
 //!
 //! ### `DataProvider<dyn ErasedDataStruct>`
 //!
-//! The trait [`ErasedDataProvider`] removes the type argument from `DataProvider` and requires
-//! that all data structs be convertible to the `Any` type. This enables the processing of data
+//! The trait [`ErasedDataProvider`] removes the type argument from [`DataProvider`] and requires
+//! that all data structs be convertible to the [`Any`](std::any::Any) type. This enables the processing of data
 //! without the caller knowing the underlying data struct.
 //!
 //! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
@@ -124,7 +125,7 @@ mod error;
 pub use error::Error as DataError;
 
 pub mod prelude {
-    //! Core selection of APIs and structures for `DataProvider`.
+    //! Core selection of APIs and structures for [`DataProvider`].
     pub use crate::data_provider::DataPayload;
     pub use crate::data_provider::DataProvider;
     pub use crate::data_provider::DataRequest;

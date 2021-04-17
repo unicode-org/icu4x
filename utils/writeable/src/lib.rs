@@ -17,7 +17,7 @@
 //! If desired, types implementing Writeable can manually implement ToString
 //! to wrap writeable_to_string.
 //!
-//! # Example
+//! # Examples
 //!
 //! ```
 //! use writeable::Writeable;
@@ -70,7 +70,7 @@ pub enum LengthHint {
 impl LengthHint {
     /// Returns a recommendation for the number of bytes to pre-allocate.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use writeable::Writeable;
@@ -125,7 +125,7 @@ pub trait Writeable {
 /// The macro tests for equality of both string content and string length. If your Writeable
 /// implementation returns an inexact string length, don't use this macro.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use writeable::Writeable;

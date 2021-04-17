@@ -7,7 +7,7 @@ use std::default::Default;
 use std::path::PathBuf;
 
 /// Trait returning filesystem paths to CLDR JSON resource directories.
-/// The fields should be Ok if present. They default to Err when not present.
+/// The fields should be [`Ok`] if present. They default to [`Err`] when not present.
 pub trait CldrPaths: std::fmt::Debug {
     /// Path to checkout of cldr-core:
     /// <https://github.com/unicode-cldr/cldr-core>
@@ -22,9 +22,9 @@ pub trait CldrPaths: std::fmt::Debug {
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
 }
 
-/// Implementation of `CldrPaths` for multiple separate local CLDR JSON directories per component.
+/// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per component.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider_cldr::CldrPathsLocal;
@@ -69,9 +69,9 @@ impl Default for CldrPathsLocal {
     }
 }
 
-/// Implementation of `CldrPaths` for one combined local CLDR JSON directory.
+/// An implementation of [`CldrPaths`] for one combined local CLDR JSON directory.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider_cldr::CldrPathsAllInOne;

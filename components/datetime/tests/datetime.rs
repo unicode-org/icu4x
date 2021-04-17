@@ -23,7 +23,7 @@ use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
         dayperiods::DayPeriodExpectation,
-        timezones::{TimeZoneConfig, TimeZoneExpectation},
+        time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
 use std::{borrow::Cow, fmt::Write};
@@ -122,13 +122,13 @@ fn test_dayperiod_patterns() {
         *data
             .to_mut()
             .patterns
-            .date_time
+            .datetime
             .length_patterns
             .long
             .to_mut() = String::from("{0}");
         for test_case in &test.test_cases {
-            for dt_input in &test_case.date_times {
-                let date_time: MockDateTime = dt_input.parse().unwrap();
+            for dt_input in &test_case.datetimes {
+                let datetime: MockDateTime = dt_input.parse().unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
@@ -140,7 +140,7 @@ fn test_dayperiod_patterns() {
                             DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
                                 .unwrap();
                         assert_eq!(
-                            dtf.format(&date_time).to_string(),
+                            dtf.format(&datetime).to_string(),
                             *expected,
                             "\n\
                             locale:   `{}`,\n\
@@ -163,13 +163,13 @@ fn test_time_zone_patterns() {
     let zone_provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatOptions::default();
 
-    for test in get_time_zone_tests("timezones").unwrap().0 {
+    for test in get_time_zone_tests("time_zones").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut config = test.config;
-        let mut date_time: MockZonedDateTime = test.date_time.parse().unwrap();
-        date_time.time_zone.time_zone_id = config.time_zone_id.take();
-        date_time.time_zone.metazone_id = config.metazone_id.take();
-        date_time.time_zone.time_variant = config.time_variant.take();
+        let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
+        datetime.time_zone.time_zone_id = config.time_zone_id.take();
+        datetime.time_zone.metazone_id = config.metazone_id.take();
+        datetime.time_zone.time_variant = config.time_variant.take();
 
         let mut data: Cow<DatesV1> = date_provider
             .load_payload(&DataRequest {
@@ -189,7 +189,7 @@ fn test_time_zone_patterns() {
         *data
             .to_mut()
             .patterns
-            .date_time
+            .datetime
             .length_patterns
             .long
             .to_mut() = String::from("{0}");
@@ -211,14 +211,14 @@ fn test_time_zone_patterns() {
                 .unwrap();
 
                 assert_eq!(
-                    dtf.format(&date_time).to_string(),
+                    dtf.format(&datetime).to_string(),
                     *expected,
                     "\n\
                     locale:   `{}`,\n\
                     datetime: `{}`,\n\
                     pattern:  `{}`",
                     langid,
-                    test.date_time,
+                    test.datetime,
                     pattern_input,
                 );
             }
@@ -259,7 +259,7 @@ fn test_components_width_differences() {
 
 /// Tests that component::Bags can combine a date skeleton, and a time skeleton.
 #[test]
-fn test_components_combine_date_time() {
+fn test_components_combine_datetime() {
     // components/datetime/tests/fixtures/tests/components-combine-date-time.json
     test_fixture("components-combine-date-time");
 }

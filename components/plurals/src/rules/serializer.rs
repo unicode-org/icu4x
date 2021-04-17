@@ -6,7 +6,7 @@ use crate::rules::ast;
 use std::fmt;
 use std::ops::RangeInclusive;
 
-/// Unicode Plural Rule serializer converts an [`AST`] to a `String`.
+/// Unicode Plural Rule serializer converts an [`AST`] to a [`String`].
 ///
 /// # Examples
 ///

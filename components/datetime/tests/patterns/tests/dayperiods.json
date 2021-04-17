@@ -3,7 +3,7 @@
     "locale": "ar-EG",
     "test_cases": [
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T12:00:00"
         ],
         "expectations": [
@@ -27,7 +27,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T00:00:00"
         ],
         "expectations": [
@@ -56,7 +56,7 @@
     "locale": "ru",
     "test_cases": [
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T12:00:00"
         ],
         "expectations": [
@@ -95,7 +95,7 @@
     "locale": "en",
     "test_cases": [
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T00:00:00",
           "2021-01-11T00:01:00",
           "2021-01-11T00:00:01"
@@ -136,7 +136,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T12:00:00",
           "2021-01-11T12:01:00",
           "2021-01-11T12:00:01"
@@ -177,7 +177,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T12:00:00"
         ],
         "expectations": [
@@ -220,7 +220,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T12:00:01"
         ],
         "expectations": [
@@ -258,7 +258,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T12:01:00"
         ],
         "expectations": [
@@ -291,7 +291,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T13:00:00"
         ],
         "expectations": [
@@ -319,7 +319,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T00:00:00"
         ],
         "expectations": [
@@ -362,7 +362,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T00:00:01"
         ],
         "expectations": [
@@ -400,7 +400,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T00:01:00"
         ],
         "expectations": [
@@ -433,7 +433,7 @@
         ]
       },
       {
-        "date_times": [
+        "datetimes": [
           "2021-01-11T01:00:00"
         ],
         "expectations": [

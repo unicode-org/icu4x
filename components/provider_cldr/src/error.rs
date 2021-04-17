@@ -34,7 +34,7 @@ impl fmt::Display for MissingSourceError {
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: `Error::Io(err, None)`
+/// If a path is unavailable, create the error directly: [`Error::Io`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
     fn from(pieces: (std::io::Error, P)) -> Self {
         Self::Io(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
@@ -42,7 +42,7 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 }
 
 /// To help with debugging, JSON errors should be paired with a file path.
-/// If a path is unavailable, create the error directly: `Error::Json(err, None)`
+/// If a path is unavailable, create the error directly: [`Error::Json`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
         Self::Json(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
@@ -50,7 +50,7 @@ impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
 }
 
 /// To help with debugging, string errors should be paired with a locale.
-/// If a locale is unavailable, create the error directly: `Error::Custom(err, None)`
+/// If a locale is unavailable, create the error directly: [`Error::Custom`]`(err, `[`None`]`)`
 impl<L: AsRef<LanguageIdentifier>> From<(String, L)> for Error {
     fn from(pieces: (String, L)) -> Self {
         Self::Custom(pieces.0, Some(pieces.1.as_ref().clone()))
@@ -58,7 +58,7 @@ impl<L: AsRef<LanguageIdentifier>> From<(String, L)> for Error {
 }
 
 /// To help with debugging, string errors should be paired with a locale.
-/// If a locale is unavailable, create the error directly: `Error::Custom(err, None)`
+/// If a locale is unavailable, create the error directly: [`Error::Custom`]`(err, `[`None`]`)`
 impl<L: AsRef<LanguageIdentifier>> From<(&'static str, L)> for Error {
     fn from(pieces: (&'static str, L)) -> Self {
         Self::Custom(pieces.0.to_string(), Some(pieces.1.as_ref().clone()))
