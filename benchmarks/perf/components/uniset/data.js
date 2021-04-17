@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618639217418,
+  "lastUpdate": 1618674451377,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5249,6 +5249,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33932808,
             "range": "± 1334456",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cbf7945f62fff01547db32baf9712810b41dd17d",
+          "message": "ZeroVec: More docs and code cleanup (#658)",
+          "timestamp": "2021-04-17T10:40:53-05:00",
+          "tree_id": "4353bff83b35f3b60736824975689aeee2ff9aa0",
+          "url": "https://github.com/unicode-org/icu4x/commit/cbf7945f62fff01547db32baf9712810b41dd17d"
+        },
+        "date": 1618674450069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35508600,
+            "range": "± 1066347",
             "unit": "ns/iter"
           }
         ]
