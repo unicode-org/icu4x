@@ -27,6 +27,7 @@ members = [
     "tools/benchmark/memory",
     "utils/fixed_decimal",
     "utils/litemap",
+    "utils/pattern",
     "utils/writeable",
     "utils/zerovec",
 ]
