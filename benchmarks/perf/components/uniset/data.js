@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618625359355,
+  "lastUpdate": 1618639217418,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5219,6 +5219,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28012224,
             "range": "± 1266380",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d6612af59d103dd49c5f6e2992568edce651c239",
+          "message": "Move PpucdDataProvider to experimental (#648)",
+          "timestamp": "2021-04-17T00:54:08-05:00",
+          "tree_id": "5e22c847305181f89ad70830703fa82f2db1385f",
+          "url": "https://github.com/unicode-org/icu4x/commit/d6612af59d103dd49c5f6e2992568edce651c239"
+        },
+        "date": 1618639214769,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 33932808,
+            "range": "± 1334456",
             "unit": "ns/iter"
           }
         ]
