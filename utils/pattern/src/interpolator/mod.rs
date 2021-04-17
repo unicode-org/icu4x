@@ -26,19 +26,6 @@ pub enum InterpolatedKind<'i, 's, E> {
     Element(&'i E),
 }
 
-impl<E> PartialEq<E> for InterpolatedKind<'_, '_, E>
-where
-    E: PartialEq,
-{
-    fn eq(&self, other: &E) -> bool {
-        if let Self::Element(element) = self {
-            *element == other
-        } else {
-            false
-        }
-    }
-}
-
 impl<'i, 's, E> Writeable for InterpolatedKind<'i, 's, E>
 where
     E: Writeable,
