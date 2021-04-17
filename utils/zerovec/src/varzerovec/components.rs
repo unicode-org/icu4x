@@ -233,13 +233,18 @@ pub fn get_serializable_bytes<T: AsVarULE>(elements: &[T]) -> Option<Vec<u8>> {
     let mut vec = Vec::with_capacity(4 + 4 * elements.len());
     let len_u32: u32 = elements.len().try_into().ok()?;
     vec.extend(&len_u32.as_unaligned().0);
-    let mut offset: usize = 0;
+    let mut offset: u32 = 0;
     for element in elements {
-        let offset_u32: u32 = offset.try_into().ok()?;
-        vec.extend(&offset_u32.as_unaligned().0);
-        offset += element.as_unaligned().as_byte_slice().len();
+        vec.extend(&offset.as_unaligned().0);
+        let len_u32: u32 = element
+            .as_unaligned()
+            .as_byte_slice()
+            .len()
+            .try_into()
+            .ok()?;
+        offset = offset.checked_add(len_u32)?;
     }
-    vec.reserve(offset);
+    vec.reserve(offset as usize);
     for element in elements {
         vec.extend(element.as_unaligned().as_byte_slice())
     }
