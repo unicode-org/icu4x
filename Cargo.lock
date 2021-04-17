@@ -2624,6 +2624,7 @@ version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
+ "either",
  "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",

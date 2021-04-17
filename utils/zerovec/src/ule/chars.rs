@@ -18,7 +18,7 @@ pub struct CharULE([u8; 4]);
 impl ULE for CharULE {
     type Error = std::char::CharTryFromError;
 
-    #[inline(always)]
+    #[inline]
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
         // Validate the bytes
         for chunk in bytes.chunks_exact(4) {
@@ -32,7 +32,7 @@ impl ULE for CharULE {
         Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
     }
 
-    #[inline(always)]
+    #[inline]
     fn as_byte_slice(slice: &[Self]) -> &[u8] {
         let data = slice.as_ptr();
         let len = slice.len() * 4;
@@ -44,13 +44,13 @@ impl ULE for CharULE {
 impl AsULE for char {
     type ULE = CharULE;
 
-    #[inline(always)]
+    #[inline]
     fn as_unaligned(&self) -> Self::ULE {
         let u = u32::from(*self);
         CharULE(u.to_le_bytes())
     }
 
-    #[inline(always)]
+    #[inline]
     fn from_unaligned(unaligned: &Self::ULE) -> Self {
         let u = u32::from_le_bytes(unaligned.0);
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.

@@ -14,27 +14,27 @@ pub struct PlainOldULE<const N: usize>(pub [u8; N]);
 macro_rules! impl_byte_slice_size {
     ($size:literal) => {
         impl From<[u8; $size]> for PlainOldULE<$size> {
-            #[inline(always)]
+            #[inline]
             fn from(le_bytes: [u8; $size]) -> Self {
                 Self(le_bytes)
             }
         }
         impl PlainOldULE<$size> {
-            #[inline(always)]
+            #[inline]
             pub fn as_bytes(&self) -> &[u8] {
                 &self.0
             }
         }
         impl ULE for PlainOldULE<$size> {
             type Error = std::convert::Infallible;
-            #[inline(always)]
+            #[inline]
             fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error> {
                 let data = bytes.as_ptr();
                 let len = bytes.len() / $size;
                 // Safe because Self is transparent over [u8; $size]
                 Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
             }
-            #[inline(always)]
+            #[inline]
             fn as_byte_slice(slice: &[Self]) -> &[u8] {
                 let data = slice.as_ptr();
                 let len = slice.len() * $size;
@@ -48,18 +48,18 @@ macro_rules! impl_byte_slice_size {
 macro_rules! impl_byte_slice_type {
     ($type:ty, $size:literal) => {
         impl From<$type> for PlainOldULE<$size> {
-            #[inline(always)]
+            #[inline]
             fn from(value: $type) -> Self {
                 Self(value.to_le_bytes())
             }
         }
         impl AsULE for $type {
             type ULE = PlainOldULE<$size>;
-            #[inline(always)]
+            #[inline]
             fn as_unaligned(&self) -> Self::ULE {
                 PlainOldULE(self.to_le_bytes())
             }
-            #[inline(always)]
+            #[inline]
             fn from_unaligned(unaligned: &Self::ULE) -> Self {
                 <$type>::from_le_bytes(unaligned.0)
             }
