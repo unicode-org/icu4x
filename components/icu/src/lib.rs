@@ -32,12 +32,12 @@
 //!
 //! In the following examples an [`icu_testdata`] package is used which wraps
 //! an [`FsDataProvider`] with locally available subset of data.
-//! 
+//!
 //! # Features
-//! 
+//!
 //! ICU4X components share a set of common features that control whether core pieces of
 //! functionality are compiled. These features are:
-//! 
+//!
 //! - `provider_serde`: Whether to include Serde Serialize/Deserialize implementations for
 //!   ICU4X locale data structs, such as [`SymbolsV1`]. (On by default)
 //! - `serde`: Whether to include Serde Serialize/Deserialize implementations for core libary
@@ -77,7 +77,6 @@
 //! [`icu_testdata`]: ../icu_testdata/index.html
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
-
 
 pub mod datetime {
     //! Date and Time operations
@@ -120,9 +119,9 @@ pub mod datetime {
 
 pub mod decimal {
     //! Decimal formatting operations
-    //! 
+    //!
     //! This API provides necessary functionality for formatting of numbers with decimal digits.
-    //! 
+    //!
     //! [`FixedDecimalFormat`] is the main structure of the component. It formats a
     //! [`FixedDecimal`] to a [`FormattedFixedDecimal`].
     //!
@@ -169,7 +168,7 @@ pub mod decimal {
     //!
     //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).writeable_to_string());
     //! ```
-    //! 
+    //!
     //! [`FixedDecimal`]: fixed_decimal::FixedDecimal
     pub use icu_decimal::*;
 }
