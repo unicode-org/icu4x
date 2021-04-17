@@ -103,6 +103,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!($provider, $struct, $crate::erased::ErasedDataStruct, $d, $s);
     };
     ($provider:ty, $struct:ty, SERDE_SE, $d:lifetime, $s:lifetime) => {
+        // If this fails to compile, enable the "provider_serde" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             $struct,

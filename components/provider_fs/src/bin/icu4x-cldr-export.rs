@@ -7,7 +7,7 @@ use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::get_all_resc_keys;
+use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::CldrPathsLocal;
@@ -233,7 +233,6 @@ fn main() -> Result<(), Error> {
     }
 
     // TODO: Build up this list from --keys and --key-file
-    let keys = get_all_resc_keys();
 
     let output_path = PathBuf::from(
         matches
@@ -256,8 +255,6 @@ fn main() -> Result<(), Error> {
         }
         Box::new(cldr_paths_local)
     };
-
-    let provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
 
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
         Some("json") | None => {
@@ -305,6 +302,15 @@ fn main() -> Result<(), Error> {
     }
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
 
+    export_cldr(cldr_paths.as_ref(), &mut exporter)?;
+
+    Ok(())
+}
+
+fn export_cldr(cldr_paths: &dyn CldrPaths, exporter: &mut FilesystemExporter) -> Result<(), Error> {
+    let keys = get_all_cldr_keys();
+
+    let provider = CldrJsonDataProvider::new(cldr_paths);
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
         let result = exporter.put_key_from_provider(key, &provider);
