@@ -79,9 +79,9 @@ pub struct Unicode {
 }
 
 impl Unicode {
-    /// Returns a new empty map of Unicode extensions. Same as `Default`, but is `const`.
+    /// Returns a new empty map of Unicode extensions. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Unicode;
@@ -96,7 +96,7 @@ impl Unicode {
         }
     }
 
-    /// Returns `true` if there list of keywords and attributes is empty.
+    /// Returns [`true`] if there list of keywords and attributes is empty.
     ///
     /// # Examples
     ///

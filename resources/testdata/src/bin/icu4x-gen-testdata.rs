@@ -5,7 +5,8 @@
 use clap::{App, Arg, ArgMatches};
 use icu_provider::export::DataExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
-use icu_provider_cldr::get_all_resc_keys;
+use icu_provider_cldr::get_all_cldr_keys;
+use icu_provider_cldr::CldrPaths;
 use icu_provider_cldr::{CldrJsonDataProvider, CldrPathsAllInOne};
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
@@ -214,8 +215,6 @@ fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
 }
 
 fn generate(args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
-    let keys = get_all_resc_keys();
-
     let output_path = PathBuf::from(
         args.value_of_os("OUTPUT")
             .expect("Option has a default value"),
@@ -227,7 +226,6 @@ fn generate(args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
         cldr_json_root: icu_testdata::paths::cldr_json_root(),
         suffix: "full",
     };
-    let provider = CldrJsonDataProvider::new(&cldr_paths);
 
     let mut options = serializers::json::Options::default();
     options.style = serializers::json::StyleOption::Pretty;
@@ -240,6 +238,17 @@ fn generate(args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
     );
     options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace;
     let mut exporter = FilesystemExporter::try_new(json_serializer, options)?;
+
+    export_cldr(&cldr_paths, &mut exporter)?;
+
+    Ok(())
+}
+
+fn export_cldr(cldr_paths: &dyn CldrPaths, exporter: &mut FilesystemExporter) -> Result<(), Error> {
+    let keys = get_all_cldr_keys();
+
+    log::info!("Initializing CLDR data provider...");
+    let provider = CldrJsonDataProvider::new(cldr_paths);
 
     for key in keys.iter() {
         log::info!("Processing key: {}", key);

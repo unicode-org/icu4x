@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_decimal` offers localized decimal number formatting.
+//! [`icu_decimal`](crate) offers localized decimal number formatting.
 //!
-//! Currently, `icu_decimal` provides [`FixedDecimalFormat`], which renders basic decimal numbers
+//! Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormat`], which renders basic decimal numbers
 //! in a locale-sensitive way.
 //!
 //! Support for currencies, measurement units, and compact notation is planned. To track progress,
@@ -75,7 +75,7 @@ use std::borrow::Cow;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
-/// `FixedDecimalFormat` supports:
+/// [`FixedDecimalFormat`] supports:
 ///
 /// 1. Rendering in the local numbering system
 /// 2. Locale-sensitive grouping separator positions
@@ -84,16 +84,13 @@ use std::borrow::Cow;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
-///
-/// [`FixedDecimal`]: FixedDecimal
-/// [`options`]: options
 pub struct FixedDecimalFormat<'d> {
     options: options::FixedDecimalFormatOptions,
     symbols: Cow<'d, provider::DecimalSymbolsV1>,
 }
 
 impl<'d> FixedDecimalFormat<'d> {
-    /// Creates a new `FixedDecimalFormat` from locale data and an options bag.
+    /// Creates a new [`FixedDecimalFormat`] from locale data and an options bag.
     pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::DecimalSymbolsV1> + ?Sized>(
         locale: T,
         data_provider: &D,
@@ -114,7 +111,7 @@ impl<'d> FixedDecimalFormat<'d> {
         Ok(Self { options, symbols })
     }
 
-    /// Formats a FixedDecimal, returning a FormattedFixedDecimal.
+    /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {
         FormattedFixedDecimal {
             value,

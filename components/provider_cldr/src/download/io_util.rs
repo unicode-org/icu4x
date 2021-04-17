@@ -55,8 +55,8 @@ fn test_download_sync() -> Result<(), Error> {
     Ok(())
 }
 
-/// Synchronously unpack a zip file into a destination directory.
 // TODO(#297): Implement this async.
+/// Synchronously unpack a zip file into a destination directory.
 fn unzip_sync(zip_path: &Path, dir_path: &Path) -> Result<(), Error> {
     let reader = File::open(zip_path).map_err(|e| (e, zip_path))?;
     log::info!("Unzipping...");

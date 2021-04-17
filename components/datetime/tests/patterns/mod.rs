@@ -7,7 +7,7 @@ pub mod structs;
 use std::fs::File;
 use std::io::BufReader;
 
-use self::structs::{dayperiods::DayPeriodTests, timezones::TimeZoneTests};
+use self::structs::{dayperiods::DayPeriodTests, time_zones::TimeZoneTests};
 
 pub fn get_dayperiod_tests(name: &str) -> std::io::Result<DayPeriodTests> {
     let file = File::open(format!("./tests/patterns/tests/{}.json", name))?;

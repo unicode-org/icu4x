@@ -22,7 +22,7 @@ pub trait DateTimePatterns {
     fn get_pattern_for_length_bag(&self, length: &length::Bag) -> Result<Option<Pattern>>;
     fn get_pattern_for_date_length(&self, length: length::Date) -> Result<Pattern>;
     fn get_pattern_for_time_length(&self, length: length::Time) -> Result<Pattern>;
-    fn get_pattern_for_date_time_length(
+    fn get_pattern_for_datetime_length(
         &self,
         length: length::Date,
         date: Pattern,
@@ -68,8 +68,8 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
         let requested_fields = components.to_vec_fields();
         Ok(
             match skeleton::create_best_pattern_for_fields(
-                &self.date_time.skeletons,
-                &self.date_time.length_patterns,
+                &self.datetime.skeletons,
+                &self.datetime.length_patterns,
                 &requested_fields,
             ) {
                 skeleton::BestSkeleton::AllFieldsMatch(pattern)
@@ -88,7 +88,7 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
                 let time = self.get_pattern_for_time_length(time_length)?;
                 let date = self.get_pattern_for_date_length(date_length)?;
 
-                self.get_pattern_for_date_time_length(date_length, date, time)
+                self.get_pattern_for_datetime_length(date_length, date, time)
                     .map(Some)
             }
         }
@@ -105,18 +105,18 @@ impl DateTimePatterns for provider::gregory::PatternsV1 {
         Ok(Pattern::from_bytes(s)?)
     }
 
-    fn get_pattern_for_date_time_length(
+    fn get_pattern_for_datetime_length(
         &self,
         length: length::Date,
         date: Pattern,
         time: Pattern,
     ) -> Result<Pattern> {
-        let date_time = &self.date_time;
+        let datetime = &self.datetime;
         let s = match length {
-            length::Date::Full => &date_time.length_patterns.full,
-            length::Date::Long => &date_time.length_patterns.long,
-            length::Date::Medium => &date_time.length_patterns.medium,
-            length::Date::Short => &date_time.length_patterns.short,
+            length::Date::Full => &datetime.length_patterns.full,
+            length::Date::Long => &datetime.length_patterns.long,
+            length::Date::Medium => &datetime.length_patterns.medium,
+            length::Date::Short => &datetime.length_patterns.short,
         };
         Ok(Pattern::from_bytes_combination(s, date, time)?)
     }

@@ -3,4 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod dayperiods;
-pub mod timezones;
+pub mod time_zones;

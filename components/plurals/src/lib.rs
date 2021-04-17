@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_plurals` is one of the [`ICU4X`] components.
+//! [`icu_plurals`](crate) is one of the [`ICU4X`] components.
 //!
 //! This API provides functionality to determine the plural category
 //! appropriate for a given number in a given language.
@@ -191,7 +191,7 @@ pub enum PluralCategory {
 }
 
 impl PluralCategory {
-    /// Returns an ordered iterator over variants of `Plural Categories`.
+    /// Returns an ordered iterator over variants of [`Plural Categories`].
     ///
     /// # Examples
     ///
@@ -208,6 +208,8 @@ impl PluralCategory {
     /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
     /// assert_eq!(categories.next(), None);
     /// ```
+    ///
+    /// [`Plural Categories`]: PluralCategory
     pub fn all() -> impl ExactSizeIterator<Item = &'static Self> {
         [
             Self::Zero,
@@ -221,7 +223,7 @@ impl PluralCategory {
     }
 }
 
-/// `PluralRules` is a struct which provides an ability to retrieve an appropriate
+/// A struct which provides an ability to retrieve an appropriate
 /// [`Plural Category`] for a given number.
 ///
 /// # Examples
@@ -306,8 +308,9 @@ impl PluralRules {
     /// All unsigned primitive number types can infallibly be converted so they can be
     /// used as an input.
     ///
-    /// For signed numbers and strings, [`Plural Operands`] implement `TryFrom` and `FromStr`,
-    /// which should be used before passing the result to `select`.
+    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`](std::convert::TryFrom)
+    /// and [`FromStr`](std::str::FromStr), which should be used before passing the result to
+    /// [`select()`](PluralRules::select()).
     ///
     /// # Examples
     ///
@@ -340,8 +343,8 @@ impl PluralRules {
         self.selector.select(&input.into())
     }
 
-    /// Lower-level constructor that allows constructing a PluralRules directly from
-    /// data obtained from a provider
+    /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
+    /// data obtained from a provider.
     pub fn new_from_data<'d>(
         langid: LanguageIdentifier,
         data: &PluralRuleStringsV1<'d>,

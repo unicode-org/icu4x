@@ -6,7 +6,7 @@ mod dates;
 mod likelysubtags;
 mod numbers;
 mod plurals;
-mod timezones;
+mod time_zones;
 
 pub use dates::DatesProvider;
 pub use likelysubtags::LikelySubtagsProvider;
@@ -19,16 +19,16 @@ use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStruct;
 
-use self::timezones::TimeZonesProvider;
+use self::time_zones::TimeZonesProvider;
 
-/// Returns a list of all ResourceKeys that this provider can produce.
-pub fn get_all_resc_keys() -> Vec<ResourceKey> {
+/// Returns a list of all [`ResourceKeys`](ResourceKey) that this provider can produce.
+pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&dates::ALL_KEYS);
     result.extend(&likelysubtags::ALL_KEYS);
     result.extend(&numbers::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
-    result.extend(&timezones::ALL_KEYS);
+    result.extend(&time_zones::ALL_KEYS);
     result
 }
 
@@ -39,7 +39,7 @@ pub struct CldrJsonDataProvider<'a, 'd> {
     likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'d>>,
     numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,
-    timezones: LazyCldrProvider<TimeZonesProvider<'d>>,
+    time_zones: LazyCldrProvider<TimeZonesProvider<'d>>,
 }
 
 impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
@@ -50,7 +50,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
             likelysubtags: Default::default(),
             numbers: Default::default(),
             plurals: Default::default(),
-            timezones: Default::default(),
+            time_zones: Default::default(),
         }
     }
 }
@@ -74,7 +74,7 @@ impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
         if let Some(result) = self.plurals.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.timezones.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.time_zones.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
         Err(DataError::UnsupportedResourceKey(req.resource_path.key))
@@ -111,7 +111,7 @@ impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
             return Ok(resp);
         }
         if let Some(resp) = self
-            .timezones
+            .time_zones
             .try_supported_options(resc_key, self.cldr_paths)?
         {
             return Ok(resp);

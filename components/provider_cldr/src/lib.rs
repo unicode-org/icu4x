@@ -9,7 +9,7 @@
 //!
 //! This crate contains two implementations of [`CldrPaths`]:
 //!
-//! - `CldrPathsLocal` points to local copies of the CLDR JSON repositories.
+//! - [`CldrPathsLocal`] points to local copies of the CLDR JSON repositories.
 //! - `CldrPathsDownload` downloads and caches the CLDR JSON repositories. Requires the
 //!   "download" feature.
 //!
@@ -36,5 +36,5 @@ pub use cldr_paths::CldrPaths;
 pub use cldr_paths::CldrPathsAllInOne;
 pub use cldr_paths::CldrPathsLocal;
 pub use error::Error as CldrError;
-pub use transform::get_all_resc_keys;
+pub use transform::get_all_cldr_keys;
 pub use transform::CldrJsonDataProvider;

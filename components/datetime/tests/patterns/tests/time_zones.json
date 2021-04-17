@@ -6,7 +6,7 @@
       "metazone_id": "America_Pacific",
       "time_variant": "daylight"
     },
-    "date_time": "2021-01-11T12:00:00.000-07:00",
+    "datetime": "2021-01-11T12:00:00.000-07:00",
     "expectations": [
       {
         "patterns": [
@@ -102,7 +102,7 @@
       "metazone_id": "Japan",
       "time_variant": null
     },
-    "date_time": "2021-01-11T12:00:00.000+09:00",
+    "datetime": "2021-01-11T12:00:00.000+09:00",
     "expectations": [
       {
         "patterns": [
@@ -198,7 +198,7 @@
       "metazone_id": "GMT",
       "time_variant": null
     },
-    "date_time": "2021-01-11T12:00:00.000Z",
+    "datetime": "2021-01-11T12:00:00.000Z",
     "expectations": [
       {
         "patterns": [
@@ -309,7 +309,7 @@
       "metazone_id": "Nepal",
       "time_variant": null
     },
-    "date_time": "2021-01-11T12:00:00.000+05:45",
+    "datetime": "2021-01-11T12:00:00.000+05:45",
     "expectations": [
       {
         "patterns": [

@@ -83,9 +83,9 @@ pub struct Transform {
 }
 
 impl Transform {
-    /// Returns a new empty map of Transform extensions. Same as `Default`, but is `const`.
+    /// Returns a new empty map of Transform extensions. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::transform::Transform;
@@ -100,8 +100,7 @@ impl Transform {
         }
     }
 
-    /// Returns `true` if there are no tfields and no tlang in
-    /// the `TransformExtensionList`.
+    /// Returns `true` if there are no tfields and no tlang in the `TransformExtensionList`.
     ///
     /// # Examples
     ///

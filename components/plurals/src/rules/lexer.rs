@@ -49,7 +49,7 @@ pub struct Lexer<'l> {
 }
 
 impl<'l> Lexer<'l> {
-    /// Constructs a new `Lexer` for a given input.
+    /// Constructs a new [`Lexer`] for a given input.
     ///
     /// # Examples
     ///

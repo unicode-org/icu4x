@@ -13,14 +13,14 @@ use std::fmt::Debug;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
-/// Requires the static lifetime in order to be convertible to Any.
+/// Requires the static lifetime in order to be convertible to [`Any`].
 pub trait ErasedDataStruct: 'static + Debug {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
 
-    /// Return this boxed trait object as Box<dyn Any>.
+    /// Return this boxed trait object as [`Box`]`<dyn `[`Any`]`>`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
@@ -34,11 +34,11 @@ pub trait ErasedDataStruct: 'static + Debug {
     /// ```
     fn into_any(self: Box<Self>) -> Box<dyn Any>;
 
-    /// Return this trait object reference as &dyn Any.
+    /// Return this trait object reference as `&dyn `[`Any`].
     ///
-    /// Also see associated method downcast_ref().
+    /// Also see associated method [`downcast_ref()`](trait.ErasedDataStruct.html#method.downcast_ref).
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
@@ -61,7 +61,7 @@ impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
 impl dyn ErasedDataStruct {
     /// Convenience function: Return a downcast reference, or an error if mismatched types.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu_provider::erased::ErasedDataStruct;
@@ -85,8 +85,8 @@ impl dyn ErasedDataStruct {
 }
 
 impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
-    /// Convert this DataPayload of an ErasedDataStruct into a DataPayload of a Sized type. Returns
-    /// an error if the type is not compatible.
+    /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
+    /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
         T: Clone + Debug + Any,
@@ -138,18 +138,18 @@ where
     }
 }
 
-/// A type-erased data provider that loads a payload of types implementing Any.
+/// A type-erased data provider that loads a payload of types implementing [`Any`].
 ///
-/// Note: This trait is redundant with `DataProvider<dyn ErasedDataStruct>` and auto-implemented
+/// Note: This trait is redundant with [`DataProvider`]`<dyn `[`ErasedDataStruct`]`>` and auto-implemented
 /// for all types implementing that trait. This trait may eventually be removed when the following
 /// Rust issues are resolved:
 ///
 /// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
 /// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
 pub trait ErasedDataProvider<'d> {
-    /// Query the provider for data, returning the result as an ErasedDataStruct trait object.
+    /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
-    /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
+    /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
     fn load_erased(
         &self,
@@ -170,11 +170,11 @@ where
     }
 }
 
-/// Serve `Sized` objects from an `ErasedDataProvider` via downcasting.
 impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
     T: Clone + Debug + Any,
 {
+    /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {

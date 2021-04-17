@@ -8,7 +8,7 @@ use icu_provider::serde::SerdeDeDataReceiver;
 use std::io::Read;
 use std::path::Path;
 
-/// An Error type specifically for the Deserializer that doesn't carry filenames
+/// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 pub enum Error {
     Json(serde_json::error::Error),
     #[cfg(feature = "bincode")]
@@ -76,7 +76,7 @@ macro_rules! get_bincode_deserializer {
     }};
 }
 
-/// Deserialize into a generic type (DataProvider). Covers all supported data formats.
+/// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
 pub fn deserialize_into_type<'de, T>(
     rdr: impl Read,
     syntax_option: &SyntaxOption,
@@ -101,7 +101,8 @@ where
     }
 }
 
-/// Deserialize into a receiver used by SerdeDeDataProvider. Covers all supported data formats.
+/// Deserialize into a receiver used by [`SerdeDeDataProvider`](icu_provider::serde::SerdeDeDataProvider).
+/// Covers all supported data formats.
 pub fn deserialize_into_receiver(
     rdr: impl Read,
     syntax_option: &SyntaxOption,

@@ -7,19 +7,19 @@ use serde::{Deserialize, Deserializer};
 use std::str::FromStr;
 use tinystr::TinyStr8;
 
-/// A struct similar to `LanguageIdentifier` that supports "root"
+/// A struct similar to [`LanguageIdentifier`] that supports "root"
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[allow(clippy::upper_case_acronyms)]
 pub struct CldrLangID {
-    /// CLDR `LanguageIdentifier` (root => "root")
+    /// CLDR [`LanguageIdentifier`] (root => "root")
     cldr_language: TinyStr8,
 
-    /// Normalized `LanguageIdentifier` (root => "und")
+    /// Normalized [`LanguageIdentifier`] (root => "und")
     pub langid: LanguageIdentifier,
 }
 
 impl CldrLangID {
-    /// Return the `CldrLangID` for "root"
+    /// Return the [`CldrLangID`] for "root"
     pub fn root() -> Self {
         Self {
             cldr_language: "root".parse().unwrap(),
@@ -29,7 +29,7 @@ impl CldrLangID {
 }
 
 impl From<LanguageIdentifier> for CldrLangID {
-    /// Return a `CldrLangID` for a generic `LanguageIdentifier`. "und" becomes "root".
+    /// Return a [`CldrLangID`] for a generic [`LanguageIdentifier`]. "und" becomes "root".
     fn from(langid: LanguageIdentifier) -> Self {
         if langid == LanguageIdentifier::und() {
             Self::root()
@@ -125,7 +125,7 @@ fn test_deserialize() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Assert that CLDR order matches Ord on `CldrLangID`
+/// Assert that CLDR order matches [`Ord`] on [`CldrLangID`]
 #[test]
 fn test_order() {
     let cldr_strings = [

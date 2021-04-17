@@ -8,9 +8,9 @@ use std::ops::RangeInclusive;
 use std::str::FromStr;
 use tinystr::{tinystr4, TinyStr4};
 
-/// Language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
+/// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
 ///
-/// `Language` represents a Unicode base language code conformat to the
+/// [`Language`] represents a Unicode base language code conformat to the
 /// [`unicode_language_id`] field of the Language and Locale Identifier.
 ///
 /// # Examples
@@ -22,8 +22,8 @@ use tinystr::{tinystr4, TinyStr4};
 ///     .expect("Failed to parse a language subtag.");
 /// ```
 ///
-/// If the `Language` has no value assigned, it serializes to a string `"und"`, which
-/// can be then parsed back to an empty `Language` field.
+/// If the [`Language`] has no value assigned, it serializes to a string `"und"`, which
+/// can be then parsed back to an empty [`Language`] field.
 ///
 /// # Examples
 ///
@@ -46,7 +46,7 @@ const UND_VALUE: TinyStr4 = tinystr4!("und");
 
 impl Language {
     /// A constructor which takes a utf8 slice, parses it and
-    /// produces a well-formed `Language`.
+    /// produces a well-formed [`Language`].
     ///
     /// # Examples
     ///
@@ -80,8 +80,8 @@ impl Language {
         }
     }
 
-    /// Deconstructs the `Language` into raw format to be consumed
-    /// by `from_raw_unchecked`.
+    /// Deconstructs the [`Language`] into raw format to be consumed
+    /// by [`from_raw_unchecked()`](Language::from_raw_unchecked()).
     ///
     /// # Examples
     ///
@@ -100,7 +100,7 @@ impl Language {
     }
 
     /// Constructor which takes a raw value returned by
-    /// `into_raw`.
+    /// [`into_raw()`](Language::into_raw()).
     ///
     /// # Examples
     ///
@@ -117,8 +117,8 @@ impl Language {
     ///
     /// # Safety
     ///
-    /// This function accepts a `u32` that is expected to be a valid `TinyStr4`
-    /// representing a `Language` subtag in canonical syntax.
+    /// This function accepts a [`u32`] that is expected to be a valid [`TinyStr4`]
+    /// representing a [`Language`] subtag in canonical syntax.
     pub const unsafe fn from_raw_unchecked(v: Option<u32>) -> Self {
         Self(match v {
             Some(v) => Some(TinyStr4::new_unchecked(v)),
@@ -126,9 +126,9 @@ impl Language {
         })
     }
 
-    /// Returns the default undefined language "und". Same as `Default`, but is `const`.
+    /// Returns the default undefined language "und". Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::subtags::Language;
@@ -143,7 +143,7 @@ impl Language {
     }
 
     /// A helper function for displaying
-    /// a `Language` subtag as a `&str`.
+    /// a [`Language`] subtag as a `&`[`str`].
     ///
     /// # Examples
     ///
@@ -157,12 +157,12 @@ impl Language {
     /// ```
     ///
     /// `Notice`: For many use cases, such as comparison,
-    /// `Language` implements `PartialEq<&str>` which allows for direct comparisons.
+    /// [`Language`] implements [`PartialEq`]`<&`[`str`]`>` which allows for direct comparisons.
     pub fn as_str(&self) -> &str {
         self.0.as_deref().unwrap_or("und")
     }
 
-    /// Resets the `Language` subtag to an empty one.
+    /// Resets the [`Language`] subtag to an empty one.
     ///
     /// # Examples
     ///
@@ -182,7 +182,7 @@ impl Language {
         self.0.take();
     }
 
-    /// Tests if the `Language` subtag is empty.
+    /// Tests if the [`Language`] subtag is empty.
     ///
     /// # Examples
     ///

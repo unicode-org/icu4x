@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Unicode Extensions provide a mechanism to extend the [`LanguageIdentifier`] with
-//! additional bits of information - a combination of a [`LanguageIdentifier`] and `Extensions`
+//! additional bits of information - a combination of a [`LanguageIdentifier`] and [`Extensions`]
 //! is called [`Locale`].
 //!
 //! There are four types of extensions:
@@ -79,7 +79,7 @@ impl ExtensionType {
     }
 }
 
-/// A map of extensions associated with a given `Locale`.
+/// A map of extensions associated with a given [`Locale`](crate::Locale).
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
 pub struct Extensions {
     pub unicode: Unicode,
@@ -88,9 +88,9 @@ pub struct Extensions {
 }
 
 impl Extensions {
-    /// Returns a new empty map of extensions. Same as `Default`, but is `const`.
+    /// Returns a new empty map of extensions. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::Extensions;
@@ -108,7 +108,7 @@ impl Extensions {
 
     /// Returns whether there are no extensions present.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::Locale;

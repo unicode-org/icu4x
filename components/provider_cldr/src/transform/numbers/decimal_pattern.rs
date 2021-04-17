@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Functions for dealing with UTS 35 number patterns.
+//! Functions for dealing with UTS-35 number patterns.
 //!
 //! Spec reference: https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns
 
@@ -26,7 +26,7 @@ impl std::fmt::Display for Error {
     }
 }
 
-/// Representation of a UTS 35 number subpattern (part of a number pattern between ';'s).
+/// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
 pub struct DecimalSubPattern {
     pub prefix: SmallString8,
@@ -78,7 +78,7 @@ impl FromStr for DecimalSubPattern {
     }
 }
 
-/// Representation of a UTS 35 number pattern, including positive subpattern (required) and negative
+/// Representation of a UTS-35 number pattern, including positive subpattern (required) and negative
 /// subpattern (optional).
 #[derive(Debug, PartialEq)]
 pub struct DecimalPattern {

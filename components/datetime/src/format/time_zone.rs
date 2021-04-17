@@ -9,7 +9,7 @@ use crate::fields::{self, FieldSymbol};
 use crate::pattern::{Error as PatternError, PatternItem};
 use crate::{
     date::TimeZoneInput,
-    timezone::{IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat},
+    time_zone::{IsoFormat, IsoMinutes, IsoSeconds, TimeZoneFormat},
 };
 use writeable::Writeable;
 

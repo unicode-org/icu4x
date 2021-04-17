@@ -10,7 +10,7 @@
 //!
 //! If both fields are present, both parts of the value will be formatted and an additional connector pattern
 //! will be used to construct a full result.
-//! The type of the connector is determined by the length of the `Date` field.
+//! The type of the connector is determined by the length of the [`Date`] field.
 //!
 //! Additionally, the bag contains an optional set of `Preferences` which represent user preferred adjustments
 //! that can be applied onto the pattern right before formatting.
@@ -30,7 +30,7 @@
 //! let options = DateTimeFormatOptions::Length(bag);
 //! ```
 //!
-//! Or the options can be inferred through the `.into()` trait.
+//! Or the options can be inferred through the [`Into`] trait.
 //!
 //! ```
 //! use icu::datetime::DateTimeFormatOptions;
@@ -41,11 +41,14 @@
 //! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
+
 use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-/// `length::Bag` is a structure to represent the set of lengths in which the `DateTime` should
-/// be formatted to.
+
+/// A structure to represent the set of lengths in which the [`DateTimeInput`] implementer should be formatted to.
+///
+/// [`DateTimeInput`]: crate::date::DateTimeInput
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
@@ -64,7 +67,7 @@ use serde::{Deserialize, Serialize};
 /// let options = DateTimeFormatOptions::Length(bag);
 /// ```
 ///
-/// Or the options can be inferred through the `.into()` trait.
+/// Or the options can be inferred through the [`Into`] trait.
 ///
 /// ```
 /// use icu::datetime::DateTimeFormatOptions;
@@ -93,8 +96,10 @@ impl Default for Bag {
     }
 }
 
-/// `Date` represents different lengths `DateTime` can be formatted into.
+/// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
+///
+/// [`DateTimeInput`]: crate::date::DateTimeInput
 ///
 /// # Examples
 ///
@@ -175,8 +180,10 @@ pub enum Date {
     Short,
 }
 
-/// `Time` represents different length lengths `DateTime` can be formatted into.
+/// Represents different length lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
+///
+/// [`DateTimeInput`]: crate::date::DateTimeInput
 ///
 /// # Examples
 ///
@@ -216,7 +223,7 @@ pub enum Time {
     /// ```
     #[cfg_attr(feature = "serde", serde(rename = "full"))]
     Full,
-    /// Full length, usually with short time zone code.
+    /// Full length, usually with short time-zone code.
     ///
     /// # Examples
     ///

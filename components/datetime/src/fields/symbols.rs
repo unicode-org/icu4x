@@ -7,9 +7,9 @@ use std::{cmp::Ordering, convert::TryFrom};
 
 #[derive(Debug, PartialEq)]
 pub enum SymbolError {
-    /// Unknown field symbol
+    /// Unknown field symbol.
     Unknown(u8),
-    /// Invalid character for a field symbol
+    /// Invalid character for a field symbol.
     Invalid(char),
 }
 
@@ -36,8 +36,8 @@ pub enum TextOrNumeric {
     Numeric,
 }
 
-/// FieldSymbols can be either text or numeric. This categorization is important when matching
-/// skeletons with a components::Bag.
+/// [`FieldSymbols`](FieldSymbol) can be either text or numeric. This categorization is important
+/// when matching skeletons with a components [`Bag`](crate::options::components::Bag).
 pub trait LengthType {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric;
 }
@@ -51,7 +51,6 @@ impl FieldSymbol {
     /// This ordering is taken by the order of the fields listed in the [UTS 35 Date Field Symbol Table]
     /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
     /// ordered most significant to least significant.
-    ///
     fn get_canonical_order(&self) -> u8 {
         match self {
             FieldSymbol::Year(Year::Calendar) => 0,

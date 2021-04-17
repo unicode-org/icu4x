@@ -221,7 +221,7 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl From<&FixedDecimal> for PluralOperands {
-    /// Converts a `fixed_decimal::FixedDecimal` to `PluralOperands`. Retains at most 18
+    /// Converts a [`fixed_decimal::FixedDecimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
     fn from(dec: &FixedDecimal) -> Self {
         let mag_range = dec.magnitude_range();

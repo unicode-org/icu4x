@@ -11,7 +11,7 @@ use std::fmt;
 #[derive(Debug)]
 pub enum PluralRulesError {
     Parser(ParserError),
-    /// An error originating inside of the DataProvider
+    /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)
     DataProvider(DataError),
 }
 

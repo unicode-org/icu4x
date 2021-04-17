@@ -26,7 +26,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .write_to(&mut output)
         .expect("Writing to a string is infallible");
 
-    debug_assert_eq!("19.9500", fixed_decimal.to_string());
+    assert_eq!("19.9500", fixed_decimal.to_string());
 
     0
 }

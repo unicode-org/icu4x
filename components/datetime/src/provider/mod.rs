@@ -8,20 +8,20 @@
 
 pub mod gregory;
 pub(crate) mod helpers;
-pub mod timezones;
+pub mod time_zones;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
     pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
-    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(timezones, "formats", 1);
+    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(time_zones, "formats", 1);
     pub const TIMEZONE_EXEMPLAR_CITIES_V1: ResourceKey =
-        resource_key!(timezones, "exemplar-cities", 1);
+        resource_key!(time_zones, "exemplar-cities", 1);
     pub const TIMEZONE_GENERIC_NAMES_LONG_V1: ResourceKey =
-        resource_key!(timezones, "generic-long", 1);
+        resource_key!(time_zones, "generic-long", 1);
     pub const TIMEZONE_GENERIC_NAMES_SHORT_V1: ResourceKey =
-        resource_key!(timezones, "generic-short", 1);
+        resource_key!(time_zones, "generic-short", 1);
     pub const TIMEZONE_SPECIFIC_NAMES_LONG_V1: ResourceKey =
-        resource_key!(timezones, "specific-long", 1);
+        resource_key!(time_zones, "specific-long", 1);
     pub const TIMEZONE_SPECIFIC_NAMES_SHORT_V1: ResourceKey =
-        resource_key!(timezones, "specific-short", 1);
+        resource_key!(time_zones, "specific-short", 1);
 }

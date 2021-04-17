@@ -20,7 +20,7 @@ In ICU4X, we also intend to implement a low-level, performance-focused API for c
 
 There are surprisingly few examples of good date and time APIs in the industry that we feel confident to recommend. We strongly believe that the history of JavaScript [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), C++ [`std::chrono`](https://en.cppreference.com/w/cpp/chrono) or Java [`LocalDateTime`](https://docs.oracle.com/javase/tutorial/datetime/iso/datetime.html) and a long history of shortcomings and limitations of them, particularly in relation to i18n, serve as a cautionary tale for anyone aiming to design a reference one for Rust.
 
-In particular, we believe that correct date and time management API must include `calendar` and `timezone`.
+In particular, we believe that correct date and time management API must include `calendar` and `time zone`.
 It is our experience that such functionality is incredibly hard to retrofit into an existing API. Therefore it is our belief that such functionality must be planned very early in the API design.
 We do not see any crate in the current ecosystem that covers those two features.
 

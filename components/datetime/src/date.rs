@@ -40,7 +40,7 @@ impl From<std::num::ParseIntError> for DateTimeError {
 /// All fields are optional. If a field is not present but is required when formatting, an error
 /// result will be returned from the formatter.
 ///
-/// All data represented in DateInput should be locale-agnostic.
+/// All data represented in [`DateInput`] should be locale-agnostic.
 pub trait DateInput {
     /// Gets the era and year input.
     fn year(&self) -> Option<Year>;
@@ -64,7 +64,7 @@ pub trait DateInput {
 /// All fields are optional. If a field is not present but is required when formatting, an error
 /// result will be returned from the formatter.
 ///
-/// All data represented in IsoTimeInput should be locale-agnostic.
+/// All data represented in [`IsoTimeInput`] should be locale-agnostic.
 pub trait IsoTimeInput {
     /// Gets the hour input.
     fn hour(&self) -> Option<IsoHour>;
@@ -79,20 +79,20 @@ pub trait IsoTimeInput {
     fn fraction(&self) -> Option<FractionalSecond>;
 }
 
-/// Inputs relevant to formatting a time zone.
+/// Representation of a formattable time zone.
 ///
-/// Only the GMT offset is required, since it is the final format fallback.
+/// Only the [`GmtOffset`] is required, since it is the final format fallback.
 ///
-/// All data represented in TimeZoneInput should be locale-agnostic.
+/// All data represented in [`TimeZoneInput`] should be locale-agnostic.
 pub trait TimeZoneInput {
     /// The GMT offset in Nanoseconds.
     fn gmt_offset(&self) -> GmtOffset;
 
-    /// The IANA TimeZone identifier.
+    /// The IANA time-zone identifier.
     /// TODO(#606) switch this to BCP-47 identifier.
     fn time_zone_id(&self) -> Option<&str>;
 
-    /// The MetaZone identifier.
+    /// The metazone identifier.
     /// TODO(#528) switch to a compact, stable ID.
     fn metazone_id(&self) -> Option<&str>;
 
@@ -112,8 +112,8 @@ impl<T> ZonedDateTimeInput for T where T: TimeZoneInput + DateTimeInput {}
 
 /// A formattable calendar date and ISO time that takes the locale into account.
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
-    /// A reference to this instance's DateTimeInput.
-    fn date_time(&self) -> &T;
+    /// A reference to this instance's [`DateTimeInput`].
+    fn datetime(&self) -> &T;
 
     /// The year number according to week numbering.
     ///
@@ -167,7 +167,7 @@ impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
 }
 
 impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
-    fn date_time(&self) -> &T {
+    fn datetime(&self) -> &T {
         self.data
     }
 
@@ -189,7 +189,7 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
 }
 
 impl<'s, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'s, T> {
-    fn date_time(&self) -> &T {
+    fn datetime(&self) -> &T {
         self.data
     }
 
@@ -220,10 +220,10 @@ pub struct Year {
     /// The era containing the year.
     pub era: Era,
 
-    /// Year number in the current era (usually 1-based).
+    /// The year number in the current era (usually 1-based).
     pub number: i32,
 
-    /// Related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
+    /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
     pub related_iso: i32,
 }
@@ -263,7 +263,7 @@ pub struct DayOfYearInfo {
 ///
 /// The discriminant values correspond to ISO-8601 weekday numbers (Monday = 1, Sunday = 7).
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu::datetime::date::IsoWeekday;
@@ -284,10 +284,10 @@ pub enum IsoWeekday {
 }
 
 impl From<usize> for IsoWeekday {
-    /// Convert from an ISO-8601 weekday number to an IsoWeekday enum. 0 is automatically converted
+    /// Convert from an ISO-8601 weekday number to an [`IsoWeekday`] enum. 0 is automatically converted
     /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::datetime::date::IsoWeekday;
@@ -421,7 +421,7 @@ pub enum FractionalSecond {
     Nanosecond(u32),
 }
 
-/// The GMT offset in seconds for a `ZonedDateTime`.
+/// The GMT offset in seconds for a [`MockTimeZone`](crate::mock::time_zone::MockTimeZone).
 #[derive(Copy, Clone, Debug, Default)]
 pub struct GmtOffset(i32);
 
@@ -448,22 +448,22 @@ impl GmtOffset {
         self.0
     }
 
-    /// Returns `true` if the GMT offset is positive, otherwise `false`.
+    /// Returns `true` if the [`GmtOffset`] is positive, otherwise `false`.
     pub fn is_positive(&self) -> bool {
         self.0 >= 0
     }
 
-    /// Returns `true` if the GMT offset is zero, otherwise `false`.
+    /// Returns `true` if the [`GmtOffset`] is zero, otherwise `false`.
     pub fn is_zero(&self) -> bool {
         self.0 == 0
     }
 
-    /// Returns `true` if the GMT offset has non-zero minutes, otherwise `false`.
+    /// Returns `true` if the [`GmtOffset`] has non-zero minutes, otherwise `false`.
     pub fn has_minutes(&self) -> bool {
         self.0 % 3600 / 60 > 0
     }
 
-    /// Returns `true` if the GMT offset has non-zero seconds, otherwise `false`.
+    /// Returns `true` if the [`GmtOffset`] has non-zero seconds, otherwise `false`.
     pub fn has_seconds(&self) -> bool {
         self.0 % 3600 % 60 > 0
     }
@@ -472,7 +472,7 @@ impl GmtOffset {
 impl FromStr for GmtOffset {
     type Err = DateTimeError;
 
-    /// Parse a `GmtOffset` from a string.
+    /// Parse a [`GmtOffset`] from a string.
     ///
     /// The offset must range from GMT-12 to GMT+14.
     /// The string must be an ISO 8601 time zone designator:

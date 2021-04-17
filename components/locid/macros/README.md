@@ -1,8 +1,8 @@
 # icu_locid_macros [![crates.io](http://meritbadge.herokuapp.com/icu_locid_macros)](https://crates.io/crates/icu_locid_macros)
 
-`icu_locid_macros` is one of the [`ICU4X`] components.
+[`icu_locid_macros`](crate) is one of the ICU4X components.
 
-This API provides convenience macros for `icu_locid`.
+This API provides convenience macros for [`icu_locid`].
 
 ## Examples
 

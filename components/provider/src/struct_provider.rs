@@ -11,7 +11,7 @@ use std::fmt::Debug;
 
 /// A data provider that unconditionally returns references to borrowed data.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::prelude::*;

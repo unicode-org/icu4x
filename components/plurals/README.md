@@ -1,6 +1,6 @@
 # icu_plurals [![crates.io](http://meritbadge.herokuapp.com/icu_plurals)](https://crates.io/crates/icu_plurals)
 
-`icu_plurals` is one of the [`ICU4X`] components.
+[`icu_plurals`](crate) is one of the [`ICU4X`] components.
 
 This API provides functionality to determine the plural category
 appropriate for a given number in a given language.

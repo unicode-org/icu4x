@@ -126,8 +126,8 @@ impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
 
 impl From<&cldr_json::LocalePluralRules> for PluralRuleStringsV1<'static> {
     fn from(other: &cldr_json::LocalePluralRules) -> Self {
-        /// Removes samples from plural rule strings. Takes an owned String reference and
-        /// returns a new String in a Cow::Owned.
+        /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
+        /// returns a new [`String`] in a [`Cow::Owned`].
         #[allow(clippy::ptr_arg)]
         fn convert(s: &String) -> Cow<'static, str> {
             let mut ast = parse(s.as_bytes()).expect("Rule parsing failed.");

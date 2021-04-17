@@ -37,9 +37,9 @@ use super::Value;
 pub struct Keywords(Option<Box<[(Key, Value)]>>);
 
 impl Keywords {
-    /// Returns a new empty list of key-value pairs. Same as `Default`, but is `const`.
+    /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locid::extensions::unicode::Keywords;
@@ -51,10 +51,12 @@ impl Keywords {
         Self(None)
     }
 
-    /// A constructor which takes a pre-sorted list of `(Key, Value)` tuples.
+    /// A constructor which takes a pre-sorted list of `(`[`Key`]`, `[`Value`]`)` tuples.
     ///
     ///
     /// # Examples
+    ///
+    /// ```
     /// use icu::locid::extensions::unicode::{Keywords, Key, Value};
     ///
     /// let key: Key = "ca".parse()

@@ -13,7 +13,7 @@ pub fn is_valid(v: &[u32]) -> bool {
     v.is_empty() || (v.len() % 2 == 0 && v.windows(2).all(|chunk| chunk[0] < chunk[1]) && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
 }
 
-/// Returns start (inclusive) and end (exclusive) bounds of `RangeBounds`
+/// Returns start (inclusive) and end (exclusive) bounds of [`RangeBounds`]
 pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
     let from = match range.start_bound() {
         Included(b) => (*b as u32),

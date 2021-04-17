@@ -40,7 +40,7 @@ impl Default for HelloWorldV1<'_> {
 ///
 /// Mostly useful for testing.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
@@ -72,7 +72,7 @@ pub struct HelloWorldProvider<'s> {
 }
 
 impl<'s> HelloWorldProvider<'s> {
-    /// Creates a HelloWorldProvider pre-populated with hardcoded data from Wiktionary.
+    /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider<'static> {
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
         // Note: we don't want to use langid!() because icu_langid_macros is heavy.
@@ -155,7 +155,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     }
 }
 
-/// Adds entries to a HelloWorldProvider from ErasedDataStruct
+/// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
 impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
     for HelloWorldProvider<'static>
 {

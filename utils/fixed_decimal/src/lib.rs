@@ -8,7 +8,7 @@
 //! appropriate for formatting and plural rule selection. It is optimized for operations involving
 //! the individual digits of a number.
 //!
-//! # Example
+//! # Examples
 //!
 //! ```
 //! use fixed_decimal::FixedDecimal;
@@ -51,7 +51,7 @@ pub enum Error {
     /// magnitude of the most significant digit is std::i16::MAX, and the lowest magnitude of the
     /// least significant digit is std::i16::MIN.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
