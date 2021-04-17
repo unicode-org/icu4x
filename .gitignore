@@ -23,3 +23,6 @@ dhat-heap.json
 
 # Do not check-in bincode test data
 resources/testdata/data/bincode
+
+# Ignore irrelevant files that get generated on macOS
+**/.DS_Store
