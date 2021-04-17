@@ -31,7 +31,19 @@ and instrument it to point at the correct location where the data files are stor
 In the following examples an [`icu_testdata`] package is used which wraps
 an [`FsDataProvider`] with locally available subset of data.
 
-## Examples
+## Features
+
+ICU4X components share a set of common features that control whether core pieces of
+functionality are compiled. These features are:
+
+- `provider_serde`: Whether to include Serde Serialize/Deserialize implementations for
+  ICU4X locale data structs, such as [`SymbolsV1`]. (On by default)
+- `serde`: Whether to include Serde Serialize/Deserialize implementations for core libary
+  types, such as [`Locale`].
+- `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
+  when running `cargo bench`.
+
+## Example
 
 ```rust
 use icu::locid::Locale;
@@ -58,9 +70,11 @@ let formatted_date = dtf.format(&date);
 assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
 ```
 
-[`icu_testdata`]: ../icu_testdata/index.html
 [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
+[`icu_testdata`]: ../icu_testdata/index.html
+[`Locale`]: crate::locid::Locale
+[`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
 ## More Information
 
