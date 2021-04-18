@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618678838251,
+  "lastUpdate": 1618755939621,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4403,6 +4403,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2472666,
             "range": "± 25823",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6be34fd43a9ab2d068009105b3027c52c50367bc",
+          "message": "Add metadata fields to icu_benchmark_macros (#656)",
+          "timestamp": "2021-04-18T07:18:34-07:00",
+          "tree_id": "b41c77151f2f359f92b7f05ef822865c839d5c71",
+          "url": "https://github.com/unicode-org/icu4x/commit/6be34fd43a9ab2d068009105b3027c52c50367bc"
+        },
+        "date": 1618755938772,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1253296,
+            "range": "± 42223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2363498,
+            "range": "± 74371",
             "unit": "ns/iter"
           }
         ]
