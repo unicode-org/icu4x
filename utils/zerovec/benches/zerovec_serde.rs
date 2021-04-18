@@ -8,8 +8,8 @@ use zerovec::samples::*;
 use zerovec::ZeroVec;
 
 fn overview_bench(c: &mut Criterion) {
-    c.bench_function("zerovec/serde/overview", |b| {
-        // Same as "zerovec/serde/deserialize_sum/u32/zerovec"
+    c.bench_function("zerovec_serde/overview", |b| {
+        // Same as "zerovec_serde/deserialize_sum/u32/zerovec"
         let buffer = bincode::serialize(
             &ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap(),
         )
@@ -31,11 +31,11 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn u32_benches(c: &mut Criterion) {
-    c.bench_function("zerovec/serde/serialize/u32/slice", |b| {
+    c.bench_function("zerovec_serde/serialize/u32/slice", |b| {
         b.iter(|| bincode::serialize(&Vec::from(black_box(TEST_SLICE))));
     });
 
-    c.bench_function("zerovec/serde/deserialize_sum/u32/slice", |b| {
+    c.bench_function("zerovec_serde/deserialize_sum/u32/slice", |b| {
         let buffer = bincode::serialize(&Vec::from(black_box(TEST_SLICE))).unwrap();
         b.iter(|| {
             bincode::deserialize::<Vec<u32>>(&buffer)
@@ -45,11 +45,11 @@ fn u32_benches(c: &mut Criterion) {
         });
     });
 
-    c.bench_function("zerovec/serde/serialize/u32/zerovec", |b| {
+    c.bench_function("zerovec_serde/serialize/u32/zerovec", |b| {
         b.iter(|| bincode::serialize(&ZeroVec::from_aligned(black_box(TEST_SLICE))));
     });
 
-    c.bench_function("zerovec/serde/deserialize_sum/u32/zerovec", |b| {
+    c.bench_function("zerovec_serde/deserialize_sum/u32/zerovec", |b| {
         let buffer = bincode::serialize(
             &ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap(),
         )
@@ -69,20 +69,20 @@ fn char_benches(c: &mut Criterion) {
         'ⶢ', '⺇', 'Ⱜ', '◁', '◩', '⌂', '⼅', '⏻', '⢜', '◊', 'ⲫ', '⏷', '◢', '⟉', '℞',
     ];
 
-    c.bench_function("zerovec/serde/serialize/char/slice", |b| {
+    c.bench_function("zerovec_serde/serialize/char/slice", |b| {
         b.iter(|| bincode::serialize(&Vec::from(ORIGINAL_CHARS)));
     });
 
-    c.bench_function("zerovec/serde/deserialize/char/slice", |b| {
+    c.bench_function("zerovec_serde/deserialize/char/slice", |b| {
         let buffer = bincode::serialize(&Vec::from(ORIGINAL_CHARS)).unwrap();
         b.iter(|| bincode::deserialize::<Vec<char>>(&buffer));
     });
 
-    c.bench_function("zerovec/serde/serialize/char/zerovec", |b| {
+    c.bench_function("zerovec_serde/serialize/char/zerovec", |b| {
         b.iter(|| bincode::serialize(&ZeroVec::from_aligned(black_box(ORIGINAL_CHARS))));
     });
 
-    c.bench_function("zerovec/serde/deserialize/char/zerovec", |b| {
+    c.bench_function("zerovec_serde/deserialize/char/zerovec", |b| {
         let buffer = bincode::serialize(&ZeroVec::from_aligned(black_box(ORIGINAL_CHARS))).unwrap();
         b.iter(|| bincode::deserialize::<ZeroVec<char>>(&buffer));
     });
