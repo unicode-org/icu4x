@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618678802231,
+  "lastUpdate": 1618755920705,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5309,6 +5309,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 29938700,
             "range": "± 1313579",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6be34fd43a9ab2d068009105b3027c52c50367bc",
+          "message": "Add metadata fields to icu_benchmark_macros (#656)",
+          "timestamp": "2021-04-18T07:18:34-07:00",
+          "tree_id": "b41c77151f2f359f92b7f05ef822865c839d5c71",
+          "url": "https://github.com/unicode-org/icu4x/commit/6be34fd43a9ab2d068009105b3027c52c50367bc"
+        },
+        "date": 1618755919373,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32269208,
+            "range": "± 2146769",
             "unit": "ns/iter"
           }
         ]
