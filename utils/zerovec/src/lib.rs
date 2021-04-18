@@ -4,8 +4,8 @@
 
 //! Zero-copy vector abstractions over byte arrays.
 //!
-//! ZeroVec and VarZeroVec enable vectors of multibyte types to be backed by a byte array,
-//! abstracting away issues including memory alignment and endianness.
+//! `zerovec` enable vectors of multibyte types to be backed by a byte array, abstracting away
+//! issues including memory alignment and endianness.
 //!
 //! This crate has two main types:
 //!
@@ -18,7 +18,23 @@
 //!
 //! # Performance
 //!
-//! TODO
+//! `zerovec` is designed for fast deserialization from byte buffers with zero memory allocations
+//! while minimizing performance regressions for common vector operations.
+//!
+//! Benchmark results on x86_64:
+//!
+//! | Operation | `Vec<T>` | `zerovec` |
+//! |---|---|---|
+//! | Deserialize vec of 100 `u32` | 233.18 ns | 14.120 ns |
+//! | Compute sum of vec of 100 `u32` (read every element) | 8.7472 ns | 10.775 ns |
+//! | Binary search vec of 1000 `u32` 50 times | 442.80 ns | 472.51 ns |
+//! | Deserialize vec of 100 strings | 6.4357 us\* | 1.4405 us |
+//! | Count chars in vec of 100 strings (read every element) | 3.7452 us | 4.6891 us |
+//! | Binary search vec of 500 strings 10 times | 463.74 ns | 847.82 ns |
+//! 
+//! \* *This result is reported for `Vec<String>`. However, Serde also supports deserializing to `Vec<&str>`; this gives 1.6916 us, much faster than `Vec<String>` but a bit slower than `zerovec`.*
+//!
+//! The benches used to generate the above table can be found in the `benches` directory in the project repository.
 //!
 //! # Features
 //!

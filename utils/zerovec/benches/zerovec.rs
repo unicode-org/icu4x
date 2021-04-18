@@ -16,10 +16,10 @@ use zerovec::ZeroVec;
 #[derive(Default)]
 struct AlignedBuffer(Vec<u8>);
 
+/// Generate a large list of u32s for stress testing.
 #[allow(dead_code)]
 fn get_needles_and_haystack() -> (Vec<u32>, Vec<u32>) {
-    // Generate a large list of u32s for stress testing.
-    // Lcg64Xsh32 is a PRNG with a fixed seed for reproducible benchmarks.
+    // Lcg64Xsh32 is a small, fast PRNG for reproducible benchmarks.
     // LogNormal(10, 1) generates numbers with mean 36315 and mode 8103, a distribution that, in
     // spirit, correlates with Unicode properties (many low values and a long tail of high values)
     let mut rng = Lcg64Xsh32::seed_from_u64(2021);
@@ -99,11 +99,14 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| uvec.binary_search(&0x0c0d0c));
     });
 
-    let (needles, haystack) = get_needles_and_haystack();
+    let (needles_100, haystack) = get_needles_and_haystack();
+    // Only search for 50 needles to put all figures in nanoseconds
+    let needles_50 = &needles_100[0..50];
 
+    // *** Binary search vec of 1000 `u32` 50 times ***
     c.bench_function("zerovec/binary_search/log_normal/slice", |b| {
         b.iter(|| {
-            black_box(&needles)
+            black_box(&needles_50)
                 .iter()
                 .map(|needle| black_box(&haystack).binary_search(&needle))
                 .filter(|r| r.is_ok())
@@ -111,12 +114,13 @@ fn binary_search_benches(c: &mut Criterion) {
         });
     });
 
+    // *** Binary search vec of 1000 `u32` 50 times ***
     c.bench_function("zerovec/binary_search/log_normal/zerovec", |b| {
         let mut buffer = AlignedBuffer::default();
         let uvec = vec_to_unaligned_uvec(black_box(&haystack), &mut buffer);
         assert_eq!(uvec, haystack.as_slice());
         b.iter(|| {
-            black_box(&needles)
+            black_box(&needles_50)
                 .iter()
                 .map(|needle| black_box(&uvec).binary_search(&needle))
                 .filter(|r| r.is_ok())

@@ -83,10 +83,11 @@ pub trait AsVarULE {
 
     /// Converts from `&Self` to `Self::ULE`.
     ///
-    /// This function will almost always be a [`Deref`] or similar.
+    /// This function will almost always be a `Deref` or similar.
     ///
     /// For best performance, mark your implementation of this function `#[inline]`.
     fn as_unaligned(&self) -> &Self::VarULE;
+
     /// Converts from `&Self::ULE` to an owned `Self`.
     ///
     /// This function may involve allocation.
@@ -119,6 +120,7 @@ pub trait VarULE: 'static {
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error>;
+
     /// Takes a byte slice, `&[u8]`, and return it as `&self` with the same lifetime, assuming that
     /// this byte slice has previously been run through [`VarULE::parse_byte_slice()`] with success.
     ///
@@ -134,6 +136,7 @@ pub trait VarULE: 'static {
     /// correct type. It is up to the implementation to reason about the safety, assuming the invariant
     /// above.
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
+
     /// Given `&Self`, returns a `&[u8]` with the same lifetime.
     ///
     /// # Safety

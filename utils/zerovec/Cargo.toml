@@ -50,5 +50,9 @@ harness = false
 required-features = ["serde"]
 
 [[bench]]
+name = "vzv"
+harness = false
+
+[[bench]]
 name = "zerovec_iai"
 harness = false
