@@ -126,11 +126,11 @@ fn binary_search_benches(c: &mut Criterion) {
     });
 
     c.bench_function("vzv/binary_search/single/slice", |b| {
-        b.iter(|| black_box(&string_vec).binary_search(&single_needle));
+        b.iter(|| black_box(&string_vec).binary_search(black_box(&single_needle)));
     });
 
     c.bench_function("vzv/binary_search/single/vzv", |b| {
-        b.iter(|| black_box(&vzv).binary_search(&single_needle));
+        b.iter(|| black_box(&vzv).binary_search(black_box(&single_needle)));
     });
 }
 
@@ -144,17 +144,17 @@ fn serde_benches(c: &mut Criterion) {
 
     // *** Deserialize vec of 100 strings ***
     c.bench_function("vzv/deserialize/string/vec_owned", |b| {
-        b.iter(|| bincode::deserialize::<Vec<String>>(&bincode_vec));
+        b.iter(|| bincode::deserialize::<Vec<String>>(black_box(&bincode_vec)));
     });
 
     // *** Deserialize vec of 100 strings ***
     c.bench_function("vzv/deserialize/string/vec_borrowed", |b| {
-        b.iter(|| bincode::deserialize::<Vec<&str>>(&bincode_vec));
+        b.iter(|| bincode::deserialize::<Vec<&str>>(black_box(&bincode_vec)));
     });
 
     // *** Deserialize vec of 100 strings ***
     c.bench_function("vzv/deserialize/string/vzv", |b| {
-        b.iter(|| bincode::deserialize::<VarZeroVec<String>>(&bincode_vzv));
+        b.iter(|| bincode::deserialize::<VarZeroVec<String>>(black_box(&bincode_vzv)));
     });
 }
 
