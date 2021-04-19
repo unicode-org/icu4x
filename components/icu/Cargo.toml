@@ -26,13 +26,17 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_datetime = { version = "0.1", path = "../datetime" }
+icu_decimal = { version = "0.1", path = "../decimal" }
 icu_locid = { version = "0.1", path = "../locid" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 icu_plurals = { version = "0.1", path = "../plurals" }
 icu_uniset = { version = "0.1", path = "../uniset" }
 
 [dev-dependencies]
+icu_provider = { version = "0.1", path = "../provider" }
 icu_testdata = { version = "0.1", path = "../../resources/testdata" }
+fixed_decimal = { version = "0.1", path = "../../utils/fixed_decimal" }
+writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [features]
 default = ["provider_serde"]

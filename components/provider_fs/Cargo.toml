@@ -55,7 +55,9 @@ icu_plurals = { version = "0.1", path = "../plurals" }
 criterion = "0.3.3"
 
 [features]
+# Enables the "export" module and FilesystemExporter
 export = ["static_assertions", "log"]
+# Enables the "icu4x-cldr-export" binary to generate ICU4X data on the command line
 export-bin = ["export", "clap", "icu_provider_cldr", "simple_logger"]
 bench = []
 

@@ -33,7 +33,19 @@
 //! In the following examples an [`icu_testdata`] package is used which wraps
 //! an [`FsDataProvider`] with locally available subset of data.
 //!
-//! # Examples
+//! # Features
+//!
+//! ICU4X components share a set of common features that control whether core pieces of
+//! functionality are compiled. These features are:
+//!
+//! - `provider_serde`: Whether to include Serde Serialize/Deserialize implementations for
+//!   ICU4X locale data structs, such as [`SymbolsV1`]. (On by default)
+//! - `serde`: Whether to include Serde Serialize/Deserialize implementations for core libary
+//!   types, such as [`Locale`].
+//! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
+//!   when running `cargo bench`.
+//!
+//! # Example
 //!
 //! ```
 //! use icu::locid::Locale;
@@ -60,9 +72,12 @@
 //! assert_eq!(formatted_date.to_string(), "September 12, 2020 at 12:35:00 PM");
 //! ```
 //!
-//! [`icu_testdata`]: ../icu_testdata/index.html
 //! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
+//! [`icu_testdata`]: ../icu_testdata/index.html
+//! [`Locale`]: crate::locid::Locale
+//! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
+
 pub mod datetime {
     //! Date and Time operations
     //!
@@ -100,6 +115,62 @@ pub mod datetime {
     //! ```
     //! [`DataProvider`]: ../../icu_provider/index.html
     pub use icu_datetime::*;
+}
+
+pub mod decimal {
+    //! Decimal formatting operations
+    //!
+    //! This API provides necessary functionality for formatting of numbers with decimal digits.
+    //!
+    //! [`FixedDecimalFormat`] is the main structure of the component. It formats a
+    //! [`FixedDecimal`] to a [`FormattedFixedDecimal`].
+    //!
+    //! # Examples
+    //!
+    //! ## Format a number with Bengali digits
+    //!
+    //! ```
+    //! # #[cfg(feature = "provider_serde")] {
+    //! use icu::decimal::FixedDecimalFormat;
+    //! use icu::locid::Locale;
+    //! use icu::locid::macros::langid;
+    //! use writeable::Writeable;
+    //!
+    //! let locale: Locale = langid!("bn").into();
+    //! let provider = icu_testdata::get_provider();
+    //! let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+    //!     .expect("Data should load successfully");
+    //!
+    //! let fixed_decimal = 1000007.into();
+    //! let formatted_value = fdf.format(&fixed_decimal);
+    //! let formatted_str = formatted_value.writeable_to_string();
+    //!
+    //! assert_eq!("১০,০০,০০৭", formatted_str);
+    //! # } // feature = "provider_serde"
+    //! ```
+    //!
+    //! ## Format a number with digits after the decimal separator
+    //!
+    //! ```
+    //! use fixed_decimal::FixedDecimal;
+    //! use icu::decimal::FixedDecimalFormat;
+    //! use icu::locid::Locale;
+    //! use writeable::Writeable;
+    //!
+    //! let locale = Locale::und();
+    //! let provider = icu_provider::inv::InvariantDataProvider;
+    //! let fdf = FixedDecimalFormat::try_new(locale, &provider, Default::default())
+    //!     .expect("Data should load successfully");
+    //!
+    //! let fixed_decimal = FixedDecimal::from(200050)
+    //!     .multiplied_pow10(-2)
+    //!     .expect("Operation is fully in range");
+    //!
+    //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).writeable_to_string());
+    //! ```
+    //!
+    //! [`FixedDecimal`]: fixed_decimal::FixedDecimal
+    pub use icu_decimal::*;
 }
 
 pub mod locid {

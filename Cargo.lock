@@ -807,12 +807,16 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 name = "icu"
 version = "0.1.0"
 dependencies = [
+ "fixed_decimal",
  "icu_datetime",
+ "icu_decimal",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
+ "icu_provider",
  "icu_testdata",
  "icu_uniset",
+ "writeable",
 ]
 
 [[package]]
@@ -887,6 +891,7 @@ dependencies = [
  "criterion",
  "fixed_decimal",
  "getrandom 0.2.2",
+ "icu",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
