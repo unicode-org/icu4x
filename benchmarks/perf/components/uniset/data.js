@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618755920705,
+  "lastUpdate": 1618854514522,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5339,6 +5339,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32269208,
             "range": "± 2146769",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b58ed80e99cf20e1e2bf48875462910cffadfeee",
+          "message": "Cleanups to icu, icu_decimal, and zerovec (#650)\n\n- Adds FixedDecimalFormat to the icu crate\r\n- Documents cargo features used in ICU4X\r\n- Adds benchmarks for VarZeroVec\r\n- Documents benchmark results in zerovec docs",
+          "timestamp": "2021-04-19T12:41:43-05:00",
+          "tree_id": "9a59f644ca27f0e281b7e6def4114186379c7103",
+          "url": "https://github.com/unicode-org/icu4x/commit/b58ed80e99cf20e1e2bf48875462910cffadfeee"
+        },
+        "date": 1618854513001,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 38707812,
+            "range": "± 3376479",
             "unit": "ns/iter"
           }
         ]
