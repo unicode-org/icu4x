@@ -105,7 +105,7 @@ impl<R: Rng> TestDataGenerator<R> {
     /// Returns a BIES vector weighted at the given cell (b, i, e, s)
     fn bies_vector_for_char(&mut self, ch: char, noise: f32) -> BiesVector<f32> {
         let cell = if self.rng.gen::<f32>() < noise {
-            self.rng.gen_range(0, 4)
+            self.rng.gen_range(0..4)
         } else {
             match ch {
                 'b' => 0,
@@ -120,7 +120,7 @@ impl<R: Rng> TestDataGenerator<R> {
 
     /// Returns a random BIES vector.
     fn rand_bies_vector(&mut self) -> BiesVector<f32> {
-        let cell = self.rng.gen_range(0, 4);
+        let cell = self.rng.gen_range(0..4);
         self.bies_vector_for_cell(cell)
     }
 
