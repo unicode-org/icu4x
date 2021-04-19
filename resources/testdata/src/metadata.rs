@@ -7,7 +7,6 @@ use cargo_metadata::{self, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::fmt;
-use std::path::PathBuf;
 
 pub enum Error {
     Cargo(cargo_metadata::Error),
