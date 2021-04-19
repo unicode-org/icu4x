@@ -116,8 +116,8 @@ impl From<PluralOperands> for ICU4XPluralOperands {
 }
 
 impl From<ICU4XPluralOperands> for PluralOperands {
-    fn from(other: ICU4XPluralOperands) -> PluralOperands {
-        PluralOperands {
+    fn from(other: ICU4XPluralOperands) -> Self {
+        Self {
             i: other.i,
             v: other.v,
             w: other.w,
@@ -131,20 +131,20 @@ impl From<ICU4XPluralOperands> for PluralOperands {
 impl From<ICU4XPluralRuleType> for PluralRuleType {
     fn from(other: ICU4XPluralRuleType) -> Self {
         match other {
-            ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,
-            ICU4XPluralRuleType::Ordinal => PluralRuleType::Ordinal,
+            ICU4XPluralRuleType::Cardinal => Self::Cardinal,
+            ICU4XPluralRuleType::Ordinal => Self::Ordinal,
         }
     }
 }
 impl From<PluralCategory> for ICU4XPluralCategory {
     fn from(other: PluralCategory) -> Self {
         match other {
-            PluralCategory::Zero => ICU4XPluralCategory::Zero,
-            PluralCategory::One => ICU4XPluralCategory::One,
-            PluralCategory::Two => ICU4XPluralCategory::Two,
-            PluralCategory::Few => ICU4XPluralCategory::Few,
-            PluralCategory::Many => ICU4XPluralCategory::Many,
-            PluralCategory::Other => ICU4XPluralCategory::Other,
+            PluralCategory::Zero => Self::Zero,
+            PluralCategory::One => Self::One,
+            PluralCategory::Two => Self::Two,
+            PluralCategory::Few => Self::Few,
+            PluralCategory::Many => Self::Many,
+            PluralCategory::Other => Self::Other,
         }
     }
 }

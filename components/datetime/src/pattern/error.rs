@@ -21,12 +21,12 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::FieldLengthInvalid(symbol) => {
+            Self::FieldLengthInvalid(symbol) => {
                 write!(f, "{:?} invalid field length in pattern", symbol)
             }
-            Error::UnknownSubstitution(ch) => write!(f, "unknown substitution {} in pattern", ch),
-            Error::UnclosedLiteral => write!(f, "unclosed literal in pattern"),
-            Error::UnclosedPlaceholder => write!(f, "unclosed placeholder in pattern"),
+            Self::UnknownSubstitution(ch) => write!(f, "unknown substitution {} in pattern", ch),
+            Self::UnclosedLiteral => write!(f, "unclosed literal in pattern"),
+            Self::UnclosedPlaceholder => write!(f, "unclosed placeholder in pattern"),
         }
     }
 }

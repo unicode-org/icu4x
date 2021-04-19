@@ -81,16 +81,16 @@ impl LengthHint {
     /// ```
     pub fn capacity(&self) -> usize {
         match self {
-            LengthHint::Undefined => 0,
-            LengthHint::Exact(len) => *len,
+            Self::Undefined => 0,
+            Self::Exact(len) => *len,
         }
     }
 
     /// Returns whether the LengthHint indicates that the string is exactly 0 bytes long.
     pub fn is_zero(&self) -> bool {
         match self {
-            LengthHint::Undefined => false,
-            LengthHint::Exact(len) => *len == 0,
+            Self::Undefined => false,
+            Self::Exact(len) => *len == 0,
         }
     }
 }

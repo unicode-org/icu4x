@@ -32,7 +32,7 @@ impl ICU4XDataProvider {
     ///
     /// Only call for values that are to be returned to C and never passed to Rust.
     pub unsafe fn zeroed() -> Self {
-        ICU4XDataProvider {
+        Self {
             _field1: 0,
             _field2: 0,
         }
@@ -62,7 +62,7 @@ impl ICU4XDataProvider {
             // &dyn Trait and Box<dyn Trait> have the same layout
             // Note that we are reading from a *pointer* to `Box<dyn Trait>`,
             // so we need to `ptr::read` the fat pointer first.
-            let borrowed_erased: ICU4XDataProvider = ptr::read(self);
+            let borrowed_erased: Self = ptr::read(self);
             // If the layout changes this will error
             // Once Rust gets pointer metadata APIs we should switch to using those
             mem::transmute(borrowed_erased)

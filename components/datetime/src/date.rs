@@ -297,7 +297,7 @@ impl From<usize> for IsoWeekday {
     /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(7));
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
     /// ```
-    fn from(input: usize) -> IsoWeekday {
+    fn from(input: usize) -> Self {
         let mut ordinal = (input % 7) as i8;
         if ordinal == 0 {
             ordinal = 7;
@@ -497,7 +497,7 @@ impl FromStr for GmtOffset {
             Some('+') => offset_sign = 1,
             /* ASCII  */ Some('-') => offset_sign = -1,
             /* U+2212 */ Some('−') => offset_sign = -1,
-            Some('Z') => return Ok(GmtOffset(0)),
+            Some('Z') => return Ok(Self(0)),
             _ => return Err(DateTimeError::InvalidTimeZoneOffset),
         };
 

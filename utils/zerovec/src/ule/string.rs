@@ -9,7 +9,7 @@ impl AsVarULE for String {
     type VarULE = str;
     #[inline]
     fn as_unaligned(&self) -> &str {
-        &self
+        self
     }
     #[inline]
     fn from_unaligned(unaligned: &str) -> Self {

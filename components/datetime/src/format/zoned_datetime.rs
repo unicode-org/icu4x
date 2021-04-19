@@ -58,7 +58,7 @@ where
     for item in pattern.items() {
         match item {
             PatternItem::Field(field) => {
-                write_field(&field, zoned_datetime_format, &loc_datetime, w)?
+                write_field(field, zoned_datetime_format, &loc_datetime, w)?
             }
             PatternItem::Literal(l) => w.write_str(l)?,
         }

@@ -182,7 +182,7 @@ pub mod patterns {
         fn try_from(pattern_string: &str) -> Result<Self, Self::Error> {
             let pattern = Pattern::from_bytes(pattern_string);
             match pattern {
-                Ok(pattern) => Ok(PatternV1::from(pattern)),
+                Ok(pattern) => Ok(Self::from(pattern)),
                 Err(err) => Err(err),
             }
         }
@@ -206,7 +206,7 @@ pub mod patterns {
 
         fn try_from(skeleton_string: &str) -> Result<Self, Self::Error> {
             match Skeleton::try_from(skeleton_string) {
-                Ok(skeleton) => Ok(SkeletonV1(skeleton)),
+                Ok(skeleton) => Ok(Self(skeleton)),
                 Err(err) => Err(err),
             }
         }

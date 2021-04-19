@@ -140,6 +140,6 @@ impl<'l> From<&'l Script> for &'l str {
 
 impl From<Script> for TinyStr4 {
     fn from(input: Script) -> Self {
-        input.0.into()
+        input.0
     }
 }

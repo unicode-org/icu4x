@@ -222,5 +222,5 @@ pub fn langid(input: TokenStream) -> TokenStream {
         variants
     );
 
-    output.parse().unwrap()
+    output.parse().expect("Output should parse.")
 }

@@ -107,7 +107,7 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, DecimalSymbolsV1>, DataError> {
-        NumbersProvider::supports_key(&req.resource_path.key)?;
+        Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let cldr_langid: CldrLangID = langid.clone().into();
         let numbers = match self

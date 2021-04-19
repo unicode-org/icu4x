@@ -249,7 +249,7 @@ where
                 }
                 Some(&PatternToken::Placeholder(ref p)) => {
                     self.token_idx += 1;
-                    self.current_replacement = self.replacements.take_replacement(&p);
+                    self.current_replacement = self.replacements.take_replacement(p);
                     if self.current_replacement.is_none() {
                         return Err(InterpolatorError::MissingPlaceholder(p.clone()));
                     }

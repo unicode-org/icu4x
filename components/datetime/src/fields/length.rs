@@ -27,7 +27,7 @@ pub enum FieldLength {
 }
 
 impl From<FieldLength> for u8 {
-    fn from(length: FieldLength) -> u8 {
+    fn from(length: FieldLength) -> Self {
         match length {
             FieldLength::One => 1,
             FieldLength::TwoDigit => 2,

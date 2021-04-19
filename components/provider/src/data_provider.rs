@@ -29,7 +29,7 @@ impl fmt::Display for DataRequest {
 /// Create a [`DataRequest`] to a particular [`ResourceKey`] with default options.
 impl From<ResourceKey> for DataRequest {
     fn from(key: ResourceKey) -> Self {
-        DataRequest {
+        Self {
             resource_path: ResourcePath {
                 key,
                 options: Default::default(),

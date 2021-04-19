@@ -402,7 +402,7 @@ impl<'d> TimeZoneFormat<'d> {
                 .exemplar_cities
                 .as_ref()
                 .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
-                .map(|location| self.zone_formats.region_format.replace("{0}", &location))
+                .map(|location| self.zone_formats.region_format.replace("{0}", location))
                 .ok_or(fmt::Error)?,
         )
         .map_err(DateTimeFormatError::from)
@@ -417,8 +417,7 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatError> {
         sink.write_str(
-            &self
-                .mz_generic_short
+            self.mz_generic_short
                 .as_ref()
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .ok_or(fmt::Error)?,
@@ -435,8 +434,7 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatError> {
         sink.write_str(
-            &self
-                .mz_generic_long
+            self.mz_generic_long
                 .as_ref()
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .ok_or(fmt::Error)?,
@@ -453,8 +451,7 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatError> {
         sink.write_str(
-            &self
-                .mz_specific_short
+            self.mz_specific_short
                 .as_ref()
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .and_then(|specific_names| {
@@ -462,7 +459,7 @@ impl<'d> TimeZoneFormat<'d> {
                         .time_variant()
                         .and_then(|variant| specific_names.get(variant))
                 })
-                .ok_or(DateTimeFormatError::from(fmt::Error))?,
+                .ok_or_else(|| DateTimeFormatError::from(fmt::Error))?,
         )
         .map_err(DateTimeFormatError::from)
     }
@@ -476,8 +473,7 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatError> {
         sink.write_str(
-            &self
-                .mz_specific_long
+            self.mz_specific_long
                 .as_ref()
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .and_then(|specific_names| {
@@ -535,8 +531,7 @@ impl<'d> TimeZoneFormat<'d> {
         time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatError> {
         sink.write_str(
-            &self
-                .exemplar_cities
+            self.exemplar_cities
                 .as_ref()
                 .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
                 .ok_or(fmt::Error)?,
@@ -556,8 +551,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink: &mut W,
     ) -> Result<(), DateTimeFormatError> {
         sink.write_str(
-            &self
-                .exemplar_cities
+            self.exemplar_cities
                 .as_ref()
                 .and_then(|cities| cities.get("Etc/Unknown"))
                 .unwrap_or(&Cow::Borrowed("Unknown")),

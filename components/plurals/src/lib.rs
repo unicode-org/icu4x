@@ -345,9 +345,9 @@ impl PluralRules {
 
     /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
     /// data obtained from a provider.
-    pub fn new_from_data<'d>(
+    pub fn new_from_data(
         langid: LanguageIdentifier,
-        data: &PluralRuleStringsV1<'d>,
+        data: &PluralRuleStringsV1,
     ) -> Result<Self, PluralRulesError> {
         let data: data::PluralRuleList = data.try_into()?;
         Ok(Self {

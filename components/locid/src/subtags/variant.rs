@@ -156,6 +156,6 @@ impl<'l> From<&'l Variant> for &'l str {
 
 impl From<Variant> for TinyStr8 {
     fn from(input: Variant) -> Self {
-        input.0.into()
+        input.0
     }
 }

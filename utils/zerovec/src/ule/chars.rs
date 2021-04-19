@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::upper_case_acronyms)]
 //! ULE implementation for the `char` type.
 
 use super::*;
@@ -78,7 +79,7 @@ impl AsULE for char {
         let u = u32::from_le_bytes(unaligned.0);
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
         // TODO: Use char::from_u32_unchecked() when stabilized
-        char::try_from(u).unwrap()
+        Self::try_from(u).unwrap()
     }
 }
 

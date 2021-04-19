@@ -16,7 +16,7 @@ macro_rules! impl_dyn_clone {
             }
         }
         impl<$s> Clone for Box<(dyn $trait + $s)> {
-            fn clone(&self) -> Box<(dyn $trait + $s)> {
+            fn clone(&self) -> Self {
                 <dyn $trait + $s>::clone_into_box(self.as_ref())
             }
         }

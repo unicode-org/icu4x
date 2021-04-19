@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::upper_case_acronyms)]
 //! ULE implementation for Plain Old Data types, including all sized integers.
 
 use super::*;
