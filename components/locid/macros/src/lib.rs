@@ -22,16 +22,17 @@ mod token_stream;
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use proc_macro_crate::crate_name;
+use proc_macro_crate::{crate_name, FoundCrate};
 use token_stream::IntoTokenStream;
 
 fn get_crate_name() -> String {
-    if let Ok(name) = crate_name("icu") {
-        format!("{}::locid", name)
-    } else if let Ok(name) = crate_name("icu_locid") {
-        name
-    } else {
-        "icu_locid".to_string()
+    match crate_name("icu") {
+        Ok(FoundCrate::Itself) => "icu::locid".to_string(),
+        Ok(FoundCrate::Name(name)) => format!("{}::locid", name),
+        Err(_) => match crate_name("icu_locid") {
+            Ok(FoundCrate::Name(name)) => name,
+            _ => "icu_locid".to_string(),
+        },
     }
 }
 
