@@ -4,7 +4,7 @@
 
 use bies::*;
 use rand::prelude::*;
-use rand_distr::{Beta, Distribution};
+use rand_distr::{Beta, Distribution, Uniform};
 use rand_pcg::Lcg64Xsh32;
 use strum::IntoEnumIterator;
 use writeable::Writeable;
@@ -81,7 +81,8 @@ impl<R: Rng> TestDataGenerator<R> {
     }
 
     /// Returns a BIES vector weighted at the given cell (0=b, 1=i, 2=e, 3=s)
-    fn bies_vector_for_cell(&mut self, cell: usize) -> BiesVector<f32> {
+    /// The `cell` argument is `u64` for backwards compatibility with the PRNG.
+    fn bies_vector_for_cell(&mut self, cell: u64) -> BiesVector<f32> {
         // Use a Beta distribution with heavy weight on low numbers.
         let beta: Beta<f32> = Beta::new(0.2, 5.0).unwrap();
         let nums: Vec<f32> = (0..4)
@@ -105,7 +106,7 @@ impl<R: Rng> TestDataGenerator<R> {
     /// Returns a BIES vector weighted at the given cell (b, i, e, s)
     fn bies_vector_for_char(&mut self, ch: char, noise: f32) -> BiesVector<f32> {
         let cell = if self.rng.gen::<f32>() < noise {
-            self.rng.gen_range(0, 4)
+            Uniform::new(0, 4).sample(&mut self.rng)
         } else {
             match ch {
                 'b' => 0,
@@ -120,7 +121,7 @@ impl<R: Rng> TestDataGenerator<R> {
 
     /// Returns a random BIES vector.
     fn rand_bies_vector(&mut self) -> BiesVector<f32> {
-        let cell = self.rng.gen_range(0, 4);
+        let cell = Uniform::new(0, 4).sample(&mut self.rng);
         self.bies_vector_for_cell(cell)
     }
 
@@ -298,28 +299,28 @@ fn get_test_cases() -> Vec<TestCase> {
         TestCase {
             sample_data: test_gen.fully_random_sample_data(10),
             expected_breakpoints: Breakpoints {
-                breakpoints: vec![3, 4, 5, 9],
+                breakpoints: vec![2, 4, 5, 6, 9],
                 length: 10,
             },
-            expected_bies: "biessbiies".to_string(),
-            skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
-        },
-        TestCase {
-            sample_data: test_gen.fully_random_sample_data(10),
-            expected_breakpoints: Breakpoints {
-                breakpoints: vec![6, 7],
-                length: 10,
-            },
-            expected_bies: "biiiiesbie".to_string(),
+            expected_bies: "bebessbies".to_string(),
             skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
         },
         TestCase {
             sample_data: test_gen.fully_random_sample_data(10),
             expected_breakpoints: Breakpoints {
-                breakpoints: vec![4, 5, 6],
+                breakpoints: vec![1, 7],
                 length: 10,
             },
-            expected_bies: "biiessbiie".to_string(),
+            expected_bies: "sbiiiiebie".to_string(),
+            skip_algorithms: None,
+        },
+        TestCase {
+            sample_data: test_gen.fully_random_sample_data(10),
+            expected_breakpoints: Breakpoints {
+                breakpoints: vec![2, 4, 5, 6, 7],
+                length: 10,
+            },
+            expected_bies: "bebesssbie".to_string(),
             skip_algorithms: Some(vec![Algorithm::Alg1a, Algorithm::Alg1b]),
         },
         // Some partially random cases:
@@ -339,9 +340,13 @@ fn get_test_cases() -> Vec<TestCase> {
         // Test cases with noise:
         test_gen.noisy_random_test_case(0.05, 15, None),
         test_gen.noisy_random_test_case(0.05, 15, None),
-        test_gen.noisy_random_test_case(0.05, 15, Some(vec![Algorithm::Alg1a, Algorithm::Alg1b])),
         test_gen.noisy_random_test_case(0.05, 15, None),
-        test_gen.noisy_random_test_case(0.1, 15, Some(vec![Algorithm::Alg1a, Algorithm::Alg1b])),
+        test_gen.noisy_random_test_case(0.05, 15, None),
+        test_gen.noisy_random_test_case(
+            0.1,
+            15,
+            Some(vec![Algorithm::Alg1a, Algorithm::Alg1b, Algorithm::Alg2a]),
+        ),
         test_gen.noisy_random_test_case(0.1, 15, None),
         test_gen.noisy_random_test_case(0.1, 15, None),
         test_gen.noisy_random_test_case(0.1, 15, None),

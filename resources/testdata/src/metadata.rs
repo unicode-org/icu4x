@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use camino::Utf8PathBuf;
 use cargo_metadata::{self, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::fmt;
-use std::path::PathBuf;
 
 pub enum Error {
     Cargo(cargo_metadata::Error),
@@ -53,7 +53,7 @@ pub struct PackageMetadata {
 
 #[derive(Debug)]
 pub struct PackageInfo {
-    pub target_directory: PathBuf,
+    pub target_directory: Utf8PathBuf,
     pub package_metadata: PackageMetadata,
 }
 
