@@ -132,15 +132,11 @@ fn binary_search_benches(c: &mut Criterion) {
     let single_needle = 36315;
 
     c.bench_function("zerovec/binary_search/log_normal/single/slice", |b| {
-        b.iter(|| {
-            black_box(&haystack).binary_search(&single_needle)
-        });
+        b.iter(|| black_box(&haystack).binary_search(&single_needle));
     });
 
     c.bench_function("zerovec/binary_search/log_normal/single/zerovec", |b| {
-        b.iter(|| {
-            black_box(&zerovec).binary_search(&single_needle)
-        });
+        b.iter(|| black_box(&zerovec).binary_search(&single_needle));
     });
 }
 

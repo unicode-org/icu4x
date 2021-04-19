@@ -126,15 +126,11 @@ fn binary_search_benches(c: &mut Criterion) {
     });
 
     c.bench_function("vzv/binary_search/single/slice", |b| {
-        b.iter(|| {
-            black_box(&string_vec).binary_search(&single_needle)
-        });
+        b.iter(|| black_box(&string_vec).binary_search(&single_needle));
     });
 
     c.bench_function("vzv/binary_search/single/vzv", |b| {
-        b.iter(|| {
-            black_box(&vzv).binary_search(&single_needle)
-        });
+        b.iter(|| black_box(&vzv).binary_search(&single_needle));
     });
 }
 
