@@ -95,8 +95,8 @@ fn binary_search_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec/binary_search/sample/zerovec", |b| {
-        let uvec = ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap();
-        b.iter(|| uvec.binary_search(&0x0c0d0c));
+        let zerovec = ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap();
+        b.iter(|| zerovec.binary_search(&0x0c0d0c));
     });
 
     let (needles_100, haystack) = get_needles_and_haystack();
@@ -114,17 +114,32 @@ fn binary_search_benches(c: &mut Criterion) {
         });
     });
 
+    let mut buffer = AlignedBuffer::default();
+    let zerovec = vec_to_unaligned_uvec(black_box(&haystack), &mut buffer);
+    assert_eq!(zerovec, haystack.as_slice());
+
     // *** Binary search vec of 1000 `u32` 50 times ***
     c.bench_function("zerovec/binary_search/log_normal/zerovec", |b| {
-        let mut buffer = AlignedBuffer::default();
-        let uvec = vec_to_unaligned_uvec(black_box(&haystack), &mut buffer);
-        assert_eq!(uvec, haystack.as_slice());
         b.iter(|| {
             black_box(&needles_50)
                 .iter()
-                .map(|needle| black_box(&uvec).binary_search(&needle))
+                .map(|needle| black_box(&zerovec).binary_search(&needle))
                 .filter(|r| r.is_ok())
                 .count()
+        });
+    });
+
+    let single_needle = 36315;
+
+    c.bench_function("zerovec/binary_search/log_normal/single/slice", |b| {
+        b.iter(|| {
+            black_box(&haystack).binary_search(&single_needle)
+        });
+    });
+
+    c.bench_function("zerovec/binary_search/log_normal/single/zerovec", |b| {
+        b.iter(|| {
+            black_box(&zerovec).binary_search(&single_needle)
         });
     });
 }

@@ -101,6 +101,7 @@ fn binary_search_benches(c: &mut Criterion) {
     let (needles, _) = random_alphanums(2..=20, 10, seed);
     let bytes: Vec<u8> = VarZeroVec::get_serializable_bytes(string_vec.as_slice()).unwrap();
     let vzv = VarZeroVec::<String>::try_from_bytes(black_box(bytes.as_slice())).unwrap();
+    let single_needle = "lmnop".to_string();
 
     // *** Binary search vec of 500 strings 10 times ***
     c.bench_function("vzv/binary_search/slice", |b| {
@@ -121,6 +122,18 @@ fn binary_search_benches(c: &mut Criterion) {
                 .map(|needle| black_box(&vzv).binary_search(&needle))
                 .filter(|r| r.is_ok())
                 .count()
+        });
+    });
+
+    c.bench_function("vzv/binary_search/single/slice", |b| {
+        b.iter(|| {
+            black_box(&string_vec).binary_search(&single_needle)
+        });
+    });
+
+    c.bench_function("vzv/binary_search/single/vzv", |b| {
+        b.iter(|| {
+            black_box(&vzv).binary_search(&single_needle)
         });
     });
 }
