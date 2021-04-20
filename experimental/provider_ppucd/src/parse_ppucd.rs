@@ -65,7 +65,7 @@ fn is_enum_val_line(line: &str) -> bool {
 
 /// For a property definition or enumerated property value line, update the aliases map.
 fn update_aliases<'s>(prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>, line: &'s str) {
-    let line_parts = split_line(&line);
+    let line_parts = split_line(line);
     let mut line_parts: &[&str] = line_parts.as_slice();
     line_parts = &line_parts[2..];
 
@@ -88,7 +88,7 @@ fn update_property_aliases<'s>(
     enum_prop_aliases: &mut HashMap<&'s str, HashSet<&'s str>>,
     line: &'s str,
 ) {
-    let line_parts = split_line(&line);
+    let line_parts = split_line(line);
     assert_eq!(&"property", &line_parts[0]);
     let prop_type = &line_parts[1];
     if prop_type == &"Binary" {
@@ -103,7 +103,7 @@ fn update_enum_val_aliases<'s>(
     enum_val_aliases: &mut HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
     line: &'s str,
 ) {
-    let line_parts = split_line(&line);
+    let line_parts = split_line(line);
     let mut line_parts: &[&str] = line_parts.as_slice();
     assert_eq!(&"value", &line_parts[0]);
     line_parts = &line_parts[1..];
@@ -153,7 +153,7 @@ fn is_defaults_line(line: &str) -> bool {
 /// line as a map. "defaults" is like the base level of overrides of property
 /// values for all code points in PPUCD.
 fn get_defaults_prop_vals(line: &str) -> HashMap<&str, &str> {
-    let line_parts = split_line(&line);
+    let line_parts = split_line(line);
     assert_eq!(&"defaults", &line_parts[0]);
     get_data_line_prop_vals(&line_parts)
 }
@@ -166,13 +166,13 @@ fn is_block_line(line: &str) -> bool {
 /// line as a map. "blocks" represent overrides of property values for code
 /// points in PPUCD within a Unicode block above the "defaults" values.
 fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
-    let line_parts = split_line(&line);
+    let line_parts = split_line(line);
     assert_eq!(&"block", &line_parts[0]);
 
     let range_str = &line_parts[1];
     let range_bound_strs = range_str.split("..").collect::<Vec<_>>();
-    let range_start: &u32 = &u32::from_str_radix(&range_bound_strs[0], 16).unwrap();
-    let range_end: &u32 = &u32::from_str_radix(&range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
+    let range_start: &u32 = &u32::from_str_radix(range_bound_strs[0], 16).unwrap();
+    let range_end: &u32 = &u32::from_str_radix(range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
     let inv_list_start: u32 = *range_start;
     let inv_list_end: u32 = *range_end + 1;
     let inv_list: Vec<u32> = vec![inv_list_start, inv_list_end];
@@ -197,15 +197,15 @@ fn is_code_point_line(line: &str) -> bool {
 /// line as a map. "cp" represents overrides of property values for a code
 /// point (or range of code points) that are layered above "blk" and "defaults".
 fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
-    let line_parts = split_line(&line);
+    let line_parts = split_line(line);
     assert_eq!(&"cp", &line_parts[0]);
 
     let range_str = &line_parts[1];
     let range_bound_strs = &range_str.split("..").collect::<Vec<_>>();
     // a "cp" line in PPUCD can either represent a single code point or a code point range
     let range_result = if range_bound_strs.len() > 1 {
-        let range_start: &u32 = &u32::from_str_radix(&range_bound_strs[0], 16).unwrap();
-        let range_end: &u32 = &u32::from_str_radix(&range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
+        let range_start: &u32 = &u32::from_str_radix(range_bound_strs[0], 16).unwrap();
+        let range_end: &u32 = &u32::from_str_radix(range_bound_strs[1], 16).unwrap(); // inclusive end val in PPUCD
         let inv_list_start: u32 = *range_start;
         let inv_list_end: u32 = *range_end + 1;
         let inv_list: Vec<u32> = vec![inv_list_start, inv_list_end];
@@ -431,25 +431,25 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     // parse PPUCD to fill out data structures for info of property name aliases
     // and overrides at defaults/blocks/cp levels
     for line in parseable_lines {
-        if is_property_line(&line) {
-            update_property_aliases(&mut binary_prop_aliases, &mut enum_prop_aliases, &line);
-        } else if is_enum_val_line(&line) {
-            update_enum_val_aliases(&mut enum_val_aliases, &line);
-        } else if is_defaults_line(&line) {
-            defaults = get_defaults_prop_vals(&line);
-        } else if is_block_line(&line) {
-            let (range, prop_vals) = get_block_range_prop_vals(&line);
+        if is_property_line(line) {
+            update_property_aliases(&mut binary_prop_aliases, &mut enum_prop_aliases, line);
+        } else if is_enum_val_line(line) {
+            update_enum_val_aliases(&mut enum_val_aliases, line);
+        } else if is_defaults_line(line) {
+            defaults = get_defaults_prop_vals(line);
+        } else if is_block_line(line) {
+            let (range, prop_vals) = get_block_range_prop_vals(line);
             blocks.insert(range, prop_vals);
-        } else if is_code_point_line(&line) {
+        } else if is_code_point_line(line) {
             // record code point override vals directly from line
-            let (code_point_range, prop_vals) = get_code_point_overrides(&line);
+            let (code_point_range, prop_vals) = get_code_point_overrides(line);
             code_point_overrides.insert(code_point_range, prop_vals);
 
             // compute final code point property vals after applying all
             // levels of overrides
             // can't clone UnicodeSet, so recomputing code point range
             // TODO: can we allow UnicodeSet to derive Clone ?
-            let (code_point_range, _) = get_code_point_overrides(&line);
+            let (code_point_range, _) = get_code_point_overrides(line);
             for code_point_char in code_point_range.iter_chars() {
                 let code_point = code_point_char as u32;
                 let code_point_prop_vals =

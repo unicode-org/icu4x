@@ -39,9 +39,9 @@ impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
 impl Location {
     fn exemplar_city(&self) -> Option<String> {
         match self {
-            Location::LocationWithCity(place) => Some(place.exemplar_city.clone()),
-            Location::LocationWithLong(place) => place.exemplar_city.clone(),
-            Location::LocationWithShort(place) => place.exemplar_city.clone(),
+            Self::LocationWithCity(place) => Some(place.exemplar_city.clone()),
+            Self::LocationWithLong(place) => place.exemplar_city.clone(),
+            Self::LocationWithShort(place) => place.exemplar_city.clone(),
         }
     }
 }

@@ -71,7 +71,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.binary_search_by(|k| k.0.borrow().cmp(&key)) {
+        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
             Ok(found) => Some(&self.values[found].1),
             Err(_) => None,
         }
@@ -94,7 +94,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         Q: Ord,
     {
         self.values
-            .binary_search_by(|k| k.0.borrow().cmp(&key))
+            .binary_search_by(|k| k.0.borrow().cmp(key))
             .is_ok()
     }
 
@@ -116,7 +116,7 @@ impl<K: Ord, V> LiteMap<K, V> {
         K: Borrow<Q>,
         Q: Ord,
     {
-        match self.values.binary_search_by(|k| k.0.borrow().cmp(&key)) {
+        match self.values.binary_search_by(|k| k.0.borrow().cmp(key)) {
             Ok(found) => Some(&mut self.values[found].1),
             Err(_) => None,
         }
@@ -152,7 +152,7 @@ impl<K: Ord, V> LiteMap<K, V> {
     /// ```
     #[must_use]
     pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
-        if let Some(ref last) = self.values.last() {
+        if let Some(last) = self.values.last() {
             if last.0 >= key {
                 return Some((key, value));
             }
@@ -208,7 +208,7 @@ impl<K: Ord, V> LiteMap<K, V> {
 
 impl<K, V> Default for LiteMap<K, V> {
     fn default() -> Self {
-        LiteMap { values: vec![] }
+        Self { values: vec![] }
     }
 }
 impl<K: Ord, V> Index<&'_ K> for LiteMap<K, V> {
@@ -226,8 +226,8 @@ impl<K: Ord, V> FromIterator<(K, V)> for LiteMap<K, V> {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
         let iter = iter.into_iter();
         let mut map = match iter.size_hint() {
-            (_, Some(upper)) => LiteMap::with_capacity(upper),
-            (lower, None) => LiteMap::with_capacity(lower),
+            (_, Some(upper)) => Self::with_capacity(upper),
+            (lower, None) => Self::with_capacity(lower),
         };
 
         for (key, value) in iter {
@@ -291,7 +291,7 @@ mod serde {
 
     impl<K, V> LiteMapVisitor<K, V> {
         fn new() -> Self {
-            LiteMapVisitor {
+            Self {
                 marker: PhantomData,
             }
         }

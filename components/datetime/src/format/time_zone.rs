@@ -26,7 +26,7 @@ where
     T: TimeZoneInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(&self.time_zone_format, self.time_zone, sink).map_err(|_| std::fmt::Error)
+        write_pattern(self.time_zone_format, self.time_zone, sink).map_err(|_| std::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -37,7 +37,7 @@ where
     T: TimeZoneInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(&self.time_zone_format, self.time_zone, f).map_err(|_| std::fmt::Error)
+        write_pattern(self.time_zone_format, self.time_zone, f).map_err(|_| std::fmt::Error)
     }
 }
 
@@ -54,7 +54,7 @@ where
     let pattern = &time_zone_format.pattern;
     for item in pattern.items() {
         match item {
-            PatternItem::Field(field) => write_field(&field, time_zone_format, time_zone, w)?,
+            PatternItem::Field(field) => write_field(field, time_zone_format, time_zone, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }

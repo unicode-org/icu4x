@@ -53,34 +53,34 @@ impl FieldSymbol {
     /// ordered most significant to least significant.
     fn get_canonical_order(&self) -> u8 {
         match self {
-            FieldSymbol::Year(Year::Calendar) => 0,
-            FieldSymbol::Year(Year::WeekOf) => 1,
-            FieldSymbol::Month(Month::Format) => 2,
-            FieldSymbol::Month(Month::StandAlone) => 3,
-            FieldSymbol::Day(Day::DayOfMonth) => 4,
-            FieldSymbol::Day(Day::DayOfYear) => 5,
-            FieldSymbol::Day(Day::DayOfWeekInMonth) => 6,
-            FieldSymbol::Day(Day::ModifiedJulianDay) => 7,
-            FieldSymbol::Weekday(Weekday::Format) => 8,
-            FieldSymbol::Weekday(Weekday::Local) => 9,
-            FieldSymbol::Weekday(Weekday::StandAlone) => 10,
-            FieldSymbol::DayPeriod(DayPeriod::AmPm) => 11,
-            FieldSymbol::DayPeriod(DayPeriod::NoonMidnight) => 12,
-            FieldSymbol::Hour(Hour::H11) => 13,
-            FieldSymbol::Hour(Hour::H12) => 14,
-            FieldSymbol::Hour(Hour::H23) => 15,
-            FieldSymbol::Hour(Hour::H24) => 16,
-            FieldSymbol::Minute => 17,
-            FieldSymbol::Second(Second::Second) => 18,
-            FieldSymbol::Second(Second::FractionalSecond) => 19,
-            FieldSymbol::Second(Second::Millisecond) => 20,
-            FieldSymbol::TimeZone(TimeZone::LowerZ) => 21,
-            FieldSymbol::TimeZone(TimeZone::UpperZ) => 22,
-            FieldSymbol::TimeZone(TimeZone::UpperO) => 23,
-            FieldSymbol::TimeZone(TimeZone::LowerV) => 24,
-            FieldSymbol::TimeZone(TimeZone::UpperV) => 25,
-            FieldSymbol::TimeZone(TimeZone::LowerX) => 26,
-            FieldSymbol::TimeZone(TimeZone::UpperX) => 27,
+            Self::Year(Year::Calendar) => 0,
+            Self::Year(Year::WeekOf) => 1,
+            Self::Month(Month::Format) => 2,
+            Self::Month(Month::StandAlone) => 3,
+            Self::Day(Day::DayOfMonth) => 4,
+            Self::Day(Day::DayOfYear) => 5,
+            Self::Day(Day::DayOfWeekInMonth) => 6,
+            Self::Day(Day::ModifiedJulianDay) => 7,
+            Self::Weekday(Weekday::Format) => 8,
+            Self::Weekday(Weekday::Local) => 9,
+            Self::Weekday(Weekday::StandAlone) => 10,
+            Self::DayPeriod(DayPeriod::AmPm) => 11,
+            Self::DayPeriod(DayPeriod::NoonMidnight) => 12,
+            Self::Hour(Hour::H11) => 13,
+            Self::Hour(Hour::H12) => 14,
+            Self::Hour(Hour::H23) => 15,
+            Self::Hour(Hour::H24) => 16,
+            Self::Minute => 17,
+            Self::Second(Second::Second) => 18,
+            Self::Second(Second::FractionalSecond) => 19,
+            Self::Second(Second::Millisecond) => 20,
+            Self::TimeZone(TimeZone::LowerZ) => 21,
+            Self::TimeZone(TimeZone::UpperZ) => 22,
+            Self::TimeZone(TimeZone::UpperO) => 23,
+            Self::TimeZone(TimeZone::LowerV) => 24,
+            Self::TimeZone(TimeZone::UpperV) => 25,
+            Self::TimeZone(TimeZone::LowerX) => 26,
+            Self::TimeZone(TimeZone::UpperX) => 27,
         }
     }
 }
@@ -374,8 +374,8 @@ pub enum Weekday {
 impl LengthType for Weekday {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match self {
-            Weekday::Format => TextOrNumeric::Text,
-            Weekday::Local | Weekday::StandAlone => match length {
+            Self::Format => TextOrNumeric::Text,
+            Self::Local | Self::StandAlone => match length {
                 FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Text,
                 _ => TextOrNumeric::Numeric,
             },
@@ -460,19 +460,19 @@ impl LengthType for TimeZone {
             //
             // The default cases may want to be updated to return errors themselves
             // if the skeleton matching code ever becomes fallible.
-            TimeZone::UpperZ => match u8::from(length) {
+            Self::UpperZ => match u8::from(length) {
                 1..=3 => Numeric,
                 4 => Text,
                 5 => Numeric,
                 _ => Text,
             },
-            TimeZone::UpperO => match u8::from(length) {
+            Self::UpperO => match u8::from(length) {
                 1 => Text,
                 4 => Numeric,
                 _ => Text,
             },
-            TimeZone::LowerX | TimeZone::UpperX => Numeric,
-            TimeZone::LowerZ | TimeZone::LowerV | TimeZone::UpperV => Text,
+            Self::LowerX | Self::UpperX => Numeric,
+            Self::LowerZ | Self::LowerV | Self::UpperV => Text,
         }
     }
 }

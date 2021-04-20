@@ -116,7 +116,7 @@ impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
 
 #[cfg(feature = "provider_serde")]
 impl<'de> Deserialize<'de> for Skeleton {
-    fn deserialize<D>(deserializer: D) -> Result<Skeleton, D::Error>
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -190,7 +190,7 @@ impl TryFrom<&str> for Skeleton {
             }
         }
 
-        Ok(Skeleton(fields))
+        Ok(Self(fields))
     }
 }
 
@@ -233,37 +233,37 @@ pub enum SkeletonError {
 impl fmt::Display for SkeletonError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            SkeletonError::InvalidFieldLength => write!(f, "field too long in skeleton"),
-            SkeletonError::DuplicateField => write!(f, "duplicate field in skeleton"),
-            SkeletonError::SymbolUnknown(ch) => write!(f, "symbol unknown {} in skeleton", ch),
-            SkeletonError::SymbolInvalid(ch) => write!(f, "symbol invalid {} in skeleton", ch),
-            SkeletonError::SymbolUnimplemented(ch) => {
+            Self::InvalidFieldLength => write!(f, "field too long in skeleton"),
+            Self::DuplicateField => write!(f, "duplicate field in skeleton"),
+            Self::SymbolUnknown(ch) => write!(f, "symbol unknown {} in skeleton", ch),
+            Self::SymbolInvalid(ch) => write!(f, "symbol invalid {} in skeleton", ch),
+            Self::SymbolUnimplemented(ch) => {
                 write!(f, "symbol unimplemented {} in skeleton", ch)
             }
-            SkeletonError::UnimplementedField(ch) => {
+            Self::UnimplementedField(ch) => {
                 write!(f, "unimplemented field {} in skeleton", ch)
             }
-            SkeletonError::Fields(err) => write!(f, "{} in skeleton", err),
+            Self::Fields(err) => write!(f, "{} in skeleton", err),
         }
     }
 }
 
 impl From<fields::Error> for SkeletonError {
     fn from(fields_error: fields::Error) -> Self {
-        SkeletonError::Fields(fields_error)
+        Self::Fields(fields_error)
     }
 }
 
 impl From<fields::LengthError> for SkeletonError {
     fn from(_: fields::LengthError) -> Self {
-        SkeletonError::InvalidFieldLength
+        Self::InvalidFieldLength
     }
 }
 
 impl From<fields::SymbolError> for SkeletonError {
     fn from(symbol_error: fields::SymbolError) -> Self {
         match symbol_error {
-            fields::SymbolError::Invalid(ch) => SkeletonError::SymbolInvalid(ch),
+            fields::SymbolError::Invalid(ch) => Self::SymbolInvalid(ch),
             fields::SymbolError::Unknown(byte) => {
                 // NOTE: If you remove a symbol due to it now being supported,
                 //       make sure to regenerate the test data.
@@ -279,8 +279,8 @@ impl From<fields::SymbolError> for SkeletonError {
                     | b'Q'
                     // TODO (#488) - Week of year
                     | b'w'
-                    => SkeletonError::SymbolUnimplemented(byte.into()),
-                    _ => SkeletonError::SymbolUnknown(byte.into()),
+                    => Self::SymbolUnimplemented(byte.into()),
+                    _ => Self::SymbolUnknown(byte.into()),
                 }
             }
         }
@@ -366,14 +366,14 @@ pub fn create_best_pattern_for_fields<'a>(
     length_patterns: &LengthPatternsV1,
     fields: &[Field],
 ) -> BestSkeleton<Pattern> {
-    let first_pattern_match = get_best_available_format_pattern(&skeletons, fields);
+    let first_pattern_match = get_best_available_format_pattern(skeletons, fields);
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(pattern) = first_pattern_match {
         return BestSkeleton::AllFieldsMatch(pattern.clone());
     }
 
-    let FieldsByType { date, time, other } = group_fields_by_type(&fields);
+    let FieldsByType { date, time, other } = group_fields_by_type(fields);
 
     if !other.is_empty() {
         // These require "append items" support, see #586.
@@ -400,14 +400,14 @@ pub fn create_best_pattern_for_fields<'a>(
     // Match the date and time, and then simplify the combinatorial logic of the results into
     // an optional values of the results, and a boolean value.
     let (date_pattern, date_missing_or_extra) =
-        match get_best_available_format_pattern(&skeletons, &date) {
+        match get_best_available_format_pattern(skeletons, &date) {
             BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
             BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
             BestSkeleton::NoMatch => (None, true),
         };
 
     let (time_pattern, time_missing_or_extra) =
-        match get_best_available_format_pattern(&skeletons, &time) {
+        match get_best_available_format_pattern(skeletons, &time) {
             BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
             BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
             BestSkeleton::NoMatch => (None, true),
@@ -627,7 +627,7 @@ pub fn get_best_available_format_pattern<'a>(
         return BestSkeleton::NoMatch;
     }
     if closest_distance >= SKELETON_EXTRA_SYMBOL {
-        return BestSkeleton::MissingOrExtraFields(&closest_format_pattern);
+        return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
     }
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
 }

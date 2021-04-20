@@ -224,7 +224,7 @@ impl writeable::Writeable for Language {
 
     #[inline]
     fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(self.0.map(|t| t.len()).unwrap_or(3))
+        writeable::LengthHint::Exact(self.0.map_or(3, |t| t.len()))
     }
 }
 

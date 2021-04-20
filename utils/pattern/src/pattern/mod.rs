@@ -268,13 +268,13 @@ where
     type Error = ParserError<<P as FromStr>::Err>;
 
     fn try_from(input: &'s str) -> Result<Self, Self::Error> {
-        Ok(Parser::new(
+        Parser::new(
             input,
             ParserOptions {
                 allow_raw_letters: false,
             },
         )
-        .try_into()?)
+        .try_into()
     }
 }
 

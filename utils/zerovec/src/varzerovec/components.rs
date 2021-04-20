@@ -51,7 +51,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
     pub fn try_from_bytes(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
-        if slice.len() == 0 {
+        if slice.is_empty() {
             return Ok(SliceComponents {
                 indices: &[],
                 things: &[],
@@ -90,6 +90,11 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     #[inline]
     pub fn len(self) -> usize {
         self.indices.len()
+    }
+
+    #[inline]
+    pub fn is_empty(self) -> bool {
+        self.indices.is_empty()
     }
 
     #[inline]
@@ -137,7 +142,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     #[inline]
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T::VarULE, ParseErrorFor<T>>> {
         let last = iter::from_fn(move || {
-            if self.len() > 0 {
+            if !self.is_empty() {
                 let start = usizeify(self.indices[self.len() - 1]);
                 let end = self.things.len();
                 Some(
@@ -168,7 +173,7 @@ impl<'a, T: AsVarULE> SliceComponents<'a, T> {
     #[inline]
     pub fn iter(self) -> impl Iterator<Item = &'a T::VarULE> {
         let last = iter::from_fn(move || {
-            if self.len() > 0 {
+            if !self.is_empty() {
                 let start = usizeify(self.indices[self.len() - 1]);
                 let end = self.things.len();
                 Some(unsafe { self.things.get_unchecked(start..end) })

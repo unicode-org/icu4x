@@ -143,13 +143,13 @@ impl LanguageIdentifier {
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {
-    fn as_ref(&self) -> &LanguageIdentifier {
+    fn as_ref(&self) -> &Self {
         self
     }
 }
 
 impl AsMut<LanguageIdentifier> for LanguageIdentifier {
-    fn as_mut(&mut self) -> &mut LanguageIdentifier {
+    fn as_mut(&mut self) -> &mut Self {
         self
     }
 }

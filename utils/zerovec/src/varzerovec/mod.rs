@@ -106,8 +106,8 @@ pub enum VarZeroVecError<E> {
 impl<E: Display> Display for VarZeroVecError<E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
-            VarZeroVecError::FormatError => write!(f, "Incorrect slice format"),
-            VarZeroVecError::ParseError(ref e) => e.fmt(f),
+            Self::FormatError => write!(f, "Incorrect slice format"),
+            Self::ParseError(ref e) => e.fmt(f),
         }
     }
 }
@@ -125,21 +125,21 @@ type ParseErrorFor<T> = VarZeroVecError<<<T as AsVarULE>::VarULE as VarULE>::Err
 
 impl<E> From<E> for VarZeroVecError<E> {
     fn from(e: E) -> Self {
-        VarZeroVecError::ParseError(e)
+        Self::ParseError(e)
     }
 }
 
 impl<'a, T> From<Vec<T>> for VarZeroVec<'a, T> {
     #[inline]
     fn from(other: Vec<T>) -> Self {
-        VarZeroVec(VarZeroVecInner::Owned(other))
+        Self(VarZeroVecInner::Owned(other))
     }
 }
 
 impl<'a, T> From<VarZeroVecInner<'a, T>> for VarZeroVec<'a, T> {
     #[inline]
     fn from(other: VarZeroVecInner<'a, T>) -> Self {
-        VarZeroVec(other)
+        Self(other)
     }
 }
 
@@ -167,6 +167,30 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
             VarZeroVecInner::Borrowed(components) => components.len(),
         }
     }
+
+    /// Returns `true` if the vector contains no elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::VarZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings: Vec<String> = vec![];
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
+    ///
+    /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
+    /// assert!(vec.is_empty());
+    /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        match self.0 {
+            VarZeroVecInner::Owned(ref vec) => vec.is_empty(),
+            VarZeroVecInner::Borrowed(components) => components.is_empty(),
+        }
+    }
+
     /// Parse a VarZeroVec from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via VarZeroVec::get_serializable_bytes()
@@ -190,7 +214,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
     pub fn try_from_bytes(slice: &'a [u8]) -> Result<Self, ParseErrorFor<T>> {
-        if slice.len() == 0 {
+        if slice.is_empty() {
             // does not allocate
             return Ok(VarZeroVecInner::Owned(Vec::new()).into());
         }
@@ -254,7 +278,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// assert_eq!(vec.get(4), None);
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
-    pub fn get<'b>(&'b self, idx: usize) -> Option<&'b T::VarULE> {
+    pub fn get(&self, idx: usize) -> Option<&T::VarULE> {
         match self.0 {
             VarZeroVecInner::Owned(ref vec) => vec.get(idx).map(|t| t.as_unaligned()),
             VarZeroVecInner::Borrowed(components) => components.get(idx),
@@ -292,7 +316,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         T: Clone,
     {
         match self.0 {
-            VarZeroVecInner::Owned(ref mut vec) => return vec,
+            VarZeroVecInner::Owned(ref mut vec) => vec,
             VarZeroVecInner::Borrowed(components) => {
                 let vec = components.iter().map(T::from_unaligned).collect();
                 let new_self = VarZeroVecInner::Owned(vec).into();

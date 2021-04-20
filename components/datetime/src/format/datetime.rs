@@ -107,7 +107,7 @@ where
     let loc_datetime = DateTimeInputWithLocale::new(datetime, locale);
     for item in pattern.items() {
         match item {
-            PatternItem::Field(field) => write_field(pattern, &field, symbols, &loc_datetime, w)?,
+            PatternItem::Field(field) => write_field(pattern, field, symbols, &loc_datetime, w)?,
             PatternItem::Literal(l) => w.write_str(l)?,
         }
     }
@@ -226,7 +226,7 @@ where
                 field.length,
                 datetime.datetime().hour().ok_or(Error::MissingInputField)?,
                 arithmetic::is_top_of_hour(
-                    &pattern,
+                    pattern,
                     datetime.datetime().minute().map(u8::from).unwrap_or(0),
                     datetime.datetime().second().map(u8::from).unwrap_or(0),
                 ),

@@ -81,7 +81,7 @@ impl FromStr for MockZonedDateTime {
             None => return Err(DateTimeError::InvalidTimeZoneOffset),
         };
 
-        Ok(MockZonedDateTime {
+        Ok(Self {
             datetime,
             time_zone,
         })

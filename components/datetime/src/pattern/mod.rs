@@ -100,14 +100,14 @@ impl Pattern {
     }
 
     pub fn from_bytes(input: &str) -> Result<Self, Error> {
-        Parser::new(input).parse().map(Pattern::from)
+        Parser::new(input).parse().map(Self::from)
     }
 
     // TODO(#277): This should be turned into a utility for all ICU4X.
     pub fn from_bytes_combination(input: &str, date: Self, time: Self) -> Result<Self, Error> {
         Parser::new(input)
             .parse_placeholders(vec![time, date])
-            .map(Pattern::from)
+            .map(Self::from)
     }
 
     pub(super) fn most_granular_time(&self) -> Option<TimeGranularity> {
@@ -248,7 +248,7 @@ impl<'de> de::Visitor<'de> for DeserializePatternBincode {
 
 #[cfg(feature = "provider_serde")]
 impl<'de> Deserialize<'de> for Pattern {
-    fn deserialize<D>(deserializer: D) -> Result<Pattern, D::Error>
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {

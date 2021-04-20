@@ -328,7 +328,7 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter<'b>(&'b self) -> impl Iterator<Item = T> + 'b {
+    pub fn iter(&self) -> impl Iterator<Item = T> + '_ {
         self.as_slice().iter().map(T::from_unaligned)
     }
 
