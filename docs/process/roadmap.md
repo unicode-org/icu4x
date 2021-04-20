@@ -22,6 +22,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		* [ ] Unicode Set L3b
 		* [ ] 0.2 Release
 	* [ ] May
+		* [ ] FFI/WASM exploration
 		* [ ] DateTime performance
 		* [ ] Data Provider performance
 		* [ ] Gecko integration experiment

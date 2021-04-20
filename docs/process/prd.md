@@ -47,7 +47,7 @@ With the maturing of ICU4X we hope to attract those organizations to consider IC
 Rust programming language has evolved one of the most unique and [highly productive software communities in the world](https://stackoverflow.blog/2020/01/20/what-is-rust-and-why-is-it-so-popular/). Rust has been voted the most loved programming language in an annual StackOverflow survey for [four years in a row](https://stackoverflow.blog/2020/01/20/what-is-rust-and-why-is-it-so-popular/).
 
 Internationalization is a notoriously challenging domain of software, and the Rust community has proven itself to handle challenging problems very well. Currently the ecosystem uses Unicode, and ICU-like APIs in many crucial places, including rustc compiler itself and multiple high quality layout implementations such as [xi-editor](https://github.com/xi-editor/xi-editor).
-With the rising focus on higher-level libraries such as [GUI toolkits](https://www.areweguiyet.com/), [game and web engine](https://arewegameyet.rs/) components, the need for high-quality internationalization solutions will become needed.
+With the rising focus on higher-level libraries such as [GUI toolkits](https://www.areweguiyet.com/), [game and web engine](https://arewegameyet.rs/) components, high-quality internationalization solutions are increasingly in demand.
 
 By introducing ICU4X to the community, we get a chance to attract high-quality contributors to ICU4X, much like we were able to build a robust community around ECMA-402.
 
@@ -59,7 +59,7 @@ ICU4X 0.1’s selection of components aimed to:
 
 -   Validate low-level models around [data management](https://github.com/unicode-org/icu4x/blob/master/docs/design/data_pipeline.md)
 -   Establish project culture using simple building blocks such as [Locale](https://docs.rs/icu_locid/0.1.0/icu_locid/) and [Plural Rules](https://docs.rs/icu_plurals/0.1.0/icu_plurals/)
--   Introduce a low level foundation for string operations with [Unicode Set](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
+-   Introduce a low-level foundation for string operations with [Unicode Set](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
 -   Expose a single, high-level, highly requested API - [DateTimeFormat](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
 -   Release a meta-package [ICU](https://docs.rs/icu/0.1.0/icu/)
 
@@ -67,13 +67,13 @@ With the upcoming 0.2 release, we aim to close the gap between our 0.1 features 
 
 ## Risk Analysis
 
-Developing a high quality solution for the internationalization industry needs is a noble goal which requires a lot of time to design correctly. All three current stakeholders are well positioned to justify such effort.
+Developing a high-quality solution for the internationalization industry's needs is a noble goal which requires a lot of time to design correctly. All three current stakeholders are well positioned to justify such effort.
 
 This allows ICU4X to strive for project quality rather than short-term business needs, but software projects disconnected from business needs are at risk of developing the [“Ivory Tower”](https://medium.com/it-dead-inside/knocking-down-the-ivory-tower-72fd249a8db7) syndrome which exposes risk of disconnection from real world alignment.
 
-We strive therefore to balance the roadmap between focusing on industry level excellence with business alignments which allow us to frequently evaluate our ability to deliver on the value proposition and recognize early if the effort is not yielding expected results.
+We strive create a roadmap that balances industry-level excellence with business alignments that allow us to frequently evaluate our ability to deliver on the value proposition. We want to recognize if the effort is not yielding expected results as early as possible.
 
-To achieve that, we identified a number of milestones, aligned with project planning, at which we’ll be able to test the prototypes of ICU4X against real business needs, validate and learn from the tests and adapt our roadmap and planning to ensure ICU4X fits business requirements and has an answer to actual product needs.
+To achieve this, we have identified a number of milestones, aligned with project planning, at which we will be able to test the prototypes of ICU4X against real business needs. This lets us validate and learn from the results, providing an opportunity to adapt our roadmap to ensure that ICU4X meets the needs of real-world products.
 
 ## Business Alignments
 
@@ -101,7 +101,7 @@ The proposed target for such a component is a streamlined simple subset of DateT
 
 Such a component would require less data, have a simple API surface and require less code to be vendored in, while providing a high quality output for a highly requested feature.
 
-If that test were to be successful, we’d also validate additional ICU4X proposition - ability to design internationalization components in a modular fashion serving full-features formatter to those that need to support full ECMA-402 or ICU4C/ICU4J level needs, and a modular smaller subset of it to those who only need the core functionality.
+If that test were to be successful, we would validate an additional ICU4X proposition: the ability to design internationalization components in a modular fashion, serving fully featured formatters to those who need to support full ECMA-402 and ICU4C/ICU4J needs, as well as serving a more modular subset of features to those who only need core functionality.
 
 If that were to end up not being the right target, an alternative suggestion was placed to use DurationFormat API, as a simple, low-data, low-code solution that is similar to Date and Time format.
 
