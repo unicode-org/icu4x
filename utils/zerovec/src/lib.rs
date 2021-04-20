@@ -73,6 +73,7 @@
 //! # } // feature = "serde"
 //! ```
 
+pub mod map;
 pub mod samples;
 pub mod ule;
 mod varzerovec;
