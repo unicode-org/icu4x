@@ -44,32 +44,38 @@ pub trait ZeroMapKV<'a>: Sized {
 }
 
 macro_rules! impl_sized_kv {
-    ($($ty:ident),+) => {
-        $(
-            impl<'a> ZeroMapKV<'a> for $ty {
-                type Container = ZeroVec<'a, $ty>;
-                type NeedleType = $ty;
-                type GetType = <$ty as AsULE>::ULE;
-                type SerializeType = $ty;
-                fn as_needle(&self) -> &Self {
-                    self
-                }
-                fn cmp_get(&self, g: &Self::GetType) -> Ordering {
-                    self.cmp(&$ty::from_unaligned(g))
-                }
-
-                fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering {
-                    $ty::from_unaligned(g1).cmp(&$ty::from_unaligned(g2))
-                }
-                fn get_as_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
-                    f(&Self::from_unaligned(g))
-                }
+    ($ty:ident) => {
+        impl<'a> ZeroMapKV<'a> for $ty {
+            type Container = ZeroVec<'a, $ty>;
+            type NeedleType = $ty;
+            type GetType = <$ty as AsULE>::ULE;
+            type SerializeType = $ty;
+            fn as_needle(&self) -> &Self {
+                self
             }
-        )+
+            fn cmp_get(&self, g: &Self::GetType) -> Ordering {
+                self.cmp(&$ty::from_unaligned(g))
+            }
+
+            fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering {
+                $ty::from_unaligned(g1).cmp(&$ty::from_unaligned(g2))
+            }
+            fn get_as_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
+                f(&Self::from_unaligned(g))
+            }
+        }
     };
 }
 
-impl_sized_kv!(u16, u32, u64, u128, i16, i32, i64, i128, char);
+impl_sized_kv!(u16);
+impl_sized_kv!(u32);
+impl_sized_kv!(u64);
+impl_sized_kv!(u128);
+impl_sized_kv!(i16);
+impl_sized_kv!(i32);
+impl_sized_kv!(i64);
+impl_sized_kv!(i128);
+impl_sized_kv!(char);
 
 impl<'a> ZeroMapKV<'a> for String {
     type Container = VarZeroVec<'a, String>;
