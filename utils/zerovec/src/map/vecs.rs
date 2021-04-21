@@ -7,19 +7,36 @@ use crate::VarZeroVec;
 use crate::ZeroVec;
 use std::mem;
 
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`]. You
+/// should not be implementing or calling this trait directly.
 pub trait ZeroVecLike<'a, T> {
+    /// The type received by `Self::binary_search()`
     type NeedleType: ?Sized;
+    /// The type returned by `Self::get()`
     type GetType: ?Sized;
+    /// Search for a key in a sorted vector, returns `Ok(index)` if found,
+    /// returns `Err(insert_index)` if not found, where `insert_index` is the
+    /// index where it should be inserted to maintain sort order.
     fn binary_search(&self, k: &Self::NeedleType) -> Result<usize, usize>;
+    /// Get element at `index`
     fn get(&self, index: usize) -> Option<&Self::GetType>;
+    /// Insert an element at `index`
     fn insert(&mut self, index: usize, value: T);
+    /// Remove the element at `index` (panicking if nonexistant)
     fn remove(&mut self, index: usize) -> T;
+    /// Replace the element at `index` with another one, returning the old element
     fn replace(&mut self, index: usize, value: T) -> T;
+    /// Push an element to the end of this vector
     fn push(&mut self, value: T);
+    /// The length of this vector
     fn len(&self) -> usize;
+    /// Create a new, empty vector
     fn new() -> Self;
+    /// Create a new, empty vector, with given capacity
     fn with_capacity(cap: usize) -> Self;
+    /// Remove all elements from the vector
     fn clear(&mut self);
+    /// Reserve space for `addl` additional elements
     fn reserve(&mut self, addl: usize);
 }
 

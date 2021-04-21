@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! See [`ZeroMap`] for details.
+
 use std::cmp::Ordering;
 
 mod kv;
@@ -12,6 +14,12 @@ mod vecs;
 pub use kv::ZeroMapKV;
 pub use vecs::ZeroVecLike;
 
+/// A zero-copy map datastructure, built on sorted binary-searchable [`ZeroVec`](crate::ZeroVec)
+/// and [`VarZeroVec`](crate::VarZeroVec).
+///
+/// This type, like [`ZeroVec`](crate::ZeroVec) and [`VarZeroVec`](crate::VarZeroVec), is able to zero-copy
+/// deserialize from appropriately formatted byte buffers. It is internally copy-on-write, so it can be mutated
+/// afterwards as necessary.
 pub struct ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,

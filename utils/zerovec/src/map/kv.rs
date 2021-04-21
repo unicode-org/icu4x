@@ -8,18 +8,38 @@ use crate::VarZeroVec;
 use crate::ZeroVec;
 use std::cmp::Ordering;
 
+/// Trait marking types which are allowed to be keys or values in [`ZeroMap`].
+///
+/// Users should not be calling methods of this trait directly, however if you are
+/// implementing your own [`AsULE`] or [`AsVarULE`] type you may wish to implement
+/// this trait.
 // this lifetime should be a GAT on Container once that is possible
 pub trait ZeroMapKV<'a>: Sized {
+    /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
     type Container: ZeroVecLike<'a, Self, NeedleType = Self::NeedleType, GetType = Self::GetType>
         + Sized;
+    /// The type to use with `Container::binary_search()`
+    ///
+    /// This type will be predetermined by the choice of `Self::Container`
     type NeedleType: ?Sized;
+    /// The type produces by `Container::get()`
+    ///
+    /// This type will be predetermined by the choice of `Self::Container`
     type GetType: ?Sized;
+    /// The type to use whilst serializing. This may not necessarily be `Self`, however it
+    /// must serialize to the exact same thing as `Self`
     type SerializeType: ?Sized;
+    /// Convert to a needle for searching
     fn as_needle(&self) -> &Self::NeedleType;
+    /// Compare this type with a `Self::GetType`. This must produce the same result as
+    /// if `g` were converted to `Self`
     fn cmp_get(&self, g: &Self::GetType) -> Ordering;
+    /// Compare two `Self::GetType`s, as if they were both converted to `Self`
     fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering;
-    // This uses a callback because it's not possible to return owned-or-borrowed
-    // types without GATs
+    /// Obtain a version of this type suitable for serialization
+    ///
+    /// This uses a callback because it's not possible to return owned-or-borrowed
+    /// types without GATs
     fn get_as_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R;
 }
 
