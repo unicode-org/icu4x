@@ -3,45 +3,48 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 
 * [x] 2020
   * [x] October
-	  * [x] 0.1 Release
+	  * [x] 0.1 Release (#204)
   * [x] November/December
-	  * [x] Post 0.1 clean up and maintenance cycle
+	  * [x] Post 0.1 clean up and maintenance cycle ([Milestone](https://github.com/unicode-org/icu4x/milestone/7))
 * [ ] 2021
 	* [x] January/February
 		* [x] Locale
-			* [x] Likely Subtags
+			* [x] Likely Subtags (#417)
 		* [x] DateTime
-			* [x] Day Periods
-			* [x] Timezones
-			* [x] Components Bag
+			* [x] Day Periods (#435)
+			* [x] Timezones (#418)
+			* [x] Components Bag (#481)
 		* [x] Unicode Set
-			* [x] L3a
+			* [x] L3a (#478)
 	* [ ] March/April
-		* [ ] FFI/WASM exploration
-		* [ ] Static Data Provider
-		* [ ] Unicode Set L3b
-		* [ ] 0.2 Release
+		* [ ] FFI/WASM exploration (#207)
+		* [ ] Static Data Provider (#632)
+		* [ ] Unicode Set L3b (#168)
+		* [ ] 0.2 Release (#239)
 	* [ ] May
-		* [ ] FFI/WASM exploration
-		* [ ] DateTime performance
-		* [ ] Data Provider performance
+		* [ ] FFI/WASM exploration (#207)
+		* [ ] DateTime performance (#603)
+		* [ ] Data Provider performance (#667)
 		* [ ] Gecko integration experiment
 	 		* [ ] Test262 evaluation
-		* [ ] 0.3 Release
+		* [ ] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
 	* [ ] June-September
-		* [ ] NumberFormat
-		* [ ] DateTime Calendars
-		* [ ] Segmenter
-		* [ ] Unicode Regular Expressions
+		* [ ] NumberFormat (#275)
+		* [ ] DateTime Calendars (#534)
+		* [ ] Segmenter (#109)
+		* [ ] Unicode Regular Expressions (#131)
+		* [ ] Time Zone Calculations (#533)
+		* [ ] Novel DateTime Pattern Selection Algorithm (#645)
+		* [ ] C++ FFI (#560)
 	* [ ] October
-		* [ ] 0.4 Release
+		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 		* [ ] Migration to ICU4X is enabled
 	* [ ] November
 	 	* [ ] Data + API stability
 	* [ ] December
-		* [ ] 0.5 (1.0 beta) Release
+		* [ ] 0.5 (1.0 beta) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/14))
 * [ ] 2022
 	* [ ] Q1
-		* [ ] 0.6 (1.0 RC) Release
+		* [ ] 0.6 (1.0 RC) Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
 	* [ ] Q2
-		* [ ] 1.0 Release
+		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))

@@ -1,19 +1,17 @@
-# ICU4X 1.0 PRD
+# ICU4X 1.0 Product Requirement Document (PRD)
 
 [ICU4X is an effort](https://github.com/unicode-org/icu4x/blob/master/docs/process/charter.md) under [Unicode](https://unicode.org/) guidance to develop a set of [Unicode Components](http://site.icu-project.org/) with focus on modularity, composability, and FFI supporting the scope of [ECMA-402](https://tc39.es/ecma402/) and written in accordance with modern internationalization techniques and standards.
 
-The effort, currently driven mostly by engineering resources from Google and Mozilla, has been in development since February 2020 and a year into the project, we’re looking to establish the criteria for evaluation of its value proposition and business fit.
+The effort, currently driven mostly by engineering resources from Google and Mozilla, has been in development since February 2020 and we’re now looking to establish the criteria for evaluation of its value proposition and business fit.
 
 The following is the vision for a stable, production ready 1.0 release and milestones on the path toward it.
 
 ## Value Proposition
 
-ICU4X is an answer to accrued needs arising around the Internationalization industry as the software development models evolve.
-
-Primarily, ICU4X aims to offer a more modular approach to internationalization, allowing client-side and resource-constrained environments to fine-tune the payload they vendor-in to maximize the quality and breadth of the internationalization coverage and relax the constrains internationalization imposes on product release cycles.
+Primarily, ICU4X aims to offer a more modular approach to internationalization, allowing client-side and resource-constrained environments to fine-tune the payload they vendor-in to maximize the quality and breadth of the internationalization coverage and relax the constraints internationalization imposes on product release cycles.
 
 Secondarily, ICU4X aims to provide a single [high quality](https://github.com/unicode-org/icu4x/blob/master/docs/process/benchmarking.md) Internationalization API implementation written in a modern language, with [low memory overhead and great runtime performance](https://github.com/zbraniecki/intl-measurements/), exposed to many target ecosystems via robust FFI.
-This aims to reduce the maintenance cost of internationalization stacks and improve access to high quality internationalization in multi-stack environments.
+This will reduce the maintenance cost of internationalization stacks and improve access to high quality internationalization in multi-stack environments.
 
 Finally, ICU4X will offer a powerful and flexible data management system, enabling sophisticated software release models and long-lived software processes to maintain data selection and updates.
 
@@ -21,14 +19,14 @@ Finally, ICU4X will offer a powerful and flexible data management system, enabli
 
 The initial stakeholders are Unicode, Google and Mozilla.
 
-Unicode provides the knowledge, experience and guidance, and a non-corporate plane on which such industry wide effort can be developed.
+Unicode provides the knowledge, experience and guidance, as well as a non-corporate environment in which such an industry wide effort can be developed.
 Mozilla and Google provide engineering resources driving the development and offering business needs, product environment, and high-fidelity opportunities to validate the project against popular mature software.
 
 As the project matures, we hope to attract three more classes of stakeholders:
 
 ### Internationalization Community
 
-Thanks to Unicode guidance, strong engineering resources, mature CLDR base, and leveraging the experience of ECMA-402, ICU4C and ICU4J, ICU4X has a chance to expose the latest, modern and well designed APIs based on the lessons-learned of the last 30 years of the industry development.
+Thanks to Unicode guidance, strong engineering resources, mature CLDR base, and leveraging the experience of ECMA-402, ICU4C and ICU4J, ICU4X has a chance to expose the latest, modern and well designed APIs based on the lessons-learned of the last 30 years of industry development.
 
 ICU4X will enable high quality, rich and modern internationalization for environments and software deployment types which are unable to benefit from the currently existing industry options.
 
@@ -49,7 +47,7 @@ Rust programming language has evolved one of the most unique and [highly product
 Internationalization is a notoriously challenging domain of software, and the Rust community has proven itself to handle challenging problems very well. Currently the ecosystem uses Unicode, and ICU-like APIs in many crucial places, including rustc compiler itself and multiple high quality layout implementations such as [xi-editor](https://github.com/xi-editor/xi-editor).
 With the rising focus on higher-level libraries such as [GUI toolkits](https://www.areweguiyet.com/), [game and web engine](https://arewegameyet.rs/) components, high-quality internationalization solutions are increasingly in demand.
 
-By introducing ICU4X to the community, we get a chance to attract high-quality contributors to ICU4X, much like we were able to build a robust community around ECMA-402.
+By introducing ICU4X to the community, we have a chance to attract high-quality contributors to ICU4X, much like we were able to build a robust community around ECMA-402.
 
 ## Current Status
 
@@ -63,7 +61,7 @@ ICU4X 0.1’s selection of components aimed to:
 -   Expose a single, high-level, highly requested API - [DateTimeFormat](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
 -   Release a meta-package [ICU](https://docs.rs/icu/0.1.0/icu/)
 
-With the upcoming 0.2 release, we aim to close the gap between our 0.1 features and requirements of ECMA-402.
+With the upcoming 0.2 release, we aim to close the gap between our 0.1 features and requirements of ECMA-402 for `Intl.Locale`, `Intl.PluralRules`, and `Intl.DateTimeFormat`, as discussed below.
 
 ## Risk Analysis
 
@@ -97,15 +95,11 @@ If successful, this test will allow us to validate the claim that ICU4X can be a
 
 If we were to successfully expose a simple component of ICU4X via Wasm or FFI to another programming environment, such as Dart, JS, Python or PHP, we would be able to validate the claim that ICU4X can provide “write-once-use-everywhere” solution to low maintenance, high quality internationalization solutions in multiple environments.
 
-The proposed target for such a component is a streamlined simple subset of DateTimeFormat potentially only supporting `dateStyle/timeStyle` selection of date and time formats.
+The proposed target for such a component is a `FixedDecimal`. The chosen API is feature complete and allows us to validate mutable and immutable scenarios.
 
 Such a component would require less data, have a simple API surface and require less code to be vendored in, while providing a high quality output for a highly requested feature.
 
 If that test were to be successful, we would validate an additional ICU4X proposition: the ability to design internationalization components in a modular fashion, serving fully featured formatters to those who need to support full ECMA-402 and ICU4C/ICU4J needs, as well as serving a more modular subset of features to those who only need core functionality.
-
-If that were to end up not being the right target, an alternative suggestion was placed to use DurationFormat API, as a simple, low-data, low-code solution that is similar to Date and Time format.
-
-Another choice could be one of the lighter APIs from the ECMA-402 scope like ListFormat.
 
 ### Mozilla I18n
 
@@ -117,7 +111,7 @@ This will allow us to replace the standalone components with their evolved ICU4X
 
 ### Web Engine Segmentation
 
-As a result of the upcoming [ECMA-402 Intl.Segmenter API](https://github.com/tc39/proposal-intl-segmenter), Mozilla Platform Internationalization Team is facing a challenge that ICU4X is directly aiming to solve.
+As a result of the upcoming [ECMA-402 Intl.Segmenter API](https://github.com/tc39/proposal-intl-segmenter), the Mozilla Platform Internationalization Team is facing a challenge that ICU4X is directly aiming to solve.
 
 Mozilla currently maintains [its own segmentation engine](https://searchfox.org/mozilla-central/source/intl/lwbrk) for its layout needs, and pulling in ICU4C Segmenter would [bring a substantial payload](https://bugzilla.mozilla.org/show_bug.cgi?id=1423593) and result in code and data duplication.
 
@@ -125,13 +119,13 @@ Replacing lwbrk with ICU4C for layout needs would require a substantial effort t
 
 ICU4X offers an environment in which we are developing a new Unicode UAX#14/UAX#29 compatible segmentation API which will use the foundational [Unicode Set API](https://docs.rs/icu_uniset/0.1.0/icu_uniset/), and fit the needs of both Layout and ECMA-402.
 
-Google contributed an ML based segmenter model for Thai, Burmese, Khmer and Lao, that cut down data size by ~75% and increase precision.
+Google contributed an ML based segmenter model for Thai, Burmese, Khmer and Lao, that cut down data size by ~75% and increased precision.
 
 ### Unicode Regular Expression Needs
 
 Irregexp is a [Google regular expression engine](https://blog.chromium.org/2009/02/irregexp-google-chromes-new-regexp.html), used in Google and Mozilla [JS engines](https://hacks.mozilla.org/2020/06/a-new-regexp-engine-in-spidermonkey/).
 
-The engine uses Unicode and is linked to ICU4C, but unfortunately the alignment between JavaScript Regular Expressions and ICU4C is suboptimal leading to a problem known as [catastrophic backtracking](https://v8.dev/blog/non-backtracking-regexp). Mozilla is interested in investing in ICU4X Unicode Properties API to provide a [better aligned and more performant API](https://docs.google.com/document/d/1pcJc8joXpjE3sHwjPW9H1XbrCk8hKSL0IG-rzpAwNF4/edit) for irregexp needs and plans to implement the binding for irregexp to ICU4X.
+Due to the problem known as [catastrophic backtracking](https://v8.dev/blog/non-backtracking-regexp) work is underway to develop a non-backtracking based engine as part of Irregexp. Irregexp currently uses ICU4C, but Mozilla is interested in investing in ICU4X Unicode Properties API to provide a [better aligned and more performant API](https://docs.google.com/document/d/1pcJc8joXpjE3sHwjPW9H1XbrCk8hKSL0IG-rzpAwNF4/edit) for irregexp needs and plans to implement the binding for irregexp to ICU4X.
 
 ### Fuchsia
 
@@ -148,6 +142,8 @@ In order to balance the technical and business requirements of the project, the 
 Data Provider is the most crucial part of the ICU4X value proposition. High quality, flexible data management is required to prove the technical characteristics of the product, as well as provide business features that make ICU4X attractive to customers.
 
 DataProvider is necessary to meet performance requirements, validate FFI models, and enable production use of ICU4X.
+
+Additionally, flexible data provider gives users greater control over data / payload size and resource loading models.
 
 For production readiness, we’ll need to validate the DataProvider management model using synchronous and asynchronous I/O, and prove the concept of chained data management.
 
@@ -177,7 +173,7 @@ Unicode Properties API is also critical for our ability to harness the dynamic R
 
 ### Segmentation
 
-Segmentation aligns business needs, allowing us to attract Mozilla investment and in return getting ability to test our model in production supplying the needs of both Gecko layout engine and ECMA-402 component.
+Segmentation aligns with business needs, allowing us to attract Mozilla investment and in return getting ability to test our model in production supplying the needs of both Gecko layout engine and ECMA-402 component.
 
 The segmentation API carries also similar strategic value for the project as the Unicode Set as an attractor for the Rust community, but with a higher-level API allows us to validate performance claims in a performance-critical part of all layout needs which also serves our goal of attracting corporate interest in the project.
 
@@ -205,7 +201,7 @@ We’ll need to validate the ability to produce bindings to other programming la
 
 With the above listed components, ICU4X 1.0 will provide a comprehensive internationalization solution and validate its value proposition.
 
-Components listed below may be worth considering for 1.0 as resources and timing permits, but shouldn’t be necessary to prove the product.
+Components listed below are worth considering for 1.0 as resources and timing permits, but will not be necessary to prove the product.
 
 ### Collator
 
