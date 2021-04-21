@@ -4,6 +4,8 @@
 
 //! See [`ZeroMap`] for details.
 
+use crate::ule::AsULE;
+use crate::ZeroVec;
 use std::cmp::Ordering;
 
 mod kv;
@@ -14,10 +16,10 @@ mod vecs;
 pub use kv::ZeroMapKV;
 pub use vecs::ZeroVecLike;
 
-/// A zero-copy map datastructure, built on sorted binary-searchable [`ZeroVec`](crate::ZeroVec)
+/// A zero-copy map datastructure, built on sorted binary-searchable [`ZeroVec`]
 /// and [`VarZeroVec`](crate::VarZeroVec).
 ///
-/// This type, like [`ZeroVec`](crate::ZeroVec) and [`VarZeroVec`](crate::VarZeroVec), is able to zero-copy
+/// This type, like [`ZeroVec`] and [`VarZeroVec`](crate::VarZeroVec), is able to zero-copy
 /// deserialize from appropriately formatted byte buffers. It is internally copy-on-write, so it can be mutated
 /// afterwards as necessary.
 pub struct ZeroMap<'a, K, V>
@@ -217,5 +219,55 @@ where
     /// Produce an ordered iterator over keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
+    }
+}
+
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    V: AsULE + Copy,
+    V::ULE: 'static,
+{
+    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
+    pub fn get_copied(&self, key: &K::NeedleType) -> Option<V> {
+        let index = self.keys.binary_search(key).ok()?;
+        ZeroVec::get(&self.values, index)
+    }
+
+    /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
+    /// to `V::ULE`, in cases when `V` is fixed-size
+    pub fn iter_copied_values<'b>(
+        &'b self,
+    ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
+        (0..self.keys.len()).map(move |idx| {
+            (
+                self.keys.get(idx).unwrap(),
+                ZeroVec::get(&self.values, idx).unwrap(),
+            )
+        })
+    }
+}
+
+impl<'a, K, V> ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>>,
+    V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
+    K: AsULE + Copy,
+    V: AsULE + Copy,
+    K::ULE: 'static,
+    V::ULE: 'static,
+{
+    /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
+    /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
+    pub fn iter_copied<'b>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
+        let keys = &self.keys;
+        let values = &self.values;
+        (0..keys.len()).map(move |idx| {
+            (
+                ZeroVec::get(keys, idx).unwrap(),
+                ZeroVec::get(values, idx).unwrap(),
+            )
+        })
     }
 }
