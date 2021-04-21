@@ -17,20 +17,24 @@ where
     values: V::Container,
 }
 
-type NeedleTypeFor<'a, T> = <<T as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, T>>::NeedleType;
-type GetTypeFor<'a, T> = <<T as ZeroMapKV<'a>>::Container as ZeroVecLike<'a, T>>::GetType;
-
 impl<'a, K, V> ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
 {
-    pub fn get(&self, key: &NeedleTypeFor<'a, K>) -> Option<&GetTypeFor<'a, V>> {
+    pub fn get(&self, key: &K::NeedleType) -> Option<&V::GetType> {
         let index = self.keys.binary_search(key).ok()?;
         self.values.get(index)
     }
-    // pub fn insert(&self, key: K, value: V) -> Option<V> {
-    //     let index = self.keys.binary_search(key).ok()?;
-    //     self.values.get(index)
-    // }
+    pub fn insert(&mut self, key: K, value: V) -> Option<V> {
+        let key_needle = key.as_needle();
+        match self.keys.binary_search(key_needle) {
+            Ok(index) => Some(self.values.replace(index, value)),
+            Err(index) => {
+                self.keys.insert(index, key);
+                self.values.insert(index, value);
+                None
+            }
+        }
+    }
 }
