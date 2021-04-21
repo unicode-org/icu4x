@@ -17,6 +17,10 @@ pub trait ZeroVecLike<'a, T> {
     fn replace(&mut self, index: usize, value: T) -> T;
     fn push(&mut self, value: T);
     fn len(&self) -> usize;
+    fn new() -> Self;
+    fn with_capacity(cap: usize) -> Self;
+    fn clear(&mut self);
+    fn reserve(&mut self, addl: usize);
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -46,6 +50,18 @@ where
     }
     fn len(&self) -> usize {
         self.len()
+    }
+    fn new() -> Self {
+        ZeroVec::Owned(Vec::new())
+    }
+    fn with_capacity(cap: usize) -> Self {
+        ZeroVec::Owned(Vec::with_capacity(cap))
+    }
+    fn clear(&mut self) {
+        self.make_mut().clear()
+    }
+    fn reserve(&mut self, addl: usize) {
+        self.make_mut().reserve(addl)
     }
 }
 
@@ -77,5 +93,17 @@ where
     }
     fn len(&self) -> usize {
         self.len()
+    }
+    fn new() -> Self {
+        Vec::new().into()
+    }
+    fn with_capacity(cap: usize) -> Self {
+        Vec::with_capacity(cap).into()
+    }
+    fn clear(&mut self) {
+        self.make_mut().clear()
+    }
+    fn reserve(&mut self, addl: usize) {
+        self.make_mut().reserve(addl)
     }
 }
