@@ -15,6 +15,7 @@ pub trait ZeroVecLike<'a, T> {
     fn insert(&mut self, index: usize, value: T);
     fn remove(&mut self, index: usize) -> T;
     fn replace(&mut self, index: usize, value: T) -> T;
+    fn push(&mut self, value: T);
     fn len(&self) -> usize;
 }
 
@@ -39,6 +40,9 @@ where
     fn replace(&mut self, index: usize, value: T) -> T {
         let vec = self.make_mut();
         T::from_unaligned(&mem::replace(&mut vec[index], value.as_unaligned()))
+    }
+    fn push(&mut self, value: T) {
+        self.make_mut().push(value.as_unaligned())
     }
     fn len(&self) -> usize {
         self.len()
@@ -67,6 +71,9 @@ where
     fn replace(&mut self, index: usize, value: T) -> T {
         let vec = self.make_mut();
         mem::replace(&mut vec[index], value)
+    }
+    fn push(&mut self, value: T) {
+        self.make_mut().push(value)
     }
     fn len(&self) -> usize {
         self.len()

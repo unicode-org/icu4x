@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::cmp::Ordering;
+
 mod kv;
 mod vecs;
 
@@ -26,6 +28,12 @@ where
         let index = self.keys.binary_search(key).ok()?;
         self.values.get(index)
     }
+
+    pub fn contains_key(&self, key: &K) -> bool {
+        let key_needle = key.as_needle();
+        self.keys.binary_search(key_needle).is_ok()
+    }
+
     pub fn insert(&mut self, key: K, value: V) -> Option<V> {
         let key_needle = key.as_needle();
         match self.keys.binary_search(key_needle) {
@@ -36,5 +44,25 @@ where
                 None
             }
         }
+    }
+    pub fn remove(&mut self, key: K) -> Option<V> {
+        let key_needle = key.as_needle();
+        let idx = self.keys.binary_search(key_needle).ok()?;
+        self.keys.remove(idx);
+        Some(self.values.remove(idx))
+    }
+    pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
+        if self.keys.len() == 0 {
+            return Some((key, value))
+        }
+        if let Some(last) = self.keys.get(self.keys.len() - 1) {
+            if key.cmp_get(last) != Ordering::Greater {
+                return Some((key, value));
+            }
+        }
+
+        self.keys.push(key);
+        self.values.push(value);
+        None
     }
 }

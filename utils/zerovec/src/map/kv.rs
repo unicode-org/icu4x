@@ -6,6 +6,7 @@ use super::vecs::ZeroVecLike;
 use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
+use std::cmp::Ordering;
 
 // this lifetime should be a GAT on Container once that is possible
 pub trait ZeroMapKV<'a>: Sized {
@@ -14,6 +15,7 @@ pub trait ZeroMapKV<'a>: Sized {
     type NeedleType: ?Sized;
     type GetType: ?Sized;
     fn as_needle(&self) -> &Self::NeedleType;
+    fn cmp_get(&self, g: &Self::GetType) -> Ordering;
 }
 
 macro_rules! impl_sized_kv {
@@ -25,6 +27,9 @@ macro_rules! impl_sized_kv {
                 type GetType = <$ty as AsULE>::ULE;
                 fn as_needle(&self) -> &Self {
                     self
+                }
+                fn cmp_get(&self, g: &Self::GetType) -> Ordering {
+                    self.cmp(&$ty::from_unaligned(g))
                 }
             }
         )+
@@ -39,5 +44,8 @@ impl<'a> ZeroMapKV<'a> for String {
     type GetType = str;
     fn as_needle(&self) -> &str {
         &self
+    }
+    fn cmp_get(&self, g: &str) -> Ordering {
+        (&**self).cmp(g)
     }
 }
