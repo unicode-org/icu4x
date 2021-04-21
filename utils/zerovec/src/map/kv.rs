@@ -17,6 +17,7 @@ pub trait ZeroMapKV<'a>: Sized {
     type SerializeType: ?Sized;
     fn as_needle(&self) -> &Self::NeedleType;
     fn cmp_get(&self, g: &Self::GetType) -> Ordering;
+    fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering;
     // This uses a callback because it's not possible to return owned-or-borrowed
     // types without GATs
     fn get_as_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self::SerializeType) -> R) -> R;
@@ -35,6 +36,10 @@ macro_rules! impl_sized_kv {
                 }
                 fn cmp_get(&self, g: &Self::GetType) -> Ordering {
                     self.cmp(&$ty::from_unaligned(g))
+                }
+
+                fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering {
+                    $ty::from_unaligned(g1).cmp(&$ty::from_unaligned(g2))
                 }
                 fn get_as_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
                     f(&Self::from_unaligned(g))
@@ -56,6 +61,9 @@ impl<'a> ZeroMapKV<'a> for String {
     }
     fn cmp_get(&self, g: &str) -> Ordering {
         (&**self).cmp(g)
+    }
+    fn cmp_two_gets(g1: &str, g2: &str) -> Ordering {
+        g1.cmp(g2)
     }
     fn get_as_ser<R>(g: &str, f: impl FnOnce(&str) -> R) -> R {
         f(g)

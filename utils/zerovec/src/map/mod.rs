@@ -5,6 +5,8 @@
 use std::cmp::Ordering;
 
 mod kv;
+#[cfg(feature = "serde")]
+mod serde;
 mod vecs;
 
 pub use kv::ZeroMapKV;
@@ -187,24 +189,25 @@ where
     }
 
     /// Produce an ordered iterator over key-value pairs
-    pub fn iter<'b>(&'b self) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, &'b <V as ZeroMapKV<'a>>::GetType)> {
-        (0..self.keys.len()).map(move |idx| {
-            (self.keys.get(idx).unwrap(),
-             self.values.get(idx).unwrap())
-        })
+    pub fn iter<'b>(
+        &'b self,
+    ) -> impl Iterator<
+        Item = (
+            &'b <K as ZeroMapKV<'a>>::GetType,
+            &'b <V as ZeroMapKV<'a>>::GetType,
+        ),
+    > {
+        (0..self.keys.len())
+            .map(move |idx| (self.keys.get(idx).unwrap(), self.values.get(idx).unwrap()))
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
-        (0..self.keys.len()).map(move |idx| {
-            self.keys.get(idx).unwrap()
-        })
+        (0..self.keys.len()).map(move |idx| self.keys.get(idx).unwrap())
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
-        (0..self.values.len()).map(move |idx| {
-            self.values.get(idx).unwrap()
-        })
+        (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
     }
 }
