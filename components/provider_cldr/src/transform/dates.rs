@@ -161,10 +161,11 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
                     };
 
                     if !variant_parts.is_empty() {
-                        unimplemented!(
+                        eprintln!(
                             "This skeleton string is not yet supported: {:?}",
                             skeleton_str
                         );
+                        continue;
                     }
 
                     let pattern_v1 = PatternV1::try_from(pattern_str as &str)
