@@ -72,15 +72,12 @@ where
         // into our map.
         while let Some((key, value)) = access.next_entry()? {
             // Try to append it at the end, hoping for a sorted map.
-            // If not sorted, insert as usual.
-            // This allows for arbitrary maps (e.g. from user JSON)
-            // to be deserialized into LiteMap
-            // without impacting performance in the case of deserializing
+            // If not sorted, return an error
             // a serialized map that came from another LiteMap
-            if let Some((key, value)) = map.try_append(key, value) {
-                // Note: this effectively selection sorts the map,
-                // which isn't efficient for large maps
-                map.insert(key, value);
+            if let Some(_) = map.try_append(key, value) {
+                return Err(de::Error::custom(
+                    "ZeroMap's keys must be sorted while deserializing",
+                ));
             }
         }
 
