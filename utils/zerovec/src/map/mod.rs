@@ -114,9 +114,8 @@ where
     /// assert_eq!(map.contains_key(&1), true);
     /// assert_eq!(map.contains_key(&3), false);
     /// ```
-    pub fn contains_key(&self, key: &K) -> bool {
-        let key_needle = key.as_needle();
-        self.keys.binary_search(key_needle).is_ok()
+    pub fn contains_key(&self, key: &K::NeedleType) -> bool {
+        self.keys.binary_search(key).is_ok()
     }
 
     /// Insert `value` with `key`, returning the existing value if it exists.
