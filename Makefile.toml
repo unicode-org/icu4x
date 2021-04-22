@@ -109,7 +109,7 @@ output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     if contains ${output.stdout} README.md
         msg = array "" ""
-        array_push ${msg} "A README.md file is out-of-sync with lib.rs!
+        array_push ${msg} "A README.md file is out-of-sync with lib.rs
         array_push ${msg} ""
         array_push ${msg} "If you modified a lib.rs file, please run `cargo make generate-readmes`. If you edited a"
         array_push ${msg} "README.md file directly, please also update the corresponding lib.rs."
