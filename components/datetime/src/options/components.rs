@@ -281,14 +281,14 @@ impl Default for Bag {
     fn default() -> Self {
         Self {
             era: None,
-            year: Some(Numeric::Numeric),
-            month: Some(Month::Long),
-            day: Some(Numeric::Numeric),
+            year: None,
+            month: None,
+            day: None,
             weekday: None,
 
-            hour: Some(Numeric::Numeric),
-            minute: Some(Numeric::Numeric),
-            second: Some(Numeric::Numeric),
+            hour: None,
+            minute: None,
+            second: None,
 
             time_zone_name: None,
 
