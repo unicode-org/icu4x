@@ -59,7 +59,7 @@ where
     type Value = ZeroMap<'de, K, V>;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a map produced by LiteMap")
+        formatter.write_str("a map produced by ZeroMap")
     }
 
     fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
@@ -73,7 +73,7 @@ where
         while let Some((key, value)) = access.next_entry()? {
             // Try to append it at the end, hoping for a sorted map.
             // If not sorted, return an error
-            // a serialized map that came from another LiteMap
+            // a serialized map that came from another ZeroMap
             if let Some(_) = map.try_append(key, value) {
                 return Err(de::Error::custom(
                     "ZeroMap's keys must be sorted while deserializing",
