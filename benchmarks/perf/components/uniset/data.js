@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1618973494887,
+  "lastUpdate": 1619113531957,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5459,6 +5459,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31799315,
             "range": "± 2167817",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6daf09323a50001967fcabd778d96aa9176f3cc5",
+          "message": "Make it so that unsupported skeleton fields only emit a warning (#670)",
+          "timestamp": "2021-04-22T12:38:53-05:00",
+          "tree_id": "68d8c45c4df3696e814f2666ec28c859ec5aabda",
+          "url": "https://github.com/unicode-org/icu4x/commit/6daf09323a50001967fcabd778d96aa9176f3cc5"
+        },
+        "date": 1619113530824,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35252202,
+            "range": "± 904418",
             "unit": "ns/iter"
           }
         ]
