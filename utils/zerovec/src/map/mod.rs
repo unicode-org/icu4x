@@ -215,7 +215,7 @@ where
         (0..self.keys.len()).map(move |idx| self.keys.get(idx).unwrap())
     }
 
-    /// Produce an ordered iterator over values
+    /// Produce an iterator over values, ordered by keys
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
     }
@@ -226,7 +226,6 @@ where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
     V: AsULE + Copy,
-    V::ULE: 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K::NeedleType) -> Option<V> {
@@ -254,8 +253,6 @@ where
     V: ZeroMapKV<'a, Container = ZeroVec<'a, V>>,
     K: AsULE + Copy,
     V: AsULE + Copy,
-    K::ULE: 'static,
-    V::ULE: 'static,
 {
     /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
