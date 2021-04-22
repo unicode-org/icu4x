@@ -5,6 +5,7 @@
 use crate::ule::*;
 use crate::VarZeroVec;
 use crate::ZeroVec;
+use std::cmp::Ordering;
 use std::mem;
 
 /// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`]. You
@@ -38,6 +39,8 @@ pub trait ZeroVecLike<'a, T> {
     fn clear(&mut self);
     /// Reserve space for `addl` additional elements
     fn reserve(&mut self, addl: usize);
+    /// Check if this vector is in ascending order according to `T`s `Ord` impl
+    fn is_ascending(&self) -> bool;
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -79,6 +82,11 @@ where
     }
     fn reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
+    }
+    fn is_ascending(&self) -> bool {
+        self.as_slice()
+            .windows(2)
+            .all(|w| T::from_unaligned(&w[1]).cmp(&T::from_unaligned(&w[0])) == Ordering::Greater)
     }
 }
 
@@ -122,5 +130,17 @@ where
     }
     fn reserve(&mut self, addl: usize) {
         self.make_mut().reserve(addl)
+    }
+    fn is_ascending(&self) -> bool {
+        if self.len() > 0 {
+            let mut prev = self.get(0).unwrap();
+            for element in self.iter().skip(1) {
+                if element.cmp(prev) != Ordering::Greater {
+                    return false;
+                }
+                prev = element;
+            }
+        }
+        true
     }
 }

@@ -6,7 +6,6 @@ use super::{ZeroMap, ZeroMapKV, ZeroVecLike};
 use serde::de::{self, MapAccess, Visitor};
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::cmp::Ordering;
 use std::fmt;
 use std::marker::PhantomData;
 
@@ -108,15 +107,8 @@ where
                     "Mismatched key and value sizes in ZeroMap",
                 ));
             }
-            if keys.len() > 0 {
-                let mut prev = keys.get(0).unwrap();
-                for i in 1..keys.len() {
-                    let cur = keys.get(i).unwrap();
-                    if K::cmp_two_gets(&cur, &prev) != Ordering::Greater {
-                        return Err(de::Error::custom("ZeroMap deserializing keys out of order"));
-                    }
-                    prev = cur;
-                }
+            if !keys.is_ascending() {
+                return Err(de::Error::custom("ZeroMap deserializing keys out of order"));
             }
             Ok(Self { keys, values })
         }

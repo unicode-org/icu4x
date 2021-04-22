@@ -34,8 +34,6 @@ pub trait ZeroMapKV<'a>: Sized {
     /// Compare this type with a `Self::GetType`. This must produce the same result as
     /// if `g` were converted to `Self`
     fn cmp_get(&self, g: &Self::GetType) -> Ordering;
-    /// Compare two `Self::GetType`s, as if they were both converted to `Self`
-    fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering;
     /// Obtain a version of this type suitable for serialization
     ///
     /// This uses a callback because it's not possible to return owned-or-borrowed
@@ -57,9 +55,6 @@ macro_rules! impl_sized_kv {
                 self.cmp(&$ty::from_unaligned(g))
             }
 
-            fn cmp_two_gets(g1: &Self::GetType, g2: &Self::GetType) -> Ordering {
-                $ty::from_unaligned(g1).cmp(&$ty::from_unaligned(g2))
-            }
             fn with_ser<R>(g: &Self::GetType, f: impl FnOnce(&Self) -> R) -> R {
                 f(&Self::from_unaligned(g))
             }
@@ -88,9 +83,7 @@ impl<'a> ZeroMapKV<'a> for String {
     fn cmp_get(&self, g: &str) -> Ordering {
         (&**self).cmp(g)
     }
-    fn cmp_two_gets(g1: &str, g2: &str) -> Ordering {
-        g1.cmp(g2)
-    }
+
     fn with_ser<R>(g: &str, f: impl FnOnce(&str) -> R) -> R {
         f(g)
     }
