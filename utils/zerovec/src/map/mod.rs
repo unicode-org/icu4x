@@ -215,7 +215,7 @@ where
         (0..self.keys.len()).map(move |idx| self.keys.get(idx).unwrap())
     }
 
-    /// Produce an ordered iterator over keys
+    /// Produce an ordered iterator over values
     pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         (0..self.values.len()).map(move |idx| self.values.get(idx).unwrap())
     }
