@@ -243,7 +243,7 @@ jobs:
 
       - name: Store benchmark result & create dashboard (merge to main only)
         # only merges to main (implies PR is finished and approved by this point)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
         uses: rhysd/github-action-benchmark@v1.8.1
         with:
           name: Rust Benchmark
@@ -263,11 +263,11 @@ jobs:
       # Benchmarking & dashboards job > Upload output dashboard HTML to "persist" the files across jobs within the same workflow.
 
       - name: Switch branch to get result of benchmark pages output (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
         run: git checkout gh-pages
 
       - name: Upload updated benchmark data (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
         uses: actions/upload-artifact@v2
         with:
           path: ./benchmarks/perf/**  # use wildcard pattern to preserve dir structure of uploaded files
@@ -371,7 +371,7 @@ jobs:
 
       - name: Store benchmark result & create dashboard (merge to main only)
         # only merges to main (implies PR is finished and approved by this point)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
         # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
         # If the PR gets merged, this can be switched back to the main project.
         # https://github.com/rhysd/github-action-benchmark/pull/54
@@ -398,11 +398,11 @@ jobs:
       # files across jobs within the same workflow.
 
       - name: Switch branch to get result of benchmark pages output (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
         run: git checkout gh-pages
 
       - name: Upload updated benchmark data (merge to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
         uses: actions/upload-artifact@v2
         with:
           # Use wildcard pattern to preserve dir structure of uploaded files:
@@ -420,7 +420,7 @@ jobs:
 
     ## Only create docs for merges/pushes to main (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
 
     steps:
     - uses: actions/checkout@v2
