@@ -364,7 +364,7 @@ where
     ///
     /// # Example
     ///
-    /// ```
+    /// ```rust,ignore
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
@@ -375,7 +375,10 @@ where
     /// zerovec.make_mut().push(12_u16.as_unaligned());
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// ```
-    pub fn make_mut(&mut self) -> &mut Vec<T::ULE> {
+    //
+    // This function is crate-public for now since we don't yet want to stabilize
+    // the internal implementation details
+    pub(crate) fn make_mut(&mut self) -> &mut Vec<T::ULE> {
         match self {
             ZeroVec::Owned(ref mut vec) => return vec,
             ZeroVec::Borrowed(_) => {
