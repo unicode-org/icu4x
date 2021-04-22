@@ -351,7 +351,17 @@ mod test {
 
     #[test]
     fn test_component_bag_to_vec_field() {
-        let bag = Bag::default();
+        let bag = Bag {
+            year: Some(Numeric::Numeric),
+            month: Some(Month::Long),
+            day: Some(Numeric::Numeric),
+
+            hour: Some(Numeric::Numeric),
+            minute: Some(Numeric::Numeric),
+            second: Some(Numeric::Numeric),
+
+            ..Default::default()
+        };
         assert_eq!(
             bag.to_vec_fields(),
             vec![
@@ -368,16 +378,10 @@ mod test {
     #[test]
     fn test_component_bag_to_vec_field2() {
         let bag = Bag {
-            era: None,
             year: Some(Numeric::Numeric),
             month: Some(Month::TwoDigit),
             day: Some(Numeric::Numeric),
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
-            time_zone_name: None,
-            preferences: None,
+            ..Default::default()
         };
         assert_eq!(
             bag.to_vec_fields(),
