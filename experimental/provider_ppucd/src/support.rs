@@ -111,6 +111,8 @@ impl<'d> IterableDataProviderCore for PpucdDataProvider<'d> {
 
 #[test]
 fn test_ppucd_provider_parse() {
+    use icu_uniset::UnicodeSet;
+
     let ppucd_property_files_root_path = "tests/testdata/ppucd-wspace-test.txt";
     let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
@@ -128,10 +130,11 @@ fn test_ppucd_provider_parse() {
     let ppucd_property_cow: Cow<UnicodePropertyV1> = resp.payload.take().unwrap();
     let exp_prop_uniset: UnicodePropertyV1 = UnicodePropertyV1 {
         name: Cow::Borrowed("WSpace"),
-        inv_list: vec![
+        inv_list: UnicodeSet::from_inversion_list(vec![
             9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240,
             8287, 8288, 12288, 12289,
-        ],
+        ])
+        .unwrap(),
     };
     assert_eq!(exp_prop_uniset, ppucd_property_cow.into_owned());
 }

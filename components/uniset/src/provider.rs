@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
 use std::borrow::Cow;
 use std::convert::TryInto;
@@ -654,33 +655,28 @@ pub mod key {
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnicodePropertyV1<'s> {
     pub name: Cow<'s, str>,
-    pub inv_list: Vec<u32>,
+    pub inv_list: UnicodeSet,
 }
 
 impl Default for UnicodePropertyV1<'static> {
     /// Default empty nameless property
-    fn default() -> UnicodePropertyV1
-<'static> {
-        UnicodePropertyV1
-     {
+    fn default() -> UnicodePropertyV1<'static> {
+        UnicodePropertyV1 {
             name: Cow::Borrowed(""),
-            inv_list: vec![],
+            inv_list: UnicodeSetBuilder::new().build(),
         }
     }
 }
 
 impl<'s> UnicodePropertyV1<'s> {
-    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodePropertyV1
-<'s> {
-        let inv_list = set.get_inversion_list();
-        UnicodePropertyV1
-     { name, inv_list }
+    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodePropertyV1<'s> {
+        UnicodePropertyV1 { name, inv_list: set.clone() }
     }
 }
 
 impl<'s> TryInto<UnicodeSet> for UnicodePropertyV1<'s> {
     type Error = crate::UnicodeSetError;
     fn try_into(self) -> Result<UnicodeSet, Self::Error> {
-        UnicodeSet::from_inversion_list(self.inv_list)
+        Ok(self.inv_list)
     }
 }
