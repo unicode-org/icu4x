@@ -9,7 +9,7 @@ use std::u32;
 
 use crate::enum_prop_mapping::get_prop_name_identifier;
 use crate::support::UnicodeProperties;
-use icu_uniset::provider::UnicodeProperty;
+use icu_uniset::provider::UnicodePropertyV1;
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 use tinystr::TinyStr16;
 
@@ -402,7 +402,7 @@ fn get_enum_val_canonical_mapping<'s>(
 /// Parse a whole PPUCD file that was loaded into a string slice and return a
 /// struct of the binary and enumerated property inversion lists.
 /// Note: even though `UnicodeProperties` stores a sequential data structure of
-/// the `UnicodeProperty` struct, there is no inherent ordering of the entries.
+/// the `UnicodePropertyV1` struct, there is no inherent ordering of the entries.
 pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     let lines: std::str::Lines = s.lines();
 
@@ -460,9 +460,9 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
     }
 
     // This vector becomes the return value for the fn. Push each new
-    // `UnicodeProperty` constructed from each UnicodeSet + name for all of the
+    // `UnicodePropertyV1` constructed from each UnicodeSet + name for all of the
     // binary properties and enumerated properties parsed from the input.
-    let mut props: Vec<UnicodeProperty> = vec![];
+    let mut props: Vec<UnicodePropertyV1> = vec![];
 
     let binary_prop_unisets: HashMap<&'s str, UnicodeSet> =
         get_binary_prop_unisets(&binary_prop_aliases, &code_points);
@@ -471,8 +471,8 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
         get_enum_prop_unisets(&enum_prop_aliases, &enum_val_aliases, &code_points);
 
     for (canonical_name, uniset) in binary_prop_unisets {
-        let ppucd_prop: UnicodeProperty =
-            UnicodeProperty::from_uniset(&uniset, Cow::Borrowed(canonical_name));
+        let ppucd_prop: UnicodePropertyV1 =
+            UnicodePropertyV1::from_uniset(&uniset, Cow::Borrowed(canonical_name));
         props.push(ppucd_prop);
     }
 
@@ -481,8 +481,8 @@ pub fn parse<'s>(s: &'s str) -> UnicodeProperties<'s> {
             Cow::Borrowed(tiny_str) => Cow::Borrowed(tiny_str.as_str()),
             Cow::Owned(tiny_str) => Cow::Owned(tiny_str.to_string()),
         };
-        let ppucd_prop: UnicodeProperty =
-            UnicodeProperty::from_uniset(&uniset, key_val_tuple_name_str);
+        let ppucd_prop: UnicodePropertyV1 =
+            UnicodePropertyV1::from_uniset(&uniset, key_val_tuple_name_str);
         props.push(ppucd_prop);
     }
 
@@ -875,217 +875,217 @@ mod gen_properties_test {
         // Actual
         let uni_props: UnicodeProperties = parse(&ppucd_property_file_str);
         // Convert actual to testable form
-        let act_uni_props_set: HashSet<UnicodeProperty> = HashSet::from_iter(uni_props.props);
+        let act_uni_props_set: HashSet<UnicodePropertyV1> = HashSet::from_iter(uni_props.props);
 
         // Expected
-        let mut exp_uni_props_set: HashSet<UnicodeProperty> = HashSet::new();
-        let gc_lo = UnicodeProperty {
+        let mut exp_uni_props_set: HashSet<UnicodePropertyV1> = HashSet::new();
+        let gc_lo = UnicodePropertyV1 {
             name: Cow::Borrowed("5=10"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(gc_lo);
-        let gc_mn = UnicodeProperty {
+        let gc_mn = UnicodePropertyV1 {
             name: Cow::Borrowed("5=16"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(gc_mn);
-        let gr_base = UnicodeProperty {
+        let gr_base = UnicodePropertyV1 {
             name: Cow::Borrowed("Gr_Base"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(gr_base);
-        let idc = UnicodeProperty {
+        let idc = UnicodePropertyV1 {
             name: Cow::Borrowed("IDC"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(idc);
-        let ids = UnicodeProperty {
+        let ids = UnicodePropertyV1 {
             name: Cow::Borrowed("IDS"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(ids);
-        let insc_consonant = UnicodeProperty {
+        let insc_consonant = UnicodePropertyV1 {
             name: Cow::Borrowed("9=4"),
             inv_list: vec![5891, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(insc_consonant);
-        let insc_vowel_independent = UnicodeProperty {
+        let insc_vowel_independent = UnicodePropertyV1 {
             name: Cow::Borrowed("9=35"),
             inv_list: vec![5888, 5891],
         };
         exp_uni_props_set.insert(insc_vowel_independent);
-        let insc_vowel_dependent = UnicodeProperty {
+        let insc_vowel_dependent = UnicodePropertyV1 {
             name: Cow::Borrowed("9=34"),
             inv_list: vec![5906, 5908],
         };
         exp_uni_props_set.insert(insc_vowel_dependent);
-        let insc_pure_killer = UnicodeProperty {
+        let insc_pure_killer = UnicodePropertyV1 {
             name: Cow::Borrowed("9=26"),
             inv_list: vec![5908, 5909],
         };
         exp_uni_props_set.insert(insc_pure_killer);
-        let lb_al = UnicodeProperty {
+        let lb_al = UnicodePropertyV1 {
             name: Cow::Borrowed("12=1"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(lb_al);
-        let lb_cm = UnicodeProperty {
+        let lb_cm = UnicodePropertyV1 {
             name: Cow::Borrowed("12=9"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(lb_cm);
-        let sb_le = UnicodeProperty {
+        let sb_le = UnicodePropertyV1 {
             name: Cow::Borrowed("19=5"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(sb_le);
-        let sb_ex = UnicodeProperty {
+        let sb_ex = UnicodePropertyV1 {
             name: Cow::Borrowed("19=3"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(sb_ex);
-        let wb_le = UnicodeProperty {
+        let wb_le = UnicodePropertyV1 {
             name: Cow::Borrowed("22=11"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(wb_le);
-        let wb_extend = UnicodeProperty {
+        let wb_extend = UnicodePropertyV1 {
             name: Cow::Borrowed("22=6"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(wb_extend);
-        let xidc = UnicodeProperty {
+        let xidc = UnicodePropertyV1 {
             name: Cow::Borrowed("XIDC"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(xidc);
-        let xids = UnicodeProperty {
+        let xids = UnicodePropertyV1 {
             name: Cow::Borrowed("XIDS"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(xids);
-        let bc_l = UnicodeProperty {
+        let bc_l = UnicodePropertyV1 {
             name: Cow::Borrowed("0=9"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(bc_l);
-        let bc_nsm = UnicodeProperty {
+        let bc_nsm = UnicodePropertyV1 {
             name: Cow::Borrowed("0=13"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(bc_nsm);
-        let ci = UnicodeProperty {
+        let ci = UnicodePropertyV1 {
             name: Cow::Borrowed("CI"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(ci);
-        let gcb_ex = UnicodeProperty {
+        let gcb_ex = UnicodePropertyV1 {
             name: Cow::Borrowed("6=5"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(gcb_ex);
-        let gcb_xx = UnicodeProperty {
+        let gcb_xx = UnicodePropertyV1 {
             name: Cow::Borrowed("6=16"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(gcb_xx);
-        let gr_ext = UnicodeProperty {
+        let gr_ext = UnicodePropertyV1 {
             name: Cow::Borrowed("Gr_Ext"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(gr_ext);
-        let inpc_al = UnicodeProperty {
+        let inpc_al = UnicodePropertyV1 {
             name: Cow::Borrowed("8=5"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(inpc_al);
-        let inpc_top = UnicodeProperty {
+        let inpc_top = UnicodePropertyV1 {
             name: Cow::Borrowed("8=8"),
             inv_list: vec![5906, 5907],
         };
         exp_uni_props_set.insert(inpc_top);
-        let inpc_bottom = UnicodeProperty {
+        let inpc_bottom = UnicodePropertyV1 {
             name: Cow::Borrowed("8=0"),
             inv_list: vec![5907, 5909],
         };
         exp_uni_props_set.insert(inpc_bottom);
 
-        let jt_u = UnicodeProperty {
+        let jt_u = UnicodePropertyV1 {
             name: Cow::Borrowed("11=5"),
             inv_list: vec![5888, 5901, 5902, 5906],
         };
         exp_uni_props_set.insert(jt_u);
-        let jt_t = UnicodeProperty {
+        let jt_t = UnicodePropertyV1 {
             name: Cow::Borrowed("11=4"),
             inv_list: vec![5906, 5909],
         };
         exp_uni_props_set.insert(jt_t);
-        let alpha = UnicodeProperty {
+        let alpha = UnicodePropertyV1 {
             name: Cow::Borrowed("Alpha"),
             inv_list: vec![5888, 5901, 5902, 5908],
         };
         exp_uni_props_set.insert(alpha);
-        let nfd_qc_y = UnicodeProperty {
+        let nfd_qc_y = UnicodePropertyV1 {
             name: Cow::Borrowed("15=1"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(nfd_qc_y);
-        let nfc_qc_y = UnicodeProperty {
+        let nfc_qc_y = UnicodePropertyV1 {
             name: Cow::Borrowed("14=2"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(nfc_qc_y);
-        let nfkd_qc_y = UnicodeProperty {
+        let nfkd_qc_y = UnicodePropertyV1 {
             name: Cow::Borrowed("17=1"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(nfkd_qc_y);
-        let nfkc_qc_y = UnicodeProperty {
+        let nfkc_qc_y = UnicodePropertyV1 {
             name: Cow::Borrowed("16=2"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(nfkc_qc_y);
-        let jg_no_joining_group = UnicodeProperty {
+        let jg_no_joining_group = UnicodePropertyV1 {
             name: Cow::Borrowed("10=71"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(jg_no_joining_group);
-        let dt_none = UnicodeProperty {
+        let dt_none = UnicodePropertyV1 {
             name: Cow::Borrowed("3=11"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(dt_none);
-        let nt_none = UnicodeProperty {
+        let nt_none = UnicodePropertyV1 {
             name: Cow::Borrowed("18=2"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(nt_none);
-        let ea_n = UnicodeProperty {
+        let ea_n = UnicodePropertyV1 {
             name: Cow::Borrowed("4=3"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(ea_n);
-        let vo_r = UnicodeProperty {
+        let vo_r = UnicodePropertyV1 {
             name: Cow::Borrowed("21=0"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(vo_r);
-        let ccc_9 = UnicodeProperty {
+        let ccc_9 = UnicodePropertyV1 {
             name: Cow::Borrowed("2=9"),
             inv_list: vec![5908, 5909],
         };
         exp_uni_props_set.insert(ccc_9);
-        let hst_na = UnicodeProperty {
+        let hst_na = UnicodePropertyV1 {
             name: Cow::Borrowed("7=3"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
         exp_uni_props_set.insert(hst_na);
-        let gr_link = UnicodeProperty {
+        let gr_link = UnicodePropertyV1 {
             name: Cow::Borrowed("Gr_Link"),
             inv_list: vec![5908, 5909],
         };
         exp_uni_props_set.insert(gr_link);
-        let bpt_n = UnicodeProperty {
+        let bpt_n = UnicodePropertyV1 {
             name: Cow::Borrowed("1=1"),
             inv_list: vec![5888, 5901, 5902, 5909],
         };
@@ -1117,7 +1117,7 @@ mod gen_properties_test {
             .join(", ");
         assert_eq!(
             exp_uni_props_set, act_uni_props_set,
-            "**** UnicodeProperty values missing in exp but in act = {}",
+            "**** UnicodePropertyV1 values missing in exp but in act = {}",
             diff_str
         );
     }

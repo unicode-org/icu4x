@@ -652,29 +652,33 @@ pub mod key {
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct UnicodeProperty<'s> {
+pub struct UnicodePropertyV1<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: Vec<u32>,
 }
 
-impl Default for UnicodeProperty<'static> {
+impl Default for UnicodePropertyV1<'static> {
     /// Default empty nameless property
-    fn default() -> UnicodeProperty<'static> {
-        UnicodeProperty {
+    fn default() -> UnicodePropertyV1
+<'static> {
+        UnicodePropertyV1
+     {
             name: Cow::Borrowed(""),
             inv_list: vec![],
         }
     }
 }
 
-impl<'s> UnicodeProperty<'s> {
-    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodeProperty<'s> {
+impl<'s> UnicodePropertyV1<'s> {
+    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodePropertyV1
+<'s> {
         let inv_list = set.get_inversion_list();
-        UnicodeProperty { name, inv_list }
+        UnicodePropertyV1
+     { name, inv_list }
     }
 }
 
-impl<'s> TryInto<UnicodeSet> for UnicodeProperty<'s> {
+impl<'s> TryInto<UnicodeSet> for UnicodePropertyV1<'s> {
     type Error = crate::UnicodeSetError;
     fn try_into(self) -> Result<UnicodeSet, Self::Error> {
         UnicodeSet::from_inversion_list(self.inv_list)
