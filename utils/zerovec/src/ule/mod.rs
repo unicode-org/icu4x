@@ -18,7 +18,7 @@ pub use plain::PlainOldULE;
 pub trait ULE
 where
     Self: Sized,
-    Self: 'static
+    Self: 'static,
 {
     /// The error that occurs if a byte array is not valid for this ULE.
     type Error;
