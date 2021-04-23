@@ -73,10 +73,12 @@
 //! # } // feature = "serde"
 //! ```
 
+pub mod map;
 pub mod samples;
 pub mod ule;
 mod varzerovec;
 mod zerovec;
 
+pub use crate::map::ZeroMap;
 pub use crate::varzerovec::{VarZeroVec, VarZeroVecError};
 pub use crate::zerovec::ZeroVec;

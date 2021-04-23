@@ -290,7 +290,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// # Example
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// # use std::str::Utf8Error;
     /// # use zerovec::VarZeroVecError;
     /// # use zerovec::VarZeroVec;
@@ -311,7 +311,10 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// assert_eq!(&vec[4], "lorem ipsum");
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
-    pub fn make_mut(&mut self) -> &mut Vec<T>
+    //
+    // This function is crate-public for now since we don't yet want to stabilize
+    // the internal implementation details
+    pub(crate) fn make_mut(&mut self) -> &mut Vec<T>
     where
         T: Clone,
     {
