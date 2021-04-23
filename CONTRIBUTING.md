@@ -49,7 +49,7 @@ Such commits do not have to pass tests in isolation, and need only to be meaning
 
 Once the pull request is ready for review and passes all tests, the author can switch from draft to regular pull request.
 
-At this point, the pull request will be triaged during the next triage session and reviewers will be assigned to it.
+At this point, the pull request will be triaged during the next triage session and reviewers will be assigned to it. The pull request author may also request reviews from specific individuals. When doing so, it is encouraged to communicate the desired review focus to these reviewers.
 
 In this phase, any changes applied to the pull request should result in additive commits to it. This allows reviewers to see what changes have been made in result of their feedback and evaluate them.
 
