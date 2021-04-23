@@ -61,6 +61,10 @@ If the author has the editing rights to the repository merging should be perform
 
 If the pull request modifies code in one of the recognized components, one of the component owners should be on the reviewers list for the pull request. For the list of components and their owners, see [CODEOWNERS](CODEOWNERS).
 
+The author of the pull request should feel free to remove pending reviewers if they have at least one approving review and feel that the pull request is sufficiently reviewed.
+
+If minor changes have been made after the approving review that it is clear that the reviewer will not care about (e.g. applying `cargo fmt`, or addressing minor leftover review comments), it is acceptable to ask other maintainers for a "rubber stamp" review on Slack or elsewhere, as a workaround to GitHub not allowing self-approvals from maintainers.
+
 ## Review Model
 
 Every project has its own code authoring and review culture which grows organically as the project matures and is a subject to change.
@@ -78,10 +82,7 @@ The reviewer is responsible for accepting a pull request only once they feel the
 
 The *approve* can be set with pending review comments, if those comments don't affect whether the patch is ready to be merged (for example, they're stylistic suggestions).
 
-The reviewer should communicate the nature of their review comments - specifically, between the three types: *"blocking"*, *"suggestion"*, and *"optional"*.
-* **blocking** is when the reviewer considers the change to be unmergable and requires a new revision.
-* **suggestion** is for when the reviewer considers the change to be suboptimal, but usable, and wants to defer the decision to the PR author, while stating their opinion.
-* **optional** is for when the reviewer considers multiple options to be mostly comparable or tradeoffs, and wants to defer to the PR author for the final decision after bringing up a new option.
+We try to use [Conventional Comments](https://conventionalcomments.org/) for review comments, explicitly marking the weight and blocking nature of each review comment.
 
 ### Social Contract
 
