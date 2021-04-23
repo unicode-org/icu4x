@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619200035584,
+  "lastUpdate": 1619205608948,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4469,6 +4469,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 135590,
             "range": "± 7044",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6030ec10e49651651b5145ede735e9b2a8a9b306",
+          "message": "Update CONTRIBUTING.md with review dismiss rules and Conventional Comments (#678)\n\n* Update CONTRIBUTING.md with review dismiss rules and Conventional Comments\r\n\r\n* Mention manual reviewers",
+          "timestamp": "2021-04-23T12:13:33-07:00",
+          "tree_id": "28a2c66575130c374086e93c08064822949db5af",
+          "url": "https://github.com/unicode-org/icu4x/commit/6030ec10e49651651b5145ede735e9b2a8a9b306"
+        },
+        "date": 1619205607908,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 162146,
+            "range": "± 3103",
             "unit": "ns/iter"
           }
         ]
