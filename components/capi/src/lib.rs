@@ -4,6 +4,7 @@
 
 #![allow(clippy::upper_case_acronyms)]
 
+pub mod fixed_decimal;
 pub mod locale;
 pub mod pluralrules;
 pub mod provider;
