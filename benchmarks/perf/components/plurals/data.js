@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619464314869,
+  "lastUpdate": 1619475289696,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6383,6 +6383,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 108014,
             "range": "± 5705",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9015f7820c614afd288567efb2cd80b1eccd2a2e",
+          "message": "Update failing generated-readme-check error message (#641)",
+          "timestamp": "2021-04-26T17:07:01-05:00",
+          "tree_id": "ad42378f451284a1a1ac7b05308b91f7e8c43b5d",
+          "url": "https://github.com/unicode-org/icu4x/commit/9015f7820c614afd288567efb2cd80b1eccd2a2e"
+        },
+        "date": 1619475285151,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1201,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7571,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 110937,
+            "range": "± 8643",
             "unit": "ns/iter"
           }
         ]
