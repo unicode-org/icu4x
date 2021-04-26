@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619462169973,
+  "lastUpdate": 1619464347937,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6077,6 +6077,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5283,
             "range": "± 330",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "04ec2da09a759409019103e3aa7ca65337811cd1",
+          "message": "Change the components bag to default to None (#675)",
+          "timestamp": "2021-04-26T14:04:45-05:00",
+          "tree_id": "57980f5a294511c1540dd4902a0e0a38e1a8d586",
+          "url": "https://github.com/unicode-org/icu4x/commit/04ec2da09a759409019103e3aa7ca65337811cd1"
+        },
+        "date": 1619464346823,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3801,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 6185,
+            "range": "± 150",
             "unit": "ns/iter"
           }
         ]
