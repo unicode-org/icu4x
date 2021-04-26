@@ -675,7 +675,17 @@ mod test {
     /// testing see components/datetime/tests/fixtures/tests/components-*.json
     #[test]
     fn test_skeleton_matching() {
-        let components = components::Bag::default();
+        let components = components::Bag {
+            year: Some(components::Numeric::Numeric),
+            month: Some(components::Month::Long),
+            day: Some(components::Numeric::Numeric),
+
+            hour: Some(components::Numeric::Numeric),
+            minute: Some(components::Numeric::Numeric),
+            second: Some(components::Numeric::Numeric),
+
+            ..Default::default()
+        };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
 
@@ -699,16 +709,9 @@ mod test {
     #[test]
     fn test_skeleton_matching_missing_fields() {
         let components = components::Bag {
-            era: None,
-            year: None,
             month: Some(components::Month::Numeric),
-            day: None,
             weekday: Some(components::Text::Short),
-            hour: None,
-            minute: None,
-            second: None,
-            time_zone_name: None,
-            preferences: None,
+            ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
@@ -728,17 +731,12 @@ mod test {
     #[test]
     fn test_missing_append_items_support() {
         let components = components::Bag {
-            era: None,
             year: Some(components::Numeric::Numeric),
             month: Some(components::Month::Long),
             day: Some(components::Numeric::Numeric),
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
             // This will be appended.
             time_zone_name: Some(components::TimeZoneName::Long),
-            preferences: None,
+            ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
@@ -762,18 +760,7 @@ mod test {
 
     #[test]
     fn test_skeleton_empty_bag() {
-        let components = components::Bag {
-            era: None,
-            year: None,
-            month: None,
-            day: None,
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
-            time_zone_name: None,
-            preferences: None,
-        };
+        let components: components::Bag = Default::default();
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
 
@@ -792,16 +779,8 @@ mod test {
     #[test]
     fn test_skeleton_no_match() {
         let components = components::Bag {
-            era: None,
-            year: None,
-            month: None,
-            day: None,
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
             time_zone_name: Some(components::TimeZoneName::Long),
-            preferences: None,
+            ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
         let data_provider = get_data_provider();
