@@ -108,7 +108,16 @@ output = exec git status --porcelain=v1 -uno
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     if contains ${output.stdout} README.md
-        trigger_error "Found non-automatically generated README.md:\n ${output.stdout}"
+        msg = array "" ""
+        array_push ${msg} "A README.md file is out-of-sync with lib.rs"
+        array_push ${msg} ""
+        array_push ${msg} "If you modified a lib.rs file, please run `cargo make generate-readmes`. If you edited a"
+        array_push ${msg} "README.md file directly, please also update the corresponding lib.rs."
+        array_push ${msg} ""
+        array_push ${msg} "The modified files were:"
+        array_push ${msg} "${output.stdout}"
+        msg = array_join ${msg} "\n"
+        trigger_error ${msg}
     end
 end
 '''
