@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619464347937,
+  "lastUpdate": 1619475205666,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6113,6 +6113,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 6185,
             "range": "± 150",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9015f7820c614afd288567efb2cd80b1eccd2a2e",
+          "message": "Update failing generated-readme-check error message (#641)",
+          "timestamp": "2021-04-26T17:07:01-05:00",
+          "tree_id": "ad42378f451284a1a1ac7b05308b91f7e8c43b5d",
+          "url": "https://github.com/unicode-org/icu4x/commit/9015f7820c614afd288567efb2cd80b1eccd2a2e"
+        },
+        "date": 1619475204753,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2771,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4401,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
