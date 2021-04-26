@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619205608948,
+  "lastUpdate": 1619462124006,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4499,6 +4499,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 162146,
             "range": "± 3103",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "62d541647835d9c8af7cfd5110e8e3973f1105d1",
+          "message": "1.0 PRD and Roadmap documents (#665)\n\n* 1.0 PRD and Roadmap documents\r\n\r\n* Apply feedback round 1\r\n\r\n* Apply feedback\r\n\r\n* Apply feedback",
+          "timestamp": "2021-04-26T11:28:53-07:00",
+          "tree_id": "9a53d1f021355ddb628677d07b4bfb51ded0c9dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/62d541647835d9c8af7cfd5110e8e3973f1105d1"
+        },
+        "date": 1619462122396,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 167822,
+            "range": "± 565",
             "unit": "ns/iter"
           }
         ]
