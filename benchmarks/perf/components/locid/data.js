@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619475205666,
+  "lastUpdate": 1619593463840,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6149,6 +6149,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4401,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b937cfadf78a1f6f4223d6269c25629adef98144",
+          "message": "Update Tutorial to 0.2. (#684)\n\n* Update Tutorial to 0.2.\r\n\r\n* Apply feedback",
+          "timestamp": "2021-04-27T23:57:53-07:00",
+          "tree_id": "1dd98cb6a244623c5e74c9627b1d4096267ff0e8",
+          "url": "https://github.com/unicode-org/icu4x/commit/b937cfadf78a1f6f4223d6269c25629adef98144"
+        },
+        "date": 1619593462362,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2993,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4676,
+            "range": "± 198",
             "unit": "ns/iter"
           }
         ]
