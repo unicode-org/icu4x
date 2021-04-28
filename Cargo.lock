@@ -477,7 +477,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "getrandom 0.2.2",
@@ -763,7 +763,7 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
 name = "icu"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "fixed_decimal",
  "icu_datetime",
@@ -784,7 +784,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "ecma402_traits",
@@ -798,7 +798,7 @@ dependencies = [
 
 [[package]]
 name = "icu_benchmark_macros"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "dhat",
  "dlmalloc",
@@ -825,7 +825,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -845,7 +845,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "fixed_decimal",
@@ -867,7 +867,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_canonicalizer"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "icu_locid",
@@ -881,7 +881,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "icu",
@@ -894,7 +894,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_macros"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "icu",
  "icu_locid",
@@ -913,7 +913,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "fixed_decimal",
@@ -929,7 +929,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "erased-serde",
  "icu_locid",
@@ -944,7 +944,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_cldr"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "dirs",
  "icu_datetime",
@@ -974,7 +974,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "bincode",
  "clap",
@@ -1016,7 +1016,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "camino",
  "cargo_metadata",
@@ -1039,7 +1039,7 @@ dependencies = [
 
 [[package]]
 name = "icu_uniset"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "criterion",
  "icu",
@@ -1154,7 +1154,7 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "litemap"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "icu_benchmark_macros",
  "icu_locid",

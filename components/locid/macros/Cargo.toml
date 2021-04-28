@@ -5,7 +5,7 @@
 [package]
 name = "icu_locid_macros"
 description = "proc-macros for icu_locid"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -27,7 +27,7 @@ proc_macro = true
 
 [dependencies]
 proc-macro-crate = "1.0"
-icu_locid = { version = "0.1", path = "../" }
+icu_locid = { version = "0.2", path = "../" }
 tinystr = "0.4"
 
 [dev-dependencies]

@@ -4,7 +4,7 @@
 
 [package]
 name = "litemap"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2018"
@@ -28,9 +28,9 @@ serde = {version = "1", optional = true}
 [dev-dependencies]
 serde = "1"
 serde_json = "1"
-icu_locid = { version = "0.1", path = "../../components/locid" }
-icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
-icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
+icu_locid = { version = "0.2", path = "../../components/locid" }
+icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
+icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
 
 [[test]]
 name = "serde"

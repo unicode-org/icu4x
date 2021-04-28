@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -29,8 +29,8 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider", features = ["provider_serde"] }
-icu_locid = { version = "0.1", path = "../locid", features = ["serde"] }
+icu_provider = { version = "0.2", path = "../provider", features = ["provider_serde"] }
+icu_locid = { version = "0.2", path = "../locid", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 erased-serde = { version = "0.3" }
 
@@ -45,13 +45,13 @@ static_assertions = { version = "1.1", optional = true }
 
 # Dependencies for the binary
 clap = { version = "2.33", optional = true }
-icu_provider_cldr = { version = "0.1", path = "../provider_cldr", features = ["download"], optional = true }
+icu_provider_cldr = { version = "0.2", path = "../provider_cldr", features = ["download"], optional = true }
 simple_logger = { version = "1.11", optional = true }
 
 [dev-dependencies]
-icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
-icu_locid_macros = { version = "0.1", path = "../locid/macros" }
-icu_plurals = { version = "0.1", path = "../plurals" }
+icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
+icu_locid_macros = { version = "0.2", path = "../locid/macros" }
+icu_plurals = { version = "0.2", path = "../plurals" }
 criterion = "0.3.3"
 
 [features]
