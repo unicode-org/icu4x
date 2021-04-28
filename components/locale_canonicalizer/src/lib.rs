@@ -25,13 +25,16 @@
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+//! let lc = LocaleCanonicalizer::new(&provider)
+//!     .expect("create failed");
 //!
-//! let mut locale : Locale = "zh-CN".parse().expect("parse failed");
+//! let mut locale : Locale = "zh-CN".parse()
+//!     .expect("parse failed");
 //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
 //! assert_eq!(locale.to_string(), "zh-Hans-CN");
 //!
-//! let mut locale : Locale = "zh-Hant-TW".parse().expect("parse failed");
+//! let mut locale : Locale = "zh-Hant-TW".parse()
+//!     .expect("parse failed");
 //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
 //! assert_eq!(locale.to_string(), "zh-Hant-TW");
 //! # } // feature = "provider_serde"
@@ -43,13 +46,16 @@
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+//! let lc = LocaleCanonicalizer::new(&provider)
+//!     .expect("create failed");
 //!
-//! let mut locale : Locale = "zh-Hans-CN".parse().expect("parse failed");
+//! let mut locale : Locale = "zh-Hans-CN".parse()
+//!     .expect("parse failed");
 //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
 //! assert_eq!(locale.to_string(), "zh");
 //!
-//! let mut locale : Locale = "zh".parse().expect("parse failed");
+//! let mut locale : Locale = "zh".parse()
+//!     .expect("parse failed");
 //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
 //! assert_eq!(locale.to_string(), "zh");
 //! # } // feature = "provider_serde"
