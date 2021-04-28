@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619593466729,
+  "lastUpdate": 1619626463909,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4835,6 +4835,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2606832,
             "range": "± 51816",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc6315e0c35b57db3fc1b35d80325d320a94a71b",
+          "message": "Make docs for provider module consistent (#683)",
+          "timestamp": "2021-04-28T11:07:08-05:00",
+          "tree_id": "75e31b0bdd06a8a3a7d9e596f5913d1aea38e659",
+          "url": "https://github.com/unicode-org/icu4x/commit/fc6315e0c35b57db3fc1b35d80325d320a94a71b"
+        },
+        "date": 1619626462317,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1367960,
+            "range": "± 51763",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2598032,
+            "range": "± 75119",
             "unit": "ns/iter"
           }
         ]
