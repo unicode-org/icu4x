@@ -178,7 +178,7 @@ pub mod locale_canonicalizer {
     //! upon [`CLDR`] data.
     //!
     //! It currently supports the minimize and maximize likely subtags algorithms
-    //! as described in [`UTS 35`].
+    //! as described in [`UTS #35: Unicode LDML 3. Likely Subtags`].
     //!
     //! # Examples
     //!
@@ -188,15 +188,15 @@ pub mod locale_canonicalizer {
     //! use icu_locid::Locale;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    //! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
     //!
-    //! let mut locale : Locale = "en-US".parse().unwrap();
+    //! let mut locale : Locale = "zh-CN".parse().expect("parse failed");
     //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
-    //! assert_eq!(locale.to_string(), "en-Latn-US");
+    //! assert_eq!(locale.to_string(), "zh-Hans-CN");
     //!
-    //! let mut locale : Locale = "en-Latn-DE".parse().unwrap();
+    //! let mut locale : Locale = "zh-Hant-TW".parse().expect("parse failed");
     //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
-    //! assert_eq!(locale.to_string(), "en-Latn-DE");
+    //! assert_eq!(locale.to_string(), "zh-Hant-TW");
     //! # } // feature = "provider_serde"
     //! ```
     //!
@@ -206,20 +206,20 @@ pub mod locale_canonicalizer {
     //! use icu_locid::Locale;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    //! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
     //!
-    //! let mut locale : Locale = "en-Latn-US".parse().unwrap();
+    //! let mut locale : Locale = "zh-Hans-CN".parse().expect("parse failed");
     //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
-    //! assert_eq!(locale.to_string(), "en");
+    //! assert_eq!(locale.to_string(), "zh");
     //!
-    //! let mut locale : Locale = "en".parse().unwrap();
+    //! let mut locale : Locale = "zh".parse().expect("parse failed");
     //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
-    //! assert_eq!(locale.to_string(), "en");
+    //! assert_eq!(locale.to_string(), "zh");
     //! # } // feature = "provider_serde"
     //! ```
     //! [`ICU4X`]: ../icu/index.html
     //! [`CLDR`]: http://cldr.unicode.org/
-    //! [`UTS 35`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+    //! [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
     pub use icu_locale_canonicalizer::*;
 }
 
