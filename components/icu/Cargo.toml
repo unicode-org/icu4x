@@ -27,6 +27,7 @@ skip_optional_dependencies = true
 [dependencies]
 icu_datetime = { version = "0.1", path = "../datetime" }
 icu_decimal = { version = "0.1", path = "../decimal" }
+icu_locale_canonicalizer = { version = "0.1", path = "../locale_canonicalizer" }
 icu_locid = { version = "0.1", path = "../locid" }
 icu_locid_macros = { version = "0.1", path = "../locid/macros" }
 icu_plurals = { version = "0.1", path = "../plurals" }

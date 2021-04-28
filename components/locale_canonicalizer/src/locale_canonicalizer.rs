@@ -79,15 +79,18 @@ impl LocaleCanonicalizer<'_> {
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    /// let lc = LocaleCanonicalizer::new(&provider)
+    ///     .expect("create failed");
     ///
-    /// let mut locale : Locale = "en-US".parse().unwrap();
+    /// let mut locale : Locale = "zh-CN".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
-    /// assert_eq!(locale.to_string(), "en-Latn-US");
+    /// assert_eq!(locale.to_string(), "zh-Hans-CN");
     ///
-    /// let mut locale : Locale = "en-Latn-DE".parse().unwrap();
+    /// let mut locale : Locale = "zh-Hant-TW".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "en-Latn-DE");
+    /// assert_eq!(locale.to_string(), "zh-Hant-TW");
     /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
@@ -149,15 +152,18 @@ impl LocaleCanonicalizer<'_> {
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    /// let lc = LocaleCanonicalizer::new(&provider)
+    ///     .expect("creation failed");
     ///
-    /// let mut locale : Locale = "en-Latn-US".parse().unwrap();
+    /// let mut locale : Locale = "zh-Hans-CN".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
-    /// assert_eq!(locale.to_string(), "en");
+    /// assert_eq!(locale.to_string(), "zh");
     ///
-    /// let mut locale : Locale = "en".parse().unwrap();
+    /// let mut locale : Locale = "zh".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "en");
+    /// assert_eq!(locale.to_string(), "zh");
     /// # } // feature = "provider_serde"
     /// ```
     pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
