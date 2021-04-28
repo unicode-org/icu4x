@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619626457167,
+  "lastUpdate": 1619633247798,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6221,6 +6221,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5151,
             "range": "± 277",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e78289331a514adbce008364653dce2fed9ddced",
+          "message": "Fixes to locale canonicalizer docs (#688)\n\n* Fixes to locale canonicalizer docs\r\n\r\n* Address review feedback\r\n\r\n* More review feedback\r\n\r\n* Split expect onto following line",
+          "timestamp": "2021-04-28T11:00:46-07:00",
+          "tree_id": "753f6ecb603059b65471682f71256d9b01c2a5b4",
+          "url": "https://github.com/unicode-org/icu4x/commit/e78289331a514adbce008364653dce2fed9ddced"
+        },
+        "date": 1619633246301,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3027,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4724,
+            "range": "± 215",
             "unit": "ns/iter"
           }
         ]
