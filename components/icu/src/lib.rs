@@ -178,7 +178,7 @@ pub mod locale_canonicalizer {
     //! upon [`CLDR`] data.
     //!
     //! It currently supports the minimize and maximize likely subtags algorithms
-    //! as described in [`TR-35`].
+    //! as described in [`UTS 35`].
     //!
     //! # Examples
     //!
@@ -219,7 +219,7 @@ pub mod locale_canonicalizer {
     //! ```
     //! [`ICU4X`]: ../icu/index.html
     //! [`CLDR`]: http://cldr.unicode.org/
-    //! [`TR-35`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+    //! [`UTS 35`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
     pub use icu_locale_canonicalizer::*;
 }
 

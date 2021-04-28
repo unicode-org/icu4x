@@ -8,14 +8,14 @@
 //! upon [`CLDR`] data.
 //!
 //! It currently supports the minimize and maximize likely subtags algorithms
-//! as described in [`TR-35`].
+//! as described in [`UTS 35`].
 //!
 //! The maximize method potentially updates a passed in locale in place
 //! depending up the results of running the 'Add Likely Subtags' algorithm
-//! from [`TR-35`].
+//! from [`UTS 35`].
 //!
 //! This minimize method returns a new Locale that is the result of running the
-//! 'Remove Likely Subtags' algorithm from [`TR-35`].
+//! 'Remove Likely Subtags' algorithm from [`UTS 35`].
 //!
 //! # Examples
 //!
@@ -27,13 +27,13 @@
 //! let provider = icu_testdata::get_provider();
 //! let lc = LocaleCanonicalizer::new(&provider).unwrap();
 //!
-//! let mut locale : Locale = "en-US".parse().unwrap();
+//! let mut locale : Locale = "zh-CN".parse().unwrap();
 //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
-//! assert_eq!(locale.to_string(), "en-Latn-US");
+//! assert_eq!(locale.to_string(), "zh-Hans-CN");
 //!
-//! let mut locale : Locale = "en-Latn-DE".parse().unwrap();
+//! let mut locale : Locale = "zh-Hant-TW".parse().unwrap();
 //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
-//! assert_eq!(locale.to_string(), "en-Latn-DE");
+//! assert_eq!(locale.to_string(), "zh-Hant-TW");
 //! # } // feature = "provider_serde"
 //! ```
 //!
@@ -45,19 +45,19 @@
 //! let provider = icu_testdata::get_provider();
 //! let lc = LocaleCanonicalizer::new(&provider).unwrap();
 //!
-//! let mut locale : Locale = "en-Latn-US".parse().unwrap();
+//! let mut locale : Locale = "zh-Hans-CN".parse().unwrap();
 //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
-//! assert_eq!(locale.to_string(), "en");
+//! assert_eq!(locale.to_string(), "zh");
 //!
-//! let mut locale : Locale = "en".parse().unwrap();
+//! let mut locale : Locale = "zh".parse().unwrap();
 //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
-//! assert_eq!(locale.to_string(), "en");
+//! assert_eq!(locale.to_string(), "zh");
 //! # } // feature = "provider_serde"
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`CLDR`]: http://cldr.unicode.org/
-//! [`TR-35`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+//! [`UTS 35`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 
 pub mod locale_canonicalizer;
 pub mod provider;
