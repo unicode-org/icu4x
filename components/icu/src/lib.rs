@@ -173,6 +173,56 @@ pub mod decimal {
     pub use icu_decimal::*;
 }
 
+pub mod locale_canonicalizer {
+    //! This API provides functionality to canonicalize locale identifiers based
+    //! upon [`CLDR`] data.
+    //!
+    //! It currently supports the minimize and maximize likely subtags algorithms
+    //! as described in [`TR-35`].
+    //!
+    //! # Examples
+    //!
+    //! ```
+    //! # #[cfg(feature = "provider_serde")] {
+    //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    //! use icu_locid::Locale;
+    //!
+    //! let provider = icu_testdata::get_provider();
+    //! let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    //!
+    //! let mut locale : Locale = "en-US".parse().unwrap();
+    //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
+    //! assert_eq!(locale.to_string(), "en-Latn-US");
+    //!
+    //! let mut locale : Locale = "en-Latn-DE".parse().unwrap();
+    //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
+    //! assert_eq!(locale.to_string(), "en-Latn-DE");
+    //! # } // feature = "provider_serde"
+    //! ```
+    //!
+    //! ```
+    //! # #[cfg(feature = "provider_serde")] {
+    //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    //! use icu_locid::Locale;
+    //!
+    //! let provider = icu_testdata::get_provider();
+    //! let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    //!
+    //! let mut locale : Locale = "en-Latn-US".parse().unwrap();
+    //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
+    //! assert_eq!(locale.to_string(), "en");
+    //!
+    //! let mut locale : Locale = "en".parse().unwrap();
+    //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
+    //! assert_eq!(locale.to_string(), "en");
+    //! # } // feature = "provider_serde"
+    //! ```
+    //! [`ICU4X`]: ../icu/index.html
+    //! [`CLDR`]: http://cldr.unicode.org/
+    //! [`TR-35`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+    pub use icu_locale_canonicalizer::*;
+}
+
 pub mod locid {
     //! Language and Locale operations
     //!

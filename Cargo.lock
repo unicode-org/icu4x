@@ -768,6 +768,7 @@ dependencies = [
  "fixed_decimal",
  "icu_datetime",
  "icu_decimal",
+ "icu_locale_canonicalizer",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
