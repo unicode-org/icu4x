@@ -15,17 +15,16 @@ use std::{fmt, ptr};
 /// "borrows" from the FFI side.
 ///
 /// # Safety invariants:
-///  - `flush()` and `grow()` will be passed `context` and the value should be valid for that
-///     `context` may be  null, however `flush()` and `grow()` must then be ready to receive it
+///  - `flush()` and `grow()` will be passed `context` and it should always be safe to do so.
+///     `context` may be  null, however `flush()` and `grow()` must then be ready to receive it as such.
 ///  - `buf` must be `cap` bytes long
 ///  - `grow()` must either return null or a valid buffer of at least the requested buffer size
 ///  - Rust code must call `ICU4XCustomWriteable::flush()` before releasing to C
 pub struct ICU4XCustomWriteable {
-    /// Pointer to the actual object. While we're writing, we will write
-    /// directly to `buf` without updating `context`'s state, this pointer exists so that
-    /// `grow()` and `flush()` can get access to the full object on the foreign side.
+    /// Context pointer passed to `grow()` and `flush()`. May be `null`.
     ///
-    /// This can be null if the
+    /// The pointer may reference structured data on the foreign side,
+    /// such as C++ std::string, used to reallocate buf.
     context: *mut c_void,
     /// The raw string buffer, which will be mutated on the Rust side.
     buf: *mut u8,
@@ -33,16 +32,21 @@ pub struct ICU4XCustomWriteable {
     len: usize,
     /// The current capacity of the buffer
     cap: usize,
-    /// Called by Rust code when it is done writing, updating `context`
-    /// with the new length
+    /// Called by Rust to indicate that there is no more data to write.
+    ///
+    /// Arguments:
+    /// - `context` (`*mut c_void`): The `context` field of this struct
+    /// - `length` (`usize`): The final length of the string in `buf`
     flush: extern "C" fn(*mut c_void, usize),
-    /// Called by Rust when it needs more capacity, passing
-    /// in the requested capacity. Returns the new buffer, with
-    /// the existing data already copied.
+    /// Called by Rust to request more capacity in the buffer. The implementation should allocate a new
+    /// buffer and copy the contents of the old buffer into the new buffer.
     ///
-    /// Should return `null` if the requested capacity could not be achieved
+    /// Arguments:
+    /// - `context` (`*mut c_void`): The `context` field of this struct.
+    /// - `capacity` (`*mut usize`): The requested capacity. Should be updated to reflect
+    ///    the actual capacity if the allocated buffer is larger than was requested.
     ///
-    /// The capacity value will be updated if the actually allocated capacity is larger.
+    /// Returns: the newly allocated buffer, or `null` if allocation failed.
     grow: extern "C" fn(*mut c_void, *mut usize) -> *mut u8,
 }
 
