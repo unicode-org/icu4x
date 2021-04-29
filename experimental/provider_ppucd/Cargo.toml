@@ -15,6 +15,7 @@ categories = ["internationalization"]
 include = [
     "src/**/*",
     "examples/**/*",
+    "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
     "README.md"
