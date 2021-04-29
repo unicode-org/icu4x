@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619720591318,
+  "lastUpdate": 1619721404352,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4859,6 +4859,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 143203,
             "range": "± 7662",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "8e93c88897cdd086c49524ef05c7f383a885d804",
+          "message": "Add description to decimal",
+          "timestamp": "2021-04-29T11:30:16-07:00",
+          "tree_id": "a163e1859f11737ea095d198c3ad7bbc22fec00b",
+          "url": "https://github.com/unicode-org/icu4x/commit/8e93c88897cdd086c49524ef05c7f383a885d804"
+        },
+        "date": 1619721402864,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130514,
+            "range": "± 6381",
             "unit": "ns/iter"
           }
         ]
