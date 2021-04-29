@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619727451410,
+  "lastUpdate": 1619736408780,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4919,6 +4919,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 143603,
             "range": "± 6805",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "478c4a901faca10195edce477b583ed31f8fdd1f",
+          "message": "Apply feedback on 0.2 blog post from Mark",
+          "timestamp": "2021-04-29T15:40:30-07:00",
+          "tree_id": "7547d7a22a86db6021925770049cef13a4159efb",
+          "url": "https://github.com/unicode-org/icu4x/commit/478c4a901faca10195edce477b583ed31f8fdd1f"
+        },
+        "date": 1619736407312,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 144559,
+            "range": "± 5351",
             "unit": "ns/iter"
           }
         ]
