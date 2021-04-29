@@ -27,7 +27,7 @@ pub struct ICU4XCustomWriteable {
     ///
     /// This can be null if the
     context: *mut c_void,
-    /// The buffer to write directly to
+    /// The raw string buffer, which will be mutated on the Rust side.
     buf: *mut u8,
     /// The current filled size of the buffer
     len: usize,
