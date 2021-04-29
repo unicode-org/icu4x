@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_cldr"
 description = "Data provider that reads from a CLDR JSON data source"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -29,21 +29,21 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider", features = ["provider_serde"] }
-icu_locid = { version = "0.1", path = "../locid" }
-icu_plurals = { version = "0.1", path = "../plurals" }
-icu_datetime = { version = "0.1", path = "../datetime" }
-icu_locale_canonicalizer = { version = "0.1", path = "../locale_canonicalizer" }
-icu_decimal = { version = "0.1", path = "../decimal" }
+icu_provider = { version = "0.2", path = "../provider", features = ["provider_serde"] }
+icu_locid = { version = "0.2", path = "../locid" }
+icu_plurals = { version = "0.2", path = "../plurals" }
+icu_datetime = { version = "0.2", path = "../datetime" }
+icu_locale_canonicalizer = { version = "0.2", path = "../locale_canonicalizer" }
+icu_decimal = { version = "0.2", path = "../decimal" }
 itertools = "0.10"
 json = "0.12"
-litemap = { version = "0.1.1", path = "../../utils/litemap" }
+litemap = { version = "0.2", path = "../../utils/litemap" }
 serde = { version = "1.0", features = ["derive"] }
 serde-aux = "2.1.1"
 serde_json = "1.0"
 serde-tuple-vec-map = "1.0"
 smallstr = { version = "0.2", features = ["serde"] }
-smallvec = "1.4"
+smallvec = "1.6"
 tinystr = { version = "0.4.5", features = ["serde"] }
 
 # Dependencies for the download feature
@@ -55,8 +55,8 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
-icu_locid_macros = { version = "0.1", path = "../locid/macros" }
-icu_testdata = { version = "0.1", path = "../../resources/testdata" }
+icu_locid_macros = { version = "0.2", path = "../locid/macros" }
+icu_testdata = { version = "0.2", path = "../../resources/testdata" }
 
 [features]
 # Automatically download CLDR data from a host

@@ -5,7 +5,7 @@
 [package]
 name = "icu_uniset"
 description = "API for highly efficient querying of sets of Unicode characters"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -25,15 +25,15 @@ include = [
 skip_optional_dependencies = true
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../provider" }
-litemap = { version = "0.1", path = "../../utils/litemap" }
+icu_provider = { version = "0.2", path = "../provider" }
+litemap = { version = "0.2", path = "../../utils/litemap" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 tinystr = "0.4.5"
 
 [dev-dependencies]
 criterion = "0.3.3"
-icu = { path = "../icu" }
-icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
+icu = { version = "0.2", path = "../icu" }
+icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI

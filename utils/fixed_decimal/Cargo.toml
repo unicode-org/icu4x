@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -22,13 +22,13 @@ include = [
 ]
 
 [dependencies]
-smallvec = "1.4"
+smallvec = "1.6"
 static_assertions = "1.1"
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [dev-dependencies]
-criterion = "0.3.3"
-icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
+criterion = "0.3.4"
+icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"

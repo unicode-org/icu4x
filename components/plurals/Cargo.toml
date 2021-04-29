@@ -5,7 +5,7 @@
 [package]
 name = "icu_plurals"
 description = "Unicode Plural Rules categorizer for numeric input"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -25,19 +25,19 @@ include = [
 skip_optional_dependencies = true
 
 [dependencies]
-fixed_decimal = { version = "0.1", path = "../../utils/fixed_decimal" }
-icu_provider = { version = "0.1", path = "../provider" }
-icu_locid = { version = "0.1", path = "../locid" }
+fixed_decimal = { version = "0.2", path = "../../utils/fixed_decimal" }
+icu_provider = { version = "0.2", path = "../provider" }
+icu_locid = { version = "0.2", path = "../locid" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
 icu = { path = "../icu" }
-icu_benchmark_macros = { version = "0.1", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "0.1", path = "../provider" }
-icu_locid = { version = "0.1", path = "../locid" }
-icu_locid_macros = { version = "0.1", path = "../locid/macros" }
-icu_testdata = { version = "0.1", path = "../../resources/testdata" }
+icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
+icu_provider = { version = "0.2", path = "../provider" }
+icu_locid = { version = "0.2", path = "../locid" }
+icu_locid_macros = { version = "0.2", path = "../locid/macros" }
+icu_testdata = { version = "0.2", path = "../../resources/testdata" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
 

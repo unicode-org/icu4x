@@ -5,7 +5,7 @@
 [package]
 name = "icu_testdata"
 description = "Test data for ICU4X, generated from CLDR"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -123,9 +123,9 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.1", path = "../../components/provider" }
-icu_provider_fs = { version = "0.1", path = "../../components/provider_fs" }
-icu_locid = { version = "0.1", path = "../../components/locid" }
+icu_provider = { version = "0.2", path = "../../components/provider" }
+icu_provider_fs = { version = "0.2", path = "../../components/provider_fs" }
+icu_locid = { version = "0.2", path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature
 serde = { version = "1.0", features = ["derive"], optional = true }
@@ -135,7 +135,7 @@ serde_json = { version = "1.0", optional = true }
 cargo_metadata = { version = "0.13", optional = true }
 camino = "1.0"
 clap = { version = "2.33", optional = true }
-icu_provider_cldr = { version = "0.1", path = "../../components/provider_cldr", optional = true, features = ["download"] }
+icu_provider_cldr = { version = "0.2", path = "../../components/provider_cldr", optional = true, features = ["download"] }
 log = { version = "0.4", optional = true }
 simple_logger = { version = "1.11", optional = true }
 globwalk = { version = "0.8", optional = true }
@@ -144,8 +144,8 @@ itertools = { version = "0.10", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable", optional = true }
 
 [dev-dependencies]
-icu_locid_macros = { version = "0.1", path = "../../components/locid/macros" }
-icu_plurals = { version = "0.1", path = "../../components/plurals" }
+icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
+icu_plurals = { version = "0.2", path = "../../components/plurals" }
 
 [features]
 # Enables programmatic access to this Cargo.toml file
