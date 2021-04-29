@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619720391222,
+  "lastUpdate": 1619720634071,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5087,6 +5087,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1838102,
             "range": "± 17929",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "distinct": true,
+          "id": "20fc4c5a5936e8d344c67236541911b4913ef6f0",
+          "message": "Add description to locale_canonicalizer",
+          "timestamp": "2021-04-29T11:17:03-07:00",
+          "tree_id": "1237ac82239a5a30d3e9eb81459105f8d6466119",
+          "url": "https://github.com/unicode-org/icu4x/commit/20fc4c5a5936e8d344c67236541911b4913ef6f0"
+        },
+        "date": 1619720628294,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1200178,
+            "range": "± 97752",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2395761,
+            "range": "± 205107",
             "unit": "ns/iter"
           }
         ]
