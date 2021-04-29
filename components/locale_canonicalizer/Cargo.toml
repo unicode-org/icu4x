@@ -4,6 +4,7 @@
 
 [package]
 name = "icu_locale_canonicalizer"
+description = "API for Unicode Language and Locale Identifiers canonicalization"
 version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
