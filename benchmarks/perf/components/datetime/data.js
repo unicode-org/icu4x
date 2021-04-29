@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619713919396,
+  "lastUpdate": 1619714802276,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5015,6 +5015,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2548170,
             "range": "± 114168",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3b6d7784c2a8d7a7a3eb02878a342a1b21709ac0",
+          "message": "Add ownership command for crates.io (#690)",
+          "timestamp": "2021-04-29T09:39:07-07:00",
+          "tree_id": "d01b120141270d38b6149b3ac18b656d83325b5b",
+          "url": "https://github.com/unicode-org/icu4x/commit/3b6d7784c2a8d7a7a3eb02878a342a1b21709ac0"
+        },
+        "date": 1619714800600,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1209606,
+            "range": "± 66919",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2272875,
+            "range": "± 126710",
             "unit": "ns/iter"
           }
         ]
