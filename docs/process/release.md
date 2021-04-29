@@ -18,4 +18,6 @@ Once the release is complete, the assigned release driver will:
 * Build a changelog for the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * `cargo publish` each component and meta component
+* Add `icu4x-release` group as owners to each new component you're publishing
+  * `cargo owner -a github:unicode-org:icu4x-release`
 * Announce the release to public
