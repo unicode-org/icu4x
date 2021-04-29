@@ -49,16 +49,16 @@ impl ICU4XCustomWriteable {
 }
 impl fmt::Write for ICU4XCustomWriteable {
     fn write_str(&mut self, s: &str) -> Result<(), fmt::Error> {
-        let mut needed_len = self.len + s.len();
+        let needed_len = self.len + s.len();
         if needed_len > self.cap {
-            let newbuf = (self.grow)(self.data, &mut needed_len);
+            let mut new_cap = needed_len;
+            let newbuf = (self.grow)(self.data, &mut new_cap);
             if newbuf.is_null() {
                 return Err(fmt::Error);
             }
-            self.cap = needed_len;
+            self.cap = new_cap;
             self.buf = newbuf;
         }
-        let needed_len = self.len + s.len();
         debug_assert!(needed_len <= self.cap);
         unsafe {
             ptr::copy_nonoverlapping(
