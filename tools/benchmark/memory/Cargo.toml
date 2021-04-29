@@ -11,6 +11,7 @@ version = "0.1.0"
 include = [
     "src/**/*",
     "examples/**/*",
+    "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
     "README.md"
