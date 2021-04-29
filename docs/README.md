@@ -61,4 +61,5 @@ List of posts by ICU4X.
 
 Document | Summary
 ---------|---------
+[20210427_ICU4X_02_Release.md](posts/20210427_ICU4X_02_Release.md) | ICU4X 0.2 Release
 [20201015_ICU4X_Project_Announcement.md](posts/20201015_ICU4X_Project_Announcement.md) | ICU4X Project Announcement
