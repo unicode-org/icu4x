@@ -4,6 +4,7 @@
 
 [package]
 name = "icu_decimal"
+description = "API for formatting basic decimal numbers in a locale-sensitive way"
 version = "0.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
