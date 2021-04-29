@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619633262873,
+  "lastUpdate": 1619674251061,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4907,6 +4907,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2490380,
             "range": "± 23166",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "750dc07d0ee12a2f9d19aa435a4eeb42631f3a79",
+          "message": "Hide skeleton docs (#689)",
+          "timestamp": "2021-04-28T22:23:15-07:00",
+          "tree_id": "a21d21f1f85918ed237cd61bc5c6b5864a45362a",
+          "url": "https://github.com/unicode-org/icu4x/commit/750dc07d0ee12a2f9d19aa435a4eeb42631f3a79"
+        },
+        "date": 1619674249399,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1464399,
+            "range": "± 101561",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2731460,
+            "range": "± 158245",
             "unit": "ns/iter"
           }
         ]
