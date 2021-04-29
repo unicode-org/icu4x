@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619714822037,
+  "lastUpdate": 1619720415337,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6401,6 +6401,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5174,
             "range": "± 117",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "377ba0e6c90280d1dfa6973fce643c439b021c3b",
+          "message": "Add benches to includes (#692)",
+          "timestamp": "2021-04-29T11:13:48-07:00",
+          "tree_id": "bac686a8b23c22d990facc3d850b58bfc0429962",
+          "url": "https://github.com/unicode-org/icu4x/commit/377ba0e6c90280d1dfa6973fce643c439b021c3b"
+        },
+        "date": 1619720413826,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3333,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5011,
+            "range": "± 92",
             "unit": "ns/iter"
           }
         ]
