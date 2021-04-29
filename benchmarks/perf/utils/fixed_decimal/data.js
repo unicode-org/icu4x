@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619674184901,
+  "lastUpdate": 1619713152003,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4709,6 +4709,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 162648,
             "range": "± 1026",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dc4accf2da2eed54d80ba57910cedf1de86cf2d8",
+          "message": "icu4x 0.2 (#687)\n\n* icu4x 0.2\r\n\r\n* Release will be on the 28th\r\n\r\n* Update to 29th",
+          "timestamp": "2021-04-29T09:12:26-07:00",
+          "tree_id": "774c341513a82647d9a467863c5c1d50b0db1456",
+          "url": "https://github.com/unicode-org/icu4x/commit/dc4accf2da2eed54d80ba57910cedf1de86cf2d8"
+        },
+        "date": 1619713150336,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 152739,
+            "range": "± 6904",
             "unit": "ns/iter"
           }
         ]
