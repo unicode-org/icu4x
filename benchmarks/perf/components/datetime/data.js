@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1619721451592,
+  "lastUpdate": 1619727473823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5159,6 +5159,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2480048,
             "range": "± 6313",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3a458106e62befb111b54fd62014b5b712fc2e8c",
+          "message": "Update README.md to 0.2 (#691)",
+          "timestamp": "2021-04-29T13:11:07-07:00",
+          "tree_id": "4399d22e228d2353940543901bd575f1890e658f",
+          "url": "https://github.com/unicode-org/icu4x/commit/3a458106e62befb111b54fd62014b5b712fc2e8c"
+        },
+        "date": 1619727472332,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1185750,
+            "range": "± 53842",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2420249,
+            "range": "± 119657",
             "unit": "ns/iter"
           }
         ]
