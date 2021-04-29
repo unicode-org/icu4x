@@ -4,7 +4,7 @@
 
   - …
 
-## icu4x 0.2.0 (April 28, 2021)
+## icu4x 0.2.0 (April 29, 2021)
   - Updated CLDR to 39 (#640)
   - Initial release of:
     - `icu_decimal` (#590)
