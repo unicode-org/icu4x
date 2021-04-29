@@ -10,7 +10,7 @@
 #include <stdbool.h>
 
 typedef struct {
-    void* data;
+    void* context;
     char* buf;
     size_t len;
     size_t cap;

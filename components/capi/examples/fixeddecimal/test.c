@@ -33,14 +33,14 @@ int main() {
 
     ICU4XCustomWriteable write = icu4x_simple_writeable(output, 40);
 
-    bool success = icu4x_fixed_decimal_format_format(fdf, decimal, &write);
+    bool success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
     }
     printf("Output is %s\n", output);
 
-    char* expected = "১০,০০,০০৭";
+    const char* expected = u8"১০,০০,০০৭";
     if (strcmp(output, expected) != 0) {
         printf("Output does not match expected output!\n");
         return 1;

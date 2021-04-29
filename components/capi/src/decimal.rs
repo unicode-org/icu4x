@@ -58,7 +58,7 @@ pub extern "C" fn icu4x_fixed_decimal_format_create<'d>(
 /// FFI version of [`FixedDecimalFormat::format()`]. See its docs for more details.
 ///
 /// Returns `false` when there were errors writing to `write`
-pub extern "C" fn icu4x_fixed_decimal_format_format(
+pub extern "C" fn icu4x_fixed_decimal_format_write(
     fdf: &ICU4XFixedDecimalFormat<'_>,
     value: &ICU4XFixedDecimal,
     write: &mut ICU4XCustomWriteable,
