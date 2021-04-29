@@ -9,6 +9,8 @@ use std::{fmt, ptr};
 ///
 /// [`icu4x_simple_writeable()`] can be used to write to a fixed-size char buffer.
 ///
+/// May be extended in the future to support further invariants
+///
 /// # Safety invariants:
 ///  - `flush()` and `grow()` will be passed `data` and the value should be valid for that
 ///     `data` may be  null, however `flush()` and `grow()` must then be ready to receive it
@@ -17,9 +19,10 @@ use std::{fmt, ptr};
 ///  - Rust code must call `ICU4XCustomWriteable::flush()` before releasing to C
 pub struct ICU4XCustomWriteable {
     /// Pointer to the actual object. While we're writing, we will write
-    /// directly to `buf` without updating `data`'s state.
+    /// directly to `buf` without updating `data`'s state, this pointer exists so that
+    /// `grow()` and `flush()` can get access to the full object on the foreign side
     data: *mut c_void,
-    /// The buffer to write to
+    /// The buffer to write directly to
     buf: *mut u8,
     /// The current filled size of the buffer
     len: usize,
