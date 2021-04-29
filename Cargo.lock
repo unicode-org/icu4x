@@ -822,6 +822,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_provider_fs",
+ "writeable",
 ]
 
 [[package]]

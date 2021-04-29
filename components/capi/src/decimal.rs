@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::custom_writeable::ICU4XCustomWriteable;
+use crate::fixed_decimal::ICU4XFixedDecimal;
 use crate::locale::ICU4XLocale;
 use crate::provider::ICU4XDataProvider;
 use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay};
@@ -50,6 +52,23 @@ pub extern "C" fn icu4x_fixed_decimal_format_create<'d>(
             success: false,
         },
     }
+}
+
+#[no_mangle]
+/// FFI version of [`FixedDecimalFormat::format()`]. See its docs for more details.
+///
+/// Returns `false` when there were errors writing to `write`
+pub extern "C" fn icu4x_fixed_decimal_format_format(
+    fdf: &ICU4XFixedDecimalFormat<'_>,
+    value: &ICU4XFixedDecimal,
+    write: &mut ICU4XCustomWriteable,
+) -> bool {
+    use writeable::Writeable;
+
+    let formatted = fdf.format(value);
+    let result = formatted.write_to(write).is_ok();
+    write.flush();
+    result
 }
 
 #[no_mangle]

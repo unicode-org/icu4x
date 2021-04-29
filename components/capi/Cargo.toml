@@ -21,3 +21,4 @@ icu_locid = { path = "../locid" }
 icu_plurals = { path = "../plurals/" }
 icu_provider = { path = "../provider" }
 icu_provider_fs = { path = "../provider_fs/" }
+writeable = { path = "../../utils/writeable/" }
