@@ -1,0 +1,40 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+name: PR Artifacts
+
+on:
+  pull_request:
+    branches: '*'
+
+jobs:
+  docs:
+    name: "Documentation Preview"
+    runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Build docs
+      uses: actions-rs/cargo@v1
+      with:
+        command: doc
+        args: --workspace --release --all-features --no-deps
+    - name: Upload docs to Google Cloud Storage
+      run: |
+        gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.run_number }}/docs
+    - name: "⭐⭐⭐ Summary ⭐⭐⭐"
+      run: |
+        echo "::group::📖 Docs Preview"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.run_number }}/docs/icu/index.html"
+        echo "::endgroup::"
