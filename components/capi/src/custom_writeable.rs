@@ -7,6 +7,16 @@ use std::{fmt, ptr};
 /// This allows the C API to write to arbitrary kinds of objects, for example a
 /// C++ std::string or a char buffer.
 ///
+/// The way to use this object is to fill out the `buf`, `len`, `cap` fields with
+/// appropriate values for the buffer, its current length, and its current capacity,
+/// and `flush` and `grow` with appropriate callbacks (using `context` to reference any
+/// state they need). This object will be passed by mutable reference to the Rust side,
+/// and Rust will write to it, calling `grow()` as necessary. Once done, it will call `flush()`
+/// to update any state on `context` (e.g. adding a null terminator, updating the length).
+/// The object on the foreign side will be directly usable after this, the foreign side
+/// need not perform additional state updates after passing an [`ICU4XCustomWriteable`] to
+/// a function.
+///
 /// [`icu4x_simple_writeable()`] can be used to write to a fixed-size char buffer.
 ///
 /// May be extended in the future to support further invariants
@@ -85,7 +95,10 @@ impl fmt::Write for ICU4XCustomWriteable {
 ///
 /// Once done, this will append a null terminator to the written string.
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, len: usize) -> ICU4XCustomWriteable {
+pub unsafe extern "C" fn icu4x_simple_writeable(
+    buf: *mut u8,
+    buf_size: usize,
+) -> ICU4XCustomWriteable {
     extern "C" fn grow(_context: *mut c_void, _cap: *mut usize) -> *mut u8 {
         ptr::null_mut()
     }
@@ -100,7 +113,7 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, len: usize) -> ICU
         buf,
         len: 0,
         // keep an extra byte in our pocket for the null terminator
-        cap: len - 1,
+        cap: buf_size - 1,
         flush,
         grow,
     }
