@@ -2442,6 +2442,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "yoke"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+ "zerovec",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.2.0"
 dependencies = [
