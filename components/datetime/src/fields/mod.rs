@@ -7,26 +7,17 @@ pub(crate) mod symbols;
 
 pub use length::{FieldLength, LengthError};
 pub use symbols::*;
+use thiserror::Error;
 
 use std::{
     cmp::{Ord, PartialOrd},
     convert::{TryFrom, TryInto},
-    fmt,
 };
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
+    #[error("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::InvalidLength(symbol) => {
-                write!(f, "field {:?} is is not a valid length", symbol)
-            }
-        }
-    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]

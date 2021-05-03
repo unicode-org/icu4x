@@ -3,34 +3,44 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::LanguageIdentifier;
-use std::error;
-use std::fmt;
 use std::path::{Path, PathBuf};
+use thiserror::Error;
 
 #[cfg(feature = "download")]
 use crate::download;
 
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
-    Io(std::io::Error, Option<PathBuf>),
-    Json(serde_json::error::Error, Option<PathBuf>),
+    #[error("{0}: {1:?}")]
+    Io(#[source] std::io::Error, Option<PathBuf>),
+    #[error("JSON error: {0}: {1:?}")]
+    Json(#[source] serde_json::error::Error, Option<PathBuf>),
+    #[error("{0}: {1:?}")]
     Custom(String, Option<LanguageIdentifier>),
+    #[error(transparent)]
     MissingSource(MissingSourceError),
     #[cfg(feature = "download")]
+    #[error(transparent)]
     Download(download::Error),
+    #[error("poisoned lock on CLDR provider")]
     Poison,
 }
 
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub struct MissingSourceError {
-    pub src: &'static str,
+#[cfg(feature = "download")]
+impl From<download::Error> for Error {
+    fn from(err: download::Error) -> Error {
+        match err {
+            download::Error::Io(err, path) => Error::Io(err, path),
+            _ => Error::Download(err),
+        }
+    }
 }
 
-impl fmt::Display for MissingSourceError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Missing CLDR data source: {}", self.src)
-    }
+#[derive(Error, Debug, PartialEq, Copy, Clone)]
+#[error("Missing CLDR data source: {src}")]
+pub struct MissingSourceError {
+    pub src: &'static str,
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
@@ -68,44 +78,5 @@ impl<L: AsRef<LanguageIdentifier>> From<(&'static str, L)> for Error {
 impl From<MissingSourceError> for Error {
     fn from(err: MissingSourceError) -> Self {
         Self::MissingSource(err)
-    }
-}
-
-#[cfg(feature = "download")]
-impl From<download::Error> for Error {
-    fn from(err: download::Error) -> Error {
-        match err {
-            download::Error::Io(err, path) => Error::Io(err, path),
-            _ => Error::Download(err),
-        }
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
-            Self::Io(err, None) => err.fmt(f),
-            Self::Json(err, Some(path)) => write!(f, "JSON error: {}: {:?}", err, path),
-            Self::Json(err, None) => write!(f, "JSON error: {}", err),
-            Self::Custom(s, Some(langid)) => write!(f, "{}: {:?}", s, langid),
-            Self::Custom(s, None) => write!(f, "{}", s),
-            Self::MissingSource(err) => err.fmt(f),
-            #[cfg(feature = "download")]
-            Self::Download(err) => err.fmt(f),
-            Self::Poison => write!(f, "poisoned lock on CLDR provider"),
-        }
-    }
-}
-
-impl error::Error for Error {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::Io(err, _) => Some(err),
-            Self::Json(err, _) => Some(err),
-            #[cfg(feature = "download")]
-            Self::Download(err) => Some(err),
-            _ => None,
-        }
     }
 }

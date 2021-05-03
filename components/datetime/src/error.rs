@@ -6,39 +6,28 @@ use crate::fields::FieldSymbol;
 use crate::pattern;
 use crate::skeleton::SkeletonError;
 use icu_provider::prelude::DataError;
+use thiserror::Error;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
-    Pattern(pattern::Error),
+    #[error(transparent)]
+    Pattern(#[from] pattern::Error),
     /// An error originating from the [`Write`](std::fmt::Write) trait.
-    Format(std::fmt::Error),
+    #[error(transparent)]
+    Format(#[from] std::fmt::Error),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
-    DataProvider(DataError),
+    #[error(transparent)]
+    DataProvider(#[from] DataError),
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
+    #[error("Missing input field")]
     MissingInputField,
     /// An error originating from skeleton matching.
+    #[error(transparent)]
     Skeleton(SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
+    #[error("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
-}
-
-impl From<DataError> for DateTimeFormatError {
-    fn from(err: DataError) -> Self {
-        Self::DataProvider(err)
-    }
-}
-
-impl From<pattern::Error> for DateTimeFormatError {
-    fn from(err: pattern::Error) -> Self {
-        Self::Pattern(err)
-    }
-}
-
-impl From<std::fmt::Error> for DateTimeFormatError {
-    fn from(err: std::fmt::Error) -> Self {
-        Self::Format(err)
-    }
 }

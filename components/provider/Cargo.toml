@@ -32,6 +32,7 @@ provider_serde = ["serde", "erased-serde"]
 icu_locid = { version = "0.2", path = "../locid" }
 tinystr = "0.4.5"
 writeable = { version = "0.2", path = "../../utils/writeable" }
+thiserror = "1.0"
 
 # For "provider_serde" feature
 erased-serde = { version = "0.3", optional = true }

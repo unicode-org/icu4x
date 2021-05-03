@@ -10,20 +10,14 @@ use std::str::FromStr;
 type SmallString8 = smallstr::SmallString<[u8; 8]>;
 use icu_decimal::provider::AffixesV1;
 use itertools::Itertools;
+use thiserror::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Error, Debug, PartialEq)]
 pub enum Error {
+    #[error("No body in decimal subpattern")]
     NoBodyInSubpattern,
+    #[error("Unknown decimal body: {0}")]
     UnknownPatternBody(String),
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::NoBodyInSubpattern => write!(f, "No body in decimal subpattern"),
-            Self::UnknownPatternBody(s) => write!(f, "Unknown decimal body: {}", s),
-        }
-    }
 }
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).

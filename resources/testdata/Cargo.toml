@@ -143,6 +143,7 @@ globwalk = { version = "0.8", optional = true }
 walkdir = { version = "2", optional = true }
 itertools = { version = "0.10", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable", optional = true }
+thiserror = "1.0"
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }

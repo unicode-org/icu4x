@@ -16,46 +16,22 @@ use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
 use simple_logger::SimpleLogger;
-use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
+use thiserror::Error;
 
+#[derive(Error, Debug)]
 enum Error {
+    #[error("Unsupported: {0}")]
     Unsupported(&'static str),
-    Export(icu_provider_fs::FsDataError),
-    DataProvider(icu_provider::DataError),
+    #[error(transparent)]
+    Export(#[from] icu_provider_fs::FsDataError),
+    #[error(transparent)]
+    DataProvider(#[from] icu_provider::DataError),
+    #[error("{0}: {1}")]
     LocaleParser(icu_locid::ParserError, String),
-    Setup(Box<dyn std::error::Error>),
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
-            Error::Export(error) => write!(f, "{}", error),
-            Error::DataProvider(error) => write!(f, "{}", error),
-            Error::LocaleParser(error, s) => write!(f, "{}: {}", error, s),
-            Error::Setup(error) => write!(f, "{}", error),
-        }
-    }
-}
-
-impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        (self as &dyn fmt::Display).fmt(f)
-    }
-}
-
-impl From<icu_provider_fs::FsDataError> for Error {
-    fn from(err: icu_provider_fs::FsDataError) -> Error {
-        Error::Export(err)
-    }
-}
-
-impl From<icu_provider::DataError> for Error {
-    fn from(err: icu_provider::DataError) -> Error {
-        Error::DataProvider(err)
-    }
+    #[error(transparent)]
+    Setup(#[from] Box<dyn std::error::Error>),
 }
 
 impl From<icu_provider_cldr::download::Error> for Error {
