@@ -9,13 +9,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef struct {
+typedef struct ICU4XCustomWriteable {
     void* context;
     char* buf;
     size_t len;
     size_t cap;
-    void (*flush)(void*, size_t);
-    char (*grow)(void*, size_t*);
+    void (*flush)(struct ICU4XCustomWriteable*);
+    char (*grow)(struct ICU4XCustomWriteable*, size_t);
 } ICU4XCustomWriteable;
 
 ICU4XCustomWriteable icu4x_simple_writeable(char* buf, size_t buf_size);

@@ -29,13 +29,14 @@ use std::{fmt, ptr};
 /// "borrows" from the FFI side.
 ///
 /// # Safety invariants:
-///  - `flush()` and `grow()` will be passed `context` and it should always be safe to do so.
+///  - `flush()` and `grow()` will be passed `self` including `context` and it should always be safe to do so.
 ///     `context` may be  null, however `flush()` and `grow()` must then be ready to receive it as such.
 ///  - `buf` must be `cap` bytes long
-///  - `grow()` must either return null or a valid buffer of at least the requested buffer size
+///  - `grow()` must either return false or update `buf` and `cap` for a valid buffer
+///  - of at least the requested buffer size
 ///  - Rust code must call `ICU4XCustomWriteable::flush()` before releasing to C
 pub struct ICU4XCustomWriteable {
-    /// Context pointer passed to `grow()` and `flush()`. May be `null`.
+    /// Context pointer for additional data needed by `grow()` and `flush()`. May be `null`.
     ///
     /// The pointer may reference structured data on the foreign side,
     /// such as C++ std::string, used to reallocate buf.
@@ -49,38 +50,33 @@ pub struct ICU4XCustomWriteable {
     /// Called by Rust to indicate that there is no more data to write.
     ///
     /// Arguments:
-    /// - `context` (`*mut c_void`): The `context` field of this struct
-    /// - `length` (`usize`): The final length of the string in `buf`
-    flush: extern "C" fn(*mut c_void, usize),
+    /// - `self` (`*mut ICU4XCustomWriteable`): This `ICU4XCustomWriteable`
+    flush: extern "C" fn(*mut ICU4XCustomWriteable),
     /// Called by Rust to request more capacity in the buffer. The implementation should allocate a new
-    /// buffer and copy the contents of the old buffer into the new buffer.
+    /// buffer and copy the contents of the old buffer into the new buffer, updating `self.buf` and `self.cap`
     ///
     /// Arguments:
-    /// - `context` (`*mut c_void`): The `context` field of this struct.
-    /// - `capacity` (`*mut usize`): The requested capacity. Should be updated to reflect
-    ///    the actual capacity if the allocated buffer is larger than was requested.
+    /// - `self` (`*mut ICU4XCustomWriteable`): This `ICU4XCustomWriteable`
+    /// - `capacity` (`usize`): The requested capacity.
     ///
-    /// Returns: the newly allocated buffer, or `null` if allocation failed.
-    grow: extern "C" fn(*mut c_void, *mut usize) -> *mut u8,
+    /// Returns: `true` if the allocation succeeded. Should not update any state if it failed.
+    grow: extern "C" fn(*mut ICU4XCustomWriteable, usize) -> bool,
 }
 
 impl ICU4XCustomWriteable {
     /// Call this function before releasing the buffer to C
     pub fn flush(&mut self) {
-        (self.flush)(self.context, self.len);
+        (self.flush)(self);
     }
 }
 impl fmt::Write for ICU4XCustomWriteable {
     fn write_str(&mut self, s: &str) -> Result<(), fmt::Error> {
         let needed_len = self.len + s.len();
         if needed_len > self.cap {
-            let mut new_cap = needed_len;
-            let newbuf = (self.grow)(self.context, &mut new_cap);
-            if newbuf.is_null() {
+            let success = (self.grow)(self, needed_len);
+            if !success {
                 return Err(fmt::Error);
             }
-            self.cap = new_cap;
-            self.buf = newbuf;
         }
         debug_assert!(needed_len <= self.cap);
         unsafe {
@@ -103,17 +99,17 @@ pub unsafe extern "C" fn icu4x_simple_writeable(
     buf: *mut u8,
     buf_size: usize,
 ) -> ICU4XCustomWriteable {
-    extern "C" fn grow(_context: *mut c_void, _cap: *mut usize) -> *mut u8 {
-        ptr::null_mut()
+    extern "C" fn grow(_this: *mut ICU4XCustomWriteable, _cap: usize) -> bool {
+        false
     }
-    extern "C" fn flush(context: *mut c_void, size: usize) {
+    extern "C" fn flush(this: *mut ICU4XCustomWriteable) {
         unsafe {
-            let buf = context as *mut u8;
-            ptr::write(buf.offset(size as isize), 0)
+            let buf = (*this).buf;
+            ptr::write(buf.offset((*this).len as isize), 0)
         }
     }
     ICU4XCustomWriteable {
-        context: buf as *mut c_void,
+        context: ptr::null_mut(),
         buf,
         len: 0,
         // keep an extra byte in our pocket for the null terminator
