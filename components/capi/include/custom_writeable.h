@@ -18,6 +18,6 @@ typedef struct {
     char (*grow)(void*, size_t*);
 } ICU4XCustomWriteable;
 
-ICU4XCustomWriteable icu4x_simple_writeable(char* buf, size_t len);
+ICU4XCustomWriteable icu4x_simple_writeable(char* buf, size_t buf_size);
 
 #endif // ICU4X_CUSTOM_WRITEABLE_H
