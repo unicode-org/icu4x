@@ -299,7 +299,8 @@ pub fn get_xid_start_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
 // Enumerated property getter fns
 //
 
-/// Return a [`UnicodeSet`] for a particular value of the Bidi_Class Unicode enumerated property
+/// Return a [`UnicodeSet`] for a particular value of the Bidi_Class Unicode enumerated property.
+/// Bidi_Class specifies the language directional property of a character set.
 pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: BidiClass) -> UnisetResult {
     match enum_val {
         BidiClass::ArabicLetter => get_prop(provider, key::BIDI_CLASS_ARABIC_LETTER_V1),
@@ -328,7 +329,8 @@ pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
     }
 }
 
-/// Return a [`UnicodeSet`] for a particular value of the Bidi_Paired_Bracket_Type Unicode enumerated property
+/// Return a [`UnicodeSet`] for a particular value of the Bidi_Paired_Bracket_Type Unicode enumerated property.
+/// Bidi_Paired_Bracket_Type specifies Bidi Paired Bracket Type constants.
 pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: BidiPairedBracketType) -> UnisetResult {
     match enum_val {
         BidiPairedBracketType::Close => get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_CLOSE_V1),
@@ -338,6 +340,7 @@ pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, UnicodePrope
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Canonical_Combining_Class Unicode enumerated property
+/// Canonical_Combining_Class specifies the combining class of the code point as specified in UnicodeData.txt.
 pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: CanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         CanonicalCombiningClass::NotReordered => get_prop(provider, key::CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
@@ -401,7 +404,8 @@ pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProp
     }
 }
 
-/// Return a [`UnicodeSet`] for a particular value of the Decomposition_Type Unicode enumerated property
+/// Return a [`UnicodeSet`] for a particular value of the Decomposition_Type Unicode enumerated property.
+/// Decomposition_Type specifies Decomposition Type constants.
 pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: DecompositionType) -> UnisetResult {
     match enum_val {
         DecompositionType::Can => get_prop(provider, key::DECOMPOSITION_TYPE_CAN_V1),
@@ -425,7 +429,8 @@ pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d
     }
 }
 
-/// Return a [`UnicodeSet`] for a particular value of the East_Asian_Width Unicode enumerated property
+/// Return a [`UnicodeSet`] for a particular value of the East_Asian_Width Unicode enumerated property.
+/// East_Asian_Width specifies East Asian Width constants.
 pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: EastAsianWidth) -> UnisetResult {
     match enum_val {
         EastAsianWidth::Ambiguous => get_prop(provider, key::EAST_ASIAN_WIDTH_AMBIGUOUS_V1),
@@ -438,6 +443,8 @@ pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property
+/// General_Category specifies enumerated Unicode general category types.
+/// See https://www.unicode.org/reports/tr44/ .
 pub fn get_general_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: GeneralCategory) -> UnisetResult {
     match enum_val {
         GeneralCategory::Other => get_prop(provider, key::GENERAL_CATEGORY_OTHER_V1),
@@ -482,6 +489,7 @@ pub fn get_general_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Grapheme_Cluster_Break Unicode enumerated property
+/// Grapheme_Cluster_Break specifies Grapheme Cluster Break constants.
 pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: GraphemeClusterBreak) -> UnisetResult {
     match enum_val {
         GraphemeClusterBreak::Control => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_CONTROL_V1),
@@ -506,6 +514,7 @@ pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, UnicodePropert
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Hangul_Syllable_Type Unicode enumerated property
+/// Hangul_Syllable_Type specifies Hangul Syllable Type constants.
 pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: HangulSyllableType) -> UnisetResult {
     match enum_val {
         HangulSyllableType::LeadingJamo => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1),
@@ -518,6 +527,7 @@ pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Indic_Positional_Category Unicode enumerated property
+/// Indic_Positional_Category specifies Indic Positional Category constants.
 pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: IndicPositionalCategory) -> UnisetResult {
     match enum_val {
         IndicPositionalCategory::Bottom => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_V1),
@@ -540,6 +550,7 @@ pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, UnicodeProp
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Indic_Syllabic_Category Unicode enumerated property
+/// Indic_Syllabic_Category specifies Indic Syllabic Category constants.
 pub fn get_indic_syllabic_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: IndicSyllabicCategory) -> UnisetResult {
     match enum_val {
         IndicSyllabicCategory::Avagraha => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1),
@@ -582,6 +593,7 @@ pub fn get_indic_syllabic_category_val_set<'d, D: DataProvider<'d, UnicodeProper
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Joining_Group Unicode enumerated property
+/// Joining_Group specifies Joining Group constants.
 pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: JoiningGroup) -> UnisetResult {
     match enum_val {
         JoiningGroup::AfricanFeh => get_prop(provider, key::JOINING_GROUP_AFRICAN_FEH_V1),
@@ -690,6 +702,7 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + 
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Joining_Type Unicode enumerated property
+/// Joining_Type specifies Joining Type constants.
 pub fn get_joining_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: JoiningType) -> UnisetResult {
     match enum_val {
         JoiningType::JoinCausing => get_prop(provider, key::JOINING_TYPE_JOIN_CAUSING_V1),
@@ -702,6 +715,7 @@ pub fn get_joining_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Line_Break Unicode enumerated property
+/// Line_Break specifies Line Break constants.
 pub fn get_line_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: LineBreak) -> UnisetResult {
     match enum_val {
         LineBreak::Ambiguous => get_prop(provider, key::LINE_BREAK_AMBIGUOUS_V1),
@@ -751,6 +765,8 @@ pub fn get_line_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Lead_Canonical_Combining_Class Unicode enumerated property
+/// Lead_Canonical_Combining_Class is a ICU-specific property for the ccc of the first code point
+/// of the decomposition.
 pub fn get_lead_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: LeadCanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         LeadCanonicalCombiningClass::NotReordered => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
@@ -849,6 +865,7 @@ pub fn get_nfkd_quick_check_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Numeric_Type Unicode enumerated property
+/// Numeric_Type specifies Numeric Type constants.
 pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: NumericType) -> UnisetResult {
     match enum_val {
         NumericType::Decimal => get_prop(provider, key::NUMERIC_TYPE_DECIMAL_V1),
@@ -859,6 +876,7 @@ pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Sentence_Break Unicode enumerated property
+/// Sentence_Break specifies Sentence Break constants.
 pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: SentenceBreak) -> UnisetResult {
     match enum_val {
         SentenceBreak::ATerm => get_prop(provider, key::SENTENCE_BREAK_ATERM_V1),
@@ -880,6 +898,8 @@ pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> +
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Trail_Canonical_Combining_Class Unicode enumerated property
+/// /// Trail_Canonical_Combining_Class is a ICU-specific property for the ccc of the last code point
+/// of the decomposition.
 pub fn get_trail_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: TrailCanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         TrailCanonicalCombiningClass::NotReordered => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
@@ -944,6 +964,7 @@ pub fn get_trail_canonical_combining_class_val_set<'d, D: DataProvider<'d, Unico
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Vertical_Orientation Unicode enumerated property
+/// Vertical_Orientation specifies Vertical Orientation constants.
 pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: VerticalOrientation) -> UnisetResult {
     match enum_val {
         VerticalOrientation::Rotated => get_prop(provider, key::VERTICAL_ORIENTATION_ROTATED_V1),
@@ -954,6 +975,7 @@ pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, UnicodeProperty<
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Word_Break Unicode enumerated property
+/// Word_Break specifies Word Break constants.
 pub fn get_word_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: WordBreak) -> UnisetResult {
     match enum_val {
         WordBreak::CR => get_prop(provider, key::WORD_BREAK_CR_V1),

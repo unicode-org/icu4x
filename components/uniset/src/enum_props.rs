@@ -4,7 +4,9 @@
 
 #![allow(clippy::upper_case_acronyms)]
 
-/// See UProperty in ICU4C
+/// Selection constants for Unicode properties.
+/// These constants are used to select one of the Unicode properties.
+/// See UProperty in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum EnumeratedProperty {
     BidiClass = 0x1000,
@@ -32,10 +34,12 @@ pub enum EnumeratedProperty {
     WordBreak = 0x1014,
 }
 
-/// See UCharDirection in ICU4C
+
 // TODO: verify hunches that U_BLOCK_SEPARATOR is PPUCD Paragraph_Separator
 // TODO: ask why U_RIGHT_TO_LEFT_ARABIC is not in PPUCD
 // TODO: ask why PPUCD has ArabicLetter? Is that same as U_RIGHT_TO_LEFT_ARABIC?
+/// This specifies the language directional property of a character set.
+/// See UCharDirection in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum BidiClass {
     // ArabicLetter = -1,
@@ -63,7 +67,8 @@ pub enum BidiClass {
     WhiteSpace = 9,
 }
 
-/// See UBidiPariedBrackedType in ICU4C
+/// Bidi Paired Bracket Type constants.
+/// See UBidiPairedBracketType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum BidiPairedBracketType {
     Close = 2,
@@ -71,7 +76,11 @@ pub enum BidiPairedBracketType {
     Open = 1,
 }
 
-/// See CanonicalCombiningClass in PPUCD
+/// Enumerated property Canonical_Combining_Class.
+/// Same as u_getCombiningClass, returns 8-bit numeric values that specify the
+/// combining class of the code point as specified in UnicodeData.txt.
+/// See UCHAR_CANONICAL_COMBINING_CLASS in ICU4C
+/// and CanonicalCombiningClass in PPUCD.
 #[derive(Clone, PartialEq, Debug)]
 pub enum CanonicalCombiningClass {
     NotReordered = 0,
@@ -134,7 +143,8 @@ pub enum CanonicalCombiningClass {
     CCC91 = 91,
 }
 
-/// See UDecompositionType in ICU4C
+/// Decomposition Type constants.
+/// See UDecompositionType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum DecompositionType {
     Can = 1,
@@ -157,7 +167,8 @@ pub enum DecompositionType {
     Wide = 17,
 }
 
-/// See UEastAsianWidth in ICU4C
+/// East Asian Width constants.
+/// See UEastAsianWidth in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum EastAsianWidth {
     Ambiguous = 1,
@@ -178,7 +189,9 @@ pub enum EastAsianWidth {
 // TODO: Why does ICU4C have `Other` and `Unassigned` use the same 
 // enum value (discriminant) ?
 //
-/// See UCharCategory in ICU4C
+/// Enumerated Unicode general category types.
+/// See https://www.unicode.org/reports/tr44/ .
+/// See UCharCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum GeneralCategory {
     Other = 0,
@@ -221,7 +234,8 @@ pub enum GeneralCategory {
     SpaceSeparator = 12,
 }
 
-/// See UGraphemeClusterBreak in ICU4C
+/// Grapheme Cluster Break constants.
+/// See UGraphemeClusterBreak in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum GraphemeClusterBreak {
     Control = 1,
@@ -244,7 +258,8 @@ pub enum GraphemeClusterBreak {
     ZWJ = 17,
 }
 
-/// See UHangulSyllableType in ICU4C
+/// Hangul Syllable Type constants.
+/// See UHangulSyllableType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum HangulSyllableType {
     LeadingJamo = 1,
@@ -255,7 +270,8 @@ pub enum HangulSyllableType {
     VowelJamo = 2,
 }
 
-/// See UIndicPositionalCategory in ICU4C
+/// Indic Positional Category constants.
+/// See UIndicPositionalCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum IndicPositionalCategory {
     Bottom = 1,
@@ -276,7 +292,8 @@ pub enum IndicPositionalCategory {
     VisualOrderLeft = 14,
 }
 
-/// See UIndicSyllabicCategory in ICU4C
+/// Indic Syllabic Category constants.
+/// See UIndicSyllabicCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum IndicSyllabicCategory {
     Avagraha = 1,
@@ -317,7 +334,8 @@ pub enum IndicSyllabicCategory {
     VowelIndependent = 35,
 }
 
-/// See UJoiningGroup in ICU4C
+/// Joining Group constants.
+/// See UJoiningGroup in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum JoiningGroup {
     AfricanFeh = 86,
@@ -424,7 +442,8 @@ pub enum JoiningGroup {
     Zhain = 53,
 }
 
-/// See UJoiningType in ICU4C
+/// Joining Type constants.
+/// See UJoiningType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum JoiningType {
     JoinCausing = 1,
@@ -435,7 +454,8 @@ pub enum JoiningType {
     NonJoining = 0,
 }
 
-/// See ULineBreak in ICU4C
+/// Line Break constants.
+/// See ULineBreak in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum LineBreak {
     Ambiguous = 1,
@@ -485,7 +505,14 @@ pub enum LineBreak {
 
 // The Rust enum determinant values are meaningful in ICU4C for collation
 // implementation purposes, so those numerical values are preserved here, too.
-/// See LeadCanonicalCombiningClass in PPUCD
+/// Enumerated property Lead_Canonical_Combining_Class.
+/// ICU-specific property for the ccc of the first code point
+/// of the decomposition, or lccc(c)=ccc(NFD(c)[0]).
+/// Useful for checking for canonically ordered text;
+/// see UNORM_FCD and http://www.unicode.org/notes/tn5/#FCD .
+/// Returns 8-bit numeric values like [`CanonicalCombiningClass`].
+/// See UCHAR_LEAD_CANONICAL_COMBINING_CLASS in ICU4C
+/// and LeadCanonicalCombiningClass in PPUCD.
 #[derive(Clone, PartialEq, Debug)]
 pub enum LeadCanonicalCombiningClass {
     NotReordered = 0,
@@ -578,7 +605,8 @@ pub enum NFKDQuickCheck {
     Yes = 2,
 }
 
-/// See UNumericType in ICU4C
+/// Numeric Type constants.
+/// See UNumericType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum NumericType {
     Decimal = 1,
@@ -587,7 +615,8 @@ pub enum NumericType {
     Numeric = 3,
 }
 
-// See USentenceBreak
+/// Sentence Break constants.
+/// See USentenceBreak in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum SentenceBreak {
     ATerm = 1,
@@ -609,6 +638,14 @@ pub enum SentenceBreak {
 
 // The Rust enum determinant values are meaningful in ICU4C for collation
 // implementation purposes, so those numerical values are preserved here, too.
+/// Enumerated property Trail_Canonical_Combining_Class.
+/// ICU-specific property for the ccc of the last code point
+/// of the decomposition, or tccc(c)=ccc(NFD(c)[last]).
+/// Useful for checking for canonically ordered text;
+/// see UNORM_FCD and http://www.unicode.org/notes/tn5/#FCD .
+/// Returns 8-bit numeric values like [`CanonicalCombiningClass`].
+/// See UCHAR_TRAIL_CANONICAL_COMBINING_CLASS in ICU4C and
+/// TrailCanonicalCombiningClass in PPUCD.
 #[derive(Clone, PartialEq, Debug)]
 pub enum TrailCanonicalCombiningClass {
     NotReordered = 0,
@@ -671,7 +708,8 @@ pub enum TrailCanonicalCombiningClass {
     CCC91 = 91,
 }
 
-/// See UVerticalOrientation in ICU4C
+/// Vertical Orientation constants.
+/// See UVerticalOrientation in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum VerticalOrientation {
     Rotated = 0,
@@ -680,7 +718,8 @@ pub enum VerticalOrientation {
     Upright = 3,
 }
 
-/// See UWordBreakValues in ICU4C
+/// Word Break constants.
+/// See UWordBreakValues in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum WordBreak {
     CR = 8,
