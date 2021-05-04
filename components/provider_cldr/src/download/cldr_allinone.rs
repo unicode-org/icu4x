@@ -66,33 +66,41 @@ pub struct CldrAllInOneDownloader {
 
     /// The URL to the remote zip file
     pub url: String,
+
+    /// CLDR JSON locale subset: "full" or "modern"
+    pub locale_subset: String,
 }
 
 impl CldrAllInOneDownloader {
-    /// Creates a [`CldrAllInOneDownloader`] that downloads files to the system cache directory as determined by
-    /// [`dirs::cache_dir()`](dirs::cache_dir()).
+    /// Creates a [`CldrAllInOneDownloader`] that downloads files to the system cache directory as
+    /// determined by [`dirs::cache_dir()`](dirs::cache_dir()).
     ///
-    /// github_tag should be a tag in the CLDR JSON repositories, such as "38.1.0":
-    /// https://github.com/unicode-cldr/cldr-json/tags
-    pub fn try_new_from_github_tag(github_tag: &str) -> Result<Self, Error> {
+    /// Arguments:
+    ///
+    /// - `github_tag`: a tag in the CLDR JSON repositories, such as "38.1.0":
+    ///   https://github.com/unicode-cldr/cldr-json/tags
+    /// - `locale_subset`: either "modern" (fewer locales, smaller download) or "full" (more
+    ///   locales, larger download)
+    pub fn try_new_from_github(github_tag: &str, locale_subset: &str) -> Result<Self, Error> {
         Ok(Self {
             cache_dir: dirs::cache_dir()
-            .ok_or(Error::NoCacheDir)?
-            .join("icu4x")
-            .join("cldr"),
+                .ok_or(Error::NoCacheDir)?
+                .join("icu4x")
+                .join("cldr"),
             url: format!(
-                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
-                github_tag, github_tag
+                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                github_tag, github_tag, locale_subset
             ),
+            locale_subset: locale_subset.to_string(),
         })
     }
 
-    pub fn download(&self) -> Result<CldrPathsAllInOne, Error> {
+    pub fn download(self) -> Result<CldrPathsAllInOne, Error> {
         // TODO(#297): Implement this async.
         let downloaded = io_util::download_and_unzip(&self.url, &self.cache_dir)?;
         Ok(CldrPathsAllInOne {
             cldr_json_root: downloaded,
-            suffix: "full",
+            locale_subset: self.locale_subset,
         })
     }
 }

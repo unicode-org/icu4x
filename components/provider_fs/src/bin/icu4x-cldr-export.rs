@@ -10,7 +10,7 @@ use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
 use icu_provider_cldr::CldrPaths;
-use icu_provider_cldr::CldrPathsLocal;
+use icu_provider_cldr::CldrPathsAllInOne;
 use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
@@ -116,38 +116,29 @@ fn main() -> Result<(), Error> {
                 .long("cldr-tag")
                 .value_name("TAG")
                 .help(
-                    "Download CLDR 38+ JSON data from this GitHub tag: \n\
+                    "Download CLDR JSON data from this GitHub tag: \n\
                     https://github.com/unicode-org/cldr-json/tags",
                 )
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("CLDR_CORE")
-                .long("cldr-core")
+            Arg::with_name("CLDR_ROOT")
+                .long("cldr-root")
                 .value_name("PATH")
                 .help(
-                    "Path to cldr-core. Ignored if '--cldr-tag' is present. \n\
-                    https://github.com/unicode-cldr/cldr-core",
+                    "Path to CLDR JSON distribution. Ignored if '--cldr-tag' is present. \n\
+                    https://github.com/unicode-org/cldr-json/tree/master/cldr-json",
                 )
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("CLDR_DATES")
-                .long("cldr-dates")
-                .value_name("PATH")
+            Arg::with_name("CLDR_LOCALE_SUBSET")
+                .long("cldr-locale-subset")
+                .takes_value(true)
+                .possible_value("full")
+                .possible_value("modern")
                 .help(
-                    "Path to cldr-dates. Ignored if '--cldr-tag' is present. \n\
-                    https://github.com/unicode-cldr/cldr-dates-full",
-                )
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("CLDR_NUMBERS")
-                .long("cldr-numbers")
-                .value_name("PATH")
-                .help(
-                    "Path to cldr-numbers. Ignored if '--cldr-tag' is present. \n\
-                    https://github.com/unicode-cldr/cldr-numbers-full",
+                    "CLDR JSON locale subset; defaults to 'full'",
                 )
                 .takes_value(true),
         )
@@ -240,20 +231,18 @@ fn main() -> Result<(), Error> {
             .expect("--out is a required option"),
     );
 
+    let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_new_from_github_tag(tag)?.download()?)
+        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
+    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: PathBuf::from(path),
+            locale_subset: locale_subset.to_string(),
+        })
     } else {
-        let mut cldr_paths_local = CldrPathsLocal::default();
-        if let Some(path) = matches.value_of("CLDR_CORE") {
-            cldr_paths_local.cldr_core = Ok(path.into());
-        }
-        if let Some(path) = matches.value_of("CLDR_DATES") {
-            cldr_paths_local.cldr_dates = Ok(path.into());
-        }
-        if let Some(path) = matches.value_of("CLDR_NUMBERS") {
-            cldr_paths_local.cldr_numbers = Ok(path.into());
-        }
-        Box::new(cldr_paths_local)
+        return Err(Error::Unsupported(
+            "Either --cldr-tag or --cldr-root must be specified",
+        ));
     };
 
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {

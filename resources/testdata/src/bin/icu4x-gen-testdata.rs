@@ -173,7 +173,7 @@ fn main() -> Result<(), Error> {
 /// Downloads the CLDR JSON and copies a subset of it into data/cldr
 fn download(_args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
     let downloader =
-        CldrAllInOneDownloader::try_new_from_github_tag(&metadata.package_metadata.gitref)?;
+        CldrAllInOneDownloader::try_new_from_github(&metadata.package_metadata.gitref, "full")?;
     let downloaded_cldr = downloader.download()?;
 
     let cldr_json_root = icu_testdata::paths::cldr_json_root();
@@ -224,7 +224,7 @@ fn generate(args: &ArgMatches, metadata: &PackageInfo) -> Result<(), Error> {
 
     let cldr_paths = CldrPathsAllInOne {
         cldr_json_root: icu_testdata::paths::cldr_json_root(),
-        suffix: "full",
+        locale_subset: "full".to_string(),
     };
 
     let mut options = serializers::json::Options::default();

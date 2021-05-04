@@ -22,7 +22,8 @@ pub trait CldrPaths: std::fmt::Debug {
     fn cldr_numbers(&self) -> Result<PathBuf, Error>;
 }
 
-/// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per component.
+/// An implementation of [`CldrPaths`] for multiple separate local CLDR JSON directories per
+/// component.
 ///
 /// # Examples
 ///
@@ -90,7 +91,7 @@ pub struct CldrPathsAllInOne {
     /// Path to the CLDR JSON root directory
     pub cldr_json_root: PathBuf,
     /// CLDR JSON directory suffix: probably either "modern" or "full"
-    pub suffix: &'static str,
+    pub locale_subset: String,
 }
 
 impl CldrPaths for CldrPathsAllInOne {
@@ -101,13 +102,13 @@ impl CldrPaths for CldrPathsAllInOne {
         Ok(self
             .cldr_json_root
             .clone()
-            .join(format!("cldr-dates-{}", self.suffix)))
+            .join(format!("cldr-dates-{}", self.locale_subset)))
     }
     fn cldr_numbers(&self) -> Result<PathBuf, Error> {
         Ok(self
             .cldr_json_root
             .clone()
-            .join(format!("cldr-numbers-{}", self.suffix)))
+            .join(format!("cldr-numbers-{}", self.locale_subset)))
     }
 }
 
@@ -115,6 +116,6 @@ impl CldrPaths for CldrPathsAllInOne {
 pub(crate) fn for_test() -> CldrPathsAllInOne {
     CldrPathsAllInOne {
         cldr_json_root: icu_testdata::paths::cldr_json_root(),
-        suffix: "full",
+        locale_subset: "full".to_string(),
     }
 }
