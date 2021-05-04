@@ -143,6 +143,9 @@ globwalk = { version = "0.8", optional = true }
 walkdir = { version = "2", optional = true }
 itertools = { version = "0.10", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable", optional = true }
+thiserror = { version = "1.0", optional = true }
+reqwest = { version = "0.11", features = ["json"], optional = true }
+tokio = { version = "1.5", features = ["rt", "macros"], optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
@@ -164,9 +167,18 @@ icu4x-gen-testdata = [
     "walkdir",
     "itertools",
     "writeable",
+    "thiserror",
+    "serde",
+    "serde_json",
+    "reqwest",
 ]
 
 [[bin]]
 name = "icu4x-gen-testdata"
 required-features = ["icu4x-gen-testdata"]
 path = "src/bin/icu4x-gen-testdata.rs"
+
+[[bin]]
+name = "icu4x-testdata-download"
+required-features = ["icu4x-gen-testdata"]
+path = "src/bin/icu4x-testdata-download.rs"

@@ -1030,9 +1030,12 @@ dependencies = [
  "icu_provider_fs",
  "itertools 0.10.0",
  "log",
+ "reqwest",
  "serde",
  "serde_json",
  "simple_logger",
+ "thiserror",
+ "tokio",
  "walkdir",
  "writeable",
 ]
@@ -1692,6 +1695,7 @@ dependencies = [
  "percent-encoding",
  "pin-project-lite",
  "serde",
+ "serde_json",
  "serde_urlencoded",
  "tokio",
  "tokio-native-tls",
@@ -2117,6 +2121,18 @@ dependencies = [
  "mio",
  "num_cpus",
  "pin-project-lite",
+ "tokio-macros",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "caf7b11a536f46a809a8a9f0bb4237020f70ecbf115b842360afb127ea2fda57"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
