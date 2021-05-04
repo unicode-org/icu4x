@@ -57,7 +57,7 @@ int main() {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
     }
-    printf("Output x100 is %s\n", output);
+    printf("Output x100 and negated is %s\n", output);
 
     expected = u8"-১০,০০,০০,৭০০";
     if (strcmp(output, expected) != 0) {
