@@ -26,7 +26,7 @@ pub enum DateTimeFormatError {
     MissingInputField,
     /// An error originating from skeleton matching.
     #[error(transparent)]
-    Skeleton(#[source] SkeletonError),
+    Skeleton(#[from] SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
     #[error("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
