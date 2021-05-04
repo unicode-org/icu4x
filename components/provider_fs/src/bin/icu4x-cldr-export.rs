@@ -113,6 +113,7 @@ fn main() -> Result<(), Error> {
         )
         .arg(
             Arg::with_name("CLDR_TAG")
+                .short("t")
                 .long("cldr-tag")
                 .value_name("TAG")
                 .help(
@@ -130,6 +131,12 @@ fn main() -> Result<(), Error> {
                     https://github.com/unicode-org/cldr-json/tree/master/cldr-json",
                 )
                 .takes_value(true),
+        )
+        .group(
+            ArgGroup::with_name("CLDR_SOURCE")
+                .arg("CLDR_TAG")
+                .arg("CLDR_ROOT")
+                .required(true),
         )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
@@ -150,7 +157,7 @@ fn main() -> Result<(), Error> {
                 .takes_value(true)
                 .help(
                     "Include this resource key in the output. Accepts multiple arguments. \
-                Also see --key-file.",
+                    Also see --key-file.",
                 ),
         )
         .arg(
@@ -159,8 +166,8 @@ fn main() -> Result<(), Error> {
                 .long("key-file")
                 .takes_value(true)
                 .help(
-                    "Path to text file with resource keys to include, one per line. Empty lines and \
-                    lines starting with '#' are ignored. Also see --key.",
+                    "Path to text file with resource keys to include, one per line. Empty lines \
+                    and lines starting with '#' are ignored. Also see --key.",
                 ),
         )
         .arg(
