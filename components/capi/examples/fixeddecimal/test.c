@@ -48,6 +48,8 @@ int main() {
         return 1;
     }
 
+    icu4x_fixed_decimal_negate(decimal);
+
     write = icu4x_simple_writeable(output, 40);
 
     success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
@@ -57,7 +59,7 @@ int main() {
     }
     printf("Output x100 is %s\n", output);
 
-    expected = u8"১০,০০,০০,৭০০";
+    expected = u8"-১০,০০,০০,৭০০";
     if (strcmp(output, expected) != 0) {
         printf("Output does not match expected output!\n");
         return 1;
