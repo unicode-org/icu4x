@@ -104,6 +104,7 @@ pub unsafe extern "C" fn icu4x_simple_writeable(
     }
     extern "C" fn flush(this: *mut ICU4XCustomWriteable) {
         unsafe {
+            debug_assert!((*this).len <= (*this).cap);
             let buf = (*this).buf;
             ptr::write(buf.offset((*this).len as isize), 0)
         }

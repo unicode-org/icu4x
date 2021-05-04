@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::FixedDecimal;
-use std::ptr;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimal`]
 ///
