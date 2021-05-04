@@ -18,14 +18,14 @@ use std::{fmt, ptr};
 /// and Rust will write to it, calling `grow()` as necessary. Once done, it will call `flush()`
 /// to update any state on `context` (e.g. adding a null terminator, updating the length).
 /// The object on the foreign side will be directly usable after this, the foreign side
-/// need not perform additional state updates after passing an [`ICU4XCustomWriteable`] to
+/// need not perform additional state updates after passing an [`ICU4XWriteable`] to
 /// a function.
 ///
 /// [`icu4x_simple_writeable()`] can be used to write to a fixed-size char buffer.
 ///
 /// May be extended in the future to support further invariants
 ///
-/// ICU4XCustomWriteable will not perform any cleanup on `context` or `buf`, these are logically
+/// ICU4XWriteable will not perform any cleanup on `context` or `buf`, these are logically
 /// "borrows" from the FFI side.
 ///
 /// # Safety invariants:
@@ -34,8 +34,8 @@ use std::{fmt, ptr};
 ///  - `buf` must be `cap` bytes long
 ///  - `grow()` must either return false or update `buf` and `cap` for a valid buffer
 ///    of at least the requested buffer size
-///  - Rust code must call `ICU4XCustomWriteable::flush()` before releasing to C
-pub struct ICU4XCustomWriteable {
+///  - Rust code must call `ICU4XWriteable::flush()` before releasing to C
+pub struct ICU4XWriteable {
     /// Context pointer for additional data needed by `grow()` and `flush()`. May be `null`.
     ///
     /// The pointer may reference structured data on the foreign side,
@@ -50,26 +50,26 @@ pub struct ICU4XCustomWriteable {
     /// Called by Rust to indicate that there is no more data to write.
     ///
     /// Arguments:
-    /// - `self` (`*mut ICU4XCustomWriteable`): This `ICU4XCustomWriteable`
-    flush: extern "C" fn(*mut ICU4XCustomWriteable),
+    /// - `self` (`*mut ICU4XWriteable`): This `ICU4XWriteable`
+    flush: extern "C" fn(*mut ICU4XWriteable),
     /// Called by Rust to request more capacity in the buffer. The implementation should allocate a new
     /// buffer and copy the contents of the old buffer into the new buffer, updating `self.buf` and `self.cap`
     ///
     /// Arguments:
-    /// - `self` (`*mut ICU4XCustomWriteable`): This `ICU4XCustomWriteable`
+    /// - `self` (`*mut ICU4XWriteable`): This `ICU4XWriteable`
     /// - `capacity` (`usize`): The requested capacity.
     ///
     /// Returns: `true` if the allocation succeeded. Should not update any state if it failed.
-    grow: extern "C" fn(*mut ICU4XCustomWriteable, usize) -> bool,
+    grow: extern "C" fn(*mut ICU4XWriteable, usize) -> bool,
 }
 
-impl ICU4XCustomWriteable {
+impl ICU4XWriteable {
     /// Call this function before releasing the buffer to C
     pub fn flush(&mut self) {
         (self.flush)(self);
     }
 }
-impl fmt::Write for ICU4XCustomWriteable {
+impl fmt::Write for ICU4XWriteable {
     fn write_str(&mut self, s: &str) -> Result<(), fmt::Error> {
         let needed_len = self.len + s.len();
         if needed_len > self.cap {
@@ -87,7 +87,7 @@ impl fmt::Write for ICU4XCustomWriteable {
     }
 }
 
-/// Create an `ICU4XCustomWriteable` that can write to a fixed-length stack allocated `u8` buffer.
+/// Create an `ICU4XWriteable` that can write to a fixed-length stack allocated `u8` buffer.
 ///
 /// Once done, this will append a null terminator to the written string.
 ///
@@ -98,18 +98,18 @@ impl fmt::Write for ICU4XCustomWriteable {
 pub unsafe extern "C" fn icu4x_simple_writeable(
     buf: *mut u8,
     buf_size: usize,
-) -> ICU4XCustomWriteable {
-    extern "C" fn grow(_this: *mut ICU4XCustomWriteable, _cap: usize) -> bool {
+) -> ICU4XWriteable {
+    extern "C" fn grow(_this: *mut ICU4XWriteable, _cap: usize) -> bool {
         false
     }
-    extern "C" fn flush(this: *mut ICU4XCustomWriteable) {
+    extern "C" fn flush(this: *mut ICU4XWriteable) {
         unsafe {
             debug_assert!((*this).len <= (*this).cap);
             let buf = (*this).buf;
             ptr::write(buf.add((*this).len), 0)
         }
     }
-    ICU4XCustomWriteable {
+    ICU4XWriteable {
         context: ptr::null_mut(),
         buf,
         len: 0,

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::custom_writeable::ICU4XCustomWriteable;
+use crate::custom_writeable::ICU4XWriteable;
 use crate::fixed_decimal::ICU4XFixedDecimal;
 use crate::locale::ICU4XLocale;
 use crate::provider::ICU4XDataProvider;
@@ -61,7 +61,7 @@ pub extern "C" fn icu4x_fixed_decimal_format_create<'d>(
 pub extern "C" fn icu4x_fixed_decimal_format_write(
     fdf: &ICU4XFixedDecimalFormat<'_>,
     value: &ICU4XFixedDecimal,
-    write: &mut ICU4XCustomWriteable,
+    write: &mut ICU4XWriteable,
 ) -> bool {
     use writeable::Writeable;
 

@@ -43,7 +43,7 @@ typedef struct {
 
 ICU4XCreateFixedDecimalFormatResult icu4x_fixed_decimal_format_create(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XFixedDecimalFormatOptions options);
 
-bool icu4x_fixed_decimal_format_write(const ICU4XFixedDecimalFormat* fdf, const ICU4XFixedDecimal* value, ICU4XCustomWriteable* write);
+bool icu4x_fixed_decimal_format_write(const ICU4XFixedDecimalFormat* fdf, const ICU4XFixedDecimal* value, ICU4XWriteable* write);
 void icu4x_fixed_decimal_format_destroy(ICU4XFixedDecimalFormat* fdf);
 
 

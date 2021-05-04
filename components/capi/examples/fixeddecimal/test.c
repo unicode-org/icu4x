@@ -27,7 +27,7 @@ int main() {
     ICU4XFixedDecimalFormat* fdf = fdf_result.fdf;
     char output[40];
 
-    ICU4XCustomWriteable write = icu4x_simple_writeable(output, 40);
+    ICU4XWriteable write = icu4x_simple_writeable(output, 40);
 
     bool success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
     if (!success) {
