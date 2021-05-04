@@ -84,22 +84,25 @@ pub struct ICU4XPluralOperands {
     pub c: usize,
 }
 
-#[repr(C)]
-/// FFI version of [`PluralRuleType`]. See its docs for more details.
-pub enum ICU4XPluralRuleType {
-    Cardinal,
-    Ordinal,
+c_enum! {
+    /// FFI version of [`PluralRuleType`]. See its docs for more details.
+    pub c_enum ICU4XPluralRuleType is PluralRuleType {
+        Cardinal,
+        Ordinal,
+    }
 }
 
 #[repr(C)]
-/// FFI version of [`PluralCategory`]. See its docs for more details.
-pub enum ICU4XPluralCategory {
-    Zero,
-    One,
-    Two,
-    Few,
-    Many,
-    Other,
+c_enum! {
+    /// FFI version of [`PluralCategory`]. See its docs for more details.
+    pub c_enum ICU4XPluralCategory is PluralCategory {
+        Zero,
+        One,
+        Two,
+        Few,
+        Many,
+        Other,
+    }
 }
 
 impl From<PluralOperands> for ICU4XPluralOperands {
@@ -124,27 +127,6 @@ impl From<ICU4XPluralOperands> for PluralOperands {
             f: other.f,
             t: other.t,
             c: other.c,
-        }
-    }
-}
-
-impl From<ICU4XPluralRuleType> for PluralRuleType {
-    fn from(other: ICU4XPluralRuleType) -> Self {
-        match other {
-            ICU4XPluralRuleType::Cardinal => Self::Cardinal,
-            ICU4XPluralRuleType::Ordinal => Self::Ordinal,
-        }
-    }
-}
-impl From<PluralCategory> for ICU4XPluralCategory {
-    fn from(other: PluralCategory) -> Self {
-        match other {
-            PluralCategory::Zero => Self::Zero,
-            PluralCategory::One => Self::One,
-            PluralCategory::Two => Self::Two,
-            PluralCategory::Few => Self::Few,
-            PluralCategory::Many => Self::Many,
-            PluralCategory::Other => Self::Other,
         }
     }
 }

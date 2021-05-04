@@ -4,6 +4,12 @@
 
 #![allow(clippy::upper_case_acronyms)]
 
+#[macro_use]
+mod macros;
+
+pub mod custom_writeable;
+pub mod decimal;
+pub mod fixed_decimal;
 pub mod locale;
 pub mod pluralrules;
 pub mod provider;
