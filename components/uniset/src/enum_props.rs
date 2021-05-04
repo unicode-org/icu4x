@@ -38,7 +38,8 @@ pub enum EnumeratedProperty {
 // TODO: verify hunches that U_BLOCK_SEPARATOR is PPUCD Paragraph_Separator
 // TODO: ask why U_RIGHT_TO_LEFT_ARABIC is not in PPUCD
 // TODO: ask why PPUCD has ArabicLetter? Is that same as U_RIGHT_TO_LEFT_ARABIC?
-/// This specifies the language directional property of a character set.
+/// This specifies the the categories required by the Unicode Bidirectional Algorithm.
+/// For more information, see Unicode Standard Annex #9, "Unicode Bidirectional Algorithm".
 /// See UCharDirection in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum BidiClass {
@@ -67,7 +68,9 @@ pub enum BidiClass {
     WhiteSpace = 9,
 }
 
-/// Bidi Paired Bracket Type constants.
+/// Type of a paired bracket, either opening or closing. 
+/// This property is used in the implementation of parenthesis matching.
+/// See Unicode Standard Annex #9, "Unicode Bidirectional Algorithm".
 /// See UBidiPairedBracketType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum BidiPairedBracketType {
@@ -76,7 +79,9 @@ pub enum BidiPairedBracketType {
     Open = 1,
 }
 
-/// Enumerated property Canonical_Combining_Class.
+/// The classes used for the Canonical Ordering Algorithm in the Unicode Standard. 
+/// This property could be considered either an enumerated property or a numeric property: 
+/// the principal use of the property is in terms of the numeric values.
 /// Same as u_getCombiningClass, returns 8-bit numeric values that specify the
 /// combining class of the code point as specified in UnicodeData.txt.
 /// See UCHAR_CANONICAL_COMBINING_CLASS in ICU4C
@@ -144,6 +149,9 @@ pub enum CanonicalCombiningClass {
 }
 
 /// Decomposition Type constants.
+/// These are listed as Compatibility Formatting Tags in
+/// section 5.7.3 "Character Decomposition Mapping" in Unicode Standard Annex #44,
+/// "Unicode Character Database".
 /// See UDecompositionType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum DecompositionType {
@@ -167,7 +175,8 @@ pub enum DecompositionType {
     Wide = 17,
 }
 
-/// East Asian Width constants.
+/// A property for determining the choice of wide versus narrow glyphs in East Asian contexts.
+/// Property values are described in Unicode Standard Annex #11, "East Asian Width".
 /// See UEastAsianWidth in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum EastAsianWidth {
@@ -235,6 +244,8 @@ pub enum GeneralCategory {
 }
 
 /// Grapheme Cluster Break constants.
+/// See Section 3.1 "Default Graphame Cluster Boundary Specification" in
+/// Unicode Standard Annex #29, "Unicode Text Segmentation".
 /// See UGraphemeClusterBreak in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum GraphemeClusterBreak {
@@ -259,6 +270,8 @@ pub enum GraphemeClusterBreak {
 }
 
 /// Hangul Syllable Type constants.
+/// See the values L, V, T, LV, and LVT used in Chapter 3, Conformance in
+/// the Unicode Standard.
 /// See UHangulSyllableType in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum HangulSyllableType {
@@ -270,7 +283,8 @@ pub enum HangulSyllableType {
     VowelJamo = 2,
 }
 
-/// Indic Positional Category constants.
+/// A property informally defining the positional categories for dependent vowels, viramas, combining marks, and other characters used in Indic scripts.
+/// General descriptions of the property values are provided in the header section of the data file IndicPositionalCategory.txt.
 /// See UIndicPositionalCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum IndicPositionalCategory {
@@ -292,7 +306,8 @@ pub enum IndicPositionalCategory {
     VisualOrderLeft = 14,
 }
 
-/// Indic Syllabic Category constants.
+/// A property informally defining the structural categories of syllabic components in Indic scripts.
+/// General descriptions of the property values are provided in the header section of the data file IndicSyllabicCategory.txt.
 /// See UIndicSyllabicCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum IndicSyllabicCategory {
@@ -334,6 +349,7 @@ pub enum IndicSyllabicCategory {
     VowelIndependent = 35,
 }
 
+// TODO: suggest update (to include more script categories) for description in UAX 44.
 /// Joining Group constants.
 /// See UJoiningGroup in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
@@ -708,7 +724,9 @@ pub enum TrailCanonicalCombiningClass {
     CCC91 = 91,
 }
 
-/// Vertical Orientation constants.
+/// A property used to establish a default for the
+/// correct orientation of characters when used in vertical text layout,
+/// as described in Unicode Standard Annex #50, "Unicode Vertical Text Layout".
 /// See UVerticalOrientation in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum VerticalOrientation {

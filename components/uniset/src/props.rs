@@ -300,7 +300,8 @@ pub fn get_xid_start_property<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
 //
 
 /// Return a [`UnicodeSet`] for a particular value of the Bidi_Class Unicode enumerated property.
-/// Bidi_Class specifies the language directional property of a character set.
+/// Bidi_Class specifies the the categories required by the Unicode Bidirectional Algorithm.
+/// For more information, see Unicode Standard Annex #9, "Unicode Bidirectional Algorithm".
 pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: BidiClass) -> UnisetResult {
     match enum_val {
         BidiClass::ArabicLetter => get_prop(provider, key::BIDI_CLASS_ARABIC_LETTER_V1),
@@ -330,7 +331,9 @@ pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Si
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Bidi_Paired_Bracket_Type Unicode enumerated property.
-/// Bidi_Paired_Bracket_Type specifies Bidi Paired Bracket Type constants.
+/// Bidi_Paired_Bracket_Type specifies the type of a paired bracket, either opening or closing. 
+/// This property is used in the implementation of parenthesis matching.
+/// See Unicode Standard Annex #9, "Unicode Bidirectional Algorithm".
 pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: BidiPairedBracketType) -> UnisetResult {
     match enum_val {
         BidiPairedBracketType::Close => get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_CLOSE_V1),
@@ -340,7 +343,7 @@ pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, UnicodePrope
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Canonical_Combining_Class Unicode enumerated property
-/// Canonical_Combining_Class specifies the combining class of the code point as specified in UnicodeData.txt.
+/// Canonical_Combining_Class specifies the classes used for the Canonical Ordering Algorithm in the Unicode Standard.
 pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: CanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         CanonicalCombiningClass::NotReordered => get_prop(provider, key::CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
@@ -405,7 +408,8 @@ pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, UnicodeProp
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Decomposition_Type Unicode enumerated property.
-/// Decomposition_Type specifies Decomposition Type constants.
+/// Decomposition_Type specifies Decomposition Type constants, listed as Compatibility Formatting Tags in 
+/// Unicode Standard Annex #44.
 pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: DecompositionType) -> UnisetResult {
     match enum_val {
         DecompositionType::Can => get_prop(provider, key::DECOMPOSITION_TYPE_CAN_V1),
@@ -430,7 +434,8 @@ pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the East_Asian_Width Unicode enumerated property.
-/// East_Asian_Width specifies East Asian Width constants.
+/// East_Asian_Width determines the choice of wide versus narrow glyphs in East Asian contexts.
+/// Property values are described in Unicode Standard Annex #11, "East Asian Width".
 pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: EastAsianWidth) -> UnisetResult {
     match enum_val {
         EastAsianWidth::Ambiguous => get_prop(provider, key::EAST_ASIAN_WIDTH_AMBIGUOUS_V1),
@@ -490,6 +495,7 @@ pub fn get_general_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
 
 /// Return a [`UnicodeSet`] for a particular value of the Grapheme_Cluster_Break Unicode enumerated property
 /// Grapheme_Cluster_Break specifies Grapheme Cluster Break constants.
+/// See Section 3.1 in Unicode Standard Annex #29.
 pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: GraphemeClusterBreak) -> UnisetResult {
     match enum_val {
         GraphemeClusterBreak::Control => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_CONTROL_V1),
@@ -515,6 +521,8 @@ pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, UnicodePropert
 
 /// Return a [`UnicodeSet`] for a particular value of the Hangul_Syllable_Type Unicode enumerated property
 /// Hangul_Syllable_Type specifies Hangul Syllable Type constants.
+/// See the values L, V, T, LV, and LVT used in Chapter 3, Conformance in
+/// the Unicode Standard.
 pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: HangulSyllableType) -> UnisetResult {
     match enum_val {
         HangulSyllableType::LeadingJamo => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1),
@@ -527,7 +535,8 @@ pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, UnicodeProperty<
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Indic_Positional_Category Unicode enumerated property
-/// Indic_Positional_Category specifies Indic Positional Category constants.
+/// Indic_Positional_Category informally defines the positional categories for dependent vowels, viramas, combining marks, and other characters used in Indic scripts.
+/// General descriptions of the property values are provided in the header section of the data file IndicPositionalCategory.txt.
 pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: IndicPositionalCategory) -> UnisetResult {
     match enum_val {
         IndicPositionalCategory::Bottom => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_V1),
@@ -550,7 +559,8 @@ pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, UnicodeProp
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Indic_Syllabic_Category Unicode enumerated property
-/// Indic_Syllabic_Category specifies Indic Syllabic Category constants.
+/// Indic_Syllabic_Category informally defines the structural categories of syllabic components in Indic scripts.
+/// General descriptions of the property values are provided in the header section of the data file IndicSyllabicCategory.txt.
 pub fn get_indic_syllabic_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: IndicSyllabicCategory) -> UnisetResult {
     match enum_val {
         IndicSyllabicCategory::Avagraha => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1),
@@ -964,7 +974,9 @@ pub fn get_trail_canonical_combining_class_val_set<'d, D: DataProvider<'d, Unico
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Vertical_Orientation Unicode enumerated property
-/// Vertical_Orientation specifies Vertical Orientation constants.
+/// Vertical_Orientation is used to establish a default for the
+/// correct orientation of characters when used in vertical text layout,
+/// as described in Unicode Standard Annex #50, "Unicode Vertical Text Layout".
 pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>> + ?Sized>(provider: &D, enum_val: VerticalOrientation) -> UnisetResult {
     match enum_val {
         VerticalOrientation::Rotated => get_prop(provider, key::VERTICAL_ORIENTATION_ROTATED_V1),
