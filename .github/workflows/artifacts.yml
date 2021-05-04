@@ -10,7 +10,7 @@ on:
 
 jobs:
   docs:
-    name: "Documentation Preview"
+    name: "Docs Preview"
     runs-on: "ubuntu-latest"
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
@@ -33,7 +33,7 @@ jobs:
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.run_number }}/docs
-    - name: "⭐⭐⭐ Summary ⭐⭐⭐"
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::📖 Docs Preview"
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.run_number }}/docs/icu/index.html"
