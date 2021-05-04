@@ -95,10 +95,7 @@ impl fmt::Write for ICU4XWriteable {
 ///
 ///  - `buf` must be a valid pointer to a region of memory that can hold at `buf_size` bytes
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_simple_writeable(
-    buf: *mut u8,
-    buf_size: usize,
-) -> ICU4XWriteable {
+pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -> ICU4XWriteable {
     extern "C" fn grow(_this: *mut ICU4XWriteable, _cap: usize) -> bool {
         false
     }

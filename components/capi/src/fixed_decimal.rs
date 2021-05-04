@@ -32,8 +32,7 @@ pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
 
 #[no_mangle]
 /// FFI version of [`FixedDecimal::negate()`]. See its docs for more details.ICU4XFixedDecimal
-pub extern "C" fn icu4x_fixed_decimal_negate(
-    fd: &mut ICU4XFixedDecimal) {
+pub extern "C" fn icu4x_fixed_decimal_negate(fd: &mut ICU4XFixedDecimal) {
     fd.negate()
 }
 #[no_mangle]
