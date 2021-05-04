@@ -34,16 +34,12 @@ pub enum EnumeratedProperty {
     WordBreak = 0x1014,
 }
 
-
-// TODO: verify hunches that U_BLOCK_SEPARATOR is PPUCD Paragraph_Separator
-// TODO: ask why U_RIGHT_TO_LEFT_ARABIC is not in PPUCD
-// TODO: ask why PPUCD has ArabicLetter? Is that same as U_RIGHT_TO_LEFT_ARABIC?
 /// This specifies the the categories required by the Unicode Bidirectional Algorithm.
-/// For more information, see Unicode Standard Annex #9, "Unicode Bidirectional Algorithm".
-/// See UCharDirection in ICU4C.
+/// For more information, see Section 3.2 of Unicode Standard Annex #9, "Unicode Bidirectional Algorithm".
+/// See UCharDirection in ICU4C and Bidi_Class in PPUCD.
 #[derive(Clone, PartialEq, Debug)]
 pub enum BidiClass {
-    // ArabicLetter = -1,
+    ArabicLetter = 13,
     ArabicNumber = 5,
     ParagraphSeparator = 7,
     BoundaryNeutral = 18,
