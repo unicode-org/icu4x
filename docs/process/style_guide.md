@@ -1,9 +1,15 @@
-Rust Best Practice for ICU4X
-============================
+ICU4X Style Guide
+=================
 
-# Introduction
+This document outlines the style guide and best practice for code in ICU4X, with a focus on Rust code style.
 
-This document outlines the Rust style guide and best practice for code in ICU4X.
+## Objectives
+
+This style guide is intended to help ICU4X code be readable and maintainable for many years to come, as well as run quickly on devices of all sizes and operating systems with low memory usage and code/data size.
+
+*All pull requests must fully abide by this style guide.* However, this is an evolving document; if you feel that a recommendation in this guide comes into conflict with correctness, readability, or performance, please suggest an update to the guide.
+
+## Preamble
 
 As Rust is a new programming language it is expected that the language guidelines will evolve over time, so care should be taken to keep this document up to date, and any new changes after the initially agreed upon version should be reflected in the change history at the bottom of this document.
 
@@ -13,11 +19,11 @@ Items in this document are categorized as **required** or **suggested**, which e
 
 Many of the practices here are collected from existing sources (which should be cited) and where applicable there may be some additional justification for including that practice in this document and why it is categorized as it is. In general where a practice is sensible, expected to be achievable, and has no obvious downside, it will be marked as required.
 
-Note however that none of this document is meant to trump common sense, if you're in a situation where it would be better to violate a **required** practice, then it just means we should have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However exceptions should always be commented clearly for the next maintainer.
+If you find yourself in a situation where it would be better to violate a **required** practice, please raise it with the group so that we can have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However, exceptions should always be commented clearly for the next maintainer.
 
 If you're new to Rust, see the [Appendix](#appendix) for some, hopefully useful, links.
 
-# Naming Conventions
+## Naming Conventions
 
 ### No Special Naming :: required
 
