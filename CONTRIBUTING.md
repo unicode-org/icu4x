@@ -16,6 +16,14 @@ The first step is to fork the repository to your namespace and create a branch o
 
 That branch may end up containing one of more commits that are constituting the full scope of the pull request.
 
+### Release Readiness
+
+When considering a contribution, we use the following rule of thumb: **all code in `components/` and `utils/` on the `main` branch must be ready for release at any time.**
+
+Practically, this means that new components or improvements to existing components should not be merged until they meet all requirements of code quality (see the checklist below).
+
+If working on a larger project, consider starting it in the `experimental/` directory. We allow contributions to that directory even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved from `experimental/` into `components/` or `utils/` as a separate pull request.
+
 ### Checklist
 
 Each commit and pull request should follow the [style guide][style_guide] and be properly formatted with `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage is above `90%`.
@@ -37,6 +45,8 @@ The other is the review cycle.
 If the pull request is simple and short lived, it can be initialized with review request.
 If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
+
+If a pull request is particularly large in scope, consider reducing the scope of the pull request and moving work to the `experimental/` directory, as discussed above.
 
 By the end of this phase, and right before review is requested, it is helpful for the reviewers to have a clean list of commits in the pull request.
 
