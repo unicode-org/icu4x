@@ -602,6 +602,22 @@ fn main() {
 
 ## Data Types
 
+### Zero-copy in DataProvider structs :: required
+
+All data structs that can be passed through the DataProvider pipeline must support *zero-copy deserialization:* in practice, no heap allocations should be required when deserializing from Bincode-like formats. This means that if the type involves variable-length data like strings, vectors, and maps, it must use a zero-copy type backed by a byte buffer to represent them.
+
+Data structs with zero-copy data should have a `'s` lifetime parameter.
+
+Examples of types that can be used in zero-copy data structs:
+
+- Strings: `Cow<'s, str>`, except as noted below
+- Vectors of fixed-width types: `ZeroVec<'s, T>`
+    - Examples: `ZeroVec<'s, u32>`, `ZeroVec<'s, TinyStr8>`
+- Vectors of variable-width types: `VarZeroVec<'s, T>`
+    - Example: `VarZeroVec<'s, String>`
+- Maps: `ZeroMap<'s, K, V>`
+    - Example: `ZeroMap<'s, TinyStr4, String>`
+
 ### Conventions for strings in structs :: suggested
 
 Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
@@ -653,6 +669,20 @@ struct MyStructOptions {
     pub fraction_digits: FractionDigits,
 }
 ```
+
+### Pre-parsed fields (exotic types) :: suggested
+
+Main issue: [#523](https://github.com/unicode-org/icu4x/issues/523)
+
+Data in memory should be fully parsed and ready to use. For example, if a data struct contains a datetime pattern, that pattern should be represented as a `Pattern`, not as a string. We call these *exotic types*.
+
+Keep the following in mind when using exotic types:
+
+1. **Stability:** Since exotic types become part of the serialization format of the data struct, their serialized form must remain stable, according to the data struct versioning requirements discussed in [data_pipeline.md](../design/data_pipeline.md).
+2. **Zero-Copy:** If the exotic type involves variable-length data (like a string or a vector), it must also support zero-copy deserialization, as described above. This means that such an exotic type must have a lifetime parameter and internal `Cow`s or `ZeroVec`s for data storage.
+3. **Data Integrity:** In most cases, it is insufficient to auto-derive `serde::Deserialize` on an exotic type. Deserialization must perform data validation in order to retain internal invariants of the exotic type.
+
+If it is not possible to obey these requirements in an exotic type, use a standard type instead, but make sure that it requires minimal parsing and post-processing.
 
 # Error Handling
 
