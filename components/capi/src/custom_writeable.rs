@@ -33,7 +33,7 @@ use std::{fmt, ptr};
 ///     `context` may be  null, however `flush()` and `grow()` must then be ready to receive it as such.
 ///  - `buf` must be `cap` bytes long
 ///  - `grow()` must either return false or update `buf` and `cap` for a valid buffer
-///  - of at least the requested buffer size
+///    of at least the requested buffer size
 ///  - Rust code must call `ICU4XCustomWriteable::flush()` before releasing to C
 pub struct ICU4XCustomWriteable {
     /// Context pointer for additional data needed by `grow()` and `flush()`. May be `null`.
