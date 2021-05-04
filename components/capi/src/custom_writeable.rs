@@ -80,11 +80,7 @@ impl fmt::Write for ICU4XCustomWriteable {
         }
         debug_assert!(needed_len <= self.cap);
         unsafe {
-            ptr::copy_nonoverlapping(
-                s.as_bytes().as_ptr(),
-                self.buf.offset(self.len as isize),
-                s.len(),
-            );
+            ptr::copy_nonoverlapping(s.as_bytes().as_ptr(), self.buf.add(self.len), s.len());
         }
         self.len = needed_len;
         Ok(())
@@ -94,6 +90,10 @@ impl fmt::Write for ICU4XCustomWriteable {
 /// Create an `ICU4XCustomWriteable` that can write to a fixed-length stack allocated `u8` buffer.
 ///
 /// Once done, this will append a null terminator to the written string.
+///
+/// # Safety
+///
+///  - `buf` must be a valid pointer to a region of memory that can hold at `buf_size` bytes
 #[no_mangle]
 pub unsafe extern "C" fn icu4x_simple_writeable(
     buf: *mut u8,
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn icu4x_simple_writeable(
         unsafe {
             debug_assert!((*this).len <= (*this).cap);
             let buf = (*this).buf;
-            ptr::write(buf.offset((*this).len as isize), 0)
+            ptr::write(buf.add((*this).len), 0)
         }
     }
     ICU4XCustomWriteable {

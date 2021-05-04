@@ -23,11 +23,15 @@ pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedD
 /// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.ICU4XFixedDecimal
 ///
 /// Returns `true` if the multiplication was successful.
-pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
+///
+/// # Safety
+///
+/// - `fd` must be a valid pointer to an [`ICU4XFixedDecimal`]
+pub unsafe extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     fd: *mut ICU4XFixedDecimal,
     power: i16,
 ) -> bool {
-    unsafe { (&mut *fd).multiply_pow10(power).is_ok() }
+    (&mut *fd).multiply_pow10(power).is_ok()
 }
 #[no_mangle]
 /// Destructor for [`ICU4XFixedDecimal`]
