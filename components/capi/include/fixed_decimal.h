@@ -8,12 +8,8 @@
 // opaque
 typedef struct ICU4XFixedDecimal ICU4XFixedDecimal; 
 
-typedef struct {
-    ICU4XFixedDecimal* decimal;
-    bool success;
-} ICU4XCreateFixedDecimalResult;
-
-ICU4XCreateFixedDecimalResult icu4x_fixed_decimal_create(int64_t magnitude, int16_t power);
+ICU4XFixedDecimal* icu4x_fixed_decimal_create(int64_t magnitude);
+bool icu4x_fixed_decimal_multiply_pow10(ICU4XFixedDecimal* fd, int16_t power);
 
 void icu4x_fixed_decimal_destroy(ICU4XFixedDecimal* fd);
 

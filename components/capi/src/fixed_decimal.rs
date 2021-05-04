@@ -10,41 +10,26 @@ use std::ptr;
 /// Can be obtained via [`icu4x_fixed_decimal_create()`] and destroyed via [`icu4x_fixed_decimal_destroy()`]
 pub type ICU4XFixedDecimal = FixedDecimal;
 
-#[repr(C)]
-/// This is the result returned by [`icu4x_plural_rules_create()`]
-pub struct ICU4XCreateFixedDecimalResult {
-    /// Will be null if `success` is [`false`]
-    pub decimal: *mut ICU4XFixedDecimal,
-    /// Currently just a boolean, but we might add a proper error enum as necessary
-    pub success: bool,
+#[no_mangle]
+/// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
+/// `magnitude`.
+//
+// We can add additional constructors from strings, floats, etc as the need arises
+pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedDecimal {
+    let fd = FixedDecimal::from(magnitude);
+    Box::into_raw(Box::new(fd))
 }
 
 #[no_mangle]
-/// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
-/// `magnitude` and then multiplies it by `10 ^ pow10`.
+/// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.ICU4XFixedDecimal
 ///
-/// # Safety
-/// - Only access `decimal` in the result if `success` is [`true`].
-//
-// We can add additional constructors from strings, floats, etc as the need arises
-pub extern "C" fn icu4x_fixed_decimal_create(
-    magnitude: i64,
-    pow10: i16,
-) -> ICU4XCreateFixedDecimalResult {
-    let fd = FixedDecimal::from(magnitude);
-    if let Ok(multiplied) = fd.multiplied_pow10(pow10) {
-        ICU4XCreateFixedDecimalResult {
-            decimal: Box::into_raw(Box::new(multiplied)),
-            success: true,
-        }
-    } else {
-        ICU4XCreateFixedDecimalResult {
-            decimal: ptr::null_mut(),
-            success: false,
-        }
-    }
+/// Returns `true` if the multiplication was successful.
+pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
+    fd: *mut ICU4XFixedDecimal,
+    power: i16,
+) -> bool {
+    unsafe { (&mut *fd).multiply_pow10(power).is_ok() }
 }
-
 #[no_mangle]
 /// Destructor for [`ICU4XFixedDecimal`]
 ///

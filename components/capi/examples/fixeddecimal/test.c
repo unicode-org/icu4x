@@ -15,12 +15,8 @@ int main() {
         return 1;
     }
     ICU4XDataProvider provider = result.provider;
-    ICU4XCreateFixedDecimalResult decimal_result = icu4x_fixed_decimal_create(1000007, 0);
-    if (!decimal_result.success)  {
-        printf("Failed to create FixedDecimal\n");
-        return 1;
-    }
-    ICU4XFixedDecimal* decimal = decimal_result.decimal;
+    ICU4XFixedDecimal* decimal = icu4x_fixed_decimal_create(1000007);
+
     ICU4XFixedDecimalFormatOptions opts = {ICU4XGroupingStrategy_Auto, ICU4XSignDisplay_Auto};
 
     ICU4XCreateFixedDecimalFormatResult fdf_result = icu4x_fixed_decimal_format_create(locale, &provider, opts);
@@ -41,6 +37,27 @@ int main() {
     printf("Output is %s\n", output);
 
     const char* expected = u8"১০,০০,০০৭";
+    if (strcmp(output, expected) != 0) {
+        printf("Output does not match expected output!\n");
+        return 1;
+    }
+
+    success = icu4x_fixed_decimal_multiply_pow10(decimal, 2);
+    if (!success) {
+        printf("Failed to multiply FixedDecimal\n");
+        return 1;
+    }
+
+    write = icu4x_simple_writeable(output, 40);
+
+    success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
+    if (!success) {
+        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
+        return 1;
+    }
+    printf("Output x100 is %s\n", output);
+
+    expected = u8"১০,০০,০০,৭০০";
     if (strcmp(output, expected) != 0) {
         printf("Output does not match expected output!\n");
         return 1;
