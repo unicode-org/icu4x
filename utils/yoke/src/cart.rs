@@ -10,10 +10,11 @@ use std::sync::Arc;
 ///
 /// The essential invariant that must be maintained by implementors is that `Self::Inner` references
 /// obtained from this type via `Self::get_inner()` must continue to be valid for the
-/// duration of this type provided that this type is never accessed via `&mut` references.
+/// complete lifetime of this type (i.e. until destructors run) provided that this type
+/// is never accessed via `&mut` references.
 ///
-/// For example, `Vec<u8>` is a valid [`Cart`], however `Vec<RefCell<u8>>` is not, because
-/// in the latter type it is possible to use interior mutation to change the data.
+/// For example, `Rc<Vec<u8>>` and `Rc<[u8]>` are valid [`Cart`]s, however `Rc<RefCell<Vec<u8>>>` is
+/// not, because in the latter type it is possible to use interior mutation to change the data.
 ///
 /// In general, this means "no interior mutability", though interior mutability can be fine
 /// if the interior mutability is to something that does not affect references. For example,
@@ -38,8 +39,12 @@ pub unsafe trait Cart {
 /// all references obtained from this type must continue to be valid for the lifetime
 /// of this type provided that this type is never moved or accessed via an `&mut` reference.
 ///
-/// Essentially, this means "no interior mutability", however interior mutability which cannot be
-/// seen from the outside is fine.
+/// Essentially, this means "no interior mutability", however interior mutability which mutates
+/// data that cannot have references taken to it is fine.
+///
+/// For example, both `Rc` and `Weak` use interior mutability, however in `Rc`'s case it mutates
+/// the internal reference count which one cannot take references to, whereas in `Weak`'s case 
+/// the `T` itself can be destroyed.
 pub unsafe trait Cartable {}
 
 unsafe impl<T: Cartable + ?Sized> Cart for Rc<T> {

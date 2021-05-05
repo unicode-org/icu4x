@@ -11,6 +11,7 @@ use std::mem;
 ///
 /// While Rust does not yet have GAT syntax, for the purpose of this documentation
 /// we shall refer to "`Self` with a lifetime `'a`" with the syntax `Self<'a>`.
+/// Self<'static> is a stand-in for the HKT Self<'_>: lifetime -> type.
 ///
 /// [`Yokeable`]  exposes ways to cast between `Self<'static>` and `Self<'a>` generically.
 /// This is useful for turning covariant lifetimes to _dynamic_ lifetimes, where `'static` is
@@ -223,7 +224,7 @@ where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         // Cast away the lifetime of Self
-        unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
+        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
     }
 }
 
@@ -243,6 +244,6 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         // Cast away the lifetime of Self
-        unsafe { f(mem::transmute::<&mut Self, &mut Self::Output>(self)) }
+        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
     }
 }
