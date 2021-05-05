@@ -129,24 +129,19 @@ icu_provider_fs = { version = "0.2", path = "../../components/provider_fs" }
 icu_locid = { version = "0.2", path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature
+cargo_metadata = { version = "0.13", optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable", optional = true }
 
 # Dependencies for the binary
-cargo_metadata = { version = "0.13", optional = true }
-camino = "1.0"
-clap = { version = "2.33", optional = true }
-icu_provider_cldr = { version = "0.2", path = "../../components/provider_cldr", optional = true, features = ["download"] }
-log = { version = "0.4", optional = true }
-simple_logger = { version = "1.11", optional = true }
-globwalk = { version = "0.8", optional = true }
-walkdir = { version = "2", optional = true }
-itertools = { version = "0.10", optional = true }
-reqwest = { version = "0.11", features = ["json", "stream", "gzip"], optional = true }
-tokio = { version = "1.5", features = ["rt", "macros", "fs"], optional = true }
-futures = { version = "0.3", optional = true }
 anyhow = { version = "1.0", optional = true }
+clap = { version = "2.33", optional = true }
+futures = { version = "0.3", optional = true }
+log = { version = "0.4", optional = true }
+reqwest = { version = "0.11", features = ["json", "stream", "gzip"], optional = true }
+simple_logger = { version = "1.11", optional = true }
+tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
 
 [dev-dependencies]
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
@@ -154,31 +149,27 @@ icu_plurals = { version = "0.2", path = "../../components/plurals" }
 
 [features]
 # Enables programmatic access to this Cargo.toml file
-metadata = ["cargo_metadata", "serde", "serde_json", "icu_locid/serde", "writeable"]
+metadata = [
+    "cargo_metadata",
+    "icu_locid/serde",
+    "serde_json",
+    "serde",
+    "writeable"
+]
 # Enables the `download` binary to re-generate the test data
 download = [
-    "cargo_metadata",
-    "clap",
-    "icu_provider_cldr",
-    "log",
-    "simple_logger",
-    "icu_provider_fs/export",
-    "metadata",
-    "globwalk",
-    "walkdir",
-    "itertools",
-    "serde",
-    "serde_json",
-    "reqwest",
-    "tokio",
-    "futures",
     "anyhow",
+    "clap",
+    "futures",
+    "icu_provider_fs/export",
+    "log",
+    "metadata",
+    "reqwest",
+    "serde_json",
+    "serde",
+    "simple_logger",
+    "tokio",
 ]
-
-[[bin]]
-name = "icu4x-gen-testdata"
-required-features = ["download"]
-path = "src/bin/icu4x-gen-testdata.rs"
 
 [[bin]]
 name = "icu4x-testdata-download"

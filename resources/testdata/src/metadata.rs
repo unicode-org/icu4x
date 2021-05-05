@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use camino::Utf8PathBuf;
-use cargo_metadata::{self, MetadataCommand};
+use cargo_metadata::{self, camino::Utf8PathBuf, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::fmt;
