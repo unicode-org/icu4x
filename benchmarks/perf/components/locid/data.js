@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620187954536,
+  "lastUpdate": 1620194315421,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6653,6 +6653,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4213,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6582ccddf87d49a44e2d4e54604543365c76bff",
+          "message": "Switch to use thiserror for errors (#697)\n\n* Switch to use thiserror for errors\r\n\r\n* Update components/datetime/src/error.rs\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>\r\n\r\n* Switch to from, since transparent and source are a no go together.\r\n\r\nCo-authored-by: Shane F. Carr <sffc@google.com>",
+          "timestamp": "2021-05-04T22:51:18-07:00",
+          "tree_id": "04cd7b21c0788e88cb41cda04f4795f74a2edc6a",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6582ccddf87d49a44e2d4e54604543365c76bff"
+        },
+        "date": 1620194314291,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3518,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5404,
+            "range": "± 242",
             "unit": "ns/iter"
           }
         ]
