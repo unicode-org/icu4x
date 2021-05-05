@@ -76,7 +76,7 @@ use std::mem;
 /// ```
 pub unsafe trait Yokeable<'a>: 'static {
     /// This type MUST be `Self` with the `'static` replaced with `'a`, i.e. `Self<'a>`
-    type Output: 'a + Sized;
+    type Output: 'a;
 
     /// This method must cast `self` between `&'a Self<'static>` and `&'a Self<'a>`.
     ///

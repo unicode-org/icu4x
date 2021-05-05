@@ -107,7 +107,7 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     ///     })
     /// }
     ///
-    /// let yoke = load_object("filename.bincode");
+    /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
     /// assert_eq!(&**yoke.get(), "hello");
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// ```
@@ -163,7 +163,7 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     /// # }
     ///
     /// // load_object() defined in the example at the top of this page
-    /// let yoke = load_object("filename.bincode");
+    /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn get<'a>(&'a self) -> &'a <Y as Yokeable<'a>>::Output {
@@ -216,7 +216,7 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     /// }
     ///
     /// // `load_object()` deserializes an object from a file
-    /// let mut bar = load_object("filename.bincode");
+    /// let mut bar: Yoke<Bar, _> = load_object("filename.bincode");
     /// assert_eq!(bar.get().string, "hello");
     /// assert!(matches!(bar.get().string, Cow::Borrowed(_)));
     /// assert_eq!(&*bar.get().numbers, &[0x68, 0x65, 0x6c, 0x6c, 0x6f]);
