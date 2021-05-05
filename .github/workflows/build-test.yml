@@ -351,6 +351,7 @@ jobs:
           output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
           # Show alert with commit comment on detecting possible memory regression
           alert-threshold: '200%'
+          fail-on-alert: true
           # Requires one-time-only creation of this branch on remote repo. This will
           # store the generated information.
           gh-pages-branch: unmerged-pr-bench-data
