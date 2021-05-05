@@ -31,7 +31,8 @@ use std::mem;
 /// # Implementation example
 ///
 /// This crate will eventually expose a custom derive that makes it possible to implement this
-/// trait safely without much ceremony. In the meantime, this trait can typically be implemented as
+/// trait safely without much ceremony. Such a custom derive will include static checks
+/// for the covariance of each field. In the meantime, this trait can typically be implemented as
 /// follows:
 ///
 /// ```rust
