@@ -114,7 +114,7 @@ async fn main() -> anyhow::Result<()> {
         _ => anyhow::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let metadata = metadata::load().unwrap(); // TODO: Pending on thiserror PR
+    let metadata = metadata::load()?;
     log::debug!("Package metadata: {:?}", metadata);
 
     fs::remove_dir_all(&cldr_json_root)

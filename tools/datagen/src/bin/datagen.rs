@@ -288,11 +288,7 @@ fn main() -> anyhow::Result<()> {
             .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?;
         options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
     } else if matches.is_present("TEST_LOCALES") {
-        // TODO: Wait for thiserror to remove unwrap
-        let locales_vec = icu_testdata::metadata::load()
-            .unwrap()
-            .package_metadata
-            .locales;
+        let locales_vec = icu_testdata::metadata::load()?.package_metadata.locales;
         options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
     }
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
