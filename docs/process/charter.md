@@ -9,10 +9,12 @@ ICU4X builds on the design and API decisions of [ICU4C]/[ICU4J] and [ECMA-402].
 
 ICU4X is being built from the start with several key design constraints:
 
-1. Small and modular code.
+1. Small, modular, fast, low-memory code.
 2. Pluggable locale data.
 3. Availability and ease of use in multiple programming languages.
 4. Written by i18n experts to encourage best practices.
+
+Above all, ICU4X code will produce correct results for all languages and locales. No language or locale should be at a structural disadvantage.
 
 ## Scope
 
