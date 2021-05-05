@@ -43,7 +43,7 @@ pub unsafe trait Cart {
 /// data that cannot have references taken to it is fine.
 ///
 /// For example, both `Rc` and `Weak` use interior mutability, however in `Rc`'s case it mutates
-/// the internal reference count which one cannot take references to, whereas in `Weak`'s case 
+/// the internal reference count which one cannot take references to, whereas in `Weak`'s case
 /// the `T` itself can be destroyed.
 pub unsafe trait Cartable {}
 
