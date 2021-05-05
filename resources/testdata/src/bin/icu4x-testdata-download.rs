@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use anyhow::{Context, Result};
-use clap::{App, Arg};
+use clap::{ArgMatches, App, Arg, value_t};
 use futures::stream::{self, StreamExt, TryStreamExt};
 use icu_testdata::metadata::{self, PackageInfo};
 use simple_logger::SimpleLogger;
@@ -92,6 +92,15 @@ async fn main() -> Result<()> {
                 .takes_value(true)
                 .default_value_os(&default_out_dir),
         )
+        .arg(
+            Arg::with_name("HTTP_CONCURRENCY")
+                .long("http-concurrency")
+                .help(
+                    "Maximum number of concurrent HTTP requests",
+                )
+                .takes_value(true)
+                .default_value("4"),
+        )
         .get_matches();
 
     match args.occurrences_of("VERBOSE") {
@@ -114,13 +123,13 @@ async fn main() -> Result<()> {
     let metadata = metadata::load().unwrap(); // TODO: Pending on thiserror PR
     log::info!("Package metadata: {:?}", metadata);
 
-    download_cldr(&metadata).await?;
+    download_cldr(&args, &metadata).await?;
 
     Ok(())
 }
 
-async fn download_cldr(metadata: &PackageInfo) -> Result<()> {
-    let downloader = CldrJsonDownloader {
+async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> Result<()> {
+    let downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
         tag: "39.0.0",
         root_dir: "/tmp/icu4x-dl".into(),
@@ -133,10 +142,10 @@ async fn download_cldr(metadata: &PackageInfo) -> Result<()> {
             .build()?,
     };
     let all_paths = metadata.package_metadata.get_all_cldr_paths();
-    let paths_with_downloader = all_paths.iter().zip(std::iter::repeat(downloader));
-    stream::iter(paths_with_downloader)
+    let concurrency: usize = value_t!(args, "HTTP_CONCURRENCY", usize)?;
+    stream::iter(all_paths)
         .map(Ok)
-        .try_for_each_concurrent(/* limit */ 5, |(path, downloader)| async move {
+        .try_for_each_concurrent(concurrency, |path| async move {
             log::info!("Downloading: {}", path);
             downloader.fetch(&path).await
         })
