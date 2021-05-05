@@ -81,7 +81,7 @@ impl Default for CldrPathsLocal {
 ///
 /// let paths = CldrPathsAllInOne {
 ///     cldr_json_root: PathBuf::from("/path/to/cldr-json"),
-///     suffix: "full",
+///     locale_subset: "full".to_string(),
 /// };
 ///
 /// let data_provider = CldrJsonDataProvider::new(&paths);

@@ -26,10 +26,10 @@ use std::path::PathBuf;
 /// use icu_locid_macros::langid;
 /// use std::path::PathBuf;
 ///
-/// let downloader = CldrAllInOneDownloader::try_new_from_github_tag("38.1.0")
+/// let downloader = CldrAllInOneDownloader::try_new_from_github("38.1.0", "modern")
 ///     .expect("Cache directory not found");
 ///
-/// fn demo(downloader: &CldrAllInOneDownloader) {
+/// fn demo(downloader: CldrAllInOneDownloader) {
 ///     use std::borrow::Cow;
 ///     use std::convert::TryFrom;
 ///     use icu_provider::prelude::*;
@@ -56,8 +56,8 @@ use std::path::PathBuf;
 ///     assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
 /// }
 ///
-/// // Calling demo(&downloader) will cause the data to actually get downloaded.
-/// //demo(&downloader);
+/// // Calling demo(downloader) will cause the data to actually get downloaded.
+/// //demo(downloader);
 /// ```
 #[derive(Debug)]
 pub struct CldrAllInOneDownloader {
