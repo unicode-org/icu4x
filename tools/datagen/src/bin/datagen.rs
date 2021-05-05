@@ -216,7 +216,9 @@ fn main() -> anyhow::Result<()> {
 
     // TODO: Build up this list from --keys and --key-file
 
-    let syntax = matches.value_of("SYNTAX").expect("Option has default value");
+    let syntax = matches
+        .value_of("SYNTAX")
+        .expect("Option has default value");
 
     let output_path = if matches.is_present("OUTPUT_TESTDATA") {
         icu_testdata::paths::data_root().join(syntax)
