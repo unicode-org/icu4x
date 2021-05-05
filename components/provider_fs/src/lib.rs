@@ -63,7 +63,7 @@
 //!
 //! ```text
 //! cargo run
-//!   --bin icu4x-cldr-export
+//!   --bin icu4x-datagen
 //!   --
 //!   --cldr-tag 39.0.0
 //!   --out ./icu4x-data
@@ -75,7 +75,7 @@
 //!
 //! ```text
 //! cargo run
-//!   --bin icu4x-cldr-export
+//!   --bin icu4x-datagen
 //!   --
 //!   --cldr-tag 39.0.0
 //!   --out ./icu4x-data

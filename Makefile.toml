@@ -424,7 +424,7 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-cldr-export",
+    "--bin=icu4x-datagen",
     "--",
     "-v",
     # TODO: Make windows-friendly
@@ -452,7 +452,7 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-cldr-export",
+    "--bin=icu4x-datagen",
     "--",
     "-v",
     # TODO: Make windows-friendly

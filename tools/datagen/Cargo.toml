@@ -33,5 +33,5 @@ icu_provider_fs = { version = "0.2", path = "../../components/provider_fs", feat
 anyhow = "1.0"
 
 [[bin]]
-name = "icu4x-cldr-export"
+name = "icu4x-datagen"
 path = "src/main.rs"
