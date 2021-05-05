@@ -44,8 +44,9 @@ mod uint_iterator;
 
 pub use decimal::FixedDecimal;
 pub use signum::Signum;
+use thiserror::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Error, Debug, PartialEq)]
 pub enum Error {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
     /// magnitude of the most significant digit is std::i16::MAX, and the lowest magnitude of the
@@ -60,6 +61,7 @@ pub enum Error {
     /// let mut dec1 = FixedDecimal::from(123);
     /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());
     /// ```
+    #[error("Magnitude or number of digits exceeded")]
     Limit,
     /// The input of a string that is supposed to be converted to FixedDecimal is not accepted.
     ///
@@ -68,5 +70,6 @@ pub enum Error {
     /// Strings of form "12_345_678" are not accepted, the accepted format is "12345678".
     /// Also '.' shouldn't be first or the last characters, i. e. .123 and 123. are not accepted, and instead 0.123 and
     /// 123 (or 123.0) must be used.
+    #[error("Failed to parse the input string")]
     Syntax,
 }

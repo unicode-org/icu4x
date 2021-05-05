@@ -3,34 +3,40 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use core::ops::Deref;
 use std::any::TypeId;
-use std::fmt;
+use thiserror::Error;
 
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
     /// The data provider does not support the requested category.
+    #[error("Unsupported category: {0}")]
     UnsupportedCategory(ResourceCategory),
 
     /// The data provider supports the category, but not the key (sub-category or version).
+    #[error("Unsupported resource key: {0}")]
     UnsupportedResourceKey(ResourceKey),
 
     /// The data provider supports the key, but does not have data for the specific entry.
+    #[error("Unavailable resource options: {0}")]
     UnavailableResourceOptions(DataRequest),
 
     /// The data provider supports the key, but it requires a language identifier, which was
     /// missing from the request.
+    #[error("Requested key needs language identifier in request: {0}")]
     NeedsLanguageIdentifier(DataRequest),
 
     /// The operation cannot be completed without more type information. For example, data
     /// cannot be deserialized without the concrete type.
+    #[error("Complete type information is required")]
     NeedsTypeInfo,
 
     /// The payload is missing. This error is usually unexpected.
+    #[error("Payload is missing")]
     MissingPayload,
 
     /// The TypeID of the payload does not match the expected TypeID.
+    #[error("Mismatched type: payload is {actual:?} (expected from generic type paramenter: {generic:?})")]
     MismatchedType {
         /// The actual TypeID of the payload, if available.
         actual: Option<TypeId>,
@@ -41,10 +47,21 @@ pub enum Error {
 
     /// An error occured during serialization or deserialization.
     #[cfg(feature = "erased-serde")]
-    Serde(erased_serde::Error),
+    #[error("Serde error: {0}")]
+    Serde(#[from] erased_serde::Error),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
-    Resource(Box<dyn std::error::Error + Send + Sync>),
+    #[error("Failed to load resource: {0}")]
+    Resource(#[from] Box<dyn std::error::Error + Send + Sync>),
+}
+
+impl Error {
+    pub fn new_resc_error<T>(err: T) -> Self
+    where
+        T: 'static + std::error::Error + Send + Sync,
+    {
+        Self::Resource(Box::new(err))
+    }
 }
 
 impl From<&ResourceKey> for Error {
@@ -62,67 +79,5 @@ impl From<&ResourceCategory> for Error {
 impl From<DataRequest> for Error {
     fn from(req: DataRequest) -> Self {
         Self::UnavailableResourceOptions(req)
-    }
-}
-
-#[cfg(feature = "erased-serde")]
-impl From<erased_serde::Error> for Error {
-    fn from(err: erased_serde::Error) -> Self {
-        Self::Serde(err)
-    }
-}
-
-impl From<Box<dyn std::error::Error + Send + Sync>> for Error {
-    fn from(err: Box<dyn std::error::Error + Send + Sync>) -> Self {
-        Self::Resource(err)
-    }
-}
-
-impl Error {
-    pub fn new_resc_error<T>(err: T) -> Self
-    where
-        T: 'static + std::error::Error + Send + Sync,
-    {
-        Self::Resource(Box::new(err))
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::UnsupportedCategory(category) => write!(f, "Unsupported category: {}", category),
-            Self::UnsupportedResourceKey(resc_key) => {
-                write!(f, "Unsupported resource key: {}", resc_key)
-            }
-            Self::UnavailableResourceOptions(request) => {
-                write!(f, "Unavailable resource options: {}", request)
-            }
-            Self::NeedsLanguageIdentifier(request) => write!(
-                f,
-                "Requested key needs language identifier in request: {}",
-                request
-            ),
-            Self::NeedsTypeInfo => write!(f, "Complete type information is required"),
-            Self::MissingPayload => write!(f, "Payload is missing"),
-            Self::MismatchedType { actual, generic } => {
-                write!(f, "Mismatched type: payload is {:?}", actual)?;
-                if let Some(type_id) = generic {
-                    write!(f, " (expected from generic type parameter: {:?})", type_id)?;
-                }
-                Ok(())
-            }
-            #[cfg(feature = "erased-serde")]
-            Self::Serde(err) => write!(f, "Serde error: {}", err),
-            Self::Resource(err) => write!(f, "Failed to load resource: {}", err),
-        }
-    }
-}
-
-impl std::error::Error for Error {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::Resource(error) => Some(error.deref()),
-            _ => None,
-        }
     }
 }

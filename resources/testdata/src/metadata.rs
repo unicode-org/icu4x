@@ -5,42 +5,18 @@
 use cargo_metadata::{self, camino::Utf8PathBuf, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use std::fmt;
+use thiserror::Error;
 
+#[derive(Error, Debug)]
 pub enum Error {
-    Cargo(cargo_metadata::Error),
-    SerdeJson(serde_json::Error),
+    #[error("Cargo Error: {0}")]
+    Cargo(#[from] cargo_metadata::Error),
+    #[error("Serde Error: {0}")]
+    SerdeJson(#[from] serde_json::Error),
+    #[error("{0}: package not found", env!("CARGO_PKG_NAME"))]
     PackageNotFound,
+    #[error("package.metadata.icu4x_testdata not found")]
     MetadataNotFound,
-}
-
-impl From<cargo_metadata::Error> for Error {
-    fn from(err: cargo_metadata::Error) -> Error {
-        Error::Cargo(err)
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(err: serde_json::Error) -> Error {
-        Error::SerdeJson(err)
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::Cargo(error) => write!(f, "Cargo Error: {}", error),
-            Error::SerdeJson(error) => write!(f, "Serde Error: {}", error),
-            Error::PackageNotFound => write!(f, "{}: package not found", env!("CARGO_PKG_NAME")),
-            Error::MetadataNotFound => write!(f, "package.metadata.icu4x_testdata not found"),
-        }
-    }
-}
-
-impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        (self as &dyn fmt::Display).fmt(f)
-    }
 }
 
 #[derive(Debug, Deserialize)]

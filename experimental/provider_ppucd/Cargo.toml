@@ -30,3 +30,4 @@ icu_provider = { version = "0.2", path = "../../components/provider", features =
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 icu_uniset = { version = "0.2", path = "../../components/uniset" }
 tinystr = "0.4"
+thiserror = "1.0"

@@ -3,16 +3,21 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::manifest::SyntaxOption;
-use std::fmt;
 use std::path::{Path, PathBuf};
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
-    Io(std::io::Error, Option<PathBuf>),
-    DataProvider(icu_provider::DataError),
-    Deserializer(Box<dyn std::error::Error + Send + Sync>, Option<PathBuf>),
+    #[error("{0}: {1:?}")]
+    Io(#[source] std::io::Error, Option<PathBuf>),
+    #[error(transparent)]
+    DataProvider(#[from] icu_provider::DataError),
+    #[error("Deserializer error: {0}: {1:?}")]
+    Deserializer(#[source] Box<dyn std::error::Error + Send + Sync>, Option<PathBuf>),
     #[cfg(feature = "export")]
-    Serializer(erased_serde::Error, Option<PathBuf>),
+    #[error("Serializer error: {0}: {1:?}")]
+    Serializer(#[source] erased_serde::Error, Option<PathBuf>),
+    #[error("Unknown syntax {0:?}. Do you need to enable a feature?")]
     UnknownSyntax(SyntaxOption),
 }
 
@@ -29,12 +34,6 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
         Self::Deserializer(Box::new(pieces.0), Some(pieces.1.as_ref().to_path_buf()))
-    }
-}
-
-impl From<icu_provider::DataError> for Error {
-    fn from(err: icu_provider::DataError) -> Self {
-        Self::DataProvider(err)
     }
 }
 
@@ -58,44 +57,6 @@ impl Error {
         match err {
             Error::Io(err) => Self::Io(err, None),
             Error::Serializer(err) => Self::Serializer(err, None),
-        }
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::Io(err, Some(path)) => write!(f, "{}: {:?}", err, path),
-            Self::Io(err, None) => err.fmt(f),
-            Self::DataProvider(err) => err.fmt(f),
-            Self::Deserializer(err, Some(filename)) => {
-                write!(f, "Deserializer error: {}: {:?}", err, filename)
-            }
-            Self::Deserializer(err, None) => write!(f, "Deserializer error: {}", err),
-            #[cfg(feature = "export")]
-            Self::Serializer(err, Some(filename)) => {
-                write!(f, "Serializer error: {}: {:?}", err, filename)
-            }
-            #[cfg(feature = "export")]
-            Self::Serializer(err, None) => write!(f, "Serializer error: {}", err),
-            Self::UnknownSyntax(syntax_option) => write!(
-                f,
-                "Unknown syntax {:?}. Do you need to enable a feature?",
-                syntax_option
-            ),
-        }
-    }
-}
-
-impl std::error::Error for Error {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::Io(err, _) => Some(err),
-            Self::DataProvider(err) => Some(err),
-            Self::Deserializer(err, _) => Some(err.as_ref()),
-            #[cfg(feature = "export")]
-            Self::Serializer(err, _) => Some(err),
-            _ => None,
         }
     }
 }
