@@ -4,43 +4,15 @@
 
 use crate::rules::parser::ParserError;
 use icu_provider::prelude::DataError;
-use std::fmt;
+use thiserror::Error;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum PluralRulesError {
-    Parser(ParserError),
+    #[error("Parser error: {0}")]
+    Parser(#[from] ParserError),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)
-    DataProvider(DataError),
-}
-
-impl From<DataError> for PluralRulesError {
-    fn from(err: DataError) -> Self {
-        Self::DataProvider(err)
-    }
-}
-
-impl From<ParserError> for PluralRulesError {
-    fn from(err: ParserError) -> Self {
-        Self::Parser(err)
-    }
-}
-
-impl fmt::Display for PluralRulesError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::Parser(error) => write!(f, "Parser error: {}", error),
-            Self::DataProvider(error) => write!(f, "Data provider error: {}", error),
-        }
-    }
-}
-
-impl std::error::Error for PluralRulesError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::Parser(error) => Some(error),
-            Self::DataProvider(error) => Some(error),
-        }
-    }
+    #[error("Data provider error: {0}")]
+    DataProvider(#[from] DataError),
 }

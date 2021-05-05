@@ -31,6 +31,7 @@ extra_features = ["serde"]
 tinystr = "0.4.5"
 serde = { version = "1.0", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable" }
+thiserror = "1.0"
 
 [dev-dependencies]
 criterion = "0.3.3"

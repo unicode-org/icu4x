@@ -6,9 +6,11 @@ use std::{
     cmp::{Ord, PartialOrd},
     convert::TryFrom,
 };
+use thiserror::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Error, Debug, PartialEq)]
 pub enum LengthError {
+    #[error("Invalid length")]
     InvalidLength,
 }
 

@@ -6,6 +6,7 @@
 
 use smallvec::SmallVec;
 use std::{convert::TryFrom, fmt};
+use thiserror::Error;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
@@ -214,44 +215,27 @@ impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
     }
 }
 
-#[derive(Debug)]
-pub enum SkeletonError {
-    InvalidFieldLength,
-    DuplicateField,
-    SymbolUnknown(char),
-    SymbolInvalid(char),
-    SymbolUnimplemented(char),
-    UnimplementedField(char),
-    Fields(fields::Error),
-}
-
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
 /// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
-impl fmt::Display for SkeletonError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::InvalidFieldLength => write!(f, "field too long in skeleton"),
-            Self::DuplicateField => write!(f, "duplicate field in skeleton"),
-            Self::SymbolUnknown(ch) => write!(f, "symbol unknown {} in skeleton", ch),
-            Self::SymbolInvalid(ch) => write!(f, "symbol invalid {} in skeleton", ch),
-            Self::SymbolUnimplemented(ch) => {
-                write!(f, "symbol unimplemented {} in skeleton", ch)
-            }
-            Self::UnimplementedField(ch) => {
-                write!(f, "unimplemented field {} in skeleton", ch)
-            }
-            Self::Fields(err) => write!(f, "{} in skeleton", err),
-        }
-    }
-}
-
-impl From<fields::Error> for SkeletonError {
-    fn from(fields_error: fields::Error) -> Self {
-        Self::Fields(fields_error)
-    }
+#[derive(Error, Debug)]
+pub enum SkeletonError {
+    #[error("field too long in skeleton")]
+    InvalidFieldLength,
+    #[error("duplicate field in skeleton")]
+    DuplicateField,
+    #[error("symbol unknown {0} in skeleton")]
+    SymbolUnknown(char),
+    #[error("symbol invalid {0} in skeleton")]
+    SymbolInvalid(char),
+    #[error("symbol unimplemented {0} in skeleton")]
+    SymbolUnimplemented(char),
+    #[error("unimplemented field {0} in skeleton")]
+    UnimplementedField(char),
+    #[error(transparent)]
+    Fields(#[from] fields::Error),
 }
 
 impl From<fields::LengthError> for SkeletonError {

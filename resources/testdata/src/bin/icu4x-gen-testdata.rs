@@ -15,42 +15,31 @@ use icu_provider_fs::manifest;
 use icu_testdata::metadata::{self, PackageInfo};
 use itertools::Itertools;
 use simple_logger::SimpleLogger;
+use std::fs;
 use std::path::{Path, PathBuf};
-use std::{fmt, fs};
+use thiserror::Error;
 use writeable::Writeable;
 
+#[derive(Error, Debug)]
 enum Error {
+    #[error("Unsupported: {0}")]
     Unsupported(&'static str),
+    #[error("I/O Error: {0}, {1:?}")]
     Io(std::io::Error, Option<PathBuf>),
-    Export(icu_provider_fs::FsDataError),
-    DataProvider(icu_provider::DataError),
-    Metadata(icu_testdata::metadata::Error),
-    Download(icu_provider_cldr::download::Error),
-    GlobWalk(globwalk::GlobError),
-    Walkdir(walkdir::Error),
-    StripPrefix(std::path::StripPrefixError),
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
-            Error::Io(error, path) => write!(f, "I/O Error: {}, {:?}", error, path),
-            Error::Export(error) => write!(f, "{}", error),
-            Error::DataProvider(error) => write!(f, "{}", error),
-            Error::Metadata(error) => write!(f, "Metadata Error: {}", error),
-            Error::Download(error) => write!(f, "Download Error: {}", error),
-            Error::GlobWalk(error) => write!(f, "Glob Error: {}", error),
-            Error::Walkdir(error) => write!(f, "Walk Error: {}", error),
-            Error::StripPrefix(error) => write!(f, "Strip Prefix Error: {}", error),
-        }
-    }
-}
-
-impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        (self as &dyn fmt::Display).fmt(f)
-    }
+    #[error(transparent)]
+    Export(#[from] icu_provider_fs::FsDataError),
+    #[error(transparent)]
+    DataProvider(#[from] icu_provider::DataError),
+    #[error("Metadata Error: {0}")]
+    Metadata(#[from] icu_testdata::metadata::Error),
+    #[error("Download Error: {0}")]
+    Download(#[from] icu_provider_cldr::download::Error),
+    #[error("Glob Error: {0}")]
+    GlobWalk(#[from] globwalk::GlobError),
+    #[error("Walk Error: {0}")]
+    Walkdir(#[from] walkdir::Error),
+    #[error("Strip Prefix Error: {0}")]
+    StripPrefix(#[from] std::path::StripPrefixError),
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
@@ -58,48 +47,6 @@ impl fmt::Debug for Error {
 impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
     fn from(pieces: (std::io::Error, P)) -> Self {
         Self::Io(pieces.0, Some(pieces.1.as_ref().to_path_buf()))
-    }
-}
-
-impl From<icu_provider_fs::FsDataError> for Error {
-    fn from(err: icu_provider_fs::FsDataError) -> Error {
-        Error::Export(err)
-    }
-}
-
-impl From<icu_provider::DataError> for Error {
-    fn from(err: icu_provider::DataError) -> Error {
-        Error::DataProvider(err)
-    }
-}
-
-impl From<icu_testdata::metadata::Error> for Error {
-    fn from(err: icu_testdata::metadata::Error) -> Error {
-        Error::Metadata(err)
-    }
-}
-
-impl From<icu_provider_cldr::download::Error> for Error {
-    fn from(err: icu_provider_cldr::download::Error) -> Error {
-        Error::Download(err)
-    }
-}
-
-impl From<globwalk::GlobError> for Error {
-    fn from(err: globwalk::GlobError) -> Error {
-        Error::GlobWalk(err)
-    }
-}
-
-impl From<walkdir::Error> for Error {
-    fn from(err: walkdir::Error) -> Error {
-        Error::Walkdir(err)
-    }
-}
-
-impl From<std::path::StripPrefixError> for Error {
-    fn from(err: std::path::StripPrefixError) -> Error {
-        Error::StripPrefix(err)
     }
 }
 

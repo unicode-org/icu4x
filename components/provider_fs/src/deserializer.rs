@@ -7,34 +7,21 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerdeDeDataReceiver;
 use std::io::Read;
 use std::path::Path;
+use thiserror::Error;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
+#[derive(Error, Debug)]
 pub enum Error {
-    Json(serde_json::error::Error),
+    #[error(transparent)]
+    Json(#[from] serde_json::error::Error),
     #[cfg(feature = "bincode")]
-    Bincode(bincode::Error),
-    DataProvider(DataError),
+    #[error(transparent)]
+    Bincode(#[from] bincode::Error),
+    #[error(transparent)]
+    DataProvider(#[from] DataError),
     #[allow(dead_code)]
+    #[error("Unknown syntax: {0:?}")]
     UnknownSyntax(SyntaxOption),
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(err: serde_json::Error) -> Self {
-        Self::Json(err)
-    }
-}
-
-#[cfg(feature = "bincode")]
-impl From<bincode::Error> for Error {
-    fn from(err: bincode::Error) -> Self {
-        Self::Bincode(err)
-    }
-}
-
-impl From<DataError> for Error {
-    fn from(err: DataError) -> Self {
-        Self::DataProvider(err)
-    }
 }
 
 impl Error {

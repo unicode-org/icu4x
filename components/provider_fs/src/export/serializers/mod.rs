@@ -10,23 +10,15 @@ pub mod bincode;
 use crate::manifest::SyntaxOption;
 use std::io;
 use std::ops::Deref;
+use thiserror::Error;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
+#[derive(Error, Debug)]
 pub enum Error {
-    Io(io::Error),
-    Serializer(erased_serde::Error),
-}
-
-impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Self {
-        Self::Io(err)
-    }
-}
-
-impl From<erased_serde::Error> for Error {
-    fn from(err: erased_serde::Error) -> Self {
-        Self::Serializer(err)
-    }
+    #[error(transparent)]
+    Io(#[from] io::Error),
+    #[error(transparent)]
+    Serializer(#[from] erased_serde::Error),
 }
 
 /// A simple serializer trait that works on whole objects.

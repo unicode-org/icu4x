@@ -2,34 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::fmt;
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum Error {
-    PpucdParse(PpucdParseError),
+    #[error(transparent)]
+    PpucdParse(#[from] PpucdParseError),
 }
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Error, Debug, PartialEq, Copy, Clone)]
+#[error("Could not parse PPUCD file: {src}")]
 pub struct PpucdParseError {
     pub src: &'static str,
-}
-
-impl From<PpucdParseError> for Error {
-    fn from(err: PpucdParseError) -> Self {
-        Self::PpucdParse(err)
-    }
-}
-
-impl fmt::Display for PpucdParseError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Could not parse PPUCD file: {}", self.src)
-    }
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::PpucdParse(err) => err.fmt(f),
-        }
-    }
 }

@@ -487,6 +487,7 @@ dependencies = [
  "rand_pcg",
  "smallvec",
  "static_assertions",
+ "thiserror",
  "writeable",
 ]
 
@@ -842,6 +843,7 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
+ "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -891,6 +893,7 @@ dependencies = [
  "icu_benchmark_macros",
  "serde",
  "serde_json",
+ "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -928,6 +931,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
+ "thiserror",
 ]
 
 [[package]]
@@ -941,6 +945,7 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
+ "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -970,6 +975,7 @@ dependencies = [
  "serde_json",
  "smallstr",
  "smallvec",
+ "thiserror",
  "tinystr",
  "unzip",
  "urlencoding",
@@ -994,6 +1000,7 @@ dependencies = [
  "serde_json",
  "simple_logger",
  "static_assertions",
+ "thiserror",
 ]
 
 [[package]]
@@ -1004,6 +1011,7 @@ dependencies = [
  "icu_locid_macros",
  "icu_provider",
  "icu_uniset",
+ "thiserror",
  "tinystr",
 ]
 
@@ -1036,6 +1044,7 @@ dependencies = [
  "serde",
  "serde_json",
  "simple_logger",
+ "thiserror",
  "walkdir",
  "writeable",
 ]
@@ -1050,6 +1059,7 @@ dependencies = [
  "icu_provider",
  "litemap",
  "serde",
+ "thiserror",
  "tinystr",
 ]
 
