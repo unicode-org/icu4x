@@ -75,6 +75,14 @@ unsafe impl<T: Cartable> Cart for Vec<T> {
     }
 }
 
+unsafe impl<'a, T: Cartable + ?Sized> Cart for &'a T {
+    type Inner = T;
+    fn get_inner(&self) -> &Self::Inner {
+        &**self
+    }
+}
+
+
 unsafe impl Cart for String {
     type Inner = str;
     fn get_inner(&self) -> &Self::Inner {
