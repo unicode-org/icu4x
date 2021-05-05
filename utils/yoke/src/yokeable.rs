@@ -234,13 +234,7 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
     }
 
     unsafe fn make(from: &'a T) -> Self {
-        debug_assert!(mem::size_of::<&'a T>() == mem::size_of::<Self>());
-        // i hate this
-        // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
-        // are the same
-        let ret = mem::transmute_copy(&from);
-        mem::forget(from);
-        ret
+        mem::transmute(from)
     }
 
     fn with_mut<F>(&'a mut self, f: F)

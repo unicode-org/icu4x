@@ -9,6 +9,10 @@
 //!
 //! See the documentation of [`Yoke`] for more details.
 
+// The lifetimes here are important for safety and explicitly writing
+// them out is good even when redundant
+#![allow(clippy::needless_lifetimes)]
+
 mod cart;
 mod yoke;
 mod yokeable;
