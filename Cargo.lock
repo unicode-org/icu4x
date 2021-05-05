@@ -867,10 +867,13 @@ dependencies = [
 name = "icu_capi"
 version = "0.1.0"
 dependencies = [
+ "fixed_decimal",
+ "icu_decimal",
  "icu_locid",
  "icu_plurals",
  "icu_provider",
  "icu_provider_fs",
+ "writeable",
 ]
 
 [[package]]

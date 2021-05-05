@@ -24,6 +24,8 @@ category = "ICU4X Development"
 script = '''
 cd components/capi/examples/pluralrules;
 make
+cd components/capi/examples/fixeddecimal;
+make
 '''
 
 [tasks.license-header-check]
