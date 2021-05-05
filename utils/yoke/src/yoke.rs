@@ -72,11 +72,11 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     ///
     /// let owned: Cow<str> = "hello".to_owned().into();
     /// // this yoke can be intermingled with actually-borrowed Yokes
-    /// let yoke: Yoke<Cow<str>, Option<Rc<[u8]>>> = Yoke::new(None, owned);
+    /// let yoke: Yoke<Cow<str>, Option<Rc<[u8]>>> = Yoke::new(owned, None);
     ///
     /// assert_eq!(yoke.get(), "hello");
     /// ```
-    pub fn new(cart: C, yokeable: Y) -> Self {
+    pub fn new(yokeable: Y, cart: C) -> Self {
         Self { yokeable, cart }
     }
 
