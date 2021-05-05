@@ -412,7 +412,6 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--features=icu_testdata/download",
     "--bin=icu4x-testdata-download",
     "--",
     "-v",
@@ -427,9 +426,8 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "-v",
-    # TODO: Make windows-friendly?
-    "--cldr-root=resources/testdata/data/cldr",
-    "--out=resources/testdata/data/json",
+    "--cldr-testdata",
+    "--out-testdata",
     "--all-keys",
     "--test-locales",
     "--syntax=json",
@@ -463,9 +461,8 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "-v",
-    # TODO: Make windows-friendly?
-    "--cldr-root=resources/testdata/data/cldr",
-    "--out", "../../resources/testdata/data/bincode",
+    "--cldr-testdata",
+    "--out-testdata",
     "--all-keys",
     "--test-locales",
     "--syntax=bincode",

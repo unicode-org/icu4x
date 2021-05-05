@@ -134,15 +134,6 @@ serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
 writeable = { version = "0.2", path = "../../utils/writeable", optional = true }
 
-# Dependencies for the binary
-anyhow = { version = "1.0", optional = true }
-clap = { version = "2.33", optional = true }
-futures = { version = "0.3", optional = true }
-log = { version = "0.4", optional = true }
-reqwest = { version = "0.11", features = ["json", "stream", "gzip"], optional = true }
-simple_logger = { version = "1.11", optional = true }
-tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"], optional = true }
-
 [dev-dependencies]
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.2", path = "../../components/plurals" }
@@ -156,22 +147,3 @@ metadata = [
     "serde",
     "writeable"
 ]
-# Enables the `download` binary to re-generate the test data
-download = [
-    "anyhow",
-    "clap",
-    "futures",
-    "icu_provider_fs/export",
-    "log",
-    "metadata",
-    "reqwest",
-    "serde_json",
-    "serde",
-    "simple_logger",
-    "tokio",
-]
-
-[[bin]]
-name = "icu4x-testdata-download"
-required-features = ["download"]
-path = "src/bin/icu4x-testdata-download.rs"

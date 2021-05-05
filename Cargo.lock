@@ -862,16 +862,17 @@ version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
- "erased-serde",
+ "futures",
  "icu_locid",
  "icu_provider",
  "icu_provider_cldr",
  "icu_provider_fs",
  "icu_testdata",
  "log",
+ "reqwest",
  "serde",
  "simple_logger",
- "static_assertions",
+ "tokio",
 ]
 
 [[package]]
@@ -1066,21 +1067,14 @@ dependencies = [
 name = "icu_testdata"
 version = "0.2.0"
 dependencies = [
- "anyhow",
  "cargo_metadata",
- "clap",
- "futures",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
  "icu_provider_fs",
- "log",
- "reqwest",
  "serde",
  "serde_json",
- "simple_logger",
- "tokio",
  "writeable",
 ]
 

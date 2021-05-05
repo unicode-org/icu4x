@@ -19,19 +19,24 @@ include = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.2", path = "../../components/provider", features = ["provider_serde"] }
-icu_locid = { version = "0.2", path = "../../components/locid", features = ["serde"] }
-serde = { version = "1.0", features = ["derive"] }
-erased-serde = { version = "0.3" }
-log = { version = "0.4" }
-static_assertions = { version = "1.1" }
-clap = { version = "2.33" }
-icu_provider_cldr = { version = "0.2", path = "../../components/provider_cldr", features = ["download"] }
-simple_logger = { version = "1.11" }
-icu_testdata = { version = "0.2", path = "../../resources/testdata", features = ["metadata"] }
-icu_provider_fs = { version = "0.2", path = "../../components/provider_fs", features = ["export"] }
 anyhow = "1.0"
+clap = "2.33"
+futures = "0.3"
+icu_locid = { version = "0.2", path = "../../components/locid" }
+icu_provider = { version = "0.2", path = "../../components/provider" }
+icu_provider_cldr = { version = "0.2", path = "../../components/provider_cldr", features = ["download"] }
+icu_provider_fs = { version = "0.2", path = "../../components/provider_fs", features = ["export"] }
+icu_testdata = { version = "0.2", path = "../../resources/testdata", features = ["metadata"] }
+log = "0.4"
+reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
+serde = { version = "1.0", features = ["derive"] }
+simple_logger = "1.11"
+tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
 
 [[bin]]
 name = "icu4x-datagen"
-path = "src/main.rs"
+path = "src/bin/datagen.rs"
+
+[[bin]]
+name = "icu4x-testdata-download"
+path = "src/bin/testdata-download.rs"

@@ -59,7 +59,8 @@ fn main() -> anyhow::Result<()> {
                 .takes_value(true)
                 .possible_value("json")
                 .possible_value("bincode")
-                .help("File format syntax for data files (defaults to JSON)."),
+                .help("File format syntax for data files (defaults to JSON).")
+                .default_value("json"),
         )
         .arg(
             Arg::with_name("PRETTY")
@@ -88,10 +89,16 @@ fn main() -> anyhow::Result<()> {
                 )
                 .takes_value(true),
         )
+        .arg(
+            Arg::with_name("CLDR_TESTDATA")
+                .long("cldr-testdata")
+                .help("Load CLDR JSON data from the icu_testdata project."),
+        )
         .group(
             ArgGroup::with_name("CLDR_SOURCE")
                 .arg("CLDR_TAG")
                 .arg("CLDR_ROOT")
+                .arg("CLDR_TESTDATA")
                 .required(true),
         )
         .arg(
@@ -171,7 +178,17 @@ fn main() -> anyhow::Result<()> {
                     "Path to output data directory. Must be empty or non-existent, unless \
                     --overwrite is present, in which case the directory is deleted first.",
                 )
-                .takes_value(true)
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("OUTPUT_TESTDATA")
+                .long("out-testdata")
+                .help("Write output to the ICU4X testdata tree."),
+        )
+        .group(
+            ArgGroup::with_name("OUTPUT_MODE")
+                .arg("OUTPUT")
+                .arg("OUTPUT_TESTDATA")
                 .required(true),
         )
         .get_matches();
@@ -199,11 +216,17 @@ fn main() -> anyhow::Result<()> {
 
     // TODO: Build up this list from --keys and --key-file
 
-    let output_path = PathBuf::from(
-        matches
-            .value_of_os("OUTPUT")
-            .expect("--out is a required option"),
-    );
+    let syntax = matches.value_of("SYNTAX").expect("Option has default value");
+
+    let output_path = if matches.is_present("OUTPUT_TESTDATA") {
+        icu_testdata::paths::data_root().join(syntax)
+    } else {
+        PathBuf::from(
+            matches
+                .value_of_os("OUTPUT")
+                .expect("--out is a required option"),
+        )
+    };
 
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
@@ -212,6 +235,11 @@ fn main() -> anyhow::Result<()> {
         Box::new(CldrPathsAllInOne {
             cldr_json_root: PathBuf::from(path),
             locale_subset: locale_subset.to_string(),
+        })
+    } else if matches.is_present("CLDR_TESTDATA") {
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: icu_testdata::paths::cldr_json_root(),
+            locale_subset: "full".to_string(),
         })
     } else {
         anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
