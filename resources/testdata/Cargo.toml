@@ -50,7 +50,7 @@ locales = [
     # - Widely understood language in software engineering
     # - Includes regional variants to test similar-data fallbacks
     "en",
-    "en-US-posix",
+    "en-001",
     "en-ZA",
 
     # Spanish:

@@ -1,13 +1,12 @@
 {
   "main": {
-    "en-US-POSIX": {
+    "en-001": {
       "identity": {
         "version": {
           "_cldrVersion": "39"
         },
         "language": "en",
-        "territory": "US",
-        "variant": "POSIX"
+        "territory": "001"
       },
       "numbers": {
         "defaultNumberingSystem": "latn",
@@ -25,13 +24,13 @@
           "approximatelySign": "~",
           "exponential": "E",
           "superscriptingExponent": "×",
-          "perMille": "0/00",
-          "infinity": "INF",
+          "perMille": "‰",
+          "infinity": "∞",
           "nan": "NaN",
           "timeSeparator": ":"
         },
         "decimalFormats-numberSystem-latn": {
-          "standard": "0.######",
+          "standard": "#,##0.###",
           "long": {
             "decimalFormat": {
               "1000-count-one": "0 thousand",
@@ -90,10 +89,10 @@
           }
         },
         "scientificFormats-numberSystem-latn": {
-          "standard": "0.000000E+000"
+          "standard": "#E0"
         },
         "percentFormats-numberSystem-latn": {
-          "standard": "0%"
+          "standard": "#,##0%"
         },
         "currencyFormats-numberSystem-latn": {
           "currencySpacing": {
@@ -108,7 +107,7 @@
               "insertBetween": " "
             }
           },
-          "standard": "¤ 0.00",
+          "standard": "¤#,##0.00",
           "accounting": "¤#,##0.00;(¤#,##0.00)",
           "short": {
             "standard": {

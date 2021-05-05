@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use anyhow::{Context, Result};
-use clap::{ArgMatches, App, Arg, value_t};
+use clap::{value_t, App, Arg, ArgMatches};
 use futures::stream::{self, StreamExt, TryStreamExt};
 use icu_testdata::metadata::{self, PackageInfo};
 use simple_logger::SimpleLogger;
@@ -28,11 +28,7 @@ impl CldrJsonDownloader<'_> {
             "https://raw.githubusercontent.com/{}/{}/cldr-json/{}",
             self.repo_owner_and_name, self.tag, cldr_path
         );
-        let response = self
-            .client
-            .get(&url)
-            .send()
-            .await?;
+        let response = self.client.get(&url).send().await?;
         let mut stream = match response.error_for_status() {
             Ok(res) => res.bytes_stream(),
             Err(err) => {
@@ -66,15 +62,12 @@ impl CldrJsonDownloader<'_> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let default_out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("data")
-        .join("json")
-        .into_os_string();
+    let cldr_json_root = icu_testdata::paths::cldr_json_root();
 
-    let args = App::new("ICU4X Test Data Generator")
+    let args = App::new("ICU4X Test Data Downloader")
         .version("0.0.1")
         .author("The ICU4X Project Developers")
-        .about("Export CLDR JSON into the ICU4X data schema for test data")
+        .about("Download data from CLDR for ICU4X testing")
         .arg(
             Arg::with_name("VERBOSE")
                 .short("v")
@@ -90,10 +83,11 @@ async fn main() -> Result<()> {
                     "Path to output data directory. The directory will be overwritten. Omit this option to write data into the package tree.",
                 )
                 .takes_value(true)
-                .default_value_os(&default_out_dir),
+                .default_value_os(cldr_json_root.as_os_str()),
         )
         .arg(
             Arg::with_name("HTTP_CONCURRENCY")
+                .short("j")
                 .long("http-concurrency")
                 .help(
                     "Maximum number of concurrent HTTP requests",
@@ -121,7 +115,11 @@ async fn main() -> Result<()> {
     }
 
     let metadata = metadata::load().unwrap(); // TODO: Pending on thiserror PR
-    log::info!("Package metadata: {:?}", metadata);
+    log::debug!("Package metadata: {:?}", metadata);
+
+    fs::remove_dir_all(&cldr_json_root)
+        .await
+        .with_context(|| format!("Failed to delete directory: {:?}", &cldr_json_root))?;
 
     download_cldr(&args, &metadata).await?;
 
@@ -129,10 +127,17 @@ async fn main() -> Result<()> {
 }
 
 async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> Result<()> {
+    let output_path = PathBuf::from(
+        args.value_of_os("OUTPUT")
+            .expect("Option has a default value"),
+    );
+    let http_concurrency: usize =
+        value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
+
     let downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: "39.0.0",
-        root_dir: "/tmp/icu4x-dl".into(),
+        tag: &metadata.package_metadata.gitref,
+        root_dir: output_path,
         client: reqwest::ClientBuilder::new()
             .user_agent(concat!(
                 env!("CARGO_PKG_NAME"),
@@ -141,11 +146,11 @@ async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> Result<
             ))
             .build()?,
     };
+
     let all_paths = metadata.package_metadata.get_all_cldr_paths();
-    let concurrency: usize = value_t!(args, "HTTP_CONCURRENCY", usize)?;
     stream::iter(all_paths)
         .map(Ok)
-        .try_for_each_concurrent(concurrency, |path| async move {
+        .try_for_each_concurrent(http_concurrency, |path| async move {
             log::info!("Downloading: {}", path);
             downloader.fetch(&path).await
         })
