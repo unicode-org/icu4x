@@ -427,7 +427,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "-v",
-    # TODO: Make windows-friendly
+    # TODO: Make windows-friendly?
     "--cldr-root=resources/testdata/data/cldr",
     "--out=resources/testdata/data/json",
     "--all-keys",
@@ -435,6 +435,14 @@ args = [
     "--syntax=json",
     "--pretty",
     "--overwrite",
+]
+
+[tasks.testdata]
+description = "Download fresh data and then build ICU4X JSON from it"
+category = "ICU4X Data"
+dependencies = [
+    "testdata-download",
+    "testdata-build-json",
 ]
 
 [tasks.bincode-clean]
@@ -455,7 +463,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "-v",
-    # TODO: Make windows-friendly
+    # TODO: Make windows-friendly?
     "--cldr-root=resources/testdata/data/cldr",
     "--out", "../../resources/testdata/data/bincode",
     "--all-keys",
