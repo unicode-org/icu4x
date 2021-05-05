@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::manifest::LocalesOption;
+use anyhow::Context;
 use clap::{App, Arg, ArgGroup};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
@@ -16,55 +17,10 @@ use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
 use simple_logger::SimpleLogger;
-use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-enum Error {
-    Unsupported(&'static str),
-    Export(icu_provider_fs::FsDataError),
-    DataProvider(icu_provider::DataError),
-    LocaleParser(icu_locid::ParserError, String),
-    Setup(Box<dyn std::error::Error>),
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::Unsupported(message) => write!(f, "Unsupported: {}", message),
-            Error::Export(error) => write!(f, "{}", error),
-            Error::DataProvider(error) => write!(f, "{}", error),
-            Error::LocaleParser(error, s) => write!(f, "{}: {}", error, s),
-            Error::Setup(error) => write!(f, "{}", error),
-        }
-    }
-}
-
-impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        (self as &dyn fmt::Display).fmt(f)
-    }
-}
-
-impl From<icu_provider_fs::FsDataError> for Error {
-    fn from(err: icu_provider_fs::FsDataError) -> Error {
-        Error::Export(err)
-    }
-}
-
-impl From<icu_provider::DataError> for Error {
-    fn from(err: icu_provider::DataError) -> Error {
-        Error::DataProvider(err)
-    }
-}
-
-impl From<icu_provider_cldr::download::Error> for Error {
-    fn from(err: icu_provider_cldr::download::Error) -> Error {
-        Error::Setup(Box::from(err))
-    }
-}
-
-fn main() -> Result<(), Error> {
+fn main() -> anyhow::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
         .version("0.0.1")
         .author("The ICU4X Project Developers")
@@ -144,9 +100,7 @@ fn main() -> Result<(), Error> {
                 .takes_value(true)
                 .possible_value("full")
                 .possible_value("modern")
-                .help(
-                    "CLDR JSON locale subset; defaults to 'full'",
-                )
+                .help("CLDR JSON locale subset; defaults to 'full'")
                 .takes_value(true),
         )
         .arg(
@@ -162,7 +116,6 @@ fn main() -> Result<(), Error> {
         )
         .arg(
             Arg::with_name("KEY_FILE")
-                .short("i")
                 .long("key-file")
                 .takes_value(true)
                 .help(
@@ -172,7 +125,6 @@ fn main() -> Result<(), Error> {
         )
         .arg(
             Arg::with_name("ALL_KEYS")
-                .short("A")
                 .long("all-keys")
                 .help("Include all keys known to ICU4X."),
         )
@@ -193,6 +145,23 @@ fn main() -> Result<(), Error> {
                     "Include this locale in the output. Accepts multiple arguments. \
                     Omit this option to include all locales.",
                 ),
+        )
+        .arg(
+            Arg::with_name("TEST_LOCALES")
+                .long("test-locales")
+                .help("Include only test locales, as discussed in icu_testdata."),
+        )
+        .arg(
+            Arg::with_name("ALL_LOCALES")
+                .long("all-locales")
+                .help("Include all locales present in the input CLDR JSON."),
+        )
+        .group(
+            ArgGroup::with_name("LOCALE_MODE")
+                .arg("LOCALES")
+                .arg("TEST_LOCALES")
+                .arg("ALL_LOCALES")
+                .required(true),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -217,17 +186,15 @@ fn main() -> Result<(), Error> {
             .with_level(log::LevelFilter::Trace)
             .init()
             .unwrap(),
-        _ => return Err(Error::Unsupported("Only -v and -vv are supported")),
+        _ => anyhow::bail!("Only -v and -vv are supported"),
     }
 
     if !matches.is_present("ALL_KEYS") {
-        return Err(Error::Unsupported(
-            "Lists of keys are not yet supported (see #192)",
-        ));
+        anyhow::bail!("Lists of keys are not yet supported (see #192)",);
     }
 
     if matches.is_present("DRY_RUN") {
-        return Err(Error::Unsupported("Dry-run is not yet supported"));
+        anyhow::bail!("Dry-run is not yet supported");
     }
 
     // TODO: Build up this list from --keys and --key-file
@@ -247,9 +214,7 @@ fn main() -> Result<(), Error> {
             locale_subset: locale_subset.to_string(),
         })
     } else {
-        return Err(Error::Unsupported(
-            "Either --cldr-tag or --cldr-root must be specified",
-        ));
+        anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
@@ -269,9 +234,8 @@ fn main() -> Result<(), Error> {
         Some("bincode") => {
             use icu_provider_fs::manifest::SyntaxOption;
             use icu_provider_fs::FsDataError;
-            return Err(Error::Export(FsDataError::UnknownSyntax(
-                SyntaxOption::Bincode,
-            )));
+            Err(FsDataError::UnknownSyntax(SyntaxOption::Bincode))?;
+            unreachable!()
         }
         _ => unreachable!(),
     };
@@ -290,10 +254,15 @@ fn main() -> Result<(), Error> {
     }
     if let Some(locale_strs) = matches.values_of("LOCALES") {
         let locales_vec = locale_strs
-            .map(|s| {
-                LanguageIdentifier::from_str(s).map_err(|e| Error::LocaleParser(e, s.to_string()))
-            })
-            .collect::<Result<Vec<LanguageIdentifier>, Error>>()?;
+            .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
+            .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?;
+        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
+    } else if matches.is_present("TEST_LOCALES") {
+        // TODO: Wait for thiserror to remove unwrap
+        let locales_vec = icu_testdata::metadata::load()
+            .unwrap()
+            .package_metadata
+            .locales;
         options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
     }
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
@@ -303,7 +272,10 @@ fn main() -> Result<(), Error> {
     Ok(())
 }
 
-fn export_cldr(cldr_paths: &dyn CldrPaths, exporter: &mut FilesystemExporter) -> Result<(), Error> {
+fn export_cldr(
+    cldr_paths: &dyn CldrPaths,
+    exporter: &mut FilesystemExporter,
+) -> anyhow::Result<()> {
     let keys = get_all_cldr_keys();
 
     let provider = CldrJsonDataProvider::new(cldr_paths);

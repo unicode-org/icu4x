@@ -38,7 +38,7 @@ where
         + IterableDataProviderCore
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,
-    <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error,
+    <T as TryFrom<&'b dyn CldrPaths>>::Error: 'static + std::error::Error + Send + Sync,
 {
     /// Call [`DataProvider::load_payload()`], initializing `T` if necessary.
     pub fn try_load_serde(

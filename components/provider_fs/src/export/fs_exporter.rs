@@ -75,7 +75,7 @@ impl<'d, 's: 'd> DataExporter<'d, dyn SerdeSeDataStruct<'s> + 's> for Filesystem
         &mut self,
         req: &DataRequest,
         obj: &dyn SerdeSeDataStruct,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         path_buf.extend(req.resource_path.options.get_components().iter());

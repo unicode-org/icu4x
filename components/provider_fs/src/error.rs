@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 pub enum Error {
     Io(std::io::Error, Option<PathBuf>),
     DataProvider(icu_provider::DataError),
-    Deserializer(Box<dyn std::error::Error>, Option<PathBuf>),
+    Deserializer(Box<dyn std::error::Error + Send + Sync>, Option<PathBuf>),
     #[cfg(feature = "export")]
     Serializer(erased_serde::Error, Option<PathBuf>),
     UnknownSyntax(SyntaxOption),

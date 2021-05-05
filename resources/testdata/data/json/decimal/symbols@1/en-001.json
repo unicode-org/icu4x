@@ -10,8 +10,8 @@
   "decimal_separator": ".",
   "grouping_separator": ",",
   "grouping_sizes": {
-    "primary": 0,
-    "secondary": 0,
+    "primary": 3,
+    "secondary": 3,
     "min_grouping": 1
   },
   "digits": [

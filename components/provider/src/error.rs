@@ -44,7 +44,7 @@ pub enum Error {
     Serde(erased_serde::Error),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
-    Resource(Box<dyn std::error::Error>),
+    Resource(Box<dyn std::error::Error + Send + Sync>),
 }
 
 impl From<&ResourceKey> for Error {
@@ -72,8 +72,8 @@ impl From<erased_serde::Error> for Error {
     }
 }
 
-impl From<Box<dyn std::error::Error>> for Error {
-    fn from(err: Box<dyn std::error::Error>) -> Self {
+impl From<Box<dyn std::error::Error + Send + Sync>> for Error {
+    fn from(err: Box<dyn std::error::Error + Send + Sync>) -> Self {
         Self::Resource(err)
     }
 }
@@ -81,7 +81,7 @@ impl From<Box<dyn std::error::Error>> for Error {
 impl Error {
     pub fn new_resc_error<T>(err: T) -> Self
     where
-        T: 'static + std::error::Error,
+        T: 'static + std::error::Error + Send + Sync,
     {
         Self::Resource(Box::new(err))
     }

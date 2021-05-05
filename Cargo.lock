@@ -890,6 +890,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_datagen"
+version = "0.2.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "erased-serde",
+ "icu_locid",
+ "icu_provider",
+ "icu_provider_cldr",
+ "icu_provider_fs",
+ "icu_testdata",
+ "log",
+ "serde",
+ "simple_logger",
+ "static_assertions",
+]
+
+[[package]]
 name = "icu_datetime"
 version = "0.2.0"
 dependencies = [
@@ -1043,7 +1061,6 @@ name = "icu_provider_fs"
 version = "0.2.0"
 dependencies = [
  "bincode",
- "clap",
  "criterion",
  "erased-serde",
  "icu_benchmark_macros",
@@ -1051,11 +1068,9 @@ dependencies = [
  "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
- "icu_provider_cldr",
  "log",
  "serde",
  "serde_json",
- "simple_logger",
  "static_assertions",
 ]
 

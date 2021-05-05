@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use anyhow::{Context, Result};
+use anyhow::Context;
 use clap::{value_t, App, Arg, ArgMatches};
 use futures::stream::{self, StreamExt, TryStreamExt};
 use icu_testdata::metadata::{self, PackageInfo};
@@ -23,7 +23,7 @@ struct CldrJsonDownloader<'a> {
 }
 
 impl CldrJsonDownloader<'_> {
-    async fn fetch(&self, cldr_path: &str) -> Result<()> {
+    async fn fetch(&self, cldr_path: &str) -> anyhow::Result<()> {
         let url = format!(
             "https://raw.githubusercontent.com/{}/{}/cldr-json/{}",
             self.repo_owner_and_name, self.tag, cldr_path
@@ -61,7 +61,7 @@ impl CldrJsonDownloader<'_> {
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> anyhow::Result<()> {
     let cldr_json_root = icu_testdata::paths::cldr_json_root();
 
     let args = App::new("ICU4X Test Data Downloader")
@@ -126,7 +126,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> Result<()> {
+async fn download_cldr(args: &ArgMatches<'_>, metadata: &PackageInfo) -> anyhow::Result<()> {
     let output_path = PathBuf::from(
         args.value_of_os("OUTPUT")
             .expect("Option has a default value"),

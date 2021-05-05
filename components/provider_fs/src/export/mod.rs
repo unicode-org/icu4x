@@ -5,7 +5,7 @@
 //! The `export` feature enables you to pull all data from some other data provider and persist it
 //! on the filesystem to be read by an FsDataProvider at runtime.
 //!
-//! Also see the binary "icu4x-cldr-export".
+//! Also see the `icu_datagen` crate.
 //!
 //! # Examples
 //!

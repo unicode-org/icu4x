@@ -1,0 +1,37 @@
+[package]
+name = "icu_datagen"
+description = "Generate data for ICU4X DataProvider"
+version = "0.2.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "README.md",
+]
+
+[dependencies]
+icu_provider = { version = "0.2", path = "../../components/provider", features = ["provider_serde"] }
+icu_locid = { version = "0.2", path = "../../components/locid", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+erased-serde = { version = "0.3" }
+log = { version = "0.4" }
+static_assertions = { version = "1.1" }
+clap = { version = "2.33" }
+icu_provider_cldr = { version = "0.2", path = "../../components/provider_cldr", features = ["download"] }
+simple_logger = { version = "1.11" }
+icu_testdata = { version = "0.2", path = "../../resources/testdata", features = ["metadata"] }
+icu_provider_fs = { version = "0.2", path = "../../components/provider_fs", features = ["export"] }
+anyhow = "1.0"
+
+[[bin]]
+name = "icu4x-cldr-export"
+path = "src/main.rs"
