@@ -178,6 +178,9 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// which is unsound because `bar` could be moved later, and we do not want to be able to
     /// self-insert references to it.
     ///
+    /// The `for<'b>` enforces this by stopping the author of the closure from matching up the input
+    /// `&'b Self::Output` lifetime with `'a` and borrowing directly from it.
+    ///
     /// Thus the only types of mutations allowed are ones that move around already-borrowed data, or
     /// introduce new owned data:
     ///
