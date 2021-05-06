@@ -20,7 +20,7 @@ jobs:
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v0.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
