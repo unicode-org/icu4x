@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::Cart;
-use crate::Cartable;
 use crate::Yokeable;
+use stable_deref_trait::StableDeref;
+use std::ops::Deref;
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -54,8 +54,8 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     cart: C,
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
-    /// Construct a [`Yoke`] by yokeing an object to a [`Cart`]. This is the primary constructor
+impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
+    /// Construct a [`Yoke`] by yokeing an object to a cart. This is the primary constructor
     /// for [`Yoke`].
     ///
     /// This method is currently unusable due to a [compiler bug](https://github.com/rust-lang/rust/issues/84937),
@@ -88,9 +88,9 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     /// ```
     pub fn attach_to_cart<F>(cart: C, f: F) -> Self
     where
-        F: for<'de> FnOnce(&'de C::Inner) -> <Y as Yokeable<'de>>::Output,
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     {
-        let deserialized = f(cart.get_inner());
+        let deserialized = f(cart.deref());
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
@@ -103,9 +103,9 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     /// See its docs for more details
     pub fn attach_to_cart_badly(
         cart: C,
-        f: for<'de> fn(&'de C::Inner) -> <Y as Yokeable<'de>>::Output,
+        f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     ) -> Self {
-        let deserialized = f(cart.get_inner());
+        let deserialized = f(cart.deref());
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
@@ -240,7 +240,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, Option<C>> {
+impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     /// Construct a new [`Yoke`] from static data. There will be no
     /// references to `cart` here since [`Yokeable`]s are `'static`,
     /// this is good for e.g. constructing fully owned
@@ -279,9 +279,9 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, Option<C>> {
     /// use [`Yoke::attach_to_option_cart_badly()`] instead
     pub fn attach_to_option_cart<F>(cart: C, f: F) -> Self
     where
-        F: for<'de> FnOnce(&'de C::Inner) -> <Y as Yokeable<'de>>::Output,
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     {
-        let deserialized = f(cart.get_inner());
+        let deserialized = f(cart.deref());
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart: Some(cart),
@@ -293,9 +293,9 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, Option<C>> {
     /// See its docs for more details
     pub fn attach_to_option_cart_badly(
         cart: C,
-        f: for<'de> fn(&'de C::Inner) -> <Y as Yokeable<'de>>::Output,
+        f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     ) -> Self {
-        let deserialized = f(cart.get_inner());
+        let deserialized = f(cart.deref());
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart: Some(cart),
@@ -305,7 +305,7 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, Option<C>> {
 
 // clone impls only work for reference counted objects, otherwise you should be
 // cloning `backing_cart()` and reusing `attach_to_cart()`
-impl<Y: for<'a> Yokeable<'a>, T: Cartable + ?Sized> Clone for Yoke<Y, Rc<T>>
+impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Rc<T>>
 where
     for<'a> <Y as Yokeable<'a>>::Output: Clone,
 {
@@ -317,7 +317,7 @@ where
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, T: Cartable + ?Sized> Clone for Yoke<Y, Arc<T>>
+impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Arc<T>>
 where
     for<'a> <Y as Yokeable<'a>>::Output: Clone,
 {
@@ -329,7 +329,7 @@ where
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, T: Cartable + ?Sized> Clone for Yoke<Y, Option<Rc<T>>>
+impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Option<Rc<T>>>
 where
     for<'a> <Y as Yokeable<'a>>::Output: Clone,
 {

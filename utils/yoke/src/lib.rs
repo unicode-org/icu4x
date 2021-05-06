@@ -13,13 +13,11 @@
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
 
-mod cart;
 mod yoke;
 mod yokeable;
 
 #[cfg(feature = "zerovec")]
 mod zerovec_impls;
 
-pub use crate::cart::{Cart, Cartable};
 pub use crate::yoke::Yoke;
 pub use crate::yokeable::Yokeable;
