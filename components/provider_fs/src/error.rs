@@ -13,7 +13,10 @@ pub enum Error {
     #[error(transparent)]
     DataProvider(#[from] icu_provider::DataError),
     #[error("Deserializer error: {0}: {1:?}")]
-    Deserializer(#[source] Box<dyn std::error::Error + Send + Sync>, Option<PathBuf>),
+    Deserializer(
+        #[source] Box<dyn std::error::Error + Send + Sync>,
+        Option<PathBuf>,
+    ),
     #[cfg(feature = "export")]
     #[error("Serializer error: {0}: {1:?}")]
     Serializer(#[source] erased_serde::Error, Option<PathBuf>),

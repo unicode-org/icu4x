@@ -255,17 +255,9 @@ fn main() -> anyhow::Result<()> {
             }
             Box::new(serializers::json::Serializer::new(options))
         }
-        #[cfg(feature = "bincode")]
         Some("bincode") => {
             let options = serializers::bincode::Options::default();
             Box::new(serializers::bincode::Serializer::new(options))
-        }
-        #[cfg(not(feature = "bincode"))]
-        Some("bincode") => {
-            use icu_provider_fs::manifest::SyntaxOption;
-            use icu_provider_fs::FsDataError;
-            Err(FsDataError::UnknownSyntax(SyntaxOption::Bincode))?;
-            unreachable!()
         }
         _ => unreachable!(),
     };
