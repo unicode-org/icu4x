@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::{Cow, ToOwned};
-use std::mem;
+use std::{mem, ptr};
 
 /// A [`Yokeable`] type is essentially one with a covariant lifetime parameter,
 /// matched to the parameter in the trait definition. The trait allows one to cast
@@ -39,7 +39,7 @@ use std::mem;
 /// ```rust
 /// # use yoke::Yokeable;
 /// # use std::borrow::Cow;
-/// # use std::mem;
+/// # use std::{mem, ptr};
 /// struct Bar<'a> {
 ///     numbers: Cow<'a, [u8]>,
 ///     string: Cow<'a, str>,
@@ -61,9 +61,9 @@ use std::mem;
 ///         // This assert will be optimized out, but is included for additional
 ///         // peace of mind as we are using transmute_copy
 ///         debug_assert!(mem::size_of::<Bar<'a>>() == mem::size_of::<Self>());
-///         let ret = mem::transmute_copy(&from);
+///         let ptr: *const Self = (&from as *const Self::Output).cast();
 ///         mem::forget(from);
-///         ret
+///         ptr::read(ptr)
 ///     }
 ///
 ///     fn with_mut<F>(&'a mut self, f: F)
@@ -213,13 +213,13 @@ where
     }
 
     unsafe fn make(from: Cow<'a, T>) -> Self {
-        debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
         // i hate this
         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
         // are the same
-        let ret = mem::transmute_copy(&from);
+        debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
+        let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
-        ret
+        ptr::read(ptr)
     }
 
     fn with_mut<F>(&'a mut self, f: F)

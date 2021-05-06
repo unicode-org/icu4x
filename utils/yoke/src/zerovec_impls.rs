@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::*;
-use std::mem;
+use std::{mem, ptr};
 use zerovec::map::ZeroMapKV;
 use zerovec::ule::*;
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
@@ -17,9 +17,9 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 
     unsafe fn make(from: ZeroVec<'a, T>) -> Self {
         debug_assert!(mem::size_of::<ZeroVec<'a, T>>() == mem::size_of::<Self>());
-        let ret = mem::transmute_copy(&from);
+        let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
-        ret
+        ptr::read(ptr)
     }
 
     fn with_mut<F>(&'a mut self, f: F)
@@ -39,9 +39,9 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
 
     unsafe fn make(from: VarZeroVec<'a, T>) -> Self {
         debug_assert!(mem::size_of::<VarZeroVec<'a, T>>() == mem::size_of::<Self>());
-        let ret = mem::transmute_copy(&from);
+        let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
-        ret
+        ptr::read(ptr)
     }
 
     fn with_mut<F>(&'a mut self, f: F)
@@ -75,9 +75,9 @@ where
         debug_assert!(
             mem::size_of::<ZeroMap<'a, K::Output, V::Output>>() == mem::size_of::<Self>()
         );
-        let ret = mem::transmute_copy(&from);
+        let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
-        ret
+        ptr::read(ptr)
     }
 
     fn with_mut<F>(&'a mut self, f: F)
