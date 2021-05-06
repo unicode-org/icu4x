@@ -82,20 +82,10 @@ unsafe impl<'a, T: Cartable + ?Sized> Cart for &'a T {
     }
 }
 
-
 unsafe impl Cart for String {
     type Inner = str;
     fn get_inner(&self) -> &Self::Inner {
         &**self
-    }
-}
-
-// useful for constructing `Yokeable`s that may be borrowed
-// or owned, this is basically intended to be used with `Yoke::new()`
-unsafe impl<T: Cart> Cart for Option<T> {
-    type Inner = T::Inner;
-    fn get_inner(&self) -> &Self::Inner {
-        self.as_ref().unwrap().get_inner()
     }
 }
 

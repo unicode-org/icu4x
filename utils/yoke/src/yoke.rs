@@ -47,21 +47,21 @@ use std::sync::Arc;
 /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
 /// ```
 ///
-pub struct Yoke<Y: for<'a> Yokeable<'a>, C: Cart> {
+pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: Y,
     cart: C,
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, Option<C>> {
     /// Construct a new [`Yoke`] from static data. There will be no
     /// references to `cart` here since [`Yokeable`]s are `'static`,
     /// this is good for e.g. constructing fully owned
     /// [`Yoke`]s with no internal borrowing.
     ///
-    /// [`Yoke`]s will typically not be constructed with [`Yoke::new()`],
-    /// [`Self::attach_to_cart()`] is more likely.
+    /// This can be paired with [`Yoke::attach_to_option_cart()`] to mix owned
+    /// and borrowed data.
     ///
     /// # Example
     ///
@@ -72,19 +72,24 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     ///
     /// let owned: Cow<str> = "hello".to_owned().into();
     /// // this yoke can be intermingled with actually-borrowed Yokes
-    /// let yoke: Yoke<Cow<str>, Option<Rc<[u8]>>> = Yoke::new(owned, None);
+    /// let yoke: Yoke<Cow<str>, Option<Rc<[u8]>>> = Yoke::new_owned(owned);
     ///
     /// assert_eq!(yoke.get(), "hello");
     /// ```
-    pub fn new(yokeable: Y, cart: C) -> Self {
-        Self { yokeable, cart }
+    pub fn new_owned(yokeable: Y) -> Self {
+        Self {
+            yokeable,
+            cart: None,
+        }
     }
+}
 
+impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
     /// Construct a [`Yoke`] by yokeing an object to a [`Cart`]. This is the primary constructor
     /// for [`Yoke`].
     ///
     /// This method is currently unusable due to a [compiler bug](https://github.com/rust-lang/rust/issues/84937),
-    /// use [`Self::attach_to_cart_badly()`] instead
+    /// use [`Yoke::attach_to_cart_badly()`] instead
     ///
     /// # Example
     ///
@@ -122,7 +127,7 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
         }
     }
 
-    /// Temporary version of [`Self::attach_to_cart()`]
+    /// Temporary version of [`Yoke::attach_to_cart()`]
     /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
     ///
     /// See its docs for more details
@@ -136,7 +141,44 @@ impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, C> {
             cart,
         }
     }
+}
 
+impl<Y: for<'a> Yokeable<'a>, C: Cart> Yoke<Y, Option<C>> {
+    /// Similar to [`Yoke::attach_to_cart()`], except it constructs a `Yoke<Y, Option<C>>`
+    /// instead, where the cart is `Some(..)`.
+    ///
+    /// This allows mixing [`Yoke`]s constructed from owned and borrowed data, when
+    /// paired with [`Yoke::new_owned()`].
+    ///
+    /// This method is currently unusable due to a [compiler bug](https://github.com/rust-lang/rust/issues/84937),
+    /// use [`Yoke::attach_to_option_cart_badly()`] instead
+    pub fn attach_to_option_cart<F>(cart: C, f: F) -> Self
+    where
+        F: for<'de> FnOnce(&'de C::Inner) -> <Y as Yokeable<'de>>::Output,
+    {
+        let deserialized = f(cart.get_inner());
+        Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart: Some(cart),
+        }
+    }
+    /// Temporary version of [`Yoke::attach_to_option_cart()`]
+    /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
+    ///
+    /// See its docs for more details
+    pub fn attach_to_option_cart_badly(
+        cart: C,
+        f: for<'de> fn(&'de C::Inner) -> <Y as Yokeable<'de>>::Output,
+    ) -> Self {
+        let deserialized = f(cart.get_inner());
+        Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart: Some(cart),
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Obtain a valid reference to the yokeable data
     ///
     /// This essentially transforms the lifetime of the internal yokeable data to
