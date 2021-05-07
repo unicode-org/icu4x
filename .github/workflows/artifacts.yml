@@ -20,41 +20,21 @@ jobs:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
-    - name: "⭐⭐⭐ Check Credentials ⭐⭐⭐"
-      env:
-        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
-      if: env.HAS_KEY == null
-      run: |
-        echo "::group::🔒 Credentials Not Found"
-        echo "If you are a regular contributor, please request the key so that you can view docs previews in PRs."
-        echo "::endgroup::"
     - name: Authenticate to Google Cloud
-      env:
-        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
-      if: env.HAS_KEY != null
       uses: google-github-actions/setup-gcloud@v0.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Build docs
-      env:
-        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
-      if: env.HAS_KEY != null
       uses: actions-rs/cargo@v1
       with:
         command: doc
         args: --workspace --release --all-features --no-deps
     - name: Upload docs to Google Cloud Storage
-      env:
-        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
-      if: env.HAS_KEY != null
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.run_number }}/docs
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
-      env:
-        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
-      if: env.HAS_KEY != null
       run: |
         echo "::group::📖 Docs Preview"
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.run_number }}/docs/icu/index.html"
