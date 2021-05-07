@@ -15,6 +15,7 @@ jobs:
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    # To generate docs previews, you must add the GCP key to your fork. If you are a regular contributor, please ask icu4x-core@unicode.org for the key.
     if: secrets.ICU4X_GCP_SA_KEY != null
     steps:
     - uses: actions/checkout@v2
