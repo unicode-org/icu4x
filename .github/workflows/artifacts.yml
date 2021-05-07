@@ -15,6 +15,7 @@ jobs:
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    if: secrets.ICU4X_GCP_SA_KEY != null
     steps:
     - name: "⭐⭐⭐ Check Credentials ⭐⭐⭐"
       env:
