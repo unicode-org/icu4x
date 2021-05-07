@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620408976032,
+  "lastUpdate": 1620409265376,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6149,6 +6149,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 29815291,
             "range": "± 631307",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1fa93b46cf574d5b61ecb9128e9a5292d3549375",
+          "message": "Add PR template, including reminder for Conventional Comments (#706)",
+          "timestamp": "2021-05-07T10:34:48-07:00",
+          "tree_id": "77e4b32e1ab092625600987a947dc96bef105d7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/1fa93b46cf574d5b61ecb9128e9a5292d3549375"
+        },
+        "date": 1620409263751,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32401224,
+            "range": "± 1844351",
             "unit": "ns/iter"
           }
         ]
