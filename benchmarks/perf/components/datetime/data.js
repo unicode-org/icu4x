@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620409022053,
+  "lastUpdate": 1620409332607,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5411,6 +5411,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2581171,
             "range": "± 127157",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1fa93b46cf574d5b61ecb9128e9a5292d3549375",
+          "message": "Add PR template, including reminder for Conventional Comments (#706)",
+          "timestamp": "2021-05-07T10:34:48-07:00",
+          "tree_id": "77e4b32e1ab092625600987a947dc96bef105d7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/1fa93b46cf574d5b61ecb9128e9a5292d3549375"
+        },
+        "date": 1620409328439,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1423375,
+            "range": "± 135123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2726297,
+            "range": "± 446678",
             "unit": "ns/iter"
           }
         ]
