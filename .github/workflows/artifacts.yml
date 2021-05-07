@@ -16,9 +16,6 @@ jobs:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
     - name: "⭐⭐⭐ Check Credentials ⭐⭐⭐"
       env:
         HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -27,6 +24,15 @@ jobs:
         echo "::group::🔒 Credentials Not Found"
         echo "If you are a regular contributor, please request the key so that you can view docs previews in PRs."
         echo "::endgroup::"
+    - uses: actions/checkout@v2
+      env:
+        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
+      if: env.HAS_KEY != null
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      env:
+        HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
+      if: env.HAS_KEY != null
+      run: rustup show
     - name: Authenticate to Google Cloud
       env:
         HAS_KEY: ${{ secrets.ICU4X_GCP_SA_KEY }}
