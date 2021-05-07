@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620243837913,
+  "lastUpdate": 1620408992549,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5069,6 +5069,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 124938,
             "range": "± 8823",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3085cc6dbe3018a4029c82f10b0f6452fde949fd",
+          "message": "Add GitHub workflow for documentation preview (#694)",
+          "timestamp": "2021-05-07T12:30:38-05:00",
+          "tree_id": "c22f52d0d9c1e4495fb9dc3cf4a52d0205745e69",
+          "url": "https://github.com/unicode-org/icu4x/commit/3085cc6dbe3018a4029c82f10b0f6452fde949fd"
+        },
+        "date": 1620408990937,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147828,
+            "range": "± 5552",
             "unit": "ns/iter"
           }
         ]
