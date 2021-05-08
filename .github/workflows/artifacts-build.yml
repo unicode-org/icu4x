@@ -5,8 +5,23 @@
 ##### README #####
 #
 # The CI action in this file is used to build the artifacts on pushes to a repository containing
-# the ICU4X service account key. All steps are skipped unless the key is present. If you are a
-# frequent contributor, you may request the key from icu4x-core@unicode.org.
+# the ICU4X service account key. All steps are skipped unless the key is present.
+#
+# If you are a frequent contributor, you can add the key to your fork. The key is shared with
+# icu4x collaborators and can be viewed here:
+#
+# https://drive.google.com/file/d/17-oMqRfuHOHL9hYp64NYOh8vcJ03DQHm/view
+#
+# To add the key, follow these steps:
+#
+# 1. Go to the secrets on your fork:
+#     - https://github.com/{USER}/icu4x/settings/secrets/actions
+# 2. Click "New repository secret" and enter the following information:
+#     - Name: ICU4X_GCP_SA_KEY
+#     - Value: The contents of the file linked above
+# 3. Click "Add secret"
+# 4. Re-run the latest "Artifacts Build" action on your fork to make sure it works:
+#     - https://github.com/{USER}/icu4x/actions/workflows/artifacts-build.yml
 
 name: Artifacts Build
 
@@ -25,7 +40,7 @@ jobs:
       run: |
         if [ -z "$ICU4X_GCP_SA_KEY" ]
         then
-          echo "GCP key not found. Docs previews will not be uploaded. If you are a frequent contributor, you may request the key from icu4x-core@unicode.org."
+          echo "GCP key not found. Docs previews will not be uploaded. If you are a frequent contributor, you may add the key to your fork; for instructions, see 'artifacts-build.yml'"
           exit 1;
         fi
   docs:
