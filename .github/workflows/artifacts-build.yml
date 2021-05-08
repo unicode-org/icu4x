@@ -2,21 +2,39 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-name: PR Artifacts
+##### README #####
+#
+# The CI action in this file is used to build the artifacts on pushes to a repository containing
+# the ICU4X service account key. All steps are skipped unless the key is present. If you are a
+# frequent contributor, you may request the key from icu4x-core@unicode.org.
+
+name: Artifacts Build
 
 on:
-  pull_request:
-    branches: '*'
+  push:
+    branches-ignore: ["main"]
 
 jobs:
+  credentials:
+    name: "Check Credentials"
+    runs-on: "ubuntu-latest"
+    env:
+      ICU4X_GCP_SA_KEY: "${{ secrets.ICU4X_GCP_SA_KEY }}"
+    steps:
+    - name: "Check for credentials"
+      run: |
+        if [ -z "$ICU4X_GCP_SA_KEY" ]
+        then
+          echo "GCP key not found. Docs previews will not be uploaded. If you are a frequent contributor, you may request the key from icu4x-core@unicode.org."
+          exit 1;
+        fi
   docs:
     name: "Docs Preview"
+    needs: credentials
     runs-on: "ubuntu-latest"
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
-    # To generate docs previews, you must add the GCP key to your fork. If you are a regular contributor, please ask icu4x-core@unicode.org for the key.
-    if: secrets.ICU4X_GCP_SA_KEY != null
     steps:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
@@ -34,9 +52,9 @@ jobs:
         args: --workspace --release --all-features --no-deps
     - name: Upload docs to Google Cloud Storage
       run: |
-        gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.run_number }}/docs
+        gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::📖 Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.run_number }}/docs/icu/index.html"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
         echo "::endgroup::"
