@@ -2469,6 +2469,7 @@ dependencies = [
  "rand_pcg",
  "serde",
  "serde_json",
+ "tinystr",
 ]
 
 [[package]]

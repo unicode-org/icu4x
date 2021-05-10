@@ -8,9 +8,13 @@
 mod chars;
 mod plain;
 mod string;
+#[cfg(feature = "tinystr")]
+mod tinystr;
 
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
+#[cfg(feature = "tinystr")]
+pub use self::tinystr::UTF8ULE;
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///

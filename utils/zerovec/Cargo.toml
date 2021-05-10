@@ -24,6 +24,7 @@ include = [
 [dependencies]
 either = "1.6.1"
 serde = { version = "1.0", optional = true }
+tinystr = { version = "0.4.5", optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
