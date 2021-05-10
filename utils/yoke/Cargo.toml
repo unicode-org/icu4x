@@ -24,7 +24,6 @@ include = [
 
 [dependencies]
 stable_deref_trait = "1.2.0"
-zerovec = { path = "../zerovec", optional = true }
 
 [dev-dependencies]
 bincode = "1.3.3"

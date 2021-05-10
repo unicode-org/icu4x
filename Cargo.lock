@@ -2454,7 +2454,6 @@ dependencies = [
  "bincode",
  "serde",
  "stable_deref_trait",
- "zerovec",
 ]
 
 [[package]]
@@ -2472,6 +2471,7 @@ dependencies = [
  "rand_pcg",
  "serde",
  "serde_json",
+ "yoke",
 ]
 
 [[package]]

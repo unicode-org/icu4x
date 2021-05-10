@@ -16,8 +16,5 @@
 mod yoke;
 mod yokeable;
 
-#[cfg(feature = "zerovec")]
-mod zerovec_impls;
-
 pub use crate::yoke::Yoke;
 pub use crate::yokeable::Yokeable;
