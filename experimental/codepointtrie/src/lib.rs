@@ -3,19 +3,43 @@ pub fn hello() {
 }
 
 /// The width of the elements in the data array of a CodePointTrie.
-pub enum CodePointTrieDataValueWidth {
-    Width8Bit,
-    Width16Bit,
-    Width32Bit,
+/// See UCPTrieValueWidth in ICU4C.
+pub enum CodePointTrieValueWidth {
+    ValueBitsAny = -1,
+    ValueBits16 = 0,
+    ValueBits32 = 1,
+    ValueBits8 = 2,
 }
 
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
+/// See UCPTrieType in ICU4C.
 pub enum CodePointTrieType {
     CodePointTrieTypeAny = -1,
     CodePointTrieTypeFast = 0,
     CodePointTrieTypeSmall = 1,
 }
+
+pub struct CodePointTrieData<'trie> {
+    data_8_bit: Option<&'trie [u8]>,
+    data_16_bit: Option<&'trie [u16]>,
+    data_32_bit: Option<&'trie [u32]>,
+}
+
+pub struct CodePointTrie<'trie> {
+    index_length: u32,
+    data_length: u32,
+    high_start: u32,
+    shifted12_high_start: u16,
+    trie_type: CodePointTrieType,
+    value_width: CodePointTrieValueWidth,
+    index3_null_offset: u16,
+    data_null_offset: u32,
+    null_value: u32,
+    index: &'trie [u16],
+    data: &'trie CodePointTrieData<'trie>,
+}
+
 
 // pub fn fast_trie_fast_range_data_array_index(cp: i32) -> i32 {
 // }
