@@ -317,6 +317,18 @@ where
     }
 }
 
+impl<'b, Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, &'b T>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        Yoke {
+            yokeable: unsafe { Y::make(self.get().clone()) },
+            cart: self.cart,
+        }
+    }
+}
+
 impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Arc<T>>
 where
     for<'a> <Y as Yokeable<'a>>::Output: Clone,
@@ -337,6 +349,30 @@ where
         Yoke {
             yokeable: unsafe { Y::make(self.get().clone()) },
             cart: self.cart.clone(),
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Option<Arc<T>>>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        Yoke {
+            yokeable: unsafe { Y::make(self.get().clone()) },
+            cart: self.cart.clone(),
+        }
+    }
+}
+
+impl<'b, Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Option<&'b T>>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        Yoke {
+            yokeable: unsafe { Y::make(self.get().clone()) },
+            cart: self.cart,
         }
     }
 }
