@@ -6,6 +6,7 @@
 
 members = [
     "experimental/bies",
+    "experimental/codepointtrie",
     "experimental/provider_ppucd",
     "experimental/segmenter_lstm",
     "components/datetime",
