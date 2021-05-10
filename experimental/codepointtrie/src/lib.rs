@@ -2,9 +2,11 @@ pub fn hello() {
     println!("Hello, world!");
 }
 
+const CODE_POINT_TRIE_SMALL_TYPE_FAST_INDEXING_LIMIT: u32 = 0xfff;
+
 /// The width of the elements in the data array of a CodePointTrie.
 /// See UCPTrieValueWidth in ICU4C.
-pub enum CodePointTrieValueWidth {
+enum CodePointTrieValueWidth {
     BitsAny = -1,
     Bits16 = 0,
     Bits32 = 1,
@@ -14,13 +16,14 @@ pub enum CodePointTrieValueWidth {
 /// The type of trie represents whether the trie has an optimization that
 /// would make it small or fast.
 /// See UCPTrieType in ICU4C.
-pub enum CodePointTrieType {
+#[derive(PartialEq)]
+enum CodePointTrieType {
     Any = -1,
     Fast = 0,
     Small = 1,
 }
 
-pub struct CodePointTrieData<'trie> {
+struct CodePointTrieData<'trie> {
     // void: bool,  // Do we need an equivalent to the `void *ptr0` field in
     // UCPTrieData? Is it derivative of a None value for the other fields? Is
     // there a performance / convenience to having it?
@@ -29,7 +32,7 @@ pub struct CodePointTrieData<'trie> {
     data_32_bit: Option<&'trie [u32]>,
 }
 
-pub struct CodePointTrie<'trie> {
+struct CodePointTrie<'trie> {
     index_length: u32,
     data_length: u32,
     high_start: u32,
@@ -43,7 +46,7 @@ pub struct CodePointTrie<'trie> {
     data: &'trie CodePointTrieData<'trie>,
 }
 
-pub fn get_code_point_trie_type(trie_type_int: u8) -> CodePointTrieType {
+fn get_code_point_trie_type(trie_type_int: u8) -> CodePointTrieType {
     match trie_type_int {
         0 => CodePointTrieType::Fast,
         1 => CodePointTrieType::Small,
@@ -51,7 +54,7 @@ pub fn get_code_point_trie_type(trie_type_int: u8) -> CodePointTrieType {
     }
 }
 
-pub fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValueWidth {
+fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValueWidth {
     match value_width_int {
         0 => CodePointTrieValueWidth::Bits16,
         1 => CodePointTrieValueWidth::Bits32,
@@ -60,7 +63,36 @@ pub fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValu
     }
 }
 
-// pub fn fast_trie_fast_range_data_array_index(cp: i32) -> i32 {
+/// Get trie data array index position for code point value `c` that is beyond
+/// ASCII range.
+fn trie_cp_index(trie: &CodePointTrie, fast_max: u32, c: u32) -> u32 {
+    
+    // TODO: implement
+
+    0
+}
+
+/// Get trie data array index position for code point value `c`.
+fn trie_index(trie: &CodePointTrie, c: u32) -> u32 {
+    if c <= 0x7f {
+        c
+    } else {
+        let fast_indexing_limit: u32 =
+            if trie.trie_type == CodePointTrieType::Fast {
+                0xffff
+            } else {
+                CODE_POINT_TRIE_SMALL_TYPE_FAST_INDEXING_LIMIT
+            };
+        trie_cp_index(trie, fast_indexing_limit, c)
+    }
+}
+
+// pub fn trie_get(trie: &CodePointTrie, c: u32) -> u32 {
+//     if c <= 0x7f {
+
+//     } else {
+//         trie.null_value
+//     }
 // }
 
 #[test]
@@ -147,6 +179,11 @@ pub fn bit_shifting_test() {
                     data_32_bit: None,
                 },
         };
+
+    assert_eq!(trie_index(&trie, 1), 1, "ASCII range code points index pos is code point value");
+    assert_eq!(trie_index(&trie, 65), 65, "ASCII range code points index pos is code point value");
+    assert_eq!(trie_index(&trie, 127), 127, "ASCII range code points index pos is code point value");
+    assert_ne!(trie_index(&trie, 999), 999, "ASCII range code points index pos is code point value (Not yet properly implemented)");
 
     let _check_ranges: [u32; 10] = [0, 1, 0x740, 1, 0x780, 2, 0x880, 3, 0x110000, 1];
 
