@@ -202,13 +202,37 @@ fn trie_index(trie: &CodePointTrie, c: u32) -> u32 {
     }
 }
 
-// pub fn trie_get(trie: &CodePointTrie, c: u32) -> u32 {
-//     if c <= 0x7f {
+/// Helper function that gets the data array value at the provided index
+fn trie_get_value(data: &CodePointTrieData, value_width: &CodePointTrieValueWidth, data_index: u32) -> u32 {
+    let return_val_opt: Option<u32> = match value_width {
+        &CodePointTrieValueWidth::Bits16 => {
+            match data.data_16_bit {
+                Some(data_array) => Some(data_array[data_index as usize] as u32),
+                _ => None,
+            }
+        },
+        &CodePointTrieValueWidth::Bits32 => {
+            match data.data_32_bit {
+                Some(data_array) => Some(data_array[data_index as usize]),
+                _ => None,
+            }           
+        },
+        &CodePointTrieValueWidth::Bits8 => {
+            match data.data_8_bit {
+                Some(data_array) => Some(data_array[data_index as usize] as u32),
+                _ => None
+            }
+        }
+        _ => None // Unreachable if the trie is properly initialized.
+    };
+    return_val_opt.unwrap_or(0xffffffff)
+}
 
-//     } else {
-//         trie.null_value
-//     }
-// }
+fn trie_get(trie: &CodePointTrie, c: u32) -> u32 {
+    let data_index: u32 = trie_index(trie, c);
+    let data_value: u32 = trie_get_value(&trie.data, &trie.value_width, data_index);
+    data_value
+}
 
 // Exported trie data from free-blocks.8.toml. This file represents a
 // fast-type trie with 8-bit width data.
