@@ -93,18 +93,16 @@ where
                 seq.serialize_element(&T::from_unaligned(value))?;
             }
             seq.end()
+        } else if let Some(slice) = self.get_slice_for_borrowed() {
+            serializer.serialize_bytes(&slice)
         } else {
-            if let Some(slice) = self.get_slice_for_borrowed() {
-                serializer.serialize_bytes(&slice)
-            } else {
-                // This creates an additional Vec allocation to enable code reuse of
-                // VarZeroVec::to_vec()'s. The alternative is to write a different
-                // implementation of get_serializable_bytes() which enables us to pull
-                // out the byte buffer components bit by bit and use serialize_seq + serialize_element
-                let vec = VarZeroVec::get_serializable_bytes(&self.to_vec())
-                    .ok_or_else(|| ser::Error::custom("VarZeroVec too large to be serialized"))?;
-                serializer.serialize_bytes(&vec)
-            }
+            // This creates an additional Vec allocation to enable code reuse of
+            // VarZeroVec::to_vec()'s. The alternative is to write a different
+            // implementation of get_serializable_bytes() which enables us to pull
+            // out the byte buffer components bit by bit and use serialize_seq + serialize_element
+            let vec = VarZeroVec::get_serializable_bytes(&self.to_vec())
+                .ok_or_else(|| ser::Error::custom("VarZeroVec too large to be serialized"))?;
+            serializer.serialize_bytes(&vec)
         }
     }
 }

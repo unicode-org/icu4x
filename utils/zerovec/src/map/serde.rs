@@ -73,7 +73,7 @@ where
             // Try to append it at the end, hoping for a sorted map.
             // If not sorted, return an error
             // a serialized map that came from another ZeroMap
-            if let Some(_) = map.try_append(key, value) {
+            if map.try_append(key, value).is_some() {
                 return Err(de::Error::custom(
                     "ZeroMap's keys must be sorted while deserializing",
                 ));
