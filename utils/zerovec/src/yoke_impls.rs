@@ -9,6 +9,7 @@ use std::{mem, ptr};
 use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
+/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T> {
     type Output = ZeroVec<'a, T>;
     fn transform(&'a self) -> &'a ZeroVec<'a, T> {
@@ -31,6 +32,7 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 }
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
+/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
     fn transform(&'a self) -> &'a VarZeroVec<'a, T> {
@@ -52,6 +54,7 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
     }
 }
 
+/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 unsafe impl<
         'a,
         K: 'static + ZeroMapKV<'static> + Yokeable<'a>,
