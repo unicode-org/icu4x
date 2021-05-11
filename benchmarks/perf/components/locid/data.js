@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620704911344,
+  "lastUpdate": 1620754014065,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6869,6 +6869,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5057,
             "range": "± 101",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "51e1e72b8a6a4d2df0221e8f617e3d9a6819b815",
+          "message": "Fix keyword in Cargo.toml (#714)\n\n* Fix keyword in Cargo.toml\r\n\r\n* Update zerovec crate",
+          "timestamp": "2021-05-11T10:19:50-07:00",
+          "tree_id": "87f47eb5a6b8194bcf66add1ca291a2fd29b58ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/51e1e72b8a6a4d2df0221e8f617e3d9a6819b815"
+        },
+        "date": 1620754012832,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3551,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5257,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
