@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620754014065,
+  "lastUpdate": 1620762128921,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6905,6 +6905,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5257,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "edd710df243c1d7d40660600d9ba2c6cbf7d7153",
+          "message": "Add docs about optional features to zerovec crate, enable on docs.rs (#715)\n\n* Add docs about optional features to zerovec crate, enable on docs.rs\r\n\r\n* Fix whitespace in yokeable docs",
+          "timestamp": "2021-05-11T12:35:26-07:00",
+          "tree_id": "b9138b4b6baa4fd3d7837466905243697898a07f",
+          "url": "https://github.com/unicode-org/icu4x/commit/edd710df243c1d7d40660600d9ba2c6cbf7d7153"
+        },
+        "date": 1620762127267,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3380,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5262,
+            "range": "± 264",
             "unit": "ns/iter"
           }
         ]
