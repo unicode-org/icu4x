@@ -1,54 +1,77 @@
-pub fn hello() {
-    println!("Hello, world!");
-}
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-const CODE_POINT_TRIE_FAST_TYPE_SHIFT: i32 = 6;
+const CODEPOINTTRIE_FAST_TYPE_SHIFT: i32 = 6;
 
-const CODE_POINT_TRIE_FAST_TYPE_DATA_BLOCK_LENGTH: u32 = 1 << CODE_POINT_TRIE_FAST_TYPE_SHIFT;
+/// Number of entries in a data block for code points below the fast limit. 64=0x40
+const CODEPOINTTRIE_FAST_TYPE_DATA_BLOCK_LENGTH: u32 = 1 << CODEPOINTTRIE_FAST_TYPE_SHIFT;
 
-const CODE_POINT_TRIE_FAST_TYPE_DATA_MASK: u32 = CODE_POINT_TRIE_FAST_TYPE_DATA_BLOCK_LENGTH - 1;
+/// Mask for getting the lower bits for the in-fast-data-block offset.
+const CODEPOINTTRIE_FAST_TYPE_DATA_MASK: u32 = CODEPOINTTRIE_FAST_TYPE_DATA_BLOCK_LENGTH - 1;
 
 // Fast indexing limit for "fast"-type trie
-const CODE_POINT_TRIE_FAST_TYPE_FAST_INDEXING_MAX: u32 = 0xffff;
+const CODEPOINTTRIE_FAST_TYPE_FAST_INDEXING_MAX: u32 = 0xffff;
 
 // Fast indexing limit for "small"-type trie
-const CODE_POINT_TRIE_SMALL_TYPE_FAST_INDEXING_MAX: u32 = 0xfff;
+const CODEPOINTTRIE_SMALL_TYPE_FAST_INDEXING_MAX: u32 = 0xfff;
 
-const CODE_POINT_TRIE_ERROR_VALUE_NEG_DATA_OFFSET: u32 = 1;
+/// Offset from dataLength (to be subtracted) for fetching the
+/// value returned for out-of-range code points and ill-formed UTF-8/16.
+const CODEPOINTTRIE_ERROR_VALUE_NEG_DATA_OFFSET: u32 = 1;
 
-const CODE_POINT_TRIE_HIGH_VALUE_NEG_DATA_OFFSET: u32 = 2;
+/// Offset from dataLength (to be subtracted) for fetching the
+/// value returned for code points highStart..U+10FFFF.
+const CODEPOINTTRIE_HIGH_VALUE_NEG_DATA_OFFSET: u32 = 2;
 
-const CODE_POINT_TRIE_BMP_INDEX_LENGTH: u32 = 0x10000 >> CODE_POINT_TRIE_FAST_TYPE_SHIFT;
+/// The length of the BMP index table. 1024=0x400
+const CODEPOINTTRIE_BMP_INDEX_LENGTH: u32 = 0x10000 >> CODEPOINTTRIE_FAST_TYPE_SHIFT;
 
-const CODE_POINT_TRIE_SMALL_LIMIT: u32 = 0x10000;
+const CODEPOINTTRIE_SMALL_LIMIT: u32 = 0x10000;
 
-const CODE_POINT_TRIE_SMALL_INDEX_LENGTH: u32 = CODE_POINT_TRIE_SMALL_LIMIT >> CODE_POINT_TRIE_FAST_TYPE_SHIFT;
+const CODEPOINTTRIE_SMALL_INDEX_LENGTH: u32 = CODEPOINTTRIE_SMALL_LIMIT >> CODEPOINTTRIE_FAST_TYPE_SHIFT;
 
-const CODE_POINT_TRIE_SHIFT_3: u32 = 4;
+/// Shift size for getting the index-3 table offset.
+const CODEPOINTTRIE_SHIFT_3: u32 = 4;
 
-const CODE_POINT_TRIE_SHIFT_2: u32 = 5 + CODE_POINT_TRIE_SHIFT_3;
+/// Shift size for getting the index-2 table offset.
+const CODEPOINTTRIE_SHIFT_2: u32 = 5 + CODEPOINTTRIE_SHIFT_3;
 
-const CODE_POINT_TRIE_SHIFT_1: u32 = 5 + CODE_POINT_TRIE_SHIFT_2;
+/// Shift size for getting the index-1 table offset.
+const CODEPOINTTRIE_SHIFT_1: u32 = 5 + CODEPOINTTRIE_SHIFT_2;
 
-const CODE_POINT_TRIE_SHIFT_2_3: u32 = CODE_POINT_TRIE_SHIFT_2 - CODE_POINT_TRIE_SHIFT_3;
+/// Difference between two shift sizes,
+///  for getting an index-2 offset from an index-3 offset. 5=9-4
+const CODEPOINTTRIE_SHIFT_2_3: u32 = CODEPOINTTRIE_SHIFT_2 - CODEPOINTTRIE_SHIFT_3;
 
-const CODE_POINT_TRIE_SHIFT_1_2: u32 = CODE_POINT_TRIE_SHIFT_1 - CODE_POINT_TRIE_SHIFT_2;
+/// Difference between two shift sizes,
+/// for getting an index-1 offset from an index-2 offset. 5=14-9
+const CODEPOINTTRIE_SHIFT_1_2: u32 = CODEPOINTTRIE_SHIFT_1 - CODEPOINTTRIE_SHIFT_2;
 
-const CODE_POINT_TRIE_OMITTED_BMP_INDEX_1_LENGTH: u32 = 0x10000 >> CODE_POINT_TRIE_SHIFT_1;
+/// Number of index-1 entries for the BMP. (4)
+/// This part of the index-1 table is omitted from the serialized form.
+const CODEPOINTTRIE_OMITTED_BMP_INDEX_1_LENGTH: u32 = 0x10000 >> CODEPOINTTRIE_SHIFT_1;
 
-const CODE_POINT_TRIE_INDEX_2_BLOCK_LENGTH: u32 = 1 << CODE_POINT_TRIE_SHIFT_2;
+/// Number of entries in an index-2 block. 32=0x20
+const CODEPOINTTRIE_INDEX_2_BLOCK_LENGTH: u32 = 1 << CODEPOINTTRIE_SHIFT_2;
 
-const CODE_POINT_TRIE_INDEX_2_MASK: u32 = CODE_POINT_TRIE_INDEX_2_BLOCK_LENGTH - 1;
+/// Mask for getting the lower bits for the in-index-2-block offset.
+const CODEPOINTTRIE_INDEX_2_MASK: u32 = CODEPOINTTRIE_INDEX_2_BLOCK_LENGTH - 1;
 
-const CODE_POINT_TRIE_CP_PER_INDEX_2_ENTRY: u32 = 1 << CODE_POINT_TRIE_SHIFT_2;
+/// Number of code points per index-2 table entry. 512=0x200
+const CODEPOINTTRIE_CP_PER_INDEX_2_ENTRY: u32 = 1 << CODEPOINTTRIE_SHIFT_2;
 
-const CODE_POINT_TRIE_INDEX_3_BLOCK_LENGTH: u32 = 1 << CODE_POINT_TRIE_SHIFT_2_3;
+/// Number of entries in an index-3 block. 32=0x20
+const CODEPOINTTRIE_INDEX_3_BLOCK_LENGTH: u32 = 1 << CODEPOINTTRIE_SHIFT_2_3;
 
-const CODE_POINT_TRIE_INDEX_3_MASK: u32 = CODE_POINT_TRIE_INDEX_3_BLOCK_LENGTH - 1;
+/// Mask for getting the lower bits for the in-index-3-block offset.
+const CODEPOINTTRIE_INDEX_3_MASK: u32 = CODEPOINTTRIE_INDEX_3_BLOCK_LENGTH - 1;
 
-const CODE_POINT_TRIE_SMALL_DATA_BLOCK_LENGTH: u32 = 1 << CODE_POINT_TRIE_SHIFT_3;
+/// Number of entries in a small data block. 16=0x10
+const CODEPOINTTRIE_SMALL_DATA_BLOCK_LENGTH: u32 = 1 << CODEPOINTTRIE_SHIFT_3;
 
-const CODE_POINT_TRIE_SMALL_DATA_MASK: u32 = CODE_POINT_TRIE_SMALL_DATA_BLOCK_LENGTH - 1;
+/// Mask for getting the lower bits for the in-small-data-block offset.
+const CODEPOINTTRIE_SMALL_DATA_MASK: u32 = CODEPOINTTRIE_SMALL_DATA_BLOCK_LENGTH - 1;
 
 /// The width of the elements in the data array of a CodePointTrie.
 /// See UCPTrieValueWidth in ICU4C.
@@ -110,16 +133,16 @@ fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValueWid
 }
 
 fn trie_internal_small_index(trie: &CodePointTrie, c: u32) -> u32 {
-    let mut i1: u32 = c >> CODE_POINT_TRIE_SHIFT_1;
+    let mut i1: u32 = c >> CODEPOINTTRIE_SHIFT_1;
     if trie.trie_type == CodePointTrieType::Fast {
         assert!(0xffff < c && c < trie.high_start);
-        i1 = i1 + CODE_POINT_TRIE_BMP_INDEX_LENGTH - CODE_POINT_TRIE_OMITTED_BMP_INDEX_1_LENGTH;
+        i1 = i1 + CODEPOINTTRIE_BMP_INDEX_LENGTH - CODEPOINTTRIE_OMITTED_BMP_INDEX_1_LENGTH;
     } else {
-        assert!(c < trie.high_start && trie.high_start > CODE_POINT_TRIE_SMALL_LIMIT);
-        i1 = i1 + CODE_POINT_TRIE_SMALL_INDEX_LENGTH;
+        assert!(c < trie.high_start && trie.high_start > CODEPOINTTRIE_SMALL_LIMIT);
+        i1 = i1 + CODEPOINTTRIE_SMALL_INDEX_LENGTH;
     }
-    let mut i3_block: u32 = trie.index[ (trie.index[i1 as usize] as u32 + ((c >> CODE_POINT_TRIE_SHIFT_2) & CODE_POINT_TRIE_INDEX_2_MASK)) as usize] as u32;
-    let mut i3: u32 = (c >> CODE_POINT_TRIE_SHIFT_3) & CODE_POINT_TRIE_INDEX_3_MASK;
+    let mut i3_block: u32 = trie.index[ (trie.index[i1 as usize] as u32 + ((c >> CODEPOINTTRIE_SHIFT_2) & CODEPOINTTRIE_INDEX_2_MASK)) as usize] as u32;
+    let mut i3: u32 = (c >> CODEPOINTTRIE_SHIFT_3) & CODEPOINTTRIE_INDEX_3_MASK;
     let mut data_block: u32;
     if i3_block & 0x8000 == 0 {
         // 16-bit indexes
@@ -131,45 +154,49 @@ fn trie_internal_small_index(trie: &CodePointTrie, c: u32) -> u32 {
         data_block = ((trie.index[(i3_block + 1) as usize] << (2 + (2 * i3))) as u32 & 0x30000) as u32;
         data_block = data_block | trie.index[(i3_block + i3) as usize] as u32;
     }
-    data_block + (c & CODE_POINT_TRIE_SMALL_DATA_MASK)
+    data_block + (c & CODEPOINTTRIE_SMALL_DATA_MASK)
 }
 
+/// Internal trie getter for a code point at or above the fast limit. Returns the data index.
 fn trie_small_index(trie: &CodePointTrie, c: u32) -> u32 {
     if c >= trie.high_start {
-        trie.data_length - CODE_POINT_TRIE_HIGH_VALUE_NEG_DATA_OFFSET
+        trie.data_length - CODEPOINTTRIE_HIGH_VALUE_NEG_DATA_OFFSET
     } else {
         trie_internal_small_index(trie, c)
     }
 }
 
+/// Internal trie getter for a code point below the fast limit. Returns the data index.
 fn trie_fast_index(trie: &CodePointTrie, c: u32) -> u32 {
-    let index_array_pos: u32 = (c >> CODE_POINT_TRIE_FAST_TYPE_SHIFT) +
-        (c & CODE_POINT_TRIE_FAST_TYPE_DATA_MASK);
+    let index_array_pos: u32 = (c >> CODEPOINTTRIE_FAST_TYPE_SHIFT) +
+        (c & CODEPOINTTRIE_FAST_TYPE_DATA_MASK);
     trie.index[index_array_pos as usize] as u32
 }
 
-/// Get trie data array index position for code point value `c` that is beyond
-/// ASCII range.
+/// Internal trie getter to get trie data array index position for code point
+/// value `c` that is beyond ASCII range. Also checks that c is in 
+/// U+0000..10FFFF.
 fn trie_cp_index(trie: &CodePointTrie, fast_max: u32, c: u32) -> u32 {
     if c <= fast_max {
         trie_fast_index(trie, c)
     } else if c < 0x10ffff {
         trie_small_index(trie, c)
     } else {
-        trie.data_length - CODE_POINT_TRIE_ERROR_VALUE_NEG_DATA_OFFSET
+        trie.data_length - CODEPOINTTRIE_ERROR_VALUE_NEG_DATA_OFFSET
     }
 }
 
 /// Get trie data array index position for code point value `c`.
 fn trie_index(trie: &CodePointTrie, c: u32) -> u32 {
     if c <= 0x7f {
+        // linear ASCII
         c
     } else {
         let fast_indexing_limit: u32 =
             if trie.trie_type == CodePointTrieType::Fast {
-                CODE_POINT_TRIE_FAST_TYPE_FAST_INDEXING_MAX // 0xffff
+                CODEPOINTTRIE_FAST_TYPE_FAST_INDEXING_MAX // 0xffff
             } else {
-                CODE_POINT_TRIE_SMALL_TYPE_FAST_INDEXING_MAX // 0xfff
+                CODEPOINTTRIE_SMALL_TYPE_FAST_INDEXING_MAX // 0xfff
             };
         trie_cp_index(trie, fast_indexing_limit, c)
     }
