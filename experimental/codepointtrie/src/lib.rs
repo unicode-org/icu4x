@@ -29,7 +29,8 @@ const CODEPOINTTRIE_BMP_INDEX_LENGTH: u32 = 0x10000 >> CODEPOINTTRIE_FAST_TYPE_S
 
 const CODEPOINTTRIE_SMALL_LIMIT: u32 = 0x10000;
 
-const CODEPOINTTRIE_SMALL_INDEX_LENGTH: u32 = CODEPOINTTRIE_SMALL_LIMIT >> CODEPOINTTRIE_FAST_TYPE_SHIFT;
+const CODEPOINTTRIE_SMALL_INDEX_LENGTH: u32 =
+    CODEPOINTTRIE_SMALL_LIMIT >> CODEPOINTTRIE_FAST_TYPE_SHIFT;
 
 /// Shift size for getting the index-3 table offset.
 const CODEPOINTTRIE_SHIFT_3: u32 = 4;
@@ -128,7 +129,7 @@ fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValueWid
         0 => CodePointTrieValueWidth::Bits16,
         1 => CodePointTrieValueWidth::Bits32,
         2 => CodePointTrieValueWidth::Bits8,
-        _ => CodePointTrieValueWidth::BitsAny
+        _ => CodePointTrieValueWidth::BitsAny,
     }
 }
 
@@ -141,7 +142,9 @@ fn trie_internal_small_index(trie: &CodePointTrie, c: u32) -> u32 {
         assert!(c < trie.high_start && trie.high_start > CODEPOINTTRIE_SMALL_LIMIT);
         i1 = i1 + CODEPOINTTRIE_SMALL_INDEX_LENGTH;
     }
-    let mut i3_block: u32 = trie.index[ (trie.index[i1 as usize] as u32 + ((c >> CODEPOINTTRIE_SHIFT_2) & CODEPOINTTRIE_INDEX_2_MASK)) as usize] as u32;
+    let mut i3_block: u32 = trie.index[(trie.index[i1 as usize] as u32
+        + ((c >> CODEPOINTTRIE_SHIFT_2) & CODEPOINTTRIE_INDEX_2_MASK))
+        as usize] as u32;
     let mut i3: u32 = (c >> CODEPOINTTRIE_SHIFT_3) & CODEPOINTTRIE_INDEX_3_MASK;
     let mut data_block: u32;
     if i3_block & 0x8000 == 0 {
@@ -151,7 +154,8 @@ fn trie_internal_small_index(trie: &CodePointTrie, c: u32) -> u32 {
         // 18-bit indexes stored in groups of 9 entries per 8 indexes.
         i3_block = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
         i3 = i3 & 7;
-        data_block = ((trie.index[(i3_block + 1) as usize] << (2 + (2 * i3))) as u32 & 0x30000) as u32;
+        data_block =
+            ((trie.index[(i3_block + 1) as usize] << (2 + (2 * i3))) as u32 & 0x30000) as u32;
         data_block = data_block | trie.index[(i3_block + i3) as usize] as u32;
     }
     data_block + (c & CODEPOINTTRIE_SMALL_DATA_MASK)
@@ -168,13 +172,13 @@ fn trie_small_index(trie: &CodePointTrie, c: u32) -> u32 {
 
 /// Internal trie getter for a code point below the fast limit. Returns the data index.
 fn trie_fast_index(trie: &CodePointTrie, c: u32) -> u32 {
-    let index_array_pos: u32 = (c >> CODEPOINTTRIE_FAST_TYPE_SHIFT) +
-        (c & CODEPOINTTRIE_FAST_TYPE_DATA_MASK);
+    let index_array_pos: u32 =
+        (c >> CODEPOINTTRIE_FAST_TYPE_SHIFT) + (c & CODEPOINTTRIE_FAST_TYPE_DATA_MASK);
     trie.index[index_array_pos as usize] as u32
 }
 
 /// Internal trie getter to get trie data array index position for code point
-/// value `c` that is beyond ASCII range. Also checks that c is in 
+/// value `c` that is beyond ASCII range. Also checks that c is in
 /// U+0000..10FFFF.
 fn trie_cp_index(trie: &CodePointTrie, fast_max: u32, c: u32) -> u32 {
     if c <= fast_max {
@@ -192,38 +196,35 @@ fn trie_index(trie: &CodePointTrie, c: u32) -> u32 {
         // linear ASCII
         c
     } else {
-        let fast_indexing_limit: u32 =
-            if trie.trie_type == CodePointTrieType::Fast {
-                CODEPOINTTRIE_FAST_TYPE_FAST_INDEXING_MAX // 0xffff
-            } else {
-                CODEPOINTTRIE_SMALL_TYPE_FAST_INDEXING_MAX // 0xfff
-            };
+        let fast_indexing_limit: u32 = if trie.trie_type == CodePointTrieType::Fast {
+            CODEPOINTTRIE_FAST_TYPE_FAST_INDEXING_MAX // 0xffff
+        } else {
+            CODEPOINTTRIE_SMALL_TYPE_FAST_INDEXING_MAX // 0xfff
+        };
         trie_cp_index(trie, fast_indexing_limit, c)
     }
 }
 
 /// Helper function that gets the data array value at the provided index
-fn trie_get_value(data: &CodePointTrieData, value_width: &CodePointTrieValueWidth, data_index: u32) -> u32 {
+fn trie_get_value(
+    data: &CodePointTrieData,
+    value_width: &CodePointTrieValueWidth,
+    data_index: u32,
+) -> u32 {
     let return_val_opt: Option<u32> = match value_width {
-        &CodePointTrieValueWidth::Bits16 => {
-            match data.data_16_bit {
-                Some(data_array) => Some(data_array[data_index as usize] as u32),
-                _ => None,
-            }
+        &CodePointTrieValueWidth::Bits16 => match data.data_16_bit {
+            Some(data_array) => Some(data_array[data_index as usize] as u32),
+            _ => None,
         },
-        &CodePointTrieValueWidth::Bits32 => {
-            match data.data_32_bit {
-                Some(data_array) => Some(data_array[data_index as usize]),
-                _ => None,
-            }           
+        &CodePointTrieValueWidth::Bits32 => match data.data_32_bit {
+            Some(data_array) => Some(data_array[data_index as usize]),
+            _ => None,
         },
-        &CodePointTrieValueWidth::Bits8 => {
-            match data.data_8_bit {
-                Some(data_array) => Some(data_array[data_index as usize] as u32),
-                _ => None
-            }
-        }
-        _ => None // Unreachable if the trie is properly initialized.
+        &CodePointTrieValueWidth::Bits8 => match data.data_8_bit {
+            Some(data_array) => Some(data_array[data_index as usize] as u32),
+            _ => None,
+        },
+        _ => None, // Unreachable if the trie is properly initialized.
     };
     return_val_opt.unwrap_or(0xffffffff)
 }
@@ -301,29 +302,39 @@ pub fn fast_type_8_bit_trie_test() {
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0xad,
     ];
 
-    let trie: CodePointTrie =
-        CodePointTrie {
-            index_length,
-            data_length,
-            high_start,
-            shifted12_high_start,
-            trie_type: get_code_point_trie_type(trie_type),
-            value_width: get_code_point_trie_value_width(value_width),
-            index3_null_offset,
-            data_null_offset,
-            null_value,
-            index: &index,
-            data: 
-                &CodePointTrieData {
-                    data_8_bit: Some(&data_8),
-                    data_16_bit: None,
-                    data_32_bit: None,
-                },
-        };
+    let trie: CodePointTrie = CodePointTrie {
+        index_length,
+        data_length,
+        high_start,
+        shifted12_high_start,
+        trie_type: get_code_point_trie_type(trie_type),
+        value_width: get_code_point_trie_value_width(value_width),
+        index3_null_offset,
+        data_null_offset,
+        null_value,
+        index: &index,
+        data: &CodePointTrieData {
+            data_8_bit: Some(&data_8),
+            data_16_bit: None,
+            data_32_bit: None,
+        },
+    };
 
-    assert_eq!(trie_index(&trie, 1), 1, "ASCII range code points index pos is code point value");
-    assert_eq!(trie_index(&trie, 65), 65, "ASCII range code points index pos is code point value");
-    assert_eq!(trie_index(&trie, 127), 127, "ASCII range code points index pos is code point value");
+    assert_eq!(
+        trie_index(&trie, 1),
+        1,
+        "ASCII range code points index pos is code point value"
+    );
+    assert_eq!(
+        trie_index(&trie, 65),
+        65,
+        "ASCII range code points index pos is code point value"
+    );
+    assert_eq!(
+        trie_index(&trie, 127),
+        127,
+        "ASCII range code points index pos is code point value"
+    );
 
     assert_eq!(trie_index(&trie, 999), 0);
 
@@ -331,7 +342,5 @@ pub fn fast_type_8_bit_trie_test() {
 
     // TODO: add impl & tests for data-getting fns using the index fns
 
-
     let _check_ranges: [u32; 10] = [0, 1, 0x740, 1, 0x780, 2, 0x880, 3, 0x110000, 1];
-
 }
