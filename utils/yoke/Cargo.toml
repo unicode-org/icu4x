@@ -11,7 +11,7 @@ edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "../../LICENSE"
 categories = ["data-structures"]
-keywords = ["zero copy", "serialization", "lifetime", "borrow", "self-referential"]
+keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 include = [
     "src/**/*",
     "examples/**/*",
