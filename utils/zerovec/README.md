@@ -14,6 +14,10 @@ Both are intended as drop-in replacements for `Vec<T>` in Serde structs serializ
 format supporting a borrowed byte buffer, like Bincode. Clients upgrading from Vec to ZeroVec
 or VarZeroVec benefit from zero heap allocations when deserializing read-only data.
 
+This crate has two optional features: `serde` and `yoke`. `serde` allows serializing and deserializing
+`zerovec`'s abstractions via [`serde`](https://docs.rs/serde), and `yoke` enables implementations of `Yokeable`
+from the [`yoke`](https://docs.rs/yoke/) crate.
+
 ## Performance
 
 `zerovec` is designed for fast deserialization from byte buffers with zero memory allocations

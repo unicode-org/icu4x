@@ -143,7 +143,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// # use std::borrow::Cow;
     /// # use yoke::Yokeable;
     /// # use std::mem;
-    ///
+    /// #
     /// // also safely implements Yokeable<'a>
     /// struct Bar<'a> {
     ///     num: u8,
@@ -153,7 +153,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// fn unsound<'a>(bar: &'a mut Bar<'static>) {
     ///     bar.with_mut(move |bar| bar.cow = Cow::Borrowed(&bar.num));
     /// }
-    ///
+    /// #
     /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
     /// #     type Output = Bar<'a>;
     /// #     fn transform(&'a self) -> &'a Bar<'a> {
