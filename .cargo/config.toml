@@ -25,7 +25,7 @@ readme-check = "make generated-readme-check"
 # Keep args in sync with `clippy` job in .github/workflows/build-test.yml
 # unknown-clippy-lints: to allow us to work with nightly clippy lints that we don't CI
 # field-reassign-with-default: https://github.com/rust-lang/rust-clippy/issues/6559 (fixed in nightly but not stable)
-clippy-all = "clippy --all-features --all-targets -D warnings -- -Aclippy::field-reassign-with-default"
+clippy-all = "clippy --all-features --all-targets -- -D warnings -Aclippy::field-reassign-with-default"
 
 ### META TASKS ###
 
