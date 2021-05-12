@@ -92,8 +92,8 @@
     "day_periods": {
       "format": {
         "abbreviated": {
-          "am": "AM",
-          "pm": "PM",
+          "am": "am",
+          "pm": "pm",
           "noon": "noon",
           "midnight": "midnight"
         },
@@ -105,8 +105,8 @@
         },
         "short": null,
         "wide": {
-          "am": "AM",
-          "pm": "PM",
+          "am": "am",
+          "pm": "pm",
           "noon": "noon",
           "midnight": "midnight"
         }
@@ -114,8 +114,8 @@
       "stand_alone": {
         "abbreviated": null,
         "narrow": {
-          "am": "AM",
-          "pm": "PM",
+          "am": "am",
+          "pm": "pm",
           "noon": "noon",
           "midnight": "midnight"
         },
@@ -126,10 +126,10 @@
   },
   "patterns": {
     "date": {
-      "full": "EEEE, MMMM d, y",
-      "long": "MMMM d, y",
-      "medium": "MMM d, y",
-      "short": "M/d/yy"
+      "full": "EEEE, d MMMM y",
+      "long": "d MMMM y",
+      "medium": "d MMM y",
+      "short": "dd/MM/y"
     },
     "time": {
       "full": "h:mm:ss a zzzz",
@@ -146,22 +146,23 @@
       },
       "skeletons": {
         "y": "y",
-        "yM": "M/y",
-        "yMd": "M/d/y",
-        "yMdE": "E, M/d/y",
+        "yM": "MM/y",
+        "yMd": "dd/MM/y",
+        "yMdE": "E, dd/MM/y",
         "yMMM": "MMM y",
-        "yMMMd": "MMM d, y",
-        "yMMMdE": "E, MMM d, y",
+        "yMMMd": "d MMM y",
+        "yMMMdE": "E, d MMM y",
         "yMMMM": "MMMM y",
         "M": "L",
-        "Md": "M/d",
-        "MdE": "E, M/d",
+        "Md": "dd/MM",
+        "MdE": "E, dd/MM",
+        "MMdd": "dd/MM",
         "MMM": "LLL",
-        "MMMd": "MMM d",
-        "MMMdE": "E, MMM d",
-        "MMMMd": "MMMM d",
+        "MMMd": "d MMM",
+        "MMMdE": "E, d MMM",
+        "MMMMd": "d MMMM",
         "d": "d",
-        "dE": "d E",
+        "dE": "E d",
         "E": "ccc",
         "Ehm": "E h:mm a",
         "Ehms": "E h:mm:ss a",

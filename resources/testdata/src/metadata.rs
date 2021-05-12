@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use camino::Utf8PathBuf;
-use cargo_metadata::{self, MetadataCommand};
+use cargo_metadata::{self, camino::Utf8PathBuf, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use thiserror::Error;
@@ -25,6 +24,28 @@ pub struct PackageMetadata {
     pub locales: Vec<LanguageIdentifier>,
     pub cldr_json_glob: Vec<String>,
     pub gitref: String,
+}
+
+impl PackageMetadata {
+    /// Expands `cldr_json_glob` to the list of all included CLDR JSON paths.
+    // TODO: Consider making this a Generator.
+    pub fn get_all_cldr_paths(&self) -> Vec<String> {
+        let mut paths = vec![];
+        for pattern in self.cldr_json_glob.iter() {
+            if pattern.contains("$LOCALES") {
+                for locale in self.locales.iter() {
+                    let locale_str = writeable::Writeable::writeable_to_string(locale);
+                    paths.push(pattern.replace("$LOCALES", &locale_str));
+                }
+                // Also add "root" for older CLDRs
+                paths.push(pattern.replace("$LOCALES", "root"));
+            } else {
+                // No variable in pattern
+                paths.push(pattern.clone())
+            }
+        }
+        paths
+    }
 }
 
 #[derive(Debug)]

@@ -7,7 +7,10 @@ based on a CLDR tag and a short list of locales that, together, cover a range of
 
 The list of locales and the current CLDR tag can be found in [Cargo.toml](./Cargo.toml).
 
-The output data can be found in the [data](./data/) subdirectory.
+The output data can be found in the [data](./data/) subdirectory. There, you will find:
+
+- `json` for the ICU4X JSON test data
+- `cldr` for the source CLDR JSON
 
 ### Pointing to custom test data
 
@@ -19,19 +22,17 @@ $ ICU4X_TESTDATA_DIR=/path/to/custom/testdata cargo test
 
 ### Re-generating the data
 
-From this directory, run:
+From the top level, run:
 
 ```bash
-$ cargo gen-testdata -v
+$ cargo make testdata
 ```
 
-Use `-v`, `-vv`, or `-vvv` for different verbosities of logging.
+The following commands are also available:
 
-Use `-m generate` to generate the testdata without downloading it first:
-
-```bash
-$ cargo gen-testdata -v -m generate
-```
+- `cargo make testdata-download` downloads fresh CLDR JSON without overwriting ICU4X JSON
+- `cargo make testdata-build-json` re-generates the ICU4X JSON
+- `cargo make bincode-gen-testdata` generates Bincode testdata
 
 ## Examples
 

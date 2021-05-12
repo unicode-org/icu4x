@@ -25,6 +25,7 @@ members = [
     "resources/testdata",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
+    "tools/datagen",
     "utils/fixed_decimal",
     "utils/litemap",
     "utils/pattern",

@@ -22,7 +22,7 @@ where
         &mut self,
         req: &DataRequest,
         payload: &T,
-    ) -> Result<(), Box<dyn std::error::Error>>;
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
     /// [`DataExporter`] to filter out certain data entries.

@@ -59,26 +59,28 @@
 //!
 //! # Exporting data
 //!
-//! To generate the data required for [`FsDataProvider`], use the following script:
+//! To generate the data required for [`FsDataProvider`], run the following from the top level:
 //!
 //! ```text
 //! cargo run
-//!   --features export-bin
+//!   --bin icu4x-datagen
 //!   --
-//!   --cldr-tag 37.0.0
+//!   --cldr-tag 39.0.0
 //!   --out ./icu4x-data
 //!   --all-keys
+//!   --all-locales
 //! ```
 //!
 //! To export `bincode` format, use
 //!
 //! ```text
 //! cargo run
-//!   --features export-bin,bincode
+//!   --bin icu4x-datagen
 //!   --
-//!   --cldr-tag 37.0.0
+//!   --cldr-tag 39.0.0
 //!   --out ./icu4x-data
 //!   --all-keys
+//!   --all-locales
 //!   -s bincode
 //! ```
 //!

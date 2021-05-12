@@ -52,13 +52,13 @@ pub enum Error {
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
     #[error("Failed to load resource: {0}")]
-    Resource(#[from] Box<dyn std::error::Error>),
+    Resource(#[from] Box<dyn std::error::Error + Send + Sync>),
 }
 
 impl Error {
     pub fn new_resc_error<T>(err: T) -> Self
     where
-        T: 'static + std::error::Error,
+        T: 'static + std::error::Error + Send + Sync,
     {
         Self::Resource(Box::new(err))
     }

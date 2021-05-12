@@ -163,7 +163,7 @@ impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
         &mut self,
         req: &DataRequest,
         payload: &dyn crate::erased::ErasedDataStruct,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data: &HelloWorldV1 = payload.downcast_ref()?;
