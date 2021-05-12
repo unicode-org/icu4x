@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620762085890,
+  "lastUpdate": 1620849748280,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6299,6 +6299,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30483942,
             "range": "± 840497",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9f897fb14dc1ed8093e152819427b98cdeddc657",
+          "message": "Re-organize ICU4X data generation tools (#704)\n\n- Adds new crate under `tools/datagen`\r\n- Moves `icu4x-cldr-export` into that crate, renamed as `icu4x-datagen`\r\n- Replaces `icu4x-gen-testdata` with a new tool `icu4x-testdata-download`\r\n- Adds commands in Makefile.toml to invoke these tools",
+          "timestamp": "2021-05-12T14:55:57-05:00",
+          "tree_id": "b1614a6467b59fab9c68620bae91ffd7d63d6c08",
+          "url": "https://github.com/unicode-org/icu4x/commit/9f897fb14dc1ed8093e152819427b98cdeddc657"
+        },
+        "date": 1620849746509,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34457892,
+            "range": "± 1912777",
             "unit": "ns/iter"
           }
         ]
