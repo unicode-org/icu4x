@@ -8,8 +8,9 @@ use std::char::decode_utf16;
 // TODO:
 // json file is big, So I should use anoher binary format like npy.
 // But provided npy uses tensorflow dtype.
-const THAI_MODEL: &[u8; 373466] =
-    include_bytes!("../data/Thai_codepoints_exclusive_model4_heavy/weights.json");
+const THAI_MODEL: &[u8; 373466] = include_bytes!(
+    "../../segmenter_lstm/tests/testdata/Thai_codepoints_exclusive_model4_heavy/weights.json"
+);
 
 lazy_static! {
     static ref THAI_LSTM: Lstm = {
