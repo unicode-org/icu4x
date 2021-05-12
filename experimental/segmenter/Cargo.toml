@@ -3,15 +3,24 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "uax14_rs"
-description = "Implement UAX#14 in Rust"
+name = "icu_segmenter"
+description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
 version = "0.1.0"
-authors = ["Makoto Kato <m_kato@ga2.so-net.ne.jp>"]
+authors = ["The ICU4X Project Developers"]
 edition = "2018"
-license = "Apache-2.0 OR MIT"
-repository = "https://github.com/makotokato/uax14_rs"
-keywords = ["unicode"]
-categories = ["text-processing"]
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "README.md"
+]
 
 [dependencies]
 unicode-width = "0.1.7"
