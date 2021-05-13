@@ -16,9 +16,9 @@ path = "src/lib.rs"
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal" }
-icu_decimal = { path = "../decimal/" }
-icu_locid = { path = "../locid" }
-icu_plurals = { path = "../plurals/" }
-icu_provider = { path = "../provider" }
-icu_provider_fs = { path = "../provider_fs/" }
+icu_decimal = { path = "../../components/decimal/" }
+icu_locid = { path = "../../components/locid" }
+icu_plurals = { path = "../../components/plurals/" }
+icu_provider = { path = "../../provider/core" }
+icu_provider_fs = { path = "../../provider/fs/" }
 writeable = { path = "../../utils/writeable/" }

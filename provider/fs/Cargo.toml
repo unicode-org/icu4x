@@ -30,8 +30,8 @@ extra_features = [
 ]
 
 [dependencies]
-icu_provider = { version = "0.2", path = "../provider", features = ["provider_serde"] }
-icu_locid = { version = "0.2", path = "../locid", features = ["serde"] }
+icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
+icu_locid = { version = "0.2", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 erased-serde = { version = "0.3" }
 thiserror = "1.0"
@@ -47,8 +47,8 @@ static_assertions = { version = "1.1", optional = true }
 
 [dev-dependencies]
 icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
-icu_locid_macros = { version = "0.2", path = "../locid/macros" }
-icu_plurals = { version = "0.2", path = "../plurals" }
+icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
+icu_plurals = { version = "0.2", path = "../../components/plurals" }
 criterion = "0.3.3"
 
 [features]

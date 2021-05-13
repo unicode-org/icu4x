@@ -449,7 +449,7 @@ category = "ICU4X Data"
 script_runner = "@duckscript"
 script = '''
 # Use duckscript, rather than a unix command, so that this works on Windows.
-rm -r ./resources/testdata/data/bincode
+rm -r ./provider/testdata/data/bincode
 '''
 
 [tasks.bincode-gen-testdata-no-clean]
