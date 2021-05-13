@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620926630330,
+  "lastUpdate": 1620932696415,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5339,6 +5339,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 112182,
             "range": "± 5322",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0eb7f7bb9bfd6ec45e01258f44bdfdc15d6e5f6a",
+          "message": "Fix clippy in zerovec (#719)",
+          "timestamp": "2021-05-13T11:58:35-07:00",
+          "tree_id": "95a7fef0c65da10068a00f7237da3bf750386fde",
+          "url": "https://github.com/unicode-org/icu4x/commit/0eb7f7bb9bfd6ec45e01258f44bdfdc15d6e5f6a"
+        },
+        "date": 1620932695077,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147884,
+            "range": "± 5888",
             "unit": "ns/iter"
           }
         ]
