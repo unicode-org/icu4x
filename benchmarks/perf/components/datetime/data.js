@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620932711319,
+  "lastUpdate": 1620947192236,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5735,6 +5735,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2476177,
             "range": "± 32320",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8599e4e3f972b3120887252d290ea6e750cbf60",
+          "message": "Rename package directories in repo (#721)",
+          "timestamp": "2021-05-13T16:00:29-07:00",
+          "tree_id": "803a86066a5a41a378a5b2ec01d4968d40b75133",
+          "url": "https://github.com/unicode-org/icu4x/commit/a8599e4e3f972b3120887252d290ea6e750cbf60"
+        },
+        "date": 1620947190707,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1083244,
+            "range": "± 31557",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2031596,
+            "range": "± 79393",
             "unit": "ns/iter"
           }
         ]
