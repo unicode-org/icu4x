@@ -121,8 +121,8 @@ gitref = "39.0.0"
 skip_optional_dependencies = true
 
 [dependencies]
-icu_provider = { version = "0.2", path = "../../components/provider" }
-icu_provider_fs = { version = "0.2", path = "../../components/provider_fs" }
+icu_provider = { version = "0.2", path = "../../provider/core" }
+icu_provider_fs = { version = "0.2", path = "../../provider/fs" }
 icu_locid = { version = "0.2", path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature

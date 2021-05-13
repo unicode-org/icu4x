@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 
-const char* path = "../../../../resources/testdata/data/json/";
+const char* path = "../../../../provider/testdata/data/json/";
 int main() {
     ICU4XLocale* locale = icu4x_locale_create("ar", 2);
     ICU4XCreateDataProviderResult result = icu4x_fs_data_provider_create(path, strlen(path));

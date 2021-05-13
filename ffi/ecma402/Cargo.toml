@@ -24,14 +24,14 @@ include = [
 
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
-icu = { version = "0.2", path = "../icu" }
-icu_provider = { version = "0.2", path = "../provider" }
+icu = { version = "0.2", path = "../../components/icu" }
+icu_provider = { version = "0.2", path = "../../provider/core" }
 
 
 [dev-dependencies]
 criterion = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = {version = "1.0" }
-icu_locid = { version = "0.2", path = "../locid" }
-icu_provider = { version = "0.2", path = "../provider" }
-icu_testdata = { version = "0.2", path = "../../resources/testdata"  }
+icu_locid = { version = "0.2", path = "../../components/locid" }
+icu_provider = { version = "0.2", path = "../../provider/core" }
+icu_testdata = { version = "0.2", path = "../../provider/testdata"  }
