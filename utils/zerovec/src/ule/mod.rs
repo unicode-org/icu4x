@@ -42,6 +42,7 @@ where
     /// In most cases, the implementation of this function should involve re-casting the pointer.
     /// It is up to the implementation to reason about the safety. Keep in mind that `&[Self]` and
     /// `&[u8]` may have different lengths.
+    #[allow(clippy::wrong_self_convention)] // https://github.com/rust-lang/rust-clippy/issues/7219
     fn as_byte_slice(slice: &[Self]) -> &[u8];
 }
 

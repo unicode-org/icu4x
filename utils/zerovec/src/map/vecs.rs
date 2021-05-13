@@ -41,6 +41,10 @@ pub trait ZeroVecLike<'a, T> {
     fn reserve(&mut self, addl: usize);
     /// Check if this vector is in ascending order according to `T`s `Ord` impl
     fn is_ascending(&self) -> bool;
+    /// Check if this vector is empty
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl<'a, T> ZeroVecLike<'a, T> for ZeroVec<'a, T>
@@ -132,7 +136,7 @@ where
         self.make_mut().reserve(addl)
     }
     fn is_ascending(&self) -> bool {
-        if self.len() > 0 {
+        if !self.is_empty() {
             let mut prev = self.get(0).unwrap();
             for element in self.iter().skip(1) {
                 if element.cmp(prev) != Ordering::Greater {
