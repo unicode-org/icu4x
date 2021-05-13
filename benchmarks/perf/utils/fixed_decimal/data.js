@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620932696415,
+  "lastUpdate": 1620947208380,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5369,6 +5369,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 147884,
             "range": "± 5888",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8599e4e3f972b3120887252d290ea6e750cbf60",
+          "message": "Rename package directories in repo (#721)",
+          "timestamp": "2021-05-13T16:00:29-07:00",
+          "tree_id": "803a86066a5a41a378a5b2ec01d4968d40b75133",
+          "url": "https://github.com/unicode-org/icu4x/commit/a8599e4e3f972b3120887252d290ea6e750cbf60"
+        },
+        "date": 1620947206714,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155886,
+            "range": "± 5386",
             "unit": "ns/iter"
           }
         ]
