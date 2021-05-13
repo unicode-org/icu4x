@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620926458325,
+  "lastUpdate": 1620926630330,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5309,6 +5309,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 130462,
             "range": "± 382",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "579f8253d595763908a0eb2ae63b1f18f941e844",
+          "message": "Build docs previews in forks with valid key (#709)",
+          "timestamp": "2021-05-13T12:17:51-05:00",
+          "tree_id": "685a41233951b588f3312408c4a0bf26eb4da01b",
+          "url": "https://github.com/unicode-org/icu4x/commit/579f8253d595763908a0eb2ae63b1f18f941e844"
+        },
+        "date": 1620926628664,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112182,
+            "range": "± 5322",
             "unit": "ns/iter"
           }
         ]
