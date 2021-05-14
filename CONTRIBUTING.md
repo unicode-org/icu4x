@@ -18,11 +18,15 @@ That branch may end up containing one of more commits that are constituting the 
 
 ### Release Readiness
 
-When considering a contribution, we use the following rule of thumb: **all code in `components/` and `utils/` on the `main` branch must be ready for release at any time.**
+When considering a contribution, we use the following rule of thumb: **all code in `components/`, `ffi/`, `provider/`, and `utils/` on the `main` branch must be ready for release at any time.**
 
 Practically, this means that new components or improvements to existing components should not be merged until they meet all requirements of code quality (see the checklist below).
 
-If working on a larger project, consider starting it in the `experimental/` directory. We allow contributions to that directory even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved from `experimental/` into `components/` or `utils/` as a separate pull request.
+If working on a new component, consider starting it in the `experimental/` directory. We allow contributions to that directory even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved from `experimental/` into `components/` or `utils/` as a separate pull request.
+
+If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"experimental"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"experimental"` feature can be removed from the crate.
+
+Note that the actual Cargo.toml version bumps will be done at release time, and crates under `utils/` may follow a different release cadence than those under other directory trees.
 
 ### Checklist
 
