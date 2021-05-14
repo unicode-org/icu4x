@@ -69,7 +69,7 @@ macro_rules! impl_dyn_from_payload {
 /// - `$s` is the lifetime bound for the struct trait; usually `'s`
 ///
 /// # Examples
-/// 
+///
 /// Basic usage:
 ///
 /// ```
@@ -103,9 +103,9 @@ macro_rules! impl_dyn_from_payload {
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
 /// ```
-/// 
+///
 /// Using the wildcard `_` match:
-/// 
+///
 /// ```
 /// # use icu_provider::prelude::*;
 /// # use std::borrow::Cow;
