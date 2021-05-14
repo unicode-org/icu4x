@@ -68,11 +68,14 @@ jobs:
       with:
         command: install
         args: cargo-all-features --version "^1.4"
-    # Note: we need test-all-features (rather than build-all-features) for docs
-    - name: Test All Feature Permutations
+    - name: Test Docs with Default Features
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: test-all-features
+        command: test-docs-defaults
+    - name: Build All Feature Permutations
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build-all-features
 
 
   # Lint job - runs all "cargo make" linting commands

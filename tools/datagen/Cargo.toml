@@ -22,6 +22,9 @@ include = [
     "README.md",
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 anyhow = "1.0"
 clap = "2.33"

@@ -25,6 +25,9 @@ include = [
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
 
+[package.metadata.docs.rs]
+all-features = true
+
 [features]
 provider_serde = ["serde", "erased-serde"]
 

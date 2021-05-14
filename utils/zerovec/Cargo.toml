@@ -19,7 +19,8 @@ include = [
     "README.md"
 ]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 either = "1.6.1"
@@ -57,6 +58,3 @@ harness = false
 [[bench]]
 name = "zerovec_iai"
 harness = false
-
-[package.metadata.docs.rs]
-all-features = true
