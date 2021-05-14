@@ -14,10 +14,8 @@ use icu_datetime::provider::{
     },
 };
 use icu_provider::{
-    erased::ErasedDataProvider,
     iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,
-    serde::SerdeSeDataStruct,
 };
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -80,10 +78,7 @@ impl TryFrom<&str> for TimeZonesProvider<'_> {
 
 impl<'d> KeyedDataProvider for TimeZonesProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::TimeZones {
-            return Err((&resc_key.category).into());
-        }
-        if resc_key.version != 1 {
+        if resc_key.category != ResourceCategory::TimeZones || resc_key.version != 1 {
             return Err(resc_key.into());
         }
         Ok(())
@@ -104,59 +99,6 @@ impl<'d> IterableDataProviderCore for TimeZonesProvider<'d> {
             })
             .collect();
         Ok(Box::new(list.into_iter()))
-    }
-}
-
-impl<'d> ErasedDataProvider<'d> for TimeZonesProvider<'d> {
-    fn load_erased(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn icu_provider::erased::ErasedDataStruct>, DataError> {
-        match req.resource_path.key {
-            key::TIMEZONE_FORMATS_V1 => {
-                let result: DataResponse<TimeZoneFormatsV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_EXEMPLAR_CITIES_V1 => {
-                let result: DataResponse<ExemplarCitiesV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_GENERIC_NAMES_LONG_V1 => {
-                let result: DataResponse<MetaZoneGenericNamesLongV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => {
-                let result: DataResponse<MetaZoneGenericNamesShortV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => {
-                let result: DataResponse<MetaZoneSpecificNamesLongV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => {
-                let result: DataResponse<MetaZoneSpecificNamesShortV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
-        }
     }
 }
 
@@ -186,58 +128,23 @@ macro_rules! impl_data_provider {
     };
 }
 
-impl<'d, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's> for TimeZonesProvider<'d> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, DataError> {
-        match req.resource_path.key {
-            key::TIMEZONE_FORMATS_V1 => {
-                let result: DataResponse<TimeZoneFormatsV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_EXEMPLAR_CITIES_V1 => {
-                let result: DataResponse<ExemplarCitiesV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_GENERIC_NAMES_LONG_V1 => {
-                let result: DataResponse<MetaZoneGenericNamesLongV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => {
-                let result: DataResponse<MetaZoneGenericNamesShortV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => {
-                let result: DataResponse<MetaZoneSpecificNamesLongV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => {
-                let result: DataResponse<MetaZoneSpecificNamesShortV1> = self.load_payload(req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
-            }
-            _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key)),
-        }
-    }
-}
+icu_provider::impl_dyn_provider!(TimeZonesProvider<'d>, {
+    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1,
+    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1,
+    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1,
+    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1,
+    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1,
+    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1,
+}, ERASED, 'd, 's);
+
+icu_provider::impl_dyn_provider!(TimeZonesProvider<'d>, {
+    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1,
+    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1,
+    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1,
+    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1,
+    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1,
+    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1,
+}, SERDE_SE, 'd, 's);
 
 impl_data_provider!(TimeZoneFormatsV1: 'd);
 impl_data_provider!(ExemplarCitiesV1: 'd);

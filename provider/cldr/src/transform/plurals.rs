@@ -58,10 +58,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
 
 impl<'d> KeyedDataProvider for PluralsProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::Plurals {
-            return Err((&resc_key.category).into());
-        }
-        if resc_key.version != 1 {
+        if resc_key.category != ResourceCategory::Plurals || resc_key.version != 1 {
             return Err(resc_key.into());
         }
         Ok(())
@@ -103,7 +100,9 @@ impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
     }
 }
 
-icu_provider::impl_dyn_provider!(PluralsProvider<'d>, PluralRuleStringsV1<'s>, SERDE_SE, 'd, 's);
+icu_provider::impl_dyn_provider!(PluralsProvider<'d>, {
+    _ => PluralRuleStringsV1<'s>,
+}, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
     fn supported_options_for_key(

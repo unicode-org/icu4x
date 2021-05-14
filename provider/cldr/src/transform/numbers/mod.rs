@@ -60,10 +60,7 @@ impl TryFrom<&dyn CldrPaths> for NumbersProvider {
 
 impl KeyedDataProvider for NumbersProvider {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::Decimal {
-            return Err((&resc_key.category).into());
-        }
-        if resc_key.version != 1 {
+        if resc_key.category != ResourceCategory::Decimal || resc_key.version != 1 {
             return Err(resc_key.into());
         }
         Ok(())
@@ -143,7 +140,9 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
     }
 }
 
-icu_provider::impl_dyn_provider!(NumbersProvider, DecimalSymbolsV1, SERDE_SE, 'd, 's);
+icu_provider::impl_dyn_provider!(NumbersProvider, {
+    _ => DecimalSymbolsV1,
+}, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for NumbersProvider {
     fn supported_options_for_key(

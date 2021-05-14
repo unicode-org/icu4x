@@ -143,7 +143,7 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::UnsupportedCategory(_))
+        Err(DataError::UnsupportedResourceKey(_))
     ));
 }
 

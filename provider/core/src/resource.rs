@@ -209,12 +209,10 @@ impl ResourceKey {
     ///
     /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
     /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::UnsupportedResourceKey(_))));
-    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::UnsupportedCategory(_))));
+    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::UnsupportedResourceKey(_))));
     /// ```
     pub fn match_key(&self, key: Self) -> Result<(), Error> {
-        if self.category != key.category {
-            Err(Error::UnsupportedCategory(self.category))
-        } else if *self == key {
+        if *self == key {
             Ok(())
         } else {
             Err(Error::UnsupportedResourceKey(*self))

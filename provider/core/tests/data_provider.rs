@@ -52,7 +52,9 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_dyn_provider!(DataWarehouse<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(DataWarehouse<'static>, {
+    HELLO_WORLD_V1 => HelloWorldV1<'static>,
+}, ERASED, 'd, 's);
 
 impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     fn load_payload(
@@ -69,10 +71,11 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_dyn_provider!(&'d DataWarehouse<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
+icu_provider::impl_dyn_provider!(&'d DataWarehouse<'static>, {
+    HELLO_WORLD_V1 => HelloWorldV1<'static>,
+}, ERASED, 'd, 's);
 
-/// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT. Custom implementation of
-/// ErasedDataProvider.
+/// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT.
 #[derive(Debug)]
 struct DataProviderBorrowing<'d, 's> {
     borrowed_data: &'d HelloCombined<'s>,
@@ -113,38 +116,10 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
     }
 }
 
-// TODO(sffc): Make a macro out of this
-impl<'d> ErasedDataProvider<'d> for DataProviderBorrowing<'d, 'static> {
-    /// Loads JSON data. Returns borrowed data.
-    fn load_erased<'a>(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, DataError> {
-        let result: Result<DataResponse<HelloWorldV1>, DataError> =
-            DataProvider::load_payload(self, req);
-        match result {
-            Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
-            _ => {
-                return result.map(|r| DataResponse {
-                    metadata: r.metadata,
-                    payload: r.payload.into(),
-                })
-            }
-        };
-        let result: Result<DataResponse<HelloAlt>, DataError> =
-            DataProvider::load_payload(self, req);
-        match result {
-            Err(DataError::UnsupportedCategory(_)) | Err(DataError::UnsupportedResourceKey(_)) => {}
-            _ => {
-                return result.map(|r| DataResponse {
-                    metadata: r.metadata,
-                    payload: r.payload.into(),
-                })
-            }
-        };
-        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
-    }
-}
+icu_provider::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
+    HELLO_WORLD_V1 => HelloWorldV1<'static>,
+    HELLO_ALT_KEY => HelloAlt,
+}, icu_provider::erased::ErasedDataStruct, 'd, 's);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{

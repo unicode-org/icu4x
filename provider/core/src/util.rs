@@ -50,12 +50,15 @@ macro_rules! impl_dyn_from_payload {
 }
 
 /// Implement [`DataProvider<dyn S>`](crate::DataProvider) on a type that already implements [`DataProvider<T>`](crate::DataProvider)
-/// where `T` is a [`Sized`] type that implements the trait `S`.
+/// for one or more `T`, where `T` is a [`Sized`] type that implements the trait `S`.
 ///
 /// Use this macro to add support to your data provider for:
 ///
 /// - [`ErasedDataStruct`](crate::erased::ErasedDataStruct) if your provider can return typed objects as [`Any`](std::any::Any)
 /// - [`SerdeSeDataStruct`](crate::serde::SerdeSeDataStruct) if your provider returns objects implementing [`serde::Serialize`]
+///
+/// The second argument is a match-like construction mapping from resource keys to structs. To map
+/// multiple keys to a single data struct, use `_` as the data key.
 ///
 /// The third argument can be either the trait expression, like [SerdeSeDataStruct<'s>`], or the
 /// shorthands `ERASED` or `SERDE_SE`.
@@ -67,11 +70,12 @@ macro_rules! impl_dyn_from_payload {
 ///
 /// # Examples
 ///
-/// ```
-/// use icu_provider::prelude::*;
-/// use icu_provider::erased::ErasedDataStruct;
-/// use std::borrow::Cow;
+/// Basic usage:
 ///
+/// ```
+/// # use icu_provider::prelude::*;
+/// # use icu_provider::erased::ErasedDataStruct;
+/// # use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
 /// // A small DataProvider that returns owned strings
@@ -89,7 +93,9 @@ macro_rules! impl_dyn_from_payload {
 /// }
 ///
 /// // Since `String` is `'static`, we can implement `DataProvider<dyn ErasedDataStruct>`
-/// icu_provider::impl_dyn_provider!(MyProvider, String, ERASED, 'd, 's);
+/// icu_provider::impl_dyn_provider!(MyProvider, {
+///     DEMO_KEY => String,
+/// }, ERASED, 'd, 's);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
@@ -97,22 +103,50 @@ macro_rules! impl_dyn_from_payload {
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
 /// ```
+///
+/// Using the wildcard `_` match:
+///
+/// ```
+/// # use icu_provider::prelude::*;
+/// # use std::borrow::Cow;
+/// # struct MyProvider(pub String);
+/// # impl<'d> DataProvider<'d, String> for MyProvider {
+/// #   fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, String>, DataError> {
+/// #       Ok(DataResponse {
+/// #           metadata: Default::default(),
+/// #           payload: DataPayload {
+/// #               cow: Some(Cow::Owned(self.0.to_string()))
+/// #           }
+/// #       })
+/// #   }
+/// # }
+/// // Send all keys to the `String` provider.
+/// icu_provider::impl_dyn_provider!(MyProvider, {
+///     _ => String,
+/// }, ERASED, 'd, 's);
+/// ```
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, $struct:ty, ERASED, $d:lifetime, $s:lifetime) => {
-        $crate::impl_dyn_provider!($provider, $struct, $crate::erased::ErasedDataStruct, $d, $s);
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, ERASED, $d:lifetime, $s:lifetime) => {
+        $crate::impl_dyn_provider!(
+            $provider,
+            { $($pat => $struct),+, },
+            $crate::erased::ErasedDataStruct,
+            $d,
+            $s
+        );
     };
-    ($provider:ty, $struct:ty, SERDE_SE, $d:lifetime, $s:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, SERDE_SE, $d:lifetime, $s:lifetime) => {
         // If this fails to compile, enable the "provider_serde" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
-            $struct,
+            { $($pat => $struct),+, },
             $crate::serde::SerdeSeDataStruct<$s>,
             $d,
             $s
         );
     };
-    ($provider:ty, $struct:ty, $struct_trait:path, $d:lifetime, $s:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $struct_trait:path, $d:lifetime, $s:lifetime) => {
         impl<$d, $s> $crate::prelude::DataProvider<$d, dyn $struct_trait + $s> for $provider
         where
             $s: $d,
@@ -124,13 +158,22 @@ macro_rules! impl_dyn_provider {
                 $crate::prelude::DataResponse<$d, dyn $struct_trait + $s>,
                 $crate::prelude::DataError,
             > {
-                let result: $crate::prelude::DataResponse<$struct> =
-                    $crate::prelude::DataProvider::load_payload(self, req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.into(),
-                })
+                match req.resource_path.key {
+                    $(
+                        $pat => {
+                            let result: $crate::prelude::DataResponse<$struct> =
+                                $crate::prelude::DataProvider::load_payload(self, req)?;
+                            Ok(DataResponse {
+                                metadata: result.metadata,
+                                payload: result.payload.into(),
+                            })
+                        }
+                    )+,
+                    // Don't complain if the call site has its own wildcard match
+                    #[allow(unreachable_patterns)]
+                    _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key))
+                }
             }
         }
-    };
+    }
 }

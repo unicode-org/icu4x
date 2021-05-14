@@ -63,12 +63,7 @@ impl FsDataProvider {
             path_buf.set_extension(self.manifest.syntax.get_file_extension());
         }
         if !path_buf.exists() {
-            path_buf.pop();
-            if path_buf.exists() {
-                return Err(Error::UnsupportedResourceKey(req.resource_path.key));
-            } else {
-                return Err(Error::UnsupportedCategory(req.resource_path.key.category));
-            }
+            return Err(Error::UnsupportedResourceKey(req.resource_path.key));
         }
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
