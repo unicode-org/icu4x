@@ -26,7 +26,8 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_locid = { version = "0.2", path = "../../components/locid" }
-icu_provider = { version = "0.2", path = "../../components/provider", features = ["provider_serde"] }
+icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 icu_uniset = { version = "0.2", path = "../../components/uniset" }
 tinystr = "0.4"
+thiserror = "1.0"

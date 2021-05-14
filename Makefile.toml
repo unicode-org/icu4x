@@ -24,6 +24,8 @@ category = "ICU4X Development"
 script = '''
 cd components/capi/examples/pluralrules;
 make
+cd components/capi/examples/fixeddecimal;
+make
 '''
 
 [tasks.license-header-check]
@@ -402,38 +404,73 @@ for json_message in ${json_messages}
 end
 '''
 
-### BINCODE TASKS ###
+### DATA TASKS ###
+
+[tasks.testdata-download]
+description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-testdata-download",
+    "--",
+    "-v",
+]
+
+[tasks.testdata-build-json]
+description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "-v",
+    "--cldr-testdata",
+    "--out-testdata",
+    "--all-keys",
+    "--test-locales",
+    "--syntax=json",
+    "--pretty",
+    "--overwrite",
+]
+
+[tasks.testdata]
+description = "Download fresh data and then build ICU4X JSON from it"
+category = "ICU4X Data"
+dependencies = [
+    "testdata-download",
+    "testdata-build-json",
+]
 
 [tasks.bincode-clean]
 description = "Clean out the bincode data."
-category = "ICU4X Bincode"
+category = "ICU4X Data"
 script_runner = "@duckscript"
 script = '''
 # Use duckscript, rather than a unix command, so that this works on Windows.
-rm -r ./resources/testdata/data/bincode
+rm -r ./provider/testdata/data/bincode
 '''
 
 [tasks.bincode-gen-testdata-no-clean]
 description = "Generate bincode testdata without removing the old data"
-category = "ICU4X Bincode"
-cwd = "components/provider_fs"
+category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--features", "export-bin",
-    "--features", "bincode",
+    "--bin=icu4x-datagen",
     "--",
-    "--cldr-core", "../../resources/testdata/data/cldr/cldr-core",
-    "--cldr-dates", "../../resources/testdata/data/cldr/cldr-dates-full",
-    "--cldr-numbers", "../../resources/testdata/data/cldr/cldr-numbers-full",
-    "--out", "../../resources/testdata/data/bincode",
+    "-v",
+    "--cldr-testdata",
+    "--out-testdata",
     "--all-keys",
-    "-s", "bincode",
+    "--test-locales",
+    "--syntax=bincode",
 ]
 
 [tasks.bincode-gen-testdata]
 description = "Generate bincode for the testdata"
-category = "ICU4X Bincode"
+category = "ICU4X Data"
 run_task = [
     # Running "bincode-clean" first ensures that this command won't fail because the data
     # already exists at that location.

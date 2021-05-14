@@ -9,6 +9,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::marker::PhantomData;
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
@@ -84,6 +85,7 @@ where
     }
 }
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, K, V> Deserialize<'de> for ZeroMap<'de, K, V>
 where
     K: Deserialize<'de> + Ord,

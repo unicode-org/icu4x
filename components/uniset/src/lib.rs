@@ -61,28 +61,19 @@ mod utils;
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
 use icu_provider::DataError;
-pub use std::fmt;
+use thiserror::Error;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 
 /// Custom Errors for [`UnicodeSet`].
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum UnicodeSetError {
+    #[error("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
+    #[error("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
-    PropDataLoad(DataError),
-}
-
-impl fmt::Display for UnicodeSetError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
-
-impl From<DataError> for UnicodeSetError {
-    fn from(err: DataError) -> Self {
-        Self::PropDataLoad(err)
-    }
+    #[error(transparent)]
+    PropDataLoad(#[from] DataError),
 }
 
 #[derive(PartialEq)]
