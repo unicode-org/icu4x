@@ -22,9 +22,12 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
-icu = { version = "0.2", path = "../../components/icu" }
+icu = { path = "../../components/icu", default-features = false }
 icu_provider = { version = "0.2", path = "../../provider/core" }
 
 

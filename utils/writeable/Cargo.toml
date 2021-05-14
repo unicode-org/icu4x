@@ -21,6 +21,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dev-dependencies]
 criterion = "0.3"
 icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }

@@ -19,6 +19,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 thiserror = "1"
 writeable = { version = "0.2", path = "../writeable" }

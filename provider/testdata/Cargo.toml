@@ -25,6 +25,9 @@ include = [
     "data/**/*",
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 # icu4x_testdata metadata: schema defined in ./src/metadata.rs
 [package.metadata.icu4x_testdata]
 

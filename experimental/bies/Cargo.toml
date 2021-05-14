@@ -21,6 +21,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 itertools = "0.10"
 num-traits = "0.2"

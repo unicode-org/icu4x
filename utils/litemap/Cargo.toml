@@ -23,6 +23,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 serde = {version = "1", optional = true}
 

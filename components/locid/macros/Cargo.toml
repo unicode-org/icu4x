@@ -22,6 +22,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [lib]
 path = "src/lib.rs"
 proc_macro = true
@@ -32,4 +35,4 @@ icu_locid = { version = "0.2", path = "../" }
 tinystr = "0.4"
 
 [dev-dependencies]
-icu = { path = "../../icu" }
+icu = { path = "../../icu", default-features = false }

@@ -25,14 +25,44 @@ include = [
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
 
-[dependencies]
-icu_datetime = { version = "0.2", path = "../datetime" }
-icu_decimal = { version = "0.2", path = "../decimal" }
-icu_locid = { version = "0.2", path = "../locid" }
-icu_locid_macros = { version = "0.2", path = "../locid/macros" }
-icu_locale_canonicalizer = { version = "0.2", path = "../locale_canonicalizer" }
-icu_plurals = { version = "0.2", path = "../plurals" }
-icu_uniset = { version = "0.2", path = "../uniset" }
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies.icu_datetime]
+version = "0.2"
+path = "../datetime"
+default-features = false
+
+[dependencies.icu_decimal]
+version = "0.2"
+path = "../decimal"
+default-features = false
+
+[dependencies.icu_locid]
+version = "0.2"
+path = "../locid"
+default-features = false
+
+[dependencies.icu_locid_macros]
+version = "0.2"
+path = "../locid/macros"
+default-features = false
+
+[dependencies.icu_locale_canonicalizer]
+version = "0.2"
+path = "../locale_canonicalizer"
+default-features = false
+
+[dependencies.icu_plurals]
+version = "0.2"
+path = "../plurals"
+default-features = false
+
+[dependencies.icu_uniset]
+version = "0.2"
+path = "../uniset"
+default-features = false
+
 
 [dev-dependencies]
 icu_provider = { version = "0.2", path = "../../provider/core" }
@@ -47,6 +77,8 @@ serde = [
 ]
 provider_serde = [
     "icu_datetime/provider_serde",
+    "icu_decimal/provider_serde",
+    "icu_locale_canonicalizer/provider_serde",
     "icu_plurals/provider_serde",
     "icu_uniset/provider_serde",
 ]

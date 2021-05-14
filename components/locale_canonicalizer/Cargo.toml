@@ -24,6 +24,9 @@ include = [
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 icu_locid = { version = "0.2", path = "../locid" }
 icu_provider = { version = "0.2", path = "../../provider/core" }

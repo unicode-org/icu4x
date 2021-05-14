@@ -29,6 +29,9 @@ extra_features = [
     "log",
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
 icu_locid = { version = "0.2", path = "../../components/locid" }

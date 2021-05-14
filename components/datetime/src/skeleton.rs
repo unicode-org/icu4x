@@ -5,7 +5,7 @@
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
 use smallvec::SmallVec;
-use std::{convert::TryFrom, fmt};
+use std::convert::TryFrom;
 use thiserror::Error;
 
 use crate::{
@@ -59,7 +59,7 @@ struct DeserializeSkeletonFieldsUTS35String;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(formatter, "Expected to find a valid skeleton.")
     }
 
@@ -88,7 +88,7 @@ struct DeserializeSkeletonBincode;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(formatter, "Unable to deserialize a bincode Pattern.")
     }
 

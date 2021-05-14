@@ -22,6 +22,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 smallvec = "1.6"
 static_assertions = "1.1"
