@@ -51,10 +51,7 @@ impl TryFrom<&dyn CldrPaths> for DatesProvider<'_> {
 
 impl<'d> KeyedDataProvider for DatesProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::Dates {
-            return Err((&resc_key.category).into());
-        }
-        if resc_key.version != 1 {
+        if resc_key.category != ResourceCategory::Dates || resc_key.version != 1 {
             return Err(resc_key.into());
         }
         Ok(())
@@ -86,7 +83,9 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
     }
 }
 
-icu_provider::impl_dyn_provider!(DatesProvider<'d>, gregory::DatesV1, SERDE_SE, 'd, 's);
+icu_provider::impl_dyn_provider!(DatesProvider<'d>, {
+    _ => gregory::DatesV1,
+}, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for DatesProvider<'d> {
     fn supported_options_for_key(

@@ -9,11 +9,7 @@ use thiserror::Error;
 #[non_exhaustive]
 #[derive(Error, Debug)]
 pub enum Error {
-    /// The data provider does not support the requested category.
-    #[error("Unsupported category: {0}")]
-    UnsupportedCategory(ResourceCategory),
-
-    /// The data provider supports the category, but not the key (sub-category or version).
+    /// The data provider does not support the resource key.
     #[error("Unsupported resource key: {0}")]
     UnsupportedResourceKey(ResourceKey),
 
@@ -67,12 +63,6 @@ impl Error {
 impl From<&ResourceKey> for Error {
     fn from(resc_key: &ResourceKey) -> Self {
         Self::UnsupportedResourceKey(*resc_key)
-    }
-}
-
-impl From<&ResourceCategory> for Error {
-    fn from(category: &ResourceCategory) -> Self {
-        Self::UnsupportedCategory(*category)
     }
 }
 

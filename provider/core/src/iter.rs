@@ -47,9 +47,8 @@ pub trait KeyedDataProvider {
     /// Given a [`ResourceKey`], checks whether this type of [`DataProvider`] supports it.
     ///
     /// Returns Ok if the key is supported, or an Error with more information if not. The Error
-    /// should be either [`UnsupportedCategory`] or [`UnsupportedResourceKey`].
+    /// should be [`UnsupportedResourceKey`].
     ///
-    /// [`UnsupportedCategory`]: crate::error::Error::UnsupportedCategory
     /// [`UnsupportedResourceKey`]: crate::error::Error::UnsupportedResourceKey
     fn supports_key(resc_key: &ResourceKey) -> Result<(), Error>;
 

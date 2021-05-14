@@ -132,10 +132,14 @@ where
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider<'static>, HelloWorldV1<'static>, ERASED, 'd, 's);
+impl_dyn_provider!(HelloWorldProvider<'static>, {
+    _ => HelloWorldV1<'static>,
+}, ERASED, 'd, 's);
 
 #[cfg(feature = "provider_serde")]
-impl_dyn_provider!(HelloWorldProvider<'s>, HelloWorldV1<'s>, SERDE_SE, 'd, 's);
+impl_dyn_provider!(HelloWorldProvider<'s>, {
+    _ => HelloWorldV1<'s>,
+}, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     fn supported_options_for_key(
