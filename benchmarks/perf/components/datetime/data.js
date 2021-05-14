@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621025282268,
+  "lastUpdate": 1621036351550,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5807,6 +5807,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2635012,
             "range": "± 72018",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1f4a9505f21a6d5c9bb4833e0cf3fe969f734c54",
+          "message": "Touch-ups to Cargo.toml files and features (#722)",
+          "timestamp": "2021-05-14T18:45:29-05:00",
+          "tree_id": "d29be99abbf6b97a6acf945ab3d3feeb0f128558",
+          "url": "https://github.com/unicode-org/icu4x/commit/1f4a9505f21a6d5c9bb4833e0cf3fe969f734c54"
+        },
+        "date": 1621036349642,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1318343,
+            "range": "± 62897",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2531404,
+            "range": "± 123375",
             "unit": "ns/iter"
           }
         ]
