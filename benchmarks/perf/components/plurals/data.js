@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1620947238877,
+  "lastUpdate": 1621025270865,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7559,6 +7559,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 106985,
             "range": "± 2707",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0400ad1de102a0774618859ebee214d799b65e40",
+          "message": "Refactoring and generalizing impl_dyn_provider! (#723)",
+          "timestamp": "2021-05-14T15:41:26-05:00",
+          "tree_id": "4a428a443677c4b025c94ba58465e75ecb3865dd",
+          "url": "https://github.com/unicode-org/icu4x/commit/0400ad1de102a0774618859ebee214d799b65e40"
+        },
+        "date": 1621025269343,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1185,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7136,
+            "range": "± 721",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 98679,
+            "range": "± 9743",
             "unit": "ns/iter"
           }
         ]
