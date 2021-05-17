@@ -5,7 +5,7 @@
 //! A line breaking iterator of [Unicode Standard Annex #14](http://www.unicode.org/reports/tr14/) compatible rules.
 //!
 //! ```rust
-//! use uax14_rs::LineBreakIterator;
+//! use icu_segmenter::LineBreakIterator;
 //!
 //! fn main() {
 //!     let teststr = "Hello World";

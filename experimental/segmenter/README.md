@@ -1,11 +1,11 @@
-# uax14_rs
+# icu_segmenter
 
 A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 
 [UAX14]: http://www.unicode.org/reports/tr14/
 
 ```rust
-use uax14_rs::LineBreakIterator;
+use icu_segmenter::LineBreakIterator;
 
 fn main () {
     let mut iter = LineBreakIterator::new("Hello World");
@@ -16,7 +16,7 @@ fn main () {
 
 With CSS property.
 ```rust
-use uax14_rs::{LineBreakIterator, LineBreakRule, WordBreakRule};
+use icu_segmenter::{LineBreakIterator, LineBreakRule, WordBreakRule};
 
 fn main() {
     let iter = LineBreakIterator::new_with_break_rule(
@@ -33,7 +33,7 @@ fn main() {
 Use Latin 1 string for C binding and etc.
 
 ```rust
-use uax14_rs::LineBreakIteratorLatin1;
+use icu_segmenter::LineBreakIteratorLatin1;
 
 fn main () {
     let s = "Hello World";
