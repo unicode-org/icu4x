@@ -178,6 +178,26 @@ impl FixedDecimal {
         Ok(result)
     }
 
+    /// Initialize a `FixedDecimal` with a floating-point value, using Ryu under the hood
+    /// to get digits from the value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from_float_ryu::<f32>(12.34).unwrap();
+    /// assert_eq!(4, dec.digit_at(-2));
+    /// assert_eq!(3, dec.digit_at(-1));
+    /// assert_eq!(2, dec.digit_at(0));
+    /// assert_eq!(1, dec.digit_at(1));
+    /// ```
+    #[cfg(feature = "ryu_decimal")]
+    pub fn from_float_ryu<F: ryu::Float>(value: f64) -> Result<Self, Error> {
+        let mut buffer = ryu::Buffer::new();
+        FixedDecimal::from_str(buffer.format(value))
+    }
+
     /// Gets the digit at the specified order of magnitude. Returns 0 if the magnitude is out of
     /// range of the currently visible digits.
     ///
