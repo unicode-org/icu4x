@@ -2,17 +2,54 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! A line breaking iterator of [Unicode Standard Annex #14](http://www.unicode.org/reports/tr14/) compatible rules.
+//! A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 //!
-//! ```rust
+//! [UAX14]: http://www.unicode.org/reports/tr14/
+//!
+//!```rust
 //! use icu_segmenter::LineBreakIterator;
 //!
-//! fn main() {
-//!     let teststr = "Hello World";
-//!     let mut iter = LineBreakIterator::new(teststr);
-//!     println!("First line breaking point is {}", iter.next().unwrap());
+//! fn main () {
+//!     let mut iter = LineBreakIterator::new("Hello World");
+//!     let result: Vec<usize> = iter.collect();
+//!     println!("{:?}", result);
 //! }
 //! ```
+//!
+//! With CSS property.
+//! ```rust
+//! use icu_segmenter::{LineBreakIterator, LineBreakRule, WordBreakRule};
+//!
+//! fn main() {
+//!     let iter = LineBreakIterator::new_with_break_rule(
+//!         "Hello World",
+//!         LineBreakRule::Strict,
+//!         WordBreakRule::BreakAll,
+//!         false,
+//!     );
+//!     let result: Vec<usize> = iter.collect();
+//!     println!("{:?}", result);
+//! }
+//! ```
+//!
+//! Use Latin 1 string for C binding and etc.
+//!
+//! ```rust
+//! use icu_segmenter::LineBreakIteratorLatin1;
+//!
+//! fn main () {
+//!     let s = "Hello World";
+//!     let iter = LineBreakIteratorLatin1::new(s.as_bytes());
+//!     let result: Vec<usize> = iter.collect();
+//!     println!("{:?}", result);
+//! }
+//! ```
+//!
+//! # Generating property table
+//!
+//! Copy the following files to tools directory. Then run `python ./generate_properties.py` in `tools` directory. Machine generated files are moved to `src` directory.
+//! - <https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt>
+//! - <https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt>
 
 mod lb_define;
 mod line_breaker;

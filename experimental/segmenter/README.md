@@ -1,4 +1,4 @@
-# icu_segmenter
+# icu_segmenter [![crates.io](http://meritbadge.herokuapp.com/icu_segmenter)](https://crates.io/crates/icu_segmenter)
 
 A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 
@@ -48,3 +48,7 @@ fn main () {
 Copy the following files to tools directory. Then run `python ./generate_properties.py` in `tools` directory. Machine generated files are moved to `src` directory.
 - <https://www.unicode.org/Public/UCD/latest/ucd/LineBreak.txt>
 - <https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt>
+
+## More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
