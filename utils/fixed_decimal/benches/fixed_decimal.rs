@@ -185,7 +185,7 @@ fn from_float_ryu_benches(c: &mut Criterion) {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
                 object,
-                |b, object| b.iter(|| FixedDecimal::from_float_ryu(*object, 64).unwrap()),
+                |b, object| b.iter(|| FixedDecimal::from_float_ryu(*object, 10).unwrap()),
             );
         }
         group.finish();
@@ -212,7 +212,7 @@ fn from_double_ryu_benches(c: &mut Criterion) {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
                 object,
-                |b, object| b.iter(|| FixedDecimal::from_double_ryu(*object, 64).unwrap()),
+                |b, object| b.iter(|| FixedDecimal::from_double_ryu(*object, 10).unwrap()),
             );
         }
         group.finish();

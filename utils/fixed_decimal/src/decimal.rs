@@ -180,8 +180,8 @@ impl FixedDecimal {
     }
 
     /// Initialize a `FixedDecimal` with a float value, using Ryu under the hood
-    /// to get digits from the value. The `post_decimal_places` parameter places
-    /// a limit on the number of digits after the decimal point.
+    /// to get digits from the value. The `post_decimal_places` parameter fixes
+    /// the number of digits after the decimal point.
     ///
     /// # Examples
     ///
@@ -196,11 +196,16 @@ impl FixedDecimal {
         let ryu_decimal = ryu_floating_decimal::f2d(value);
         let mut limited_mantissa = ryu_decimal.mantissa;
         let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
-        if limited_exponent < 0 {
-            while -limited_exponent as u16 > post_decimal_places {
-                limited_exponent += 1;
-                limited_mantissa /= 10;
-            }
+        
+        while limited_exponent > 0 || (-limited_exponent as u16) < post_decimal_places {
+            limited_exponent -= 1;
+            limited_mantissa *= 10;
+        }
+
+        // at this point the limited exponent is at most 0
+        while -limited_exponent as u16 > post_decimal_places {
+            limited_exponent += 1;
+            limited_mantissa /= 10;
         }
 
         let mut res = FixedDecimal::from(limited_mantissa);
@@ -209,8 +214,8 @@ impl FixedDecimal {
     }
 
     /// Initialize a `FixedDecimal` with a double value, using Ryu under the hood
-    /// to get digits from the value. The `post_decimal_places` parameter places
-    /// a limit on the number of digits after the decimal point.
+    /// to get digits from the value. The `post_decimal_places` parameter fixes
+    /// the number of digits after the decimal point.
     ///
     /// # Examples
     ///
@@ -225,11 +230,16 @@ impl FixedDecimal {
         let ryu_decimal = ryu_floating_decimal::d2d(value);
         let mut limited_mantissa = ryu_decimal.mantissa;
         let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
-        if limited_exponent < 0 {
-            while -limited_exponent as u16 > post_decimal_places {
-                limited_exponent += 1;
-                limited_mantissa /= 10;
-            }
+
+        while limited_exponent > 0 || (-limited_exponent as u16) < post_decimal_places {
+            limited_exponent -= 1;
+            limited_mantissa *= 10;
+        }
+
+        // at this point the limited exponent is at most 0
+        while -limited_exponent as u16 > post_decimal_places {
+            limited_exponent += 1;
+            limited_mantissa /= 10;
         }
 
         let mut res = FixedDecimal::from(limited_mantissa);
@@ -1052,5 +1062,87 @@ fn test_signum_zero() {
     for cas in &cases {
         let signum = cas.fixed_decimal.signum();
         assert_eq!(cas.expected_signum, signum, "{:?}", cas);
+    }
+}
+
+#[test]
+fn test_from_float_ryu() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub float: f32,
+        pub post_decimal_places: u16,
+        pub expected_decimal: FixedDecimal,
+    }
+    let cases = [
+        TestCase {
+            float: 12.34,
+            post_decimal_places: 2,
+            expected_decimal: FixedDecimal::from_str("12.34").unwrap(),
+        },
+        TestCase {
+            float: 12.34,
+            post_decimal_places: 1,
+            expected_decimal: FixedDecimal::from_str("12.3").unwrap(),
+        },
+        TestCase {
+            float: 12.34,
+            post_decimal_places: 3,
+            expected_decimal: FixedDecimal::from_str("12.340").unwrap(),
+        },
+        TestCase {
+            float: 1234.0,
+            post_decimal_places: 0,
+            expected_decimal: FixedDecimal::from_str("1234").unwrap(),
+        },
+        TestCase {
+            float: 1234.0,
+            post_decimal_places: 1,
+            expected_decimal: FixedDecimal::from_str("1234.0").unwrap(),
+        },
+    ];
+    for cas in &cases {
+        let to_decimal = FixedDecimal::from_float_ryu(cas.float, cas.post_decimal_places).unwrap();
+        assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
+    }
+}
+
+#[test]
+fn test_from_double_ryu() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub double: f64,
+        pub post_decimal_places: u16,
+        pub expected_decimal: FixedDecimal,
+    }
+    let cases = [
+        TestCase {
+            double: 12.34,
+            post_decimal_places: 2,
+            expected_decimal: FixedDecimal::from_str("12.34").unwrap(),
+        },
+        TestCase {
+            double: 12.34,
+            post_decimal_places: 1,
+            expected_decimal: FixedDecimal::from_str("12.3").unwrap(),
+        },
+        TestCase {
+            double: 12.34,
+            post_decimal_places: 3,
+            expected_decimal: FixedDecimal::from_str("12.340").unwrap(),
+        },
+        TestCase {
+            double: 1234.0,
+            post_decimal_places: 0,
+            expected_decimal: FixedDecimal::from_str("1234").unwrap(),
+        },
+        TestCase {
+            double: 1234.0,
+            post_decimal_places: 1,
+            expected_decimal: FixedDecimal::from_str("1234.0").unwrap(),
+        },
+    ];
+    for cas in &cases {
+        let to_decimal = FixedDecimal::from_double_ryu(cas.double, cas.post_decimal_places).unwrap();
+        assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
     }
 }
