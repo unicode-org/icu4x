@@ -1,5 +1,3 @@
-![](https://github.com/makotokato/uax14_rs/workflows/CI/badge.svg)
-
 # uax14_rs
 
 A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
