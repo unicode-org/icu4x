@@ -180,28 +180,15 @@ fn trie_fast_index(trie: &CodePointTrie, c: u32) -> u32 {
 /// Internal trie getter to get trie data array index position for code point
 /// value `c` that is beyond ASCII range. Also checks that c is in
 /// U+0000..10FFFF.
-fn trie_cp_index(trie: &CodePointTrie, fast_max: u32, c: u32) -> u32 {
-    if c <= fast_max {
+fn trie_cp_index(trie: &CodePointTrie, c: u32) -> u32 {
+    if c < 0 {
+        trie.data_length - CODEPOINTTRIE_ERROR_VALUE_NEG_DATA_OFFSET
+    } else if c <= 0xffff {
         trie_fast_index(trie, c)
-    } else if c < 0x10ffff {
+    } else if c <= 0x10ffff {
         trie_small_index(trie, c)
     } else {
         trie.data_length - CODEPOINTTRIE_ERROR_VALUE_NEG_DATA_OFFSET
-    }
-}
-
-/// Get trie data array index position for code point value `c`.
-fn trie_index(trie: &CodePointTrie, c: u32) -> u32 {
-    if c <= 0x7f {
-        // linear ASCII
-        c
-    } else {
-        let fast_indexing_limit: u32 = if trie.trie_type == CodePointTrieType::Fast {
-            CODEPOINTTRIE_FAST_TYPE_FAST_INDEXING_MAX // 0xffff
-        } else {
-            CODEPOINTTRIE_SMALL_TYPE_FAST_INDEXING_MAX // 0xfff
-        };
-        trie_cp_index(trie, fast_indexing_limit, c)
     }
 }
 
@@ -230,7 +217,7 @@ fn trie_get_value(
 }
 
 fn trie_get(trie: &CodePointTrie, c: u32) -> u32 {
-    let data_index: u32 = trie_index(trie, c);
+    let data_index: u32 = trie_cp_index(trie, c);
     let data_value: u32 = trie_get_value(&trie.data, &trie.value_width, data_index);
     data_value
 }
@@ -321,22 +308,27 @@ pub fn fast_type_8_bit_trie_test() {
     };
 
     assert_eq!(
-        trie_index(&trie, 1),
-        1,
-        "ASCII range code points index pos is code point value"
+        0,
+        trie_cp_index(&trie, 0),
+        "trie_cp_index(&trie, 0)"
     );
     assert_eq!(
-        trie_index(&trie, 65),
-        65,
-        "ASCII range code points index pos is code point value"
+        64,
+        trie_cp_index(&trie, 1),
+        "trie_cp_index(&trie, 1)"
     );
     assert_eq!(
-        trie_index(&trie, 127),
-        127,
-        "ASCII range code points index pos is code point value"
+        0,
+        trie_cp_index(&trie, 2),
+        "trie_cp_index(&trie, 2)"
+    );
+    assert_eq!(
+        0,
+        trie_cp_index(&trie, 127),
+        "trie_cp_index(&trie, 127)"
     );
 
-    assert_eq!(trie_index(&trie, 999), 0);
+    assert_eq!(trie_cp_index(&trie, 999), 0);
 
     // TODO: add more test cases for index values
 
