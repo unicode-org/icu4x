@@ -10,6 +10,7 @@ use std::fmt;
 use std::ops::RangeInclusive;
 
 use std::str::FromStr;
+use std::convert::TryInto;
 
 use static_assertions::const_assert;
 
@@ -178,24 +179,62 @@ impl FixedDecimal {
         Ok(result)
     }
 
-    /// Initialize a `FixedDecimal` with a floating-point value, using Ryu under the hood
-    /// to get digits from the value.
+    /// Initialize a `FixedDecimal` with a float value, using Ryu under the hood
+    /// to get digits from the value. The `post_decimal_places` parameter places
+    /// a limit on the number of digits after the decimal point.
     ///
     /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec = FixedDecimal::from_float_ryu::<f32>(12.34).unwrap();
-    /// assert_eq!(4, dec.digit_at(-2));
-    /// assert_eq!(3, dec.digit_at(-1));
-    /// assert_eq!(2, dec.digit_at(0));
-    /// assert_eq!(1, dec.digit_at(1));
+    /// let dec = FixedDecimal::from_float_ryu(12.345, 2).unwrap();
+    /// assert_eq!("12.34", dec.to_string());
     /// ```
     #[cfg(feature = "ryu_decimal")]
-    pub fn from_float_ryu<F: ryu::Float>(value: f64) -> Result<Self, Error> {
-        let mut buffer = ryu::Buffer::new();
-        FixedDecimal::from_str(buffer.format(value))
+    pub fn from_float_ryu(value: f32, post_decimal_places: u16) -> Result<Self, Error> {
+        let ryu_decimal = ryu_floating_decimal::f2d(value);
+        let mut limited_mantissa = ryu_decimal.mantissa;
+        let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
+        if limited_exponent < 0 {
+            while -limited_exponent as u16 > post_decimal_places {
+                limited_exponent += 1;
+                limited_mantissa /= 10;
+            }
+        }
+
+        let mut res = FixedDecimal::from(limited_mantissa);
+        res.multiply_pow10(limited_exponent)?;
+        Ok(res)
+    }
+
+    /// Initialize a `FixedDecimal` with a double value, using Ryu under the hood
+    /// to get digits from the value. The `post_decimal_places` parameter places
+    /// a limit on the number of digits after the decimal point.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from_double_ryu(12.345, 2).unwrap();
+    /// assert_eq!("12.34", dec.to_string());
+    /// ```
+    #[cfg(feature = "ryu_decimal")]
+    pub fn from_double_ryu(value: f64, post_decimal_places: u16) -> Result<Self, Error> {
+        let ryu_decimal = ryu_floating_decimal::d2d(value);
+        let mut limited_mantissa = ryu_decimal.mantissa;
+        let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
+        if limited_exponent < 0 {
+            while -limited_exponent as u16 > post_decimal_places {
+                limited_exponent += 1;
+                limited_mantissa /= 10;
+            }
+        }
+
+        let mut res = FixedDecimal::from(limited_mantissa);
+        res.multiply_pow10(limited_exponent)?;
+        Ok(res)
     }
 
     /// Gets the digit at the specified order of magnitude. Returns 0 if the magnitude is out of
