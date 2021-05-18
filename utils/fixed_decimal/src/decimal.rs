@@ -181,7 +181,8 @@ impl FixedDecimal {
 
     /// Initialize a `FixedDecimal` with a float value, using Ryu under the hood
     /// to get digits from the value. The `post_decimal_places` parameter fixes
-    /// the number of digits after the decimal point.
+    /// the number of digits after the decimal point. This API requires the
+    /// `ryu_decimal` feature.
     ///
     /// # Examples
     ///
@@ -211,12 +212,15 @@ impl FixedDecimal {
             i16_post_decimal.checked_add(limited_exponent).ok_or(Error::Limit)?
         ).ok_or(Error::Limit)?;
 
+        res.is_negative = value.is_sign_negative();
+
         Ok(res)
     }
 
     /// Initialize a `FixedDecimal` with a double value, using Ryu under the hood
     /// to get digits from the value. The `post_decimal_places` parameter fixes
-    /// the number of digits after the decimal point.
+    /// the number of digits after the decimal point. This API requires the
+    /// `ryu_decimal` feature.
     ///
     /// # Examples
     ///
@@ -245,6 +249,8 @@ impl FixedDecimal {
             // add because exponent is negative of post decimal
             i16_post_decimal.checked_add(limited_exponent).ok_or(Error::Limit)?
         ).ok_or(Error::Limit)?;
+
+        res.is_negative = value.is_sign_negative();
 
         Ok(res)
     }
@@ -1106,6 +1112,21 @@ fn test_from_float_ryu() {
             post_decimal_places: 100,
             expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str()).unwrap(),
         },
+        TestCase {
+            float: -12.34,
+            post_decimal_places: 2,
+            expected_decimal: FixedDecimal::from_str("-12.34").unwrap(),
+        },
+        TestCase {
+            float: -12.34,
+            post_decimal_places: 1,
+            expected_decimal: FixedDecimal::from_str("-12.3").unwrap(),
+        },
+        TestCase {
+            float: -12.34,
+            post_decimal_places: 3,
+            expected_decimal: FixedDecimal::from_str("-12.340").unwrap(),
+        },
     ];
     for cas in &cases {
         let to_decimal = FixedDecimal::from_float_ryu(cas.float, cas.post_decimal_places).unwrap();
@@ -1151,6 +1172,21 @@ fn test_from_double_ryu() {
             double: 12.34,
             post_decimal_places: 100,
             expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str()).unwrap(),
+        },
+        TestCase {
+            double: -12.34,
+            post_decimal_places: 2,
+            expected_decimal: FixedDecimal::from_str("-12.34").unwrap(),
+        },
+        TestCase {
+            double: -12.34,
+            post_decimal_places: 1,
+            expected_decimal: FixedDecimal::from_str("-12.3").unwrap(),
+        },
+        TestCase {
+            double: -12.34,
+            post_decimal_places: 3,
+            expected_decimal: FixedDecimal::from_str("-12.340").unwrap(),
         },
     ];
     for cas in &cases {
