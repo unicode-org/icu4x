@@ -193,23 +193,24 @@ impl FixedDecimal {
     /// ```
     #[cfg(feature = "ryu_decimal")]
     pub fn from_float_ryu(value: f32, post_decimal_places: u16) -> Result<Self, Error> {
+        let i16_post_decimal = TryInto::<i16>::try_into(post_decimal_places).map_err(|_| Error::Limit)?;
         let ryu_decimal = ryu_floating_decimal::f2d(value);
         let mut limited_mantissa = ryu_decimal.mantissa;
         let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
         
-        while limited_exponent > 0 || (-limited_exponent as u16) < post_decimal_places {
-            limited_exponent -= 1;
-            limited_mantissa = limited_mantissa.checked_mul(10).ok_or(Error::Limit)?;
-        }
-
-        // at this point the limited exponent is at most 0
-        while -limited_exponent as u16 > post_decimal_places {
+        while -limited_exponent > i16_post_decimal {
             limited_exponent += 1;
             limited_mantissa /= 10;
         }
 
         let mut res = FixedDecimal::from(limited_mantissa);
         res.multiply_pow10(limited_exponent)?;
+
+        res.lower_magnitude = res.lower_magnitude.checked_sub(
+            // add because exponent is negative of post decimal
+            i16_post_decimal.checked_add(limited_exponent).ok_or(Error::Limit)?
+        ).ok_or(Error::Limit)?;
+
         Ok(res)
     }
 
@@ -227,23 +228,24 @@ impl FixedDecimal {
     /// ```
     #[cfg(feature = "ryu_decimal")]
     pub fn from_double_ryu(value: f64, post_decimal_places: u16) -> Result<Self, Error> {
+        let i16_post_decimal = TryInto::<i16>::try_into(post_decimal_places).map_err(|_| Error::Limit)?;
         let ryu_decimal = ryu_floating_decimal::d2d(value);
         let mut limited_mantissa = ryu_decimal.mantissa;
         let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
 
-        while limited_exponent > 0 || (-limited_exponent as u16) < post_decimal_places {
-            limited_exponent -= 1;
-            limited_mantissa = limited_mantissa.checked_mul(10).ok_or(Error::Limit)?;
-        }
-
-        // at this point the limited exponent is at most 0
-        while -limited_exponent as u16 > post_decimal_places {
+        while -limited_exponent > i16_post_decimal {
             limited_exponent += 1;
             limited_mantissa /= 10;
         }
 
         let mut res = FixedDecimal::from(limited_mantissa);
         res.multiply_pow10(limited_exponent)?;
+
+        res.lower_magnitude = res.lower_magnitude.checked_sub(
+            // add because exponent is negative of post decimal
+            i16_post_decimal.checked_add(limited_exponent).ok_or(Error::Limit)?
+        ).ok_or(Error::Limit)?;
+
         Ok(res)
     }
 
@@ -1099,14 +1101,16 @@ fn test_from_float_ryu() {
             post_decimal_places: 1,
             expected_decimal: FixedDecimal::from_str("1234.0").unwrap(),
         },
+        TestCase {
+            float: 12.34,
+            post_decimal_places: 100,
+            expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str()).unwrap(),
+        },
     ];
     for cas in &cases {
         let to_decimal = FixedDecimal::from_float_ryu(cas.float, cas.post_decimal_places).unwrap();
         assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
     }
-
-    // bonus test: errors when a large post decimal request would cause overflow
-    assert_eq!(Error::Limit, FixedDecimal::from_float_ryu(12.34, 100).err().unwrap());
 }
 
 #[test]
@@ -1143,12 +1147,14 @@ fn test_from_double_ryu() {
             post_decimal_places: 1,
             expected_decimal: FixedDecimal::from_str("1234.0").unwrap(),
         },
+        TestCase {
+            double: 12.34,
+            post_decimal_places: 100,
+            expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str()).unwrap(),
+        },
     ];
     for cas in &cases {
         let to_decimal = FixedDecimal::from_double_ryu(cas.double, cas.post_decimal_places).unwrap();
         assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
     }
-
-    // bonus test: errors when a large post decimal request would cause overflow
-    assert_eq!(Error::Limit, FixedDecimal::from_double_ryu(12.34, 100).err().unwrap());
 }
