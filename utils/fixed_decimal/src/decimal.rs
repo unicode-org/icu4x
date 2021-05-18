@@ -199,7 +199,7 @@ impl FixedDecimal {
         
         while limited_exponent > 0 || (-limited_exponent as u16) < post_decimal_places {
             limited_exponent -= 1;
-            limited_mantissa *= 10;
+            limited_mantissa = limited_mantissa.checked_mul(10).ok_or(Error::Limit)?;
         }
 
         // at this point the limited exponent is at most 0
@@ -233,7 +233,7 @@ impl FixedDecimal {
 
         while limited_exponent > 0 || (-limited_exponent as u16) < post_decimal_places {
             limited_exponent -= 1;
-            limited_mantissa *= 10;
+            limited_mantissa = limited_mantissa.checked_mul(10).ok_or(Error::Limit)?;
         }
 
         // at this point the limited exponent is at most 0
@@ -1104,6 +1104,9 @@ fn test_from_float_ryu() {
         let to_decimal = FixedDecimal::from_float_ryu(cas.float, cas.post_decimal_places).unwrap();
         assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
     }
+
+    // bonus test: errors when a large post decimal request would cause overflow
+    assert_eq!(Error::Limit, FixedDecimal::from_float_ryu(12.34, 100).err().unwrap());
 }
 
 #[test]
@@ -1145,4 +1148,7 @@ fn test_from_double_ryu() {
         let to_decimal = FixedDecimal::from_double_ryu(cas.double, cas.post_decimal_places).unwrap();
         assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
     }
+
+    // bonus test: errors when a large post decimal request would cause overflow
+    assert_eq!(Error::Limit, FixedDecimal::from_double_ryu(12.34, 100).err().unwrap());
 }
