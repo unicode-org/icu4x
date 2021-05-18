@@ -74,6 +74,81 @@ const CODEPOINTTRIE_SMALL_DATA_BLOCK_LENGTH: u32 = 1 << CODEPOINTTRIE_SHIFT_3;
 /// Mask for getting the lower bits for the in-small-data-block offset.
 const CODEPOINTTRIE_SMALL_DATA_MASK: u32 = CODEPOINTTRIE_SMALL_DATA_BLOCK_LENGTH - 1;
 
+
+
+
+// trait+impl fn polymorphism testing code
+
+struct MyStruct<T> {
+    x: T,
+}
+
+fn trait_impl_polymorphism_scratch_code() {
+    let xyz = MyStruct { x: 42 };
+
+    let xyz = MyStruct::<CodePointTrieValueWidth> { x: CodePointTrieValueWidth::Bits8 };
+}
+
+trait CodePointTrieReader<'t> {
+    fn get_trie_type(trie_type_int: u8) -> CodePointTrieType;
+    fn get_value_width(value_width_int: u8) -> CodePointTrieValueWidth;
+    fn internal_small_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32;
+    fn small_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32;
+    fn fast_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32;
+}
+
+// can't do this because:
+//
+// expected type, found variant `CodePointTrieType::Fast`
+// not a type
+// help: try using the variant's enum: `crate::CodePointTrieType`rustc(E0573)
+//
+// impl<'trie> CodePointTrieReader<'trie> for CodePointTrie<'trie, CodePointTrieType::Fast, CodePointTrieValueWidth::Bits8> {
+//
+// }
+
+
+
+
+
+// empty trait+structs polymorphism testing code
+
+
+// Using empty traits and structs instead of enums, following this strategy:
+// https://stackoverflow.com/questions/59426358/how-to-make-a-struct-containing-an-enum-generic-over-the-enum-variant
+// in order to allow polymorphism on methods for the `CodePointTrie` struct.
+// This is because you cannot have `impl MyTrait for MyStruct<enum1::varianta, enum2::variantb> {...}`.
+
+// alternative to having an enum `ValueWidth` with variants `Bits16`, `Bits32`, `Bits8`.
+
+trait ValueWidth {}
+
+struct Bits16;
+struct Bits32;
+struct Bits8;
+struct BitsAny;
+
+impl ValueWidth for Bits16 {}
+impl ValueWidth for Bits32 {}
+impl ValueWidth for Bits8 {}
+impl ValueWidth for BitsAny {}
+
+// alternative to having an enum `TrieType` with variants `Fast`, `Small`.
+
+trait TrieType {}
+
+struct FastType;
+struct SmallType;
+struct AnyType;
+
+impl TrieType for FastType {}
+impl TrieType for SmallType {}
+impl TrieType for AnyType {}
+
+
+
+
+
 /// The width of the elements in the data array of a CodePointTrie.
 /// See UCPTrieValueWidth in ICU4C.
 enum CodePointTrieValueWidth {
@@ -102,12 +177,21 @@ struct CodePointTrieData<'trie> {
     data_32_bit: Option<&'trie [u32]>,
 }
 
-struct CodePointTrie<'trie> {
+struct CodePointTrie<'trie, CodePointTrieType, CodePointTrieValueWidth> {
     index_length: u32,
     data_length: u32,
     high_start: u32,
     shifted12_high_start: u16,
     trie_type: CodePointTrieType,
+
+    // can't do this because:
+    //
+    // the size for values of type `(dyn TrieType + 'static)` cannot be known at compilation time
+    // doesn't have a size known at compile-time
+    // help: the trait `std::marker::Sized` is not implemented for `(dyn TrieType + 'static)`
+    //
+    // trie_type2: TrieType,
+
     value_width: CodePointTrieValueWidth,
     index3_null_offset: u16,
     data_null_offset: u32,
@@ -115,6 +199,20 @@ struct CodePointTrie<'trie> {
     index: &'trie [u16],
     data: &'trie CodePointTrieData<'trie>,
 }
+
+// can't do this because:
+//
+// return type cannot have an unboxed trait object
+// doesn't have a size known at compile-time
+//
+// fn get_trie_type(trie_type_int: u8) -> TrieType {
+//     match trie_type_int {
+//         0 => FastType,
+//         1 => SmallType,
+//         _ => AnyType,
+//     }
+// }
+
 
 fn get_code_point_trie_type(trie_type_int: u8) -> CodePointTrieType {
     match trie_type_int {
@@ -133,7 +231,7 @@ fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValueWid
     }
 }
 
-fn trie_internal_small_index(trie: &CodePointTrie, c: u32) -> u32 {
+fn trie_internal_small_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32 {
     let mut i1: u32 = c >> CODEPOINTTRIE_SHIFT_1;
     if trie.trie_type == CodePointTrieType::Fast {
         assert!(0xffff < c && c < trie.high_start);
@@ -162,7 +260,7 @@ fn trie_internal_small_index(trie: &CodePointTrie, c: u32) -> u32 {
 }
 
 /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
-fn trie_small_index(trie: &CodePointTrie, c: u32) -> u32 {
+fn trie_small_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32 {
     if c >= trie.high_start {
         trie.data_length - CODEPOINTTRIE_HIGH_VALUE_NEG_DATA_OFFSET
     } else {
@@ -171,7 +269,7 @@ fn trie_small_index(trie: &CodePointTrie, c: u32) -> u32 {
 }
 
 /// Internal trie getter for a code point below the fast limit. Returns the data index.
-fn trie_fast_index(trie: &CodePointTrie, c: u32) -> u32 {
+fn trie_fast_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32 {
     let index_array_pos: u32 =
         (c >> CODEPOINTTRIE_FAST_TYPE_SHIFT) + (c & CODEPOINTTRIE_FAST_TYPE_DATA_MASK);
     trie.index[index_array_pos as usize] as u32
@@ -180,7 +278,7 @@ fn trie_fast_index(trie: &CodePointTrie, c: u32) -> u32 {
 /// Internal trie getter to get trie data array index position for code point
 /// value `c` that is beyond ASCII range. Also checks that c is in
 /// U+0000..10FFFF.
-fn trie_cp_index(trie: &CodePointTrie, c: u32) -> u32 {
+fn trie_cp_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32 {
     if c < 0 {
         trie.data_length - CODEPOINTTRIE_ERROR_VALUE_NEG_DATA_OFFSET
     } else if c <= 0xffff {
@@ -216,7 +314,7 @@ fn trie_get_value(
     return_val_opt.unwrap_or(0xffffffff)
 }
 
-fn trie_get(trie: &CodePointTrie, c: u32) -> u32 {
+fn trie_get(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32 {
     let data_index: u32 = trie_cp_index(trie, c);
     let data_value: u32 = trie_get_value(&trie.data, &trie.value_width, data_index);
     data_value
@@ -289,7 +387,7 @@ pub fn fast_type_8_bit_trie_test() {
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0xad,
     ];
 
-    let trie: CodePointTrie = CodePointTrie {
+    let trie: CodePointTrie<CodePointTrieType, CodePointTrieValueWidth> =  CodePointTrie {
         index_length,
         data_length,
         high_start,
