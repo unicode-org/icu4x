@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621036327660,
+  "lastUpdate": 1621458746197,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6509,6 +6509,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34681074,
             "range": "± 810746",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d68636ac9e319f7ee1c784e8bb83b6313f3f6ae5",
+          "message": "Add rust versions policy (#726)\n\n* Add rust versions policy\r\n\r\n* +readme",
+          "timestamp": "2021-05-19T14:06:04-07:00",
+          "tree_id": "474950468811fce0efd1875b66b313675f033cde",
+          "url": "https://github.com/unicode-org/icu4x/commit/d68636ac9e319f7ee1c784e8bb83b6313f3f6ae5"
+        },
+        "date": 1621458743109,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35391375,
+            "range": "± 1085993",
             "unit": "ns/iter"
           }
         ]
