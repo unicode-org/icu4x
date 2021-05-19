@@ -368,7 +368,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         let mut new = self.clone();
         new.make_mut();
         match new.0 {
-            VarZeroVecInner::Owned(vec) => vec.into(),
+            VarZeroVecInner::Owned(vec) => vec,
             _ => unreachable!(),
         }
     }

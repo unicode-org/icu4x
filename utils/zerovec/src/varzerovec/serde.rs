@@ -55,6 +55,7 @@ where
     }
 }
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, 'a, T> Deserialize<'de> for VarZeroVec<'a, T>
 where
     T: 'de + Deserialize<'de> + AsVarULE,
@@ -74,6 +75,7 @@ where
     }
 }
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<T> Serialize for VarZeroVec<'_, T>
 where
     T: Serialize + AsVarULE + Clone,

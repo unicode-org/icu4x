@@ -12,6 +12,9 @@ test-all = "test --all-features --all-targets"
 # Build and run all docs tests
 test-docs = "test --all-features --doc"
 
+# Build and run docs tests with default features
+test-docs-defaults = "test --doc"
+
 # Check for formatting on all code
 fmt-check = "fmt -- --check"
 

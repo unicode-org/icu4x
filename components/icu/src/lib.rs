@@ -130,7 +130,6 @@ pub mod decimal {
     //! ## Format a number with Bengali digits
     //!
     //! ```
-    //! # #[cfg(feature = "provider_serde")] {
     //! use icu::decimal::FixedDecimalFormat;
     //! use icu::locid::Locale;
     //! use icu::locid::macros::langid;
@@ -146,7 +145,6 @@ pub mod decimal {
     //! let formatted_str = formatted_value.writeable_to_string();
     //!
     //! assert_eq!("১০,০০,০০৭", formatted_str);
-    //! # } // feature = "provider_serde"
     //! ```
     //!
     //! ## Format a number with digits after the decimal separator
@@ -183,7 +181,6 @@ pub mod locale_canonicalizer {
     //! # Examples
     //!
     //! ```
-    //! # #[cfg(feature = "provider_serde")] {
     //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     //! use icu_locid::Locale;
     //!
@@ -200,11 +197,9 @@ pub mod locale_canonicalizer {
     //!     .expect("parse failed");
     //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     //! assert_eq!(locale.to_string(), "zh-Hant-TW");
-    //! # } // feature = "provider_serde"
     //! ```
     //!
     //! ```
-    //! # #[cfg(feature = "provider_serde")] {
     //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     //! use icu_locid::Locale;
     //!
@@ -221,7 +216,6 @@ pub mod locale_canonicalizer {
     //!     .expect("parse failed");
     //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     //! assert_eq!(locale.to_string(), "zh");
-    //! # } // feature = "provider_serde"
     //! ```
     //! [`ICU4X`]: ../icu/index.html
     //! [`CLDR`]: http://cldr.unicode.org/

@@ -17,7 +17,6 @@
 //! ## Format a number with Bengali digits
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu::decimal::FixedDecimalFormat;
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
@@ -33,7 +32,6 @@
 //! let formatted_str = formatted_value.writeable_to_string();
 //!
 //! assert_eq!("১০,০০,০০৭", formatted_str);
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator

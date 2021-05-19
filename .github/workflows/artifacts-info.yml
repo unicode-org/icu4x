@@ -1,0 +1,33 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+##### README #####
+#
+# The CI action prints links to uploaded artifacts built via "artifacts-build.yml".
+
+name: Artifacts
+
+on:
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  docs:
+    name: "Docs Preview"
+    runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    steps:
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "::group::🔒 Credentials Info"
+        echo "The following artifacts are built and uploaded in forks containing the ICU4X service account key. If you are a frequent contributor, see 'artifacts-build.yml' for instructions on setting up the key."
+        echo "::endgroup::"
+        echo "::group::📖 Docs Preview"
+        echo "View the docs preview at:"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/docs/icu/index.html"
+        echo "The link will be available after the following job completes:"
+        echo "${{ github.event.pull_request.head.repo.html_url }}/actions/workflows/artifacts-build.yml"
+        echo "::endgroup::"

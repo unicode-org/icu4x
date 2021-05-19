@@ -74,7 +74,6 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -91,7 +90,6 @@ impl LocaleCanonicalizer<'_> {
     ///     .expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "zh-Hant-TW");
-    /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();
@@ -147,7 +145,6 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -164,7 +161,6 @@ impl LocaleCanonicalizer<'_> {
     ///     .expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "zh");
-    /// # } // feature = "provider_serde"
     /// ```
     pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();

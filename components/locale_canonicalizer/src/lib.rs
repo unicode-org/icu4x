@@ -20,7 +20,6 @@
 //! # Examples
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 //! use icu_locid::Locale;
 //!
@@ -37,11 +36,9 @@
 //!     .expect("parse failed");
 //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
 //! assert_eq!(locale.to_string(), "zh-Hant-TW");
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 //! use icu_locid::Locale;
 //!
@@ -58,7 +55,6 @@
 //!     .expect("parse failed");
 //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
 //! assert_eq!(locale.to_string(), "zh");
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

@@ -135,13 +135,14 @@ The `provider_fs` component has a binary application which will fetch the CLDR d
 ```
 cd ~/projects/icu
 git clone https://github.com/unicode-org/icu4x
-cd icu4x/components/provider_fs
-cargo run --features export-bin -- --cldr-tag 37.0.0 --out ~/projects/icu/icu4x-data --all-keys
+cd icu4x
+cargo run --bin icu4x-datagen -- --cldr-tag 37.0.0 --out ~/projects/icu/icu4x-data --all-keys --all-locales
 ```
 
 The last command is a bit dense, so let's dissect it.
-* First, we call `cargo run` which runs a binary in the crate. In our case, `fs-data-provider` has only one binary, so cargo knows which one we mean.
-* Then, we add a feature called `export-bin` which is required for the binary to work
+
+* First, we call `cargo run` which runs a binary in the crate
+* We tell it that the binary is named `icu4x-datagen`
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
 * Then we pass `--out` directory which is where the generated ICU4X data will be stored
@@ -149,7 +150,7 @@ The last command is a bit dense, so let's dissect it.
 
 After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
 
-*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --features export-bin -- --help` for details.
+*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
 *Notice:* In particular, in production, the `bincode` format will yield better performance results.
 *Notice:* For offline or unconventional use, the user can also pass `--cldr-core` and `--cldr-dates` paths to local clones of the repositories instead of `--cldr-tag`.
 

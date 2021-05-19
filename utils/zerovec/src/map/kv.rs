@@ -14,7 +14,7 @@ use std::cmp::Ordering;
 /// implementing your own [`AsULE`] or [`AsVarULE`] type you may wish to implement
 /// this trait.
 // this lifetime should be a GAT on Container once that is possible
-#[allow(clippy::upper_case_acronyms)]
+#[allow(clippy::upper_case_acronyms)] // KV is not an acronym
 pub trait ZeroMapKV<'a>: Sized {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
     type Container: ZeroVecLike<'a, Self, NeedleType = Self::NeedleType, GetType = Self::GetType>

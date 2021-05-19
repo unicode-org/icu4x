@@ -10,4 +10,4 @@ ignore:
   - "**/tests/**/*"
   - "**/benches/**/*"
   - "**/examples/**/*"
-  - "resources/testdata/**/*"
+  - "provider/testdata/**/*"

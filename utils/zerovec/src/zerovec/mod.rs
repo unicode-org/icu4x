@@ -380,7 +380,7 @@ where
     // the internal implementation details
     pub(crate) fn make_mut(&mut self) -> &mut Vec<T::ULE> {
         match self {
-            ZeroVec::Owned(ref mut vec) => return vec,
+            ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
                 let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
                 let new_self = ZeroVec::Owned(vec);

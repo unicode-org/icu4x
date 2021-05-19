@@ -37,7 +37,7 @@ the API by using *Data Providers*.  The API is using the
 the example key.
 
 [dm]: https://github.com/unicode-org/icu4x/blob/main/docs/design/data_pipeline.md
-[rq]: https://github.com/unicode-org/icu4x/blob/main/components/provider_cldr/src/lib.rs
+[rq]: https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/lib.rs
 
 ## Use cases
 
@@ -219,7 +219,7 @@ CLDR][dpcldr] uses a 4-dimensional key space consisting of:
 - a Key;
 - a Payload.
 
-[dpcldr]: https://github.com/unicode-org/icu4x/blob/main/components/provider_cldr/src/lib.rs
+[dpcldr]: https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/lib.rs
 
 This key space is intended to fit any CLDR resource according to the data
 mapping which is internally defined by CLDR rules.
