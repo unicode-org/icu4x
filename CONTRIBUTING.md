@@ -50,7 +50,7 @@ If the pull request is simple and short lived, it can be initialized with review
 If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
-If a pull request is particularly large in scope, consider reducing the scope of the pull request and moving work to the `experimental/` directory, as discussed above.
+If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `experimental/` directory, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
 
 By the end of this phase, and right before review is requested, it is helpful for the reviewers to have a clean list of commits in the pull request.
 
