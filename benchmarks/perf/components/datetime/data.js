@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621036351550,
+  "lastUpdate": 1621458821550,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5843,6 +5843,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2531404,
             "range": "± 123375",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d68636ac9e319f7ee1c784e8bb83b6313f3f6ae5",
+          "message": "Add rust versions policy (#726)\n\n* Add rust versions policy\r\n\r\n* +readme",
+          "timestamp": "2021-05-19T14:06:04-07:00",
+          "tree_id": "474950468811fce0efd1875b66b313675f033cde",
+          "url": "https://github.com/unicode-org/icu4x/commit/d68636ac9e319f7ee1c784e8bb83b6313f3f6ae5"
+        },
+        "date": 1621458819790,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1290827,
+            "range": "± 20613",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2422863,
+            "range": "± 31104",
             "unit": "ns/iter"
           }
         ]
