@@ -10,6 +10,8 @@ use std::fmt;
 use std::ops::RangeInclusive;
 
 use std::str::FromStr;
+
+#[cfg(feature = "ryu_decimal")]
 use std::convert::TryInto;
 
 use static_assertions::const_assert;
@@ -194,11 +196,13 @@ impl FixedDecimal {
     /// ```
     #[cfg(feature = "ryu_decimal")]
     pub fn from_float_ryu(value: f32, post_decimal_places: u16) -> Result<Self, Error> {
-        let i16_post_decimal = TryInto::<i16>::try_into(post_decimal_places).map_err(|_| Error::Limit)?;
+        let i16_post_decimal =
+            TryInto::<i16>::try_into(post_decimal_places).map_err(|_| Error::Limit)?;
         let ryu_decimal = ryu_floating_decimal::f2d(value);
         let mut limited_mantissa = ryu_decimal.mantissa;
-        let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
-        
+        let mut limited_exponent: i16 =
+            ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
+
         while -limited_exponent > i16_post_decimal {
             limited_exponent += 1;
             limited_mantissa /= 10;
@@ -207,10 +211,15 @@ impl FixedDecimal {
         let mut res = FixedDecimal::from(limited_mantissa);
         res.multiply_pow10(limited_exponent)?;
 
-        res.lower_magnitude = res.lower_magnitude.checked_sub(
-            // add because exponent is negative of post decimal
-            i16_post_decimal.checked_add(limited_exponent).ok_or(Error::Limit)?
-        ).ok_or(Error::Limit)?;
+        res.lower_magnitude = res
+            .lower_magnitude
+            .checked_sub(
+                // add because exponent is negative of post decimal
+                i16_post_decimal
+                    .checked_add(limited_exponent)
+                    .ok_or(Error::Limit)?,
+            )
+            .ok_or(Error::Limit)?;
 
         res.is_negative = value.is_sign_negative();
 
@@ -232,10 +241,12 @@ impl FixedDecimal {
     /// ```
     #[cfg(feature = "ryu_decimal")]
     pub fn from_double_ryu(value: f64, post_decimal_places: u16) -> Result<Self, Error> {
-        let i16_post_decimal = TryInto::<i16>::try_into(post_decimal_places).map_err(|_| Error::Limit)?;
+        let i16_post_decimal =
+            TryInto::<i16>::try_into(post_decimal_places).map_err(|_| Error::Limit)?;
         let ryu_decimal = ryu_floating_decimal::d2d(value);
         let mut limited_mantissa = ryu_decimal.mantissa;
-        let mut limited_exponent: i16 = ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
+        let mut limited_exponent: i16 =
+            ryu_decimal.exponent.try_into().map_err(|_| Error::Limit)?;
 
         while -limited_exponent > i16_post_decimal {
             limited_exponent += 1;
@@ -245,10 +256,15 @@ impl FixedDecimal {
         let mut res = FixedDecimal::from(limited_mantissa);
         res.multiply_pow10(limited_exponent)?;
 
-        res.lower_magnitude = res.lower_magnitude.checked_sub(
-            // add because exponent is negative of post decimal
-            i16_post_decimal.checked_add(limited_exponent).ok_or(Error::Limit)?
-        ).ok_or(Error::Limit)?;
+        res.lower_magnitude = res
+            .lower_magnitude
+            .checked_sub(
+                // add because exponent is negative of post decimal
+                i16_post_decimal
+                    .checked_add(limited_exponent)
+                    .ok_or(Error::Limit)?,
+            )
+            .ok_or(Error::Limit)?;
 
         res.is_negative = value.is_sign_negative();
 
@@ -1110,7 +1126,8 @@ fn test_from_float_ryu() {
         TestCase {
             float: 12.34,
             post_decimal_places: 100,
-            expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str()).unwrap(),
+            expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str())
+                .unwrap(),
         },
         TestCase {
             float: -12.34,
@@ -1171,7 +1188,8 @@ fn test_from_double_ryu() {
         TestCase {
             double: 12.34,
             post_decimal_places: 100,
-            expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str()).unwrap(),
+            expected_decimal: FixedDecimal::from_str(format!("12.34{}", "0".repeat(98)).as_str())
+                .unwrap(),
         },
         TestCase {
             double: -12.34,
@@ -1190,7 +1208,8 @@ fn test_from_double_ryu() {
         },
     ];
     for cas in &cases {
-        let to_decimal = FixedDecimal::from_double_ryu(cas.double, cas.post_decimal_places).unwrap();
+        let to_decimal =
+            FixedDecimal::from_double_ryu(cas.double, cas.post_decimal_places).unwrap();
         assert_eq!(cas.expected_decimal, to_decimal, "{:?}", cas);
     }
 }
