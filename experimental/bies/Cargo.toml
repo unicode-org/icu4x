@@ -15,10 +15,14 @@ license-file = "../../LICENSE"
 include = [
     "src/**/*",
     "examples/**/*",
+    "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
     "README.md"
 ]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 itertools = "0.10"

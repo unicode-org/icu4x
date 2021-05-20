@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The `provider` module contains struct definitions for ICU4X [`DataProvider`].
+//! Data provider struct definitions for this ICU4X component.
 //!
-//! [`DataProvider`]: icu_provider::DataProvider
+//! Read more about data providers: [`icu_provider`]
 
 pub mod gregory;
 pub(crate) mod helpers;

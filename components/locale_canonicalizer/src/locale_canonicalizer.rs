@@ -74,21 +74,22 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    /// let lc = LocaleCanonicalizer::new(&provider)
+    ///     .expect("create failed");
     ///
-    /// let mut locale : Locale = "en-US".parse().unwrap();
+    /// let mut locale : Locale = "zh-CN".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
-    /// assert_eq!(locale.to_string(), "en-Latn-US");
+    /// assert_eq!(locale.to_string(), "zh-Hans-CN");
     ///
-    /// let mut locale : Locale = "en-Latn-DE".parse().unwrap();
+    /// let mut locale : Locale = "zh-Hant-TW".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "en-Latn-DE");
-    /// # } // feature = "provider_serde"
+    /// assert_eq!(locale.to_string(), "zh-Hant-TW");
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();
@@ -144,21 +145,22 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    /// let lc = LocaleCanonicalizer::new(&provider)
+    ///     .expect("creation failed");
     ///
-    /// let mut locale : Locale = "en-Latn-US".parse().unwrap();
+    /// let mut locale : Locale = "zh-Hans-CN".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
-    /// assert_eq!(locale.to_string(), "en");
+    /// assert_eq!(locale.to_string(), "zh");
     ///
-    /// let mut locale : Locale = "en".parse().unwrap();
+    /// let mut locale : Locale = "zh".parse()
+    ///     .expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "en");
-    /// # } // feature = "provider_serde"
+    /// assert_eq!(locale.to_string(), "zh");
     /// ```
     pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();

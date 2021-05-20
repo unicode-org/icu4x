@@ -97,7 +97,9 @@ impl<'s> TryFrom<&'s str> for PpucdDataProvider<'s> {
     }
 }
 
-icu_provider::impl_dyn_provider!(PpucdDataProvider<'s>, UnicodePropertyV1<'s>, SERDE_SE, 'd, 's);
+icu_provider::impl_dyn_provider!(PpucdDataProvider<'s>, {
+    _ => UnicodePropertyV1<'s>,
+}, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PpucdDataProvider<'d> {
     fn supported_options_for_key(

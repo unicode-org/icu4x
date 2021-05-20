@@ -55,6 +55,7 @@ where
     }
 }
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, 'a, T> Deserialize<'de> for VarZeroVec<'a, T>
 where
     T: 'de + Deserialize<'de> + AsVarULE,
@@ -74,6 +75,7 @@ where
     }
 }
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<T> Serialize for VarZeroVec<'_, T>
 where
     T: Serialize + AsVarULE + Clone,
@@ -98,10 +100,10 @@ where
                 serializer.serialize_bytes(&slice)
             } else {
                 // This creates an additional Vec allocation to enable code reuse of
-                // VarZeroVec::to_owned()'s. The alternative is to write a different
+                // VarZeroVec::to_vec()'s. The alternative is to write a different
                 // implementation of get_serializable_bytes() which enables us to pull
                 // out the byte buffer components bit by bit and use serialize_seq + serialize_element
-                let vec = VarZeroVec::get_serializable_bytes(&self.to_owned())
+                let vec = VarZeroVec::get_serializable_bytes(&self.to_vec())
                     .ok_or_else(|| ser::Error::custom("VarZeroVec too large to be serialized"))?;
                 serializer.serialize_bytes(&vec)
             }
@@ -140,10 +142,10 @@ mod test {
         // VarZeroVec should deserialize from JSON to either Vec or VarZeroVec
         let vec_new: Vec<String> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to Vec");
-        assert_eq!(zerovec_orig.to_owned(), vec_new);
+        assert_eq!(zerovec_orig.to_vec(), vec_new);
         let zerovec_new: VarZeroVec<String> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to VarZeroVec");
-        assert_eq!(zerovec_orig.to_owned(), zerovec_new.to_owned());
+        assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
         assert!(zerovec_new.get_slice_for_borrowed().is_none());
     }
 
@@ -154,7 +156,7 @@ mod test {
         assert_eq!(BINCODE_BUF, bincode_buf);
         let zerovec_new: VarZeroVec<String> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to VarZeroVec");
-        assert_eq!(zerovec_orig.to_owned(), zerovec_new.to_owned());
+        assert_eq!(zerovec_orig.to_vec(), zerovec_new.to_vec());
         assert!(zerovec_new.get_slice_for_borrowed().is_some());
     }
 
@@ -167,17 +169,17 @@ mod test {
             .collect::<Vec<_>>();
         let mut zerovec: VarZeroVec<String> =
             VarZeroVec::try_from_bytes(NONASCII_BYTES).expect("parse");
-        assert_eq!(zerovec.to_owned(), src_vec);
+        assert_eq!(zerovec.to_vec(), src_vec);
         let bincode_buf = bincode::serialize(&zerovec).expect("serialize");
         let zerovec_result =
             bincode::deserialize::<VarZeroVec<String>>(&bincode_buf).expect("deserialize");
-        assert_eq!(zerovec_result.to_owned(), src_vec);
+        assert_eq!(zerovec_result.to_vec(), src_vec);
 
         // try again with owned zerovec
         zerovec.make_mut();
         let bincode_buf = bincode::serialize(&zerovec).expect("serialize");
         let zerovec_result =
             bincode::deserialize::<VarZeroVec<String>>(&bincode_buf).expect("deserialize");
-        assert_eq!(zerovec_result.to_owned(), src_vec);
+        assert_eq!(zerovec_result.to_vec(), src_vec);
     }
 }

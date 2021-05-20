@@ -290,7 +290,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     ///
     /// # Example
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// # use std::str::Utf8Error;
     /// # use zerovec::VarZeroVecError;
     /// # use zerovec::VarZeroVec;
@@ -311,7 +311,10 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// assert_eq!(&vec[4], "lorem ipsum");
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```
-    pub fn make_mut(&mut self) -> &mut Vec<T>
+    //
+    // This function is crate-public for now since we don't yet want to stabilize
+    // the internal implementation details
+    pub(crate) fn make_mut(&mut self) -> &mut Vec<T>
     where
         T: Clone,
     {
@@ -327,8 +330,38 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
         }
     }
 
+    /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::str::Utf8Error;
+    /// # use zerovec::VarZeroVecError;
+    /// # use zerovec::VarZeroVec;
+    ///
+    /// let strings = vec!["foo".to_owned(), "bar".to_owned(),
+    ///                    "baz".to_owned(), "quux".to_owned()];
+    /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
+    /// let mut vec: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
+    ///
+    /// assert_eq!(vec.len(), 4);
+    /// // has 'static lifetime
+    /// let owned = vec.into_owned();
+    /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
+    /// ```
+    pub fn into_owned(mut self) -> VarZeroVec<'static, T>
+    where
+        T: Clone,
+    {
+        self.make_mut();
+        match self.0 {
+            VarZeroVecInner::Owned(vec) => vec.into(),
+            _ => unreachable!(),
+        }
+    }
+
     /// Obtain an owned `Vec<T>` out of this
-    pub fn to_owned(&self) -> Vec<T>
+    pub fn to_vec(&self) -> Vec<T>
     where
         T: Clone,
     {
@@ -366,7 +399,7 @@ impl<'a, T: AsVarULE> VarZeroVec<'a, T> {
     /// let bytes = VarZeroVec::get_serializable_bytes(&strings).unwrap();
     ///
     /// let mut borrowed: VarZeroVec<String> = VarZeroVec::try_from_bytes(&bytes)?;
-    /// assert_eq!(borrowed.to_owned(), strings);
+    /// assert_eq!(borrowed, &*strings);
     ///
     /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
     /// ```

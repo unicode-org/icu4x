@@ -270,6 +270,10 @@ where
         self.as_slice().get(index).map(T::from_unaligned)
     }
 
+    pub(crate) fn get_ule_ref(&self, index: usize) -> Option<&T::ULE> {
+        self.as_slice().get(index)
+    }
+
     /// Gets the first element. Returns None if empty.
     ///
     /// The element is returned by value, so `T` must implement `Copy`.
@@ -352,6 +356,37 @@ where
             Self::Borrowed(_) => {
                 let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
                 ZeroVec::Owned(vec)
+            }
+        }
+    }
+
+    /// Allows the ZeroVec to be mutated by converting it to an owned variant
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore
+    /// # use crate::zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::try_from_bytes(bytes).expect("infallible");
+    /// assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
+    ///
+    /// zerovec.make_mut().push(12_u16.as_unaligned());
+    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
+    /// ```
+    //
+    // This function is crate-public for now since we don't yet want to stabilize
+    // the internal implementation details
+    pub(crate) fn make_mut(&mut self) -> &mut Vec<T::ULE> {
+        match self {
+            ZeroVec::Owned(ref mut vec) => vec,
+            ZeroVec::Borrowed(_) => {
+                let vec: Vec<T::ULE> = self.iter().map(|ule| T::as_unaligned(&ule)).collect();
+                let new_self = ZeroVec::Owned(vec);
+                *self = new_self;
+                // recursion is limited since we are guaranteed to hit the Owned branch
+                self.make_mut()
             }
         }
     }

@@ -4,34 +4,21 @@
 
 use icu_locid::Locale;
 use std::convert::TryFrom;
-use std::fmt;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
+use thiserror::Error;
 use tinystr::TinyStr8;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum DateTimeError {
-    Parse(std::num::ParseIntError),
+    #[error(transparent)]
+    Parse(#[from] std::num::ParseIntError),
+    #[error("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
+    #[error("{field} must be between {min}-0")]
     Underflow { field: &'static str, min: isize },
+    #[error("Failed to parse time-zone offset")]
     InvalidTimeZoneOffset,
-}
-
-impl fmt::Display for DateTimeError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Parse(err) => write!(f, "{}", err),
-            Self::Overflow { field, max } => write!(f, "{} must be between 0-{}", field, max),
-            Self::Underflow { field, min } => write!(f, "{} must be between {}-0", field, min),
-            Self::InvalidTimeZoneOffset => write!(f, "Failed to parse time-zone offset"),
-        }
-    }
-}
-
-impl From<std::num::ParseIntError> for DateTimeError {
-    fn from(input: std::num::ParseIntError) -> Self {
-        Self::Parse(input)
-    }
 }
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses

@@ -6,7 +6,7 @@ At the moment, `DataProvider` is only synchronous, but the model of plugging it 
 
 ## Data
 
-The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in the [`components/provider/src/structs`](../../components/provider/src/structs) directory and should represent the data efficiently (rather than 1-1 match to CLDR data model).
+The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in the [`provider/core/src/structs`](../../provider/core/src/structs) directory and should represent the data efficiently (rather than 1-1 match to CLDR data model).
 
 ## Types of providers
 

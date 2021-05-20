@@ -27,22 +27,23 @@ More information about the project can be found in [the docs subdirectory](docs/
 An example `ICU4X` powered application in Rust may look like this:
 
 ```toml
-icu = "0.1"
-icu_provider_fs = "0.1"
+icu = "0.2"
+icu_provider_fs = "0.2"
 ```
 
 ```rust
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, date::MockDateTime, options::length};
+use icu::locid::Locale;
+use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
-    let lid = langid!("ar");
+    let loc: Locale = langid!("pl").into();
 
     let date: MockDateTime = "2020-10-14T13:21:00".parse()
         .expect("Failed to parse a datetime.");
 
-    let provider = FsDataProvider::try_new("./icu4x-data")
+    let provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
         .expect("Failed to initialize Data Provider.");
 
     let options = length::Bag {
@@ -51,7 +52,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);

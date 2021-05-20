@@ -4,12 +4,15 @@
 
 use crate::fields::FieldLength;
 use std::{cmp::Ordering, convert::TryFrom};
+use thiserror::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Error, Debug, PartialEq)]
 pub enum SymbolError {
     /// Unknown field symbol.
+    #[error("Unknown field symbol: {0}")]
     Unknown(u8),
     /// Invalid character for a field symbol.
+    #[error("Invalid character for a field symbol: {0}")]
     Invalid(char),
 }
 

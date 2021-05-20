@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ast;
+use thiserror::Error;
 
 #[derive(Debug, PartialEq)]
 pub enum Token {
@@ -25,9 +26,11 @@ pub enum Token {
     E,
 }
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum LexerError {
+    #[error("Expected byte: {0}")]
     ExpectedByte(u8),
+    #[error("Unknown token: {0}")]
     UnknownToken(u8),
 }
 
