@@ -3,4 +3,5 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod codepointtrie;
+mod fast_16;
 mod fast_8;

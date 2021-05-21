@@ -7,75 +7,6 @@ use crate::codepointtrie::{
     CodePointTrie, CodePointTrieData, CodePointTrieType, CodePointTrieValueWidth,
 };
 
-// trait+impl fn polymorphism testing code
-
-struct _MyStruct<T> {
-    x: T,
-}
-
-fn _trait_impl_polymorphism_scratch_code() {
-    let _xyz = _MyStruct { x: 42 };
-
-    let _xyz = _MyStruct::<CodePointTrieValueWidth> {
-        x: CodePointTrieValueWidth::Bits8,
-    };
-}
-
-trait CodePointTrieReader<'t> {
-    fn get_trie_type(trie_type_int: u8) -> CodePointTrieType;
-    fn get_value_width(value_width_int: u8) -> CodePointTrieValueWidth;
-    fn internal_small_index(
-        trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
-        c: u32,
-    ) -> u32;
-    fn small_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32)
-        -> u32;
-    fn fast_index(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c: u32) -> u32;
-}
-
-// can't do this because:
-//
-// expected type, found variant `CodePointTrieType::Fast`
-// not a type
-// help: try using the variant's enum: `crate::CodePointTrieType`rustc(E0573)
-//
-// impl<'trie> CodePointTrieReader<'trie> for CodePointTrie<'trie, CodePointTrieType::Fast, CodePointTrieValueWidth::Bits8> {
-//
-// }
-
-// empty trait+structs polymorphism testing code
-
-// Using empty traits and structs instead of enums, following this strategy:
-// https://stackoverflow.com/questions/59426358/how-to-make-a-struct-containing-an-enum-generic-over-the-enum-variant
-// in order to allow polymorphism on methods for the `CodePointTrie` struct.
-// This is because you cannot have `impl MyTrait for MyStruct<enum1::varianta, enum2::variantb> {...}`.
-
-// alternative to having an enum `ValueWidth` with variants `Bits16`, `Bits32`, `Bits8`.
-
-trait ValueWidth {}
-
-struct Bits16;
-struct Bits32;
-struct Bits8;
-struct BitsAny;
-
-impl ValueWidth for Bits16 {}
-impl ValueWidth for Bits32 {}
-impl ValueWidth for Bits8 {}
-impl ValueWidth for BitsAny {}
-
-// alternative to having an enum `TrieType` with variants `Fast`, `Small`.
-
-trait TrieType {}
-
-struct FastType;
-struct SmallType;
-struct AnyType;
-
-impl TrieType for FastType {}
-impl TrieType for SmallType {}
-impl TrieType for AnyType {}
-
 fn trie_internal_small_index(
     trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
     c: u32,
@@ -206,7 +137,7 @@ fn check_trie(
 }
 
 #[cfg(test)]
-mod fast_8_test {
+mod fast_16_test {
     use super::*;
 
     const INDEX: [u16; 1024] = [
@@ -247,7 +178,7 @@ mod fast_8_test {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
 
-    const DATA_8: [u8; 260] = [
+    const DATA_16: [u16; 258] = [
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -256,24 +187,24 @@ mod fast_8_test {
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0xad,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 0xad,
     ];
 
     const CHECK_RANGES: [u32; 10] = [0, 1, 0x740, 1, 0x780, 2, 0x880, 3, 0x110000, 1];
 
-    // Exported trie data from free-blocks.8.toml. This file represents a
-    // fast-type trie with 8-bit width data.
-    fn get_testing_fast_type_8_bit_trie<'trie>(
+    // Exported trie data from free-blocks.16.toml. This file represents a
+    // fast-type trie with 16-bit width data.
+    fn get_testing_fast_type_16_bit_trie<'trie>(
     ) -> CodePointTrie<'trie, CodePointTrieType, CodePointTrieValueWidth> {
         let index_length: u32 = 1024;
-        let data_length: u32 = 260;
+        let data_length: u32 = 258;
         // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
         // to represent it as a u32 since UnicodeSet deals with `u32` instead of
         // the Rust `char` type?
         let high_start: u32 = 0xa00;
         let shifted12_high_start: u16 = 0x1;
         let trie_type: u8 = 0;
-        let value_width: u8 = 2;
+        let value_width: u8 = 0;
         let index3_null_offset: u16 = 0x7fff;
         let data_null_offset: u32 = 0x0;
         let null_value: u32 = 0x1;
@@ -290,8 +221,8 @@ mod fast_8_test {
             null_value,
             index: &INDEX,
             data: &CodePointTrieData {
-                data_8_bit: Some(&DATA_8),
-                data_16_bit: None,
+                data_8_bit: None,
+                data_16_bit: Some(&DATA_16),
                 data_32_bit: None,
             },
         };
@@ -301,7 +232,7 @@ mod fast_8_test {
 
     #[test]
     pub fn cp_index_test() {
-        let trie = get_testing_fast_type_8_bit_trie();
+        let trie = get_testing_fast_type_16_bit_trie();
 
         assert_eq!(0, trie_cp_index(&trie, 0), "trie_cp_index(&trie, 0)");
         assert_eq!(1, trie_cp_index(&trie, 1), "trie_cp_index(&trie, 1)");
@@ -337,7 +268,7 @@ mod fast_8_test {
 
     #[test]
     pub fn get_test() {
-        let trie = get_testing_fast_type_8_bit_trie();
+        let trie = get_testing_fast_type_16_bit_trie();
 
         assert_eq!(trie_get(&trie, 0), 1);
         assert_eq!(trie_get(&trie, 1), 1);
@@ -348,7 +279,7 @@ mod fast_8_test {
 
     #[test]
     pub fn check_ranges_test() {
-        let trie = get_testing_fast_type_8_bit_trie();
+        let trie = get_testing_fast_type_16_bit_trie();
 
         check_trie(&trie, &CHECK_RANGES);
     }
