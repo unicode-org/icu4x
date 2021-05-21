@@ -95,7 +95,7 @@ pub struct DataResponseMetadata {
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload { cow: Cow::Borrowed("Demo") };
+/// let payload = DataPayload::from_borrowed("Demo");
 ///
 /// assert_eq!("Demo", &*payload);
 /// ```
@@ -105,7 +105,52 @@ where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    pub cow: Cow<'d, T>,
+    pub(crate) cow: Cow<'d, T>,
+}
+
+impl<'d, T> From<T> for DataPayload<'d, T>
+where
+    T: Clone + Debug,
+{
+    /// Convert a Sized data struct into a DataPayload.
+    #[inline]
+    fn from(data: T) -> Self {
+        Self {
+            cow: Cow::Owned(data)
+        }
+    }
+}
+
+impl<'d, T> DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    /// Convert an owned Cow-compatible data struct into a DataPayload.
+    #[inline]
+    pub fn from_owned(data: <T as ToOwned>::Owned) -> Self {
+        Self {
+            cow: Cow::Owned(data)
+        }
+    }
+
+    /// Convert a borrowed Cow-compatible data struct into a DataPayload.
+    #[inline]
+    pub fn from_borrowed(data: &'d T) -> Self {
+        Self {
+            cow: Cow::Borrowed(data)
+        }
+    }
+
+    #[inline]
+    pub fn as_legacy_cow(&self) -> &Cow<'d, T> {
+        &self.cow
+    }
+
+    #[inline]
+    pub fn into_legacy_cow(self) -> Cow<'d, T> {
+        self.cow
+    }
 }
 
 impl<'d, T> Borrow<T> for DataPayload<'d, T>

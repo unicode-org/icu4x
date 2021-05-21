@@ -85,9 +85,7 @@ macro_rules! impl_dyn_from_payload {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
 ///         Ok(DataResponse {
 ///             metadata: Default::default(),
-///             payload: Some(DataPayload {
-///                 cow: Cow::Owned(self.0.to_string())
-///             })
+///             payload: Some(self.0.to_string().into())
 ///         })
 ///     }
 /// }
@@ -114,9 +112,7 @@ macro_rules! impl_dyn_from_payload {
 /// #   fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, String>, DataError> {
 /// #       Ok(DataResponse {
 /// #           metadata: Default::default(),
-/// #           payload: Some(DataPayload {
-/// #               cow: Cow::Owned(self.0.to_string())
-/// #           })
+/// #           payload: Some(self.0.to_string().into())
 /// #       })
 /// #   }
 /// # }

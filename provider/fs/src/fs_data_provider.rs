@@ -93,9 +93,7 @@ where
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload {
-                cow: Cow::Owned(data),
-            }),
+            payload: Some(data.into()),
         })
     }
 }
