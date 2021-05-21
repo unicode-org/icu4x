@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621577304008,
+  "lastUpdate": 1621579374295,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5579,6 +5579,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 156557,
             "range": "± 441",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ca7cf884d164da7472741e81291309f06d80b484",
+          "message": "Fix cargo make wasm (#728)",
+          "timestamp": "2021-05-20T23:36:22-07:00",
+          "tree_id": "954421693b34500a4fa26fb746d4e34ae2977c1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/ca7cf884d164da7472741e81291309f06d80b484"
+        },
+        "date": 1621579372360,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 146699,
+            "range": "± 7304",
             "unit": "ns/iter"
           }
         ]
