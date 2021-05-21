@@ -15,7 +15,7 @@ use icu_locid::subtags::Language;
 use icu_locid_macros::language;
 use litemap::LiteMap;
 
-const DATA: [(Language, &'static str); 11] = [
+const DATA: [(Language, &str); 11] = [
     (language!("ar"), "Arabic"),
     (language!("bn"), "Bangla"),
     (language!("ccp"), "Chakma"),

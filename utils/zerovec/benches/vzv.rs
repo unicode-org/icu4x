@@ -139,7 +139,7 @@ fn serde_benches(c: &mut Criterion) {
     let seed = 2021;
     let (string_vec, _) = random_alphanums(2..=20, 100, seed);
     let bincode_vec = bincode::serialize(&string_vec).unwrap();
-    let vzv = VarZeroVec::from(string_vec.clone());
+    let vzv = VarZeroVec::from(string_vec);
     let bincode_vzv = bincode::serialize(&vzv).unwrap();
 
     // *** Deserialize vec of 100 strings ***
