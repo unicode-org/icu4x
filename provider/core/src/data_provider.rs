@@ -99,7 +99,7 @@ pub struct DataResponseMetadata {
 ///
 /// assert_eq!("Demo", &*payload);
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,

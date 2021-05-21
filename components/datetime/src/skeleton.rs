@@ -628,7 +628,6 @@ mod test {
 
     use icu_locid_macros::langid;
     use icu_provider::prelude::*;
-    
 
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},

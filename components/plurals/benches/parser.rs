@@ -9,7 +9,6 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_provider::prelude::*;
 
-
 fn parser(c: &mut Criterion) {
     use icu_plurals::rules::parse_condition;
 

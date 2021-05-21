@@ -25,7 +25,7 @@ use patterns::{
         time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
-use std::{fmt::Write};
+use std::fmt::Write;
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();

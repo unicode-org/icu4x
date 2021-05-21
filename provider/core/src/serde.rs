@@ -40,17 +40,16 @@ pub trait SerdeDeDataReceiver<'de> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::serde::SerdeDeDataReceiver;
-    /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
     ///
-    /// let mut receiver = DataPayload::<String>::new();
+    /// let mut receiver: Option<&str> = None;
     /// let mut d = serde_json::Deserializer::from_str(JSON);
     /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))
     ///     .expect("Deserialization should be successful");
     ///
-    /// assert!(matches!(receiver.cow, Some(Cow::Owned(_))));
-    /// assert_eq!("hello world", *receiver.borrow().unwrap());
+    /// assert!(matches!(receiver, Some(_)));
+    /// assert_eq!(receiver, Some("hello world"));
     /// ```
     fn receive_deserializer(
         &mut self,
