@@ -52,11 +52,10 @@ fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = provider
+    let plurals_data: DataPayload<PluralRuleStringsV1> = provider
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
-        .payload
-        .take()
+        .take_payload()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
@@ -66,11 +65,10 @@ fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn SerdeDeDataProvider)
+    let plurals_data: DataPayload<PluralRuleStringsV1> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
-        .payload
-        .take()
+        .take_payload()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_RU_DATA);
 }
@@ -159,11 +157,10 @@ fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = provider
+    let plurals_data: DataPayload<PluralRuleStringsV1> = provider
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
-        .payload
-        .take()
+        .take_payload()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }
@@ -174,11 +171,10 @@ fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: Cow<PluralRuleStringsV1> = (&provider as &dyn SerdeDeDataProvider)
+    let plurals_data: DataPayload<PluralRuleStringsV1> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
-        .payload
-        .take()
+        .take_payload()
         .expect("The data should be present");
     assert_eq!(*plurals_data, EXPECTED_SR_DATA);
 }

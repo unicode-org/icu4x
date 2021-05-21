@@ -40,7 +40,7 @@ use std::path::PathBuf;
 ///     let data_provider = PluralsProvider::try_from(&paths as &dyn CldrPaths)
 ///         .expect("The data should be well-formed after downloading");
 ///
-///     let data: Cow<icu_plurals::provider::PluralRuleStringsV1> = data_provider
+///     let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1> = data_provider
 ///         .load_payload(&DataRequest {
 ///             resource_path: ResourcePath {
 ///                 key: icu_plurals::provider::key::ORDINAL_V1,
@@ -51,7 +51,7 @@ use std::path::PathBuf;
 ///             },
 ///         })
 ///         .unwrap()
-///         .payload.take()
+///         .take_payload()
 ///         .unwrap();
 ///     assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
 /// }

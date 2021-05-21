@@ -10,7 +10,7 @@ use crate::{
 };
 use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1};
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_provider::{DataProvider, DataRequest, ResourceKey, ResourceOptions, ResourcePath};
+use icu_provider::prelude::*;
 
 use crate::fields::{FieldSymbol, TimeZone};
 use crate::pattern::{Pattern, PatternItem};
@@ -19,7 +19,7 @@ use crate::pattern::{Pattern, PatternItem};
 fn load_resource<'d, D, L, P>(
     locale: &L,
     resource_key: ResourceKey,
-    destination: &mut Option<Cow<'d, D>>,
+    destination: &mut Option<DataPayload<'d, D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatError>
 where
@@ -39,8 +39,7 @@ where
                         },
                     },
                 })?
-                .payload
-                .take()?,
+                .take_payload()?,
         );
     }
     Ok(())
@@ -89,21 +88,21 @@ pub(super) struct TimeZoneFormat<'d> {
     /// The pattern to format.
     pub(super) pattern: Pattern,
     /// The data that contains meta information about how to display content.
-    pub(super) zone_formats: Cow<'d, provider::time_zones::TimeZoneFormatsV1<'d>>,
+    pub(super) zone_formats: DataPayload<'d, provider::time_zones::TimeZoneFormatsV1<'d>>,
     /// The exemplar cities for time zones.
-    pub(super) exemplar_cities: Option<Cow<'d, provider::time_zones::ExemplarCitiesV1<'d>>>,
+    pub(super) exemplar_cities: Option<DataPayload<'d, provider::time_zones::ExemplarCitiesV1<'d>>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
-        Option<Cow<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>>,
+        Option<DataPayload<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>>,
     /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
-        Option<Cow<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>>,
+        Option<DataPayload<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
-        Option<Cow<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>>,
+        Option<DataPayload<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
-        Option<Cow<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>>,
+        Option<DataPayload<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>>,
 }
 
 impl<'d> TimeZoneFormat<'d> {
@@ -146,7 +145,7 @@ impl<'d> TimeZoneFormat<'d> {
     {
         let locale = locale.into();
 
-        let zone_formats: Cow<TimeZoneFormatsV1> = zone_provider
+        let zone_formats: DataPayload<TimeZoneFormatsV1> = zone_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: provider::key::TIMEZONE_FORMATS_V1,
@@ -156,8 +155,7 @@ impl<'d> TimeZoneFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
 
         let mut time_zone_format = Self {
             pattern,

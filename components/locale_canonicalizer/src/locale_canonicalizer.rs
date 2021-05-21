@@ -5,7 +5,6 @@
 use crate::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
@@ -15,7 +14,7 @@ pub enum CanonicalizationResult {
 }
 
 pub struct LocaleCanonicalizer<'a> {
-    likely_subtags: Cow<'a, LikelySubtagsV1>,
+    likely_subtags: DataPayload<'a, LikelySubtagsV1>,
 }
 
 #[inline]
@@ -51,10 +50,9 @@ impl LocaleCanonicalizer<'_> {
     pub fn new<'d>(
         provider: &(impl DataProvider<'d, LikelySubtagsV1> + ?Sized),
     ) -> Result<LocaleCanonicalizer<'d>, DataError> {
-        let payload: Cow<LikelySubtagsV1> = provider
+        let payload: DataPayload<LikelySubtagsV1> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
-            .payload
-            .take()?;
+            .take_payload()?;
 
         Ok(LocaleCanonicalizer {
             likely_subtags: payload,
