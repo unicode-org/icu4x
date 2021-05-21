@@ -118,36 +118,6 @@ fn trie_get(trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>, c:
     crate::fast::trie_get(trie, c)
 }
 
-fn check_trie(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
-    check_ranges: &[u32],
-) {
-    assert_eq!(
-        0,
-        check_ranges.len() % 2,
-        "check_ranges must have an even number of 32-bit values in (limit,value) pairs"
-    );
-
-    let mut i: u32 = 0;
-    let check_range_tuples = check_ranges.chunks(2);
-    // Iterate over each check range
-    for range_tuple in check_range_tuples {
-        let range_end = range_tuple[0];
-        let range_value = range_tuple[1];
-        // Check all values in this range, one-by-one
-        while i < range_end {
-            assert_eq!(
-                range_value,
-                trie_get(trie, i),
-                "expected trie_get({}) == {}",
-                i,
-                range_value
-            );
-            i = i + 1;
-        }
-    }
-}
-
 #[cfg(test)]
 mod fast_8_test {
     use super::*;
@@ -293,6 +263,6 @@ mod fast_8_test {
     pub fn check_ranges_test() {
         let trie = get_testing_fast_type_8_bit_trie();
 
-        check_trie(&trie, &CHECK_RANGES);
+        crate::fast::check_trie(&trie, &CHECK_RANGES);
     }
 }
