@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621556928716,
+  "lastUpdate": 1621577312802,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5951,6 +5951,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2483958,
             "range": "± 5716",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5fa630f86b31880cee7000793467d5ab9fd5abc6",
+          "message": "Store DataPayload instead of Cow throughout ICU4X (#729)",
+          "timestamp": "2021-05-21T01:02:44-05:00",
+          "tree_id": "8f998589d9317d31432f0563cfba4936addb3260",
+          "url": "https://github.com/unicode-org/icu4x/commit/5fa630f86b31880cee7000793467d5ab9fd5abc6"
+        },
+        "date": 1621577311108,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1182890,
+            "range": "± 77303",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2205112,
+            "range": "± 142832",
             "unit": "ns/iter"
           }
         ]
