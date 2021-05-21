@@ -42,7 +42,7 @@ use std::fmt::Debug;
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(*payload, local_data);
-/// assert!(matches!(payload.as_legacy_cow(), Cow::Borrowed(_)))
+/// assert!(matches!(payload.into_cow(), Cow::Borrowed(_)))
 /// ```
 pub struct StructProvider<'d, T> {
     pub key: ResourceKey,

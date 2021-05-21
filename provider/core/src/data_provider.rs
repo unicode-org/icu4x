@@ -128,32 +128,49 @@ where
         }
     }
 
-    #[inline]
-    pub fn as_legacy_cow(&self) -> &Cow<'d, T> {
-        &self.cow
-    }
-
-    #[inline]
-    pub fn as_legacy_cow_mut(&mut self) -> &mut Cow<'d, T> {
-        &mut self.cow
-    }
-
-    #[inline]
-    pub fn into_legacy_cow_non_static(self) -> Cow<'d, T> {
-        self.cow
-    }
-}
-
-impl<'d, T> DataPayload<'d, T>
-where
-    T: ToOwned + ?Sized + 'static,
-    <T as ToOwned>::Owned: Debug,
-{
-    /// Converts the DataPayload into a Cow.
+    /// Mutate the data contained in this DataPayload.
     ///
-    /// Requires that the data struct is `'static` so that it can be safely detached from its
-    /// cart; see the `yoke` crate for more information.
-    /// 
+    /// For safety, all mutation operations must take place within a helper function that cannot
+    /// borrow data from the surrounding context.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let mut payload = DataPayload::<str>::from_owned("Hello".to_string());
+    ///
+    /// payload.with_mut(|s| s.push_str(" World"));
+    ///
+    /// assert_eq!("Hello World", &*payload);
+    /// ```
+    ///
+    /// To transfer data from the context into the data struct, use the `move` keyword:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let initial_vector = vec!["Foo".to_string()];
+    /// let mut payload: DataPayload<Vec<String>> = DataPayload::from_owned(initial_vector);
+    ///
+    /// let new_value = "Bar".to_string();
+    /// payload.with_mut(move |v| v.push(new_value));
+    ///
+    /// assert_eq!("Foo", payload[0]);
+    /// assert_eq!("Bar", payload[1]);
+    /// ```
+    #[inline]
+    pub fn with_mut<F>(&mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut <T as ToOwned>::Owned),
+    {
+        f(self.cow.to_mut())
+    }
+
+    /// Converts the DataPayload into a Cow. May require cloning the data.
+    ///
     /// # Examples
     ///
     /// ```

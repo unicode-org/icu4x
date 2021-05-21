@@ -25,6 +25,7 @@ use patterns::{
         time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
+use std::borrow::Cow;
 use std::fmt::Write;
 
 fn test_fixture(fixture_name: &str) {
@@ -117,21 +118,18 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        *data
-            .as_legacy_cow_mut()
-            .to_mut()
-            .patterns
-            .datetime
-            .length_patterns
-            .long
-            .to_mut() = String::from("{0}");
+        data.with_mut(|data| {
+            data.patterns.datetime.length_patterns.long = Cow::Borrowed("{0}");
+        });
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
                 let datetime: MockDateTime = dt_input.parse().unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
-                        *data.as_legacy_cow_mut().to_mut().patterns.time.long.to_mut() =
-                            String::from(pattern_input);
+                        let new_pattern_cow = Cow::Owned(pattern_input.to_string());
+                        data.with_mut(move |data| {
+                            data.patterns.time.long = new_pattern_cow;
+                        });
                         let provider = StructProvider {
                             key: GREGORY_V1,
                             data: data.as_ref(),
@@ -185,18 +183,16 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
 
-        *data
-            .as_legacy_cow_mut()
-            .to_mut()
-            .patterns
-            .datetime
-            .length_patterns
-            .long
-            .to_mut() = String::from("{0}");
+        data.with_mut(|data| {
+            data.patterns.datetime.length_patterns.long = Cow::Borrowed("{0}");
+        });
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {
             for pattern_input in patterns {
-                *data.as_legacy_cow_mut().to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
+                let new_pattern_cow = Cow::Owned(pattern_input.to_string());
+                data.with_mut(move |data| {
+                    data.patterns.time.long = new_pattern_cow;
+                });
                 let date_provider = StructProvider {
                     key: GREGORY_V1,
                     data: data.as_ref(),
