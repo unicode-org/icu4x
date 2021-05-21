@@ -46,11 +46,10 @@ impl Default for HelloWorldV1<'_> {
 /// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
-/// use std::borrow::Cow;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
-/// let german_hello_world: Cow<HelloWorldV1> = provider
+/// let german_hello_world: DataPayload<HelloWorldV1> = provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
 ///             key: key::HELLO_WORLD_V1,
@@ -61,7 +60,7 @@ impl Default for HelloWorldV1<'_> {
 ///         }
 ///     })
 ///     .unwrap()
-///     .payload.take()
+///     .take_payload()
 ///     .unwrap();
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.message);
@@ -125,9 +124,9 @@ where
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(data)),
-            },
+            payload: Some(DataPayload {
+                cow: Cow::Owned(data),
+            }),
         })
     }
 }

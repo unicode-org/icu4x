@@ -25,10 +25,10 @@ use std::fmt::Debug;
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
-/// let result: Cow<HelloWorldV1> = provider
+/// let result: DataPayload<HelloWorldV1> = provider
 ///     .load_payload(&DataRequest::from(key::HELLO_WORLD_V1))
 ///     .unwrap()
-///     .payload.take()
+///     .take_payload()
 ///     .unwrap();
 ///
 /// assert_eq!("(und) Hello World", result.message);
@@ -42,9 +42,9 @@ where
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: DataPayload {
-                cow: Some(Cow::Owned(T::default())),
-            },
+            payload: Some(DataPayload {
+                cow: Cow::Owned(T::default()),
+            }),
         })
     }
 }

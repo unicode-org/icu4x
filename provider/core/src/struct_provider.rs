@@ -36,13 +36,13 @@ use std::fmt::Debug;
 ///     data: &local_data,
 /// };
 ///
-/// let payload: Cow<SampleDataStruct> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
+/// let payload: DataPayload<SampleDataStruct> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
-///     .payload.take()
+///     .take_payload()
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(*payload, local_data);
-/// assert!(matches!(payload, Cow::Borrowed(_)))
+/// assert!(matches!(payload.cow, Cow::Borrowed(_)))
 /// ```
 pub struct StructProvider<'d, T> {
     pub key: ResourceKey,
@@ -57,9 +57,9 @@ where
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: DataPayload {
-                cow: Some(Cow::Borrowed(self.data)),
-            },
+            payload: Some(DataPayload {
+                cow: Cow::Borrowed(self.data),
+            }),
         })
     }
 }

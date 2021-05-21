@@ -5,8 +5,11 @@
 use crate::error::Error;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
+use core::ops::Deref;
 use icu_locid::LanguageIdentifier;
+use std::borrow::Borrow;
 use std::borrow::Cow;
+use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
 
@@ -92,9 +95,9 @@ pub struct DataResponseMetadata {
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload { cow: Some(Cow::Borrowed("Demo")) };
+/// let payload = DataPayload { cow: Cow::Borrowed("Demo") };
 ///
-/// assert_eq!("Demo", payload.borrow().expect("Payload is present"));
+/// assert_eq!("Demo", &*payload);
 /// ```
 #[derive(Debug, Clone)]
 pub struct DataPayload<'d, T>
@@ -102,7 +105,42 @@ where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    pub cow: Option<Cow<'d, T>>,
+    pub cow: Cow<'d, T>,
+}
+
+impl<'d, T> Borrow<T> for DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    #[inline]
+    fn borrow(&self) -> &T {
+        self.cow.borrow()
+    }
+}
+
+impl<'d, T> AsRef<T> for DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    #[inline]
+    fn as_ref(&self) -> &T {
+        self.cow.as_ref()
+    }
+}
+
+impl<'d, T> Deref for DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    type Target = T;
+
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        self.cow.deref()
+    }
 }
 
 /// A response object containing an object as payload and metadata about it.
@@ -116,35 +154,30 @@ where
     pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
-    pub payload: DataPayload<'d, T>,
+    pub payload: Option<DataPayload<'d, T>>,
 }
 
-impl<'d, T> DataPayload<'d, T>
+impl<'d, T> DataResponse<'d, T>
 where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    /// Creates a new, empty [`DataPayload`].
-    ///
-    /// Default is not implemented because it would be misleading: does the DataPayload start
-    /// empty, or does it start with the Default value of T?
-    #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
-        Self { cow: None }
-    }
-
-    /// Borrows the underlying payload. Error if not present.
-    pub fn borrow(&self) -> Result<&T, Error> {
-        use std::borrow::Borrow;
-        self.cow
-            .as_ref()
-            .map(|cow| cow.borrow())
-            .ok_or(Error::MissingPayload)
-    }
-
     /// Takes ownership of the underlying payload. Error if not present.
-    pub fn take(&mut self) -> Result<Cow<'d, T>, Error> {
-        self.cow.take().ok_or(Error::MissingPayload)
+    #[inline]
+    pub fn take_payload(self) -> Result<DataPayload<'d, T>, Error> {
+        self.payload.ok_or(Error::MissingPayload)
+    }
+}
+
+impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    type Error = Error;
+
+    fn try_from(response: DataResponse<'d, T>) -> Result<Self, Self::Error> {
+        response.take_payload()
     }
 }
 
