@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621458772969,
+  "lastUpdate": 1621555948366,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7685,6 +7685,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 116118,
             "range": "± 8465",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bacbc93be0130f80f74f1d58bab6c3316041ec14",
+          "message": "Document release readiness and experimental code (#700)",
+          "timestamp": "2021-05-20T19:05:05-05:00",
+          "tree_id": "0ccb405934215df26681b871f5204c949b4099db",
+          "url": "https://github.com/unicode-org/icu4x/commit/bacbc93be0130f80f74f1d58bab6c3316041ec14"
+        },
+        "date": 1621555946638,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1270,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8025,
+            "range": "± 509",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 124230,
+            "range": "± 23710",
             "unit": "ns/iter"
           }
         ]
