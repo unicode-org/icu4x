@@ -145,7 +145,7 @@ impl<'d> DateTimeFormat<'d> {
     ) -> Self {
         let locale = locale.into();
 
-        let symbols = match data.into_legacy_cow() {
+        let symbols = match data.into_cow() {
             Cow::Borrowed(data) => DataPayload::from_borrowed(&data.symbols),
             Cow::Owned(data) => DataPayload::from_owned(data.symbols),
         };

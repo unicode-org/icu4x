@@ -138,7 +138,7 @@ where
     provider
         .load_payload(&get_request_v1())?
         .take_payload()
-        .map(|p| p.into_legacy_cow())
+        .map(|p| p.into_legacy_cow_non_static())
 }
 
 fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
@@ -146,7 +146,7 @@ fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
     d.load_payload(&get_request_alt())?
         .take_payload()
-        .map(|p| p.into_legacy_cow())
+        .map(|p| p.into_legacy_cow_non_static())
 }
 
 fn get_request_v1() -> DataRequest {

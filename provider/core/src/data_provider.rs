@@ -93,7 +93,6 @@ pub struct DataResponseMetadata {
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use std::borrow::Cow;
 ///
 /// let payload = DataPayload::from_borrowed("Demo");
 ///
@@ -140,7 +139,37 @@ where
     }
 
     #[inline]
-    pub fn into_legacy_cow(self) -> Cow<'d, T> {
+    pub fn into_legacy_cow_non_static(self) -> Cow<'d, T> {
+        self.cow
+    }
+}
+
+impl<'d, T> DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized + 'static,
+    <T as ToOwned>::Owned: Debug,
+{
+    /// Converts the DataPayload into a Cow.
+    ///
+    /// Requires that the data struct is `'static` so that it can be safely detached from its
+    /// cart; see the `yoke` crate for more information.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let payload = DataPayload::from_borrowed("Demo");
+    /// let data: Cow<str> = payload.into_cow();
+    /// assert!(matches!(data, Cow::Borrowed(_)));
+    ///
+    /// let payload = DataPayload::<str>::from_owned("Demo".to_string());
+    /// let data: Cow<str> = payload.into_cow();
+    /// assert!(matches!(data, Cow::Owned(_)));
+    /// ```
+    #[inline]
+    pub fn into_cow(self) -> Cow<'d, T> {
         self.cow
     }
 }
