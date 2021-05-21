@@ -135,6 +135,11 @@ where
     }
 
     #[inline]
+    pub fn as_legacy_cow_mut(&mut self) -> &mut Cow<'d, T> {
+        &mut self.cow
+    }
+
+    #[inline]
     pub fn into_legacy_cow(self) -> Cow<'d, T> {
         self.cow
     }

@@ -118,7 +118,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         *data
-            .cow
+            .as_legacy_cow_mut()
             .to_mut()
             .patterns
             .datetime
@@ -130,7 +130,7 @@ fn test_dayperiod_patterns() {
                 let datetime: MockDateTime = dt_input.parse().unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
-                        *data.cow.to_mut().patterns.time.long.to_mut() =
+                        *data.as_legacy_cow_mut().to_mut().patterns.time.long.to_mut() =
                             String::from(pattern_input);
                         let provider = StructProvider {
                             key: GREGORY_V1,
@@ -186,7 +186,7 @@ fn test_time_zone_patterns() {
             .unwrap();
 
         *data
-            .cow
+            .as_legacy_cow_mut()
             .to_mut()
             .patterns
             .datetime
@@ -196,7 +196,7 @@ fn test_time_zone_patterns() {
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {
             for pattern_input in patterns {
-                *data.cow.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
+                *data.as_legacy_cow_mut().to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
                 let date_provider = StructProvider {
                     key: GREGORY_V1,
                     data: data.as_ref(),
