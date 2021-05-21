@@ -141,13 +141,17 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        data: Cow<'d, DatesV1>,
+        data: DataPayload<'d, DatesV1>,
     ) -> Self {
         let locale = locale.into();
 
-        let symbols = match data {
-            Cow::Borrowed(data) => Cow::Borrowed(&data.symbols),
-            Cow::Owned(data) => Cow::Owned(data.symbols),
+        let symbols = match data.cow {
+            Cow::Borrowed(data) => DataPayload {
+                cow: Cow::Borrowed(&data.symbols),
+            },
+            Cow::Owned(data) => DataPayload {
+                cow: Cow::Owned(data.symbols),
+            },
         };
 
         Self {

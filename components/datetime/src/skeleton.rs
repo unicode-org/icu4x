@@ -627,7 +627,7 @@ mod test {
     use super::*;
 
     use icu_locid_macros::langid;
-    use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
+    use icu_provider::prelude::*;
     use std::borrow::Cow;
 
     use crate::{
@@ -636,7 +636,7 @@ mod test {
         provider::{gregory::DatesV1, key::GREGORY_V1},
     };
 
-    fn get_data_provider() -> Cow<'static, DatesV1> {
+    fn get_data_provider() -> DataPayload<'static, DatesV1> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
@@ -650,8 +650,7 @@ mod test {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap()
     }
 

@@ -116,8 +116,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
 
         let pattern = data
             .patterns

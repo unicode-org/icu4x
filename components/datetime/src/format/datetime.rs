@@ -250,7 +250,7 @@ mod tests {
         use icu_provider::prelude::*;
         use std::borrow::Cow;
         let provider = icu_testdata::get_provider();
-        let data: Cow<'_, DatesV1> = provider
+        let data: DataPayload<'_, DatesV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: provider::key::GREGORY_V1,
@@ -261,8 +261,7 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
         let datetime = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();

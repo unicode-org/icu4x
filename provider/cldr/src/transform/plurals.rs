@@ -93,9 +93,9 @@ impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
-            },
+            payload: Some(DataPayload {
+                cow: Cow::Owned(PluralRuleStringsV1::from(r)),
+            }),
         })
     }
 }
@@ -195,7 +195,7 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: Cow<PluralRuleStringsV1> = provider
+    let cs_rules: DataPayload<PluralRuleStringsV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::CARDINAL_V1,
@@ -206,8 +206,7 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     assert_eq!(None, cs_rules.zero);

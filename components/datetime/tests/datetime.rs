@@ -16,9 +16,8 @@ use icu_datetime::{
     DateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_provider::{
-    struct_provider::StructProvider, DataProvider, DataRequest, ResourceOptions, ResourcePath,
-};
+use icu_provider::prelude::*;
+use icu_provider::struct_provider::StructProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -105,7 +104,7 @@ fn test_dayperiod_patterns() {
     let format_options = DateTimeFormatOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
-        let mut data: Cow<DatesV1> = provider
+        let mut data: DataPayload<DatesV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_V1,
@@ -116,10 +115,10 @@ fn test_dayperiod_patterns() {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         *data
+            .cow
             .to_mut()
             .patterns
             .datetime
@@ -131,7 +130,8 @@ fn test_dayperiod_patterns() {
                 let datetime: MockDateTime = dt_input.parse().unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
-                        *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
+                        *data.cow.to_mut().patterns.time.long.to_mut() =
+                            String::from(pattern_input);
                         let provider = StructProvider {
                             key: GREGORY_V1,
                             data: data.as_ref(),
@@ -171,7 +171,7 @@ fn test_time_zone_patterns() {
         datetime.time_zone.metazone_id = config.metazone_id.take();
         datetime.time_zone.time_variant = config.time_variant.take();
 
-        let mut data: Cow<DatesV1> = date_provider
+        let mut data: DataPayload<DatesV1> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_V1,
@@ -182,11 +182,11 @@ fn test_time_zone_patterns() {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
 
         *data
+            .cow
             .to_mut()
             .patterns
             .datetime
@@ -196,7 +196,7 @@ fn test_time_zone_patterns() {
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {
             for pattern_input in patterns {
-                *data.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
+                *data.cow.to_mut().patterns.time.long.to_mut() = String::from(pattern_input);
                 let date_provider = StructProvider {
                     key: GREGORY_V1,
                     data: data.as_ref(),

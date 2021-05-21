@@ -76,9 +76,9 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(gregory::DatesV1::from(dates))),
-            },
+            payload: Some(DataPayload {
+                cow: Cow::Owned(gregory::DatesV1::from(dates)),
+            }),
         })
     }
 }
@@ -501,12 +501,11 @@ pub(self) mod cldr_json {
 #[test]
 fn test_basic() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = provider
+    let cs_dates: DataPayload<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -517,8 +516,7 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
@@ -534,12 +532,11 @@ fn test_basic() {
 #[test]
 fn test_with_numbering_system() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = provider
+    let cs_dates: DataPayload<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -550,8 +547,7 @@ fn test_with_numbering_system() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     assert_eq!("d MMM y", cs_dates.patterns.date.medium);
@@ -562,12 +558,11 @@ fn test_with_numbering_system() {
 #[test]
 fn unalias_contexts() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: Cow<gregory::DatesV1> = provider
+    let cs_dates: DataPayload<gregory::DatesV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -578,8 +573,7 @@ fn unalias_contexts() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     // Czech months are not unaliased because `wide` differs.

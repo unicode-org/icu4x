@@ -64,9 +64,9 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
                 },
-                payload: DataPayload {
-                    cow: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
-                },
+                payload: Some(DataPayload {
+                    cow: Cow::Owned(LikelySubtagsV1::from(&self.data)),
+                }),
             })
         } else {
             Err(DataError::UnavailableResourceOptions(req.clone()))
@@ -187,15 +187,13 @@ pub(self) mod cldr_json {
 #[test]
 fn test_basic() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-    let result: Cow<LikelySubtagsV1> = provider
+    let result: DataPayload<LikelySubtagsV1> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     let langid = langid!("cu-Glag");

@@ -20,7 +20,7 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &plurals_data.langs {
-        let plurals_data: Cow<icu_plurals::provider::PluralRuleStringsV1> = provider
+        let plurals_data: DataPayload<icu_plurals::provider::PluralRuleStringsV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: icu_plurals::provider::key::CARDINAL_V1,
@@ -31,8 +31,7 @@ fn parser(c: &mut Criterion) {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
 
         let r = &[
