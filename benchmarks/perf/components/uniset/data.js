@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621458746197,
+  "lastUpdate": 1621555902184,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6539,6 +6539,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35391375,
             "range": "± 1085993",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bacbc93be0130f80f74f1d58bab6c3316041ec14",
+          "message": "Document release readiness and experimental code (#700)",
+          "timestamp": "2021-05-20T19:05:05-05:00",
+          "tree_id": "0ccb405934215df26681b871f5204c949b4099db",
+          "url": "https://github.com/unicode-org/icu4x/commit/bacbc93be0130f80f74f1d58bab6c3316041ec14"
+        },
+        "date": 1621555900975,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34211790,
+            "range": "± 432890",
             "unit": "ns/iter"
           }
         ]
