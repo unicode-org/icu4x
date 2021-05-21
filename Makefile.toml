@@ -157,7 +157,7 @@ category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2021-02-28"
 command = "cargo"
-args = ["wasm-build", "--examples"]
+args = ["wasm-build", "--examples", "--workspace", "--exclude", "icu_datagen"]
 
 [tasks.wasm-dir]
 description = "Make the WASM package directory"
@@ -281,7 +281,7 @@ for src_path in ${handle}
 
     if not ${up_to_date}
         echo Writing ${out_path}
-        output = exec ${wasm-opt} ${src_path} -o ${out_path}
+        output = exec ${wasm-opt} -Os ${src_path} -o ${out_path}
         stdout = trim ${output.stdout}
         stderr = trim ${output.stderr}
         if ${stdout} or ${stderr} or ${output.code}
