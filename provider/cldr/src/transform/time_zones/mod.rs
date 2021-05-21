@@ -119,9 +119,7 @@ macro_rules! impl_data_provider {
                     metadata: DataResponseMetadata {
                         data_langid: req.resource_path.options.langid.clone(),
                     },
-                    payload: Some(DataPayload {
-                        cow: Cow::Owned($id::from(time_zones.clone())),
-                    }),
+                    payload: Some(DataPayload::from_owned($id::from(time_zones.clone()))),
                 })
             }
         }

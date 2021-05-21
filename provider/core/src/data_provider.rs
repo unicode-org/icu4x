@@ -108,19 +108,6 @@ where
     pub(crate) cow: Cow<'d, T>,
 }
 
-impl<'d, T> From<T> for DataPayload<'d, T>
-where
-    T: Clone + Debug,
-{
-    /// Convert a Sized data struct into a DataPayload.
-    #[inline]
-    fn from(data: T) -> Self {
-        Self {
-            cow: Cow::Owned(data)
-        }
-    }
-}
-
 impl<'d, T> DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,

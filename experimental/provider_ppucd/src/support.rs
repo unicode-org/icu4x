@@ -80,9 +80,7 @@ impl<'d, 's> DataProvider<'d, UnicodeProperty<'s>> for PpucdDataProvider<'s> {
         };
         Ok(DataResponse {
             metadata: DataResponseMetadata { data_langid: None },
-            payload: Some(DataPayload {
-                cow: Cow::Owned(prop),
-            }),
+            payload: Some(DataPayload::from_owned(prop)),
         })
     }
 }

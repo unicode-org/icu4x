@@ -45,7 +45,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(self.data.hello_v1.clone().into()),
+            payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
         })
     }
 }
