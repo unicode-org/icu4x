@@ -52,6 +52,7 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
             .push(path_buf);
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn flush(&mut self) -> Result<(), Error> {
         self.flushed = true;
         // TODO: Make sure the directory is empty
@@ -72,6 +73,11 @@ impl<T: fmt::Debug + Eq + Hash + Ord + AsRef<[u8]>> AliasCollection<T> {
             }
         }
         Ok(())
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn flush(&mut self) -> Result<(), Error> {
+        panic!("Flush is not supported on wasm32");
     }
 }
 

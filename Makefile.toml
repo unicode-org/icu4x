@@ -281,7 +281,7 @@ for src_path in ${handle}
 
     if not ${up_to_date}
         echo Writing ${out_path}
-        output = exec ${wasm-opt} ${src_path} -o ${out_path}
+        output = exec ${wasm-opt} -O ${src_path} -o ${out_path}
         stdout = trim ${output.stdout}
         stderr = trim ${output.stderr}
         if ${stdout} or ${stderr} or ${output.code}
