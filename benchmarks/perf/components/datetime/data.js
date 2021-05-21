@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621555916074,
+  "lastUpdate": 1621556928716,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5915,6 +5915,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2382710,
             "range": "± 29215",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "48c47db44cace4a608b627f6065de1dd39aac166",
+          "message": "Make clippy warnings report as errors and update clippy args (#712)",
+          "timestamp": "2021-05-20T17:21:57-07:00",
+          "tree_id": "e16af60d9b2284d5943f4f01b26b3a156f27aa36",
+          "url": "https://github.com/unicode-org/icu4x/commit/48c47db44cace4a608b627f6065de1dd39aac166"
+        },
+        "date": 1621556926931,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1296272,
+            "range": "± 15213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2483958,
+            "range": "± 5716",
             "unit": "ns/iter"
           }
         ]
