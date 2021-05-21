@@ -8,7 +8,7 @@ mod helpers;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_provider::prelude::*;
-use std::borrow::Cow;
+
 
 fn parser(c: &mut Criterion) {
     use icu_plurals::rules::parse_condition;

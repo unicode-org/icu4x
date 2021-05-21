@@ -125,7 +125,7 @@ fn test_ppucd_provider_parse() {
             },
         },
     };
-    let mut resp: DataResponse<UnicodeProperty> = ppucd_provider.load_payload(&data_req).unwrap();
+    let resp: DataResponse<UnicodeProperty> = ppucd_provider.load_payload(&data_req).unwrap();
 
     let ppucd_property_cow: DataPayload<UnicodeProperty> = resp.take_payload().unwrap();
     let exp_prop_uniset: UnicodeProperty = UnicodeProperty {

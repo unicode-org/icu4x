@@ -248,7 +248,7 @@ mod tests {
         use crate::mock::datetime::MockDateTime;
         use crate::provider::gregory::DatesV1;
         use icu_provider::prelude::*;
-        use std::borrow::Cow;
+        
         let provider = icu_testdata::get_provider();
         let data: DataPayload<'_, DatesV1> = provider
             .load_payload(&DataRequest {
