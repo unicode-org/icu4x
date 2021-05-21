@@ -8,7 +8,7 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
-use std::borrow::Cow;
+
 use std::fmt::Debug;
 use std::fs;
 use std::fs::File;

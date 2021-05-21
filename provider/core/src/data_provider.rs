@@ -117,7 +117,7 @@ where
     #[inline]
     pub fn from_owned(data: <T as ToOwned>::Owned) -> Self {
         Self {
-            cow: Cow::Owned(data)
+            cow: Cow::Owned(data),
         }
     }
 
@@ -125,7 +125,7 @@ where
     #[inline]
     pub fn from_borrowed(data: &'d T) -> Self {
         Self {
-            cow: Cow::Borrowed(data)
+            cow: Cow::Borrowed(data),
         }
     }
 

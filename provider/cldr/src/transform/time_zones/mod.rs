@@ -17,7 +17,7 @@ use icu_provider::{
     iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,
 };
-use std::borrow::Cow;
+
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 

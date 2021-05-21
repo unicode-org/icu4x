@@ -6,7 +6,7 @@ use crate::parse_ppucd;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::provider::*;
-use std::borrow::Cow;
+
 use std::convert::TryFrom;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -111,6 +111,8 @@ impl<'d> IterableDataProviderCore for PpucdDataProvider<'d> {
 
 #[test]
 fn test_ppucd_provider_parse() {
+    use std::borrow::Cow;
+
     let ppucd_property_files_root_path = "tests/testdata/ppucd-wspace-test.txt";
     let ppucd_property_file_str = std::fs::read_to_string(ppucd_property_files_root_path).unwrap();
     let ppucd_provider: PpucdDataProvider = PpucdDataProvider::new(&ppucd_property_file_str);
