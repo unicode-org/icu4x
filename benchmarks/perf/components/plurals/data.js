@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621555948366,
+  "lastUpdate": 1621556961926,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7727,6 +7727,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 124230,
             "range": "± 23710",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "48c47db44cace4a608b627f6065de1dd39aac166",
+          "message": "Make clippy warnings report as errors and update clippy args (#712)",
+          "timestamp": "2021-05-20T17:21:57-07:00",
+          "tree_id": "e16af60d9b2284d5943f4f01b26b3a156f27aa36",
+          "url": "https://github.com/unicode-org/icu4x/commit/48c47db44cace4a608b627f6065de1dd39aac166"
+        },
+        "date": 1621556957074,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1318,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8020,
+            "range": "± 360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 119348,
+            "range": "± 5345",
             "unit": "ns/iter"
           }
         ]
