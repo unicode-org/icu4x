@@ -409,8 +409,7 @@ macro_rules! break_iterator_impl {
             fn handle_complex_language(&mut self, left_codepoint: $char_type) -> Option<usize> {
                 let start_iter = self.iter.clone();
                 let start_point = self.current_pos_data;
-                let mut s = Vec::new();
-                s.push(left_codepoint as u16);
+                let mut s = vec![left_codepoint as u16];
                 loop {
                     s.push(self.current_pos_data.unwrap().1 as u16);
                     self.current_pos_data = self.iter.next();
