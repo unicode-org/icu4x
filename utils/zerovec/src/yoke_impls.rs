@@ -55,6 +55,7 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
 }
 
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+#[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<
         'a,
         K: 'static + ZeroMapKV<'static> + Yokeable<'a>,

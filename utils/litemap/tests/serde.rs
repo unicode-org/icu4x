@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use litemap::LiteMap;
-use serde_json;
 
 #[test]
 fn test_ser() {

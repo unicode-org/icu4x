@@ -8,7 +8,6 @@ mod helpers;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {
     use icu_plurals::rules::parse_condition;
@@ -20,7 +19,7 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &plurals_data.langs {
-        let plurals_data: Cow<icu_plurals::provider::PluralRuleStringsV1> = provider
+        let plurals_data: DataPayload<icu_plurals::provider::PluralRuleStringsV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: icu_plurals::provider::key::CARDINAL_V1,
@@ -31,8 +30,7 @@ fn parser(c: &mut Criterion) {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
 
         let r = &[

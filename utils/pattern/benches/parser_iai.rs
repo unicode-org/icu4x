@@ -32,7 +32,7 @@ fn iai_parse() {
                 allow_raw_letters: false,
             },
         );
-        while let Some(_) = p.try_next().unwrap() {}
+        while p.try_next().unwrap().is_some() {}
     }
 }
 

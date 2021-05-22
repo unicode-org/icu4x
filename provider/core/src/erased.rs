@@ -91,11 +91,7 @@ impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
     where
         T: Clone + Debug + Any,
     {
-        let old_cow = match self.cow {
-            Some(cow) => cow,
-            None => return Ok(DataPayload { cow: None }),
-        };
-        let new_cow = match old_cow {
+        let new_cow = match self.cow {
             Cow::Borrowed(erased) => {
                 let borrowed: &'d T =
                     erased
@@ -119,7 +115,7 @@ impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
                 Cow::Owned(*boxed)
             }
         };
-        Ok(DataPayload { cow: Some(new_cow) })
+        Ok(DataPayload { cow: new_cow })
     }
 }
 
@@ -179,7 +175,7 @@ where
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,
-            payload: result.payload.downcast()?,
+            payload: result.payload.map(|p| p.downcast()).transpose()?,
         })
     }
 }

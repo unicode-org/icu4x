@@ -119,9 +119,9 @@ macro_rules! impl_data_provider {
                     metadata: DataResponseMetadata {
                         data_langid: req.resource_path.options.langid.clone(),
                     },
-                    payload: DataPayload {
-                        cow: Some(Cow::Owned($id::from(time_zones.clone()))),
-                    },
+                    payload: Some(DataPayload {
+                        cow: Cow::Owned($id::from(time_zones.clone())),
+                    }),
                 })
             }
         }
@@ -164,7 +164,7 @@ mod tests {
         let cldr_paths = crate::cldr_paths::for_test();
         let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-        let time_zone_formats: Cow<TimeZoneFormatsV1> = provider
+        let time_zone_formats: DataPayload<TimeZoneFormatsV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_FORMATS_V1,
@@ -175,12 +175,11 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         assert_eq!("GMT", time_zone_formats.gmt_zero_format);
 
-        let exemplar_cities: Cow<ExemplarCitiesV1> = provider
+        let exemplar_cities: DataPayload<ExemplarCitiesV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_EXEMPLAR_CITIES_V1,
@@ -191,12 +190,11 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         assert_eq!("Pohnpei", exemplar_cities["Pacific/Ponape"]);
 
-        let generic_names_long: Cow<MetaZoneGenericNamesLongV1> = provider
+        let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_GENERIC_NAMES_LONG_V1,
@@ -207,15 +205,14 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
             generic_names_long["Australia_CentralWestern"]
         );
 
-        let specific_names_long: Cow<MetaZoneSpecificNamesLongV1> = provider
+        let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
@@ -226,15 +223,14 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
             specific_names_long["Australia_CentralWestern"]["standard"]
         );
 
-        let generic_names_short: Cow<MetaZoneGenericNamesShortV1> = provider
+        let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
@@ -245,12 +241,11 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         assert_eq!("PT", generic_names_short["America_Pacific"]);
 
-        let specific_names_short: Cow<MetaZoneSpecificNamesShortV1> = provider
+        let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,
@@ -261,8 +256,7 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         assert_eq!("PDT", specific_names_short["America_Pacific"]["daylight"]);
     }

@@ -133,9 +133,9 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(result)),
-            },
+            payload: Some(DataPayload {
+                cow: Cow::Owned(result),
+            }),
         })
     }
 }
@@ -200,12 +200,11 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
 #[test]
 fn test_basic() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let ar_decimal: Cow<DecimalSymbolsV1> = provider
+    let ar_decimal: DataPayload<DecimalSymbolsV1> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::SYMBOLS_V1,
@@ -216,8 +215,7 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     assert_eq!(ar_decimal.decimal_separator, "٫");

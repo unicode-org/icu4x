@@ -40,17 +40,16 @@ pub trait SerdeDeDataReceiver<'de> {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::serde::SerdeDeDataReceiver;
-    /// use std::borrow::Cow;
     ///
     /// const JSON: &'static str = "\"hello world\"";
     ///
-    /// let mut receiver = DataPayload::<String>::new();
+    /// let mut receiver: Option<&str> = None;
     /// let mut d = serde_json::Deserializer::from_str(JSON);
     /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))
     ///     .expect("Deserialization should be successful");
     ///
-    /// assert!(matches!(receiver.cow, Some(Cow::Owned(_))));
-    /// assert_eq!("hello world", *receiver.borrow().unwrap());
+    /// assert!(matches!(receiver, Some(_)));
+    /// assert_eq!(receiver, Some("hello world"));
     /// ```
     fn receive_deserializer(
         &mut self,
@@ -58,7 +57,7 @@ pub trait SerdeDeDataReceiver<'de> {
     ) -> Result<(), Error>;
 }
 
-impl<'d, 'de, T> SerdeDeDataReceiver<'de> for DataPayload<'d, T>
+impl<'de, T> SerdeDeDataReceiver<'de> for Option<T>
 where
     T: serde::Deserialize<'de> + Clone + Debug,
 {
@@ -67,7 +66,7 @@ where
         deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error> {
         let obj: T = erased_serde::deserialize(deserializer)?;
-        self.cow = Some(Cow::Owned(obj));
+        self.replace(obj);
         Ok(())
     }
 }
@@ -93,9 +92,14 @@ where
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
-        let mut payload = DataPayload::<T>::new();
+        let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
-        Ok(DataResponse { metadata, payload })
+        Ok(DataResponse {
+            metadata,
+            payload: payload.map(|obj| DataPayload {
+                cow: Cow::Owned(obj),
+            }),
+        })
     }
 }
 

@@ -36,13 +36,13 @@ macro_rules! impl_dyn_from_payload {
             ) -> $crate::prelude::DataPayload<$d, dyn $trait + 's> {
                 use std::borrow::Cow;
                 Self {
-                    cow: other.cow.map(|p| match p {
+                    cow: match other.cow {
                         Cow::Borrowed(v) => Cow::Borrowed(v as &(dyn $trait + 's)),
                         Cow::Owned(v) => {
                             let boxed: Box<dyn $trait + 's> = Box::new(v);
                             Cow::Owned(boxed)
                         }
-                    }),
+                    },
                 }
             }
         }
@@ -85,9 +85,9 @@ macro_rules! impl_dyn_from_payload {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
 ///         Ok(DataResponse {
 ///             metadata: Default::default(),
-///             payload: DataPayload {
-///                 cow: Some(Cow::Owned(self.0.to_string()))
-///             }
+///             payload: Some(DataPayload {
+///                 cow: Cow::Owned(self.0.to_string())
+///             })
 ///         })
 ///     }
 /// }
@@ -114,9 +114,9 @@ macro_rules! impl_dyn_from_payload {
 /// #   fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, String>, DataError> {
 /// #       Ok(DataResponse {
 /// #           metadata: Default::default(),
-/// #           payload: DataPayload {
-/// #               cow: Some(Cow::Owned(self.0.to_string()))
-/// #           }
+/// #           payload: Some(DataPayload {
+/// #               cow: Cow::Owned(self.0.to_string())
+/// #           })
 /// #       })
 /// #   }
 /// # }
@@ -165,7 +165,7 @@ macro_rules! impl_dyn_provider {
                                 $crate::prelude::DataProvider::load_payload(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.into(),
+                                payload: result.payload.map(|p| p.into()),
                             })
                         }
                     )+,

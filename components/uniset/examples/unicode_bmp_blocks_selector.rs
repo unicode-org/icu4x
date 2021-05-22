@@ -31,32 +31,32 @@ fn get_latin1_supplement_block() -> UnicodeSet {
 }
 
 #[derive(Copy, Clone, Debug)]
-enum BMPBlock {
+enum BmpBlock {
     Basic,
     Latin1Supplement,
     Unknown,
 }
 
-struct BMPBlockSelector {
-    blocks: Vec<(BMPBlock, UnicodeSet)>,
+struct BmpBlockSelector {
+    blocks: Vec<(BmpBlock, UnicodeSet)>,
 }
 
-impl BMPBlockSelector {
+impl BmpBlockSelector {
     pub fn new() -> Self {
         let blocks = vec![
-            (BMPBlock::Basic, get_basic_latin_block()),
-            (BMPBlock::Latin1Supplement, get_latin1_supplement_block()),
+            (BmpBlock::Basic, get_basic_latin_block()),
+            (BmpBlock::Latin1Supplement, get_latin1_supplement_block()),
         ];
-        Self { blocks }
+        BmpBlockSelector { blocks }
     }
 
-    pub fn select(&self, input: char) -> BMPBlock {
+    pub fn select(&self, input: char) -> BmpBlock {
         for (block, set) in &self.blocks {
             if set.contains(input) {
                 return *block;
             }
         }
-        BMPBlock::Unknown
+        BmpBlock::Unknown
     }
 }
 
@@ -68,7 +68,7 @@ fn print(_input: &str) {
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
-    let selector = BMPBlockSelector::new();
+    let selector = BmpBlockSelector::new();
 
     let sample = "Welcome to MyName©®, Алексей!";
 
