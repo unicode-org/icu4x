@@ -143,7 +143,7 @@ fn is_break_utf32_by_loose(
             || right_codepoint == 0xFF1B
             || right_codepoint == 0xFF65
             || right_codepoint == 0x203C
-            || (right_codepoint >= 0x2047 && right_codepoint <= 0x2049)
+            || (0x2047..=0x2049).contains(&right_codepoint)
         {
             return Some(ja_zh);
         }
@@ -227,7 +227,7 @@ fn get_break_state(left: u8, right: u8) -> i8 {
 #[inline]
 fn use_complex_breaking_utf32(codepoint: u32) -> bool {
     // Thai
-    codepoint >= 0xe01 && codepoint <= 0xe7f
+    (0xe01..=0xe7f).contains(&codepoint)
 }
 
 /*
