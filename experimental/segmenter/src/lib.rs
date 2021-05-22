@@ -9,27 +9,23 @@
 //!```rust
 //! use icu_segmenter::LineBreakIterator;
 //!
-//! fn main () {
-//!     let mut iter = LineBreakIterator::new("Hello World");
-//!     let result: Vec<usize> = iter.collect();
-//!     println!("{:?}", result);
-//! }
+//! let mut iter = LineBreakIterator::new("Hello World");
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
 //! ```
 //!
 //! With CSS property.
 //! ```rust
 //! use icu_segmenter::{LineBreakIterator, LineBreakRule, WordBreakRule};
 //!
-//! fn main() {
-//!     let iter = LineBreakIterator::new_with_break_rule(
-//!         "Hello World",
-//!         LineBreakRule::Strict,
-//!         WordBreakRule::BreakAll,
-//!         false,
-//!     );
-//!     let result: Vec<usize> = iter.collect();
-//!     println!("{:?}", result);
-//! }
+//! let iter = LineBreakIterator::new_with_break_rule(
+//!     "Hello World",
+//!     LineBreakRule::Strict,
+//!     WordBreakRule::BreakAll,
+//!     false,
+//! );
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
 //! ```
 //!
 //! Use Latin 1 string for C binding and etc.
@@ -37,12 +33,10 @@
 //! ```rust
 //! use icu_segmenter::LineBreakIteratorLatin1;
 //!
-//! fn main () {
-//!     let s = "Hello World";
-//!     let iter = LineBreakIteratorLatin1::new(s.as_bytes());
-//!     let result: Vec<usize> = iter.collect();
-//!     println!("{:?}", result);
-//! }
+//! let s = "Hello World";
+//! let iter = LineBreakIteratorLatin1::new(s.as_bytes());
+//! let result: Vec<usize> = iter.collect();
+//! println!("{:?}", result);
 //! ```
 //!
 //! # Generating property table
