@@ -615,12 +615,12 @@ impl<'a> LineBreakIteratorLatin1<'a> {
 
 /// UTF-16 version of line break iterator.
 #[derive(Clone)]
-struct UTF16Indices<'a> {
+struct Utf16Indices<'a> {
     front_offset: usize,
     iter: &'a [u16],
 }
 
-impl<'a> Iterator for UTF16Indices<'a> {
+impl<'a> Iterator for Utf16Indices<'a> {
     type Item = (usize, u32);
 
     #[inline]
@@ -649,13 +649,13 @@ impl<'a> Iterator for UTF16Indices<'a> {
     }
 }
 
-break_iterator_impl!(LineBreakIteratorUTF16, UTF16Indices<'a>, u32);
+break_iterator_impl!(LineBreakIteratorUtf16, Utf16Indices<'a>, u32);
 
-impl<'a> LineBreakIteratorUTF16<'a> {
+impl<'a> LineBreakIteratorUtf16<'a> {
     /// Create line break iterator using UTF-16 string.
-    pub fn new(input: &[u16]) -> LineBreakIteratorUTF16 {
-        LineBreakIteratorUTF16 {
-            iter: UTF16Indices {
+    pub fn new(input: &[u16]) -> LineBreakIteratorUtf16 {
+        LineBreakIteratorUtf16 {
+            iter: Utf16Indices {
                 front_offset: 0,
                 iter: input,
             },
@@ -674,9 +674,9 @@ impl<'a> LineBreakIteratorUTF16<'a> {
         line_break_rule: LineBreakRule,
         word_break_rule: WordBreakRule,
         ja_zh: bool,
-    ) -> LineBreakIteratorUTF16 {
-        LineBreakIteratorUTF16 {
-            iter: UTF16Indices {
+    ) -> LineBreakIteratorUtf16 {
+        LineBreakIteratorUtf16 {
+            iter: Utf16Indices {
                 front_offset: 0,
                 iter: input,
             },

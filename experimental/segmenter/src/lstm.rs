@@ -54,12 +54,12 @@ impl LstmSegmenterIterator {
     }
 }
 
-struct LstmSegmenterIteratorUTF16 {
+struct LstmSegmenterIteratorUtf16 {
     bies_str: String,
     pos: usize,
 }
 
-impl Iterator for LstmSegmenterIteratorUTF16 {
+impl Iterator for LstmSegmenterIteratorUtf16 {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -74,7 +74,7 @@ impl Iterator for LstmSegmenterIteratorUTF16 {
     }
 }
 
-impl LstmSegmenterIteratorUTF16 {
+impl LstmSegmenterIteratorUtf16 {
     pub fn new(lstm: &Lstm, input: &str) -> Self {
         let lstm_output = lstm.word_segmenter(input);
         Self {
@@ -98,7 +98,7 @@ pub fn get_line_break_utf16(input: &[u16]) -> Option<Vec<usize>> {
     let s: String = decode_utf16(input.iter().cloned())
         .map(|r| r.unwrap())
         .collect();
-    let iter = LstmSegmenterIteratorUTF16::new(&*THAI_LSTM, &s);
+    let iter = LstmSegmenterIteratorUtf16::new(&*THAI_LSTM, &s);
     let result: Vec<usize> = iter.collect();
     if result.is_empty() {
         return None;

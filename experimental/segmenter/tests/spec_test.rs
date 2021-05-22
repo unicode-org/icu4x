@@ -4,7 +4,7 @@
 
 use icu_segmenter::LineBreakIterator;
 use icu_segmenter::LineBreakIteratorLatin1;
-use icu_segmenter::LineBreakIteratorUTF16;
+use icu_segmenter::LineBreakIteratorUtf16;
 use std::char;
 use std::fs::File;
 use std::io::prelude::*;
@@ -88,7 +88,7 @@ fn run_line_break_test() {
 
         {
             println!("UTF16: {}", line);
-            let iter = LineBreakIteratorUTF16::new(&u16_vec);
+            let iter = LineBreakIteratorUtf16::new(&u16_vec);
             let result: Vec<usize> = iter.map(|x| x).collect();
             assert_eq!(result, u16_break, "UTF16: {}", line);
         }

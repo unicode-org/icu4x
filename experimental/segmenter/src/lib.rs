@@ -68,7 +68,7 @@ pub use crate::line_breaker::*;
 mod tests {
     use crate::LineBreakIterator;
     use crate::LineBreakIteratorLatin1;
-    use crate::LineBreakIteratorUTF16;
+    use crate::LineBreakIteratorUtf16;
 
     #[test]
     fn linebreak() {
@@ -96,7 +96,7 @@ mod tests {
         assert_eq!(None, iter_u8.next());
 
         let input: [u16; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
-        let mut iter_u16 = LineBreakIteratorUTF16::new(&input);
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
         assert_eq!(Some(7), iter_u16.next());
 
         // LB15
@@ -108,7 +108,7 @@ mod tests {
         assert_eq!(Some(10), iter_u8.next());
 
         let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
-        let mut iter_u16 = LineBreakIteratorUTF16::new(&input);
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
         assert_eq!(Some(10), iter_u16.next());
 
         // LB16
@@ -118,7 +118,7 @@ mod tests {
         assert_eq!(Some(6), iter.next());
 
         let input: [u16; 4] = [0x29, 0x20, 0x20, 0x203c];
-        let mut iter_u16 = LineBreakIteratorUTF16::new(&input);
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
         assert_eq!(Some(4), iter_u16.next());
 
         // LB17
@@ -138,13 +138,13 @@ mod tests {
         let input: [u16; 11] = [
             0x28, 0x30, 0x2C, 0x31, 0x29, 0x2B, 0x28, 0x32, 0x2C, 0x33, 0x29,
         ];
-        let mut iter_u16 = LineBreakIteratorUTF16::new(&input);
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
         assert_eq!(Some(11), iter_u16.next());
 
         let input: [u16; 13] = [
             0x2014, 0x2014, 0x20, 0x20, 0x2014, 0x2014, 0x31, 0x32, 0x33, 0x20, 0x61, 0x62, 0x63,
         ];
-        let mut iter_u16 = LineBreakIteratorUTF16::new(&input);
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
         assert_eq!(Some(6), iter_u16.next());
 
         iter = LineBreakIterator::new("\u{1F3FB} \u{1F3FB}");

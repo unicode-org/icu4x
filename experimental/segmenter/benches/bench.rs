@@ -6,7 +6,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 
 use icu_segmenter::LineBreakIterator;
 use icu_segmenter::LineBreakIteratorLatin1;
-use icu_segmenter::LineBreakIteratorUTF16;
+use icu_segmenter::LineBreakIteratorUtf16;
 use icu_segmenter::LineBreakRule;
 use icu_segmenter::WordBreakRule;
 
@@ -52,12 +52,12 @@ fn line_break_iter_utf16(c: &mut Criterion) {
 
     let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
     group.bench_function("En", |b| {
-        b.iter(|| LineBreakIteratorUTF16::new(&utf16).count())
+        b.iter(|| LineBreakIteratorUtf16::new(&utf16).count())
     });
 
     group.bench_function("En CSS", |b| {
         b.iter(|| {
-            LineBreakIteratorUTF16::new_with_break_rule(
+            LineBreakIteratorUtf16::new_with_break_rule(
                 &utf16,
                 LineBreakRule::Anywhere,
                 WordBreakRule::BreakAll,
@@ -70,7 +70,7 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
     group.bench_function("Th", |b| {
         b.iter(|| {
-            LineBreakIteratorUTF16::new_with_break_rule(
+            LineBreakIteratorUtf16::new_with_break_rule(
                 &utf16,
                 LineBreakRule::Anywhere,
                 WordBreakRule::BreakAll,

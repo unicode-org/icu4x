@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::LineBreakIterator;
-use icu_segmenter::LineBreakIteratorUTF16;
+use icu_segmenter::LineBreakIteratorUtf16;
 use icu_segmenter::LineBreakRule;
 use icu_segmenter::WordBreakRule;
 
@@ -18,7 +18,7 @@ fn break_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     assert_eq!(expect_utf8, result, "{}", s);
 
     let s_utf16: Vec<u16> = s.encode_utf16().map(|x| x).collect();
-    let iter = LineBreakIteratorUTF16::new_with_break_rule(
+    let iter = LineBreakIteratorUtf16::new_with_break_rule(
         &s_utf16,
         LineBreakRule::Strict,
         WordBreakRule::BreakAll,
@@ -39,7 +39,7 @@ fn keep_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     assert_eq!(expect_utf8, result, "{}", s);
 
     let s_utf16: Vec<u16> = s.encode_utf16().map(|x| x).collect();
-    let iter = LineBreakIteratorUTF16::new_with_break_rule(
+    let iter = LineBreakIteratorUtf16::new_with_break_rule(
         &s_utf16,
         LineBreakRule::Strict,
         WordBreakRule::KeepAll,
@@ -60,7 +60,7 @@ fn normal(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     assert_eq!(expect_utf8, result, "{}", s);
 
     let s_utf16: Vec<u16> = s.encode_utf16().map(|x| x).collect();
-    let iter = LineBreakIteratorUTF16::new_with_break_rule(
+    let iter = LineBreakIteratorUtf16::new_with_break_rule(
         &s_utf16,
         LineBreakRule::Strict,
         WordBreakRule::Normal,
