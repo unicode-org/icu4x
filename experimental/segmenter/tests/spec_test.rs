@@ -82,21 +82,21 @@ fn run_line_break_test() {
 
         {
             println!("UTF8: {}", line);
-            let result: Vec<usize> = iter.map(|x| x).collect();
+            let result: Vec<usize> = iter.collect();
             assert_eq!(result, char_break, "{}", line);
         }
 
         {
             println!("UTF16: {}", line);
             let iter = LineBreakIteratorUtf16::new(&u16_vec);
-            let result: Vec<usize> = iter.map(|x| x).collect();
+            let result: Vec<usize> = iter.collect();
             assert_eq!(result, u16_break, "UTF16: {}", line);
         }
 
         if ascii_only {
             println!("Latin1: {}", line);
             let iter = LineBreakIteratorLatin1::new(&u8_vec);
-            let result: Vec<usize> = iter.map(|x| x).collect();
+            let result: Vec<usize> = iter.collect();
             assert_eq!(result, u8_break, "Latin1: {}", line);
         }
     }
