@@ -20,10 +20,10 @@ fn run_line_break_test() {
     let f = BufReader::new(f.unwrap());
     for line in f.lines() {
         let line = line.unwrap();
-        if line.starts_with("#") {
+        if line.starts_with('#') {
             continue;
         }
-        let mut r = line.split("#");
+        let mut r = line.split('#');
         let r = r.next();
         let v: Vec<_> = r.unwrap().split_ascii_whitespace().collect();
         let mut char_break: Vec<_> = Vec::new();
