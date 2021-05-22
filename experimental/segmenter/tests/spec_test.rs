@@ -63,13 +63,11 @@ fn run_line_break_test() {
                     u16_vec.push(ch as u16);
                     u16_len = u16_len + 1;
                 }
-            } else {
-                if v[count] != "\u{00d7}" {
-                    assert_eq!(v[count], "\u{00f7}");
-                    char_break.push(char_len);
-                    u8_break.push(u8_len);
-                    u16_break.push(u16_len);
-                }
+            } else if v[count] != "\u{00d7}" {
+                assert_eq!(v[count], "\u{00f7}");
+                char_break.push(char_len);
+                u8_break.push(u8_len);
+                u16_break.push(u16_len);
             }
             count = count + 1
         }
