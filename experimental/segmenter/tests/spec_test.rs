@@ -46,22 +46,22 @@ fn run_line_break_test() {
             if count % 2 == 1 {
                 let ch = char::from_u32(u32::from_str_radix(v[count], 16).unwrap()).unwrap();
                 char_vec.push(ch);
-                char_len = char_len + ch.len_utf8();
+                char_len += ch.len_utf8();
 
                 if ch as u32 >= 0x100 {
                     ascii_only = false;
                 } else {
                     u8_vec.push(ch as u8);
-                    u8_len = u8_len + 1;
+                    u8_len += 1;
                 }
 
                 if ch as u32 >= 0x10000 {
                     u16_vec.push((((ch as u32 - 0x10000) >> 10) | 0xd800) as u16);
                     u16_vec.push((((ch as u32) & 0x3ff) | 0xdc00) as u16);
-                    u16_len = u16_len + 2;
+                    u16_len += 2;
                 } else {
                     u16_vec.push(ch as u16);
-                    u16_len = u16_len + 1;
+                    u16_len += 1;
                 }
             } else if v[count] != "\u{00d7}" {
                 assert_eq!(v[count], "\u{00f7}");
@@ -69,7 +69,7 @@ fn run_line_break_test() {
                 u8_break.push(u8_len);
                 u16_break.push(u16_len);
             }
-            count = count + 1
+            count += 1
         }
         let s: String = char_vec.into_iter().collect();
         let mut iter = LineBreakIterator::new(&s);
