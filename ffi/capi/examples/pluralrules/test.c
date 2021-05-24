@@ -22,8 +22,7 @@ int main() {
     }
     ICU4XPluralRules* rules = plural_result.rules;
 
-    ICU4XPluralOperands op;
-    op.i = 3;
+    ICU4XPluralOperands op = { .i = 3 };
 
     ICU4XPluralCategory cat = icu4x_plural_rules_select(rules, &op);
 
