@@ -93,9 +93,8 @@ pub struct DataResponseMetadata {
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use std::borrow::Cow;
 ///
-/// let payload = DataPayload { cow: Cow::Borrowed("Demo") };
+/// let payload = DataPayload::from_borrowed("Demo");
 ///
 /// assert_eq!("Demo", &*payload);
 /// ```
@@ -105,7 +104,91 @@ where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    pub cow: Cow<'d, T>,
+    pub(crate) cow: Cow<'d, T>,
+}
+
+impl<'d, T> DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: Debug,
+{
+    /// Convert an owned Cow-compatible data struct into a DataPayload.
+    #[inline]
+    pub fn from_owned(data: <T as ToOwned>::Owned) -> Self {
+        Self {
+            cow: Cow::Owned(data),
+        }
+    }
+
+    /// Convert a borrowed Cow-compatible data struct into a DataPayload.
+    #[inline]
+    pub fn from_borrowed(data: &'d T) -> Self {
+        Self {
+            cow: Cow::Borrowed(data),
+        }
+    }
+
+    /// Mutate the data contained in this DataPayload.
+    ///
+    /// For safety, all mutation operations must take place within a helper function that cannot
+    /// borrow data from the surrounding context.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let mut payload = DataPayload::<str>::from_owned("Hello".to_string());
+    ///
+    /// payload.with_mut(|s| s.push_str(" World"));
+    ///
+    /// assert_eq!("Hello World", &*payload);
+    /// ```
+    ///
+    /// To transfer data from the context into the data struct, use the `move` keyword:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let initial_vector = vec!["Foo".to_string()];
+    /// let mut payload: DataPayload<Vec<String>> = DataPayload::from_owned(initial_vector);
+    ///
+    /// let new_value = "Bar".to_string();
+    /// payload.with_mut(move |v| v.push(new_value));
+    ///
+    /// assert_eq!("Foo", payload[0]);
+    /// assert_eq!("Bar", payload[1]);
+    /// ```
+    #[inline]
+    pub fn with_mut<F>(&mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut <T as ToOwned>::Owned),
+    {
+        f(self.cow.to_mut())
+    }
+
+    /// Converts the DataPayload into a Cow. May require cloning the data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let payload = DataPayload::from_borrowed("Demo");
+    /// let data: Cow<str> = payload.into_cow();
+    /// assert!(matches!(data, Cow::Borrowed(_)));
+    ///
+    /// let payload = DataPayload::<str>::from_owned("Demo".to_string());
+    /// let data: Cow<str> = payload.into_cow();
+    /// assert!(matches!(data, Cow::Owned(_)));
+    /// ```
+    #[inline]
+    pub fn into_cow(self) -> Cow<'d, T> {
+        self.cow
+    }
 }
 
 impl<'d, T> Borrow<T> for DataPayload<'d, T>

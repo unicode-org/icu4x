@@ -93,9 +93,7 @@ impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload {
-                cow: Cow::Owned(PluralRuleStringsV1::from(r)),
-            }),
+            payload: Some(DataPayload::from_owned(PluralRuleStringsV1::from(r))),
         })
     }
 }

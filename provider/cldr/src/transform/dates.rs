@@ -76,9 +76,7 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload {
-                cow: Cow::Owned(gregory::DatesV1::from(dates)),
-            }),
+            payload: Some(DataPayload::from_owned(gregory::DatesV1::from(dates))),
         })
     }
 }

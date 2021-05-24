@@ -8,7 +8,7 @@ use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use std::borrow::Cow;
+
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 use tinystr::TinyStr4;
@@ -64,9 +64,7 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
                 },
-                payload: Some(DataPayload {
-                    cow: Cow::Owned(LikelySubtagsV1::from(&self.data)),
-                }),
+                payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
             })
         } else {
             Err(DataError::UnavailableResourceOptions(req.clone()))

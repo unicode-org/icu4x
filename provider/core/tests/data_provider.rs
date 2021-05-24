@@ -45,9 +45,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload {
-                cow: Cow::Owned(self.data.hello_v1.clone()),
-            }),
+            payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
         })
     }
 }
@@ -64,9 +62,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload {
-                cow: Cow::Borrowed(&self.data.hello_v1),
-            }),
+            payload: Some(DataPayload::from_borrowed(&self.data.hello_v1)),
         })
     }
 }
@@ -97,9 +93,7 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload {
-                cow: Cow::Borrowed(&self.borrowed_data.hello_v1),
-            }),
+            payload: Some(DataPayload::from_borrowed(&self.borrowed_data.hello_v1)),
         })
     }
 }
@@ -109,9 +103,7 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload {
-                cow: Cow::Borrowed(&self.borrowed_data.hello_alt),
-            }),
+            payload: Some(DataPayload::from_borrowed(&self.borrowed_data.hello_alt)),
         })
     }
 }
@@ -146,7 +138,7 @@ where
     provider
         .load_payload(&get_request_v1())?
         .take_payload()
-        .map(|p| p.cow)
+        .map(|p| p.into_cow())
 }
 
 fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
@@ -154,7 +146,7 @@ fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
     d.load_payload(&get_request_alt())?
         .take_payload()
-        .map(|p| p.cow)
+        .map(|p| p.into_cow())
 }
 
 fn get_request_v1() -> DataRequest {
@@ -341,18 +333,16 @@ where
     's: 'd,
     P: DataProvider<'d, HelloWorldV1<'s>> + DataProvider<'d, HelloAlt> + ?Sized,
 {
-    let v1: Cow<'d, HelloWorldV1<'s>> = d
+    let v1: DataPayload<'d, HelloWorldV1<'s>> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
-        .unwrap()
-        .cow;
-    let v2: Cow<'d, HelloAlt> = d
+        .unwrap();
+    let v2: DataPayload<'d, HelloAlt> = d
         .load_payload(&get_request_alt())
         .unwrap()
         .take_payload()
-        .unwrap()
-        .cow;
+        .unwrap();
     if v1.message == v2.message {
         panic!()
     }
