@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621579346387,
+  "lastUpdate": 1621874054896,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6659,6 +6659,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30695558,
             "range": "± 194821",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eb112c397b37a57a551f0c972b9f7220a5177738",
+          "message": "Make cow field of DataPayload crate-private",
+          "timestamp": "2021-05-24T11:27:59-05:00",
+          "tree_id": "2d08a0ca7e40b2f2ae643a70b4eb5e5efe1b0370",
+          "url": "https://github.com/unicode-org/icu4x/commit/eb112c397b37a57a551f0c972b9f7220a5177738"
+        },
+        "date": 1621874053148,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30637554,
+            "range": "± 150106",
             "unit": "ns/iter"
           }
         ]
