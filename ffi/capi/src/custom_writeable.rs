@@ -116,3 +116,40 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
         grow,
     }
 }
+
+
+#[no_mangle]
+pub unsafe extern "C" fn icu4x_sbuffer_writeable(cap: usize) -> *mut ICU4XWriteable {
+    extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
+        unsafe {
+            let this = &*this;
+            let mut vec = Vec::from_raw_parts(this.buf, 0, this.cap);
+            vec.reserve(cap);
+            std::mem::forget(vec);
+        }
+        true
+    }
+
+    extern "C" fn flush(_: *mut ICU4XWriteable) {}
+
+    let mut vec = Vec::<u8>::with_capacity(cap);
+    let ret = ICU4XWriteable {
+        context: ptr::null_mut(),
+        buf: vec.as_mut_ptr(),
+        len: 0,
+        cap: cap,
+        flush: flush,
+        grow: grow
+    };
+
+    std::mem::forget(vec);
+    Box::into_raw(Box::new(ret))
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn icu4x_free_sbuffer_writeable(this: *mut ICU4XWriteable) {
+    let this = Box::from_raw(this);
+    let vec = Vec::from_raw_parts(this.buf, 0, this.cap);
+    drop(vec);
+    drop(this);
+}

@@ -157,7 +157,7 @@ category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2021-02-28"
 command = "cargo"
-args = ["wasm-build", "--examples", "--workspace", "--exclude", "icu_datagen"]
+args = ["wasm-build", "--package", "icu_capi"]
 
 [tasks.wasm-dir]
 description = "Make the WASM package directory"
@@ -169,7 +169,7 @@ args = ["-p", "wasmpkg"]
 description = "Copy the WASM files from target into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["-a", "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/examples/.", "wasmpkg/"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/icu_capi.wasm", "wasmpkg/"]
 dependencies = ["wasm-build", "wasm-dir"]
 
 [tasks.wasm-wat]
