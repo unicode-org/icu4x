@@ -21,14 +21,52 @@ function getString(ptr, len) {
   return (new TextDecoder()).decode(buf)
 }
 
-const decimal = icu4x.icu4x_fixed_decimal_create(BigInt(1234));
-icu4x.icu4x_fixed_decimal_multiply_pow10(decimal, -2);
-icu4x.icu4x_fixed_decimal_negate(decimal);
+const fixedDecimalRegistry = new FinalizationRegistry(ptr => {
+  console.log("freeing decimal!");
+  icu4x.icu4x_fixed_decimal_destroy(ptr);
+});
 
-const outWritable = icu4x.icu4x_buffer_writeable(10);
-icu4x.icu4x_fixed_decimal_write_to(decimal, outWritable);
-const outStringPtr = icu4x.icu4x_buffer_writeable_borrow(outWritable);
-const outStringLen = icu4x.icu4x_buffer_writeable_len(outWritable);
-console.log(getString(outStringPtr, outStringLen));
-icu4x.icu4x_buffer_writeable_free(outWritable);
-icu4x.icu4x_fixed_decimal_destroy(decimal);
+class FixedDecimal {
+  constructor(magnitude) {
+    this.underlying = icu4x.icu4x_fixed_decimal_create(magnitude);    
+    fixedDecimalRegistry.register(this, this.underlying);
+  }
+
+  multiply_pow10(pow) {
+    icu4x.icu4x_fixed_decimal_multiply_pow10(this.underlying, pow);
+  }
+
+  negate() {
+    icu4x.icu4x_fixed_decimal_negate(this.underlying);
+  }
+
+  write_to(writable) {
+    icu4x.icu4x_fixed_decimal_write_to(this.underlying, writable.underlying);
+  }
+}
+
+const bufferWritableRegistry = new FinalizationRegistry(ptr => {
+  console.log("freeing writable!");
+  icu4x.icu4x_buffer_writeable_free(ptr);
+});
+
+class BufferWritable {
+  constructor() {
+    this.underlying = icu4x.icu4x_buffer_writeable(0);    
+    bufferWritableRegistry.register(this, this.underlying);
+  }
+
+  getString() {
+    const outStringPtr = icu4x.icu4x_buffer_writeable_borrow(this.underlying);
+    const outStringLen = icu4x.icu4x_buffer_writeable_len(this.underlying);
+    return getString(outStringPtr, outStringLen);
+  }
+}
+
+const decimal = new FixedDecimal(BigInt(1234));
+decimal.multiply_pow10(-2);
+decimal.negate();
+
+const outWritable = new BufferWritable();
+decimal.write_to(outWritable);
+console.log(outWritable.getString());
