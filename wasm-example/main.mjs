@@ -15,10 +15,10 @@ function withEncodedString(str, fn) {
   }
 }
 
-function getString(ptr, len) {
+function readString(ptr, len) {
   const memory = new Uint8Array(icu4x.memory.buffer);
   const buf = memory.subarray(ptr, ptr + len);
-  return (new TextDecoder()).decode(buf)
+  return (new TextDecoder("utf-8")).decode(buf)
 }
 
 const fixedDecimalRegistry = new FinalizationRegistry(ptr => {
@@ -41,7 +41,15 @@ class FixedDecimal {
   }
 
   write_to(writable) {
-    icu4x.icu4x_fixed_decimal_write_to(this.underlying, writable.underlying);
+    let outPtr = icu4x.icu4x_alloc(16);
+    icu4x.icu4x_fixed_decimal_write_to(outPtr, this.underlying, writable.underlying);
+    const buf = new BigUint64Array(icu4x.memory.buffer, outPtr, 2);
+    const ret = {
+      abc: buf[0],
+      def: buf[1]
+    };
+    icu4x.icu4x_free(outPtr, 16);
+    return ret;
   }
 }
 
@@ -59,7 +67,8 @@ class BufferWritable {
   getString() {
     const outStringPtr = icu4x.icu4x_buffer_writeable_borrow(this.underlying);
     const outStringLen = icu4x.icu4x_buffer_writeable_len(this.underlying);
-    return getString(outStringPtr, outStringLen);
+    console.log("len is", outStringLen);
+    return readString(outStringPtr, outStringLen);
   }
 }
 
@@ -68,5 +77,5 @@ decimal.multiply_pow10(-2);
 decimal.negate();
 
 const outWritable = new BufferWritable();
-decimal.write_to(outWritable);
+console.log(decimal.write_to(outWritable));
 console.log(outWritable.getString());

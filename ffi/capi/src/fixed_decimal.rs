@@ -39,9 +39,19 @@ pub extern "C" fn icu4x_fixed_decimal_negate(fd: &mut ICU4XFixedDecimal) {
     fd.negate()
 }
 
+#[repr(C)]
+pub struct TempStruct {
+    abc: u64,
+    def: u64
+}
+
 #[no_mangle]
-pub extern "C" fn icu4x_fixed_decimal_write_to(fd: &ICU4XFixedDecimal, to: &mut ICU4XWriteable) {
+pub extern "C" fn icu4x_fixed_decimal_write_to(fd: &ICU4XFixedDecimal, to: &mut ICU4XWriteable) -> TempStruct {
     fd.write_to(to).unwrap();
+    TempStruct {
+        abc: 123,
+        def: 456
+    }
 }
 
 #[no_mangle]
