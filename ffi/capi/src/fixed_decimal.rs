@@ -4,6 +4,9 @@
 
 use fixed_decimal::FixedDecimal;
 
+use writeable::Writeable;
+use crate::custom_writeable::ICU4XWriteable;
+
 /// Opaque type for use behind a pointer, is [`FixedDecimal`]
 ///
 /// Can be obtained via [`icu4x_fixed_decimal_create()`] and destroyed via [`icu4x_fixed_decimal_destroy()`]
@@ -35,6 +38,12 @@ pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
 pub extern "C" fn icu4x_fixed_decimal_negate(fd: &mut ICU4XFixedDecimal) {
     fd.negate()
 }
+
+#[no_mangle]
+pub extern "C" fn icu4x_fixed_decimal_write_to(fd: &ICU4XFixedDecimal, to: &mut ICU4XWriteable) {
+    fd.write_to(to).unwrap();
+}
+
 #[no_mangle]
 /// Destructor for [`ICU4XFixedDecimal`]
 ///

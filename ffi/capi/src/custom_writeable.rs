@@ -119,7 +119,7 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
 
 
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_sbuffer_writeable(cap: usize) -> *mut ICU4XWriteable {
+pub unsafe extern "C" fn icu4x_buffer_writeable(cap: usize) -> *mut ICU4XWriteable {
     extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
         unsafe {
             let this = &*this;
@@ -147,7 +147,23 @@ pub unsafe extern "C" fn icu4x_sbuffer_writeable(cap: usize) -> *mut ICU4XWritea
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_free_sbuffer_writeable(this: *mut ICU4XWriteable) {
+pub unsafe extern "C" fn icu4x_buffer_writeable_borrow(this: *mut ICU4XWriteable) -> *mut u8 {
+    let this = Box::from_raw(this);
+    let ret = this.buf;
+    std::mem::forget(this);
+    ret
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn icu4x_buffer_writeable_len(this: *mut ICU4XWriteable) -> usize {
+    let this = Box::from_raw(this);
+    let ret = this.len;
+    std::mem::forget(this);
+    ret
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn icu4x_buffer_writeable_free(this: *mut ICU4XWriteable) {
     let this = Box::from_raw(this);
     let vec = Vec::from_raw_parts(this.buf, 0, this.cap);
     drop(vec);
