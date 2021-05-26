@@ -7,6 +7,8 @@
 use crate::error::Error;
 use crate::prelude::*;
 use std::fmt::Debug;
+use std::borrow::Borrow;
+use yoke::Yokeable;
 
 /// A provider that can iterate over all supported [`ResourceOptions`] for a certain key.
 ///
@@ -25,7 +27,9 @@ pub trait IterableDataProviderCore {
 pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
 {
 }
 
@@ -33,7 +37,9 @@ impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
     S: IterableDataProviderCore + DataProvider<'d, T>,
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
 {
 }
 

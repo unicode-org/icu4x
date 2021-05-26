@@ -12,6 +12,8 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
+use yoke::Yoke;
+use yoke::Yokeable;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -87,6 +89,16 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
+enum DataPayloadInternal<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+{
+    Borrowed(&'d T),
+    Yoked(yoke::Yoke<<T as ToOwned>::Owned, Option<std::rc::Rc<[u8]>>>),
+}
+
 /// A wrapper around the payload returned in a [`DataResponse`].
 ///
 /// # Examples
@@ -98,25 +110,28 @@ pub struct DataResponseMetadata {
 ///
 /// assert_eq!("Demo", &*payload);
 /// ```
-#[derive(Debug, Clone, PartialEq)]
 pub struct DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
 {
-    pub(crate) cow: Cow<'d, T>,
+    // pub(crate) cow: Cow<'d, T>,
+    internal: DataPayloadInternal<'d, T>,
 }
 
 impl<'d, T> DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
 {
     /// Convert an owned Cow-compatible data struct into a DataPayload.
     #[inline]
     pub fn from_owned(data: <T as ToOwned>::Owned) -> Self {
         Self {
-            cow: Cow::Owned(data),
+            // cow: Cow::Owned(data),
+            internal: DataPayloadInternal::Yoked(Yoke::new_owned(data))
         }
     }
 
@@ -124,7 +139,8 @@ where
     #[inline]
     pub fn from_borrowed(data: &'d T) -> Self {
         Self {
-            cow: Cow::Borrowed(data),
+            // cow: Cow::Borrowed(data),
+            internal: DataPayloadInternal::Borrowed(data)
         }
     }
 
@@ -164,9 +180,19 @@ where
     #[inline]
     pub fn with_mut<F>(&mut self, f: F)
     where
-        F: 'static + for<'b> FnOnce(&'b mut <T as ToOwned>::Owned),
+        F: 'static + for<'b> FnOnce(&'b mut <<T as ToOwned>::Owned as Yokeable<'_>>::Output),
     {
-        f(self.cow.to_mut())
+        use DataPayloadInternal::*;
+        match self.internal {
+            Borrowed(borrowed) => {
+                self.internal = Yoked(Yoke::new_owned(borrowed.to_owned()));
+                match self.internal {
+                    Borrowed(..) => unreachable!(),
+                    Yoked(ref mut yoke) => yoke.with_mut(f),
+                }
+            },
+            Yoked(ref mut yoke) => yoke.with_mut(f),
+        }
     }
 
     /// Converts the DataPayload into a Cow. May require cloning the data.
@@ -187,42 +213,94 @@ where
     /// ```
     #[inline]
     pub fn into_cow(self) -> Cow<'d, T> {
-        self.cow
+        // self.cow
+        todo!()
     }
 }
 
 impl<'d, T> Borrow<T> for DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
 {
     #[inline]
     fn borrow(&self) -> &T {
-        self.cow.borrow()
+        &*self
     }
 }
 
 impl<'d, T> AsRef<T> for DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
 {
     #[inline]
     fn as_ref(&self) -> &T {
-        self.cow.as_ref()
+        &*self
     }
 }
 
 impl<'d, T> Deref for DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
 {
     type Target = T;
 
     #[inline]
-    fn deref(&self) -> &Self::Target {
-        self.cow.deref()
+    fn deref<'a>(&'a self) -> &'a Self::Target {
+        use DataPayloadInternal::*;
+        match self.internal {
+            Borrowed(borrowed) => borrowed,
+            Yoked(ref yoke) => {
+                yoke.get().borrow()
+            },
+        }
+    }
+}
+
+impl<'d, T> Debug for DataPayload<'d, T>
+where
+    T: Debug + ToOwned + ?Sized,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        self.fmt(f)
+    }
+}
+
+impl<'d, T> PartialEq for DataPayload<'d, T>
+where
+    T: PartialEq + ToOwned + ?Sized,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.eq(other)
+    }
+}
+
+impl<'d, T> Clone for DataPayload<'d, T>
+where
+    T: ToOwned + ?Sized,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        use DataPayloadInternal::*;
+        DataPayload {
+            internal: match self.internal {
+                Borrowed(borrowed) => Borrowed(borrowed),
+                Yoked(ref yoke) => {
+                    Yoked(yoke.clone())
+                },
+            }
+        }
     }
 }
 
@@ -231,7 +309,9 @@ where
 pub struct DataResponse<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -243,7 +323,9 @@ where
 impl<'d, T> DataResponse<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
@@ -255,7 +337,9 @@ where
 impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
 {
     type Error = Error;
 
@@ -274,7 +358,9 @@ where
 pub trait DataProvider<'d, T>
 where
     T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Clone,
 {
     /// Query the provider for data, returning the result.
     ///

@@ -10,6 +10,8 @@ use std::any::Any;
 use std::any::TypeId;
 use std::borrow::Cow;
 use std::fmt::Debug;
+use std::borrow::Borrow;
+use yoke::Yokeable;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
@@ -56,7 +58,28 @@ pub trait ErasedDataStruct: 'static + Debug {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
+// impl_dyn_from_payload!(ErasedDataStruct, 'd, 'static);
+
+unsafe impl<'a> Yokeable<'a> for Box<dyn ErasedDataStruct> {
+    type Output = &'a dyn ErasedDataStruct;
+
+    fn transform(&'a self) -> &'a &'a dyn ErasedDataStruct {
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        self
+    }
+
+    unsafe fn make(from: &'a dyn ErasedDataStruct) -> Self {
+        std::mem::transmute(from)
+    }
+
+    fn with_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        // Cast away the lifetime of Self
+        unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+    }
+}
 
 impl dyn ErasedDataStruct {
     /// Convenience function: Return a downcast reference, or an error if mismatched types.
@@ -89,8 +112,11 @@ impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
-        T: Clone + Debug + Any,
+        T: Clone,
+        <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+        for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T>,
     {
+        /*
         let new_cow = match self.cow {
             Cow::Borrowed(erased) => {
                 let borrowed: &'d T =
@@ -116,6 +142,8 @@ impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
             }
         };
         Ok(DataPayload { cow: new_cow })
+        */
+        todo!()
     }
 }
 
@@ -133,6 +161,8 @@ where
         self
     }
 }
+
+// impl<'a> Borrow<dyn ErasedDataStruct> for Box<dyn ErasedDataStruct
 
 /// A type-erased data provider that loads a payload of types implementing [`Any`].
 ///
@@ -168,7 +198,9 @@ where
 
 impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: Clone + Debug + Any,
+    T: Clone,
+    <T as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+    for<'a> <<T as ToOwned>::Owned as Yokeable<'a>>::Output: Borrow<T> + Clone,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {

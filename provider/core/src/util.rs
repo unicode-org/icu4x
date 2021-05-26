@@ -23,33 +23,41 @@ macro_rules! impl_dyn_clone {
     };
 }
 
-/// Implement [`From`](std::convert::From)`<`[`DataPayload<T>`]`>` for [DataPayload<dyn S>`] where `T` implements the trait `S`.
+/// Implement [`From`](std::convert::From)`<`[`DataPayload<T>`]`>` for [DataPayload<dyn S>`]
+/// where `T` implements the trait `S`.
 macro_rules! impl_dyn_from_payload {
     ($trait:path, $d:lifetime, $s:lifetime) => {
         impl<$d, $s: $d, T> From<$crate::prelude::DataPayload<$d, T>>
-            for $crate::prelude::DataPayload<$d, dyn $trait + 's>
+            for $crate::prelude::DataPayload<$d, dyn $trait + $s>
         where
-            T: $trait + Clone,
+            T: $trait,
+            dyn $trait: ToOwned,
+            <dyn $trait as ToOwned>::Owned: for<'a> yoke::Yokeable<'a>,
+            for<'a> <<dyn $trait as ToOwned>::Owned as yoke::Yokeable<'a>>::Output: std::borrow::Borrow<T> + Clone,
         {
             fn from(
                 other: $crate::prelude::DataPayload<$d, T>,
-            ) -> $crate::prelude::DataPayload<$d, dyn $trait + 's> {
+            ) -> $crate::prelude::DataPayload<$d, dyn $trait + $s> {
+                /*
                 use std::borrow::Cow;
                 Self {
                     cow: match other.cow {
-                        Cow::Borrowed(v) => Cow::Borrowed(v as &(dyn $trait + 's)),
+                        Cow::Borrowed(v) => Cow::Borrowed(v as &(dyn $trait + $s)),
                         Cow::Owned(v) => {
-                            let boxed: Box<dyn $trait + 's> = Box::new(v);
+                            let boxed: Box<dyn $trait + $s> = Box::new(v);
                             Cow::Owned(boxed)
                         }
                     },
                 }
+                */
+                todo!()
             }
         }
     };
 }
 
-/// Implement [`DataProvider<dyn S>`](crate::DataProvider) on a type that already implements [`DataProvider<T>`](crate::DataProvider)
+/// Implement [`DataProvider<dyn S>`](crate::DataProvider) on a type that already implements
+/// [`DataProvider<T>`](crate::DataProvider)
 /// for one or more `T`, where `T` is a [`Sized`] type that implements the trait `S`.
 ///
 /// Use this macro to add support to your data provider for:

@@ -47,14 +47,21 @@ use std::sync::Arc;
 /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
 /// ```
 ///
-pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
+pub struct Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+{
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: Y,
     cart: C,
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
+impl<Y, C> Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    C: StableDeref,
+{
     /// Construct a [`Yoke`] by yokeing an object to a cart. This is the primary constructor
     /// for [`Yoke`].
     ///
@@ -113,7 +120,10 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
+impl<Y, C> Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+{
     /// Obtain a valid reference to the yokeable data
     ///
     /// This essentially transforms the lifetime of the internal yokeable data to
@@ -374,5 +384,81 @@ where
             yokeable: unsafe { Y::make(self.get().clone()) },
             cart: self.cart,
         }
+    }
+}
+
+impl<Y, C> Ord for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: Ord,
+{
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.get().cmp(other.get())
+    }
+}
+
+impl<Y, C> PartialOrd for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: PartialOrd,
+{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.get().partial_cmp(other.get())
+    }
+}
+
+impl<Y, C> Eq for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: Eq,
+{}
+
+impl<Y, C> PartialEq for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.get() == other.get()
+    }
+}
+
+
+trait Foo {}
+
+// impl Foo for &'_ str {}
+
+impl<'a> Foo for &'a str {}
+
+impl<Y, C> std::fmt::Debug for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> &'a <Y as Yokeable<'a>>::Output: std::fmt::Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        self.get().fmt(f)
+    }
+}
+
+impl<Y, C> Foo for Yoke<Y, C>
+where
+    for<'a> Y: Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: Foo,
+{}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::borrow::Cow;
+    use std::fmt::Debug;
+
+    #[test]
+    fn test_dyn() {
+        let owned_data = "Hello World".to_string();
+        // let rc: Rc<str> = Rc::from(&owned_data);
+        // let yoke =
+        //     Yoke::<Cow<str>, Rc<str>>::attach_to_cart_badly(rc, |data: &str| Cow::Borrowed(data));
+        let yoke = Yoke::<&str, &str>::attach_to_cart_badly(&owned_data, |data: &str| data);
+        let as_debug: &dyn Debug = &yoke;
     }
 }
