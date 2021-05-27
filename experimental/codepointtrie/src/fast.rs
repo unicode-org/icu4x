@@ -7,8 +7,8 @@ use crate::codepointtrie::{
     CodePointTrie, TrieType, ValueWidth,
 };
 
-pub(crate) fn trie_internal_small_index(
-    trie: &CodePointTrie<TrieType, ValueWidth>,
+pub(crate) fn trie_internal_small_index<T: TrieType, W: ValueWidth>(
+    trie: &CodePointTrie<W, T>,
     c: u32,
 ) -> u32 {
     let mut i1: u32 = c >> SHIFT_1;
@@ -39,8 +39,8 @@ pub(crate) fn trie_internal_small_index(
 }
 
 /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
-pub(crate) fn trie_small_index(
-    trie: &CodePointTrie<TrieType, ValueWidth>,
+pub(crate) fn trie_small_index<T: TrieType, W: ValueWidth>(
+    trie: &CodePointTrie<W, T>,
     c: u32,
 ) -> u32 {
     if c >= trie.high_start() {
@@ -51,8 +51,8 @@ pub(crate) fn trie_small_index(
 }
 
 /// Internal trie getter for a code point below the fast limit. Returns the data index.
-pub(crate) fn trie_fast_index(
-    trie: &CodePointTrie<TrieType, ValueWidth>,
+pub(crate) fn trie_fast_index<T: TrieType, W: ValueWidth>(
+    trie: &CodePointTrie<W, T>,
     c: u32,
 ) -> u32 {
     let index_array_pos: u32 = c >> FAST_TYPE_SHIFT;
@@ -64,8 +64,8 @@ pub(crate) fn trie_fast_index(
 /// Internal trie getter to get trie data array index position for code point
 /// value `c` that is beyond ASCII range. Also checks that c is in
 /// U+0000..10FFFF.
-pub(crate) fn trie_cp_index(
-    trie: &CodePointTrie<TrieType, ValueWidth>,
+pub(crate) fn trie_cp_index<T: TrieType, W: ValueWidth>(
+    trie: &CodePointTrie<W, T>,
     c: u32,
 ) -> u32 {
     if c < 0 {
@@ -80,9 +80,9 @@ pub(crate) fn trie_cp_index(
 }
 
 /// Helper function that gets the data array value at the provided index
-pub(crate) fn trie_get_value(
-    data: &CodePointTrieData,
-    value_width: &ValueWidth,
+pub(crate) fn trie_get_value<W: ValueWidth>(
+    data: &[W],
+    value_width: &W,
     data_index: u32,
 ) -> u32 {
     let return_val_opt: Option<u32> = match value_width {
@@ -103,8 +103,8 @@ pub(crate) fn trie_get_value(
     return_val_opt.unwrap_or(0xffffffff)
 }
 
-pub(crate) fn trie_get(
-    trie: &CodePointTrie<TrieType, ValueWidth>,
+pub(crate) fn trie_get<T: TrieType, W: ValueWidth>(
+    trie: &CodePointTrie<W, T>,
     c: u32,
 ) -> u32 {
     let data_index: u32 = trie_cp_index(trie, c);
@@ -112,8 +112,8 @@ pub(crate) fn trie_get(
     data_value
 }
 
-pub(crate) fn check_trie(
-    trie: &CodePointTrie<TrieType, ValueWidth>,
+pub(crate) fn check_trie<T: TrieType, W: ValueWidth>(
+    trie: &CodePointTrie<W, T>,
     check_ranges: &[u32],
 ) {
     assert_eq!(

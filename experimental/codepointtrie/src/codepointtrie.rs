@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use zerovec::ZeroVec;
+use std::marker::PhantomData;
 
 pub mod impl_const {
 
@@ -158,6 +159,7 @@ pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
     pub null_value: u32,
     pub index: ZeroVec<'trie, u16>,
     pub data: ZeroVec<'trie, W>,
+    pub _marker_ty: PhantomData<T>,
 }
 
 pub fn get_code_point_trie_type(trie_type_int: u8) -> TrieTypeEnum {
@@ -228,7 +230,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         if c >= self.high_start() {
             self.data_length() - HIGH_VALUE_NEG_DATA_OFFSET
         } else {
-            trie_internal_small_index(self, c)
+            self.trie_internal_small_index(c)
         }
     }
 
@@ -245,9 +247,9 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
     pub fn get(&self, c: u32) -> W {
         let index: u32 = if c <= T::FAST_MAX {
-            trie_fast_index(self, c)
+            self.trie_fast_index(c)
         } else if c <= CODE_POINT_MAX {
-            trie_small_index(self, c)
+            self.trie_small_index(c)
         } else {
             self.data_length() - ERROR_VALUE_NEG_DATA_OFFSET
         };
@@ -259,12 +261,12 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         self.get(c).cast_to_widest()
     }
 
-    pub fn index(&self) -> ZeroVec<'trie, u16> {
-        self.index
+    pub fn index(&self) -> &ZeroVec<'trie, u16> {
+        &self.index
     }
 
-    pub fn data(&self) -> ZeroVec<'trie, W> {
-        self.data
+    pub fn data(&self) -> &ZeroVec<'trie, W> {
+        &self.data
     }
 
     pub fn trie_type(&self) -> TrieTypeEnum {
