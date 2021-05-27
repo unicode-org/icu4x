@@ -188,6 +188,61 @@ use impl_const::*;
 
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
+    pub(crate) fn trie_internal_small_index(
+        &self,
+        c: u32,
+    ) -> u32 {
+        let mut i1: u32 = c >> SHIFT_1;
+        if self.trie_type() == TrieType::Fast {
+            assert!(0xffff < c && c < self.high_start());
+            i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
+        } else {
+            assert!(c < self.high_start() && self.high_start() > SMALL_LIMIT);
+            i1 = i1 + SMALL_INDEX_LENGTH;
+        }
+        let mut i3_block: u32 = self.index().get(
+            (self.index().get(i1 as usize) as u32 + ((c >> SHIFT_2) & INDEX_2_MASK)) as usize)
+            as u32;
+        let mut i3: u32 = (c >> SHIFT_3) & INDEX_3_MASK;
+        let mut data_block: u32;
+        if i3_block & 0x8000 == 0 {
+            // 16-bit indexes
+            data_block = self.index().get((i3_block + i3) as usize) as u32;
+        } else {
+            // 18-bit indexes stored in groups of 9 enselfs per 8 indexes.
+            i3_block = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
+            i3 = i3 & 7;
+            data_block =
+                ((self.index().get((i3_block + 1) as usize) << (2 + (2 * i3))) as u32 & 0x30000) as u32;
+            data_block = data_block | self.index().get((i3_block + i3) as usize) as u32;
+        }
+        data_block + (c & SMALL_DATA_MASK)
+    }
+    
+
+    /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
+    pub fn trie_small_index(
+        &self,
+        c: u32,
+    ) -> u32 {
+        if c >= self.high_start() {
+            self.data_length() - HIGH_VALUE_NEG_DATA_OFFSET
+        } else {
+            trie_internal_small_index(self, c)
+        }
+    }
+
+    /// Internal trie getter for a code point below the fast limit. Returns the data index.
+    pub fn trie_fast_index(
+        &self,
+        c: u32,
+    ) -> u32 {
+        let index_array_pos: u32 = c >> FAST_TYPE_SHIFT;
+        let index_array_val: u16 = self.index().get(index_array_pos as usize).unwrap(); // 1. How to specify type parameter for .index() 2. How to avoid unwrap()?
+        let fast_index_val: u32 = index_array_val as u32 + (c & FAST_TYPE_DATA_MASK);
+        fast_index_val
+    }
+
     pub fn get(&self, c: u32) -> W {
         let index: u32 = if c <= T::FAST_MAX {
             trie_fast_index(self, c)
