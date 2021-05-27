@@ -4,6 +4,3 @@
 
 mod codepointtrie;
 mod fast;
-mod fast_16;
-mod fast_32;
-mod fast_8;

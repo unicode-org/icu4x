@@ -4,15 +4,15 @@
 
 use crate::codepointtrie::impl_const::*;
 use crate::codepointtrie::{
-    CodePointTrie, CodePointTrieData, CodePointTrieType, CodePointTrieValueWidth,
+    CodePointTrie, TrieType, ValueWidth,
 };
 
 pub(crate) fn trie_internal_small_index(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
+    trie: &CodePointTrie<TrieType, ValueWidth>,
     c: u32,
 ) -> u32 {
     let mut i1: u32 = c >> SHIFT_1;
-    if trie.trie_type() == CodePointTrieType::Fast {
+    if trie.trie_type() == TrieType::Fast {
         assert!(0xffff < c && c < trie.high_start());
         i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
     } else {
@@ -40,7 +40,7 @@ pub(crate) fn trie_internal_small_index(
 
 /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
 pub(crate) fn trie_small_index(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
+    trie: &CodePointTrie<TrieType, ValueWidth>,
     c: u32,
 ) -> u32 {
     if c >= trie.high_start() {
@@ -52,7 +52,7 @@ pub(crate) fn trie_small_index(
 
 /// Internal trie getter for a code point below the fast limit. Returns the data index.
 pub(crate) fn trie_fast_index(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
+    trie: &CodePointTrie<TrieType, ValueWidth>,
     c: u32,
 ) -> u32 {
     let index_array_pos: u32 = c >> FAST_TYPE_SHIFT;
@@ -65,7 +65,7 @@ pub(crate) fn trie_fast_index(
 /// value `c` that is beyond ASCII range. Also checks that c is in
 /// U+0000..10FFFF.
 pub(crate) fn trie_cp_index(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
+    trie: &CodePointTrie<TrieType, ValueWidth>,
     c: u32,
 ) -> u32 {
     if c < 0 {
@@ -82,19 +82,19 @@ pub(crate) fn trie_cp_index(
 /// Helper function that gets the data array value at the provided index
 pub(crate) fn trie_get_value(
     data: &CodePointTrieData,
-    value_width: &CodePointTrieValueWidth,
+    value_width: &ValueWidth,
     data_index: u32,
 ) -> u32 {
     let return_val_opt: Option<u32> = match value_width {
-        &CodePointTrieValueWidth::Bits16 => match data.data_16_bit() {
+        &ValueWidth::Bits16 => match data.data_16_bit() {
             Some(data_array) => Some(data_array[data_index as usize] as u32),
             _ => None,
         },
-        &CodePointTrieValueWidth::Bits32 => match data.data_32_bit() {
+        &ValueWidth::Bits32 => match data.data_32_bit() {
             Some(data_array) => Some(data_array[data_index as usize]),
             _ => None,
         },
-        &CodePointTrieValueWidth::Bits8 => match data.data_8_bit() {
+        &ValueWidth::Bits8 => match data.data_8_bit() {
             Some(data_array) => Some(data_array[data_index as usize] as u32),
             _ => None,
         },
@@ -104,7 +104,7 @@ pub(crate) fn trie_get_value(
 }
 
 pub(crate) fn trie_get(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
+    trie: &CodePointTrie<TrieType, ValueWidth>,
     c: u32,
 ) -> u32 {
     let data_index: u32 = trie_cp_index(trie, c);
@@ -113,7 +113,7 @@ pub(crate) fn trie_get(
 }
 
 pub(crate) fn check_trie(
-    trie: &CodePointTrie<CodePointTrieType, CodePointTrieValueWidth>,
+    trie: &CodePointTrie<TrieType, ValueWidth>,
     check_ranges: &[u32],
 ) {
     assert_eq!(

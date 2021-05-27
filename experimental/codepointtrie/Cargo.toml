@@ -25,3 +25,6 @@ include = [
 [lib]
 bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
+
+[dependencies]
+zerovec = { version = "0.2", path = "../../utils/zerovec" }

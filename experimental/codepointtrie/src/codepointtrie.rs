@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use zerovec::ZeroVec;
+
 pub mod impl_const {
 
     pub const FAST_TYPE_SHIFT: i32 = 6;
@@ -74,12 +76,16 @@ pub mod impl_const {
 
     /// Mask for getting the lower bits for the in-small-data-block offset.
     pub const SMALL_DATA_MASK: u32 = SMALL_DATA_BLOCK_LENGTH - 1;
+
+    pub const CODE_POINT_MAX: u32 = 0x10ffff;
 }
+
+// Enums
 
 /// The width of the elements in the data array of a CodePointTrie.
 /// See UCPTrieValueWidth in ICU4C.
 #[derive(Clone, Copy)]
-pub enum CodePointTrieValueWidth {
+pub enum ValueWidthEnum {
     BitsAny = -1,
     Bits16 = 0,
     Bits32 = 1,
@@ -90,88 +96,128 @@ pub enum CodePointTrieValueWidth {
 /// would make it small or fast.
 /// See UCPTrieType in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
-pub enum CodePointTrieType {
+pub enum TrieTypeEnum {
     Any = -1,
     Fast = 0,
     Small = 1,
 }
 
-pub struct CodePointTrieData<'trie> {
-    // void: bool,  // Do we need an equivalent to the `void *ptr0` field in
-    // UCPTrieData? Is it derivative of a None value for the other fields? Is
-    // there a performance / convenience to having it?
-    pub data_8_bit: Option<&'trie [u8]>,
-    pub data_16_bit: Option<&'trie [u16]>,
-    pub data_32_bit: Option<&'trie [u32]>,
+// ValueWidth trait
+
+pub trait ValueWidth: Copy + zerovec::ule::AsULE { // AsUnalignedLittleEndian -> "allowed in a zerovec"
+    const ENUM_VALUE: ValueWidthEnum;
+    fn cast_to_widest(self) -> u32;
 }
 
-pub struct CodePointTrie<'trie, CodePointTrieType, CodePointTrieValueWidth> {
+impl ValueWidth for u8 {
+    const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits8;
+    
+    fn cast_to_widest(self) -> u32 { self as u32 }
+}
+
+impl ValueWidth for u16 {
+    const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits16;
+    
+    fn cast_to_widest(self) -> u32 { self as u32 }
+}
+
+impl ValueWidth for u32 {
+    const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits32;
+    
+    fn cast_to_widest(self) -> u32 { self }
+}
+
+// TrieType trait
+
+pub trait TrieType {
+    const FAST_MAX: u32;
+    const ENUM_VALUE: TrieTypeEnum;
+}
+
+struct Fast;
+impl TrieType for Fast {
+    const FAST_MAX: u32 = 0xffff;
+    const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Fast;
+}
+
+struct Small;
+impl TrieType for Small {
+    const FAST_MAX: u32 = 0x0fff;
+    const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Small;
+}
+
+
+pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
     pub index_length: u32,
     pub data_length: u32,
     pub high_start: u32,
     pub shifted12_high_start: u16,
-    pub trie_type: CodePointTrieType,
-
-    // can't do this because:
-    //
-    // the size for values of type `(dyn TrieType + 'static)` cannot be known at compilation time
-    // doesn't have a size known at compile-time
-    // help: the trait `std::marker::Sized` is not implemented for `(dyn TrieType + 'static)`
-    //
-    // trie_type2: TrieType,
-    pub value_width: CodePointTrieValueWidth,
+    // pub trie_type: TrieTypeEnum,
     pub index3_null_offset: u16,
     pub data_null_offset: u32,
     pub null_value: u32,
-    pub index: &'trie [u16],
-    pub data: &'trie CodePointTrieData<'trie>,
+    pub index: ZeroVec<'trie, u16>,
+    pub data: ZeroVec<'trie, W>,
 }
 
-// can't do this because:
-//
-// return type cannot have an unboxed trait object
-// doesn't have a size known at compile-time
-//
-// fn get_trie_type(trie_type_int: u8) -> TrieType {
-//     match trie_type_int {
-//         0 => FastType,
-//         1 => SmallType,
-//         _ => AnyType,
-//     }
-// }
-
-pub fn get_code_point_trie_type(trie_type_int: u8) -> CodePointTrieType {
+pub fn get_code_point_trie_type(trie_type_int: u8) -> TrieTypeEnum {
     match trie_type_int {
-        0 => CodePointTrieType::Fast,
-        1 => CodePointTrieType::Small,
-        _ => CodePointTrieType::Any,
+        0 => TrieTypeEnum::Fast,
+        1 => TrieTypeEnum::Small,
+        _ => TrieTypeEnum::Any,
     }
 }
 
-pub fn get_code_point_trie_value_width(value_width_int: u8) -> CodePointTrieValueWidth {
+pub fn get_code_point_trie_value_width(value_width_int: u8) -> ValueWidthEnum {
     match value_width_int {
-        0 => CodePointTrieValueWidth::Bits16,
-        1 => CodePointTrieValueWidth::Bits32,
-        2 => CodePointTrieValueWidth::Bits8,
-        _ => CodePointTrieValueWidth::BitsAny,
+        0 => ValueWidthEnum::Bits16,
+        1 => ValueWidthEnum::Bits32,
+        2 => ValueWidthEnum::Bits8,
+        _ => ValueWidthEnum::BitsAny,
     }
 }
 
-impl<'trie> CodePointTrie<'trie, CodePointTrieType, CodePointTrieValueWidth> {
-    pub fn index(&self) -> &'trie [u16] {
+// CPTAuto will only expose get_u32() (probably will call it `get()`), but will not / cannot expose get() without using an enum for W
+// CPT<W1,S1> will expose get() and get_u32(). You may not want get_u32() at this point, but it is necessary in order to implement CPTAuto
+
+// u32 vs. char in Rust - unpaired surrogates are valid code points but are not UTF-32 code units, therefore not allowed in `char` type in Rust.
+// But for the CodePointTrie, we do want to be able to look up surrogate code points, therefore we want to use the u32 type. (Note: this is also what we do in the `uniset` crate for `UnicodeSet`.)
+// struct CodePoint(u32) ← enforce whatever invariants you'd like
+
+use impl_const::*;
+
+impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
+
+    pub fn get(&self, c: u32) -> W {
+        let index: u32 = if c <= T::FAST_MAX {
+            trie_fast_index(self, c)
+        } else if c <= CODE_POINT_MAX {
+            trie_small_index(self, c)
+        } else {
+            self.data_length() - ERROR_VALUE_NEG_DATA_OFFSET
+        };
+        self.data().get(index as usize).unwrap()  // need the unwrap because the default value is stored in the data array,
+                                                  // and getting that default value always returns an Option<W>, but need to return W
+    }
+
+    pub fn get_u32(&self, c: u32) -> u32 {  // this is the consistent API that is public-facing for users
+        self.get(c).cast_to_widest()
+    }
+
+    pub fn index(&self) -> ZeroVec<'trie, u16> {
         self.index
     }
 
-    pub fn data(&self) -> &'trie CodePointTrieData<'trie> {
+    pub fn data(&self) -> ZeroVec<'trie, W> {
         self.data
     }
 
-    pub fn trie_type(&self) -> CodePointTrieType {
-        self.trie_type
+    pub fn trie_type(&self) -> TrieTypeEnum {
+        T::ENUM_VALUE
     }
 
-    pub fn value_width(&self) -> CodePointTrieValueWidth {
-        self.value_width
+    pub fn value_width(&self) -> ValueWidthEnum {
+        W::ENUM_VALUE
     }
 
     pub fn high_start(&self) -> u32 {
@@ -183,16 +229,3 @@ impl<'trie> CodePointTrie<'trie, CodePointTrieType, CodePointTrieValueWidth> {
     }
 }
 
-impl<'trie> CodePointTrieData<'trie> {
-    pub fn data_8_bit(&self) -> Option<&'trie [u8]> {
-        self.data_8_bit
-    }
-
-    pub fn data_16_bit(&self) -> Option<&'trie [u16]> {
-        self.data_16_bit
-    }
-
-    pub fn data_32_bit(&self) -> Option<&'trie [u32]> {
-        self.data_32_bit
-    }
-}
