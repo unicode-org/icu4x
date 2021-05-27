@@ -6,13 +6,12 @@ use super::PluralRuleStringsV1;
 use crate::{PluralRuleType, PluralRulesError};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 pub fn resolve_plural_data<'s, D: DataProvider<'s, PluralRuleStringsV1<'s>> + ?Sized>(
     langid: LanguageIdentifier,
     data_provider: &D,
     type_: PluralRuleType,
-) -> Result<Cow<'s, PluralRuleStringsV1<'s>>, PluralRulesError> {
+) -> Result<DataPayload<'s, PluralRuleStringsV1<'s>>, PluralRulesError> {
     let key = match type_ {
         PluralRuleType::Cardinal => super::key::CARDINAL_V1,
         PluralRuleType::Ordinal => super::key::ORDINAL_V1,
@@ -27,6 +26,5 @@ pub fn resolve_plural_data<'s, D: DataProvider<'s, PluralRuleStringsV1<'s>> + ?S
                 },
             },
         })?
-        .payload
-        .take()?)
+        .take_payload()?)
 }

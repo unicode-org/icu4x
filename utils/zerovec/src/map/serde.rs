@@ -9,6 +9,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::marker::PhantomData;
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'a, K, V> Serialize for ZeroMap<'a, K, V>
 where
     K: ZeroMapKV<'a>,
@@ -73,7 +74,7 @@ where
             // Try to append it at the end, hoping for a sorted map.
             // If not sorted, return an error
             // a serialized map that came from another ZeroMap
-            if let Some(_) = map.try_append(key, value) {
+            if map.try_append(key, value).is_some() {
                 return Err(de::Error::custom(
                     "ZeroMap's keys must be sorted while deserializing",
                 ));
@@ -84,6 +85,7 @@ where
     }
 }
 
+/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 impl<'de, K, V> Deserialize<'de> for ZeroMap<'de, K, V>
 where
     K: Deserialize<'de> + Ord,

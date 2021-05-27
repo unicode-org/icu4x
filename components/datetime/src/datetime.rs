@@ -10,7 +10,7 @@ use crate::{
     provider::{gregory::DatesV1, helpers::DateTimePatterns},
 };
 use icu_locid::Locale;
-use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
+use icu_provider::prelude::*;
 use std::borrow::Cow;
 
 use crate::{
@@ -60,7 +60,7 @@ use crate::{
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: Cow<'d, provider::gregory::DateSymbolsV1>,
+    pub(super) symbols: DataPayload<'d, provider::gregory::DateSymbolsV1>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -102,8 +102,7 @@ impl<'d> DateTimeFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
 
         let pattern = data
             .patterns
@@ -142,13 +141,13 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        data: Cow<'d, DatesV1>,
+        data: DataPayload<'d, DatesV1>,
     ) -> Self {
         let locale = locale.into();
 
-        let symbols = match data {
-            Cow::Borrowed(data) => Cow::Borrowed(&data.symbols),
-            Cow::Owned(data) => Cow::Owned(data.symbols),
+        let symbols = match data.into_cow() {
+            Cow::Borrowed(data) => DataPayload::from_borrowed(&data.symbols),
+            Cow::Owned(data) => DataPayload::from_owned(data.symbols),
         };
 
         Self {

@@ -17,7 +17,6 @@
 //! ## Format a number with Bengali digits
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu::decimal::FixedDecimalFormat;
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
@@ -33,7 +32,6 @@
 //! let formatted_str = formatted_value.writeable_to_string();
 //!
 //! assert_eq!("১০,০০,০০৭", formatted_str);
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator
@@ -71,7 +69,6 @@ pub use format::FormattedFixedDecimal;
 use fixed_decimal::FixedDecimal;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -86,7 +83,7 @@ use std::borrow::Cow;
 /// See the crate-level documentation for examples.
 pub struct FixedDecimalFormat<'d> {
     options: options::FixedDecimalFormatOptions,
-    symbols: Cow<'d, provider::DecimalSymbolsV1>,
+    symbols: DataPayload<'d, provider::DecimalSymbolsV1>,
 }
 
 impl<'d> FixedDecimalFormat<'d> {
@@ -106,8 +103,7 @@ impl<'d> FixedDecimalFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
         Ok(Self { options, symbols })
     }
 

@@ -5,7 +5,6 @@
 use crate::provider::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
@@ -15,7 +14,7 @@ pub enum CanonicalizationResult {
 }
 
 pub struct LocaleCanonicalizer<'a> {
-    likely_subtags: Cow<'a, LikelySubtagsV1>,
+    likely_subtags: DataPayload<'a, LikelySubtagsV1>,
 }
 
 #[inline]
@@ -51,10 +50,9 @@ impl LocaleCanonicalizer<'_> {
     pub fn new<'d>(
         provider: &(impl DataProvider<'d, LikelySubtagsV1> + ?Sized),
     ) -> Result<LocaleCanonicalizer<'d>, DataError> {
-        let payload: Cow<LikelySubtagsV1> = provider
+        let payload: DataPayload<LikelySubtagsV1> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
-            .payload
-            .take()?;
+            .take_payload()?;
 
         Ok(LocaleCanonicalizer {
             likely_subtags: payload,
@@ -74,7 +72,6 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -91,7 +88,6 @@ impl LocaleCanonicalizer<'_> {
     ///     .expect("parse failed");
     /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "zh-Hant-TW");
-    /// # } // feature = "provider_serde"
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();
@@ -147,7 +143,6 @@ impl LocaleCanonicalizer<'_> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
@@ -164,7 +159,6 @@ impl LocaleCanonicalizer<'_> {
     ///     .expect("parse failed");
     /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
     /// assert_eq!(locale.to_string(), "zh");
-    /// # } // feature = "provider_serde"
     /// ```
     pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();

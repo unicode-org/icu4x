@@ -5,7 +5,7 @@
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
 use smallvec::SmallVec;
-use std::{convert::TryFrom, fmt};
+use std::convert::TryFrom;
 use thiserror::Error;
 
 use crate::{
@@ -59,7 +59,7 @@ struct DeserializeSkeletonFieldsUTS35String;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(formatter, "Expected to find a valid skeleton.")
     }
 
@@ -88,7 +88,7 @@ struct DeserializeSkeletonBincode;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(formatter, "Unable to deserialize a bincode Pattern.")
     }
 
@@ -251,7 +251,7 @@ impl From<fields::SymbolError> for SkeletonError {
             fields::SymbolError::Unknown(byte) => {
                 // NOTE: If you remove a symbol due to it now being supported,
                 //       make sure to regenerate the test data.
-                //       https://github.com/unicode-org/icu4x/blob/main/resources/testdata/README.md
+                //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
                 match byte {
                     // TODO(#487) - Flexible day periods
                     b'B'
@@ -627,8 +627,7 @@ mod test {
     use super::*;
 
     use icu_locid_macros::langid;
-    use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
-    use std::borrow::Cow;
+    use icu_provider::prelude::*;
 
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
@@ -636,7 +635,7 @@ mod test {
         provider::{gregory::DatesV1, key::GREGORY_V1},
     };
 
-    fn get_data_provider() -> Cow<'static, DatesV1> {
+    fn get_data_provider() -> DataPayload<'static, DatesV1> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
@@ -650,8 +649,7 @@ mod test {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap()
     }
 
@@ -797,7 +795,7 @@ mod test {
     // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
     //       on your symbol from impl From<fields::SymbolError> for SkeletonError
     //       and then regenerate the test data.
-    //       https://github.com/unicode-org/icu4x/blob/main/resources/testdata/README.md
+    //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
     #[rustfmt::skip]
     const UNSUPPORTED_STRING_SKELETONS: [&str; 19] = [
         // TODO(#487) - Flexible day periods

@@ -24,7 +24,6 @@
 //! # Examples
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu::locid::macros::langid;
 //! use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
 //!
@@ -36,7 +35,6 @@
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! ## Plural Rules
