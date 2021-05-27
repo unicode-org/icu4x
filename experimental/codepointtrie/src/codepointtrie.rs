@@ -188,12 +188,12 @@ use impl_const::*;
 
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
-    pub(crate) fn trie_internal_small_index(
+    pub fn trie_internal_small_index(
         &self,
         c: u32,
     ) -> u32 {
         let mut i1: u32 = c >> SHIFT_1;
-        if self.trie_type() == TrieType::Fast {
+        if self.trie_type() == TrieTypeEnum::Fast {
             assert!(0xffff < c && c < self.high_start());
             i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
         } else {
@@ -201,20 +201,20 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             i1 = i1 + SMALL_INDEX_LENGTH;
         }
         let mut i3_block: u32 = self.index().get(
-            (self.index().get(i1 as usize) as u32 + ((c >> SHIFT_2) & INDEX_2_MASK)) as usize)
+            (self.index().get(i1 as usize).unwrap() as u32 + ((c >> SHIFT_2) & INDEX_2_MASK)) as usize).unwrap()
             as u32;
         let mut i3: u32 = (c >> SHIFT_3) & INDEX_3_MASK;
         let mut data_block: u32;
         if i3_block & 0x8000 == 0 {
             // 16-bit indexes
-            data_block = self.index().get((i3_block + i3) as usize) as u32;
+            data_block = self.index().get((i3_block + i3) as usize).unwrap() as u32;
         } else {
             // 18-bit indexes stored in groups of 9 enselfs per 8 indexes.
             i3_block = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
             i3 = i3 & 7;
             data_block =
-                ((self.index().get((i3_block + 1) as usize) << (2 + (2 * i3))) as u32 & 0x30000) as u32;
-            data_block = data_block | self.index().get((i3_block + i3) as usize) as u32;
+                ((self.index().get((i3_block + 1) as usize).unwrap() << (2 + (2 * i3))) as u32 & 0x30000) as u32;
+            data_block = data_block | self.index().get((i3_block + i3) as usize).unwrap() as u32;
         }
         data_block + (c & SMALL_DATA_MASK)
     }
