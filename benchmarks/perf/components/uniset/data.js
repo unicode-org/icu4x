@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621884165402,
+  "lastUpdate": 1622132913231,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6719,6 +6719,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30418498,
             "range": "± 1610250",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "65863887250dc86947386299ad64210f478a36b7",
+          "message": "Add include to capi (#738)",
+          "timestamp": "2021-05-27T09:22:29-07:00",
+          "tree_id": "2be80e2fc4f62b1a15d6f52bb1a59cde322d0abf",
+          "url": "https://github.com/unicode-org/icu4x/commit/65863887250dc86947386299ad64210f478a36b7"
+        },
+        "date": 1622132911818,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 36845483,
+            "range": "± 91126",
             "unit": "ns/iter"
           }
         ]
