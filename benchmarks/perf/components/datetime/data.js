@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1621884194749,
+  "lastUpdate": 1622132937144,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6095,6 +6095,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2426804,
             "range": "± 20437",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "65863887250dc86947386299ad64210f478a36b7",
+          "message": "Add include to capi (#738)",
+          "timestamp": "2021-05-27T09:22:29-07:00",
+          "tree_id": "2be80e2fc4f62b1a15d6f52bb1a59cde322d0abf",
+          "url": "https://github.com/unicode-org/icu4x/commit/65863887250dc86947386299ad64210f478a36b7"
+        },
+        "date": 1622132935402,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1262906,
+            "range": "± 27390",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2404919,
+            "range": "± 56714",
             "unit": "ns/iter"
           }
         ]
