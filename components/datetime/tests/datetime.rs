@@ -132,7 +132,7 @@ fn test_dayperiod_patterns() {
                         });
                         let provider = StructProvider {
                             key: GREGORY_V1,
-                            data: data.as_ref(),
+                            data: data.get(),
                         };
                         let dtf =
                             DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
@@ -195,7 +195,7 @@ fn test_time_zone_patterns() {
                 });
                 let date_provider = StructProvider {
                     key: GREGORY_V1,
-                    data: data.as_ref(),
+                    data: data.get(),
                 };
 
                 let dtf = ZonedDateTimeFormat::try_new(

@@ -91,6 +91,7 @@ impl LocaleCanonicalizer<'_> {
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
         let langid = langid.as_mut();
+        let data = self.likely_subtags.get();
 
         if !langid.language.is_empty() && langid.script.is_some() && langid.region.is_some() {
             return CanonicalizationResult::Unmodified;
@@ -98,36 +99,21 @@ impl LocaleCanonicalizer<'_> {
 
         if let Some(language) = langid.language.into() {
             if let Some(region) = langid.region {
-                maximize_locale!(
-                    langid,
-                    self.likely_subtags.language_region,
-                    language,
-                    region.into()
-                );
+                maximize_locale!(langid, data.language_region, language, region.into());
             }
             if let Some(script) = langid.script {
-                maximize_locale!(
-                    langid,
-                    self.likely_subtags.language_script,
-                    language,
-                    script.into()
-                );
+                maximize_locale!(langid, data.language_script, language, script.into());
             }
-            maximize_locale!(langid, self.likely_subtags.language, language);
+            maximize_locale!(langid, data.language, language);
         } else if let Some(script) = langid.script {
             if let Some(region) = langid.region {
-                maximize_locale!(
-                    langid,
-                    self.likely_subtags.script_region,
-                    script.into(),
-                    region.into()
-                );
+                maximize_locale!(langid, data.script_region, script.into(), region.into());
             }
-            maximize_locale!(langid, self.likely_subtags.script, script.into());
+            maximize_locale!(langid, data.script, script.into());
         } else if let Some(region) = langid.region {
-            maximize_locale!(langid, self.likely_subtags.region, region.into());
+            maximize_locale!(langid, data.region, region.into());
         }
-        update_langid(&self.likely_subtags.und, langid)
+        update_langid(&data.und, langid)
     }
 
     /// This returns a new Locale that is the result of running the

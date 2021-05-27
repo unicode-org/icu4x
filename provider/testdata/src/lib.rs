@@ -58,7 +58,7 @@
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
-//! assert_eq!(data.few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
+//! assert_eq!(data.get().few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

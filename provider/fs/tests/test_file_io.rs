@@ -57,7 +57,7 @@ fn test_json() {
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(*plurals_data, EXPECTED_RU_DATA);
+    assert_eq!(plurals_data.get(), &EXPECTED_RU_DATA);
 }
 
 #[test]
@@ -70,7 +70,7 @@ fn test_json_dyn_erased_serde() {
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(*plurals_data, EXPECTED_RU_DATA);
+    assert_eq!(plurals_data.get(), &EXPECTED_RU_DATA);
 }
 
 #[test]
@@ -162,7 +162,7 @@ fn test_bincode() {
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(*plurals_data, EXPECTED_SR_DATA);
+    assert_eq!(plurals_data.get(), &EXPECTED_SR_DATA);
 }
 
 #[test]
@@ -176,5 +176,5 @@ fn test_bincode_dyn_erased_serde() {
         .expect("The data should be valid")
         .take_payload()
         .expect("The data should be present");
-    assert_eq!(*plurals_data, EXPECTED_SR_DATA);
+    assert_eq!(plurals_data.get(), &EXPECTED_SR_DATA);
 }

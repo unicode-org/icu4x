@@ -517,14 +517,22 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    assert_eq!("srpna", cs_dates.symbols.months.format.wide.0[7]);
+    assert_eq!("srpna", cs_dates.get().symbols.months.format.wide.0[7]);
 
     assert_eq!(
         "po",
-        cs_dates.symbols.weekdays.format.short.as_ref().unwrap().0[1]
+        cs_dates
+            .get()
+            .symbols
+            .weekdays
+            .format
+            .short
+            .as_ref()
+            .unwrap()
+            .0[1]
     );
 
-    assert_eq!("d. M. y", cs_dates.patterns.date.medium);
+    assert_eq!("d. M. y", cs_dates.get().patterns.date.medium);
 }
 
 #[test]
@@ -548,9 +556,9 @@ fn test_with_numbering_system() {
         .take_payload()
         .unwrap();
 
-    assert_eq!("d MMM y", cs_dates.patterns.date.medium);
+    assert_eq!("d MMM y", cs_dates.get().patterns.date.medium);
     // TODO(#308): Support numbering system variations. We currently throw them away.
-    assert_eq!("d/M/yy", cs_dates.patterns.date.short);
+    assert_eq!("d/M/yy", cs_dates.get().patterns.date.short);
 }
 
 #[test]
@@ -575,10 +583,11 @@ fn unalias_contexts() {
         .unwrap();
 
     // Czech months are not unaliased because `wide` differs.
-    assert!(cs_dates.symbols.months.stand_alone.is_some());
+    assert!(cs_dates.get().symbols.months.stand_alone.is_some());
 
     // Czech months are not unaliased because `wide` differs.
     assert!(cs_dates
+        .get()
         .symbols
         .months
         .stand_alone
@@ -587,6 +596,7 @@ fn unalias_contexts() {
         .abbreviated
         .is_none());
     assert!(cs_dates
+        .get()
         .symbols
         .months
         .stand_alone
@@ -595,6 +605,7 @@ fn unalias_contexts() {
         .short
         .is_none());
     assert!(cs_dates
+        .get()
         .symbols
         .months
         .stand_alone
@@ -603,6 +614,7 @@ fn unalias_contexts() {
         .narrow
         .is_none());
     assert!(cs_dates
+        .get()
         .symbols
         .months
         .stand_alone
@@ -612,5 +624,5 @@ fn unalias_contexts() {
         .is_some());
 
     // Czech weekdays are unaliased because they completely overlap.
-    assert!(cs_dates.symbols.weekdays.stand_alone.is_none());
+    assert!(cs_dates.get().symbols.weekdays.stand_alone.is_none());
 }
