@@ -16,6 +16,12 @@ impl<'s> Foo<'s> for Cow<'s, str> {
     }
 }
 
+impl<'a, 's, T: Foo<'s> > Foo<'s> for &'a T {
+    fn foo(&self) -> char {
+        <T as Foo<'s>>::foo(*self)
+    }
+}
+
 pub struct FooWrap<'a> {
     pub inner: &'a dyn Foo<'a>,
 }
@@ -66,30 +72,15 @@ impl<'a> DynHelper for dyn Foo<'a> + 'a {
     }
 }
 
-// Compiles:
 impl<'b, Y, C> Foo<'b> for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
-    <Y as Yokeable<'b>>::Output: Foo<'b>,
+    for<'a> &'a <Y as Yokeable<'a>>::Output: Foo<'a>,
 {
     fn foo(&self) -> char {
-        'y'
-
-        // Does NOT compile:
-        // self.get().foo()
+        self.get().foo()
     }
 }
-
-// This compiles, but then the call site in test_dyn does not compile:
-// impl<'b, Y, C> Foo<'b> for Yoke<Y, C>
-// where
-//     Y: for<'a> Yokeable<'a>,
-//     for<'a> &'a <Y as Yokeable<'a>>::Output: Foo<'a>,
-// {
-//     fn foo(&self) -> char {
-//         self.get().foo()
-//     }
-// }
 
 fn yoke_from_box<'b, D>(input: Box<D>) -> Yoke<<D as DynHelper>::Yokeable, <D as DynHelper>::Cart>
 where
