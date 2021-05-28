@@ -57,9 +57,7 @@ where
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload {
-                cow: Cow::Borrowed(self.data),
-            }),
+            payload: Some(DataPayload::from_borrowed(self.data)),
         })
     }
 }

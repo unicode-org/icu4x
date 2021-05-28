@@ -124,9 +124,7 @@ where
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: Some(DataPayload {
-                cow: Cow::Owned(data),
-            }),
+            payload: Some(DataPayload::from_owned(data)),
         })
     }
 }

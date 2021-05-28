@@ -103,7 +103,7 @@ where
     T: ToOwned + ?Sized,
     <T as ToOwned>::Owned: Debug,
 {
-    pub(crate) cow: Cow<'d, T>,
+    cow: Cow<'d, T>,
 }
 
 impl<'d, T> DataPayload<'d, T>

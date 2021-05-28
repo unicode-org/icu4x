@@ -34,6 +34,8 @@ macro_rules! impl_dyn_from_payload {
             fn from(
                 other: $crate::prelude::DataPayload<$d, T>,
             ) -> $crate::prelude::DataPayload<$d, dyn $trait + 's> {
+                todo!()
+                /*
                 use std::borrow::Cow;
                 Self {
                     cow: match other.cow {
@@ -44,6 +46,7 @@ macro_rules! impl_dyn_from_payload {
                         }
                     },
                 }
+                */
             }
         }
     };

@@ -96,9 +96,7 @@ where
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse {
             metadata,
-            payload: payload.map(|obj| DataPayload {
-                cow: Cow::Owned(obj),
-            }),
+            payload: payload.map(|obj| DataPayload::from_owned(obj)),
         })
     }
 }

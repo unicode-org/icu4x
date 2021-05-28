@@ -42,9 +42,7 @@ where
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload {
-                cow: Cow::Owned(T::default()),
-            }),
+            payload: Some(DataPayload::from_owned(T::default())),
         })
     }
 }

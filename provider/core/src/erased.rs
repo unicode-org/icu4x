@@ -91,6 +91,8 @@ impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
     where
         T: Clone + Debug + Any,
     {
+        todo!()
+        /*
         let new_cow = match self.cow {
             Cow::Borrowed(erased) => {
                 let borrowed: &'d T =
@@ -116,6 +118,7 @@ impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
             }
         };
         Ok(DataPayload { cow: new_cow })
+        */
     }
 }
 
