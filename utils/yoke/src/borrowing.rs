@@ -59,6 +59,15 @@ impl ZeroCopyCloneV2 for str {
     }
 }
 
+impl<'b, B> Yoke<<B as ZeroCopyCloneV2>::Yokeable, &'b B>
+where
+    B: ZeroCopyCloneV2
+{
+    fn from_borrowed(b: &'b B) -> Self {
+        Self::attach_to_cart_badly(b, B::zero_copy_clone_v2)
+    }
+}
+
 #[test]
 fn test_borrowing() {
     let data_struct = DataStruct {
@@ -69,5 +78,10 @@ fn test_borrowing() {
     let yoke = data_struct.borrow_into_yoke();
 
     assert_eq!(yoke.get().f1, "foo");
-    assert!(matches!(yoke.get().f1, Cow::Borrowed(_)))
+    assert!(matches!(yoke.get().f1, Cow::Borrowed(_)));
+
+    let yoke = Yoke::<DataStruct<'static>, &DataStruct<'_>>::from_borrowed(&data_struct);
+
+    assert_eq!(yoke.get().f1, "foo");
+    assert!(matches!(yoke.get().f1, Cow::Borrowed(_)));
 }
