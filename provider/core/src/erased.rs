@@ -8,7 +8,7 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
-use std::borrow::Cow;
+
 use std::fmt::Debug;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.

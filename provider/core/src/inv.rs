@@ -7,7 +7,7 @@
 use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
-use std::borrow::Cow;
+
 use std::fmt::Debug;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in

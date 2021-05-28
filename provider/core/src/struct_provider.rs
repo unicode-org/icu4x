@@ -6,7 +6,7 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use std::borrow::Cow;
+
 use std::fmt::Debug;
 
 /// A data provider that unconditionally returns references to borrowed data.
