@@ -13,6 +13,7 @@
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
 
+mod borrowing;
 mod yoke;
 mod yokeable;
 
