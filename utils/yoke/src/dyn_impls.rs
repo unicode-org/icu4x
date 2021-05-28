@@ -66,7 +66,7 @@ impl<'a> DynHelper for dyn Foo<'a> + 'a {
     }
 }
 
-// unsafe impl<T> DynHelper for T where T: Sized {
+// impl<T> DynHelper for T where T: Sized {
 //     type Yokeable = ();
 //     type Cart = ();
 // }
@@ -74,10 +74,10 @@ impl<'a> DynHelper for dyn Foo<'a> + 'a {
 impl<'b, Y, C> Foo<'b> for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
-    <Y as Yokeable<'b>>::Output: Foo<'b> + 'b,
+    for<'a> &'a <Y as Yokeable<'a>>::Output: Foo<'a>,
 {
     fn foo(&self) -> char {
-        'y'
+        self.get().foo()
     }
 }
 
@@ -103,5 +103,5 @@ fn test_dyn() {
 
     let dyn_yoke: Yoke<FooWrap<'static>, Box<dyn Foo<'static>>> = yoke_from_box(boxed);
 
-    assert_eq!(dyn_yoke.get().inner.foo(), 'y');
+    assert_eq!(dyn_yoke.get().inner.foo(), 'z');
 }
