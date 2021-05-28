@@ -14,8 +14,8 @@
 #![allow(clippy::needless_lifetimes)]
 
 mod dyn_impls;
-pub(crate) mod yoke;
-pub(crate) mod yokeable;
+mod yoke;
+mod yokeable;
 
 pub use crate::yoke::Yoke;
 pub use crate::yokeable::Yokeable;
