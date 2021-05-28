@@ -7,7 +7,6 @@ use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use core::ops::Deref;
 use icu_locid::LanguageIdentifier;
-use std::borrow::Borrow;
 use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
@@ -96,7 +95,7 @@ pub struct DataResponseMetadata {
 ///
 /// let payload = DataPayload::from_borrowed("Demo");
 ///
-/// assert_eq!("Demo", &*payload);
+/// assert_eq!("Demo", payload.get());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct DataPayload<'d, T>
@@ -144,7 +143,7 @@ where
     ///
     /// payload.with_mut(|s| s.push_str(" World"));
     ///
-    /// assert_eq!("Hello World", &*payload);
+    /// assert_eq!("Hello World", payload.get());
     /// ```
     ///
     /// To transfer data from the context into the data struct, use the `move` keyword:
@@ -158,8 +157,8 @@ where
     /// let new_value = "Bar".to_string();
     /// payload.with_mut(move |v| v.push(new_value));
     ///
-    /// assert_eq!("Foo", payload[0]);
-    /// assert_eq!("Bar", payload[1]);
+    /// assert_eq!("Foo", payload.get()[0]);
+    /// assert_eq!("Bar", payload.get()[1]);
     /// ```
     #[inline]
     pub fn with_mut<F>(&mut self, f: F)
@@ -189,39 +188,23 @@ where
     pub fn into_cow(self) -> Cow<'d, T> {
         self.cow
     }
-}
 
-impl<'d, T> Borrow<T> for DataPayload<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
+    /// Borrows the underlying data.
+    ///
+    /// This function should be used like `Deref` would normally be used. For more information on
+    /// why DataPayload cannot implement `Deref`, see the `yoke` crate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// let payload = DataPayload::from_borrowed("Demo");
+    ///
+    /// assert_eq!("Demo", payload.get());
+    /// ```
     #[inline]
-    fn borrow(&self) -> &T {
-        self.cow.borrow()
-    }
-}
-
-impl<'d, T> AsRef<T> for DataPayload<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
-    #[inline]
-    fn as_ref(&self) -> &T {
-        self.cow.as_ref()
-    }
-}
-
-impl<'d, T> Deref for DataPayload<'d, T>
-where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
-{
-    type Target = T;
-
-    #[inline]
-    fn deref(&self) -> &Self::Target {
+    pub fn get(&self) -> &T {
         self.cow.deref()
     }
 }

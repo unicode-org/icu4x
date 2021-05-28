@@ -635,7 +635,7 @@ mod test {
         provider::{gregory::DatesV1, key::GREGORY_V1},
     };
 
-    fn get_data_provider() -> DataPayload<'static, DatesV1> {
+    fn get_data_payload() -> DataPayload<'static, DatesV1> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
@@ -669,10 +669,10 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         match get_best_available_format_pattern(
-            &data_provider.patterns.datetime.skeletons,
+            &data_provider.get().patterns.datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
@@ -696,10 +696,10 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         match get_best_available_format_pattern(
-            &data_provider.patterns.datetime.skeletons,
+            &data_provider.get().patterns.datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
@@ -721,11 +721,11 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         match create_best_pattern_for_fields(
-            &data_provider.patterns.datetime.skeletons,
-            &data_provider.patterns.datetime.length_patterns,
+            &data_provider.get().patterns.datetime.skeletons,
+            &data_provider.get().patterns.datetime.length_patterns,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
@@ -744,11 +744,11 @@ mod test {
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.patterns.datetime.skeletons,
+                &data_provider.get().patterns.datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,
@@ -765,11 +765,11 @@ mod test {
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.patterns.datetime.skeletons,
+                &data_provider.get().patterns.datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,

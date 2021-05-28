@@ -216,6 +216,6 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    assert_eq!(ar_decimal.decimal_separator, "٫");
-    assert_eq!(ar_decimal.digits[0], '٠');
+    assert_eq!(ar_decimal.get().decimal_separator, "٫");
+    assert_eq!(ar_decimal.get().digits[0], '٠');
 }

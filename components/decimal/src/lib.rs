@@ -112,7 +112,7 @@ impl<'d> FixedDecimalFormat<'d> {
         FormattedFixedDecimal {
             value,
             options: &self.options,
-            symbols: &self.symbols,
+            symbols: self.symbols.get(),
         }
     }
 }

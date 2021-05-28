@@ -196,11 +196,12 @@ fn test_basic() {
 
     let langid = langid!("cu-Glag");
     let entry = result
+        .get()
         .script
         .binary_search_by_key(&(langid.script.map(|s| s.into())), |(script, _)| {
             Some(*script)
         })
         .unwrap();
-    assert_eq!(result.script[entry].1.language, "cu");
-    assert_eq!(result.script[entry].1.region.unwrap(), "BG");
+    assert_eq!(result.get().script[entry].1.language, "cu");
+    assert_eq!(result.get().script[entry].1.region.unwrap(), "BG");
 }

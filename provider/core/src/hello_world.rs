@@ -63,7 +63,7 @@ impl Default for HelloWorldV1<'_> {
 ///     .take_payload()
 ///     .unwrap();
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.message);
+/// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider<'s> {

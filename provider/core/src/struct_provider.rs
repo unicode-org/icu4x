@@ -41,7 +41,7 @@ use std::fmt::Debug;
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!(*payload, local_data);
+/// assert_eq!(payload.get(), &local_data);
 /// assert!(matches!(payload.into_cow(), Cow::Borrowed(_)))
 /// ```
 pub struct StructProvider<'d, T> {

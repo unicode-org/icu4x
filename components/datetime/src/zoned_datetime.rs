@@ -119,6 +119,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
             .take_payload()?;
 
         let pattern = data
+            .get()
             .patterns
             .get_pattern_for_options(options)?
             .unwrap_or_default();

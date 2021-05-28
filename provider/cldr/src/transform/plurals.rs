@@ -207,15 +207,18 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    assert_eq!(None, cs_rules.zero);
+    assert_eq!(None, cs_rules.get().zero);
     assert_eq!(
         Some("i = 1 and v = 0"),
-        cs_rules.one.as_ref().map(|v| v.borrow())
+        cs_rules.get().one.as_ref().map(|v| v.borrow())
     );
-    assert_eq!(None, cs_rules.two);
+    assert_eq!(None, cs_rules.get().two);
     assert_eq!(
         Some("i = 2..4 and v = 0"),
-        cs_rules.few.as_ref().map(|v| v.borrow())
+        cs_rules.get().few.as_ref().map(|v| v.borrow())
     );
-    assert_eq!(Some("v != 0"), cs_rules.many.as_ref().map(|v| v.borrow()));
+    assert_eq!(
+        Some("v != 0"),
+        cs_rules.get().many.as_ref().map(|v| v.borrow())
+    );
 }

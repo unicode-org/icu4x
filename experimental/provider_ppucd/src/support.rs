@@ -135,5 +135,5 @@ fn test_ppucd_provider_parse() {
             8287, 8288, 12288, 12289,
         ],
     };
-    assert_eq!(exp_prop_uniset, ppucd_property_cow.as_ref().clone());
+    assert_eq!(exp_prop_uniset, ppucd_property_cow.get().clone());
 }
