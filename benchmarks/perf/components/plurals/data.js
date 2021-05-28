@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622132975543,
+  "lastUpdate": 1622164515554,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7979,6 +7979,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 112549,
             "range": "± 9087",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "958ee68fa4f88fd740bb02927674871f1565dba2",
+          "message": "Replace DataPayload Deref with .get() throughout ICU4X (#739)",
+          "timestamp": "2021-05-27T20:08:24-05:00",
+          "tree_id": "12c3ff9d23b6122cfc28cf0d798f22b89dc01341",
+          "url": "https://github.com/unicode-org/icu4x/commit/958ee68fa4f88fd740bb02927674871f1565dba2"
+        },
+        "date": 1622164514284,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1207,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7302,
+            "range": "± 310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 107619,
+            "range": "± 5070",
             "unit": "ns/iter"
           }
         ]
