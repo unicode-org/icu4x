@@ -13,8 +13,9 @@
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
 
-mod yoke;
-mod yokeable;
+mod dyn_impls;
+pub(crate) mod yoke;
+pub(crate) mod yokeable;
 
 pub use crate::yoke::Yoke;
 pub use crate::yokeable::Yokeable;
