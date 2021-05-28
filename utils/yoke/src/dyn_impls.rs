@@ -66,20 +66,30 @@ impl<'a> DynHelper for dyn Foo<'a> + 'a {
     }
 }
 
-// impl<T> DynHelper for T where T: Sized {
-//     type Yokeable = ();
-//     type Cart = ();
-// }
-
+// Compiles:
 impl<'b, Y, C> Foo<'b> for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
-    for<'a> &'a <Y as Yokeable<'a>>::Output: Foo<'a>,
+    <Y as Yokeable<'b>>::Output: Foo<'b>,
 {
     fn foo(&self) -> char {
-        self.get().foo()
+        'y'
+
+        // Does NOT compile:
+        // self.get().foo()
     }
 }
+
+// This compiles, but then the call site in test_dyn does not compile:
+// impl<'b, Y, C> Foo<'b> for Yoke<Y, C>
+// where
+//     Y: for<'a> Yokeable<'a>,
+//     for<'a> &'a <Y as Yokeable<'a>>::Output: Foo<'a>,
+// {
+//     fn foo(&self) -> char {
+//         self.get().foo()
+//     }
+// }
 
 fn yoke_from_box<'b, D>(input: Box<D>) -> Yoke<<D as DynHelper>::Yokeable, <D as DynHelper>::Cart>
 where
