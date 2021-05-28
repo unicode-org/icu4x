@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622132942271,
+  "lastUpdate": 1622164480757,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7481,6 +7481,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5127,
             "range": "± 37",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "958ee68fa4f88fd740bb02927674871f1565dba2",
+          "message": "Replace DataPayload Deref with .get() throughout ICU4X (#739)",
+          "timestamp": "2021-05-27T20:08:24-05:00",
+          "tree_id": "12c3ff9d23b6122cfc28cf0d798f22b89dc01341",
+          "url": "https://github.com/unicode-org/icu4x/commit/958ee68fa4f88fd740bb02927674871f1565dba2"
+        },
+        "date": 1622164479044,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3072,
+            "range": "± 123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4668,
+            "range": "± 207",
             "unit": "ns/iter"
           }
         ]
