@@ -81,22 +81,15 @@ where
     }
 }
 
-fn yoke_from_box<'b, Y, C>(
-    input: Box<<Y as Yokeable<'b>>::Output>,
-) -> Yoke<
-    <<Y as Yokeable<'b>>::Output as DynHelper>::Yokeable,
-    <<Y as Yokeable<'b>>::Output as DynHelper>::Cart,
->
+fn yoke_from_box<'b, D>(input: Box<D>) -> Yoke<<D as DynHelper>::Yokeable, <D as DynHelper>::Cart>
 where
-    Y: for<'a> Yokeable<'a>,
-    <Y as Yokeable<'b>>::Output: DynHelper,
+    D: DynHelper + ?Sized,
 {
-    let cart: <<Y as Yokeable<'b>>::Output as DynHelper>::Cart =
-        <<Y as Yokeable<'b>>::Output as DynHelper>::make_cart(input);
-    Yoke::<
-        <<Y as Yokeable<'b>>::Output as DynHelper>::Yokeable,
-        <<Y as Yokeable<'b>>::Output as DynHelper>::Cart,
-    >::attach_to_cart_badly(cart, <<Y as Yokeable<'b>>::Output as DynHelper>::attach)
+    let cart: <D as DynHelper>::Cart = <D as DynHelper>::make_cart(input);
+    Yoke::<<D as DynHelper>::Yokeable, <D as DynHelper>::Cart>::attach_to_cart_badly(
+        cart,
+        <D as DynHelper>::attach,
+    )
 }
 
 #[test]
@@ -109,4 +102,6 @@ fn test_dyn() {
     let boxed: Box<dyn Foo<'_>> = Box::new(string_yoke);
 
     let dyn_yoke: Yoke<FooWrap<'static>, Box<dyn Foo<'static>>> = yoke_from_box(boxed);
+
+    assert_eq!(dyn_yoke.get().inner.foo(), 'y');
 }
