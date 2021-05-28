@@ -8,6 +8,10 @@ trait ZeroCopyCloneV2 {
     type Yokeable: for<'a> Yokeable<'a>;
 
     fn zero_copy_clone_v2<'b>(&'b self) -> <Self::Yokeable as Yokeable<'b>>::Output;
+
+    fn borrow_into_yoke<'b>(&'b self) -> Yoke<Self::Yokeable, &'b Self> {
+        Yoke::<Self::Yokeable, &'b Self>::attach_to_cart_badly(self, Self::zero_copy_clone_v2)
+    }
 }
 
 struct DataStruct<'s> {
@@ -19,7 +23,8 @@ unsafe impl<'a> Yokeable<'a> for DataStruct<'static> {
     type Output = DataStruct<'a>;
 
     fn transform(&'a self) -> &'a DataStruct<'a> {
-        unsafe { mem::transmute(self) }
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        self
     }
 
     unsafe fn make(from: DataStruct<'a>) -> Self {
@@ -54,16 +59,15 @@ impl ZeroCopyCloneV2 for str {
     }
 }
 
-fn helper<'de, B>(b: &'de B) -> <<B as ZeroCopyCloneV2>::Yokeable as Yokeable<'de>>::Output
-where
-    B: ZeroCopyCloneV2
-{
-    todo!()
-}
+#[test]
+fn test_borrowing() {
+    let data_struct = DataStruct {
+        f1: Cow::Owned("foo".to_string()),
+        f2: Cow::Owned("bar".to_string()),
+    };
 
-fn yoke_from_borrowed<'b, B>(b: &'b B) -> Yoke<<B as ZeroCopyCloneV2>::Yokeable, &'b B>
-where
-    B: ZeroCopyCloneV2
-{
-    Yoke::<<B as ZeroCopyCloneV2>::Yokeable, &'b B>::attach_to_cart_badly(b, helper)
+    let yoke = data_struct.borrow_into_yoke();
+
+    assert_eq!(yoke.get().f1, "foo");
+    assert!(matches!(yoke.get().f1, Cow::Borrowed(_)))
 }
