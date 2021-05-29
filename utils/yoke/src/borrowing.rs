@@ -14,6 +14,10 @@ trait ZeroCopyCloneV2 {
     }
 }
 
+trait ZeroCopyCloneV4: for<'a> Yokeable<'a> {
+    fn zero_copy_clone_v4<'b>(this: &'b <Self as Yokeable<'b>>::Output) -> <Self as Yokeable<'b>>::Output;
+}
+
 struct DataStruct<'s> {
     f1: Cow<'s, str>,
     f2: Cow<'s, str>,
@@ -47,6 +51,15 @@ impl<'s> ZeroCopyCloneV2 for DataStruct<'s> {
         DataStruct {
             f1: Cow::Borrowed(self.f1.borrow()),
             f2: Cow::Borrowed(self.f2.borrow()),
+        }
+    }
+}
+
+impl<'s> ZeroCopyCloneV4 for DataStruct<'static> {
+    fn zero_copy_clone_v4<'b>(this: &'b DataStruct<'b>) -> DataStruct<'b> {
+        DataStruct {
+            f1: Cow::Borrowed(this.f1.borrow()),
+            f2: Cow::Borrowed(this.f2.borrow()),
         }
     }
 }
