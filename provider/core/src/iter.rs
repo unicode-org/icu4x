@@ -24,7 +24,7 @@ pub trait IterableDataProviderCore {
 /// for all types implementing both of those traits.
 pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
 }
@@ -32,7 +32,7 @@ where
 impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
     S: IterableDataProviderCore + DataProvider<'d, T>,
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
 }

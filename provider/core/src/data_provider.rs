@@ -256,7 +256,7 @@ where
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     /// Query the provider for data, returning the result.

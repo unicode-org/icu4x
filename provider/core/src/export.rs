@@ -14,7 +14,7 @@ use std::fmt::Debug;
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
 pub trait DataExporter<'s, T>
 where
-    T: 's + ToOwned + ?Sized,
+    T: 's + ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
