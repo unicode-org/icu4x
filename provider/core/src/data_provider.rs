@@ -100,7 +100,7 @@ pub struct DataResponseMetadata {
 #[derive(Debug, Clone, PartialEq)]
 pub struct DataPayload<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     cow: Cow<'d, T>,
@@ -108,7 +108,7 @@ where
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     /// Convert an owned Cow-compatible data struct into a DataPayload.
@@ -213,7 +213,7 @@ where
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     /// Metadata about the returned object.
@@ -225,7 +225,7 @@ where
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     /// Takes ownership of the underlying payload. Error if not present.
@@ -237,7 +237,7 @@ where
 
 impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
 where
-    T: ToOwned + ?Sized,
+    T: ToOwned,
     <T as ToOwned>::Owned: Debug,
 {
     type Error = Error;
