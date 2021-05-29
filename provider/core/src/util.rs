@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Internal utilities for DataProvider.
+
 /// Implement [`ToOwned`](std::borrow::ToOwned) on a trait object, enabling it to be used in a [`Cow`](std::borrow::Cow).
 /// Requires the trait to have a method named `clone_into_box()`.
 macro_rules! impl_dyn_clone {
@@ -23,17 +25,28 @@ macro_rules! impl_dyn_clone {
     };
 }
 
+/// Custom `From` trait for `DataPayload`.
+/// 
+/// The standard `From` trait cannot be used in all situations due to the blanket implementation
+/// `impl<T> From<T> for T`.
+pub trait FromDataPayload<'d, T>
+where
+    T: Clone + std::fmt::Debug,
+{
+    fn from_data_payload(other: crate::prelude::DataPayload<'d, T>) -> Self;
+}
+
 /// Implement [`From`](std::convert::From)`<`[`DataPayload<T>`]`>` for [DataPayload<dyn S>`] where `T` implements the trait `S`.
 macro_rules! impl_dyn_from_payload {
-    ($trait:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s: $d, T> From<$crate::prelude::DataPayload<$d, T>>
-            for $crate::prelude::DataPayload<$d, dyn $trait + 's>
+    ($trait:path, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
+        impl<$d, $s: $d, T> $crate::util::FromDataPayload<$d, T>
+            for $crate::prelude::DataPayload<$d, $dyn_wrap>
         where
             T: $trait + Clone,
         {
-            fn from(
+            fn from_data_payload(
                 other: $crate::prelude::DataPayload<$d, T>,
-            ) -> $crate::prelude::DataPayload<$d, dyn $trait + 's> {
+            ) -> $crate::prelude::DataPayload<$d, $dyn_wrap> {
                 todo!()
                 /*
                 use std::borrow::Cow;
@@ -130,7 +143,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::erased::ErasedDataStruct,
+            $crate::erased::ErasedDataStructWrap<$d>,
             $d,
             $s
         );
@@ -140,13 +153,13 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::serde::SerdeSeDataStruct<$s>,
+            $crate::serde::SerdeSeDataStructWrap<$d, $s>,
             $d,
             $s
         );
     };
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $struct_trait:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s> $crate::prelude::DataProvider<$d, dyn $struct_trait + $s> for $provider
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
+        impl<$d, $s> $crate::prelude::DataProvider<$d, $dyn_wrap> for $provider
         where
             $s: $d,
         {
@@ -154,7 +167,7 @@ macro_rules! impl_dyn_provider {
                 &self,
                 req: &$crate::prelude::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<$d, dyn $struct_trait + $s>,
+                $crate::prelude::DataResponse<$d, $dyn_wrap>,
                 $crate::prelude::DataError,
             > {
                 match req.resource_path.key {
@@ -164,7 +177,9 @@ macro_rules! impl_dyn_provider {
                                 $crate::prelude::DataProvider::load_payload(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
-                                payload: result.payload.map(|p| p.into()),
+                                payload: result.payload.map(|p| {
+                                    $crate::util::FromDataPayload::<$struct>::from_data_payload(p)
+                                }),
                             })
                         }
                     )+,

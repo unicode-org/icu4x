@@ -105,7 +105,7 @@
 //! [`impl_dyn_provider!`]: impl_dyn_provider
 
 #[macro_use]
-mod util;
+pub mod util;
 
 mod data_provider;
 #[macro_use]

@@ -21,8 +21,8 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use std::borrow::Cow;
 use std::fmt::Debug;
+use std::ops::Deref;
 
 /// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
 ///
@@ -136,8 +136,6 @@ pub trait SerdeSeDataStruct<'s>: 's + Debug {
 
 impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
 
-impl_dyn_from_payload!(SerdeSeDataStruct<'s>, 'd, 's);
-
 impl<'s, T> SerdeSeDataStruct<'s> for T
 where
     T: 's + serde::Serialize + Clone + Debug,
@@ -149,3 +147,18 @@ where
         self
     }
 }
+
+/// A wrapper around `&dyn `[`SerdeSeDataStruct`] for integration with DataProvider.
+#[derive(Clone, Debug)]
+pub struct SerdeSeDataStructWrap<'d, 's> {
+    inner: &'d (dyn SerdeSeDataStruct<'s> + 's),
+}
+
+impl<'d, 's> Deref for SerdeSeDataStructWrap<'d, 's> {
+    type Target = dyn SerdeSeDataStruct<'s> + 's;
+    fn deref(&self) -> &Self::Target {
+        self.inner.deref()
+    }
+}
+
+impl_dyn_from_payload!(SerdeSeDataStruct<'s>, SerdeSeDataStructWrap<'d, 's>, 'd, 's);

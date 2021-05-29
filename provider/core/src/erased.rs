@@ -8,8 +8,8 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
-
 use std::fmt::Debug;
+use std::ops::Deref;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
@@ -56,8 +56,6 @@ pub trait ErasedDataStruct: 'static + Debug {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-impl_dyn_from_payload!(ErasedDataStruct, 'd, 's);
-
 impl dyn ErasedDataStruct {
     /// Convenience function: Return a downcast reference, or an error if mismatched types.
     ///
@@ -84,7 +82,22 @@ impl dyn ErasedDataStruct {
     }
 }
 
-impl<'d> DataPayload<'d, dyn ErasedDataStruct> {
+/// A wrapper around `&dyn `[`ErasedDataStruct`] for integration with DataProvider.
+#[derive(Clone, Debug)]
+pub struct ErasedDataStructWrap<'d> {
+    inner: &'d dyn ErasedDataStruct,
+}
+
+impl<'d> Deref for ErasedDataStructWrap<'d> {
+    type Target = dyn ErasedDataStruct;
+    fn deref(&self) -> &Self::Target {
+        self.inner.deref()
+    }
+}
+
+impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructWrap<'d>, 'd, 's);
+
+impl<'d> DataPayload<'d, ErasedDataStructWrap<'d>> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
@@ -153,19 +166,19 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error>;
+    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, dyn ErasedDataStruct>,
+    T: DataProvider<'d, ErasedDataStructWrap<'d>>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn ErasedDataStruct>, Error> {
-        DataProvider::<dyn ErasedDataStruct>::load_payload(self, req)
+    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error> {
+        DataProvider::<ErasedDataStructWrap<'d>>::load_payload(self, req)
     }
 }
 

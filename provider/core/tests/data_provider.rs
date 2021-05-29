@@ -111,7 +111,7 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
 icu_provider::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
     HELLO_WORLD_V1 => HelloWorldV1<'static>,
     HELLO_ALT_KEY => HelloAlt,
-}, icu_provider::erased::ErasedDataStruct, 'd, 's);
+}, ERASED, 'd, 's);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{

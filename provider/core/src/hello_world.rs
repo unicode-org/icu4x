@@ -157,13 +157,13 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
+impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructWrap<'d>>
     for HelloWorldProvider<'static>
 {
     fn put_payload(
         &mut self,
         req: &DataRequest,
-        payload: &dyn crate::erased::ErasedDataStruct,
+        payload: &crate::erased::ErasedDataStructWrap<'d>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
