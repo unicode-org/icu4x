@@ -126,14 +126,16 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloWorldV1<'static>> for HelloWorldProvider<'s>
+impl<'d, 's, 't> DataProvider<'d, HelloWorldV1<'t>> for HelloWorldProvider<'s>
 where
     's: 'd,
+    't: 'static,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'static>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1<'t>>, DataError> {
+        // TODO: Add a way to allow this type HelloWorldV1 to request a custom cart.
         todo!()
         /*
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
