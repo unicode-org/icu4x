@@ -11,6 +11,7 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
+use yoke::Yoke;
 use yoke::Yokeable;
 
 /// A struct to request a certain piece of data from a data provider.
@@ -98,13 +99,36 @@ pub struct DataResponseMetadata {
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
-#[derive(Debug, Clone, PartialEq)]
 pub struct DataPayload<'d, T>
 where
     T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
-    cow: Cow<'d, T>,
+    // cow: Cow<'d, T>,
+    yoke: yoke::Yoke<T, Option<&'d <T as Yokeable<'d>>::Output>>
+}
+
+// TODO
+impl<'d, T> Debug for DataPayload<'d, T>
+where
+    T: ToOwned + for<'a> Yokeable<'a>,
+    <T as ToOwned>::Owned: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result { todo!() }
+}
+impl<'d, T> PartialEq for DataPayload<'d, T>
+where
+    T: ToOwned + for<'a> Yokeable<'a>,
+    <T as ToOwned>::Owned: Debug,
+{
+    fn eq(&self, other: &Self) -> bool { todo!() }
+}
+impl<'d, T> Clone for DataPayload<'d, T>
+where
+    T: ToOwned + for<'a> Yokeable<'a>,
+    <T as ToOwned>::Owned: Debug,
+{
+    fn clone(&self) -> Self { todo!() }
 }
 
 impl<'d, T> DataPayload<'d, T>
@@ -114,18 +138,20 @@ where
 {
     /// Convert an owned Cow-compatible data struct into a DataPayload.
     #[inline]
-    pub fn from_owned(data: <T as ToOwned>::Owned) -> Self {
+    pub fn from_owned(data: T) -> Self {
         Self {
-            cow: Cow::Owned(data),
+            // cow: Cow::Owned(data),
+            yoke: Yoke::new_owned(data)
         }
     }
 
     /// Convert a borrowed Cow-compatible data struct into a DataPayload.
     #[inline]
-    pub fn from_borrowed(data: &'d T) -> Self {
-        Self {
-            cow: Cow::Borrowed(data),
-        }
+    pub fn from_borrowed(data: &'d <T as Yokeable::<'d>>::Output) -> Self {
+        todo!()
+        // Self {
+        //     cow: Cow::Borrowed(data),
+        // }
     }
 
     /// Mutate the data contained in this DataPayload.
@@ -162,11 +188,12 @@ where
     /// assert_eq!("Bar", payload.get()[1]);
     /// ```
     #[inline]
-    pub fn with_mut<F>(&mut self, f: F)
+    pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
-        F: 'static + for<'b> FnOnce(&'b mut <T as ToOwned>::Owned),
+        F: 'static + for<'b> FnOnce(&'b mut <T as Yokeable<'a>>::Output),
     {
-        f(self.cow.to_mut())
+        // f(self.cow.to_mut())
+        self.yoke.with_mut(f)
     }
 
     /// Converts the DataPayload into a Cow. May require cloning the data.
@@ -187,7 +214,8 @@ where
     /// ```
     #[inline]
     pub fn into_cow(self) -> Cow<'d, T> {
-        self.cow
+        // self.cow
+        todo!()
     }
 
     /// Borrows the underlying data.
@@ -207,7 +235,7 @@ where
     #[inline]
     pub fn get<'a>(&'a self) -> &'a <T as Yokeable<'a>>::Output {
         // self.cow.deref()
-        todo!()
+        self.yoke.get()
     }
 }
 

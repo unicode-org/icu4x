@@ -121,7 +121,7 @@ unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
 impl<'d> DataPayload<'d, ErasedDataStructWrap<'static>> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
     /// Returns an error if the type is not compatible.
-    pub fn downcast<T>(self) -> Result<DataPayload<'static, T>, Error>
+    pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
         T: Clone + Debug + Any + for<'a> yoke::Yokeable<'a>,
     {

@@ -167,8 +167,6 @@ unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;
 
     fn transform(&'a self) -> &'a Self::Output {
-        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
-        // self
         unsafe { std::mem::transmute(self) }
     }
 
