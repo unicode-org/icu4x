@@ -90,7 +90,7 @@ macro_rules! impl_dyn_from_payload {
 ///
 /// ```
 /// # use icu_provider::prelude::*;
-/// # use icu_provider::erased::ErasedDataStruct;
+/// # use icu_provider::erased::ErasedDataStructWrap;
 /// # use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
@@ -106,14 +106,14 @@ macro_rules! impl_dyn_from_payload {
 ///     }
 /// }
 ///
-/// // Since `String` is `'static`, we can implement `DataProvider<dyn ErasedDataStruct>`
+/// // Since `String` is `'static`, we can implement `DataProvider<ErasedDataStructWrap>`
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => String,
 /// }, ERASED, 'd, 's);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<dyn ErasedDataStruct> = provider
+/// let resp: DataResponse<ErasedDataStructWrap> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
 /// ```
