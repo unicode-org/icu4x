@@ -11,6 +11,7 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
+use yoke::Yokeable;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -100,7 +101,7 @@ pub struct DataResponseMetadata {
 #[derive(Debug, Clone, PartialEq)]
 pub struct DataPayload<'d, T>
 where
-    T: ToOwned,
+    T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     cow: Cow<'d, T>,
@@ -108,7 +109,7 @@ where
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ToOwned,
+    T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     /// Convert an owned Cow-compatible data struct into a DataPayload.
@@ -204,8 +205,9 @@ where
     /// assert_eq!("Demo", payload.get());
     /// ```
     #[inline]
-    pub fn get(&self) -> &T {
-        self.cow.deref()
+    pub fn get<'a>(&'a self) -> &'a <T as Yokeable<'a>>::Output {
+        // self.cow.deref()
+        todo!()
     }
 }
 
@@ -213,7 +215,7 @@ where
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
 where
-    T: ToOwned,
+    T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     /// Metadata about the returned object.
@@ -225,7 +227,7 @@ where
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: ToOwned,
+    T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     /// Takes ownership of the underlying payload. Error if not present.
@@ -237,7 +239,7 @@ where
 
 impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
 where
-    T: ToOwned,
+    T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     type Error = Error;
@@ -256,7 +258,7 @@ where
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
-    T: ToOwned,
+    T: ToOwned + for<'a> Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     /// Query the provider for data, returning the result.

@@ -36,6 +36,27 @@ impl Default for HelloWorldV1<'_> {
     }
 }
 
+unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
+    type Output = HelloWorldV1<'a>;
+
+    fn transform(&'a self) -> &'a Self::Output {
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        self
+    }
+
+    unsafe fn make(from: Self::Output) -> Self {
+        std::mem::transmute(from)
+    }
+
+    fn with_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        // Cast away the lifetime of Self
+        unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+    }
+}
+
 /// A data provider returning Hello World strings in different languages.
 ///
 /// Mostly useful for testing.
@@ -105,14 +126,16 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for HelloWorldProvider<'s>
+impl<'d, 's> DataProvider<'d, HelloWorldV1<'static>> for HelloWorldProvider<'s>
 where
     's: 'd,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1<'static>>, DataError> {
+        todo!()
+        /*
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -126,6 +149,7 @@ where
             },
             payload: Some(DataPayload::from_owned(data)),
         })
+        */
     }
 }
 
@@ -135,7 +159,7 @@ impl_dyn_provider!(HelloWorldProvider<'static>, {
 
 #[cfg(feature = "provider_serde")]
 impl_dyn_provider!(HelloWorldProvider<'s>, {
-    _ => HelloWorldV1<'s>,
+    _ => HelloWorldV1<'static>,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
@@ -157,13 +181,13 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructWrap<'d>>
+impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructWrap<'static>>
     for HelloWorldProvider<'static>
 {
-    fn put_payload(
-        &mut self,
-        req: &DataRequest,
-        payload: &crate::erased::ErasedDataStructWrap<'d>,
+    fn put_payload<'a>(
+        &'a mut self,
+        req: &'a DataRequest,
+        payload: &'a crate::erased::ErasedDataStructWrap<'a>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;

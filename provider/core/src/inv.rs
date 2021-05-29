@@ -37,7 +37,7 @@ pub struct InvariantDataProvider;
 
 impl<'d, T> DataProvider<'d, T> for InvariantDataProvider
 where
-    T: Clone + Debug + Default + 'd,
+    T: Clone + Debug + Default + for<'a> yoke::Yokeable<'a>,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {

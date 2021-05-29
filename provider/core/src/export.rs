@@ -14,14 +14,14 @@ use std::fmt::Debug;
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
 pub trait DataExporter<'s, T>
 where
-    T: 's + ToOwned,
+    T: 's + ToOwned + for<'a> yoke::Yokeable<'a>,
     <T as ToOwned>::Owned: Debug,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
-    fn put_payload(
-        &mut self,
-        req: &DataRequest,
-        payload: &T,
+    fn put_payload<'a>(
+        &'a mut self,
+        req: &'a DataRequest,
+        payload: &'a <T as yoke::Yokeable<'a>>::Output,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the

@@ -31,7 +31,7 @@ macro_rules! impl_dyn_clone {
 /// `impl<T> From<T> for T`.
 pub trait FromDataPayload<'d, T>
 where
-    T: Clone + std::fmt::Debug,
+    T: Clone + std::fmt::Debug + for<'a> yoke::Yokeable<'a>,
 {
     fn from_data_payload(other: crate::prelude::DataPayload<'d, T>) -> Self;
 }
@@ -42,7 +42,7 @@ macro_rules! impl_dyn_from_payload {
         impl<$d, $s: $d, T> $crate::util::FromDataPayload<$d, T>
             for $crate::prelude::DataPayload<$d, $dyn_wrap>
         where
-            T: $trait + Clone,
+            T: $trait + Clone + for<'a> yoke::Yokeable<'a>,
         {
             fn from_data_payload(
                 other: $crate::prelude::DataPayload<$d, T>,
@@ -143,7 +143,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::erased::ErasedDataStructWrap<$d>,
+            $crate::erased::ErasedDataStructWrap<'static>,
             $d,
             $s
         );
@@ -153,7 +153,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::serde::SerdeSeDataStructWrap<$d, $s>,
+            $crate::serde::SerdeSeDataStructWrap<'static, 'static>,
             $d,
             $s
         );

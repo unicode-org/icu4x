@@ -95,14 +95,35 @@ impl<'d> Deref for ErasedDataStructWrap<'d> {
     }
 }
 
-impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructWrap<'d>, 'd, 's);
+impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructWrap<'static>, 'd, 's);
 
-impl<'d> DataPayload<'d, ErasedDataStructWrap<'d>> {
+unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
+    type Output = ErasedDataStructWrap<'a>;
+
+    fn transform(&'a self) -> &'a Self::Output {
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        self
+    }
+
+    unsafe fn make(from: Self::Output) -> Self {
+        std::mem::transmute(from)
+    }
+
+    fn with_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        // Cast away the lifetime of Self
+        unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+    }
+}
+
+impl<'d> DataPayload<'d, ErasedDataStructWrap<'static>> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
     /// Returns an error if the type is not compatible.
-    pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
+    pub fn downcast<T>(self) -> Result<DataPayload<'static, T>, Error>
     where
-        T: Clone + Debug + Any,
+        T: Clone + Debug + Any + for<'a> yoke::Yokeable<'a>,
     {
         todo!()
         /*
@@ -166,25 +187,25 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error>;
+    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'static>>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, ErasedDataStructWrap<'d>>,
+    T: DataProvider<'d, ErasedDataStructWrap<'static>>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error> {
-        DataProvider::<ErasedDataStructWrap<'d>>::load_payload(self, req)
+    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'static>>, Error> {
+        DataProvider::<ErasedDataStructWrap<'static>>::load_payload(self, req)
     }
 }
 
 impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: Clone + Debug + Any,
+    T: Clone + Debug + Any + for<'a> yoke::Yokeable<'a>,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
