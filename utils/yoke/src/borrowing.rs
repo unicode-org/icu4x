@@ -18,6 +18,18 @@ trait ZeroCopyCloneV4: for<'a> Yokeable<'a> {
     fn zero_copy_clone_v4<'b>(this: &'b <Self as Yokeable<'b>>::Output) -> <Self as Yokeable<'b>>::Output;
 }
 
+// trait ZeroCopyCloneV5<'d> {
+//     type Yokeable: for<'a> Yokeable<'a> + Yokeable<'d, Output = Self>;
+
+//     fn zero_copy_clone_v5<'b>(&self) -> <Self::Yokeable as Yokeable<'b>>::Output;
+// }
+
+trait ZeroCopyCloneV6<'d>: 'd {
+    type Yokeable: for<'a> Yokeable<'a>;
+
+    fn zero_copy_clone_v6<'b>(&'b self) -> <Self::Yokeable as Yokeable<'b>>::Output;
+}
+
 struct DataStruct<'s> {
     f1: Cow<'s, str>,
     f2: Cow<'s, str>,
