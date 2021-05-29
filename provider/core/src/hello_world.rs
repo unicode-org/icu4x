@@ -181,7 +181,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructWrap<'static>>
+impl<'d> crate::export::DataExporter<crate::erased::ErasedDataStructWrap<'static>>
     for HelloWorldProvider<'static>
 {
     fn put_payload<'a>(

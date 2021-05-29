@@ -12,10 +12,9 @@ use std::fmt::Debug;
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
-pub trait DataExporter<'s, T>
+pub trait DataExporter<T>
 where
-    T: 's + ToOwned + for<'a> yoke::Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> yoke::Yokeable<'a>,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload<'a>(
@@ -35,8 +34,6 @@ where
         resc_key: &ResourceKey,
         provider: &impl IterableDataProvider<'d, T>,
     ) -> Result<(), Error>
-    where
-        's: 'd,
     {
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {

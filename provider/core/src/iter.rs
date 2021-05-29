@@ -24,16 +24,14 @@ pub trait IterableDataProviderCore {
 /// for all types implementing both of those traits.
 pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
-    T: ToOwned + for<'a> yoke::Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> yoke::Yokeable<'a>,
 {
 }
 
 impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
     S: IterableDataProviderCore + DataProvider<'d, T>,
-    T: ToOwned + for<'a> yoke::Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> yoke::Yokeable<'a>,
 {
 }
 

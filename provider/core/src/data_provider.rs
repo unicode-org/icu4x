@@ -101,46 +101,39 @@ pub struct DataResponseMetadata {
 /// ```
 pub struct DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
-    // cow: Cow<'d, T>,
     yoke: yoke::Yoke<T, Option<&'d <T as Yokeable<'d>>::Output>>
 }
 
 // TODO
 impl<'d, T> Debug for DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result { todo!() }
 }
 impl<'d, T> PartialEq for DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     fn eq(&self, other: &Self) -> bool { todo!() }
 }
 impl<'d, T> Clone for DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     fn clone(&self) -> Self { todo!() }
 }
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     /// Convert an owned Cow-compatible data struct into a DataPayload.
     #[inline]
     pub fn from_owned(data: T) -> Self {
         Self {
-            // cow: Cow::Owned(data),
             yoke: Yoke::new_owned(data)
         }
     }
@@ -149,9 +142,6 @@ where
     #[inline]
     pub fn from_borrowed(data: &'d <T as Yokeable::<'d>>::Output) -> Self {
         todo!()
-        // Self {
-        //     cow: Cow::Borrowed(data),
-        // }
     }
 
     /// Mutate the data contained in this DataPayload.
@@ -192,30 +182,7 @@ where
     where
         F: 'static + for<'b> FnOnce(&'b mut <T as Yokeable<'a>>::Output),
     {
-        // f(self.cow.to_mut())
         self.yoke.with_mut(f)
-    }
-
-    /// Converts the DataPayload into a Cow. May require cloning the data.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use std::borrow::Cow;
-    ///
-    /// let payload = DataPayload::from_borrowed("Demo");
-    /// let data: Cow<str> = payload.into_cow();
-    /// assert!(matches!(data, Cow::Borrowed(_)));
-    ///
-    /// let payload = DataPayload::<str>::from_owned("Demo".to_string());
-    /// let data: Cow<str> = payload.into_cow();
-    /// assert!(matches!(data, Cow::Owned(_)));
-    /// ```
-    #[inline]
-    pub fn into_cow(self) -> Cow<'d, T> {
-        // self.cow
-        todo!()
     }
 
     /// Borrows the underlying data.
@@ -234,8 +201,33 @@ where
     /// ```
     #[inline]
     pub fn get<'a>(&'a self) -> &'a <T as Yokeable<'a>>::Output {
-        // self.cow.deref()
         self.yoke.get()
+    }
+}
+
+impl<'d, T> DataPayload<'d, T>
+where
+    T: ToOwned + for<'a> Yokeable<'a>,
+{
+    /// Converts the DataPayload into a Cow. May require cloning the data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let payload = DataPayload::from_borrowed("Demo");
+    /// let data: Cow<str> = payload.into_cow();
+    /// assert!(matches!(data, Cow::Borrowed(_)));
+    ///
+    /// let payload = DataPayload::<str>::from_owned("Demo".to_string());
+    /// let data: Cow<str> = payload.into_cow();
+    /// assert!(matches!(data, Cow::Owned(_)));
+    /// ```
+    #[inline]
+    pub fn into_cow(self) -> Cow<'d, T> {
+        todo!()
     }
 }
 
@@ -243,8 +235,7 @@ where
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -255,8 +246,7 @@ where
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
@@ -267,8 +257,7 @@ where
 
 impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     type Error = Error;
 
@@ -286,8 +275,7 @@ where
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
-    <T as ToOwned>::Owned: Debug,
+    T: for<'a> Yokeable<'a>,
 {
     /// Query the provider for data, returning the result.
     ///
