@@ -88,7 +88,7 @@ pub trait SerdeDeDataProvider<'de> {
 
 impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
 where
-    T: serde::Deserialize<'de> + Clone + Debug + for<'a> yoke::Yokeable<'a>,
+    T: serde::Deserialize<'de> + Clone + Debug + ZeroCopyCloneV3<'d>,
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
@@ -96,7 +96,7 @@ where
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse {
             metadata,
-            payload: payload.map(|obj| DataPayload::from_owned(obj)),
+            payload: payload.map(|obj| DataPayload::from_partial_owned(obj)),
         })
     }
 }
@@ -161,7 +161,7 @@ impl<'d, 's> Deref for SerdeSeDataStructWrap<'d, 's> {
     }
 }
 
-impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructWrap<'static, 'static>, 'd, 's);
+impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructWrap<'d, 'd>, 'd, 's);
 
 unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;
@@ -181,4 +181,8 @@ unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
         // Cast away the lifetime of Self
         unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
     }
+}
+
+impl<'s> ZeroCopyCloneV3<'s> for SerdeSeDataStructWrap<'s, 's> {
+    type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
 }

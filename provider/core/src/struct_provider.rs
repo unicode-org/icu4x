@@ -49,9 +49,9 @@ pub struct StructProvider<'d, T> {
     pub data: &'d T,
 }
 
-impl<'d, T> DataProvider<'d, T> for StructProvider<'d, <T as yoke::Yokeable<'d>>::Output>
+impl<'d, T> DataProvider<'d, T> for StructProvider<'d, T>
 where
-    T: Clone + Debug + Sized + for<'a> yoke::Yokeable<'a>,
+    T: Clone + Debug + Sized + ZeroCopyCloneV3<'d>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         req.resource_path.key.match_key(self.key)?;

@@ -88,6 +88,10 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
+pub trait ZeroCopyCloneV3<'s>: 's {
+    type Yokeable: for<'a> Yokeable<'a>;
+}
+
 /// A wrapper around the payload returned in a [`DataResponse`].
 ///
 /// # Examples
@@ -101,46 +105,56 @@ pub struct DataResponseMetadata {
 /// ```
 pub struct DataPayload<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
-    yoke: yoke::Yoke<T, Option<&'d <T as Yokeable<'d>>::Output>>
+    yoke: yoke::Yoke<<T as ZeroCopyCloneV3<'d>>::Yokeable, Option<&'d T>>
 }
 
 // TODO
 impl<'d, T> Debug for DataPayload<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result { todo!() }
 }
 impl<'d, T> PartialEq for DataPayload<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     fn eq(&self, other: &Self) -> bool { todo!() }
 }
 impl<'d, T> Clone for DataPayload<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     fn clone(&self) -> Self { todo!() }
 }
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
-    /// Convert an owned Cow-compatible data struct into a DataPayload.
+    /// Convert a fully owned (`'static`) data struct into a DataPayload.
     #[inline]
-    pub fn from_owned(data: T) -> Self {
+    pub fn from_owned(data: <T as ZeroCopyCloneV3<'d>>::Yokeable) -> Self {
         Self {
             yoke: Yoke::new_owned(data)
         }
     }
 
-    /// Convert a borrowed Cow-compatible data struct into a DataPayload.
+    /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
-    pub fn from_borrowed(data: &'d <T as Yokeable::<'d>>::Output) -> Self {
+    pub fn from_partial_owned(data: T) -> Self {
+        // TODO: Build up the following Yoke:
+        // Yoke<T::Yokeable, Rc<T>>
+        todo!()
+    }
+
+    /// Convert a borrowed data struct into a DataPayload.
+    #[inline]
+    pub fn from_borrowed(data: &'d T) -> Self {
+        // TODO: Build up the following Yoke:
+        // Yoke<T::Yokeable, &'d T>
         todo!()
     }
 
@@ -180,7 +194,7 @@ where
     #[inline]
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
-        F: 'static + for<'b> FnOnce(&'b mut <T as Yokeable<'a>>::Output),
+        F: 'static + for<'b> FnOnce(&'b mut <<T as ZeroCopyCloneV3<'d>>::Yokeable as Yokeable<'a>>::Output),
     {
         self.yoke.with_mut(f)
     }
@@ -200,14 +214,14 @@ where
     /// assert_eq!("Demo", payload.get());
     /// ```
     #[inline]
-    pub fn get<'a>(&'a self) -> &'a <T as Yokeable<'a>>::Output {
+    pub fn get<'a>(&'a self) -> &'a <<T as ZeroCopyCloneV3<'d>>::Yokeable as Yokeable<'a>>::Output {
         self.yoke.get()
     }
 }
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ToOwned + for<'a> Yokeable<'a>,
+    T: ToOwned + ZeroCopyCloneV3<'d>,
 {
     /// Converts the DataPayload into a Cow. May require cloning the data.
     ///
@@ -235,7 +249,7 @@ where
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -246,7 +260,7 @@ where
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
@@ -257,7 +271,7 @@ where
 
 impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     type Error = Error;
 
@@ -275,7 +289,7 @@ where
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
-    T: for<'a> Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     /// Query the provider for data, returning the result.
     ///

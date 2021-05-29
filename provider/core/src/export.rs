@@ -12,15 +12,15 @@ use std::fmt::Debug;
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
-pub trait DataExporter<T>
+pub trait DataExporter<'d, T>
 where
-    T: for<'a> yoke::Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload<'a>(
         &'a mut self,
         req: &'a DataRequest,
-        payload: &'a <T as yoke::Yokeable<'a>>::Output,
+        payload: &'a <<T as ZeroCopyCloneV3<'d>>::Yokeable as yoke::Yokeable<'a>>::Output,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -29,7 +29,7 @@ where
 
     /// Auto-implemented function that loads data from an [`IterableDataProvider`] and dumps it
     /// into this [`DataExporter`].
-    fn put_key_from_provider<'d>(
+    fn put_key_from_provider(
         &mut self,
         resc_key: &ResourceKey,
         provider: &impl IterableDataProvider<'d, T>,

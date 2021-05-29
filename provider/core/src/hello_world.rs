@@ -57,6 +57,10 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
     }
 }
 
+impl<'s> ZeroCopyCloneV3<'s> for HelloWorldV1<'s> {
+    type Yokeable = HelloWorldV1<'static>;
+}
+
 /// A data provider returning Hello World strings in different languages.
 ///
 /// Mostly useful for testing.
@@ -126,15 +130,14 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's, 't> DataProvider<'d, HelloWorldV1<'t>> for HelloWorldProvider<'s>
+impl<'d, 's, 't> DataProvider<'d, HelloWorldV1<'d>> for HelloWorldProvider<'s>
 where
     's: 'd,
-    't: 'static,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'t>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1<'d>>, DataError> {
         // TODO: Add a way to allow this type HelloWorldV1 to request a custom cart.
         todo!()
         /*
@@ -160,8 +163,8 @@ impl_dyn_provider!(HelloWorldProvider<'static>, {
 }, ERASED, 'd, 's);
 
 #[cfg(feature = "provider_serde")]
-impl_dyn_provider!(HelloWorldProvider<'s>, {
-    _ => HelloWorldV1<'static>,
+impl_dyn_provider!(HelloWorldProvider<'d>, {
+    _ => HelloWorldV1<'d>,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
@@ -183,7 +186,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<crate::erased::ErasedDataStructWrap<'static>>
+impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructWrap<'d>>
     for HelloWorldProvider<'static>
 {
     fn put_payload<'a>(

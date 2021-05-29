@@ -24,14 +24,14 @@ pub trait IterableDataProviderCore {
 /// for all types implementing both of those traits.
 pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
-    T: for<'a> yoke::Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
 }
 
 impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
     S: IterableDataProviderCore + DataProvider<'d, T>,
-    T: for<'a> yoke::Yokeable<'a>,
+    T: ZeroCopyCloneV3<'d>,
 {
 }
 

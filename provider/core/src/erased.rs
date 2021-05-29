@@ -95,7 +95,7 @@ impl<'d> Deref for ErasedDataStructWrap<'d> {
     }
 }
 
-impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructWrap<'static>, 'd, 's);
+impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructWrap<'d>, 'd, 's);
 
 unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
     type Output = ErasedDataStructWrap<'a>;
@@ -118,12 +118,16 @@ unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
     }
 }
 
-impl<'d> DataPayload<'d, ErasedDataStructWrap<'static>> {
+impl<'s> ZeroCopyCloneV3<'s> for ErasedDataStructWrap<'s> {
+    type Yokeable = ErasedDataStructWrap<'static>;
+}
+
+impl<'d> DataPayload<'d, ErasedDataStructWrap<'d>> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
-        T: Clone + Debug + Any + for<'a> yoke::Yokeable<'a>,
+        T: Clone + Debug + Any + ZeroCopyCloneV3<'d>,
     {
         todo!()
         /*
@@ -187,25 +191,25 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'static>>, Error>;
+    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, ErasedDataStructWrap<'static>>,
+    T: DataProvider<'d, ErasedDataStructWrap<'d>>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'static>>, Error> {
-        DataProvider::<ErasedDataStructWrap<'static>>::load_payload(self, req)
+    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error> {
+        DataProvider::<ErasedDataStructWrap<'d>>::load_payload(self, req)
     }
 }
 
 impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: Clone + Debug + Any + for<'a> yoke::Yokeable<'a>,
+    T: Clone + Debug + Any + ZeroCopyCloneV3<'d>,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {

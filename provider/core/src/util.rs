@@ -31,7 +31,7 @@ macro_rules! impl_dyn_clone {
 /// `impl<T> From<T> for T`.
 pub trait FromDataPayload<'d, T>
 where
-    T: Clone + std::fmt::Debug + for<'a> yoke::Yokeable<'a>,
+    T: Clone + std::fmt::Debug + crate::prelude::ZeroCopyCloneV3<'d>,
 {
     fn from_data_payload(other: crate::prelude::DataPayload<'d, T>) -> Self;
 }
@@ -42,7 +42,7 @@ macro_rules! impl_dyn_from_payload {
         impl<$d, $s: $d, T> $crate::util::FromDataPayload<$d, T>
             for $crate::prelude::DataPayload<$d, $dyn_wrap>
         where
-            T: $trait + Clone + for<'a> yoke::Yokeable<'a>,
+            T: $trait + Clone + ZeroCopyCloneV3<$d>,
         {
             fn from_data_payload(
                 other: $crate::prelude::DataPayload<$d, T>,
@@ -143,7 +143,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::erased::ErasedDataStructWrap<'static>,
+            $crate::erased::ErasedDataStructWrap<$d>,
             $d,
             $s
         );
@@ -153,7 +153,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::serde::SerdeSeDataStructWrap<'static, 'static>,
+            $crate::serde::SerdeSeDataStructWrap<$d, $d>,
             $d,
             $s
         );
