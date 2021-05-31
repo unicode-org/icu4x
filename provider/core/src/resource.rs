@@ -38,7 +38,7 @@ impl ResourceCategory {
             Self::Icu4x => Cow::Borrowed("icu4x"),
             Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
             Self::Plurals => Cow::Borrowed("plurals"),
-            Self::TimeZones => Cow::Borrowed("timezones"),
+            Self::TimeZones => Cow::Borrowed("time_zones"),
             Self::Uniset => Cow::Borrowed("uniset"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
