@@ -7,8 +7,6 @@
 use crate::error::Error;
 use crate::prelude::*;
 
-use std::fmt::Debug;
-
 /// A data provider that unconditionally returns references to borrowed data.
 ///
 /// # Examples
@@ -49,9 +47,10 @@ pub struct StructProvider<'d, T> {
     pub data: &'d T,
 }
 
-impl<'d, T> DataProvider<'d, T> for StructProvider<'d, T>
+impl<'d, T> DataProvider<'d, T>
+    for StructProvider<'d, <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output>
 where
-    T: Clone + Debug + Sized + ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         req.resource_path.key.match_key(self.key)?;

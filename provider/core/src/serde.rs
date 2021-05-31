@@ -88,7 +88,9 @@ pub trait SerdeDeDataProvider<'de> {
 
 impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
 where
-    T: serde::Deserialize<'de> + Clone + Debug + ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'de>>::Output: serde::Deserialize<'de> + Clone + Debug,
+    'de: 'd,
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
@@ -179,10 +181,16 @@ unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         // Cast away the lifetime of Self
-        unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+        unsafe {
+            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+                self,
+            ))
+        }
     }
 }
 
-impl<'s> ZeroCopyCloneV3<'s> for SerdeSeDataStructWrap<'s, 's> {
+pub struct SerdeSeDataStructHelper {}
+
+impl DataStructHelperTrait for SerdeSeDataStructHelper {
     type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
 }

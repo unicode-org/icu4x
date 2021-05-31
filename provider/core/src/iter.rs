@@ -6,7 +6,6 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use std::fmt::Debug;
 
 /// A provider that can iterate over all supported [`ResourceOptions`] for a certain key.
 ///
@@ -24,14 +23,14 @@ pub trait IterableDataProviderCore {
 /// for all types implementing both of those traits.
 pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
 }
 
 impl<'d, S, T> IterableDataProvider<'d, T> for S
 where
     S: IterableDataProviderCore + DataProvider<'d, T>,
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
 }
 

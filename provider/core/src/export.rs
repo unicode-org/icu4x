@@ -7,20 +7,20 @@
 use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
-use std::fmt::Debug;
 
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
 pub trait DataExporter<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    // TODO: Why do I need a 'd here?
+    T: DataStructHelperTrait + 'd,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload<'a>(
         &'a mut self,
         req: &'a DataRequest,
-        payload: &'a <<T as ZeroCopyCloneV3<'d>>::Yokeable as yoke::Yokeable<'a>>::Output,
+        payload: &'a <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'a>>::Output,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -33,8 +33,7 @@ where
         &mut self,
         resc_key: &ResourceKey,
         provider: &impl IterableDataProvider<'d, T>,
-    ) -> Result<(), Error>
-    {
+    ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {
                 continue;

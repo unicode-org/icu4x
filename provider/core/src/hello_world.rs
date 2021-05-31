@@ -53,11 +53,17 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         // Cast away the lifetime of Self
-        unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+        unsafe {
+            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+                self,
+            ))
+        }
     }
 }
 
-impl<'s> ZeroCopyCloneV3<'s> for HelloWorldV1<'s> {
+pub struct HelloWorldV1Helper {}
+
+impl DataStructHelperTrait for HelloWorldV1Helper {
     type Yokeable = HelloWorldV1<'static>;
 }
 
@@ -130,14 +136,14 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's, 't> DataProvider<'d, HelloWorldV1<'d>> for HelloWorldProvider<'s>
+impl<'d, 's, 't> DataProvider<'d, HelloWorldV1Helper> for HelloWorldProvider<'s>
 where
     's: 'd,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'d>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
         // TODO: Add a way to allow this type HelloWorldV1 to request a custom cart.
         todo!()
         /*
@@ -158,6 +164,7 @@ where
     }
 }
 
+/*
 impl_dyn_provider!(HelloWorldProvider<'static>, {
     _ => HelloWorldV1<'static>,
 }, ERASED, 'd, 's);
@@ -166,6 +173,29 @@ impl_dyn_provider!(HelloWorldProvider<'static>, {
 impl_dyn_provider!(HelloWorldProvider<'d>, {
     _ => HelloWorldV1<'d>,
 }, SERDE_SE, 'd, 's);
+*/
+
+impl<'d> DataProvider<'d, crate::erased::ErasedDataStructHelper> for HelloWorldProvider<'static> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, crate::erased::ErasedDataStructHelper>, DataError> {
+        match req.resource_path.key {
+            _ => {
+                let result: DataResponse<'d, HelloWorldV1Helper> =
+                    DataProvider::load_payload(self, req)?;
+                Ok(DataResponse {
+                    metadata: result.metadata,
+                    payload: result.payload.map(|p| {
+                        crate::util::ConvertDataPayload::<HelloWorldV1Helper>::convert(
+                            p,
+                        )
+                    }),
+                })
+            }
+        }
+    }
+}
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     fn supported_options_for_key(
@@ -186,7 +216,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructWrap<'d>>
+impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructHelper>
     for HelloWorldProvider<'static>
 {
     fn put_payload<'a>(

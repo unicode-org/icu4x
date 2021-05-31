@@ -95,7 +95,7 @@ impl<'d> Deref for ErasedDataStructWrap<'d> {
     }
 }
 
-impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructWrap<'d>, 'd, 's);
+impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructHelper, 'd, 's);
 
 unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
     type Output = ErasedDataStructWrap<'a>;
@@ -114,20 +114,26 @@ unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         // Cast away the lifetime of Self
-        unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+        unsafe {
+            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+                self,
+            ))
+        }
     }
 }
 
-impl<'s> ZeroCopyCloneV3<'s> for ErasedDataStructWrap<'s> {
+pub struct ErasedDataStructHelper {}
+
+impl DataStructHelperTrait for ErasedDataStructHelper {
     type Yokeable = ErasedDataStructWrap<'static>;
 }
 
-impl<'d> DataPayload<'d, ErasedDataStructWrap<'d>> {
+impl<'d> DataPayload<'d, ErasedDataStructHelper> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
-        T: Clone + Debug + Any + ZeroCopyCloneV3<'d>,
+        T: Clone + Debug + Any + DataStructHelperTrait,
     {
         todo!()
         /*
@@ -191,25 +197,25 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error>;
+    ) -> Result<DataResponse<'d, ErasedDataStructHelper>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, ErasedDataStructWrap<'d>>,
+    T: DataProvider<'d, ErasedDataStructHelper>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructWrap<'d>>, Error> {
-        DataProvider::<ErasedDataStructWrap<'d>>::load_payload(self, req)
+    ) -> Result<DataResponse<'d, ErasedDataStructHelper>, Error> {
+        DataProvider::<ErasedDataStructHelper>::load_payload(self, req)
     }
 }
 
 impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: Clone + Debug + Any + ZeroCopyCloneV3<'d>,
+    T: Clone + Debug + Any + DataStructHelperTrait,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {

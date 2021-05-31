@@ -25,26 +25,28 @@ macro_rules! impl_dyn_clone {
     };
 }
 
-/// Custom `From` trait for `DataPayload`.
-/// 
+/// Trait to allow conversion from `DataPayload<T>` to `DataPayload<Self>`.
+///
 /// The standard `From` trait cannot be used in all situations due to the blanket implementation
 /// `impl<T> From<T> for T`.
-pub trait FromDataPayload<'d, T>
+pub trait ConvertDataPayload<'d, T>
 where
-    T: Clone + std::fmt::Debug + crate::prelude::ZeroCopyCloneV3<'d>,
+    T: crate::prelude::DataStructHelperTrait,
+    Self: Sized + crate::prelude::DataStructHelperTrait,
 {
-    fn from_data_payload(other: crate::prelude::DataPayload<'d, T>) -> Self;
+    fn convert(other: crate::prelude::DataPayload<'d, T>) -> crate::prelude::DataPayload<'d, Self>;
 }
 
-/// Implement [`From`](std::convert::From)`<`[`DataPayload<T>`]`>` for [DataPayload<dyn S>`] where `T` implements the trait `S`.
+/// Implement `ConvertDataPayload<T>` for `S` where `T` implements the trait `S`.
 macro_rules! impl_dyn_from_payload {
     ($trait:path, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s: $d, T> $crate::util::FromDataPayload<$d, T>
-            for $crate::prelude::DataPayload<$d, $dyn_wrap>
+        impl<$d, $s: $d, T> $crate::util::ConvertDataPayload<$d, T> for $dyn_wrap
         where
-            T: $trait + Clone + ZeroCopyCloneV3<$d>,
+            T: $crate::prelude::DataStructHelperTrait,
+            $dyn_wrap: $crate::prelude::DataStructHelperTrait,
+            // <<T as $crate::prelude::DataStructHelperTrait>::Yokeable as yoke::Yokeable<$s>>::Output: $trait + Clone,
         {
-            fn from_data_payload(
+            fn convert(
                 other: $crate::prelude::DataPayload<$d, T>,
             ) -> $crate::prelude::DataPayload<$d, $dyn_wrap> {
                 todo!()
@@ -178,7 +180,7 @@ macro_rules! impl_dyn_provider {
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
-                                    $crate::util::FromDataPayload::<$struct>::from_data_payload(p)
+                                    $crate::util::ConvertDataPayload::<$struct>::convert(p)
                                 }),
                             })
                         }

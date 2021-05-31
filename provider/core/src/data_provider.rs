@@ -5,7 +5,6 @@
 use crate::error::Error;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
-use core::ops::Deref;
 use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -88,7 +87,8 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-pub trait ZeroCopyCloneV3<'s>: 's {
+// FIXME: Change the name of this thing
+pub trait DataStructHelperTrait {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
@@ -105,56 +105,66 @@ pub trait ZeroCopyCloneV3<'s>: 's {
 /// ```
 pub struct DataPayload<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
-    yoke: yoke::Yoke<<T as ZeroCopyCloneV3<'d>>::Yokeable, Option<&'d T>>
+    yoke: Yoke<<T as DataStructHelperTrait>::Yokeable, Option<&'d T>>,
 }
 
 // TODO
 impl<'d, T> Debug for DataPayload<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result { todo!() }
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
 }
 impl<'d, T> PartialEq for DataPayload<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
-    fn eq(&self, other: &Self) -> bool { todo!() }
+    fn eq(&self, other: &Self) -> bool {
+        todo!()
+    }
 }
 impl<'d, T> Clone for DataPayload<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
-    fn clone(&self) -> Self { todo!() }
+    fn clone(&self) -> Self {
+        todo!()
+    }
 }
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     #[inline]
-    pub fn from_owned(data: <T as ZeroCopyCloneV3<'d>>::Yokeable) -> Self {
+    pub fn from_owned(data: <T as DataStructHelperTrait>::Yokeable) -> Self {
         Self {
-            yoke: Yoke::new_owned(data)
+            yoke: Yoke::new_owned(data),
         }
     }
 
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
-    pub fn from_partial_owned(data: T) -> Self {
+    pub fn from_partial_owned<'s: 'd>(
+        data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+    ) -> Self {
         // TODO: Build up the following Yoke:
-        // Yoke<T::Yokeable, Rc<T>>
+        // Yoke<T::Yokeable, Rc<T::Yokeable<'d>::Output>>
         todo!()
     }
 
     /// Convert a borrowed data struct into a DataPayload.
     #[inline]
-    pub fn from_borrowed(data: &'d T) -> Self {
+    pub fn from_borrowed<'s: 'd>(
+        data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+    ) -> Self {
         // TODO: Build up the following Yoke:
-        // Yoke<T::Yokeable, &'d T>
+        // Yoke<T::Yokeable, &'d T::Yokeable<'d>::Output>
         todo!()
     }
 
@@ -194,7 +204,8 @@ where
     #[inline]
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
-        F: 'static + for<'b> FnOnce(&'b mut <<T as ZeroCopyCloneV3<'d>>::Yokeable as Yokeable<'a>>::Output),
+        F: 'static
+            + for<'b> FnOnce(&'b mut <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output),
     {
         self.yoke.with_mut(f)
     }
@@ -214,14 +225,16 @@ where
     /// assert_eq!("Demo", payload.get());
     /// ```
     #[inline]
-    pub fn get<'a>(&'a self) -> &'a <<T as ZeroCopyCloneV3<'d>>::Yokeable as Yokeable<'a>>::Output {
+    pub fn get<'a>(
+        &'a self,
+    ) -> &'a <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output {
         self.yoke.get()
     }
 }
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ToOwned + ZeroCopyCloneV3<'d>,
+    T: ToOwned + DataStructHelperTrait,
 {
     /// Converts the DataPayload into a Cow. May require cloning the data.
     ///
@@ -249,7 +262,7 @@ where
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -260,7 +273,7 @@ where
 
 impl<'d, T> DataResponse<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
@@ -271,7 +284,7 @@ where
 
 impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
     type Error = Error;
 
@@ -289,7 +302,7 @@ where
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, T>
 where
-    T: ZeroCopyCloneV3<'d>,
+    T: DataStructHelperTrait,
 {
     /// Query the provider for data, returning the result.
     ///

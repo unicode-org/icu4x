@@ -137,7 +137,7 @@ pub mod prelude {
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
 
-    pub use crate::data_provider::ZeroCopyCloneV3;
+    pub use crate::data_provider::DataStructHelperTrait;
 }
 
 // Also include the same symbols at the top level for selective inclusion
