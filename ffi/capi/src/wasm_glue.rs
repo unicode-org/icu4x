@@ -1,14 +1,18 @@
 use std::ffi::CString;
 use std::os::raw::c_char;
-use std::panic;
 use std::io;
 
 use log::{Record, Metadata, LevelFilter, Level};
+
+#[cfg(debug_assertions)]
+use std::panic;
 
 // minimal WASM logger based on https://github.com/DeMille/wasm-glue
 extern {
     fn log_js(ptr: *const c_char);
     fn warn_js(ptr: *const c_char);
+
+    #[allow(dead_code)] // we want a consistent set of externs
     fn trace_js(ptr: *const c_char);
 }
 
@@ -51,7 +55,8 @@ impl log::Log for ConsoleLogger  {
 }
 
 /// Sets a custom panic hook, uses your JavaScript `trace` function
-pub fn set_panic_hook() {
+#[cfg(debug_assertions)]
+fn set_panic_hook() {
     panic::set_hook(Box::new(|info| {
         let file = info.location().unwrap().file();
         let line = info.location().unwrap().line();
@@ -80,7 +85,9 @@ static LOGGER: ConsoleLogger = ConsoleLogger;
 
 #[no_mangle]
 pub unsafe extern "C" fn icu4x_init() {
+    #[cfg(debug_assertions)]
     set_panic_hook();
+
     log::set_logger(&LOGGER)
         .map(|()| log::set_max_level(LevelFilter::Debug))
         .unwrap();

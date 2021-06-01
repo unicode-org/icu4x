@@ -44,7 +44,8 @@ bincode-gen-testdata = "make bincode-gen-testdata"
 ### WASM TASKS ###
 
 # Re-build standard library with panic=abort.
-wasm-build = "build -Z build-std=std,panic_abort --target wasm32-unknown-unknown --release"
+wasm-build-dev = "build -Z build-std=std,panic_abort --target wasm32-unknown-unknown"
+wasm-build-release = "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target wasm32-unknown-unknown --release"
 
 [target.wasm32-unknown-unknown]
 rustflags = [
