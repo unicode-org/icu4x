@@ -1062,6 +1062,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_segmenter"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "icu_segmenter_lstm",
+ "lazy_static",
+ "serde",
+ "serde_json",
+ "unicode-width",
+]
+
+[[package]]
 name = "icu_segmenter_lstm"
 version = "0.1.0"
 dependencies = [
