@@ -93,7 +93,7 @@ pub trait DataStructHelperTrait {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-enum DataPayloadInnner<'d, T>
+enum DataPayloadInner<'d, T>
 where
     T: DataStructHelperTrait,
 {
@@ -128,7 +128,7 @@ pub struct DataPayload<'d, T>
 where
     T: DataStructHelperTrait,
 {
-    inner: DataPayloadInnner<'d, T>,
+    inner: DataPayloadInner<'d, T>,
 }
 
 // TODO
@@ -165,7 +165,7 @@ where
     #[inline]
     pub fn from_owned(data: <T as DataStructHelperTrait>::Yokeable) -> Self {
         Self {
-            inner: DataPayloadInnner::Owned(Yoke::new_owned(data)),
+            inner: DataPayloadInner::Owned(Yoke::new_owned(data)),
         }
     }
 
@@ -180,7 +180,7 @@ where
             todo!()
         }
         Self {
-            inner: DataPayloadInnner::RcStruct(Yoke::attach_to_cart_badly(
+            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(
                 Rc::from(data),
                 helper::<T>,
             )),
@@ -198,7 +198,7 @@ where
             todo!()
         }
         Self {
-            inner: DataPayloadInnner::Borrowed(Yoke::attach_to_cart_badly(
+            inner: DataPayloadInner::Borrowed(Yoke::attach_to_cart_badly(
                 data,
                 helper::<T>,
             )),
@@ -243,7 +243,7 @@ where
         F: 'static
             + for<'b> FnOnce(&'b mut <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output),
     {
-        use DataPayloadInnner::*;
+        use DataPayloadInner::*;
         todo!()
         /*
         match &self.inner {
@@ -271,7 +271,7 @@ where
     pub fn get<'a>(
         &'a self,
     ) -> &'a <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output {
-        use DataPayloadInnner::*;
+        use DataPayloadInner::*;
         match &self.inner {
             Borrowed(yoke) => yoke.get(),
             RcStruct(yoke) => yoke.get(),
