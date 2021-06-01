@@ -4,8 +4,7 @@ function withEncodedString(str, fn) {
   let bytes = (new TextEncoder()).encode(str);
 
   let ptr = icu4x.icu4x_alloc(bytes.length);
-  const memory = new Uint8Array(icu4x.memory.buffer);
-  const buf = memory.subarray(ptr, ptr + bytes.length);
+  const buf = new Uint8Array(icu4x.memory.buffer, ptr, bytes.length);
   buf.set(bytes, 0);
 
   try {
@@ -16,8 +15,7 @@ function withEncodedString(str, fn) {
 }
 
 function readString(ptr, len) {
-  const memory = new Uint8Array(icu4x.memory.buffer);
-  const buf = memory.subarray(ptr, ptr + len);
+  const buf = new Uint8Array(icu4x.memory.buffer, ptr, len);
   return (new TextDecoder("utf-8")).decode(buf)
 }
 
@@ -67,7 +65,6 @@ class BufferWritable {
   getString() {
     const outStringPtr = icu4x.icu4x_buffer_writeable_borrow(this.underlying);
     const outStringLen = icu4x.icu4x_buffer_writeable_len(this.underlying);
-    console.log("len is", outStringLen);
     return readString(outStringPtr, outStringLen);
   }
 }

@@ -3,9 +3,8 @@ let icu4x;
 function readString(ptr) {
   const view = new Uint8Array(icu4x.memory.buffer);
   let end = ptr;
-  while (view[end]) ++ end;
-  const buf = new Uint8Array(view.subarray(ptr, end));
-  return (new TextDecoder()).decode(buf);
+  while (view[end]) end++;
+  return (new TextDecoder("utf-8")).decode(view.subarray(ptr, end));
 }
 
 const imports = {
