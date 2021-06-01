@@ -140,6 +140,9 @@ pub mod prelude {
     pub use crate::data_provider::DataStructHelperTrait;
 }
 
+// FIXME: Temporary?
+pub use yoke;
+
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
 

@@ -32,3 +32,28 @@ pub struct PluralRuleStringsV1<'s> {
     pub few: Option<Cow<'s, str>>,
     pub many: Option<Cow<'s, str>>,
 }
+
+// FIXME: Reconsider this
+pub struct PluralRuleStringsV1Helper {}
+impl icu_provider::prelude::DataStructHelperTrait for PluralRuleStringsV1Helper {
+    type Yokeable = PluralRuleStringsV1<'static>;
+}
+unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for PluralRuleStringsV1<'static> {
+    type Output = PluralRuleStringsV1<'a>;
+    fn transform(&'a self) -> &'a Self::Output {
+        self
+    }
+    unsafe fn make(from: Self::Output) -> Self {
+        std::mem::transmute(from)
+    }
+    fn with_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        unsafe {
+            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+                self,
+            ))
+        }
+    }
+}

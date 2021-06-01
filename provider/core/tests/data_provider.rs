@@ -7,7 +7,7 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 
 use icu_provider::erased::*;
-use icu_provider::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1};
+use icu_provider::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Helper};
 use icu_provider::prelude::*;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
@@ -20,6 +20,26 @@ const HELLO_ALT_KEY: ResourceKey = icu_provider::resource_key!(icu4x, "helloalt"
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 struct HelloAlt {
     message: String,
+}
+
+struct HelloAltHelper {}
+impl DataStructHelperTrait for HelloAltHelper {
+    type Yokeable = HelloAlt;
+}
+unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for HelloAlt {
+    type Output = HelloAlt;
+    fn transform(&'a self) -> &'a Self::Output {
+        self
+    }
+    unsafe fn make(from: Self::Output) -> Self {
+        from
+    }
+    fn with_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        f(self)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -37,28 +57,28 @@ struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
 }
 
-impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for DataWarehouse<'s> {
+impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1Helper> for DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
+            payload: Some(DataPayload::from_partial_owned(self.data.hello_v1.clone())),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(DataWarehouse<'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1<'static>,
+    HELLO_WORLD_V1 => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
-impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
+impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1Helper> for &'d DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -68,7 +88,7 @@ impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1<'s>> for &'d DataWarehouse<'s> {
 }
 
 icu_provider::impl_dyn_provider!(&'d DataWarehouse<'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1<'static>,
+    HELLO_WORLD_V1 => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
 /// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT.
@@ -85,11 +105,11 @@ impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's> {
+impl<'d, 's> DataProvider<'d, HelloWorldV1Helper> for DataProviderBorrowing<'d, 's> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
+    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -98,8 +118,8 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for DataProviderBorrowing<'d, 's
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloAlt>, DataError> {
+impl<'d, 's> DataProvider<'d, HelloAltHelper> for DataProviderBorrowing<'d, 's> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloAltHelper>, DataError> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -109,8 +129,8 @@ impl<'d, 's> DataProvider<'d, HelloAlt> for DataProviderBorrowing<'d, 's> {
 }
 
 icu_provider::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1<'static>,
-    HELLO_ALT_KEY => HelloAlt,
+    HELLO_WORLD_V1 => HelloWorldV1Helper,
+    HELLO_ALT_KEY => HelloAltHelper,
 }, ERASED, 'd, 's);
 
 #[allow(clippy::redundant_static_lifetimes)]
@@ -129,11 +149,9 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_payload_v1<'d, 's, P: DataProvider<'d, HelloWorldV1<'s>> + ?Sized + 'd>(
+fn get_payload_v1<'d, P: DataProvider<'d, HelloWorldV1Helper> + ?Sized + 'd>(
     provider: &P,
-) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError>
-where
-    's: 'd,
+) -> Result<Cow<'d, HelloWorldV1<'d>>, DataError>
 {
     provider
         .load_payload(&get_request_v1())?
@@ -141,7 +159,7 @@ where
         .map(|p| p.into_cow())
 }
 
-fn get_payload_alt<'d, P: DataProvider<'d, HelloAlt> + ?Sized>(
+fn get_payload_alt<'d, P: DataProvider<'d, HelloAltHelper> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
     d.load_payload(&get_request_alt())?
@@ -194,7 +212,7 @@ fn test_warehouse_owned_dyn_erased() {
 #[test]
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1>);
+    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Helper>);
     assert!(matches!(
         hello_data,
         Ok(Cow::Owned(HelloWorldV1 {
@@ -240,7 +258,7 @@ fn test_warehouse_ref_dyn_erased() {
 #[test]
 fn test_warehouse_ref_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1>);
+    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1Helper>);
     assert!(matches!(
         hello_data,
         Ok(Cow::Borrowed(HelloWorldV1 {
@@ -297,7 +315,7 @@ fn test_borrowing_dyn_erased_alt() {
 fn test_borrowing_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1>);
+    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Helper>);
     assert!(matches!(
         hello_data,
         Ok(Cow::Borrowed(HelloWorldV1 {
@@ -310,7 +328,7 @@ fn test_borrowing_dyn_generic() {
 fn test_borrowing_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAlt>);
+    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltHelper>);
     assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
 }
 
@@ -319,7 +337,7 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataPayload<HelloWorldV1>, DataError> =
+    let response: Result<DataPayload<HelloWorldV1Helper>, DataError> =
         ErasedDataProvider::load_erased(&provider, &get_request_alt())
             .unwrap()
             .take_payload()
@@ -331,14 +349,14 @@ fn test_mismatched_types() {
 fn check_v1_v2<'d, 's, P>(d: &P)
 where
     's: 'd,
-    P: DataProvider<'d, HelloWorldV1<'s>> + DataProvider<'d, HelloAlt> + ?Sized,
+    P: DataProvider<'d, HelloWorldV1Helper> + DataProvider<'d, HelloAltHelper> + ?Sized,
 {
-    let v1: DataPayload<'d, HelloWorldV1<'s>> = d
+    let v1: DataPayload<'d, HelloWorldV1Helper> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
         .unwrap();
-    let v2: DataPayload<'d, HelloAlt> = d
+    let v2: DataPayload<'d, HelloAltHelper> = d
         .load_payload(&get_request_alt())
         .unwrap()
         .take_payload()
