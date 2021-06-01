@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622164456796,
+  "lastUpdate": 1622582270193,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5729,6 +5729,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 146273,
             "range": "± 5757",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "83e10131e36e5cc264f3ec800cdeff6c94b2cf71",
+          "message": "Add a line breaker prototype by importing uax14_rs (#717)\n\nThis commit is adapted from uax14_rs's master branch on commit\r\nb9607c520d798effba67a3fb2a0fb0995543b59e with necessary fix to pass\r\nicu4x's CI.",
+          "timestamp": "2021-06-01T14:11:47-07:00",
+          "tree_id": "5faa37604d9c4d60058f6f237af10d111f75e424",
+          "url": "https://github.com/unicode-org/icu4x/commit/83e10131e36e5cc264f3ec800cdeff6c94b2cf71"
+        },
+        "date": 1622582268397,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130247,
+            "range": "± 3238",
             "unit": "ns/iter"
           }
         ]
