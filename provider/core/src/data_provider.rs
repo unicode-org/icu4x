@@ -171,8 +171,8 @@ where
 
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
-    pub fn from_partial_owned<'s: 'd>(
-        data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+    pub fn from_partial_owned(
+        data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output,
     ) -> Self {
         fn helper<'de, 's, T: DataStructHelperTrait>(
             obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
@@ -189,8 +189,8 @@ where
 
     /// Convert a borrowed data struct into a DataPayload.
     #[inline]
-    pub fn from_borrowed<'s: 'd>(
-        data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+    pub fn from_borrowed(
+        data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output,
     ) -> Self {
         fn helper<'de, 's, T: DataStructHelperTrait>(
             obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
@@ -198,10 +198,7 @@ where
             todo!()
         }
         Self {
-            inner: DataPayloadInner::Borrowed(Yoke::attach_to_cart_badly(
-                data,
-                helper::<T>,
-            )),
+            inner: DataPayloadInner::Borrowed(Yoke::attach_to_cart_badly(data, helper::<T>)),
         }
     }
 
@@ -272,6 +269,7 @@ where
         match &self.inner {
             Borrowed(yoke) => yoke.get(),
             RcStruct(yoke) => yoke.get(),
+            Owned(yoke) => yoke.get(),
         }
     }
 }

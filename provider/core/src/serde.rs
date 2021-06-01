@@ -86,12 +86,11 @@ pub trait SerdeDeDataProvider<'de> {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
+impl<'d, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'d> + 'd
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'de>>::Output:
-        serde::Deserialize<'de> + Clone + Debug,
-    'de: 'd,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output:
+        serde::Deserialize<'d> + Clone + Debug,
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {

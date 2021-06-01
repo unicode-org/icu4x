@@ -35,17 +35,16 @@ use std::fmt::Debug;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d, 's, T> DataProvider<'d, T> for InvariantDataProvider
+impl<'d, T> DataProvider<'d, T> for InvariantDataProvider
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output: Clone + Debug + Default,
-    's: 'd,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output: Clone + Debug + Default,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_partial_owned(
-                <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output::default(),
+                <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output::default(),
             )),
         })
     }
