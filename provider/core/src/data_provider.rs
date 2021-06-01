@@ -241,7 +241,7 @@ where
             + for<'b> FnOnce(&'b mut <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output),
     {
         use DataPayloadInner::*;
-        match &self.inner {
+        match &mut self.inner {
             Borrowed(yoke) => yoke.with_mut(f),
             RcStruct(yoke) => yoke.with_mut(f),
             Owned(yoke) => yoke.with_mut(f),
