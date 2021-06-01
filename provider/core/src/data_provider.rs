@@ -234,7 +234,8 @@ where
 
 impl<'d, T> DataPayload<'d, T>
 where
-    T: ToOwned + DataStructHelperTrait,
+    T: DataStructHelperTrait,
+    <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output: ToOwned,
 {
     /// Converts the DataPayload into a Cow. May require cloning the data.
     ///
@@ -253,7 +254,7 @@ where
     /// assert!(matches!(data, Cow::Owned(_)));
     /// ```
     #[inline]
-    pub fn into_cow(self) -> Cow<'d, T> {
+    pub fn into_cow(self) -> Cow<'d, <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output> {
         todo!()
     }
 }

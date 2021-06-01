@@ -144,9 +144,6 @@ where
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
-        // TODO: Add a way to allow this type HelloWorldV1 to request a custom cart.
-        todo!()
-        /*
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -158,9 +155,8 @@ where
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: Some(DataPayload::from_owned(data)),
+            payload: Some(DataPayload::from_partial_owned(data)),
         })
-        */
     }
 }
 

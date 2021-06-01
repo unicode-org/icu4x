@@ -133,7 +133,8 @@ impl<'d> DataPayload<'d, ErasedDataStructHelper> {
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
     where
-        T: Clone + Debug + Any + DataStructHelperTrait,
+        T: DataStructHelperTrait,
+        <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output: Clone + Debug + Any,
     {
         todo!()
         /*
@@ -215,7 +216,8 @@ where
 
 impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: Clone + Debug + Any + DataStructHelperTrait,
+    T: DataStructHelperTrait,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output: Clone + Debug + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
