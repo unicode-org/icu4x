@@ -163,7 +163,7 @@ impl<'d, 's> Deref for SerdeSeDataStructWrap<'d, 's> {
     }
 }
 
-impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructWrap<'d, 'd>, 'd, 's);
+impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructHelper, 'd, 's);
 
 unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;

@@ -145,7 +145,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::erased::ErasedDataStructWrap<$d>,
+            $crate::erased::ErasedDataStructHelper,
             $d,
             $s
         );
@@ -155,7 +155,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
-            $crate::serde::SerdeSeDataStructWrap<$d, $d>,
+            $crate::serde::SerdeSeDataStructHelper,
             $d,
             $s
         );

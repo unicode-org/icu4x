@@ -160,38 +160,14 @@ where
     }
 }
 
-/*
 impl_dyn_provider!(HelloWorldProvider<'static>, {
-    _ => HelloWorldV1<'static>,
+    _ => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
 #[cfg(feature = "provider_serde")]
 impl_dyn_provider!(HelloWorldProvider<'d>, {
-    _ => HelloWorldV1<'d>,
+    _ => HelloWorldV1Helper,
 }, SERDE_SE, 'd, 's);
-*/
-
-impl<'d> DataProvider<'d, crate::erased::ErasedDataStructHelper> for HelloWorldProvider<'static> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, crate::erased::ErasedDataStructHelper>, DataError> {
-        match req.resource_path.key {
-            _ => {
-                let result: DataResponse<'d, HelloWorldV1Helper> =
-                    DataProvider::load_payload(self, req)?;
-                Ok(DataResponse {
-                    metadata: result.metadata,
-                    payload: result.payload.map(|p| {
-                        crate::util::ConvertDataPayload::<HelloWorldV1Helper>::convert(
-                            p,
-                        )
-                    }),
-                })
-            }
-        }
-    }
-}
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     fn supported_options_for_key(
