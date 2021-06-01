@@ -10,6 +10,7 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
+use std::rc::Rc;
 use yoke::Yoke;
 use yoke::Yokeable;
 
@@ -92,6 +93,26 @@ pub trait DataStructHelperTrait {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
+enum DataPayloadInnner<'d, T>
+where
+    T: DataStructHelperTrait,
+{
+    Borrowed(
+        Yoke<
+            <T as DataStructHelperTrait>::Yokeable,
+            &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output,
+        >,
+    ),
+    RcStruct(
+        Yoke<
+            <T as DataStructHelperTrait>::Yokeable,
+            Rc<<<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output>,
+        >,
+    ),
+    // Note: We could use either of the above two variants for Owned if we liked
+    Owned(Yoke<<T as DataStructHelperTrait>::Yokeable, Option<&'static ()>>),
+}
+
 /// A wrapper around the payload returned in a [`DataResponse`].
 ///
 /// # Examples
@@ -107,7 +128,7 @@ pub struct DataPayload<'d, T>
 where
     T: DataStructHelperTrait,
 {
-    yoke: Yoke<<T as DataStructHelperTrait>::Yokeable, Option<&'d T>>,
+    inner: DataPayloadInnner<'d, T>,
 }
 
 // TODO
@@ -144,7 +165,7 @@ where
     #[inline]
     pub fn from_owned(data: <T as DataStructHelperTrait>::Yokeable) -> Self {
         Self {
-            yoke: Yoke::new_owned(data),
+            inner: DataPayloadInnner::Owned(Yoke::new_owned(data)),
         }
     }
 
@@ -153,9 +174,17 @@ where
     pub fn from_partial_owned<'s: 'd>(
         data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
-        // TODO: Build up the following Yoke:
-        // Yoke<T::Yokeable, Rc<T::Yokeable<'d>::Output>>
-        todo!()
+        fn helper<'de, 's, T: DataStructHelperTrait>(
+            obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+        ) -> <<T as DataStructHelperTrait>::Yokeable as Yokeable<'de>>::Output {
+            todo!()
+        }
+        Self {
+            inner: DataPayloadInnner::RcStruct(Yoke::attach_to_cart_badly(
+                Rc::from(data),
+                helper::<T>,
+            )),
+        }
     }
 
     /// Convert a borrowed data struct into a DataPayload.
@@ -163,9 +192,17 @@ where
     pub fn from_borrowed<'s: 'd>(
         data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
-        // TODO: Build up the following Yoke:
-        // Yoke<T::Yokeable, &'d T::Yokeable<'d>::Output>
-        todo!()
+        fn helper<'de, 's, T: DataStructHelperTrait>(
+            obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+        ) -> <<T as DataStructHelperTrait>::Yokeable as Yokeable<'de>>::Output {
+            todo!()
+        }
+        Self {
+            inner: DataPayloadInnner::Borrowed(Yoke::attach_to_cart_badly(
+                data,
+                helper::<T>,
+            )),
+        }
     }
 
     /// Mutate the data contained in this DataPayload.
@@ -201,13 +238,20 @@ where
     /// assert_eq!("Foo", payload.get()[0]);
     /// assert_eq!("Bar", payload.get()[1]);
     /// ```
-    #[inline]
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
         F: 'static
             + for<'b> FnOnce(&'b mut <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output),
     {
-        self.yoke.with_mut(f)
+        use DataPayloadInnner::*;
+        todo!()
+        /*
+        match &self.inner {
+            Borrowed(yoke) => yoke.with_mut(f),
+            RcStruct(yoke) => yoke.with_mut(f),
+            Owned(yoke) => yoke.with_mut(f),
+        }
+        */
     }
 
     /// Borrows the underlying data.
@@ -224,11 +268,14 @@ where
     ///
     /// assert_eq!("Demo", payload.get());
     /// ```
-    #[inline]
     pub fn get<'a>(
         &'a self,
     ) -> &'a <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output {
-        self.yoke.get()
+        use DataPayloadInnner::*;
+        match &self.inner {
+            Borrowed(yoke) => yoke.get(),
+            RcStruct(yoke) => yoke.get(),
+        }
     }
 }
 
@@ -254,7 +301,9 @@ where
     /// assert!(matches!(data, Cow::Owned(_)));
     /// ```
     #[inline]
-    pub fn into_cow(self) -> Cow<'d, <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output> {
+    pub fn into_cow(
+        self,
+    ) -> Cow<'d, <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output> {
         todo!()
     }
 }

@@ -89,7 +89,8 @@ pub trait SerdeDeDataProvider<'de> {
 impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'de>>::Output: serde::Deserialize<'de> + Clone + Debug,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'de>>::Output:
+        serde::Deserialize<'de> + Clone + Debug,
     'de: 'd,
 {
     /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].

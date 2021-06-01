@@ -44,7 +44,9 @@ where
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(<<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output::default())),
+            payload: Some(DataPayload::from_partial_owned(
+                <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output::default(),
+            )),
         })
     }
 }
