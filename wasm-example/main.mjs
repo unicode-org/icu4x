@@ -20,7 +20,6 @@ function readString(ptr, len) {
 }
 
 const fixedDecimalRegistry = new FinalizationRegistry(ptr => {
-  console.log("freeing decimal!");
   icu4x.icu4x_fixed_decimal_destroy(ptr);
 });
 
@@ -39,20 +38,11 @@ class FixedDecimal {
   }
 
   write_to(writable) {
-    let outPtr = icu4x.icu4x_alloc(16);
-    icu4x.icu4x_fixed_decimal_write_to(outPtr, this.underlying, writable.underlying);
-    const buf = new BigUint64Array(icu4x.memory.buffer, outPtr, 2);
-    const ret = {
-      abc: buf[0],
-      def: buf[1]
-    };
-    icu4x.icu4x_free(outPtr, 16);
-    return ret;
+    icu4x.icu4x_fixed_decimal_write_to(this.underlying, writable.underlying);
   }
 }
 
 const bufferWritableRegistry = new FinalizationRegistry(ptr => {
-  console.log("freeing writable!");
   icu4x.icu4x_buffer_writeable_free(ptr);
 });
 
@@ -74,5 +64,5 @@ decimal.multiply_pow10(-2);
 decimal.negate();
 
 const outWritable = new BufferWritable();
-console.log(decimal.write_to(outWritable));
+decimal.write_to(outWritable);
 console.log(outWritable.getString());
