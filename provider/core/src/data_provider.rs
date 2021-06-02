@@ -158,15 +158,24 @@ where
 }
 
 pub trait ZeroCopyClone: for<'a> Yokeable<'a> {
-    fn zcc<'b, 's: 'b>(this: &'b <Self as Yokeable<'s>>::Output) -> <Self as Yokeable<'b>>::Output {
-        todo!()
-    }
+    fn zcc<'b, 's>(this: &'b <Self as Yokeable<'s>>::Output) -> <Self as Yokeable<'b>>::Output;
+}
+
+fn make_borrowed_yoke<'b, 's, Y: ZeroCopyClone + for<'a> Yokeable<'a>>(
+    cart: &'b <Y as Yokeable<'s>>::Output,
+) -> Yoke<Y, &'b <Y as Yokeable<'s>>::Output> {
+    Yoke::<Y, &'b <Y as Yokeable<'s>>::Output>::attach_to_cart_badly(cart, Y::zcc)
+}
+
+fn make_rc_yoke<'b, 's, Y: ZeroCopyClone + for<'a> Yokeable<'a>>(
+    cart: Rc<<Y as Yokeable<'s>>::Output>,
+) -> Yoke<Y, Rc<<Y as Yokeable<'s>>::Output>> {
+    Yoke::<Y, Rc<<Y as Yokeable<'s>>::Output>>::attach_to_cart_badly(cart, Y::zcc)
 }
 
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
-    // TODO: Make this ZeroCopyClone
     <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
 {
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
@@ -174,20 +183,9 @@ where
     pub fn from_partial_owned(
         data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
-        fn helper<'de, 's: 'de, T: DataStructHelperTrait>(
-            obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
-        ) -> <<T as DataStructHelperTrait>::Yokeable as Yokeable<'de>>::Output
-        where
-            <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
-        {
-            <<T as DataStructHelperTrait>::Yokeable as ZeroCopyClone>::zcc(obj)
-        }
+        let cart = Rc::from(data);
         Self {
-            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(
-                Rc::from(data),
-                helper::<T>,
-                // |obj| <<T as DataStructHelperTrait>::Yokeable as ZeroCopyClone>::zcc(obj),
-            )),
+            inner: DataPayloadInner::RcStruct(make_rc_yoke(cart)),
         }
     }
 
@@ -196,13 +194,8 @@ where
     pub fn from_borrowed(
         data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
-        fn helper<'de, 's, T: DataStructHelperTrait>(
-            obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
-        ) -> <<T as DataStructHelperTrait>::Yokeable as Yokeable<'de>>::Output {
-            todo!()
-        }
         Self {
-            inner: DataPayloadInner::Borrowed(Yoke::attach_to_cart_badly(data, helper::<T>)),
+            inner: DataPayloadInner::Borrowed(make_borrowed_yoke(data)),
         }
     }
 }

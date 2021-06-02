@@ -62,6 +62,12 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
 }
 
 impl ZeroCopyClone for HelloWorldV1<'static> {
+    fn zcc<'b, 's>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
+        todo!()
+        // Self {
+        //     message: Cow::Borrowed(this.message.as_ref())
+        // }
+    }
 }
 
 pub struct HelloWorldV1Helper {}

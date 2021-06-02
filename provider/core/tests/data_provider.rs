@@ -41,6 +41,11 @@ unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for HelloAlt {
         f(self)
     }
 }
+impl ZeroCopyClone for HelloAlt {
+    fn zcc<'b, 's>(this: &'b HelloAlt) -> HelloAlt {
+        todo!()
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 struct HelloCombined<'s> {
