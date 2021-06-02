@@ -64,7 +64,7 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
 impl<'s> ZeroCopyClone<HelloWorldV1<'s>> for HelloWorldV1<'static> {
     fn zcc<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
         HelloWorldV1 {
-            message: Cow::Borrowed(&this.message)
+            message: Cow::Borrowed(&this.message),
         }
     }
 }

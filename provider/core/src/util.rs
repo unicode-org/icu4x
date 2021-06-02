@@ -51,16 +51,14 @@ macro_rules! impl_dyn_from_payload {
             fn convert(
                 other: $crate::prelude::DataPayload<$d, $s, T>,
             ) -> $crate::prelude::DataPayload<$d, $s, $dyn_wrap> {
-                use crate::prelude::*;
                 use crate::data_provider::DataPayloadInner::*;
+                use crate::prelude::*;
                 let inner = match other.inner {
                     Borrowed(yoke) => todo!(),
                     RcStruct(yoke) => todo!(),
                     Owned(yoke) => todo!(),
                 };
-                DataPayload {
-                    inner
-                }
+                DataPayload { inner }
                 /*
                 use std::borrow::Cow;
                 Self {

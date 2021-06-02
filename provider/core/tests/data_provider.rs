@@ -46,7 +46,7 @@ impl ZeroCopyClone<HelloAlt> for HelloAlt {
     fn zcc<'b, 's>(this: &'b HelloAlt) -> HelloAlt {
         HelloAlt {
             // Note: We can't actually implement this in a zero-copy fashion
-            message: this.message.clone()
+            message: this.message.clone(),
         }
     }
 }

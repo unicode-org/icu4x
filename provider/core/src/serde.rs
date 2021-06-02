@@ -89,9 +89,9 @@ pub trait SerdeDeDataProvider<'de> {
 impl<'d, 's, T> DataProvider<'d, 's, T> for dyn SerdeDeDataProvider<'s> + 'd
 where
     T: DataStructHelperTrait<'s>,
-    <T as DataStructHelperTrait<'s>>::Cart:
-        serde::Deserialize<'s>,
-    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    <T as DataStructHelperTrait<'s>>::Cart: serde::Deserialize<'s>,
+    <T as DataStructHelperTrait<'s>>::Yokeable:
+        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {

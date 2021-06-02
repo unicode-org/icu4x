@@ -39,7 +39,8 @@ impl<'d, 's, T> DataProvider<'d, 's, T> for InvariantDataProvider
 where
     T: DataStructHelperTrait<'s>,
     <T as DataStructHelperTrait<'s>>::Cart: Default,
-    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    <T as DataStructHelperTrait<'s>>::Yokeable:
+        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
         Ok(DataResponse {

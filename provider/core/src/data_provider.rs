@@ -158,7 +158,6 @@ where
     }
 }
 
-
 /// TODO: MOVE THIS TO THE YOKE CRATE ///
 
 pub trait ZeroCopyClone<C>: for<'a> Yokeable<'a> {
@@ -182,13 +181,12 @@ fn make_rc_yoke<'b, 's, C, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait<'s>,
-    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    <T as DataStructHelperTrait<'s>>::Yokeable:
+        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
-    pub fn from_partial_owned(
-        data: <T as DataStructHelperTrait<'s>>::Cart,
-    ) -> Self {
+    pub fn from_partial_owned(data: <T as DataStructHelperTrait<'s>>::Cart) -> Self {
         let cart = Rc::from(data);
         Self {
             inner: DataPayloadInner::RcStruct(make_rc_yoke(cart)),
@@ -197,9 +195,7 @@ where
 
     /// Convert a borrowed data struct into a DataPayload.
     #[inline]
-    pub fn from_borrowed(
-        data: &'d <T as DataStructHelperTrait<'s>>::Cart,
-    ) -> Self {
+    pub fn from_borrowed(data: &'d <T as DataStructHelperTrait<'s>>::Cart) -> Self {
         Self {
             inner: DataPayloadInner::Borrowed(make_borrowed_yoke(data)),
         }

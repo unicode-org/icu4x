@@ -51,7 +51,8 @@ impl<'d, 's, T> DataProvider<'d, 's, T>
     for StructProvider<'d, <T as DataStructHelperTrait<'s>>::Cart>
 where
     T: DataStructHelperTrait<'s>,
-    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    <T as DataStructHelperTrait<'s>>::Yokeable:
+        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
         req.resource_path.key.match_key(self.key)?;
