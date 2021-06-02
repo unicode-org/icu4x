@@ -70,7 +70,7 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl<'d, 's: 'd> DataExporter<SerdeSeDataStructWrap<'d, 's>> for FilesystemExporter {
+impl<'d, 's> DataExporter<'d, SerdeSeDataStructWrap<'d, 's>> for FilesystemExporter {
     fn put_payload(
         &mut self,
         req: &DataRequest,

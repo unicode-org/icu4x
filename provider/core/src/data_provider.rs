@@ -124,7 +124,7 @@ where
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
-pub struct DataPayload<'d, 's: 'd, T>
+pub struct DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -132,7 +132,7 @@ where
 }
 
 // TODO
-impl<'d, 's: 'd, T> Debug for DataPayload<'d, 's, T>
+impl<'d, 's, T> Debug for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -140,7 +140,7 @@ where
         todo!()
     }
 }
-impl<'d, 's: 'd, T> PartialEq for DataPayload<'d, 's, T>
+impl<'d, 's, T> PartialEq for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -148,7 +148,7 @@ where
         todo!()
     }
 }
-impl<'d, 's: 'd, T> Clone for DataPayload<'d, 's, T>
+impl<'d, 's, T> Clone for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -157,7 +157,7 @@ where
     }
 }
 
-impl<'d, 's: 'd, T> DataPayload<'d, 's, T>
+impl<'d, 's, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -277,7 +277,7 @@ where
     }
 }
 
-impl<'d, 's: 'd, T> DataPayload<'d, 's, T>
+impl<'d, 's, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
     <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output: ToOwned,
@@ -308,7 +308,7 @@ where
 
 /// A response object containing an object as payload and metadata about it.
 #[derive(Debug, Clone)]
-pub struct DataResponse<'d, 's: 'd, T>
+pub struct DataResponse<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -319,7 +319,7 @@ where
     pub payload: Option<DataPayload<'d, 's, T>>,
 }
 
-impl<'d, 's: 'd, T> DataResponse<'d, 's, T>
+impl<'d, 's, T> DataResponse<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -330,7 +330,7 @@ where
     }
 }
 
-impl<'d, 's: 'd, T> TryFrom<DataResponse<'d, 's, T>> for DataPayload<'d, 's, T>
+impl<'d, 's, T> TryFrom<DataResponse<'d, 's, T>> for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -348,7 +348,7 @@ where
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
 /// - [`StructProvider`](crate::struct_provider::StructProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<'d, 's: 'd, T>
+pub trait DataProvider<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {

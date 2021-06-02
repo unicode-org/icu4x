@@ -29,7 +29,7 @@ macro_rules! impl_dyn_clone {
 ///
 /// The standard `From` trait cannot be used in all situations due to the blanket implementation
 /// `impl<T> From<T> for T`.
-pub trait ConvertDataPayload<'d, 's: 'd, T>
+pub trait ConvertDataPayload<'d, 's, T>
 where
     T: crate::prelude::DataStructHelperTrait,
     Self: Sized + crate::prelude::DataStructHelperTrait,

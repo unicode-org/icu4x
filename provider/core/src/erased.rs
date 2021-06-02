@@ -190,7 +190,7 @@ where
 ///
 /// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
 /// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
-pub trait ErasedDataProvider<'d, 's: 'd> {
+pub trait ErasedDataProvider<'d> {
     /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
@@ -198,23 +198,23 @@ pub trait ErasedDataProvider<'d, 's: 'd> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, ErasedDataStructHelper>, Error>;
+    ) -> Result<DataResponse<'d, 'static, ErasedDataStructHelper>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
-impl<'d, 's: 'd, T> ErasedDataProvider<'d, 's> for T
+impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, 's, ErasedDataStructHelper>,
+    T: DataProvider<'d, 'static, ErasedDataStructHelper>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, ErasedDataStructHelper>, Error> {
+    ) -> Result<DataResponse<'d, 'static, ErasedDataStructHelper>, Error> {
         DataProvider::<ErasedDataStructHelper>::load_payload(self, req)
     }
 }
 
-impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d, 'static> + 'd
+impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'd
 where
     T: DataStructHelperTrait,
     <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Debug + Any,

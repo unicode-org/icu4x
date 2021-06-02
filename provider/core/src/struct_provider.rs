@@ -47,7 +47,7 @@ pub struct StructProvider<'d, T> {
     pub data: &'d T,
 }
 
-impl<'d, 's: 'd, T> DataProvider<'d, 's, T>
+impl<'d, 's, T> DataProvider<'d, 's, T>
     for StructProvider<'d, <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output>
 where
     T: DataStructHelperTrait,

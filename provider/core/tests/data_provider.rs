@@ -57,7 +57,7 @@ struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
 }
 
-impl<'d, 's: 'd> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
+impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -74,7 +74,7 @@ icu_provider::impl_dyn_provider!(DataWarehouse<'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
-impl<'d, 's: 'd> DataProvider<'d, 's, HelloWorldV1Helper> for &'d DataWarehouse<'s> {
+impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for &'d DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -97,7 +97,7 @@ struct DataProviderBorrowing<'d, 's> {
     borrowed_data: &'d HelloCombined<'s>,
 }
 
-impl<'d, 's: 'd> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
+impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
     fn from(warehouse: &'d DataWarehouse<'s>) -> Self {
         DataProviderBorrowing {
             borrowed_data: &warehouse.data,
@@ -149,7 +149,7 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_payload_v1<'d, 's: 'd, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Sized + 'd>(
+fn get_payload_v1<'d, 's, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Sized + 'd>(
     provider: &P,
 ) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError>
 {
@@ -159,7 +159,7 @@ fn get_payload_v1<'d, 's: 'd, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Siz
         .map(|p| p.into_cow())
 }
 
-fn get_payload_alt<'d, 's: 'd, P: DataProvider<'d, 's, HelloAltHelper> + ?Sized>(
+fn get_payload_alt<'d, P: DataProvider<'d, 'static, HelloAltHelper> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
     d.load_payload(&get_request_alt())?

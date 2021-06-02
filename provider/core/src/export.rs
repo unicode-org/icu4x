@@ -11,7 +11,7 @@ use crate::prelude::*;
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
-pub trait DataExporter<'d, 's: 'd, T>
+pub trait DataExporter<'d, T>
 where
     // TODO: Why do I need a 'd here?
     T: DataStructHelperTrait + 'd,
@@ -32,7 +32,7 @@ where
     fn put_key_from_provider(
         &mut self,
         resc_key: &ResourceKey,
-        provider: &impl IterableDataProvider<'d, 's, T>,
+        provider: &impl IterableDataProvider<'d, 'd, T>,
     ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {
