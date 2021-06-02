@@ -16,5 +16,8 @@
 mod yoke;
 mod yokeable;
 
+#[cfg(feature = "serde")]
+mod serde;
+
 pub use crate::yoke::Yoke;
 pub use crate::yokeable::Yokeable;
