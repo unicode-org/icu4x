@@ -141,7 +141,7 @@ impl<'d, 's, T> Debug for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait<'s>,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, _f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         todo!()
     }
 }
@@ -149,7 +149,7 @@ impl<'d, 's, T> PartialEq for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait<'s>,
 {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, _other: &Self) -> bool {
         todo!()
     }
 }

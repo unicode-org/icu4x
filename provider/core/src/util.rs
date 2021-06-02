@@ -119,7 +119,8 @@ macro_rules! impl_dyn_provider {
             { $($pat => $struct),+, },
             $crate::erased::ErasedDataStructHelper,
             $d,
-            $s
+            $s,
+            'static
         );
     };
     ($provider:ty, { $($pat:pat => $struct:ty),+, }, SERDE_SE, $d:lifetime, $s:lifetime) => {
@@ -129,13 +130,14 @@ macro_rules! impl_dyn_provider {
             { $($pat => $struct),+, },
             $crate::serde::SerdeSeDataStructHelper,
             $d,
-            $s
+            $s,
+            $d
         );
     };
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime, $sb:lifetime) => {
         impl<$d, $s> $crate::prelude::DataProvider<$d, $s, $dyn_wrap> for $provider
         where
-            $s: $d,
+            $s: $sb,
         {
             fn load_payload(
                 &self,
