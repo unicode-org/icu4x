@@ -175,7 +175,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                         Ok(yoke) => return Ok(DataPayload {
                             inner: RcStruct(yoke),
                         }),
-                        Err(_) => return Err(Error::NeedsTypeInfo),
+                        Err(_) => return Err(Error::MultipleReferences),
                     },
                     Err(any_rc) => any_rc,
                 };
@@ -183,16 +183,19 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                     <T as DataStructHelperTrait<'static>>::Yokeable,
                     Option<&'static ()>
                 >>();
-                match y2 {
+                let any_rc = match y2 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
                         Ok(yoke) => return Ok(DataPayload {
                             inner: Owned(yoke),
                         }),
-                        Err(_) => return Err(Error::NeedsTypeInfo),
+                        Err(_) => return Err(Error::MultipleReferences),
                     },
                     Err(any_rc) => any_rc,
                 };
-                return Err(Error::NeedsTypeInfo);
+                return Err(Error::MismatchedType {
+                    actual: Some(any_rc.type_id()),
+                    generic: Some(TypeId::of::<<T as DataStructHelperTrait<'static>>::Yokeable>()),
+                });
             },
             Owned(_) => unimplemented!(),
         };

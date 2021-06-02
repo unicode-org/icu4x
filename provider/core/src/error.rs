@@ -41,6 +41,10 @@ pub enum Error {
         generic: Option<TypeId>,
     },
 
+    /// The requested operation failed to unwrap an Rc backing the data payload.
+    #[error("Could not unwrap Rc due to multiple references")]
+    MultipleReferences,
+
     /// An error occured during serialization or deserialization.
     #[cfg(feature = "erased-serde")]
     #[error("Serde error: {0}")]
