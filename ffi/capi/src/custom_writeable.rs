@@ -120,8 +120,7 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
 #[no_mangle]
 /// Create an [`ICU4XWriteable`] that can write to a dynamically allocated buffer managed by Rust.
 ///
-/// # Safety
-/// - Use [`icu4x_buffer_writeable_destroy()`] to free the writable and its underlying buffer.
+/// Use [`icu4x_buffer_writeable_destroy()`] to free the writable and its underlying buffer.
 pub unsafe extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteable {
     extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
         unsafe {
@@ -154,13 +153,10 @@ pub unsafe extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4X
 ///
 /// # Safety
 /// - The returned pointer is valid until the passed writable is destroyed.
-/// `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
 /// [`icu4x_buffer_writeable_create()`].
-pub unsafe extern "C" fn icu4x_buffer_writeable_get_bytes(this: *mut ICU4XWriteable) -> *mut u8 {
-    let this = Box::from_raw(this);
-    let ret = this.buf;
-    std::mem::forget(this);
-    ret
+pub extern "C" fn icu4x_buffer_writeable_get_bytes(this: &ICU4XWriteable) -> *mut u8 {
+    this.buf
 }
 
 #[no_mangle]
@@ -169,11 +165,8 @@ pub unsafe extern "C" fn icu4x_buffer_writeable_get_bytes(this: *mut ICU4XWritea
 /// # Safety
 /// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
 /// [`icu4x_buffer_writeable_create()`].
-pub unsafe extern "C" fn icu4x_buffer_writeable_len(this: *mut ICU4XWriteable) -> usize {
-    let this = Box::from_raw(this);
-    let ret = this.len;
-    std::mem::forget(this);
-    ret
+pub extern "C" fn icu4x_buffer_writeable_len(this: &ICU4XWriteable) -> usize {
+    this.len
 }
 
 #[no_mangle]
