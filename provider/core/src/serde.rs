@@ -166,12 +166,16 @@ impl<'d, 's> Deref for SerdeSeDataStructWrap<'d, 's> {
     }
 }
 
+impl<'d, 's: 'd> SerdeSeDataStructWrap<'d, 's> {
+    fn shorten(self) -> SerdeSeDataStructWrap<'d, 'd> {
+        // This is safe because 's exceeds 'd
+        unsafe { std::mem::transmute(self) }
+    }
+}
+
 impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap<'static, 'static> {
     fn zcc<'b>(this: &'b (dyn SerdeSeDataStruct<'s> + 's)) -> SerdeSeDataStructWrap<'b, 'b> {
-        todo!()
-        // SerdeSeDataStructWrap {
-        //     inner: this,
-        // }
+        SerdeSeDataStructWrap { inner: this }.shorten()
     }
 }
 
