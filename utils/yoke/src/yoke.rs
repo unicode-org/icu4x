@@ -154,6 +154,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         &self.cart
     }
 
+    pub fn into_backing_cart(self) -> C {
+        self.cart
+    }
+
     /// Mutate the stored [`Yokeable`] data.
     ///
     /// See [`Yokeable::with_mut()`] for why this operation is safe.

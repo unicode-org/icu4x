@@ -9,6 +9,7 @@ use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
 use std::ops::Deref;
+use std::rc::Rc;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
@@ -32,6 +33,8 @@ pub trait ErasedDataStruct: 'static {
     /// let boxed: Box<HelloWorldV1> = erased.into_any().downcast().expect("Types should match");
     /// ```
     fn into_any(self: Box<Self>) -> Box<dyn Any>;
+
+    fn into_any_rc(self: Rc<Self>) -> Rc<dyn Any>;
 
     /// Return this trait object reference as `&dyn `[`Any`].
     ///
@@ -107,7 +110,6 @@ where
         other: DataPayload<'d, 'static, T>,
     ) -> DataPayload<'d, 'static, ErasedDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
-        use std::rc::Rc;
         let cart: Rc<dyn ErasedDataStruct> = match other.inner {
             Borrowed(_) => todo!(),
             RcStruct(yoke) => Rc::from(yoke),
@@ -150,42 +152,50 @@ impl<'s> DataStructHelperTrait<'s> for ErasedDataStructHelper {
 }
 
 impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
-    /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
+    /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a concrete type.
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, 'static, T>, Error>
     where
         T: DataStructHelperTrait<'static>,
-        <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
-            Clone + Any,
     {
-        todo!()
-        /*
-        let new_cow = match self.cow {
-            Cow::Borrowed(erased) => {
-                let borrowed: &'d T =
-                    erased
-                        .as_any()
-                        .downcast_ref()
-                        .ok_or_else(|| Error::MismatchedType {
-                            actual: Some(erased.type_id()),
-                            generic: Some(TypeId::of::<T>()),
-                        })?;
-                Cow::Borrowed(borrowed)
-            }
-            Cow::Owned(erased) => {
-                let boxed: Box<T> =
-                    erased
-                        .into_any()
-                        .downcast()
-                        .map_err(|any| Error::MismatchedType {
-                            actual: Some(any.type_id()),
-                            generic: Some(TypeId::of::<T>()),
-                        })?;
-                Cow::Owned(*boxed)
-            }
+        use crate::data_provider::DataPayloadInner::*;
+        use yoke::Yoke;
+        match self.inner {
+            Borrowed(_) => unimplemented!(),
+            RcStruct(yoke) => {
+                let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
+                // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It could have
+                // been any valid variant of Yoke, so we need to check each possibility.
+                let y1 = any_rc.downcast::<Yoke<
+                    <T as DataStructHelperTrait<'static>>::Yokeable,
+                    Rc<<T as DataStructHelperTrait<'static>>::Cart>
+                >>();
+                let any_rc = match y1 {
+                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
+                        Ok(yoke) => return Ok(DataPayload {
+                            inner: RcStruct(yoke),
+                        }),
+                        Err(_) => return Err(Error::NeedsTypeInfo),
+                    },
+                    Err(any_rc) => any_rc,
+                };
+                let y2 = any_rc.downcast::<Yoke<
+                    <T as DataStructHelperTrait<'static>>::Yokeable,
+                    Option<&'static ()>
+                >>();
+                match y2 {
+                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
+                        Ok(yoke) => return Ok(DataPayload {
+                            inner: Owned(yoke),
+                        }),
+                        Err(_) => return Err(Error::NeedsTypeInfo),
+                    },
+                    Err(any_rc) => any_rc,
+                };
+                return Err(Error::NeedsTypeInfo);
+            },
+            Owned(_) => unimplemented!(),
         };
-        Ok(DataPayload { cow: new_cow })
-        */
     }
 }
 
@@ -199,6 +209,9 @@ where
         // Box::new(self.clone())
     }
     fn into_any(self: Box<Self>) -> Box<dyn Any> {
+        self
+    }
+    fn into_any_rc(self: Rc<Self>) -> Rc<dyn Any> {
         self
     }
     fn as_any(&self) -> &dyn Any {
