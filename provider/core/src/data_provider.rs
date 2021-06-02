@@ -183,7 +183,7 @@ where
             <<T as DataStructHelperTrait>::Yokeable as ZeroCopyClone>::zcc(obj)
         }
         Self {
-            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly_v2(
+            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(
                 Rc::from(data),
                 helper::<T>,
                 // |obj| <<T as DataStructHelperTrait>::Yokeable as ZeroCopyClone>::zcc(obj),
