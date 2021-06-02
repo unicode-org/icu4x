@@ -43,7 +43,10 @@ unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for HelloAlt {
 }
 impl ZeroCopyClone for HelloAlt {
     fn zcc<'b, 's>(this: &'b HelloAlt) -> HelloAlt {
-        todo!()
+        HelloAlt {
+            // Note: We can't actually implement this in a zero-copy fashion
+            message: this.message.clone()
+        }
     }
 }
 
