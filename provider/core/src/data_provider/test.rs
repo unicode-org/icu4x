@@ -7,15 +7,16 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use icu_provider::erased::*;
-use icu_provider::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Helper};
-use icu_provider::prelude::*;
+use crate::erased::*;
+use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Helper};
+use crate::prelude::*;
+use crate::yoke;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
 
 /// Key for HelloAlt, used for testing mismatched types
-const HELLO_ALT_KEY: ResourceKey = icu_provider::resource_key!(icu4x, "helloalt", 1);
+const HELLO_ALT_KEY: ResourceKey = crate::resource_key!(icu4x, "helloalt", 1);
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -28,7 +29,7 @@ impl<'s> DataStructHelperTrait<'s> for HelloAltHelper {
     type Yokeable = HelloAlt;
     type Cart = HelloAlt;
 }
-unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for HelloAlt {
+unsafe impl<'a> yoke::Yokeable<'a> for HelloAlt {
     type Output = HelloAlt;
     fn transform(&'a self) -> &'a Self::Output {
         self
@@ -82,7 +83,7 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
     }
 }
 
-icu_provider::impl_dyn_provider!(DataWarehouse<'static>, {
+crate::impl_dyn_provider!(DataWarehouse<'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
@@ -99,7 +100,7 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for &'d DataWarehouse<'s> 
     }
 }
 
-icu_provider::impl_dyn_provider!(&'d DataWarehouse<'static>, {
+crate::impl_dyn_provider!(&'d DataWarehouse<'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
@@ -143,7 +144,7 @@ impl<'d, 's> DataProvider<'d, 's, HelloAltHelper> for DataProviderBorrowing<'d, 
     }
 }
 
-icu_provider::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
+crate::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Helper,
     HELLO_ALT_KEY => HelloAltHelper,
 }, ERASED, 'd, 's);

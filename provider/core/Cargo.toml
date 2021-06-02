@@ -49,9 +49,5 @@ icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.2", path = "../../components/plurals" }
 
 [[test]]
-name = "data_provider"
-required-features = ["serde"]
-
-[[test]]
 name = "data_receiver"
 required-features = ["provider_serde"]
