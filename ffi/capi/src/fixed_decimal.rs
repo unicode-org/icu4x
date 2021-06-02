@@ -40,6 +40,7 @@ pub extern "C" fn icu4x_fixed_decimal_negate(fd: &mut ICU4XFixedDecimal) {
 }
 
 #[no_mangle]
+/// FFI version of [`FixedDecimal::write_to()`]. See its docs for more details.ICU4XFixedDecimal
 pub extern "C" fn icu4x_fixed_decimal_write_to(fd: &ICU4XFixedDecimal, to: &mut ICU4XWriteable) {
     fd.write_to(to).unwrap();
 }

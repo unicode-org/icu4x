@@ -119,7 +119,11 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
 
 
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_buffer_writeable(cap: usize) -> *mut ICU4XWriteable {
+/// Create an [`ICU4XWriteable`] that can write to a dynamically allocated buffer managed by Rust.
+///
+/// # Safety
+/// - Use [`icu4x_buffer_writeable_destroy()`] to free the writable and its underlying buffer.
+pub unsafe extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteable {
     extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
         unsafe {
             let this = &*this;
@@ -147,7 +151,13 @@ pub unsafe extern "C" fn icu4x_buffer_writeable(cap: usize) -> *mut ICU4XWriteab
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_buffer_writeable_borrow(this: *mut ICU4XWriteable) -> *mut u8 {
+/// Grabs a pointer to the underlying buffer of a writable.
+///
+/// # Safety
+/// - The returned pointer is valid until the passed writable is destroyed.
+/// `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// [`icu4x_buffer_writeable_create()`].
+pub unsafe extern "C" fn icu4x_buffer_writeable_get_bytes(this: *mut ICU4XWriteable) -> *mut u8 {
     let this = Box::from_raw(this);
     let ret = this.buf;
     std::mem::forget(this);
@@ -155,6 +165,11 @@ pub unsafe extern "C" fn icu4x_buffer_writeable_borrow(this: *mut ICU4XWriteable
 }
 
 #[no_mangle]
+/// Gets the length in bytes of the content written to the writable.
+///
+/// # Safety
+/// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// [`icu4x_buffer_writeable_create()`].
 pub unsafe extern "C" fn icu4x_buffer_writeable_len(this: *mut ICU4XWriteable) -> usize {
     let this = Box::from_raw(this);
     let ret = this.len;
@@ -163,7 +178,12 @@ pub unsafe extern "C" fn icu4x_buffer_writeable_len(this: *mut ICU4XWriteable) -
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn icu4x_buffer_writeable_free(this: *mut ICU4XWriteable) {
+/// Destructor for Rust-memory backed writables.
+///
+/// # Safety
+/// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// [`icu4x_buffer_writeable_create()`].
+pub unsafe extern "C" fn icu4x_buffer_writeable_destroy(this: *mut ICU4XWriteable) {
     let this = Box::from_raw(this);
     let vec = Vec::from_raw_parts(this.buf, 0, this.cap);
     drop(vec);

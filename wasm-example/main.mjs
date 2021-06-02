@@ -43,17 +43,17 @@ class FixedDecimal {
 }
 
 const bufferWritableRegistry = new FinalizationRegistry(ptr => {
-  icu4x.icu4x_buffer_writeable_free(ptr);
+  icu4x.icu4x_buffer_writeable_destroy(ptr);
 });
 
 class BufferWritable {
   constructor() {
-    this.underlying = icu4x.icu4x_buffer_writeable(0);    
+    this.underlying = icu4x.icu4x_buffer_writeable_create(0);    
     bufferWritableRegistry.register(this, this.underlying);
   }
 
   getString() {
-    const outStringPtr = icu4x.icu4x_buffer_writeable_borrow(this.underlying);
+    const outStringPtr = icu4x.icu4x_buffer_writeable_get_bytes(this.underlying);
     const outStringLen = icu4x.icu4x_buffer_writeable_len(this.underlying);
     return readString(outStringPtr, outStringLen);
   }
