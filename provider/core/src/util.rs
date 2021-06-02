@@ -83,7 +83,7 @@ where
 /// // Since `String` is `'static`, we can implement `DataProvider<ErasedDataStructWrap>`
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => String,
-/// }, ERASED, 'd, 's);
+/// }, ERASED, 'd);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
@@ -109,18 +109,17 @@ where
 /// // Send all keys to the `String` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => String,
-/// }, ERASED, 'd, 's);
+/// }, ERASED, 'd);
 /// ```
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, ERASED, $d:lifetime, $s:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, ERASED, $d:lifetime) => {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct),+, },
             $crate::erased::ErasedDataStructHelper,
             $d,
-            $s,
-            'static
+            's: 'static
         );
     };
     ($provider:ty, { $($pat:pat => $struct:ty),+, }, SERDE_SE, $d:lifetime, $s:lifetime) => {
@@ -130,11 +129,10 @@ macro_rules! impl_dyn_provider {
             { $($pat => $struct),+, },
             $crate::serde::SerdeSeDataStructHelper,
             $d,
-            $s,
-            $d
+            $s: $d
         );
     };
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime, $sb:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime : $sb:lifetime) => {
         impl<$d, $s> $crate::prelude::DataProvider<$d, $s, $dyn_wrap> for $provider
         where
             $s: $sb,

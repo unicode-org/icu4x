@@ -169,7 +169,7 @@ impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Helper> for HelloWorldProvider
 
 impl_dyn_provider!(HelloWorldProvider<'static>, {
     _ => HelloWorldV1Helper,
-}, ERASED, 'd, 's);
+}, ERASED, 'd);
 
 #[cfg(feature = "provider_serde")]
 impl_dyn_provider!(HelloWorldProvider<'s>, {

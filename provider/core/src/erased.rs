@@ -103,7 +103,9 @@ impl<'d, T> crate::util::ConvertDataPayload<'d, 'static, T> for ErasedDataStruct
 where
     T: DataStructHelperTrait<'static>,
 {
-    fn convert(other: DataPayload<'d, 'static, T>) -> DataPayload<'d, 'static, ErasedDataStructHelper> {
+    fn convert(
+        other: DataPayload<'d, 'static, T>,
+    ) -> DataPayload<'d, 'static, ErasedDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
         use std::rc::Rc;
         let cart: Rc<dyn ErasedDataStruct> = match other.inner {
