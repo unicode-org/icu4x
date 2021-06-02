@@ -119,7 +119,10 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataProviderBorrowing<
 }
 
 impl<'d, 's> DataProvider<'d, 's, HelloAltHelper> for DataProviderBorrowing<'d, 's> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, HelloAltHelper>, DataError> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, 's, HelloAltHelper>, DataError> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -151,8 +154,7 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
 
 fn get_payload_v1<'d, 's, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Sized + 'd>(
     provider: &P,
-) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError>
-{
+) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError> {
     provider
         .load_payload(&get_request_v1())?
         .take_payload()

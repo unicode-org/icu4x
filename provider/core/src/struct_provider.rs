@@ -51,6 +51,7 @@ impl<'d, 's, T> DataProvider<'d, 's, T>
     for StructProvider<'d, <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output>
 where
     T: DataStructHelperTrait,
+    <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
         req.resource_path.key.match_key(self.key)?;

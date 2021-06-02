@@ -61,6 +61,9 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
     }
 }
 
+impl ZeroCopyClone for HelloWorldV1<'static> {
+}
+
 pub struct HelloWorldV1Helper {}
 
 impl DataStructHelperTrait for HelloWorldV1Helper {

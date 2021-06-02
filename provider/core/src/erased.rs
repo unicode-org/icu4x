@@ -134,7 +134,8 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
     pub fn downcast<T>(self) -> Result<DataPayload<'d, 'static, T>, Error>
     where
         T: DataStructHelperTrait,
-        <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Debug + Any,
+        <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output:
+            Clone + Debug + Any,
     {
         todo!()
         /*
@@ -217,7 +218,8 @@ where
 impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'd
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Debug + Any,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output:
+        Clone + Debug + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, T>, Error> {

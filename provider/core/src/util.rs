@@ -34,7 +34,9 @@ where
     T: crate::prelude::DataStructHelperTrait,
     Self: Sized + crate::prelude::DataStructHelperTrait,
 {
-    fn convert(other: crate::prelude::DataPayload<'d, 's, T>) -> crate::prelude::DataPayload<'d, 's, Self>;
+    fn convert(
+        other: crate::prelude::DataPayload<'d, 's, T>,
+    ) -> crate::prelude::DataPayload<'d, 's, Self>;
 }
 
 /// Implement `ConvertDataPayload<T>` for `S` where `T` implements the trait `S`.

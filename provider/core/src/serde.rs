@@ -91,6 +91,7 @@ where
     T: DataStructHelperTrait,
     <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output:
         serde::Deserialize<'s> + Clone + Debug,
+    <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {

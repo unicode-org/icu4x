@@ -157,32 +157,36 @@ where
     }
 }
 
+pub trait ZeroCopyClone: for<'a> Yokeable<'a> {
+    fn zcc<'b, 's: 'b>(this: &'b <Self as Yokeable<'s>>::Output) -> <Self as Yokeable<'b>>::Output {
+        todo!()
+    }
+}
+
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
+    // TODO: Make this ZeroCopyClone
+    <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
 {
-    /// Convert a fully owned (`'static`) data struct into a DataPayload.
-    #[inline]
-    pub fn from_owned(data: <T as DataStructHelperTrait>::Yokeable) -> Self {
-        Self {
-            inner: DataPayloadInner::Owned(Yoke::new_owned(data)),
-        }
-    }
-
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
     pub fn from_partial_owned(
         data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
-        fn helper<'de, 's, T: DataStructHelperTrait>(
+        fn helper<'de, 's: 'de, T: DataStructHelperTrait>(
             obj: &'de <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
-        ) -> <<T as DataStructHelperTrait>::Yokeable as Yokeable<'de>>::Output {
-            todo!()
+        ) -> <<T as DataStructHelperTrait>::Yokeable as Yokeable<'de>>::Output
+        where
+            <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
+        {
+            <<T as DataStructHelperTrait>::Yokeable as ZeroCopyClone>::zcc(obj)
         }
         Self {
-            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(
+            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly_v2(
                 Rc::from(data),
                 helper::<T>,
+                // |obj| <<T as DataStructHelperTrait>::Yokeable as ZeroCopyClone>::zcc(obj),
             )),
         }
     }
@@ -198,10 +202,20 @@ where
             todo!()
         }
         Self {
-            inner: DataPayloadInner::Borrowed(Yoke::attach_to_cart_badly(
-                data,
-                helper::<T>,
-            )),
+            inner: DataPayloadInner::Borrowed(Yoke::attach_to_cart_badly(data, helper::<T>)),
+        }
+    }
+}
+
+impl<'d, 's, T> DataPayload<'d, 's, T>
+where
+    T: DataStructHelperTrait,
+{
+    /// Convert a fully owned (`'static`) data struct into a DataPayload.
+    #[inline]
+    pub fn from_owned(data: <T as DataStructHelperTrait>::Yokeable) -> Self {
+        Self {
+            inner: DataPayloadInner::Owned(Yoke::new_owned(data)),
         }
     }
 
