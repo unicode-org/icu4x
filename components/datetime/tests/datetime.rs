@@ -81,7 +81,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let mut value: MockZonedDateTime = fx.input.value.parse().unwrap();
         value.time_zone.time_zone_id = config.time_zone_id.clone();
         value.time_zone.metazone_id = config.metazone_id.clone();
-        value.time_zone.time_variant = config.time_variant.clone();
+        value.time_zone.time_variant = config.time_variant;
 
         let result = dtf.format_to_string(&value);
         assert_eq!(result, fx.output.value, "\n  file: {}.json\n", fixture_name);
