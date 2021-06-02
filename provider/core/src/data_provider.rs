@@ -89,28 +89,29 @@ pub struct DataResponseMetadata {
 }
 
 // FIXME: Change the name of this thing
-pub trait DataStructHelperTrait {
+pub trait DataStructHelperTrait<'s> {
     type Yokeable: for<'a> Yokeable<'a>;
+    type Cart: 's; // TODO: ?Sized
 }
 
 pub(crate) enum DataPayloadInner<'d, 's: 'd, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     Borrowed(
         Yoke<
-            <T as DataStructHelperTrait>::Yokeable,
-            &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+            <T as DataStructHelperTrait<'s>>::Yokeable,
+            &'d <T as DataStructHelperTrait<'s>>::Cart,
         >,
     ),
     RcStruct(
         Yoke<
-            <T as DataStructHelperTrait>::Yokeable,
-            Rc<<<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output>,
+            <T as DataStructHelperTrait<'s>>::Yokeable,
+            Rc<<T as DataStructHelperTrait<'s>>::Cart>,
         >,
     ),
     // Note: We could use either of the above two variants for Owned if we liked
-    Owned(Yoke<<T as DataStructHelperTrait>::Yokeable, Option<&'static ()>>),
+    Owned(Yoke<<T as DataStructHelperTrait<'s>>::Yokeable, Option<&'static ()>>),
 }
 
 /// A wrapper around the payload returned in a [`DataResponse`].
@@ -126,7 +127,7 @@ where
 /// ```
 pub struct DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     pub(crate) inner: DataPayloadInner<'d, 's, T>,
 }
@@ -134,7 +135,7 @@ where
 // TODO
 impl<'d, 's, T> Debug for DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         todo!()
@@ -142,7 +143,7 @@ where
 }
 impl<'d, 's, T> PartialEq for DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     fn eq(&self, other: &Self) -> bool {
         todo!()
@@ -150,7 +151,7 @@ where
 }
 impl<'d, 's, T> Clone for DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     fn clone(&self) -> Self {
         todo!()
@@ -160,33 +161,33 @@ where
 
 /// TODO: MOVE THIS TO THE YOKE CRATE ///
 
-pub trait ZeroCopyClone: for<'a> Yokeable<'a> {
-    fn zcc<'b, 's>(this: &'b <Self as Yokeable<'s>>::Output) -> <Self as Yokeable<'b>>::Output;
+pub trait ZeroCopyClone<C>: for<'a> Yokeable<'a> {
+    fn zcc<'b>(this: &'b C) -> <Self as Yokeable<'b>>::Output;
 }
 
-fn make_borrowed_yoke<'b, 's, Y: ZeroCopyClone + for<'a> Yokeable<'a>>(
-    cart: &'b <Y as Yokeable<'s>>::Output,
-) -> Yoke<Y, &'b <Y as Yokeable<'s>>::Output> {
-    Yoke::<Y, &'b <Y as Yokeable<'s>>::Output>::attach_to_cart_badly(cart, Y::zcc)
+fn make_borrowed_yoke<'b, 's, C, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
+    cart: &'b C,
+) -> Yoke<Y, &'b C> {
+    Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zcc)
 }
 
-fn make_rc_yoke<'b, 's, Y: ZeroCopyClone + for<'a> Yokeable<'a>>(
-    cart: Rc<<Y as Yokeable<'s>>::Output>,
-) -> Yoke<Y, Rc<<Y as Yokeable<'s>>::Output>> {
-    Yoke::<Y, Rc<<Y as Yokeable<'s>>::Output>>::attach_to_cart_badly(cart, Y::zcc)
+fn make_rc_yoke<'b, 's, C, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
+    cart: Rc<C>,
+) -> Yoke<Y, Rc<C>> {
+    Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zcc)
 }
 
 /// END ///
 
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
-    <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
+    T: DataStructHelperTrait<'s>,
+    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
     pub fn from_partial_owned(
-        data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+        data: <T as DataStructHelperTrait<'s>>::Cart,
     ) -> Self {
         let cart = Rc::from(data);
         Self {
@@ -197,7 +198,7 @@ where
     /// Convert a borrowed data struct into a DataPayload.
     #[inline]
     pub fn from_borrowed(
-        data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
+        data: &'d <T as DataStructHelperTrait<'s>>::Cart,
     ) -> Self {
         Self {
             inner: DataPayloadInner::Borrowed(make_borrowed_yoke(data)),
@@ -207,11 +208,11 @@ where
 
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     #[inline]
-    pub fn from_owned(data: <T as DataStructHelperTrait>::Yokeable) -> Self {
+    pub fn from_owned(data: <T as DataStructHelperTrait<'s>>::Yokeable) -> Self {
         Self {
             inner: DataPayloadInner::Owned(Yoke::new_owned(data)),
         }
@@ -279,7 +280,7 @@ where
     /// ```
     pub fn get<'a>(
         &'a self,
-    ) -> &'a <<T as DataStructHelperTrait>::Yokeable as Yokeable<'a>>::Output {
+    ) -> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as Yokeable<'a>>::Output {
         use DataPayloadInner::*;
         match &self.inner {
             Borrowed(yoke) => yoke.get(),
@@ -291,8 +292,8 @@ where
 
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output: ToOwned,
+    T: DataStructHelperTrait<'s>,
+    <<T as DataStructHelperTrait<'s>>::Yokeable as Yokeable<'s>>::Output: ToOwned,
 {
     /// Converts the DataPayload into a Cow. May require cloning the data.
     ///
@@ -313,7 +314,7 @@ where
     #[inline]
     pub fn into_cow(
         self,
-    ) -> Cow<'d, <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output> {
+    ) -> Cow<'d, <<T as DataStructHelperTrait<'s>>::Yokeable as Yokeable<'s>>::Output> {
         todo!()
     }
 }
@@ -322,7 +323,7 @@ where
 #[derive(Debug, Clone)]
 pub struct DataResponse<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -333,7 +334,7 @@ where
 
 impl<'d, 's, T> DataResponse<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
@@ -344,7 +345,7 @@ where
 
 impl<'d, 's, T> TryFrom<DataResponse<'d, 's, T>> for DataPayload<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     type Error = Error;
 
@@ -362,7 +363,7 @@ where
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
 pub trait DataProvider<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
     /// Query the provider for data, returning the result.
     ///

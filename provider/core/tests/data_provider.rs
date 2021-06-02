@@ -23,8 +23,9 @@ struct HelloAlt {
 }
 
 struct HelloAltHelper {}
-impl DataStructHelperTrait for HelloAltHelper {
+impl<'s> DataStructHelperTrait<'s> for HelloAltHelper {
     type Yokeable = HelloAlt;
+    type Cart = HelloAlt;
 }
 unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for HelloAlt {
     type Output = HelloAlt;
@@ -41,7 +42,7 @@ unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for HelloAlt {
         f(self)
     }
 }
-impl ZeroCopyClone for HelloAlt {
+impl ZeroCopyClone<HelloAlt> for HelloAlt {
     fn zcc<'b, 's>(this: &'b HelloAlt) -> HelloAlt {
         HelloAlt {
             // Note: We can't actually implement this in a zero-copy fashion

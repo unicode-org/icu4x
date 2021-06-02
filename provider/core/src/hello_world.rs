@@ -61,8 +61,8 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
     }
 }
 
-impl ZeroCopyClone for HelloWorldV1<'static> {
-    fn zcc<'b, 's>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
+impl<'s> ZeroCopyClone<HelloWorldV1<'s>> for HelloWorldV1<'static> {
+    fn zcc<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
         HelloWorldV1 {
             message: Cow::Borrowed(&this.message)
         }
@@ -71,8 +71,9 @@ impl ZeroCopyClone for HelloWorldV1<'static> {
 
 pub struct HelloWorldV1Helper {}
 
-impl DataStructHelperTrait for HelloWorldV1Helper {
+impl<'s> DataStructHelperTrait<'s> for HelloWorldV1Helper {
     type Yokeable = HelloWorldV1<'static>;
+    type Cart = HelloWorldV1<'s>;
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -193,7 +194,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructHelper>
+impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStructHelper>
     for HelloWorldProvider<'static>
 {
     fn put_payload<'a>(

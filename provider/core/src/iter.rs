@@ -24,14 +24,14 @@ pub trait IterableDataProviderCore {
 pub trait IterableDataProvider<'d, 's, T>:
     IterableDataProviderCore + DataProvider<'d, 's, T>
 where
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
 }
 
 impl<'d, 's, S, T> IterableDataProvider<'d, 's, T> for S
 where
     S: IterableDataProviderCore + DataProvider<'d, 's, T>,
-    T: DataStructHelperTrait,
+    T: DataStructHelperTrait<'s>,
 {
 }
 

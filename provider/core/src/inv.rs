@@ -37,15 +37,15 @@ pub struct InvariantDataProvider;
 
 impl<'d, 's, T> DataProvider<'d, 's, T> for InvariantDataProvider
 where
-    T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output: Clone + Debug + Default,
-    <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
+    T: DataStructHelperTrait<'s>,
+    <T as DataStructHelperTrait<'s>>::Cart: Default,
+    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_partial_owned(
-                <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output::default(),
+                <T as DataStructHelperTrait<'s>>::Cart::default(),
             )),
         })
     }

@@ -124,8 +124,11 @@ unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
 
 pub struct ErasedDataStructHelper {}
 
-impl DataStructHelperTrait for ErasedDataStructHelper {
+impl<'s> DataStructHelperTrait<'s> for ErasedDataStructHelper {
     type Yokeable = ErasedDataStructWrap<'static>;
+    // TODO
+    // type Cart = dyn ErasedDataStruct;
+    type Cart = ErasedDataStructWrap<'static>;
 }
 
 impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
@@ -133,8 +136,8 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
     /// Returns an error if the type is not compatible.
     pub fn downcast<T>(self) -> Result<DataPayload<'d, 'static, T>, Error>
     where
-        T: DataStructHelperTrait,
-        <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output:
+        T: DataStructHelperTrait<'static>,
+        <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
             Clone + Debug + Any,
     {
         todo!()
@@ -217,8 +220,8 @@ where
 
 impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output:
+    T: DataStructHelperTrait<'static>,
+    <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
         Clone + Debug + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.

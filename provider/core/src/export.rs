@@ -11,16 +11,15 @@ use crate::prelude::*;
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
-pub trait DataExporter<'d, T>
+pub trait DataExporter<'d, 's: 'd, T>
 where
-    // TODO: Why do I need a 'd here?
-    T: DataStructHelperTrait + 'd,
+    T: DataStructHelperTrait<'s>,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload<'a>(
         &'a mut self,
         req: &'a DataRequest,
-        payload: &'a <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'a>>::Output,
+        payload: &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -32,7 +31,7 @@ where
     fn put_key_from_provider(
         &mut self,
         resc_key: &ResourceKey,
-        provider: &impl IterableDataProvider<'d, 'd, T>,
+        provider: &impl IterableDataProvider<'d, 's, T>,
     ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {

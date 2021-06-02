@@ -59,7 +59,7 @@ pub trait SerdeDeDataReceiver<'de> {
 
 impl<'de, T> SerdeDeDataReceiver<'de> for Option<T>
 where
-    T: serde::Deserialize<'de> + Clone + Debug,
+    T: serde::Deserialize<'de>,
 {
     fn receive_deserializer(
         &mut self,
@@ -88,10 +88,10 @@ pub trait SerdeDeDataProvider<'de> {
 
 impl<'d, 's, T> DataProvider<'d, 's, T> for dyn SerdeDeDataProvider<'s> + 'd
 where
-    T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output:
-        serde::Deserialize<'s> + Clone + Debug,
-    <T as DataStructHelperTrait>::Yokeable: ZeroCopyClone,
+    T: DataStructHelperTrait<'s>,
+    <T as DataStructHelperTrait<'s>>::Cart:
+        serde::Deserialize<'s>,
+    <T as DataStructHelperTrait<'s>>::Yokeable: ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
@@ -192,6 +192,8 @@ unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
 
 pub struct SerdeSeDataStructHelper {}
 
-impl DataStructHelperTrait for SerdeSeDataStructHelper {
+impl<'s> DataStructHelperTrait<'s> for SerdeSeDataStructHelper {
     type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
+    // TODO
+    type Cart = SerdeSeDataStructWrap<'s, 's>;
 }

@@ -31,8 +31,8 @@ macro_rules! impl_dyn_clone {
 /// `impl<T> From<T> for T`.
 pub trait ConvertDataPayload<'d, 's, T>
 where
-    T: crate::prelude::DataStructHelperTrait,
-    Self: Sized + crate::prelude::DataStructHelperTrait,
+    T: crate::prelude::DataStructHelperTrait<'s>,
+    Self: Sized + crate::prelude::DataStructHelperTrait<'s>,
 {
     fn convert(
         other: crate::prelude::DataPayload<'d, 's, T>,
@@ -44,9 +44,9 @@ macro_rules! impl_dyn_from_payload {
     ($trait:path, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
         impl<$d, $s: $d, T> $crate::util::ConvertDataPayload<$d, $s, T> for $dyn_wrap
         where
-            T: $crate::prelude::DataStructHelperTrait,
-            $dyn_wrap: $crate::prelude::DataStructHelperTrait,
-            // <<T as $crate::prelude::DataStructHelperTrait>::Yokeable as yoke::Yokeable<$s>>::Output: $trait + Clone,
+            T: $crate::prelude::DataStructHelperTrait<$s>,
+            $dyn_wrap: $crate::prelude::DataStructHelperTrait<$s>,
+            // <<T as $crate::prelude::DataStructHelperTrait<$s>>::Yokeable as yoke::Yokeable<$s>>::Output: $trait + Clone,
         {
             fn convert(
                 other: $crate::prelude::DataPayload<$d, $s, T>,
