@@ -107,17 +107,14 @@ where
     // for<'a> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output: ErasedDataStruct,
 {
     fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, ErasedDataStructHelper> {
-        todo!()
-        /*
         use crate::data_provider::DataPayloadInner::*;
         use std::rc::Rc;
         let cart: Rc<dyn ErasedDataStruct> = match other.inner {
             Borrowed(yoke) => todo!(),
-            RcStruct(yoke) => Rc::from(yoke),
+            RcStruct(yoke) => todo!(),
             Owned(yoke) => Rc::from(yoke),
         };
         DataPayload::from_partial_owned(cart)
-        */
     }
 }
 
