@@ -121,7 +121,7 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
 /// Create an [`ICU4XWriteable`] that can write to a dynamically allocated buffer managed by Rust.
 ///
 /// Use [`icu4x_buffer_writeable_destroy()`] to free the writable and its underlying buffer.
-pub unsafe extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteable {
+pub extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteable {
     extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
         unsafe {
             let this = &*this;
