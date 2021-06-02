@@ -21,7 +21,6 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use std::fmt::Debug;
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -179,8 +178,6 @@ impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap
     }
 }
 
-// impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructHelper, 'd, 's);
-
 impl<'d, 's, T> crate::util::ConvertDataPayload<'d, 's, T> for SerdeSeDataStructHelper
 where
     T: DataStructHelperTrait<'s>,
@@ -191,7 +188,7 @@ where
     fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, SerdeSeDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
         let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
-            Borrowed(yoke) => todo!(),
+            Borrowed(_) => todo!(),
             RcStruct(yoke) => Rc::from(yoke),
             Owned(yoke) => Rc::from(yoke),
         };

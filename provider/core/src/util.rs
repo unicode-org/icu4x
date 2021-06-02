@@ -39,43 +39,6 @@ where
     ) -> crate::prelude::DataPayload<'d, 's, Self>;
 }
 
-/// Implement `ConvertDataPayload<T>` for `S` where `T` implements the trait `S`.
-macro_rules! impl_dyn_from_payload {
-    ($trait:path, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s: $d, T> $crate::util::ConvertDataPayload<$d, $s, T> for $dyn_wrap
-        where
-            T: $crate::prelude::DataStructHelperTrait<$s>,
-            $dyn_wrap: $crate::prelude::DataStructHelperTrait<$s>,
-            // <<T as $crate::prelude::DataStructHelperTrait<$s>>::Yokeable as yoke::Yokeable<$s>>::Output: $trait + Clone,
-        {
-            fn convert(
-                other: $crate::prelude::DataPayload<$d, $s, T>,
-            ) -> $crate::prelude::DataPayload<$d, $s, $dyn_wrap> {
-                use crate::data_provider::DataPayloadInner::*;
-                use crate::prelude::*;
-                let inner = match other.inner {
-                    Borrowed(yoke) => todo!(),
-                    RcStruct(yoke) => todo!(),
-                    Owned(yoke) => todo!(),
-                };
-                DataPayload { inner }
-                /*
-                use std::borrow::Cow;
-                Self {
-                    cow: match other.cow {
-                        Cow::Borrowed(v) => Cow::Borrowed(v as &(dyn $trait + 's)),
-                        Cow::Owned(v) => {
-                            let boxed: Box<dyn $trait + 's> = Box::new(v);
-                            Cow::Owned(boxed)
-                        }
-                    },
-                }
-                */
-            }
-        }
-    };
-}
-
 /// Implement [`DataProvider<dyn S>`](crate::DataProvider) on a type that already implements [`DataProvider<T>`](crate::DataProvider)
 /// for one or more `T`, where `T` is a [`Sized`] type that implements the trait `S`.
 ///

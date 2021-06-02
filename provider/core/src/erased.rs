@@ -99,19 +99,16 @@ impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for ErasedDataStructWrap<'static> {
     }
 }
 
-// impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructHelper, 'd, 's);
-
 impl<'d, 's: 'd, T> crate::util::ConvertDataPayload<'d, 's, T> for ErasedDataStructHelper
 where
     T: DataStructHelperTrait<'s>,
-    // for<'a> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output: ErasedDataStruct,
 {
     fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, ErasedDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
         use std::rc::Rc;
         let cart: Rc<dyn ErasedDataStruct> = match other.inner {
-            Borrowed(yoke) => todo!(),
-            RcStruct(yoke) => todo!(),
+            Borrowed(_) => todo!(),
+            RcStruct(_) => todo!(),
             Owned(yoke) => Rc::from(yoke),
         };
         DataPayload::from_partial_owned(cart)
