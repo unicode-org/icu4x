@@ -42,7 +42,7 @@ use crate::prelude::*;
 /// assert_eq!(payload.get(), &local_data);
 /// assert!(matches!(payload.into_cow(), Cow::Borrowed(_)))
 /// ```
-pub struct StructProvider<'d, T> {
+pub struct StructProvider<'d, T: ?Sized> {
     pub key: ResourceKey,
     pub data: &'d T,
 }

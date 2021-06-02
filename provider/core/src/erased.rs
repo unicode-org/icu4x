@@ -126,9 +126,7 @@ pub struct ErasedDataStructHelper {}
 
 impl<'s> DataStructHelperTrait<'s> for ErasedDataStructHelper {
     type Yokeable = ErasedDataStructWrap<'static>;
-    // TODO
-    // type Cart = dyn ErasedDataStruct;
-    type Cart = ErasedDataStructWrap<'static>;
+    type Cart = dyn ErasedDataStruct;
 }
 
 impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {

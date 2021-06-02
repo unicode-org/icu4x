@@ -10,6 +10,7 @@ use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::rc::Rc;
 use std::str::FromStr;
 
 pub mod key {
@@ -161,7 +162,7 @@ impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Helper> for HelloWorldProvider
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: Some(DataPayload::from_partial_owned(data)),
+            payload: Some(DataPayload::from_partial_owned(Rc::from(data))),
         })
     }
 }

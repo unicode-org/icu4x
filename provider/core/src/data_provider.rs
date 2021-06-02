@@ -91,7 +91,7 @@ pub struct DataResponseMetadata {
 // FIXME: Change the name of this thing
 pub trait DataStructHelperTrait<'s> {
     type Yokeable: for<'a> Yokeable<'a>;
-    type Cart: 's; // TODO: ?Sized
+    type Cart: 's + ?Sized;
 }
 
 pub(crate) enum DataPayloadInner<'d, 's: 'd, T>
@@ -160,17 +160,17 @@ where
 
 /// TODO: MOVE THIS TO THE YOKE CRATE ///
 
-pub trait ZeroCopyClone<C>: for<'a> Yokeable<'a> {
+pub trait ZeroCopyClone<C: ?Sized>: for<'a> Yokeable<'a> {
     fn zcc<'b>(this: &'b C) -> <Self as Yokeable<'b>>::Output;
 }
 
-fn make_borrowed_yoke<'b, 's, C, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
+fn make_borrowed_yoke<'b, 's, C: ?Sized, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
     cart: &'b C,
 ) -> Yoke<Y, &'b C> {
     Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zcc)
 }
 
-fn make_rc_yoke<'b, 's, C, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
+fn make_rc_yoke<'b, 's, C: ?Sized, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
     cart: Rc<C>,
 ) -> Yoke<Y, Rc<C>> {
     Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zcc)
@@ -186,10 +186,9 @@ where
 {
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
-    pub fn from_partial_owned(data: <T as DataStructHelperTrait<'s>>::Cart) -> Self {
-        let cart = Rc::from(data);
+    pub fn from_partial_owned(data: Rc<<T as DataStructHelperTrait<'s>>::Cart>) -> Self {
         Self {
-            inner: DataPayloadInner::RcStruct(make_rc_yoke(cart)),
+            inner: DataPayloadInner::RcStruct(make_rc_yoke(data)),
         }
     }
 

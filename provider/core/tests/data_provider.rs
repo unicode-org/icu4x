@@ -5,6 +5,7 @@
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Debug;
+use std::rc::Rc;
 
 use icu_provider::erased::*;
 use icu_provider::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Helper};
@@ -74,7 +75,9 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(self.data.hello_v1.clone())),
+            payload: Some(DataPayload::from_partial_owned(Rc::from(
+                self.data.hello_v1.clone(),
+            ))),
         })
     }
 }

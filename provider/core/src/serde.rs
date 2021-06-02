@@ -23,6 +23,7 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::fmt::Debug;
 use std::ops::Deref;
+use std::rc::Rc;
 
 /// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
 ///
@@ -99,7 +100,7 @@ where
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse {
             metadata,
-            payload: payload.map(|obj| DataPayload::from_partial_owned(obj)),
+            payload: payload.map(|obj| DataPayload::from_partial_owned(Rc::new(obj))),
         })
     }
 }
@@ -194,6 +195,5 @@ pub struct SerdeSeDataStructHelper {}
 
 impl<'s> DataStructHelperTrait<'s> for SerdeSeDataStructHelper {
     type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
-    // TODO
-    type Cart = SerdeSeDataStructWrap<'s, 's>;
+    type Cart = dyn SerdeSeDataStruct<'s>;
 }
