@@ -187,15 +187,13 @@ where
     for<'a> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output:
         serde::Serialize,
     's: 'd,
-    // 'd: 's,
 {
     fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, SerdeSeDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
         let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
-            // Borrowed(yoke) => Rc::from(yoke),
+            Borrowed(yoke) => todo!(),
             RcStruct(yoke) => Rc::from(yoke),
             Owned(yoke) => Rc::from(yoke),
-            _ => todo!(),
         };
         DataPayload::from_partial_owned(cart)
     }

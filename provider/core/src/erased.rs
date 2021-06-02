@@ -8,13 +8,12 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
-use std::fmt::Debug;
 use std::ops::Deref;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
 /// Requires the static lifetime in order to be convertible to [`Any`].
-pub trait ErasedDataStruct: 'static + Debug {
+pub trait ErasedDataStruct: 'static {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
 
@@ -83,7 +82,6 @@ impl dyn ErasedDataStruct {
 }
 
 /// A wrapper around `&dyn `[`ErasedDataStruct`] for integration with DataProvider.
-#[derive(Clone, Debug)]
 pub struct ErasedDataStructWrap<'d> {
     inner: &'d dyn ErasedDataStruct,
 }
@@ -95,7 +93,35 @@ impl<'d> Deref for ErasedDataStructWrap<'d> {
     }
 }
 
+impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for ErasedDataStructWrap<'static> {
+    fn zcc<'b>(this: &'b (dyn ErasedDataStruct)) -> ErasedDataStructWrap<'b> {
+        ErasedDataStructWrap { inner: this }
+    }
+}
+
 impl_dyn_from_payload!(ErasedDataStruct, ErasedDataStructHelper, 'd, 's);
+
+/*
+impl<'d, 's, T> crate::util::Convert
+DataPayload<'d, 's, T> for ErasedDataStructHelper
+where
+    T: DataStructHelperTrait<'s>,
+    for<'a> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output:
+        ErasedDataStruct,
+    's: 'static,
+{
+    fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, ErasedDataStructHelper> {
+        use crate::data_provider::DataPayloadInner::*;
+        use std::rc::Rc;
+        let cart: Rc<dyn ErasedDataStruct> = match other.inner {
+            Borrowed(yoke) => todo!(),
+            RcStruct(yoke) => Rc::from(yoke),
+            Owned(yoke) => Rc::from(yoke),
+        };
+        DataPayload::from_partial_owned(cart)
+    }
+}
+*/
 
 unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
     type Output = ErasedDataStructWrap<'a>;
@@ -136,7 +162,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
     where
         T: DataStructHelperTrait<'static>,
         <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
-            Clone + Debug + Any,
+            Clone + Any,
     {
         todo!()
         /*
@@ -171,10 +197,12 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
 
 impl<T> ErasedDataStruct for T
 where
-    T: Clone + Debug + Any,
+    T: Any,
+    for<'a> &'a T: Clone,
 {
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
-        Box::new(self.clone())
+        todo!()
+        // Box::new(self.clone())
     }
     fn into_any(self: Box<Self>) -> Box<dyn Any> {
         self
@@ -220,7 +248,7 @@ impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'd
 where
     T: DataStructHelperTrait<'static>,
     <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
-        Clone + Debug + Any,
+        Clone + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, T>, Error> {
