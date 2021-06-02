@@ -3,11 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use serde::{Deserialize, Serialize};
+use tinystr::TinyStr8;
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneConfig {
     pub time_zone_id: Option<String>,
     pub metazone_id: Option<String>,
-    pub time_variant: Option<String>,
+    pub time_variant: Option<TinyStr8>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

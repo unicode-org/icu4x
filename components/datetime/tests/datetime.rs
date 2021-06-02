@@ -27,6 +27,7 @@ use patterns::{
 };
 use std::borrow::Cow;
 use std::fmt::Write;
+use tinystr::TinyStr8;
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
@@ -231,7 +232,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(String::from("America_Pacific")),
-            time_variant: Some(String::from("daylight")),
+            time_variant: Some("daylight".parse::<TinyStr8>().unwrap()),
             ..TimeZoneConfig::default()
         },
     );
