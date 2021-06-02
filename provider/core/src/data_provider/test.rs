@@ -11,6 +11,7 @@ use crate::erased::*;
 use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Helper};
 use crate::prelude::*;
 use crate::yoke;
+use super::*;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -167,19 +168,17 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
 
 fn get_payload_v1<'d, 's, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Sized + 'd>(
     provider: &P,
-) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError> {
+) -> Result<DataPayload<'d, 's, HelloWorldV1Helper>, DataError> {
     provider
         .load_payload(&get_request_v1())?
         .take_payload()
-        .map(|p| p.into_cow())
 }
 
 fn get_payload_alt<'d, P: DataProvider<'d, 'static, HelloAltHelper> + ?Sized>(
     d: &P,
-) -> Result<Cow<'d, HelloAlt>, DataError> {
+) -> Result<DataPayload<'d, 'static, HelloAltHelper>, DataError> {
     d.load_payload(&get_request_alt())?
         .take_payload()
-        .map(|p| p.into_cow())
 }
 
 fn get_request_v1() -> DataRequest {
@@ -203,36 +202,48 @@ fn get_request_alt() -> DataRequest {
 #[test]
 fn test_warehouse_owned() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse);
+    let hello_data = get_payload_v1(&warehouse).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Owned(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::RcStruct(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
 #[test]
 fn test_warehouse_owned_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider);
+    let hello_data = get_payload_v1(&warehouse as &dyn ErasedDataProvider).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Owned(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::RcStruct(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
 #[test]
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Helper>);
+    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Helper>).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Owned(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::RcStruct(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
@@ -249,36 +260,48 @@ fn test_warehouse_owned_dyn_erased_alt() {
 #[test]
 fn test_warehouse_ref() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse);
+    let hello_data = get_payload_v1(&&warehouse).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
 #[test]
 fn test_warehouse_ref_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn ErasedDataProvider);
+    let hello_data = get_payload_v1(&&warehouse as &dyn ErasedDataProvider).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
 #[test]
 fn test_warehouse_ref_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1Helper>);
+    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1Helper>).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
@@ -296,12 +319,16 @@ fn test_warehouse_ref_dyn_erased_alt() {
 fn test_borrowing() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider);
+    let hello_data = get_payload_v1(&provider).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
@@ -309,12 +336,16 @@ fn test_borrowing() {
 fn test_borrowing_dyn_erased() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider);
+    let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
@@ -322,20 +353,31 @@ fn test_borrowing_dyn_erased() {
 fn test_borrowing_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider);
-    assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
+    let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider).unwrap();
+    assert!(matches!(
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloAlt { .. }
+    ));
 }
 
 #[test]
 fn test_borrowing_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Helper>);
+    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Helper>).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
@@ -343,8 +385,15 @@ fn test_borrowing_dyn_generic() {
 fn test_borrowing_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltHelper>);
-    assert!(matches!(hello_data, Ok(Cow::Borrowed(HelloAlt { .. }))));
+    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltHelper>).unwrap();
+    assert!(matches!(
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloAlt { .. }
+    ));
 }
 
 #[test]
@@ -399,12 +448,16 @@ fn test_v1_v2_dyn_erased() {
 fn test_local() {
     let local_data = DATA.to_string();
     let warehouse = get_warehouse(&local_data);
-    let hello_data = get_payload_v1(&warehouse);
+    let hello_data = get_payload_v1(&warehouse).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Owned(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::RcStruct(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
@@ -412,12 +465,16 @@ fn test_local() {
 fn test_local_ref() {
     let local_data = DATA.to_string();
     let warehouse = get_warehouse(&local_data);
-    let hello_data = get_payload_v1(&&warehouse);
+    let hello_data = get_payload_v1(&&warehouse).unwrap();
     assert!(matches!(
-        hello_data,
-        Ok(Cow::Borrowed(HelloWorldV1 {
+        hello_data.inner,
+        DataPayloadInner::Borrowed(_)
+    ));
+    assert!(matches!(
+        hello_data.get(),
+        HelloWorldV1 {
             message: Cow::Borrowed(_),
-        }))
+        }
     ));
 }
 
