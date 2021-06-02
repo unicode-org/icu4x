@@ -93,7 +93,7 @@ pub trait DataStructHelperTrait {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-enum DataPayloadInner<'d, 's: 'd, T>
+pub(crate) enum DataPayloadInner<'d, 's: 'd, T>
 where
     T: DataStructHelperTrait,
 {
@@ -128,7 +128,7 @@ pub struct DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
-    inner: DataPayloadInner<'d, 's, T>,
+    pub(crate) inner: DataPayloadInner<'d, 's, T>,
 }
 
 // TODO
@@ -157,6 +157,9 @@ where
     }
 }
 
+
+/// TODO: MOVE THIS TO THE YOKE CRATE ///
+
 pub trait ZeroCopyClone: for<'a> Yokeable<'a> {
     fn zcc<'b, 's>(this: &'b <Self as Yokeable<'s>>::Output) -> <Self as Yokeable<'b>>::Output;
 }
@@ -172,6 +175,8 @@ fn make_rc_yoke<'b, 's, Y: ZeroCopyClone + for<'a> Yokeable<'a>>(
 ) -> Yoke<Y, Rc<<Y as Yokeable<'s>>::Output>> {
     Yoke::<Y, Rc<<Y as Yokeable<'s>>::Output>>::attach_to_cart_badly(cart, Y::zcc)
 }
+
+/// END ///
 
 impl<'d, 's, T> DataPayload<'d, 's, T>
 where

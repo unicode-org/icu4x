@@ -107,7 +107,7 @@
 #[macro_use]
 pub mod util;
 
-mod data_provider;
+pub(crate) mod data_provider;
 #[macro_use]
 mod resource;
 #[macro_use]
