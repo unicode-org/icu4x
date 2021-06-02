@@ -23,7 +23,7 @@ pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedD
 }
 
 #[no_mangle]
-/// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.ICU4XFixedDecimal
+/// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
 ///
 /// Returns `true` if the multiplication was successful.
 pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
@@ -34,7 +34,7 @@ pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
 }
 
 #[no_mangle]
-/// FFI version of [`FixedDecimal::negate()`]. See its docs for more details.ICU4XFixedDecimal
+/// FFI version of [`FixedDecimal::negate()`]. See its docs for more details.
 pub extern "C" fn icu4x_fixed_decimal_negate(fd: &mut ICU4XFixedDecimal) {
     fd.negate()
 }
