@@ -136,14 +136,14 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's, 't> DataProvider<'d, HelloWorldV1Helper> for HelloWorldProvider<'s>
+impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Helper> for HelloWorldProvider<'s>
 where
     's: 'd,
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -165,7 +165,7 @@ impl_dyn_provider!(HelloWorldProvider<'static>, {
 }, ERASED, 'd, 's);
 
 #[cfg(feature = "provider_serde")]
-impl_dyn_provider!(HelloWorldProvider<'d>, {
+impl_dyn_provider!(HelloWorldProvider<'s>, {
     _ => HelloWorldV1Helper,
 }, SERDE_SE, 'd, 's);
 
@@ -188,7 +188,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, crate::erased::ErasedDataStructHelper>
+impl<'d, 's: 'd> crate::export::DataExporter<'d, 's, crate::erased::ErasedDataStructHelper>
     for HelloWorldProvider<'static>
 {
     fn put_payload<'a>(

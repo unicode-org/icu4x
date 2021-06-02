@@ -270,7 +270,7 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProvider<'d, PluralRuleStringsV1Helper> + ?Sized>(
+    pub fn try_new<'d, D: DataProvider<'d, 'd, PluralRuleStringsV1Helper> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,

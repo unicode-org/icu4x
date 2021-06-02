@@ -93,20 +93,20 @@ pub trait DataStructHelperTrait {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-enum DataPayloadInner<'d, T>
+enum DataPayloadInner<'d, 's: 'd, T>
 where
     T: DataStructHelperTrait,
 {
     Borrowed(
         Yoke<
             <T as DataStructHelperTrait>::Yokeable,
-            &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output,
+            &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
         >,
     ),
     RcStruct(
         Yoke<
             <T as DataStructHelperTrait>::Yokeable,
-            Rc<<<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output>,
+            Rc<<<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output>,
         >,
     ),
     // Note: We could use either of the above two variants for Owned if we liked
@@ -124,15 +124,15 @@ where
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
-pub struct DataPayload<'d, T>
+pub struct DataPayload<'d, 's: 'd, T>
 where
     T: DataStructHelperTrait,
 {
-    inner: DataPayloadInner<'d, T>,
+    inner: DataPayloadInner<'d, 's, T>,
 }
 
 // TODO
-impl<'d, T> Debug for DataPayload<'d, T>
+impl<'d, 's: 'd, T> Debug for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -140,7 +140,7 @@ where
         todo!()
     }
 }
-impl<'d, T> PartialEq for DataPayload<'d, T>
+impl<'d, 's: 'd, T> PartialEq for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -148,7 +148,7 @@ where
         todo!()
     }
 }
-impl<'d, T> Clone for DataPayload<'d, T>
+impl<'d, 's: 'd, T> Clone for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -157,7 +157,7 @@ where
     }
 }
 
-impl<'d, T> DataPayload<'d, T>
+impl<'d, 's: 'd, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
@@ -171,7 +171,7 @@ where
 
     /// Convert a partially owned (`'d`) data struct into a DataPayload.
     #[inline]
-    pub fn from_partial_owned<'s: 'd>(
+    pub fn from_partial_owned(
         data: <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
         fn helper<'de, 's, T: DataStructHelperTrait>(
@@ -189,7 +189,7 @@ where
 
     /// Convert a borrowed data struct into a DataPayload.
     #[inline]
-    pub fn from_borrowed<'s: 'd>(
+    pub fn from_borrowed(
         data: &'d <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output,
     ) -> Self {
         fn helper<'de, 's, T: DataStructHelperTrait>(
@@ -272,14 +272,15 @@ where
         match &self.inner {
             Borrowed(yoke) => yoke.get(),
             RcStruct(yoke) => yoke.get(),
+            Owned(yoke) => yoke.get(),
         }
     }
 }
 
-impl<'d, T> DataPayload<'d, T>
+impl<'d, 's: 'd, T> DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output: ToOwned,
+    <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output: ToOwned,
 {
     /// Converts the DataPayload into a Cow. May require cloning the data.
     ///
@@ -300,14 +301,14 @@ where
     #[inline]
     pub fn into_cow(
         self,
-    ) -> Cow<'d, <<T as DataStructHelperTrait>::Yokeable as Yokeable<'d>>::Output> {
+    ) -> Cow<'d, <<T as DataStructHelperTrait>::Yokeable as Yokeable<'s>>::Output> {
         todo!()
     }
 }
 
 /// A response object containing an object as payload and metadata about it.
 #[derive(Debug, Clone)]
-pub struct DataResponse<'d, T>
+pub struct DataResponse<'d, 's: 'd, T>
 where
     T: DataStructHelperTrait,
 {
@@ -315,27 +316,27 @@ where
     pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
-    pub payload: Option<DataPayload<'d, T>>,
+    pub payload: Option<DataPayload<'d, 's, T>>,
 }
 
-impl<'d, T> DataResponse<'d, T>
+impl<'d, 's: 'd, T> DataResponse<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
-    pub fn take_payload(self) -> Result<DataPayload<'d, T>, Error> {
+    pub fn take_payload(self) -> Result<DataPayload<'d, 's, T>, Error> {
         self.payload.ok_or(Error::MissingPayload)
     }
 }
 
-impl<'d, T> TryFrom<DataResponse<'d, T>> for DataPayload<'d, T>
+impl<'d, 's: 'd, T> TryFrom<DataResponse<'d, 's, T>> for DataPayload<'d, 's, T>
 where
     T: DataStructHelperTrait,
 {
     type Error = Error;
 
-    fn try_from(response: DataResponse<'d, T>) -> Result<Self, Self::Error> {
+    fn try_from(response: DataResponse<'d, 's, T>) -> Result<Self, Self::Error> {
         response.take_payload()
     }
 }
@@ -347,7 +348,7 @@ where
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
 /// - [`StructProvider`](crate::struct_provider::StructProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<'d, T>
+pub trait DataProvider<'d, 's: 'd, T>
 where
     T: DataStructHelperTrait,
 {
@@ -355,5 +356,5 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error>;
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error>;
 }

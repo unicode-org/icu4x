@@ -29,26 +29,26 @@ macro_rules! impl_dyn_clone {
 ///
 /// The standard `From` trait cannot be used in all situations due to the blanket implementation
 /// `impl<T> From<T> for T`.
-pub trait ConvertDataPayload<'d, T>
+pub trait ConvertDataPayload<'d, 's: 'd, T>
 where
     T: crate::prelude::DataStructHelperTrait,
     Self: Sized + crate::prelude::DataStructHelperTrait,
 {
-    fn convert(other: crate::prelude::DataPayload<'d, T>) -> crate::prelude::DataPayload<'d, Self>;
+    fn convert(other: crate::prelude::DataPayload<'d, 's, T>) -> crate::prelude::DataPayload<'d, 's, Self>;
 }
 
 /// Implement `ConvertDataPayload<T>` for `S` where `T` implements the trait `S`.
 macro_rules! impl_dyn_from_payload {
     ($trait:path, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s: $d, T> $crate::util::ConvertDataPayload<$d, T> for $dyn_wrap
+        impl<$d, $s: $d, T> $crate::util::ConvertDataPayload<$d, $s, T> for $dyn_wrap
         where
             T: $crate::prelude::DataStructHelperTrait,
             $dyn_wrap: $crate::prelude::DataStructHelperTrait,
             // <<T as $crate::prelude::DataStructHelperTrait>::Yokeable as yoke::Yokeable<$s>>::Output: $trait + Clone,
         {
             fn convert(
-                other: $crate::prelude::DataPayload<$d, T>,
-            ) -> $crate::prelude::DataPayload<$d, $dyn_wrap> {
+                other: $crate::prelude::DataPayload<$d, $s, T>,
+            ) -> $crate::prelude::DataPayload<$d, $s, $dyn_wrap> {
                 todo!()
                 /*
                 use std::borrow::Cow;
@@ -161,7 +161,7 @@ macro_rules! impl_dyn_provider {
         );
     };
     ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime) => {
-        impl<$d, $s> $crate::prelude::DataProvider<$d, $dyn_wrap> for $provider
+        impl<$d, $s> $crate::prelude::DataProvider<$d, $s, $dyn_wrap> for $provider
         where
             $s: $d,
         {
@@ -169,7 +169,7 @@ macro_rules! impl_dyn_provider {
                 &self,
                 req: &$crate::prelude::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<$d, $dyn_wrap>,
+                $crate::prelude::DataResponse<$d, $s, $dyn_wrap>,
                 $crate::prelude::DataError,
             > {
                 match req.resource_path.key {

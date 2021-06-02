@@ -128,13 +128,13 @@ impl DataStructHelperTrait for ErasedDataStructHelper {
     type Yokeable = ErasedDataStructWrap<'static>;
 }
 
-impl<'d> DataPayload<'d, ErasedDataStructHelper> {
+impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a [`Sized`] type.
     /// Returns an error if the type is not compatible.
-    pub fn downcast<T>(self) -> Result<DataPayload<'d, T>, Error>
+    pub fn downcast<T>(self) -> Result<DataPayload<'d, 'static, T>, Error>
     where
         T: DataStructHelperTrait,
-        <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output: Clone + Debug + Any,
+        <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Debug + Any,
     {
         todo!()
         /*
@@ -190,7 +190,7 @@ where
 ///
 /// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
 /// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
-pub trait ErasedDataProvider<'d> {
+pub trait ErasedDataProvider<'d, 's: 'd> {
     /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
@@ -198,29 +198,29 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructHelper>, Error>;
+    ) -> Result<DataResponse<'d, 's, ErasedDataStructHelper>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
-impl<'d, T> ErasedDataProvider<'d> for T
+impl<'d, 's: 'd, T> ErasedDataProvider<'d, 's> for T
 where
-    T: DataProvider<'d, ErasedDataStructHelper>,
+    T: DataProvider<'d, 's, ErasedDataStructHelper>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, ErasedDataStructHelper>, Error> {
+    ) -> Result<DataResponse<'d, 's, ErasedDataStructHelper>, Error> {
         DataProvider::<ErasedDataStructHelper>::load_payload(self, req)
     }
 }
 
-impl<'d, T> DataProvider<'d, T> for dyn ErasedDataProvider<'d> + 'd
+impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d, 'static> + 'd
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output: Clone + Debug + Any,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Debug + Any,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, T>, Error> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,

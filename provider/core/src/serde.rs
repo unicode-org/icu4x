@@ -86,15 +86,15 @@ pub trait SerdeDeDataProvider<'de> {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'d, 'de, T> DataProvider<'d, T> for dyn SerdeDeDataProvider<'de> + 'd
+impl<'d, 's, T> DataProvider<'d, 's, T> for dyn SerdeDeDataProvider<'s> + 'd
 where
     T: DataStructHelperTrait,
-    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'de>>::Output:
-        serde::Deserialize<'de> + Clone + Debug,
-    'de: 'd,
+    <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output:
+        serde::Deserialize<'s> + Clone + Debug,
+    's: 'd,
 {
-    /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+    /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse {

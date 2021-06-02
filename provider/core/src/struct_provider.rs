@@ -47,12 +47,12 @@ pub struct StructProvider<'d, T> {
     pub data: &'d T,
 }
 
-impl<'d, T> DataProvider<'d, T>
-    for StructProvider<'d, <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'d>>::Output>
+impl<'d, 's: 'd, T> DataProvider<'d, 's, T>
+    for StructProvider<'d, <<T as DataStructHelperTrait>::Yokeable as yoke::Yokeable<'s>>::Output>
 where
     T: DataStructHelperTrait,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

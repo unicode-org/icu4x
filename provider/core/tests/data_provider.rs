@@ -57,11 +57,11 @@ struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
 }
 
-impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1Helper> for DataWarehouse<'s> {
+impl<'d, 's: 'd> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -74,11 +74,11 @@ icu_provider::impl_dyn_provider!(DataWarehouse<'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Helper,
 }, ERASED, 'd, 's);
 
-impl<'d, 's: 'd> DataProvider<'d, HelloWorldV1Helper> for &'d DataWarehouse<'s> {
+impl<'d, 's: 'd> DataProvider<'d, 's, HelloWorldV1Helper> for &'d DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -97,7 +97,7 @@ struct DataProviderBorrowing<'d, 's> {
     borrowed_data: &'d HelloCombined<'s>,
 }
 
-impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
+impl<'d, 's: 'd> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
     fn from(warehouse: &'d DataWarehouse<'s>) -> Self {
         DataProviderBorrowing {
             borrowed_data: &warehouse.data,
@@ -105,11 +105,11 @@ impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloWorldV1Helper> for DataProviderBorrowing<'d, 's> {
+impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataProviderBorrowing<'d, 's> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -118,8 +118,8 @@ impl<'d, 's> DataProvider<'d, HelloWorldV1Helper> for DataProviderBorrowing<'d, 
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloAltHelper> for DataProviderBorrowing<'d, 's> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, HelloAltHelper>, DataError> {
+impl<'d, 's> DataProvider<'d, 's, HelloAltHelper> for DataProviderBorrowing<'d, 's> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, HelloAltHelper>, DataError> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -149,9 +149,9 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_payload_v1<'d, P: DataProvider<'d, HelloWorldV1Helper> + ?Sized + 'd>(
+fn get_payload_v1<'d, 's: 'd, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Sized + 'd>(
     provider: &P,
-) -> Result<Cow<'d, HelloWorldV1<'d>>, DataError>
+) -> Result<Cow<'d, HelloWorldV1<'s>>, DataError>
 {
     provider
         .load_payload(&get_request_v1())?
@@ -159,7 +159,7 @@ fn get_payload_v1<'d, P: DataProvider<'d, HelloWorldV1Helper> + ?Sized + 'd>(
         .map(|p| p.into_cow())
 }
 
-fn get_payload_alt<'d, P: DataProvider<'d, HelloAltHelper> + ?Sized>(
+fn get_payload_alt<'d, 's: 'd, P: DataProvider<'d, 's, HelloAltHelper> + ?Sized>(
     d: &P,
 ) -> Result<Cow<'d, HelloAlt>, DataError> {
     d.load_payload(&get_request_alt())?
@@ -349,14 +349,14 @@ fn test_mismatched_types() {
 fn check_v1_v2<'d, 's, P>(d: &P)
 where
     's: 'd,
-    P: DataProvider<'d, HelloWorldV1Helper> + DataProvider<'d, HelloAltHelper> + ?Sized,
+    P: DataProvider<'d, 's, HelloWorldV1Helper> + DataProvider<'d, 's, HelloAltHelper> + ?Sized,
 {
-    let v1: DataPayload<'d, HelloWorldV1Helper> = d
+    let v1: DataPayload<'d, 's, HelloWorldV1Helper> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
         .unwrap();
-    let v2: DataPayload<'d, HelloAltHelper> = d
+    let v2: DataPayload<'d, 's, HelloAltHelper> = d
         .load_payload(&get_request_alt())
         .unwrap()
         .take_payload()

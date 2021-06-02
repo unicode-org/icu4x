@@ -7,11 +7,11 @@ use crate::{PluralRuleType, PluralRulesError};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
-pub fn resolve_plural_data<'s, D: DataProvider<'s, PluralRuleStringsV1Helper> + ?Sized>(
+pub fn resolve_plural_data<'d, 's: 'd, D: DataProvider<'d, 's, PluralRuleStringsV1Helper> + ?Sized>(
     langid: LanguageIdentifier,
     data_provider: &D,
     type_: PluralRuleType,
-) -> Result<DataPayload<'s, PluralRuleStringsV1Helper>, PluralRulesError> {
+) -> Result<DataPayload<'d, 's, PluralRuleStringsV1Helper>, PluralRulesError> {
     let key = match type_ {
         PluralRuleType::Cardinal => super::key::CARDINAL_V1,
         PluralRuleType::Ordinal => super::key::ORDINAL_V1,
