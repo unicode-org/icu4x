@@ -36,7 +36,7 @@ icu_locid = { version = "0.2", path = "../../components/locid" }
 tinystr = "0.4.5"
 writeable = { version = "0.2", path = "../../utils/writeable" }
 thiserror = "1.0"
-yoke = { version = "0.1", path = "../../utils/yoke" }
+yoke = { version = "0.1", path = "../../utils/yoke", features = ["serde"] }
 
 # For "provider_serde" feature
 erased-serde = { version = "0.3", optional = true }

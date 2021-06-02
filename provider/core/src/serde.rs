@@ -107,7 +107,7 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-pub trait SerdeSeDataStruct<'s>: 's + Debug {
+pub trait SerdeSeDataStruct<'s>: 's {
     /// Clone this trait object reference, returning a boxed trait object.
     fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;
 
@@ -142,10 +142,12 @@ impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
 
 impl<'s, T> SerdeSeDataStruct<'s> for T
 where
-    T: 's + serde::Serialize + Clone + Debug,
+    T: 's + serde::Serialize,
+    for<'a> &'a T: Clone,
 {
     fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
-        Box::new(self.clone())
+        todo!()
+        // Box::new(self.clone())
     }
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
@@ -153,7 +155,6 @@ where
 }
 
 /// A wrapper around `&dyn `[`SerdeSeDataStruct`] for integration with DataProvider.
-#[derive(Clone, Debug)]
 pub struct SerdeSeDataStructWrap<'d, 's> {
     inner: &'d (dyn SerdeSeDataStruct<'s> + 's),
 }
@@ -165,7 +166,36 @@ impl<'d, 's> Deref for SerdeSeDataStructWrap<'d, 's> {
     }
 }
 
-impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructHelper, 'd, 's);
+impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap<'static, 'static> {
+    fn zcc<'b>(this: &'b (dyn SerdeSeDataStruct<'s> + 's)) -> SerdeSeDataStructWrap<'b, 'b> {
+        todo!()
+        // SerdeSeDataStructWrap {
+        //     inner: this,
+        // }
+    }
+}
+
+// impl_dyn_from_payload!(SerdeSeDataStruct<'static>, SerdeSeDataStructHelper, 'd, 's);
+
+impl<'d, 's, T> crate::util::ConvertDataPayload<'d, 's, T> for SerdeSeDataStructHelper
+where
+    T: DataStructHelperTrait<'s>,
+    for<'a> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output:
+        serde::Serialize,
+    's: 'd,
+    // 'd: 's,
+{
+    fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, SerdeSeDataStructHelper> {
+        use crate::data_provider::DataPayloadInner::*;
+        let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
+            // Borrowed(yoke) => Rc::from(yoke),
+            RcStruct(yoke) => Rc::from(yoke),
+            Owned(yoke) => Rc::from(yoke),
+            _ => todo!(),
+        };
+        DataPayload::from_partial_owned(cart)
+    }
+}
 
 unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;
