@@ -1,4 +1,5 @@
 import icu4x from "./icu4x.mjs"
+import * as rtti from "./rtti.mjs"
 
 function withEncodedString(str, fn) {
   let bytes = (new TextEncoder()).encode(str);
@@ -23,6 +24,15 @@ const fixedDecimalRegistry = new FinalizationRegistry(ptr => {
   icu4x.icu4x_fixed_decimal_destroy(ptr);
 });
 
+const ICU4XFixedDecimalMultiplyPow10Result = {
+  parse: rtti.StructType({
+    success: [ 0, rtti.ScalarType.bool ],
+    error_code: [ 4, rtti.ScalarType.i32 ]
+  }),
+  size: 8
+};
+
+
 class FixedDecimal {
   constructor(magnitude) {
     this.underlying = icu4x.icu4x_fixed_decimal_create(magnitude);    
@@ -30,7 +40,11 @@ class FixedDecimal {
   }
 
   multiply_pow10(pow) {
-    icu4x.icu4x_fixed_decimal_multiply_pow10(this.underlying, pow);
+    const receiveBuffer = icu4x.icu4x_alloc(ICU4XFixedDecimalMultiplyPow10Result.size);
+    icu4x.icu4x_fixed_decimal_multiply_pow10(receiveBuffer, this.underlying, pow);
+    const parsed = ICU4XFixedDecimalMultiplyPow10Result.parse(icu4x.memory.buffer, receiveBuffer);
+    icu4x.icu4x_free(receiveBuffer);
+    return parsed;
   }
 
   negate() {
@@ -60,7 +74,7 @@ class BufferWritable {
 }
 
 const decimal = new FixedDecimal(BigInt(1234));
-decimal.multiply_pow10(-2);
+console.log(decimal.multiply_pow10(-2));
 decimal.negate();
 
 const outWritable = new BufferWritable();

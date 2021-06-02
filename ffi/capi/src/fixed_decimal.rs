@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::{Error, FixedDecimal};
 
 use crate::custom_writeable::ICU4XWriteable;
 use writeable::Writeable;
@@ -22,15 +22,30 @@ pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedD
     Box::into_raw(Box::new(fd))
 }
 
+#[repr(C)]
+/// This is the result returned by [`icu4x_fixed_decimal_multiply_pow10()`]
+pub struct ICU4XFixedDecimalMultiplyPow10Result {
+    /// Whether the multiplication was successful.
+    pub success: bool,
+    /// The error type if the multiplication failed.
+    pub error_code: i32
+}
+
 #[no_mangle]
 /// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
 ///
-/// Returns `true` if the multiplication was successful.
+/// Returns a [`ICU4XFixedDecimalMultiplyPow10Result`] struct. See its docs for more details.
 pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     fd: &mut ICU4XFixedDecimal,
     power: i16,
-) -> bool {
-    fd.multiply_pow10(power).is_ok()
+) -> ICU4XFixedDecimalMultiplyPow10Result {
+    match fd.multiply_pow10(power) {
+        Ok(_) => ICU4XFixedDecimalMultiplyPow10Result { success: true, error_code: 0 },
+        Err(e) => ICU4XFixedDecimalMultiplyPow10Result { success: false, error_code: match e {
+            Error::Limit => 0,
+            Error::Syntax => 1
+        } }
+    }
 }
 
 #[no_mangle]
