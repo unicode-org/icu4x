@@ -1,14 +1,14 @@
 use std::ffi::CString;
-use std::os::raw::c_char;
 use std::io;
+use std::os::raw::c_char;
 
-use log::{Record, Metadata, LevelFilter, Level};
+use log::{Level, LevelFilter, Metadata, Record};
 
 #[cfg(debug_assertions)]
 use std::panic;
 
 // minimal WASM logger based on https://github.com/DeMille/wasm-glue
-extern {
+extern "C" {
     fn log_js(ptr: *const c_char);
     fn warn_js(ptr: *const c_char);
 
@@ -38,7 +38,7 @@ fn _warn(buf: &str) -> io::Result<()> {
 
 struct ConsoleLogger;
 
-impl log::Log for ConsoleLogger  {
+impl log::Log for ConsoleLogger {
     fn enabled(&self, _: &Metadata) -> bool {
         true
     }
@@ -64,12 +64,10 @@ fn set_panic_hook() {
 
         let msg = match info.payload().downcast_ref::<&'static str>() {
             Some(s) => *s,
-            None => {
-                match info.payload().downcast_ref::<String>() {
-                    Some(s) => &s[..],
-                    None => "Box<Any>",
-                }
-            }
+            None => match info.payload().downcast_ref::<String>() {
+                Some(s) => &s[..],
+                None => "Box<Any>",
+            },
         };
 
         let err_info = format!("Panicked at '{}', {}:{}:{}", msg, file, line, col);
@@ -99,10 +97,10 @@ pub unsafe extern "C" fn icu4x_init() {
 /// # Safety
 /// - The allocated buffer must be freed with [`icu4x_free()`].
 pub unsafe extern "C" fn icu4x_alloc(size: usize) -> *mut u8 {
-  let mut vec = Vec::<u8>::with_capacity(size);
-  let ret = vec.as_mut_ptr();
-  std::mem::forget(vec);
-  ret
+    let mut vec = Vec::<u8>::with_capacity(size);
+    let ret = vec.as_mut_ptr();
+    std::mem::forget(vec);
+    ret
 }
 
 #[no_mangle]
@@ -110,6 +108,6 @@ pub unsafe extern "C" fn icu4x_alloc(size: usize) -> *mut u8 {
 /// # Safety
 /// - `ptr` must be a pointer to a valid buffer allocated by [`icu4x_alloc()`].
 pub unsafe extern "C" fn icu4x_free(ptr: *mut u8, size: usize) {
-  let vec = Vec::from_raw_parts(ptr, size, size);
-  drop(vec);
+    let vec = Vec::from_raw_parts(ptr, size, size);
+    drop(vec);
 }

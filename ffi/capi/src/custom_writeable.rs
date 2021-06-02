@@ -117,7 +117,6 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
     }
 }
 
-
 #[no_mangle]
 /// Create an [`ICU4XWriteable`] that can write to a dynamically allocated buffer managed by Rust.
 ///
@@ -141,9 +140,9 @@ pub unsafe extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4X
         context: ptr::null_mut(),
         buf: vec.as_mut_ptr(),
         len: 0,
-        cap: cap,
-        flush: flush,
-        grow: grow
+        cap,
+        flush,
+        grow,
     };
 
     std::mem::forget(vec);

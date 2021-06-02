@@ -4,8 +4,8 @@
 
 use fixed_decimal::FixedDecimal;
 
-use writeable::Writeable;
 use crate::custom_writeable::ICU4XWriteable;
+use writeable::Writeable;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimal`]
 ///
