@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622582528026,
+  "lastUpdate": 1622672401249,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Heap – windows-latest": [
@@ -21905,6 +21905,192 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/83e10131e36e5cc264f3ec800cdeff6c94b2cf71"
         },
         "date": 1622582521808,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "icu_datetime/work_log – Total Heap Allocations",
+            "value": 34282,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at Global Memory Max",
+            "value": 20662,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_datetime/work_log – Heap at End of Program Execution",
+            "value": 1112,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Total Heap Allocations",
+            "value": 590,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at Global Memory Max",
+            "value": 309,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/syntatically_canonicalize_locales – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Total Heap Allocations",
+            "value": 1299,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at Global Memory Max",
+            "value": 706,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_locid/filter_langids – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Total Heap Allocations",
+            "value": 13242,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at Global Memory Max",
+            "value": 8931,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/unread_emails – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Total Heap Allocations",
+            "value": 14303,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at Global Memory Max",
+            "value": 9016,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_plurals/elevator_floors – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Total Heap Allocations",
+            "value": 976,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at Global Memory Max",
+            "value": 388,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "icu_uniset/unicode_bmp_blocks_selector – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Total Heap Allocations",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at Global Memory Max",
+            "value": 15,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "fixed_decimal/permyriad – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Total Heap Allocations",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at Global Memory Max",
+            "value": 11,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable/writeable_message – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Total Heap Allocations",
+            "value": 448,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at Global Memory Max",
+            "value": 256,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap/language_names_lite_map – Heap at End of Program Execution",
+            "value": 0,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shadaj@users.noreply.github.com",
+            "name": "Shadaj Laddad",
+            "username": "shadaj"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a7d087c9831e9135acb235e4fc46fd6c3596452d",
+          "message": "Initial build infrastructure and example for WASM FFI (#748)\n\n* [WIP] Prototype using ICU4X from JS through WASM\r\n\r\n* Support converting a fixed decimal to a string in WASM\r\n\r\n* Prototype high-level API\r\n\r\n* Add example of returning struct from WASM to JS\r\n\r\n* Directly create views of WASM memory\r\n\r\n* Set up build for separate dev and release WASM modes\r\n\r\n* Clean up example\r\n\r\n* Add docs for new FFI functions\r\n\r\n* Run cargo fmt and address clippy warnings\r\n\r\n* Update ffi/capi/src/fixed_decimal.rs\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>\r\n\r\n* Address feedback\r\n\r\n* Fix lint and clippy\r\n\r\n* Cleanup docs\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-06-02T15:10:32-07:00",
+          "tree_id": "f7a839085ccffcf7fa439de47807025a7bae00d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/a7d087c9831e9135acb235e4fc46fd6c3596452d"
+        },
+        "date": 1622672395199,
         "tool": "ndjson",
         "benches": [
           {
