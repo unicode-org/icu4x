@@ -153,6 +153,8 @@ impl_data_provider!(MetaZoneSpecificNamesShortV1: 'd);
 
 #[cfg(test)]
 mod tests {
+    use tinystr::tinystr8;
+
     use super::*;
 
     #[test]
@@ -225,7 +227,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
-            specific_names_long.get()["Australia_CentralWestern"]["standard"]
+            specific_names_long.get()["Australia_CentralWestern"][&tinystr8!("standard")]
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1> = provider
@@ -258,7 +260,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "PDT",
-            specific_names_short.get()["America_Pacific"]["daylight"]
+            specific_names_short.get()["America_Pacific"][&tinystr8!("daylight")]
         );
     }
 }
