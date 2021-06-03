@@ -17,6 +17,7 @@ use std::fmt::Debug;
 use std::rc::Rc;
 use yoke::Yoke;
 use yoke::Yokeable;
+use crate::marker::DataMarker;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -92,19 +93,12 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-// FIXME: Change the name of this thing
-pub trait DataMarker<'s> {
-    type Yokeable: for<'a> Yokeable<'a>;
-    type Cart: 's + ?Sized;
-}
-
 pub(crate) enum DataPayloadInner<'d, 's: 'd, M>
 where
     M: DataMarker<'s>,
 {
     Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
-    // Note: We could use either of the above two variants for Owned if we liked
     Owned(Yoke<M::Yokeable, Option<&'static ()>>),
 }
 

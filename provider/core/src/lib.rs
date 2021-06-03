@@ -116,6 +116,7 @@ pub mod export;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
+pub mod marker;
 #[cfg(feature = "provider_serde")]
 pub mod serde;
 pub mod struct_provider;
@@ -132,12 +133,12 @@ pub mod prelude {
     pub use crate::data_provider::DataResponse;
     pub use crate::data_provider::DataResponseMetadata;
     pub use crate::error::Error as DataError;
+    pub use crate::marker::DataMarker;
     pub use crate::resource::ResourceCategory;
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
 
-    pub use crate::data_provider::DataMarker;
     pub use crate::data_provider::ZeroCopyClone;
 }
 
