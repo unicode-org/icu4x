@@ -28,7 +28,7 @@ pub struct ICU4XFixedDecimalMultiplyPow10Result {
     /// Whether the multiplication was successful.
     pub success: bool,
     /// The error type if the multiplication failed.
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[no_mangle]
@@ -40,11 +40,17 @@ pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     power: i16,
 ) -> ICU4XFixedDecimalMultiplyPow10Result {
     match fd.multiply_pow10(power) {
-        Ok(_) => ICU4XFixedDecimalMultiplyPow10Result { success: true, error_code: 0 },
-        Err(e) => ICU4XFixedDecimalMultiplyPow10Result { success: false, error_code: match e {
-            Error::Limit => 0,
-            Error::Syntax => 1
-        } }
+        Ok(_) => ICU4XFixedDecimalMultiplyPow10Result {
+            success: true,
+            error_code: 0,
+        },
+        Err(e) => ICU4XFixedDecimalMultiplyPow10Result {
+            success: false,
+            error_code: match e {
+                Error::Limit => 0,
+                Error::Syntax => 1,
+            },
+        },
     }
 }
 
