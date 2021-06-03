@@ -6,7 +6,7 @@
 #define ICU4X_FIXED_DECIMAL_H
 
 // opaque
-typedef struct ICU4XFixedDecimal ICU4XFixedDecimal; 
+typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 
 ICU4XFixedDecimal* icu4x_fixed_decimal_create(int64_t magnitude);
 bool icu4x_fixed_decimal_multiply_pow10(ICU4XFixedDecimal* fd, int16_t power);
