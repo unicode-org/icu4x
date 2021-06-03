@@ -13,17 +13,12 @@ use crate::prelude::*;
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
 /// use icu_provider::struct_provider::StructProvider;
 /// use std::borrow::Cow;
-/// use std::default::Default;
 ///
-/// #[derive(Clone, Debug, PartialEq)]
-/// struct SampleDataStruct<'s> {
-///     value: &'s str,
-/// }
-///
-/// let local_data = SampleDataStruct {
-///     value: &"hello world".to_string(),
+/// let local_data = HelloWorldV1 {
+///     message: Cow::Owned("hello world".to_string()),
 /// };
 ///
 /// // A placeholder key to use to serve the data struct
@@ -34,13 +29,12 @@ use crate::prelude::*;
 ///     data: &local_data,
 /// };
 ///
-/// let payload: DataPayload<SampleDataStruct> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
+/// let payload: DataPayload<HelloWorldV1_M> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(payload.get(), &local_data);
-/// assert!(matches!(payload.into_cow(), Cow::Borrowed(_)))
 /// ```
 pub struct StructProvider<'d, T: ?Sized> {
     pub key: ResourceKey,

@@ -85,13 +85,13 @@ impl<'s> DataMarker<'s> for HelloWorldV1_M {
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
+/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1_M};
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1> = provider
+/// let german_hello_world: DataPayload<HelloWorldV1_M> = provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
 ///             key: key::HELLO_WORLD_V1,

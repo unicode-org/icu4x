@@ -108,8 +108,9 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::marker::CowStr_M;
 ///
-/// let payload = DataPayload::from_borrowed("Demo");
+/// let payload = DataPayload::<CowStr_M>::from_borrowed("Demo");
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
@@ -164,6 +165,18 @@ fn make_rc_yoke<'b, 's, C: ?Sized, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
     Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zcc)
 }
 
+impl ZeroCopyClone<str> for Cow<'static, str> {
+    fn zcc<'b>(this: &'b str) -> Cow<'b, str> {
+        Cow::Borrowed(this)
+    }
+}
+
+impl ZeroCopyClone<String> for Cow<'static, str> {
+    fn zcc<'b>(this: &'b String) -> Cow<'b, str> {
+        Cow::Borrowed(this)
+    }
+}
+
 /// END ///
 
 impl<'d, 's, M> DataPayload<'d, 's, M>
@@ -211,10 +224,11 @@ where
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::marker::CowStr_M;
     ///
-    /// let mut payload = DataPayload::<str>::from_owned("Hello".to_string());
+    /// let mut payload = DataPayload::<CowStr_M>::from_borrowed("Hello");
     ///
-    /// payload.with_mut(|s| s.push_str(" World"));
+    /// payload.with_mut(|s| s.to_mut().push_str(" World"));
     ///
     /// assert_eq!("Hello World", payload.get());
     /// ```
@@ -223,15 +237,14 @@ where
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::marker::CowStr_M;
     ///
-    /// let initial_vector = vec!["Foo".to_string()];
-    /// let mut payload: DataPayload<Vec<String>> = DataPayload::from_owned(initial_vector);
+    /// let mut payload = DataPayload::<CowStr_M>::from_borrowed("Hello");
     ///
-    /// let new_value = "Bar".to_string();
-    /// payload.with_mut(move |v| v.push(new_value));
+    /// let suffix = " World".to_string();
+    /// payload.with_mut(move |s| s.to_mut().push_str(&suffix));
     ///
-    /// assert_eq!("Foo", payload.get()[0]);
-    /// assert_eq!("Bar", payload.get()[1]);
+    /// assert_eq!("Hello World", payload.get());
     /// ```
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
@@ -254,8 +267,9 @@ where
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::marker::CowStr_M;
     ///
-    /// let payload = DataPayload::from_borrowed("Demo");
+    /// let payload = DataPayload::<CowStr_M>::from_borrowed("Demo");
     ///
     /// assert_eq!("Demo", payload.get());
     /// ```
@@ -266,33 +280,6 @@ where
             RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
         }
-    }
-}
-
-impl<'d, 's, M> DataPayload<'d, 's, M>
-where
-    M: DataMarker<'s>,
-    <M::Yokeable as Yokeable<'s>>::Output: ToOwned,
-{
-    /// Converts the DataPayload into a Cow. May require cloning the data.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use std::borrow::Cow;
-    ///
-    /// let payload = DataPayload::from_borrowed("Demo");
-    /// let data: Cow<str> = payload.into_cow();
-    /// assert!(matches!(data, Cow::Borrowed(_)));
-    ///
-    /// let payload = DataPayload::<str>::from_owned("Demo".to_string());
-    /// let data: Cow<str> = payload.into_cow();
-    /// assert!(matches!(data, Cow::Owned(_)));
-    /// ```
-    #[inline]
-    pub fn into_cow(self) -> Cow<'d, <M::Yokeable as Yokeable<'s>>::Output> {
-        todo!()
     }
 }
 

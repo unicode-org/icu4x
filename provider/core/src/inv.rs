@@ -21,11 +21,11 @@ use std::rc::Rc;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// use icu_provider::hello_world::{key, HelloWorldV1};
+/// use icu_provider::hello_world::{key, HelloWorldV1_M};
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
-/// let result: DataPayload<HelloWorldV1> = provider
+/// let result: DataPayload<HelloWorldV1_M> = provider
 ///     .load_payload(&DataRequest::from(key::HELLO_WORLD_V1))
 ///     .unwrap()
 ///     .take_payload()

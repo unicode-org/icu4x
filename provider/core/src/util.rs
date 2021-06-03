@@ -63,43 +63,54 @@ where
 /// Basic usage:
 ///
 /// ```
-/// # use icu_provider::prelude::*;
-/// # use icu_provider::erased::ErasedDataStructWrap;
-/// # use std::borrow::Cow;
+/// use icu_provider::prelude::*;
+/// use icu_provider::erased::ErasedDataStruct_M;
+/// use icu_provider::marker::CowString_M;
+/// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
 /// // A small DataProvider that returns owned strings
 /// struct MyProvider(pub String);
-/// impl<'d> DataProvider<'d, String> for MyProvider {
-///     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, String>, DataError> {
+/// impl<'d> DataProvider<'d, 'static, CowString_M> for MyProvider {
+///     fn load_payload(&self, req: &DataRequest)
+///             -> Result<DataResponse<'d, 'static, CowString_M>, DataError> {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
 ///         Ok(DataResponse {
 ///             metadata: Default::default(),
-///             payload: Some(DataPayload::from_owned(self.0.to_string().into()))
+///             payload: Some(DataPayload::from_owned(Cow::Owned(self.0.to_string())))
 ///         })
 ///     }
 /// }
 ///
-/// // Since `String` is `'static`, we can implement `DataProvider<ErasedDataStructWrap>`
+/// // Since `String` is `'static`, we can implement `DataProvider<ErasedDataStruct_M>`
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     DEMO_KEY => String,
+///     DEMO_KEY => CowString_M,
 /// }, ERASED, 'd);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<ErasedDataStructWrap> = provider
+/// let resp: DataResponse<ErasedDataStruct_M> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
+///
+/// let payload: DataPayload<CowString_M> = resp
+///     .take_payload()
+///     .expect("Payload should be present")
+///     .downcast()
+///     .expect("Type should downcast successfully");
+/// assert_eq!("demo", payload.get());
 /// ```
 ///
 /// Using the wildcard `_` match:
 ///
 /// ```
 /// # use icu_provider::prelude::*;
+/// # use icu_provider::marker::CowString_M;
 /// # use std::borrow::Cow;
 /// # struct MyProvider(pub String);
-/// # impl<'d> DataProvider<'d, String> for MyProvider {
-/// #   fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, String>, DataError> {
+/// # impl<'d> DataProvider<'d, 'static, CowString_M> for MyProvider {
+/// #   fn load_payload(&self, req: &DataRequest)
+/// #           -> Result<DataResponse<'d, 'static, CowString_M>, DataError> {
 /// #       Ok(DataResponse {
 /// #           metadata: Default::default(),
 /// #           payload: Some(DataPayload::from_owned(self.0.to_string().into()))
@@ -108,7 +119,7 @@ where
 /// # }
 /// // Send all keys to the `String` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     _ => String,
+///     _ => CowString_M,
 /// }, ERASED, 'd);
 /// ```
 #[macro_export]
