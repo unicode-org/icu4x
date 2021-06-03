@@ -77,6 +77,32 @@ jobs:
       with:
         command: build-all-features
 
+  # WASM Tests - runs Node.js tests for WASM bindings
+  wasm:
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Load the default Rust toolchain via the rust-toolchain file.
+        run: rustup show
+      - name: Install cargo-make
+        uses: actions-rs/install@v0.1.2
+        with:
+          crate: cargo-make
+          version: latest
+      - name: Build
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: make
+          args: wasm-release
+      - name: Install Node.js v14.17.0
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.0
+      - name: Test
+        run: npm test
+        working-directory: ./ffi/capi/wasm-test
 
   # Lint job - runs all "cargo make" linting commands
   lint:
