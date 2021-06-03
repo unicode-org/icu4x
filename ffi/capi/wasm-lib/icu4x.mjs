@@ -23,8 +23,16 @@ const imports = {
   }
 }
 
-const ixu4xWasm = await WebAssembly.instantiateStreaming(fetch('/wasmpkg/icu_capi.wasm'), imports);
-icu4x = ixu4xWasm.instance.exports;
+if (typeof fetch === 'undefined') {
+  const fs = await import("fs");
+  const path = await import("path");
+  const wasmFile = new Uint8Array(fs.readFileSync(path.resolve('../../../wasmpkg/icu_capi.wasm')));
+  const ixu4xWasm = await WebAssembly.instantiate(wasmFile, imports);
+  icu4x = ixu4xWasm.instance.exports;
+} else {
+  const ixu4xWasm = await WebAssembly.instantiateStreaming(fetch('../../../wasmpkg/icu_capi.wasm'), imports);
+  icu4x = ixu4xWasm.instance.exports;
+}
 
 icu4x.icu4x_init();
 
