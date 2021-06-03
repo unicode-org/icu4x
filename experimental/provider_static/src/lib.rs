@@ -54,6 +54,8 @@ where
             .chain(req.resource_path.options.get_components().iter())
         {
             if file.is_some() {
+                // We should eventually distinguish between UnsupportedResourceKey
+                // and UnsupportedResourceOptions here
                 return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
             }
             let fod = dir
