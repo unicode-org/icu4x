@@ -103,14 +103,14 @@ where
 }
 
 /// A wrapper around the payload returned in a [`DataResponse`].
-/// 
+///
 /// Internally, the data is represented using the [`yoke`] crate, with several variations for
 /// different ownership models.
-/// 
+///
 /// `DataPayload` is closely coupled with [`DataMarker`].
 ///
 /// # Examples
-/// 
+///
 /// Basic usage, using the `CowStr_M` marker:
 ///
 /// ```
@@ -212,7 +212,7 @@ where
     ///
     /// assert_eq!(payload.get(), &*rc_struct);
     /// ```
-    /// 
+    ///
     /// [`Cart`]: crate::marker::DataMarker::Cart
     #[inline]
     pub fn from_partial_owned(data: Rc<M::Cart>) -> Self {
@@ -241,7 +241,7 @@ where
     ///
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
-    /// 
+    ///
     /// [`Cart`]: crate::marker::DataMarker::Cart
     #[inline]
     pub fn from_borrowed(data: &'d M::Cart) -> Self {
@@ -256,7 +256,7 @@ where
     M: DataMarker<'s>,
 {
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```

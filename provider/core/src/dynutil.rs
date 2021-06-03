@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Internal utilities for DataProvider.
+//! Utilities for using trait objects with `DataPayload`.
 
 /// Implement [`ToOwned`](std::borrow::ToOwned) on a trait object, enabling it to be used in a [`Cow`](std::borrow::Cow).
 /// Requires the trait to have a method named `clone_into_box()`.
@@ -25,17 +25,20 @@ macro_rules! impl_dyn_clone {
     };
 }
 
-/// Trait to allow conversion from `DataPayload<T>` to `DataPayload<Self>`.
+/// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>` where `T` implements `S`.
 ///
-/// The standard `From` trait cannot be used in all situations due to the blanket implementation
-/// `impl<T> From<T> for T`.
-pub trait ConvertDataPayload<'d, 's, T>
+/// This is used internally by [`impl_dyn_provider!`] and is not intended to be called from userland
+/// code. You may be looking for [`DataPayload::downcast`], which converts in the other direction.
+///
+/// [`DataPayload::downcast`]: crate::DataPayload::downcast
+pub trait UpcastDataPayload<'d, 's, M>
 where
-    T: crate::prelude::DataMarker<'s>,
+    M: crate::prelude::DataMarker<'s>,
     Self: Sized + crate::prelude::DataMarker<'s>,
 {
-    fn convert(
-        other: crate::prelude::DataPayload<'d, 's, T>,
+    /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
+    fn upcast(
+        other: crate::prelude::DataPayload<'d, 's, M>,
     ) -> crate::prelude::DataPayload<'d, 's, Self>;
 }
 
@@ -129,27 +132,27 @@ where
 /// [`SerdeSeDataStruct_M`]: (crate::serde::SerdeSeDataStruct_M)
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, ERASED, $d:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED, $d:lifetime) => {
         $crate::impl_dyn_provider!(
             $provider,
-            { $($pat => $struct),+, },
+            { $($pat => $struct_m),+, },
             $crate::erased::ErasedDataStruct_M,
             $d,
             's: 'static
         );
     };
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, SERDE_SE, $d:lifetime, $s:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE, $d:lifetime, $s:lifetime) => {
         // If this fails to compile, enable the "provider_serde" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
-            { $($pat => $struct),+, },
+            { $($pat => $struct_m),+, },
             $crate::serde::SerdeSeDataStruct_M,
             $d,
             $s: $d
         );
     };
-    ($provider:ty, { $($pat:pat => $struct:ty),+, }, $dyn_wrap:path, $d:lifetime, $s:lifetime : $sb:lifetime) => {
-        impl<$d, $s> $crate::prelude::DataProvider<$d, $s, $dyn_wrap> for $provider
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, $dyn_m:path, $d:lifetime, $s:lifetime : $sb:lifetime) => {
+        impl<$d, $s> $crate::prelude::DataProvider<$d, $s, $dyn_m> for $provider
         where
             $s: $sb,
         {
@@ -157,18 +160,18 @@ macro_rules! impl_dyn_provider {
                 &self,
                 req: &$crate::prelude::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<$d, $s, $dyn_wrap>,
+                $crate::prelude::DataResponse<$d, $s, $dyn_m>,
                 $crate::prelude::DataError,
             > {
                 match req.resource_path.key {
                     $(
                         $pat => {
-                            let result: $crate::prelude::DataResponse<$struct> =
+                            let result: $crate::prelude::DataResponse<$struct_m> =
                                 $crate::prelude::DataProvider::load_payload(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
-                                    $crate::util::ConvertDataPayload::<$struct>::convert(p)
+                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
                                 }),
                             })
                         }

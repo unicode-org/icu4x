@@ -109,7 +109,7 @@
 //! [`impl_dyn_provider!`]: impl_dyn_provider
 
 #[macro_use]
-pub mod util;
+pub mod dynutil;
 
 pub(crate) mod data_provider;
 #[macro_use]

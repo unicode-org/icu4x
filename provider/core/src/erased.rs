@@ -8,7 +8,6 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
-use std::ops::Deref;
 use std::rc::Rc;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
@@ -58,30 +57,28 @@ pub trait ErasedDataStruct: 'static {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-/// A wrapper around `&dyn `[`ErasedDataStruct`] for integration with DataProvider.
-pub struct ErasedDataStructWrap<'d> {
-    inner: &'d dyn ErasedDataStruct,
-}
-
-impl<'d> Deref for ErasedDataStructWrap<'d> {
-    type Target = dyn ErasedDataStruct;
-    fn deref(&self) -> &Self::Target {
-        self.inner.deref()
+// TODO: This could be moved to yoke as a blanket impl
+impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
+    fn zcc<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
+        this
     }
 }
 
-impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for ErasedDataStructWrap<'static> {
-    fn zcc<'b>(this: &'b (dyn ErasedDataStruct)) -> ErasedDataStructWrap<'b> {
-        ErasedDataStructWrap { inner: this }
-    }
+/// Marker type for [`ErasedDataStruct`].
+#[allow(non_camel_case_types)]
+pub struct ErasedDataStruct_M {}
+
+impl<'s> DataMarker<'s> for ErasedDataStruct_M {
+    type Yokeable = &'static dyn ErasedDataStruct;
+    type Cart = dyn ErasedDataStruct;
 }
 
-impl<'d, M> crate::util::ConvertDataPayload<'d, 'static, M> for ErasedDataStruct_M
+impl<'d, M> crate::dynutil::UpcastDataPayload<'d, 'static, M> for ErasedDataStruct_M
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
-    fn convert(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStruct_M> {
+    fn upcast(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStruct_M> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
             Borrowed(yoke) => {
@@ -102,48 +99,14 @@ where
     }
 }
 
-unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
-    type Output = ErasedDataStructWrap<'a>;
-
-    fn transform(&'a self) -> &'a Self::Output {
-        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
-        self
-    }
-
-    unsafe fn make(from: Self::Output) -> Self {
-        std::mem::transmute(from)
-    }
-
-    fn with_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        // Cast away the lifetime of Self
-        unsafe {
-            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-                self,
-            ))
-        }
-    }
-}
-
-/// Marker type for [`ErasedDataStruct`].
-#[allow(non_camel_case_types)]
-pub struct ErasedDataStruct_M {}
-
-impl<'s> DataMarker<'s> for ErasedDataStruct_M {
-    type Yokeable = ErasedDataStructWrap<'static>;
-    type Cart = dyn ErasedDataStruct;
-}
-
 impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a concrete type.
     /// Returns an error if the type is not compatible.
-    /// 
+    ///
     /// This is the main way to consume data returned from an [`ErasedDataProvider`].
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::erased::*;
@@ -151,7 +114,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     /// use icu_locid_macros::langid;
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data();
-    /// 
+    ///
     /// let erased_payload: DataPayload<ErasedDataStruct_M> = provider
     ///     .load_payload(&DataRequest {
     ///         resource_path: ResourcePath {
@@ -165,7 +128,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     ///     .expect("Loading should succeed")
     ///     .take_payload()
     ///     .expect("Data should be present");
-    /// 
+    ///
     /// let downcast_payload: DataPayload<HelloWorldV1_M> = erased_payload
     ///     .downcast()
     ///     .expect("Types should match");

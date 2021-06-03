@@ -177,13 +177,13 @@ impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap
     }
 }
 
-impl<'d, 's, M> crate::util::ConvertDataPayload<'d, 's, M> for SerdeSeDataStruct_M
+impl<'d, 's, M> crate::dynutil::UpcastDataPayload<'d, 's, M> for SerdeSeDataStruct_M
 where
     M: DataMarker<'s>,
     for<'a> &'a <M::Yokeable as yoke::Yokeable<'a>>::Output: serde::Serialize,
     's: 'd,
 {
-    fn convert(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStruct_M> {
+    fn upcast(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStruct_M> {
         use crate::data_provider::DataPayloadInner::*;
         let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
             Borrowed(_) => todo!(),
