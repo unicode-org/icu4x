@@ -31,8 +31,8 @@ macro_rules! impl_dyn_clone {
 /// `impl<T> From<T> for T`.
 pub trait ConvertDataPayload<'d, 's, T>
 where
-    T: crate::prelude::DataStructHelperTrait<'s>,
-    Self: Sized + crate::prelude::DataStructHelperTrait<'s>,
+    T: crate::prelude::DataMarker<'s>,
+    Self: Sized + crate::prelude::DataMarker<'s>,
 {
     fn convert(
         other: crate::prelude::DataPayload<'d, 's, T>,

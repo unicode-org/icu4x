@@ -86,15 +86,14 @@ pub trait SerdeDeDataProvider<'de> {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'d, 's, T> DataProvider<'d, 's, T> for dyn SerdeDeDataProvider<'s> + 'd
+impl<'d, 's, M> DataProvider<'d, 's, M> for dyn SerdeDeDataProvider<'s> + 'd
 where
-    T: DataStructHelperTrait<'s>,
-    <T as DataStructHelperTrait<'s>>::Cart: serde::Deserialize<'s>,
-    <T as DataStructHelperTrait<'s>>::Yokeable:
-        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    M: DataMarker<'s>,
+    M::Cart: serde::Deserialize<'s>,
+    M::Yokeable: ZeroCopyClone<M::Cart>,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse {
@@ -178,14 +177,13 @@ impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap
     }
 }
 
-impl<'d, 's, T> crate::util::ConvertDataPayload<'d, 's, T> for SerdeSeDataStructHelper
+impl<'d, 's, M> crate::util::ConvertDataPayload<'d, 's, M> for SerdeSeDataStructHelper
 where
-    T: DataStructHelperTrait<'s>,
-    for<'a> &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output:
-        serde::Serialize,
+    M: DataMarker<'s>,
+    for<'a> &'a <M::Yokeable as yoke::Yokeable<'a>>::Output: serde::Serialize,
     's: 'd,
 {
-    fn convert(other: DataPayload<'d, 's, T>) -> DataPayload<'d, 's, SerdeSeDataStructHelper> {
+    fn convert(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
         let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
             Borrowed(_) => todo!(),
@@ -222,7 +220,7 @@ unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
 
 pub struct SerdeSeDataStructHelper {}
 
-impl<'s> DataStructHelperTrait<'s> for SerdeSeDataStructHelper {
+impl<'s> DataMarker<'s> for SerdeSeDataStructHelper {
     type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
     type Cart = dyn SerdeSeDataStruct<'s>;
 }

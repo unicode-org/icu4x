@@ -26,7 +26,7 @@ struct HelloAlt {
 }
 
 struct HelloAltHelper {}
-impl<'s> DataStructHelperTrait<'s> for HelloAltHelper {
+impl<'s> DataMarker<'s> for HelloAltHelper {
     type Yokeable = HelloAlt;
     type Cart = HelloAlt;
 }

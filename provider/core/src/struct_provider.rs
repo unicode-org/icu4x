@@ -47,14 +47,12 @@ pub struct StructProvider<'d, T: ?Sized> {
     pub data: &'d T,
 }
 
-impl<'d, 's, T> DataProvider<'d, 's, T>
-    for StructProvider<'d, <T as DataStructHelperTrait<'s>>::Cart>
+impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<'d, M::Cart>
 where
-    T: DataStructHelperTrait<'s>,
-    <T as DataStructHelperTrait<'s>>::Yokeable:
-        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    M: DataMarker<'s>,
+    M::Yokeable: ZeroCopyClone<M::Cart>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

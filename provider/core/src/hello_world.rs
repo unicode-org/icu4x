@@ -72,7 +72,7 @@ impl<'s> ZeroCopyClone<HelloWorldV1<'s>> for HelloWorldV1<'static> {
 
 pub struct HelloWorldV1Helper {}
 
-impl<'s> DataStructHelperTrait<'s> for HelloWorldV1Helper {
+impl<'s> DataMarker<'s> for HelloWorldV1Helper {
     type Yokeable = HelloWorldV1<'static>;
     type Cart = HelloWorldV1<'s>;
 }
@@ -206,7 +206,10 @@ impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruc
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let downcast_payload: DataPayload<HelloWorldV1Helper> = payload.downcast()?;
-        self.map.insert(langid.clone(), Cow::Owned(downcast_payload.get().message.to_string()));
+        self.map.insert(
+            langid.clone(),
+            Cow::Owned(downcast_payload.get().message.to_string()),
+        );
         Ok(())
     }
 

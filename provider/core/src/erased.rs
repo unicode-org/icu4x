@@ -76,13 +76,13 @@ impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for ErasedDataStructWrap<'static> {
     }
 }
 
-impl<'d, T> crate::util::ConvertDataPayload<'d, 'static, T> for ErasedDataStructHelper
+impl<'d, M> crate::util::ConvertDataPayload<'d, 'static, M> for ErasedDataStructHelper
 where
-    T: DataStructHelperTrait<'static>,
-    <T as DataStructHelperTrait<'static>>::Cart: Sized,
+    M: DataMarker<'static>,
+    M::Cart: Sized,
 {
     fn convert(
-        other: DataPayload<'d, 'static, T>,
+        other: DataPayload<'d, 'static, M>,
     ) -> DataPayload<'d, 'static, ErasedDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
@@ -131,7 +131,7 @@ unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
 
 pub struct ErasedDataStructHelper {}
 
-impl<'s> DataStructHelperTrait<'s> for ErasedDataStructHelper {
+impl<'s> DataMarker<'s> for ErasedDataStructHelper {
     type Yokeable = ErasedDataStructWrap<'static>;
     type Cart = dyn ErasedDataStruct;
 }
@@ -139,27 +139,24 @@ impl<'s> DataStructHelperTrait<'s> for ErasedDataStructHelper {
 impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a concrete type.
     /// Returns an error if the type is not compatible.
-    pub fn downcast<T>(self) -> Result<DataPayload<'d, 'static, T>, Error>
+    pub fn downcast<M>(self) -> Result<DataPayload<'d, 'static, M>, Error>
     where
-        T: DataStructHelperTrait<'static>,
-        <T as DataStructHelperTrait<'static>>::Cart: Sized,
-        <T as DataStructHelperTrait<'static>>::Yokeable:
-            ZeroCopyClone<<T as DataStructHelperTrait<'static>>::Cart>,
+        M: DataMarker<'static>,
+        M::Cart: Sized,
+        M::Yokeable: ZeroCopyClone<M::Cart>,
     {
         use crate::data_provider::DataPayloadInner::*;
         use yoke::Yoke;
         match self.inner {
             Borrowed(yoke) => {
                 let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
-                let y1 = any_ref.downcast_ref::<<T as DataStructHelperTrait<'static>>::Cart>();
+                let y1 = any_ref.downcast_ref::<M::Cart>();
                 match y1 {
                     Some(t_ref) => return Ok(DataPayload::from_borrowed(t_ref)),
                     None => {
                         return Err(Error::MismatchedType {
                             actual: Some(any_ref.type_id()),
-                            generic: Some(
-                                TypeId::of::<<T as DataStructHelperTrait<'static>>::Cart>(),
-                            ),
+                            generic: Some(TypeId::of::<M::Cart>()),
                         })
                     }
                 };
@@ -168,10 +165,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
                 // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It could have
                 // been any valid variant of Yoke, so we need to check each possibility.
-                let y1 = any_rc.downcast::<Yoke<
-                    <T as DataStructHelperTrait<'static>>::Yokeable,
-                    Rc<<T as DataStructHelperTrait<'static>>::Cart>,
-                >>();
+                let y1 = any_rc.downcast::<Yoke<M::Yokeable, Rc<M::Cart>>>();
                 let any_rc = match y1 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
                         Ok(yoke) => {
@@ -183,10 +177,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                     },
                     Err(any_rc) => any_rc,
                 };
-                let y2 = any_rc.downcast::<Yoke<
-                    <T as DataStructHelperTrait<'static>>::Yokeable,
-                    Option<&'static ()>
-                >>();
+                let y2 = any_rc.downcast::<Yoke<M::Yokeable, Option<&'static ()>>>();
                 let any_rc = match y2 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
                         Ok(yoke) => return Ok(DataPayload { inner: Owned(yoke) }),
@@ -196,7 +187,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                 };
                 return Err(Error::MismatchedType {
                     actual: Some(any_rc.type_id()),
-                    generic: Some(TypeId::of::<<T as DataStructHelperTrait<'static>>::Cart>()),
+                    generic: Some(TypeId::of::<M::Cart>()),
                 });
             }
             // This is unreachable because ErasedDataStructHelper cannot be fully owned, since it
@@ -258,17 +249,15 @@ where
     }
 }
 
-impl<'d, T> DataProvider<'d, 'static, T> for dyn ErasedDataProvider<'d> + 'd
+impl<'d, M> DataProvider<'d, 'static, M> for dyn ErasedDataProvider<'d> + 'd
 where
-    T: DataStructHelperTrait<'static>,
-    <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
-        Clone + Any,
-    <T as DataStructHelperTrait<'static>>::Yokeable:
-        ZeroCopyClone<<T as DataStructHelperTrait<'static>>::Cart>,
-    <T as DataStructHelperTrait<'static>>::Cart: Sized,
+    M: DataMarker<'static>,
+    <M::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Any,
+    M::Yokeable: ZeroCopyClone<M::Cart>,
+    M::Cart: Sized,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, M>, Error> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,

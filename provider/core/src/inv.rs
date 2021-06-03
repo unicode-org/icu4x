@@ -35,19 +35,18 @@ use std::rc::Rc;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d, 's, T> DataProvider<'d, 's, T> for InvariantDataProvider
+impl<'d, 's, M> DataProvider<'d, 's, M> for InvariantDataProvider
 where
-    T: DataStructHelperTrait<'s>,
-    <T as DataStructHelperTrait<'s>>::Cart: Default,
-    <T as DataStructHelperTrait<'s>>::Yokeable:
-        ZeroCopyClone<<T as DataStructHelperTrait<'s>>::Cart>,
+    M: DataMarker<'s>,
+    M::Cart: Default,
+    M::Yokeable: ZeroCopyClone<M::Cart>,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, T>, Error> {
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(Rc::from(
-                <T as DataStructHelperTrait<'s>>::Cart::default(),
-            ))),
+            payload: Some(DataPayload::from_partial_owned(
+                Rc::from(M::Cart::default()),
+            )),
         })
     }
 }

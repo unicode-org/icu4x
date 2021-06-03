@@ -35,7 +35,7 @@ pub struct PluralRuleStringsV1<'s> {
 
 // FIXME: Reconsider this
 pub struct PluralRuleStringsV1Helper {}
-impl<'s> icu_provider::prelude::DataStructHelperTrait<'s> for PluralRuleStringsV1Helper {
+impl<'s> icu_provider::prelude::DataMarker<'s> for PluralRuleStringsV1Helper {
     type Yokeable = PluralRuleStringsV1<'static>;
     type Cart = PluralRuleStringsV1<'s>;
 }
