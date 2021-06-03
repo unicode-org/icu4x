@@ -23,7 +23,7 @@ const imports = {
   }
 }
 
-const ixu4xWasm = await WebAssembly.instantiateStreaming(fetch('../wasmpkg/icu_capi.wasm'), imports);
+const ixu4xWasm = await WebAssembly.instantiateStreaming(fetch('/wasmpkg/icu_capi.wasm'), imports);
 icu4x = ixu4xWasm.instance.exports;
 
 icu4x.icu4x_init();
