@@ -105,17 +105,28 @@ impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for ErasedDataStructWrap<'static> {
 impl<'d, T> crate::util::ConvertDataPayload<'d, 'static, T> for ErasedDataStructHelper
 where
     T: DataStructHelperTrait<'static>,
+    <T as DataStructHelperTrait<'static>>::Cart: Sized,
 {
     fn convert(
         other: DataPayload<'d, 'static, T>,
     ) -> DataPayload<'d, 'static, ErasedDataStructHelper> {
         use crate::data_provider::DataPayloadInner::*;
-        let cart: Rc<dyn ErasedDataStruct> = match other.inner {
-            Borrowed(_) => todo!(),
-            RcStruct(yoke) => Rc::from(yoke),
-            Owned(yoke) => Rc::from(yoke),
-        };
-        DataPayload::from_partial_owned(cart)
+        match other.inner {
+            Borrowed(yoke) => {
+                // TODO(#752): This is not completely sound, because calling `.into_backing_cart()`
+                // throws away overrides stored in the Yokeable, such as those from `.with_mut()`.
+                let cart: &'d dyn ErasedDataStruct = yoke.into_backing_cart();
+                DataPayload::from_borrowed(cart)
+            }
+            RcStruct(yoke) => {
+                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
+                DataPayload::from_partial_owned(cart)
+            }
+            Owned(yoke) => {
+                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
+                DataPayload::from_partial_owned(cart)
+            }
+        }
     }
 }
 
@@ -157,24 +168,43 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
     pub fn downcast<T>(self) -> Result<DataPayload<'d, 'static, T>, Error>
     where
         T: DataStructHelperTrait<'static>,
+        <T as DataStructHelperTrait<'static>>::Cart: Sized,
+        <T as DataStructHelperTrait<'static>>::Yokeable:
+            ZeroCopyClone<<T as DataStructHelperTrait<'static>>::Cart>,
     {
         use crate::data_provider::DataPayloadInner::*;
         use yoke::Yoke;
         match self.inner {
-            Borrowed(_) => unimplemented!(),
+            Borrowed(yoke) => {
+                let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
+                let y1 = any_ref.downcast_ref::<<T as DataStructHelperTrait<'static>>::Cart>();
+                match y1 {
+                    Some(t_ref) => return Ok(DataPayload::from_borrowed(t_ref)),
+                    None => {
+                        return Err(Error::MismatchedType {
+                            actual: Some(any_ref.type_id()),
+                            generic: Some(
+                                TypeId::of::<<T as DataStructHelperTrait<'static>>::Cart>(),
+                            ),
+                        })
+                    }
+                };
+            }
             RcStruct(yoke) => {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
                 // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It could have
                 // been any valid variant of Yoke, so we need to check each possibility.
                 let y1 = any_rc.downcast::<Yoke<
                     <T as DataStructHelperTrait<'static>>::Yokeable,
-                    Rc<<T as DataStructHelperTrait<'static>>::Cart>
+                    Rc<<T as DataStructHelperTrait<'static>>::Cart>,
                 >>();
                 let any_rc = match y1 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => return Ok(DataPayload {
-                            inner: RcStruct(yoke),
-                        }),
+                        Ok(yoke) => {
+                            return Ok(DataPayload {
+                                inner: RcStruct(yoke),
+                            })
+                        }
                         Err(_) => return Err(Error::MultipleReferences),
                     },
                     Err(any_rc) => any_rc,
@@ -185,19 +215,19 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                 >>();
                 let any_rc = match y2 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
-                        Ok(yoke) => return Ok(DataPayload {
-                            inner: Owned(yoke),
-                        }),
+                        Ok(yoke) => return Ok(DataPayload { inner: Owned(yoke) }),
                         Err(_) => return Err(Error::MultipleReferences),
                     },
                     Err(any_rc) => any_rc,
                 };
                 return Err(Error::MismatchedType {
                     actual: Some(any_rc.type_id()),
-                    generic: Some(TypeId::of::<<T as DataStructHelperTrait<'static>>::Yokeable>()),
+                    generic: Some(TypeId::of::<<T as DataStructHelperTrait<'static>>::Cart>()),
                 });
-            },
-            Owned(_) => unimplemented!(),
+            }
+            // This is unreachable because ErasedDataStructHelper cannot be fully owned, since it
+            // contains a reference.
+            Owned(_) => unreachable!(),
         };
     }
 }
@@ -259,6 +289,9 @@ where
     T: DataStructHelperTrait<'static>,
     <<T as DataStructHelperTrait<'static>>::Yokeable as yoke::Yokeable<'static>>::Output:
         Clone + Any,
+    <T as DataStructHelperTrait<'static>>::Yokeable:
+        ZeroCopyClone<<T as DataStructHelperTrait<'static>>::Cart>,
+    <T as DataStructHelperTrait<'static>>::Cart: Sized,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, T>, Error> {
