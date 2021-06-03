@@ -23,7 +23,6 @@ const imports = {
   }
 }
 
-<<<<<<< HEAD:ffi/wasm/lib/icu4x.mjs
 if (typeof fetch === 'undefined') {
   const fs = await import("fs");
   const path = await import("path");
@@ -34,10 +33,6 @@ if (typeof fetch === 'undefined') {
   const ixu4xWasm = await WebAssembly.instantiateStreaming(fetch('../../../wasmpkg/icu_capi.wasm'), imports);
   icu4x = ixu4xWasm.instance.exports;
 }
-=======
-const ixu4xWasm = await WebAssembly.instantiateStreaming(fetch('/wasmpkg/icu_capi.wasm'), imports);
-icu4x = ixu4xWasm.instance.exports;
->>>>>>> cf929184 (Move WASM example under FFI folder):ffi/capi/examples/wasm/icu4x.mjs
 
 icu4x.icu4x_init();
 
