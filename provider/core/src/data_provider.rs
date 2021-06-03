@@ -128,28 +128,30 @@ where
     pub(crate) inner: DataPayloadInner<'d, 's, M>,
 }
 
-// TODO
 impl<'d, 's, M> Debug for DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
-    fn fmt(&self, _f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        todo!()
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.get().fmt(f)
     }
 }
-impl<'d, 's, M> PartialEq for DataPayload<'d, 's, M>
-where
-    M: DataMarker<'s>,
-{
-    fn eq(&self, _other: &Self) -> bool {
-        todo!()
-    }
-}
+
 impl<'d, 's, M> Clone for DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
 {
     fn clone(&self) -> Self {
+        todo!()
+    }
+}
+
+impl<'d, 's, M> PartialEq for DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+{
+    fn eq(&self, _other: &Self) -> bool {
         todo!()
     }
 }
@@ -350,7 +352,7 @@ where
 }
 
 /// A response object containing an object as payload and metadata about it.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct DataResponse<'d, 's, M>
 where
     M: DataMarker<'s>,
@@ -382,6 +384,29 @@ where
     fn try_from(response: DataResponse<'d, 's, M>) -> Result<Self, Self::Error> {
         response.take_payload()
     }
+}
+
+impl<'d, 's, M> Debug for DataResponse<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "DataResponse {{ metadata: {:?}, payload: {:?} }}", self.metadata, self.payload)
+    }
+}
+
+#[test]
+fn test_debug() {
+    use crate::hello_world::*;
+    use std::borrow::Cow;
+    let resp = DataResponse::<HelloWorldV1_M> {
+        metadata: Default::default(),
+        payload: Some(DataPayload::from_borrowed(&HelloWorldV1 {
+            message: Cow::Borrowed("foo")
+        }))
+    };
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }
 
 /// A generic data provider that loads a payload of a specific type.

@@ -152,7 +152,7 @@ where
     }
 }
 
-/// A wrapper around `&dyn `[`SerdeSeDataStruct`] for integration with DataProvider.
+/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'s>` for integration with DataProvider.
 pub struct SerdeSeDataStructWrap<'d, 's> {
     inner: &'d (dyn SerdeSeDataStruct<'s> + 's),
 }
@@ -196,20 +196,16 @@ where
 
 unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;
-
     fn transform(&'a self) -> &'a Self::Output {
         unsafe { std::mem::transmute(self) }
     }
-
     unsafe fn make(from: Self::Output) -> Self {
         std::mem::transmute(from)
     }
-
     fn with_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
-        // Cast away the lifetime of Self
         unsafe {
             f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
                 self,
