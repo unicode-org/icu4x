@@ -11,13 +11,11 @@ use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use icu_locid::LanguageIdentifier;
-use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
 use std::rc::Rc;
-use yoke::Yoke;
-use yoke::Yokeable;
+use yoke::*;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -166,38 +164,6 @@ where
     }
 }
 
-// TODO: MOVE THIS TO THE YOKE CRATE
-
-pub trait ZeroCopyClone<C: ?Sized>: for<'a> Yokeable<'a> {
-    fn zcc<'b>(this: &'b C) -> <Self as Yokeable<'b>>::Output;
-}
-
-fn make_borrowed_yoke<'b, 's, C: ?Sized, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
-    cart: &'b C,
-) -> Yoke<Y, &'b C> {
-    Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zcc)
-}
-
-fn make_rc_yoke<'b, 's, C: ?Sized, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>>(
-    cart: Rc<C>,
-) -> Yoke<Y, Rc<C>> {
-    Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zcc)
-}
-
-impl ZeroCopyClone<str> for Cow<'static, str> {
-    fn zcc<'b>(this: &'b str) -> Cow<'b, str> {
-        Cow::Borrowed(this)
-    }
-}
-
-impl ZeroCopyClone<String> for Cow<'static, str> {
-    fn zcc<'b>(this: &'b String) -> Cow<'b, str> {
-        Cow::Borrowed(this)
-    }
-}
-
-// END TODO
-
 impl<'d, 's, M> DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
@@ -229,7 +195,7 @@ where
     #[inline]
     pub fn from_partial_owned(data: Rc<M::Cart>) -> Self {
         Self {
-            inner: DataPayloadInner::RcStruct(make_rc_yoke(data)),
+            inner: DataPayloadInner::RcStruct(Yoke::attach_to_rc_cart(data)),
         }
     }
 
@@ -258,7 +224,7 @@ where
     #[inline]
     pub fn from_borrowed(data: &'d M::Cart) -> Self {
         Self {
-            inner: DataPayloadInner::Borrowed(make_borrowed_yoke(data)),
+            inner: DataPayloadInner::Borrowed(Yoke::attach_to_borrowed_cart(data)),
         }
     }
 }

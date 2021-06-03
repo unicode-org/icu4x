@@ -23,6 +23,7 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::ops::Deref;
 use std::rc::Rc;
+use yoke::*;
 
 /// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
 ///
@@ -180,7 +181,7 @@ impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap
 impl<'d, 's, M> crate::dynutil::UpcastDataPayload<'d, 's, M> for SerdeSeDataStruct_M
 where
     M: DataMarker<'s>,
-    for<'a> &'a <M::Yokeable as yoke::Yokeable<'a>>::Output: serde::Serialize,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
     's: 'd,
 {
     fn upcast(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStruct_M> {
@@ -194,7 +195,7 @@ where
     }
 }
 
-unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
+unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;
     fn transform(&'a self) -> &'a Self::Output {
         unsafe { std::mem::transmute(self) }

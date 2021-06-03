@@ -9,6 +9,7 @@ use crate::prelude::*;
 use std::any::Any;
 use std::any::TypeId;
 use std::rc::Rc;
+use yoke::*;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
@@ -57,7 +58,6 @@ pub trait ErasedDataStruct: 'static {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-// TODO: This could be moved to yoke as a blanket impl
 impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
     fn zcc<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
         this
@@ -142,7 +142,6 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
         M::Yokeable: ZeroCopyClone<M::Cart>,
     {
         use crate::data_provider::DataPayloadInner::*;
-        use yoke::Yoke;
         match self.inner {
             Borrowed(yoke) => {
                 let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
@@ -248,7 +247,7 @@ where
 impl<'d, M> DataProvider<'d, 'static, M> for dyn ErasedDataProvider<'d> + 'd
 where
     M: DataMarker<'static>,
-    <M::Yokeable as yoke::Yokeable<'static>>::Output: Clone + Any,
+    <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
     M::Yokeable: ZeroCopyClone<M::Cart>,
     M::Cart: Sized,
 {

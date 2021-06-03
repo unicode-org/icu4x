@@ -15,9 +15,11 @@
 
 mod yoke;
 mod yokeable;
+mod zcc;
 
 #[cfg(feature = "serde")]
 mod serde;
 
 pub use crate::yoke::Yoke;
 pub use crate::yokeable::Yokeable;
+pub use crate::zcc::ZeroCopyClone;

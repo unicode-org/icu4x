@@ -12,6 +12,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::str::FromStr;
+use yoke::*;
 
 pub mod key {
     use crate::resource::ResourceKey;
@@ -39,7 +40,7 @@ impl Default for HelloWorldV1<'_> {
 
 // BEGIN YOKEABLE BOILERPLATE
 
-unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
+unsafe impl<'a> Yokeable<'a> for HelloWorldV1<'static> {
     type Output = HelloWorldV1<'a>;
     fn transform(&'a self) -> &'a Self::Output {
         self

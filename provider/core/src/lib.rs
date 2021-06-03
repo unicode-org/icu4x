@@ -142,11 +142,9 @@ pub mod prelude {
     pub use crate::resource::ResourceKey;
     pub use crate::resource::ResourceOptions;
     pub use crate::resource::ResourcePath;
-
-    pub use crate::data_provider::ZeroCopyClone;
 }
 
-// FIXME: Temporary?
+/// Re-export of the yoke crate for convenience of downstream implementors.
 pub use yoke;
 
 // Also include the same symbols at the top level for selective inclusion

@@ -11,7 +11,7 @@ use super::*;
 use crate::erased::*;
 use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1_M};
 use crate::prelude::*;
-use crate::yoke;
+use yoke::*;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -33,7 +33,7 @@ impl<'s> DataMarker<'s> for HelloAlt_M {
     type Yokeable = HelloAlt;
     type Cart = HelloAlt;
 }
-unsafe impl<'a> yoke::Yokeable<'a> for HelloAlt {
+unsafe impl<'a> Yokeable<'a> for HelloAlt {
     type Output = HelloAlt;
     fn transform(&'a self) -> &'a Self::Output {
         self
