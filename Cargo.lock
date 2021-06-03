@@ -1066,14 +1066,11 @@ dependencies = [
 name = "icu_provider_static"
 version = "0.2.0"
 dependencies = [
- "erased-serde",
  "icu",
  "icu_locid",
  "icu_provider",
- "icu_provider_fs",
  "serde",
  "serde_json",
- "thiserror",
 ]
 
 [[package]]
