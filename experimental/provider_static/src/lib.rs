@@ -19,6 +19,10 @@ enum StaticFileOrDir {
 #[derive(Serialize, Deserialize, Debug)]
 struct Directory(Box<HashMap<String, StaticFileOrDir>>);
 
+/// A data provider loading data statically baked in to the binary. Useful for testing in situations
+/// where setting up a filesystem is tricky (e.g. WASM).
+///
+/// This should probably not be used in production code since it bloats the binary.
 pub struct StaticDataProvider {
     json: Directory,
 }
