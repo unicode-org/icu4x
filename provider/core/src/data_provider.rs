@@ -141,15 +141,25 @@ where
 impl<'d, 's, M> Clone for DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
-        todo!()
+        use DataPayloadInner::*;
+        let new_inner = match &self.inner {
+            Borrowed(yoke) => Borrowed(yoke.clone()),
+            RcStruct(yoke) => RcStruct(yoke.clone()),
+            Owned(yoke) => Owned(yoke.clone()),
+        };
+        Self {
+            inner: new_inner
+        }
     }
 }
 
 impl<'d, 's, M> PartialEq for DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: PartialEq,
 {
     fn eq(&self, _other: &Self) -> bool {
         todo!()
@@ -352,7 +362,6 @@ where
 }
 
 /// A response object containing an object as payload and metadata about it.
-#[derive(Clone)]
 pub struct DataResponse<'d, 's, M>
 where
     M: DataMarker<'s>,
@@ -393,6 +402,19 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "DataResponse {{ metadata: {:?}, payload: {:?} }}", self.metadata, self.payload)
+    }
+}
+
+impl<'d, 's, M> Clone for DataResponse<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            metadata: self.metadata.clone(),
+            payload: self.payload.clone(),
+        }
     }
 }
 

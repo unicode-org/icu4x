@@ -101,9 +101,9 @@ impl<'s> DataMarker<'s> for HelloWorldV1_M {
 ///             }
 ///         }
 ///     })
-///     .unwrap()
+///     .expect("Loading should succeed")
 ///     .take_payload()
-///     .unwrap();
+///     .expect("Data should be present");
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
