@@ -6,6 +6,7 @@ use crate::prelude::*;
 use std::any::TypeId;
 use thiserror::Error;
 
+/// Error enumeration for DataProvider.
 #[non_exhaustive]
 #[derive(Error, Debug)]
 pub enum Error {

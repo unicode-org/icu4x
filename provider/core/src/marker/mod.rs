@@ -43,11 +43,12 @@ use yoke::Yokeable;
 /// impl<'s> DataMarker<'s> for MyDataStruct_M {
 ///     type Yokeable = MyDataStruct<'static>;
 ///
-///     // Note: the cart could also be just `str` since MyDataStruct has only one field
+///     // Note: the cart could also be just `str` since
+///     // MyDataStruct has only one field.
 ///     type Cart = MyDataStruct<'s>;
 /// }
 ///
-/// unsafe impl<'a> yoke::Yokeable<'a> for MyDataStruct<'static> {
+/// unsafe impl<'a> Yokeable<'a> for MyDataStruct<'static> {
 ///     // (not shown; see the yoke crate for examples)
 /// #    type Output = MyDataStruct<'a>;
 /// #    fn transform(&'a self) -> &'a Self::Output {
@@ -80,7 +81,7 @@ use yoke::Yokeable;
 /// let s = Rc::from(MyDataStruct {
 ///     message: Cow::Borrowed("Hello World")
 /// });
-/// let payload: DataPayload<MyDataStruct_M> = DataPayload::from_partial_owned(s);
+/// let payload = DataPayload::<MyDataStruct_M>::from_partial_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
 pub trait DataMarker<'s> {

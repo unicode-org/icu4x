@@ -39,24 +39,25 @@ where
     ) -> crate::prelude::DataPayload<'d, 's, Self>;
 }
 
-/// Implement [`DataProvider<dyn S>`](crate::DataProvider) on a type that already implements [`DataProvider<T>`](crate::DataProvider)
-/// for one or more `T`, where `T` is a [`Sized`] type that implements the trait `S`.
+/// Implement [`DataProvider`] for a trait object `S` on a type that already implements [`DataProvider`]
+/// for one or more `M`, where `M` is a concrete type that implements the trait `S`.
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - [`ErasedDataStruct`](crate::erased::ErasedDataStruct) if your provider can return typed objects as [`Any`](std::any::Any)
-/// - [`SerdeSeDataStruct`](crate::serde::SerdeSeDataStruct) if your provider returns objects implementing [`serde::Serialize`]
+/// - [`ErasedDataStruct`] if your provider can return typed objects as [`Any`](std::any::Any)
+/// - [`SerdeSeDataStruct`] if your provider returns objects implementing [`serde::Serialize`]
 ///
 /// The second argument is a match-like construction mapping from resource keys to structs. To map
 /// multiple keys to a single data struct, use `_` as the data key.
 ///
-/// The third argument can be either the trait expression, like [SerdeSeDataStruct<'s>`], or the
+/// The third argument can be either the trait object marker, like [`SerdeSeDataStruct_M`], or the
 /// shorthands `ERASED` or `SERDE_SE`.
 ///
 /// Lifetimes:
 ///
-/// - `$d` is the lifetime parameter for [`DataProvider`](crate::DataProvider); usually `'d`
-/// - `$s` is the lifetime bound for the struct trait; usually `'s`
+/// - `$d` is the lifetime parameter for [`DataProvider`](crate::DataProvider); usually `'d`.
+/// - `$s` is the lifetime bound for the struct trait; usually `'s`. However, in the `ERASED` variant,
+///     this lifetime is always set to `'static`.
 ///
 /// # Examples
 ///
@@ -82,7 +83,7 @@ where
 ///     }
 /// }
 ///
-/// // Since `String` is `'static`, we can implement `DataProvider<ErasedDataStruct_M>`
+/// // Implement DataProvider<ErasedDataStruct_M>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowString_M,
 /// }, ERASED, 'd);
@@ -92,7 +93,6 @@ where
 /// let resp: DataResponse<ErasedDataStruct_M> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
-///
 /// let payload: DataPayload<CowString_M> = resp
 ///     .take_payload()
 ///     .expect("Payload should be present")
@@ -117,11 +117,16 @@ where
 /// #       })
 /// #   }
 /// # }
-/// // Send all keys to the `String` provider.
+/// // Send all keys to the `CowString_M` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => CowString_M,
 /// }, ERASED, 'd);
 /// ```
+///
+/// [`DataProvider`]: crate::DataProvider
+/// [`ErasedDataStruct`]: (crate::erased::ErasedDataStruct)
+/// [`SerdeSeDataStruct`]: (crate::serde::SerdeSeDataStruct)
+/// [`SerdeSeDataStruct_M`]: (crate::serde::SerdeSeDataStruct_M)
 #[macro_export]
 macro_rules! impl_dyn_provider {
     ($provider:ty, { $($pat:pat => $struct:ty),+, }, ERASED, $d:lifetime) => {

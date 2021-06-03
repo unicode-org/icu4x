@@ -139,6 +139,39 @@ impl<'s> DataMarker<'s> for ErasedDataStruct_M {
 impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a concrete type.
     /// Returns an error if the type is not compatible.
+    /// 
+    /// This is the main way to consume data returned from an [`ErasedDataProvider`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_locid_macros::langid;
+    ///
+    /// let provider = HelloWorldProvider::new_with_placeholder_data();
+    /// 
+    /// let erased_payload: DataPayload<ErasedDataStruct_M> = provider
+    ///     .load_payload(&DataRequest {
+    ///         resource_path: ResourcePath {
+    ///             key: key::HELLO_WORLD_V1,
+    ///             options: ResourceOptions {
+    ///                 variant: None,
+    ///                 langid: Some(langid!("de")),
+    ///             }
+    ///         }
+    ///     })
+    ///     .expect("Loading should succeed")
+    ///     .take_payload()
+    ///     .expect("Data should be present");
+    /// 
+    /// let downcast_payload: DataPayload<HelloWorldV1_M> = erased_payload
+    ///     .downcast()
+    ///     .expect("Types should match");
+    ///
+    /// assert_eq!("Hallo Welt", downcast_payload.get().message);
+    /// ```
     pub fn downcast<M>(self) -> Result<DataPayload<'d, 'static, M>, Error>
     where
         M: DataMarker<'static>,

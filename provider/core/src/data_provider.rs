@@ -103,8 +103,15 @@ where
 }
 
 /// A wrapper around the payload returned in a [`DataResponse`].
+/// 
+/// Internally, the data is represented using the [`yoke`] crate, with several variations for
+/// different ownership models.
+/// 
+/// `DataPayload` is closely coupled with [`DataMarker`].
 ///
 /// # Examples
+/// 
+/// Basic usage, using the `CowStr_M` marker:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -147,7 +154,7 @@ where
     }
 }
 
-/// TODO: MOVE THIS TO THE YOKE CRATE ///
+// TODO: MOVE THIS TO THE YOKE CRATE
 
 pub trait ZeroCopyClone<C: ?Sized>: for<'a> Yokeable<'a> {
     fn zcc<'b>(this: &'b C) -> <Self as Yokeable<'b>>::Output;
@@ -177,14 +184,36 @@ impl ZeroCopyClone<String> for Cow<'static, str> {
     }
 }
 
-/// END ///
+// END TODO
 
 impl<'d, 's, M> DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
     M::Yokeable: ZeroCopyClone<M::Cart>,
 {
-    /// Convert a partially owned (`'d`) data struct into a DataPayload.
+    /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`]. The data need not be fully owned;
+    /// it may be constrained by the `'s` lifetime.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::rc::Rc;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_data = "example".to_string();
+    ///
+    /// let rc_struct = Rc::from(HelloWorldV1 {
+    ///     message: Cow::Borrowed(&local_data),
+    /// });
+    ///
+    /// let payload = DataPayload::<HelloWorldV1_M>::from_partial_owned(rc_struct.clone());
+    ///
+    /// assert_eq!(payload.get(), &*rc_struct);
+    /// ```
+    /// 
+    /// [`Cart`]: crate::marker::DataMarker::Cart
     #[inline]
     pub fn from_partial_owned(data: Rc<M::Cart>) -> Self {
         Self {
@@ -192,7 +221,28 @@ where
         }
     }
 
-    /// Convert a borrowed data struct into a DataPayload.
+    /// Convert an `&'d `[`Cart`] into a [`DataPayload`]. The data need not be fully owned;
+    /// it may be constrained by the `'s` lifetime.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_data = "example".to_string();
+    ///
+    /// let local_struct = HelloWorldV1 {
+    ///     message: Cow::Borrowed(&local_data),
+    /// };
+    ///
+    /// let payload = DataPayload::<HelloWorldV1_M>::from_borrowed(&local_struct);
+    ///
+    /// assert_eq!(payload.get(), &local_struct);
+    /// ```
+    /// 
+    /// [`Cart`]: crate::marker::DataMarker::Cart
     #[inline]
     pub fn from_borrowed(data: &'d M::Cart) -> Self {
         Self {
@@ -206,6 +256,22 @@ where
     M: DataMarker<'s>,
 {
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_struct = HelloWorldV1 {
+    ///     message: Cow::Owned("example".to_string()),
+    /// };
+    ///
+    /// let payload = DataPayload::<HelloWorldV1_M>::from_owned(local_struct.clone());
+    ///
+    /// assert_eq!(payload.get(), &local_struct);
+    /// ```
     #[inline]
     pub fn from_owned(data: M::Yokeable) -> Self {
         Self {
