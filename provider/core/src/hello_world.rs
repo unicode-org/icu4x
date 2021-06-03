@@ -198,15 +198,15 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStructHelper>
     for HelloWorldProvider<'static>
 {
-    fn put_payload<'a>(
-        &'a mut self,
-        req: &'a DataRequest,
-        payload: &'a crate::erased::ErasedDataStructWrap<'a>,
+    fn put_payload(
+        &mut self,
+        req: DataRequest,
+        payload: DataPayload<'d, 'static, crate::erased::ErasedDataStructHelper>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
-        let data: &HelloWorldV1 = payload.downcast_ref()?;
-        self.map.insert(langid.clone(), data.message.clone());
+        let downcast_payload: DataPayload<HelloWorldV1Helper> = payload.downcast()?;
+        self.map.insert(langid.clone(), Cow::Owned(downcast_payload.get().message.to_string()));
         Ok(())
     }
 

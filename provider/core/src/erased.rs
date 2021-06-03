@@ -58,32 +58,6 @@ pub trait ErasedDataStruct: 'static {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-impl dyn ErasedDataStruct {
-    /// Convenience function: Return a downcast reference, or an error if mismatched types.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::erased::ErasedDataStruct;
-    /// use icu_provider::hello_world::HelloWorldV1;
-    ///
-    /// // Create type-erased reference
-    /// let data = HelloWorldV1::default();
-    /// let erased: &dyn ErasedDataStruct = &data;
-    ///
-    /// // Borrow as typed reference
-    /// let borrowed: &HelloWorldV1 = erased.downcast_ref().expect("Types should match");
-    /// ```
-    pub fn downcast_ref<T: Any>(&self) -> Result<&T, Error> {
-        self.as_any()
-            .downcast_ref()
-            .ok_or_else(|| Error::MismatchedType {
-                actual: Some(self.as_any().type_id()),
-                generic: Some(TypeId::of::<T>()),
-            })
-    }
-}
-
 /// A wrapper around `&dyn `[`ErasedDataStruct`] for integration with DataProvider.
 pub struct ErasedDataStructWrap<'d> {
     inner: &'d dyn ErasedDataStruct,

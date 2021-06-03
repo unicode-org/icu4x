@@ -16,10 +16,10 @@ where
     T: DataStructHelperTrait<'s>,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
-    fn put_payload<'a>(
-        &'a mut self,
-        req: &'a DataRequest,
-        payload: &'a <<T as DataStructHelperTrait<'s>>::Yokeable as yoke::Yokeable<'a>>::Output,
+    fn put_payload(
+        &mut self,
+        req: DataRequest,
+        payload: DataPayload<'d, 's, T>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -44,7 +44,7 @@ where
                 },
             };
             let payload = provider.load_payload(&req)?.take_payload()?;
-            self.put_payload(&req, payload.get())?;
+            self.put_payload(req, payload)?;
         }
         Ok(())
     }
