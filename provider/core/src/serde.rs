@@ -177,13 +177,13 @@ impl<'s> ZeroCopyClone<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap
     }
 }
 
-impl<'d, 's, M> crate::util::ConvertDataPayload<'d, 's, M> for SerdeSeDataStructHelper
+impl<'d, 's, M> crate::util::ConvertDataPayload<'d, 's, M> for SerdeSeDataStruct_M
 where
     M: DataMarker<'s>,
     for<'a> &'a <M::Yokeable as yoke::Yokeable<'a>>::Output: serde::Serialize,
     's: 'd,
 {
-    fn convert(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStructHelper> {
+    fn convert(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStruct_M> {
         use crate::data_provider::DataPayloadInner::*;
         let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
             Borrowed(_) => todo!(),
@@ -218,9 +218,11 @@ unsafe impl<'a> yoke::Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     }
 }
 
-pub struct SerdeSeDataStructHelper {}
+/// Marker type for [`SerdeSeDataStruct`].
+#[allow(non_camel_case_types)]
+pub struct SerdeSeDataStruct_M {}
 
-impl<'s> DataMarker<'s> for SerdeSeDataStructHelper {
+impl<'s> DataMarker<'s> for SerdeSeDataStruct_M {
     type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
     type Cart = dyn SerdeSeDataStruct<'s>;
 }

@@ -9,7 +9,7 @@ use std::rc::Rc;
 
 use super::*;
 use crate::erased::*;
-use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Helper};
+use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1_M};
 use crate::prelude::*;
 use crate::yoke;
 
@@ -25,8 +25,11 @@ struct HelloAlt {
     message: String,
 }
 
-struct HelloAltHelper {}
-impl<'s> DataMarker<'s> for HelloAltHelper {
+/// Marker type for [`HelloAlt`].
+#[allow(non_camel_case_types)]
+struct HelloAlt_M {}
+
+impl<'s> DataMarker<'s> for HelloAlt_M {
     type Yokeable = HelloAlt;
     type Cart = HelloAlt;
 }
@@ -69,11 +72,11 @@ struct DataWarehouse<'s> {
     data: HelloCombined<'s>,
 }
 
-impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
+impl<'d, 's> DataProvider<'d, 's, HelloWorldV1_M> for DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1_M>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -85,14 +88,14 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataWarehouse<'s> {
 }
 
 crate::impl_dyn_provider!(DataWarehouse<'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1Helper,
+    HELLO_WORLD_V1 => HelloWorldV1_M,
 }, ERASED, 'd);
 
-impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for &'d DataWarehouse<'s> {
+impl<'d, 's> DataProvider<'d, 's, HelloWorldV1_M> for &'d DataWarehouse<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1_M>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -102,7 +105,7 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for &'d DataWarehouse<'s> 
 }
 
 crate::impl_dyn_provider!(&'d DataWarehouse<'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1Helper,
+    HELLO_WORLD_V1 => HelloWorldV1_M,
 }, ERASED, 'd);
 
 /// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT.
@@ -119,11 +122,11 @@ impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataProviderBorrowing<'d, 's> {
+impl<'d, 's> DataProvider<'d, 's, HelloWorldV1_M> for DataProviderBorrowing<'d, 's> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1_M>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -132,11 +135,11 @@ impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Helper> for DataProviderBorrowing<
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, HelloAltHelper> for DataProviderBorrowing<'d, 's> {
+impl<'d, 's> DataProvider<'d, 's, HelloAlt_M> for DataProviderBorrowing<'d, 's> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloAltHelper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloAlt_M>, DataError> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -146,8 +149,8 @@ impl<'d, 's> DataProvider<'d, 's, HelloAltHelper> for DataProviderBorrowing<'d, 
 }
 
 crate::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1Helper,
-    HELLO_ALT_KEY => HelloAltHelper,
+    HELLO_WORLD_V1 => HelloWorldV1_M,
+    HELLO_ALT_KEY => HelloAlt_M,
 }, ERASED, 'd);
 
 #[allow(clippy::redundant_static_lifetimes)]
@@ -166,15 +169,15 @@ fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
     DataWarehouse { data }
 }
 
-fn get_payload_v1<'d, 's, P: DataProvider<'d, 's, HelloWorldV1Helper> + ?Sized + 'd>(
+fn get_payload_v1<'d, 's, P: DataProvider<'d, 's, HelloWorldV1_M> + ?Sized + 'd>(
     provider: &P,
-) -> Result<DataPayload<'d, 's, HelloWorldV1Helper>, DataError> {
+) -> Result<DataPayload<'d, 's, HelloWorldV1_M>, DataError> {
     provider.load_payload(&get_request_v1())?.take_payload()
 }
 
-fn get_payload_alt<'d, P: DataProvider<'d, 'static, HelloAltHelper> + ?Sized>(
+fn get_payload_alt<'d, P: DataProvider<'d, 'static, HelloAlt_M> + ?Sized>(
     d: &P,
-) -> Result<DataPayload<'d, 'static, HelloAltHelper>, DataError> {
+) -> Result<DataPayload<'d, 'static, HelloAlt_M>, DataError> {
     d.load_payload(&get_request_alt())?.take_payload()
 }
 
@@ -225,7 +228,7 @@ fn test_warehouse_owned_dyn_erased() {
 #[test]
 fn test_warehouse_owned_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Helper>).unwrap();
+    let hello_data = get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1_M>).unwrap();
     assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(
         hello_data.get(),
@@ -274,7 +277,7 @@ fn test_warehouse_ref_dyn_erased() {
 #[test]
 fn test_warehouse_ref_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1Helper>).unwrap();
+    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1_M>).unwrap();
     assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
     assert!(matches!(
         hello_data.get(),
@@ -335,7 +338,7 @@ fn test_borrowing_dyn_erased_alt() {
 fn test_borrowing_dyn_generic() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Helper>).unwrap();
+    let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1_M>).unwrap();
     assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
     assert!(matches!(
         hello_data.get(),
@@ -349,7 +352,7 @@ fn test_borrowing_dyn_generic() {
 fn test_borrowing_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
-    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltHelper>).unwrap();
+    let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAlt_M>).unwrap();
     assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
@@ -359,7 +362,7 @@ fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
     let provider = DataProviderBorrowing::from(&warehouse);
     // Request is for v2, but type argument is for v1
-    let response: Result<DataPayload<HelloWorldV1Helper>, DataError> =
+    let response: Result<DataPayload<HelloWorldV1_M>, DataError> =
         ErasedDataProvider::load_erased(&provider, &get_request_alt())
             .unwrap()
             .take_payload()
@@ -371,14 +374,14 @@ fn test_mismatched_types() {
 fn check_v1_v2<'d, 's, P>(d: &P)
 where
     's: 'd,
-    P: DataProvider<'d, 's, HelloWorldV1Helper> + DataProvider<'d, 's, HelloAltHelper> + ?Sized,
+    P: DataProvider<'d, 's, HelloWorldV1_M> + DataProvider<'d, 's, HelloAlt_M> + ?Sized,
 {
-    let v1: DataPayload<'d, 's, HelloWorldV1Helper> = d
+    let v1: DataPayload<'d, 's, HelloWorldV1_M> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
         .unwrap();
-    let v2: DataPayload<'d, 's, HelloAltHelper> = d
+    let v2: DataPayload<'d, 's, HelloAlt_M> = d
         .load_payload(&get_request_alt())
         .unwrap()
         .take_payload()

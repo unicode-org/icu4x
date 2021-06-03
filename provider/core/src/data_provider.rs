@@ -7,6 +7,7 @@
 mod test;
 
 use crate::error::Error;
+use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use icu_locid::LanguageIdentifier;
@@ -17,7 +18,6 @@ use std::fmt::Debug;
 use std::rc::Rc;
 use yoke::Yoke;
 use yoke::Yokeable;
-use crate::marker::DataMarker;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]

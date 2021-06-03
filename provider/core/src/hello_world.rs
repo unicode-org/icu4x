@@ -37,23 +37,20 @@ impl Default for HelloWorldV1<'_> {
     }
 }
 
+// BEGIN YOKEABLE BOILERPLATE
+
 unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
     type Output = HelloWorldV1<'a>;
-
     fn transform(&'a self) -> &'a Self::Output {
-        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
-
     unsafe fn make(from: Self::Output) -> Self {
         std::mem::transmute(from)
     }
-
     fn with_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
-        // Cast away the lifetime of Self
         unsafe {
             f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
                 self,
@@ -61,6 +58,8 @@ unsafe impl<'a> yoke::Yokeable<'a> for HelloWorldV1<'static> {
         }
     }
 }
+
+// END YOKEABLE BOILERPLATE
 
 impl<'s> ZeroCopyClone<HelloWorldV1<'s>> for HelloWorldV1<'static> {
     fn zcc<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
@@ -70,9 +69,11 @@ impl<'s> ZeroCopyClone<HelloWorldV1<'s>> for HelloWorldV1<'static> {
     }
 }
 
-pub struct HelloWorldV1Helper {}
+/// Marker type for [`HelloWorldV1`].
+#[allow(non_camel_case_types)]
+pub struct HelloWorldV1_M;
 
-impl<'s> DataMarker<'s> for HelloWorldV1Helper {
+impl<'s> DataMarker<'s> for HelloWorldV1_M {
     type Yokeable = HelloWorldV1<'static>;
     type Cart = HelloWorldV1<'s>;
 }
@@ -146,11 +147,11 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Helper> for HelloWorldProvider<'s> {
+impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1_M> for HelloWorldProvider<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Helper>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1_M>, DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -168,12 +169,12 @@ impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Helper> for HelloWorldProvider
 }
 
 impl_dyn_provider!(HelloWorldProvider<'static>, {
-    _ => HelloWorldV1Helper,
+    _ => HelloWorldV1_M,
 }, ERASED, 'd);
 
 #[cfg(feature = "provider_serde")]
 impl_dyn_provider!(HelloWorldProvider<'s>, {
-    _ => HelloWorldV1Helper,
+    _ => HelloWorldV1_M,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
@@ -195,17 +196,17 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStructHelper>
+impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruct_M>
     for HelloWorldProvider<'static>
 {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        payload: DataPayload<'d, 'static, crate::erased::ErasedDataStructHelper>,
+        payload: DataPayload<'d, 'static, crate::erased::ErasedDataStruct_M>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
-        let downcast_payload: DataPayload<HelloWorldV1Helper> = payload.downcast()?;
+        let downcast_payload: DataPayload<HelloWorldV1_M> = payload.downcast()?;
         self.map.insert(
             langid.clone(),
             Cow::Owned(downcast_payload.get().message.to_string()),

@@ -76,14 +76,12 @@ impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for ErasedDataStructWrap<'static> {
     }
 }
 
-impl<'d, M> crate::util::ConvertDataPayload<'d, 'static, M> for ErasedDataStructHelper
+impl<'d, M> crate::util::ConvertDataPayload<'d, 'static, M> for ErasedDataStruct_M
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
-    fn convert(
-        other: DataPayload<'d, 'static, M>,
-    ) -> DataPayload<'d, 'static, ErasedDataStructHelper> {
+    fn convert(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStruct_M> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
             Borrowed(yoke) => {
@@ -129,14 +127,16 @@ unsafe impl<'a> yoke::Yokeable<'a> for ErasedDataStructWrap<'static> {
     }
 }
 
-pub struct ErasedDataStructHelper {}
+/// Marker type for [`ErasedDataStruct`].
+#[allow(non_camel_case_types)]
+pub struct ErasedDataStruct_M {}
 
-impl<'s> DataMarker<'s> for ErasedDataStructHelper {
+impl<'s> DataMarker<'s> for ErasedDataStruct_M {
     type Yokeable = ErasedDataStructWrap<'static>;
     type Cart = dyn ErasedDataStruct;
 }
 
-impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
+impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a concrete type.
     /// Returns an error if the type is not compatible.
     pub fn downcast<M>(self) -> Result<DataPayload<'d, 'static, M>, Error>
@@ -190,7 +190,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructHelper> {
                     generic: Some(TypeId::of::<M::Cart>()),
                 });
             }
-            // This is unreachable because ErasedDataStructHelper cannot be fully owned, since it
+            // This is unreachable because ErasedDataStruct_M cannot be fully owned, since it
             // contains a reference.
             Owned(_) => unreachable!(),
         };
@@ -233,19 +233,19 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStructHelper>, Error>;
+    ) -> Result<DataResponse<'d, 'static, ErasedDataStruct_M>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, 'static, ErasedDataStructHelper>,
+    T: DataProvider<'d, 'static, ErasedDataStruct_M>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStructHelper>, Error> {
-        DataProvider::<ErasedDataStructHelper>::load_payload(self, req)
+    ) -> Result<DataResponse<'d, 'static, ErasedDataStruct_M>, Error> {
+        DataProvider::<ErasedDataStruct_M>::load_payload(self, req)
     }
 }
 
