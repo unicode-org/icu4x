@@ -95,6 +95,35 @@ impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b 
     }
 }
 
+impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<C>> {
+    /// Construct a [`Yoke`]`<Y, Box<C>>` from a boxed cart by zero-copy cloning the cart to `Y` and
+    /// then yokeing that object to the cart.
+    ///
+    /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
+    /// fully owned, then the resulting [`Yoke`] will be `'static`.
+    ///
+    /// The type `Y` must implement [`ZeroCopyClone`]`<C>`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///
+    /// let box_cart = Box::new("demo".to_string());
+    ///  
+    /// let yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     Box<String>
+    /// >::attach_to_box_cart(box_cart);
+    ///
+    /// assert_eq!("demo", yoke.get());
+    /// ```
+    pub fn attach_to_box_cart(cart: Box<C>) -> Self {
+        Yoke::<Y, Box<C>>::attach_to_cart_badly(cart, Y::zcc)
+    }
+}
+
 impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C>> {
     /// Construct a [`Yoke`]`<Y, Rc<C>>` from a reference-counted cart by zero-copy cloning the
     /// cart to `Y` and then yokeing that object to the cart.
@@ -125,6 +154,11 @@ impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C
     }
 }
 
+// Note: The following could be blanket implementations, but that would require constraining the
+// blanket `T` on `T: 'static`, which may not be desirable for all downstream users who may wish
+// to customize their `ZeroCopyClone` impl. The blanket implementation may be safe once Rust has
+// specialization.
+
 impl ZeroCopyClone<str> for Cow<'static, str> {
     fn zcc<'b>(cart: &'b str) -> Cow<'b, str> {
         Cow::Borrowed(cart)
@@ -134,5 +168,17 @@ impl ZeroCopyClone<str> for Cow<'static, str> {
 impl ZeroCopyClone<String> for Cow<'static, str> {
     fn zcc<'b>(cart: &'b String) -> Cow<'b, str> {
         Cow::Borrowed(cart)
+    }
+}
+
+impl ZeroCopyClone<str> for &'static str {
+    fn zcc<'b>(cart: &'b str) -> &'b str {
+        cart
+    }
+}
+
+impl ZeroCopyClone<String> for &'static str {
+    fn zcc<'b>(cart: &'b String) -> &'b str {
+        cart
     }
 }

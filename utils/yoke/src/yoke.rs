@@ -149,11 +149,62 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 
     /// Get a reference to the backing cart.
     ///
-    /// This can be useful when building caches, etc
+    /// This can be useful when building caches, etc. However, if you plan to store the cart
+    /// separately from the yoke, read the note of caution below in [`Yoke::into_backing_cart`].
     pub fn backing_cart(&self) -> &C {
         &self.cart
     }
 
+    /// Get the backing cart by value, dropping the yokeable object.
+    ///
+    /// **Caution:** Calling this method could cause information saved in the yokeable object but
+    /// not the cart to be lost. Use this method only if the yokeable object cannot contain its
+    /// own information.
+    ///
+    /// # Example
+    ///
+    /// Good example: the yokeable object is only a reference, so no information can be lost.
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    ///
+    /// let local_data = "foo".to_string();
+    /// let yoke = Yoke::<
+    ///     &'static str,
+    ///     Box<String>
+    /// >::attach_to_box_cart(Box::new(local_data));
+    /// assert_eq!(*yoke.get(), "foo");
+    ///
+    /// // Get back the cart
+    /// let cart = yoke.into_backing_cart();
+    /// assert_eq!(&*cart, "foo");
+    /// ```
+    ///
+    /// Bad example: information specified in `.with_mut()` is lost.
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_data = "foo".to_string();
+    /// let mut yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     Box<String>
+    /// >::attach_to_box_cart(Box::new(local_data));
+    /// assert_eq!(yoke.get(), "foo");
+    ///
+    /// // Override data in the cart
+    /// yoke.with_mut(|cow| {
+    ///     let mut_str = cow.to_mut();
+    ///     mut_str.clear();
+    ///     mut_str.push_str("bar");
+    /// });
+    /// assert_eq!(yoke.get(), "bar");
+    ///
+    /// // Get back the cart
+    /// let cart = yoke.into_backing_cart();
+    /// assert_eq!(&*cart, "foo"); // WHOOPS!
+    /// ```
     pub fn into_backing_cart(self) -> C {
         self.cart
     }
