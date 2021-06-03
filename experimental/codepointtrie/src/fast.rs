@@ -4,7 +4,7 @@
 
 use crate::codepointtrie::impl_const::*;
 use crate::codepointtrie::{
-    CodePointTrie, TrieType, ValueWidth,
+    CodePointTrie, TrieType, ValueWidth, TrieTypeEnum
 };
 
 pub(crate) fn trie_internal_small_index<T: TrieType, W: ValueWidth>(
@@ -12,7 +12,7 @@ pub(crate) fn trie_internal_small_index<T: TrieType, W: ValueWidth>(
     c: u32,
 ) -> u32 {
     let mut i1: u32 = c >> SHIFT_1;
-    if trie.trie_type() == TrieType::Fast {
+    if trie.trie_type() == TrieTypeEnum::Fast {
         assert!(0xffff < c && c < trie.high_start());
         i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
     } else {

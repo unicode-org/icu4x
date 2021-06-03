@@ -188,9 +188,8 @@ pub fn get_code_point_trie_value_width(value_width_int: u8) -> ValueWidthEnum {
 
 use impl_const::*;
 
-impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
-
-    pub fn trie_internal_small_index(
+impl<'trie, W: ValueWidth> CodePointTrie<'trie, W, Fast> {
+    fn trie_internal_small_index(
         &self,
         c: u32,
     ) -> u32 {
@@ -211,7 +210,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             // 16-bit indexes
             data_block = self.index().get((i3_block + i3) as usize).unwrap() as u32;
         } else {
-            // 18-bit indexes stored in groups of 9 enselfs per 8 indexes.
+            // 18-bit indexes stored in groups of 9 entries per 8 indexes.
             i3_block = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
             i3 = i3 & 7;
             data_block =
@@ -220,22 +219,21 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         }
         data_block + (c & SMALL_DATA_MASK)
     }
-    
 
     /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
-    pub fn trie_small_index(
+    fn trie_small_index(
         &self,
         c: u32,
     ) -> u32 {
         if c >= self.high_start() {
             self.data_length() - HIGH_VALUE_NEG_DATA_OFFSET
         } else {
-            self.trie_internal_small_index(c)
+            self.trie_internal_small_index(c)  // helper fn
         }
     }
 
     /// Internal trie getter for a code point below the fast limit. Returns the data index.
-    pub fn trie_fast_index(
+    fn trie_fast_index(
         &self,
         c: u32,
     ) -> u32 {
@@ -246,20 +244,39 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 
     pub fn get(&self, c: u32) -> W {
-        let index: u32 = if c <= T::FAST_MAX {
-            self.trie_fast_index(c)
+        let index: u32 = if c <= Fast::FAST_MAX {
+            Self::trie_fast_index(self, c)
         } else if c <= CODE_POINT_MAX {
-            self.trie_small_index(c)
+            Self::trie_small_index(self, c)
         } else {
             self.data_length() - ERROR_VALUE_NEG_DATA_OFFSET
         };
         self.data().get(index as usize).unwrap()  // need the unwrap because the default value is stored in the data array,
-                                                  // and getting that default value always returns an Option<W>, but need to return W
+                                                    // and getting that default value always returns an Option<W>, but need to return W
     }
 
     pub fn get_u32(&self, c: u32) -> u32 {  // this is the consistent API that is public-facing for users
         self.get(c).cast_to_widest()
     }
+}
+
+impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
+
+    // pub fn get(&self, c: u32) -> W {
+    //     let index: u32 = if c <= T::FAST_MAX {
+    //         self.trie_fast_index(c)
+    //     } else if c <= CODE_POINT_MAX {
+    //         self.trie_small_index(c)
+    //     } else {
+    //         self.data_length() - ERROR_VALUE_NEG_DATA_OFFSET
+    //     };
+    //     self.data().get(index as usize).unwrap()  // need the unwrap because the default value is stored in the data array,
+    //                                               // and getting that default value always returns an Option<W>, but need to return W
+    // }
+
+    // pub fn get_u32(&self, c: u32) -> u32 {  // this is the consistent API that is public-facing for users
+    //     self.get(c).cast_to_widest()
+    // }
 
     pub fn index(&self) -> &ZeroVec<'trie, u16> {
         &self.index
@@ -286,3 +303,141 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 }
 
+
+// TODO: genericize this over TrieType once AutoCodePointTrie wrapper type for CodePointTrie is done
+fn check_fast_trie<W: ValueWidth>(
+    trie: &CodePointTrie<W, Fast>,
+    check_ranges: &[u32],
+) {
+    assert_eq!(
+        0,
+        check_ranges.len() % 2,
+        "check_ranges must have an even number of 32-bit values in (limit,value) pairs"
+    );
+
+    let mut i: u32 = 0;
+    let check_range_tuples = check_ranges.chunks(2);
+    // Iterate over each check range
+    for range_tuple in check_range_tuples {
+        let range_end = range_tuple[0];
+        let range_value = range_tuple[1];
+        // Check all values in this range, one-by-one
+        while i < range_end {
+            assert_eq!(
+                range_value,
+                trie.get_u32(i),
+                "trie_get({})",
+                i,
+            );
+            i = i + 1;
+        }
+    }
+}
+
+#[cfg(test)]
+mod fast_8_test {
+    use super::*;
+
+    const INDEX: [u16; 1024] = [
+        0, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0x80, 0xc0, 0xc0, 0xc0, 0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+
+    const DATA_8: [u8; 260] = [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0xad,
+    ];
+
+    const CHECK_RANGES: [u32; 10] = [0, 1, 0x740, 1, 0x780, 2, 0x880, 3, 0x110000, 1];
+
+    // Exported trie data from free-blocks.8.toml. This file represents a
+    // fast-type trie with 8-bit width data.
+    fn get_testing_fast_type_8_bit_trie<'trie>(
+    ) -> CodePointTrie<'trie, u8, Fast> {
+        let index_length: u32 = 1024;
+        let data_length: u32 = 260;
+        // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
+        // to represent it as a u32 since UnicodeSet deals with `u32` instead of
+        // the Rust `char` type?
+        let high_start: u32 = 0xa00;
+        let shifted12_high_start: u16 = 0x1;
+        let trie_type: u8 = 0;
+        let value_width: u8 = 2;
+        let index3_null_offset: u16 = 0x7fff;
+        let data_null_offset: u32 = 0x0;
+        let null_value: u32 = 0x1;
+
+        let trie = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&INDEX),
+            data: ZeroVec::from_aligned(&DATA_8),
+            _marker_ty: PhantomData,
+        };
+
+        trie
+    }
+
+    #[test]
+    pub fn get_test() {
+        let trie = get_testing_fast_type_8_bit_trie();
+
+        assert_eq!(trie.get(0), 1);
+        assert_eq!(trie.get(1), 1);
+        assert_eq!(trie.get(2), 1);
+        assert_eq!(trie.get(28), 1);
+        assert_eq!(trie.get(29), 1);
+    }
+
+    #[test]
+    pub fn check_ranges_test() {
+        let trie = get_testing_fast_type_8_bit_trie();
+
+        check_fast_trie::<u8>(&trie, &CHECK_RANGES);
+    }
+}
