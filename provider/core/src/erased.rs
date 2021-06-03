@@ -198,7 +198,7 @@ where
     for<'a> &'a T: Clone,
 {
     fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
-        todo!()
+        todo!("#753")
         // Box::new(self.clone())
     }
     fn into_any(self: Box<Self>) -> Box<dyn Any> {
