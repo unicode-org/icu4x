@@ -54,6 +54,23 @@ impl Key {
         Ok(Self(key.to_ascii_lowercase()))
     }
 
+    /// A constructor which takes a TinyStr4 and produces a [`Key`]
+    /// without doing any checking.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::unicode::Key;
+    /// use tinystr::tinystr4;
+    ///
+    /// let key = Key::from_tinystr4_unchecked(tinystr4!("ca"));
+    ///
+    /// assert_eq!(key, "ca");
+    /// ```
+    pub fn from_tinystr4_unchecked(key: TinyStr4) -> Self {
+        Self(key)
+    }
+
     /// A helper function for displaying
     /// a [`Key`] subtag as a `&`[`str`].
     ///

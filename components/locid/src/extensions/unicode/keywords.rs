@@ -151,7 +151,7 @@ impl Keywords {
     ///     .expect("Failed to parse a Key.");
     /// if let Some(value) = keywords.get_mut(key) {
     ///     *value = "gregory".parse()
-    ///     .expect("Failed to parse a Value.");
+    ///         .expect("Failed to parse a Value.");
     /// }
     /// assert_eq!(
     ///     keywords.get(&key).map(|v| v.to_string()),
