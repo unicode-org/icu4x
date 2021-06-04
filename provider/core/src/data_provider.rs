@@ -141,6 +141,8 @@ where
     M: DataMarker<'s>,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
+    /// Note: This function is currently inoperable. For more details, see
+    /// https://github.com/unicode-org/icu4x/issues/753
     fn clone(&self) -> Self {
         use DataPayloadInner::*;
         let new_inner = match &self.inner {
@@ -369,6 +371,8 @@ where
     M: DataMarker<'s>,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
+    /// Note: This function is currently inoperable. For more details, see
+    /// https://github.com/unicode-org/icu4x/issues/753
     fn clone(&self) -> Self {
         Self {
             metadata: self.metadata.clone(),
