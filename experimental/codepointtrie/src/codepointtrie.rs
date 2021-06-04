@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::{Error, FromDeserializedError};
 use std::marker::PhantomData;
 use zerovec::ZeroVec;
 
@@ -85,7 +86,7 @@ pub mod impl_const {
 
 /// The width of the elements in the data array of a CodePointTrie.
 /// See UCPTrieValueWidth in ICU4C.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ValueWidthEnum {
     BitsAny = -1,
     Bits16 = 0,
@@ -155,20 +156,19 @@ impl TrieType for Small {
 }
 
 pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
-    pub index_length: u32,
-    pub data_length: u32,
-    pub high_start: u32,
-    pub shifted12_high_start: u16,
-    // pub trie_type: TrieTypeEnum,
-    pub index3_null_offset: u16,
-    pub data_null_offset: u32,
-    pub null_value: u32,
-    pub index: ZeroVec<'trie, u16>,
-    pub data: ZeroVec<'trie, W>,
-    pub _marker_ty: PhantomData<T>,
+    index_length: u32,
+    data_length: u32,
+    high_start: u32,
+    shifted12_high_start: u16,
+    index3_null_offset: u16,
+    data_null_offset: u32,
+    null_value: u32,
+    index: ZeroVec<'trie, u16>,
+    data: ZeroVec<'trie, W>,
+    _marker_ty: PhantomData<T>,
 }
 
-pub fn get_code_point_trie_type(trie_type_int: u8) -> TrieTypeEnum {
+pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> TrieTypeEnum {
     match trie_type_int {
         0 => TrieTypeEnum::Fast,
         1 => TrieTypeEnum::Small,
@@ -176,7 +176,7 @@ pub fn get_code_point_trie_type(trie_type_int: u8) -> TrieTypeEnum {
     }
 }
 
-pub fn get_code_point_trie_value_width(value_width_int: u8) -> ValueWidthEnum {
+pub fn get_code_point_trie_value_width_enum(value_width_int: u8) -> ValueWidthEnum {
     match value_width_int {
         0 => ValueWidthEnum::Bits16,
         1 => ValueWidthEnum::Bits32,
@@ -287,6 +287,240 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 }
 
+impl<'trie> CodePointTrie<'trie, u8, Fast> {
+    pub fn try_from_u8_fast(
+        index_length: u32,
+        data_length: u32,
+        high_start: u32,
+        shifted12_high_start: u16,
+        trie_type_int: u8,
+        value_width_int: u8,
+        index3_null_offset: u16,
+        data_null_offset: u32,
+        null_value: u32,
+        index: &[u16],
+        data: &[u8],
+    ) -> Result<CodePointTrie<'trie, u8, Fast>, Error> {
+        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Fast trie type"}))
+        }
+        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits8 {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 8-bit value width"}))
+        }
+
+        // TODO: what are other assertions to include?
+        
+        let trie: CodePointTrie<'trie, u8, Fast> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&index),
+            data: ZeroVec::from_aligned(&data),
+            _marker_ty: PhantomData,
+        };
+        Ok(trie)        
+    }
+}
+
+impl<'trie> CodePointTrie<'trie, u16, Fast> {
+    pub fn try_from_u16_fast(
+        index_length: u32,
+        data_length: u32,
+        high_start: u32,
+        shifted12_high_start: u16,
+        trie_type_int: u8,
+        value_width_int: u8,
+        index3_null_offset: u16,
+        data_null_offset: u32,
+        null_value: u32,
+        index: &[u16],
+        data: &[u16],
+    ) -> Result<CodePointTrie<'trie, u16, Fast>, Error> {
+        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Fast trie type"}))
+        }
+        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits16 {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 16-bit value width"}))
+        }
+
+        // TODO: what are other assertions to include?
+        
+        let trie: CodePointTrie<'trie, u16, Fast> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&index),
+            data: ZeroVec::from_aligned(&data),
+            _marker_ty: PhantomData,
+        };
+        Ok(trie)        
+    }
+}
+
+impl<'trie> CodePointTrie<'trie, u32, Fast> {
+    pub fn try_from_u32_fast(
+        index_length: u32,
+        data_length: u32,
+        high_start: u32,
+        shifted12_high_start: u16,
+        trie_type_int: u8,
+        value_width_int: u8,
+        index3_null_offset: u16,
+        data_null_offset: u32,
+        null_value: u32,
+        index: &[u16],
+        data: &[u32],
+    ) -> Result<CodePointTrie<'trie, u32, Fast>, Error> {
+        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Fast trie type"}))
+        }
+        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits32 {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 32-bit value width"}))
+        }
+
+        // TODO: what are other assertions to include?
+        
+        let trie: CodePointTrie<'trie, u32, Fast> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&index),
+            data: ZeroVec::from_aligned(&data),
+            _marker_ty: PhantomData,
+        };
+        Ok(trie)        
+    }
+}
+
+impl<'trie> CodePointTrie<'trie, u8, Small> {
+    pub fn try_from_u8_small(
+        index_length: u32,
+        data_length: u32,
+        high_start: u32,
+        shifted12_high_start: u16,
+        trie_type_int: u8,
+        value_width_int: u8,
+        index3_null_offset: u16,
+        data_null_offset: u32,
+        null_value: u32,
+        index: &[u16],
+        data: &[u8],
+    ) -> Result<CodePointTrie<'trie, u8, Small>, Error> {
+        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Small trie type"}))
+        }
+        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits8 {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 8-bit value width"}))
+        }
+
+        // TODO: what are other assertions to include?
+        
+        let trie: CodePointTrie<'trie, u8, Small> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&index),
+            data: ZeroVec::from_aligned(&data),
+            _marker_ty: PhantomData,
+        };
+        Ok(trie)        
+    }
+}
+
+impl<'trie> CodePointTrie<'trie, u16, Small> {
+    pub fn try_from_u16_small(
+        index_length: u32,
+        data_length: u32,
+        high_start: u32,
+        shifted12_high_start: u16,
+        trie_type_int: u8,
+        value_width_int: u8,
+        index3_null_offset: u16,
+        data_null_offset: u32,
+        null_value: u32,
+        index: &[u16],
+        data: &[u16],
+    ) -> Result<CodePointTrie<'trie, u16, Small>, Error> {
+        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Small trie type"}))
+        }
+        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits16 {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 16-bit value width"}))
+        }
+
+        // TODO: what are other assertions to include?
+        
+        let trie: CodePointTrie<'trie, u16, Small> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&index),
+            data: ZeroVec::from_aligned(&data),
+            _marker_ty: PhantomData,
+        };
+        Ok(trie)        
+    }
+}
+
+impl<'trie> CodePointTrie<'trie, u32, Small> {
+    pub fn try_from_u32_small(
+        index_length: u32,
+        data_length: u32,
+        high_start: u32,
+        shifted12_high_start: u16,
+        trie_type_int: u8,
+        value_width_int: u8,
+        index3_null_offset: u16,
+        data_null_offset: u32,
+        null_value: u32,
+        index: &[u16],
+        data: &[u32],
+    ) -> Result<CodePointTrie<'trie, u32, Small>, Error> {
+        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Small trie type"}))
+        }
+        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits32 {
+            return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 32-bit value width"}))
+        }
+
+        // TODO: what are other assertions to include?
+        
+        let trie: CodePointTrie<'trie, u32, Small> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&index),
+            data: ZeroVec::from_aligned(&data),
+            _marker_ty: PhantomData,
+        };
+        Ok(trie)        
+    }
+}
+
 // TODO: genericize this over TrieType once AutoCodePointTrie wrapper type for CodePointTrie is done
 fn check_trie<W: ValueWidth, T: TrieType>(trie: &CodePointTrie<W, T>, check_ranges: &[u32]) {
     assert_eq!(
@@ -370,9 +604,6 @@ mod fast_8_test {
     fn get_testing_fast_type_8_bit_trie<'trie>() -> CodePointTrie<'trie, u8, Fast> {
         let index_length: u32 = 1024;
         let data_length: u32 = 260;
-        // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
-        // to represent it as a u32 since UnicodeSet deals with `u32` instead of
-        // the Rust `char` type?
         let high_start: u32 = 0xa00;
         let shifted12_high_start: u16 = 0x1;
         let trie_type: u8 = 0;
@@ -381,18 +612,20 @@ mod fast_8_test {
         let data_null_offset: u32 = 0x0;
         let null_value: u32 = 0x1;
 
-        let trie: CodePointTrie<'trie, u8, Fast> = CodePointTrie {
+        let trie_result = CodePointTrie::try_from_u8_fast(
             index_length,
-            data_length,
-            high_start,
+            data_length, 
+            high_start, 
             shifted12_high_start,
+            trie_type,
+            value_width,
             index3_null_offset,
             data_null_offset,
             null_value,
-            index: ZeroVec::from_aligned(&INDEX),
-            data: ZeroVec::from_aligned(&DATA_8),
-            _marker_ty: PhantomData,
-        };
+            &INDEX,
+            &DATA_8,
+        );
+        let trie = trie_result.unwrap();
 
         trie
     }
@@ -477,9 +710,6 @@ mod fast_16_test {
     fn get_testing_fast_type_16_bit_trie<'trie>() -> CodePointTrie<'trie, u16, Fast> {
         let index_length: u32 = 1024;
         let data_length: u32 = 258;
-        // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
-        // to represent it as a u32 since UnicodeSet deals with `u32` instead of
-        // the Rust `char` type?
         let high_start: u32 = 0xa00;
         let shifted12_high_start: u16 = 0x1;
         let trie_type: u8 = 0;
@@ -488,18 +718,20 @@ mod fast_16_test {
         let data_null_offset: u32 = 0x0;
         let null_value: u32 = 0x1;
 
-        let trie: CodePointTrie<'trie, u16, Fast> = CodePointTrie {
+        let trie_result = CodePointTrie::try_from_u16_fast(
             index_length,
-            data_length,
-            high_start,
+            data_length, 
+            high_start, 
             shifted12_high_start,
+            trie_type,
+            value_width,
             index3_null_offset,
             data_null_offset,
             null_value,
-            index: ZeroVec::from_aligned(&INDEX),
-            data: ZeroVec::from_aligned(&DATA_16),
-            _marker_ty: PhantomData,
-        };
+            &INDEX,
+            &DATA_16,
+        );
+        let trie = trie_result.unwrap();
 
         trie
     }
@@ -632,18 +864,20 @@ mod fast_16_test {
         let data_null_offset: u32 = 0x100;
         let null_value: u32 = 0x5;
 
-        let trie: CodePointTrie<'trie, u16, Fast> = CodePointTrie {
+        let trie_result = CodePointTrie::try_from_u16_fast(
             index_length,
-            data_length,
-            high_start,
+            data_length, 
+            high_start, 
             shifted12_high_start,
+            trie_type,
+            value_width,
             index3_null_offset,
             data_null_offset,
             null_value,
-            index: ZeroVec::from_aligned(&GROW_INDEX),
-            data: ZeroVec::from_aligned(&GROW_DATA_16),
-            _marker_ty: PhantomData,
-        };
+            &GROW_INDEX,
+            &GROW_DATA_16,
+        );
+        let trie = trie_result.unwrap();
 
         trie
     }
@@ -717,9 +951,6 @@ mod fast_32_test {
     fn get_testing_fast_type_32_bit_trie<'trie>() -> CodePointTrie<'trie, u32, Fast> {
         let index_length: u32 = 1024;
         let data_length: u32 = 258;
-        // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
-        // to represent it as a u32 since UnicodeSet deals with `u32` instead of
-        // the Rust `char` type?
         let high_start: u32 = 0xa00;
         let shifted12_high_start: u16 = 0x1;
         let trie_type: u8 = 0;
@@ -728,18 +959,20 @@ mod fast_32_test {
         let data_null_offset: u32 = 0x0;
         let null_value: u32 = 0x1;
 
-        let trie: CodePointTrie<'trie, u32, Fast> = CodePointTrie {
+        let trie_result = CodePointTrie::try_from_u32_fast(
             index_length,
-            data_length,
-            high_start,
+            data_length, 
+            high_start, 
             shifted12_high_start,
+            trie_type,
+            value_width,
             index3_null_offset,
             data_null_offset,
             null_value,
-            index: ZeroVec::from_aligned(&INDEX),
-            data: ZeroVec::from_aligned(&DATA_32),
-            _marker_ty: PhantomData,
-        };
+            &INDEX,
+            &DATA_32,
+        );
+        let trie = trie_result.unwrap();
 
         trie
     }
@@ -792,9 +1025,6 @@ mod small_16_test {
     fn get_testing_small_type_16_bit_trie<'trie>() -> CodePointTrie<'trie, u16, Small> {
         let index_length: u32 = 64;
         let data_length: u32 = 258;
-        // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
-        // to represent it as a u32 since UnicodeSet deals with `u32` instead of
-        // the Rust `char` type?
         let high_start: u32 = 0xa00;
         let shifted12_high_start: u16 = 0x1;
         let trie_type: u8 = 1;
@@ -803,18 +1033,20 @@ mod small_16_test {
         let data_null_offset: u32 = 0x0;
         let null_value: u32 = 0x1;
 
-        let trie: CodePointTrie<'trie, u16, Small> = CodePointTrie {
+        let trie_result = CodePointTrie::try_from_u16_small(
             index_length,
-            data_length,
-            high_start,
+            data_length, 
+            high_start, 
             shifted12_high_start,
+            trie_type,
+            value_width,
             index3_null_offset,
             data_null_offset,
             null_value,
-            index: ZeroVec::from_aligned(&INDEX),
-            data: ZeroVec::from_aligned(&DATA_16),
-            _marker_ty: PhantomData,
-        };
+            &INDEX,
+            &DATA_16,
+        );
+        let trie = trie_result.unwrap();
 
         trie
     }

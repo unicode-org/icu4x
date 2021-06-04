@@ -27,4 +27,5 @@ bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
 [dependencies]
+thiserror = "1.0"
 zerovec = { version = "0.2", path = "../../utils/zerovec" }
