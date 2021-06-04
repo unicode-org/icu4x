@@ -53,7 +53,7 @@ where
 /// The second argument is a match-like construction mapping from resource keys to structs. To map
 /// multiple keys to a single data struct, use `_` as the data key.
 ///
-/// The third argument can be either the trait object marker, like [`SerdeSeDataStruct_M`], or the
+/// The third argument can be either the trait object marker, like [`SerdeSeDataStructMarker`], or the
 /// shorthands `ERASED` or `SERDE_SE`.
 ///
 /// Lifetimes:
@@ -68,16 +68,16 @@ where
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::erased::ErasedDataStruct_M;
-/// use icu_provider::marker::CowString_M;
+/// use icu_provider::erased::ErasedDataStructMarker;
+/// use icu_provider::marker::CowStringMarker;
 /// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
 /// // A small DataProvider that returns owned strings
 /// struct MyProvider(pub String);
-/// impl<'d> DataProvider<'d, 'static, CowString_M> for MyProvider {
+/// impl<'d> DataProvider<'d, 'static, CowStringMarker> for MyProvider {
 ///     fn load_payload(&self, req: &DataRequest)
-///             -> Result<DataResponse<'d, 'static, CowString_M>, DataError> {
+///             -> Result<DataResponse<'d, 'static, CowStringMarker>, DataError> {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
 ///         Ok(DataResponse {
 ///             metadata: Default::default(),
@@ -86,17 +86,17 @@ where
 ///     }
 /// }
 ///
-/// // Implement DataProvider<ErasedDataStruct_M>
+/// // Implement DataProvider<ErasedDataStructMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     DEMO_KEY => CowString_M,
+///     DEMO_KEY => CowStringMarker,
 /// }, ERASED, 'd);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
-/// let resp: DataResponse<ErasedDataStruct_M> = provider
+/// let resp: DataResponse<ErasedDataStructMarker> = provider
 ///     .load_payload(&DEMO_KEY.into())
 ///     .expect("Loading should succeed");
-/// let payload: DataPayload<CowString_M> = resp
+/// let payload: DataPayload<CowStringMarker> = resp
 ///     .take_payload()
 ///     .expect("Payload should be present")
 ///     .downcast()
@@ -108,35 +108,35 @@ where
 ///
 /// ```
 /// # use icu_provider::prelude::*;
-/// # use icu_provider::marker::CowString_M;
+/// # use icu_provider::marker::CowStringMarker;
 /// # use std::borrow::Cow;
 /// # struct MyProvider(pub String);
-/// # impl<'d> DataProvider<'d, 'static, CowString_M> for MyProvider {
+/// # impl<'d> DataProvider<'d, 'static, CowStringMarker> for MyProvider {
 /// #   fn load_payload(&self, req: &DataRequest)
-/// #           -> Result<DataResponse<'d, 'static, CowString_M>, DataError> {
+/// #           -> Result<DataResponse<'d, 'static, CowStringMarker>, DataError> {
 /// #       Ok(DataResponse {
 /// #           metadata: Default::default(),
 /// #           payload: Some(DataPayload::from_owned(self.0.to_string().into()))
 /// #       })
 /// #   }
 /// # }
-/// // Send all keys to the `CowString_M` provider.
+/// // Send all keys to the `CowStringMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     _ => CowString_M,
+///     _ => CowStringMarker,
 /// }, ERASED, 'd);
 /// ```
 ///
 /// [`DataProvider`]: crate::DataProvider
 /// [`ErasedDataStruct`]: (crate::erased::ErasedDataStruct)
 /// [`SerdeSeDataStruct`]: (crate::serde::SerdeSeDataStruct)
-/// [`SerdeSeDataStruct_M`]: (crate::serde::SerdeSeDataStruct_M)
+/// [`SerdeSeDataStructMarker`]: (crate::serde::SerdeSeDataStructMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
     ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED, $d:lifetime) => {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
-            $crate::erased::ErasedDataStruct_M,
+            $crate::erased::ErasedDataStructMarker,
             $d,
             's: 'static
         );
@@ -146,7 +146,7 @@ macro_rules! impl_dyn_provider {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
-            $crate::serde::SerdeSeDataStruct_M,
+            $crate::serde::SerdeSeDataStructMarker,
             $d,
             $s: $d
         );

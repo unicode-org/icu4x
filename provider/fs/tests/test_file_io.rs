@@ -52,7 +52,7 @@ fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1_M> = provider
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = provider
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
         .take_payload()
@@ -65,7 +65,7 @@ fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1_M> = (&provider as &dyn SerdeDeDataProvider)
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("ru")))
         .expect("The data should be valid")
         .take_payload()
@@ -78,7 +78,7 @@ fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    type Provider<'d, 's> = dyn DataProvider<'d, 's, PluralRuleStringsV1_M>;
+    type Provider<'d, 's> = dyn DataProvider<'d, 's, PluralRuleStringsV1Marker>;
 
     assert!(matches!(
         Provider::load_payload(
@@ -157,7 +157,7 @@ fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1_M> = provider
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = provider
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
         .take_payload()
@@ -171,7 +171,7 @@ fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
 
-    let plurals_data: DataPayload<PluralRuleStringsV1_M> = (&provider as &dyn SerdeDeDataProvider)
+    let plurals_data: DataPayload<PluralRuleStringsV1Marker> = (&provider as &dyn SerdeDeDataProvider)
         .load_payload(&get_request(langid!("sr")))
         .expect("The data should be valid")
         .take_payload()

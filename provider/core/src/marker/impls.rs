@@ -6,20 +6,18 @@ use super::*;
 use std::borrow::Cow;
 
 /// Marker type for [`Cow`]`<str>` where the backing cart is `str`.
-#[allow(non_camel_case_types)]
-pub struct CowStr_M;
+pub struct CowStrMarker;
 
-impl<'s> DataMarker<'s> for CowStr_M {
+impl<'s> DataMarker<'s> for CowStrMarker {
     type Yokeable = Cow<'static, str>;
     type Cart = str;
 }
 
 /// Marker type for [`Cow`]`<str>` where the backing cart is `String`. This is required if
 /// `ErasedDataStruct` is to be used.
-#[allow(non_camel_case_types)]
-pub struct CowString_M;
+pub struct CowStringMarker;
 
-impl<'s> DataMarker<'s> for CowString_M {
+impl<'s> DataMarker<'s> for CowStringMarker {
     type Yokeable = Cow<'static, str>;
     type Cart = String;
 }

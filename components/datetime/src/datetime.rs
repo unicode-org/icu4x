@@ -7,7 +7,7 @@ use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
     pattern::PatternItem,
-    provider::{gregory::DatesV1_M, helpers::DateTimePatterns},
+    provider::{gregory::DatesV1Marker, helpers::DateTimePatterns},
 };
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -59,7 +59,7 @@ use crate::{
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: DataPayload<'d, 'd, provider::gregory::DateSymbolsV1_M>,
+    pub(super) symbols: DataPayload<'d, 'd, provider::gregory::DateSymbolsV1Marker>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -87,7 +87,7 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     pub fn try_new<
         T: Into<Locale>,
-        D: DataProvider<'d, 'd, provider::gregory::DatesV1_M> + ?Sized,
+        D: DataProvider<'d, 'd, provider::gregory::DatesV1Marker> + ?Sized,
     >(
         locale: T,
         data_provider: &D,
@@ -144,7 +144,7 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        data: DataPayload<'d, 'd, DatesV1_M>,
+        data: DataPayload<'d, 'd, DatesV1Marker>,
     ) -> Self {
         let locale = locale.into();
 

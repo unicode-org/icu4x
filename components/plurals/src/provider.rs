@@ -37,7 +37,7 @@ pub struct PluralRuleStringsV1<'s> {
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     PluralRuleStringsV1<'s>,
     /// Marker type for [`PluralRuleStringsV1`]
-    PluralRuleStringsV1_M
+    PluralRuleStringsV1Marker
 );
 
 impl<'s> ZeroCopyFrom<PluralRuleStringsV1<'s>> for PluralRuleStringsV1<'static> {

@@ -36,7 +36,7 @@ pub mod key {
         (ALNUM_V1, "alnum"),
         (ALPHABETIC_V1, "Alpha"),
         (BIDI_CONTROL_V1, "Bidi_C"),
-        (BIDI_MIRRORED_V1, "Bidi_M"),
+        (BIDI_MIRRORED_V1, "BidiMarker"),
         (BLANK_V1, "blank"),
         (CASED_V1, "Cased"),
         (CASE_IGNORABLE_V1, "CI"),
@@ -664,7 +664,7 @@ pub struct UnicodeProperty<'s> {
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     UnicodeProperty<'s>,
     /// Marker type for [`UnicodeProperty`]
-    UnicodeProperty_M,
+    UnicodePropertyMarker,
     TEMP_ZCF
 );
 

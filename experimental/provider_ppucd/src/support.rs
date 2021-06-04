@@ -63,11 +63,11 @@ impl<'s> PpucdDataProvider<'s> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, UnicodeProperty_M> for PpucdDataProvider<'s> {
+impl<'d, 's> DataProvider<'d, 's, UnicodePropertyMarker> for PpucdDataProvider<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, UnicodeProperty_M>, DataError> {
+    ) -> Result<DataResponse<'d, 's, UnicodePropertyMarker>, DataError> {
         let resc_key: &ResourceKey = &req.resource_path.key;
         let resc_key_str: &str = resc_key.sub_category.as_str();
         let props_data: &UnicodeProperties = &self.ppucd_props;
@@ -96,7 +96,7 @@ impl<'s> TryFrom<&'s str> for PpucdDataProvider<'s> {
 }
 
 icu_provider::impl_dyn_provider!(PpucdDataProvider<'s>, {
-    _ => UnicodeProperty_M,
+    _ => UnicodePropertyMarker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PpucdDataProvider<'d> {
@@ -125,9 +125,9 @@ fn test_ppucd_provider_parse() {
             },
         },
     };
-    let resp: DataResponse<UnicodeProperty_M> = ppucd_provider.load_payload(&data_req).unwrap();
+    let resp: DataResponse<UnicodePropertyMarker> = ppucd_provider.load_payload(&data_req).unwrap();
 
-    let ppucd_property_cow: DataPayload<UnicodeProperty_M> = resp.take_payload().unwrap();
+    let ppucd_property_cow: DataPayload<UnicodePropertyMarker> = resp.take_payload().unwrap();
     let exp_prop_uniset: UnicodeProperty = UnicodeProperty {
         name: Cow::Borrowed("WSpace"),
         inv_list: vec![

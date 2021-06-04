@@ -16,16 +16,16 @@ use std::convert::TryInto;
 type UnisetResult = Result<UnicodeSet, UnicodeSetError>;
 
 // helper fn
-fn get_prop<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(ppucd_provider: &D, resc_key: ResourceKey) -> UnisetResult {
+fn get_prop<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(ppucd_provider: &D, resc_key: ResourceKey) -> UnisetResult {
     let data_req = DataRequest {
         resource_path: ResourcePath {
             key: resc_key,
             options: ResourceOptions { variant: None, langid: None },
         },
     };
-    let resp: DataResponse<UnicodeProperty_M> = ppucd_provider.load_payload(&data_req)?;
+    let resp: DataResponse<UnicodePropertyMarker> = ppucd_provider.load_payload(&data_req)?;
 
-    let ppucd_property_payload: DataPayload<UnicodeProperty_M> = resp.take_payload()?;
+    let ppucd_property_payload: DataPayload<UnicodePropertyMarker> = resp.take_payload()?;
     let ppucd_property: UnicodeProperty = ppucd_property_payload.get().clone();
     ppucd_property.try_into()
 }
@@ -34,263 +34,263 @@ fn get_prop<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(ppucd_provi
 // Binary property getter fns
 //
 
-pub fn get_ascii_hex_digit_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_ascii_hex_digit_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::ASCII_HEX_DIGIT_V1)
 }
 
-pub fn get_alnum_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_alnum_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::ALNUM_V1)
 }
 
-pub fn get_alphabetic_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_alphabetic_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::ALPHABETIC_V1)
 }
 
-pub fn get_bidi_control_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_bidi_control_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::BIDI_CONTROL_V1)
 }
 
-pub fn get_bidi_mirrored_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_bidi_mirrored_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::BIDI_MIRRORED_V1)
 }
 
-pub fn get_blank_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_blank_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::BLANK_V1)
 }
 
-pub fn get_cased_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_cased_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CASED_V1)
 }
 
-pub fn get_case_ignorable_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_case_ignorable_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CASE_IGNORABLE_V1)
 }
 
-pub fn get_full_composition_exclusion_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_full_composition_exclusion_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::FULL_COMPOSITION_EXCLUSION_V1)
 }
 
-pub fn get_changes_when_casefolded_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_changes_when_casefolded_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CHANGES_WHEN_CASEFOLDED_V1)
 }
 
-pub fn get_changes_when_casemapped_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_changes_when_casemapped_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CHANGES_WHEN_CASEMAPPED_V1)
 }
 
-pub fn get_changes_when_nfkc_casefolded_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_changes_when_nfkc_casefolded_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CHANGES_WHEN_NFKC_CASEFOLDED_V1)
 }
 
-pub fn get_changes_when_lowercased_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_changes_when_lowercased_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CHANGES_WHEN_LOWERCASED_V1)
 }
 
-pub fn get_changes_when_titlecased_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_changes_when_titlecased_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CHANGES_WHEN_TITLECASED_V1)
 }
 
-pub fn get_changes_when_uppercased_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_changes_when_uppercased_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CHANGES_WHEN_UPPERCASED_V1)
 }
 
-pub fn get_dash_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_dash_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::DASH_V1)
 }
 
-pub fn get_deprecated_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_deprecated_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::DEPRECATED_V1)
 }
 
-pub fn get_default_ignorable_code_point_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_default_ignorable_code_point_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::DEFAULT_IGNORABLE_CODE_POINT_V1)
 }
 
-pub fn get_diacritic_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_diacritic_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::DIACRITIC_V1)
 }
 
-pub fn get_emoji_modifier_base_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_emoji_modifier_base_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EMOJI_MODIFIER_BASE_V1)
 }
 
-pub fn get_emoji_component_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_emoji_component_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EMOJI_COMPONENT_V1)
 }
 
-pub fn get_emoji_modifier_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_emoji_modifier_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EMOJI_MODIFIER_V1)
 }
 
-pub fn get_emoji_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_emoji_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EMOJI_V1)
 }
 
-pub fn get_emoji_presentation_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_emoji_presentation_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EMOJI_PRESENTATION_V1)
 }
 
-pub fn get_extender_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_extender_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EXTENDER_V1)
 }
 
-pub fn get_extended_pictographic_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_extended_pictographic_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::EXTENDED_PICTOGRAPHIC_V1)
 }
 
-pub fn get_graph_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_graph_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::GRAPH_V1)
 }
 
-pub fn get_grapheme_base_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_grapheme_base_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::GRAPHEME_BASE_V1)
 }
 
-pub fn get_grapheme_extend_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_grapheme_extend_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::GRAPHEME_EXTEND_V1)
 }
 
-pub fn get_grapheme_link_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_grapheme_link_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::GRAPHEME_LINK_V1)
 }
 
-pub fn get_hex_digit_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_hex_digit_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::HEX_DIGIT_V1)
 }
 
-pub fn get_hyphen_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_hyphen_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::HYPHEN_V1)
 }
 
-pub fn get_id_continue_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_id_continue_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::ID_CONTINUE_V1)
 }
 
-pub fn get_ideographic_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_ideographic_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::IDEOGRAPHIC_V1)
 }
 
-pub fn get_id_start_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_id_start_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::ID_START_V1)
 }
 
-pub fn get_ids_binary_operator_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_ids_binary_operator_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::IDS_BINARY_OPERATOR_V1)
 }
 
-pub fn get_ids_trinary_operator_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_ids_trinary_operator_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::IDS_TRINARY_OPERATOR_V1)
 }
 
-pub fn get_join_control_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_join_control_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::JOIN_CONTROL_V1)
 }
 
-pub fn get_logical_order_exception_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_logical_order_exception_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::LOGICAL_ORDER_EXCEPTION_V1)
 }
 
-pub fn get_lowercase_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_lowercase_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::LOWERCASE_V1)
 }
 
-pub fn get_math_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_math_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::MATH_V1)
 }
 
-pub fn get_noncharacter_code_point_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_noncharacter_code_point_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::NONCHARACTER_CODE_POINT_V1)
 }
 
-pub fn get_nfc_inert_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_nfc_inert_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::NFC_INERT_V1)
 }
 
-pub fn get_nfd_inert_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_nfd_inert_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::NFD_INERT_V1)
 }
 
-pub fn get_nfkc_inert_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_nfkc_inert_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::NFKC_INERT_V1)
 }
 
-pub fn get_nfkd_inert_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_nfkd_inert_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::NFKD_INERT_V1)
 }
 
-pub fn get_pattern_syntax_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_pattern_syntax_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::PATTERN_SYNTAX_V1)
 }
 
-pub fn get_pattern_white_space_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_pattern_white_space_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::PATTERN_WHITE_SPACE_V1)
 }
 
-pub fn get_prepended_concatenation_mark_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_prepended_concatenation_mark_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::PREPENDED_CONCATENATION_MARK_V1)
 }
 
-pub fn get_print_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_print_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::PRINT_V1)
 }
 
-pub fn get_quotation_mark_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_quotation_mark_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::QUOTATION_MARK_V1)
 }
 
-pub fn get_radical_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_radical_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::RADICAL_V1)
 }
 
-pub fn get_regional_indicator_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_regional_indicator_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::REGIONAL_INDICATOR_V1)
 }
 
-pub fn get_soft_dotted_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_soft_dotted_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::SOFT_DOTTED_V1)
 }
 
-pub fn get_segment_starter_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_segment_starter_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::SEGMENT_STARTER_V1)
 }
 
-pub fn get_case_sensitive_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_case_sensitive_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::CASE_SENSITIVE_V1)
 }
 
-pub fn get_sentence_terminal_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_sentence_terminal_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::SENTENCE_TERMINAL_V1)
 }
 
-pub fn get_terminal_punctuation_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_terminal_punctuation_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::TERMINAL_PUNCTUATION_V1)
 }
 
-pub fn get_unified_ideograph_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_unified_ideograph_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::UNIFIED_IDEOGRAPH_V1)
 }
 
-pub fn get_uppercase_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_uppercase_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::UPPERCASE_V1)
 }
 
-pub fn get_variation_selector_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_variation_selector_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::VARIATION_SELECTOR_V1)
 }
 
-pub fn get_white_space_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_white_space_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::WHITE_SPACE_V1)
 }
 
-pub fn get_xdigit_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_xdigit_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::XDIGIT_V1)
 }
 
-pub fn get_xid_continue_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_xid_continue_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::XID_CONTINUE_V1)
 }
 
-pub fn get_xid_start_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D) -> UnisetResult {
+pub fn get_xid_start_property<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D) -> UnisetResult {
     get_prop(provider, key::XID_START_V1)
 }
 
@@ -299,7 +299,7 @@ pub fn get_xid_start_property<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?
 //
 
 /// Return a [`UnicodeSet`] for a particular value of the Bidi_Class Unicode enumerated property
-pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: BidiClass) -> UnisetResult {
+pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: BidiClass) -> UnisetResult {
     match enum_val {
         BidiClass::ArabicLetter => get_prop(provider, key::BIDI_CLASS_ARABIC_LETTER_V1),
         BidiClass::ArabicNumber => get_prop(provider, key::BIDI_CLASS_ARABIC_NUMBER_V1),
@@ -328,7 +328,7 @@ pub fn get_bidi_class_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Bidi_Paired_Bracket_Type Unicode enumerated property
-pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: BidiPairedBracketType) -> UnisetResult {
+pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: BidiPairedBracketType) -> UnisetResult {
     match enum_val {
         BidiPairedBracketType::Close => get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_CLOSE_V1),
         BidiPairedBracketType::None => get_prop(provider, key::BIDI_PAIRED_BRACKET_TYPE_NONE_V1),
@@ -337,7 +337,7 @@ pub fn get_bidi_paired_bracket_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeP
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Canonical_Combining_Class Unicode enumerated property
-pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: CanonicalCombiningClass) -> UnisetResult {
+pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: CanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         CanonicalCombiningClass::NotReordered => get_prop(provider, key::CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
         CanonicalCombiningClass::Overlay => get_prop(provider, key::CANONICAL_COMBINING_CLASS_OVERLAY_V1),
@@ -401,7 +401,7 @@ pub fn get_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, Unicode
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Decomposition_Type Unicode enumerated property
-pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: DecompositionType) -> UnisetResult {
+pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: DecompositionType) -> UnisetResult {
     match enum_val {
         DecompositionType::Can => get_prop(provider, key::DECOMPOSITION_TYPE_CAN_V1),
         DecompositionType::Com => get_prop(provider, key::DECOMPOSITION_TYPE_COM_V1),
@@ -425,7 +425,7 @@ pub fn get_decomposition_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePropert
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the East_Asian_Width Unicode enumerated property
-pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: EastAsianWidth) -> UnisetResult {
+pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: EastAsianWidth) -> UnisetResult {
     match enum_val {
         EastAsianWidth::Ambiguous => get_prop(provider, key::EAST_ASIAN_WIDTH_AMBIGUOUS_V1),
         EastAsianWidth::Fullwidth => get_prop(provider, key::EAST_ASIAN_WIDTH_FULLWIDTH_V1),
@@ -437,7 +437,7 @@ pub fn get_east_asian_width_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property
-pub fn get_general_category_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: GeneralCategory) -> UnisetResult {
+pub fn get_general_category_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: GeneralCategory) -> UnisetResult {
     match enum_val {
         GeneralCategory::Other => get_prop(provider, key::GENERAL_CATEGORY_OTHER_V1),
         GeneralCategory::Cntrl => get_prop(provider, key::GENERAL_CATEGORY_CNTRL_V1),
@@ -481,7 +481,7 @@ pub fn get_general_category_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Grapheme_Cluster_Break Unicode enumerated property
-pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: GraphemeClusterBreak) -> UnisetResult {
+pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: GraphemeClusterBreak) -> UnisetResult {
     match enum_val {
         GraphemeClusterBreak::Control => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_CONTROL_V1),
         GraphemeClusterBreak::CR => get_prop(provider, key::GRAPHEME_CLUSTER_BREAK_CR_V1),
@@ -505,7 +505,7 @@ pub fn get_grapheme_cluster_break_val_set<'d, D: DataProvider<'d, 'd, UnicodePro
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Hangul_Syllable_Type Unicode enumerated property
-pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: HangulSyllableType) -> UnisetResult {
+pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: HangulSyllableType) -> UnisetResult {
     match enum_val {
         HangulSyllableType::LeadingJamo => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LEADING_JAMO_V1),
         HangulSyllableType::LVSyllable => get_prop(provider, key::HANGUL_SYLLABLE_TYPE_LV_SYLLABLE_V1),
@@ -517,7 +517,7 @@ pub fn get_hangul_syllable_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePrope
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Indic_Positional_Category Unicode enumerated property
-pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: IndicPositionalCategory) -> UnisetResult {
+pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: IndicPositionalCategory) -> UnisetResult {
     match enum_val {
         IndicPositionalCategory::Bottom => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_V1),
         IndicPositionalCategory::BottomAndLeft => get_prop(provider, key::INDIC_POSITIONAL_CATEGORY_BOTTOM_AND_LEFT_V1),
@@ -539,7 +539,7 @@ pub fn get_indic_positional_category_val_set<'d, D: DataProvider<'d, 'd, Unicode
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Indic_Syllabic_Category Unicode enumerated property
-pub fn get_indic_syllabic_category_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: IndicSyllabicCategory) -> UnisetResult {
+pub fn get_indic_syllabic_category_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: IndicSyllabicCategory) -> UnisetResult {
     match enum_val {
         IndicSyllabicCategory::Avagraha => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_AVAGRAHA_V1),
         IndicSyllabicCategory::Bindu => get_prop(provider, key::INDIC_SYLLABIC_CATEGORY_BINDU_V1),
@@ -581,7 +581,7 @@ pub fn get_indic_syllabic_category_val_set<'d, D: DataProvider<'d, 'd, UnicodePr
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Joining_Group Unicode enumerated property
-pub fn get_joining_group_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: JoiningGroup) -> UnisetResult {
+pub fn get_joining_group_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: JoiningGroup) -> UnisetResult {
     match enum_val {
         JoiningGroup::AfricanFeh => get_prop(provider, key::JOINING_GROUP_AFRICAN_FEH_V1),
         JoiningGroup::AfricanNoon => get_prop(provider, key::JOINING_GROUP_AFRICAN_NOON_V1),
@@ -689,7 +689,7 @@ pub fn get_joining_group_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> 
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Joining_Type Unicode enumerated property
-pub fn get_joining_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: JoiningType) -> UnisetResult {
+pub fn get_joining_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: JoiningType) -> UnisetResult {
     match enum_val {
         JoiningType::JoinCausing => get_prop(provider, key::JOINING_TYPE_JOIN_CAUSING_V1),
         JoiningType::DualJoining => get_prop(provider, key::JOINING_TYPE_DUAL_JOINING_V1),
@@ -701,7 +701,7 @@ pub fn get_joining_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> +
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Line_Break Unicode enumerated property
-pub fn get_line_break_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: LineBreak) -> UnisetResult {
+pub fn get_line_break_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: LineBreak) -> UnisetResult {
     match enum_val {
         LineBreak::Ambiguous => get_prop(provider, key::LINE_BREAK_AMBIGUOUS_V1),
         LineBreak::Alphabetic => get_prop(provider, key::LINE_BREAK_ALPHABETIC_V1),
@@ -750,7 +750,7 @@ pub fn get_line_break_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Lead_Canonical_Combining_Class Unicode enumerated property
-pub fn get_lead_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: LeadCanonicalCombiningClass) -> UnisetResult {
+pub fn get_lead_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: LeadCanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         LeadCanonicalCombiningClass::NotReordered => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
         LeadCanonicalCombiningClass::Overlay => get_prop(provider, key::LEAD_CANONICAL_COMBINING_CLASS_OVERLAY_V1),
@@ -814,7 +814,7 @@ pub fn get_lead_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, Un
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the NFC_Quick_Check Unicode enumerated property
-pub fn get_nfc_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: NFCQuickCheck) -> UnisetResult {
+pub fn get_nfc_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: NFCQuickCheck) -> UnisetResult {
     match enum_val {
         NFCQuickCheck::Maybe => get_prop(provider, key::NFC_QUICK_CHECK_MAYBE_V1),
         NFCQuickCheck::No => get_prop(provider, key::NFC_QUICK_CHECK_NO_V1),
@@ -823,7 +823,7 @@ pub fn get_nfc_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the NFD_Quick_Check Unicode enumerated property
-pub fn get_nfd_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: NFDQuickCheck) -> UnisetResult {
+pub fn get_nfd_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: NFDQuickCheck) -> UnisetResult {
     match enum_val {
         NFDQuickCheck::No => get_prop(provider, key::NFD_QUICK_CHECK_NO_V1),
         NFDQuickCheck::Yes => get_prop(provider, key::NFD_QUICK_CHECK_YES_V1),
@@ -831,7 +831,7 @@ pub fn get_nfd_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the NFKC_Quick_Check Unicode enumerated property
-pub fn get_nfkc_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: NFKCQuickCheck) -> UnisetResult {
+pub fn get_nfkc_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: NFKCQuickCheck) -> UnisetResult {
     match enum_val {
         NFKCQuickCheck::Maybe => get_prop(provider, key::NFKC_QUICK_CHECK_MAYBE_V1),
         NFKCQuickCheck::No => get_prop(provider, key::NFKC_QUICK_CHECK_NO_V1),
@@ -840,7 +840,7 @@ pub fn get_nfkc_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the NFKD_Quick_Check Unicode enumerated property
-pub fn get_nfkd_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: NFKDQuickCheck) -> UnisetResult {
+pub fn get_nfkd_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: NFKDQuickCheck) -> UnisetResult {
     match enum_val {
         NFKDQuickCheck::No => get_prop(provider, key::NFKD_QUICK_CHECK_NO_V1),
         NFKDQuickCheck::Yes => get_prop(provider, key::NFKD_QUICK_CHECK_YES_V1),
@@ -848,7 +848,7 @@ pub fn get_nfkd_quick_check_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Numeric_Type Unicode enumerated property
-pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: NumericType) -> UnisetResult {
+pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: NumericType) -> UnisetResult {
     match enum_val {
         NumericType::Decimal => get_prop(provider, key::NUMERIC_TYPE_DECIMAL_V1),
         NumericType::Digit => get_prop(provider, key::NUMERIC_TYPE_DIGIT_V1),
@@ -858,7 +858,7 @@ pub fn get_numeric_type_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> +
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Sentence_Break Unicode enumerated property
-pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: SentenceBreak) -> UnisetResult {
+pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: SentenceBreak) -> UnisetResult {
     match enum_val {
         SentenceBreak::ATerm => get_prop(provider, key::SENTENCE_BREAK_ATERM_V1),
         SentenceBreak::Close => get_prop(provider, key::SENTENCE_BREAK_CLOSE_V1),
@@ -879,7 +879,7 @@ pub fn get_sentence_break_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M>
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Trail_Canonical_Combining_Class Unicode enumerated property
-pub fn get_trail_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: TrailCanonicalCombiningClass) -> UnisetResult {
+pub fn get_trail_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: TrailCanonicalCombiningClass) -> UnisetResult {
     match enum_val {
         TrailCanonicalCombiningClass::NotReordered => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_NOT_REORDERED_V1),
         TrailCanonicalCombiningClass::Overlay => get_prop(provider, key::TRAIL_CANONICAL_COMBINING_CLASS_OVERLAY_V1),
@@ -943,7 +943,7 @@ pub fn get_trail_canonical_combining_class_val_set<'d, D: DataProvider<'d, 'd, U
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Vertical_Orientation Unicode enumerated property
-pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: VerticalOrientation) -> UnisetResult {
+pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: VerticalOrientation) -> UnisetResult {
     match enum_val {
         VerticalOrientation::Rotated => get_prop(provider, key::VERTICAL_ORIENTATION_ROTATED_V1),
         VerticalOrientation::TransformedRotated => get_prop(provider, key::VERTICAL_ORIENTATION_TRANSFORMED_ROTATED_V1),
@@ -953,7 +953,7 @@ pub fn get_vertical_orientation_val_set<'d, D: DataProvider<'d, 'd, UnicodePrope
 }
 
 /// Return a [`UnicodeSet`] for a particular value of the Word_Break Unicode enumerated property
-pub fn get_word_break_val_set<'d, D: DataProvider<'d, 'd, UnicodeProperty_M> + ?Sized>(provider: &D, enum_val: WordBreak) -> UnisetResult {
+pub fn get_word_break_val_set<'d, D: DataProvider<'d, 'd, UnicodePropertyMarker> + ?Sized>(provider: &D, enum_val: WordBreak) -> UnisetResult {
     match enum_val {
         WordBreak::CR => get_prop(provider, key::WORD_BREAK_CR_V1),
         WordBreak::DoubleQuote => get_prop(provider, key::WORD_BREAK_DOUBLE_QUOTE_V1),

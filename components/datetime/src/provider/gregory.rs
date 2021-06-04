@@ -18,7 +18,7 @@ pub struct DatesV1 {
 icu_provider::impl_data_marker_no_lifetime!(
     DatesV1,
     /// Marker type for [`DatesV1`]
-    DatesV1_M
+    DatesV1Marker
 );
 
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -37,7 +37,7 @@ pub struct DateSymbolsV1 {
 icu_provider::impl_data_marker_no_lifetime!(
     DateSymbolsV1,
     /// Marker type for [`DateSymbolsV1`]
-    DateSymbolsV1_M
+    DateSymbolsV1Marker
 );
 
 #[derive(Debug, PartialEq, Clone, Default)]

@@ -32,5 +32,5 @@ pub struct LikelySubtagsV1 {
 icu_provider::impl_data_marker_no_lifetime!(
     LikelySubtagsV1,
     /// Marker type for [`LikelySubtagsV1`]
-    LikelySubtagsV1_M
+    LikelySubtagsV1Marker
 );

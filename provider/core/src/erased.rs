@@ -66,15 +66,14 @@ impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 }
 
 /// Marker type for [`ErasedDataStruct`].
-#[allow(non_camel_case_types)]
-pub struct ErasedDataStruct_M {}
+pub struct ErasedDataStructMarker {}
 
-impl<'s> DataMarker<'s> for ErasedDataStruct_M {
+impl<'s> DataMarker<'s> for ErasedDataStructMarker {
     type Yokeable = &'static dyn ErasedDataStruct;
     type Cart = dyn ErasedDataStruct;
 }
 
-impl<'d, M> crate::dynutil::UpcastDataPayload<'d, 'static, M> for ErasedDataStruct_M
+impl<'d, M> crate::dynutil::UpcastDataPayload<'d, 'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
@@ -88,7 +87,7 @@ where
     ///   cart is the result of casting the whole input Yoke to `ErasedDataStruct`
     /// - `Yoke<Y, _>` (fully owned) => `Yoke<S, Rc<dyn ErasedDataStruct>>`, by casting the
     ///   whole input Yoke to `ErasedDataStruct` as above
-    fn upcast(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStruct_M> {
+    fn upcast(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
             Borrowed(yoke) => {
@@ -112,7 +111,7 @@ where
     }
 }
 
-impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
+impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a
     /// concrete type.
     ///
@@ -122,7 +121,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     ///
     /// Internally, this method reverses the transformation performed by
     /// [`UpcastDataPayload::upcast`](crate::dynutil::UpcastDataPayload::upcast) as implemented
-    /// for [`ErasedDataStruct_M`].
+    /// for [`ErasedDataStructMarker`].
     ///
     /// # Examples
     ///
@@ -134,7 +133,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     ///
     /// let provider = HelloWorldProvider::new_with_placeholder_data();
     ///
-    /// let erased_payload: DataPayload<ErasedDataStruct_M> = provider
+    /// let erased_payload: DataPayload<ErasedDataStructMarker> = provider
     ///     .load_payload(&DataRequest {
     ///         resource_path: ResourcePath {
     ///             key: key::HELLO_WORLD_V1,
@@ -148,7 +147,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     ///     .take_payload()
     ///     .expect("Data should be present");
     ///
-    /// let downcast_payload: DataPayload<HelloWorldV1_M> = erased_payload
+    /// let downcast_payload: DataPayload<HelloWorldV1Marker> = erased_payload
     ///     .downcast()
     ///     .expect("Types should match");
     ///
@@ -208,7 +207,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
                     generic: Some(TypeId::of::<M::Cart>()),
                 })
             }
-            // This is unreachable because ErasedDataStruct_M cannot be fully owned, since it
+            // This is unreachable because ErasedDataStructMarker cannot be fully owned, since it
             // contains a reference.
             Owned(_) => unreachable!(),
         }
@@ -251,19 +250,19 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStruct_M>, Error>;
+    ) -> Result<DataResponse<'d, 'static, ErasedDataStructMarker>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, 'static, ErasedDataStruct_M>,
+    T: DataProvider<'d, 'static, ErasedDataStructMarker>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStruct_M>, Error> {
-        DataProvider::<ErasedDataStruct_M>::load_payload(self, req)
+    ) -> Result<DataResponse<'d, 'static, ErasedDataStructMarker>, Error> {
+        DataProvider::<ErasedDataStructMarker>::load_payload(self, req)
     }
 }
 

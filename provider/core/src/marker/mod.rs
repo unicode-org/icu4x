@@ -15,7 +15,7 @@ use yoke::Yokeable;
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
 ///
-/// By convention, the non-standard `_M` suffix is used by types implementing DataMarker.
+/// By convention, the non-standard `Marker` suffix is used by types implementing DataMarker.
 ///
 /// In addition to a marker type implementing DataMarker, the following impls must also be present
 /// for the data struct:
@@ -39,10 +39,9 @@ use yoke::Yokeable;
 ///     message: Cow<'s, str>,
 /// }
 ///
-/// #[allow(non_camel_case_types)]
-/// struct MyDataStruct_M;
+/// struct MyDataStructMarker;
 ///
-/// impl<'s> DataMarker<'s> for MyDataStruct_M {
+/// impl<'s> DataMarker<'s> for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
 ///
 ///     // Note: the cart could also be just `str` since
@@ -83,7 +82,7 @@ use yoke::Yokeable;
 /// let s = Rc::from(MyDataStruct {
 ///     message: Cow::Borrowed("Hello World")
 /// });
-/// let payload = DataPayload::<MyDataStruct_M>::from_partial_owned(s);
+/// let payload = DataPayload::<MyDataStructMarker>::from_partial_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
 pub trait DataMarker<'s> {

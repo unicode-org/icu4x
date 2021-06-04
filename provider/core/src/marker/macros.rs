@@ -23,7 +23,6 @@ macro_rules! unsafe_impl_data_marker_with_lifetime {
     };
     ($struct:ident < $s:lifetime >, $(#[$meta:meta])* $marker:ident) => {
         $(#[$meta])*
-        #[allow(non_camel_case_types)]
         pub struct $marker {}
         impl<$s> $crate::DataMarker<$s> for $marker {
             type Yokeable = $struct<'static>;
@@ -58,7 +57,6 @@ macro_rules! unsafe_impl_data_marker_with_lifetime {
 macro_rules! impl_data_marker_no_lifetime {
     ($struct:ident, $(#[$meta:meta])* $marker:ident) => {
         $(#[$meta])*
-        #[allow(non_camel_case_types)]
         pub struct $marker {}
         impl<'s> $crate::DataMarker<'s> for $marker {
             type Yokeable = $struct;

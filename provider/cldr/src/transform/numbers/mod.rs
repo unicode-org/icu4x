@@ -99,11 +99,11 @@ impl NumbersProvider {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1_M> for NumbersProvider {
+impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1Marker> for NumbersProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, DecimalSymbolsV1_M>, DataError> {
+    ) -> Result<DataResponse<'d, 's, DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let cldr_langid: CldrLangID = langid.clone().into();
@@ -139,7 +139,7 @@ impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1_M> for NumbersProvider {
 }
 
 icu_provider::impl_dyn_provider!(NumbersProvider, {
-    _ => DecimalSymbolsV1_M,
+    _ => DecimalSymbolsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for NumbersProvider {
@@ -202,7 +202,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let ar_decimal: DataPayload<DecimalSymbolsV1_M> = provider
+    let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::SYMBOLS_V1,

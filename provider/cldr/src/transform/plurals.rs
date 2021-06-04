@@ -77,11 +77,11 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, PluralRuleStringsV1_M> for PluralsProvider<'d> {
+impl<'d, 's> DataProvider<'d, 's, PluralRuleStringsV1Marker> for PluralsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, PluralRuleStringsV1_M>, DataError> {
+    ) -> Result<DataResponse<'d, 's, PluralRuleStringsV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req.try_langid()?.clone().into();
@@ -99,7 +99,7 @@ impl<'d, 's> DataProvider<'d, 's, PluralRuleStringsV1_M> for PluralsProvider<'d>
 }
 
 icu_provider::impl_dyn_provider!(PluralsProvider<'d>, {
-    _ => PluralRuleStringsV1_M,
+    _ => PluralRuleStringsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
@@ -193,7 +193,7 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: DataPayload<PluralRuleStringsV1_M> = provider
+    let cs_rules: DataPayload<PluralRuleStringsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::CARDINAL_V1,

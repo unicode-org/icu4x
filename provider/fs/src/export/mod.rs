@@ -12,7 +12,7 @@
 //! ```
 //! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
-//! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1_M};
+//! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
 //! use icu_provider::export::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
@@ -51,9 +51,9 @@
 //!         },
 //!     }
 //! };
-//! let source_response: DataResponse<HelloWorldV1_M> =
+//! let source_response: DataResponse<HelloWorldV1Marker> =
 //!     source_provider.load_payload(&req).unwrap();
-//! let fs_response: DataResponse<HelloWorldV1_M> =
+//! let fs_response: DataResponse<HelloWorldV1Marker> =
 //!     fs_provider.load_payload(&req).unwrap();
 //!
 //! assert_eq!(

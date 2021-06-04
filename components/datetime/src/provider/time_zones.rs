@@ -63,7 +63,7 @@ pub struct TimeZoneFormatsV1<'s> {
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     TimeZoneFormatsV1<'s>,
     /// Marker type for [`TimeZoneFormatsV1`]
-    TimeZoneFormatsV1_M,
+    TimeZoneFormatsV1Marker,
     TEMP_ZCF
 );
 
@@ -80,7 +80,7 @@ map_access!(ExemplarCitiesV1<'s>[str] => Cow<'s, str>: 's);
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     ExemplarCitiesV1<'s>,
     /// Marker type for [`ExemplarCitiesV1`]
-    ExemplarCitiesV1_M,
+    ExemplarCitiesV1Marker,
     TEMP_ZCF
 );
 
@@ -97,7 +97,7 @@ map_access!(MetaZoneGenericNamesLongV1<'s>[str] => Cow<'s, str>: 's);
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneGenericNamesLongV1<'s>,
     /// Marker type for [`MetaZoneGenericNamesLongV1`]
-    MetaZoneGenericNamesLongV1_M,
+    MetaZoneGenericNamesLongV1Marker,
     TEMP_ZCF
 );
 
@@ -114,7 +114,7 @@ map_access!(MetaZoneGenericNamesShortV1<'s>[str] => Cow<'s, str>: 's);
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneGenericNamesShortV1<'s>,
     /// Marker type for [`MetaZoneGenericNamesShortV1`]
-    MetaZoneGenericNamesShortV1_M,
+    MetaZoneGenericNamesShortV1Marker,
     TEMP_ZCF
 );
 
@@ -132,7 +132,7 @@ map_access!(MetaZoneSpecificNamesLongV1<'s>[str] => MetaZoneSpecificNamesV1<'s>:
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesLongV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesLongV1`]
-    MetaZoneSpecificNamesLongV1_M,
+    MetaZoneSpecificNamesLongV1Marker,
     TEMP_ZCF
 );
 
@@ -150,7 +150,7 @@ map_access!(MetaZoneSpecificNamesShortV1<'s>[str] => MetaZoneSpecificNamesV1<'s>
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesShortV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesShortV1`]
-    MetaZoneSpecificNamesShortV1_M,
+    MetaZoneSpecificNamesShortV1Marker,
     TEMP_ZCF
 );
 
@@ -168,6 +168,6 @@ map_access!(MetaZoneSpecificNamesV1<'s>[TinyStr8] => Cow<'s, str>: 's);
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesV1`]
-    MetaZoneSpecificNamesV1_M,
+    MetaZoneSpecificNamesV1Marker,
     TEMP_ZCF
 );

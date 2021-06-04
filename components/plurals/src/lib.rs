@@ -74,7 +74,7 @@ pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
-use provider::{resolver, PluralRuleStringsV1, PluralRuleStringsV1_M};
+use provider::{resolver, PluralRuleStringsV1, PluralRuleStringsV1Marker};
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -270,7 +270,7 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, 's: 'd, D: DataProvider<'d, 's, PluralRuleStringsV1_M> + ?Sized>(
+    pub fn try_new<'d, 's: 'd, D: DataProvider<'d, 's, PluralRuleStringsV1Marker> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,

@@ -30,7 +30,7 @@ use yoke::*;
 ///     data: &local_data,
 /// };
 ///
-/// let payload: DataPayload<HelloWorldV1_M> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
+/// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
 ///     .take_payload()
 ///     .expect("Data should be present");
