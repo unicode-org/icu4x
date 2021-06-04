@@ -45,7 +45,7 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1> = data_provider
+//! let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1_M> = data_provider
 //!     .load_payload(&DataRequest {
 //!         resource_path: ResourcePath {
 //!             key: icu_plurals::provider::key::CARDINAL_V1,

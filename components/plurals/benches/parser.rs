@@ -19,7 +19,7 @@ fn parser(c: &mut Criterion) {
     let mut rules = vec![];
 
     for langid in &fixture_data.langs {
-        let data_payload: DataPayload<icu_plurals::provider::PluralRuleStringsV1> = provider
+        let data_payload: DataPayload<icu_plurals::provider::PluralRuleStringsV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: icu_plurals::provider::key::CARDINAL_V1,
@@ -38,7 +38,7 @@ fn parser(c: &mut Criterion) {
 
         for i in r {
             if let Some(x) = i {
-                rules.push(x.clone());
+                rules.push(x.to_string());
             }
         }
     }

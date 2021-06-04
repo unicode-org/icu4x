@@ -12,7 +12,7 @@ use icu_datetime::{
     DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_datetime::{
-    provider::{gregory::DatesV1, key::GREGORY_V1},
+    provider::{gregory::DatesV1_M, key::GREGORY_V1},
     DateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -105,7 +105,7 @@ fn test_dayperiod_patterns() {
     let format_options = DateTimeFormatOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
-        let mut data: DataPayload<DatesV1> = provider
+        let mut data: DataPayload<DatesV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_V1,
@@ -169,7 +169,7 @@ fn test_time_zone_patterns() {
         datetime.time_zone.metazone_id = config.metazone_id.take();
         datetime.time_zone.time_variant = config.time_variant.take();
 
-        let mut data: DataPayload<DatesV1> = date_provider
+        let mut data: DataPayload<DatesV1_M> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_V1,

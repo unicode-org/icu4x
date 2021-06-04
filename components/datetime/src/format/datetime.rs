@@ -246,11 +246,11 @@ mod tests {
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
         use crate::mock::datetime::MockDateTime;
-        use crate::provider::gregory::DatesV1;
+        use crate::provider::gregory::DatesV1_M;
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
-        let data: DataPayload<'_, DatesV1> = provider
+        let data: DataPayload<DatesV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: provider::key::GREGORY_V1,

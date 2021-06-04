@@ -632,10 +632,10 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        provider::{gregory::DatesV1, key::GREGORY_V1},
+        provider::{gregory::DatesV1_M, key::GREGORY_V1},
     };
 
-    fn get_data_payload() -> DataPayload<'static, DatesV1> {
+    fn get_data_payload() -> DataPayload<'static, 'static, DatesV1_M> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
