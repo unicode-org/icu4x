@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622673648861,
+  "lastUpdate": 1622766420608,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6869,6 +6869,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34324446,
             "range": "± 749140",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "823c497bc9854ceae5f20d46890117d76aea9af3",
+          "message": "Add quick-and-dirty static data provider for WASM testing (#759)\n\n* Add quick-and-dirty static data provider for WASM testing\r\n\r\n* small amount of docs\r\n\r\n* Review fixes\r\n\r\n* ci fixes\r\n\r\n* more ci",
+          "timestamp": "2021-06-03T17:20:50-07:00",
+          "tree_id": "015200164d516fabb81310fcfb970afce5188874",
+          "url": "https://github.com/unicode-org/icu4x/commit/823c497bc9854ceae5f20d46890117d76aea9af3"
+        },
+        "date": 1622766411564,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35425954,
+            "range": "± 1541257",
             "unit": "ns/iter"
           }
         ]
