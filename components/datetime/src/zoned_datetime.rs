@@ -96,13 +96,13 @@ impl<'d> ZonedDateTimeFormat<'d> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<'d, provider::gregory::DatesV1> + ?Sized,
-        ZP: DataProvider<'d, provider::time_zones::TimeZoneFormatsV1<'d>>
-            + DataProvider<'d, provider::time_zones::ExemplarCitiesV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>
+        DP: DataProvider<'d, 'd, provider::gregory::DatesV1Marker> + ?Sized,
+        ZP: DataProvider<'d, 'd, provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();

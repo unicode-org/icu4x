@@ -13,7 +13,7 @@ use std::ptr;
 /// Opaque type for use behind a pointer, is [`FixedDecimalFormat`]
 ///
 /// Can be obtained via [`icu4x_fixed_decimal_format_create()`] and destroyed via [`icu4x_fixed_decimal_format_destroy()`]
-pub type ICU4XFixedDecimalFormat<'d> = FixedDecimalFormat<'d>;
+pub type ICU4XFixedDecimalFormat<'d> = FixedDecimalFormat<'d, 'static>;
 
 #[repr(C)]
 /// This is the result returned by [`icu4x_fixed_decimal_format_create()`]

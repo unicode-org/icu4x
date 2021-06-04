@@ -38,16 +38,19 @@ This crate also contains some concrete implementations for testing purposes:
 
 ### Types and Lifetimes
 
-All types `T` compatible with [`Cow`](std::borrow::Cow) and [`Debug`](std::fmt::Debug) can be passed through
-the data provider.
+Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
+associated with a marker type implementing [`DataMarker`].
 
-Most [`DataProvider`] traits take a lifetime argument `'d`. This represents the lifetime of data
-returned by the [`DataProvider`], which is a [`Cow<'d, T>`](std::borrow::Cow).
+Most [`DataProvider`] traits take two lifetime arguments: `'d` and `'s`. These represent data
+lifetimes for different ownership models of the data.
 
-Objects returned by [`DataProvider`] can have their own borrowed fields, which enables zero-copy
-deserialization. By convention, the lifetime `'s` is used to constrain data struct fields. In
-general, `'s` should exceed `'d` (i.e., `'s: 'd`), such that the data is valid for as long as
-the [`Cow<'d, T>`](std::borrow::Cow) is valid.
+- `'d` is the lifetime of a reference to the whole data struct being borrowed.
+- `'s` is the lifetime of fields within a data struct.
+
+Data structs and [`DataMarker`] use the `'s` lifetime, and this is also the lifetime that the
+[`Yokeable`] implementation should handle.
+
+`'s` should exceed `'d` (i.e., `'s: 'd`). If a data struct is fully owned, `'s: 'static`.
 
 ### Additional Traits
 
@@ -100,6 +103,7 @@ This trait is normally implemented using the [`impl_dyn_provider!`] macro.
 [`ErasedDataProvider`]: erased::ErasedDataProvider
 [`SerdeDeDataProvider`]: serde::SerdeDeDataProvider
 [`SerdeSeDataStruct`]: serde::SerdeSeDataStruct
+[`Yokeable`]: yoke::Yokeable
 [`impl_dyn_provider!`]: impl_dyn_provider
 
 ## More Information

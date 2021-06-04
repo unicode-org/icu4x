@@ -28,3 +28,9 @@ pub struct LikelySubtagsV1 {
     pub region: Vec<(TinyStr4, LanguageIdentifier)>,
     pub und: LanguageIdentifier,
 }
+
+icu_provider::impl_data_marker_no_lifetime!(
+    LikelySubtagsV1,
+    /// Marker type for [`LikelySubtagsV1`]
+    LikelySubtagsV1Marker
+);

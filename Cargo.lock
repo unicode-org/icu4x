@@ -998,6 +998,7 @@ dependencies = [
  "thiserror",
  "tinystr",
  "writeable",
+ "yoke",
 ]
 
 [[package]]
