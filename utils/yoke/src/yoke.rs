@@ -295,6 +295,34 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
+impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
+    /// Construct a new [`Yoke`] from static data. There will be no
+    /// references to `cart` here since [`Yokeable`]s are `'static`,
+    /// this is good for e.g. constructing fully owned
+    /// [`Yoke`]s with no internal borrowing.
+    ///
+    /// This is similar to [`Yoke::new_owned()`] but it does not allow you to
+    /// mix the [`Yoke`] with borrowed data. This is primarily useful
+    /// for using [`Yoke`] in generic scenarios.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use yoke::Yoke;
+    /// # use std::borrow::Cow;
+    /// # use std::rc::Rc;
+    ///
+    /// let owned: Cow<str> = "hello".to_owned().into();
+    /// // this yoke can be intermingled with actually-borrowed Yokes
+    /// let yoke: Yoke<Cow<str>, ()> = Yoke::new_always_owned(owned);
+    ///
+    /// assert_eq!(yoke.get(), "hello");
+    /// ```
+    pub fn new_always_owned(yokeable: Y) -> Self {
+        Self { yokeable, cart: () }
+    }
+}
+
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     /// Construct a new [`Yoke`] from static data. There will be no
     /// references to `cart` here since [`Yokeable`]s are `'static`,
@@ -303,6 +331,9 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     ///
     /// This can be paired with [`Yoke::attach_to_option_cart()`] to mix owned
     /// and borrowed data.
+    ///
+    /// If you do not wish to pair this with borrowed data, [`Yoke::new_always_owned()`] can
+    /// be used to get a [`Yoke`] API on always-owned data.
     ///
     /// # Example
     ///
