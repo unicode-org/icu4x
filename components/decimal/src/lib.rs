@@ -88,7 +88,10 @@ pub struct FixedDecimalFormat<'d, 's> {
 
 impl<'d, 's> FixedDecimalFormat<'d, 's> {
     /// Creates a new [`FixedDecimalFormat`] from locale data and an options bag.
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, 's, provider::DecimalSymbolsV1_M> + ?Sized>(
+    pub fn try_new<
+        T: Into<Locale>,
+        D: DataProvider<'d, 's, provider::DecimalSymbolsV1_M> + ?Sized,
+    >(
         locale: T,
         data_provider: &D,
         options: options::FixedDecimalFormatOptions,

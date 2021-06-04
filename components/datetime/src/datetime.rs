@@ -85,7 +85,10 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, 'd, provider::gregory::DatesV1_M> + ?Sized>(
+    pub fn try_new<
+        T: Into<Locale>,
+        D: DataProvider<'d, 'd, provider::gregory::DatesV1_M> + ?Sized,
+    >(
         locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,

@@ -14,12 +14,12 @@ use std::rc::Rc;
 /// The intention is for `ZeroCopyFrom` to produce a struct from a cart with as little work as
 /// possible. Although it is technically possible to implement `ZeroCopyFrom` without being
 /// zero-copy (using heap allocations), doing so defeats the purpose of `ZeroCopyFrom`.
-/// 
+///
 /// For example, `impl ZeroCopyFrom<C> for Cow<str>` should return a `Cow::Borrowed` pointing at
 /// data in the cart `C`, even if the cart is itself fully owned.
 ///
 /// # Examples
-/// 
+///
 /// Implementing `ZeroCopyFrom` on a custom data struct:
 ///
 /// ```

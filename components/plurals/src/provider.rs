@@ -6,8 +6,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use std::borrow::Cow;
 use icu_provider::yoke::ZeroCopyFrom;
+use std::borrow::Cow;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};

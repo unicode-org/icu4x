@@ -6,10 +6,7 @@ use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
-use icu_datetime::provider::{
-    key,
-    time_zones::*,
-};
+use icu_datetime::provider::{key, time_zones::*};
 use icu_provider::{
     iter::{IterableDataProviderCore, KeyedDataProvider},
     prelude::*,

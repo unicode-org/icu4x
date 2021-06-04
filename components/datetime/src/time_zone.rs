@@ -90,7 +90,8 @@ pub(super) struct TimeZoneFormat<'d> {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<'d, 'd, provider::time_zones::TimeZoneFormatsV1_M>,
     /// The exemplar cities for time zones.
-    pub(super) exemplar_cities: Option<DataPayload<'d, 'd, provider::time_zones::ExemplarCitiesV1_M>>,
+    pub(super) exemplar_cities:
+        Option<DataPayload<'d, 'd, provider::time_zones::ExemplarCitiesV1_M>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
         Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1_M>>,

@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 /// Temporary macro to implement data struct boilerplate for a struct with a lifetime.
-/// 
+///
 /// `ZeroCopyFrom` must still be implemented manually when this macro is used.
-/// 
+///
 /// TODO(#761): Will be replaced by a custom derive proc macro.
-/// 
+///
 /// # Safety
-/// 
+///
 /// The data struct must have a covariant lifetime.
 #[macro_export]
 macro_rules! unsafe_impl_data_marker_with_lifetime {
@@ -51,9 +51,8 @@ macro_rules! unsafe_impl_data_marker_with_lifetime {
     };
 }
 
-
 /// Temporary macro to implement data struct boilerplate for a struct with no lifetime.
-/// 
+///
 /// TODO(#761): Will be replaced by a custom derive proc macro.
 #[macro_export]
 macro_rules! impl_data_marker_no_lifetime {
