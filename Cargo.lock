@@ -850,6 +850,7 @@ version = "0.1.0"
 dependencies = [
  "fixed_decimal",
  "icu_decimal",
+ "icu_locale_canonicalizer",
  "icu_locid",
  "icu_plurals",
  "icu_provider",
