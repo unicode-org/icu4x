@@ -4,4 +4,4 @@
 
 mod codepointtrie;
 mod error;
-// mod fast;
+mod impl_const;
