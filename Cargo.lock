@@ -1063,6 +1063,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_static"
+version = "0.2.0"
+dependencies = [
+ "icu",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
