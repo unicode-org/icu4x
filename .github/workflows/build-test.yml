@@ -110,7 +110,7 @@ jobs:
         run: |
           npm install
           npm test
-        working-directory: ./ffi/capi/wasm-test
+        working-directory: ./ffi/wasm/test
 
   # Lint job - runs all "cargo make" linting commands
   lint:

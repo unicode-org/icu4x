@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { FixedDecimal, BufferWritable } from "../wasm-lib/high-level.mjs"
+import { FixedDecimal, BufferWritable } from "../lib/high-level.mjs"
 
 test("convert a simple decimal to a string", t => {
   const decimal = new FixedDecimal(BigInt(1234));
