@@ -97,7 +97,7 @@ where
 {
     Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
-    Owned(Yoke<M::Yokeable, Option<&'static ()>>),
+    Owned(Yoke<M::Yokeable, ()>),
 }
 
 /// A wrapper around the payload returned in a [`DataResponse`].
@@ -243,7 +243,7 @@ where
     #[inline]
     pub fn from_owned(data: M::Yokeable) -> Self {
         Self {
-            inner: DataPayloadInner::Owned(Yoke::new_owned(data)),
+            inner: DataPayloadInner::Owned(Yoke::new_always_owned(data)),
         }
     }
 

@@ -194,7 +194,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
                     Err(any_rc) => any_rc,
                 };
                 // Check for Case 3: an Owned Yoke.
-                let y2 = any_rc.downcast::<Yoke<M::Yokeable, Option<&'static ()>>>();
+                let y2 = any_rc.downcast::<Yoke<M::Yokeable, ()>>();
                 let any_rc = match y2 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
                         Ok(yoke) => return Ok(DataPayload { inner: Owned(yoke) }),
