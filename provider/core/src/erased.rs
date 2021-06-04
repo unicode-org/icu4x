@@ -168,12 +168,10 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
                 let y1 = any_ref.downcast_ref::<M::Cart>();
                 match y1 {
                     Some(t_ref) => Ok(DataPayload::from_borrowed(t_ref)),
-                    None => {
-                        Err(Error::MismatchedType {
-                            actual: Some(any_ref.type_id()),
-                            generic: Some(TypeId::of::<M::Cart>()),
-                        })
-                    }
+                    None => Err(Error::MismatchedType {
+                        actual: Some(any_ref.type_id()),
+                        generic: Some(TypeId::of::<M::Cart>()),
+                    }),
                 }
             }
             RcStruct(yoke) => {
