@@ -41,11 +41,13 @@ impl Default for StaticDataProvider {
     }
 }
 
-impl<'d, T> DataProvider<'d, T> for StaticDataProvider
+impl<'d, 's, M> DataProvider<'d, 's, M> for StaticDataProvider
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + 'd,
+    M: DataMarker<'s>,
+    // TODO(#667): Use zero-copy Deserialize instead of DeserializeOwned
+    M::Yokeable: serde::de::DeserializeOwned,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
         let components = req.resource_path.key.get_components();
         let mut dir = &self.json;
         let mut file: Option<&str> = None;
@@ -68,7 +70,7 @@ where
             }
         }
         let file = file.ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))?;
-        let data: T = T::deserialize(&mut serde_json::Deserializer::from_reader(file.as_bytes()))
+        let data: M::Yokeable = M::Yokeable::deserialize(&mut serde_json::Deserializer::from_reader(file.as_bytes()))
             .map_err(|e| DataError::Resource(Box::new(e)))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
