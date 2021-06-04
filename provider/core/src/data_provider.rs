@@ -152,16 +152,6 @@ where
     }
 }
 
-impl<'d, 's, M> PartialEq for DataPayload<'d, 's, M>
-where
-    M: DataMarker<'s>,
-    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: PartialEq,
-{
-    fn eq(&self, _other: &Self) -> bool {
-        todo!("#753")
-    }
-}
-
 impl<'d, 's, M> DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
