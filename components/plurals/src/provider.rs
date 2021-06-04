@@ -7,6 +7,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use std::borrow::Cow;
+use icu_provider::prelude::*;
+use icu_provider::yoke::*;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
@@ -33,12 +35,15 @@ pub struct PluralRuleStringsV1<'s> {
     pub many: Option<Cow<'s, str>>,
 }
 
-// FIXME: Reconsider this
-pub struct PluralRuleStringsV1Helper {}
-impl<'s> icu_provider::prelude::DataMarker<'s> for PluralRuleStringsV1Helper {
+/// Marker type for [`PluralRuleStringsV1`].
+#[allow(non_camel_case_types)]
+pub struct PluralRuleStringsV1_M {}
+
+impl<'s> DataMarker<'s> for PluralRuleStringsV1_M {
     type Yokeable = PluralRuleStringsV1<'static>;
     type Cart = PluralRuleStringsV1<'s>;
 }
+
 unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for PluralRuleStringsV1<'static> {
     type Output = PluralRuleStringsV1<'a>;
     fn transform(&'a self) -> &'a Self::Output {
@@ -55,6 +60,18 @@ unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for PluralRuleStringsV1<'static
             f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
                 self,
             ))
+        }
+    }
+}
+
+impl<'s> ZeroCopyFrom<PluralRuleStringsV1<'s>> for PluralRuleStringsV1<'static> {
+    fn zero_copy_from<'b>(this: &'b PluralRuleStringsV1<'s>) -> PluralRuleStringsV1<'b> {
+        PluralRuleStringsV1 {
+            zero: this.zero.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            one: this.one.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            two: this.two.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            few: this.few.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            many: this.many.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
         }
     }
 }

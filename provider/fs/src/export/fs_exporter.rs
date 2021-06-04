@@ -11,7 +11,7 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStructWrap;
+use icu_provider::serde::SerdeSeDataStruct_M;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
@@ -70,17 +70,17 @@ impl Drop for FilesystemExporter {
     }
 }
 
-impl<'d, 's> DataExporter<'d, SerdeSeDataStructWrap<'d, 's>> for FilesystemExporter {
+impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStruct_M> for FilesystemExporter {
     fn put_payload(
         &mut self,
-        req: &DataRequest,
-        obj: &SerdeSeDataStructWrap<'d, 's>,
+        req: DataRequest,
+        obj: DataPayload<'d, 's, SerdeSeDataStruct_M>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         path_buf.extend(req.resource_path.options.get_components().iter());
         log::trace!("Writing: {}", req);
-        self.write_to_path(path_buf, obj.as_serialize())?;
+        self.write_to_path(path_buf, obj.get().as_serialize())?;
         Ok(())
     }
 
