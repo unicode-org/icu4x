@@ -8,10 +8,7 @@ use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
 use icu_datetime::provider::{
     key,
-    time_zones::{
-        ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1,
-        MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneFormatsV1,
-    },
+    time_zones::*,
 };
 use icu_provider::{
     iter::{IterableDataProviderCore, KeyedDataProvider},
@@ -103,9 +100,9 @@ impl<'d> IterableDataProviderCore for TimeZonesProvider<'d> {
 }
 
 macro_rules! impl_data_provider {
-    ($id: ident: $lt: lifetime) => {
-        impl<$lt, 'dp: $lt> DataProvider<'dp, $id<'dp>> for TimeZonesProvider<$lt> {
-            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'dp, $id<'dp>>, DataError> {
+    ($id:ident: $lt:lifetime, $marker:ident) => {
+        impl<$lt, 'dp: $lt> DataProvider<'dp, 'dp, $marker> for TimeZonesProvider<$lt> {
+            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'dp, 'dp, $marker>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
                 let time_zones = match self
@@ -127,29 +124,29 @@ macro_rules! impl_data_provider {
 }
 
 icu_provider::impl_dyn_provider!(TimeZonesProvider<'d>, {
-    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1,
-    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1,
-    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1,
-    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1,
-    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1,
-    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1,
-}, ERASED, 'd, 's);
+    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1_M,
+    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1_M,
+    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1_M,
+    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1_M,
+    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1_M,
+    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1_M,
+}, ERASED, 'd);
 
 icu_provider::impl_dyn_provider!(TimeZonesProvider<'d>, {
-    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1,
-    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1,
-    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1,
-    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1,
-    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1,
-    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1,
+    key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1_M,
+    key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1_M,
+    key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1_M,
+    key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1_M,
+    key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1_M,
+    key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1_M,
 }, SERDE_SE, 'd, 's);
 
-impl_data_provider!(TimeZoneFormatsV1: 'd);
-impl_data_provider!(ExemplarCitiesV1: 'd);
-impl_data_provider!(MetaZoneGenericNamesLongV1: 'd);
-impl_data_provider!(MetaZoneGenericNamesShortV1: 'd);
-impl_data_provider!(MetaZoneSpecificNamesLongV1: 'd);
-impl_data_provider!(MetaZoneSpecificNamesShortV1: 'd);
+impl_data_provider!(TimeZoneFormatsV1: 'd, TimeZoneFormatsV1_M);
+impl_data_provider!(ExemplarCitiesV1: 'd, ExemplarCitiesV1_M);
+impl_data_provider!(MetaZoneGenericNamesLongV1: 'd, MetaZoneGenericNamesLongV1_M);
+impl_data_provider!(MetaZoneGenericNamesShortV1: 'd, MetaZoneGenericNamesShortV1_M);
+impl_data_provider!(MetaZoneSpecificNamesLongV1: 'd, MetaZoneSpecificNamesLongV1_M);
+impl_data_provider!(MetaZoneSpecificNamesShortV1: 'd, MetaZoneSpecificNamesShortV1_M);
 
 #[cfg(test)]
 mod tests {
@@ -162,7 +159,7 @@ mod tests {
         let cldr_paths = crate::cldr_paths::for_test();
         let provider = TimeZonesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-        let time_zone_formats: DataPayload<TimeZoneFormatsV1> = provider
+        let time_zone_formats: DataPayload<TimeZoneFormatsV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_FORMATS_V1,
@@ -177,7 +174,7 @@ mod tests {
             .unwrap();
         assert_eq!("GMT", time_zone_formats.get().gmt_zero_format);
 
-        let exemplar_cities: DataPayload<ExemplarCitiesV1> = provider
+        let exemplar_cities: DataPayload<ExemplarCitiesV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_EXEMPLAR_CITIES_V1,
@@ -192,7 +189,7 @@ mod tests {
             .unwrap();
         assert_eq!("Pohnpei", exemplar_cities.get()["Pacific/Ponape"]);
 
-        let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1> = provider
+        let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_GENERIC_NAMES_LONG_V1,
@@ -210,7 +207,7 @@ mod tests {
             generic_names_long.get()["Australia_CentralWestern"]
         );
 
-        let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1> = provider
+        let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_SPECIFIC_NAMES_LONG_V1,
@@ -228,7 +225,7 @@ mod tests {
             specific_names_long.get()["Australia_CentralWestern"]["standard"]
         );
 
-        let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1> = provider
+        let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_GENERIC_NAMES_SHORT_V1,
@@ -243,7 +240,7 @@ mod tests {
             .unwrap();
         assert_eq!("PT", generic_names_short.get()["America_Pacific"]);
 
-        let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1> = provider
+        let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1_M> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1,

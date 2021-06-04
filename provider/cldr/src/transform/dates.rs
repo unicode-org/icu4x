@@ -58,11 +58,11 @@ impl<'d> KeyedDataProvider for DatesProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
+impl<'d, 's> DataProvider<'d, 's, gregory::DatesV1_M> for DatesProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, gregory::DatesV1>, DataError> {
+    ) -> Result<DataResponse<'d, 's, gregory::DatesV1_M>, DataError> {
         DatesProvider::supports_key(&req.resource_path.key)?;
         let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
         let dates = match self
@@ -82,7 +82,7 @@ impl<'d> DataProvider<'d, gregory::DatesV1> for DatesProvider<'d> {
 }
 
 icu_provider::impl_dyn_provider!(DatesProvider<'d>, {
-    _ => gregory::DatesV1,
+    _ => gregory::DatesV1_M,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for DatesProvider<'d> {
@@ -503,7 +503,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<gregory::DatesV1> = provider
+    let cs_dates: DataPayload<gregory::DatesV1_M> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -542,7 +542,7 @@ fn test_with_numbering_system() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<gregory::DatesV1> = provider
+    let cs_dates: DataPayload<gregory::DatesV1_M> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
@@ -568,7 +568,7 @@ fn unalias_contexts() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = DatesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let cs_dates: DataPayload<gregory::DatesV1> = provider
+    let cs_dates: DataPayload<gregory::DatesV1_M> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::GREGORY_V1,
