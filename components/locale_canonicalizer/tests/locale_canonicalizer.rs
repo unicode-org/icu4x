@@ -5,15 +5,13 @@
 mod fixtures;
 mod helpers;
 
-use icu_locale_canonicalizer::{
-    CanonicalizationResult, LocaleCanonicalizer, LocaleCanonicalizerOptions,
-};
+use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 use icu_locid::Locale;
 
 #[test]
 fn test_maximize() {
     let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default()).unwrap();
+    let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let path = "./tests/fixtures/maximize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -38,7 +36,7 @@ fn test_maximize() {
 #[test]
 fn test_minimize() {
     let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default()).unwrap();
+    let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let path = "./tests/fixtures/minimize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -63,7 +61,7 @@ fn test_minimize() {
 #[test]
 fn test_canonicalize() {
     let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default()).unwrap();
+    let lc = LocaleCanonicalizer::new(&provider).unwrap();
 
     let path = "./tests/fixtures/canonicalize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =

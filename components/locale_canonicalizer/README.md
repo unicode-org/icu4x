@@ -18,13 +18,11 @@ This minimize method returns a new Locale that is the result of running the
 ## Examples
 
 ```rust
-use icu_locale_canonicalizer::{
-    CanonicalizationResult, LocaleCanonicalizer, LocaleCanonicalizerOptions
-};
+use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 use icu_locid::Locale;
 
 let provider = icu_testdata::get_provider();
-let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default())
+let lc = LocaleCanonicalizer::new(&provider)
     .expect("create failed");
 
 let mut locale : Locale = "zh-CN".parse()
@@ -39,13 +37,11 @@ assert_eq!(locale.to_string(), "zh-Hant-TW");
 ```
 
 ```rust
-use icu_locale_canonicalizer::{
-    CanonicalizationResult, LocaleCanonicalizer, LocaleCanonicalizerOptions
-};
+use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 use icu_locid::Locale;
 
 let provider = icu_testdata::get_provider();
-let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default())
+let lc = LocaleCanonicalizer::new(&provider)
     .expect("create failed");
 
 let mut locale : Locale = "zh-Hans-CN".parse()
@@ -60,13 +56,11 @@ assert_eq!(locale.to_string(), "zh");
 ```
 
 ```rust
-use icu_locale_canonicalizer::{
-    CanonicalizationResult, LocaleCanonicalizer, LocaleCanonicalizerOptions
-};
+use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 use icu_locid::Locale;
 
 let provider = icu_testdata::get_provider();
-let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default())
+let lc = LocaleCanonicalizer::new(&provider)
     .expect("create failed");
 
 let mut locale : Locale = "ja-Latn-fonipa-hepburn-heploc".parse()

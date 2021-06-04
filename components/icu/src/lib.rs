@@ -183,13 +183,11 @@ pub mod locale_canonicalizer {
     //! # Examples
     //!
     //! ```
-    //! use icu_locale_canonicalizer::{
-    //!     CanonicalizationResult, LocaleCanonicalizer, LocaleCanonicalizerOptions
-    //! };
+    //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     //! use icu_locid::Locale;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default())
+    //! let lc = LocaleCanonicalizer::new(&provider)
     //!     .expect("create failed");
     //!
     //! let mut locale : Locale = "zh-CN".parse()
@@ -204,13 +202,11 @@ pub mod locale_canonicalizer {
     //! ```
     //!
     //! ```
-    //! use icu_locale_canonicalizer::{
-    //!     CanonicalizationResult, LocaleCanonicalizer, LocaleCanonicalizerOptions
-    //! };
+    //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     //! use icu_locid::Locale;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let lc = LocaleCanonicalizer::new(&provider, LocaleCanonicalizerOptions::default())
+    //! let lc = LocaleCanonicalizer::new(&provider)
     //!     .expect("create failed");
     //!
     //! let mut locale : Locale = "zh-Hans-CN".parse()
