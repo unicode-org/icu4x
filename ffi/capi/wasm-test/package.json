@@ -5,8 +5,8 @@
       "esm"
     ],
     "nodeArguments": [
-			"--experimental-wasm-bigint"
-		]
+      "--experimental-wasm-bigint"
+    ]
   },
   "scripts": {
     "test": "ava"
