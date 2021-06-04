@@ -264,10 +264,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
-        Self {
-            yokeable,
-            cart: (),
-        }
+        Self { yokeable, cart: () }
     }
 }
 
