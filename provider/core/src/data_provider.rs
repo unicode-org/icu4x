@@ -315,6 +315,7 @@ where
     ///
     /// assert_eq!("Demo", payload.get());
     /// ```
+    #[allow(clippy::needless_lifetimes)]
     pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
         use DataPayloadInner::*;
         match &self.inner {

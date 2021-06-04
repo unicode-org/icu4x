@@ -59,6 +59,7 @@ pub trait ErasedDataStruct: 'static {
 impl_dyn_clone!(ErasedDataStruct);
 
 impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
+    #[allow(clippy::needless_lifetimes)]
     fn zero_copy_from<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
         this
     }
@@ -166,14 +167,14 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
                 let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
                 let y1 = any_ref.downcast_ref::<M::Cart>();
                 match y1 {
-                    Some(t_ref) => return Ok(DataPayload::from_borrowed(t_ref)),
+                    Some(t_ref) => Ok(DataPayload::from_borrowed(t_ref)),
                     None => {
-                        return Err(Error::MismatchedType {
+                        Err(Error::MismatchedType {
                             actual: Some(any_ref.type_id()),
                             generic: Some(TypeId::of::<M::Cart>()),
                         })
                     }
-                };
+                }
             }
             RcStruct(yoke) => {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
@@ -204,15 +205,15 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
                     Err(any_rc) => any_rc,
                 };
                 // None of the downcasts succeeded; return an error.
-                return Err(Error::MismatchedType {
+                Err(Error::MismatchedType {
                     actual: Some(any_rc.type_id()),
                     generic: Some(TypeId::of::<M::Cart>()),
-                });
+                })
             }
             // This is unreachable because ErasedDataStruct_M cannot be fully owned, since it
             // contains a reference.
             Owned(_) => unreachable!(),
-        };
+        }
     }
 }
 
