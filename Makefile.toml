@@ -151,13 +151,21 @@ dependencies = [
 
 ### WASM TASKS ###
 
-[tasks.wasm-build]
-description = "Build all examples as WASM into the target directory"
+[tasks.wasm-build-dev]
+description = "Build WASM FFI into the target directory (dev mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2021-02-28"
 command = "cargo"
-args = ["wasm-build", "--examples", "--workspace", "--exclude", "icu_datagen"]
+args = ["wasm-build-dev", "--package", "icu_capi"]
+
+[tasks.wasm-build-release]
+description = "Build WASM FFI into the target directory (release mode)"
+category = "ICU4X WASM"
+install_crate = { rustup_component_name = "rust-src" }
+toolchain = "nightly-2021-02-28"
+command = "cargo"
+args = ["wasm-build-release", "--package", "icu_capi"]
 
 [tasks.wasm-dir]
 description = "Make the WASM package directory"
@@ -165,17 +173,24 @@ category = "ICU4X WASM"
 command = "mkdir"
 args = ["-p", "wasmpkg"]
 
-[tasks.wasm-wasm]
-description = "Copy the WASM files from target into wasmpkg"
+[tasks.wasm-wasm-dev]
+description = "Copy the WASM files from dev into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["-a", "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/examples/.", "wasmpkg/"]
-dependencies = ["wasm-build", "wasm-dir"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/debug/icu_capi.wasm", "wasmpkg/"]
+dependencies = ["wasm-build-dev", "wasm-dir"]
+
+[tasks.wasm-wasm-release]
+description = "Copy the WASM files from release into wasmpkg"
+category = "ICU4X WASM"
+command = "cp"
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/icu_capi.wasm", "wasmpkg/"]
+dependencies = ["wasm-build-release", "wasm-dir"]
 
 [tasks.wasm-wat]
 description = "Create WebAssembly Text files from the WASM files"
 category = "ICU4X WASM"
-dependencies = ["wasm-wasm"]
+dependencies = ["wasm-wasm-release"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -215,7 +230,7 @@ end
 [tasks.wasm-dcmp]
 description = "Create WebAssembly decompiled code files from the WASM files"
 category = "ICU4X WASM"
-dependencies = ["wasm-wasm"]
+dependencies = ["wasm-wasm-release"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -255,7 +270,7 @@ end
 [tasks.wasm-opt]
 description = "Create optimized WASM files from the WASM files"
 category = "ICU4X WASM"
-dependencies = ["wasm-wasm"]
+dependencies = ["wasm-wasm-release"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -324,13 +339,20 @@ for src_path in ${handle}
     end
 end
 '''
-dependencies = ["wasm-wasm"]
+dependencies = ["wasm-wasm-release"]
 
-[tasks.wasm]
-description = "All-in-one command to build examples and supplements to wasmpkg"
+[tasks.wasm-dev]
+description = "All-in-one command to build dev-mode WASM FFI to wasmpkg"
 category = "ICU4X WASM"
 dependencies = [
-    "wasm-wasm",
+    "wasm-wasm-dev",
+]
+
+[tasks.wasm-release]
+description = "All-in-one command to build release-mode WASM FFI to wasmpkg"
+category = "ICU4X WASM"
+dependencies = [
+    "wasm-wasm-release",
     "wasm-wat",
     "wasm-dcmp",
     "wasm-opt",

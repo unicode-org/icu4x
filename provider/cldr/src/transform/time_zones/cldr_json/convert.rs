@@ -10,6 +10,7 @@ use icu_datetime::provider::time_zones::{
 };
 use litemap::LiteMap;
 use std::borrow::Cow;
+use tinystr::TinyStr8;
 
 fn parse_hour_format<'d>(hour_format: &str) -> (Cow<'d, str>, Cow<'d, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
@@ -29,7 +30,15 @@ impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
             region_format_variants: other
                 .region_format_variants
                 .into_iter()
-                .map(|(key, value)| (key.into(), value.into()))
+                .map(|(key, value)| {
+                    (
+                        Cow::Owned(
+                            key.parse::<TinyStr8>()
+                                .expect("Time-zone variant was not compatible with TinyStr8"),
+                        ),
+                        value.into(),
+                    )
+                })
                 .collect(),
             fallback_format: other.fallback_format.into(),
         }
@@ -187,7 +196,15 @@ impl<'d> From<ZoneFormat> for MetaZoneSpecificNamesV1<'d> {
                 .0
                 .into_iter()
                 .filter(|(key, _)| len > 1 && !key.eq("generic"))
-                .map(|(key, value)| (key.into(), value.into()))
+                .map(|(key, value)| {
+                    (
+                        Cow::Owned(
+                            key.parse::<TinyStr8>()
+                                .expect("Time-zone variant was not compatible with TinyStr8"),
+                        ),
+                        value.into(),
+                    )
+                })
                 .collect(),
         )
     }
