@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622839952127,
+  "lastUpdate": 1622847615518,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7733,6 +7733,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4708,
             "range": "± 200",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3420be93fb29c6adf7c21e17f1c2eae8beaf51aa",
+          "message": "Switch DataPayload::Owned over to using Yoke::new_always_owned (#765)\n\n* Switch DataPayload::Owned over to using Yoke::new_always_owned\n\n* lint",
+          "timestamp": "2021-06-04T15:54:08-07:00",
+          "tree_id": "6519e2a4b76a53771d6cb784715bd2ff0164265f",
+          "url": "https://github.com/unicode-org/icu4x/commit/3420be93fb29c6adf7c21e17f1c2eae8beaf51aa"
+        },
+        "date": 1622847613624,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3219,
+            "range": "± 145",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5103,
+            "range": "± 232",
             "unit": "ns/iter"
           }
         ]
