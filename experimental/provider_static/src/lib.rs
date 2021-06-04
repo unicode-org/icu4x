@@ -70,8 +70,9 @@ where
             }
         }
         let file = file.ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))?;
-        let data: M::Yokeable = M::Yokeable::deserialize(&mut serde_json::Deserializer::from_reader(file.as_bytes()))
-            .map_err(|e| DataError::Resource(Box::new(e)))?;
+        let data: M::Yokeable =
+            M::Yokeable::deserialize(&mut serde_json::Deserializer::from_reader(file.as_bytes()))
+                .map_err(|e| DataError::Resource(Box::new(e)))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
