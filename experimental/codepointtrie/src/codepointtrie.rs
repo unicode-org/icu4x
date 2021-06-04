@@ -194,7 +194,7 @@ pub fn get_code_point_trie_value_width(value_width_int: u8) -> ValueWidthEnum {
 
 use impl_const::*;
 
-impl<'trie, W: ValueWidth> CodePointTrie<'trie, W, Fast> {
+impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     fn trie_internal_small_index(&self, c: u32) -> u32 {
         let mut i1: u32 = c >> SHIFT_1;
         if self.trie_type() == TrieTypeEnum::Fast {
@@ -246,7 +246,7 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W, Fast> {
     }
 
     pub fn get(&self, c: u32) -> W {
-        let index: u32 = if c <= Fast::FAST_MAX {
+        let index: u32 = if c <= T::FAST_MAX {
             Self::trie_fast_index(self, c)
         } else if c <= CODE_POINT_MAX {
             Self::trie_small_index(self, c)
@@ -261,24 +261,6 @@ impl<'trie, W: ValueWidth> CodePointTrie<'trie, W, Fast> {
         // this is the consistent API that is public-facing for users
         self.get(c).cast_to_widest()
     }
-}
-
-impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
-    // pub fn get(&self, c: u32) -> W {
-    //     let index: u32 = if c <= T::FAST_MAX {
-    //         self.trie_fast_index(c)
-    //     } else if c <= CODE_POINT_MAX {
-    //         self.trie_small_index(c)
-    //     } else {
-    //         self.data_length() - ERROR_VALUE_NEG_DATA_OFFSET
-    //     };
-    //     self.data().get(index as usize).unwrap()  // need the unwrap because the default value is stored in the data array,
-    //                                               // and getting that default value always returns an Option<W>, but need to return W
-    // }
-
-    // pub fn get_u32(&self, c: u32) -> u32 {  // this is the consistent API that is public-facing for users
-    //     self.get(c).cast_to_widest()
-    // }
 
     pub fn index(&self) -> &ZeroVec<'trie, u16> {
         &self.index
@@ -306,7 +288,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 }
 
 // TODO: genericize this over TrieType once AutoCodePointTrie wrapper type for CodePointTrie is done
-fn check_fast_trie<W: ValueWidth>(trie: &CodePointTrie<W, Fast>, check_ranges: &[u32]) {
+fn check_trie<W: ValueWidth, T: TrieType>(trie: &CodePointTrie<W, T>, check_ranges: &[u32]) {
     assert_eq!(
         0,
         check_ranges.len() % 2,
@@ -430,7 +412,7 @@ mod fast_8_test {
     pub fn check_ranges_test() {
         let trie = get_testing_fast_type_8_bit_trie();
 
-        check_fast_trie::<u8>(&trie, &CHECK_RANGES);
+        check_trie(&trie, &CHECK_RANGES);
     }
 }
 
@@ -537,7 +519,7 @@ mod fast_16_test {
     pub fn check_ranges_test() {
         let trie = get_testing_fast_type_16_bit_trie();
 
-        check_fast_trie(&trie, &CHECK_RANGES);
+        check_trie(&trie, &CHECK_RANGES);
     }
 
     const GROW_INDEX: [u16; 1024] = [
@@ -670,7 +652,7 @@ mod fast_16_test {
     pub fn grow_trie_check_ranges_test() {
         let grow_trie = get_testing_fast_type_16_bit_grow_trie();
 
-        check_fast_trie(&grow_trie, &GROW_CHECK_RANGES);
+        check_trie(&grow_trie, &GROW_CHECK_RANGES);
     }
 }
 
@@ -777,6 +759,81 @@ mod fast_32_test {
     pub fn check_ranges_test() {
         let trie = get_testing_fast_type_32_bit_trie();
 
-        check_fast_trie(&trie, &CHECK_RANGES);
+        check_trie(&trie, &CHECK_RANGES);
+    }
+}
+
+#[cfg(test)]
+mod small_16_test {
+    use super::*;
+
+    const INDEX: [u16; 64] = [
+        0, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0x80, 0xc0, 0xc0, 0xc0, 0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+
+    const DATA_16: [u16; 258] = [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 0xad,
+    ];
+
+    const CHECK_RANGES: [u32; 10] = [0, 1, 0x740, 1, 0x780, 2, 0x880, 3, 0x110000, 1];
+
+    // Exported trie data from free-blocks.8.toml. This file represents a
+    // fast-type trie with 8-bit width data.
+    fn get_testing_small_type_16_bit_trie<'trie>() -> CodePointTrie<'trie, u16, Small> {
+        let index_length: u32 = 64;
+        let data_length: u32 = 258;
+        // Question: in ICU4C, `highStart` is a `UChar32` type. Does it make sense
+        // to represent it as a u32 since UnicodeSet deals with `u32` instead of
+        // the Rust `char` type?
+        let high_start: u32 = 0xa00;
+        let shifted12_high_start: u16 = 0x1;
+        let trie_type: u8 = 1;
+        let value_width: u8 = 0;
+        let index3_null_offset: u16 = 0x7fff;
+        let data_null_offset: u32 = 0x0;
+        let null_value: u32 = 0x1;
+
+        let trie: CodePointTrie<'trie, u16, Small> = CodePointTrie {
+            index_length,
+            data_length,
+            high_start,
+            shifted12_high_start,
+            index3_null_offset,
+            data_null_offset,
+            null_value,
+            index: ZeroVec::from_aligned(&INDEX),
+            data: ZeroVec::from_aligned(&DATA_16),
+            _marker_ty: PhantomData,
+        };
+
+        trie
+    }
+
+    #[test]
+    pub fn get_test() {
+        let trie = get_testing_small_type_16_bit_trie();
+
+        assert_eq!(trie.get(0), 1);
+        assert_eq!(trie.get(1), 1);
+        assert_eq!(trie.get(2), 1);
+        assert_eq!(trie.get(28), 1);
+        assert_eq!(trie.get(29), 1);
+    }
+
+    #[test]
+    pub fn check_ranges_test() {
+        let trie = get_testing_small_type_16_bit_trie();
+
+        check_trie(&trie, &CHECK_RANGES);
     }
 }
