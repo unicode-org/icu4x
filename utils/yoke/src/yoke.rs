@@ -462,3 +462,15 @@ where
         }
     }
 }
+
+impl<Y: for<'a> Yokeable<'a>> Clone for Yoke<Y, ()>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        Yoke {
+            yokeable: unsafe { Y::make(self.get().clone()) },
+            cart: (),
+        }
+    }
+}
