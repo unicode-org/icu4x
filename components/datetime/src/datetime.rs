@@ -11,7 +11,6 @@ use crate::{
 };
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 use crate::{
     date::DateTimeInput, pattern::Pattern, provider, DateTimeFormatError, FormattedDateTime,
@@ -146,17 +145,14 @@ impl<'d> DateTimeFormat<'d> {
     ) -> Self {
         let locale = locale.into();
 
-        todo!()
-        // let symbols = match data.into_cow() {
-        //     Cow::Borrowed(data) => DataPayload::from_borrowed(&data.symbols),
-        //     Cow::Owned(data) => DataPayload::from_owned(data.symbols),
-        // };
+        // TODO(#257): Avoid the need for this clone by splitting the keys.
+        let symbols = DataPayload::from_owned(data.get().symbols.clone());
 
-        // Self {
-        //     locale,
-        //     pattern,
-        //     symbols,
-        // }
+        Self {
+            locale,
+            pattern,
+            symbols,
+        }
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
