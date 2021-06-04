@@ -17,7 +17,7 @@ pub type ICU4XFixedDecimal = FixedDecimal;
 pub enum ICU4XFixedDecimalError {
     Success = 0,
     Limit = 1,
-    Syntax = 2
+    Syntax = 2,
 }
 
 #[no_mangle]
