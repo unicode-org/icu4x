@@ -107,7 +107,9 @@ jobs:
         with:
           node-version: 14.17.0
       - name: Test
-        run: npm test
+        run: |
+          npm install
+          npm test
         working-directory: ./ffi/capi/wasm-test
 
   # Lint job - runs all "cargo make" linting commands

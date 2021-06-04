@@ -12,9 +12,7 @@
     "test": "ava"
   },
   "devDependencies": {
-    "ava": "^3.15.0"
-  },
-  "dependencies": {
+    "ava": "^3.15.0",
     "esm": "^3.2.25"
   }
 }
