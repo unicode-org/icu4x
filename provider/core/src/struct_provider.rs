@@ -45,7 +45,7 @@ pub struct StructProvider<'d, T: ?Sized> {
 impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<'d, M::Cart>
 where
     M: DataMarker<'s>,
-    M::Yokeable: ZeroCopyClone<M::Cart>,
+    M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         req.resource_path.key.match_key(self.key)?;

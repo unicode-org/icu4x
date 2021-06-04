@@ -148,9 +148,7 @@ where
             RcStruct(yoke) => RcStruct(yoke.clone()),
             Owned(yoke) => Owned(yoke.clone()),
         };
-        Self {
-            inner: new_inner
-        }
+        Self { inner: new_inner }
     }
 }
 
@@ -167,7 +165,7 @@ where
 impl<'d, 's, M> DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
-    M::Yokeable: ZeroCopyClone<M::Cart>,
+    M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
     /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`]. The data need not be fully owned;
     /// it may be constrained by the `'s` lifetime.
@@ -367,7 +365,11 @@ where
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "DataResponse {{ metadata: {:?}, payload: {:?} }}", self.metadata, self.payload)
+        write!(
+            f,
+            "DataResponse {{ metadata: {:?}, payload: {:?} }}",
+            self.metadata, self.payload
+        )
     }
 }
 
@@ -391,8 +393,8 @@ fn test_debug() {
     let resp = DataResponse::<HelloWorldV1_M> {
         metadata: Default::default(),
         payload: Some(DataPayload::from_borrowed(&HelloWorldV1 {
-            message: Cow::Borrowed("foo")
-        }))
+            message: Cow::Borrowed("foo"),
+        })),
     };
     assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }

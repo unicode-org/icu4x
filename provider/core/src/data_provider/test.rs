@@ -48,8 +48,8 @@ unsafe impl<'a> Yokeable<'a> for HelloAlt {
         f(self)
     }
 }
-impl ZeroCopyClone<HelloAlt> for HelloAlt {
-    fn zcc<'b, 's>(this: &'b HelloAlt) -> HelloAlt {
+impl ZeroCopyFrom<HelloAlt> for HelloAlt {
+    fn zero_copy_from<'b, 's>(this: &'b HelloAlt) -> HelloAlt {
         HelloAlt {
             // Note: We can't actually implement this in a zero-copy fashion
             message: this.message.clone(),

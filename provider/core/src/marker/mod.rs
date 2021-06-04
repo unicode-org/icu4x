@@ -19,7 +19,7 @@ use yoke::Yokeable;
 /// for the data struct:
 ///
 /// - `impl<'a> Yokeable<'a>` (required)
-/// - `impl ZeroCopyClone<Cart>` (required for use with some `DataPayload` constructors)
+/// - `impl ZeroCopyFrom<Cart>` (required for use with some `DataPayload` constructors)
 ///
 /// See also some common pre-made DataMarker impls in this module.
 ///
@@ -69,8 +69,8 @@ use yoke::Yokeable;
 /// #    }
 /// }
 ///
-/// impl<'s> ZeroCopyClone<MyDataStruct<'s>> for MyDataStruct<'static> {
-///     fn zcc<'b>(this: &'b MyDataStruct<'s>) -> MyDataStruct<'b> {
+/// impl<'s> ZeroCopyFrom<MyDataStruct<'s>> for MyDataStruct<'static> {
+///     fn zero_copy_from<'b>(this: &'b MyDataStruct<'s>) -> MyDataStruct<'b> {
 ///         MyDataStruct {
 ///             message: Cow::Borrowed(&this.message),
 ///         }

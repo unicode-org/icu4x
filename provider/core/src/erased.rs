@@ -58,8 +58,8 @@ pub trait ErasedDataStruct: 'static {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-impl<'s> ZeroCopyClone<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
-    fn zcc<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
+impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
+    fn zero_copy_from<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
         this
     }
 }
@@ -78,20 +78,32 @@ where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
+    /// Upcast for ErasedDataStruct performs the following mapping of the data payload variants,
+    /// where `Y` is the concrete Yokeable and `S` is ErasedDataStruct Yokeable:
+    ///
+    /// - `Yoke<Y, &'d C>` => `Yoke<S, &'d dyn ErasedDataStruct>`, where the trait object in the
+    ///   cart is obtained by calling `.into_backing_cart()` on the input Yoke
+    /// - `Yoke<Y, Rc<C>>` => `Yoke<S, Rc<dyn ErasedDataStruct>`, where the trait object in the
+    ///   cart is the result of casting the whole input Yoke to `ErasedDataStruct`
+    /// - `Yoke<Y, _>` (fully owned) => `Yoke<S, Rc<dyn ErasedDataStruct>>`, by casting the
+    ///   whole input Yoke to `ErasedDataStruct` as above
     fn upcast(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStruct_M> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
             Borrowed(yoke) => {
+                // Case 1: Cast the cart of the Borrowed Yoke to the trait object.
                 // TODO(#752): This is not completely sound, because calling `.into_backing_cart()`
                 // throws away overrides stored in the Yokeable, such as those from `.with_mut()`.
                 let cart: &'d dyn ErasedDataStruct = yoke.into_backing_cart();
                 DataPayload::from_borrowed(cart)
             }
             RcStruct(yoke) => {
+                // Case 2: Cast the whole RcStruct Yoke to the trait object.
                 let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
                 DataPayload::from_partial_owned(cart)
             }
             Owned(yoke) => {
+                // Case 3: Cast the whole Owned Yoke to the trait object.
                 let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
                 DataPayload::from_partial_owned(cart)
             }
@@ -100,10 +112,16 @@ where
 }
 
 impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
-    /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a concrete type.
+    /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a
+    /// concrete type.
+    ///
     /// Returns an error if the type is not compatible.
     ///
     /// This is the main way to consume data returned from an [`ErasedDataProvider`].
+    ///
+    /// Internally, this method reverses the transformation performed by
+    /// [`UpcastDataPayload::upcast`](crate::dynutil::UpcastDataPayload::upcast) as implemented
+    /// for [`ErasedDataStruct_M`].
     ///
     /// # Examples
     ///
@@ -139,11 +157,12 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
     where
         M: DataMarker<'static>,
         M::Cart: Sized,
-        M::Yokeable: ZeroCopyClone<M::Cart>,
+        M::Yokeable: ZeroCopyFrom<M::Cart>,
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
             Borrowed(yoke) => {
+                // Case 1: The trait object originated from a Borrowed Yoke.
                 let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
                 let y1 = any_ref.downcast_ref::<M::Cart>();
                 match y1 {
@@ -158,8 +177,9 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
             }
             RcStruct(yoke) => {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
-                // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It could have
-                // been any valid variant of Yoke, so we need to check each possibility.
+                // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
+                // could have been either the RcStruct or the Owned variant of Yoke.
+                // Check first for Case 2: an RcStruct Yoke.
                 let y1 = any_rc.downcast::<Yoke<M::Yokeable, Rc<M::Cart>>>();
                 let any_rc = match y1 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
@@ -168,18 +188,22 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStruct_M> {
                                 inner: RcStruct(yoke),
                             })
                         }
+                        // Note: We could consider cloning the Yoke instead of erroring out.
                         Err(_) => return Err(Error::MultipleReferences),
                     },
                     Err(any_rc) => any_rc,
                 };
+                // Check for Case 3: an Owned Yoke.
                 let y2 = any_rc.downcast::<Yoke<M::Yokeable, Option<&'static ()>>>();
                 let any_rc = match y2 {
                     Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
                         Ok(yoke) => return Ok(DataPayload { inner: Owned(yoke) }),
+                        // Note: We could consider cloning the Yoke instead of erroring out.
                         Err(_) => return Err(Error::MultipleReferences),
                     },
                     Err(any_rc) => any_rc,
                 };
+                // None of the downcasts succeeded; return an error.
                 return Err(Error::MismatchedType {
                     actual: Some(any_rc.type_id()),
                     generic: Some(TypeId::of::<M::Cart>()),
@@ -248,7 +272,7 @@ impl<'d, M> DataProvider<'d, 'static, M> for dyn ErasedDataProvider<'d> + 'd
 where
     M: DataMarker<'static>,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
-    M::Yokeable: ZeroCopyClone<M::Cart>,
+    M::Yokeable: ZeroCopyFrom<M::Cart>,
     M::Cart: Sized,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.

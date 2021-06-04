@@ -62,8 +62,8 @@ unsafe impl<'a> Yokeable<'a> for HelloWorldV1<'static> {
 
 // END YOKEABLE BOILERPLATE
 
-impl<'s> ZeroCopyClone<HelloWorldV1<'s>> for HelloWorldV1<'static> {
-    fn zcc<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
+impl<'s> ZeroCopyFrom<HelloWorldV1<'s>> for HelloWorldV1<'static> {
+    fn zero_copy_from<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
         HelloWorldV1 {
             message: Cow::Borrowed(&this.message),
         }

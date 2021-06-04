@@ -7,18 +7,24 @@ use crate::Yokeable;
 use std::borrow::Cow;
 use std::rc::Rc;
 
-/// Trait for types that can clone a cart type `C` with no allocations. A type can be the
-/// `ZeroCopyClone` target of multiple cart types.
+/// Trait for types that can be crated from a reference to a cart type `C` with no allocations.
 ///
-/// It is possible to implement `ZeroCopyClone` without being zero-copy (using heap allocations),
-/// but doing so will reduce the performance of various `Yoke` constructors. The intention is for
-/// `ZeroCopyClone` to produce a struct from a cart with as little work as possible.
+/// A type can be the `ZeroCopyFrom` target of multiple cart types.
+///
+/// The intention is for `ZeroCopyFrom` to produce a struct from a cart with as little work as
+/// possible. Although it is technically possible to implement `ZeroCopyFrom` without being
+/// zero-copy (using heap allocations), doing so defeats the purpose of `ZeroCopyFrom`.
+/// 
+/// For example, `impl ZeroCopyFrom<C> for Cow<str>` should return a `Cow::Borrowed` pointing at
+/// data in the cart `C`, even if the cart is itself fully owned.
 ///
 /// # Examples
+/// 
+/// Implementing `ZeroCopyFrom` on a custom data struct:
 ///
 /// ```
 /// use yoke::Yokeable;
-/// use yoke::ZeroCopyClone;
+/// use yoke::ZeroCopyFrom;
 /// use std::borrow::Cow;
 ///
 /// struct MyStruct<'s> {
@@ -47,8 +53,8 @@ use std::rc::Rc;
 /// }
 ///
 /// // Reference from a borrowed version of self
-/// impl<'s> ZeroCopyClone<MyStruct<'s>> for MyStruct<'static> {
-///     fn zcc<'b>(cart: &'b MyStruct<'s>) -> MyStruct<'b> {
+/// impl<'s> ZeroCopyFrom<MyStruct<'s>> for MyStruct<'static> {
+///     fn zero_copy_from<'b>(cart: &'b MyStruct<'s>) -> MyStruct<'b> {
 ///         MyStruct {
 ///             message: Cow::Borrowed(&cart.message)
 ///         }
@@ -56,26 +62,26 @@ use std::rc::Rc;
 /// }
 ///
 /// // Reference from a string slice directly
-/// impl ZeroCopyClone<str> for MyStruct<'static> {
-///     fn zcc<'b>(cart: &'b str) -> MyStruct<'b> {
+/// impl ZeroCopyFrom<str> for MyStruct<'static> {
+///     fn zero_copy_from<'b>(cart: &'b str) -> MyStruct<'b> {
 ///         MyStruct {
 ///             message: Cow::Borrowed(cart)
 ///         }
 ///     }
 /// }
 /// ```
-pub trait ZeroCopyClone<C: ?Sized>: for<'a> Yokeable<'a> {
+pub trait ZeroCopyFrom<C: ?Sized>: for<'a> Yokeable<'a> {
     /// Clone the cart `C` into a [`Yokeable`] struct, which may retain references into `C`.
-    fn zcc<'b>(cart: &'b C) -> <Self as Yokeable<'b>>::Output;
+    fn zero_copy_from<'b>(cart: &'b C) -> <Self as Yokeable<'b>>::Output;
 }
 
-impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C> {
+impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b C> {
     /// Construct a [`Yoke`]`<Y, &C>` from a borrowed cart by zero-copy cloning the cart to `Y` and
     /// then yokeing that object to the cart.
     ///
     /// This results in a [`Yoke`] bound to the lifetime of the reference to the borrowed cart.
     ///
-    /// The type `Y` must implement [`ZeroCopyClone`]`<C>`.
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
     ///
     /// # Example
     ///
@@ -91,18 +97,18 @@ impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, &'b 
     /// assert_eq!("demo", yoke.get());
     /// ```
     pub fn attach_to_borrowed_cart(cart: &'b C) -> Self {
-        Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zcc)
+        Yoke::<Y, &'b C>::attach_to_cart_badly(cart, Y::zero_copy_from)
     }
 }
 
-impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<C>> {
+impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<C>> {
     /// Construct a [`Yoke`]`<Y, Box<C>>` from a boxed cart by zero-copy cloning the cart to `Y` and
     /// then yokeing that object to the cart.
     ///
     /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
     /// fully owned, then the resulting [`Yoke`] will be `'static`.
     ///
-    /// The type `Y` must implement [`ZeroCopyClone`]`<C>`.
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
     ///
     /// # Example
     ///
@@ -120,18 +126,18 @@ impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Box<
     /// assert_eq!("demo", yoke.get());
     /// ```
     pub fn attach_to_box_cart(cart: Box<C>) -> Self {
-        Yoke::<Y, Box<C>>::attach_to_cart_badly(cart, Y::zcc)
+        Yoke::<Y, Box<C>>::attach_to_cart_badly(cart, Y::zero_copy_from)
     }
 }
 
-impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C>> {
+impl<'b, 's, Y: ZeroCopyFrom<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C>> {
     /// Construct a [`Yoke`]`<Y, Rc<C>>` from a reference-counted cart by zero-copy cloning the
     /// cart to `Y` and then yokeing that object to the cart.
     ///
     /// This results in a [`Yoke`] bound to the lifetime of data within the cart. If the cart is
     /// fully owned, then the resulting [`Yoke`] will be `'static`.
     ///
-    /// The type `Y` must implement [`ZeroCopyClone`]`<C>`.
+    /// The type `Y` must implement [`ZeroCopyFrom`]`<C>`.
     ///
     /// # Example
     ///
@@ -150,35 +156,35 @@ impl<'b, 's, Y: ZeroCopyClone<C> + for<'a> Yokeable<'a>, C: ?Sized> Yoke<Y, Rc<C
     /// assert_eq!("demo", yoke.get());
     /// ```
     pub fn attach_to_rc_cart(cart: Rc<C>) -> Self {
-        Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zcc)
+        Yoke::<Y, Rc<C>>::attach_to_cart_badly(cart, Y::zero_copy_from)
     }
 }
 
 // Note: The following could be blanket implementations, but that would require constraining the
 // blanket `T` on `T: 'static`, which may not be desirable for all downstream users who may wish
-// to customize their `ZeroCopyClone` impl. The blanket implementation may be safe once Rust has
+// to customize their `ZeroCopyFrom` impl. The blanket implementation may be safe once Rust has
 // specialization.
 
-impl ZeroCopyClone<str> for Cow<'static, str> {
-    fn zcc<'b>(cart: &'b str) -> Cow<'b, str> {
+impl ZeroCopyFrom<str> for Cow<'static, str> {
+    fn zero_copy_from<'b>(cart: &'b str) -> Cow<'b, str> {
         Cow::Borrowed(cart)
     }
 }
 
-impl ZeroCopyClone<String> for Cow<'static, str> {
-    fn zcc<'b>(cart: &'b String) -> Cow<'b, str> {
+impl ZeroCopyFrom<String> for Cow<'static, str> {
+    fn zero_copy_from<'b>(cart: &'b String) -> Cow<'b, str> {
         Cow::Borrowed(cart)
     }
 }
 
-impl ZeroCopyClone<str> for &'static str {
-    fn zcc<'b>(cart: &'b str) -> &'b str {
+impl ZeroCopyFrom<str> for &'static str {
+    fn zero_copy_from<'b>(cart: &'b str) -> &'b str {
         cart
     }
 }
 
-impl ZeroCopyClone<String> for &'static str {
-    fn zcc<'b>(cart: &'b String) -> &'b str {
+impl ZeroCopyFrom<String> for &'static str {
+    fn zero_copy_from<'b>(cart: &'b String) -> &'b str {
         cart
     }
 }
