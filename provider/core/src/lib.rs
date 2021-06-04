@@ -120,6 +120,7 @@ pub mod export;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
+#[macro_use]
 pub mod marker;
 #[cfg(feature = "provider_serde")]
 pub mod serde;

@@ -15,6 +15,12 @@ pub struct DatesV1 {
     pub patterns: PatternsV1,
 }
 
+icu_provider::impl_data_marker_no_lifetime!(
+    DatesV1,
+    /// Marker type for [`DatesV1`]
+    DatesV1_M
+);
+
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -27,6 +33,12 @@ pub struct DateSymbolsV1 {
 
     pub day_periods: day_periods::ContextsV1,
 }
+
+icu_provider::impl_data_marker_no_lifetime!(
+    DateSymbolsV1,
+    /// Marker type for [`DateSymbolsV1`]
+    DateSymbolsV1_M
+);
 
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

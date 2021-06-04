@@ -8,7 +8,7 @@ use crate::{
     date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
     provider, DateTimeFormatError,
 };
-use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1};
+use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1_M};
 use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::prelude::*;
 
@@ -19,13 +19,13 @@ use crate::pattern::{Pattern, PatternItem};
 fn load_resource<'d, D, L, P>(
     locale: &L,
     resource_key: ResourceKey,
-    destination: &mut Option<DataPayload<'d, D>>,
+    destination: &mut Option<DataPayload<'d, 'd, D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatError>
 where
-    D: std::fmt::Debug + Clone + 'd,
+    D: DataMarker<'d>,
     L: Clone + Into<LanguageIdentifier>,
-    P: DataProvider<'d, D> + ?Sized,
+    P: DataProvider<'d, 'd, D> + ?Sized,
 {
     if destination.is_none() {
         *destination = Some(
@@ -88,21 +88,21 @@ pub(super) struct TimeZoneFormat<'d> {
     /// The pattern to format.
     pub(super) pattern: Pattern,
     /// The data that contains meta information about how to display content.
-    pub(super) zone_formats: DataPayload<'d, provider::time_zones::TimeZoneFormatsV1<'d>>,
+    pub(super) zone_formats: DataPayload<'d, 'd, provider::time_zones::TimeZoneFormatsV1_M>,
     /// The exemplar cities for time zones.
-    pub(super) exemplar_cities: Option<DataPayload<'d, provider::time_zones::ExemplarCitiesV1<'d>>>,
+    pub(super) exemplar_cities: Option<DataPayload<'d, 'd, provider::time_zones::ExemplarCitiesV1_M>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
-        Option<DataPayload<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1_M>>,
     /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
-        Option<DataPayload<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1_M>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
-        Option<DataPayload<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1_M>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
-        Option<DataPayload<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1_M>>,
 }
 
 impl<'d> TimeZoneFormat<'d> {
@@ -135,17 +135,17 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        ZP: DataProvider<'d, provider::time_zones::TimeZoneFormatsV1<'d>>
-            + DataProvider<'d, provider::time_zones::ExemplarCitiesV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>
+        ZP: DataProvider<'d, 'd, provider::time_zones::TimeZoneFormatsV1_M>
+            + DataProvider<'d, 'd, provider::time_zones::ExemplarCitiesV1_M>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1_M>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1_M>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1_M>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1_M>
             + ?Sized,
     {
         let locale = locale.into();
 
-        let zone_formats: DataPayload<TimeZoneFormatsV1> = zone_provider
+        let zone_formats: DataPayload<TimeZoneFormatsV1_M> = zone_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: provider::key::TIMEZONE_FORMATS_V1,

@@ -7,7 +7,7 @@ use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
     pattern::PatternItem,
-    provider::{gregory::DatesV1, helpers::DateTimePatterns},
+    provider::{gregory::DatesV1_M, helpers::DateTimePatterns},
 };
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -60,7 +60,7 @@ use crate::{
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: DataPayload<'d, provider::gregory::DateSymbolsV1>,
+    pub(super) symbols: DataPayload<'d, 'd, provider::gregory::DateSymbolsV1_M>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -86,7 +86,7 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::gregory::DatesV1> + ?Sized>(
+    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, 'd, provider::gregory::DatesV1_M> + ?Sized>(
         locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,
@@ -142,20 +142,21 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        data: DataPayload<'d, DatesV1>,
+        data: DataPayload<'d, 'd, DatesV1_M>,
     ) -> Self {
         let locale = locale.into();
 
-        let symbols = match data.into_cow() {
-            Cow::Borrowed(data) => DataPayload::from_borrowed(&data.symbols),
-            Cow::Owned(data) => DataPayload::from_owned(data.symbols),
-        };
+        todo!()
+        // let symbols = match data.into_cow() {
+        //     Cow::Borrowed(data) => DataPayload::from_borrowed(&data.symbols),
+        //     Cow::Owned(data) => DataPayload::from_owned(data.symbols),
+        // };
 
-        Self {
-            locale,
-            pattern,
-            symbols,
-        }
+        // Self {
+        //     locale,
+        //     pattern,
+        //     symbols,
+        // }
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]

@@ -14,7 +14,7 @@ pub enum CanonicalizationResult {
 }
 
 pub struct LocaleCanonicalizer<'a> {
-    likely_subtags: DataPayload<'a, LikelySubtagsV1>,
+    likely_subtags: DataPayload<'a, 'a, LikelySubtagsV1_M>,
 }
 
 #[inline]
@@ -48,9 +48,9 @@ macro_rules! maximize_locale {
 impl LocaleCanonicalizer<'_> {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
     pub fn new<'d>(
-        provider: &(impl DataProvider<'d, LikelySubtagsV1> + ?Sized),
+        provider: &(impl DataProvider<'d, 'd, LikelySubtagsV1_M> + ?Sized),
     ) -> Result<LocaleCanonicalizer<'d>, DataError> {
-        let payload: DataPayload<LikelySubtagsV1> = provider
+        let payload: DataPayload<LikelySubtagsV1_M> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
             .take_payload()?;
 

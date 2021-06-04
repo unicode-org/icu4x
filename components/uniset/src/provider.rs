@@ -661,6 +661,13 @@ pub struct UnicodeProperty<'s> {
     pub inv_list: Vec<u32>,
 }
 
+icu_provider::unsafe_impl_data_marker_with_lifetime!(
+    UnicodeProperty<'s>,
+    /// Marker type for [`UnicodeProperty`]
+    UnicodeProperty_M,
+    TEMP_ZCF
+);
+
 impl Default for UnicodeProperty<'static> {
     /// Default empty nameless property
     fn default() -> UnicodeProperty<'static> {

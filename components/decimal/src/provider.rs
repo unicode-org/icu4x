@@ -98,3 +98,9 @@ impl Default for DecimalSymbolsV1 {
         }
     }
 }
+
+icu_provider::impl_data_marker_no_lifetime!(
+    DecimalSymbolsV1,
+    /// Marker type for [`DecimalSymbolsV1`]
+    DecimalSymbolsV1_M
+);

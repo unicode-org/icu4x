@@ -83,12 +83,12 @@ use icu_provider::prelude::*;
 /// See the crate-level documentation for examples.
 pub struct FixedDecimalFormat<'d> {
     options: options::FixedDecimalFormatOptions,
-    symbols: DataPayload<'d, provider::DecimalSymbolsV1>,
+    symbols: DataPayload<'d, 'd, provider::DecimalSymbolsV1_M>,
 }
 
 impl<'d> FixedDecimalFormat<'d> {
     /// Creates a new [`FixedDecimalFormat`] from locale data and an options bag.
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::DecimalSymbolsV1> + ?Sized>(
+    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, 'd, provider::DecimalSymbolsV1_M> + ?Sized>(
         locale: T,
         data_provider: &D,
         options: options::FixedDecimalFormatOptions,

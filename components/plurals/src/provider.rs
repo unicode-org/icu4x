@@ -7,8 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use std::borrow::Cow;
-use icu_provider::prelude::*;
-use icu_provider::yoke::*;
+use icu_provider::yoke::ZeroCopyFrom;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
@@ -35,34 +34,11 @@ pub struct PluralRuleStringsV1<'s> {
     pub many: Option<Cow<'s, str>>,
 }
 
-/// Marker type for [`PluralRuleStringsV1`].
-#[allow(non_camel_case_types)]
-pub struct PluralRuleStringsV1_M {}
-
-impl<'s> DataMarker<'s> for PluralRuleStringsV1_M {
-    type Yokeable = PluralRuleStringsV1<'static>;
-    type Cart = PluralRuleStringsV1<'s>;
-}
-
-unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for PluralRuleStringsV1<'static> {
-    type Output = PluralRuleStringsV1<'a>;
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        std::mem::transmute(from)
-    }
-    fn with_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe {
-            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-                self,
-            ))
-        }
-    }
-}
+icu_provider::unsafe_impl_data_marker_with_lifetime!(
+    PluralRuleStringsV1<'s>,
+    /// Marker type for [`PluralRuleStringsV1`]
+    PluralRuleStringsV1_M
+);
 
 impl<'s> ZeroCopyFrom<PluralRuleStringsV1<'s>> for PluralRuleStringsV1<'static> {
     fn zero_copy_from<'b>(this: &'b PluralRuleStringsV1<'s>) -> PluralRuleStringsV1<'b> {
