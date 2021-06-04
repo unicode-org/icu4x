@@ -87,7 +87,9 @@ where
     ///   cart is the result of casting the whole input Yoke to `ErasedDataStruct`
     /// - `Yoke<Y, _>` (fully owned) => `Yoke<S, Rc<dyn ErasedDataStruct>>`, by casting the
     ///   whole input Yoke to `ErasedDataStruct` as above
-    fn upcast(other: DataPayload<'d, 'static, M>) -> DataPayload<'d, 'static, ErasedDataStructMarker> {
+    fn upcast(
+        other: DataPayload<'d, 'static, M>,
+    ) -> DataPayload<'d, 'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
             Borrowed(yoke) => {

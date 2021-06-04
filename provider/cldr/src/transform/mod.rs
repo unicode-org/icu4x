@@ -55,7 +55,9 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker> for CldrJsonDataProvider<'a, 'd> {
+impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker>
+    for CldrJsonDataProvider<'a, 'd>
+{
     fn load_payload(
         &self,
         req: &DataRequest,
