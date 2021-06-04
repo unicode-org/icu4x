@@ -13,6 +13,10 @@
 #include "fixed_decimal.h"
 #include "custom_writeable.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // opaque
 typedef struct ICU4XFixedDecimalFormat ICU4XFixedDecimalFormat;
 
@@ -46,5 +50,8 @@ ICU4XCreateFixedDecimalFormatResult icu4x_fixed_decimal_format_create(const ICU4
 bool icu4x_fixed_decimal_format_write(const ICU4XFixedDecimalFormat* fdf, const ICU4XFixedDecimal* value, ICU4XWriteable* write);
 void icu4x_fixed_decimal_format_destroy(ICU4XFixedDecimalFormat* fdf);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ICU4X_DECIMAL_H

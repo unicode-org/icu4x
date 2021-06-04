@@ -27,6 +27,14 @@ cd ../fixeddecimal;
 make
 '''
 
+[tasks.test-cpp]
+description = "Run CPP tests"
+category = "ICU4X Development"
+script = '''
+cd ffi/cpp/examples/pluralrules;
+make
+'''
+
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
@@ -136,6 +144,7 @@ dependencies = [
     "license-header-check",
     "generated-readme-check",
     "test-capi",
+    "test-cpp",
 ]
 
 [tasks.ci]

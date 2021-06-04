@@ -1,0 +1,27 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+#ifndef ICU4X_LOCALE_HPP
+#define ICU4X_LOCALE_HPP
+
+#include <algorithm>
+#include <memory>
+#include <string_view>
+
+#include "../../capi/include/locale.h"
+
+namespace icu4x {
+    struct ICU4XLocaleDeleter {
+        void operator()(ICU4XLocale* l) { icu4x_locale_destroy(l); }
+    };
+    class Locale {
+    public:
+        Locale(const std::string_view& value): inner(icu4x_locale_create(value.data(), value.size())) {}
+        inline const ICU4XLocale* AsFFI() const { return this->inner.get(); }
+    private:
+        std::unique_ptr<ICU4XLocale, ICU4XLocaleDeleter> inner;
+    };
+};
+
+#endif // ICU4X_LOCALE_HPP

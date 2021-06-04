@@ -1,0 +1,27 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+#include "../../include/pluralrules.hpp"
+
+#include <iostream>
+
+const char* path = "../../../../provider/testdata/data/json/";
+using namespace icu4x;
+
+int main() {
+    Locale locale("ar");
+    DataProvider dp = DataProvider::FsDataProvider("../../../../provider/testdata/data/json/").value();
+    PluralRules pr = PluralRules::Create(locale, dp, PluralRuleType::Cardinal).value();
+
+    PluralOperands op = { .i = 3 };
+    PluralCategory cat = pr.Select(op);
+
+    std::cout << "Category is " << static_cast<int>(cat)
+                                << " (should be " << static_cast<int>(PluralCategory::Few) << ")"
+                                << std::endl;
+    if (cat != PluralCategory::Few) {
+        return 1;
+    }
+    return 0;
+}

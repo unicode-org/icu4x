@@ -9,6 +9,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     uintptr_t _field1;
     uintptr_t _field2;
@@ -19,8 +23,14 @@ typedef struct {
     bool success;
 } ICU4XCreateDataProviderResult;
 
+
+
 void icu4x_data_provider_destroy(ICU4XDataProvider d);
 
 ICU4XCreateDataProviderResult icu4x_fs_data_provider_create(const char* path, size_t len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ICU4X_PROVIDER_H
