@@ -19,7 +19,7 @@ typedef struct ICU4XWriteable {
     size_t len;
     size_t cap;
     void (*flush)(struct ICU4XWriteable*);
-    char (*grow)(struct ICU4XWriteable*, size_t);
+    bool (*grow)(struct ICU4XWriteable*, size_t);
 } ICU4XWriteable;
 
 ICU4XWriteable icu4x_simple_writeable(char* buf, size_t buf_size);

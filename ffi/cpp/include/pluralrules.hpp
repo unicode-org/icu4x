@@ -45,7 +45,6 @@ namespace icu4x {
             ICU4XPluralCategory cat = icu4x_plural_rules_select(this->inner.get(), &op);
             return static_cast<PluralCategory>(cat);
         }
-        // PluralRules(const char* value, size_t len): inner(icu4x_locale_create(value, len)) {}
     private:
         PluralRules(ICU4XPluralRules* i): inner(i) {}
         std::unique_ptr<ICU4XPluralRules, ICU4XPluralRulesDeleter> inner;
