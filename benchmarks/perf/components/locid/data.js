@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1622847615518,
+  "lastUpdate": 1623093618305,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7769,6 +7769,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5103,
             "range": "± 232",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ffd520f415d7cb58d88401641b9f55c421c5d845",
+          "message": "Add canonicalize method to LocaleCanonicalizer (#747)\n\nAdd canonicalize method to LocaleCanonicalizer",
+          "timestamp": "2021-06-07T15:13:17-04:00",
+          "tree_id": "b264324a40acf3466d7a0d9d07e1c4e8f87dfe6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/ffd520f415d7cb58d88401641b9f55c421c5d845"
+        },
+        "date": 1623093616404,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3279,
+            "range": "± 208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5030,
+            "range": "± 248",
             "unit": "ns/iter"
           }
         ]
