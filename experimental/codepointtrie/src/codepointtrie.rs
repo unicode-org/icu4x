@@ -31,10 +31,19 @@ pub enum TrieTypeEnum {
 
 // ValueWidth trait
 
+// AsULE is AsUnalignedLittleEndian, i.e. "allowed in a zerovec"
 pub trait ValueWidth: Copy + zerovec::ule::AsULE {
-    // AsUnalignedLittleEndian -> "allowed in a zerovec"
     const ENUM_VALUE: ValueWidthEnum;
     fn cast_to_widest(self) -> u32;
+
+    fn get_code_point_trie_value_width_enum(value_width_int: u8) -> ValueWidthEnum {
+        match value_width_int {
+            0 => ValueWidthEnum::Bits16,
+            1 => ValueWidthEnum::Bits32,
+            2 => ValueWidthEnum::Bits8,
+            _ => ValueWidthEnum::BitsAny,
+        }
+    }
 }
 
 impl ValueWidth for u8 {
@@ -66,6 +75,14 @@ impl ValueWidth for u32 {
 pub trait TrieType {
     const FAST_MAX: u32;
     const ENUM_VALUE: TrieTypeEnum;
+
+    fn get_code_point_trie_type_enum(trie_type_int: u8) -> TrieTypeEnum {
+        match trie_type_int {
+            0 => TrieTypeEnum::Fast,
+            1 => TrieTypeEnum::Small,
+            _ => TrieTypeEnum::Any,
+        }
+    }   
 }
 
 struct Fast;
@@ -91,23 +108,6 @@ pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
     index: ZeroVec<'trie, u16>,
     data: ZeroVec<'trie, W>,
     _marker_ty: PhantomData<T>,
-}
-
-pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> TrieTypeEnum {
-    match trie_type_int {
-        0 => TrieTypeEnum::Fast,
-        1 => TrieTypeEnum::Small,
-        _ => TrieTypeEnum::Any,
-    }
-}
-
-pub fn get_code_point_trie_value_width_enum(value_width_int: u8) -> ValueWidthEnum {
-    match value_width_int {
-        0 => ValueWidthEnum::Bits16,
-        1 => ValueWidthEnum::Bits32,
-        2 => ValueWidthEnum::Bits8,
-        _ => ValueWidthEnum::BitsAny,
-    }
 }
 
 // CPTAuto will only expose get_u32() (probably will call it `get()`), but will not / cannot expose get() without using an enum for W
@@ -176,8 +176,9 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         } else {
             self.data_length() - ERROR_VALUE_NEG_DATA_OFFSET
         };
-        self.data().get(index as usize).unwrap() // need the unwrap because the default value is stored in the data array,
-                                                 // and getting that default value always returns an Option<W>, but need to return W
+        // need the unwrap because the default value is stored in the data array,
+        // and getting that default value always returns an Option<W>, but need to return W
+        self.data().get(index as usize).unwrap()
     }
 
     pub fn get_u32(&self, c: u32) -> u32 {
@@ -224,10 +225,10 @@ impl<'trie> CodePointTrie<'trie, u8, Fast> {
         index: &[u16],
         data: &[u8],
     ) -> Result<CodePointTrie<'trie, u8, Fast>, Error> {
-        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
+        if Fast::get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Fast trie type"}))
         }
-        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits8 {
+        if u8::get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits8 {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 8-bit value width"}))
         }
 
@@ -263,10 +264,10 @@ impl<'trie> CodePointTrie<'trie, u16, Fast> {
         index: &[u16],
         data: &[u16],
     ) -> Result<CodePointTrie<'trie, u16, Fast>, Error> {
-        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
+        if Fast::get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Fast trie type"}))
         }
-        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits16 {
+        if u16::get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits16 {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 16-bit value width"}))
         }
 
@@ -302,10 +303,10 @@ impl<'trie> CodePointTrie<'trie, u32, Fast> {
         index: &[u16],
         data: &[u32],
     ) -> Result<CodePointTrie<'trie, u32, Fast>, Error> {
-        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
+        if Fast::get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Fast {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Fast trie type"}))
         }
-        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits32 {
+        if u32::get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits32 {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 32-bit value width"}))
         }
 
@@ -341,10 +342,10 @@ impl<'trie> CodePointTrie<'trie, u8, Small> {
         index: &[u16],
         data: &[u8],
     ) -> Result<CodePointTrie<'trie, u8, Small>, Error> {
-        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
+        if Small::get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Small trie type"}))
         }
-        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits8 {
+        if u8::get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits8 {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 8-bit value width"}))
         }
 
@@ -380,10 +381,10 @@ impl<'trie> CodePointTrie<'trie, u16, Small> {
         index: &[u16],
         data: &[u16],
     ) -> Result<CodePointTrie<'trie, u16, Small>, Error> {
-        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
+        if Small::get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Small trie type"}))
         }
-        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits16 {
+        if u16::get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits16 {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 16-bit value width"}))
         }
 
@@ -419,10 +420,10 @@ impl<'trie> CodePointTrie<'trie, u32, Small> {
         index: &[u16],
         data: &[u32],
     ) -> Result<CodePointTrie<'trie, u32, Small>, Error> {
-        if get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
+        if Small::get_code_point_trie_type_enum(trie_type_int) != TrieTypeEnum::Small {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected Small trie type"}))
         }
-        if get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits32 {
+        if u32::get_code_point_trie_value_width_enum(value_width_int) != ValueWidthEnum::Bits32 {
             return Err(Error::FromDeserialized(FromDeserializedError {reason: "Expected 32-bit value width"}))
         }
 
