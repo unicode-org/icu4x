@@ -6,19 +6,19 @@
 
 #include <iostream>
 
-const char* path = "../../../../provider/testdata/data/json/";
+const std::string_view path = "../../../../provider/testdata/data/json/";
 using namespace icu4x;
 
 int main() {
     Locale locale("ar");
-    DataProvider dp = DataProvider::FsDataProvider("../../../../provider/testdata/data/json/").value();
+    DataProvider dp = DataProvider::FsDataProvider(path).value();
     PluralRules pr = PluralRules::Create(locale, dp, PluralRuleType::Cardinal).value();
 
     PluralOperands op = { .i = 3 };
     PluralCategory cat = pr.Select(op);
 
-    std::cout << "Category is " << static_cast<int>(cat)
-                                << " (should be " << static_cast<int>(PluralCategory::Few) << ")"
+    std::cout << "Category is " << static_cast<int32_t>(cat)
+                                << " (should be " << static_cast<int32_t>(PluralCategory::Few) << ")"
                                 << std::endl;
     if (cat != PluralCategory::Few) {
         return 1;
