@@ -6,6 +6,7 @@ use crate::prelude::*;
 use std::any::TypeId;
 use thiserror::Error;
 
+/// Error enumeration for DataProvider.
 #[non_exhaustive]
 #[derive(Error, Debug)]
 pub enum Error {
@@ -40,6 +41,10 @@ pub enum Error {
         /// The expected TypeID derived from the generic type parameter at the call site.
         generic: Option<TypeId>,
     },
+
+    /// The requested operation failed to unwrap an Rc backing the data payload.
+    #[error("Could not unwrap Rc due to multiple references")]
+    MultipleReferences,
 
     /// An error occured during serialization or deserialization.
     #[cfg(feature = "erased-serde")]

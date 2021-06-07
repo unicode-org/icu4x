@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use icu_provider::yoke::ZeroCopyFrom;
 use std::borrow::Cow;
 
 pub mod key {
@@ -31,4 +32,22 @@ pub struct PluralRuleStringsV1<'s> {
     pub two: Option<Cow<'s, str>>,
     pub few: Option<Cow<'s, str>>,
     pub many: Option<Cow<'s, str>>,
+}
+
+icu_provider::unsafe_impl_data_marker_with_lifetime!(
+    PluralRuleStringsV1<'s>,
+    /// Marker type for [`PluralRuleStringsV1`]
+    PluralRuleStringsV1Marker
+);
+
+impl<'s> ZeroCopyFrom<PluralRuleStringsV1<'s>> for PluralRuleStringsV1<'static> {
+    fn zero_copy_from<'b>(this: &'b PluralRuleStringsV1<'s>) -> PluralRuleStringsV1<'b> {
+        PluralRuleStringsV1 {
+            zero: this.zero.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            one: this.one.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            two: this.two.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            few: this.few.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+            many: this.many.as_ref().map(|cow| Cow::Borrowed(cow.as_ref())),
+        }
+    }
 }

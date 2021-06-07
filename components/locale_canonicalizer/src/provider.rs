@@ -34,6 +34,12 @@ pub struct AliasesV1 {
     pub subdivision: Vec<(TinyStr8, TinyStr8)>,
 }
 
+icu_provider::impl_data_marker_no_lifetime!(
+    AliasesV1,
+    /// Marker type for [`AliasesV1`]
+    AliasesV1Marker
+);
+
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
@@ -48,3 +54,9 @@ pub struct LikelySubtagsV1 {
     pub region: Vec<(TinyStr4, LanguageIdentifier)>,
     pub und: LanguageIdentifier,
 }
+
+icu_provider::impl_data_marker_no_lifetime!(
+    LikelySubtagsV1,
+    /// Marker type for [`LikelySubtagsV1`]
+    LikelySubtagsV1Marker
+);

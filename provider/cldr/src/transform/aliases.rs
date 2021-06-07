@@ -61,8 +61,11 @@ impl<'d> KeyedDataProvider for AliasesProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d, AliasesV1> for AliasesProvider<'d> {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, AliasesV1>, DataError> {
+impl<'d, 's> DataProvider<'d, 's, AliasesV1Marker> for AliasesProvider<'d> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, 's, AliasesV1Marker>, DataError> {
         AliasesProvider::supports_key(&req.resource_path.key)?;
         let langid = &req.resource_path.options.langid;
 
@@ -82,7 +85,7 @@ impl<'d> DataProvider<'d, AliasesV1> for AliasesProvider<'d> {
 }
 
 icu_provider::impl_dyn_provider!(AliasesProvider<'d>, {
-    _ => AliasesV1,
+    _ => AliasesV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for AliasesProvider<'d> {
@@ -358,7 +361,7 @@ fn test_basic() {
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = AliasesProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-    let data: DataPayload<AliasesV1> = provider
+    let data: DataPayload<AliasesV1Marker> = provider
         .load_payload(&DataRequest::from(key::ALIASES_V1))
         .unwrap()
         .take_payload()

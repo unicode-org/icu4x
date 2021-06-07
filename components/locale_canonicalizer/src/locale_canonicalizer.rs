@@ -18,8 +18,8 @@ pub enum CanonicalizationResult {
 }
 
 pub struct LocaleCanonicalizer<'a> {
-    aliases: DataPayload<'a, AliasesV1>,
-    likely_subtags: DataPayload<'a, LikelySubtagsV1>,
+    aliases: DataPayload<'a, 'a, AliasesV1Marker>,
+    likely_subtags: DataPayload<'a, 'a, LikelySubtagsV1Marker>,
     extension_keys: Vec<Key>,
 }
 
@@ -76,7 +76,7 @@ fn uts35_replacement(
 #[inline]
 fn uts35_check_language_rules(
     locale: &mut Locale,
-    alias_data: &DataPayload<AliasesV1>,
+    alias_data: &DataPayload<AliasesV1Marker>,
 ) -> CanonicalizationResult {
     let maybe_lang: Option<TinyStr4> = locale.id.language.into();
     if let Some(lang) = maybe_lang {
@@ -127,15 +127,15 @@ impl LocaleCanonicalizer<'_> {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
     pub fn new<'d, P>(provider: &P) -> Result<LocaleCanonicalizer<'d>, DataError>
     where
-        P: DataProvider<'d, crate::provider::AliasesV1>
-            + DataProvider<'d, crate::provider::LikelySubtagsV1>
+        P: DataProvider<'d, 'd, AliasesV1Marker>
+            + DataProvider<'d, 'd, LikelySubtagsV1Marker>
             + ?Sized,
     {
         let extension_keys = vec![
             Key::from_tinystr4_unchecked(tinystr4!("rg")),
             Key::from_tinystr4_unchecked(tinystr4!("sd")),
         ];
-        let aliases: DataPayload<AliasesV1> =
+        let aliases: DataPayload<AliasesV1Marker> =
             // The `rg` region override and `sd` regional subdivision keys may contain
             // language codes that require canonicalization.
                 provider
@@ -143,7 +143,7 @@ impl LocaleCanonicalizer<'_> {
                     .take_payload()?
             ;
 
-        let likely_subtags: DataPayload<LikelySubtagsV1> = provider
+        let likely_subtags: DataPayload<LikelySubtagsV1Marker> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
             .take_payload()?;
 

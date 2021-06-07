@@ -12,7 +12,7 @@ use icu_datetime::{
     DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_datetime::{
-    provider::{gregory::DatesV1, key::GREGORY_V1},
+    provider::{gregory::DatesV1Marker, key::GREGORY_V1},
     DateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -27,6 +27,7 @@ use patterns::{
 };
 use std::borrow::Cow;
 use std::fmt::Write;
+use tinystr::tinystr8;
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
@@ -80,7 +81,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let mut value: MockZonedDateTime = fx.input.value.parse().unwrap();
         value.time_zone.time_zone_id = config.time_zone_id.clone();
         value.time_zone.metazone_id = config.metazone_id.clone();
-        value.time_zone.time_variant = config.time_variant.clone();
+        value.time_zone.time_variant = config.time_variant;
 
         let result = dtf.format_to_string(&value);
         assert_eq!(result, fx.output.value, "\n  file: {}.json\n", fixture_name);
@@ -105,7 +106,7 @@ fn test_dayperiod_patterns() {
     let format_options = DateTimeFormatOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
-        let mut data: DataPayload<DatesV1> = provider
+        let mut data: DataPayload<DatesV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_V1,
@@ -169,7 +170,7 @@ fn test_time_zone_patterns() {
         datetime.time_zone.metazone_id = config.metazone_id.take();
         datetime.time_zone.time_variant = config.time_variant.take();
 
-        let mut data: DataPayload<DatesV1> = date_provider
+        let mut data: DataPayload<DatesV1Marker> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: GREGORY_V1,
@@ -231,7 +232,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(String::from("America_Pacific")),
-            time_variant: Some(String::from("daylight")),
+            time_variant: Some(tinystr8!("daylight")),
             ..TimeZoneConfig::default()
         },
     );

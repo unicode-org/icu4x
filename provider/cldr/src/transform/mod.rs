@@ -19,7 +19,7 @@ use crate::support::LazyCldrProvider;
 use crate::CldrPaths;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStruct;
+use icu_provider::serde::SerdeSeDataStructMarker;
 
 use self::time_zones::TimeZonesProvider;
 
@@ -60,13 +60,13 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd, 's: 'd> DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
+impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker>
     for CldrJsonDataProvider<'a, 'd>
 {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>, DataError> {
+    ) -> Result<DataResponse<'d, 's, SerdeSeDataStructMarker>, DataError> {
         if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }

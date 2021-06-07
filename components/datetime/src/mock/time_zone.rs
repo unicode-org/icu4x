@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use tinystr::TinyStr8;
+
 use crate::date::*;
 use std::str::FromStr;
 
@@ -41,7 +43,7 @@ pub struct MockTimeZone {
     // TODO(#528) change this to <TBD> identifier
     pub metazone_id: Option<String>,
     /// The time variant e.g. "daylight" or "standard"
-    pub time_variant: Option<String>,
+    pub time_variant: Option<TinyStr8>,
 }
 
 impl MockTimeZone {
@@ -52,7 +54,7 @@ impl MockTimeZone {
         gmt_offset: GmtOffset,
         time_zone_id: Option<String>,
         metazone_id: Option<String>,
-        time_variant: Option<String>,
+        time_variant: Option<TinyStr8>,
     ) -> Self {
         Self {
             gmt_offset,
@@ -111,7 +113,7 @@ impl TimeZoneInput for MockTimeZone {
         self.metazone_id.as_ref().map(AsRef::as_ref)
     }
 
-    fn time_variant(&self) -> Option<&str> {
-        self.time_variant.as_ref().map(AsRef::as_ref)
+    fn time_variant(&self) -> Option<&TinyStr8> {
+        self.time_variant.as_ref()
     }
 }

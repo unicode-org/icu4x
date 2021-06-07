@@ -49,11 +49,11 @@ impl<'d> KeyedDataProvider for LikelySubtagsProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
+impl<'d, 's> DataProvider<'d, 's, LikelySubtagsV1Marker> for LikelySubtagsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, LikelySubtagsV1>, DataError> {
+    ) -> Result<DataResponse<'d, 's, LikelySubtagsV1Marker>, DataError> {
         LikelySubtagsProvider::supports_key(&req.resource_path.key)?;
         let langid = &req.resource_path.options.langid;
 
@@ -73,7 +73,7 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
 }
 
 icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, {
-    _ => LikelySubtagsV1,
+    _ => LikelySubtagsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {
@@ -188,7 +188,7 @@ fn test_basic() {
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-    let result: DataPayload<LikelySubtagsV1> = provider
+    let result: DataPayload<LikelySubtagsV1Marker> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
         .take_payload()

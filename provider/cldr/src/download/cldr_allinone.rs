@@ -40,7 +40,7 @@ use std::path::PathBuf;
 ///     let data_provider = PluralsProvider::try_from(&paths as &dyn CldrPaths)
 ///         .expect("The data should be well-formed after downloading");
 ///
-///     let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1> = data_provider
+///     let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1Marker> = data_provider
 ///         .load_payload(&DataRequest {
 ///             resource_path: ResourcePath {
 ///                 key: icu_plurals::provider::key::ORDINAL_V1,

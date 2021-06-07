@@ -5,7 +5,7 @@
 use crate::CldrPaths;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeSeDataStruct;
+use icu_provider::serde::SerdeSeDataStructMarker;
 use std::convert::TryFrom;
 use std::sync::RwLock;
 
@@ -34,7 +34,7 @@ fn map_poison<E>(_err: E) -> DataError {
 /// A lazy-initialized CLDR JSON data provider.
 impl<'b, 'd, 's: 'd, T> LazyCldrProvider<T>
 where
-    T: DataProvider<'d, dyn SerdeSeDataStruct<'s> + 's>
+    T: DataProvider<'d, 's, SerdeSeDataStructMarker>
         + IterableDataProviderCore
         + KeyedDataProvider
         + TryFrom<&'b dyn CldrPaths>,
@@ -45,7 +45,7 @@ where
         &self,
         req: &DataRequest,
         cldr_paths: &'b dyn CldrPaths,
-    ) -> Result<Option<DataResponse<'d, dyn SerdeSeDataStruct<'s> + 's>>, DataError> {
+    ) -> Result<Option<DataResponse<'d, 's, SerdeSeDataStructMarker>>, DataError> {
         if T::supports_key(&req.resource_path.key).is_err() {
             return Ok(None);
         }
