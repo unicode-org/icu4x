@@ -2,12 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod aliases;
 mod dates;
 mod likelysubtags;
 mod numbers;
 mod plurals;
 mod time_zones;
 
+pub use aliases::AliasesProvider;
 pub use dates::DatesProvider;
 pub use likelysubtags::LikelySubtagsProvider;
 pub use numbers::NumbersProvider;
@@ -24,6 +26,7 @@ use self::time_zones::TimeZonesProvider;
 /// Returns a list of all [`ResourceKeys`](ResourceKey) that this provider can produce.
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
+    result.extend(&aliases::ALL_KEYS);
     result.extend(&dates::ALL_KEYS);
     result.extend(&likelysubtags::ALL_KEYS);
     result.extend(&numbers::ALL_KEYS);
@@ -35,6 +38,7 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
 #[derive(Debug)]
 pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a dyn CldrPaths,
+    aliases: LazyCldrProvider<AliasesProvider<'d>>,
     dates: LazyCldrProvider<DatesProvider<'d>>,
     likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'d>>,
     numbers: LazyCldrProvider<NumbersProvider>,
@@ -46,6 +50,7 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
         CldrJsonDataProvider {
             cldr_paths,
+            aliases: Default::default(),
             dates: Default::default(),
             likelysubtags: Default::default(),
             numbers: Default::default(),
@@ -62,6 +67,9 @@ impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker>
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, 's, SerdeSeDataStructMarker>, DataError> {
+        if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
         if let Some(result) = self.dates.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
@@ -86,6 +94,12 @@ impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
         &self,
         resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        if let Some(resp) = self
+            .aliases
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
+            return Ok(resp);
+        }
         if let Some(resp) = self
             .dates
             .try_supported_options(resc_key, self.cldr_paths)?

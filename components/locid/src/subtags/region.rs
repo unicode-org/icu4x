@@ -123,6 +123,22 @@ impl Region {
     pub fn as_str(&self) -> &str {
         self.0.as_str()
     }
+
+    /// Returns true if the Region has an alphabetic code.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::Region;
+    ///
+    /// let region = Region::from_bytes(b"us")
+    ///     .expect("Parsing failed.");
+    ///
+    /// assert_eq!(region.is_alphabetic(), true);
+    /// ```
+    pub fn is_alphabetic(&self) -> bool {
+        self.0.is_ascii_alphabetic()
+    }
 }
 
 impl FromStr for Region {
