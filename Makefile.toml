@@ -33,6 +33,8 @@ category = "ICU4X Development"
 script = '''
 cd ffi/cpp/examples/pluralrules;
 make
+cd ../fixeddecimal;
+make
 '''
 
 [tasks.license-header-check]
