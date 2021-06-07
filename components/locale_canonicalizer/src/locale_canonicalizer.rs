@@ -17,9 +17,9 @@ pub enum CanonicalizationResult {
     Unmodified,
 }
 
-pub struct LocaleCanonicalizer<'a> {
-    aliases: DataPayload<'a, 'a, AliasesV1Marker>,
-    likely_subtags: DataPayload<'a, 'a, LikelySubtagsV1Marker>,
+pub struct LocaleCanonicalizer<'d, 's> {
+    aliases: DataPayload<'d, 's, AliasesV1Marker>,
+    likely_subtags: DataPayload<'d, 's, LikelySubtagsV1Marker>,
     extension_keys: Vec<Key>,
 }
 
@@ -123,25 +123,23 @@ macro_rules! maximize_locale {
     }};
 }
 
-impl LocaleCanonicalizer<'_> {
+impl<'d, 's> LocaleCanonicalizer<'d, 's> {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
-    pub fn new<'d, P>(provider: &P) -> Result<LocaleCanonicalizer<'d>, DataError>
+    pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer<'d, 's>, DataError>
     where
-        P: DataProvider<'d, 'd, AliasesV1Marker>
-            + DataProvider<'d, 'd, LikelySubtagsV1Marker>
+        P: DataProvider<'d, 's, AliasesV1Marker>
+            + DataProvider<'d, 's, LikelySubtagsV1Marker>
             + ?Sized,
     {
+        // The `rg` region override and `sd` regional subdivision keys may contain
+        // language codes that require canonicalization.
         let extension_keys = vec![
             Key::from_tinystr4_unchecked(tinystr4!("rg")),
             Key::from_tinystr4_unchecked(tinystr4!("sd")),
         ];
-        let aliases: DataPayload<AliasesV1Marker> =
-            // The `rg` region override and `sd` regional subdivision keys may contain
-            // language codes that require canonicalization.
-                provider
-                    .load_payload(&DataRequest::from(key::ALIASES_V1))?
-                    .take_payload()?
-            ;
+        let aliases: DataPayload<AliasesV1Marker> = provider
+            .load_payload(&DataRequest::from(key::ALIASES_V1))?
+            .take_payload()?;
 
         let likely_subtags: DataPayload<LikelySubtagsV1Marker> = provider
             .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))?
