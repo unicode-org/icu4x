@@ -71,8 +71,9 @@ impl<'de> SerdeDeDataProvider<'de> for StaticDataProvider {
         receiver: &mut dyn SerdeDeDataReceiver<'de>,
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
-        let mut d = serde_json::Deserializer::from_reader(file.as_bytes());
-        receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
+        receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(
+            &mut serde_json::Deserializer::from_reader(file.as_bytes())
+        ))?;
 
         Ok(DataResponseMetadata {
             data_langid: req.resource_path.options.langid.clone(),
