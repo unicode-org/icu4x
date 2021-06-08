@@ -14,7 +14,7 @@
 
 namespace icu4x {
     struct ICU4XPluralRulesDeleter {
-        void operator()(ICU4XPluralRules* l) { icu4x_plural_rules_destroy(l); }
+        void operator()(ICU4XPluralRules* l) const noexcept { icu4x_plural_rules_destroy(l); }
     };
     enum class PluralRuleType {
         Cardinal = ICU4XPluralRuleType_Cardinal,

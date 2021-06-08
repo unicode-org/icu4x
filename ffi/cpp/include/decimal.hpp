@@ -16,7 +16,7 @@
 
 namespace icu4x {
     struct ICU4XFixedDecimalFormatDeleter {
-        void operator()(ICU4XFixedDecimalFormat* l) { icu4x_fixed_decimal_format_destroy(l); }
+        void operator()(ICU4XFixedDecimalFormat* l) const noexcept { icu4x_fixed_decimal_format_destroy(l); }
     };
     enum class GroupingStrategy {
         Auto = ICU4XGroupingStrategy_Auto,

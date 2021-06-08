@@ -12,7 +12,7 @@
 
 namespace icu4x {
     struct ICU4XFixedDecimalDeleter {
-        void operator()(ICU4XFixedDecimal* l) { icu4x_fixed_decimal_destroy(l); }
+        void operator()(ICU4XFixedDecimal* l) const noexcept { icu4x_fixed_decimal_destroy(l); }
     };
     class FixedDecimal {
     public:

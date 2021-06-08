@@ -13,7 +13,7 @@
 
 namespace icu4x {
     struct ICU4XLocaleDeleter {
-        void operator()(ICU4XLocale* l) { icu4x_locale_destroy(l); }
+        void operator()(ICU4XLocale* l) const noexcept { icu4x_locale_destroy(l); }
     };
     class Locale {
     public:
