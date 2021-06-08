@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::slice;
-
+use crate::custom_writeable::ICU4XWriteable;
 use icu_locid::Locale;
+use std::slice;
 
 /// Opaque type for use behind a pointer, is [`Locale`]
 ///
@@ -24,6 +24,18 @@ pub unsafe extern "C" fn icu4x_locale_create(value: *const u8, len: usize) -> *m
     // todo: return errors
     let loc = ICU4XLocale::from_bytes(bytes).unwrap();
     Box::into_raw(Box::new(loc))
+}
+
+#[no_mangle]
+/// Write a string representation of [`ICU4XLocale`] to `write`
+///
+/// Returns `false` when there were errors writing to `write`
+pub extern "C" fn icu4x_locale_tostring(locale: &ICU4XLocale, write: &mut ICU4XWriteable) -> bool {
+    use writeable::Writeable;
+
+    let result = locale.write_to(write).is_ok();
+    write.flush();
+    result
 }
 
 #[no_mangle]

@@ -12,7 +12,7 @@
 #include "locale.h"
 
 // opaque
-typedef struct ICU4XPluralRules ICU4XPluralRules; 
+typedef struct ICU4XPluralRules ICU4XPluralRules;
 
 typedef struct {
     ICU4XPluralRules* rules;

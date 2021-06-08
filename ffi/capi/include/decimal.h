@@ -14,7 +14,7 @@
 #include "custom_writeable.h"
 
 // opaque
-typedef struct ICU4XFixedDecimalFormat ICU4XFixedDecimalFormat; 
+typedef struct ICU4XFixedDecimalFormat ICU4XFixedDecimalFormat;
 
 typedef struct {
     ICU4XFixedDecimalFormat* fdf;
