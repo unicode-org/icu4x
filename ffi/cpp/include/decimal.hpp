@@ -9,63 +9,72 @@
 #include <memory>
 
 #include "../../capi/include/decimal.h"
+#include "fixed_decimal.hpp"
 #include "locale.hpp"
 #include "provider.hpp"
-#include "fixed_decimal.hpp"
 #include "writeable_utils.hpp"
 
 namespace icu4x {
 struct ICU4XFixedDecimalFormatDeleter {
-    void operator()(ICU4XFixedDecimalFormat* l) const noexcept { icu4x_fixed_decimal_format_destroy(l); }
+  void operator()(ICU4XFixedDecimalFormat* l) const noexcept {
+    icu4x_fixed_decimal_format_destroy(l);
+  }
 };
 enum class GroupingStrategy {
-    Auto = ICU4XGroupingStrategy_Auto,
-    Never = ICU4XGroupingStrategy_Never,
-    Always = ICU4XGroupingStrategy_Always,
-    Min2 = ICU4XGroupingStrategy_Min2,
+  Auto = ICU4XGroupingStrategy_Auto,
+  Never = ICU4XGroupingStrategy_Never,
+  Always = ICU4XGroupingStrategy_Always,
+  Min2 = ICU4XGroupingStrategy_Min2,
 };
 
 enum class SignDisplay {
-    Auto = ICU4XSignDisplay_Auto,
-    Never = ICU4XSignDisplay_Never,
-    Always = ICU4XSignDisplay_Always,
-    ExceptZero = ICU4XSignDisplay_ExceptZero,
-    Negative = ICU4XSignDisplay_Negative,
+  Auto = ICU4XSignDisplay_Auto,
+  Never = ICU4XSignDisplay_Never,
+  Always = ICU4XSignDisplay_Always,
+  ExceptZero = ICU4XSignDisplay_ExceptZero,
+  Negative = ICU4XSignDisplay_Negative,
 };
 
 struct FixedDecimalFormatOptions {
-    GroupingStrategy grouping_strategy;
-    SignDisplay sign_display;
+  GroupingStrategy grouping_strategy;
+  SignDisplay sign_display;
 };
 
 class FixedDecimalFormat {
-public:
-    static std::optional<FixedDecimalFormat> Create(const Locale& locale, const DataProvider& provider, FixedDecimalFormatOptions opts) {
-        ICU4XDataProvider dp = provider.AsFFI();
-        ICU4XFixedDecimalFormatOptions opts_ffi = {static_cast<ICU4XGroupingStrategy>(opts.grouping_strategy), static_cast<ICU4XSignDisplay>(opts.sign_display)};
-        ICU4XCreateFixedDecimalFormatResult result = icu4x_fixed_decimal_format_create(locale.AsFFI(), &dp, opts_ffi);
-        if (result.success) {
-            return FixedDecimalFormat(result.fdf);
-        } else {
-            return {};
-        }
+ public:
+  static std::optional<FixedDecimalFormat> Create(
+      const Locale& locale, const DataProvider& provider,
+      FixedDecimalFormatOptions opts) {
+    ICU4XDataProvider dp = provider.AsFFI();
+    ICU4XFixedDecimalFormatOptions opts_ffi = {
+        static_cast<ICU4XGroupingStrategy>(opts.grouping_strategy),
+        static_cast<ICU4XSignDisplay>(opts.sign_display)};
+    ICU4XCreateFixedDecimalFormatResult result =
+        icu4x_fixed_decimal_format_create(locale.AsFFI(), &dp, opts_ffi);
+    if (result.success) {
+      return FixedDecimalFormat(result.fdf);
+    } else {
+      return {};
     }
+  }
 
-    std::optional<std::string> Format(const FixedDecimal& dec) {
-        std::string out;
-        ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
-        bool success = icu4x_fixed_decimal_format_write(this->inner.get(), dec.AsFFI(), &writer);
-        if (success) {
-            return out;
-        } else {
-            return {};
-        }
+  std::optional<std::string> Format(const FixedDecimal& dec) {
+    std::string out;
+    ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
+    bool success = icu4x_fixed_decimal_format_write(this->inner.get(),
+                                                    dec.AsFFI(), &writer);
+    if (success) {
+      return out;
+    } else {
+      return {};
     }
+  }
 
-private:
-    FixedDecimalFormat(ICU4XFixedDecimalFormat* i): inner(i) {}
-    std::unique_ptr<ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatDeleter> inner;
+ private:
+  FixedDecimalFormat(ICU4XFixedDecimalFormat* i) : inner(i) {}
+  std::unique_ptr<ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatDeleter>
+      inner;
 };
-} // namespace icu4x
+}  // namespace icu4x
 
-#endif // ICU4X_DECIMAL_HPP
+#endif  // ICU4X_DECIMAL_HPP

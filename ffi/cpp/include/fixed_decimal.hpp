@@ -12,22 +12,24 @@
 
 namespace icu4x {
 struct ICU4XFixedDecimalDeleter {
-    void operator()(ICU4XFixedDecimal* l) const noexcept { icu4x_fixed_decimal_destroy(l); }
+  void operator()(ICU4XFixedDecimal* l) const noexcept {
+    icu4x_fixed_decimal_destroy(l);
+  }
 };
 class FixedDecimal {
-public:
-    FixedDecimal(int64_t magnitude): FixedDecimal(icu4x_fixed_decimal_create(magnitude)) {}
-    void MultiplyPow10(int16_t power) {
-        icu4x_fixed_decimal_multiply_pow10(this->inner.get(), power);
-    }
-    void Negate() {
-        icu4x_fixed_decimal_negate(this->inner.get());
-    }
-    inline const ICU4XFixedDecimal* AsFFI() const { return this->inner.get(); }
-private:
-    FixedDecimal(ICU4XFixedDecimal* i): inner(i) {}
-    std::unique_ptr<ICU4XFixedDecimal, ICU4XFixedDecimalDeleter> inner;
-};
-} // namespace icu4x
+ public:
+  FixedDecimal(int64_t magnitude)
+      : FixedDecimal(icu4x_fixed_decimal_create(magnitude)) {}
+  void MultiplyPow10(int16_t power) {
+    icu4x_fixed_decimal_multiply_pow10(this->inner.get(), power);
+  }
+  void Negate() { icu4x_fixed_decimal_negate(this->inner.get()); }
+  inline const ICU4XFixedDecimal* AsFFI() const { return this->inner.get(); }
 
-#endif // ICU4X_FIXED_DECIMAL_HPP
+ private:
+  FixedDecimal(ICU4XFixedDecimal* i) : inner(i) {}
+  std::unique_ptr<ICU4XFixedDecimal, ICU4XFixedDecimalDeleter> inner;
+};
+}  // namespace icu4x
+
+#endif  // ICU4X_FIXED_DECIMAL_HPP
