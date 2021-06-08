@@ -40,7 +40,7 @@ struct FixedDecimalFormatOptions {
 
 class FixedDecimalFormat {
 public:
-    inline static std::optional<FixedDecimalFormat> Create(const Locale& locale, const DataProvider& provider, FixedDecimalFormatOptions opts) {
+    static std::optional<FixedDecimalFormat> Create(const Locale& locale, const DataProvider& provider, FixedDecimalFormatOptions opts) {
         ICU4XDataProvider dp = provider.AsFFI();
         ICU4XFixedDecimalFormatOptions opts_ffi = {static_cast<ICU4XGroupingStrategy>(opts.grouping_strategy), static_cast<ICU4XSignDisplay>(opts.sign_display)};
         ICU4XCreateFixedDecimalFormatResult result = icu4x_fixed_decimal_format_create(locale.AsFFI(), &dp, opts_ffi);
@@ -51,7 +51,7 @@ public:
         }
     }
 
-    inline std::optional<std::string> Format(const FixedDecimal& dec) {
+    std::optional<std::string> Format(const FixedDecimal& dec) {
         std::string out;
         ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
         bool success = icu4x_fixed_decimal_format_write(this->inner.get(), dec.AsFFI(), &writer);

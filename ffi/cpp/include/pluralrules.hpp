@@ -31,7 +31,7 @@ enum class PluralCategory {
 using PluralOperands = ICU4XPluralOperands;
 class PluralRules {
 public:
-    inline static std::optional<PluralRules> Create(const Locale& locale, const DataProvider& provider, PluralRuleType ty) {
+    static std::optional<PluralRules> Create(const Locale& locale, const DataProvider& provider, PluralRuleType ty) {
         ICU4XDataProvider dp = provider.AsFFI();
         ICU4XPluralRuleType ty_ffi = static_cast<ICU4XPluralRuleType>(ty);
         ICU4XCreatePluralRulesResult result = icu4x_plural_rules_create(locale.AsFFI(), &dp, ty_ffi);
@@ -41,7 +41,7 @@ public:
             return {};
         }
     }
-    inline PluralCategory Select(PluralOperands& op) const {
+    PluralCategory Select(PluralOperands& op) const {
         ICU4XPluralCategory cat = icu4x_plural_rules_select(this->inner.get(), &op);
         return static_cast<PluralCategory>(cat);
     }

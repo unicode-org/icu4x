@@ -17,10 +17,10 @@ struct ICU4XFixedDecimalDeleter {
 class FixedDecimal {
 public:
     FixedDecimal(int64_t magnitude): FixedDecimal(icu4x_fixed_decimal_create(magnitude)) {}
-    inline void MultiplyPow10(int16_t power) {
+    void MultiplyPow10(int16_t power) {
         icu4x_fixed_decimal_multiply_pow10(this->inner.get(), power);
     }
-    inline void Negate() {
+    void Negate() {
         icu4x_fixed_decimal_negate(this->inner.get());
     }
     inline const ICU4XFixedDecimal* AsFFI() const { return this->inner.get(); }

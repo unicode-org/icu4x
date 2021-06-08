@@ -20,7 +20,7 @@ struct ICU4XLocaleDeleter {
 class Locale {
 public:
     Locale(const std::string_view& value): inner(icu4x_locale_create(value.data(), value.size())) {}
-    inline std::optional<std::string> ToString() const {
+    std::optional<std::string> ToString() const {
         std::string out;
         ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
         bool success = icu4x_locale_tostring(this->inner.get(), &writer);

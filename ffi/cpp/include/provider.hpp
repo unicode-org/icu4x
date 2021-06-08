@@ -31,7 +31,7 @@ public:
         std::swap(inner, other.inner);
         return *this;
     }
-    static inline std::optional<DataProvider> FsDataProvider(const std::string_view& path) {
+    static std::optional<DataProvider> FsDataProvider(const std::string_view& path) {
         ICU4XCreateDataProviderResult result = icu4x_fs_data_provider_create(path.data(), path.size());
         if (result.success) {
             return DataProvider(result.provider);
