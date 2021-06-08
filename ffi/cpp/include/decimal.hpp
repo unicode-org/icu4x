@@ -53,7 +53,7 @@ namespace icu4x {
 
         inline std::optional<std::string> Format(const FixedDecimal& dec) {
             std::string out;
-            ICU4XWriteable writer = icu4x::internal::WriteTo(out);
+            ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
             bool success = icu4x_fixed_decimal_format_write(this->inner.get(), dec.AsFFI(), &writer);
             if (success) {
                 return out;

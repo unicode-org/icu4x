@@ -23,7 +23,7 @@ extern "C" inline bool Grow(ICU4XWriteable* w, uintptr_t requested) {
     return true;
 };
 
-inline ICU4XWriteable WriteTo(std::string& string) {
+inline ICU4XWriteable WriteableFromString(std::string& string) {
     ICU4XWriteable w;
     w.context = &string;
     w.buf = string.data();
