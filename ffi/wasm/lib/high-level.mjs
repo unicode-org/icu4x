@@ -26,7 +26,7 @@ const fixedDecimalRegistry = new FinalizationRegistry(ptr => {
 
 export class FixedDecimal {
   constructor(magnitude) {
-    this.underlying = icu4x.icu4x_fixed_decimal_create(magnitude);    
+    this.underlying = icu4x.icu4x_fixed_decimal_create(magnitude);
     fixedDecimalRegistry.register(this, this.underlying);
   }
 
@@ -43,6 +43,19 @@ export class FixedDecimal {
   write_to(writable) {
     icu4x.icu4x_fixed_decimal_write_to(this.underlying, writable.underlying);
   }
+
+  toString() {
+    const writable = icu4x.icu4x_buffer_writeable_create(0);
+    try {
+      icu4x.icu4x_fixed_decimal_write_to(this.underlying, writable);
+
+      const outStringPtr = icu4x.icu4x_buffer_writeable_get_bytes(writable);
+      const outStringLen = icu4x.icu4x_buffer_writeable_len(writable);
+      return readString(outStringPtr, outStringLen);
+    } finally {
+      icu4x.icu4x_buffer_writeable_destroy(writable);
+    }
+  }
 }
 
 const bufferWritableRegistry = new FinalizationRegistry(ptr => {
@@ -51,7 +64,7 @@ const bufferWritableRegistry = new FinalizationRegistry(ptr => {
 
 export class BufferWritable {
   constructor() {
-    this.underlying = icu4x.icu4x_buffer_writeable_create(0);    
+    this.underlying = icu4x.icu4x_buffer_writeable_create(0);
     bufferWritableRegistry.register(this, this.underlying);
   }
 
@@ -132,6 +145,21 @@ export class FixedDecimalFormat {
   write(decimal, writable) {
     if (!icu4x.icu4x_fixed_decimal_format_write(this.underlying, decimal.underlying, writable.underlying)) {
       throw new Error("Writing fixed decimal failed");
+    }
+  }
+
+  format(decimal) {
+    const writable = icu4x.icu4x_buffer_writeable_create(0);
+    try {
+      if (!icu4x.icu4x_fixed_decimal_format_write(this.underlying, decimal.underlying, writable)) {
+        throw new Error("Writing fixed decimal failed");
+      }
+
+      const outStringPtr = icu4x.icu4x_buffer_writeable_get_bytes(writable);
+      const outStringLen = icu4x.icu4x_buffer_writeable_len(writable);
+      return readString(outStringPtr, outStringLen);
+    } finally {
+      icu4x.icu4x_buffer_writeable_destroy(writable);
     }
   }
 }
