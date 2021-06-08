@@ -14,26 +14,26 @@
 
 
 namespace icu4x {
-    struct ICU4XLocaleDeleter {
-        void operator()(ICU4XLocale* l) const noexcept { icu4x_locale_destroy(l); }
-    };
-    class Locale {
-    public:
-        Locale(const std::string_view& value): inner(icu4x_locale_create(value.data(), value.size())) {}
-        inline std::optional<std::string> ToString() const {
-            std::string out;
-            ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
-            bool success = icu4x_locale_tostring(this->inner.get(), &writer);
-            if (success) {
-                return out;
-            } else {
-                return {};
-            }
+struct ICU4XLocaleDeleter {
+    void operator()(ICU4XLocale* l) const noexcept { icu4x_locale_destroy(l); }
+};
+class Locale {
+public:
+    Locale(const std::string_view& value): inner(icu4x_locale_create(value.data(), value.size())) {}
+    inline std::optional<std::string> ToString() const {
+        std::string out;
+        ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
+        bool success = icu4x_locale_tostring(this->inner.get(), &writer);
+        if (success) {
+            return out;
+        } else {
+            return {};
         }
-        inline const ICU4XLocale* AsFFI() const { return this->inner.get(); }
-    private:
-        std::unique_ptr<ICU4XLocale, ICU4XLocaleDeleter> inner;
-    };
+    }
+    inline const ICU4XLocale* AsFFI() const { return this->inner.get(); }
+private:
+    std::unique_ptr<ICU4XLocale, ICU4XLocaleDeleter> inner;
+};
 } // namespace icu4x
 
 #endif // ICU4X_LOCALE_HPP
