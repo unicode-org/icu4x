@@ -28,7 +28,7 @@ namespace icu4x {
         Many = ICU4XPluralCategory_Many,
         Other = ICU4XPluralCategory_Other,
     };
-    typedef ICU4XPluralOperands PluralOperands;
+    using PluralOperands = ICU4XPluralOperands;
     class PluralRules {
     public:
         inline static std::optional<PluralRules> Create(const Locale& locale, const DataProvider& provider, PluralRuleType ty) {
