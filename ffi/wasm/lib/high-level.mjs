@@ -31,7 +31,9 @@ export class FixedDecimal {
   }
 
   multiply_pow10(pow) {
-    return icu4x.icu4x_fixed_decimal_multiply_pow10(this.underlying, pow) == 1;
+    if (icu4x.icu4x_fixed_decimal_multiply_pow10(this.underlying, pow) != 1) {
+      throw new Error("Failed to multiply_pow10 the decimal");
+    }
   }
 
   negate() {

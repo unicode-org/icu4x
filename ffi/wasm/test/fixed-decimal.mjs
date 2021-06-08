@@ -12,8 +12,7 @@ test("convert a simple decimal to a string", t => {
 
 test("multiply a decimal by a power of 10", t => {
   const decimal = new FixedDecimal(BigInt(1234));
-  const result = decimal.multiply_pow10(-2);
-  t.is(result, true);
+  decimal.multiply_pow10(-2);
 
   const outWritable = new BufferWritable();
   decimal.write_to(outWritable);
