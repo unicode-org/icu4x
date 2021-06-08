@@ -25,7 +25,7 @@ pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedD
 #[no_mangle]
 /// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
 ///
-/// Returns `true` if the multiplication was successful.
+/// Returns a [`ICU4XFixedDecimalMultiplyPow10Result`] struct. See its docs for more details.
 pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     fd: &mut ICU4XFixedDecimal,
     power: i16,
