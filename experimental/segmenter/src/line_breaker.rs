@@ -39,7 +39,6 @@ fn get_linebreak_property_utf32_with_rule(
     codepoint: u32,
     line_break_rule: LineBreakRule,
     word_break_rule: WordBreakRule,
-    _ja_zh: bool,
 ) -> u8 {
     let codepoint = codepoint as usize;
     if codepoint < 0x20000 {
@@ -93,9 +92,8 @@ fn get_linebreak_property_with_rule(
     codepoint: char,
     linebreak_rule: LineBreakRule,
     wordbreak_rule: WordBreakRule,
-    ja_zh: bool,
 ) -> u8 {
-    get_linebreak_property_utf32_with_rule(codepoint as u32, linebreak_rule, wordbreak_rule, ja_zh)
+    get_linebreak_property_utf32_with_rule(codepoint as u32, linebreak_rule, wordbreak_rule)
 }
 
 #[inline]
@@ -484,7 +482,7 @@ impl<'a> LineBreakIterator<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: char) -> u8 {
-        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule, self.ja_zh)
+        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -693,7 +691,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: u32) -> u8 {
-        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule, self.ja_zh)
+        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -728,7 +726,6 @@ mod tests {
             codepoint,
             LineBreakRule::Strict,
             WordBreakRule::Normal,
-            false,
         )
     }
 
