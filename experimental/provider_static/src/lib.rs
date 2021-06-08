@@ -6,60 +6,35 @@ use icu_provider::{
     prelude::*,
     serde::{SerdeDeDataProvider, SerdeDeDataReceiver},
 };
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::fmt::Debug;
+use litemap::LiteMap;
+use serde::Deserialize;
 
-const STATIC_STR_DATA: &str = include_str!(concat!(env!("OUT_DIR"), "/static_data.json"));
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(tag = "ty", content = "contents")]
-enum StaticFileOrDir {
-    File(String),
-    Dir(Directory),
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Directory(Box<HashMap<String, StaticFileOrDir>>);
+const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/static_data.bincode"));
 
 /// A data provider loading data statically baked in to the binary. Useful for testing in situations
 /// where setting up a filesystem is tricky (e.g. WASM).
 ///
 /// This should probably not be used in production code since it bloats the binary.
 pub struct StaticDataProvider {
-    json: Directory,
+    json: LiteMap<&'static str, &'static str>,
 }
 
 impl StaticDataProvider {
     pub fn new() -> Self {
         StaticDataProvider {
-            json: serde_json::from_str(&STATIC_STR_DATA).unwrap(),
+            json: bincode::deserialize(&STATIC_STR_DATA).unwrap(),
         }
     }
 
-    fn get_file(&self, req: &DataRequest) -> Result<&str, DataError> {
-        let components = req.resource_path.key.get_components();
-        let mut dir = &self.json;
-        let mut file: Option<&str> = None;
-        for component in components
-            .iter()
-            .chain(req.resource_path.options.get_components().iter())
-        {
-            if file.is_some() {
-                // We should eventually distinguish between UnsupportedResourceKey
-                // and UnsupportedResourceOptions here
-                return Err(DataError::UnsupportedResourceKey(req.resource_path.key));
-            }
-            let fod = dir
-                .0
-                .get(component)
-                .ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))?;
-            match fod {
-                StaticFileOrDir::Dir(ref d) => dir = d,
-                StaticFileOrDir::File(ref f) => file = Some(f),
-            }
-        }
-        file.ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))
+    fn get_file(&self, req: &DataRequest) -> Result<&&str, DataError> {
+        let key_components = req.resource_path.key.get_components();
+        let opt_components = req.resource_path.options.get_components();
+        let key: Vec<&str> = key_components.iter().chain(opt_components.iter()).collect();
+        let key = "/".to_string() + &key.join("/");
+        self
+            .json
+            .get(&*key)
+            .ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 
