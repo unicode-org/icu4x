@@ -34,6 +34,6 @@ namespace icu4x {
     private:
         std::unique_ptr<ICU4XLocale, ICU4XLocaleDeleter> inner;
     };
-};
+} // namespace icu4x
 
 #endif // ICU4X_LOCALE_HPP

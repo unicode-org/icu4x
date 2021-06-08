@@ -28,6 +28,6 @@ namespace icu4x {
         FixedDecimal(ICU4XFixedDecimal* i): inner(i) {}
         std::unique_ptr<ICU4XFixedDecimal, ICU4XFixedDecimalDeleter> inner;
     };
-};
+} // namespace icu4x
 
 #endif // ICU4X_FIXED_DECIMAL_HPP

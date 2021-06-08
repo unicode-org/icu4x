@@ -38,6 +38,6 @@ inline ICU4XWriteable WriteTo(std::string& string) {
 };
 
 };
-};
+} // namespace icu4x
 
 #endif // ICU4X_UTILS_HPP

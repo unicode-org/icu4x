@@ -49,6 +49,6 @@ namespace icu4x {
         PluralRules(ICU4XPluralRules* i): inner(i) {}
         std::unique_ptr<ICU4XPluralRules, ICU4XPluralRulesDeleter> inner;
     };
-};
+} // namespace icu4x
 
 #endif // ICU4X_PLURALRULES_HPP

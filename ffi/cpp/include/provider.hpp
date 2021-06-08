@@ -44,6 +44,6 @@ namespace icu4x {
         DataProvider(ICU4XDataProvider i) : inner(i) {}
         ICU4XDataProvider inner;
     };
-};
+} // namespace icu4x
 
 #endif // ICU4X_PROVIDER_HPP

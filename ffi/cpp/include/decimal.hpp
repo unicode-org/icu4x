@@ -66,6 +66,6 @@ namespace icu4x {
         FixedDecimalFormat(ICU4XFixedDecimalFormat* i): inner(i) {}
         std::unique_ptr<ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatDeleter> inner;
     };
-};
+} // namespace icu4x
 
 #endif // ICU4X_DECIMAL_HPP
