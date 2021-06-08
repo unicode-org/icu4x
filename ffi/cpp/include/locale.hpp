@@ -10,7 +10,7 @@
 #include <string_view>
 
 #include "../../capi/include/locale.h"
-#include "utils.hpp"
+#include "writeable_utils.hpp"
 
 
 namespace icu4x {

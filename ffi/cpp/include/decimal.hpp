@@ -12,7 +12,7 @@
 #include "locale.hpp"
 #include "provider.hpp"
 #include "fixed_decimal.hpp"
-#include "utils.hpp"
+#include "writeable_utils.hpp"
 
 namespace icu4x {
     struct ICU4XFixedDecimalFormatDeleter {

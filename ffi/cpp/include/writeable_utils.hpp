@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#ifndef ICU4X_UTILS_HPP
-#define ICU4X_UTILS_HPP
+#ifndef ICU4X_WRITEABLE_UTILS_HPP
+#define ICU4X_WRITEABLE_UTILS_HPP
 
 #include<string>
 #include "../../capi/include/custom_writeable.h"
 
-namespace icu4x {
-namespace internal {
+namespace icu4x::internal {
 
 extern "C" inline void Flush(ICU4XWriteable* w) {
     std::string* string = reinterpret_cast<std::string*>(w->context);
@@ -37,7 +36,6 @@ inline ICU4XWriteable WriteTo(std::string& string) {
     return w;
 };
 
-};
 } // namespace icu4x
 
-#endif // ICU4X_UTILS_HPP
+#endif // ICU4X_WRITEABLE_UTILS_HPP
