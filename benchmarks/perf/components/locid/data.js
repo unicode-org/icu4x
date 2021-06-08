@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623186360157,
+  "lastUpdate": 1623193089813,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7877,6 +7877,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5091,
             "range": "± 57",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2a47704e5e3d8fd276de2a530feceb43e74d5a61",
+          "message": "Switch static data provider to using bincode to reduce heap footprint (#775)",
+          "timestamp": "2021-06-08T17:51:51-05:00",
+          "tree_id": "c0f9f660e5e9b44caa1eaadcb6c7d34874d59c42",
+          "url": "https://github.com/unicode-org/icu4x/commit/2a47704e5e3d8fd276de2a530feceb43e74d5a61"
+        },
+        "date": 1623193087946,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3595,
+            "range": "± 232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5100,
+            "range": "± 298",
             "unit": "ns/iter"
           }
         ]
