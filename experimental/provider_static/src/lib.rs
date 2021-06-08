@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use serde::Deserialize;
-use std::collections::HashMap;
 
 const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/static_data.bincode"));
 
@@ -13,7 +13,7 @@ const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/static_
 ///
 /// This should probably not be used in production code since it bloats the binary.
 pub struct StaticDataProvider {
-    json: HashMap<&'static str, &'static str>,
+    json: LiteMap<&'static str, &'static str>,
 }
 
 impl StaticDataProvider {
