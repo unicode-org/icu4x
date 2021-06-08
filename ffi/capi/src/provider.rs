@@ -4,8 +4,10 @@
 
 use icu_provider::serde::SerdeDeDataProvider;
 use icu_provider_fs::FsDataProvider;
-use icu_provider_static::StaticDataProvider;
 use std::{mem, ptr, slice, str};
+
+#[cfg(target_arch = "wasm32")]
+use icu_provider_static::StaticDataProvider;
 
 #[repr(C)]
 /// FFI version of [`SerdeDeDataProvider`]. See its docs for more details.
