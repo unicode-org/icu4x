@@ -31,8 +31,7 @@ impl StaticDataProvider {
         let opt_components = req.resource_path.options.get_components();
         let key: Vec<&str> = key_components.iter().chain(opt_components.iter()).collect();
         let key = "/".to_string() + &key.join("/");
-        self
-            .json
+        self.json
             .get(&*key)
             .ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
@@ -72,7 +71,7 @@ impl<'de> SerdeDeDataProvider<'de> for StaticDataProvider {
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
         receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(
-            &mut serde_json::Deserializer::from_reader(file.as_bytes())
+            &mut serde_json::Deserializer::from_reader(file.as_bytes()),
         ))?;
 
         Ok(DataResponseMetadata {
