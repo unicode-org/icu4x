@@ -10,6 +10,8 @@
 #include <string_view>
 
 #include "../../capi/include/locale.h"
+#include "utils.hpp"
+
 
 namespace icu4x {
     struct ICU4XLocaleDeleter {
@@ -18,6 +20,16 @@ namespace icu4x {
     class Locale {
     public:
         Locale(const std::string_view& value): inner(icu4x_locale_create(value.data(), value.size())) {}
+        inline std::optional<std::string> ToString() const {
+            std::string out;
+            ICU4XWriteable writer = icu4x::internal::WriteTo(out);
+            bool success = icu4x_locale_tostring(this->inner.get(), &writer);
+            if (success) {
+                return out;
+            } else {
+                return {};
+            }
+        }
         inline const ICU4XLocale* AsFFI() const { return this->inner.get(); }
     private:
         std::unique_ptr<ICU4XLocale, ICU4XLocaleDeleter> inner;

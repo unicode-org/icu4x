@@ -11,6 +11,7 @@ using namespace icu4x;
 
 int main() {
     Locale locale("ar");
+    std::cout << "Running test for locale " << locale.ToString().value() << std::endl;
     DataProvider dp = DataProvider::FsDataProvider(path).value();
     PluralRules pr = PluralRules::Create(locale, dp, PluralRuleType::Cardinal).value();
 

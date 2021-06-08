@@ -11,6 +11,7 @@ using namespace icu4x;
 
 int main() {
     Locale locale("bn");
+    std::cout << "Running test for locale " << locale.ToString().value() << std::endl;
     DataProvider dp = DataProvider::FsDataProvider(path).value();
 
     FixedDecimalFormatOptions opts = {GroupingStrategy::Auto, SignDisplay::Auto};
