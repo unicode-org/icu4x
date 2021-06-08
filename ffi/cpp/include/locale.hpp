@@ -5,7 +5,7 @@
 #ifndef ICU4X_LOCALE_HPP
 #define ICU4X_LOCALE_HPP
 
-#include <algorithm>
+#include <utility>
 #include <memory>
 #include <string_view>
 
