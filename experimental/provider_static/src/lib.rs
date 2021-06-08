@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{prelude::*, serde::{SerdeDeDataProvider, SerdeDeDataReceiver}};
+use icu_provider::{
+    prelude::*,
+    serde::{SerdeDeDataProvider, SerdeDeDataReceiver},
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt::Debug;
@@ -56,7 +59,7 @@ impl StaticDataProvider {
                 StaticFileOrDir::File(ref f) => file = Some(f),
             }
         }
-        Ok(file.ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))?)
+        file.ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))
     }
 }
 

@@ -133,6 +133,6 @@ pub unsafe extern "C" fn icu4x_static_data_provider_create() -> ICU4XCreateDataP
     let erased = Box::new(provider);
     ICU4XCreateDataProviderResult {
         provider: ICU4XDataProvider::from_boxed(erased),
-        success: true
+        success: true,
     }
 }
