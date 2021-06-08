@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{Error, FixedDecimal};
+use fixed_decimal::FixedDecimal;
 
 use crate::custom_writeable::ICU4XWriteable;
 use writeable::Writeable;
@@ -11,14 +11,6 @@ use writeable::Writeable;
 ///
 /// Can be obtained via [`icu4x_fixed_decimal_create()`] and destroyed via [`icu4x_fixed_decimal_destroy()`]
 pub type ICU4XFixedDecimal = FixedDecimal;
-
-#[repr(C)]
-/// C-representation version of [`fixed_decimal::Error`]
-pub enum ICU4XFixedDecimalError {
-    Success = 0,
-    Limit = 1,
-    Syntax = 2,
-}
 
 #[no_mangle]
 /// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
@@ -30,15 +22,6 @@ pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedD
     Box::into_raw(Box::new(fd))
 }
 
-#[repr(C)]
-/// This is the result returned by [`icu4x_fixed_decimal_multiply_pow10()`]
-pub struct ICU4XFixedDecimalMultiplyPow10Result {
-    /// Whether the multiplication was successful.
-    pub success: bool,
-    /// The error type if the multiplication failed.
-    pub error: ICU4XFixedDecimalError,
-}
-
 #[no_mangle]
 /// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
 ///
@@ -46,20 +29,8 @@ pub struct ICU4XFixedDecimalMultiplyPow10Result {
 pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     fd: &mut ICU4XFixedDecimal,
     power: i16,
-) -> ICU4XFixedDecimalMultiplyPow10Result {
-    match fd.multiply_pow10(power) {
-        Ok(_) => ICU4XFixedDecimalMultiplyPow10Result {
-            success: true,
-            error: ICU4XFixedDecimalError::Success,
-        },
-        Err(e) => ICU4XFixedDecimalMultiplyPow10Result {
-            success: false,
-            error: match e {
-                Error::Limit => ICU4XFixedDecimalError::Limit,
-                Error::Syntax => ICU4XFixedDecimalError::Syntax,
-            },
-        },
-    }
+) -> bool {
+    fd.multiply_pow10(power).is_ok()
 }
 
 #[no_mangle]

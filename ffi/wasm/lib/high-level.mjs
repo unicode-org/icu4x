@@ -24,14 +24,6 @@ const fixedDecimalRegistry = new FinalizationRegistry(ptr => {
   icu4x.icu4x_fixed_decimal_destroy(ptr);
 });
 
-const ICU4XFixedDecimalMultiplyPow10Result = {
-  parse: rtti.StructType({
-    success: [ 0, rtti.ScalarType.bool ],
-    error_code: [ 4, rtti.ScalarType.i32 ]
-  }),
-  size: 8
-};
-
 export class FixedDecimal {
   constructor(magnitude) {
     this.underlying = icu4x.icu4x_fixed_decimal_create(magnitude);    
@@ -39,11 +31,7 @@ export class FixedDecimal {
   }
 
   multiply_pow10(pow) {
-    const receiveBuffer = icu4x.icu4x_alloc(ICU4XFixedDecimalMultiplyPow10Result.size);
-    icu4x.icu4x_fixed_decimal_multiply_pow10(receiveBuffer, this.underlying, pow);
-    const parsed = ICU4XFixedDecimalMultiplyPow10Result.parse(icu4x.memory.buffer, receiveBuffer);
-    icu4x.icu4x_free(receiveBuffer);
-    return parsed;
+    return icu4x.icu4x_fixed_decimal_multiply_pow10(this.underlying, pow) == 1;
   }
 
   negate() {

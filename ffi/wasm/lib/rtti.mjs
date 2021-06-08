@@ -1,6 +1,15 @@
 // A collection of parsers for common scalar types.
 export const ScalarType = {
-  bool: (buffer, ptr) => (new Int32Array(buffer, ptr, 1))[0] == 1,
+  bool: (buffer, ptr) => {
+    const val = (new Uint8Array(buffer, ptr, 1))[0]
+    if (val == 0) {
+      return false;
+    } else if (val == 1) {
+      return true;
+    } else {
+      throw Error(`Unexpected boolean value: ${val}`);
+    }
+  },
   i8: (buffer, ptr) => (new Int8Array(buffer, ptr, 1))[0],
   u8: (buffer, ptr) => (new Uint8Array(buffer, ptr, 1))[0],
   i16: (buffer, ptr) => (new Int16Array(buffer, ptr, 1))[0],
