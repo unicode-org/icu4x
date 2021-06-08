@@ -121,6 +121,7 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 #[no_mangle]
 /// Constructs an [`StaticDataProvider`] and retirns it as an [`ICU4XDataProvider`].
 /// See [`StaticDataProvider::new()`] for more details.

@@ -10,7 +10,7 @@ console.log(outWritable.getString());
 
 const dataProvider = new StaticDataProvider();
 
-const locale = new Locale("en");
+const locale = new Locale("bn");
 
 const format = new FixedDecimalFormat(locale, dataProvider, {});
 const outWritable2 = new BufferWritable();
