@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623093544985,
+  "lastUpdate": 1623133062044,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5969,6 +5969,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 125846,
             "range": "± 7330",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6796b23271037d413a6b8706262cb68a9a7a3f76",
+          "message": "Add icu4x_locale_tostring and example for locale (#764)\n\n* Fix some trailing whitespace\r\n\r\n* Add icu4x_locale_tostring and example for locale\r\n\r\nThe example will be expanded to demonstrate locale canonicalization as\r\nwell.\r\n\r\nPartial fix for #757.",
+          "timestamp": "2021-06-07T23:12:03-07:00",
+          "tree_id": "fce991c25e938c96f3015c3ec4fddf22d96bcfa8",
+          "url": "https://github.com/unicode-org/icu4x/commit/6796b23271037d413a6b8706262cb68a9a7a3f76"
+        },
+        "date": 1623133060143,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155016,
+            "range": "± 1621",
             "unit": "ns/iter"
           }
         ]
