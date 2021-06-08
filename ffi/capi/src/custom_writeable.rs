@@ -122,11 +122,13 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
 ///
 /// Use [`icu4x_buffer_writeable_destroy()`] to free the writable and its underlying buffer.
 pub extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteable {
-    extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
+    extern "C" fn grow(this: *mut ICU4XWriteable, new_cap: usize) -> bool {
         unsafe {
-            let this = &*this;
+            let this = this.as_mut().unwrap();
             let mut vec = Vec::from_raw_parts(this.buf, 0, this.cap);
-            vec.reserve(cap);
+            vec.reserve(new_cap);
+            this.cap = vec.capacity();
+            this.buf = vec.as_mut_ptr();
             std::mem::forget(vec);
         }
         true

@@ -854,6 +854,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_provider_fs",
+ "icu_provider_static",
  "log",
  "writeable",
 ]
@@ -1067,6 +1068,7 @@ dependencies = [
 name = "icu_provider_static"
 version = "0.2.0"
 dependencies = [
+ "erased-serde",
  "icu",
  "icu_locid",
  "icu_provider",

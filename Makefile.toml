@@ -164,6 +164,7 @@ description = "Build WASM FFI into the target directory (release mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2021-02-28"
+env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
 args = ["wasm-build-release", "--package", "icu_capi"]
 
