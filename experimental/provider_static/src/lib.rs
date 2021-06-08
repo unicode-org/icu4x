@@ -13,7 +13,7 @@ const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/static_
 ///
 /// This should probably not be used in production code since it bloats the binary.
 pub struct StaticDataProvider {
-    json: HashMap<String, &'static str>,
+    json: HashMap<&'static str, &'static str>,
 }
 
 impl StaticDataProvider {
@@ -43,7 +43,7 @@ where
         let key = "/".to_string() + &key.join("/");
         let file = self
             .json
-            .get(&key)
+            .get(&*key)
             .ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))?;
         let data: M::Yokeable =
             M::Yokeable::deserialize(&mut serde_json::Deserializer::from_reader(file.as_bytes()))
