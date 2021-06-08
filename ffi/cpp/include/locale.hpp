@@ -24,11 +24,10 @@ class Locale {
     std::string out;
     ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
     bool success = icu4x_locale_tostring(this->inner.get(), &writer);
-    if (success) {
-      return out;
-    } else {
+    if (!success) {
       return {};
     }
+    return out;
   }
   inline const ICU4XLocale* AsFFI() const { return this->inner.get(); }
 

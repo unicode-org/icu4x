@@ -51,11 +51,10 @@ class FixedDecimalFormat {
         static_cast<ICU4XSignDisplay>(opts.sign_display)};
     ICU4XCreateFixedDecimalFormatResult result =
         icu4x_fixed_decimal_format_create(locale.AsFFI(), &dp, opts_ffi);
-    if (result.success) {
-      return FixedDecimalFormat(result.fdf);
-    } else {
+    if (!result.success) {
       return {};
     }
+    return FixedDecimalFormat(result.fdf);
   }
 
   std::optional<std::string> Format(const FixedDecimal& dec) {
@@ -63,11 +62,10 @@ class FixedDecimalFormat {
     ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
     bool success = icu4x_fixed_decimal_format_write(this->inner.get(),
                                                     dec.AsFFI(), &writer);
-    if (success) {
-      return out;
-    } else {
+    if (!success) {
       return {};
     }
+    return out;
   }
 
  private:

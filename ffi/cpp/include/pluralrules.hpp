@@ -40,11 +40,10 @@ class PluralRules {
     ICU4XPluralRuleType ty_ffi = static_cast<ICU4XPluralRuleType>(ty);
     ICU4XCreatePluralRulesResult result =
         icu4x_plural_rules_create(locale.AsFFI(), &dp, ty_ffi);
-    if (result.success) {
-      return PluralRules(result.rules);
-    } else {
+    if (!result.success) {
       return {};
     }
+    return PluralRules(result.rules);
   }
   PluralCategory Select(PluralOperands& op) const {
     ICU4XPluralCategory cat = icu4x_plural_rules_select(this->inner.get(), &op);

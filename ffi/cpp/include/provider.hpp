@@ -33,11 +33,10 @@ class DataProvider {
       const std::string_view& path) {
     ICU4XCreateDataProviderResult result =
         icu4x_fs_data_provider_create(path.data(), path.size());
-    if (result.success) {
-      return DataProvider(result.provider);
-    } else {
+    if (!result.success) {
       return {};
     }
+    return DataProvider(result.provider);
   }
   inline ICU4XDataProvider AsFFI() const { return this->inner; }
 
