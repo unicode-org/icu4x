@@ -40,10 +40,6 @@ export class FixedDecimal {
     icu4x.icu4x_fixed_decimal_negate(this.underlying);
   }
 
-  write_to(writable) {
-    icu4x.icu4x_fixed_decimal_write_to(this.underlying, writable.underlying);
-  }
-
   toString() {
     const writable = icu4x.icu4x_buffer_writeable_create(0);
     try {
@@ -55,23 +51,6 @@ export class FixedDecimal {
     } finally {
       icu4x.icu4x_buffer_writeable_destroy(writable);
     }
-  }
-}
-
-const bufferWritableRegistry = new FinalizationRegistry(ptr => {
-  icu4x.icu4x_buffer_writeable_destroy(ptr);
-});
-
-export class BufferWritable {
-  constructor() {
-    this.underlying = icu4x.icu4x_buffer_writeable_create(0);
-    bufferWritableRegistry.register(this, this.underlying);
-  }
-
-  getString() {
-    const outStringPtr = icu4x.icu4x_buffer_writeable_get_bytes(this.underlying);
-    const outStringLen = icu4x.icu4x_buffer_writeable_len(this.underlying);
-    return readString(outStringPtr, outStringLen);
   }
 }
 
@@ -139,12 +118,6 @@ export class FixedDecimalFormat {
       FixedDecimalFormatRegistry.register(this, this.underlying);
     } else {
       throw new Error("Failed to create a fixed decimal format");
-    }
-  }
-
-  write(decimal, writable) {
-    if (!icu4x.icu4x_fixed_decimal_format_write(this.underlying, decimal.underlying, writable.underlying)) {
-      throw new Error("Writing fixed decimal failed");
     }
   }
 
