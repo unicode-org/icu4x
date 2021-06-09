@@ -4,35 +4,12 @@
 
 [alias]
 
-### INDIVIDUAL TEST AND LINT TASKS ###
-
-# Build and run all code paths except docs
-test-all = "make test-all-features"
-
-# Build and run all docs tests
-test-docs = "make test-docs"
-
-# Build and run docs tests with default features
-test-docs-defaults = "make test-docs-defaults"
-
-# Check for formatting on all code
-fmt-check = "make fmt-check"
 
 # Run Clippy on all code paths
 # Keep args in sync with `clippy` job in .github/workflows/build-test.yml
 # unknown-clippy-lints: to allow us to work with nightly clippy lints that we don't CI
 # field-reassign-with-default: https://github.com/rust-lang/rust-clippy/issues/6559 (fixed in nightly but not stable)
 clippy-all = "clippy --all-features --all-targets -- -D warnings -Aclippy::field-reassign-with-default"
-
-### META TASKS ###
-
-# Run quick version of all lints and tests
-quick = "make quick"
-
-# Run all lints and tests
-ci = "make ci"
-
-tidy = "make tidy"
 
 ### WASM TASKS ###
 
