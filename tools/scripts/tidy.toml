@@ -4,6 +4,14 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[tasks.tidy]
+description = "Run miscellaneous tidy checks"
+category = "ICU4X Development"
+dependencies = [
+    "license-header-check",
+    "generated-readme-check",
+]
+
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
