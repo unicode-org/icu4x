@@ -54,7 +54,7 @@ export class FixedDecimal {
   }
 }
 
-const LocaleRegistry = new FinalizationRegistry(ptr => {
+const localeRegistry = new FinalizationRegistry(ptr => {
   icu4x.icu4x_locale_destroy(ptr);
 });
 
@@ -63,11 +63,11 @@ export class Locale {
     withEncodedString(name, (encoded, len) => {
       this.underlying = icu4x.icu4x_locale_create(encoded, len);
     });
-    LocaleRegistry.register(this, this.underlying);
+    localeRegistry.register(this, this.underlying);
   }
 }
 
-const StaticDataProviderRegistry = new FinalizationRegistry(ptr => {
+const staticDataProviderRegistry = new FinalizationRegistry(ptr => {
   const dataProviderView = new Uint32Array(icu4x.memory.buffer, ptr, 2);
   icu4x.icu4x_data_provider_destroy(dataProviderView[0], dataProviderView[1]); // structs are expanded into multiple params
   icu4x.icu4x_free(ptr);
@@ -87,14 +87,14 @@ export class StaticDataProvider {
     const resultParsed = ICU4XCreateDataProviderResult.parse(icu4x.memory.buffer, receiveBuffer);
     if (resultParsed.success) {
       this.underlying = receiveBuffer; // pointer to where the actual data provider is
-      StaticDataProviderRegistry.register(this, this.underlying);
+      staticDataProviderRegistry.register(this, this.underlying);
     } else {
       throw new Error("Failed to create a static data provider");
     }
   }
 }
 
-const FixedDecimalFormatRegistry = new FinalizationRegistry(ptr => {
+const fixedDecimalFormatRegistry = new FinalizationRegistry(ptr => {
   icu4x.icu4x_fixed_decimal_format_destroy(ptr);
 });
 
@@ -115,7 +115,7 @@ export class FixedDecimalFormat {
 
     if (resultParsed.success) {
       this.underlying = resultParsed.fdf;
-      FixedDecimalFormatRegistry.register(this, this.underlying);
+      fixedDecimalFormatRegistry.register(this, this.underlying);
     } else {
       throw new Error("Failed to create a fixed decimal format");
     }
