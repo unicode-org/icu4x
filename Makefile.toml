@@ -26,8 +26,7 @@ dependencies = [
     "test-all",
     "fmt-check",
     "clippy-all",
-    "license-header-check",
-    "generated-readme-check",
+    "tidy",
     "test-ffi",
 ]
 
