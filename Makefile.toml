@@ -25,6 +25,8 @@ cd ffi/capi/examples/pluralrules;
 make
 cd ../fixeddecimal;
 make
+cd ../locale;
+make
 '''
 
 [tasks.license-header-check]

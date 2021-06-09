@@ -18,7 +18,11 @@ int main() {
     if (!success) {
         return 1;
     }
-    // expect "ar"
+    const char* expected = u8"ar";
+    if (strcmp(output, expected) != 0) {
+        printf("Output does not match expected output!\n");
+        return 1;
+    }
     printf("Output is %s\n", output);
     icu4x_locale_destroy(locale);
 
@@ -39,7 +43,11 @@ int main() {
     if (!success) {
         return 1;
     }
-    // expect "en-Latn-US"
+    expected = u8"en-Latn-US";
+    if (strcmp(output, expected) != 0) {
+        printf("Output does not match expected output!\n");
+        return 1;
+    }
     printf("Output is %s\n", output);
     icu4x_locale_destroy(locale);
 
@@ -51,7 +59,11 @@ int main() {
     if (!success) {
         return 1;
     }
-    // expect "zh-TW"
+    expected = u8"zh-TW";
+    if (strcmp(output, expected) != 0) {
+        printf("Output does not match expected output!\n");
+        return 1;
+    }
     printf("Output is %s\n", output);
     icu4x_locale_destroy(locale);
 
@@ -63,7 +75,11 @@ int main() {
     if (!success) {
         return 1;
     }
-    // expect "nn"
+    expected = u8"nn";
+    if (strcmp(output, expected) != 0) {
+        printf("Output does not match expected output!\n");
+        return 1;
+    }
     printf("Output is %s\n", output);
     icu4x_locale_destroy(locale);
 
