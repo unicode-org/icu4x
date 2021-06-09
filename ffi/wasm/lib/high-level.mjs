@@ -109,7 +109,11 @@ const ICU4XCreateFixedDecimalFormatResult = {
 export class FixedDecimalFormat {
   constructor(locale, provider, options) {
     const receiveBuffer = icu4x.icu4x_alloc(ICU4XCreateFixedDecimalFormatResult.size);
-    icu4x.icu4x_fixed_decimal_format_create(receiveBuffer, locale.underlying, provider.underlying, 0, 0);
+    icu4x.icu4x_fixed_decimal_format_create(
+      receiveBuffer, locale.underlying, provider.underlying,
+      options["groupingStrategy"] || 0,
+      options["signDisplay"] || 0
+    );
     const resultParsed = ICU4XCreateFixedDecimalFormatResult.parse(icu4x.memory.buffer, receiveBuffer);
     icu4x.icu4x_free(receiveBuffer);
 

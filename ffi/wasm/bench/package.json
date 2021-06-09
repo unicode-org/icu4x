@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "benchmark": "2.1.4"
+  }
+}
