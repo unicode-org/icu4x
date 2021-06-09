@@ -12,6 +12,14 @@ install_crate_args = ["--version", "^1.4"]
 command = "cargo"
 args = ["build-all-features"]
 
+[tasks.test-ffi]
+description = "Run FFI tests"
+category = "ICU4X Development"
+dependencies = [
+    "test-capi",
+    "test-cpp",
+]
+
 [tasks.test-capi]
 description = "Run C API tests"
 category = "ICU4X Development"

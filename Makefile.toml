@@ -10,15 +10,6 @@ extend = [{ path = "./tools/scripts/data.toml"}, { path = "./tools/scripts/valgr
 default_to_workspace = false
 load_cargo_aliases = true
 
-
-[tasks.test-ffi]
-description = "Run FFI tests"
-category = "ICU4X Development"
-dependencies = [
-    "test-capi",
-    "test-cpp",
-]
-
 [tasks.quick]
 description = "Run quick version of all lints and tests"
 category = "ICU4X Development"
