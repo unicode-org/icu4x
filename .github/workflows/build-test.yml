@@ -6,6 +6,13 @@ name: Build and Test
 
 # TODO(#234) re-include cache steps, also using Rust version in cache key
 
+# Note: Each of these jobs, except for the clippy job and the optional benchmarking/coverage
+# jobs, maps to a `ci-job-foo` entry in Makefile.toml. If adding further CI jobs, please add them
+# as makefile targets as well, and list them under `ci-all`.
+#
+# Clippy is special because we're using actions-rs/clippy-check which is able to surface clippy failures on
+# PR bodies
+
 on:
   push:
     branches: [ main ]
@@ -24,8 +31,8 @@ jobs:
     - name: Check
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: check
-        args: --all-targets --all-features
+        command: make
+        args: ci-job-check
 
   # Test job - runs all "cargo make" testing commands
   test:
@@ -44,14 +51,11 @@ jobs:
       with:
         command: build
         args: --all-targets --all-features
-    - name: Test All Targets
+    - name: Run `cargo make ci-job-test`
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: test-all
-    - name: Test Docs
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: test-docs
+        command: make
+        args: ci-job-test
 
 
   # Feature coverage job - builds all permutations of features
@@ -75,7 +79,8 @@ jobs:
     - name: Build All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: build-all-features
+        command: make
+        args: ci-job-features
 
   # WASM Tests - runs Node.js tests for WASM bindings
   wasm:
@@ -106,14 +111,39 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.17.0
-      - name: Test
-        run: |
-          npm install
-          npm test
-        working-directory: ./ffi/wasm/test
+      - name: Build
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: make
+          args: wasm-test-release
 
-  # Lint job - runs all "cargo make" linting commands
-  lint:
+  # Fmt job - runs cargo fmt
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+
+    - name: Install rustfmt
+      run: rustup component add rustfmt
+
+    - name: Install cargo-make
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    - name: Check Format
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-format
+
+
+  # Lint job - runs all "cargo make" tidy commands
+  tidy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -138,46 +168,11 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
-    - name: Check Format
+    - name: Tidy
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: fmt-check
-
-    - name: Check License Headers
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: license-check
-
-    - name: Check Generated README.md
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: readme-check
-
-  # Bincode job - Test that the bincode data provider can be generated correctly.
-  bincode:
-    runs-on: ubuntu-latest
-    # Wait for the initial build to finish. Note that this step does not currently re-use any
-    # artifacts from the build step. It's only waiting on the build to minimize resource use
-    # in case the build fails.
-    needs: [build]
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
-    - name: Install cargo-make
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
-
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
-    - name: Build the bincode
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: bincode-gen-testdata
+        command: make
+        args: ci-job-tidy
 
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
