@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623193089813,
+  "lastUpdate": 1623198590649,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7913,6 +7913,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5100,
             "range": "± 298",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "500e458fbb8d5f0295f5f2baf3b7af10f937cd21",
+          "message": "Clarify `top level` in testdata README (#773)\n\n* Clarify `top level` in testdata README\r\n\r\n* Match lib.rs with README",
+          "timestamp": "2021-06-08T17:24:07-07:00",
+          "tree_id": "53c70b71af41aff3dba5f5dfb90519354efef8a7",
+          "url": "https://github.com/unicode-org/icu4x/commit/500e458fbb8d5f0295f5f2baf3b7af10f937cd21"
+        },
+        "date": 1623198589444,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2448,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4263,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
