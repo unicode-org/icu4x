@@ -18,8 +18,8 @@ struct ICU4XFixedDecimalDeleter {
 };
 class FixedDecimal {
  public:
-  FixedDecimal(int64_t magnitude)
-      : FixedDecimal(icu4x_fixed_decimal_create(magnitude)) {}
+  FixedDecimal(int64_t number)
+      : FixedDecimal(icu4x_fixed_decimal_create(number)) {}
   void MultiplyPow10(int16_t power) {
     icu4x_fixed_decimal_multiply_pow10(this->inner.get(), power);
   }
