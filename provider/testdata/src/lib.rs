@@ -24,7 +24,7 @@
 //!
 //! ## Re-generating the data
 //!
-//! From the top level, run:
+//! From the top level directory of the `icu4x` metapackage, run:
 //!
 //! ```bash
 //! $ cargo make testdata
