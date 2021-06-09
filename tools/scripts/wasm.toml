@@ -210,9 +210,20 @@ dependencies = [
     "wasm-wasm-release",
     "wasm-wat",
     "wasm-dcmp",
-    "wasm-opt",
-    "wasm-twiggy-dominators",
+    "opt",
+    "wasm-twiggy-dowasm-minators",
 ]
+
+[tasks.wasm-test-release]
+description = "Run WASM tests in release mode"
+category = "ICU4X WASM"
+script_runner = "@duckscript"
+script = '''
+cd ./ffi/wasm/test;
+npm install;
+npm test;
+'''
+dependencies = ["wasm-release"]
 
 [tasks.wasm-clean]
 description = "Clean up WASM build artifacts"

@@ -7,22 +7,16 @@
 ### INDIVIDUAL TEST AND LINT TASKS ###
 
 # Build and run all code paths except docs
-test-all = "test --all-features --all-targets"
+test-all = "make test-all-features"
 
 # Build and run all docs tests
-test-docs = "test --all-features --doc"
+test-docs = "make test-docs"
 
 # Build and run docs tests with default features
-test-docs-defaults = "test --doc"
+test-docs-defaults = "make test-docs-defaults"
 
 # Check for formatting on all code
-fmt-check = "fmt -- --check"
-
-# Check for license headers
-license-check = "make license-header-check"
-
-# Check for generated README.md
-readme-check = "make generated-readme-check"
+fmt-check = "make fmt-check"
 
 # Run Clippy on all code paths
 # Keep args in sync with `clippy` job in .github/workflows/build-test.yml
@@ -38,8 +32,7 @@ quick = "make quick"
 # Run all lints and tests
 ci = "make ci"
 
-# Run all lints and tests
-bincode-gen-testdata = "make bincode-gen-testdata"
+tidy = "make tidy"
 
 ### WASM TASKS ###
 

@@ -12,6 +12,30 @@ install_crate_args = ["--version", "^1.4"]
 command = "cargo"
 args = ["build-all-features"]
 
+[tasks.fmt-check]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
+[tasks.test-all-features]
+description = "Run all Rust tests with all features and targets"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--all-targets"]
+
+[tasks.test-docs]
+description = "Run all Rust doctests with all features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--doc"]
+
+[tasks.test-docs-default]
+description = "Run all Rust doctests with default features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--doc"]
+
 [tasks.test-ffi]
 description = "Run FFI tests"
 category = "ICU4X Development"
