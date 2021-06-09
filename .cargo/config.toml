@@ -49,9 +49,6 @@ wasm-build-release = "build -Z build-std=std,panic_abort -Z build-std-features=p
 
 [target.wasm32-unknown-unknown]
 rustflags = [
-  # 10 KiB heap size, to fit in 1 page.
-  "-C", "link-args=-z stack-size=10240",
-  # Several options to reduce code size.
-  "-C", "panic=abort",
-  "-C", "opt-level=s",
+  # 20 KiB heap size, to fit in 2 pages.
+  "-C", "link-args=-z stack-size=20480"
 ]
