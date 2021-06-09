@@ -1,0 +1,101 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.license-header-check]
+description = "Ensure all the source files have license headers"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml"
+
+blank_line = set ""
+
+license_hash_line_1 = set "# This file is part of ICU4X. For terms of use, please see the file"
+license_hash_line_2 = set "# called LICENSE at the top level of the ICU4X source tree"
+license_hash_line_3 = set "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_hash_array = array ${license_hash_line_1} ${license_hash_line_2} ${license_hash_line_3} ${blank_line}
+license_hash_str = array_join ${license_hash_array} "\n"
+
+license_slash_line_1 = set "// This file is part of ICU4X. For terms of use, please see the file"
+license_slash_line_2 = set "// called LICENSE at the top level of the ICU4X source tree"
+license_slash_line_3 = set "// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_slash_array = array ${license_slash_line_1} ${license_slash_line_2} ${license_slash_line_3} ${blank_line}
+license_slash_str = array_join ${license_slash_array} "\n"
+
+for pattern in ${glob_pattern_array}
+    handle = glob_array ${pattern}
+    for path in ${handle}
+        if not starts_with ${path} "target"  # skip paths in target dir
+            text = readfile ${path}
+            result_hash = starts_with ${text} ${license_hash_str}
+            result_slash = starts_with ${text} ${license_slash_str}
+            not_result_hash = not ${result_hash}
+            not_result_slash = not ${result_slash}
+            if ${not_result_hash} and ${not_result_slash}
+              echo "License header missing in ${path}"
+              trigger_error "License header missing or misformatted in ${path}."
+            end
+        end
+    end
+    echo "License headers found in files matching ${pattern}"
+end
+echo "License header check complete"
+'''
+
+[tasks.generate-readmes]
+description = "Automatically generate README.md for each component."
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+glob_pattern = set "./**/Cargo.toml"
+template = canonicalize README.tpl
+
+cargo_list = exec cargo --list
+if not contains ${cargo_list.stdout} "readme"
+    trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
+end
+
+handle = glob_array ${glob_pattern}
+for path in ${handle}
+    root_dir = dirname ${path}
+    if not is_empty ${root_dir}
+        echo "Automatically generating ${root_dir}/README.md"
+        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+    end
+end
+'''
+
+[tasks.generated-readme-check]
+description = "Check that README.md was properly generated for each component."
+category = "ICU4X Development"
+dependencies = [
+    "generate-readmes"
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1 -uno
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    if contains ${output.stdout} README.md
+        msg = array "" ""
+        array_push ${msg} "A README.md file is out-of-sync with lib.rs"
+        array_push ${msg} ""
+        array_push ${msg} "If you modified a lib.rs file, please run `cargo make generate-readmes`. If you edited a"
+        array_push ${msg} "README.md file directly, please also update the corresponding lib.rs."
+        array_push ${msg} ""
+        array_push ${msg} "The modified files were:"
+        array_push ${msg} "${output.stdout}"
+        msg = array_join ${msg} "\n"
+        trigger_error ${msg}
+    end
+end
+'''

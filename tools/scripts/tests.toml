@@ -1,0 +1,35 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.build-all-features]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.4"]
+command = "cargo"
+args = ["build-all-features"]
+
+[tasks.test-capi]
+description = "Run C API tests"
+category = "ICU4X Development"
+script = '''
+cd ffi/capi/examples/pluralrules;
+make
+cd ../fixeddecimal;
+make
+cd ../locale;
+make
+'''
+
+[tasks.test-cpp]
+description = "Run CPP tests"
+category = "ICU4X Development"
+script = '''
+cd ffi/cpp/examples/pluralrules;
+make
+cd ../fixeddecimal;
+make
+'''
