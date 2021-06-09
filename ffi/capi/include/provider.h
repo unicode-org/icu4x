@@ -13,6 +13,9 @@
 extern "C" {
 #endif
 
+// Rust fat pointers are two words large,
+// and neither word is null. We represent this
+// as two opaque uintptr_ts
 typedef struct {
     uintptr_t _field1;
     uintptr_t _field2;

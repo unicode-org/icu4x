@@ -15,7 +15,8 @@ namespace icu4x {
 class DataProvider {
  public:
   ~DataProvider() {
-    if (this->inner._field1) {
+    // Check that the fat pointer not nulled out
+    if (this->inner._field1 && this->inner._field2) {
       icu4x_data_provider_destroy(this->inner);
     }
   }
@@ -23,6 +24,7 @@ class DataProvider {
   DataProvider& operator=(const DataProvider&) = delete;
   DataProvider(DataProvider&& other) noexcept {
     this->inner = other.inner;
+    // Null out the fat pointer
     other.inner = {0, 0};
   }
   DataProvider& operator=(DataProvider&& other) noexcept {
