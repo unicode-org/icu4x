@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623259241448,
+  "lastUpdate": 1623280241555,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7169,6 +7169,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36627394,
             "range": "± 504443",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shadaj@users.noreply.github.com",
+            "name": "Shadaj Laddad",
+            "username": "shadaj"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da5bfbfdfa8dc7946530ec3ec97b365e1ab627c7",
+          "message": "Add support for Locale, StaticDataProvider, and FixedDecimalFormat to the WASM FFI (#770)",
+          "timestamp": "2021-06-09T18:04:39-05:00",
+          "tree_id": "5461df7510ffed138a424199b10721105ad8eb7c",
+          "url": "https://github.com/unicode-org/icu4x/commit/da5bfbfdfa8dc7946530ec3ec97b365e1ab627c7"
+        },
+        "date": 1623280239651,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35439882,
+            "range": "± 743466",
             "unit": "ns/iter"
           }
         ]
