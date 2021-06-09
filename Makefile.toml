@@ -25,6 +25,18 @@ cd ffi/capi/examples/pluralrules;
 make
 cd ../fixeddecimal;
 make
+cd ../locale;
+make
+'''
+
+[tasks.test-cpp]
+description = "Run CPP tests"
+category = "ICU4X Development"
+script = '''
+cd ffi/cpp/examples/pluralrules;
+make
+cd ../fixeddecimal;
+make
 '''
 
 [tasks.license-header-check]
@@ -126,6 +138,14 @@ end
 
 ### META TASKS ###
 
+[tasks.test-ffi]
+description = "Run FFI tests"
+category = "ICU4X Development"
+dependencies = [
+    "test-capi",
+    "test-cpp",
+]
+
 [tasks.quick]
 description = "Run quick version of all lints and tests"
 category = "ICU4X Development"
@@ -135,7 +155,7 @@ dependencies = [
     "clippy-all",
     "license-header-check",
     "generated-readme-check",
-    "test-capi",
+    "test-ffi",
 ]
 
 [tasks.ci]

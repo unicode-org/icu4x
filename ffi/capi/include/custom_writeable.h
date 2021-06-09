@@ -9,15 +9,23 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct ICU4XWriteable {
     void* context;
     char* buf;
     size_t len;
     size_t cap;
     void (*flush)(struct ICU4XWriteable*);
-    char (*grow)(struct ICU4XWriteable*, size_t);
+    bool (*grow)(struct ICU4XWriteable*, size_t);
 } ICU4XWriteable;
 
 ICU4XWriteable icu4x_simple_writeable(char* buf, size_t buf_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ICU4X_CUSTOM_WRITEABLE_H

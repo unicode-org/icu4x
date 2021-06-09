@@ -11,6 +11,10 @@
 #include "provider.h"
 #include "locale.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // opaque
 typedef struct ICU4XPluralRules ICU4XPluralRules;
 
@@ -46,5 +50,9 @@ typedef struct {
 ICU4XCreatePluralRulesResult icu4x_plural_rules_create(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XPluralRuleType ty);
 ICU4XPluralCategory icu4x_plural_rules_select(const ICU4XPluralRules* rules, const ICU4XPluralOperands* op);
 void icu4x_plural_rules_destroy(ICU4XPluralRules* rules);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ICU4X_PLURALRULES_H

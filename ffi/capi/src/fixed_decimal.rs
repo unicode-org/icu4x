@@ -14,11 +14,11 @@ pub type ICU4XFixedDecimal = FixedDecimal;
 
 #[no_mangle]
 /// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
-/// `magnitude`.
+/// `number`.
 //
 // We can add additional constructors from strings, floats, etc as the need arises
-pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedDecimal {
-    let fd = FixedDecimal::from(magnitude);
+pub extern "C" fn icu4x_fixed_decimal_create(number: i64) -> *mut ICU4XFixedDecimal {
+    let fd = FixedDecimal::from(number);
     Box::into_raw(Box::new(fd))
 }
 
