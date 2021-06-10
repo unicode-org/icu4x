@@ -34,8 +34,9 @@ Each commit and pull request should follow the [style guide][style_guide] and be
 
 Handy commands (run from the root directory):
 
+- `cargo tidy` runs tidy-checks (license, fmt, readmes)
 - `cargo quick` runs the fastest tests and lints.
-- `cargo ci` runs all tests and lints.
+- `cargo make ci-all` runs all tests and lints
 
 ### Structure of commits in a Pull Request
 
