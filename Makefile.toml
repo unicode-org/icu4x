@@ -26,7 +26,7 @@ description = "Run fmt and other tidy checks"
 category = "ICU4X Development"
 dependencies = [
     "fmt",
-    "tidy-minus-fmt",
+    "ci-job-tidy",
 ]
 
 [tasks.ci-job-check]
@@ -64,7 +64,8 @@ dependencies = [
 description = "Run all tests for the CI 'tidy' job"
 category = "CI"
 dependencies = [
-    "tidy-minus-fmt",
+    "license-header-check",
+    "generated-readme-check",
 ]
 
 [tasks.ci-job-wasm]
