@@ -96,13 +96,7 @@ impl TrieType for Small {
 }
 
 pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
-    index_length: u32,
-    data_length: u32,
-    high_start: u32,
-    shifted12_high_start: u16,
-    index3_null_offset: u16,
-    data_null_offset: u32,
-    null_value: u32,
+    header: CodePointTrieHeader,
     index: ZeroVec<'trie, u16>,
     data: ZeroVec<'trie, W>,
     _marker_ty: PhantomData<T>,
@@ -135,13 +129,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         // TODO: what are other assertions to include?
         
         let trie: CodePointTrie<'trie, W, T> = CodePointTrie {
-            index_length: header.index_length,
-            data_length: header.data_length,
-            high_start: header.high_start,
-            shifted12_high_start: header.shifted12_high_start,
-            index3_null_offset: header.index3_null_offset,
-            data_null_offset: header.data_null_offset,
-            null_value: header.null_value,
+            header: header,
             index: ZeroVec::from_aligned(&index),
             data: ZeroVec::from_aligned(&data),
             _marker_ty: PhantomData,
@@ -234,11 +222,11 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 
     pub fn high_start(&self) -> u32 {
-        self.high_start
+        self.header.high_start
     }
 
     pub fn data_length(&self) -> u32 {
-        self.data_length
+        self.header.data_length
     }
 }
 
