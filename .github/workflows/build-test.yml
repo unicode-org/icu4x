@@ -86,10 +86,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    - name: Test Docs with Default Features
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: test-docs-defaults
     - name: Build All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:
