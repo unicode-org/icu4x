@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623335717851,
+  "lastUpdate": 1623335812300,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8129,6 +8129,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5274,
             "range": "± 320",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61b7083ff2681fc7cdc847859b63b088e23228e9",
+          "message": "Add sections on zero-copy and exotic types to style guide (#699)\n\n* Add sections on zero-copy and exotic types to style guide\r\n\r\n* Review feedback",
+          "timestamp": "2021-06-10T07:26:08-07:00",
+          "tree_id": "a695f509967dfc58e9dc7e16568f900ac65259d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/61b7083ff2681fc7cdc847859b63b088e23228e9"
+        },
+        "date": 1623335807129,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3023,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4688,
+            "range": "± 364",
             "unit": "ns/iter"
           }
         ]
