@@ -9,7 +9,7 @@ use zerovec::ZeroVec;
 
 // Enums
 
-/// The width of the elements in the data array of a CodePointTrie.
+/// The width of the elements in the data array of a [`CodePointTrie`].
 /// See UCPTrieValueWidth in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
 pub enum ValueWidthEnum {
@@ -120,7 +120,10 @@ pub struct CodePointTrieHeader {
 // struct CodePoint(u32) ← enforce whatever invariants you'd like
 
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
-    fn try_new(
+
+    /// Create a new [`CodePointTrie`] backed by borrowed data for the `index`
+    /// array and `data` array.
+    pub fn try_new(
         header: CodePointTrieHeader,
         index: &[u16],
         data: &[W],
@@ -175,45 +178,46 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         Ok(trie)
     }
 
-    fn trie_internal_small_index(&self, c: u32) -> u32 {
-        let mut i1: u32 = c >> SHIFT_1;
+    fn trie_internal_small_index(&self, code_point: u32) -> u32 {
+        let mut index1_pos: u32 = code_point >> SHIFT_1;
         if T::ENUM_VALUE == TrieTypeEnum::Fast {
-            assert!(0xffff < c && c < self.header.high_start);
-            i1 = i1 + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
+            assert!(0xffff < code_point && code_point < self.header.high_start);
+            index1_pos = index1_pos + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
         } else {
-            assert!(c < self.header.high_start && self.header.high_start > SMALL_LIMIT);
-            i1 = i1 + SMALL_INDEX_LENGTH;
+            assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
+            index1_pos = index1_pos + SMALL_INDEX_LENGTH;
         }
-        let mut i3_block: u32 = self
+        let mut index3_block: u32 = self
             .index
             .get(
-                (self.index.get(i1 as usize).unwrap() as u32 + ((c >> SHIFT_2) & INDEX_2_MASK))
+                (self.index.get(index1_pos as usize).unwrap() as u32 + ((code_point >> SHIFT_2) & INDEX_2_MASK))
                     as usize,
             )
             .unwrap() as u32;
-        let mut i3: u32 = (c >> SHIFT_3) & INDEX_3_MASK;
+        let mut index3_pos: u32 = (code_point >> SHIFT_3) & INDEX_3_MASK;
         let mut data_block: u32;
-        if i3_block & 0x8000 == 0 {
+        if index3_block & 0x8000 == 0 {
             // 16-bit indexes
-            data_block = self.index.get((i3_block + i3) as usize).unwrap() as u32;
+            data_block = self.index.get((index3_block + index3_pos) as usize).unwrap() as u32;
         } else {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
-            i3_block = (i3_block & 0x7fff) + (i3 & !7) + (i3 >> 3);
-            i3 = i3 & 7;
-            data_block = ((self.index.get((i3_block + 1) as usize).unwrap() << (2 + (2 * i3)))
+            index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
+            index3_pos = index3_pos & 7;
+            data_block = ((self.index.get((index3_block + 1) as usize).unwrap() << (2 + (2 * index3_pos)))
                 as u32
                 & 0x30000) as u32;
-            data_block = data_block | self.index.get((i3_block + i3) as usize).unwrap() as u32;
+            data_block = data_block | self.index.get((index3_block + index3_pos) as usize).unwrap() as u32;
         }
-        data_block + (c & SMALL_DATA_MASK)
+        let data_pos = data_block + (code_point & SMALL_DATA_MASK);
+        data_pos
     }
 
     /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
-    fn trie_small_index(&self, c: u32) -> u32 {
-        if c >= self.header.high_start {
+    fn trie_small_index(&self, code_ponit: u32) -> u32 {
+        if code_ponit >= self.header.high_start {
             self.header.data_length - HIGH_VALUE_NEG_DATA_OFFSET
         } else {
-            self.trie_internal_small_index(c) // helper fn
+            self.trie_internal_small_index(code_ponit) // helper fn
         }
     }
 
@@ -225,22 +229,23 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         fast_index_val
     }
 
-    pub fn get(&self, c: u32) -> W {
-        let index: u32 = if c <= T::FAST_MAX {
-            Self::trie_fast_index(self, c)
-        } else if c <= CODE_POINT_MAX {
-            Self::trie_small_index(self, c)
+    
+    pub fn get(&self, code_point: u32) -> W {
+        let data_pos: u32 = if code_point <= T::FAST_MAX {
+            Self::trie_fast_index(self, code_point)
+        } else if code_point <= CODE_POINT_MAX {
+            Self::trie_small_index(self, code_point)
         } else {
             self.header.data_length - ERROR_VALUE_NEG_DATA_OFFSET
         };
         // need the unwrap because the default value is stored in the data array,
         // and getting that default value always returns an Option<W>, but need to return W
-        self.data.get(index as usize).unwrap()
+        self.data.get(data_pos as usize).unwrap()
     }
 
-    pub fn get_u32(&self, c: u32) -> u32 {
+    pub fn get_u32(&self, code_point: u32) -> u32 {
         // this is the consistent API that is public-facing for users
-        self.get(c).cast_to_widest()
+        self.get(code_point).cast_to_widest()
     }
 }
 
