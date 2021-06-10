@@ -2,6 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod codepointtrie;
-mod error;
+pub mod codepointtrie;
+pub mod error;
 mod impl_const;
