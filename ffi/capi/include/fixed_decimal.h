@@ -5,13 +5,21 @@
 #ifndef ICU4X_FIXED_DECIMAL_H
 #define ICU4X_FIXED_DECIMAL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // opaque
 typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 
-ICU4XFixedDecimal* icu4x_fixed_decimal_create(int64_t magnitude);
+ICU4XFixedDecimal* icu4x_fixed_decimal_create(int64_t number);
 bool icu4x_fixed_decimal_multiply_pow10(ICU4XFixedDecimal* fd, int16_t power);
 void icu4x_fixed_decimal_negate(ICU4XFixedDecimal* fd);
 
 void icu4x_fixed_decimal_destroy(ICU4XFixedDecimal* fd);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ICU4X_FIXED_DECIMAL_H

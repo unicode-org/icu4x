@@ -14,18 +14,18 @@ pub type ICU4XFixedDecimal = FixedDecimal;
 
 #[no_mangle]
 /// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
-/// `magnitude`.
+/// `number`.
 //
 // We can add additional constructors from strings, floats, etc as the need arises
-pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedDecimal {
-    let fd = FixedDecimal::from(magnitude);
+pub extern "C" fn icu4x_fixed_decimal_create(number: i64) -> *mut ICU4XFixedDecimal {
+    let fd = FixedDecimal::from(number);
     Box::into_raw(Box::new(fd))
 }
 
 #[no_mangle]
 /// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
 ///
-/// Returns `true` if the multiplication was successful.
+/// Returns a [`ICU4XFixedDecimalMultiplyPow10Result`] struct. See its docs for more details.
 pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     fd: &mut ICU4XFixedDecimal,
     power: i16,

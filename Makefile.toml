@@ -29,6 +29,16 @@ cd ../locale;
 make
 '''
 
+[tasks.test-cpp]
+description = "Run CPP tests"
+category = "ICU4X Development"
+script = '''
+cd ffi/cpp/examples/pluralrules;
+make
+cd ../fixeddecimal;
+make
+'''
+
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
@@ -128,6 +138,14 @@ end
 
 ### META TASKS ###
 
+[tasks.test-ffi]
+description = "Run FFI tests"
+category = "ICU4X Development"
+dependencies = [
+    "test-capi",
+    "test-cpp",
+]
+
 [tasks.quick]
 description = "Run quick version of all lints and tests"
 category = "ICU4X Development"
@@ -137,7 +155,7 @@ dependencies = [
     "clippy-all",
     "license-header-check",
     "generated-readme-check",
-    "test-capi",
+    "test-ffi",
 ]
 
 [tasks.ci]
@@ -166,6 +184,8 @@ description = "Build WASM FFI into the target directory (release mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2021-02-28"
+# We don't care about panics in release mode because most incorrect inputs are handled by result types.
+env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
 args = ["wasm-build-release", "--package", "icu_capi"]
 

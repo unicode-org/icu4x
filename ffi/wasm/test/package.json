@@ -1,0 +1,18 @@
+{
+  "ava": {
+    "files": [ "*.mjs" ],
+    "require": [
+      "esm"
+    ],
+    "nodeArguments": [
+      "--experimental-wasm-bigint"
+    ]
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^3.15.0",
+    "esm": "^3.2.25"
+  }
+}
