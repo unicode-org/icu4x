@@ -31,7 +31,7 @@ use std::fmt::Debug;
 ///     .take_payload()
 ///     .unwrap();
 ///
-/// assert_eq!("(und) Hello World", result.message);
+/// assert_eq!("(und) Hello World", result.get().message);
 /// ```
 pub struct InvariantDataProvider;
 

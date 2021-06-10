@@ -276,7 +276,7 @@ impl PluralRules {
         type_: PluralRuleType,
     ) -> Result<Self, PluralRulesError> {
         let data = resolver::resolve_plural_data(langid.clone(), data_provider, type_)?;
-        Self::new_from_data(langid, &data)
+        Self::new_from_data(langid, data.get())
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.

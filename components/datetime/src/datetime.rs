@@ -105,6 +105,7 @@ impl<'d> DateTimeFormat<'d> {
             .take_payload()?;
 
         let pattern = data
+            .get()
             .patterns
             .get_pattern_for_options(options)?
             .unwrap_or_default();
@@ -191,7 +192,7 @@ impl<'d> DateTimeFormat<'d> {
     {
         FormattedDateTime {
             pattern: &self.pattern,
-            symbols: &self.symbols,
+            symbols: self.symbols.get(),
             datetime: value,
             locale: &self.locale,
         }
@@ -228,7 +229,7 @@ impl<'d> DateTimeFormat<'d> {
         w: &mut impl std::fmt::Write,
         value: &impl DateTimeInput,
     ) -> std::fmt::Result {
-        datetime::write_pattern(&self.pattern, &self.symbols, value, &self.locale, w)
+        datetime::write_pattern(&self.pattern, self.symbols.get(), value, &self.locale, w)
             .map_err(|_| std::fmt::Error)
     }
 

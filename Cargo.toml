@@ -17,6 +17,7 @@ members = [
     "experimental/bies",
     "experimental/codepointtrie",
     "experimental/provider_ppucd",
+    "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi",
     "ffi/ecma402",

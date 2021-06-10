@@ -53,7 +53,7 @@ use std::path::PathBuf;
 ///         .unwrap()
 ///         .take_payload()
 ///         .unwrap();
-///     assert_eq!(data.few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
+///     assert_eq!(data.get().few, Some(Cow::Borrowed("n % 10 = 3 and n % 100 != 13")));
 /// }
 ///
 /// // Calling demo(downloader) will cause the data to actually get downloaded.

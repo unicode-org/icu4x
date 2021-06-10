@@ -116,3 +116,68 @@ pub unsafe extern "C" fn icu4x_simple_writeable(buf: *mut u8, buf_size: usize) -
         grow,
     }
 }
+
+#[no_mangle]
+/// Create an [`ICU4XWriteable`] that can write to a dynamically allocated buffer managed by Rust.
+///
+/// Use [`icu4x_buffer_writeable_destroy()`] to free the writable and its underlying buffer.
+pub extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteable {
+    extern "C" fn grow(this: *mut ICU4XWriteable, cap: usize) -> bool {
+        unsafe {
+            let this = &*this;
+            let mut vec = Vec::from_raw_parts(this.buf, 0, this.cap);
+            vec.reserve(cap);
+            std::mem::forget(vec);
+        }
+        true
+    }
+
+    extern "C" fn flush(_: *mut ICU4XWriteable) {}
+
+    let mut vec = Vec::<u8>::with_capacity(cap);
+    let ret = ICU4XWriteable {
+        context: ptr::null_mut(),
+        buf: vec.as_mut_ptr(),
+        len: 0,
+        cap,
+        flush,
+        grow,
+    };
+
+    std::mem::forget(vec);
+    Box::into_raw(Box::new(ret))
+}
+
+#[no_mangle]
+/// Grabs a pointer to the underlying buffer of a writable.
+///
+/// # Safety
+/// - The returned pointer is valid until the passed writable is destroyed.
+/// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// [`icu4x_buffer_writeable_create()`].
+pub extern "C" fn icu4x_buffer_writeable_get_bytes(this: &ICU4XWriteable) -> *mut u8 {
+    this.buf
+}
+
+#[no_mangle]
+/// Gets the length in bytes of the content written to the writable.
+///
+/// # Safety
+/// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// [`icu4x_buffer_writeable_create()`].
+pub extern "C" fn icu4x_buffer_writeable_len(this: &ICU4XWriteable) -> usize {
+    this.len
+}
+
+#[no_mangle]
+/// Destructor for Rust-memory backed writables.
+///
+/// # Safety
+/// - `this` must be a pointer to a valid [`ICU4XWriteable`] constructed by
+/// [`icu4x_buffer_writeable_create()`].
+pub unsafe extern "C" fn icu4x_buffer_writeable_destroy(this: *mut ICU4XWriteable) {
+    let this = Box::from_raw(this);
+    let vec = Vec::from_raw_parts(this.buf, 0, this.cap);
+    drop(vec);
+    drop(this);
+}

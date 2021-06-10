@@ -38,7 +38,6 @@ where
     where
         's: 'd,
     {
-        use std::borrow::Borrow;
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {
                 continue;
@@ -50,7 +49,7 @@ where
                 },
             };
             let payload = provider.load_payload(&req)?.take_payload()?;
-            self.put_payload(&req, payload.borrow())?;
+            self.put_payload(&req, payload.get())?;
         }
         Ok(())
     }

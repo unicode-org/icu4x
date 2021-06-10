@@ -17,6 +17,7 @@ include = [
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
+    "include/**/*",
     "Cargo.toml",
     "README.md"
 ]
@@ -25,7 +26,7 @@ include = [
 all-features = true
 
 [lib]
-crate-type = ["staticlib", "rlib"]
+crate-type = ["staticlib", "rlib", "cdylib"]
 path = "src/lib.rs"
 
 [dependencies]
@@ -36,3 +37,6 @@ icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
 icu_provider_fs = { path = "../../provider/fs/" }
 writeable = { path = "../../utils/writeable/" }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+log = { version = "0.4" }

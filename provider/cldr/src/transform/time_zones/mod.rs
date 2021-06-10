@@ -153,6 +153,8 @@ impl_data_provider!(MetaZoneSpecificNamesShortV1: 'd);
 
 #[cfg(test)]
 mod tests {
+    use tinystr::tinystr8;
+
     use super::*;
 
     #[test]
@@ -175,7 +177,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("GMT", time_zone_formats.gmt_zero_format);
+        assert_eq!("GMT", time_zone_formats.get().gmt_zero_format);
 
         let exemplar_cities: DataPayload<ExemplarCitiesV1> = provider
             .load_payload(&DataRequest {
@@ -190,7 +192,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("Pohnpei", exemplar_cities["Pacific/Ponape"]);
+        assert_eq!("Pohnpei", exemplar_cities.get()["Pacific/Ponape"]);
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1> = provider
             .load_payload(&DataRequest {
@@ -207,7 +209,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Time",
-            generic_names_long["Australia_CentralWestern"]
+            generic_names_long.get()["Australia_CentralWestern"]
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1> = provider
@@ -225,7 +227,7 @@ mod tests {
             .unwrap();
         assert_eq!(
             "Australian Central Western Standard Time",
-            specific_names_long["Australia_CentralWestern"]["standard"]
+            specific_names_long.get()["Australia_CentralWestern"][&tinystr8!("standard")]
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1> = provider
@@ -241,7 +243,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("PT", generic_names_short["America_Pacific"]);
+        assert_eq!("PT", generic_names_short.get()["America_Pacific"]);
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1> = provider
             .load_payload(&DataRequest {
@@ -256,6 +258,9 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!("PDT", specific_names_short["America_Pacific"]["daylight"]);
+        assert_eq!(
+            "PDT",
+            specific_names_short.get()["America_Pacific"][&tinystr8!("daylight")]
+        );
     }
 }

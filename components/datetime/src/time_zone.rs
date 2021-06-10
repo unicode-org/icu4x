@@ -399,8 +399,14 @@ impl<'d> TimeZoneFormat<'d> {
             &self
                 .exemplar_cities
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
-                .map(|location| self.zone_formats.region_format.replace("{0}", location))
+                .map(|location| {
+                    self.zone_formats
+                        .get()
+                        .region_format
+                        .replace("{0}", location)
+                })
                 .ok_or(fmt::Error)?,
         )
         .map_err(DateTimeFormatError::from)
@@ -417,6 +423,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_generic_short
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .ok_or(fmt::Error)?,
         )
@@ -434,6 +441,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_generic_long
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .ok_or(fmt::Error)?,
         )
@@ -451,6 +459,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_specific_short
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .and_then(|specific_names| {
                     time_zone
@@ -473,6 +482,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_specific_long
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .and_then(|specific_names| {
                     time_zone
@@ -497,20 +507,21 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Result<(), DateTimeFormatError> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() {
-            sink.write_str(&self.zone_formats.gmt_zero_format.clone())
+            sink.write_str(&self.zone_formats.get().gmt_zero_format.clone())
                 .map_err(DateTimeFormatError::from)
         } else {
             // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
             sink.write_str(
                 &self
                     .zone_formats
+                    .get()
                     .gmt_format
                     .replace(
                         "{0}",
                         if gmt_offset.is_positive() {
-                            &self.zone_formats.hour_format.0
+                            &self.zone_formats.get().hour_format.0
                         } else {
-                            &self.zone_formats.hour_format.1
+                            &self.zone_formats.get().hour_format.1
                         },
                     )
                     // support all combos of "(HH|H):mm" by replacing longest patterns first.
@@ -531,6 +542,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.exemplar_cities
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
                 .ok_or(fmt::Error)?,
         )
@@ -551,6 +563,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.exemplar_cities
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|cities| cities.get("Etc/Unknown"))
                 .unwrap_or(&Cow::Borrowed("Unknown")),
         )

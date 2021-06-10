@@ -343,7 +343,7 @@ where
         .unwrap()
         .take_payload()
         .unwrap();
-    if v1.message == v2.message {
+    if v1.get().message == v2.get().message {
         panic!()
     }
 }
