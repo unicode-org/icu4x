@@ -6,12 +6,6 @@ use thiserror::Error;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum Error {
-    #[error(transparent)]
-    FromDeserialized(#[from] FromDeserializedError),
-}
-
-#[derive(Error, Debug, PartialEq, Copy, Clone)]
-#[error("Could not construct CodePointTrie from deserialized values: {reason}")]
-pub struct FromDeserializedError {
-    pub reason: &'static str,
+    #[error("Could not construct CodePointTrie from deserialized values: {reason}")]
+    FromDeserialized { reason: &'static str },
 }

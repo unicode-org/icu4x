@@ -4,7 +4,7 @@
 
 // TODO: add module-level Rust-doc with examples
 
-use crate::error::{Error, FromDeserializedError};
+use crate::error::Error;
 use crate::impl_const::*;
 use std::marker::PhantomData;
 use zerovec::ZeroVec;
@@ -133,36 +133,36 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         data: &[W],
     ) -> Result<CodePointTrie<'trie, W, T>, Error> {
         if header.data_length < ERROR_VALUE_NEG_DATA_OFFSET {
-            return Err(Error::FromDeserialized(FromDeserializedError {
+            return Err(Error::FromDeserialized{
                 reason: "Data array must be large enough to contain error value",
-            }));
+            });
         }
 
         if header.data_length < HIGH_VALUE_NEG_DATA_OFFSET {
-            return Err(Error::FromDeserialized(FromDeserializedError {
+            return Err(Error::FromDeserialized {
                 reason:
                     "Data array must be large enough to contain value for range highStart..U+10FFFF",
-            }));
+            });
         }
 
         if index.len() as u32 != header.index_length {
-            return Err(Error::FromDeserialized(FromDeserializedError {
+            return Err(Error::FromDeserialized {
                 reason: "Length of index array does not match corresponding header value",
-            }));
+            });
         }
 
         if data.len() as u32 != header.data_length {
-            return Err(Error::FromDeserialized(FromDeserializedError {
+            return Err(Error::FromDeserialized {
                 reason: "Length of data array does not match corresponding header value",
-            }));
+            });
         }
 
         // TODO: Why does this check not work on the test data?
         // Is it invalid generally, and if so, why?
         //
         // if (index.len() as u32) < T::FAST_MAX {
-        //     return Err(Error::FromDeserialized(FromDeserializedError{
-        //         reason: "Length of index array does not have enough entries to support 2-step lookups (range 0..fastMax) for this trie type"}));
+        //     return Err(Error::FromDeserialized {
+        //         reason: "Length of index array does not have enough entries to support 2-step lookups (range 0..fastMax) for this trie type"});
         // }
 
         // TODO: what are other assertions to include?
@@ -910,10 +910,10 @@ mod test {
                 Err(e) => {
                     assert_eq!(
                         e,
-                        Error::FromDeserialized(FromDeserializedError {
+                        Error::FromDeserialized {
                             reason:
                                 "Length of index array does not match corresponding header value"
-                        })
+                        }
                     );
                 }
             }
