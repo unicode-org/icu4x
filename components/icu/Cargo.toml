@@ -63,11 +63,14 @@ version = "0.2"
 path = "../uniset"
 default-features = false
 
+[dependencies.fixed_decimal]
+version = "0.2"
+path = "../../utils/fixed_decimal"
+default-features = false
 
 [dev-dependencies]
 icu_provider = { version = "0.2", path = "../../provider/core" }
 icu_testdata = { version = "0.2", path = "../../provider/testdata" }
-fixed_decimal = { version = "0.2", path = "../../utils/fixed_decimal" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [features]
