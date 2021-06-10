@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// TODO: add module-level Rust-doc with examples
+
 use crate::error::{Error, FromDeserializedError};
 use crate::impl_const::*;
 use std::marker::PhantomData;
@@ -119,6 +121,8 @@ pub struct CodePointTrieHeader {
 // But for the CodePointTrie, we do want to be able to look up surrogate code points, therefore we want to use the u32 type. (Note: this is also what we do in the `uniset` crate for `UnicodeSet`.)
 // struct CodePoint(u32) ← enforce whatever invariants you'd like
 
+// TODO: add Rust-doc that includes examples
+
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
 
     /// Create a new [`CodePointTrie`] backed by borrowed data for the `index`
@@ -212,29 +216,33 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         data_pos
     }
 
-    /// Internal trie getter for a code point at or above the fast limit. Returns the data index.
-    fn trie_small_index(&self, code_ponit: u32) -> u32 {
-        if code_ponit >= self.header.high_start {
+    /// Internal trie getter for a code point at or above the fast limit that
+    /// is designed for this trie's trie type, [`T`]. Returns the position in
+    /// the `data` array for the value that is associated with `code_point`.
+    fn trie_above_fastmax_index(&self, code_point: u32) -> u32 {
+        if code_point >= self.header.high_start {
             self.header.data_length - HIGH_VALUE_NEG_DATA_OFFSET
         } else {
-            self.trie_internal_small_index(code_ponit) // helper fn
+            self.trie_internal_small_index(code_point) // helper fn
         }
     }
 
-    /// Internal trie getter for a code point below the fast limit. Returns the data index.
-    fn trie_fast_index(&self, c: u32) -> u32 {
+    /// Internal trie getter for a code point below the fast limit that
+    /// is designed for this trie's trie type, [`T`]. Returns the position in
+    /// the `data` array for the value that is associated with `code_point`.
+    fn trie_below_fastmax_index(&self, c: u32) -> u32 {
         let index_array_pos: u32 = c >> FAST_TYPE_SHIFT;
         let index_array_val: u16 = self.index.get(index_array_pos as usize).unwrap(); // 1. How to specify type parameter for .index() 2. How to avoid unwrap()?
         let fast_index_val: u32 = index_array_val as u32 + (c & FAST_TYPE_DATA_MASK);
         fast_index_val
     }
 
-    
+    /// Return the value that is associated with `code_point` for this [`CodePointTrie`].
     pub fn get(&self, code_point: u32) -> W {
         let data_pos: u32 = if code_point <= T::FAST_MAX {
-            Self::trie_fast_index(self, code_point)
+            Self::trie_below_fastmax_index(self, code_point)
         } else if code_point <= CODE_POINT_MAX {
-            Self::trie_small_index(self, code_point)
+            Self::trie_above_fastmax_index(self, code_point)
         } else {
             self.header.data_length - ERROR_VALUE_NEG_DATA_OFFSET
         };
@@ -243,6 +251,9 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         self.data.get(data_pos as usize).unwrap()
     }
 
+    /// Return the value that is associated with `code_point` for this [`CodePointTrie`]
+    /// as a `u32`. This API method maintains consistency with the corresponding 
+    /// originalICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
         // this is the consistent API that is public-facing for users
         self.get(code_point).cast_to_widest()
