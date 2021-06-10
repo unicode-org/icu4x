@@ -153,7 +153,7 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-format
+        args: ci-job-fmt
 
 
   # Tidy job - runs all "cargo make" tidy commands
