@@ -33,7 +33,7 @@ category = "CI"
 dependencies = [
     "test-all-features",
     "test-ffi",
-    "test-docs-defaults",
+    "test-docs-default",
     "test-docs",
     "bincode-gen-testdata",
 ]
