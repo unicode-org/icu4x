@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623333344399,
+  "lastUpdate": 1623335677189,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6179,6 +6179,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 145457,
             "range": "± 4769",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fb95cfe3d62d718fdb02e5209fd514394e6958b9",
+          "message": "Simplify get_linebreak_property_utf32_with_rule() (#777)\n\n* Remove unused ja_zh parameter\r\n\r\n* Simplify get_linebreak_property_utf32_with_rule()\r\n\r\nThis shouldn't change the behavior.",
+          "timestamp": "2021-06-10T07:25:00-07:00",
+          "tree_id": "65781f28f016f77f32aaf2733581ad2a6f7149f0",
+          "url": "https://github.com/unicode-org/icu4x/commit/fb95cfe3d62d718fdb02e5209fd514394e6958b9"
+        },
+        "date": 1623335675571,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155386,
+            "range": "± 7073",
             "unit": "ns/iter"
           }
         ]
