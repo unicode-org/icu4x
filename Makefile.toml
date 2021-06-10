@@ -17,8 +17,16 @@ dependencies = [
     "test-all-features",
     "fmt-check",
     "clippy-all",
-    "tidy",
+    "tidy-minus-fmt",
     "test-ffi",
+]
+
+[tasks.tidy]
+description = "Run fmt and other tidy checks"
+category = "ICU4X Development"
+dependencies = [
+    "fmt",
+    "tidy-minus-fmt",
 ]
 
 [tasks.ci-job-check]
@@ -31,8 +39,8 @@ args = ["check", "--all-targets", "--all-features"]
 description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
-    "test-ffi",
     "test-all-features",
+    "test-ffi",
     "test-docs-default",
     "test-docs",
     "bincode-gen-testdata",
@@ -56,7 +64,7 @@ dependencies = [
 description = "Run all tests for the CI 'tidy' job"
 category = "CI"
 dependencies = [
-    "tidy",
+    "tidy-minus-fmt",
 ]
 
 [tasks.ci-job-wasm]

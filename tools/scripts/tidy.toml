@@ -4,7 +4,7 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-[tasks.tidy]
+[tasks.tidy-minus-fmt]
 description = "Run miscellaneous tidy checks"
 category = "ICU4X Development"
 dependencies = [
