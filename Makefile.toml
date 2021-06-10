@@ -31,8 +31,8 @@ args = ["check", "--all-targets", "--all-features"]
 description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
-    "test-all-features",
     "test-ffi",
+    "test-all-features",
     "test-docs-default",
     "test-docs",
     "bincode-gen-testdata",

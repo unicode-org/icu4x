@@ -47,6 +47,7 @@ dependencies = [
 [tasks.test-capi]
 description = "Run C API tests"
 category = "ICU4X Development"
+script_runner = "@duckscript"
 script = '''
 cd ffi/capi/examples/pluralrules;
 make
@@ -59,6 +60,7 @@ make
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
+script_runner = "@duckscript"
 script = '''
 cd ffi/cpp/examples/pluralrules;
 make
