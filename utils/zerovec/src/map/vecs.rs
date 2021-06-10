@@ -8,7 +8,7 @@ use crate::ZeroVec;
 use std::cmp::Ordering;
 use std::mem;
 
-/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`]. You
+/// Trait abstracting over [`ZeroVec`] and [`VarZeroVec`], for use in [`ZeroMap`](super::ZeroMap). You
 /// should not be implementing or calling this trait directly.
 pub trait ZeroVecLike<'a, T> {
     /// The type received by `Self::binary_search()`

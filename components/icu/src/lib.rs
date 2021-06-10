@@ -169,7 +169,7 @@ pub mod decimal {
     //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).writeable_to_string());
     //! ```
     //!
-    //! [`FixedDecimal`]: fixed_decimal::FixedDecimal
+    //! [`FixedDecimal`]: decimal::FixedDecimal
     pub use icu_decimal::*;
 }
 
