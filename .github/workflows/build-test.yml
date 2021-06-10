@@ -34,7 +34,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
-    - name: Cache cargo-make
+    - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
@@ -71,7 +71,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
-    - name: Cache cargo-make
+    - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
@@ -115,7 +115,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
-    - name: Cache cargo-make
+    - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
@@ -155,7 +155,7 @@ jobs:
         run: |
           echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
         shell: bash
-      - name: Cache cargo-make
+      - name: Attempt to load cached cargo-make
         uses: actions/cache@v2
         id: cargo-make-cache
         with:
@@ -201,7 +201,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
-    - name: Cache cargo-make
+    - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
@@ -236,7 +236,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
-    - name: Cache cargo-make
+    - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
@@ -254,7 +254,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-readme | grep '^cargo-readme =' | md5sum)"
       shell: bash
-    - name: Cache cargo-readme
+    - name: Attempt to load cached cargo-readme
       uses: actions/cache@v2
       id: cargo-readme-cache
       with:
