@@ -249,6 +249,23 @@ jobs:
         crate: cargo-make
         version: latest
 
+    - name: Get cargo-readme version
+      id: cargo-readme-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-readme | grep '^cargo-readme =' | md5sum)"
+      shell: bash
+    - name: Cache cargo-readme
+      uses: actions/cache@v2
+      id: cargo-readme-cache
+      with:
+        path: ~/.cargo/bin/cargo-readme
+        key: ${{ runner.os }}-${{ steps.cargo-readme-version.outputs.hash }}
+    - name: Install cargo-readme
+      if: steps.cargo-readme-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-readme
+        version: latest
 
     - name: Install cargo-readme
       uses: actions-rs/install@v0.1.2
