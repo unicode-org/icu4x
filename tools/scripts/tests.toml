@@ -50,11 +50,11 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 cd ffi/capi/examples/pluralrules;
-make
+exec make
 cd ../fixeddecimal;
-make
+exec make
 cd ../locale;
-make
+exec make
 '''
 
 [tasks.test-cpp]
@@ -63,7 +63,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 cd ffi/cpp/examples/pluralrules;
-make
+exec make
 cd ../fixeddecimal;
-make
+exec make
 '''
