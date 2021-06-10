@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623335775178,
+  "lastUpdate": 1623346652594,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6269,6 +6269,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 132436,
             "range": "± 5538",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "acf388649a30f8a2c3d39fa764a36c10996c7482",
+          "message": "Add C FFI for LocaleCanonicalizer (#772)\n\n* Specify lifetimes separately for LocaleCanonicalizer\r\n\r\n* Add LocaleCanonicalizer FFI\r\n\r\n* Address review feedback",
+          "timestamp": "2021-06-10T13:31:17-04:00",
+          "tree_id": "e54207872ab373372038a84ad95639d46cd65abb",
+          "url": "https://github.com/unicode-org/icu4x/commit/acf388649a30f8a2c3d39fa764a36c10996c7482"
+        },
+        "date": 1623346647337,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 150278,
+            "range": "± 8103",
             "unit": "ns/iter"
           }
         ]
