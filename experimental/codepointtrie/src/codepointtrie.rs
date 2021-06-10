@@ -105,21 +105,14 @@ pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
 }
 
 pub struct CodePointTrieHeader {
-    index_length: u32,
-    data_length: u32,
-    high_start: u32,
-    shifted12_high_start: u16,
-    index3_null_offset: u16,
-    data_null_offset: u32,
-    null_value: u32,
+    pub index_length: u32,
+    pub data_length: u32,
+    pub high_start: u32,
+    pub shifted12_high_start: u16,
+    pub index3_null_offset: u16,
+    pub data_null_offset: u32,
+    pub null_value: u32,
 }
-
-// CPTAuto will only expose get_u32() (probably will call it `get()`), but will not / cannot expose get() without using an enum for W
-// CPT<W1,S1> will expose get() and get_u32(). You may not want get_u32() at this point, but it is necessary in order to implement CPTAuto
-
-// u32 vs. char in Rust - unpaired surrogates are valid code points but are not UTF-32 code units, therefore not allowed in `char` type in Rust.
-// But for the CodePointTrie, we do want to be able to look up surrogate code points, therefore we want to use the u32 type. (Note: this is also what we do in the `uniset` crate for `UnicodeSet`.)
-// struct CodePoint(u32) ← enforce whatever invariants you'd like
 
 // TODO: add Rust-doc that includes examples
 
@@ -151,21 +144,20 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             });
         }
 
+        // Index array values are 16-bit width, but in one special case they
+        // are interpreted as 18-bit values. Therefore, the data array length
+        // cannot be more than 2^18.
+        if data.len() as u32 > 262144 {
+            return Err(Error::FromDeserialized {
+                reason: "Length of data array is too large",
+            });
+        }
+
         if data.len() as u32 != header.data_length {
             return Err(Error::FromDeserialized {
                 reason: "Length of data array does not match corresponding header value",
             });
-        }
-
-        // TODO: Why does this check not work on the test data?
-        // Is it invalid generally, and if so, why?
-        //
-        // if (index.len() as u32) < T::FAST_MAX {
-        //     return Err(Error::FromDeserialized {
-        //         reason: "Length of index array does not have enough entries to support 2-step lookups (range 0..fastMax) for this trie type"});
-        // }
-
-        // TODO: what are other assertions to include?
+        }        
 
         // Note: this particular constructor is "templatized" through Rust's
         // generics type system, so callers to this constructor function must
@@ -255,6 +247,14 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// as a `u32`. This API method maintains consistency with the corresponding 
     /// originalICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
+
+        // CPTAuto will only expose get_u32() (probably will call it `get()`), but will not / cannot expose get() without using an enum for W
+        // CPT<W1,S1> will expose get() and get_u32(). You may not want get_u32() at this point, but it is necessary in order to implement CPTAuto
+
+        // u32 vs. char in Rust - unpaired surrogates are valid code points but are not UTF-32 code units, therefore not allowed in `char` type in Rust.
+        // But for the CodePointTrie, we do want to be able to look up surrogate code points, therefore we want to use the u32 type. (Note: this is also what we do in the `uniset` crate for `UnicodeSet`.)
+        // struct CodePoint(u32) ← enforce whatever invariants you'd like
+
         // this is the consistent API that is public-facing for users
         self.get(code_point).cast_to_widest()
     }
