@@ -32,6 +32,7 @@ path = "src/lib.rs"
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal" }
 icu_decimal = { path = "../../components/decimal/" }
+icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
 icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
