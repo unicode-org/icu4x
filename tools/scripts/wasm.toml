@@ -210,7 +210,7 @@ dependencies = [
     "wasm-wasm-release",
     "wasm-wat",
     "wasm-dcmp",
-    "opt",
+    "wasm-opt",
     "wasm-twiggy-dowasm-minators",
 ]
 
