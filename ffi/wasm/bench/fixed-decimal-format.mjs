@@ -25,4 +25,4 @@ suite
     console.log('μs/it:', event.target.stats.mean * 1000 * 1000);
     console.log();
   })
-  .run({ "async": true });
+  .run({ "async": false });
