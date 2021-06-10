@@ -4,6 +4,8 @@
 
 [alias]
 
+quick = "make quick"
+tidy = "make tidy"
 
 # Run Clippy on all code paths
 # Keep args in sync with `clippy` job in .github/workflows/build-test.yml
