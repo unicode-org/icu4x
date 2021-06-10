@@ -38,7 +38,9 @@ jobs:
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
-        path: ~/.cargo/bin/cargo-make
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -75,7 +77,9 @@ jobs:
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
-        path: ~/.cargo/bin/cargo-make
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -119,7 +123,9 @@ jobs:
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
-        path: ~/.cargo/bin/cargo-make
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -159,7 +165,9 @@ jobs:
         uses: actions/cache@v2
         id: cargo-make-cache
         with:
-          path: ~/.cargo/bin/cargo-make
+          path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
           key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
       - name: Install cargo-make
         if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -205,7 +213,9 @@ jobs:
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
-        path: ~/.cargo/bin/cargo-make
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -240,7 +250,9 @@ jobs:
       uses: actions/cache@v2
       id: cargo-make-cache
       with:
-        path: ~/.cargo/bin/cargo-make
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -258,7 +270,9 @@ jobs:
       uses: actions/cache@v2
       id: cargo-readme-cache
       with:
-        path: ~/.cargo/bin/cargo-readme
+        path: |
+          ~/.cargo/bin/cargo-readme
+          ~/.cargo/bin/cargo-readme.exe
         key: ${{ runner.os }}-${{ steps.cargo-readme-version.outputs.hash }}
     - name: Install cargo-readme
       if: steps.cargo-readme-cache.outputs.cache-hit != 'true'

@@ -211,7 +211,7 @@ dependencies = [
     "wasm-wat",
     "wasm-dcmp",
     "wasm-opt",
-    "wasm-twiggy-dowasm-minators",
+    "wasm-twiggy-dominators",
 ]
 
 [tasks.wasm-test-release]
