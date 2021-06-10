@@ -166,8 +166,8 @@ jobs:
         id: cargo-make-cache
         with:
           path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
+            ~/.cargo/bin/cargo-make
+            ~/.cargo/bin/cargo-make.exe
           key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
       - name: Install cargo-make
         if: steps.cargo-make-cache.outputs.cache-hit != 'true'
