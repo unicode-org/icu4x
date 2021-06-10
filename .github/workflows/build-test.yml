@@ -29,25 +29,10 @@ jobs:
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: zbraniecki/cached-cargo-install@v0
       with:
         crate: cargo-make
-        version: latest
 
     - name: Check
       uses: actions-rs/cargo@v1.0.1
@@ -68,25 +53,10 @@ jobs:
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: zbraniecki/cached-cargo-install@v0
       with:
         crate: cargo-make
-        version: latest
 
     - name: Build
       uses: actions-rs/cargo@v1.0.1
@@ -114,25 +84,10 @@ jobs:
         command: install
         args: cargo-all-features --version "^1.4"
 
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: zbraniecki/cached-cargo-install@v0
       with:
         crate: cargo-make
-        version: latest
 
     - name: Build All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
@@ -203,26 +158,10 @@ jobs:
     - name: Install rustfmt
       run: rustup component add rustfmt
 
-
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: zbraniecki/cached-cargo-install@v0
       with:
         crate: cargo-make
-        version: latest
 
 
     - name: Check Format
@@ -241,45 +180,15 @@ jobs:
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: zbraniecki/cached-cargo-install@v0
       with:
         crate: cargo-make
-        version: latest
 
-    - name: Get cargo-readme version
-      id: cargo-readme-version
-      run: |
-        echo "::set-output name=hash::$(cargo search cargo-readme | grep '^cargo-readme =' | md5sum)"
-      shell: bash
-    - name: Attempt to load cached cargo-readme
-      uses: actions/cache@v2
-      id: cargo-readme-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-readme
-          ~/.cargo/bin/cargo-readme.exe
-        key: ${{ runner.os }}-${{ steps.cargo-readme-version.outputs.hash }}
     - name: Install cargo-readme
-      if: steps.cargo-readme-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: zbraniecki/cached-cargo-install@v0
       with:
         crate: cargo-readme
-        version: latest
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
