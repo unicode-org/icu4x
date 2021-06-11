@@ -149,15 +149,15 @@ pub enum PluralCategoryInput {
 
 impl PartialEq<PluralCategory> for PluralCategoryInput {
     fn eq(&self, other: &PluralCategory) -> bool {
-        match (self, other) {
-            (PluralCategoryInput::Zero, PluralCategory::Zero) => true,
-            (PluralCategoryInput::One, PluralCategory::One) => true,
-            (PluralCategoryInput::Two, PluralCategory::Two) => true,
-            (PluralCategoryInput::Few, PluralCategory::Few) => true,
-            (PluralCategoryInput::Many, PluralCategory::Many) => true,
-            (PluralCategoryInput::Other, PluralCategory::Other) => true,
-            _ => false,
-        }
+        matches!(
+            (self, other),
+            (PluralCategoryInput::Zero, PluralCategory::Zero)
+                | (PluralCategoryInput::One, PluralCategory::One)
+                | (PluralCategoryInput::Two, PluralCategory::Two)
+                | (PluralCategoryInput::Few, PluralCategory::Few)
+                | (PluralCategoryInput::Many, PluralCategory::Many)
+                | (PluralCategoryInput::Other, PluralCategory::Other)
+        )
     }
 }
 

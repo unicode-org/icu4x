@@ -348,6 +348,8 @@ impl PluralRules {
     ///
     /// The [`Plural Categories`] are returned in alphabetically sorted order.
     ///
+    /// The category [`PluralCategory::Other`] is always included.
+    ///
     /// # Examples
     ///
     /// ```
