@@ -91,6 +91,14 @@ impl RulesSelector {
                 .unwrap_or(PluralCategory::Other),
         }
     }
+
+    pub fn categories(&self) -> impl Iterator<Item = &'static PluralCategory> + '_ {
+        match &self {
+            Self::Conditions(conditions) => PluralCategory::all().filter(move |&category| {
+                category.eq(&PluralCategory::Other) || conditions.get(*category).is_some()
+            }),
+        }
+    }
 }
 
 impl From<PluralRuleList> for RulesSelector {
