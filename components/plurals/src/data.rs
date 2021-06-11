@@ -108,7 +108,7 @@ impl RulesSelector {
     ///
     /// The category [`PluralCategory::Other`] is always included.
     pub fn categories(&self) -> impl Iterator<Item = &'static PluralCategory> + '_ {
-        match &self {
+        match self {
             Self::Conditions(conditions) => {
                 PluralCategory::all().filter(move |&category| conditions.has_rules_for(*category))
             }
