@@ -117,7 +117,6 @@ pub struct CodePointTrieHeader {
 // TODO: add Rust-doc that includes examples
 
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
-
     /// Create a new [`CodePointTrie`] backed by borrowed data for the `index`
     /// array and `data` array.
     pub fn try_new(
@@ -126,7 +125,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         data: ZeroVec<'trie, W>,
     ) -> Result<CodePointTrie<'trie, W, T>, Error> {
         if header.data_length < ERROR_VALUE_NEG_DATA_OFFSET {
-            return Err(Error::FromDeserialized{
+            return Err(Error::FromDeserialized {
                 reason: "Data array must be large enough to contain error value",
             });
         }
@@ -157,7 +156,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             return Err(Error::FromDeserialized {
                 reason: "Length of data array does not match corresponding header value",
             });
-        }        
+        }
 
         // Note: this particular constructor is "templatized" through Rust's
         // generics type system, so callers to this constructor function must
@@ -186,23 +185,30 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         let mut index3_block: u32 = self
             .index
             .get(
-                (self.index.get(index1_pos as usize).unwrap() as u32 + ((code_point >> SHIFT_2) & INDEX_2_MASK))
-                    as usize,
+                (self.index.get(index1_pos as usize).unwrap() as u32
+                    + ((code_point >> SHIFT_2) & INDEX_2_MASK)) as usize,
             )
             .unwrap() as u32;
         let mut index3_pos: u32 = (code_point >> SHIFT_3) & INDEX_3_MASK;
         let mut data_block: u32;
         if index3_block & 0x8000 == 0 {
             // 16-bit indexes
-            data_block = self.index.get((index3_block + index3_pos) as usize).unwrap() as u32;
+            data_block = self
+                .index
+                .get((index3_block + index3_pos) as usize)
+                .unwrap() as u32;
         } else {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
             index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
             index3_pos = index3_pos & 7;
-            data_block = ((self.index.get((index3_block + 1) as usize).unwrap() << (2 + (2 * index3_pos)))
-                as u32
+            data_block = ((self.index.get((index3_block + 1) as usize).unwrap()
+                << (2 + (2 * index3_pos))) as u32
                 & 0x30000) as u32;
-            data_block = data_block | self.index.get((index3_block + index3_pos) as usize).unwrap() as u32;
+            data_block = data_block
+                | self
+                    .index
+                    .get((index3_block + index3_pos) as usize)
+                    .unwrap() as u32;
         }
         let data_pos = data_block + (code_point & SMALL_DATA_MASK);
         data_pos
@@ -244,10 +250,9 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 
     /// Return the value that is associated with `code_point` for this [`CodePointTrie`]
-    /// as a `u32`. This API method maintains consistency with the corresponding 
+    /// as a `u32`. This API method maintains consistency with the corresponding
     /// originalICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
-
         // CPTAuto will only expose get_u32() (probably will call it `get()`), but will not / cannot expose get() without using an enum for W
         // CPT<W1,S1> will expose get() and get_u32(). You may not want get_u32() at this point, but it is necessary in order to implement CPTAuto
 
