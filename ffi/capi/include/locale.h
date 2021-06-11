@@ -18,8 +18,26 @@ extern "C" {
 // opaque
 typedef struct ICU4XLocale ICU4XLocale;
 
+typedef enum {
+    ICU4XLocaleResult_Ok,
+    ICU4XLocaleResult_Undefined,
+    ICU4XLocaleResult_Error,
+} ICU4XLocaleResult;
+
 ICU4XLocale* icu4x_locale_create(const char* value, size_t len);
-bool icu4x_locale_tostring(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocale* icu4x_locale_clone(const ICU4XLocale* locale);
+ICU4XLocaleResult icu4x_locale_basename(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_calendar(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_case_first(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_collation(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_hour_cycle(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_numeric(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_number_system(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_language(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_region(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_script(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_langid_tostring(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_tostring(const ICU4XLocale* locale, ICU4XWriteable* write);
 void icu4x_locale_destroy(ICU4XLocale*);
 
 #ifdef __cplusplus
