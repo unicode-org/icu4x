@@ -4,6 +4,7 @@
 
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, Fast};
 use icu_codepointtrie::error::Error;
+use zerovec::ZeroVec;
 
 mod test_util;
 
@@ -83,8 +84,10 @@ fn get_testing_fast_type_32_bit_trie<'trie>() -> CodePointTrie<'trie, u32, Fast>
         null_value,
     };
 
+    let index = ZeroVec::from_aligned(&INDEX);
+    let data = ZeroVec::from_aligned(&DATA_32);
     let trie_new_result: Result<CodePointTrie<'trie, u32, Fast>, Error> =
-        CodePointTrie::try_new(header, &INDEX, &DATA_32);
+        CodePointTrie::try_new(header, index, data);
     let trie = trie_new_result.unwrap();
 
     trie

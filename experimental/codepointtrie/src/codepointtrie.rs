@@ -122,8 +122,8 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// array and `data` array.
     pub fn try_new(
         header: CodePointTrieHeader,
-        index: &[u16],
-        data: &[W],
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, W>,
     ) -> Result<CodePointTrie<'trie, W, T>, Error> {
         if header.data_length < ERROR_VALUE_NEG_DATA_OFFSET {
             return Err(Error::FromDeserialized{
@@ -166,9 +166,9 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         // dynamic dispatch here.
 
         let trie: CodePointTrie<'trie, W, T> = CodePointTrie {
-            header: header,
-            index: ZeroVec::from_aligned(&index),
-            data: ZeroVec::from_aligned(&data),
+            header,
+            index,
+            data,
             _marker_ty: PhantomData,
         };
         Ok(trie)

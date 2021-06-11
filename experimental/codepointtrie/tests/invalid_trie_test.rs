@@ -4,6 +4,7 @@
 
 use icu_codepointtrie::codepointtrie::{CodePointTrie, CodePointTrieHeader, Fast};
 use icu_codepointtrie::error::Error;
+use zerovec::ZeroVec;
 
 const INDEX: [u16; 1024] = [
     0, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -76,8 +77,10 @@ fn try_new_error_test() {
         null_value,
     };
 
+    let index = ZeroVec::from_aligned(&INDEX);
+    let data = ZeroVec::from_aligned(&DATA_8);
     let trie_new_result: Result<CodePointTrie<u8, Fast>, Error> =
-        CodePointTrie::try_new(header, &INDEX, &DATA_8);
+        CodePointTrie::try_new(header, index, data);
     match trie_new_result {
         Ok(_) => {
             panic!("This test expects Result::Err from trie constructor using invalid deserialized values")
