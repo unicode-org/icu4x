@@ -18,7 +18,8 @@ use tinystr::{TinyStr16, TinyStr4};
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
     Aliases,
-    Dates,
+    DatePatterns,
+    DateSymbols,
     Decimal,
     Icu4x,
     LikelySubtags,
@@ -33,7 +34,8 @@ impl ResourceCategory {
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
             Self::Aliases => Cow::Borrowed("aliases"),
-            Self::Dates => Cow::Borrowed("dates"),
+            Self::DatePatterns => Cow::Borrowed("date_patterns"),
+            Self::DateSymbols => Cow::Borrowed("date_symbols"),
             Self::Decimal => Cow::Borrowed("decimal"),
             Self::Icu4x => Cow::Borrowed("icu4x"),
             Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
@@ -94,8 +96,19 @@ macro_rules! resource_key {
     (aliases, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Aliases, $sub_category, $version)
     };
-    (dates, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Dates, $sub_category, $version)
+    (date_patterns, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!(
+            $crate::ResourceCategory::DatePatterns,
+            $sub_category,
+            $version
+        )
+    };
+    (date_symbols, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!(
+            $crate::ResourceCategory::DateSymbols,
+            $sub_category,
+            $version
+        )
     };
     (icu4x, $sub_category:literal, $version:tt) => {
         $crate::resource_key!($crate::ResourceCategory::Icu4x, $sub_category, $version)

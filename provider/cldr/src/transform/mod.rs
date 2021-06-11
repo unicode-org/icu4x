@@ -10,7 +10,7 @@ mod plurals;
 mod time_zones;
 
 pub use aliases::AliasesProvider;
-pub use dates::DatesProvider;
+pub use dates::{patterns::DatePatternsProvider, symbols::DateSymbolsProvider};
 pub use likelysubtags::LikelySubtagsProvider;
 pub use numbers::NumbersProvider;
 pub use plurals::PluralsProvider;
@@ -27,7 +27,8 @@ use self::time_zones::TimeZonesProvider;
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
     let mut result: Vec<ResourceKey> = vec![];
     result.extend(&aliases::ALL_KEYS);
-    result.extend(&dates::ALL_KEYS);
+    result.extend(&dates::symbols::ALL_KEYS);
+    result.extend(&dates::patterns::ALL_KEYS);
     result.extend(&likelysubtags::ALL_KEYS);
     result.extend(&numbers::ALL_KEYS);
     result.extend(&plurals::ALL_KEYS);
@@ -39,7 +40,8 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
 pub struct CldrJsonDataProvider<'a, 'd> {
     pub cldr_paths: &'a dyn CldrPaths,
     aliases: LazyCldrProvider<AliasesProvider<'d>>,
-    dates: LazyCldrProvider<DatesProvider<'d>>,
+    date_symbols: LazyCldrProvider<DateSymbolsProvider<'d>>,
+    date_patterns: LazyCldrProvider<DatePatternsProvider<'d>>,
     likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'d>>,
     numbers: LazyCldrProvider<NumbersProvider>,
     plurals: LazyCldrProvider<PluralsProvider<'d>>,
@@ -51,7 +53,8 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
         CldrJsonDataProvider {
             cldr_paths,
             aliases: Default::default(),
-            dates: Default::default(),
+            date_symbols: Default::default(),
+            date_patterns: Default::default(),
             likelysubtags: Default::default(),
             numbers: Default::default(),
             plurals: Default::default(),
@@ -70,7 +73,10 @@ impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker>
         if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
-        if let Some(result) = self.dates.try_load_serde(req, self.cldr_paths)? {
+        if let Some(result) = self.date_symbols.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        if let Some(result) = self.date_patterns.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
         if let Some(result) = self.likelysubtags.try_load_serde(req, self.cldr_paths)? {
@@ -101,7 +107,13 @@ impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
             return Ok(resp);
         }
         if let Some(resp) = self
-            .dates
+            .date_symbols
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
+            return Ok(resp);
+        }
+        if let Some(resp) = self
+            .date_patterns
             .try_supported_options(resc_key, self.cldr_paths)?
         {
             return Ok(resp);
@@ -137,6 +149,7 @@ impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
 impl<'a, 'd> KeyedDataProvider for CldrJsonDataProvider<'a, 'd> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         PluralsProvider::supports_key(resc_key)
-            .or_else(|err| DatesProvider::or_else_supports_key(err, resc_key))
+            .or_else(|err| DateSymbolsProvider::or_else_supports_key(err, resc_key))
+            .or_else(|err| DatePatternsProvider::or_else_supports_key(err, resc_key))
     }
 }

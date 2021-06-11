@@ -12,7 +12,10 @@ use icu_datetime::{
     DateTimeFormatOptions, ZonedDateTimeFormat,
 };
 use icu_datetime::{
-    provider::{gregory::DatesV1Marker, key::GREGORY_V1},
+    provider::{
+        gregory::{DatePatternsV1, DatePatternsV1Marker, DateSymbolsV1, DateSymbolsV1Marker},
+        key::{GREGORY_DATE_PATTERNS_V1, GREGORY_DATE_SYMBOLS_V1},
+    },
     DateTimeFormat,
 };
 use icu_locid::{LanguageIdentifier, Locale};
@@ -28,6 +31,29 @@ use patterns::{
 use std::borrow::Cow;
 use std::fmt::Write;
 use tinystr::tinystr8;
+
+struct MultiKeyStructProvider<'s> {
+    pub symbols: StructProvider<'s, DateSymbolsV1>,
+    pub patterns: StructProvider<'s, DatePatternsV1>,
+}
+
+impl<'d, 's> DataProvider<'d, 's, DateSymbolsV1Marker> for MultiKeyStructProvider<'s> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, 's, DateSymbolsV1Marker>, icu_provider::DataError> {
+        self.symbols.load_payload(req)
+    }
+}
+
+impl<'d, 's> DataProvider<'d, 's, DatePatternsV1Marker> for MultiKeyStructProvider<'s> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'d, 's, DatePatternsV1Marker>, icu_provider::DataError> {
+        self.patterns.load_payload(req)
+    }
+}
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
@@ -106,10 +132,10 @@ fn test_dayperiod_patterns() {
     let format_options = DateTimeFormatOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
-        let mut data: DataPayload<DatesV1Marker> = provider
+        let mut patterns_data: DataPayload<DatePatternsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_V1,
+                    key: GREGORY_DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid.clone()),
@@ -119,21 +145,40 @@ fn test_dayperiod_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        data.with_mut(|data| {
-            data.patterns.datetime.length_patterns.long = Cow::Borrowed("{0}");
+        patterns_data.with_mut(|data| {
+            data.datetime.length_patterns.long = Cow::Borrowed("{0}");
         });
+        let symbols_data: DataPayload<DateSymbolsV1Marker> = provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_DATE_SYMBOLS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
                 let datetime: MockDateTime = dt_input.parse().unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let new_pattern_cow = Cow::Owned(pattern_input.to_string());
-                        data.with_mut(move |data| {
-                            data.patterns.time.long = new_pattern_cow;
+                        patterns_data.with_mut(move |data| {
+                            data.time.long = new_pattern_cow;
                         });
-                        let provider = StructProvider {
-                            key: GREGORY_V1,
-                            data: data.get(),
+                        let provider = MultiKeyStructProvider {
+                            symbols: StructProvider {
+                                key: GREGORY_DATE_SYMBOLS_V1,
+                                data: symbols_data.get(),
+                            },
+                            patterns: StructProvider {
+                                key: GREGORY_DATE_PATTERNS_V1,
+                                data: patterns_data.get(),
+                            },
                         };
                         let dtf =
                             DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
@@ -170,10 +215,23 @@ fn test_time_zone_patterns() {
         datetime.time_zone.metazone_id = config.metazone_id.take();
         datetime.time_zone.time_variant = config.time_variant.take();
 
-        let mut data: DataPayload<DatesV1Marker> = date_provider
+        let mut patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_V1,
+                    key: GREGORY_DATE_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(langid.clone()),
+                    },
+                },
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid.clone()),
@@ -184,19 +242,25 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
 
-        data.with_mut(|data| {
-            data.patterns.datetime.length_patterns.long = Cow::Borrowed("{0}");
+        patterns_data.with_mut(|data| {
+            data.datetime.length_patterns.long = Cow::Borrowed("{0}");
         });
 
         for TimeZoneExpectation { patterns, expected } in &test.expectations {
             for pattern_input in patterns {
                 let new_pattern_cow = Cow::Owned(pattern_input.to_string());
-                data.with_mut(move |data| {
-                    data.patterns.time.long = new_pattern_cow;
+                patterns_data.with_mut(move |data| {
+                    data.time.long = new_pattern_cow;
                 });
-                let date_provider = StructProvider {
-                    key: GREGORY_V1,
-                    data: data.get(),
+                let date_provider = MultiKeyStructProvider {
+                    symbols: StructProvider {
+                        key: GREGORY_DATE_SYMBOLS_V1,
+                        data: symbols_data.get(),
+                    },
+                    patterns: StructProvider {
+                        key: GREGORY_DATE_PATTERNS_V1,
+                        data: patterns_data.get(),
+                    },
                 };
 
                 let dtf = ZonedDateTimeFormat::try_new(

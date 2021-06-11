@@ -7,7 +7,10 @@ use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
     pattern::PatternItem,
-    provider::{gregory::DatesV1Marker, helpers::DateTimePatterns},
+    provider::{
+        gregory::{DatePatternsV1Marker, DateSymbolsV1Marker},
+        helpers::DateTimePatterns,
+    },
 };
 use icu_locid::Locale;
 use icu_provider::prelude::*;
@@ -59,7 +62,7 @@ use crate::{
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: DataPayload<'d, 'd, provider::gregory::DateSymbolsV1Marker>,
+    pub(super) symbols: DataPayload<'d, 'd, DateSymbolsV1Marker>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -87,17 +90,19 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     pub fn try_new<
         T: Into<Locale>,
-        D: DataProvider<'d, 'd, provider::gregory::DatesV1Marker> + ?Sized,
+        D: DataProvider<'d, 'd, DateSymbolsV1Marker>
+            + DataProvider<'d, 'd, DatePatternsV1Marker>
+            + ?Sized,
     >(
         locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
         let locale = locale.into();
-        let data = data_provider
+        let symbols_data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: provider::key::GREGORY_V1,
+                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(locale.clone().into()),
@@ -106,9 +111,24 @@ impl<'d> DateTimeFormat<'d> {
             })?
             .take_payload()?;
 
-        let pattern = data
+        let patterns_data: icu_provider::DataPayload<
+            '_,
+            '_,
+            provider::gregory::DatePatternsV1Marker,
+        > = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::GREGORY_DATE_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+
+        let pattern = patterns_data
             .get()
-            .patterns
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
@@ -125,7 +145,7 @@ impl<'d> DateTimeFormat<'d> {
             return Err(DateTimeFormatError::UnsupportedField(field.symbol));
         }
 
-        Ok(Self::new(locale, pattern, data))
+        Ok(Self::new(locale, pattern, symbols_data))
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
@@ -144,12 +164,9 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        data: DataPayload<'d, 'd, DatesV1Marker>,
+        symbols: DataPayload<'d, 'd, DateSymbolsV1Marker>,
     ) -> Self {
         let locale = locale.into();
-
-        // TODO(#257): Avoid the need for this clone by splitting the keys.
-        let symbols = DataPayload::from_owned(data.get().symbols.clone());
 
         Self {
             locale,
