@@ -180,7 +180,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             index1_pos = index1_pos + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
         } else {
             assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
-            index1_pos = index1_pos + SMALL_INDEX_LENGTH;
+            index1_pos += SMALL_INDEX_LENGTH;
         }
         let mut index3_block: u32 = self
             .index
@@ -200,18 +200,18 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         } else {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
             index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
-            index3_pos = index3_pos & 7;
+            index3_pos &= 7;
             data_block = ((self.index.get((index3_block + 1) as usize).unwrap()
                 << (2 + (2 * index3_pos))) as u32
                 & 0x30000) as u32;
-            data_block = data_block
-                | self
-                    .index
-                    .get((index3_block + index3_pos) as usize)
-                    .unwrap() as u32;
+            data_block |= self
+                .index
+                .get((index3_block + index3_pos) as usize)
+                .unwrap() as u32;
         }
-        let data_pos = data_block + (code_point & SMALL_DATA_MASK);
-        data_pos
+        // Return data_pos == data_block (offset) +
+        //     portion of code_point bit field for last (4th) lookup
+        data_block + (code_point & SMALL_DATA_MASK)
     }
 
     /// Internal trie getter for a code point at or above the fast limit that

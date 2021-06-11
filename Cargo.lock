@@ -268,14 +268,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "codepointtrie"
-version = "0.2.0"
-dependencies = [
- "thiserror",
- "zerovec",
-]
-
-[[package]]
 name = "colored"
 version = "1.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -864,6 +856,14 @@ dependencies = [
  "icu_provider_fs",
  "log",
  "writeable",
+]
+
+[[package]]
+name = "icu_codepointtrie"
+version = "0.2.0"
+dependencies = [
+ "thiserror",
+ "zerovec",
 ]
 
 [[package]]

@@ -20,7 +20,7 @@ pub fn check_trie<W: ValueWidth, T: TrieType>(trie: &CodePointTrie<W, T>, check_
         // Check all values in this range, one-by-one
         while i < range_end {
             assert_eq!(range_value, trie.get_u32(i), "trie_get({})", i,);
-            i = i + 1;
+            i += 1;
         }
     }
 }

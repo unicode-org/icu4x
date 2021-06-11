@@ -85,9 +85,8 @@ fn get_testing_fast_type_32_bit_trie<'trie>() -> CodePointTrie<'trie, u32, Fast>
     let data = ZeroVec::from_aligned(&DATA_32);
     let trie_new_result: Result<CodePointTrie<'trie, u32, Fast>, Error> =
         CodePointTrie::try_new(header, index, data);
-    let trie = trie_new_result.unwrap();
 
-    trie
+    trie_new_result.unwrap()
 }
 
 #[test]
