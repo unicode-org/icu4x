@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623346652594,
+  "lastUpdate": 1623440071592,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6299,6 +6299,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 150278,
             "range": "± 8103",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "feb1add946d05c98b8e6d57c4d5bca7311ddd6bd",
+          "message": "Split DateTimeFormat keys (#774)",
+          "timestamp": "2021-06-11T12:28:30-07:00",
+          "tree_id": "1e8c5b30d302d2132f7a3e98b935e24a1cceeae9",
+          "url": "https://github.com/unicode-org/icu4x/commit/feb1add946d05c98b8e6d57c4d5bca7311ddd6bd"
+        },
+        "date": 1623440069333,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 151002,
+            "range": "± 6140",
             "unit": "ns/iter"
           }
         ]
