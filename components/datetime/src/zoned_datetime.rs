@@ -8,7 +8,10 @@ use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 use crate::{
     date::ZonedDateTimeInput,
     datetime::DateTimeFormat,
-    format::zoned_datetime::{self, FormattedZonedDateTime},
+    format::{
+        datetime,
+        zoned_datetime::{self, FormattedZonedDateTime},
+    },
     options::DateTimeFormatOptions,
     provider::{self, helpers::DateTimePatterns},
     time_zone::TimeZoneFormat,
@@ -124,26 +127,31 @@ impl<'d> ZonedDateTimeFormat<'d> {
             })?
             .take_payload()?;
 
-        let symbols_data: icu_provider::DataPayload<
-            '_,
-            '_,
-            provider::gregory::DateSymbolsV1Marker,
-        > = date_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
-                    },
-                },
-            })?
-            .take_payload()?;
-
         let pattern = pattern_data
             .get()
             .get_pattern_for_options(options)?
             .unwrap_or_default();
+
+        let requires_data = datetime::analyze_pattern(&pattern, true)
+            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
+
+        let symbols_data = if requires_data {
+            Some(
+                date_provider
+                    .load_payload(&DataRequest {
+                        resource_path: ResourcePath {
+                            key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                            options: ResourceOptions {
+                                variant: None,
+                                langid: Some(locale.clone().into()),
+                            },
+                        },
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
 
         let datetime_format = DateTimeFormat::new(locale, pattern, symbols_data);
         let time_zone_format = TimeZoneFormat::try_new(
