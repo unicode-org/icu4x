@@ -27,6 +27,18 @@ pub struct PluralRuleList {
 }
 
 impl PluralRuleList {
+    fn has_rules_for(&self, category: PluralCategory) -> bool {
+        // There is implicitly always a rule for "Other" as the fallback.
+        match category {
+            PluralCategory::Zero => self.zero.is_some(),
+            PluralCategory::One => self.one.is_some(),
+            PluralCategory::Two => self.two.is_some(),
+            PluralCategory::Few => self.few.is_some(),
+            PluralCategory::Many => self.many.is_some(),
+            PluralCategory::Other => true,
+        }
+    }
+
     fn get(&self, category: PluralCategory) -> Option<&ast::Condition> {
         match category {
             PluralCategory::Zero => self.zero.as_ref(),
@@ -89,6 +101,17 @@ impl RulesSelector {
                         .map(|_| *category)
                 })
                 .unwrap_or(PluralCategory::Other),
+        }
+    }
+
+    /// Returns an iterator over each [`PluralCategory`] for which this [`RulesSelector`] has rules.
+    ///
+    /// The category [`PluralCategory::Other`] is always included.
+    pub fn categories(&self) -> impl Iterator<Item = &'static PluralCategory> + '_ {
+        match self {
+            Self::Conditions(conditions) => {
+                PluralCategory::all().filter(move |&category| conditions.has_rules_for(*category))
+            }
         }
     }
 }
