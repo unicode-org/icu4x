@@ -2,9 +2,9 @@
 
 `ICU4X` is an open source project and welcomes everyone to participate.
 
-In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](docs/process/charter.md) and [style guide][style_guide] used by the project.
+The core team has identified good starter projects and gave them **[good first issue](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22+-label%3A%22blocked%22+) label**.  This is a great place to start as a volunteer.
 
-The list of [open issues](triaging.md) represent the current focus points of the project, and the [help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+label%3A%22help+wanted%22+no%3Aassignee+) lists the issues which we don't have resources to work on right now, but would consider accepting if someone volunteered to work on them.
+In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](docs/process/charter.md) and [style guide][style_guide] used by the project.
 
 Issues are open to everyone to discuss and can be used to jump-start Pull Requests intended for the project.
 
