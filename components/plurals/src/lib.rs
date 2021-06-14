@@ -357,15 +357,18 @@ impl PluralRules {
     /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
     /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let lid = langid!("cy");
+    /// let lid = langid!("fr");
     ///
-    /// let dp = InvariantDataProvider;
+    /// let dp = icu_testdata::get_provider();
     ///
-    /// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Ordinal)
+    /// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
-    /// let categories = pr.categories().copied().collect::<Vec<PluralCategory>>();
-    /// assert!(categories.contains(&PluralCategory::Other));
+    /// let mut categories = pr.categories();
+    /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
+    /// assert_eq!(categories.next(), None);
     /// ```
     ///
     /// [`Plural Categories`]: PluralCategory
