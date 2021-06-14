@@ -3,68 +3,68 @@
     "langid": "ar",
     "plural_type": "Cardinal",
     "categories": [
-      "Few",
-      "Many",
-      "One",
-      "Other",
-      "Two",
-      "Zero"
+      "few",
+      "many",
+      "one",
+      "other",
+      "two",
+      "zero"
     ]
   },
   {
     "langid": "ar",
     "plural_type": "Ordinal",
     "categories": [
-      "Other"
+      "other"
     ]
   },
   {
     "langid": "en",
     "plural_type": "Cardinal",
     "categories": [
-      "One",
-      "Other"
+      "one",
+      "other"
     ]
   },
   {
     "langid": "en",
     "plural_type": "Ordinal",
     "categories": [
-      "Few",
-      "One",
-      "Other",
-      "Two"
+      "few",
+      "one",
+      "other",
+      "two"
     ]
   },
   {
     "langid": "fr",
     "plural_type": "Cardinal",
     "categories": [
-      "Many",
-      "One",
-      "Other"
+      "many",
+      "one",
+      "other"
     ]
   },
   {
     "langid": "fr",
     "plural_type": "Ordinal",
     "categories": [
-      "One",
-      "Other"
+      "one",
+      "other"
     ]
   },
   {
     "langid": "ja",
     "plural_type": "Cardinal",
     "categories": [
-      "Other"
+      "other"
     ]
   },
   {
     "langid": "ja",
     "plural_type": "Ordinal",
     "categories": [
-      "Other"
+      "other"
     ]
   }
 ]

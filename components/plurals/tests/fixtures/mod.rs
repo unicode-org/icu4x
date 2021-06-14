@@ -138,6 +138,7 @@ impl From<PluralRuleTypeInput> for PluralRuleType {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum PluralCategoryInput {
     Zero,
     One,
