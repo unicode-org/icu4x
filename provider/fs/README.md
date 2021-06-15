@@ -60,25 +60,25 @@ The directory passed to the [`FsDataProvider`] constructor may contain either of
 To generate the data required for [`FsDataProvider`], run the following from the top level:
 
 ```
-cargo run
-  --bin icu4x-datagen
-  --
-  --cldr-tag 39.0.0
-  --out ./icu4x-data
-  --all-keys
+cargo run             \
+  --bin icu4x-datagen \
+  --                  \
+  --cldr-tag 39.0.0   \
+  --out ./icu4x-data  \
+  --all-keys          \
   --all-locales
 ```
 
 To export `bincode` format, use
 
 ```
-cargo run
-  --bin icu4x-datagen
-  --
-  --cldr-tag 39.0.0
-  --out ./icu4x-data
-  --all-keys
-  --all-locales
+cargo run             \
+  --bin icu4x-datagen \
+  --                  \
+  --cldr-tag 39.0.0   \
+  --out ./icu4x-data  \
+  --all-keys          \
+  --all-locales       \
   -s bincode
 ```
 
