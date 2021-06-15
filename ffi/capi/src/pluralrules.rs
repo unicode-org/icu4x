@@ -82,7 +82,10 @@ pub unsafe extern "C" fn icu4x_plural_operands_create(
         .and_then(|s| {
             PluralOperands::from_str(s)
                 .ok()
-                .map(ICU4XCreatePluralOperandsResult::from)
+                .map(|ops| ICU4XCreatePluralOperandsResult {
+                    operands: ops.into(),
+                    success: true,
+                })
         })
         .unwrap_or_default()
 }
@@ -161,15 +164,6 @@ impl From<ICU4XPluralOperands> for PluralOperands {
             f: other.f,
             t: other.t,
             c: other.c,
-        }
-    }
-}
-
-impl From<PluralOperands> for ICU4XCreatePluralOperandsResult {
-    fn from(operands: PluralOperands) -> Self {
-        Self {
-            operands: operands.into(),
-            success: true,
         }
     }
 }
