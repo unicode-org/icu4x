@@ -55,7 +55,6 @@ pub extern "C" fn icu4x_plural_rules_create(
 }
 
 #[repr(C)]
-#[derive(Default)]
 /// This is the result returned by [`icu4x_plural_operands_create()`]
 pub struct ICU4XCreatePluralOperandsResult {
     /// Will default initialized if `success` is [`false`]
@@ -87,7 +86,10 @@ pub unsafe extern "C" fn icu4x_plural_operands_create(
                     success: true,
                 })
         })
-        .unwrap_or_default()
+        .unwrap_or(ICU4XCreatePluralOperandsResult {
+            operands: ICU4XPluralOperands::default(),
+            success: false,
+        })
 }
 
 #[no_mangle]
