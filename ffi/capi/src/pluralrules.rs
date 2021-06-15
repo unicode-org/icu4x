@@ -102,6 +102,25 @@ pub extern "C" fn icu4x_plural_rules_select(
 }
 
 #[no_mangle]
+/// FFI version of [`PluralRules::categories()`]. See its docs for more details.
+pub extern "C" fn icu4x_plural_rules_categories(pr: &ICU4XPluralRules) -> ICU4XPluralCategories {
+    pr.categories().fold(
+        ICU4XPluralCategories::default(),
+        |mut categories, category| {
+            match category {
+                PluralCategory::Zero => categories.zero = true,
+                PluralCategory::One => categories.one = true,
+                PluralCategory::Two => categories.two = true,
+                PluralCategory::Few => categories.few = true,
+                PluralCategory::Many => categories.many = true,
+                PluralCategory::Other => categories.other = true,
+            };
+            categories
+        },
+    )
+}
+
+#[no_mangle]
 /// Destructor for [`ICU4XPluralRules`]
 ///
 /// # Safety
@@ -142,6 +161,18 @@ c_enum! {
         Many,
         Other,
     }
+}
+
+#[repr(C)]
+#[derive(Default)]
+/// FFI version of [`PluralRules::categories()`] data. See its docs for more details.
+pub struct ICU4XPluralCategories {
+    zero: bool,
+    one: bool,
+    two: bool,
+    few: bool,
+    many: bool,
+    other: bool,
 }
 
 impl From<PluralOperands> for ICU4XPluralOperands {
