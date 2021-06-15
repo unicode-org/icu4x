@@ -43,6 +43,9 @@ int main() {
     icu4x_data_provider_destroy(provider);
     icu4x_locale_destroy(locale);
 
+    if (cat1 != ICU4XPluralCategory_Few) {
+        return 1;
+    }
     if (cat2 != ICU4XPluralCategory_Many) {
         return 1;
     }
