@@ -77,11 +77,7 @@ pub unsafe extern "C" fn icu4x_plural_operands_create(
     number: *const u8,
     len: usize,
 ) -> ICU4XCreatePluralOperandsResult {
-    // cheap as long as there are no variants
-    let bytes = slice::from_raw_parts(number, len);
-
-    // todo: return errors
-    str::from_utf8(bytes)
+    str::from_utf8(slice::from_raw_parts(number, len))
         .ok()
         .and_then(|s| {
             PluralOperands::from_str(s)
