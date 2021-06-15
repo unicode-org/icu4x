@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623695669240,
+  "lastUpdate": 1623785257018,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8273,6 +8273,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4749,
             "range": "± 313",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0d4cf41951316c7f1c8733e20e8577fcd7e3f51",
+          "message": "Change link to good first issues in CONTRIBUTING.md (#793)",
+          "timestamp": "2021-06-15T14:20:49-05:00",
+          "tree_id": "eddac0795580cbeb18250e822aff0474ff5e7bd9",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0d4cf41951316c7f1c8733e20e8577fcd7e3f51"
+        },
+        "date": 1623785255067,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3320,
+            "range": "± 192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5004,
+            "range": "± 365",
             "unit": "ns/iter"
           }
         ]
