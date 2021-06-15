@@ -22,6 +22,14 @@ int main() {
     }
     ICU4XPluralRules* rules = plural_result.rules;
 
+    ICU4XPluralCategories categories = icu4x_plural_rules_categories(rules);
+    printf("Plural Category zero  (should be true): %s\n", categories.zero  ? "true" : "false");
+    printf("Plural Category one   (should be true): %s\n", categories.one   ? "true" : "false");
+    printf("Plural Category two   (should be true): %s\n", categories.two   ? "true" : "false");
+    printf("Plural Category few   (should be true): %s\n", categories.few   ? "true" : "false");
+    printf("Plural Category many  (should be true): %s\n", categories.many  ? "true" : "false");
+    printf("Plural Category other (should be true): %s\n", categories.other ? "true" : "false");
+
     ICU4XPluralOperands op1 = { .i = 3 };
 
     ICU4XPluralCategory cat1 = icu4x_plural_rules_select(rules, &op1);
@@ -43,11 +51,15 @@ int main() {
     icu4x_data_provider_destroy(provider);
     icu4x_locale_destroy(locale);
 
-    if (cat1 != ICU4XPluralCategory_Few) {
-        return 1;
-    }
-    if (cat2 != ICU4XPluralCategory_Many) {
-        return 1;
-    }
+    if (!categories.zero)  { return 1; }
+    if (!categories.one)   { return 1; }
+    if (!categories.two)   { return 1; }
+    if (!categories.few)   { return 1; }
+    if (!categories.many)  { return 1; }
+    if (!categories.other) { return 1; }
+
+    if (cat1 != ICU4XPluralCategory_Few)  { return 1; }
+    if (cat2 != ICU4XPluralCategory_Many) { return 1; }
+
     return 0;
 }

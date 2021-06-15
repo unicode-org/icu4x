@@ -6,6 +6,7 @@ use icu_locid::Locale as ICULocale;
 use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules};
 
 use crate::provider::ICU4XDataProvider;
+use std::iter::FromIterator;
 use std::ptr;
 use std::slice;
 use std::str::{self, FromStr};
@@ -102,6 +103,12 @@ pub extern "C" fn icu4x_plural_rules_select(
 }
 
 #[no_mangle]
+/// FFI version of [`PluralRules::categories()`]. See its docs for more details.
+pub extern "C" fn icu4x_plural_rules_categories(pr: &ICU4XPluralRules) -> ICU4XPluralCategories {
+    pr.categories().collect()
+}
+
+#[no_mangle]
 /// Destructor for [`ICU4XPluralRules`]
 ///
 /// # Safety
@@ -141,6 +148,37 @@ c_enum! {
         Few,
         Many,
         Other,
+    }
+}
+
+#[repr(C)]
+#[derive(Default)]
+/// FFI version of [`PluralRules::categories()`] data. See its docs for more details.
+pub struct ICU4XPluralCategories {
+    zero: bool,
+    one: bool,
+    two: bool,
+    few: bool,
+    many: bool,
+    other: bool,
+}
+
+impl FromIterator<&'static PluralCategory> for ICU4XPluralCategories {
+    fn from_iter<I: IntoIterator<Item = &'static PluralCategory>>(iter: I) -> Self {
+        iter.into_iter().fold(
+            ICU4XPluralCategories::default(),
+            |mut categories, category| {
+                match category {
+                    PluralCategory::Zero => categories.zero = true,
+                    PluralCategory::One => categories.one = true,
+                    PluralCategory::Two => categories.two = true,
+                    PluralCategory::Few => categories.few = true,
+                    PluralCategory::Many => categories.many = true,
+                    PluralCategory::Other => categories.other = true,
+                };
+                categories
+            },
+        )
     }
 }
 
