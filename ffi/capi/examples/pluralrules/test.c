@@ -22,17 +22,28 @@ int main() {
     }
     ICU4XPluralRules* rules = plural_result.rules;
 
-    ICU4XPluralOperands op = { .i = 3 };
+    ICU4XPluralOperands op1 = { .i = 3 };
 
-    ICU4XPluralCategory cat = icu4x_plural_rules_select(rules, &op);
+    ICU4XPluralCategory cat1 = icu4x_plural_rules_select(rules, &op1);
 
-    printf("Plural Category %d (should be %d)\n", (int)cat, (int)ICU4XPluralCategory_Few);
+    printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
+
+    ICU4XCreatePluralOperandsResult op_result = icu4x_plural_operands_create("1011.0", 6);
+
+    if (!op_result.success) {
+        printf("Failed to create PluralOperands from string\n");
+        return 1;
+    }
+
+    ICU4XPluralCategory cat2 = icu4x_plural_rules_select(rules, &op_result.operands);
+
+    printf("Plural Category %d (should be %d)\n", (int)cat2, (int)ICU4XPluralCategory_Many);
 
     icu4x_plural_rules_destroy(rules);
     icu4x_data_provider_destroy(provider);
     icu4x_locale_destroy(locale);
 
-    if (cat != ICU4XPluralCategory_Few) {
+    if (cat2 != ICU4XPluralCategory_Many) {
         return 1;
     }
     return 0;
