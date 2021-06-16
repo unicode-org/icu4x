@@ -19,6 +19,7 @@ dependencies = [
     "clippy-all",
     "tidy-minus-fmt",
     "test-ffi",
+    "test-cppdoc",
 ]
 
 [tasks.tidy]

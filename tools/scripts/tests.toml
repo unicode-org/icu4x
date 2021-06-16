@@ -67,3 +67,12 @@ exec make
 cd ../fixeddecimal;
 exec make
 '''
+
+[tasks.test-cppdoc]
+description = "Build the cpp tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/cpp/docs;
+exec make html
+'''
