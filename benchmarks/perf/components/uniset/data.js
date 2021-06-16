@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623799898012,
+  "lastUpdate": 1623885759369,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7499,6 +7499,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 28847181,
             "range": "± 1748136",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d4e81287751cc93c5155dd8304efd8b6257230f",
+          "message": "Fix bug evaluating NotEq on RangeList (#808)",
+          "timestamp": "2021-06-16T16:17:03-07:00",
+          "tree_id": "f47c78c172c8fc58575633ab80dce753ae3b45fc",
+          "url": "https://github.com/unicode-org/icu4x/commit/6d4e81287751cc93c5155dd8304efd8b6257230f"
+        },
+        "date": 1623885757254,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37739549,
+            "range": "± 226093",
             "unit": "ns/iter"
           }
         ]
