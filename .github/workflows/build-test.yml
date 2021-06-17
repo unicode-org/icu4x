@@ -364,7 +364,7 @@ jobs:
           cp $OUTPUT_PATH/output.txt /tmp
           head $OUTPUT_PATH/output.txt;
           echo "cat output.txt";
-          cat $OUTPUT_PATH/output.txt;
+          cat $OUTPUT_PATH/Output.txt;
           cat /tmp/output.txt;
           popd
 
