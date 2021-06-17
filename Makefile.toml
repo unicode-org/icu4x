@@ -26,7 +26,7 @@ dependencies = [
 description = "Run fmt and other tidy checks"
 category = "ICU4X Development"
 dependencies = [
-    "fmt",
+    "fmt-check",
     "ci-job-tidy",
 ]
 

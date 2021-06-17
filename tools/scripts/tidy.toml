@@ -4,6 +4,12 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[tasks.fmt-check]
+description = "Check code is appropriately formatted"
+category = "ICU4X Development"
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
