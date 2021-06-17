@@ -358,7 +358,7 @@ jobs:
           mkdir -p $REL_OUTPUT_PATH;
           export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
           export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
-          cargo bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
+          cargo bench -- --output-format bencher # | tee $OUTPUT_PATH/output.txt;
           echo "ls -l output.txt";
           ls -l $OUTPUT_PATH/output.txt;
           cp $OUTPUT_PATH/output.txt /tmp
