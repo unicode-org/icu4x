@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623950476091,
+  "lastUpdate": 1623950581513,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3383,6 +3383,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2382420,
             "range": "± 12908",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "mgaudet+github@ualberta.ca",
+            "name": "Matthew Gaudet",
+            "username": "mgaudet"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a663155efc52965cda788be1960b28881308b3f5",
+          "message": "Make FsDataProvider data generation command lines copy-paste-executable (#799)",
+          "timestamp": "2021-06-17T12:16:42-05:00",
+          "tree_id": "f5aa6211c98b0421632847dd47f98feab225055d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a663155efc52965cda788be1960b28881308b3f5"
+        },
+        "date": 1623950579366,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1208318,
+            "range": "± 32970",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2251428,
+            "range": "± 78835",
             "unit": "ns/iter"
           }
         ]
