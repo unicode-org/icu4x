@@ -7,8 +7,8 @@
 use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
-use std::borrow::Cow;
-use std::fmt::Debug;
+use std::rc::Rc;
+use yoke::*;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -21,30 +21,32 @@ use std::fmt::Debug;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::inv::InvariantDataProvider;
-/// use icu_provider::hello_world::{key, HelloWorldV1};
+/// use icu_provider::hello_world::{key, HelloWorldV1Marker};
 /// use std::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
-/// let result: Cow<HelloWorldV1> = provider
+/// let result: DataPayload<HelloWorldV1Marker> = provider
 ///     .load_payload(&DataRequest::from(key::HELLO_WORLD_V1))
 ///     .unwrap()
-///     .payload.take()
+///     .take_payload()
 ///     .unwrap();
 ///
-/// assert_eq!("(und) Hello World", result.message);
+/// assert_eq!("(und) Hello World", result.get().message);
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d, T> DataProvider<'d, T> for InvariantDataProvider
+impl<'d, 's, M> DataProvider<'d, 's, M> for InvariantDataProvider
 where
-    T: Clone + Debug + Default + 'd,
+    M: DataMarker<'s>,
+    M::Cart: Default,
+    M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: DataPayload {
-                cow: Some(Cow::Owned(T::default())),
-            },
+            payload: Some(DataPayload::from_partial_owned(
+                Rc::from(M::Cart::default()),
+            )),
         })
     }
 }

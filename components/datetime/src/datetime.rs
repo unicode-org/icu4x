@@ -7,11 +7,13 @@ use crate::{
     format::datetime,
     options::DateTimeFormatOptions,
     pattern::PatternItem,
-    provider::{gregory::DatesV1, helpers::DateTimePatterns},
+    provider::{
+        gregory::{DatePatternsV1Marker, DateSymbolsV1Marker},
+        helpers::DateTimePatterns,
+    },
 };
 use icu_locid::Locale;
-use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
-use std::borrow::Cow;
+use icu_provider::prelude::*;
 
 use crate::{
     date::DateTimeInput, pattern::Pattern, provider, DateTimeFormatError, FormattedDateTime,
@@ -60,7 +62,7 @@ use crate::{
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: Cow<'d, provider::gregory::DateSymbolsV1>,
+    pub(super) symbols: DataPayload<'d, 'd, DateSymbolsV1Marker>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -86,27 +88,47 @@ impl<'d> DateTimeFormat<'d> {
     ///
     /// assert_eq!(dtf.is_ok(), true);
     /// ```
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::gregory::DatesV1> + ?Sized>(
+    pub fn try_new<
+        T: Into<Locale>,
+        D: DataProvider<'d, 'd, DateSymbolsV1Marker>
+            + DataProvider<'d, 'd, DatePatternsV1Marker>
+            + ?Sized,
+    >(
         locale: T,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
         let locale = locale.into();
-        let data = data_provider
+        let symbols_data = data_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: provider::key::GREGORY_V1,
+                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(locale.clone().into()),
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
 
-        let pattern = data
-            .patterns
+        let patterns_data: icu_provider::DataPayload<
+            '_,
+            '_,
+            provider::gregory::DatePatternsV1Marker,
+        > = data_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::GREGORY_DATE_PATTERNS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+
+        let pattern = patterns_data
+            .get()
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
@@ -123,7 +145,7 @@ impl<'d> DateTimeFormat<'d> {
             return Err(DateTimeFormatError::UnsupportedField(field.symbol));
         }
 
-        Ok(Self::new(locale, pattern, data))
+        Ok(Self::new(locale, pattern, symbols_data))
     }
 
     /// Creates a new [`DateTimeFormat`] regardless of whether there are time-zone symbols in the pattern.
@@ -142,14 +164,9 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        data: Cow<'d, DatesV1>,
+        symbols: DataPayload<'d, 'd, DateSymbolsV1Marker>,
     ) -> Self {
         let locale = locale.into();
-
-        let symbols = match data {
-            Cow::Borrowed(data) => Cow::Borrowed(&data.symbols),
-            Cow::Owned(data) => Cow::Owned(data.symbols),
-        };
 
         Self {
             locale,
@@ -192,7 +209,7 @@ impl<'d> DateTimeFormat<'d> {
     {
         FormattedDateTime {
             pattern: &self.pattern,
-            symbols: &self.symbols,
+            symbols: self.symbols.get(),
             datetime: value,
             locale: &self.locale,
         }
@@ -229,7 +246,7 @@ impl<'d> DateTimeFormat<'d> {
         w: &mut impl std::fmt::Write,
         value: &impl DateTimeInput,
     ) -> std::fmt::Result {
-        datetime::write_pattern(&self.pattern, &self.symbols, value, &self.locale, w)
+        datetime::write_pattern(&self.pattern, self.symbols.get(), value, &self.locale, w)
             .map_err(|_| std::fmt::Error)
     }
 

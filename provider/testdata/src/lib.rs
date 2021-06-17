@@ -24,7 +24,7 @@
 //!
 //! ## Re-generating the data
 //!
-//! From the top level, run:
+//! From the top level directory of the `icu4x` metapackage, run:
 //!
 //! ```bash
 //! $ cargo make testdata
@@ -45,7 +45,7 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let data: Cow<icu_plurals::provider::PluralRuleStringsV1> = data_provider
+//! let data: DataPayload<icu_plurals::provider::PluralRuleStringsV1Marker> = data_provider
 //!     .load_payload(&DataRequest {
 //!         resource_path: ResourcePath {
 //!             key: icu_plurals::provider::key::CARDINAL_V1,
@@ -56,9 +56,9 @@
 //!         },
 //!     })
 //!     .unwrap()
-//!     .payload.take()
+//!     .take_payload()
 //!     .unwrap();
-//! assert_eq!(data.few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
+//! assert_eq!(data.get().few, Some(Cow::Borrowed("v = 0 and i % 10 = 2..4 and i % 100 != 12..14")));
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

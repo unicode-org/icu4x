@@ -42,6 +42,8 @@ functionality are compiled. These features are:
   types, such as [`Locale`].
 - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
   when running `cargo bench`.
+- `experimental`: Whether to enable experimental preview features. Modules enabled with
+  this feature may not be production-ready and could change at any time.
 
 ## Example
 

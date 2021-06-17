@@ -6,8 +6,9 @@ use icu_locid::Locale as ICULocale;
 use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules};
 
 use crate::provider::ICU4XDataProvider;
-
 use std::ptr;
+use std::slice;
+use std::str::{self, FromStr};
 
 /// Opaque type for use behind a pointer, is [`PluralRules`]
 ///
@@ -53,6 +54,44 @@ pub extern "C" fn icu4x_plural_rules_create(
     }
 }
 
+#[repr(C)]
+/// This is the result returned by [`icu4x_plural_operands_create()`]
+pub struct ICU4XCreatePluralOperandsResult {
+    /// Will default initialized if `success` is [`false`]
+    pub operands: ICU4XPluralOperands,
+    /// Currently just a boolean, but we might add a proper error enum as necessary
+    pub success: bool,
+}
+
+#[no_mangle]
+/// FFI version of [`PluralOperands::from_str()`]. See its docs for more details.
+///
+/// # Safety
+/// `number` and `len` should point to a valid ASCII string of length `len`.
+/// The string `number` should be able to parse as a floating-point value.
+///
+/// It does not need to be be null terminated, and `len` should not include a null
+/// terminator (this will just cause the function to panic, and is not a safety requirement).
+pub unsafe extern "C" fn icu4x_plural_operands_create(
+    number: *const u8,
+    len: usize,
+) -> ICU4XCreatePluralOperandsResult {
+    str::from_utf8(slice::from_raw_parts(number, len))
+        .ok()
+        .and_then(|s| {
+            PluralOperands::from_str(s)
+                .ok()
+                .map(|ops| ICU4XCreatePluralOperandsResult {
+                    operands: ops.into(),
+                    success: true,
+                })
+        })
+        .unwrap_or(ICU4XCreatePluralOperandsResult {
+            operands: ICU4XPluralOperands::default(),
+            success: false,
+        })
+}
+
 #[no_mangle]
 /// FFI version of [`PluralRules::select()`]. See its docs for more details.
 pub extern "C" fn icu4x_plural_rules_select(
@@ -60,6 +99,25 @@ pub extern "C" fn icu4x_plural_rules_select(
     op: &ICU4XPluralOperands,
 ) -> ICU4XPluralCategory {
     pr.select(*op).into()
+}
+
+#[no_mangle]
+/// FFI version of [`PluralRules::categories()`]. See its docs for more details.
+pub extern "C" fn icu4x_plural_rules_categories(pr: &ICU4XPluralRules) -> ICU4XPluralCategories {
+    pr.categories().fold(
+        ICU4XPluralCategories::default(),
+        |mut categories, category| {
+            match category {
+                PluralCategory::Zero => categories.zero = true,
+                PluralCategory::One => categories.one = true,
+                PluralCategory::Two => categories.two = true,
+                PluralCategory::Few => categories.few = true,
+                PluralCategory::Many => categories.many = true,
+                PluralCategory::Other => categories.other = true,
+            };
+            categories
+        },
+    )
 }
 
 #[no_mangle]
@@ -73,7 +131,7 @@ pub unsafe extern "C" fn icu4x_plural_rules_destroy(pr: *mut ICU4XPluralRules) {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 /// FFI version of [`PluralOperands`]. See its docs for more details.
 pub struct ICU4XPluralOperands {
     pub i: u64,
@@ -103,6 +161,18 @@ c_enum! {
         Many,
         Other,
     }
+}
+
+#[repr(C)]
+#[derive(Default)]
+/// FFI version of [`PluralRules::categories()`] data. See its docs for more details.
+pub struct ICU4XPluralCategories {
+    zero: bool,
+    one: bool,
+    two: bool,
+    few: bool,
+    many: bool,
+    other: bool,
 }
 
 impl From<PluralOperands> for ICU4XPluralOperands {

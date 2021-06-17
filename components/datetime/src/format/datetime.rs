@@ -246,14 +246,14 @@ mod tests {
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
         use crate::mock::datetime::MockDateTime;
-        use crate::provider::gregory::DatesV1;
+        use crate::provider::gregory::DateSymbolsV1Marker;
         use icu_provider::prelude::*;
-        use std::borrow::Cow;
+
         let provider = icu_testdata::get_provider();
-        let data: Cow<'_, DatesV1> = provider
+        let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: provider::key::GREGORY_V1,
+                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some("en".parse().unwrap()),
@@ -261,15 +261,14 @@ mod tests {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
         let pattern = crate::pattern::Pattern::from_bytes("MMM").unwrap();
         let datetime = MockDateTime::try_new(2020, 8, 1, 12, 34, 28).unwrap();
         let mut sink = String::new();
         write_pattern(
             &pattern,
-            &data.symbols,
+            &data.get(),
             &datetime,
             &"und".parse().unwrap(),
             &mut sink,

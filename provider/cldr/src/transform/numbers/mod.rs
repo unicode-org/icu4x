@@ -99,11 +99,11 @@ impl NumbersProvider {
     }
 }
 
-impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
+impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1Marker> for NumbersProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, DecimalSymbolsV1>, DataError> {
+    ) -> Result<DataResponse<'d, 's, DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let cldr_langid: CldrLangID = langid.clone().into();
@@ -133,15 +133,13 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(result)),
-            },
+            payload: Some(DataPayload::from_owned(result)),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(NumbersProvider, {
-    _ => DecimalSymbolsV1,
+    _ => DecimalSymbolsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for NumbersProvider {
@@ -200,12 +198,11 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
 #[test]
 fn test_basic() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let ar_decimal: Cow<DecimalSymbolsV1> = provider
+    let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::SYMBOLS_V1,
@@ -216,10 +213,9 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
-    assert_eq!(ar_decimal.decimal_separator, "٫");
-    assert_eq!(ar_decimal.digits[0], '٠');
+    assert_eq!(ar_decimal.get().decimal_separator, "٫");
+    assert_eq!(ar_decimal.get().digits[0], '٠');
 }

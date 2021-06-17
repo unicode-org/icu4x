@@ -30,7 +30,7 @@ fn get_needles_and_haystack() -> (Vec<u32>, Vec<u32>) {
             .take(1000)
             .map(|f| f as u32)
             .collect();
-        unsorted.sort();
+        unsorted.sort_unstable();
         unsorted
     };
     let needles: Vec<u32> = (&dist)
@@ -41,7 +41,7 @@ fn get_needles_and_haystack() -> (Vec<u32>, Vec<u32>) {
     (needles, haystack)
 }
 
-#[allow(dead_code)]
+#[allow(dead_code, clippy::ptr_arg)]
 fn vec_to_unaligned_uvec<'a, T>(vec: &Vec<T>, buffer: &'a mut AlignedBuffer) -> ZeroVec<'a, T>
 where
     T: AsULE + Copy + PartialEq + fmt::Debug,

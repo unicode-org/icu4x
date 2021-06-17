@@ -8,7 +8,7 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
-use std::borrow::Cow;
+
 use std::fmt::Debug;
 use std::fs;
 use std::fs::File;
@@ -81,11 +81,13 @@ impl FsDataProvider {
     }
 }
 
-impl<'d, T> DataProvider<'d, T> for FsDataProvider
+impl<'d, 's, M> DataProvider<'d, 's, M> for FsDataProvider
 where
-    T: serde::Deserialize<'d> + serde::Serialize + Clone + Debug + 'd,
+    M: DataMarker<'s>,
+    // TODO(#667): Change this to Deserialize<'s>
+    M::Yokeable: serde::de::DeserializeOwned,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
         let (reader, path_buf) = self.get_reader(req)?;
         let data = deserializer::deserialize_into_type(reader, &self.manifest.syntax)
             .map_err(|err| err.into_resource_error(&path_buf))?;
@@ -93,9 +95,7 @@ where
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(data)),
-            },
+            payload: Some(DataPayload::from_owned(data)),
         })
     }
 }

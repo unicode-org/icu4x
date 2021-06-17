@@ -8,7 +8,7 @@ use crate::CldrPaths;
 use icu_locale_canonicalizer::provider::*;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
-use std::borrow::Cow;
+
 use std::convert::TryFrom;
 use std::marker::PhantomData;
 use tinystr::TinyStr4;
@@ -49,11 +49,11 @@ impl<'d> KeyedDataProvider for LikelySubtagsProvider<'d> {
     }
 }
 
-impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
+impl<'d, 's> DataProvider<'d, 's, LikelySubtagsV1Marker> for LikelySubtagsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, LikelySubtagsV1>, DataError> {
+    ) -> Result<DataResponse<'d, 's, LikelySubtagsV1Marker>, DataError> {
         LikelySubtagsProvider::supports_key(&req.resource_path.key)?;
         let langid = &req.resource_path.options.langid;
 
@@ -64,9 +64,7 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
                 metadata: DataResponseMetadata {
                     data_langid: langid.clone(),
                 },
-                payload: DataPayload {
-                    cow: Some(Cow::Owned(LikelySubtagsV1::from(&self.data))),
-                },
+                payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(&self.data))),
             })
         } else {
             Err(DataError::UnavailableResourceOptions(req.clone()))
@@ -75,7 +73,7 @@ impl<'d> DataProvider<'d, LikelySubtagsV1> for LikelySubtagsProvider<'d> {
 }
 
 icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, {
-    _ => LikelySubtagsV1,
+    _ => LikelySubtagsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {
@@ -187,24 +185,23 @@ pub(self) mod cldr_json {
 #[test]
 fn test_basic() {
     use icu_locid_macros::langid;
-    use std::borrow::Cow;
 
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = LikelySubtagsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
-    let result: Cow<LikelySubtagsV1> = provider
+    let result: DataPayload<LikelySubtagsV1Marker> = provider
         .load_payload(&DataRequest::from(key::LIKELY_SUBTAGS_V1))
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
     let langid = langid!("cu-Glag");
     let entry = result
+        .get()
         .script
         .binary_search_by_key(&(langid.script.map(|s| s.into())), |(script, _)| {
             Some(*script)
         })
         .unwrap();
-    assert_eq!(result.script[entry].1.language, "cu");
-    assert_eq!(result.script[entry].1.region.unwrap(), "BG");
+    assert_eq!(result.get().script[entry].1.language, "cu");
+    assert_eq!(result.get().script[entry].1.region.unwrap(), "BG");
 }

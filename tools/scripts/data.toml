@@ -1,0 +1,76 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.testdata-download]
+description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-testdata-download",
+    "--",
+    "-v",
+]
+
+[tasks.testdata-build-json]
+description = "Build ICU4X JSON from the downloaded CLDR JSON, overwriting the existing ICU4X JSON."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "-v",
+    "--cldr-testdata",
+    "--out-testdata",
+    "--all-keys",
+    "--test-locales",
+    "--syntax=json",
+    "--pretty",
+    "--overwrite",
+]
+
+[tasks.testdata]
+description = "Download fresh data and then build ICU4X JSON from it"
+category = "ICU4X Data"
+dependencies = [
+    "testdata-download",
+    "testdata-build-json",
+]
+
+[tasks.bincode-clean]
+description = "Clean out the bincode data."
+category = "ICU4X Data"
+script_runner = "@duckscript"
+script = '''
+# Use duckscript, rather than a unix command, so that this works on Windows.
+rm -r ./provider/testdata/data/bincode
+'''
+
+[tasks.bincode-gen-testdata-no-clean]
+description = "Generate bincode testdata without removing the old data"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "-v",
+    "--cldr-testdata",
+    "--out-testdata",
+    "--all-keys",
+    "--test-locales",
+    "--syntax=bincode",
+]
+
+[tasks.bincode-gen-testdata]
+description = "Generate bincode for the testdata"
+category = "ICU4X Data"
+run_task = [
+    # Running "bincode-clean" first ensures that this command won't fail because the data
+    # already exists at that location.
+    { name = ["bincode-clean", "bincode-gen-testdata-no-clean"] },
+]

@@ -850,10 +850,13 @@ version = "0.1.0"
 dependencies = [
  "fixed_decimal",
  "icu_decimal",
+ "icu_locale_canonicalizer",
  "icu_locid",
  "icu_plurals",
  "icu_provider",
  "icu_provider_fs",
+ "icu_provider_static",
+ "log",
  "writeable",
 ]
 
@@ -997,6 +1000,7 @@ dependencies = [
  "thiserror",
  "tinystr",
  "writeable",
+ "yoke",
 ]
 
 [[package]]
@@ -1059,6 +1063,32 @@ dependencies = [
  "icu_uniset",
  "thiserror",
  "tinystr",
+]
+
+[[package]]
+name = "icu_provider_static"
+version = "0.2.0"
+dependencies = [
+ "bincode",
+ "erased-serde",
+ "icu",
+ "icu_locid",
+ "icu_provider",
+ "litemap",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "icu_segmenter"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "icu_segmenter_lstm",
+ "lazy_static",
+ "serde",
+ "serde_json",
+ "unicode-width",
 ]
 
 [[package]]

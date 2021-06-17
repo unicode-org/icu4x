@@ -16,6 +16,8 @@ members = [
     "components/uniset",
     "experimental/bies",
     "experimental/provider_ppucd",
+    "experimental/provider_static",
+    "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi",
     "ffi/ecma402",

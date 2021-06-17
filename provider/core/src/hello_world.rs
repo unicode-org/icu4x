@@ -10,7 +10,9 @@ use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::rc::Rc;
 use std::str::FromStr;
+use yoke::*;
 
 pub mod key {
     use crate::resource::ResourceKey;
@@ -24,7 +26,7 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct HelloWorldV1<'s> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    // TODO(#667): Use serde borrow.
     pub message: Cow<'s, str>,
 }
 
@@ -36,6 +38,46 @@ impl Default for HelloWorldV1<'_> {
     }
 }
 
+// BEGIN YOKEABLE BOILERPLATE
+
+unsafe impl<'a> Yokeable<'a> for HelloWorldV1<'static> {
+    type Output = HelloWorldV1<'a>;
+    fn transform(&'a self) -> &'a Self::Output {
+        self
+    }
+    unsafe fn make(from: Self::Output) -> Self {
+        std::mem::transmute(from)
+    }
+    fn with_mut<F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        unsafe {
+            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+                self,
+            ))
+        }
+    }
+}
+
+// END YOKEABLE BOILERPLATE
+
+impl<'s> ZeroCopyFrom<HelloWorldV1<'s>> for HelloWorldV1<'static> {
+    fn zero_copy_from<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
+        HelloWorldV1 {
+            message: Cow::Borrowed(&this.message),
+        }
+    }
+}
+
+/// Marker type for [`HelloWorldV1`].
+pub struct HelloWorldV1Marker;
+
+impl<'s> DataMarker<'s> for HelloWorldV1Marker {
+    type Yokeable = HelloWorldV1<'static>;
+    type Cart = HelloWorldV1<'s>;
+}
+
 /// A data provider returning Hello World strings in different languages.
 ///
 /// Mostly useful for testing.
@@ -43,14 +85,13 @@ impl Default for HelloWorldV1<'_> {
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1};
+/// use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
 /// use icu_provider::prelude::*;
 /// use icu_locid_macros::langid;
-/// use std::borrow::Cow;
 ///
 /// let provider = HelloWorldProvider::new_with_placeholder_data();
 ///
-/// let german_hello_world: Cow<HelloWorldV1> = provider
+/// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
 ///     .load_payload(&DataRequest {
 ///         resource_path: ResourcePath {
 ///             key: key::HELLO_WORLD_V1,
@@ -60,11 +101,11 @@ impl Default for HelloWorldV1<'_> {
 ///             }
 ///         }
 ///     })
-///     .unwrap()
-///     .payload.take()
-///     .unwrap();
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
 ///
-/// assert_eq!("Hallo Welt", german_hello_world.message);
+/// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider<'s> {
@@ -106,14 +147,11 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, HelloWorldV1<'s>> for HelloWorldProvider<'s>
-where
-    's: 'd,
-{
+impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Marker> for HelloWorldProvider<'s> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, HelloWorldV1<'s>>, DataError> {
+    ) -> Result<DataResponse<'d, 's, HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -125,20 +163,18 @@ where
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(data)),
-            },
+            payload: Some(DataPayload::from_partial_owned(Rc::from(data))),
         })
     }
 }
 
 impl_dyn_provider!(HelloWorldProvider<'static>, {
-    _ => HelloWorldV1<'static>,
-}, ERASED, 'd, 's);
+    _ => HelloWorldV1Marker,
+}, ERASED, 'd);
 
 #[cfg(feature = "provider_serde")]
 impl_dyn_provider!(HelloWorldProvider<'s>, {
-    _ => HelloWorldV1<'s>,
+    _ => HelloWorldV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
@@ -160,18 +196,21 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl crate::export::DataExporter<'_, dyn crate::erased::ErasedDataStruct>
+impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStructMarker>
     for HelloWorldProvider<'static>
 {
     fn put_payload(
         &mut self,
-        req: &DataRequest,
-        payload: &dyn crate::erased::ErasedDataStruct,
+        req: DataRequest,
+        payload: DataPayload<'d, 'static, crate::erased::ErasedDataStructMarker>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
-        let data: &HelloWorldV1 = payload.downcast_ref()?;
-        self.map.insert(langid.clone(), data.message.clone());
+        let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
+        self.map.insert(
+            langid.clone(),
+            Cow::Owned(downcast_payload.get().message.to_string()),
+        );
         Ok(())
     }
 

@@ -85,7 +85,7 @@ pub trait TimeZoneInput {
 
     /// The time variant (e.g. "daylight", "standard")
     /// TODO(#619) use TinyStr for time variants.
-    fn time_variant(&self) -> Option<&str>;
+    fn time_variant(&self) -> Option<&TinyStr8>;
 }
 
 /// A combination of a formattable calendar date and ISO time.

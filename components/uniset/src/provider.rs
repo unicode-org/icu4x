@@ -37,7 +37,7 @@ pub mod key {
         (ALNUM_V1, "alnum"),
         (ALPHABETIC_V1, "Alpha"),
         (BIDI_CONTROL_V1, "Bidi_C"),
-        (BIDI_MIRRORED_V1, "Bidi_M"),
+        (BIDI_MIRRORED_V1, "BidiMarker"),
         (BLANK_V1, "blank"),
         (CASED_V1, "Cased"),
         (CASE_IGNORABLE_V1, "CI"),
@@ -661,6 +661,13 @@ pub struct UnicodePropertyV1<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: UnicodeSet,
 }
+
+icu_provider::unsafe_impl_data_marker_with_lifetime!(
+    UnicodePropertyV1<'s>,
+    /// Marker type for [`UnicodeProperty`]
+    UnicodePropertyMarker,
+    TEMP_ZCF
+);
 
 impl Default for UnicodePropertyV1<'static> {
     /// Default empty nameless property

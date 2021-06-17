@@ -11,5 +11,9 @@ pub mod custom_writeable;
 pub mod decimal;
 pub mod fixed_decimal;
 pub mod locale;
+pub mod locale_canonicalizer;
 pub mod pluralrules;
 pub mod provider;
+
+#[cfg(target_arch = "wasm32")]
+mod wasm_glue;

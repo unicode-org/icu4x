@@ -8,19 +8,18 @@ mod helpers;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 fn parser(c: &mut Criterion) {
     use icu_plurals::rules::parse_condition;
 
-    let plurals_data = helpers::get_plurals_data();
+    let fixture_data = helpers::get_plurals_data();
 
     let provider = icu_testdata::get_provider();
 
     let mut rules = vec![];
 
-    for langid in &plurals_data.langs {
-        let plurals_data: Cow<icu_plurals::provider::PluralRuleStringsV1> = provider
+    for langid in &fixture_data.langs {
+        let data_payload: DataPayload<icu_plurals::provider::PluralRuleStringsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: icu_plurals::provider::key::CARDINAL_V1,
@@ -31,21 +30,15 @@ fn parser(c: &mut Criterion) {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap();
+        let data = data_payload.get();
 
-        let r = &[
-            &plurals_data.zero,
-            &plurals_data.one,
-            &plurals_data.two,
-            &plurals_data.few,
-            &plurals_data.many,
-        ];
+        let r = &[&data.zero, &data.one, &data.two, &data.few, &data.many];
 
         for i in r {
             if let Some(x) = i {
-                rules.push(x.clone());
+                rules.push(x.to_string());
             }
         }
     }

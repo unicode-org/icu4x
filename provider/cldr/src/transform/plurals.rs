@@ -77,11 +77,11 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
+impl<'d, 's> DataProvider<'d, 's, PluralRuleStringsV1Marker> for PluralsProvider<'d> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, PluralRuleStringsV1<'s>>, DataError> {
+    ) -> Result<DataResponse<'d, 's, PluralRuleStringsV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req.try_langid()?.clone().into();
@@ -93,15 +93,13 @@ impl<'d, 's> DataProvider<'d, PluralRuleStringsV1<'s>> for PluralsProvider<'d> {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: DataPayload {
-                cow: Some(Cow::Owned(PluralRuleStringsV1::from(r))),
-            },
+            payload: Some(DataPayload::from_owned(PluralRuleStringsV1::from(r))),
         })
     }
 }
 
 icu_provider::impl_dyn_provider!(PluralsProvider<'d>, {
-    _ => PluralRuleStringsV1<'s>,
+    _ => PluralRuleStringsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
@@ -195,7 +193,7 @@ fn test_basic() {
     let provider = PluralsProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
     // Spot-check locale 'cs' since it has some interesting entries
-    let cs_rules: Cow<PluralRuleStringsV1> = provider
+    let cs_rules: DataPayload<PluralRuleStringsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::CARDINAL_V1,
@@ -206,19 +204,21 @@ fn test_basic() {
             },
         })
         .unwrap()
-        .payload
-        .take()
+        .take_payload()
         .unwrap();
 
-    assert_eq!(None, cs_rules.zero);
+    assert_eq!(None, cs_rules.get().zero);
     assert_eq!(
         Some("i = 1 and v = 0"),
-        cs_rules.one.as_ref().map(|v| v.borrow())
+        cs_rules.get().one.as_ref().map(|v| v.borrow())
     );
-    assert_eq!(None, cs_rules.two);
+    assert_eq!(None, cs_rules.get().two);
     assert_eq!(
         Some("i = 2..4 and v = 0"),
-        cs_rules.few.as_ref().map(|v| v.borrow())
+        cs_rules.get().few.as_ref().map(|v| v.borrow())
     );
-    assert_eq!(Some("v != 0"), cs_rules.many.as_ref().map(|v| v.borrow()));
+    assert_eq!(
+        Some("v != 0"),
+        cs_rules.get().many.as_ref().map(|v| v.borrow())
+    );
 }

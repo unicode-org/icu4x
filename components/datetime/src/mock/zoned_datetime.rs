@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use tinystr::TinyStr8;
+
 use crate::date::*;
 use std::str::FromStr;
 
@@ -141,7 +143,7 @@ impl TimeZoneInput for MockZonedDateTime {
         self.time_zone.metazone_id()
     }
 
-    fn time_variant(&self) -> Option<&str> {
+    fn time_variant(&self) -> Option<&TinyStr8> {
         self.time_zone.time_variant()
     }
 }

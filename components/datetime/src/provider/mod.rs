@@ -12,7 +12,8 @@ pub mod time_zones;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
-    pub const GREGORY_V1: ResourceKey = resource_key!(dates, "gregory", 1);
+    pub const GREGORY_DATE_PATTERNS_V1: ResourceKey = resource_key!(date_patterns, "gregory", 1);
+    pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(date_symbols, "gregory", 1);
     pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(time_zones, "formats", 1);
     pub const TIMEZONE_EXEMPLAR_CITIES_V1: ResourceKey =
         resource_key!(time_zones, "exemplar-cities", 1);

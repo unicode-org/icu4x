@@ -8,7 +8,7 @@ use crate::VarZeroVec;
 use crate::ZeroVec;
 use std::cmp::Ordering;
 
-/// Trait marking types which are allowed to be keys or values in [`ZeroMap`].
+/// Trait marking types which are allowed to be keys or values in [`ZeroMap`](super::ZeroMap).
 ///
 /// Users should not be calling methods of this trait directly, however if you are
 /// implementing your own [`AsULE`] or [`AsVarULE`] type you may wish to implement

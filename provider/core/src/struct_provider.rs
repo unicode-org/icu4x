@@ -6,8 +6,7 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use std::borrow::Cow;
-use std::fmt::Debug;
+use yoke::*;
 
 /// A data provider that unconditionally returns references to borrowed data.
 ///
@@ -15,17 +14,12 @@ use std::fmt::Debug;
 ///
 /// ```
 /// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
 /// use icu_provider::struct_provider::StructProvider;
 /// use std::borrow::Cow;
-/// use std::default::Default;
 ///
-/// #[derive(Clone, Debug, PartialEq)]
-/// struct SampleDataStruct<'s> {
-///     value: &'s str,
-/// }
-///
-/// let local_data = SampleDataStruct {
-///     value: &"hello world".to_string(),
+/// let local_data = HelloWorldV1 {
+///     message: Cow::Owned("hello world".to_string()),
 /// };
 ///
 /// // A placeholder key to use to serve the data struct
@@ -36,30 +30,28 @@ use std::fmt::Debug;
 ///     data: &local_data,
 /// };
 ///
-/// let payload: Cow<SampleDataStruct> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
+/// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
 ///     .expect("Load should succeed")
-///     .payload.take()
+///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!(*payload, local_data);
-/// assert!(matches!(payload, Cow::Borrowed(_)))
+/// assert_eq!(payload.get(), &local_data);
 /// ```
-pub struct StructProvider<'d, T> {
+pub struct StructProvider<'d, T: ?Sized> {
     pub key: ResourceKey,
     pub data: &'d T,
 }
 
-impl<'d, T> DataProvider<'d, T> for StructProvider<'d, T>
+impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<'d, M::Cart>
 where
-    T: Clone + Debug + Sized + 'd,
+    M: DataMarker<'s>,
+    M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: DataPayload {
-                cow: Some(Cow::Borrowed(self.data)),
-            },
+            payload: Some(DataPayload::from_borrowed(self.data)),
         })
     }
 }

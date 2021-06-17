@@ -96,35 +96,56 @@ impl<'d> ZonedDateTimeFormat<'d> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        DP: DataProvider<'d, provider::gregory::DatesV1> + ?Sized,
-        ZP: DataProvider<'d, provider::time_zones::TimeZoneFormatsV1<'d>>
-            + DataProvider<'d, provider::time_zones::ExemplarCitiesV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>
+        DP: DataProvider<'d, 'd, provider::gregory::DatePatternsV1Marker>
+            + DataProvider<'d, 'd, provider::gregory::DateSymbolsV1Marker>
+            + ?Sized,
+        ZP: DataProvider<'d, 'd, provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
-        let data = date_provider
+        let pattern_data: icu_provider::DataPayload<
+            '_,
+            '_,
+            provider::gregory::DatePatternsV1Marker,
+        > = date_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: provider::key::GREGORY_V1,
+                    key: provider::key::GREGORY_DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(locale.clone().into()),
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
 
-        let pattern = data
-            .patterns
+        let symbols_data: icu_provider::DataPayload<
+            '_,
+            '_,
+            provider::gregory::DateSymbolsV1Marker,
+        > = date_provider
+            .load_payload(&DataRequest {
+                resource_path: ResourcePath {
+                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                    options: ResourceOptions {
+                        variant: None,
+                        langid: Some(locale.clone().into()),
+                    },
+                },
+            })?
+            .take_payload()?;
+
+        let pattern = pattern_data
+            .get()
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
-        let datetime_format = DateTimeFormat::new(locale, pattern, data);
+        let datetime_format = DateTimeFormat::new(locale, pattern, symbols_data);
         let time_zone_format = TimeZoneFormat::try_new(
             datetime_format.locale.clone(),
             datetime_format.pattern.clone(),

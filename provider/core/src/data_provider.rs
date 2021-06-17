@@ -2,13 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(test)]
+#[cfg(feature = "serde")]
+mod test;
+
 use crate::error::Error;
+use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use icu_locid::LanguageIdentifier;
-use std::borrow::Cow;
+use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Debug;
+use std::rc::Rc;
+use yoke::*;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -84,68 +91,307 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
+pub(crate) enum DataPayloadInner<'d, 's: 'd, M>
+where
+    M: DataMarker<'s>,
+{
+    Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
+    RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
+    Owned(Yoke<M::Yokeable, ()>),
+}
+
 /// A wrapper around the payload returned in a [`DataResponse`].
+///
+/// Internally, the data is represented using the [`yoke`] crate, with several variations for
+/// different ownership models.
+///
+/// `DataPayload` is closely coupled with [`DataMarker`].
 ///
 /// # Examples
 ///
+/// Basic usage, using the `CowStrMarker` marker:
+///
 /// ```
 /// use icu_provider::prelude::*;
-/// use std::borrow::Cow;
+/// use icu_provider::marker::CowStrMarker;
 ///
-/// let payload = DataPayload { cow: Some(Cow::Borrowed("Demo")) };
+/// let payload = DataPayload::<CowStrMarker>::from_borrowed("Demo");
 ///
-/// assert_eq!("Demo", payload.borrow().expect("Payload is present"));
+/// assert_eq!("Demo", payload.get());
 /// ```
-#[derive(Debug, Clone)]
-pub struct DataPayload<'d, T>
+pub struct DataPayload<'d, 's, M>
 where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    M: DataMarker<'s>,
 {
-    pub cow: Option<Cow<'d, T>>,
+    pub(crate) inner: DataPayloadInner<'d, 's, M>,
+}
+
+impl<'d, 's, M> Debug for DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.get().fmt(f)
+    }
+}
+
+impl<'d, 's, M> Clone for DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+{
+    /// Note: This function is currently inoperable. For more details, see
+    /// https://github.com/unicode-org/icu4x/issues/753
+    fn clone(&self) -> Self {
+        use DataPayloadInner::*;
+        let new_inner = match &self.inner {
+            Borrowed(yoke) => Borrowed(yoke.clone()),
+            RcStruct(yoke) => RcStruct(yoke.clone()),
+            Owned(yoke) => Owned(yoke.clone()),
+        };
+        Self { inner: new_inner }
+    }
+}
+
+impl<'d, 's, M> DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    M::Yokeable: ZeroCopyFrom<M::Cart>,
+{
+    /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`]. The data need not be fully owned;
+    /// it may be constrained by the `'s` lifetime.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::rc::Rc;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_data = "example".to_string();
+    ///
+    /// let rc_struct = Rc::from(HelloWorldV1 {
+    ///     message: Cow::Borrowed(&local_data),
+    /// });
+    ///
+    /// let payload = DataPayload::<HelloWorldV1Marker>::from_partial_owned(rc_struct.clone());
+    ///
+    /// assert_eq!(payload.get(), &*rc_struct);
+    /// ```
+    ///
+    /// [`Cart`]: crate::marker::DataMarker::Cart
+    #[inline]
+    pub fn from_partial_owned(data: Rc<M::Cart>) -> Self {
+        Self {
+            inner: DataPayloadInner::RcStruct(Yoke::attach_to_rc_cart(data)),
+        }
+    }
+
+    /// Convert an `&'d `[`Cart`] into a [`DataPayload`]. The data need not be fully owned;
+    /// it may be constrained by the `'s` lifetime.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_data = "example".to_string();
+    ///
+    /// let local_struct = HelloWorldV1 {
+    ///     message: Cow::Borrowed(&local_data),
+    /// };
+    ///
+    /// let payload = DataPayload::<HelloWorldV1Marker>::from_borrowed(&local_struct);
+    ///
+    /// assert_eq!(payload.get(), &local_struct);
+    /// ```
+    ///
+    /// [`Cart`]: crate::marker::DataMarker::Cart
+    #[inline]
+    pub fn from_borrowed(data: &'d M::Cart) -> Self {
+        Self {
+            inner: DataPayloadInner::Borrowed(Yoke::attach_to_borrowed_cart(data)),
+        }
+    }
+}
+
+impl<'d, 's, M> DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+{
+    /// Convert a fully owned (`'static`) data struct into a DataPayload.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_struct = HelloWorldV1 {
+    ///     message: Cow::Owned("example".to_string()),
+    /// };
+    ///
+    /// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(local_struct.clone());
+    ///
+    /// assert_eq!(payload.get(), &local_struct);
+    /// ```
+    #[inline]
+    pub fn from_owned(data: M::Yokeable) -> Self {
+        Self {
+            inner: DataPayloadInner::Owned(Yoke::new_always_owned(data)),
+        }
+    }
+
+    /// Mutate the data contained in this DataPayload.
+    ///
+    /// For safety, all mutation operations must take place within a helper function that cannot
+    /// borrow data from the surrounding context.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::marker::CowStrMarker;
+    ///
+    /// let mut payload = DataPayload::<CowStrMarker>::from_borrowed("Hello");
+    ///
+    /// payload.with_mut(|s| s.to_mut().push_str(" World"));
+    ///
+    /// assert_eq!("Hello World", payload.get());
+    /// ```
+    ///
+    /// To transfer data from the context into the data struct, use the `move` keyword:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::marker::CowStrMarker;
+    ///
+    /// let mut payload = DataPayload::<CowStrMarker>::from_borrowed("Hello");
+    ///
+    /// let suffix = " World".to_string();
+    /// payload.with_mut(move |s| s.to_mut().push_str(&suffix));
+    ///
+    /// assert_eq!("Hello World", payload.get());
+    /// ```
+    pub fn with_mut<'a, F>(&'a mut self, f: F)
+    where
+        F: 'static + for<'b> FnOnce(&'b mut <M::Yokeable as Yokeable<'a>>::Output),
+    {
+        use DataPayloadInner::*;
+        match &mut self.inner {
+            Borrowed(yoke) => yoke.with_mut(f),
+            RcStruct(yoke) => yoke.with_mut(f),
+            Owned(yoke) => yoke.with_mut(f),
+        }
+    }
+
+    /// Borrows the underlying data.
+    ///
+    /// This function should be used like `Deref` would normally be used. For more information on
+    /// why DataPayload cannot implement `Deref`, see the `yoke` crate.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::marker::CowStrMarker;
+    ///
+    /// let payload = DataPayload::<CowStrMarker>::from_borrowed("Demo");
+    ///
+    /// assert_eq!("Demo", payload.get());
+    /// ```
+    #[allow(clippy::needless_lifetimes)]
+    pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
+        use DataPayloadInner::*;
+        match &self.inner {
+            Borrowed(yoke) => yoke.get(),
+            RcStruct(yoke) => yoke.get(),
+            Owned(yoke) => yoke.get(),
+        }
+    }
 }
 
 /// A response object containing an object as payload and metadata about it.
-#[derive(Debug, Clone)]
-pub struct DataResponse<'d, T>
+pub struct DataResponse<'d, 's, M>
 where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    M: DataMarker<'s>,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
-    pub payload: DataPayload<'d, T>,
+    pub payload: Option<DataPayload<'d, 's, M>>,
 }
 
-impl<'d, T> DataPayload<'d, T>
+impl<'d, 's, M> DataResponse<'d, 's, M>
 where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    M: DataMarker<'s>,
 {
-    /// Creates a new, empty [`DataPayload`].
-    ///
-    /// Default is not implemented because it would be misleading: does the DataPayload start
-    /// empty, or does it start with the Default value of T?
-    #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
-        Self { cow: None }
-    }
-
-    /// Borrows the underlying payload. Error if not present.
-    pub fn borrow(&self) -> Result<&T, Error> {
-        use std::borrow::Borrow;
-        self.cow
-            .as_ref()
-            .map(|cow| cow.borrow())
-            .ok_or(Error::MissingPayload)
-    }
-
     /// Takes ownership of the underlying payload. Error if not present.
-    pub fn take(&mut self) -> Result<Cow<'d, T>, Error> {
-        self.cow.take().ok_or(Error::MissingPayload)
+    #[inline]
+    pub fn take_payload(self) -> Result<DataPayload<'d, 's, M>, Error> {
+        self.payload.ok_or(Error::MissingPayload)
     }
+}
+
+impl<'d, 's, M> TryFrom<DataResponse<'d, 's, M>> for DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+{
+    type Error = Error;
+
+    fn try_from(response: DataResponse<'d, 's, M>) -> Result<Self, Self::Error> {
+        response.take_payload()
+    }
+}
+
+impl<'d, 's, M> Debug for DataResponse<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "DataResponse {{ metadata: {:?}, payload: {:?} }}",
+            self.metadata, self.payload
+        )
+    }
+}
+
+impl<'d, 's, M> Clone for DataResponse<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+{
+    /// Note: This function is currently inoperable. For more details, see
+    /// https://github.com/unicode-org/icu4x/issues/753
+    fn clone(&self) -> Self {
+        Self {
+            metadata: self.metadata.clone(),
+            payload: self.payload.clone(),
+        }
+    }
+}
+
+#[test]
+fn test_debug() {
+    use crate::hello_world::*;
+    use std::borrow::Cow;
+    let resp = DataResponse::<HelloWorldV1Marker> {
+        metadata: Default::default(),
+        payload: Some(DataPayload::from_borrowed(&HelloWorldV1 {
+            message: Cow::Borrowed("foo"),
+        })),
+    };
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }
 
 /// A generic data provider that loads a payload of a specific type.
@@ -155,14 +401,13 @@ where
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
 /// - [`StructProvider`](crate::struct_provider::StructProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<'d, T>
+pub trait DataProvider<'d, 's, M>
 where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    M: DataMarker<'s>,
 {
     /// Query the provider for data, returning the result.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, T>, Error>;
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error>;
 }

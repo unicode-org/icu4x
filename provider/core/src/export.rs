@@ -7,21 +7,19 @@
 use crate::error::Error;
 use crate::iter::IterableDataProvider;
 use crate::prelude::*;
-use std::fmt::Debug;
 
 /// An object capable of serializing data payloads to be read by a [`DataProvider`].
 ///
 /// A [`DataProvider`] by itself is "read-only"; this trait enables it to be "read-write".
-pub trait DataExporter<'s, T>
+pub trait DataExporter<'d, 's: 'd, M>
 where
-    T: 's + ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    M: DataMarker<'s>,
 {
     /// Save a `payload` corresponding to the given data request (resource path).
     fn put_payload(
         &mut self,
-        req: &DataRequest,
-        payload: &T,
+        req: DataRequest,
+        payload: DataPayload<'d, 's, M>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Whether to load and dump data for the given entry. This function enables the
@@ -30,15 +28,11 @@ where
 
     /// Auto-implemented function that loads data from an [`IterableDataProvider`] and dumps it
     /// into this [`DataExporter`].
-    fn put_key_from_provider<'d>(
+    fn put_key_from_provider(
         &mut self,
         resc_key: &ResourceKey,
-        provider: &impl IterableDataProvider<'d, T>,
-    ) -> Result<(), Error>
-    where
-        's: 'd,
-    {
-        use std::borrow::Borrow;
+        provider: &impl IterableDataProvider<'d, 's, M>,
+    ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
             if !self.include_resource_options(&resc_options) {
                 continue;
@@ -49,8 +43,8 @@ where
                     options: resc_options,
                 },
             };
-            let payload = provider.load_payload(&req)?.payload.take()?;
-            self.put_payload(&req, payload.borrow())?;
+            let payload = provider.load_payload(&req)?.take_payload()?;
+            self.put_payload(req, payload)?;
         }
         Ok(())
     }

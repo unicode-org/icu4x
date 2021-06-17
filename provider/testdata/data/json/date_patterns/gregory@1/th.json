@@ -1,0 +1,65 @@
+{
+  "date": {
+    "full": "EEEEที่ d MMMM G y",
+    "long": "d MMMM G y",
+    "medium": "d MMM y",
+    "short": "d/M/yy"
+  },
+  "time": {
+    "full": "H นาฬิกา mm นาที ss วินาที zzzz",
+    "long": "H นาฬิกา mm นาที ss วินาที z",
+    "medium": "HH:mm:ss",
+    "short": "HH:mm"
+  },
+  "datetime": {
+    "length_patterns": {
+      "full": "{1} {0}",
+      "long": "{1} {0}",
+      "medium": "{1} {0}",
+      "short": "{1} {0}"
+    },
+    "skeletons": {
+      "y": "y",
+      "yM": "M/y",
+      "yMd": "d/M/y",
+      "yMdE": "E d/M/y",
+      "yMMM": "MMM y",
+      "yMMMd": "d MMM y",
+      "yMMMdE": "E d MMM y",
+      "yMMMdEEEE": "EEEEที่ d MMM y",
+      "yMMMM": "MMMM 'G' y",
+      "yMMMMd": "d MMMM 'G' y",
+      "yMMMMdE": "E d MMMM 'G' y",
+      "yMMMMdEEEE": "EEEEที่ d MMMM 'G' y",
+      "M": "L",
+      "Md": "d/M",
+      "MdE": "E d/M",
+      "MMM": "LLL",
+      "MMMd": "d MMM",
+      "MMMdE": "E d MMM",
+      "MMMdEEEE": "EEEEที่ d MMM",
+      "MMMMd": "d MMMM",
+      "MMMMdE": "E d MMMM",
+      "MMMMdEEEE": "EEEEที่ d MMMM",
+      "d": "d",
+      "dE": "E d",
+      "E": "ccc",
+      "Ehm": "E h:mm a",
+      "Ehms": "E h:mm:ss a",
+      "EHm": "E HH:mm น.",
+      "EHms": "E HH:mm:ss",
+      "h": "h a",
+      "hm": "h:mm a",
+      "hms": "h:mm:ss a",
+      "hmsv": "h:mm:ss a v",
+      "hmv": "h:mm น. a v",
+      "H": "HH",
+      "Hm": "HH:mm น.",
+      "Hms": "HH:mm:ss",
+      "Hmsv": "HH:mm:ss v",
+      "Hmv": "HH:mm v",
+      "ms": "mm:ss",
+      "mmss": "mm:ss"
+    }
+  }
+}
