@@ -4,6 +4,12 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[tasks.fmt-check]
+description = "Check code is appropriately formatted"
+category = "ICU4X Development"
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
@@ -11,7 +17,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml"
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat"
 
 blank_line = set ""
 
@@ -27,6 +33,19 @@ license_slash_line_3 = set "// (online at: https://github.com/unicode-org/icu4x/
 license_slash_array = array ${license_slash_line_1} ${license_slash_line_2} ${license_slash_line_3} ${blank_line}
 license_slash_str = array_join ${license_slash_array} "\n"
 
+license_rst_line_0 = set ".."
+license_rst_line_1 = set "    This file is part of ICU4X. For terms of use, please see the file"
+license_rst_line_2 = set "    called LICENSE at the top level of the ICU4X source tree"
+license_rst_line_3 = set "    (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_rst_array = array ${license_rst_line_0} ${license_rst_line_1} ${license_rst_line_2} ${license_rst_line_3} ${blank_line}
+license_rst_str = array_join ${license_rst_array} "\n"
+
+license_rem_line_1 = set "REM This file is part of ICU4X. For terms of use, please see the file"
+license_rem_line_2 = set "REM called LICENSE at the top level of the ICU4X source tree"
+license_rem_line_3 = set "REM (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE )."
+license_rem_array = array ${license_rem_line_1} ${license_rem_line_2} ${license_rem_line_3} ${blank_line}
+license_rem_str = array_join ${license_rem_array} "\n"
+
 for pattern in ${glob_pattern_array}
     handle = glob_array ${pattern}
     for path in ${handle}
@@ -34,9 +53,13 @@ for pattern in ${glob_pattern_array}
             text = readfile ${path}
             result_hash = starts_with ${text} ${license_hash_str}
             result_slash = starts_with ${text} ${license_slash_str}
+            result_rst = starts_with ${text} ${license_rst_str}
+            result_rem = starts_with ${text} ${license_rst_sem}
             not_result_hash = not ${result_hash}
             not_result_slash = not ${result_slash}
-            if ${not_result_hash} and ${not_result_slash}
+            not_result_rst = not ${result_rst}
+            not_result_rem = not ${result_rem}
+            if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem}
               echo "License header missing in ${path}"
               trigger_error "License header missing or misformatted in ${path}."
             end
