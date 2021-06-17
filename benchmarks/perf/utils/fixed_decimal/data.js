@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623950417236,
+  "lastUpdate": 1623950564474,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6509,6 +6509,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 130290,
             "range": "± 378",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "mgaudet+github@ualberta.ca",
+            "name": "Matthew Gaudet",
+            "username": "mgaudet"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a663155efc52965cda788be1960b28881308b3f5",
+          "message": "Make FsDataProvider data generation command lines copy-paste-executable (#799)",
+          "timestamp": "2021-06-17T12:16:42-05:00",
+          "tree_id": "f5aa6211c98b0421632847dd47f98feab225055d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a663155efc52965cda788be1960b28881308b3f5"
+        },
+        "date": 1623950562343,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 157325,
+            "range": "± 608",
             "unit": "ns/iter"
           }
         ]
