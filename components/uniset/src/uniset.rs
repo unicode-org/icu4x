@@ -4,6 +4,11 @@
 
 use std::{char, ops::RangeBounds, slice::Chunks};
 
+// How to make import condition on feature?
+use serde::de;
+use serde::de::Deserialize;
+use std::result::Result;
+
 use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid};
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
@@ -23,8 +28,24 @@ pub struct UnicodeSet {
     // Allows for traits of fixed size arrays
 
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    #[serde(deserialize_with = "deserialize_inv_list")]
     inv_list: Vec<u32>,
     size: usize,
+}
+
+/// A private helper method for serde deserialization of a UnicodeSet to ensure
+/// that the values adhere to the invariants encoded in [`is_valid`].
+fn deserialize_inv_list<'de, D>(deserializer: D) -> Result<Vec<u32>, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let parsed_inv_list: Vec<u32> = Deserialize::deserialize(deserializer)?;
+
+    if !is_valid(&parsed_inv_list) {
+        return Err(de::Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", parsed_inv_list)));
+    }
+
+    Ok(parsed_inv_list)
 }
 
 impl UnicodeSet {
