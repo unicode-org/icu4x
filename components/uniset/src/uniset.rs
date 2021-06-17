@@ -5,8 +5,6 @@
 use std::{char, ops::RangeBounds, slice::Chunks};
 
 // How to make import condition on feature?
-use serde::de;
-use serde::de::Deserialize;
 use std::result::Result;
 
 use super::UnicodeSetError;
@@ -19,7 +17,7 @@ const BMP_MAX: u32 = 0xFFFF;
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
 #[derive(Debug, PartialEq, Hash, Eq, Clone)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 pub struct UnicodeSet {
     // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
 
@@ -28,24 +26,22 @@ pub struct UnicodeSet {
     // Allows for traits of fixed size arrays
 
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    #[serde(deserialize_with = "deserialize_inv_list")]
+    #[serde(flatten)]
     inv_list: Vec<u32>,
+    #[serde(skip)]
     size: usize,
 }
 
-/// A private helper method for serde deserialization of a UnicodeSet to ensure
-/// that the values adhere to the invariants encoded in [`is_valid`].
-fn deserialize_inv_list<'de, D>(deserializer: D) -> Result<Vec<u32>, D::Error>
-where
-    D: de::Deserializer<'de>,
-{
-    let parsed_inv_list: Vec<u32> = Deserialize::deserialize(deserializer)?;
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for UnicodeSet {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+            use serde::de::Error;
+            let parsed_inv_list = Vec::<u32>::deserialize(deserializer)?;
 
-    if !is_valid(&parsed_inv_list) {
-        return Err(de::Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", parsed_inv_list)));
-    }
-
-    Ok(parsed_inv_list)
+            UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
+        }
 }
 
 impl UnicodeSet {
