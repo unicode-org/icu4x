@@ -36,12 +36,13 @@ pub struct UnicodeSet {
 impl<'de> serde::Deserialize<'de> for UnicodeSet {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de> {
-            use serde::de::Error;
-            let parsed_inv_list = Vec::<u32>::deserialize(deserializer)?;
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        let parsed_inv_list = Vec::<u32>::deserialize(deserializer)?;
 
-            UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
-        }
+        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
+    }
 }
 
 impl UnicodeSet {
