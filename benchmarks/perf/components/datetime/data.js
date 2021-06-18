@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623950965323,
+  "lastUpdate": 1623975440375,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3455,6 +3455,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 2650489,
             "range": "± 148134",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@braniecki.net",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c5135af6babd7cdbea02f0971ef8656fb6d68b0b",
+          "message": "Only load symbols data if pattern requires them. (#791)",
+          "timestamp": "2021-06-17T17:10:44-07:00",
+          "tree_id": "43a8f51fcb27b486b23f278c6ee37a0fda3f2777",
+          "url": "https://github.com/unicode-org/icu4x/commit/c5135af6babd7cdbea02f0971ef8656fb6d68b0b"
+        },
+        "date": 1623975438065,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 960707,
+            "range": "± 10872",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1998973,
+            "range": "± 5892",
             "unit": "ns/iter"
           }
         ]
