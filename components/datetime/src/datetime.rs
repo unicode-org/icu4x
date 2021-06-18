@@ -3,10 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    fields::FieldSymbol,
     format::datetime,
     options::DateTimeFormatOptions,
-    pattern::PatternItem,
     provider::{
         gregory::{DatePatternsV1Marker, DateSymbolsV1Marker},
         helpers::DateTimePatterns,
@@ -62,7 +60,7 @@ use crate::{
 pub struct DateTimeFormat<'d> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: DataPayload<'d, 'd, DateSymbolsV1Marker>,
+    pub(super) symbols: Option<DataPayload<'d, 'd, DateSymbolsV1Marker>>,
 }
 
 impl<'d> DateTimeFormat<'d> {
@@ -99,17 +97,6 @@ impl<'d> DateTimeFormat<'d> {
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError> {
         let locale = locale.into();
-        let symbols_data = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
-                    },
-                },
-            })?
-            .take_payload()?;
 
         let patterns_data: icu_provider::DataPayload<
             '_,
@@ -132,18 +119,26 @@ impl<'d> DateTimeFormat<'d> {
             .get_pattern_for_options(options)?
             .unwrap_or_default();
 
-        let time_zone_field = pattern
-            .items()
-            .iter()
-            .filter_map(|p| match p {
-                PatternItem::Field(field) => Some(field),
-                _ => None,
-            })
-            .find(|field| matches!(field.symbol, FieldSymbol::TimeZone(_)));
+        let requires_data = datetime::analyze_pattern(&pattern, false)
+            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
 
-        if let Some(field) = time_zone_field {
-            return Err(DateTimeFormatError::UnsupportedField(field.symbol));
-        }
+        let symbols_data = if requires_data {
+            Some(
+                data_provider
+                    .load_payload(&DataRequest {
+                        resource_path: ResourcePath {
+                            key: provider::key::GREGORY_DATE_SYMBOLS_V1,
+                            options: ResourceOptions {
+                                variant: None,
+                                langid: Some(locale.clone().into()),
+                            },
+                        },
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
 
         Ok(Self::new(locale, pattern, symbols_data))
     }
@@ -164,7 +159,7 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        symbols: DataPayload<'d, 'd, DateSymbolsV1Marker>,
+        symbols: Option<DataPayload<'d, 'd, DateSymbolsV1Marker>>,
     ) -> Self {
         let locale = locale.into();
 
@@ -209,7 +204,7 @@ impl<'d> DateTimeFormat<'d> {
     {
         FormattedDateTime {
             pattern: &self.pattern,
-            symbols: self.symbols.get(),
+            symbols: self.symbols.as_ref().map(|s| s.get()),
             datetime: value,
             locale: &self.locale,
         }
@@ -246,8 +241,14 @@ impl<'d> DateTimeFormat<'d> {
         w: &mut impl std::fmt::Write,
         value: &impl DateTimeInput,
     ) -> std::fmt::Result {
-        datetime::write_pattern(&self.pattern, self.symbols.get(), value, &self.locale, w)
-            .map_err(|_| std::fmt::Error)
+        datetime::write_pattern(
+            &self.pattern,
+            self.symbols.as_ref().map(|s| s.get()),
+            value,
+            &self.locale,
+            w,
+        )
+        .map_err(|_| std::fmt::Error)
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.

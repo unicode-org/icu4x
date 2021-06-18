@@ -77,7 +77,11 @@ where
     W: fmt::Write + ?Sized,
 {
     let pattern = &zoned_datetime_format.datetime_format.pattern;
-    let symbols = zoned_datetime_format.datetime_format.symbols.get();
+    let symbols = zoned_datetime_format
+        .datetime_format
+        .symbols
+        .as_ref()
+        .map(|s| s.get());
 
     match field.symbol {
         FieldSymbol::TimeZone(_time_zone) => time_zone::write_field(
