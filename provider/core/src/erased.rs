@@ -109,6 +109,11 @@ where
                 let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
                 DataPayload::from_partial_owned(cart)
             }
+            RcBuf(yoke) => {
+                // Case 4: Cast the whole RcBuf Yoke to the trait object.
+                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
+                DataPayload::from_partial_owned(cart)
+            }
         }
     }
 }
@@ -203,15 +208,27 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
                     },
                     Err(any_rc) => any_rc,
                 };
+                // Check for Case 4: an RcBuf Yoke.
+                let y2 = any_rc.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
+                let any_rc = match y2 {
+                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
+                        Ok(yoke) => return Ok(DataPayload { inner: RcBuf(yoke) }),
+                        // Note: We could consider cloning the Yoke instead of erroring out.
+                        Err(_) => return Err(Error::MultipleReferences),
+                    },
+                    Err(any_rc) => any_rc,
+                };
                 // None of the downcasts succeeded; return an error.
                 Err(Error::MismatchedType {
                     actual: Some(any_rc.type_id()),
                     generic: Some(TypeId::of::<M::Cart>()),
                 })
             }
-            // This is unreachable because ErasedDataStructMarker cannot be fully owned, since it
+            // This is unreachable because ErasedDataStruct cannot be fully owned, since it
             // contains a reference.
             Owned(_) => unreachable!(),
+            // This is unreachable because ErasedDataStruct needs to reference an object.
+            RcBuf(_) => unreachable!(),
         }
     }
 }

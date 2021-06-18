@@ -98,6 +98,7 @@ where
     Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
     Owned(Yoke<M::Yokeable, ()>),
+    RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
 
 /// A wrapper around the payload returned in a [`DataResponse`].
@@ -149,6 +150,7 @@ where
             Borrowed(yoke) => Borrowed(yoke.clone()),
             RcStruct(yoke) => RcStruct(yoke.clone()),
             Owned(yoke) => Owned(yoke.clone()),
+            RcBuf(yoke) => RcBuf(yoke.clone()),
         };
         Self { inner: new_inner }
     }
@@ -223,6 +225,43 @@ impl<'d, 's, M> DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
 {
+    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
+    /// conversion. This can often be a Serde deserialization operation.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::rc::Rc;
+    /// 
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let json_buffer_rc: Rc<[u8]> = json_text.as_bytes().into();
+    ///
+    /// let payload = DataPayload::<HelloWorldV1Marker>::from_rc_buffer(
+    ///     json_buffer_rc.clone(),
+    ///     |data: &[u8]| {
+    ///         serde_json::from_slice(data).unwrap()
+    ///     }
+    /// );
+    /// 
+    /// assert_eq!("Hello World", payload.get().message);
+    /// ```
+    #[inline]
+    pub fn from_rc_buffer(
+        buffer: Rc<[u8]>,
+        f: for<'de> fn(_: &'de [u8]) -> <M::Yokeable as Yokeable<'de>>::Output,
+    ) -> Self {
+        Self {
+            inner: DataPayloadInner::RcBuf(Yoke::attach_to_cart_badly(buffer, f)),
+        }
+    }
+}
+
+impl<'d, 's, M> DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+{
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
     /// # Examples
@@ -289,6 +328,7 @@ where
             Borrowed(yoke) => yoke.with_mut(f),
             RcStruct(yoke) => yoke.with_mut(f),
             Owned(yoke) => yoke.with_mut(f),
+            RcBuf(yoke) => yoke.with_mut(f),
         }
     }
 
@@ -314,6 +354,7 @@ where
             Borrowed(yoke) => yoke.get(),
             RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
+            RcBuf(yoke) => yoke.get(),
         }
     }
 }

@@ -193,6 +193,7 @@ where
             Borrowed(_) => todo!("#752"),
             RcStruct(yoke) => Rc::from(yoke),
             Owned(yoke) => Rc::from(yoke),
+            RcBuf(yoke) => Rc::from(yoke),
         };
         DataPayload::from_partial_owned(cart)
     }
