@@ -231,30 +231,34 @@ where
     /// # Examples
     /// 
     /// ```
+    /// # #[cfg(feature = "provider_serde")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
     /// 
     /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let json_buffer_rc: Rc<[u8]> = json_text.as_bytes().into();
+    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
     ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_rc_buffer(
-    ///     json_buffer_rc.clone(),
+    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer(
+    ///     json_rc_buffer.clone(),
     ///     |data: &[u8]| {
-    ///         serde_json::from_slice(data).unwrap()
+    ///         serde_json::from_slice(data)
     ///     }
-    /// );
+    /// )
+    /// .expect("JSON is valid");
     /// 
     /// assert_eq!("Hello World", payload.get().message);
+    /// # } // feature = "provider_serde"
     /// ```
     #[inline]
-    pub fn from_rc_buffer(
+    pub fn try_from_rc_buffer<E>(
         buffer: Rc<[u8]>,
-        f: for<'de> fn(_: &'de [u8]) -> <M::Yokeable as Yokeable<'de>>::Output,
-    ) -> Self {
-        Self {
-            inner: DataPayloadInner::RcBuf(Yoke::attach_to_cart_badly(buffer, f)),
-        }
+        f: for<'de> fn(_: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let yoke = Yoke::try_attach_to_cart_badly(buffer, f)?;
+        Ok(Self {
+            inner: DataPayloadInner::RcBuf(yoke),
+        })
     }
 }
 

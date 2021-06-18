@@ -111,6 +111,35 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
             cart,
         }
     }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
+    /// deserializer function, the error is passed up to the caller.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use yoke::{Yoke, Yokeable};
+    /// # use std::rc::Rc;
+    /// # use std::borrow::Cow;
+    ///
+    /// let rc = Rc::new([0xb, 0xa, 0xd]);
+    ///
+    /// let yoke_result = Yoke::<Cow<str>, Rc<[u8]>>::try_attach_to_cart_badly(rc, |data: &[u8]| {
+    ///     bincode::deserialize(data)
+    /// });
+    ///
+    /// assert!(matches!(yoke_result, Err(_)));
+    /// ```
+    pub fn try_attach_to_cart_badly<E>(
+        cart: C,
+        f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        })
+    }
 }
 
 impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
