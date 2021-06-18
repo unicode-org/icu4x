@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623975411015,
+  "lastUpdate": 1624046198673,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7649,6 +7649,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37628000,
             "range": "± 159525",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a7a965078db95a90c936b5274d299be7be4f8c42",
+          "message": "Minor cleanup to format_to_parts.md",
+          "timestamp": "2021-06-18T14:50:30-05:00",
+          "tree_id": "e5fc6e35dfc28b3be3f8cdd4c104a9943b88872d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a7a965078db95a90c936b5274d299be7be4f8c42"
+        },
+        "date": 1624046196969,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37534968,
+            "range": "± 290181",
             "unit": "ns/iter"
           }
         ]
