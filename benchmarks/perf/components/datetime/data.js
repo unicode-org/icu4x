@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1623975440375,
+  "lastUpdate": 1624046254469,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3491,6 +3491,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1998973,
             "range": "± 5892",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a7a965078db95a90c936b5274d299be7be4f8c42",
+          "message": "Minor cleanup to format_to_parts.md",
+          "timestamp": "2021-06-18T14:50:30-05:00",
+          "tree_id": "e5fc6e35dfc28b3be3f8cdd4c104a9943b88872d",
+          "url": "https://github.com/unicode-org/icu4x/commit/a7a965078db95a90c936b5274d299be7be4f8c42"
+        },
+        "date": 1624046252725,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 1141639,
+            "range": "± 474162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 2249292,
+            "range": "± 98730",
             "unit": "ns/iter"
           }
         ]
