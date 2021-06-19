@@ -66,7 +66,7 @@ pub trait SerdeDeDataReceiver<'de> {
     fn new_receive(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1>,
+        get: for<'de1> fn(bytes: &'de1 [u8], f: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de1>)),
     ) -> Result<(), Error>;
 }
 
@@ -86,7 +86,7 @@ where
     fn new_receive(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1>,
+        get: for<'de1> fn(bytes: &'de1 [u8], f: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de1>)),
     ) -> Result<(), Error> {
         unimplemented!()
     }
@@ -107,10 +107,14 @@ where
     fn new_receive(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<(dyn erased_serde::Deserializer<'de1> + 'de1)>,
+        get: for<'de1> fn(bytes: &'de1 [u8], f: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de1>)),
     ) -> Result<(), Error> {
         self.replace(DataPayload::try_from_rc_buffer(rc_bytes, move |bytes| {
-            erased_serde::deserialize(&mut get(bytes))
+            let mut holder = None;
+            get(bytes, &mut |deserializer| {
+                holder.replace(erased_serde::deserialize(deserializer));
+            });
+            holder.unwrap()
         })?);
         Ok(())
     }

@@ -119,14 +119,20 @@ pub fn deserialize_into_receiver<'de>(
     match syntax_option {
         SyntaxOption::Json => {
 
-            let json_helper: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1> = |bytes| {
+            let json_helper_1: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1> = |bytes| {
                 // let mut d = serde_json::Deserializer::from_slice(bytes);
                 // Box::new(<dyn erased_serde::Deserializer>::erase(&mut d))
                 todo!()
             };
+
+            let json_helper_2: for<'de1> fn(bytes: &'de1 [u8], f: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de1>)) = |bytes, f| {
+                let mut d = serde_json::Deserializer::from_slice(bytes);
+                f(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
+            };
+
             // let mut d = get_json_deserializer_zc!(bytes);
             // receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
-            receiver.new_receive(rc_bytes, json_helper)?;
+            receiver.new_receive(rc_bytes, json_helper_2)?;
             Ok(())
         }
         #[cfg(feature = "bincode")]
