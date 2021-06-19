@@ -66,7 +66,7 @@ pub trait SerdeDeDataReceiver<'de> {
     fn new_receive(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1>>,
+        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1>,
     ) -> Result<(), Error>;
 }
 
@@ -86,7 +86,7 @@ where
     fn new_receive(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1>>,
+        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1>,
     ) -> Result<(), Error> {
         unimplemented!()
     }
