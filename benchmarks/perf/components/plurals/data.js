@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624046245347,
+  "lastUpdate": 1624063122478,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9281,6 +9281,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 119917,
             "range": "± 1210",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shadaj@users.noreply.github.com",
+            "name": "Shadaj Laddad",
+            "username": "shadaj"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bac781dee970092ae7b953e08ae9f9c69a267524",
+          "message": "Bring back cargo make wasm-examples (#815)",
+          "timestamp": "2021-06-18T19:31:35-05:00",
+          "tree_id": "6ee5339adc9563932ad408c3822aeabee9e9fb6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/bac781dee970092ae7b953e08ae9f9c69a267524"
+        },
+        "date": 1624063120832,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1316,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7683,
+            "range": "± 308",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 130165,
+            "range": "± 5966",
             "unit": "ns/iter"
           }
         ]
