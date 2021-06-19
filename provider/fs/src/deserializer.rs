@@ -9,6 +9,7 @@ use std::io::Read;
 use std::path::Path;
 use thiserror::Error;
 use icu_provider::yoke::Yokeable;
+use std::rc::Rc;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Error, Debug)]
@@ -110,22 +111,28 @@ where
 
 /// Deserialize into a receiver used by [`SerdeDeDataProvider`](icu_provider::serde::SerdeDeDataProvider).
 /// Covers all supported data formats.
-pub fn deserialize_into_receiver(
-    rdr: impl Read,
+pub fn deserialize_into_receiver<'de>(
+    rc_bytes: Rc<[u8]>,
     syntax_option: &SyntaxOption,
-    receiver: &mut dyn SerdeDeDataReceiver,
+    receiver: &mut dyn SerdeDeDataReceiver<'de>,
 ) -> Result<(), Error> {
     match syntax_option {
         SyntaxOption::Json => {
-            let mut d = get_json_deserializer!(rdr);
-            receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
+
+            let json_helper: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1> = |bytes| {
+                let mut d = serde_json::Deserializer::from_slice(bytes);
+                Box::new(<dyn erased_serde::Deserializer>::erase(&mut d))
+            };
+            // let mut d = get_json_deserializer_zc!(bytes);
+            // receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
+            receiver.new_receive(rc_bytes, json_helper)?;
             Ok(())
         }
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => {
-            let mut d = get_bincode_deserializer!(rdr);
-            receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
-            Ok(())
+            todo!()
+            // let mut d = get_bincode_deserializer_zc!(bytes);
+            // receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
         }
         #[cfg(not(feature = "bincode"))]
         SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),

@@ -56,6 +56,18 @@ pub trait SerdeDeDataReceiver<'de> {
         &mut self,
         deserializer: &mut dyn erased_serde::Deserializer<'de>,
     ) -> Result<(), Error>;
+
+    // fn receive_deserializer_rc(
+    //     &mut self,
+    //     buffer: Rc<[u8]>,
+    //     deserializer: &mut dyn erased_serde::Deserializer<'de>,
+    // ) -> Result<(), Error>;
+
+    fn new_receive(
+        &mut self,
+        rc_bytes: Rc<[u8]>,
+        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1>>,
+    ) -> Result<(), Error>;
 }
 
 impl<'de, T> SerdeDeDataReceiver<'de> for Option<T>
@@ -68,6 +80,38 @@ where
     ) -> Result<(), Error> {
         let obj: T = erased_serde::deserialize(deserializer)?;
         self.replace(obj);
+        Ok(())
+    }
+
+    fn new_receive(
+        &mut self,
+        rc_bytes: Rc<[u8]>,
+        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1>>,
+    ) -> Result<(), Error> {
+        unimplemented!()
+    }
+}
+
+impl<'d, 's, 'de2, M> SerdeDeDataReceiver<'de2> for Option<DataPayload<'d, 's, M>>
+where
+    M: DataMarker<'s>,
+    for<'de1> <M::Yokeable as Yokeable<'de1>>::Output: serde::de::Deserialize<'de1>,
+{
+    fn receive_deserializer(
+        &mut self,
+        deserializer: &mut dyn erased_serde::Deserializer<'de2>,
+    ) -> Result<(), Error> {
+        unimplemented!()
+    }
+
+    fn new_receive(
+        &mut self,
+        rc_bytes: Rc<[u8]>,
+        get: for<'de1> fn(bytes: &'de1 [u8]) -> Box<(dyn erased_serde::Deserializer<'de1> + 'de1)>,
+    ) -> Result<(), Error> {
+        self.replace(DataPayload::try_from_rc_buffer(rc_bytes, move |bytes| {
+            erased_serde::deserialize(&mut get(bytes))
+        })?);
         Ok(())
     }
 }

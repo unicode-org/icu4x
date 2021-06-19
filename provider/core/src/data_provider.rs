@@ -227,35 +227,37 @@ where
 {
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// # #[cfg(feature = "provider_serde")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use std::rc::Rc;
-    /// 
+    /// use icu_provider::yoke::Yokeable;
+    ///
     /// let json_text = "{\"message\":\"Hello World\"}";
     /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
     ///
+    /// let helper: for<'de> fn(_: &'de [u8]) -> Result<<HelloWorldV1<'static> as Yokeable<'de>>::Output, serde_json::Error> = |bytes| {
+    ///     serde_json::from_slice(bytes)
+    /// };
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer(
     ///     json_rc_buffer.clone(),
-    ///     |data: &[u8]| {
-    ///         serde_json::from_slice(data)
-    ///     }
+    ///     helper
     /// )
     /// .expect("JSON is valid");
-    /// 
+    ///
     /// assert_eq!("Hello World", payload.get().message);
     /// # } // feature = "provider_serde"
     /// ```
     #[inline]
     pub fn try_from_rc_buffer<E>(
         buffer: Rc<[u8]>,
-        f: for<'de> fn(_: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+        f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart_badly(buffer, f)?;
+        let yoke = Yoke::try_attach_to_cart(buffer, f)?;
         Ok(Self {
             inner: DataPayloadInner::RcBuf(yoke),
         })

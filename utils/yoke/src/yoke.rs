@@ -97,6 +97,17 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         }
     }
 
+    pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
+    where
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        })
+    }
+
     /// Temporary version of [`Yoke::attach_to_cart()`]
     /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
     ///
