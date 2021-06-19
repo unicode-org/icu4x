@@ -5,66 +5,50 @@
 use icu_provider::serde::SerdeDeDataReceiver;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-
-#[derive(Deserialize, Serialize, Clone, Debug, Default, PartialEq)]
-struct DataStruct<'a> {
-    #[serde(borrow)]
-    pub value: Cow<'a, str>,
-}
+use std::rc::Rc;
+use icu_provider::hello_world::*;
+use icu_provider::prelude::*;
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA_JSON: &'static str = r#"{
-    "value": "abc"
+    "message": "abc"
 }"#;
 
 #[test]
 fn test_deserializer_static() {
     // Deserialize from a string to create static references.
     let deserializer = &mut serde_json::Deserializer::from_str(DATA_JSON);
-    let mut receiver = None;
+    let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
     receiver
-        .receive_deserializer(&mut erased_serde::Deserializer::erase(deserializer))
+        .receive_static(&mut erased_serde::Deserializer::erase(deserializer))
         .expect("Well-formed data");
+    let payload = receiver.expect("Data is present");
 
     assert!(matches!(
-        receiver,
-        Some(DataStruct {
-            value: Cow::Borrowed(_)
-        })
-    ));
-}
-
-#[test]
-fn test_deserializer_borrowed() {
-    // Deserialize from a local string to create non-static references.
-    let local_data = DATA_JSON.to_string();
-    let deserializer = &mut serde_json::Deserializer::from_str(&local_data);
-    let mut receiver = None;
-    receiver
-        .receive_deserializer(&mut erased_serde::Deserializer::erase(deserializer))
-        .expect("Well-formed data");
-
-    assert!(matches!(
-        receiver,
-        Some(DataStruct {
-            value: Cow::Borrowed(_)
-        })
+        payload.get(),
+        &HelloWorldV1 {
+            message: Cow::Borrowed(_)
+        }
     ));
 }
 
 #[test]
 fn test_deserializer_owned() {
-    // Deserialize from a reader to create owned data.
-    let deserializer = &mut serde_json::Deserializer::from_reader(DATA_JSON.as_bytes());
-    let mut receiver = None;
+    // Deserialize from a reference-counted buffer.
+    let rc_bytes: Rc<[u8]> = DATA_JSON.as_bytes().into();
+    let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
     receiver
-        .receive_deserializer(&mut erased_serde::Deserializer::erase(deserializer))
+        .receive_rc_bytes(rc_bytes, |bytes, f2| {
+            let mut d = serde_json::Deserializer::from_slice(bytes);
+            f2(&mut erased_serde::Deserializer::erase(&mut d))
+        })
         .expect("Well-formed data");
+    let payload = receiver.expect("Data is present");
 
     assert!(matches!(
-        receiver,
-        Some(DataStruct {
-            value: Cow::Owned(_)
-        })
+        payload.get(),
+        &HelloWorldV1 {
+            message: Cow::Owned(_)
+        }
     ));
 }

@@ -115,11 +115,11 @@ where
     }
 }
 
-impl<'de> SerdeDeDataProvider<'de> for FsDataProvider {
+impl SerdeDeDataProvider for FsDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver<'de>,
+        receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, DataError> {
         let (rc_bytes, path_buf) = self.get_rc_bytes(req)?;
         deserializer::deserialize_into_receiver(rc_bytes, &self.manifest.syntax, receiver)

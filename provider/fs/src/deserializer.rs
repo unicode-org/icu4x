@@ -5,11 +5,10 @@
 use crate::manifest::SyntaxOption;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerdeDeDataReceiver;
-use std::io::Read;
-use std::path::Path;
-use thiserror::Error;
 use icu_provider::yoke::Yokeable;
+use std::path::Path;
 use std::rc::Rc;
+use thiserror::Error;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Error, Debug)]
@@ -46,30 +45,11 @@ impl Error {
     }
 }
 
-/// Get a JSON Deserializer. Implemeted as a macro because the return type is complex/private.
-macro_rules! get_json_deserializer {
-    ($rdr:tt) => {
-        serde_json::Deserializer::from_reader($rdr)
-    };
-}
-
 /// Get a JSON zero-copy deserializer. Implemeted as a macro because the return type is complex/private.
 macro_rules! get_json_deserializer_zc {
     ($bytes:tt) => {
         serde_json::Deserializer::from_slice($bytes)
     };
-}
-
-/// Get a Bincode Deserializer. Implemeted as a macro because the return type is complex/private.
-#[cfg(feature = "bincode")]
-macro_rules! get_bincode_deserializer {
-    ($rdr:tt) => {{
-        use bincode::Options;
-        let options = bincode::DefaultOptions::new()
-            .with_fixint_encoding()
-            .allow_trailing_bytes();
-        bincode::de::Deserializer::with_reader($rdr, options)
-    }};
 }
 
 /// Get a Bincode zero-copy Deserializer. Implemeted as a macro because the return type is complex/private.
@@ -111,37 +91,28 @@ where
 
 /// Deserialize into a receiver used by [`SerdeDeDataProvider`](icu_provider::serde::SerdeDeDataProvider).
 /// Covers all supported data formats.
-pub fn deserialize_into_receiver<'de>(
+pub fn deserialize_into_receiver(
     rc_bytes: Rc<[u8]>,
     syntax_option: &SyntaxOption,
-    receiver: &mut dyn SerdeDeDataReceiver<'de>,
+    receiver: &mut dyn SerdeDeDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
         SyntaxOption::Json => {
-
-            let json_helper_1: for<'de1> fn(bytes: &'de1 [u8]) -> Box<dyn erased_serde::Deserializer<'de1> + 'de1> = |bytes| {
-                // let mut d = serde_json::Deserializer::from_slice(bytes);
-                // Box::new(<dyn erased_serde::Deserializer>::erase(&mut d))
-                todo!()
-            };
-
-            let json_helper_2: for<'de1> fn(bytes: &'de1 [u8], f: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de1>)) = |bytes, f| {
-                let mut d = serde_json::Deserializer::from_slice(bytes);
-                f(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
-            };
-
-            // let mut d = get_json_deserializer_zc!(bytes);
-            // receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
-            receiver.new_receive(rc_bytes, json_helper_2)?;
+            receiver.receive_rc_bytes(rc_bytes, |bytes, f2| {
+                let mut d = get_json_deserializer_zc!(bytes);
+                f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
+            })?;
             Ok(())
         }
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => {
-            todo!()
-            // let mut d = get_bincode_deserializer_zc!(bytes);
-            // receiver.receive_deserializer(&mut <dyn erased_serde::Deserializer>::erase(&mut d))?;
+            receiver.receive_rc_bytes(rc_bytes, |bytes, f2| {
+                let mut d = get_bincode_deserializer_zc!(bytes);
+                f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
+            })?;
+            Ok(())
         }
         #[cfg(not(feature = "bincode"))]
-        SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
+        SyntaxOption::Bincode => Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
     }
 }

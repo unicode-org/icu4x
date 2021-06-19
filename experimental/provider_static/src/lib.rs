@@ -70,7 +70,7 @@ impl<'de> SerdeDeDataProvider<'de> for StaticDataProvider {
         receiver: &mut dyn SerdeDeDataReceiver<'de>,
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
-        receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(
+        receiver.receive_static(&mut erased_serde::Deserializer::erase(
             &mut serde_json::Deserializer::from_reader(file.as_bytes()),
         ))?;
 
