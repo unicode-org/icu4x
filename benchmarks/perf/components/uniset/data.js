@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624046198673,
+  "lastUpdate": 1624063035260,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7679,6 +7679,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37534968,
             "range": "± 290181",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shadaj@users.noreply.github.com",
+            "name": "Shadaj Laddad",
+            "username": "shadaj"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bac781dee970092ae7b953e08ae9f9c69a267524",
+          "message": "Bring back cargo make wasm-examples (#815)",
+          "timestamp": "2021-06-18T19:31:35-05:00",
+          "tree_id": "6ee5339adc9563932ad408c3822aeabee9e9fb6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/bac781dee970092ae7b953e08ae9f9c69a267524"
+        },
+        "date": 1624063033697,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31347738,
+            "range": "± 81227",
             "unit": "ns/iter"
           }
         ]
