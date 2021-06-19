@@ -88,7 +88,7 @@ where
     for<'de> <M::Yokeable as icu_provider::yoke::Yokeable<'de>>::Output:
         serde::de::Deserialize<'de>,
 {
-    fn load_payload<'de1>(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
         let (mut reader, path_buf) = self.get_reader(req)?;
         let mut buffer = Vec::<u8>::new();
         reader
@@ -102,12 +102,7 @@ where
             payload: Some(
                 DataPayload::try_from_rc_buffer(
                     buffer,
-                    // deserializer::deserialize_zero_copy(&self.manifest.syntax),
-                    |bytes: &[u8]| {
-                        let mut d = serde_json::Deserializer::from_slice(bytes);
-                        let data = serde::de::Deserialize::deserialize(&mut d)?;
-                        Ok(data)
-                    }
+                    deserializer::deserialize_zero_copy::<M>(&self.manifest.syntax),
                 )
                 .map_err(|e: deserializer::Error| e.into_resource_error(&path_buf))?,
             ),

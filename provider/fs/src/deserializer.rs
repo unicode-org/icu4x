@@ -8,6 +8,7 @@ use icu_provider::serde::SerdeDeDataReceiver;
 use std::io::Read;
 use std::path::Path;
 use thiserror::Error;
+use icu_provider::yoke::Yokeable;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Error, Debug)]
@@ -51,6 +52,13 @@ macro_rules! get_json_deserializer {
     };
 }
 
+/// Get a JSON zero-copy deserializer. Implemeted as a macro because the return type is complex/private.
+macro_rules! get_json_deserializer_zc {
+    ($bytes:tt) => {
+        serde_json::Deserializer::from_slice($bytes)
+    };
+}
+
 /// Get a Bincode Deserializer. Implemeted as a macro because the return type is complex/private.
 #[cfg(feature = "bincode")]
 macro_rules! get_bincode_deserializer {
@@ -63,28 +71,40 @@ macro_rules! get_bincode_deserializer {
     }};
 }
 
+/// Get a Bincode zero-copy Deserializer. Implemeted as a macro because the return type is complex/private.
+#[cfg(feature = "bincode")]
+macro_rules! get_bincode_deserializer_zc {
+    ($bytes:tt) => {{
+        use bincode::Options;
+        let options = bincode::DefaultOptions::new()
+            .with_fixint_encoding()
+            .allow_trailing_bytes();
+        bincode::de::Deserializer::from_slice($bytes, options)
+    }};
+}
+
 /// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
-pub fn deserialize_into_type<'de, T>(
-    rdr: impl Read,
+pub fn deserialize_zero_copy<'s, M>(
     syntax_option: &SyntaxOption,
-) -> Result<T, Error>
+) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
 where
-    T: serde::Deserialize<'de>,
+    M: DataMarker<'s>,
+    for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::Deserialize<'de>,
 {
     match syntax_option {
-        SyntaxOption::Json => {
-            let mut d = get_json_deserializer!(rdr);
-            let data = T::deserialize(&mut d)?;
+        SyntaxOption::Json => |bytes| {
+            let mut d = get_json_deserializer_zc!(bytes);
+            let data = serde::de::Deserialize::deserialize(&mut d)?;
             Ok(data)
-        }
+        },
         #[cfg(feature = "bincode")]
-        SyntaxOption::Bincode => {
-            let mut d = get_bincode_deserializer!(rdr);
-            let data = T::deserialize(&mut d)?;
+        SyntaxOption::Bincode => |bytes| {
+            let mut d = get_bincode_deserializer_zc!(bytes);
+            let data = serde::de::Deserialize::deserialize(&mut d)?;
             Ok(data)
-        }
+        },
         #[cfg(not(feature = "bincode"))]
-        SyntaxOption::Bincode => Err(Error::UnknownSyntax(syntax_option.clone())),
+        SyntaxOption::Bincode => |_| Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
     }
 }
 
