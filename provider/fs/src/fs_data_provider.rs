@@ -15,6 +15,7 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::Read;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
 ///
@@ -84,18 +85,32 @@ impl FsDataProvider {
 impl<'d, 's, M> DataProvider<'d, 's, M> for FsDataProvider
 where
     M: DataMarker<'s>,
-    // TODO(#667): Change this to Deserialize<'s>
-    M::Yokeable: serde::de::DeserializeOwned,
+    for<'de> <M::Yokeable as icu_provider::yoke::Yokeable<'de>>::Output:
+        serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
-        let (reader, path_buf) = self.get_reader(req)?;
-        let data = deserializer::deserialize_into_type(reader, &self.manifest.syntax)
-            .map_err(|err| err.into_resource_error(&path_buf))?;
+    fn load_payload<'de1>(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
+        let (mut reader, path_buf) = self.get_reader(req)?;
+        let mut buffer = Vec::<u8>::new();
+        reader
+            .read_to_end(&mut buffer)
+            .map_err(|e| DataError::Resource(Box::new(Error::Io(e, Some(path_buf.clone())))))?;
+        let buffer: Rc<[u8]> = buffer.into();
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(data)),
+            payload: Some(
+                DataPayload::try_from_rc_buffer(
+                    buffer,
+                    // deserializer::deserialize_zero_copy(&self.manifest.syntax),
+                    |bytes: &[u8]| {
+                        let mut d = serde_json::Deserializer::from_slice(bytes);
+                        let data = serde::de::Deserialize::deserialize(&mut d)?;
+                        Ok(data)
+                    }
+                )
+                .map_err(|e: deserializer::Error| e.into_resource_error(&path_buf))?,
+            ),
         })
     }
 }
