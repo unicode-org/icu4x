@@ -4,11 +4,12 @@
 
 use std::{char, ops::RangeBounds, slice::Chunks};
 
-// How to make import condition on feature?
-use std::result::Result;
+#[cfg(feature = "serde")]
+use serde::ser::SerializeSeq;
 
 use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid};
+
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
@@ -46,24 +47,20 @@ impl<'de> serde::Deserialize<'de> for UnicodeSet {
 // Note: serde(flatten) currently does not promote a struct field of type Vec
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
-#[cfg(feature = "serde")]
-use serde::ser::{Serialize, Serializer, SerializeSeq};
+
 #[cfg(feature = "serde")]
 impl serde::Serialize for UnicodeSet {
-    
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
-        let mut seq =
-            serializer.serialize_seq(Some(self.inv_list.len()))?;
+        let mut seq = serializer.serialize_seq(Some(self.inv_list.len()))?;
         for e in &self.inv_list {
             seq.serialize_element(e)?;
         }
         seq.end()
     }
 }
-
 
 impl UnicodeSet {
     /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
