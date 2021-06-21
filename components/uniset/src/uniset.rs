@@ -4,8 +4,12 @@
 
 use std::{char, ops::RangeBounds, slice::Chunks};
 
+#[cfg(feature = "serde")]
+use serde::ser::SerializeSeq;
+
 use super::UnicodeSetError;
 use crate::utils::{deconstruct_range, is_valid};
+
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
 
@@ -13,7 +17,7 @@ const BMP_MAX: u32 = 0xFFFF;
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
-#[derive(Debug, PartialEq, Hash, Eq)]
+#[derive(Debug, PartialEq, Hash, Eq, Clone)]
 pub struct UnicodeSet {
     // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
 
@@ -24,6 +28,37 @@ pub struct UnicodeSet {
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     inv_list: Vec<u32>,
     size: usize,
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for UnicodeSet {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        let parsed_inv_list = Vec::<u32>::deserialize(deserializer)?;
+
+        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
+    }
+}
+
+// Note: serde(flatten) currently does not promote a struct field of type Vec
+// to replace the struct when serializing. The error message from the default
+// serialization is: "can only flatten structs and maps (got a sequence)".
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for UnicodeSet {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut seq = serializer.serialize_seq(Some(self.inv_list.len()))?;
+        for e in &self.inv_list {
+            seq.serialize_element(e)?;
+        }
+        seq.end()
+    }
 }
 
 impl UnicodeSet {
@@ -491,5 +526,29 @@ mod tests {
         let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();
         let round_trip_inv_list = s.get_inversion_list();
         assert_eq!(round_trip_inv_list, inv_list);
+    }
+
+    #[test]
+    fn test_serde_serialize() {
+        let inv_list = vec![65, 70, 75, 85];
+        let uniset = UnicodeSet::from_inversion_list(inv_list).unwrap();
+        let json_str = serde_json::to_string(&uniset).unwrap();
+        assert_eq!(json_str, "[65,70,75,85]");
+    }
+
+    #[test]
+    fn test_serde_deserialize() {
+        let inv_list_str = "[65,70,75,85]";
+        let exp_inv_list = vec![65, 70, 75, 85];
+        let exp_uniset = UnicodeSet::from_inversion_list(exp_inv_list).unwrap();
+        let act_uniset: UnicodeSet = serde_json::from_str(inv_list_str).unwrap();
+        assert_eq!(act_uniset, exp_uniset);
+    }
+
+    #[test]
+    fn test_serde_deserialize_invalid() {
+        let inv_list_str = "[65,70,98775,85]";
+        let act_result: Result<UnicodeSet, serde_json::Error> = serde_json::from_str(inv_list_str);
+        assert!(matches!(act_result, Err(_)));
     }
 }

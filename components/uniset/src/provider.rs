@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
 use std::borrow::Cow;
 use std::convert::TryInto;
@@ -656,38 +657,37 @@ pub mod key {
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct UnicodeProperty<'s> {
+pub struct UnicodePropertyV1<'s> {
     pub name: Cow<'s, str>,
-    pub inv_list: Vec<u32>,
+    pub inv_list: UnicodeSet,
 }
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
-    UnicodeProperty<'s>,
+    UnicodePropertyV1<'s>,
     /// Marker type for [`UnicodeProperty`]
     UnicodePropertyMarker,
     TEMP_ZCF
 );
 
-impl Default for UnicodeProperty<'static> {
+impl Default for UnicodePropertyV1<'static> {
     /// Default empty nameless property
-    fn default() -> UnicodeProperty<'static> {
-        UnicodeProperty {
+    fn default() -> UnicodePropertyV1<'static> {
+        UnicodePropertyV1 {
             name: Cow::Borrowed(""),
-            inv_list: vec![],
+            inv_list: UnicodeSetBuilder::new().build(),
         }
     }
 }
 
-impl<'s> UnicodeProperty<'s> {
-    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodeProperty<'s> {
-        let inv_list = set.get_inversion_list();
-        UnicodeProperty { name, inv_list }
+impl<'s> UnicodePropertyV1<'s> {
+    pub fn from_uniset(set: &UnicodeSet, name: Cow<'s, str>) -> UnicodePropertyV1<'s> {
+        UnicodePropertyV1 { name, inv_list: set.clone() }
     }
 }
 
-impl<'s> TryInto<UnicodeSet> for UnicodeProperty<'s> {
+impl<'s> TryInto<UnicodeSet> for UnicodePropertyV1<'s> {
     type Error = crate::UnicodeSetError;
     fn try_into(self) -> Result<UnicodeSet, Self::Error> {
-        UnicodeSet::from_inversion_list(self.inv_list)
+        Ok(self.inv_list)
     }
 }
