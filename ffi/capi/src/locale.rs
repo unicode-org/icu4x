@@ -127,7 +127,7 @@ pub extern "C" fn icu4x_locale_numeric(
 
 #[no_mangle]
 /// Write a string representation of the number system extension to `write`
-pub extern "C" fn icu4x_locale_number_system(
+pub extern "C" fn icu4x_locale_numbering_system(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {

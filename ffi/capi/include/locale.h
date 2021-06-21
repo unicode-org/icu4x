@@ -32,7 +32,7 @@ ICU4XLocaleResult icu4x_locale_case_first(const ICU4XLocale* locale, ICU4XWritea
 ICU4XLocaleResult icu4x_locale_collation(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_hour_cycle(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_numeric(const ICU4XLocale* locale, ICU4XWriteable* write);
-ICU4XLocaleResult icu4x_locale_number_system(const ICU4XLocale* locale, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_numbering_system(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_language(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_region(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_script(const ICU4XLocale* locale, ICU4XWriteable* write);
