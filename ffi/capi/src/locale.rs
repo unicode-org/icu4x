@@ -4,7 +4,7 @@
 
 use crate::custom_writeable::ICU4XWriteable;
 use icu_locid::extensions::unicode::Key;
-use icu_locid::{subtags, LanguageIdentifier, Locale};
+use icu_locid::Locale;
 use std::slice;
 use tinystr::tinystr4;
 
@@ -63,22 +63,15 @@ pub extern "C" fn icu4x_locale_clone(locale: &ICU4XLocale) -> *mut ICU4XLocale {
 }
 
 #[no_mangle]
-/// Write a string representation of the basename to `write`
-/// This is the LanguageIdentifier portion of the id, without variants.
+/// Write a string representation of the [`LanguageIdentifier`] part of
+/// [`ICU4XLocale`] to `write`.
 pub extern "C" fn icu4x_locale_basename(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
     use writeable::Writeable;
 
-    let langid = LanguageIdentifier {
-        language: locale.id.language,
-        script: locale.id.script,
-        region: locale.id.region,
-        variants: subtags::Variants::default(),
-    };
-
-    let result = langid.write_to(write).is_ok();
+    let result = locale.id.write_to(write).is_ok();
     write.flush();
     if result {
         ICU4XLocaleResult::Ok
@@ -199,24 +192,6 @@ pub extern "C" fn icu4x_locale_script(
             }
         }
         None => ICU4XLocaleResult::Undefined,
-    }
-}
-
-#[no_mangle]
-/// Write a string representation of the [`LanguageIdentifier`] part of
-/// [`ICU4XLocale`] to `write`.
-pub extern "C" fn icu4x_locale_langid_tostring(
-    locale: &ICU4XLocale,
-    write: &mut ICU4XWriteable,
-) -> ICU4XLocaleResult {
-    use writeable::Writeable;
-
-    let result = locale.id.write_to(write).is_ok();
-    write.flush();
-    if result {
-        ICU4XLocaleResult::Ok
-    } else {
-        ICU4XLocaleResult::Error
     }
 }
 

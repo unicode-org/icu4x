@@ -36,7 +36,6 @@ ICU4XLocaleResult icu4x_locale_number_system(const ICU4XLocale* locale, ICU4XWri
 ICU4XLocaleResult icu4x_locale_language(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_region(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_script(const ICU4XLocale* locale, ICU4XWriteable* write);
-ICU4XLocaleResult icu4x_locale_langid_tostring(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_tostring(const ICU4XLocale* locale, ICU4XWriteable* write);
 void icu4x_locale_destroy(ICU4XLocale*);
 
