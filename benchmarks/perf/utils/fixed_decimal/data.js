@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624063051893,
+  "lastUpdate": 1624252037960,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6659,6 +6659,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 140770,
             "range": "± 4402",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b56441cc06ca09210d7859e7628f06ac7bb7336c",
+          "message": "Unicode property struct cleanup (#677)",
+          "timestamp": "2021-06-20T22:00:43-07:00",
+          "tree_id": "2ab718445c0fafc287e2574c0c55304086a7f87b",
+          "url": "https://github.com/unicode-org/icu4x/commit/b56441cc06ca09210d7859e7628f06ac7bb7336c"
+        },
+        "date": 1624252036295,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 155964,
+            "range": "± 4482",
             "unit": "ns/iter"
           }
         ]
