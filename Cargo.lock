@@ -845,6 +845,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_calendar"
+version = "0.2.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "icu_capi"
 version = "0.1.0"
 dependencies = [
