@@ -16,11 +16,11 @@ Generate ICU4X JSON:
 ```bash
 # Run from the icu4x project folder
 $ cargo run --bin icu4x-datagen -- \
-    --cldr-tag 39.0.0              \
-    --all-keys                     \
-    --all-locales                  \
-    --out /tmp/icu4x_data/json     \
-    -v
+   --cldr-tag 39.0.0 \
+   --all-keys \
+   --all-locales \
+   --out /tmp/icu4x_data/json \
+   -v
 ```
 
 Generate ICU4X Bincode:
@@ -28,12 +28,12 @@ Generate ICU4X Bincode:
 ```bash
 # Run from the icu4x project folder
 $ cargo run --bin icu4x-datagen -- \
-    --cldr-tag 39.0.0              \
-    --all-keys                     \
-    --all-locales                  \
-    --out /tmp/icu4x_data/bincode  \
-    --syntax bincode               \
-    -v
+   --cldr-tag 39.0.0 \
+   --all-keys \
+   --all-locales \
+   --out /tmp/icu4x_data/bincode \
+   --syntax bincode \
+   -v
 ```
 
 ## More Information
