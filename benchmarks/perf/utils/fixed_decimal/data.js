@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624252037960,
+  "lastUpdate": 1624388380419,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6689,6 +6689,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 155964,
             "range": "± 4482",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "80c70663dc7110db9a5eb274c310c6f832675f7a",
+          "message": "Add bincode example to icu4x-datagen readme (#819)\n\n* Add bincode example to icu4x-datagen readme\r\n\r\n* Update changes in main.rs to generate README\r\n\r\n* Reorder flags\r\n\r\n* Re-run the generation",
+          "timestamp": "2021-06-22T11:52:52-07:00",
+          "tree_id": "4697cb4f854f18279386ddf130ad7c3e5534b94d",
+          "url": "https://github.com/unicode-org/icu4x/commit/80c70663dc7110db9a5eb274c310c6f832675f7a"
+        },
+        "date": 1624388378431,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 111132,
+            "range": "± 4062",
             "unit": "ns/iter"
           }
         ]
