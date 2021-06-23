@@ -63,7 +63,7 @@
 //!     for<'a> <Y as Yokeable<'a>>::Output: MyTrait,
 //! {}
 //!
-//! fn main() {
+//! fn example() {
 //!     let y = Yoke::<MyStruct, ()>::new_always_owned(MyStruct {});
 //!     // error[E0277]: the trait bound `for<'a> <MyStruct as Yokeable<'a>>::Output: MyTrait` is not satisfied
 //!     let _: &dyn MyTrait = &y;
@@ -124,7 +124,7 @@
 //!     }
 //! }
 //!
-//! fn main() {
+//! fn example() {
 //!     let y = Yoke::<MyStruct, ()>::new_always_owned(MyStruct(42));
 //!     let _: &dyn MyTrait = &y;
 //! }
@@ -189,7 +189,7 @@
 //!     }
 //! }
 //!
-//! fn main() {
+//! fn example() {
 //!     let _ = Yoke::<MyStruct, Rc<u32>>::demo(42);
 //! }
 //! ```
@@ -215,6 +215,6 @@ where
     where
         D: serde::de::Deserializer<'de>,
     {
-        T::deserialize(deserializer).map(|v| YokeTraitHack(v))
+        T::deserialize(deserializer).map(YokeTraitHack)
     }
 }
