@@ -109,6 +109,11 @@ where
                 let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
                 DataPayload::from_partial_owned(cart)
             }
+            RcBuf(yoke) => {
+                // Case 4: Cast the whole RcBuf Yoke to the trait object.
+                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
+                DataPayload::from_partial_owned(cart)
+            }
         }
     }
 }
@@ -203,15 +208,27 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
                     },
                     Err(any_rc) => any_rc,
                 };
+                // Check for Case 4: an RcBuf Yoke.
+                let y2 = any_rc.downcast::<Yoke<M::Yokeable, Rc<[u8]>>>();
+                let any_rc = match y2 {
+                    Ok(rc_yoke) => match Rc::try_unwrap(rc_yoke) {
+                        Ok(yoke) => return Ok(DataPayload { inner: RcBuf(yoke) }),
+                        // Note: We could consider cloning the Yoke instead of erroring out.
+                        Err(_) => return Err(Error::MultipleReferences),
+                    },
+                    Err(any_rc) => any_rc,
+                };
                 // None of the downcasts succeeded; return an error.
                 Err(Error::MismatchedType {
                     actual: Some(any_rc.type_id()),
                     generic: Some(TypeId::of::<M::Cart>()),
                 })
             }
-            // This is unreachable because ErasedDataStructMarker cannot be fully owned, since it
+            // This is unreachable because ErasedDataStruct cannot be fully owned, since it
             // contains a reference.
             Owned(_) => unreachable!(),
+            // This is unreachable because ErasedDataStruct needs to reference an object.
+            RcBuf(_) => unreachable!(),
         }
     }
 }
@@ -282,5 +299,60 @@ where
             metadata: result.metadata,
             payload: result.payload.map(|p| p.downcast()).transpose()?,
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::dynutil::UpcastDataPayload;
+    use crate::marker::CowStringMarker;
+    use std::borrow::Cow;
+
+    #[test]
+    fn test_erased_case_1() {
+        let data = "foo".to_string();
+        let original = DataPayload::<CowStringMarker>::from_borrowed(&data);
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+
+    #[test]
+    fn test_erased_case_2() {
+        let data = Rc::new("foo".to_string());
+        let original = DataPayload::<CowStringMarker>::from_partial_owned(data);
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+
+    #[test]
+    fn test_erased_case_3() {
+        let data = "foo".to_string();
+        let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+
+    #[test]
+    fn test_erased_case_4() {
+        let data: Rc<[u8]> = "foo".as_bytes().into();
+        let original = DataPayload::<CowStringMarker>::try_from_rc_buffer_badly(data, |bytes| {
+            std::str::from_utf8(bytes).map(|s| Cow::Borrowed(s))
+        })
+        .expect("String is valid UTF-8");
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
     }
 }

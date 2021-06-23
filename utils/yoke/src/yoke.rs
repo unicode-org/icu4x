@@ -18,8 +18,10 @@ use std::sync::Arc;
 /// not the actual lifetime of the data, rather it is a convenient way to erase
 /// the lifetime and make it dynamic.
 ///
-/// `C` is the "cart", which `Y` may contain references to. A [`Yoke`] can be constructed
-/// with such references using [`Self::attach_to_cart()`].
+/// `C` is the "cart", which `Y` may contain references to.
+///
+/// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
+/// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
 ///
 /// # Example
 ///
@@ -55,11 +57,45 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
-    /// Construct a [`Yoke`] by yokeing an object to a cart. This is the primary constructor
-    /// for [`Yoke`].
+    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
     ///
-    /// This method is currently unusable due to a [compiler bug](https://github.com/rust-lang/rust/issues/84937),
-    /// use [`Yoke::attach_to_cart_badly()`] instead
+    /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
+    ///
+    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
+    /// for this function may not compile; if this happens, use
+    /// [`Yoke::attach_to_cart_badly()`] instead.
+    pub fn attach_to_cart<F>(cart: C, f: F) -> Self
+    where
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
+    {
+        let deserialized = f(cart.deref());
+        Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        }
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
+    /// deserializer function, the error is passed up to the caller.
+    ///
+    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
+    /// for this function may not compile; if this happens, use
+    /// [`Yoke::try_attach_to_cart_badly()`] instead.
+    pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
+    where
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        })
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
+    ///
+    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
+    /// see [`Yoke::attach_to_cart()`].
     ///
     /// # Example
     ///
@@ -86,21 +122,6 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// assert_eq!(&**yoke.get(), "hello");
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// ```
-    pub fn attach_to_cart<F>(cart: C, f: F) -> Self
-    where
-        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    {
-        let deserialized = f(cart.deref());
-        Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart,
-        }
-    }
-
-    /// Temporary version of [`Yoke::attach_to_cart()`]
-    /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
-    ///
-    /// See its docs for more details
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
@@ -110,6 +131,38 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
         }
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
+    /// deserializer function, the error is passed up to the caller.
+    ///
+    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
+    /// see [`Yoke::try_attach_to_cart()`].
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use yoke::{Yoke, Yokeable};
+    /// # use std::rc::Rc;
+    /// # use std::borrow::Cow;
+    /// let rc = Rc::new([0xb, 0xa, 0xd]);
+    ///
+    /// let yoke_result: Result<Yoke<Cow<str>, Rc<[u8]>>, _> =
+    ///     Yoke::try_attach_to_cart_badly(rc, |data: &[u8]| {
+    ///         bincode::deserialize(data)
+    ///     });
+    ///
+    /// assert!(matches!(yoke_result, Err(_)));
+    /// ```
+    pub fn try_attach_to_cart_badly<E>(
+        cart: C,
+        f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        })
     }
 }
 

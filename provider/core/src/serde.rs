@@ -23,51 +23,121 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::ops::Deref;
 use std::rc::Rc;
+use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
-/// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
+/// An object that receives data from a Serde Deserializer.
 ///
-/// Lifetimes:
-///
-/// - `'de` = deserializer lifetime; can usually be `'_`
-pub trait SerdeDeDataReceiver<'de> {
-    /// Consumes a Serde Deserializer into this SerdeDeDataReceiver as owned data.
+/// Implemented by `Option<`[`DataPayload`]`>`.
+pub trait SerdeDeDataReceiver {
+    /// Receives a reference-counted byte buffer.
     ///
-    /// This method results in an owned payload, but the payload could have non-static references
-    /// according to the deserializer lifetime.
+    /// Upon calling this function, the receiver sends byte buffer back to the caller as the first
+    /// argument of `f1`. The caller should then map the byte buffer to an
+    /// [`erased_serde::Deserializer`] and pass it back to the receiver via `f2`.
     ///
     /// # Examples
     ///
+    /// Deserialize from a reference-counted buffer:
+    ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::serde::SerdeDeDataReceiver;
+    /// use std::rc::Rc;
+    ///
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
+    /// let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
+    /// receiver
+    ///     .receive_rc_buffer(rc_buffer, |bytes, f2| {
+    ///         let mut d = serde_json::Deserializer::from_slice(bytes);
+    ///         f2(&mut erased_serde::Deserializer::erase(&mut d))
+    ///     })
+    ///     .expect("Well-formed data");
+    /// let payload = receiver.expect("Data is present");
+    ///
+    /// assert_eq!(payload.get().message, "Hello World");
+    /// ```
+    fn receive_rc_buffer(
+        &mut self,
+        rc_buffer: Rc<[u8]>,
+        f1: for<'de> fn(
+            bytes: &'de [u8],
+            f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
+        ),
+    ) -> Result<(), Error>;
+
+    /// Receives a `&'static` byte buffer via an [`erased_serde::Deserializer`].
+    ///
+    /// Note: Since the purpose of this function is to handle zero-copy deserialization of static
+    /// byte buffers, we want `Deserializer<'static>` as opposed to `DeserializeOwned`.
+    ///
+    /// # Examples
+    ///
+    /// Deserialize from a string to create static references:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
     /// use icu_provider::serde::SerdeDeDataReceiver;
     ///
-    /// const JSON: &'static str = "\"hello world\"";
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let deserializer = &mut serde_json::Deserializer::from_str(json_text);
+    /// let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
+    /// receiver
+    ///     .receive_static(&mut erased_serde::Deserializer::erase(deserializer))
+    ///     .expect("Well-formed data");
+    /// let payload = receiver.expect("Data is present");
     ///
-    /// let mut receiver: Option<&str> = None;
-    /// let mut d = serde_json::Deserializer::from_str(JSON);
-    /// receiver.receive_deserializer(&mut erased_serde::Deserializer::erase(&mut d))
-    ///     .expect("Deserialization should be successful");
-    ///
-    /// assert!(matches!(receiver, Some(_)));
-    /// assert_eq!(receiver, Some("hello world"));
+    /// assert_eq!(payload.get().message, "Hello World");
     /// ```
-    fn receive_deserializer(
+    fn receive_static(
         &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'de>,
+        deserializer: &mut dyn erased_serde::Deserializer<'static>,
     ) -> Result<(), Error>;
 }
 
-impl<'de, T> SerdeDeDataReceiver<'de> for Option<T>
+impl<'d, 's, M> SerdeDeDataReceiver for Option<DataPayload<'d, 's, M>>
 where
-    T: serde::Deserialize<'de>,
+    M: DataMarker<'s>,
+    M::Yokeable: serde::de::Deserialize<'static>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    fn receive_deserializer(
+    fn receive_rc_buffer(
         &mut self,
-        deserializer: &mut dyn erased_serde::Deserializer<'de>,
+        rc_buffer: Rc<[u8]>,
+        f1: for<'de> fn(
+            bytes: &'de [u8],
+            f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
+        ),
     ) -> Result<(), Error> {
-        let obj: T = erased_serde::deserialize(deserializer)?;
-        self.replace(obj);
+        self.replace(DataPayload::try_from_rc_buffer(rc_buffer, move |bytes| {
+            let mut holder = None;
+            f1(bytes, &mut |deserializer| {
+                holder.replace(
+                    erased_serde::deserialize::<YokeTraitHack<<M::Yokeable as Yokeable>::Output>>(
+                        deserializer,
+                    )
+                    .map(|w| w.0),
+                );
+            });
+            // The holder is guaranteed to be populated so long as the lambda function was invoked,
+            // which is in the contract of `receive_rc_buffer`.
+            holder.unwrap()
+        })?);
+        Ok(())
+    }
+
+    fn receive_static(
+        &mut self,
+        deserializer: &mut dyn erased_serde::Deserializer<'static>,
+    ) -> Result<(), Error> {
+        let obj: M::Yokeable = erased_serde::deserialize(deserializer)?;
+        self.replace(DataPayload::from_owned(obj));
         Ok(())
     }
 }
@@ -75,7 +145,7 @@ where
 /// A type-erased data provider that loads payloads from a Serde Deserializer.
 ///
 /// Uses [`erased_serde`] to allow the trait to be object-safe.
-pub trait SerdeDeDataProvider<'de> {
+pub trait SerdeDeDataProvider {
     /// Query the provider for data, loading it into a [`SerdeDeDataReceiver`].
     ///
     /// Returns Ok if the request successfully loaded data. If data failed to load, returns an
@@ -83,24 +153,24 @@ pub trait SerdeDeDataProvider<'de> {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver<'de>,
+        receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for dyn SerdeDeDataProvider<'s> + 'd
+impl<'d, 's, M> DataProvider<'d, 's, M> for dyn SerdeDeDataProvider + 'd
 where
     M: DataMarker<'s>,
-    M::Cart: serde::Deserialize<'s>,
-    M::Yokeable: ZeroCopyFrom<M::Cart>,
+    M::Yokeable: serde::de::Deserialize<'static>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
-        Ok(DataResponse {
-            metadata,
-            payload: payload.map(|obj| DataPayload::from_partial_owned(Rc::new(obj))),
-        })
+        Ok(DataResponse { metadata, payload })
     }
 }
 
@@ -193,6 +263,7 @@ where
             Borrowed(_) => todo!("#752"),
             RcStruct(yoke) => Rc::from(yoke),
             Owned(yoke) => Rc::from(yoke),
+            RcBuf(yoke) => Rc::from(yoke),
         };
         DataPayload::from_partial_owned(cart)
     }

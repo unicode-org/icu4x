@@ -98,6 +98,7 @@ where
     Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
     Owned(Yoke<M::Yokeable, ()>),
+    RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
 
 /// A wrapper around the payload returned in a [`DataResponse`].
@@ -149,6 +150,7 @@ where
             Borrowed(yoke) => Borrowed(yoke.clone()),
             RcStruct(yoke) => RcStruct(yoke.clone()),
             Owned(yoke) => Owned(yoke.clone()),
+            RcBuf(yoke) => RcBuf(yoke.clone()),
         };
         Self { inner: new_inner }
     }
@@ -223,6 +225,68 @@ impl<'d, 's, M> DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
 {
+    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
+    /// conversion. This can often be a Serde deserialization operation.
+    ///
+    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
+    /// for this function may not compile; if this happens, use
+    /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
+    #[inline]
+    pub fn try_from_rc_buffer<E>(
+        rc_buffer: Rc<[u8]>,
+        f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?;
+        Ok(Self {
+            inner: DataPayloadInner::RcBuf(yoke),
+        })
+    }
+
+    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
+    /// conversion. This can often be a Serde deserialization operation.
+    ///
+    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
+    /// see [`try_from_rc_buffer()`](Self::try_from_rc_buffer).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # #[cfg(feature = "provider_serde")] {
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use std::rc::Rc;
+    /// use icu_provider::yoke::Yokeable;
+    ///
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let json_rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
+    ///
+    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer_badly(
+    ///     json_rc_buffer.clone(),
+    ///     |bytes| {
+    ///         serde_json::from_slice(bytes)
+    ///     }
+    /// )
+    /// .expect("JSON is valid");
+    ///
+    /// assert_eq!("Hello World", payload.get().message);
+    /// # } // feature = "provider_serde"
+    /// ```
+    #[allow(clippy::type_complexity)]
+    pub fn try_from_rc_buffer_badly<E>(
+        rc_buffer: Rc<[u8]>,
+        f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let yoke = Yoke::try_attach_to_cart_badly(rc_buffer, f)?;
+        Ok(Self {
+            inner: DataPayloadInner::RcBuf(yoke),
+        })
+    }
+}
+
+impl<'d, 's, M> DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+{
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
     /// # Examples
@@ -289,6 +353,7 @@ where
             Borrowed(yoke) => yoke.with_mut(f),
             RcStruct(yoke) => yoke.with_mut(f),
             Owned(yoke) => yoke.with_mut(f),
+            RcBuf(yoke) => yoke.with_mut(f),
         }
     }
 
@@ -314,6 +379,7 @@ where
             Borrowed(yoke) => yoke.get(),
             RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
+            RcBuf(yoke) => yoke.get(),
         }
     }
 }

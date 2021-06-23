@@ -37,6 +37,27 @@ where
     Self: Sized + crate::prelude::DataMarker<'s>,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
+    ///
+    /// # Examples
+    ///
+    /// Upcast and then downcast a data struct of type `Cow<str>` (cart type `String`) via
+    /// [`ErasedDataStruct`](crate::erased::ErasedDataStruct):
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::erased::*;
+    /// use icu_provider::dynutil::UpcastDataPayload;
+    /// use icu_provider::marker::CowStringMarker;
+    /// use std::borrow::Cow;
+    ///
+    /// let data = "foo".to_string();
+    /// let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
+    /// let upcasted = ErasedDataStructMarker::upcast(original);
+    /// let downcasted = upcasted
+    ///     .downcast::<CowStringMarker>()
+    ///     .expect("Type conversion");
+    /// assert_eq!(downcasted.get(), "foo");
+    /// ```
     fn upcast(
         other: crate::prelude::DataPayload<'d, 's, M>,
     ) -> crate::prelude::DataPayload<'d, 's, Self>;
