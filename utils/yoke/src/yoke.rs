@@ -19,7 +19,7 @@ use std::sync::Arc;
 /// the lifetime and make it dynamic.
 ///
 /// `C` is the "cart", which `Y` may contain references to.
-/// 
+///
 /// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
 /// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
 ///
@@ -58,7 +58,7 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
-    /// 
+    ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
     ///
     /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites

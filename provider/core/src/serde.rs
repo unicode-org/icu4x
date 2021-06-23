@@ -25,21 +25,46 @@ use std::ops::Deref;
 use std::rc::Rc;
 use yoke::*;
 
+/// A wrapper around a type `T` implementing `serde::Deserialize`.
+///
+/// Workaround for [compiler bug #85636](https://github.com/rust-lang/rust/issues/85636).
 #[repr(transparent)]
 #[derive(serde::Deserialize)]
-pub struct DeWrap<T>(T);
+pub struct SerdeDeDataStructWrap<T>(pub T);
 
-/// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
+/// An object that receives data from a Serde Deserializer.
 ///
-/// Lifetimes:
-///
-/// - `'de` = deserializer lifetime; can usually be `'_`
+/// Implemented by `Option<`[`DataPayload`]`>`.
 pub trait SerdeDeDataReceiver {
     /// Receives a reference-counted byte buffer.
     ///
     /// Upon calling this function, the receiver sends byte buffer back to the caller as the first
     /// argument of `f1`. The caller should then map the byte buffer to an
     /// [`erased_serde::Deserializer`] and pass it back to the receiver via `f2`.
+    ///
+    /// # Examples
+    ///
+    /// Deserialize from a reference-counted buffer:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::serde::SerdeDeDataReceiver;
+    /// use std::rc::Rc;
+    ///
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let rc_bytes: Rc<[u8]> = json_text.as_bytes().into();
+    /// let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
+    /// receiver
+    ///     .receive_rc_bytes(rc_bytes, |bytes, f2| {
+    ///         let mut d = serde_json::Deserializer::from_slice(bytes);
+    ///         f2(&mut erased_serde::Deserializer::erase(&mut d))
+    ///     })
+    ///     .expect("Well-formed data");
+    /// let payload = receiver.expect("Data is present");
+    ///
+    /// assert_eq!(payload.get().message, "Hello World");
+    /// ```
     fn receive_rc_bytes(
         &mut self,
         rc_bytes: Rc<[u8]>,
@@ -53,6 +78,26 @@ pub trait SerdeDeDataReceiver {
     ///
     /// Note: Since the purpose of this function is to handle zero-copy deserialization of static
     /// byte buffers, we want `Deserializer<'static>` as opposed to `DeserializeOwned`.
+    ///
+    /// # Examples
+    ///
+    /// Deserialize from a string to create static references:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::serde::SerdeDeDataReceiver;
+    ///
+    /// let json_text = "{\"message\":\"Hello World\"}";
+    /// let deserializer = &mut serde_json::Deserializer::from_str(json_text);
+    /// let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
+    /// receiver
+    ///     .receive_static(&mut erased_serde::Deserializer::erase(deserializer))
+    ///     .expect("Well-formed data");
+    /// let payload = receiver.expect("Data is present");
+    ///
+    /// assert_eq!(payload.get().message, "Hello World");
+    /// ```
     fn receive_static(
         &mut self,
         deserializer: &mut dyn erased_serde::Deserializer<'static>,
@@ -63,7 +108,8 @@ impl<'d, 's, M> SerdeDeDataReceiver for Option<DataPayload<'d, 's, M>>
 where
     M: DataMarker<'s>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    for<'de> DeWrap<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
+    for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
+        serde::de::Deserialize<'de>,
 {
     fn receive_rc_bytes(
         &mut self,
@@ -77,9 +123,9 @@ where
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
                 holder.replace(
-                    erased_serde::deserialize::<DeWrap<<M::Yokeable as Yokeable>::Output>>(
-                        deserializer,
-                    )
+                    erased_serde::deserialize::<
+                        SerdeDeDataStructWrap<<M::Yokeable as Yokeable>::Output>,
+                    >(deserializer)
                     .map(|w| w.0),
                 );
             });
@@ -119,7 +165,8 @@ impl<'d, 's, M> DataProvider<'d, 's, M> for dyn SerdeDeDataProvider + 'd
 where
     M: DataMarker<'s>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
+        serde::de::Deserialize<'de>,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {

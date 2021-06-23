@@ -4,8 +4,9 @@
 
 use crate::manifest::SyntaxOption;
 use icu_provider::prelude::*;
-use icu_provider::serde::SerdeDeDataReceiver;
+use icu_provider::serde::*;
 use icu_provider::yoke::Yokeable;
+use serde::Deserialize;
 use std::path::Path;
 use std::rc::Rc;
 use thiserror::Error;
@@ -70,19 +71,22 @@ pub fn deserialize_zero_copy<'s, M>(
 ) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
 where
     M: DataMarker<'s>,
-    for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::Deserialize<'de>,
+    for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
+        serde::de::Deserialize<'de>,
 {
     match syntax_option {
         SyntaxOption::Json => |bytes| {
             let mut d = get_json_deserializer_zc!(bytes);
-            let data = serde::de::Deserialize::deserialize(&mut d)?;
-            Ok(data)
+            let data =
+                SerdeDeDataStructWrap::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            Ok(data.0)
         },
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => |bytes| {
             let mut d = get_bincode_deserializer_zc!(bytes);
-            let data = serde::de::Deserialize::deserialize(&mut d)?;
-            Ok(data)
+            let data =
+                SerdeDeDataStructWrap::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            Ok(data.0)
         },
         #[cfg(not(feature = "bincode"))]
         SyntaxOption::Bincode => |_| Err(Error::UnknownSyntax(SyntaxOption::Bincode)),

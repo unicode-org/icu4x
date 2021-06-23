@@ -95,7 +95,7 @@ impl FsDataProvider {
 impl<'d, 's, M> DataProvider<'d, 's, M> for FsDataProvider
 where
     M: DataMarker<'s>,
-    for<'de> <M::Yokeable as icu_provider::yoke::Yokeable<'de>>::Output:
+    for<'de> SerdeDeDataStructWrap<<M::Yokeable as icu_provider::yoke::Yokeable<'de>>::Output>:
         serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {

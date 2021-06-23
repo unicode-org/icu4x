@@ -63,11 +63,11 @@ where
     }
 }
 
-impl<'de> SerdeDeDataProvider<'de> for StaticDataProvider {
+impl SerdeDeDataProvider for StaticDataProvider {
     fn load_to_receiver(
         &self,
         req: &DataRequest,
-        receiver: &mut dyn SerdeDeDataReceiver<'de>,
+        receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
         receiver.receive_static(&mut erased_serde::Deserializer::erase(
