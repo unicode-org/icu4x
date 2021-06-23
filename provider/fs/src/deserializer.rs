@@ -66,6 +66,7 @@ macro_rules! get_bincode_deserializer_zc {
 }
 
 /// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
+#[allow(clippy::type_complexity)]
 pub fn deserialize_zero_copy<'s, M>(
     syntax_option: &SyntaxOption,
 ) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>

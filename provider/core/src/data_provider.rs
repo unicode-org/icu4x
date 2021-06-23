@@ -271,6 +271,7 @@ where
     /// assert_eq!("Hello World", payload.get().message);
     /// # } // feature = "provider_serde"
     /// ```
+    #[allow(clippy::type_complexity)]
     pub fn try_from_rc_buffer_badly<E>(
         buffer: Rc<[u8]>,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
