@@ -13,6 +13,7 @@
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
 
+pub mod trait_hack;
 mod yoke;
 mod yokeable;
 mod zero_copy_from;
