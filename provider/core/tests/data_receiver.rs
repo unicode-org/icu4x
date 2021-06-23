@@ -5,7 +5,6 @@
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerdeDeDataReceiver;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::rc::Rc;
 
@@ -27,7 +26,8 @@ fn test_deserializer_static() {
     assert!(matches!(
         payload.get(),
         &HelloWorldV1 {
-            message: Cow::Borrowed(_)
+            // TODO(#667): This should be Borrowed once HelloWorldV1 supports it
+            message: Cow::Owned(_)
         }
     ));
 }
@@ -48,6 +48,7 @@ fn test_deserializer_owned() {
     assert!(matches!(
         payload.get(),
         &HelloWorldV1 {
+            // TODO(#667): This should be Borrowed once HelloWorldV1 supports it
             message: Cow::Owned(_)
         }
     ));

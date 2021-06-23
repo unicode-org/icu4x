@@ -76,11 +76,12 @@ where
         self.replace(DataPayload::try_from_rc_buffer(rc_bytes, move |bytes| {
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
-                let deserialized_wrap: Result<
-                    DeWrap<<M::Yokeable as Yokeable>::Output>,
-                    erased_serde::Error,
-                > = erased_serde::deserialize(deserializer);
-                holder.replace(deserialized_wrap.map(|w| w.0));
+                holder.replace(
+                    erased_serde::deserialize::<DeWrap<<M::Yokeable as Yokeable>::Output>>(
+                        deserializer,
+                    )
+                    .map(|w| w.0),
+                );
             });
             // The holder is guaranteed to be populated so long as the lambda function was invoked,
             // which is in the contract of `receive_rc_bytes`.
