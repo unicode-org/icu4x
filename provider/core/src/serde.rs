@@ -23,14 +23,8 @@ use crate::error::Error;
 use crate::prelude::*;
 use std::ops::Deref;
 use std::rc::Rc;
+use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
-
-/// A wrapper around a type `T` implementing `serde::Deserialize`.
-///
-/// Workaround for [compiler bug #85636](https://github.com/rust-lang/rust/issues/85636).
-#[repr(transparent)]
-#[derive(serde::Deserialize)]
-pub struct SerdeDeDataStructWrap<T>(pub T);
 
 /// An object that receives data from a Serde Deserializer.
 ///
@@ -108,8 +102,10 @@ impl<'d, 's, M> SerdeDeDataReceiver for Option<DataPayload<'d, 's, M>>
 where
     M: DataMarker<'s>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see yoke docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn receive_rc_buffer(
         &mut self,
@@ -123,9 +119,9 @@ where
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
                 holder.replace(
-                    erased_serde::deserialize::<
-                        SerdeDeDataStructWrap<<M::Yokeable as Yokeable>::Output>,
-                    >(deserializer)
+                    erased_serde::deserialize::<YokeTraitHack<<M::Yokeable as Yokeable>::Output>>(
+                        deserializer,
+                    )
                     .map(|w| w.0),
                 );
             });
@@ -165,8 +161,10 @@ impl<'d, 's, M> DataProvider<'d, 's, M> for dyn SerdeDeDataProvider + 'd
 where
     M: DataMarker<'s>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see yoke docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {

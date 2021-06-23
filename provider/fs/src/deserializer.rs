@@ -5,6 +5,7 @@
 use crate::manifest::SyntaxOption;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
+use icu_provider::yoke::trait_hack::YokeTraitHack;
 use icu_provider::yoke::Yokeable;
 use serde::Deserialize;
 use std::path::Path;
@@ -72,21 +73,21 @@ pub fn deserialize_zero_copy<'s, M>(
 ) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
 where
     M: DataMarker<'s>,
-    for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see yoke docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     match syntax_option {
         SyntaxOption::Json => |bytes| {
             let mut d = get_json_deserializer_zc!(bytes);
-            let data =
-                SerdeDeDataStructWrap::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => |bytes| {
             let mut d = get_bincode_deserializer_zc!(bytes);
-            let data =
-                SerdeDeDataStructWrap::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
+            let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
         #[cfg(not(feature = "bincode"))]

@@ -8,6 +8,8 @@ use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
+use icu_provider::yoke::trait_hack::YokeTraitHack;
+use icu_provider::yoke::Yokeable;
 
 use std::fmt::Debug;
 use std::fs;
@@ -95,8 +97,10 @@ impl FsDataProvider {
 impl<'d, 's, M> DataProvider<'d, 's, M> for FsDataProvider
 where
     M: DataMarker<'s>,
-    for<'de> SerdeDeDataStructWrap<<M::Yokeable as icu_provider::yoke::Yokeable<'de>>::Output>:
-        serde::de::Deserialize<'de>,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    // Necessary workaround bound (see yoke docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
