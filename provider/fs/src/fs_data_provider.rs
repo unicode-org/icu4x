@@ -99,7 +99,7 @@ where
     M: DataMarker<'s>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-    // Necessary workaround bound (see yoke docs):
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
