@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624388423771,
+  "lastUpdate": 1624486274788,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8705,6 +8705,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5082,
             "range": "± 97",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2b7ca3bd55486daafbcf579d05243773e006ec89",
+          "message": "Add RcBuf variant to DataPayload (#816)\n\n- Adds yoke::trait_hack and other Yoke improvements",
+          "timestamp": "2021-06-23T17:04:37-05:00",
+          "tree_id": "ce53818d579ce2051ed7fc406c7e8d9f9159a1ac",
+          "url": "https://github.com/unicode-org/icu4x/commit/2b7ca3bd55486daafbcf579d05243773e006ec89"
+        },
+        "date": 1624486272720,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3338,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5095,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
