@@ -25,6 +25,10 @@ use std::ops::Deref;
 use std::rc::Rc;
 use yoke::*;
 
+#[repr(transparent)]
+#[derive(serde::Deserialize)]
+pub struct DeWrap<T>(T);
+
 /// An object that receives data from a Serde Deserializer. Implemented by [`DataPayload`].
 ///
 /// Lifetimes:
@@ -56,7 +60,7 @@ impl<'d, 's, M> SerdeDeDataReceiver for Option<DataPayload<'d, 's, M>>
 where
     M: DataMarker<'s>,
     M::Yokeable: serde::de::Deserialize<'static>,
-    for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
+    for<'de> DeWrap<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     fn receive_rc_bytes(
         &mut self,
@@ -66,7 +70,8 @@ where
         self.replace(DataPayload::try_from_rc_buffer(rc_bytes, move |bytes| {
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
-                holder.replace(erased_serde::deserialize(deserializer));
+                let deserialized_wrap: Result<DeWrap<<M::Yokeable as Yokeable>::Output>, erased_serde::Error> = erased_serde::deserialize(deserializer);
+                holder.replace(deserialized_wrap.map(|w| w.0));
             });
             // The holder is guaranteed to be populated so long as the lambda function was invoked,
             // which is in the contract of `receive_rc_bytes`.
