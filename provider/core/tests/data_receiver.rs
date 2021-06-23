@@ -35,10 +35,10 @@ fn test_deserializer_static() {
 #[test]
 fn test_deserializer_owned() {
     // Deserialize from a reference-counted buffer.
-    let rc_bytes: Rc<[u8]> = DATA_JSON.as_bytes().into();
+    let rc_buffer: Rc<[u8]> = DATA_JSON.as_bytes().into();
     let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
     receiver
-        .receive_rc_bytes(rc_bytes, |bytes, f2| {
+        .receive_rc_buffer(rc_buffer, |bytes, f2| {
             let mut d = serde_json::Deserializer::from_slice(bytes);
             f2(&mut erased_serde::Deserializer::erase(&mut d))
         })

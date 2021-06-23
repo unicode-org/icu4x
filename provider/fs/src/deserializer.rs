@@ -97,13 +97,13 @@ where
 /// Deserialize into a receiver used by [`SerdeDeDataProvider`](icu_provider::serde::SerdeDeDataProvider).
 /// Covers all supported data formats.
 pub fn deserialize_into_receiver(
-    rc_bytes: Rc<[u8]>,
+    rc_buffer: Rc<[u8]>,
     syntax_option: &SyntaxOption,
     receiver: &mut dyn SerdeDeDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
         SyntaxOption::Json => {
-            receiver.receive_rc_bytes(rc_bytes, |bytes, f2| {
+            receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_json_deserializer_zc!(bytes);
                 f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
             })?;
@@ -111,7 +111,7 @@ pub fn deserialize_into_receiver(
         }
         #[cfg(feature = "bincode")]
         SyntaxOption::Bincode => {
-            receiver.receive_rc_bytes(rc_bytes, |bytes, f2| {
+            receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_bincode_deserializer_zc!(bytes);
                 f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
             })?;

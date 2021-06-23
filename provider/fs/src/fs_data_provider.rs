@@ -81,14 +81,14 @@ impl FsDataProvider {
         Ok((BufReader::new(file), path_buf))
     }
 
-    fn get_rc_bytes(&self, req: &DataRequest) -> Result<(Rc<[u8]>, PathBuf), DataError> {
+    fn get_rc_buffer(&self, req: &DataRequest) -> Result<(Rc<[u8]>, PathBuf), DataError> {
         let (mut reader, path_buf) = self.get_reader(req)?;
         let mut buffer = Vec::<u8>::new();
         reader
             .read_to_end(&mut buffer)
             .map_err(|e| DataError::Resource(Box::new(Error::Io(e, Some(path_buf.clone())))))?;
-        let rc_bytes: Rc<[u8]> = buffer.into();
-        Ok((rc_bytes, path_buf))
+        let rc_buffer: Rc<[u8]> = buffer.into();
+        Ok((rc_buffer, path_buf))
     }
 }
 
@@ -99,14 +99,14 @@ where
         serde::de::Deserialize<'de>,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
-        let (rc_bytes, path_buf) = self.get_rc_bytes(req)?;
+        let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
             payload: Some(
                 DataPayload::try_from_rc_buffer(
-                    rc_bytes,
+                    rc_buffer,
                     deserializer::deserialize_zero_copy::<M>(&self.manifest.syntax),
                 )
                 .map_err(|e: deserializer::Error| e.into_resource_error(&path_buf))?,
@@ -121,8 +121,8 @@ impl SerdeDeDataProvider for FsDataProvider {
         req: &DataRequest,
         receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, DataError> {
-        let (rc_bytes, path_buf) = self.get_rc_bytes(req)?;
-        deserializer::deserialize_into_receiver(rc_bytes, &self.manifest.syntax, receiver)
+        let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
+        deserializer::deserialize_into_receiver(rc_buffer, &self.manifest.syntax, receiver)
             .map_err(|err| err.into_resource_error(&path_buf))?;
         Ok(DataResponseMetadata {
             data_langid: req.resource_path.options.langid.clone(),

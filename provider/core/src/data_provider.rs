@@ -233,10 +233,10 @@ where
     /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
     #[inline]
     pub fn try_from_rc_buffer<E>(
-        buffer: Rc<[u8]>,
+        rc_buffer: Rc<[u8]>,
         f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(buffer, f)?;
+        let yoke = Yoke::try_attach_to_cart(rc_buffer, f)?;
         Ok(Self {
             inner: DataPayloadInner::RcBuf(yoke),
         })
@@ -273,10 +273,10 @@ where
     /// ```
     #[allow(clippy::type_complexity)]
     pub fn try_from_rc_buffer_badly<E>(
-        buffer: Rc<[u8]>,
+        rc_buffer: Rc<[u8]>,
         f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
     ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart_badly(buffer, f)?;
+        let yoke = Yoke::try_attach_to_cart_badly(rc_buffer, f)?;
         Ok(Self {
             inner: DataPayloadInner::RcBuf(yoke),
         })

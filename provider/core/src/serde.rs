@@ -53,10 +53,10 @@ pub trait SerdeDeDataReceiver {
     /// use std::rc::Rc;
     ///
     /// let json_text = "{\"message\":\"Hello World\"}";
-    /// let rc_bytes: Rc<[u8]> = json_text.as_bytes().into();
+    /// let rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
     /// let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
     /// receiver
-    ///     .receive_rc_bytes(rc_bytes, |bytes, f2| {
+    ///     .receive_rc_buffer(rc_buffer, |bytes, f2| {
     ///         let mut d = serde_json::Deserializer::from_slice(bytes);
     ///         f2(&mut erased_serde::Deserializer::erase(&mut d))
     ///     })
@@ -65,9 +65,9 @@ pub trait SerdeDeDataReceiver {
     ///
     /// assert_eq!(payload.get().message, "Hello World");
     /// ```
-    fn receive_rc_bytes(
+    fn receive_rc_buffer(
         &mut self,
-        rc_bytes: Rc<[u8]>,
+        rc_buffer: Rc<[u8]>,
         f1: for<'de> fn(
             bytes: &'de [u8],
             f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
@@ -111,15 +111,15 @@ where
     for<'de> SerdeDeDataStructWrap<<M::Yokeable as Yokeable<'de>>::Output>:
         serde::de::Deserialize<'de>,
 {
-    fn receive_rc_bytes(
+    fn receive_rc_buffer(
         &mut self,
-        rc_bytes: Rc<[u8]>,
+        rc_buffer: Rc<[u8]>,
         f1: for<'de> fn(
             bytes: &'de [u8],
             f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
         ),
     ) -> Result<(), Error> {
-        self.replace(DataPayload::try_from_rc_buffer(rc_bytes, move |bytes| {
+        self.replace(DataPayload::try_from_rc_buffer(rc_buffer, move |bytes| {
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
                 holder.replace(
@@ -130,7 +130,7 @@ where
                 );
             });
             // The holder is guaranteed to be populated so long as the lambda function was invoked,
-            // which is in the contract of `receive_rc_bytes`.
+            // which is in the contract of `receive_rc_buffer`.
             holder.unwrap()
         })?);
         Ok(())
