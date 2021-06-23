@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::hello_world::*;
+use icu_provider::prelude::*;
 use icu_provider::serde::SerdeDeDataReceiver;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::rc::Rc;
-use icu_provider::hello_world::*;
-use icu_provider::prelude::*;
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA_JSON: &'static str = r#"{

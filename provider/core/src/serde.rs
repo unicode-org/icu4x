@@ -36,18 +36,21 @@ pub struct DeWrap<T>(T);
 /// - `'de` = deserializer lifetime; can usually be `'_`
 pub trait SerdeDeDataReceiver {
     /// Receives a reference-counted byte buffer.
-    /// 
+    ///
     /// Upon calling this function, the receiver sends byte buffer back to the caller as the first
     /// argument of `f1`. The caller should then map the byte buffer to an
     /// [`erased_serde::Deserializer`] and pass it back to the receiver via `f2`.
     fn receive_rc_bytes(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        f1: for<'de> fn(bytes: &'de [u8], f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>)),
+        f1: for<'de> fn(
+            bytes: &'de [u8],
+            f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
+        ),
     ) -> Result<(), Error>;
 
     /// Receives a `&'static` byte buffer via an [`erased_serde::Deserializer`].
-    /// 
+    ///
     /// Note: Since the purpose of this function is to handle zero-copy deserialization of static
     /// byte buffers, we want `Deserializer<'static>` as opposed to `DeserializeOwned`.
     fn receive_static(
@@ -65,12 +68,18 @@ where
     fn receive_rc_bytes(
         &mut self,
         rc_bytes: Rc<[u8]>,
-        f1: for<'de> fn(bytes: &'de [u8], f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>)),
+        f1: for<'de> fn(
+            bytes: &'de [u8],
+            f2: &mut dyn FnMut(&mut dyn erased_serde::Deserializer<'de>),
+        ),
     ) -> Result<(), Error> {
         self.replace(DataPayload::try_from_rc_buffer(rc_bytes, move |bytes| {
             let mut holder = None;
             f1(bytes, &mut |deserializer| {
-                let deserialized_wrap: Result<DeWrap<<M::Yokeable as Yokeable>::Output>, erased_serde::Error> = erased_serde::deserialize(deserializer);
+                let deserialized_wrap: Result<
+                    DeWrap<<M::Yokeable as Yokeable>::Output>,
+                    erased_serde::Error,
+                > = erased_serde::deserialize(deserializer);
                 holder.replace(deserialized_wrap.map(|w| w.0));
             });
             // The holder is guaranteed to be populated so long as the lambda function was invoked,
