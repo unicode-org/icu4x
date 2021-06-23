@@ -301,3 +301,58 @@ where
         })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::dynutil::UpcastDataPayload;
+    use crate::marker::CowStringMarker;
+    use std::borrow::Cow;
+
+    #[test]
+    fn test_erased_case_1() {
+        let data = "foo".to_string();
+        let original = DataPayload::<CowStringMarker>::from_borrowed(&data);
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+
+    #[test]
+    fn test_erased_case_2() {
+        let data = Rc::new("foo".to_string());
+        let original = DataPayload::<CowStringMarker>::from_partial_owned(data);
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+
+    #[test]
+    fn test_erased_case_3() {
+        let data = "foo".to_string();
+        let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+
+    #[test]
+    fn test_erased_case_4() {
+        let data: Rc<[u8]> = "foo".as_bytes().into();
+        let original = DataPayload::<CowStringMarker>::try_from_rc_buffer_badly(data, |bytes| {
+            std::str::from_utf8(bytes).map(|s| Cow::Borrowed(s))
+        })
+        .expect("String is valid UTF-8");
+        let upcasted = ErasedDataStructMarker::upcast(original);
+        let downcasted = upcasted
+            .downcast::<CowStringMarker>()
+            .expect("Type conversion");
+        assert_eq!(downcasted.get(), "foo");
+    }
+}

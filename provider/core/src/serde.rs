@@ -174,7 +174,7 @@ where
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse {
             metadata,
-            payload: payload,
+            payload,
         })
     }
 }
