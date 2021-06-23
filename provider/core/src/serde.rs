@@ -172,10 +172,7 @@ where
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
-        Ok(DataResponse {
-            metadata,
-            payload,
-        })
+        Ok(DataResponse { metadata, payload })
     }
 }
 
