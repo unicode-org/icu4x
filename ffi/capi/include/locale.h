@@ -27,8 +27,8 @@ typedef enum {
 ICU4XLocale* icu4x_locale_create(const char* value, size_t len);
 ICU4XLocale* icu4x_locale_clone(const ICU4XLocale* locale);
 ICU4XLocaleResult icu4x_locale_basename(const ICU4XLocale* locale, ICU4XWriteable* write);
-ICU4XLocaleResult icu4x_locale_get_extension(const ICU4XLocale* locale, const char* value,
-                                             size_t len, ICU4XWriteable* write);
+ICU4XLocaleResult icu4x_locale_get_unicode_extension(const ICU4XLocale* locale, const char* value,
+                                                     size_t len, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_language(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_region(const ICU4XLocale* locale, ICU4XWriteable* write);
 ICU4XLocaleResult icu4x_locale_script(const ICU4XLocale* locale, ICU4XWriteable* write);

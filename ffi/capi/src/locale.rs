@@ -61,14 +61,14 @@ pub extern "C" fn icu4x_locale_basename(
 }
 
 #[no_mangle]
-/// Write a string representation of the calendar extension to `write`
+/// Write a string representation of the unicode extension to `write`
 ///
 /// # Safety
 /// `value` and `len` should point to a valid ASCII string of length `len`.
 ///
 /// It does not need to be be null terminated, and `len` should not include a null
 /// terminator (this will just cause the function to panic, and is not a safety requirement).
-pub unsafe extern "C" fn icu4x_locale_get_extension(
+pub unsafe extern "C" fn icu4x_locale_get_unicode_extension(
     locale: &ICU4XLocale,
     value: *const u8,
     len: usize,

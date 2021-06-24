@@ -53,7 +53,7 @@ int main() {
     }
 
     write = icu4x_simple_writeable(output, 40);
-    result = icu4x_locale_get_extension(locale, "hc", 2, &write);
+    result = icu4x_locale_get_unicode_extension(locale, "hc", 2, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -64,7 +64,7 @@ int main() {
         return 1;
     }
 
-    result = icu4x_locale_get_extension(locale, "ca", 2, &write);
+    result = icu4x_locale_get_unicode_extension(locale, "ca", 2, &write);
     if (result != ICU4XLocaleResult_Undefined) {
         return 1;
     }
