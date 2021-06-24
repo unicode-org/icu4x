@@ -4,6 +4,12 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[tasks.clippy-all]
+description = "Run clippy (this target is used locally, not on CI)"
+category = "ICU4X Development"
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings", "-Aclippy::unknown-clippy-lints", "-Aclippy::field-reassign-with-default"]
+
 [tasks.fmt-check]
 description = "Check code is appropriately formatted"
 category = "ICU4X Development"
