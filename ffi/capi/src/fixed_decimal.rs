@@ -5,6 +5,7 @@
 use fixed_decimal::FixedDecimal;
 
 use crate::custom_writeable::ICU4XWriteable;
+use std::slice;
 use writeable::Writeable;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimal`]
@@ -15,11 +16,32 @@ pub type ICU4XFixedDecimal = FixedDecimal;
 #[no_mangle]
 /// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
 /// `number`.
-//
-// We can add additional constructors from strings, floats, etc as the need arises
 pub extern "C" fn icu4x_fixed_decimal_create(number: i64) -> *mut ICU4XFixedDecimal {
     let fd = FixedDecimal::from(number);
     Box::into_raw(Box::new(fd))
+}
+
+#[no_mangle]
+/// FFI version of [`FixedDecimal::FromStr()`], see its docs for more details
+///
+/// # Safety
+/// `value` and `len` should point to a valid ASCII string of length `len`.
+///
+/// It does not need to be be null terminated, and `len` should not include a null
+/// terminator (this will just cause the function to panic, and is not a safety requirement).
+///
+/// Returns nullptr if passed an invalid string.
+pub unsafe extern "C" fn icu4x_fixed_decimal_create_fromstr(
+    value: *const u8,
+    len: usize,
+) -> *mut ICU4XFixedDecimal {
+    let bytes = slice::from_raw_parts(value, len);
+    if let Ok(as_str) = std::str::from_utf8(bytes) {
+        if let Ok(fd) = as_str.parse::<FixedDecimal>() {
+            return Box::into_raw(Box::new(fd));
+        }
+    }
+    std::ptr::null_mut()
 }
 
 #[no_mangle]
