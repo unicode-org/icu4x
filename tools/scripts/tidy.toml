@@ -5,10 +5,10 @@
 # This is a cargo-make file included in the toplevel Makefile.toml
 
 [tasks.clippy-all]
-description = "Run clippy (this target is used locally, not on CI)"
+description = "Run clippy based on the alias in /.cargo/config.toml"
 category = "ICU4X Development"
 command = "cargo"
-args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings", "-Aclippy::unknown-clippy-lints", "-Aclippy::field-reassign-with-default"]
+args = ["clippy-all"]
 
 [tasks.fmt-check]
 description = "Check code is appropriately formatted"
