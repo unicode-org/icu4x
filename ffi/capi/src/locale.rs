@@ -6,30 +6,12 @@ use crate::custom_writeable::ICU4XWriteable;
 use icu_locid::extensions::unicode::Key;
 use icu_locid::Locale;
 use std::slice;
-use tinystr::tinystr4;
+use writeable::Writeable;
 
 /// Opaque type for use behind a pointer, is [`Locale`]
 ///
 /// Can be obtained via [`icu4x_locale_create()`] and destroyed via [`icu4x_locale_destroy()`]
 pub type ICU4XLocale = Locale;
-
-macro_rules! write_extension {
-    ( $key:expr, $locale: ident, $write: ident ) => {{
-        use writeable::Writeable;
-        let key = Key::from_tinystr4_unchecked($key);
-        if let Some(value) = $locale.extensions.unicode.keywords.get(key) {
-            let result = value.write_to($write).is_ok();
-            $write.flush();
-            if result {
-                ICU4XLocaleResult::Ok
-            } else {
-                ICU4XLocaleResult::Error
-            }
-        } else {
-            ICU4XLocaleResult::Undefined
-        }
-    }};
-}
 
 #[repr(C)]
 pub enum ICU4XLocaleResult {
@@ -69,8 +51,6 @@ pub extern "C" fn icu4x_locale_basename(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
-    use writeable::Writeable;
-
     let result = locale.id.write_to(write).is_ok();
     write.flush();
     if result {
@@ -82,56 +62,34 @@ pub extern "C" fn icu4x_locale_basename(
 
 #[no_mangle]
 /// Write a string representation of the calendar extension to `write`
-pub extern "C" fn icu4x_locale_calendar(
+///
+/// # Safety
+/// `value` and `len` should point to a valid ASCII string of length `len`.
+///
+/// It does not need to be be null terminated, and `len` should not include a null
+/// terminator (this will just cause the function to panic, and is not a safety requirement).
+pub unsafe extern "C" fn icu4x_locale_get_extension(
     locale: &ICU4XLocale,
+    value: *const u8,
+    len: usize,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
-    write_extension!(tinystr4!("ca"), locale, write)
-}
-
-#[no_mangle]
-/// Write a string representation of the case first extension to `write`
-pub extern "C" fn icu4x_locale_case_first(
-    locale: &ICU4XLocale,
-    write: &mut ICU4XWriteable,
-) -> ICU4XLocaleResult {
-    write_extension!(tinystr4!("kf"), locale, write)
-}
-
-#[no_mangle]
-/// Write a string representation of the collation extension to `write`
-pub extern "C" fn icu4x_locale_collation(
-    locale: &ICU4XLocale,
-    write: &mut ICU4XWriteable,
-) -> ICU4XLocaleResult {
-    write_extension!(tinystr4!("co"), locale, write)
-}
-
-#[no_mangle]
-/// Write a string representation of the hour cycle extension to `write`
-pub extern "C" fn icu4x_locale_hour_cycle(
-    locale: &ICU4XLocale,
-    write: &mut ICU4XWriteable,
-) -> ICU4XLocaleResult {
-    write_extension!(tinystr4!("hc"), locale, write)
-}
-
-#[no_mangle]
-/// Write a string representation of the numeric extension to `write`
-pub extern "C" fn icu4x_locale_numeric(
-    locale: &ICU4XLocale,
-    write: &mut ICU4XWriteable,
-) -> ICU4XLocaleResult {
-    write_extension!(tinystr4!("kn"), locale, write)
-}
-
-#[no_mangle]
-/// Write a string representation of the number system extension to `write`
-pub extern "C" fn icu4x_locale_numbering_system(
-    locale: &ICU4XLocale,
-    write: &mut ICU4XWriteable,
-) -> ICU4XLocaleResult {
-    write_extension!(tinystr4!("nu"), locale, write)
+    let bytes = slice::from_raw_parts(value, len);
+    if let Ok(key) = Key::from_bytes(bytes) {
+        if let Some(value) = locale.extensions.unicode.keywords.get(&key) {
+            let result = value.write_to(write).is_ok();
+            write.flush();
+            if result {
+                ICU4XLocaleResult::Ok
+            } else {
+                ICU4XLocaleResult::Error
+            }
+        } else {
+            ICU4XLocaleResult::Undefined
+        }
+    } else {
+        ICU4XLocaleResult::Error
+    }
 }
 
 #[no_mangle]
@@ -140,8 +98,6 @@ pub extern "C" fn icu4x_locale_language(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
-    use writeable::Writeable;
-
     let result = locale.id.language.write_to(write).is_ok();
     write.flush();
     if result {
@@ -157,8 +113,6 @@ pub extern "C" fn icu4x_locale_region(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
-    use writeable::Writeable;
-
     match locale.id.region {
         Some(region) => {
             let result = region.write_to(write).is_ok();
@@ -179,8 +133,6 @@ pub extern "C" fn icu4x_locale_script(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
-    use writeable::Writeable;
-
     match locale.id.script {
         Some(script) => {
             let result = script.write_to(write).is_ok();
@@ -201,8 +153,6 @@ pub extern "C" fn icu4x_locale_tostring(
     locale: &ICU4XLocale,
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
-    use writeable::Writeable;
-
     let result = locale.write_to(write).is_ok();
     write.flush();
     if result {
