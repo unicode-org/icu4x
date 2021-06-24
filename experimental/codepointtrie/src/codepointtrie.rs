@@ -35,15 +35,6 @@ pub enum TrieTypeEnum {
 pub trait ValueWidth: Copy + zerovec::ule::AsULE {
     const ENUM_VALUE: ValueWidthEnum;
     fn cast_to_widest(self) -> u32;
-
-    fn get_code_point_trie_value_width_enum(value_width_int: u8) -> Option<ValueWidthEnum> {
-        match value_width_int {
-            0 => Some(ValueWidthEnum::Bits16),
-            1 => Some(ValueWidthEnum::Bits32),
-            2 => Some(ValueWidthEnum::Bits8),
-            _ => None,
-        }
-    }
 }
 
 impl ValueWidth for u8 {
@@ -75,14 +66,6 @@ impl ValueWidth for u32 {
 pub trait TrieType {
     const FAST_MAX: u32;
     const ENUM_VALUE: TrieTypeEnum;
-
-    fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
-        match trie_type_int {
-            0 => Some(TrieTypeEnum::Fast),
-            1 => Some(TrieTypeEnum::Small),
-            _ => None,
-        }
-    }
 }
 
 pub struct Fast;
@@ -264,3 +247,13 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         self.get(code_point).cast_to_widest()
     }
 }
+
+/// Convert the serialized `u8` value for the trie type into a `TrieTypeEnum`.
+pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
+    match trie_type_int {
+        0 => Some(TrieTypeEnum::Fast),
+        1 => Some(TrieTypeEnum::Small),
+        _ => None,
+    }
+}
+
