@@ -28,7 +28,6 @@ skip_optional_dependencies = true
 all-features = true
 
 [dependencies]
-smallstr = { version = "0.2", features = ["serde"] }
 icu_locid = { version = "0.2", path = "../locid" }
 icu_provider = { version = "0.2", path = "../../provider/core" }
 fixed_decimal = { version = "0.2", path = "../../utils/fixed_decimal" }

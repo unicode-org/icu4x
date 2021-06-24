@@ -26,7 +26,7 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct HelloWorldV1<'s> {
-    // TODO(#667): Use serde borrow.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub message: Cow<'s, str>,
 }
 

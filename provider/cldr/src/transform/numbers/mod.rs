@@ -160,7 +160,7 @@ impl<'d> IterableDataProviderCore for NumbersProvider {
     }
 }
 
-impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
+impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, Self::Error> {
@@ -183,8 +183,8 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
         Ok(Self {
             minus_sign_affixes: parsed_pattern.localize_sign(&symbols.minus_sign),
             plus_sign_affixes: parsed_pattern.localize_sign(&symbols.plus_sign),
-            decimal_separator: symbols.decimal.clone(),
-            grouping_separator: symbols.group.clone(),
+            decimal_separator: Cow::Owned(symbols.decimal.clone()),
+            grouping_separator: Cow::Owned(symbols.group.clone()),
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,

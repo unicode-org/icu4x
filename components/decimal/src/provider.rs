@@ -6,7 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
+use std::borrow::Cow;
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).
@@ -22,12 +22,14 @@ pub mod key {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct AffixesV1 {
+pub struct AffixesV1<'s> {
     /// String to prepend before the decimal number.
-    pub prefix: Option<SmallString8>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub prefix: Cow<'s, str>,
 
     /// String to append after the decimal number.
-    pub suffix: Option<SmallString8>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub suffix: Cow<'s, str>,
 }
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
@@ -55,18 +57,21 @@ pub struct GroupingSizesV1 {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct DecimalSymbolsV1 {
+pub struct DecimalSymbolsV1<'s> {
     /// Prefix and suffix to apply when a negative sign is needed.
-    pub minus_sign_affixes: AffixesV1,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub minus_sign_affixes: AffixesV1<'s>,
 
     /// Prefix and suffix to apply when a plus sign is needed.
-    pub plus_sign_affixes: AffixesV1,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub plus_sign_affixes: AffixesV1<'s>,
 
     /// Character used to separate the integer and fraction parts of the number.
-    pub decimal_separator: SmallString8,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub decimal_separator: Cow<'s, str>,
 
     /// Character used to separate groups in the integer part of the number.
-    pub grouping_separator: SmallString8,
+    pub grouping_separator: Cow<'s, str>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
     pub grouping_sizes: GroupingSizesV1,
@@ -76,16 +81,16 @@ pub struct DecimalSymbolsV1 {
     pub digits: [char; 10],
 }
 
-impl Default for DecimalSymbolsV1 {
+impl Default for DecimalSymbolsV1<'static> {
     fn default() -> Self {
         Self {
             minus_sign_affixes: AffixesV1 {
-                prefix: Some("-".into()),
-                suffix: None,
+                prefix: Cow::Borrowed("-"),
+                suffix: Cow::Borrowed(""),
             },
             plus_sign_affixes: AffixesV1 {
-                prefix: Some("+".into()),
-                suffix: None,
+                prefix: Cow::Borrowed("+"),
+                suffix: Cow::Borrowed(""),
             },
             decimal_separator: ".".into(),
             grouping_separator: ",".into(),
@@ -99,8 +104,9 @@ impl Default for DecimalSymbolsV1 {
     }
 }
 
-icu_provider::impl_data_marker_no_lifetime!(
-    DecimalSymbolsV1,
+icu_provider::unsafe_impl_data_marker_with_lifetime!(
+    DecimalSymbolsV1<'s>,
     /// Marker type for [`DecimalSymbolsV1`]
-    DecimalSymbolsV1Marker
+    DecimalSymbolsV1Marker,
+    TEMP_ZCF
 );

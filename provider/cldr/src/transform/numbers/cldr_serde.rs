@@ -9,8 +9,6 @@ use serde_aux::prelude::*;
 use std::collections::HashMap;
 use tinystr::{TinyStr8, TinyStrAuto};
 
-pub type SmallString8 = smallstr::SmallString<[u8; 8]>;
-
 pub mod numbers_json {
     //! Serde structs representing CLDR JSON numbers.json files.
     //!
@@ -24,12 +22,12 @@ pub mod numbers_json {
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Symbols {
         // This list is not comprehensive; add more fields when needed
-        pub decimal: SmallString8,
-        pub group: SmallString8,
+        pub decimal: String,
+        pub group: String,
         #[serde(rename = "minusSign")]
-        pub minus_sign: SmallString8,
+        pub minus_sign: String,
         #[serde(rename = "plusSign")]
-        pub plus_sign: SmallString8,
+        pub plus_sign: String,
     }
 
     #[derive(PartialEq, Debug, Deserialize)]

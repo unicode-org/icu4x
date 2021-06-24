@@ -1,11 +1,11 @@
 {
   "minus_sign_affixes": {
     "prefix": "-",
-    "suffix": null
+    "suffix": ""
   },
   "plus_sign_affixes": {
     "prefix": "+",
-    "suffix": null
+    "suffix": ""
   },
   "decimal_separator": ".",
   "grouping_separator": ",",
