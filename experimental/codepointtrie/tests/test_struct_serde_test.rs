@@ -37,6 +37,7 @@ fn code_point_trie_test_data_check_test() {
     test_util::run_deserialize_test_from_test_data("tests/testdata/set-single-value.small16.toml");
     test_util::run_deserialize_test_from_test_data("tests/testdata/short-all-same.16.toml");
     test_util::run_deserialize_test_from_test_data("tests/testdata/short-all-same.8.toml");
+    test_util::run_deserialize_test_from_test_data("tests/testdata/short-all-same.small16.toml");
     test_util::run_deserialize_test_from_test_data("tests/testdata/small0-in-fast.16.toml");
     test_util::run_deserialize_test_from_test_data("tests/testdata/small0-in-fast.32.toml");
     test_util::run_deserialize_test_from_test_data("tests/testdata/small0-in-fast.8.toml");
