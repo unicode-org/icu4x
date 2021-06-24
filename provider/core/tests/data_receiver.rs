@@ -26,8 +26,7 @@ fn test_deserializer_static() {
     assert!(matches!(
         payload.get(),
         &HelloWorldV1 {
-            // TODO(#667): This should be Borrowed once HelloWorldV1 supports it
-            message: Cow::Owned(_)
+            message: Cow::Borrowed(_)
         }
     ));
 }
@@ -48,8 +47,7 @@ fn test_deserializer_owned() {
     assert!(matches!(
         payload.get(),
         &HelloWorldV1 {
-            // TODO(#667): This should be Borrowed once HelloWorldV1 supports it
-            message: Cow::Owned(_)
+            message: Cow::Borrowed(_)
         }
     ));
 }

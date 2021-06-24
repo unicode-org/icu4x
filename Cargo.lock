@@ -917,7 +917,6 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "serde",
- "smallstr",
  "thiserror",
  "writeable",
 ]
