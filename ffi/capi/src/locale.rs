@@ -76,7 +76,7 @@ pub unsafe extern "C" fn icu4x_locale_get_unicode_extension(
 ) -> ICU4XLocaleResult {
     let bytes = slice::from_raw_parts(value, len);
     if let Ok(key) = Key::from_bytes(bytes) {
-        if let Some(value) = locale.extensions.unicode.keywords.get(&key) {
+        if let Some(value) = locale.get_unicode_extension(&key) {
             let result = value.write_to(write).is_ok();
             write.flush();
             if result {
