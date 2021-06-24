@@ -165,13 +165,10 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
             index1_pos += SMALL_INDEX_LENGTH;
         }
-        let mut index3_block: u32 = self
-            .index
-            .get(
-                (self.index.get(index1_pos as usize).unwrap() as u32
-                    + ((code_point >> SHIFT_2) & INDEX_2_MASK)) as usize,
-            )
-            .unwrap() as u32;
+        let index3_block_pos: u32 =
+            (self.index.get(index1_pos as usize).unwrap() as u32)
+                + ((code_point >> SHIFT_2) & INDEX_2_MASK);
+        let mut index3_block: u32 = self.index.get(index3_block_pos as usize).unwrap() as u32;
         let mut index3_pos: u32 = (code_point >> SHIFT_3) & INDEX_3_MASK;
         let mut data_block: u32;
         if index3_block & 0x8000 == 0 {
