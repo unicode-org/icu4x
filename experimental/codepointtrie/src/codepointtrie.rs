@@ -70,13 +70,13 @@ pub trait TrieType {
 
 pub struct Fast;
 impl TrieType for Fast {
-    const FAST_MAX: u32 = 0xffff;
+    const FAST_MAX: u32 = FAST_TYPE_FAST_INDEXING_MAX;
     const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Fast;
 }
 
 pub struct Small;
 impl TrieType for Small {
-    const FAST_MAX: u32 = 0x0fff;
+    const FAST_MAX: u32 = SMALL_TYPE_FAST_INDEXING_MAX;
     const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Small;
 }
 
@@ -159,16 +159,17 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     fn trie_internal_small_index(&self, code_point: u32) -> u32 {
         let mut index1_pos: u32 = code_point >> SHIFT_1;
         if T::ENUM_VALUE == TrieTypeEnum::Fast {
-            assert!(0xffff < code_point && code_point < self.header.high_start);
+            assert!(
+                FAST_TYPE_FAST_INDEXING_MAX < code_point && code_point < self.header.high_start
+            );
             index1_pos = index1_pos + BMP_INDEX_LENGTH - OMITTED_BMP_INDEX_1_LENGTH;
         } else {
             assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
             index1_pos += SMALL_INDEX_LENGTH;
         }
-        let index3_block_pos: u32 =
-            (self.index.get(index1_pos as usize).unwrap() as u32)
-                + ((code_point >> SHIFT_2) & INDEX_2_MASK);
-        let mut index3_block: u32 = self.index.get(index3_block_pos as usize).unwrap() as u32;
+        let index3_block_idx: u32 = (self.index.get(index1_pos as usize).unwrap() as u32)
+            + ((code_point >> SHIFT_2) & INDEX_2_MASK);
+        let mut index3_block: u32 = self.index.get(index3_block_idx as usize).unwrap() as u32;
         let mut index3_pos: u32 = (code_point >> SHIFT_3) & INDEX_3_MASK;
         let mut data_block: u32;
         if index3_block & 0x8000 == 0 {
@@ -181,9 +182,10 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
             index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
             index3_pos &= 7;
-            data_block = ((self.index.get((index3_block + 1) as usize).unwrap()
-                << (2 + (2 * index3_pos))) as u32
+            data_block = ((self.index.get(index3_block as usize).unwrap() << (2 + (2 * index3_pos)))
+                as u32
                 & 0x30000) as u32;
+            index3_block += 1;
             data_block |= self
                 .index
                 .get((index3_block + index3_pos) as usize)
