@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624486282201,
+  "lastUpdate": 1624570404545,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9449,6 +9449,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 109032,
             "range": "± 7378",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ea67288c78dfe7ef56bfb702e2b6452bb13c17a",
+          "message": "Migrate HelloWorldV1 and DecimalSymbolsV1 to `serde(borrow)` (#820)",
+          "timestamp": "2021-06-24T16:26:08-05:00",
+          "tree_id": "db67d7073cefa906a67aa139f0171e63edb7df3a",
+          "url": "https://github.com/unicode-org/icu4x/commit/7ea67288c78dfe7ef56bfb702e2b6452bb13c17a"
+        },
+        "date": 1624570402348,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1355,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7831,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 113888,
+            "range": "± 682",
             "unit": "ns/iter"
           }
         ]
