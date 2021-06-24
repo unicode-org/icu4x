@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624486274788,
+  "lastUpdate": 1624570380202,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8741,6 +8741,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5095,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ea67288c78dfe7ef56bfb702e2b6452bb13c17a",
+          "message": "Migrate HelloWorldV1 and DecimalSymbolsV1 to `serde(borrow)` (#820)",
+          "timestamp": "2021-06-24T16:26:08-05:00",
+          "tree_id": "db67d7073cefa906a67aa139f0171e63edb7df3a",
+          "url": "https://github.com/unicode-org/icu4x/commit/7ea67288c78dfe7ef56bfb702e2b6452bb13c17a"
+        },
+        "date": 1624570378521,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3357,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5011,
+            "range": "± 80",
             "unit": "ns/iter"
           }
         ]
