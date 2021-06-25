@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624638473693,
+  "lastUpdate": 1624656624519,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9617,6 +9617,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 125675,
             "range": "± 6900",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "085c8166f01a963b811d752ac41945a49956eb2f",
+          "message": "Rename Yokeable::with_mut() to Yokeable::transform_mut() (#828)",
+          "timestamp": "2021-06-25T14:23:29-07:00",
+          "tree_id": "ccc9701f32a00bcb8a5c38fe3ffbb1b9ae9a5fd2",
+          "url": "https://github.com/unicode-org/icu4x/commit/085c8166f01a963b811d752ac41945a49956eb2f"
+        },
+        "date": 1624656622359,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1265,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7595,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 108435,
+            "range": "± 2323",
             "unit": "ns/iter"
           }
         ]
