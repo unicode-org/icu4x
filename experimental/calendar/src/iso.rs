@@ -293,14 +293,18 @@ mod test {
         let today_plus_5000 = Iso::create_iso_date_from_integers(2, 3, 2035).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
-        let offset = today.clone().added(simple_subtract(&today_plus_5000, &today));
+        let offset = today
+            .clone()
+            .added(simple_subtract(&today_plus_5000, &today));
         assert_eq!(offset, today_plus_5000);
 
         let today = Iso::create_iso_date_from_integers(23, 6, 2021).unwrap();
         let today_minus_5000 = Iso::create_iso_date_from_integers(15, 10, 2007).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, -5000));
         assert_eq!(offset, today_minus_5000);
-        let offset = today.clone().added(simple_subtract(&today_minus_5000, &today));
+        let offset = today
+            .clone()
+            .added(simple_subtract(&today_minus_5000, &today));
         assert_eq!(offset, today_minus_5000);
     }
 }
