@@ -36,7 +36,7 @@ macro_rules! unsafe_impl_data_marker_with_lifetime {
             unsafe fn make(from: Self::Output) -> Self {
                 std::mem::transmute(from)
             }
-            fn with_mut<F>(&'a mut self, f: F)
+            fn transform_mut<F>(&'a mut self, f: F)
             where
                 F: 'static + for<'b> FnOnce(&'b mut Self::Output),
             {
@@ -70,7 +70,7 @@ macro_rules! impl_data_marker_no_lifetime {
             unsafe fn make(from: Self::Output) -> Self {
                 from
             }
-            fn with_mut<F>(&'a mut self, f: F)
+            fn transform_mut<F>(&'a mut self, f: F)
             where
                 F: 'static + for<'b> FnOnce(&'b mut Self::Output),
             {
