@@ -21,14 +21,3 @@ include = [
     "Cargo.toml",
     "README.md"
 ]
-
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-# "serde" is an intentional feature, enabling serialization of LanguageIdentifier and others:
-extra_features = ["serde"]
-
-[package.metadata.docs.rs]
-all-features = true
-
-[dependencies]
-serde = { version = "1.0", optional = true }
