@@ -15,9 +15,8 @@ description = "Run quick version of all lints and tests"
 category = "ICU4X Development"
 dependencies = [
     "test-all-features",
-    "fmt-check",
+    "tidy",
     "clippy-all",
-    "tidy-minus-fmt",
     "test-ffi",
     "test-cppdoc",
 ]
