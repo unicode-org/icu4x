@@ -37,6 +37,7 @@ icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
 icu_provider_fs = { path = "../../provider/fs/" }
+tinystr = "0.4.5"
 writeable = { path = "../../utils/writeable/" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
