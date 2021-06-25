@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624621223873,
+  "lastUpdate": 1624638410108,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7889,6 +7889,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37485283,
             "range": "± 421604",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bd69410c5313bc1c476c88c806743a8c3dac1dc6",
+          "message": "Add icu4x_fixed_decimal_create_fromstr (#822)\n\n* Add icu4x_fixed_decimal_create_fromstr",
+          "timestamp": "2021-06-25T12:20:47-04:00",
+          "tree_id": "31e7c09fb93398d054657f21bd83fa7fcf3fca70",
+          "url": "https://github.com/unicode-org/icu4x/commit/bd69410c5313bc1c476c88c806743a8c3dac1dc6"
+        },
+        "date": 1624638407396,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 32716549,
+            "range": "± 1087599",
             "unit": "ns/iter"
           }
         ]
