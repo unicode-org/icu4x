@@ -67,7 +67,12 @@ int main() {
 
     icu4x_fixed_decimal_destroy(decimal);
 
-    decimal = icu4x_fixed_decimal_create_fromstr("1000007.070", 11);
+    ICU4XCreateFixedDecimalResult fd_result = icu4x_fixed_decimal_create_fromstr("1000007.070", 11);
+    if (!fd_result.success) {
+        printf("Failed to create FixedDecimal from string.\n");
+        return 1;
+    }
+    decimal = fd_result.fd;
 
     write = icu4x_simple_writeable(output, 40);
 

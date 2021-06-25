@@ -13,6 +13,15 @@ use writeable::Writeable;
 /// Can be obtained via [`icu4x_fixed_decimal_create()`] and destroyed via [`icu4x_fixed_decimal_destroy()`]
 pub type ICU4XFixedDecimal = FixedDecimal;
 
+#[repr(C)]
+/// This is the result returned by [`icu4x_fixed_decimal_create_fromstr()`]
+pub struct ICU4XCreateFixedDecimalResult {
+    /// Will be null if `success` is [`false`]
+    pub fd: *mut ICU4XFixedDecimal,
+    /// Currently just a boolean, but we might add a proper error enum as necessary
+    pub success: bool,
+}
+
 #[no_mangle]
 /// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
 /// `number`.
@@ -34,14 +43,20 @@ pub extern "C" fn icu4x_fixed_decimal_create(number: i64) -> *mut ICU4XFixedDeci
 pub unsafe extern "C" fn icu4x_fixed_decimal_create_fromstr(
     value: *const u8,
     len: usize,
-) -> *mut ICU4XFixedDecimal {
+) -> ICU4XCreateFixedDecimalResult {
     let bytes = slice::from_raw_parts(value, len);
     if let Ok(as_str) = std::str::from_utf8(bytes) {
         if let Ok(fd) = as_str.parse::<FixedDecimal>() {
-            return Box::into_raw(Box::new(fd));
+            return ICU4XCreateFixedDecimalResult {
+                fd: Box::into_raw(Box::new(fd)),
+                success: true,
+            };
         }
     }
-    std::ptr::null_mut()
+    ICU4XCreateFixedDecimalResult {
+        fd: std::ptr::null_mut(),
+        success: false,
+    }
 }
 
 #[no_mangle]

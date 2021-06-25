@@ -12,8 +12,13 @@ extern "C" {
 // opaque
 typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 
+typedef struct {
+    ICU4XFixedDecimal* fd;
+    bool success;
+} ICU4XCreateFixedDecimalResult;
+
 ICU4XFixedDecimal* icu4x_fixed_decimal_create(int64_t number);
-ICU4XFixedDecimal* icu4x_fixed_decimal_create_fromstr(const char* value, size_t len);
+ICU4XCreateFixedDecimalResult icu4x_fixed_decimal_create_fromstr(const char* value, size_t len);
 bool icu4x_fixed_decimal_multiply_pow10(ICU4XFixedDecimal* fd, int16_t power);
 void icu4x_fixed_decimal_negate(ICU4XFixedDecimal* fd);
 
