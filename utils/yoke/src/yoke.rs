@@ -264,7 +264,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 
     /// Mutate the stored [`Yokeable`] data.
     ///
-    /// See [`Yokeable::with_mut()`] for why this operation is safe.
+    /// See [`Yokeable::transform_mut()`] for why this operation is safe.
     ///
     /// # Example
     ///
@@ -309,7 +309,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// assert_eq!(&*bar.get().owned, &[]);
     ///
     /// bar.with_mut(|bar| {
-    ///     bar.string.to_mut().push_str(" world");   
+    ///     bar.string.to_mut().push_str(" world");
     ///     bar.owned.extend_from_slice(&[1, 4, 1, 5, 9]);   
     /// });
     ///
@@ -332,7 +332,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #         ret
     /// #     }
     /// #
-    /// #     fn with_mut<F>(&'a mut self, f: F)
+    /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
@@ -344,7 +344,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output),
     {
-        self.yokeable.with_mut(f)
+        self.yokeable.transform_mut(f)
     }
 }
 
