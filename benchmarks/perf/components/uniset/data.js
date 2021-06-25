@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624588375094,
+  "lastUpdate": 1624621223873,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7859,6 +7859,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31376095,
             "range": "± 89429",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3c91d59f9051ed0a871343228b52034f22244e63",
+          "message": "Add subtag accessors to Locale C FFI (#803)\n\n* Add subtag accessors to Locale C FFI\r\n\r\nFixes #757.",
+          "timestamp": "2021-06-25T07:34:36-04:00",
+          "tree_id": "f7d011669ce607ec9b33f9157630a5bb6a46c9a0",
+          "url": "https://github.com/unicode-org/icu4x/commit/3c91d59f9051ed0a871343228b52034f22244e63"
+        },
+        "date": 1624621221624,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 37485283,
+            "range": "± 421604",
             "unit": "ns/iter"
           }
         ]
