@@ -12,6 +12,7 @@ pub trait AsCalendar {
 
 impl<C: Calendar> AsCalendar for C {
     type Calendar = C;
+    #[inline]
     fn as_calendar(&self) -> &Self {
         self
     }
@@ -24,45 +25,60 @@ pub struct Date<A: AsCalendar> {
 
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from an ISO date and some calendar representation
+    #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
         let inner = calendar.as_calendar().date_from_iso(iso);
         Date { inner, calendar }
     }
 
+    #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
         self.calendar.as_calendar().date_to_iso(self.inner())
     }
 
     /// The number of months in the year of this date
+    #[inline]
     pub fn months_in_year(&self) -> u8 {
-        self.calendar.as_calendar().months_in_year(&self.inner)
+        self.calendar.as_calendar().months_in_year(self.inner())
     }
 
     /// The number of days in the year of this date
+    #[inline]
     pub fn days_in_year(&self) -> u32 {
-        self.calendar.as_calendar().days_in_year(&self.inner)
+        self.calendar.as_calendar().days_in_year(self.inner())
     }
 
     /// The number of days in the month of this date
+    #[inline]
     pub fn days_in_month(&self) -> u8 {
-        self.calendar.as_calendar().days_in_month(&self.inner)
+        self.calendar.as_calendar().days_in_month(self.inner())
     }
 
     /// The day of the week for this date
     ///
     /// Monday is 1, Sunday is 7, according to ISO
+    #[inline]
     pub fn day_of_week(&self) -> u8 {
-        self.calendar.as_calendar().day_of_week(&self.inner)
+        self.calendar.as_calendar().day_of_week(self.inner())
     }
 
     /// Add a `duration` to this date, mutating it
+    #[inline]
     pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
         self.calendar
             .as_calendar()
             .offset_date(&mut self.inner, duration)
     }
 
+    /// Add a `duration` to this date, returning the new one
+    #[inline]
+    pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
+        self.add(duration);
+        self
+    }
+
     /// Calculating the duration between `other - self`
+    #[inline]
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
         other: &Date<B>,
@@ -79,11 +95,13 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Calling this outside of calendar implementations is sound, but calendar implementations are not
     /// expected to do anything sensible with such invalid dates.
+    #[inline]
     pub fn construct_unchecked(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
     }
 
     /// Get the inner date implementation. Should not be called outside of calendar implementations
+    #[inline]
     pub fn inner(&self) -> &<A::Calendar as Calendar>::DateInner {
         &self.inner
     }
