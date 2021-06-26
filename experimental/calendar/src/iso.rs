@@ -5,7 +5,7 @@
 use crate::{Calendar, Date, DateDuration, DurationUnit};
 use std::convert::{TryFrom, TryInto};
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
 pub struct Iso;
 
