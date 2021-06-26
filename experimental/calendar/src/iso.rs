@@ -229,10 +229,7 @@ impl Date<Iso> {
             }
         }
 
-        Ok(Date::from_raw(
-            IsoDateInner { day, month, year },
-            Iso,
-        ))
+        Ok(Date::from_raw(IsoDateInner { day, month, year }, Iso))
     }
     pub fn new_iso_date_from_integers(day: u8, month: u8, year: i32) -> Result<Date<Iso>, ()> {
         Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
