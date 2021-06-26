@@ -15,6 +15,7 @@ members = [
     "components/plurals",
     "components/uniset",
     "experimental/bies",
+    "experimental/calendar",
     "experimental/provider_ppucd",
     "experimental/provider_static",
     "experimental/segmenter",
