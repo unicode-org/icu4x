@@ -217,14 +217,10 @@ impl Calendar for Iso {
     }
 }
 
-impl Iso {
-    pub fn new() -> Self {
-        Self
-    }
-
-    pub fn create_iso_date(day: IsoDay, month: IsoMonth, year: IsoYear) -> Result<Date<Iso>, ()> {
+impl Date<Iso> {
+    pub fn new_iso_date(day: IsoDay, month: IsoMonth, year: IsoYear) -> Result<Date<Iso>, ()> {
         if day.0 > 28 {
-            let bound = Self::days_in_month(year, month);
+            let bound = Iso::days_in_month(year, month);
             if day.0 < bound {
                 return Err(());
             }
@@ -235,9 +231,14 @@ impl Iso {
             Iso,
         ))
     }
+    pub fn new_iso_date_from_integers(day: u8, month: u8, year: i32) -> Result<Date<Iso>, ()> {
+        Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
+    }
+}
 
-    pub fn create_iso_date_from_integers(day: u8, month: u8, year: i32) -> Result<Date<Iso>, ()> {
-        Self::create_iso_date(day.try_into()?, month.try_into()?, year.into())
+impl Iso {
+    pub fn new() -> Self {
+        Self
     }
 
     pub fn is_leap_year(year: IsoYear) -> bool {
@@ -262,14 +263,14 @@ mod test {
     fn test_day_of_week() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Iso::create_iso_date_from_integers(23, 6, 2021)
+            Date::new_iso_date_from_integers(23, 6, 2021)
                 .unwrap()
                 .day_of_week(),
             3
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Iso::create_iso_date_from_integers(2, 2, 1983)
+            Date::new_iso_date_from_integers(2, 2, 1983)
                 .unwrap()
                 .day_of_week(),
             3
@@ -289,8 +290,8 @@ mod test {
 
     #[test]
     fn test_offset() {
-        let today = Iso::create_iso_date_from_integers(23, 6, 2021).unwrap();
-        let today_plus_5000 = Iso::create_iso_date_from_integers(2, 3, 2035).unwrap();
+        let today = Date::new_iso_date_from_integers(23, 6, 2021).unwrap();
+        let today_plus_5000 = Date::new_iso_date_from_integers(2, 3, 2035).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
         let offset = today
@@ -298,8 +299,8 @@ mod test {
             .added(simple_subtract(&today_plus_5000, &today));
         assert_eq!(offset, today_plus_5000);
 
-        let today = Iso::create_iso_date_from_integers(23, 6, 2021).unwrap();
-        let today_minus_5000 = Iso::create_iso_date_from_integers(15, 10, 2007).unwrap();
+        let today = Date::new_iso_date_from_integers(23, 6, 2021).unwrap();
+        let today_minus_5000 = Date::new_iso_date_from_integers(15, 10, 2007).unwrap();
         let offset = today.clone().added(DateDuration::new(0, 0, 0, -5000));
         assert_eq!(offset, today_minus_5000);
         let offset = today
