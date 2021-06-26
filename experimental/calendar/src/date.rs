@@ -96,7 +96,7 @@ impl<A: AsCalendar> Date<A> {
     /// Calling this outside of calendar implementations is sound, but calendar implementations are not
     /// expected to do anything sensible with such invalid dates.
     #[inline]
-    pub fn construct_unchecked(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
+    pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
     }
 

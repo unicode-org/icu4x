@@ -95,7 +95,7 @@ impl Calendar for Iso {
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        Date::construct_unchecked(*date, Iso)
+        Date::from_raw(*date, Iso)
     }
 
     fn months_in_year(&self, _date: &Self::DateInner) -> u8 {
@@ -116,7 +116,7 @@ impl Calendar for Iso {
 
     fn day_of_week(&self, date: &Self::DateInner) -> u8 {
         // TODO (Manishearth) share code with icu_datetime
-        
+
         // For the purposes of the calculation here, Monday is 0, Sunday is 6
         // ISO has Monday=1, Sunday=7, which we transform in the last step
 
@@ -229,7 +229,7 @@ impl Date<Iso> {
             }
         }
 
-        Ok(Date::construct_unchecked(
+        Ok(Date::from_raw(
             IsoDateInner { day, month, year },
             Iso,
         ))
