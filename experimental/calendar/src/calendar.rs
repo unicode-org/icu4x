@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{Date, DateDuration, DurationUnit, Iso};
-use std::fmt::Debug;
 
 /// A calendar implementation
 ///
@@ -13,7 +12,7 @@ use std::fmt::Debug;
 /// Individual [`Calendar`] implementations may have inherent utility methods
 /// allowing for direct construction, etc.
 pub trait Calendar {
-    type DateInner: PartialEq + Eq + Debug + Clone;
+    type DateInner: PartialEq + Eq + Clone;
     /// Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso>;
