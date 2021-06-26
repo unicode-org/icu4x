@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624656632176,
+  "lastUpdate": 1624727497981,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8921,6 +8921,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5237,
             "range": "± 249",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "67bd340dd7cb6e1a958ceb36f8f1d4e73c63742e",
+          "message": "Add initial calendars crate (#827)\n\n* Add initial calendars crate\r\n\r\n* rm serde\r\n\r\n* review fixes\r\n\r\n* fmt\r\n\r\n* Move iso constructors to Date\r\n\r\n* review fixes\r\n\r\n* rm where\r\n\r\n* scope Debug bound\r\n\r\n* construct_unchecked -> from_raw\r\n\r\n* fmt\r\n\r\n* add Default\r\n\r\n* fix clippy\r\n\r\n* +errors",
+          "timestamp": "2021-06-26T10:05:01-07:00",
+          "tree_id": "28a78ebc36f4ad188d362de61ea4eb1171992d62",
+          "url": "https://github.com/unicode-org/icu4x/commit/67bd340dd7cb6e1a958ceb36f8f1d4e73c63742e"
+        },
+        "date": 1624727492886,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3386,
+            "range": "± 177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5003,
+            "range": "± 256",
             "unit": "ns/iter"
           }
         ]
