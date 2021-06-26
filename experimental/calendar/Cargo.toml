@@ -24,3 +24,6 @@ include = [
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true

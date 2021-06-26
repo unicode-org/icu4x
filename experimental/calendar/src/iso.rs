@@ -115,6 +115,8 @@ impl Calendar for Iso {
     }
 
     fn day_of_week(&self, date: &Self::DateInner) -> u8 {
+        // TODO (Manishearth) share code with icu_datetime
+        
         // For the purposes of the calculation here, Monday is 0, Sunday is 6
         // ISO has Monday=1, Sunday=7, which we transform in the last step
 
@@ -204,7 +206,8 @@ impl Calendar for Iso {
         _smallest_unit: DurationUnit,
     ) -> DateDuration<Self> {
         let mut difference = DateDuration::default();
-        // XXXManishearth handle the unit bounds and rounding behavior
+        // TODO (Manishearth) handle the unit bounds and rounding behavior
+        // (perhaps share code with icu_datetime)
         difference.years = date1.year.0 - date2.year.0;
         difference.months = date1.month.0 as i32 - date2.month.0 as i32;
         difference.days = date1.day.0 as i32 - date2.day.0 as i32;

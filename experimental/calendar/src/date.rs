@@ -120,7 +120,7 @@ where
 
 impl<A: AsCalendar> Eq for Date<A> {}
 
-impl<A: AsCalendar> fmt::Debug for Date<A> {
+impl<A: AsCalendar> fmt::Debug for Date<A> where {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
             f,
