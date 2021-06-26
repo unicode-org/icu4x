@@ -5,9 +5,11 @@
 mod calendar;
 mod date;
 mod duration;
+mod error;
 pub mod iso;
 
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date};
 pub use duration::{DateDuration, DurationUnit};
+pub use error::Error;
 pub use iso::Iso;
