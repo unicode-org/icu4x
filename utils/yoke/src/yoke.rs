@@ -18,8 +18,10 @@ use std::sync::Arc;
 /// not the actual lifetime of the data, rather it is a convenient way to erase
 /// the lifetime and make it dynamic.
 ///
-/// `C` is the "cart", which `Y` may contain references to. A [`Yoke`] can be constructed
-/// with such references using [`Self::attach_to_cart()`].
+/// `C` is the "cart", which `Y` may contain references to.
+///
+/// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
+/// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
 ///
 /// # Example
 ///
@@ -55,11 +57,45 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
-    /// Construct a [`Yoke`] by yokeing an object to a cart. This is the primary constructor
-    /// for [`Yoke`].
+    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
     ///
-    /// This method is currently unusable due to a [compiler bug](https://github.com/rust-lang/rust/issues/84937),
-    /// use [`Yoke::attach_to_cart_badly()`] instead
+    /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
+    ///
+    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
+    /// for this function may not compile; if this happens, use
+    /// [`Yoke::attach_to_cart_badly()`] instead.
+    pub fn attach_to_cart<F>(cart: C, f: F) -> Self
+    where
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
+    {
+        let deserialized = f(cart.deref());
+        Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        }
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
+    /// deserializer function, the error is passed up to the caller.
+    ///
+    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
+    /// for this function may not compile; if this happens, use
+    /// [`Yoke::try_attach_to_cart_badly()`] instead.
+    pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
+    where
+        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        })
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
+    ///
+    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
+    /// see [`Yoke::attach_to_cart()`].
     ///
     /// # Example
     ///
@@ -86,21 +122,6 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// assert_eq!(&**yoke.get(), "hello");
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// ```
-    pub fn attach_to_cart<F>(cart: C, f: F) -> Self
-    where
-        F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    {
-        let deserialized = f(cart.deref());
-        Self {
-            yokeable: unsafe { Y::make(deserialized) },
-            cart,
-        }
-    }
-
-    /// Temporary version of [`Yoke::attach_to_cart()`]
-    /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
-    ///
-    /// See its docs for more details
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
@@ -110,6 +131,38 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
         }
+    }
+
+    /// Construct a [`Yoke`] by yokeing an object to a cart. If an error occurs in the
+    /// deserializer function, the error is passed up to the caller.
+    ///
+    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
+    /// see [`Yoke::try_attach_to_cart()`].
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use yoke::{Yoke, Yokeable};
+    /// # use std::rc::Rc;
+    /// # use std::borrow::Cow;
+    /// let rc = Rc::new([0xb, 0xa, 0xd]);
+    ///
+    /// let yoke_result: Result<Yoke<Cow<str>, Rc<[u8]>>, _> =
+    ///     Yoke::try_attach_to_cart_badly(rc, |data: &[u8]| {
+    ///         bincode::deserialize(data)
+    ///     });
+    ///
+    /// assert!(matches!(yoke_result, Err(_)));
+    /// ```
+    pub fn try_attach_to_cart_badly<E>(
+        cart: C,
+        f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+    ) -> Result<Self, E> {
+        let deserialized = f(cart.deref())?;
+        Ok(Self {
+            yokeable: unsafe { Y::make(deserialized) },
+            cart,
+        })
     }
 }
 
@@ -149,14 +202,69 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 
     /// Get a reference to the backing cart.
     ///
-    /// This can be useful when building caches, etc
+    /// This can be useful when building caches, etc. However, if you plan to store the cart
+    /// separately from the yoke, read the note of caution below in [`Yoke::into_backing_cart`].
     pub fn backing_cart(&self) -> &C {
         &self.cart
     }
 
+    /// Get the backing cart by value, dropping the yokeable object.
+    ///
+    /// **Caution:** Calling this method could cause information saved in the yokeable object but
+    /// not the cart to be lost. Use this method only if the yokeable object cannot contain its
+    /// own information.
+    ///
+    /// # Example
+    ///
+    /// Good example: the yokeable object is only a reference, so no information can be lost.
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    ///
+    /// let local_data = "foo".to_string();
+    /// let yoke = Yoke::<
+    ///     &'static str,
+    ///     Box<String>
+    /// >::attach_to_box_cart(Box::new(local_data));
+    /// assert_eq!(*yoke.get(), "foo");
+    ///
+    /// // Get back the cart
+    /// let cart = yoke.into_backing_cart();
+    /// assert_eq!(&*cart, "foo");
+    /// ```
+    ///
+    /// Bad example: information specified in `.with_mut()` is lost.
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///
+    /// let local_data = "foo".to_string();
+    /// let mut yoke = Yoke::<
+    ///     Cow<'static, str>,
+    ///     Box<String>
+    /// >::attach_to_box_cart(Box::new(local_data));
+    /// assert_eq!(yoke.get(), "foo");
+    ///
+    /// // Override data in the cart
+    /// yoke.with_mut(|cow| {
+    ///     let mut_str = cow.to_mut();
+    ///     mut_str.clear();
+    ///     mut_str.push_str("bar");
+    /// });
+    /// assert_eq!(yoke.get(), "bar");
+    ///
+    /// // Get back the cart
+    /// let cart = yoke.into_backing_cart();
+    /// assert_eq!(&*cart, "foo"); // WHOOPS!
+    /// ```
+    pub fn into_backing_cart(self) -> C {
+        self.cart
+    }
+
     /// Mutate the stored [`Yokeable`] data.
     ///
-    /// See [`Yokeable::with_mut()`] for why this operation is safe.
+    /// See [`Yokeable::transform_mut()`] for why this operation is safe.
     ///
     /// # Example
     ///
@@ -201,7 +309,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// assert_eq!(&*bar.get().owned, &[]);
     ///
     /// bar.with_mut(|bar| {
-    ///     bar.string.to_mut().push_str(" world");   
+    ///     bar.string.to_mut().push_str(" world");
     ///     bar.owned.extend_from_slice(&[1, 4, 1, 5, 9]);   
     /// });
     ///
@@ -224,7 +332,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #         ret
     /// #     }
     /// #
-    /// #     fn with_mut<F>(&'a mut self, f: F)
+    /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
@@ -236,7 +344,35 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output),
     {
-        self.yokeable.with_mut(f)
+        self.yokeable.transform_mut(f)
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
+    /// Construct a new [`Yoke`] from static data. There will be no
+    /// references to `cart` here since [`Yokeable`]s are `'static`,
+    /// this is good for e.g. constructing fully owned
+    /// [`Yoke`]s with no internal borrowing.
+    ///
+    /// This is similar to [`Yoke::new_owned()`] but it does not allow you to
+    /// mix the [`Yoke`] with borrowed data. This is primarily useful
+    /// for using [`Yoke`] in generic scenarios.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// # use yoke::Yoke;
+    /// # use std::borrow::Cow;
+    /// # use std::rc::Rc;
+    ///
+    /// let owned: Cow<str> = "hello".to_owned().into();
+    /// // this yoke can be intermingled with actually-borrowed Yokes
+    /// let yoke: Yoke<Cow<str>, ()> = Yoke::new_always_owned(owned);
+    ///
+    /// assert_eq!(yoke.get(), "hello");
+    /// ```
+    pub fn new_always_owned(yokeable: Y) -> Self {
+        Self { yokeable, cart: () }
     }
 }
 
@@ -248,6 +384,9 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     ///
     /// This can be paired with [`Yoke::attach_to_option_cart()`] to mix owned
     /// and borrowed data.
+    ///
+    /// If you do not wish to pair this with borrowed data, [`Yoke::new_always_owned()`] can
+    /// be used to get a [`Yoke`] API on always-owned data.
     ///
     /// # Example
     ///
@@ -373,6 +512,18 @@ where
         Yoke {
             yokeable: unsafe { Y::make(self.get().clone()) },
             cart: self.cart,
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>> Clone for Yoke<Y, ()>
+where
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
+{
+    fn clone(&self) -> Self {
+        Yoke {
+            yokeable: unsafe { Y::make(self.get().clone()) },
+            cart: (),
         }
     }
 }

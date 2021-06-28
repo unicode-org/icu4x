@@ -23,7 +23,7 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
         ptr::read(ptr)
     }
 
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
@@ -46,7 +46,7 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
         ptr::read(ptr)
     }
 
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
@@ -84,7 +84,7 @@ where
         ptr::read(ptr)
     }
 
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {

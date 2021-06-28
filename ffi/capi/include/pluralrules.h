@@ -11,8 +11,12 @@
 #include "provider.h"
 #include "locale.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // opaque
-typedef struct ICU4XPluralRules ICU4XPluralRules; 
+typedef struct ICU4XPluralRules ICU4XPluralRules;
 
 typedef struct {
     ICU4XPluralRules* rules;
@@ -34,6 +38,15 @@ typedef enum {
 } ICU4XPluralCategory;
 
 typedef struct {
+    bool zero;
+    bool one;
+    bool two;
+    bool few;
+    bool many;
+    bool other;
+} ICU4XPluralCategories;
+
+typedef struct {
     uint64_t i;
     size_t v;
     size_t w;
@@ -42,9 +55,19 @@ typedef struct {
     size_t c;
 } ICU4XPluralOperands;
 
+typedef struct {
+    ICU4XPluralOperands operands;
+    bool success;
+} ICU4XCreatePluralOperandsResult;
 
 ICU4XCreatePluralRulesResult icu4x_plural_rules_create(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XPluralRuleType ty);
+ICU4XCreatePluralOperandsResult icu4x_plural_operands_create(const char* number, size_t len);
 ICU4XPluralCategory icu4x_plural_rules_select(const ICU4XPluralRules* rules, const ICU4XPluralOperands* op);
+ICU4XPluralCategories icu4x_plural_rules_categories(const ICU4XPluralRules* rules);
 void icu4x_plural_rules_destroy(ICU4XPluralRules* rules);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ICU4X_PLURALRULES_H

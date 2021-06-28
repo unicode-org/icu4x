@@ -5,7 +5,8 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub struct LikelySubtagsTest {
+pub struct CanonicalizationTest {
     pub input: String,
     pub output: String,
+    pub disabled: Option<bool>,
 }

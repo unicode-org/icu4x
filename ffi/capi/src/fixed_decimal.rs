@@ -5,6 +5,7 @@
 use fixed_decimal::FixedDecimal;
 
 use crate::custom_writeable::ICU4XWriteable;
+use std::slice;
 use writeable::Writeable;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimal`]
@@ -12,20 +13,56 @@ use writeable::Writeable;
 /// Can be obtained via [`icu4x_fixed_decimal_create()`] and destroyed via [`icu4x_fixed_decimal_destroy()`]
 pub type ICU4XFixedDecimal = FixedDecimal;
 
+#[repr(C)]
+/// This is the result returned by [`icu4x_fixed_decimal_create_fromstr()`]
+pub struct ICU4XCreateFixedDecimalResult {
+    /// Will be null if `success` is [`false`]
+    pub fd: *mut ICU4XFixedDecimal,
+    /// Currently just a boolean, but we might add a proper error enum as necessary
+    pub success: bool,
+}
+
 #[no_mangle]
 /// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
-/// `magnitude`.
-//
-// We can add additional constructors from strings, floats, etc as the need arises
-pub extern "C" fn icu4x_fixed_decimal_create(magnitude: i64) -> *mut ICU4XFixedDecimal {
-    let fd = FixedDecimal::from(magnitude);
+/// `number`.
+pub extern "C" fn icu4x_fixed_decimal_create(number: i64) -> *mut ICU4XFixedDecimal {
+    let fd = FixedDecimal::from(number);
     Box::into_raw(Box::new(fd))
+}
+
+#[no_mangle]
+/// FFI version of [`FixedDecimal::FromStr()`], see its docs for more details
+///
+/// # Safety
+/// `value` and `len` should point to a valid ASCII string of length `len`.
+///
+/// It does not need to be be null terminated, and `len` should not include a null
+/// terminator (this will just cause the function to panic, and is not a safety requirement).
+///
+/// Returns nullptr if passed an invalid string.
+pub unsafe extern "C" fn icu4x_fixed_decimal_create_fromstr(
+    value: *const u8,
+    len: usize,
+) -> ICU4XCreateFixedDecimalResult {
+    let bytes = slice::from_raw_parts(value, len);
+    if let Ok(as_str) = std::str::from_utf8(bytes) {
+        if let Ok(fd) = as_str.parse::<FixedDecimal>() {
+            return ICU4XCreateFixedDecimalResult {
+                fd: Box::into_raw(Box::new(fd)),
+                success: true,
+            };
+        }
+    }
+    ICU4XCreateFixedDecimalResult {
+        fd: std::ptr::null_mut(),
+        success: false,
+    }
 }
 
 #[no_mangle]
 /// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
 ///
-/// Returns `true` if the multiplication was successful.
+/// Returns a boolean indicating whether the operation was successful.
 pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
     fd: &mut ICU4XFixedDecimal,
     power: i16,

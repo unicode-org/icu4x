@@ -5,7 +5,7 @@
 use crate::arithmetic;
 use crate::date::{DateTimeInput, DateTimeInputWithLocale, LocalizedDateTimeInput};
 use crate::error::DateTimeFormatError as Error;
-use crate::fields::{self, FieldLength, FieldSymbol};
+use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeSymbols;
@@ -46,7 +46,7 @@ where
     T: DateTimeInput,
 {
     pub(crate) pattern: &'l Pattern,
-    pub(crate) symbols: &'l provider::gregory::DateSymbolsV1,
+    pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
 }
@@ -95,7 +95,7 @@ where
 
 pub fn write_pattern<T, W>(
     pattern: &crate::pattern::Pattern,
-    symbols: &provider::gregory::DateSymbolsV1,
+    symbols: Option<&provider::gregory::DateSymbolsV1>,
     datetime: &T,
     locale: &Locale,
     w: &mut W,
@@ -114,10 +114,15 @@ where
     Ok(())
 }
 
+// This function assumes that the correct decision has been
+// made regarding availability of symbols in the caller.
+//
+// When modifying the list of fields using symbols,
+// update the matching query in `analyze_pattern` function.
 pub(super) fn write_field<T, W>(
     pattern: &crate::pattern::Pattern,
     field: &fields::Field,
-    symbols: &crate::provider::gregory::DateSymbolsV1,
+    symbols: Option<&crate::provider::gregory::DateSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>
@@ -146,16 +151,18 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = symbols.get_symbol_for_month(
-                    month,
-                    length,
-                    datetime
-                        .datetime()
-                        .month()
-                        .ok_or(Error::MissingInputField)?
-                        .number as usize
-                        - 1,
-                );
+                let symbol = symbols
+                    .expect("Expect symbols to be present")
+                    .get_symbol_for_month(
+                        month,
+                        length,
+                        datetime
+                            .datetime()
+                            .month()
+                            .ok_or(Error::MissingInputField)?
+                            .number as usize
+                            - 1,
+                    );
                 w.write_str(symbol)?
             }
         },
@@ -164,7 +171,9 @@ where
                 .datetime()
                 .iso_weekday()
                 .ok_or(Error::MissingInputField)?;
-            let symbol = symbols.get_symbol_for_weekday(weekday, field.length, dow);
+            let symbol = symbols
+                .expect("Expect symbols to be present")
+                .get_symbol_for_weekday(weekday, field.length, dow);
             w.write_str(symbol)?
         }
         FieldSymbol::Day(..) => format_number(
@@ -221,21 +230,60 @@ where
             field.length,
         )?,
         FieldSymbol::DayPeriod(period) => {
-            let symbol = symbols.get_symbol_for_day_period(
-                period,
-                field.length,
-                datetime.datetime().hour().ok_or(Error::MissingInputField)?,
-                arithmetic::is_top_of_hour(
-                    pattern,
-                    datetime.datetime().minute().map(u8::from).unwrap_or(0),
-                    datetime.datetime().second().map(u8::from).unwrap_or(0),
-                ),
-            );
+            let symbol = symbols
+                .expect("Expect symbols to be present")
+                .get_symbol_for_day_period(
+                    period,
+                    field.length,
+                    datetime.datetime().hour().ok_or(Error::MissingInputField)?,
+                    arithmetic::is_top_of_hour(
+                        pattern,
+                        datetime.datetime().minute().map(u8::from).unwrap_or(0),
+                        datetime.datetime().second().map(u8::from).unwrap_or(0),
+                    ),
+                );
             w.write_str(symbol)?
         }
         field @ FieldSymbol::TimeZone(_) => return Err(Error::UnsupportedField(field)),
     };
     Ok(())
+}
+
+// This function determins whether the struct will load symbols data.
+// Keep it in sync with the `write_field` use of symbols.
+pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<bool, &Field> {
+    let fields = pattern.items().iter().filter_map(|p| match p {
+        PatternItem::Field(field) => Some(field),
+        _ => None,
+    });
+
+    let mut requires_symbols = false;
+
+    for field in fields {
+        if !requires_symbols {
+            requires_symbols = match field.symbol {
+                FieldSymbol::Month(_) => {
+                    !matches!(field.length, FieldLength::One | FieldLength::TwoDigit)
+                }
+                FieldSymbol::Weekday(_) | FieldSymbol::DayPeriod(_) => true,
+                _ => false,
+            }
+        }
+
+        if supports_time_zones {
+            if requires_symbols {
+                // If we require time zones, and symbols, we know all
+                // we need to return already.
+                break;
+            }
+        } else if matches!(field.symbol, FieldSymbol::TimeZone(_)) {
+            // If we don't support time zones, and encountered a time zone
+            // field, error out.
+            return Err(field);
+        }
+    }
+
+    Ok(requires_symbols)
 }
 
 #[cfg(test)]
@@ -246,14 +294,14 @@ mod tests {
     #[cfg(feature = "provider_serde")]
     fn test_basic() {
         use crate::mock::datetime::MockDateTime;
-        use crate::provider::gregory::DatesV1;
+        use crate::provider::gregory::DateSymbolsV1Marker;
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
-        let data: DataPayload<'_, DatesV1> = provider
+        let data: DataPayload<DateSymbolsV1Marker> = provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: provider::key::GREGORY_V1,
+                    key: provider::key::GREGORY_DATE_SYMBOLS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some("en".parse().unwrap()),
@@ -268,7 +316,7 @@ mod tests {
         let mut sink = String::new();
         write_pattern(
             &pattern,
-            &data.get().symbols,
+            Some(&data.get()),
             &datetime,
             &"und".parse().unwrap(),
             &mut sink,

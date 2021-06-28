@@ -9,17 +9,6 @@ use std::borrow::Cow;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct DatesV1 {
-    pub symbols: DateSymbolsV1,
-
-    pub patterns: PatternsV1,
-}
-
-#[derive(Debug, PartialEq, Clone, Default)]
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
 pub struct DateSymbolsV1 {
     pub months: months::ContextsV1,
 
@@ -28,18 +17,30 @@ pub struct DateSymbolsV1 {
     pub day_periods: day_periods::ContextsV1,
 }
 
+icu_provider::impl_data_marker_no_lifetime!(
+    DateSymbolsV1,
+    /// Marker type for [`DateSymbolsV1`]
+    DateSymbolsV1Marker
+);
+
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct PatternsV1 {
+pub struct DatePatternsV1 {
     pub date: patterns::LengthPatternsV1,
 
     pub time: patterns::LengthPatternsV1,
 
     pub datetime: patterns::DateTimeFormatsV1,
 }
+
+icu_provider::impl_data_marker_no_lifetime!(
+    DatePatternsV1,
+    /// Marker type for [`DatePatternsV1`]
+    DatePatternsV1Marker
+);
 
 macro_rules! symbols {
         ($name: ident, $expr: ty) => {

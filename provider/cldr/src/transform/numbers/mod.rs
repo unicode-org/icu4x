@@ -99,11 +99,11 @@ impl NumbersProvider {
     }
 }
 
-impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
+impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1Marker> for NumbersProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, DecimalSymbolsV1>, DataError> {
+    ) -> Result<DataResponse<'d, 's, DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let cldr_langid: CldrLangID = langid.clone().into();
@@ -139,7 +139,7 @@ impl<'d> DataProvider<'d, DecimalSymbolsV1> for NumbersProvider {
 }
 
 icu_provider::impl_dyn_provider!(NumbersProvider, {
-    _ => DecimalSymbolsV1,
+    _ => DecimalSymbolsV1Marker,
 }, SERDE_SE, 'd, 's);
 
 impl<'d> IterableDataProviderCore for NumbersProvider {
@@ -160,7 +160,7 @@ impl<'d> IterableDataProviderCore for NumbersProvider {
     }
 }
 
-impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
+impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, Self::Error> {
@@ -183,8 +183,8 @@ impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1 {
         Ok(Self {
             minus_sign_affixes: parsed_pattern.localize_sign(&symbols.minus_sign),
             plus_sign_affixes: parsed_pattern.localize_sign(&symbols.plus_sign),
-            decimal_separator: symbols.decimal.clone(),
-            grouping_separator: symbols.group.clone(),
+            decimal_separator: Cow::Owned(symbols.decimal.clone()),
+            grouping_separator: Cow::Owned(symbols.group.clone()),
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
@@ -202,7 +202,7 @@ fn test_basic() {
     let cldr_paths = crate::cldr_paths::for_test();
     let provider = NumbersProvider::try_from(&cldr_paths as &dyn CldrPaths).unwrap();
 
-    let ar_decimal: DataPayload<DecimalSymbolsV1> = provider
+    let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::SYMBOLS_V1,

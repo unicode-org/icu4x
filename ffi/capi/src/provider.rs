@@ -6,6 +6,9 @@ use icu_provider::serde::SerdeDeDataProvider;
 use icu_provider_fs::FsDataProvider;
 use std::{mem, ptr, slice, str};
 
+#[cfg(target_arch = "wasm32")]
+use icu_provider_static::StaticDataProvider;
+
 #[repr(C)]
 /// FFI version of [`SerdeDeDataProvider`]. See its docs for more details.
 ///
@@ -39,7 +42,7 @@ impl ICU4XDataProvider {
     }
 
     /// Construct a [`ICU4XDataProvider`] this from a boxed [`SerdeDeDataProvider`]
-    pub fn from_boxed(x: Box<dyn SerdeDeDataProvider<'static>>) -> Self {
+    pub fn from_boxed(x: Box<dyn SerdeDeDataProvider>) -> Self {
         unsafe {
             // If the layout changes this will error
             // Once Rust gets pointer metadata APIs we should switch to using those
@@ -48,7 +51,7 @@ impl ICU4XDataProvider {
     }
 
     /// Obtain the original boxed Rust [`SerdeDeDataProvider`] for this
-    pub fn into_boxed(self) -> Box<dyn SerdeDeDataProvider<'static>> {
+    pub fn into_boxed(self) -> Box<dyn SerdeDeDataProvider> {
         debug_assert!(self._field1 != 0);
         // If the layout changes this will error
         // Once Rust gets pointer metadata APIs we should switch to using those
@@ -56,7 +59,7 @@ impl ICU4XDataProvider {
     }
 
     /// Convert a borrowed reference to a borrowed [`SerdeDeDataProvider`]
-    pub fn as_dyn_ref(&self) -> &dyn SerdeDeDataProvider<'static> {
+    pub fn as_dyn_ref(&self) -> &dyn SerdeDeDataProvider {
         debug_assert!(self._field1 != 0);
         unsafe {
             // &dyn Trait and Box<dyn Trait> have the same layout
@@ -117,5 +120,22 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
             provider: ICU4XDataProvider::zeroed(),
             success: false,
         },
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[no_mangle]
+/// Constructs an [`StaticDataProvider`] and retirns it as an [`ICU4XDataProvider`].
+/// See [`StaticDataProvider::new()`] for more details.
+///
+/// # Safety
+///
+/// Only access `provider` in the result if `success` is [`true`].
+pub unsafe extern "C" fn icu4x_static_data_provider_create() -> ICU4XCreateDataProviderResult {
+    let provider = StaticDataProvider::new();
+    let erased = Box::new(provider);
+    ICU4XCreateDataProviderResult {
+        provider: ICU4XDataProvider::from_boxed(erased),
+        success: true,
     }
 }

@@ -39,37 +39,24 @@ fn get_linebreak_property_utf32_with_rule(
     codepoint: u32,
     line_break_rule: LineBreakRule,
     word_break_rule: WordBreakRule,
-    _ja_zh: bool,
 ) -> u8 {
-    let codepoint = codepoint as usize;
     if codepoint < 0x20000 {
-        if word_break_rule == WordBreakRule::BreakAll {
-            // Letter and number
-            let prop = UAX14_PROPERTY_TABLE[codepoint / 1024][(codepoint & 0x3ff)];
+        let codepoint = codepoint as usize;
+        let prop = UAX14_PROPERTY_TABLE[codepoint / 1024][(codepoint & 0x3ff)];
+
+        if word_break_rule == WordBreakRule::BreakAll
+            || line_break_rule == LineBreakRule::Loose
+            || line_break_rule == LineBreakRule::Normal
+        {
             return match prop {
-                CJ => ID, // All CJ's General category is Other_Letter (Lo).
+                CJ => ID, // All CJ's General_Category is Other_Letter (Lo).
                 _ => prop,
             };
         }
 
-        if line_break_rule == LineBreakRule::Loose {
-            let prop = UAX14_PROPERTY_TABLE[codepoint / 1024][(codepoint & 0x3ff)];
-            return match prop {
-                CJ => ID,
-                _ => prop,
-            };
-        }
-
-        if line_break_rule == LineBreakRule::Normal {
-            let prop = UAX14_PROPERTY_TABLE[codepoint / 1024][(codepoint & 0x3ff)];
-            return match prop {
-                CJ => ID,
-                _ => prop,
-            };
-        }
-
-        // CJ is mapped as NS on default
-        return UAX14_PROPERTY_TABLE[codepoint / 1024][(codepoint & 0x3ff)];
+        // CJ is treated as NS by default, yielding strict line breaking.
+        // https://www.unicode.org/reports/tr14/#CJ
+        return prop;
     }
 
     match codepoint {
@@ -93,9 +80,8 @@ fn get_linebreak_property_with_rule(
     codepoint: char,
     linebreak_rule: LineBreakRule,
     wordbreak_rule: WordBreakRule,
-    ja_zh: bool,
 ) -> u8 {
-    get_linebreak_property_utf32_with_rule(codepoint as u32, linebreak_rule, wordbreak_rule, ja_zh)
+    get_linebreak_property_utf32_with_rule(codepoint as u32, linebreak_rule, wordbreak_rule)
 }
 
 #[inline]
@@ -484,7 +470,7 @@ impl<'a> LineBreakIterator<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: char) -> u8 {
-        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule, self.ja_zh)
+        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -693,7 +679,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: u32) -> u8 {
-        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule, self.ja_zh)
+        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -724,12 +710,7 @@ mod tests {
     use crate::WordBreakRule;
 
     fn get_linebreak_property(codepoint: char) -> u8 {
-        get_linebreak_property_with_rule(
-            codepoint,
-            LineBreakRule::Strict,
-            WordBreakRule::Normal,
-            false,
-        )
+        get_linebreak_property_with_rule(codepoint, LineBreakRule::Strict, WordBreakRule::Normal)
     }
 
     #[test]

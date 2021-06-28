@@ -74,7 +74,7 @@ pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
-use provider::{resolver, PluralRuleStringsV1};
+use provider::{resolver, PluralRuleStringsV1, PluralRuleStringsV1Marker};
 use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -191,6 +191,8 @@ pub enum PluralCategory {
 impl PluralCategory {
     /// Returns an ordered iterator over variants of [`Plural Categories`].
     ///
+    /// Categories are returned in alphabetical order.
+    ///
     /// # Examples
     ///
     /// ```
@@ -198,24 +200,24 @@ impl PluralCategory {
     ///
     /// let mut categories = PluralCategory::all();
     ///
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Zero));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
-    /// assert_eq!(categories.next(), Some(&PluralCategory::Two));
     /// assert_eq!(categories.next(), Some(&PluralCategory::Few));
     /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
     /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::Two));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::Zero));
     /// assert_eq!(categories.next(), None);
     /// ```
     ///
     /// [`Plural Categories`]: PluralCategory
     pub fn all() -> impl ExactSizeIterator<Item = &'static Self> {
         [
-            Self::Zero,
-            Self::One,
-            Self::Two,
             Self::Few,
             Self::Many,
+            Self::One,
             Self::Other,
+            Self::Two,
+            Self::Zero,
         ]
         .iter()
     }
@@ -270,7 +272,7 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider::DataProvider
-    pub fn try_new<'d, D: DataProvider<'d, PluralRuleStringsV1<'d>> + ?Sized>(
+    pub fn try_new<'d, 's: 'd, D: DataProvider<'d, 's, PluralRuleStringsV1Marker> + ?Sized>(
         langid: LanguageIdentifier,
         data_provider: &D,
         type_: PluralRuleType,
@@ -339,6 +341,39 @@ impl PluralRules {
     /// [`Plural Operands`]: operands::PluralOperands
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
         self.selector.select(&input.into())
+    }
+
+    /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
+    /// based on the [`LanguageIdentifier`] and [`PluralRuleType`].
+    ///
+    /// The [`Plural Categories`] are returned in alphabetically sorted order.
+    ///
+    /// The category [`PluralCategory::Other`] is always included.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::macros::langid;
+    /// use icu::plurals::{PluralRules, PluralRuleType, PluralCategory};
+    /// use icu_provider::inv::InvariantDataProvider;
+    ///
+    /// let lid = langid!("fr");
+    ///
+    /// let dp = icu_testdata::get_provider();
+    ///
+    /// let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
+    ///     .expect("Failed to construct a PluralRules struct.");
+    ///
+    /// let mut categories = pr.categories();
+    /// assert_eq!(categories.next(), Some(&PluralCategory::Many));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::One));
+    /// assert_eq!(categories.next(), Some(&PluralCategory::Other));
+    /// assert_eq!(categories.next(), None);
+    /// ```
+    ///
+    /// [`Plural Categories`]: PluralCategory
+    pub fn categories(&self) -> impl Iterator<Item = &'static PluralCategory> + '_ {
+        self.selector.categories()
     }
 
     /// Lower-level constructor that allows constructing a [`PluralRules`] directly from

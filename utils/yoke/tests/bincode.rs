@@ -46,7 +46,7 @@ unsafe impl<'a> Yokeable<'a> for Bar<'static> {
         ret
     }
 
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + FnOnce(&'a mut Self::Output),
     {

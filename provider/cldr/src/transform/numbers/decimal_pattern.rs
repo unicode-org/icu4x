@@ -6,10 +6,10 @@
 //!
 //! Spec reference: https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns
 
-use std::str::FromStr;
-type SmallString8 = smallstr::SmallString<[u8; 8]>;
 use icu_decimal::provider::AffixesV1;
 use itertools::Itertools;
+use std::borrow::Cow;
+use std::str::FromStr;
 use thiserror::Error;
 
 #[derive(Error, Debug, PartialEq)]
@@ -23,8 +23,8 @@ pub enum Error {
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
 pub struct DecimalSubPattern {
-    pub prefix: SmallString8,
-    pub suffix: SmallString8,
+    pub prefix: String,
+    pub suffix: String,
     pub primary_grouping: u8,
     pub secondary_grouping: u8,
     pub min_fraction_digits: u8,
@@ -98,29 +98,16 @@ impl FromStr for DecimalPattern {
 }
 
 impl DecimalPattern {
-    pub fn localize_sign(&self, sign_str: &str) -> AffixesV1 {
+    pub fn localize_sign(&self, sign_str: &str) -> AffixesV1<'static> {
         // UTS 35: the absence of a negative pattern means a single prefixed sign
         let signed_affixes = self
             .negative
             .as_ref()
-            .map(|subpattern| {
-                (
-                    if subpattern.prefix.is_empty() {
-                        None
-                    } else {
-                        Some(subpattern.prefix.clone())
-                    },
-                    if subpattern.suffix.is_empty() {
-                        None
-                    } else {
-                        Some(subpattern.suffix.clone())
-                    },
-                )
-            })
-            .unwrap_or_else(|| (Some("-".into()), None));
+            .map(|subpattern| (subpattern.prefix.as_str(), subpattern.suffix.as_str()))
+            .unwrap_or_else(|| ("-", ""));
         AffixesV1 {
-            prefix: signed_affixes.0.map(|s| s.replace("-", sign_str).into()),
-            suffix: signed_affixes.1.map(|s| s.replace("-", sign_str).into()),
+            prefix: Cow::Owned(signed_affixes.0.replace("-", sign_str)),
+            suffix: Cow::Owned(signed_affixes.1.replace("-", sign_str)),
         }
     }
 }

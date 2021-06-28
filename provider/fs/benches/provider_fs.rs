@@ -17,7 +17,7 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             let provider = FsDataProvider::try_new("./tests/testdata/json")
                 .expect("Loading file from testdata directory");
-            let _: DataPayload<PluralRuleStringsV1> = black_box(&provider)
+            let _: DataPayload<PluralRuleStringsV1Marker> = black_box(&provider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -50,7 +50,7 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRuleStringsV1> = black_box(&provider)
+            let _: DataPayload<PluralRuleStringsV1Marker> = black_box(&provider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -68,7 +68,7 @@ fn json_bench(c: &mut Criterion) {
 
     c.bench_function("json/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRuleStringsV1> =
+            let _: DataPayload<PluralRuleStringsV1Marker> =
                 black_box(&provider as &dyn SerdeDeDataProvider)
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {
@@ -93,7 +93,7 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRuleStringsV1> = black_box(&provider)
+            let _: DataPayload<PluralRuleStringsV1Marker> = black_box(&provider)
                 .load_payload(&DataRequest {
                     resource_path: ResourcePath {
                         key: key::CARDINAL_V1,
@@ -111,7 +111,7 @@ fn bincode_bench(c: &mut Criterion) {
 
     c.bench_function("bincode/erased_serde", |b| {
         b.iter(|| {
-            let _: DataPayload<PluralRuleStringsV1> =
+            let _: DataPayload<PluralRuleStringsV1Marker> =
                 black_box(&provider as &dyn SerdeDeDataProvider)
                     .load_payload(&DataRequest {
                         resource_path: ResourcePath {

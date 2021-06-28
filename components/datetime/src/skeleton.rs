@@ -632,16 +632,16 @@ mod test {
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        provider::{gregory::DatesV1, key::GREGORY_V1},
+        provider::{gregory::DatePatternsV1Marker, key::GREGORY_DATE_PATTERNS_V1},
     };
 
-    fn get_data_payload() -> DataPayload<'static, DatesV1> {
+    fn get_data_payload() -> DataPayload<'static, 'static, DatePatternsV1Marker> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_V1,
+                    key: GREGORY_DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid),
@@ -672,7 +672,7 @@ mod test {
         let data_provider = get_data_payload();
 
         match get_best_available_format_pattern(
-            &data_provider.get().patterns.datetime.skeletons,
+            &data_provider.get().datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
@@ -699,7 +699,7 @@ mod test {
         let data_provider = get_data_payload();
 
         match get_best_available_format_pattern(
-            &data_provider.get().patterns.datetime.skeletons,
+            &data_provider.get().datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
@@ -724,8 +724,8 @@ mod test {
         let data_provider = get_data_payload();
 
         match create_best_pattern_for_fields(
-            &data_provider.get().patterns.datetime.skeletons,
-            &data_provider.get().patterns.datetime.length_patterns,
+            &data_provider.get().datetime.skeletons,
+            &data_provider.get().datetime.length_patterns,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
@@ -748,7 +748,7 @@ mod test {
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.get().patterns.datetime.skeletons,
+                &data_provider.get().datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,
@@ -769,7 +769,7 @@ mod test {
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.get().patterns.datetime.skeletons,
+                &data_provider.get().datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,

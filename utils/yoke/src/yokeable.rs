@@ -29,6 +29,12 @@ use std::{mem, ptr};
 ///
 /// There are further constraints on implementation safety on individual methods.
 ///
+/// # Trait bounds
+///
+/// [Compiler bug #85636](https://github.com/rust-lang/rust/issues/85636) makes it tricky to add
+/// trait bounds on `Yokeable::Output`. For more information and for workarounds, see
+/// [`crate::trait_hack`].
+///
 /// # Implementation example
 ///
 /// This crate will eventually expose a custom derive that makes it possible to implement this
@@ -66,7 +72,7 @@ use std::{mem, ptr};
 ///         ptr::read(ptr)
 ///     }
 ///
-///     fn with_mut<F>(&'a mut self, f: F)
+///     fn transform_mut<F>(&'a mut self, f: F)
 ///     where
 ///         F: 'static + FnOnce(&'a mut Self::Output),
 ///     {
@@ -126,11 +132,11 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///
     /// fn unsound<'a>(foo: &'a mut Foo) {
     ///     let a: &str = &foo.str;
-    ///     foo.cow.with_mut(|cow| *cow = Cow::Borrowed(a));
+    ///     foo.cow.transform_mut(|cow| *cow = Cow::Borrowed(a));
     /// }
     /// ```
     ///
-    /// However, this code will not compile because [`Yokeable::with_mut()`] requires `F: 'static`.
+    /// However, this code will not compile because [`Yokeable::transform_mut()`] requires `F: 'static`.
     /// This enforces that while `F` may mutate `Self<'a>`, it can only mutate it in a way that does
     /// not insert additional references. For example, `F` may call `to_owned()` on a `Cow` and mutate it,
     /// but it cannot insert a new _borrowed_ reference because it has nowhere to borrow _from_ --
@@ -151,7 +157,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// }
     ///
     /// fn unsound<'a>(bar: &'a mut Bar<'static>) {
-    ///     bar.with_mut(move |bar| bar.cow = Cow::Borrowed(&bar.num));
+    ///     bar.transform_mut(move |bar| bar.cow = Cow::Borrowed(&bar.num));
     /// }
     /// #
     /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
@@ -166,7 +172,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// #         ret
     /// #     }
     /// #
-    /// #     fn with_mut<F>(&'a mut self, f: F)
+    /// #     fn transform_mut<F>(&'a mut self, f: F)
     /// #     where
     /// #         F: 'static + FnOnce(&'a mut Self::Output),
     /// #     {
@@ -193,10 +199,10 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// }
     ///
     /// fn sound<'a>(foo: &'a mut Foo) {
-    ///     foo.cow.with_mut(move |cow| cow.to_mut().push('a'));
+    ///     foo.cow.transform_mut(move |cow| cow.to_mut().push('a'));
     /// }
     /// ```
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         // be VERY CAREFUL changing this signature, it is very nuanced (see above)
         F: 'static + for<'b> FnOnce(&'b mut Self::Output);
@@ -222,7 +228,7 @@ where
         ptr::read(ptr)
     }
 
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
@@ -242,7 +248,7 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
         mem::transmute(from)
     }
 
-    fn with_mut<F>(&'a mut self, f: F)
+    fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {

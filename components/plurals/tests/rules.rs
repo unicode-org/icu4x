@@ -26,9 +26,23 @@ fn test_parsing_operands() {
                 let operands: PluralOperands = test.input.into();
 
                 if val {
-                    assert!(test_condition(&ast, &operands));
+                    assert!(
+                        test_condition(&ast, &operands),
+                        "\nExpected true\n\
+                            AST: {:#?}\n\
+                            Operands: {:#?}\n",
+                        ast,
+                        operands
+                    );
                 } else {
-                    assert!(!test_condition(&ast, &operands));
+                    assert!(
+                        !test_condition(&ast, &operands),
+                        "\nExpected false\n\
+                            AST: {:#?}\n\
+                            Operands: {:#?}\n",
+                        ast,
+                        operands
+                    );
                 }
 
                 // Test that parse/serialize roundtrip completes.

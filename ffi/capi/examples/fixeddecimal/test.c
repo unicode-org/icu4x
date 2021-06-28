@@ -65,5 +65,32 @@ int main() {
         return 1;
     }
 
+    icu4x_fixed_decimal_destroy(decimal);
+
+    ICU4XCreateFixedDecimalResult fd_result = icu4x_fixed_decimal_create_fromstr("1000007.070", 11);
+    if (!fd_result.success) {
+        printf("Failed to create FixedDecimal from string.\n");
+        return 1;
+    }
+    decimal = fd_result.fd;
+
+    write = icu4x_simple_writeable(output, 40);
+
+    success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
+    if (!success) {
+        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
+        return 1;
+    }
+    printf("Output is %s\n", output);
+
+    expected = u8"১০,০০,০০৭.০৭০";
+    if (strcmp(output, expected) != 0) {
+        printf("Output does not match expected output!\n");
+        return 1;
+    }
+
+    icu4x_fixed_decimal_destroy(decimal);
+    icu4x_fixed_decimal_format_destroy(fdf);
+
     return 0;
 }

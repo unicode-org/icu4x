@@ -845,16 +845,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_calendar"
+version = "0.2.0"
+
+[[package]]
 name = "icu_capi"
 version = "0.1.0"
 dependencies = [
  "fixed_decimal",
  "icu_decimal",
+ "icu_locale_canonicalizer",
  "icu_locid",
  "icu_plurals",
  "icu_provider",
  "icu_provider_fs",
+ "icu_provider_static",
  "log",
+ "tinystr",
  "writeable",
 ]
 
@@ -925,7 +932,6 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "serde",
- "smallstr",
  "thiserror",
  "writeable",
 ]
@@ -1008,6 +1014,7 @@ dependencies = [
  "thiserror",
  "tinystr",
  "writeable",
+ "yoke",
 ]
 
 [[package]]
@@ -1073,6 +1080,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_static"
+version = "0.2.0"
+dependencies = [
+ "bincode",
+ "erased-serde",
+ "icu",
+ "icu_locid",
+ "icu_provider",
+ "litemap",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
@@ -1120,6 +1141,7 @@ dependencies = [
  "icu_provider",
  "litemap",
  "serde",
+ "serde_json",
  "thiserror",
  "tinystr",
 ]

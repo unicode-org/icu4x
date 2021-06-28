@@ -17,7 +17,7 @@ use writeable::Writeable;
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatOptions,
-    pub(crate) symbols: &'l DecimalSymbolsV1,
+    pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }
 
 impl<'l> FormattedFixedDecimal<'l> {
@@ -38,9 +38,7 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
     {
         let affixes = self.get_affixes();
         if let Some(affixes) = affixes {
-            if let Some(prefix) = &affixes.prefix {
-                sink.write_str(prefix)?;
-            }
+            sink.write_str(&affixes.prefix)?;
         }
         let range = self.value.magnitude_range();
         let upper_magnitude = *range.end();
@@ -60,9 +58,7 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
             }
         }
         if let Some(affixes) = affixes {
-            if let Some(suffix) = &affixes.suffix {
-                sink.write_str(suffix)?;
-            }
+            sink.write_str(&affixes.suffix)?;
         }
         Ok(())
     }

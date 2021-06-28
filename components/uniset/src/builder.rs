@@ -465,7 +465,7 @@ mod tests {
         let mut builder = UnicodeSetBuilder::new();
         builder.add(0, 0);
         builder.add(5, 0);
-        assert_eq!(builder.intervals, vec![]);
+        assert!(builder.intervals.is_empty());
     }
 
     #[test]
@@ -634,24 +634,21 @@ mod tests {
     fn test_add_invalid_range() {
         let mut builder = UnicodeSetBuilder::new();
         builder.add_range(&('Z'..='A'));
-        let expected = vec![];
-        assert_eq!(builder.intervals, expected);
+        assert!(builder.intervals.is_empty());
     }
 
     #[test]
     fn test_remove_empty() {
         let mut builder = UnicodeSetBuilder::new();
         builder.remove(0, 10);
-        let expected = vec![];
-        assert_eq!(builder.intervals, expected);
+        assert!(builder.intervals.is_empty());
     }
 
     #[test]
     fn test_remove_entire_builder() {
         let mut builder = generate_tester(vec![10, 20, 40, 50]);
         builder.remove(10, 50);
-        let expected = vec![];
-        assert_eq!(builder.intervals, expected);
+        assert!(builder.intervals.is_empty());
     }
 
     #[test]
@@ -764,8 +761,7 @@ mod tests {
     fn test_retain_range_empty() {
         let mut builder = generate_tester(vec![65, 70]);
         builder.retain_range(&('F'..'Z'));
-        let expected = vec![];
-        assert_eq!(builder.intervals, expected);
+        assert!(builder.intervals.is_empty());
     }
 
     #[test]

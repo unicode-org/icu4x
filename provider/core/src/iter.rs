@@ -6,7 +6,6 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use std::fmt::Debug;
 
 /// A provider that can iterate over all supported [`ResourceOptions`] for a certain key.
 ///
@@ -22,18 +21,17 @@ pub trait IterableDataProviderCore {
 
 /// A super-trait combining [`DataProvider`] and [`IterableDataProviderCore`], auto-implemented
 /// for all types implementing both of those traits.
-pub trait IterableDataProvider<'d, T>: IterableDataProviderCore + DataProvider<'d, T>
+pub trait IterableDataProvider<'d, 's, M>:
+    IterableDataProviderCore + DataProvider<'d, 's, M>
 where
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    M: DataMarker<'s>,
 {
 }
 
-impl<'d, S, T> IterableDataProvider<'d, T> for S
+impl<'d, 's, S, M> IterableDataProvider<'d, 's, M> for S
 where
-    S: IterableDataProviderCore + DataProvider<'d, T>,
-    T: ToOwned + ?Sized,
-    <T as ToOwned>::Owned: Debug,
+    S: IterableDataProviderCore + DataProvider<'d, 's, M>,
+    M: DataMarker<'s>,
 {
 }
 

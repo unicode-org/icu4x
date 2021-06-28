@@ -100,6 +100,7 @@ locales = [
 # Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
 # The variable "$LOCALES" is replaced with the list of locales from above.
 cldr_json_glob = [
+    "cldr-core/supplemental/aliases.json",
     "cldr-core/supplemental/likelySubtags.json",
     "cldr-core/supplemental/numberingSystems.json",
     "cldr-core/supplemental/ordinals.json",
