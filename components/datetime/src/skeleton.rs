@@ -514,7 +514,6 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 ///      then be modified to use the requested length to produce a pattern "d MMMM y".
 ///      However, fields should not be changed from numeric to text.
 ///  * 2.6.2.2 Missing Skeleton Fields
-///    - TODO(#585) - The mechanism to combine a date pattern and a time pattern.
 ///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
 ///      much of this step to implement. See the issue for more information.
 pub fn get_best_available_format_pattern<'a>(
