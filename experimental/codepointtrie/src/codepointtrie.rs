@@ -126,15 +126,6 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             });
         }
 
-        // Index array values are 16-bit width, but in one special case they
-        // are interpreted as 18-bit values. Therefore, the data array length
-        // cannot be more than 2^18.
-        if data.len() as u32 > 262144 {
-            return Err(Error::FromDeserialized {
-                reason: "Length of data array is too large",
-            });
-        }
-
         if data.len() as u32 != header.data_length {
             return Err(Error::FromDeserialized {
                 reason: "Length of data array does not match corresponding header value",
@@ -191,7 +182,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
                 .get((index3_block + index3_pos) as usize)
                 .unwrap() as u32;
         }
-        // Return data_pos == data_block (offset) +
+        // Returns data_pos == data_block (offset) +
         //     portion of code_point bit field for last (4th) lookup
         data_block + (code_point & SMALL_DATA_MASK)
     }
@@ -217,7 +208,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         fast_index_val
     }
 
-    /// Return the value that is associated with `code_point` for this [`CodePointTrie`].
+    /// Returns the value that is associated with `code_point` for this [`CodePointTrie`].
     pub fn get(&self, code_point: u32) -> W {
         let data_pos: u32 = if code_point <= T::FAST_MAX {
             Self::trie_below_fastmax_index(self, code_point)
@@ -226,12 +217,12 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         } else {
             self.header.data_length - ERROR_VALUE_NEG_DATA_OFFSET
         };
-        // need the unwrap because the default value is stored in the data array,
+        // We need the unwrap because the default value is stored in the data array,
         // and getting that default value always returns an Option<W>, but need to return W
         self.data.get(data_pos as usize).unwrap()
     }
 
-    /// Return the value that is associated with `code_point` for this [`CodePointTrie`]
+    /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
     /// as a `u32`. This API method maintains consistency with the corresponding
     /// originalICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
