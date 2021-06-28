@@ -26,6 +26,16 @@ where
     /// [`DataExporter`] to filter out certain data entries.
     fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool;
 
+    /// Function called after a key has been fully dumped into the exporter.
+    fn flush(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        Ok(())
+    }
+
+    /// Function called after all keys have been fully dumped.
+    fn clone(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        Ok(())
+    }
+
     /// Auto-implemented function that loads data from an [`IterableDataProvider`] and dumps it
     /// into this [`DataExporter`].
     fn put_key_from_provider(

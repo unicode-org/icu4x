@@ -4,9 +4,10 @@
 
 use crate::manifest::LocalesOption;
 use anyhow::Context;
-use clap::{App, Arg, ArgGroup};
+use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
+use icu_provider::serde::SerdeSeDataStructMarker;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
@@ -39,6 +40,15 @@ fn main() -> anyhow::Result<()> {
                 .help("Do not touch the filesystem (consider using with -v)."),
         )
         .arg(
+            Arg::with_name("FORMAT")
+                .long("format")
+                .takes_value(true)
+                .possible_value("directory")
+                .possible_value("blob")
+                .help("Output to a directory on the filesystem or a single blob.")
+                .default_value("directory"),
+        )
+        .arg(
             Arg::with_name("ALIASING")
                 .long("aliasing")
                 .takes_value(true)
@@ -50,7 +60,7 @@ fn main() -> anyhow::Result<()> {
             Arg::with_name("OVERWRITE")
                 .short("W")
                 .long("overwrite")
-                .help("Delete the output directory before writing data."),
+                .help("Delete the output before writing data."),
         )
         .arg(
             Arg::with_name("SYNTAX")
@@ -175,8 +185,9 @@ fn main() -> anyhow::Result<()> {
                 .short("o")
                 .long("out")
                 .help(
-                    "Path to output data directory. Must be empty or non-existent, unless \
-                    --overwrite is present, in which case the directory is deleted first.",
+                    "Path to output directory or file. Must be empty or non-existent, unless \
+                    --overwrite is present, in which case the directory is deleted first. \
+                    For --format blob, omit this option to dump to stdout.",
                 )
                 .takes_value(true),
         )
@@ -188,8 +199,7 @@ fn main() -> anyhow::Result<()> {
         .group(
             ArgGroup::with_name("OUTPUT_MODE")
                 .arg("OUTPUT")
-                .arg("OUTPUT_TESTDATA")
-                .required(true),
+                .arg("OUTPUT_TESTDATA"),
         )
         .get_matches();
 
@@ -216,18 +226,22 @@ fn main() -> anyhow::Result<()> {
 
     // TODO: Build up this list from --keys and --key-file
 
+    let format = matches
+        .value_of("FORMAT")
+        .expect("Option has default value");
+
     let syntax = matches
         .value_of("SYNTAX")
         .expect("Option has default value");
 
-    let output_path = if matches.is_present("OUTPUT_TESTDATA") {
-        icu_testdata::paths::data_root().join(syntax)
+    let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
+        Some(icu_testdata::paths::data_root().join(syntax))
+    } else if let Some(v) = matches.value_of_os("OUTPUT") {
+        Some(PathBuf::from(v))
+    } else if format == "blob" {
+        None
     } else {
-        PathBuf::from(
-            matches
-                .value_of_os("OUTPUT")
-                .expect("--out is a required option"),
-        )
+        anyhow::bail!("--out must be specified for --format directory");
     };
 
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
@@ -247,6 +261,22 @@ fn main() -> anyhow::Result<()> {
         anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
+    match format {
+        "directory" => {
+            let mut exporter = get_fs_exporter(&matches, output_path.expect("Guaranteed for directory format"))?;
+            export_cldr(cldr_paths.as_ref(), &mut exporter)?;
+        },
+        "blob" => {
+            let mut exporter = get_blob_exporter(&matches, output_path)?;
+            export_cldr(cldr_paths.as_ref(), &mut exporter)?;
+        },
+        _ => unreachable!()
+    };
+
+    Ok(())
+}
+
+fn get_fs_exporter(matches: &ArgMatches, output_path: PathBuf) -> anyhow::Result<FilesystemExporter> {
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
         Some("json") | None => {
             let mut options = serializers::json::Options::default();
@@ -284,15 +314,17 @@ fn main() -> anyhow::Result<()> {
         options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
     }
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
-
-    export_cldr(cldr_paths.as_ref(), &mut exporter)?;
-
-    Ok(())
+    Ok(exporter)
 }
 
-fn export_cldr(
+fn get_blob_exporter(matches: &ArgMatches, output_path: Option<PathBuf>) -> anyhow::Result<FilesystemExporter> {
+    todo!()
+    // TODO(#830): Support locale filtering in BlobExporter
+}
+
+fn export_cldr<'d, 's: 'd>(
     cldr_paths: &dyn CldrPaths,
-    exporter: &mut FilesystemExporter,
+    exporter: &mut impl DataExporter<'d, 's, SerdeSeDataStructMarker>,
 ) -> anyhow::Result<()> {
     let keys = get_all_cldr_keys();
 
@@ -301,7 +333,8 @@ fn export_cldr(
         log::info!("Writing key: {}", key);
         let result = exporter.put_key_from_provider(key, &provider);
         // Ensure flush() is called, even when the result is an error
-        exporter.flush()?;
+        // FIXME: Propagate the error from flush
+        exporter.flush();
         result?;
     }
 

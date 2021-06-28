@@ -93,6 +93,15 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for FilesystemExp
             },
         }
     }
+
+    /// This function must be called before the [`FilesystemExporter`] leaves scope.
+    /// It is recommended to flush after exporting each [`ResourceKey`].
+    fn flush(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        if let Some(mut alias_collection) = self.alias_collection.take() {
+            alias_collection.flush()?;
+        }
+        Ok(())
+    }
 }
 
 impl FilesystemExporter {
@@ -136,15 +145,6 @@ impl FilesystemExporter {
             .map_err(|e| (e, &manifest_path))?;
         writeln!(&mut manifest_file).map_err(|e| (e, &manifest_path))?;
         Ok(result)
-    }
-
-    /// This function must be called before the [`FilesystemExporter`] leaves scope.
-    /// It is recommended to flush after exporting each [`ResourceKey`].
-    pub fn flush(&mut self) -> Result<(), Error> {
-        if let Some(mut alias_collection) = self.alias_collection.take() {
-            alias_collection.flush()?;
-        }
-        Ok(())
     }
 
     fn write_to_path(

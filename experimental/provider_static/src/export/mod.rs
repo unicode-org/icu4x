@@ -2,11 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod blob_schema;
-mod path_util;
-mod static_data_provider;
+mod blob_exporter;
 
-#[cfg(feature = "export")]
-pub mod export;
-
-pub use static_data_provider::StaticDataProvider;
+pub use blob_exporter::BlobExporter;
