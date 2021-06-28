@@ -11,7 +11,7 @@ use thiserror::Error;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::length,
-    pattern::Pattern,
+    pattern::{Pattern, PatternItem},
     provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
 
@@ -519,7 +519,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 pub fn get_best_available_format_pattern<'a>(
     skeletons: &'a SkeletonsV1,
     fields: &[Field],
-) -> BestSkeleton<&'a Pattern> {
+) -> BestSkeleton<Pattern> {
     let mut closest_format_pattern = None;
     let mut closest_distance: u32 = u32::MAX;
     let mut closest_missing_fields = 0;
@@ -609,10 +609,24 @@ pub fn get_best_available_format_pattern<'a>(
     if closest_missing_fields == fields.len() {
         return BestSkeleton::NoMatch;
     }
-    if closest_distance >= SKELETON_EXTRA_SYMBOL {
-        return BestSkeleton::MissingOrExtraFields(closest_format_pattern);
+
+    if closest_distance == NO_DISTANCE {
+        return BestSkeleton::AllFieldsMatch(closest_format_pattern.clone());
     }
-    BestSkeleton::AllFieldsMatch(closest_format_pattern)
+
+    let expanded_pattern = Pattern::from(
+        closest_format_pattern
+            .items()
+            .iter()
+            .map(|symbol| symbol.clone())
+            .collect::<Vec<PatternItem>>(),
+    );
+
+    if closest_distance >= SKELETON_EXTRA_SYMBOL {
+        return BestSkeleton::MissingOrExtraFields(expanded_pattern);
+    }
+
+    BestSkeleton::AllFieldsMatch(expanded_pattern)
 }
 
 pub fn get_available_format_patterns<'a>(
