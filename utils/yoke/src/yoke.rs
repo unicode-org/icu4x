@@ -442,9 +442,24 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     }
 }
 
+/// This trait marks cart types that do not change source on cloning
+///
+/// This is conceptually similar to [`stable_deref_trait::CloneStableDeref`],
+/// however [`stable_deref_trait::CloneStableDeref`] is not (and should not) be
+/// implemented on [`Option`]. [`CloneableCart`] essentially is
+/// "if there _is_ data to borrow from here, cloning the cart gives you an additional
+/// handle to the same data".
+pub unsafe trait CloneableCart: Clone {}
+
+unsafe impl<T: ?Sized> CloneableCart for Rc<T> {}
+unsafe impl<T: ?Sized> CloneableCart for Arc<T> {}
+unsafe impl<T: CloneableCart> CloneableCart for Option<T> {}
+unsafe impl<'a, T: ?Sized> CloneableCart for &'a T {}
+unsafe impl CloneableCart for () {}
+
 /// Clone requires that the cart derefs to the same address after it is cloned. This works for Rc, Arc, and &'a T.
 /// For all other cart types, clone `.backing_cart()` and re-use `attach_to_cart()`.
-impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Rc<T>>
+impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Clone for Yoke<Y, C>
 where
     for<'a> <Y as Yokeable<'a>>::Output: Clone,
 {
@@ -452,78 +467,6 @@ where
         Yoke {
             yokeable: unsafe { Y::make(self.get().clone()) },
             cart: self.cart.clone(),
-        }
-    }
-}
-
-impl<'b, Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, &'b T>
-where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
-{
-    fn clone(&self) -> Self {
-        Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
-            cart: self.cart,
-        }
-    }
-}
-
-impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Arc<T>>
-where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
-{
-    fn clone(&self) -> Self {
-        Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
-            cart: self.cart.clone(),
-        }
-    }
-}
-
-impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Option<Rc<T>>>
-where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
-{
-    fn clone(&self) -> Self {
-        Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
-            cart: self.cart.clone(),
-        }
-    }
-}
-
-impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Option<Arc<T>>>
-where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
-{
-    fn clone(&self) -> Self {
-        Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
-            cart: self.cart.clone(),
-        }
-    }
-}
-
-impl<'b, Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Option<&'b T>>
-where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
-{
-    fn clone(&self) -> Self {
-        Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
-            cart: self.cart,
-        }
-    }
-}
-
-impl<Y: for<'a> Yokeable<'a>> Clone for Yoke<Y, ()>
-where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
-{
-    fn clone(&self) -> Self {
-        Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
-            cart: (),
         }
     }
 }
