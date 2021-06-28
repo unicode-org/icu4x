@@ -120,64 +120,104 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
 
     let trie_type_enum = get_code_point_trie_type_enum(test_struct.trie_type_enum_val);
 
-    match (test_struct.data_8, test_struct.data_16, test_struct.data_32, trie_type_enum) {
+    match (
+        test_struct.data_8,
+        test_struct.data_16,
+        test_struct.data_32,
+        trie_type_enum,
+    ) {
         (Some(data_8), _, _, Some(TrieTypeEnum::Fast)) => {
             let data = ZeroVec::from_aligned(&data_8);
-            let trie_result: Result<CodePointTrie<u8, Fast>, Error> = 
+            let trie_result: Result<CodePointTrie<u8, Fast>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
-            assert_eq!(test_struct.value_width_enum_val, ValueWidthEnum::Bits8 as u8);
-            check_trie(&trie_result.unwrap(), &test_file.code_point_trie.test_data.check_ranges);
-        },
+            assert_eq!(
+                test_struct.value_width_enum_val,
+                ValueWidthEnum::Bits8 as u8
+            );
+            check_trie(
+                &trie_result.unwrap(),
+                &test_file.code_point_trie.test_data.check_ranges,
+            );
+        }
 
         (_, Some(data_16), _, Some(TrieTypeEnum::Fast)) => {
             let data = ZeroVec::from_aligned(&data_16);
-            let trie_result: Result<CodePointTrie<u16, Fast>, Error> = 
+            let trie_result: Result<CodePointTrie<u16, Fast>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
-            assert_eq!(test_struct.value_width_enum_val, ValueWidthEnum::Bits16 as u8);
-            check_trie(&trie_result.unwrap(), &test_file.code_point_trie.test_data.check_ranges);
-        },
+            assert_eq!(
+                test_struct.value_width_enum_val,
+                ValueWidthEnum::Bits16 as u8
+            );
+            check_trie(
+                &trie_result.unwrap(),
+                &test_file.code_point_trie.test_data.check_ranges,
+            );
+        }
 
         (_, _, Some(data_32), Some(TrieTypeEnum::Fast)) => {
             let data = ZeroVec::from_aligned(&data_32);
-            let trie_result: Result<CodePointTrie<u32, Fast>, Error> = 
+            let trie_result: Result<CodePointTrie<u32, Fast>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
-            assert_eq!(test_struct.value_width_enum_val, ValueWidthEnum::Bits32 as u8);
-            check_trie(&trie_result.unwrap(), &test_file.code_point_trie.test_data.check_ranges);
-        },
+            assert_eq!(
+                test_struct.value_width_enum_val,
+                ValueWidthEnum::Bits32 as u8
+            );
+            check_trie(
+                &trie_result.unwrap(),
+                &test_file.code_point_trie.test_data.check_ranges,
+            );
+        }
 
         (Some(data_8), _, _, Some(TrieTypeEnum::Small)) => {
             let data = ZeroVec::from_aligned(&data_8);
-            let trie_result: Result<CodePointTrie<u8, Small>, Error> = 
+            let trie_result: Result<CodePointTrie<u8, Small>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
-            assert_eq!(test_struct.value_width_enum_val, ValueWidthEnum::Bits8 as u8);
-            check_trie(&trie_result.unwrap(), &test_file.code_point_trie.test_data.check_ranges);
-        },
+            assert_eq!(
+                test_struct.value_width_enum_val,
+                ValueWidthEnum::Bits8 as u8
+            );
+            check_trie(
+                &trie_result.unwrap(),
+                &test_file.code_point_trie.test_data.check_ranges,
+            );
+        }
 
         (_, Some(data_16), _, Some(TrieTypeEnum::Small)) => {
             let data = ZeroVec::from_aligned(&data_16);
-            let trie_result: Result<CodePointTrie<u16, Small>, Error> = 
+            let trie_result: Result<CodePointTrie<u16, Small>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
-            assert_eq!(test_struct.value_width_enum_val, ValueWidthEnum::Bits16 as u8);
-            check_trie(&trie_result.unwrap(), &test_file.code_point_trie.test_data.check_ranges);
-        },
+            assert_eq!(
+                test_struct.value_width_enum_val,
+                ValueWidthEnum::Bits16 as u8
+            );
+            check_trie(
+                &trie_result.unwrap(),
+                &test_file.code_point_trie.test_data.check_ranges,
+            );
+        }
 
         (_, _, Some(data_32), Some(TrieTypeEnum::Small)) => {
             let data = ZeroVec::from_aligned(&data_32);
-            let trie_result: Result<CodePointTrie<u32, Small>, Error> = 
+            let trie_result: Result<CodePointTrie<u32, Small>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
-            assert_eq!(test_struct.value_width_enum_val, ValueWidthEnum::Bits32 as u8);
-            check_trie(&trie_result.unwrap(), &test_file.code_point_trie.test_data.check_ranges);
-        },
+            assert_eq!(
+                test_struct.value_width_enum_val,
+                ValueWidthEnum::Bits32 as u8
+            );
+            check_trie(
+                &trie_result.unwrap(),
+                &test_file.code_point_trie.test_data.check_ranges,
+            );
+        }
 
         (_, _, _, _) => {
             panic!("Could not match test trie data to a known value width or trie type");
         }
-
     };
 }

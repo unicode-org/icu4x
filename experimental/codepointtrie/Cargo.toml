@@ -32,7 +32,9 @@ thiserror = "1.0"
 zerovec = { version = "0.2", path = "../../utils/zerovec" }
 
 [features]
-serialization = ["serde", "zerovec/serde"]
+default = ["provider_serde"]
+bench = []
+provider_serde = ["serde", "zerovec/serde"]
 
 [dev-dependencies]
 toml = "0.5"
