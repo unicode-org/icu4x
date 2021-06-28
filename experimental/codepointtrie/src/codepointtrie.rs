@@ -246,4 +246,3 @@ pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> 
         _ => None,
     }
 }
-

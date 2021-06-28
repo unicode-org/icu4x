@@ -64,15 +64,14 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
     let display = path.display();
 
     let mut file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
+        Err(err) => panic!("couldn't open {}: {}", display, err),
         Ok(file) => file,
     };
 
     let mut toml_str = String::new();
 
-    match file.read_to_string(&mut toml_str) {
-        Err(why) => panic!("couldn't read {}: {}", display, why),
-        _ => {}
+    if let Err(err) = file.read_to_string(&mut toml_str) { 
+        panic!("couldn't read {}: {}", display, err)
     }
 
     let test_file: TestFile = toml::from_str(&toml_str).unwrap();
