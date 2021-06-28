@@ -505,14 +505,13 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 ///
 ///  * Compute a score based on the best possible match for the given fields.
 ///  * Select the skeleton with highest score.
-///
-/// The following is not implemented:
-///
-///  * 2.6.2.1 Matching Skeletons
-///    - TODO(#584) - Modify the resulting pattern to have fields of the same length. For example requesting
+///  * Modify the resulting pattern to have fields of the same length. For example requesting
 ///      a skeleton "yMMMMd" can have a best match of ["yMMMd", "d MMM y"]. This pattern should
 ///      then be modified to use the requested length to produce a pattern "d MMMM y".
 ///      However, fields should not be changed from numeric to text.
+///
+/// The following is not implemented:
+///
 ///  * 2.6.2.2 Missing Skeleton Fields
 ///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
 ///      much of this step to implement. See the issue for more information.
@@ -614,11 +613,27 @@ pub fn get_best_available_format_pattern<'a>(
         return BestSkeleton::AllFieldsMatch(closest_format_pattern.clone());
     }
 
+    // Modify the resulting pattern to have fields of the same length.
     let expanded_pattern = Pattern::from(
         closest_format_pattern
             .items()
             .iter()
-            .map(|symbol| symbol.clone())
+            .map(|item| {
+                if let PatternItem::Field(pattern_field) = item {
+                    if let Some(requested_field) = fields
+                        .iter()
+                        .find(|field| field.symbol == pattern_field.symbol)
+                    {
+                        if requested_field.length != pattern_field.length
+                            && requested_field.get_length_type() == pattern_field.get_length_type()
+                        {
+                            return PatternItem::Field(requested_field.clone());
+                        }
+                    }
+                }
+                // There's no match, or this is a string literal return the original item.
+                item.clone()
+            })
             .collect::<Vec<PatternItem>>(),
     );
 
@@ -692,7 +707,7 @@ mod test {
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(
                     available_format_pattern.to_string(),
-                    String::from("MMM d, y")
+                    String::from("MMMM d, y")
                 )
             }
             BestSkeleton::NoMatch => {
@@ -746,7 +761,7 @@ mod test {
                 // once support is added.
                 assert_eq!(
                     available_format_pattern.to_string(),
-                    String::from("MMM d, y")
+                    String::from("MMMM d, y")
                 )
             }
             best => panic!("Unexpected {:?}", best),
