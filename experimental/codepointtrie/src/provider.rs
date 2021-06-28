@@ -2,15 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(any(feature = "serde", test))]
-use serde::de::{Deserialize, Deserializer};
-#[cfg(any(feature = "serde", test))]
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-
 #[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
 pub struct UnicodeEnumeratedProperty {
     pub code_point_map: EnumPropCodePointMap,
-    pub code_point_trie: CodePointTrieChangeMeMaybe,
+    pub code_point_trie: EnumPropSerializedCPT,
 }
 
 #[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
@@ -25,14 +20,17 @@ pub struct EnumPropCodePointMapData {
     pub ranges: Vec<(u32, u32, u32)>,
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
-pub struct CodePointTrieChangeMeMaybe {
+pub struct EnumPropSerializedCPT {
     #[cfg_attr(any(feature = "serde", test), serde(rename = "struct"))]
-    pub trie_struct: CodePointTrieStruct,
+    pub trie_struct: EnumPropSerializedCPTStruct,
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
-pub struct CodePointTrieStruct {
+pub struct EnumPropSerializedCPTStruct {
+    #[cfg_attr(any(feature = "serde", test), serde(skip))]
     pub long_name: String,
     pub name: String,
     pub index: Vec<u16>,

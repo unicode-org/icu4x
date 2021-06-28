@@ -5,6 +5,7 @@
 use icu_codepointtrie::codepointtrie::get_code_point_trie_type_enum;
 use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
+use icu_codepointtrie::provider::EnumPropSerializedCPTStruct;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -38,37 +39,13 @@ pub struct TestFile {
 
 #[derive(serde::Deserialize)]
 pub struct TestCodePointTrie {
+    // The trie_struct field for test data files is dumped from the same source
+    // (ICU4C) using the same function (usrc_writeUCPTrie) as property data
+    // for the provider, so we can reuse the same struct here.
     #[serde(rename(deserialize = "struct"))]
-    trie_struct: TestTrieStruct,
+    trie_struct: EnumPropSerializedCPTStruct,
     #[serde(rename(deserialize = "testdata"))]
     test_data: TestData,
-}
-
-#[derive(serde::Deserialize)]
-pub struct TestTrieStruct {
-    name: String,
-    index: Vec<u16>,
-    data_8: Option<Vec<u8>>,
-    data_16: Option<Vec<u16>>,
-    data_32: Option<Vec<u32>>,
-    #[serde(rename(deserialize = "indexLength"))]
-    index_length: u32,
-    #[serde(rename(deserialize = "dataLength"))]
-    data_length: u32,
-    #[serde(rename(deserialize = "highStart"))]
-    high_start: u32,
-    #[serde(rename(deserialize = "shifted12HighStart"))]
-    shifted12_high_start: u16,
-    #[serde(rename(deserialize = "type"))]
-    trie_type_enum_val: u8,
-    #[serde(rename(deserialize = "valueWidth"))]
-    value_width_enum_val: u8,
-    #[serde(rename(deserialize = "index3NullOffset"))]
-    index3_null_offset: u16,
-    #[serde(rename(deserialize = "dataNullOffset"))]
-    data_null_offset: u32,
-    #[serde(rename(deserialize = "nullValue"))]
-    null_value: u32,
 }
 
 #[derive(serde::Deserialize)]
