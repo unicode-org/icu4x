@@ -443,7 +443,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 }
 
 /// Clone requires that the cart derefs to the same address after it is cloned. This works for Rc, Arc, and &'a T.
-/// For all other cart types, clone `.baking_cart()` and re-use `attach_to_cart()`.
+/// For all other cart types, clone `.backing_cart()` and re-use `attach_to_cart()`.
 impl<Y: for<'a> Yokeable<'a>, T: ?Sized> Clone for Yoke<Y, Rc<T>>
 where
     for<'a> <Y as Yokeable<'a>>::Output: Clone,
