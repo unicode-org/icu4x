@@ -4,6 +4,7 @@
 
 use crate::Yokeable;
 use stable_deref_trait::StableDeref;
+use std::marker::PhantomData;
 use std::ops::Deref;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -476,7 +477,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
     /// looking at a subfield, and producing a new yoke. This will clone the cart, and the provided
     /// transformation is only allowed to use data known to be borrowed from the cart.
     ///
-    /// This currently takes an additional `&()` parameter as a workaround to
+    /// This currently takes an additional `PhantomData<&()>` parameter as a workaround to
     /// [compiler bug #86702](https://github.com/rust-lang/rust/issues/86702). This parameter
     /// should just be ignored in the function. Furthermore,
     /// [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937) prevents
@@ -538,12 +539,15 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
     // Safety docs can be found below on `__project_safety_docs()`
     pub fn project<'this, P>(
         &'this self,
-        f: for<'a> fn(&'this <Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output,
+        f: for<'a> fn(
+            &'this <Y as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> <P as Yokeable<'a>>::Output,
     ) -> Yoke<P, C>
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.get(), &());
+        let p = f(self.get(), PhantomData);
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
@@ -561,13 +565,13 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
         f: for<'a> fn(
             &'this <Y as Yokeable<'a>>::Output,
             capture: T,
-            &'a (),
+            PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
     ) -> Yoke<P, C>
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.get(), capture, &());
+        let p = f(self.get(), capture, PhantomData);
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
