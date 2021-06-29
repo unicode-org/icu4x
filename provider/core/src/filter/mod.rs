@@ -74,7 +74,7 @@ where
 
 impl<D, F> IterableDataProviderCore for RequestFilterDataProvider<D, F>
 where
-    F: 'static + Fn(&DataRequest) -> bool,
+    F: Fn(&DataRequest) -> bool,
     D: IterableDataProviderCore,
 {
     fn supported_options_for_key(

@@ -343,12 +343,13 @@ fn export_cldr<'d, 's: 'd>(
     let keys = get_all_cldr_keys();
 
     let raw_provider = CldrJsonDataProvider::new(cldr_paths);
-    let filtered_provider =
-        allowed_locales.map(|allowlist| raw_provider.filter_by_langid_allowlist_strict(allowlist));
+    let filtered_provider = allowed_locales.map(move |allowlist| {
+        CldrJsonDataProvider::new(cldr_paths).filter_by_langid_allowlist_strict(allowlist)
+    });
 
     let provider: &(dyn IterableDataProvider<SerdeSeDataStructMarker> + '_) =
-        if let Some(p) = filtered_provider {
-            &p
+        if let Some(ref p) = filtered_provider {
+            p
         } else {
             &raw_provider
         };
