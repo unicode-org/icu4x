@@ -9,6 +9,7 @@ use icu_provider::export::DataExporter;
 use icu_provider::filter::LanguageIdentifierFilter;
 use icu_provider::iter::IterableDataProvider;
 use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
@@ -18,7 +19,6 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
-use icu_provider_blob::export::BlobExporter;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -281,12 +281,8 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn get_fs_exporter(
-    matches: &ArgMatches,
-) -> anyhow::Result<FilesystemExporter> {
-    let syntax = matches
-        .value_of("SYNTAX")
-        .unwrap_or("json");
+fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
+    let syntax = matches.value_of("SYNTAX").unwrap_or("json");
 
     let output_path: PathBuf = if matches.is_present("OUTPUT_TESTDATA") {
         icu_testdata::paths::data_root().join(syntax)
@@ -328,9 +324,7 @@ fn get_fs_exporter(
     Ok(exporter)
 }
 
-fn get_blob_exporter(
-    matches: &ArgMatches,
-) -> anyhow::Result<BlobExporter> {
+fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter> {
     if matches.value_of("SYNTAX") == Some("json") {
         anyhow::bail!("Cannot use --format=blob with --syntax=json");
     }

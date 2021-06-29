@@ -5,7 +5,8 @@
 use icu_provider_fs::FsDataProvider;
 use std::path::PathBuf;
 
-/// Get a `DataProvider` loading from test data. Panics if unable to load the data.
+/// Get a `DataProvider`, loading from the test data JSON directory.
+/// Panics if unable to load the data.
 pub fn get_provider() -> FsDataProvider {
     let path: PathBuf = match std::env::var_os("ICU4X_TESTDATA_DIR") {
         Some(val) => val.into(),

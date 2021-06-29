@@ -2,43 +2,48 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::blob_schema::BlobSchema;
+use crate::path_util;
 use icu_provider::{
     prelude::*,
     serde::{SerdeDeDataProvider, SerdeDeDataReceiver},
 };
-use litemap::LiteMap;
-use serde::Deserialize;
-use crate::path_util;
-
-const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/static_data.bincode"));
+use serde::de::Deserialize;
 
 /// A data provider loading data statically baked in to the binary. Useful for testing in situations
 /// where setting up a filesystem is tricky (e.g. WASM).
 ///
 /// This should probably not be used in production code since it bloats the binary.
 pub struct StaticDataProvider {
-    json: LiteMap<&'static str, &'static str>,
+    blob: BlobSchema<'static>,
+}
+
+/// TODO(#837): De-duplicate this code from icu_provider_fs.
+macro_rules! get_bincode_deserializer_zc {
+    ($bytes:tt) => {{
+        use bincode::Options;
+        let options = bincode::DefaultOptions::new()
+            .with_fixint_encoding()
+            .allow_trailing_bytes();
+        bincode::de::Deserializer::from_slice($bytes, options)
+    }};
 }
 
 impl StaticDataProvider {
-    pub fn new() -> Self {
-        StaticDataProvider {
-            json: bincode::deserialize(&STATIC_STR_DATA).unwrap(),
-        }
+    pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
+        Ok(StaticDataProvider {
+            blob: BlobSchema::deserialize(&mut get_bincode_deserializer_zc!(blob))
+                .map_err(DataError::new_resc_error)?,
+        })
     }
 
-    fn get_file(&self, req: &DataRequest) -> Result<&'static str, DataError> {
+    fn get_file(&self, req: &DataRequest) -> Result<&'static [u8], DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
-        self.json
+        let BlobSchema::V001(blob) = &self.blob;
+        blob.resources
             .get(&*path)
             .ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))
             .map(|v| *v)
-    }
-}
-
-impl Default for StaticDataProvider {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
@@ -50,9 +55,8 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
         let file = self.get_file(req)?;
-        let data: M::Yokeable =
-            M::Yokeable::deserialize(&mut serde_json::Deserializer::from_slice(file.as_bytes()))
-                .map_err(|e| DataError::Resource(Box::new(e)))?;
+        let data = M::Yokeable::deserialize(&mut get_bincode_deserializer_zc!(file))
+            .map_err(DataError::new_resc_error)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
@@ -70,7 +74,7 @@ impl SerdeDeDataProvider for StaticDataProvider {
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
         receiver.receive_static(&mut erased_serde::Deserializer::erase(
-            &mut serde_json::Deserializer::from_reader(file.as_bytes()),
+            &mut get_bincode_deserializer_zc!(file),
         ))?;
 
         Ok(DataResponseMetadata {

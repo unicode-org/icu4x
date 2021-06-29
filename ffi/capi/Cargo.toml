@@ -42,4 +42,4 @@ writeable = { path = "../../utils/writeable/" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
-icu_provider_blob = { path = "../../provider/blob/" }
+icu_testdata = { version = "0.2", path = "../../provider/testdata" }

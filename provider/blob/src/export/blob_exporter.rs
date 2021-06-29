@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::blob_schema::*;
+use crate::path_util;
 use icu_provider::export::DataExporter;
 use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStructMarker;
-use crate::path_util;
 use litemap::LiteMap;
-use crate::blob_schema::*;
 
 pub struct BlobExporter {
     resources: LiteMap<String, Vec<u8>>,
@@ -18,7 +18,7 @@ impl BlobExporter {
     pub fn new_with_sink(sink: Box<dyn std::io::Write>) -> Self {
         Self {
             resources: LiteMap::new(),
-            sink
+            sink,
         }
     }
 }
@@ -55,10 +55,14 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter 
     fn close(&mut self) -> Result<(), DataError> {
         // Convert from LiteMap<String, Vec> to LiteMap<&str, &[]>
         let mut schema = BlobSchemaV1 {
-            resources: LiteMap::with_capacity(self.resources.len())
+            resources: LiteMap::with_capacity(self.resources.len()),
         };
         for (k, v) in self.resources.iter() {
-            schema.resources.try_append(k, v).ok_or(()).expect_err("Same order");
+            schema
+                .resources
+                .try_append(k, v)
+                .ok_or(())
+                .expect_err("Same order");
         }
         let blob = BlobSchema::V001(schema);
         serialize(&blob, self.sink.as_mut())?;

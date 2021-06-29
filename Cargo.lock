@@ -858,8 +858,8 @@ dependencies = [
  "icu_locid",
  "icu_plurals",
  "icu_provider",
- "icu_provider_blob",
  "icu_provider_fs",
+ "icu_testdata",
  "log",
  "tinystr",
  "writeable",
@@ -1017,10 +1017,10 @@ dependencies = [
  "icu",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
  "litemap",
  "log",
  "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -1116,6 +1116,7 @@ dependencies = [
  "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
+ "icu_provider_blob",
  "icu_provider_fs",
  "serde",
  "serde_json",

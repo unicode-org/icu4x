@@ -72,7 +72,10 @@ where
             return Ok(None);
         }
         if let Some(data_provider) = self.src.read().map_err(map_poison)?.as_ref() {
-            return data_provider.supported_options_for_key(resc_key).map(|i| i.collect()).map(Some);
+            return data_provider
+                .supported_options_for_key(resc_key)
+                .map(|i| i.collect())
+                .map(Some);
         }
         let mut src = self.src.write().map_err(map_poison)?;
         if src.is_none() {
@@ -81,6 +84,9 @@ where
         let data_provider = src
             .as_ref()
             .expect("The RwLock must be populated at this point.");
-        data_provider.supported_options_for_key(resc_key).map(|i| i.collect()).map(Some)
+        data_provider
+            .supported_options_for_key(resc_key)
+            .map(|i| i.collect())
+            .map(Some)
     }
 }

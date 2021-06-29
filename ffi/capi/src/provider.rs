@@ -6,9 +6,6 @@ use icu_provider::serde::SerdeDeDataProvider;
 use icu_provider_fs::FsDataProvider;
 use std::{mem, ptr, slice, str};
 
-#[cfg(target_arch = "wasm32")]
-use icu_provider_blob::StaticDataProvider;
-
 #[repr(C)]
 /// FFI version of [`SerdeDeDataProvider`]. See its docs for more details.
 ///
@@ -132,7 +129,7 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
 ///
 /// Only access `provider` in the result if `success` is [`true`].
 pub unsafe extern "C" fn icu4x_static_data_provider_create() -> ICU4XCreateDataProviderResult {
-    let provider = StaticDataProvider::new();
+    let provider = icu_testdata::get_static_provider();
     let erased = Box::new(provider);
     ICU4XCreateDataProviderResult {
         provider: ICU4XDataProvider::from_boxed(erased),
