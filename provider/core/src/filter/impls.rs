@@ -205,7 +205,7 @@ impl<'a, T> LanguageIdentifierFilter<'a> for T {
             predicate: Box::new(move |request| -> bool {
                 match &request.resource_path.options.langid {
                     Some(langid) => allowlist.contains(langid),
-                    None => false,
+                    None => true,
                 }
             }),
             description: format!("Locale filter (allowlist: {:?})", allowlist),
