@@ -54,7 +54,7 @@ where
 impl IterableDataProviderCore for InvariantDataProvider {
     fn supported_options_for_key(
         &self,
-        _resc_key: ResourceKey,
+        _resc_key: &ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error> {
         let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
         Ok(Box::new(list.into_iter()))

@@ -36,14 +36,14 @@ where
     /// into this [`DataExporter`].
     fn put_key_from_provider(
         &mut self,
-        resc_key: ResourceKey,
+        resc_key: &ResourceKey,
         provider: &impl IterableDataProvider<'d, 's, M>,
     ) -> Result<(), Error> {
-        for resc_options in provider.supported_options_for_key(resc_key)? {
+        for options in provider.supported_options_for_key(resc_key)? {
             let req = DataRequest {
                 resource_path: ResourcePath {
-                    key: resc_key,
-                    options: resc_options,
+                    key: *resc_key,
+                    options,
                 },
             };
             let payload = provider.load_payload(&req)?.take_payload()?;
