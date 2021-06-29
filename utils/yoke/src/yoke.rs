@@ -447,7 +447,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 ///
 /// This is conceptually similar to [`stable_deref_trait::CloneStableDeref`],
 /// however [`stable_deref_trait::CloneStableDeref`] is not (and should not) be
-/// implemented on [`Option`]. [`CloneableCart`] essentially is
+/// implemented on [`Option`] (since it's not [`Deref`]. [`CloneableCart`] essentially is
 /// "if there _is_ data to borrow from here, cloning the cart gives you an additional
 /// handle to the same data".
 pub unsafe trait CloneableCart: Clone {}
@@ -577,81 +577,83 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
             cart: self.cart.clone(),
         }
     }
-
-    /// (Docs are on a private function to allow the use of compile_fail doctests)
-    ///
-    /// This is safe to perform because of the choice of lifetimes on `f`, that is,
-    /// `for<'a> fn(&'this <Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
-    ///
-    /// What we want this function to do is take a Yokeable (`Y`) that is borrowing from the cart, and
-    /// produce another Yokeable (`P`) that also borrows from the same cart. There are a couple potential
-    /// hazards here:
-    ///
-    /// - `P` ends up borrowing data from `Y` (or elsewhere) that did _not_ come from the cart,
-    ///   for example `P` could borrow owned data from a `Cow`.
-    /// - Borrowed data from `Y` escapes with the wrong lifetime
-    ///
-    /// Let's walk through these and see how they're prevented.
-    ///
-    /// ```rust, compile_fail
-    /// # use std::rc::Rc;
-    /// # use yoke::Yoke;
-    /// # use std::borrow::Cow;
-    /// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-    ///    y.project(|cow, _| &*cow)   
-    /// }
-    /// ```
-    ///
-    /// In this case, the lifetime of `&*cow` is `&'this str`, however the function needs to be able to return
-    /// `&'a str` _for all `'a`_, which isn't possible.
-    ///
-    /// Similarly, trying to project an owned field of a struct will produce similar errors:
-    ///
-    /// ```rust,compile_fail
-    /// # use std::borrow::Cow;
-    /// # use yoke::{Yoke, Yokeable};
-    /// # use std::mem;
-    /// # use std::rc::Rc;
-    /// #
-    /// // also safely implements Yokeable<'a>
-    /// struct Bar<'a> {
-    ///     owned: String,
-    ///     string_2: &'a str,
-    /// }
-    ///
-    /// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-    ///     // ERROR (but works if you replace owned with string_2)
-    ///     bar.project(|bar, _| &*bar.owned)   
-    /// }
-    ///
-    /// #
-    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
-    /// #     type Output = Bar<'a>;
-    /// #     fn transform(&'a self) -> &'a Bar<'a> {
-    /// #         self
-    /// #     }
-    /// #
-    /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
-    /// #     }
-    /// #
-    /// #     fn transform_mut<F>(&'a mut self, f: F)
-    /// #     where
-    /// #         F: 'static + FnOnce(&'a mut Self::Output),
-    /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
-    /// #     }
-    /// # }
-    /// ```
-    ///
-    /// Borrowed data from `Y` similarly cannot escape with the wrong lifetime because of the `for<'a>`, since
-    /// it will never be valid for the borrowed data to escape for all lifetimes of 'a. Internally, `.project()`
-    /// uses `.get()`, however the signature forces the callers to be able to handle every lifetime.
-    ///
-    /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
-    /// the output yokeable can _only_ have borrowed data flow in to it from the input, and the `'this` ensures separation
-    /// between `'a` data that the input is borrowing vs data that the input owns.
-    fn __project_safety_docs(&self) {}
 }
+
+/// Safety docs for project()
+///
+/// (Docs are on a private const to allow the use of compile_fail doctests)
+///
+/// This is safe to perform because of the choice of lifetimes on `f`, that is,
+/// `for<'a> fn(&'this <Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
+///
+/// What we want this function to do is take a Yokeable (`Y`) that is borrowing from the cart, and
+/// produce another Yokeable (`P`) that also borrows from the same cart. There are a couple potential
+/// hazards here:
+///
+/// - `P` ends up borrowing data from `Y` (or elsewhere) that did _not_ come from the cart,
+///   for example `P` could borrow owned data from a `Cow`.
+/// - Borrowed data from `Y` escapes with the wrong lifetime
+///
+/// Let's walk through these and see how they're prevented.
+///
+/// ```rust, compile_fail
+/// # use std::rc::Rc;
+/// # use yoke::Yoke;
+/// # use std::borrow::Cow;
+/// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///    y.project(|cow, _| &*cow)   
+/// }
+/// ```
+///
+/// In this case, the lifetime of `&*cow` is `&'this str`, however the function needs to be able to return
+/// `&'a str` _for all `'a`_, which isn't possible.
+///
+/// Similarly, trying to project an owned field of a struct will produce similar errors:
+///
+/// ```rust,compile_fail
+/// # use std::borrow::Cow;
+/// # use yoke::{Yoke, Yokeable};
+/// # use std::mem;
+/// # use std::rc::Rc;
+/// #
+/// // also safely implements Yokeable<'a>
+/// struct Bar<'a> {
+///     owned: String,
+///     string_2: &'a str,
+/// }
+///
+/// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///     // ERROR (but works if you replace owned with string_2)
+///     bar.project(|bar, _| &*bar.owned)   
+/// }
+///
+/// #
+/// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
+/// #     type Output = Bar<'a>;
+/// #     fn transform(&'a self) -> &'a Bar<'a> {
+/// #         self
+/// #     }
+/// #
+/// #     unsafe fn make(from: Bar<'a>) -> Self {
+/// #         let ret = mem::transmute_copy(&from);
+/// #         mem::forget(from);
+/// #         ret
+/// #     }
+/// #
+/// #     fn transform_mut<F>(&'a mut self, f: F)
+/// #     where
+/// #         F: 'static + FnOnce(&'a mut Self::Output),
+/// #     {
+/// #         unsafe { f(mem::transmute(self)) }
+/// #     }
+/// # }
+/// ```
+///
+/// Borrowed data from `Y` similarly cannot escape with the wrong lifetime because of the `for<'a>`, since
+/// it will never be valid for the borrowed data to escape for all lifetimes of 'a. Internally, `.project()`
+/// uses `.get()`, however the signature forces the callers to be able to handle every lifetime.
+///
+/// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
+/// the output yokeable can _only_ have borrowed data flow in to it from the input, and the `'this` ensures separation
+/// between `'a` data that the input is borrowing vs data that the input owns.
+const _: () = ();
