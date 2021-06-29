@@ -670,7 +670,7 @@ jobs:
         cargo install cargo-make
         rustup component add rust-src
         rustup toolchain install nightly-2021-02-28
-        npm install -g wabt
+        sudo npm install -g wabt
         cargo install twiggy
         cargo make wasm-examples
 
