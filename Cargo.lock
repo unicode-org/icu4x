@@ -874,6 +874,7 @@ dependencies = [
  "futures",
  "icu_locid",
  "icu_provider",
+ "icu_provider_blob",
  "icu_provider_cldr",
  "icu_provider_fs",
  "icu_testdata",

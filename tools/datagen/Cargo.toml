@@ -31,6 +31,7 @@ clap = "2.33"
 futures = "0.3"
 icu_locid = { version = "0.2", path = "../../components/locid" }
 icu_provider = { version = "0.2", path = "../../provider/core" }
+icu_provider_blob = { version = "0.2", path = "../../provider/blob", features = ["export"] }
 icu_provider_cldr = { version = "0.2", path = "../../provider/cldr", features = ["download"] }
 icu_provider_fs = { version = "0.2", path = "../../provider/fs", features = ["export", "bincode"] }
 icu_testdata = { version = "0.2", path = "../../provider/testdata", features = ["metadata"] }

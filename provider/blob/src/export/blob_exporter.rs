@@ -9,13 +9,13 @@ use crate::path_util;
 use litemap::LiteMap;
 use crate::blob_schema::*;
 
-pub struct BlobExporter<'w> {
+pub struct BlobExporter {
     resources: LiteMap<String, Vec<u8>>,
-    sink: &'w mut dyn std::io::Write,
+    sink: Box<dyn std::io::Write>,
 }
 
-impl<'w> BlobExporter<'w> {
-    pub fn new_with_sink(sink: &'w mut dyn std::io::Write) -> Self {
+impl BlobExporter {
+    pub fn new_with_sink(sink: Box<dyn std::io::Write>) -> Self {
         Self {
             resources: LiteMap::new(),
             sink
@@ -38,7 +38,7 @@ fn serialize(
     Ok(())
 }
 
-impl<'d, 's: 'd, 'w> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter<'w> {
+impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter {
     fn put_payload(
         &mut self,
         req: DataRequest,
@@ -58,10 +58,10 @@ impl<'d, 's: 'd, 'w> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExpor
             resources: LiteMap::with_capacity(self.resources.len())
         };
         for (k, v) in self.resources.iter() {
-            schema.resources.try_append(k, v).expect("Same order");
+            schema.resources.try_append(k, v).ok_or(()).expect_err("Same order");
         }
         let blob = BlobSchema::V001(schema);
-        serialize(&blob, self.sink)?;
+        serialize(&blob, self.sink.as_mut())?;
         Ok(())
     }
 }

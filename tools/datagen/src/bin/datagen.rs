@@ -18,6 +18,7 @@ use icu_provider_fs::export::fs_exporter;
 use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
+use icu_provider_blob::export::BlobExporter;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -70,8 +71,7 @@ fn main() -> anyhow::Result<()> {
                 .takes_value(true)
                 .possible_value("json")
                 .possible_value("bincode")
-                .help("File format syntax for data files (defaults to JSON).")
-                .default_value("json"),
+                .help("File format syntax for data files."),
         )
         .arg(
             Arg::with_name("PRETTY")
@@ -231,20 +231,6 @@ fn main() -> anyhow::Result<()> {
         .value_of("FORMAT")
         .expect("Option has default value");
 
-    let syntax = matches
-        .value_of("SYNTAX")
-        .expect("Option has default value");
-
-    let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
-        Some(icu_testdata::paths::data_root().join(syntax))
-    } else if let Some(v) = matches.value_of_os("OUTPUT") {
-        Some(PathBuf::from(v))
-    } else if format == "blob" {
-        None
-    } else {
-        anyhow::bail!("--out must be specified for --format=dir");
-    };
-
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
         Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
@@ -278,11 +264,11 @@ fn main() -> anyhow::Result<()> {
     let mut anchor2;
     let exporter: &mut dyn DataExporter<SerdeSeDataStructMarker> = match format {
         "dir" => {
-            anchor1 = get_fs_exporter(&matches, output_path.expect("--format=dir"))?;
+            anchor1 = get_fs_exporter(&matches)?;
             &mut anchor1
         }
         "blob" => {
-            anchor2 = get_blob_exporter(&matches, output_path)?;
+            anchor2 = get_blob_exporter(&matches)?;
             &mut anchor2
         }
         _ => unreachable!(),
@@ -297,8 +283,19 @@ fn main() -> anyhow::Result<()> {
 
 fn get_fs_exporter(
     matches: &ArgMatches,
-    output_path: PathBuf,
 ) -> anyhow::Result<FilesystemExporter> {
+    let syntax = matches
+        .value_of("SYNTAX")
+        .unwrap_or("json");
+
+    let output_path: PathBuf = if matches.is_present("OUTPUT_TESTDATA") {
+        icu_testdata::paths::data_root().join(syntax)
+    } else if let Some(v) = matches.value_of_os("OUTPUT") {
+        PathBuf::from(v)
+    } else {
+        anyhow::bail!("--out must be specified for --format=dir");
+    };
+
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
         Some("json") | None => {
             let mut options = serializers::json::Options::default();
@@ -333,9 +330,32 @@ fn get_fs_exporter(
 
 fn get_blob_exporter(
     matches: &ArgMatches,
-    output_path: Option<PathBuf>,
-) -> anyhow::Result<FilesystemExporter> {
-    todo!()
+) -> anyhow::Result<BlobExporter> {
+    if matches.value_of("SYNTAX") == Some("json") {
+        anyhow::bail!("Cannot use --format=blob with --syntax=json");
+    }
+
+    let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
+        Some(icu_testdata::paths::data_root().join("testdata.bincode"))
+    } else if let Some(v) = matches.value_of_os("OUTPUT") {
+        Some(PathBuf::from(v))
+    } else {
+        None
+    };
+
+    let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
+        if !matches.is_present("OVERWRITE") && path_buf.exists() {
+            anyhow::bail!("Output path is present: {:?}", path_buf);
+        }
+        let context = path_buf.to_string_lossy().to_string();
+        let temp = std::fs::File::create(path_buf).with_context(|| context)?;
+        Box::new(temp)
+    } else {
+        let temp = std::io::stdout();
+        Box::new(temp)
+    };
+
+    Ok(BlobExporter::new_with_sink(sink))
 }
 
 fn export_cldr<'d, 's: 'd>(
