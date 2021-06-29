@@ -16,5 +16,5 @@ pub enum BlobSchema<'s> {
 pub struct BlobSchemaV1<'s> {
     // TODO(#829): Use ZeroMap instead of LiteMap.
     #[serde(borrow)]
-    resources: LiteMap<&'s str, &'s [u8]>,
+    pub resources: LiteMap<&'s str, &'s [u8]>,
 }

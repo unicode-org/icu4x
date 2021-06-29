@@ -290,6 +290,8 @@ fn main() -> anyhow::Result<()> {
 
     export_cldr(cldr_paths.as_ref(), exporter, locales_vec.as_deref())?;
 
+    exporter.close()?;
+
     Ok(())
 }
 
