@@ -4,7 +4,7 @@
 
 use icu::locid::macros::langid;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-use icu_provider_static::StaticDataProvider;
+use icu_provider_blob::StaticDataProvider;
 
 fn main() {
     let lid = langid!("en");

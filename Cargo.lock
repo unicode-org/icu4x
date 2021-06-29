@@ -858,8 +858,8 @@ dependencies = [
  "icu_locid",
  "icu_plurals",
  "icu_provider",
+ "icu_provider_blob",
  "icu_provider_fs",
- "icu_provider_static",
  "log",
  "tinystr",
  "writeable",
@@ -1008,6 +1008,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_blob"
+version = "0.2.0"
+dependencies = [
+ "bincode",
+ "erased-serde",
+ "icu",
+ "icu_locid",
+ "icu_provider",
+ "litemap",
+ "log",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "icu_provider_cldr"
 version = "0.2.0"
 dependencies = [
@@ -1067,21 +1082,6 @@ dependencies = [
  "icu_uniset",
  "thiserror",
  "tinystr",
-]
-
-[[package]]
-name = "icu_provider_static"
-version = "0.2.0"
-dependencies = [
- "bincode",
- "erased-serde",
- "icu",
- "icu_locid",
- "icu_provider",
- "litemap",
- "log",
- "serde",
- "serde_json",
 ]
 
 [[package]]
