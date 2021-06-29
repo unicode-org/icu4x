@@ -655,5 +655,6 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
 ///
 /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
 /// the output yokeable can _only_ have borrowed data flow in to it from the input, and the `'this` ensures separation
-/// between `'a` data that the input is borrowing vs data that the input owns.
+/// between `'a` data that the input is borrowing vs data that the input owns. All paths of unsoundness require the
+/// unification of an existential and universal lifetime, which isn't possible.
 const _: () = ();
