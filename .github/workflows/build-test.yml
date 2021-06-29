@@ -658,3 +658,18 @@ jobs:
         publish_branch: gh-pages
         publish_dir: copy-to-ext-repo
         commit_message: Rust API docs + benchmark dashboards -> GH Pages
+
+  # Experimental: binary size benchmark
+
+  binsize:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build WASM binaries
+      run:
+        cargo make wasm-examples
+
+    - name: Measure size of wasm executables.
+      run: |
+        rustc tools/benchmarks/binsize.rs
+        binsize
