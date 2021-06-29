@@ -20,15 +20,6 @@ pub enum AliasOption {
 
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum LocalesOption {
-    /// Include all available locales.
-    IncludeAll,
-    /// Include only those locales that have an exact match in the given list.
-    IncludeList(Box<[LanguageIdentifier]>),
-}
-
-#[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum SyntaxOption {
     /// Serialize using JavaScript Object Notation (JSON).
     Json,
@@ -55,8 +46,6 @@ impl SyntaxOption {
 pub(crate) struct Manifest {
     /// Strategy for de-duplicating locale data.
     pub aliasing: AliasOption,
-    /// Configuration for including locales in this data provider.
-    pub locales: LocalesOption,
     /// Which data serialization file format is used.
     pub syntax: SyntaxOption,
 }

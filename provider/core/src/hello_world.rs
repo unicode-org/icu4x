@@ -213,8 +213,4 @@ impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruc
         );
         Ok(())
     }
-
-    fn include_resource_options(&self, _resc_options: &ResourceOptions) -> bool {
-        true
-    }
 }

@@ -22,10 +22,6 @@ where
         payload: DataPayload<'d, 's, M>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
-    /// Whether to load and dump data for the given entry. This function enables the
-    /// [`DataExporter`] to filter out certain data entries.
-    fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool;
-
     /// Function called after a key has been fully dumped into the exporter.
     fn flush(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         Ok(())
@@ -44,9 +40,6 @@ where
         provider: &impl IterableDataProvider<'d, 's, M>,
     ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
-            if !self.include_resource_options(&resc_options) {
-                continue;
-            }
             let req = DataRequest {
                 resource_path: ResourcePath {
                     key: resc_key,

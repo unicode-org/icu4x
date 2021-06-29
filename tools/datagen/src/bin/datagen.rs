@@ -261,6 +261,15 @@ fn main() -> anyhow::Result<()> {
         anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
+    /*
+
+            LocalesOption::IncludeAll => true,
+            LocalesOption::IncludeList(ref list) => match &resc_options.langid {
+                Some(langid) => list.contains(&langid),
+                None => true,
+            },
+    */
+
     match format {
         "directory" => {
             let mut exporter = get_fs_exporter(&matches, output_path.expect("Guaranteed for directory format"))?;

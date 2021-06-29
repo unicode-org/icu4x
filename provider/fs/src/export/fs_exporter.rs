@@ -6,7 +6,6 @@ use super::aliasing::{self, AliasCollection};
 use super::serializers::AbstractSerializer;
 use crate::error::Error;
 use crate::manifest::AliasOption;
-use crate::manifest::LocalesOption;
 use crate::manifest::Manifest;
 use crate::manifest::MANIFEST_FILE;
 use icu_provider::export::DataExporter;
@@ -34,8 +33,6 @@ pub enum OverwriteOption {
 pub struct ExporterOptions {
     /// Directory in the filesystem to write output.
     pub root: PathBuf,
-    /// Strategy for including locales.
-    pub locales: LocalesOption,
     /// Strategy for de-duplicating locale data.
     pub aliasing: AliasOption,
     /// Option for initializing the output directory.
@@ -46,7 +43,6 @@ impl Default for ExporterOptions {
     fn default() -> Self {
         Self {
             root: PathBuf::from("icu4x_data"),
-            locales: LocalesOption::IncludeAll,
             aliasing: AliasOption::NoAliases,
             overwrite: OverwriteOption::CheckEmpty,
         }
@@ -84,16 +80,6 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for FilesystemExp
         Ok(())
     }
 
-    fn include_resource_options(&self, resc_options: &ResourceOptions) -> bool {
-        match self.manifest.locales {
-            LocalesOption::IncludeAll => true,
-            LocalesOption::IncludeList(ref list) => match &resc_options.langid {
-                Some(langid) => list.contains(&langid),
-                None => true,
-            },
-        }
-    }
-
     /// This function must be called before the [`FilesystemExporter`] leaves scope.
     /// It is recommended to flush after exporting each [`ResourceKey`].
     fn flush(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -113,7 +99,6 @@ impl FilesystemExporter {
             root: options.root,
             manifest: Manifest {
                 aliasing: options.aliasing,
-                locales: options.locales,
                 syntax: serializer.deref().clone(),
             },
             alias_collection: None,
