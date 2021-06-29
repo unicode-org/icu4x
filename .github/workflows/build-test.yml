@@ -666,7 +666,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build WASM binaries
-      run:
+      run: |
+        cargo install cargo-make
+        rustup component add rust-src
+        rustup toolchain install nightly-2021-02-28
         cargo make wasm-examples
 
     - name: Measure size of wasm executables.
