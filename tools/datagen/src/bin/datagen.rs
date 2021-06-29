@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::manifest::LocalesOption;
 use anyhow::Context;
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
+use icu_provider::filter::LanguageIdentifierFilter;
+use icu_provider::iter::IterableDataProvider;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_cldr_keys;
@@ -261,14 +262,17 @@ fn main() -> anyhow::Result<()> {
         anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
     };
 
-    /*
-
-            LocalesOption::IncludeAll => true,
-            LocalesOption::IncludeList(ref list) => match &resc_options.langid {
-                Some(langid) => list.contains(&langid),
-                None => true,
-            },
-    */
+    let locales_vec = if let Some(locale_strs) = matches.values_of("LOCALES") {
+        Some(
+            locale_strs
+                .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
+                .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?,
+        )
+    } else if matches.is_present("TEST_LOCALES") {
+        Some(icu_testdata::metadata::load()?.package_metadata.locales)
+    } else {
+        None
+    };
 
     match format {
         "directory" => {
@@ -276,11 +280,11 @@ fn main() -> anyhow::Result<()> {
                 &matches,
                 output_path.expect("Guaranteed for directory format"),
             )?;
-            export_cldr(cldr_paths.as_ref(), &mut exporter)?;
+            export_cldr(cldr_paths.as_ref(), &mut exporter, locales_vec.as_deref())?;
         }
         "blob" => {
             let mut exporter = get_blob_exporter(&matches, output_path)?;
-            export_cldr(cldr_paths.as_ref(), &mut exporter)?;
+            export_cldr(cldr_paths.as_ref(), &mut exporter, locales_vec.as_deref())?;
         }
         _ => unreachable!(),
     };
@@ -319,15 +323,6 @@ fn get_fs_exporter(
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
-    if let Some(locale_strs) = matches.values_of("LOCALES") {
-        let locales_vec = locale_strs
-            .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
-            .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?;
-        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
-    } else if matches.is_present("TEST_LOCALES") {
-        let locales_vec = icu_testdata::metadata::load()?.package_metadata.locales;
-        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
-    }
     let mut exporter = FilesystemExporter::try_new(serializer, options)?;
     Ok(exporter)
 }
@@ -343,13 +338,24 @@ fn get_blob_exporter(
 fn export_cldr<'d, 's: 'd>(
     cldr_paths: &dyn CldrPaths,
     exporter: &mut impl DataExporter<'d, 's, SerdeSeDataStructMarker>,
+    allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> anyhow::Result<()> {
     let keys = get_all_cldr_keys();
 
-    let provider = CldrJsonDataProvider::new(cldr_paths);
+    let raw_provider = CldrJsonDataProvider::new(cldr_paths);
+    let filtered_provider =
+        allowed_locales.map(|allowlist| raw_provider.filter_by_langid_allowlist_strict(allowlist));
+
+    let provider: &(dyn IterableDataProvider<SerdeSeDataStructMarker> + '_) =
+        if let Some(p) = filtered_provider {
+            &p
+        } else {
+            &raw_provider
+        };
+
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
-        let result = exporter.put_key_from_provider(key, &provider);
+        let result = exporter.put_key_from_provider(key, provider);
         // Ensure flush() is called, even when the result is an error
         // FIXME: Propagate the error from flush
         exporter.flush();

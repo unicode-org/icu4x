@@ -37,7 +37,7 @@ where
     fn put_key_from_provider(
         &mut self,
         resc_key: &ResourceKey,
-        provider: &impl IterableDataProvider<'d, 's, M>,
+        provider: &(impl IterableDataProvider<'d, 's, M> + ?Sized),
     ) -> Result<(), Error> {
         for options in provider.supported_options_for_key(resc_key)? {
             let req = DataRequest {
