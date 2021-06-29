@@ -71,7 +71,7 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for FilesystemExp
         &mut self,
         req: DataRequest,
         obj: DataPayload<'d, 's, SerdeSeDataStructMarker>,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    ) -> Result<(), DataError> {
         let mut path_buf = self.root.clone();
         path_buf.extend(req.resource_path.key.get_components().iter());
         path_buf.extend(req.resource_path.options.get_components().iter());
@@ -82,7 +82,7 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for FilesystemExp
 
     /// This function must be called before the [`FilesystemExporter`] leaves scope.
     /// It is recommended to flush after exporting each [`ResourceKey`].
-    fn flush(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    fn flush(&mut self) -> Result<(), DataError> {
         if let Some(mut alias_collection) = self.alias_collection.take() {
             alias_collection.flush()?;
         }

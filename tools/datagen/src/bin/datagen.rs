@@ -44,10 +44,10 @@ fn main() -> anyhow::Result<()> {
             Arg::with_name("FORMAT")
                 .long("format")
                 .takes_value(true)
-                .possible_value("directory")
+                .possible_value("dir")
                 .possible_value("blob")
                 .help("Output to a directory on the filesystem or a single blob.")
-                .default_value("directory"),
+                .default_value("dir"),
         )
         .arg(
             Arg::with_name("ALIASING")
@@ -242,7 +242,7 @@ fn main() -> anyhow::Result<()> {
     } else if format == "blob" {
         None
     } else {
-        anyhow::bail!("--out must be specified for --format directory");
+        anyhow::bail!("--out must be specified for --format=dir");
     };
 
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
@@ -274,20 +274,21 @@ fn main() -> anyhow::Result<()> {
         None
     };
 
-    match format {
-        "directory" => {
-            let mut exporter = get_fs_exporter(
-                &matches,
-                output_path.expect("Guaranteed for directory format"),
-            )?;
-            export_cldr(cldr_paths.as_ref(), &mut exporter, locales_vec.as_deref())?;
+    let mut anchor1;
+    let mut anchor2;
+    let exporter: &mut dyn DataExporter<SerdeSeDataStructMarker> = match format {
+        "dir" => {
+            anchor1 = get_fs_exporter(&matches, output_path.expect("--format=dir"))?;
+            &mut anchor1
         }
         "blob" => {
-            let mut exporter = get_blob_exporter(&matches, output_path)?;
-            export_cldr(cldr_paths.as_ref(), &mut exporter, locales_vec.as_deref())?;
+            anchor2 = get_blob_exporter(&matches, output_path)?;
+            &mut anchor2
         }
         _ => unreachable!(),
     };
+
+    export_cldr(cldr_paths.as_ref(), exporter, locales_vec.as_deref())?;
 
     Ok(())
 }
@@ -323,7 +324,8 @@ fn get_fs_exporter(
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
-    let mut exporter = FilesystemExporter::try_new(serializer, options)?;
+
+    let exporter = FilesystemExporter::try_new(serializer, options)?;
     Ok(exporter)
 }
 
@@ -332,12 +334,11 @@ fn get_blob_exporter(
     output_path: Option<PathBuf>,
 ) -> anyhow::Result<FilesystemExporter> {
     todo!()
-    // TODO(#830): Support locale filtering in BlobExporter
 }
 
 fn export_cldr<'d, 's: 'd>(
     cldr_paths: &dyn CldrPaths,
-    exporter: &mut impl DataExporter<'d, 's, SerdeSeDataStructMarker>,
+    exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> anyhow::Result<()> {
     let keys = get_all_cldr_keys();
@@ -345,7 +346,7 @@ fn export_cldr<'d, 's: 'd>(
     let raw_provider = CldrJsonDataProvider::new(cldr_paths);
     let filtered_provider;
     let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
-    
+
     if let Some(allowlist) = allowed_locales {
         filtered_provider = raw_provider.filter_by_langid_allowlist_strict(allowlist);
         provider = &filtered_provider;
@@ -355,11 +356,7 @@ fn export_cldr<'d, 's: 'd>(
 
     for key in keys.iter() {
         log::info!("Writing key: {}", key);
-        let result = exporter.put_key_from_provider(key, provider);
-        // Ensure flush() is called, even when the result is an error
-        // FIXME: Propagate the error from flush
-        exporter.flush();
-        result?;
+        icu_provider::export::export_from_iterable(key, provider, exporter)?;
     }
 
     Ok(())
