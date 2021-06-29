@@ -272,20 +272,26 @@ fn main() -> anyhow::Result<()> {
 
     match format {
         "directory" => {
-            let mut exporter = get_fs_exporter(&matches, output_path.expect("Guaranteed for directory format"))?;
+            let mut exporter = get_fs_exporter(
+                &matches,
+                output_path.expect("Guaranteed for directory format"),
+            )?;
             export_cldr(cldr_paths.as_ref(), &mut exporter)?;
-        },
+        }
         "blob" => {
             let mut exporter = get_blob_exporter(&matches, output_path)?;
             export_cldr(cldr_paths.as_ref(), &mut exporter)?;
-        },
-        _ => unreachable!()
+        }
+        _ => unreachable!(),
     };
 
     Ok(())
 }
 
-fn get_fs_exporter(matches: &ArgMatches, output_path: PathBuf) -> anyhow::Result<FilesystemExporter> {
+fn get_fs_exporter(
+    matches: &ArgMatches,
+    output_path: PathBuf,
+) -> anyhow::Result<FilesystemExporter> {
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
         Some("json") | None => {
             let mut options = serializers::json::Options::default();
@@ -326,7 +332,10 @@ fn get_fs_exporter(matches: &ArgMatches, output_path: PathBuf) -> anyhow::Result
     Ok(exporter)
 }
 
-fn get_blob_exporter(matches: &ArgMatches, output_path: Option<PathBuf>) -> anyhow::Result<FilesystemExporter> {
+fn get_blob_exporter(
+    matches: &ArgMatches,
+    output_path: Option<PathBuf>,
+) -> anyhow::Result<FilesystemExporter> {
     todo!()
     // TODO(#830): Support locale filtering in BlobExporter
 }
