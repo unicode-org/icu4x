@@ -59,7 +59,7 @@ use icu_locid::LanguageIdentifier;
 /// assert!(supported_langids.contains(&langid!("de")));
 /// assert!(!supported_langids.contains(&langid!("en")));
 /// ```
-pub trait LanguageIdentifierFilter: Sized {
+pub trait LanguageIdentifierFilter<M>: Sized {
     /// Filter out data requests with certain langids according to the predicate function. The
     /// predicate should return `true` to allow a langid and `false` to reject a langid.
     ///
@@ -164,11 +164,16 @@ pub trait LanguageIdentifierFilter: Sized {
     ///     provider.load_payload(&req_no_langid);
     /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
     /// ```
-    fn require_langid<'a>(self) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
+    fn require_langid<'a>(
+        self,
+    ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
 }
 
-impl<T> LanguageIdentifierFilter for T {
-
+impl<'d, 's, D, M> LanguageIdentifierFilter<M> for D
+where
+    M: DataMarker<'s>,
+    D: DataProvider<'d, 's, M>,
+{
     fn filter_by_langid<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
@@ -209,7 +214,9 @@ impl<T> LanguageIdentifierFilter for T {
         }
     }
 
-    fn require_langid<'a>(self) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
+    fn require_langid<'a>(
+        self,
+    ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
         RequestFilterDataProvider {
             inner: self,
             predicate: Box::new(move |request| -> bool {
