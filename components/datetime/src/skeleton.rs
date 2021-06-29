@@ -354,7 +354,7 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(pattern) = first_pattern_match {
-        return BestSkeleton::AllFieldsMatch(pattern.clone());
+        return BestSkeleton::AllFieldsMatch(pattern);
     }
 
     let FieldsByType { date, time, other } = group_fields_by_type(fields);
@@ -375,7 +375,7 @@ pub fn create_best_pattern_for_fields<'a>(
                 unreachable!("Logic error in implementation. AllFieldsMatch handled above.")
             }
             BestSkeleton::MissingOrExtraFields(pattern) => {
-                BestSkeleton::MissingOrExtraFields(pattern.clone())
+                BestSkeleton::MissingOrExtraFields(pattern)
             }
             BestSkeleton::NoMatch => BestSkeleton::NoMatch,
         };
@@ -437,13 +437,10 @@ pub fn create_best_pattern_for_fields<'a>(
                 length::Date::Short => &length_patterns.short,
             };
 
-            Some(
-                Pattern::from_bytes_combination(bytes, date_pattern.clone(), time_pattern.clone())
-                    .expect("TODO"),
-            )
+            Some(Pattern::from_bytes_combination(bytes, date_pattern, time_pattern).expect("TODO"))
         }
-        (None, Some(pattern)) => Some(pattern.clone()),
-        (Some(pattern), None) => Some(pattern.clone()),
+        (None, Some(pattern)) => Some(pattern),
+        (Some(pattern), None) => Some(pattern),
         (None, None) => None,
     };
 
@@ -515,8 +512,8 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 ///  * 2.6.2.2 Missing Skeleton Fields
 ///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
 ///      much of this step to implement. See the issue for more information.
-pub fn get_best_available_format_pattern<'a>(
-    skeletons: &'a SkeletonsV1,
+pub fn get_best_available_format_pattern(
+    skeletons: &SkeletonsV1,
     fields: &[Field],
 ) -> BestSkeleton<Pattern> {
     let mut closest_format_pattern = None;
@@ -627,7 +624,7 @@ pub fn get_best_available_format_pattern<'a>(
                         if requested_field.length != pattern_field.length
                             && requested_field.get_length_type() == pattern_field.get_length_type()
                         {
-                            return PatternItem::Field(requested_field.clone());
+                            return PatternItem::Field(*requested_field);
                         }
                     }
                 }
