@@ -117,6 +117,7 @@ mod resource;
 #[macro_use]
 pub mod erased;
 pub mod export;
+pub mod filter;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;

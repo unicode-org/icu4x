@@ -15,8 +15,8 @@ pub trait IterableDataProviderCore {
     /// Given a [`ResourceKey`], returns a boxed iterator over [`ResourceOptions`].
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, Error>;
+        resc_key: ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, Error>;
 }
 
 /// A super-trait combining [`DataProvider`] and [`IterableDataProviderCore`], auto-implemented

@@ -32,7 +32,7 @@ where
     }
 
     /// Function called after all keys have been fully dumped.
-    fn clone(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    fn close(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         Ok(())
     }
 
@@ -40,7 +40,7 @@ where
     /// into this [`DataExporter`].
     fn put_key_from_provider(
         &mut self,
-        resc_key: &ResourceKey,
+        resc_key: ResourceKey,
         provider: &impl IterableDataProvider<'d, 's, M>,
     ) -> Result<(), Error> {
         for resc_options in provider.supported_options_for_key(resc_key)? {
@@ -49,7 +49,7 @@ where
             }
             let req = DataRequest {
                 resource_path: ResourcePath {
-                    key: *resc_key,
+                    key: resc_key,
                     options: resc_options,
                 },
             };

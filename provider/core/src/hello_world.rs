@@ -180,7 +180,7 @@ impl_dyn_provider!(HelloWorldProvider<'s>, {
 impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
     fn supported_options_for_key(
         &self,
-        resc_key: &ResourceKey,
+        resc_key: ResourceKey,
     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
         resc_key.match_key(key::HELLO_WORLD_V1)?;
         let list: Vec<ResourceOptions> = self
