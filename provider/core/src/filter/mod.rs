@@ -3,26 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Providers that filter resource requests.
-//! 
+//!
 //! Requests that fail a filter test will return [`DataError::FilteredResource`] and will not
 //! appear in [`IterableDataProvider`] iterators.
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
-//! 
+//!
 //! # Examples
-//! 
+//!
 //! ```
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::filter::LanguageIdentifierFilter;
 //! use icu_locid_macros::language;
-//! 
+//!
 //! // Only return German data from a HelloWorldProvider:
 //! HelloWorldProvider::new_with_placeholder_data()
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
-//! 
+//!
 //! [`IterableDataProvider`]: crate::iter::IterableDataProvider
 
 mod impls;
@@ -36,7 +36,7 @@ use crate::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return [`DataError::FilteredResource`], and
 /// they will not be returned by [`IterableDataProviderCore::supported_options_for_key`].
-/// 
+///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
 pub struct RequestFilterDataProvider<D, F>

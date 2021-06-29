@@ -50,9 +50,9 @@ use icu_locid::LanguageIdentifier;
 /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
 ///     provider.load_payload(&req_en);
 /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
-/// 
+///
 /// // English should not appear in the iterator result:
-/// let supported_langids = provider.supported_options_for_key(key::HELLO_WORLD_V1)
+/// let supported_langids = provider.supported_options_for_key(&key::HELLO_WORLD_V1)
 ///     .expect("Should successfully make an iterator of supported locales")
 ///     .filter_map(|options| options.langid)
 ///     .collect::<Vec<LanguageIdentifier>>();
@@ -66,7 +66,7 @@ pub trait LanguageIdentifierFilter<'a>: Sized {
     /// predicate should return `true` to allow a langid and `false` to reject a langid.
     ///
     /// Data requests with no langid will be allowed. To reject data requests without a langid,
-    /// chain this with `Self::require_langid`.
+    /// chain this with [`Self::require_langid`].
     fn filter_by_langid(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
@@ -77,6 +77,58 @@ pub trait LanguageIdentifierFilter<'a>: Sized {
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
         description: String,
+    ) -> RequestFilterDataProvider<Self, Self::F>;
+
+    /// Filter out data request except those having a language identifier that exactly matches
+    /// one in the allowlist.
+    ///
+    /// This will be replaced with a smarter algorithm for locale filtering; see
+    /// https://github.com/unicode-org/icu4x/issues/834
+    ///
+    /// Data requests with no langid will be allowed. To reject data requests without a langid,
+    /// chain this with [`Self::require_langid`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::filter::LanguageIdentifierFilter;
+    /// use icu_locid_macros::langid;
+    ///
+    /// let allowlist = vec![langid!("de"), langid!("zh")];
+    /// let provider = HelloWorldProvider::new_with_placeholder_data()
+    ///     .filter_by_langid_allowlist_strict(&allowlist);
+    ///
+    /// // German requests should succeed:
+    /// let req_de = DataRequest {
+    ///     resource_path: ResourcePath {
+    ///         key: key::HELLO_WORLD_V1,
+    ///         options: langid!("de").into(),
+    ///     }
+    /// };
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load_payload(&req_de);
+    /// assert!(matches!(response, Ok(_)));
+    ///
+    /// // English requests should fail:
+    /// let req_en = DataRequest {
+    ///     resource_path: ResourcePath {
+    ///         key: key::HELLO_WORLD_V1,
+    ///         options: langid!("en-US").into(),
+    ///     }
+    /// };
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load_payload(&req_en);
+    /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
+    /// assert_eq!(
+    ///     "Resource was filtered: Locale filter (allowlist: [de, zh]): icu4x/helloworld@1/en-US",
+    ///     response.unwrap_err().to_string()
+    /// );
+    /// ```
+    fn filter_by_langid_allowlist_strict(
+        self,
+        allowlist: &'a [LanguageIdentifier],
     ) -> RequestFilterDataProvider<Self, Self::F>;
 
     /// Require that data requests contain a langid.
@@ -141,6 +193,22 @@ impl<'a, T> LanguageIdentifierFilter<'a> for T {
                 }
             }),
             description,
+        }
+    }
+
+    fn filter_by_langid_allowlist_strict(
+        self,
+        allowlist: &'a [LanguageIdentifier],
+    ) -> RequestFilterDataProvider<Self, Self::F> {
+        RequestFilterDataProvider {
+            inner: self,
+            predicate: Box::new(move |request| -> bool {
+                match &request.resource_path.options.langid {
+                    Some(langid) => allowlist.contains(langid),
+                    None => false,
+                }
+            }),
+            description: format!("Locale filter (allowlist: {:?})", allowlist),
         }
     }
 
