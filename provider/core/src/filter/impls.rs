@@ -169,15 +169,17 @@ pub trait LanguageIdentifierFilter<M>: Sized {
     ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
 }
 
-impl<'d, 's, D, M> LanguageIdentifierFilter<M> for D
+impl<D, F> RequestFilterDataProvider<D, F>
 where
-    M: DataMarker<'s>,
-    D: DataProvider<'d, 's, M>,
+    F: Fn(&DataRequest) -> bool,
 {
     fn filter_by_langid<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
-    ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    where
+        F: 'a,
+    {
         self.filter_by_langid_with_description(predicate, "Locale filter".to_string())
     }
 
@@ -185,10 +187,17 @@ where
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
         description: String,
-    ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    where
+        F: 'a,
+    {
+        let old_predicate = self.predicate;
         RequestFilterDataProvider {
-            inner: self,
+            inner: self.inner,
             predicate: Box::new(move |request| -> bool {
+                if !(old_predicate)(request) {
+                    return false;
+                }
                 match &request.resource_path.options.langid {
                     Some(langid) => predicate(langid),
                     None => true,
@@ -201,10 +210,17 @@ where
     fn filter_by_langid_allowlist_strict<'a>(
         self,
         allowlist: &'a [LanguageIdentifier],
-    ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    where
+        F: 'a,
+    {
+        let old_predicate = self.predicate;
         RequestFilterDataProvider {
-            inner: self,
+            inner: self.inner,
             predicate: Box::new(move |request| -> bool {
+                if !(old_predicate)(request) {
+                    return false;
+                }
                 match &request.resource_path.options.langid {
                     Some(langid) => allowlist.contains(langid),
                     None => true,
@@ -216,10 +232,17 @@ where
 
     fn require_langid<'a>(
         self,
-    ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + 'a>>
+    where
+        F: 'a,
+    {
+        let old_predicate = self.predicate;
         RequestFilterDataProvider {
-            inner: self,
+            inner: self.inner,
             predicate: Box::new(move |request| -> bool {
+                if !(old_predicate)(request) {
+                    return false;
+                }
                 match &request.resource_path.options.langid {
                     Some(_) => true,
                     None => false,
