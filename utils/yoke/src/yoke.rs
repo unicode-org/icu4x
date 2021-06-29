@@ -591,7 +591,8 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
 /// hazards here:
 ///
 /// - `P` ends up borrowing data from `Y` (or elsewhere) that did _not_ come from the cart,
-///   for example `P` could borrow owned data from a `Cow`.
+///   for example `P` could borrow owned data from a `Cow`. This would make the `Yoke<P>` dependent
+///   on data owned only by the `Yoke<Y>`.
 /// - Borrowed data from `Y` escapes with the wrong lifetime
 ///
 /// Let's walk through these and see how they're prevented.
@@ -652,6 +653,13 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
 /// Borrowed data from `Y` similarly cannot escape with the wrong lifetime because of the `for<'a>`, since
 /// it will never be valid for the borrowed data to escape for all lifetimes of 'a. Internally, `.project()`
 /// uses `.get()`, however the signature forces the callers to be able to handle every lifetime.
+///
+/// `'this` and `'a` are the only two lifetimes that matter here; `Yokeable`s must be `'static` and since
+/// `Output` is an associated type it can only have one lifetime, `'a` (there's nowhere for it to get another from).
+/// `Yoke`s can get additional lifetimes via the cart, and indeed, `project()` can operate on `Yoke<_, &'b [u8]>`,
+/// however this lifetime is inaccessible to the closure, and even if it were accessible the `for<'a>` would force
+/// it out of the output the same way it does for `'this`. All external lifetimes (from other found outside the yoke/closures
+/// are similarly constrained here.
 ///
 /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
 /// the output yokeable can _only_ have borrowed data flow in to it from the input, and the `'this` ensures separation
