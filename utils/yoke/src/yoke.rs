@@ -477,11 +477,14 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
     /// looking at a subfield, and producing a new yoke. This will clone the cart, and the provided
     /// transformation is only allowed to use data known to be borrowed from the cart.
     ///
-    /// This currently takes an additional `PhantomData<&()>` parameter as a workaround to
-    /// [compiler bug #86702](https://github.com/rust-lang/rust/issues/86702). This parameter
-    /// should just be ignored in the function. Furthermore,
+    /// This takes an additional `PhantomData<&()>` parameter as a workaround to the issue
+    /// described in [#86702](https://github.com/rust-lang/rust/issues/86702). This parameter
+    /// should just be ignored in the function.
+    /// 
+    /// Furthermore,
     /// [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937) prevents
-    /// this from taking a capturing closure.
+    /// this from taking a capturing closure, however [`Yoke::project_with_capture()`]
+    /// can be used for the same use cases.
     ///
     ///
     /// This can be used, for example, to transform data from one format to another:
