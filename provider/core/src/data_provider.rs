@@ -7,6 +7,7 @@
 mod test;
 
 use crate::error::Error;
+use crate::filter::RequestFilterDataProvider;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
@@ -476,4 +477,18 @@ where
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error>;
+
+    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>
+    where
+        Self: Sized,
+    {
+        fn noop(_: &DataRequest) -> bool {
+            true
+        }
+        RequestFilterDataProvider {
+            inner: self,
+            predicate: noop,
+            description: "some description".into(),
+        }
+    }
 }
