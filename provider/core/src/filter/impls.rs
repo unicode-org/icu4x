@@ -59,19 +59,19 @@ use icu_locid::LanguageIdentifier;
 /// assert!(supported_langids.contains(&langid!("de")));
 /// assert!(!supported_langids.contains(&langid!("en")));
 /// ```
-pub trait LanguageIdentifierFilter<'a>: Sized {
+pub trait LanguageIdentifierFilter: Sized {
     /// Filter out data requests with certain langids according to the predicate function. The
     /// predicate should return `true` to allow a langid and `false` to reject a langid.
     ///
     /// Data requests with no langid will be allowed. To reject data requests without a langid,
     /// chain this with [`Self::require_langid`].
-    fn filter_by_langid(
+    fn filter_by_langid<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
     ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
 
     /// Like `Box<dyn Fn(&DataRequest) -> bool + 'a>ilter_by_langid`, but with a string description to help with debugging.
-    fn filter_by_langid_with_description(
+    fn filter_by_langid_with_description<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
         description: String,
@@ -124,7 +124,7 @@ pub trait LanguageIdentifierFilter<'a>: Sized {
     ///     response.unwrap_err().to_string()
     /// );
     /// ```
-    fn filter_by_langid_allowlist_strict(
+    fn filter_by_langid_allowlist_strict<'a>(
         self,
         allowlist: &'a [LanguageIdentifier],
     ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
@@ -164,19 +164,19 @@ pub trait LanguageIdentifierFilter<'a>: Sized {
     ///     provider.load_payload(&req_no_langid);
     /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
     /// ```
-    fn require_langid(self) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
+    fn require_langid<'a>(self) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>>;
 }
 
-impl<'a, T> LanguageIdentifierFilter<'a> for T {
+impl<T> LanguageIdentifierFilter for T {
 
-    fn filter_by_langid(
+    fn filter_by_langid<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
     ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
         self.filter_by_langid_with_description(predicate, "Locale filter".to_string())
     }
 
-    fn filter_by_langid_with_description(
+    fn filter_by_langid_with_description<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + 'a,
         description: String,
@@ -193,7 +193,7 @@ impl<'a, T> LanguageIdentifierFilter<'a> for T {
         }
     }
 
-    fn filter_by_langid_allowlist_strict(
+    fn filter_by_langid_allowlist_strict<'a>(
         self,
         allowlist: &'a [LanguageIdentifier],
     ) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
@@ -209,7 +209,7 @@ impl<'a, T> LanguageIdentifierFilter<'a> for T {
         }
     }
 
-    fn require_langid(self) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
+    fn require_langid<'a>(self) -> RequestFilterDataProvider<Self, Box<dyn Fn(&DataRequest) -> bool + 'a>> {
         RequestFilterDataProvider {
             inner: self,
             predicate: Box::new(move |request| -> bool {
