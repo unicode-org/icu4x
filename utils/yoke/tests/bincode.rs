@@ -40,6 +40,10 @@ unsafe impl<'a> Yokeable<'a> for Bar<'static> {
         self
     }
 
+    fn transform_owned(self) -> Bar<'a> {
+        self
+    }
+
     unsafe fn make(from: Bar<'a>) -> Self {
         let ret = mem::transmute_copy(&from);
         mem::forget(from);

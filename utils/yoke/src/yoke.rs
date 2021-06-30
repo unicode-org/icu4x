@@ -327,6 +327,11 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #         self
     /// #     }
     /// #
+    /// #     fn transform_owned(self) -> Bar<'a> {
+    /// #         // covariant lifetime cast, can be done safely
+    /// #         self
+    /// #     }
+    /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
     /// #         let ret = mem::transmute_copy(&from);
     /// #         mem::forget(from);
@@ -524,6 +529,11 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #         self
     /// #     }
     /// #
+    /// #     fn transform_owned(self) -> Bar<'a> {
+    /// #         // covariant lifetime cast, can be done safely
+    /// #         self
+    /// #     }
+    /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
     /// #         let ret = mem::transmute_copy(&from);
     /// #         mem::forget(from);
@@ -542,24 +552,19 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     // Safety docs can be found below on `__project_safety_docs()`
     pub fn project<P>(
         self,
-        f: for<'this, 'a> fn(
-            &'this <Y as Yokeable<'a>>::Output,
+        f: for<'a> fn(
+            <Y as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
     ) -> Yoke<P, C>
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.get(), PhantomData);
-        let ret = Yoke {
+        let p = f(self.yokeable.transform_owned(), PhantomData);
+        Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-        };
-        // Writing an explicit drop to make the safety behavior clear:
-        // self.yokeable must be dropped before the moved cart has a chance
-        // to be dropped
-        drop(self.yokeable);
-        ret
+        }
     }
 
     /// This is similar to [`Yoke::project`], however it works around it not being able to
@@ -570,8 +575,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     pub fn project_with_capture<P, T>(
         self,
         capture: T,
-        f: for<'this, 'a> fn(
-            &'this <Y as Yokeable<'a>>::Output,
+        f: for<'a> fn(
+            <Y as Yokeable<'a>>::Output,
             capture: T,
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
@@ -579,16 +584,11 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         P: for<'a> Yokeable<'a>,
     {
-        let p = f(self.get(), capture, PhantomData);
-        let ret = Yoke {
+        let p = f(self.yokeable.transform_owned(), capture, PhantomData);
+        Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-        };
-        // Writing an explicit drop to make the safety behavior clear:
-        // self.yokeable must be dropped before the moved cart has a chance
-        // to be dropped
-        drop(self.yokeable);
-        ret
+        }
     }
 }
 
@@ -645,6 +645,11 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
 /// #     type Output = Bar<'a>;
 /// #     fn transform(&'a self) -> &'a Bar<'a> {
+/// #         self
+/// #     }
+/// #
+/// #     fn transform_owned(self) -> Bar<'a> {
+/// #         // covariant lifetime cast, can be done safely
 /// #         self
 /// #     }
 /// #

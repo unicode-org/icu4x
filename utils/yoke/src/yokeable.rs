@@ -59,6 +59,11 @@ use std::{mem, ptr};
 ///         self
 ///     }
 ///
+///     fn transform_owned(self) -> Bar<'a> {
+///         // covariant lifetime cast, can be done safely
+///         self
+///     }
+///
 ///     unsafe fn make(from: Bar<'a>) -> Self {
 ///         // We're just doing mem::transmute() here, however Rust is
 ///         // not smart enough to realize that Bar<'a> and Bar<'static> are of
@@ -92,6 +97,15 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// should simply be `{ self }`, though it's acceptable to include additional assertions
     /// if desired.
     fn transform(&'a self) -> &'a Self::Output;
+
+    /// This method must cast `self` between `Self<'static>` and `Self<'a>`.
+    ///
+    /// # Implementation safety
+    ///
+    /// If the invariants of [`Yokeable`] are being satisfied, the body of this method
+    /// should simply be `{ self }`, though it's acceptable to include additional assertions
+    /// if desired.
+    fn transform_owned(self) -> Self::Output;
 
     /// This method can be used to cast away `Self<'a>`'s lifetime.
     ///
@@ -166,6 +180,11 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// #         self
     /// #     }
     /// #
+    /// #     fn transform_owned(self) -> Bar<'a> {
+    /// #         // covariant lifetime cast, can be done safely
+    /// #         self
+    /// #     }
+    /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
     /// #         let ret = mem::transmute_copy(&from);
     /// #         mem::forget(from);
@@ -218,6 +237,11 @@ where
         self
     }
 
+    fn transform_owned(self) -> Cow<'a, T> {
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        self
+    }
+
     unsafe fn make(from: Cow<'a, T>) -> Self {
         // i hate this
         // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
@@ -240,6 +264,11 @@ where
 unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
     type Output = &'a T;
     fn transform(&'a self) -> &'a &'a T {
+        // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
+        self
+    }
+
+    fn transform_owned(self) -> &'a T {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }

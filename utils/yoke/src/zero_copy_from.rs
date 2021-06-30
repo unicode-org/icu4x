@@ -37,6 +37,10 @@ use std::rc::Rc;
 /// #    fn transform(&'a self) -> &'a Self::Output {
 /// #        self
 /// #    }
+/// #    fn transform_owned(self) -> MyStruct<'a> {
+/// #        // covariant lifetime cast, can be done safely
+/// #        self
+/// #    }
 /// #    unsafe fn make(from: Self::Output) -> Self {
 /// #        std::mem::transmute(from)
 /// #    }
