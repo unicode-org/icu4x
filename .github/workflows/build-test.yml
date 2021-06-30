@@ -691,6 +691,7 @@ jobs:
         rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-02-28
+        echo "sudo sh -c 'npm install -g wasm-opt'"
         sudo npm install -g wasm-opt --unsafe-perm
         ls -l /usr/local/lib/node_modules/wasm-opt/bin/
         cargo install twiggy
