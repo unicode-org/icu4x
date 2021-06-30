@@ -688,9 +688,10 @@ jobs:
 
     - name: Build WASM binaries
       run: |
+        rustup component add rust-src
         cargo make wasm-examples
 
-        #    cargo install cargo-make
+    #    cargo install cargo-make
     #    rustup component add rust-src
     #    rustup toolchain install nightly-2021-02-28
     #    sudo npm install -g wabt
