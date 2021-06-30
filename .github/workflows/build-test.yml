@@ -689,10 +689,11 @@ jobs:
     - name: Build WASM binaries
       run: |
         rustup component add rust-src
+        rustup toolchain list
         rustup toolchain install nightly-2021-02-28
-        sudo npm install -g wabt
         sudo npm install -g wasm-opt
         cargo install twiggy
+        sudo npm install -g wabt
 
   binsize:
     runs-on: ubuntu-latest
@@ -702,11 +703,19 @@ jobs:
     - name: Install prereqs
       run: |
         cargo install cargo-make
+        echo "rustup component add rust-src"
         rustup component add rust-src
+        echo "rustup toolchain list"
+        rustup toolchain list
+        echo "rustup toolchain install nightly-2021-02-28"
         rustup toolchain install nightly-2021-02-28
+        echo "sudo npm install -g wabt"
         sudo npm install -g wabt
-        sudo bash -c 'npm install -g wasm-opt'
+        echo "sudo sh -c 'npm install -g wasm-opt'"
+        sudo sh -c 'npm install -g wasm-opt'
+        echo "cargo install twiggy"
         cargo install twiggy
+        echo "cargo make wasm-examples"
         cargo make wasm-examples
 
     - name: Measure size of wasm executables.
