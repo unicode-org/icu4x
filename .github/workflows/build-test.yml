@@ -673,12 +673,12 @@ jobs:
       shell: bash
     - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
-        id: cargo-make-cache
-        with:
-          path: |
-            ~/.cargo/bin/cargo-make
-            ~/.cargo/bin/cargo-make.exe
-          key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
       - name: Install cargo-make
         if: steps.cargo-make-cache.outputs.cache-hit != 'true'
         uses: actions-rs/install@v0.1.2
