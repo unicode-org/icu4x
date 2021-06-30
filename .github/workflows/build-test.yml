@@ -692,6 +692,7 @@ jobs:
         rustup toolchain list
         rustup toolchain install nightly-2021-02-28
         sudo npm install -g wasm-opt --unsafe-perm
+        ls -l /usr/local/lib/node_modules/wasm-opt/bin/
         cargo install twiggy
         sudo npm install -g wabt
 
