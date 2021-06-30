@@ -715,7 +715,7 @@ jobs:
         echo "sudo npm install -g wabt"
         sudo npm install -g wabt
         echo "sudo sh -c 'npm install -g wasm-opt'"
-        sudo sh -c 'npm install -g wasm-opt'
+        sudo npm install -g wasm-opt --unsafe-perm
         echo "cargo install twiggy"
         cargo install twiggy
         echo "cargo make wasm-examples"
