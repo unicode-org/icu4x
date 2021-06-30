@@ -689,6 +689,10 @@ jobs:
     - name: Build WASM binaries
       run: |
         rustup component add rust-src
+        rustup toolchain install nightly-2021-02-28
+        sudo npm install -g wabt
+        sudo npm install -g wasm-opt
+        cargo install twiggy
 
   binsize:
     runs-on: ubuntu-latest
@@ -703,6 +707,7 @@ jobs:
         sudo npm install -g wabt
         sudo bash -c 'npm install -g wasm-opt'
         cargo install twiggy
+        cargo make wasm-examples
 
     - name: Measure size of wasm executables.
       run: |
