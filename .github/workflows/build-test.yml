@@ -661,7 +661,7 @@ jobs:
 
   # Experimental: binary size benchmark
 
-  binsize:
+  cargomake:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -689,14 +689,20 @@ jobs:
     - name: Build WASM binaries
       run: |
         rustup component add rust-src
-        cargo make wasm-examples
 
-    #    cargo install cargo-make
-    #    rustup component add rust-src
-    #    rustup toolchain install nightly-2021-02-28
-    #    sudo npm install -g wabt
-    #    sudo bash -c 'npm install -g wasm-opt'
-    #    cargo install twiggy
+  binsize::
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install prereqs
+      run: |
+        cargo install cargo-make
+        rustup component add rust-src
+        rustup toolchain install nightly-2021-02-28
+        sudo npm install -g wabt
+        sudo bash -c 'npm install -g wasm-opt'
+        cargo install twiggy
 
     - name: Measure size of wasm executables.
       run: |
