@@ -688,7 +688,6 @@ jobs:
 
     - name: Build WASM binaries
       run: |
-        #rustup component add rust-src
         cargo make wasm-examples
 
     #    cargo install cargo-make
