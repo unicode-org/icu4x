@@ -79,9 +79,7 @@ where
         }
     }
     fn transform_owned(self) -> ZeroMap<'a, K::Output, V::Output> {
-        debug_assert!(
-            mem::size_of::<Self::Output>() == mem::size_of::<Self>()
-        );
+        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         unsafe {
             // Similar problem as transform(), but we need to use ptr::read since
             // the compiler isn't sure of the sizes
