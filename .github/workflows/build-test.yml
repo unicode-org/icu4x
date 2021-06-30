@@ -691,7 +691,7 @@ jobs:
         rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-02-28
-        sudo npm install -g wasm-opt
+        sudo npm install -g wasm-opt --unsafe-perm
         cargo install twiggy
         sudo npm install -g wabt
 
