@@ -690,7 +690,7 @@ jobs:
       run: |
         rustup component add rust-src
 
-  binsize::
+  binsize:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
