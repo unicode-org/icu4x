@@ -447,7 +447,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 ///
 /// This is conceptually similar to [`stable_deref_trait::CloneStableDeref`],
 /// however [`stable_deref_trait::CloneStableDeref`] is not (and should not) be
-/// implemented on [`Option`] (since it's not [`Deref`]. [`CloneableCart`] essentially is
+/// implemented on [`Option`] (since it's not [`Deref`]). [`CloneableCart`] essentially is
 /// "if there _is_ data to borrow from here, cloning the cart gives you an additional
 /// handle to the same data".
 pub unsafe trait CloneableCart: Clone {}
