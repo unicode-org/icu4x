@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::ops::Range;
 use std::{char, ops::RangeBounds, slice::Chunks};
 
 #[cfg(feature = "serde")]
@@ -124,7 +125,7 @@ impl UnicodeSet {
         &self.inv_list
     }
 
-    /// Yields an iterator going through the character set in the [`UnicodeSet`]
+    /// Yields an [`Iterator`] going through the character set in the [`UnicodeSet`]
     ///
     /// # Examples
     ///
@@ -132,15 +133,32 @@ impl UnicodeSet {
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![65, 68, 69, 70];
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
-    /// let mut example_iter = example.iter_chars();
-    /// assert_eq!(Some('A'), example_iter.next());
-    /// assert_eq!(Some('B'), example_iter.next());
-    /// assert_eq!(Some('C'), example_iter.next());
-    /// assert_eq!(Some('E'), example_iter.next());
-    /// assert_eq!(None, example_iter.next());
+    /// let mut ex_iter_chars = example.iter_chars();
+    /// assert_eq!(Some('A'), ex_iter_chars.next());
+    /// assert_eq!(Some('B'), ex_iter_chars.next());
+    /// assert_eq!(Some('C'), ex_iter_chars.next());
+    /// assert_eq!(Some('E'), ex_iter_chars.next());
+    /// assert_eq!(None, ex_iter_chars.next());
     /// ```
     pub fn iter_chars(&self) -> impl Iterator<Item = char> + '_ {
         self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
+    }
+
+    /// Yields an [`Iterator`] returning the ranges of the inversion list in the [`UnicodeSet`]
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::uniset::UnicodeSet;
+    /// let example_list = vec![65, 68, 69, 70];
+    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let mut example_iter_ranges = example.iter_ranges();
+    /// assert_eq!(Some(65..68), example_iter_ranges.next());
+    /// assert_eq!(Some(69..70), example_iter_ranges.next());
+    /// assert_eq!(None, example_iter_ranges.next());
+    /// ```
+    pub fn iter_ranges(&self) -> impl Iterator<Item = Range<u32>> + '_ {
+        self.inv_list.chunks(2).map(|pair| Range { start: pair[0], end: pair[1] })
     }
 
     /// Returns the number of elements of the [`UnicodeSet`]
@@ -476,7 +494,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_iter() {
+    fn test_unicodeset_iter_chars() {
         let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
         let check = UnicodeSet::from_inversion_list(ex).unwrap();
         let mut iter = check.iter_chars();
@@ -485,6 +503,28 @@ mod tests {
         assert_eq!(Some('C'), iter.next());
         assert_eq!(Some('E'), iter.next());
         assert_eq!(None, iter.next());
+    }
+
+    #[test]
+    fn test_unicodeset_iter_ranges() {
+        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let mut ranges = set.iter_ranges();
+        assert_eq!(Some(65..68), ranges.next());
+        assert_eq!(Some(69..70), ranges.next());
+        assert_eq!(Some(0xD800..0xD801), ranges.next());
+        assert_eq!(None, ranges.next());
+    }
+
+    // Range<char> cannot represent the upper bound (non-inclusive) for
+    // char::MAX, whereas Range<u32> can.
+    #[test]
+    fn test_unicodeset_iter_ranges_with_max_code_point() {
+        let ex = vec![128, (char::MAX as u32) + 1];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let mut ranges = set.iter_ranges();
+        assert_eq!(Some(128..((char::MAX as u32) + 1)), ranges.next());
+        assert_eq!(None, ranges.next());
     }
 
     #[test]
