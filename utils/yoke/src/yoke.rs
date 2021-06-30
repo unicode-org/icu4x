@@ -551,10 +551,15 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         P: for<'a> Yokeable<'a>,
     {
         let p = f(self.get(), PhantomData);
-        Yoke {
+        let ret = Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-        }
+        };
+        // Writing an explicit drop to make the safety behavior clear:
+        // self.yokeable must be dropped before the moved cart has a chance
+        // to be dropped
+        drop(self.yokeable);
+        ret
     }
 
     /// This is similar to [`Yoke::project`], however it works around it not being able to
@@ -575,10 +580,15 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         P: for<'a> Yokeable<'a>,
     {
         let p = f(self.get(), capture, PhantomData);
-        Yoke {
+        let ret = Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-        }
+        };
+        // Writing an explicit drop to make the safety behavior clear:
+        // self.yokeable must be dropped before the moved cart has a chance
+        // to be dropped
+        drop(self.yokeable);
+        ret
     }
 }
 
