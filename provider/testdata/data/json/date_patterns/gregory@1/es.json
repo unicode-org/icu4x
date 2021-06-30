@@ -11,6 +11,18 @@
     "medium": "H:mm:ss",
     "short": "H:mm"
   },
+  "time_h11_h12": {
+    "full": "h:mm:ss a",
+    "long": "h:mm:ss a",
+    "medium": "h:mm:ss a",
+    "short": "h:mm a"
+  },
+  "time_h23_h24": {
+    "full": "H:mm:ss (zzzz)",
+    "long": "H:mm:ss z",
+    "medium": "H:mm:ss",
+    "short": "H:mm"
+  },
   "datetime": {
     "length_patterns": {
       "full": "{1}, {0}",

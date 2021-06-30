@@ -7,7 +7,7 @@ use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
-use icu_datetime::{provider::*, skeleton::SkeletonError};
+use icu_datetime::{pattern, provider::*, skeleton::SkeletonError};
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -182,9 +182,80 @@ impl From<&cldr_json::DateTimeFormats> for gregory::patterns::DateTimeFormatsV1 
 
 impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
     fn from(other: &cldr_json::Dates) -> Self {
+        let date_time_formats_v1 =
+            gregory::patterns::DateTimeFormatsV1::from(&other.calendars.gregorian.datetime_formats);
+
         Self {
             date: (&other.calendars.gregorian.date_formats).into(),
             time: (&other.calendars.gregorian.time_formats).into(),
+            time_h11_h12: gregory::patterns::LengthPatternsV1 {
+                full: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.full.get_pattern(),
+                    pattern::FlexibleHourCycle::H11H12,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+                long: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.long.get_pattern(),
+                    pattern::FlexibleHourCycle::H11H12,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+                medium: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.medium.get_pattern(),
+                    pattern::FlexibleHourCycle::H11H12,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+                short: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.short.get_pattern(),
+                    pattern::FlexibleHourCycle::H11H12,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+            },
+            time_h23_h24: gregory::patterns::LengthPatternsV1 {
+                full: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.full.get_pattern(),
+                    pattern::FlexibleHourCycle::H23H24,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+                long: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.long.get_pattern(),
+                    pattern::FlexibleHourCycle::H23H24,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+                medium: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.medium.get_pattern(),
+                    pattern::FlexibleHourCycle::H23H24,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+                short: pattern::apply_flexible_hour_cycle(
+                    &date_time_formats_v1,
+                    &other.calendars.gregorian.time_formats.short.get_pattern(),
+                    pattern::FlexibleHourCycle::H23H24,
+                )
+                .unwrap()
+                .unwrap()
+                .into(),
+            },
             datetime: (&other.calendars.gregorian.datetime_formats).into(),
         }
     }

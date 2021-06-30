@@ -11,7 +11,7 @@ use thiserror::Error;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::length,
-    pattern::Pattern,
+    pattern::{Pattern, PatternItem},
     provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
 
@@ -47,6 +47,11 @@ impl Skeleton {
 
     fn fields_len(&self) -> usize {
         self.0.len()
+    }
+
+    /// Return the underlying fields as a slice.
+    pub fn as_slice(&self) -> &[fields::Field] {
+        self.0.as_slice()
     }
 }
 
@@ -192,6 +197,62 @@ impl TryFrom<&str> for Skeleton {
         }
 
         Ok(Self(fields))
+    }
+}
+
+/// Convert a Pattern into a Skeleton. This will remove all of the string literals, and sort
+/// the fields into the canonical sort order. Not all fields are supported by Skeletons, so map
+/// fields into skeleton-appropriate ones. For instance, in the "ja" locale the pattern "aK:mm"
+/// gets transformed into the skeleton "hmm".
+impl From<&Pattern> for Skeleton {
+    fn from(pattern: &Pattern) -> Self {
+        let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
+        for item in pattern.items() {
+            if let PatternItem::Field(field) = item {
+                let mut field = *field;
+
+                // Skeletons only have a subset of available fields, these are then mapped to more
+                // specific fields for the patterns they expand to.
+                field.symbol = match field.symbol {
+                    FieldSymbol::Year(year) => FieldSymbol::Year(year),
+                    // Remove the stand-alone designation. This will be provided by the pattern.
+                    FieldSymbol::Month(fields::Month::Format)
+                    | FieldSymbol::Month(fields::Month::StandAlone) => {
+                        FieldSymbol::Month(fields::Month::Format)
+                    }
+                    FieldSymbol::Day(day) => FieldSymbol::Day(day),
+                    FieldSymbol::Weekday(_) => FieldSymbol::Weekday(fields::Weekday::Format),
+
+                    // Only flexible day periods are used in skeletons, ignore all others.
+                    FieldSymbol::DayPeriod(fields::DayPeriod::AmPm)
+                    | FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight) => continue,
+                    // TODO(#487) - Flexible day periods should be included here.
+                    // FieldSymbol::DayPeriod(fields::DayPeriod::Flexible) => {
+                    //     FieldSymbol::DayPeriod(fields::DayPeriod::Flexible)
+                    // }
+
+                    // Only the H12 and H24 symbols are used in skeletons, while the patterns may
+                    // contain H11 or H23 depending on the localization.
+                    FieldSymbol::Hour(fields::Hour::H11) | FieldSymbol::Hour(fields::Hour::H12) => {
+                        FieldSymbol::Hour(fields::Hour::H12)
+                    }
+                    FieldSymbol::Hour(fields::Hour::H23) | FieldSymbol::Hour(fields::Hour::H24) => {
+                        FieldSymbol::Hour(fields::Hour::H24)
+                    }
+
+                    // Pass through all of the following preferences unchanged.
+                    FieldSymbol::Minute => FieldSymbol::Minute,
+                    FieldSymbol::Second(second) => FieldSymbol::Second(second),
+                    FieldSymbol::TimeZone(time_zone) => FieldSymbol::TimeZone(time_zone),
+                };
+
+                // Only insert if it's a unique field.
+                if let Err(pos) = fields.binary_search(&field) {
+                    fields.insert(pos, field)
+                }
+            }
+        }
+        Self(fields)
     }
 }
 
@@ -364,9 +425,15 @@ pub fn create_best_pattern_for_fields<'a>(
         // TODO(#583) - TimeZones
         // TODO(#486) - Eras,
         // ... etc.
-        unimplemented!(
-            "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
-        );
+
+        // TODO(#583) - Reviewer: this is commented out because TimeZone support is required
+        // here in order to generate length::Bag patterns correctly. For now I've commented out this
+        // line so that everything works for length::Bag with a preference, although it may lack
+        // a time zone.
+
+        // unimplemented!(
+        //     "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
+        // );
     }
 
     if date.is_empty() || time.is_empty() {
@@ -980,5 +1047,42 @@ mod test {
             format!("{}", err),
             "invalid value: field item out of order or duplicate: Field { symbol: Day(DayOfMonth), length: One }, expected ordered field symbols representing a skeleton"
         );
+    }
+
+    fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
+        assert_eq!(
+            serde_json::to_string(skeleton).unwrap(),
+            serde_json::to_string(&Skeleton::from(&Pattern::from_bytes(pattern).unwrap())).unwrap(),
+            "{}",
+            message
+        );
+    }
+
+    #[test]
+    fn test_pattern_to_skeleton() {
+        assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
+
+        assert_pattern_to_skeleton("K:mm", "hmm", "H11 maps to H12");
+        assert_pattern_to_skeleton("k:mm", "Hmm", "H23 maps to H24");
+
+        assert_pattern_to_skeleton("ha mm", "hmm", "Day periods get removed");
+        assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");
+
+        assert_pattern_to_skeleton("y", "y", "The year is passed through");
+        assert_pattern_to_skeleton("Y", "Y", "The year is passed through");
+
+        assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
+
+        assert_pattern_to_skeleton("s", "s", "Seconds pass through");
+        assert_pattern_to_skeleton("S", "S", "Seconds pass through");
+        assert_pattern_to_skeleton("A", "A", "Seconds pass through");
+
+        assert_pattern_to_skeleton("z", "z", "Timezones get passed through");
+        assert_pattern_to_skeleton("Z", "Z", "Timezones get passed through");
+        assert_pattern_to_skeleton("O", "O", "Timezones get passed through");
+        assert_pattern_to_skeleton("v", "v", "Timezones get passed through");
+        assert_pattern_to_skeleton("V", "V", "Timezones get passed through");
+        assert_pattern_to_skeleton("X", "X", "Timezones get passed through");
+        assert_pattern_to_skeleton("x", "x", "Timezones get passed through");
     }
 }

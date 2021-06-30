@@ -6,6 +6,8 @@ mod error;
 mod parser;
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use crate::provider;
+use crate::skeleton;
 pub use error::Error;
 use parser::Parser;
 use std::{convert::TryFrom, fmt};
@@ -97,6 +99,10 @@ fn get_time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
 impl Pattern {
     pub fn items(&self) -> &[PatternItem] {
         &self.items
+    }
+
+    pub fn items_mut(&mut self) -> &mut [PatternItem] {
+        &mut self.items
     }
 
     pub fn from_bytes(input: &str) -> Result<Self, Error> {
@@ -280,4 +286,77 @@ impl Serialize for Pattern {
             seq.end()
         }
     }
+}
+
+/// Used to represent either H11/H12, or H23/H24. Skeletons only store these
+/// hour cycles as H12 or H24.
+pub enum FlexibleHourCycle {
+    /// Can either be fields::Hour::H11 or fields::Hour::H12
+    H11H12,
+    /// Can either be fields::Hour::H23 or fields::Hour::H24
+    H23H24,
+}
+
+impl FlexibleHourCycle {
+    fn matches(&self, hour: &fields::Hour) -> bool {
+        match self {
+            FlexibleHourCycle::H11H12 => match hour {
+                fields::Hour::H11 | fields::Hour::H12 => true,
+                fields::Hour::H23 | fields::Hour::H24 => false,
+            },
+            FlexibleHourCycle::H23H24 => match hour {
+                fields::Hour::H11 | fields::Hour::H12 => false,
+                fields::Hour::H23 | fields::Hour::H24 => true,
+            },
+        }
+    }
+
+    /// Skeletons only use h12 and h24.
+    fn to_skeleton_field_symbol(&self) -> fields::Hour {
+        match self {
+            FlexibleHourCycle::H11H12 => fields::Hour::H12,
+            FlexibleHourCycle::H23H24 => fields::Hour::H24,
+        }
+    }
+}
+
+/// Invoke the pattern matching machinery to transform the hour cycle of a pattern. This provides
+/// a safe mapping from a h11/h12 to h23/h24
+pub fn apply_flexible_hour_cycle(
+    datetime: &provider::gregory::patterns::DateTimeFormatsV1,
+    pattern_str: &str,
+    flexible_hour_cycle: FlexibleHourCycle,
+) -> Result<Option<String>, Error> {
+    let mut pattern = Pattern::from_bytes(pattern_str)?;
+
+    for item in pattern.items_mut() {
+        if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
+            if let fields::FieldSymbol::Hour(pattern_hour) = symbol {
+                if flexible_hour_cycle.matches(pattern_hour) {
+                    // The preference hour cycle matches the pattern, bail out early and
+                    // return the current pattern.
+                    return Ok(Some(pattern_str.into()));
+                } else {
+                    // Mutate the pattern with the new symbol, so that it can be matched against.
+                    *symbol =
+                        fields::FieldSymbol::Hour(flexible_hour_cycle.to_skeleton_field_symbol());
+                    break;
+                }
+            }
+        }
+    }
+
+    let skeleton = skeleton::Skeleton::from(&pattern);
+
+    Ok(
+        match skeleton::create_best_pattern_for_fields(
+            &datetime.skeletons,
+            &datetime.length_patterns,
+            &skeleton.as_slice(),
+        ) {
+            skeleton::BestSkeleton::AllFieldsMatch(pattern)
+            | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(format!("{}", pattern)),
+            skeleton::BestSkeleton::NoMatch => None,
+        },
+    )
 }
