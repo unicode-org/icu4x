@@ -472,15 +472,15 @@ where
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Allows one to "project" a yoke to perform a transformation on the data, potentially
-    /// looking at a subfield, and producing a new yoke. This will clone the cart, and the provided
+    /// looking at a subfield, and producing a new yoke. This will move cart, and the provided
     /// transformation is only allowed to use data known to be borrowed from the cart.
     ///
     /// This takes an additional `PhantomData<&()>` parameter as a workaround to the issue
     /// described in [#86702](https://github.com/rust-lang/rust/issues/86702). This parameter
     /// should just be ignored in the function.
-    /// 
+    ///
     /// Furthermore,
     /// [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937) prevents
     /// this from taking a capturing closure, however [`Yoke::project_with_capture()`]
@@ -513,7 +513,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
     ///     string_2: &'a str,
     /// }
     ///
-    /// fn project_string_1(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+    /// fn project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
     ///     bar.project(|bar, _| bar.string_1)   
     /// }
     ///
@@ -540,9 +540,9 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
     /// ```
     //
     // Safety docs can be found below on `__project_safety_docs()`
-    pub fn project<'this, P>(
-        &'this self,
-        f: for<'a> fn(
+    pub fn project<P>(
+        self,
+        f: for<'this, 'a> fn(
             &'this <Y as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
@@ -553,7 +553,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
         let p = f(self.get(), PhantomData);
         Yoke {
             yokeable: unsafe { P::make(p) },
-            cart: self.cart.clone(),
+            cart: self.cart,
         }
     }
 
@@ -562,10 +562,10 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
     /// is fixed.
     ///
     /// See the docs of [`Yoke::project`] for how this works.
-    pub fn project_with_capture<'this, P, T>(
-        &'this self,
+    pub fn project_with_capture<P, T>(
+        self,
         capture: T,
-        f: for<'a> fn(
+        f: for<'this, 'a> fn(
             &'this <Y as Yokeable<'a>>::Output,
             capture: T,
             PhantomData<&'a ()>,
@@ -577,7 +577,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
         let p = f(self.get(), capture, PhantomData);
         Yoke {
             yokeable: unsafe { P::make(p) },
-            cart: self.cart.clone(),
+            cart: self.cart,
         }
     }
 }
@@ -587,7 +587,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
 /// (Docs are on a private const to allow the use of compile_fail doctests)
 ///
 /// This is safe to perform because of the choice of lifetimes on `f`, that is,
-/// `for<'a> fn(&'this <Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
+/// `for<'this, 'a> fn(&'this <Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
 ///
 /// What we want this function to do is take a Yokeable (`Y`) that is borrowing from the cart, and
 /// produce another Yokeable (`P`) that also borrows from the same cart. There are a couple potential
@@ -626,7 +626,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Yoke<Y, C> {
 ///     string_2: &'a str,
 /// }
 ///
-/// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+/// fn project_owned(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
 ///     bar.project(|bar, _| &*bar.owned)   
 /// }
