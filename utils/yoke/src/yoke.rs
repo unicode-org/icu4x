@@ -567,6 +567,29 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
+    /// This is similar to [`Yoke::project`], however it does not move
+    /// [`Self`] and instead clones the cart (only if the cart is a [`CloneableCart`])
+    ///
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::project`]
+    /// because then it will not clone fields that are going to be discarded.
+    pub fn project_cloned<'this, P>(
+        &'this self,
+        f: for<'a> fn(
+            &'this <Y as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> <P as Yokeable<'a>>::Output,
+    ) -> Yoke<P, C>
+    where
+        P: for<'a> Yokeable<'a>,
+        C: CloneableCart,
+    {
+        let p = f(self.get(), PhantomData);
+        Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart.clone(),
+        }
+    }
+
     /// This is similar to [`Yoke::project`], however it works around it not being able to
     /// use `FnOnce` by using an explicit capture input, until [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937)
     /// is fixed.
@@ -590,6 +613,31 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
             cart: self.cart,
         }
     }
+
+    /// This is similar to [`Yoke::project_cloned`], however it works around it not being able to
+    /// use `FnOnce` by using an explicit capture input, until [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937)
+    /// is fixed.
+    ///
+    /// See the docs of [`Yoke::project_cloned`] for how this works.
+    pub fn project_cloned_with_capture<'this, P, T>(
+        &'this self,
+        capture: T,
+        f: for<'a> fn(
+            &'this <Y as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> <P as Yokeable<'a>>::Output,
+    ) -> Yoke<P, C>
+    where
+        P: for<'a> Yokeable<'a>,
+        C: CloneableCart,
+    {
+        let p = f(self.get(), capture, PhantomData);
+        Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart.clone(),
+        }
+    }
 }
 
 /// Safety docs for project()
@@ -597,7 +645,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// (Docs are on a private const to allow the use of compile_fail doctests)
 ///
 /// This is safe to perform because of the choice of lifetimes on `f`, that is,
-/// `for<'this, 'a> fn(&'this <Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
+/// `for<a> fn(<Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
 ///
 /// What we want this function to do is take a Yokeable (`Y`) that is borrowing from the cart, and
 /// produce another Yokeable (`P`) that also borrows from the same cart. There are a couple potential
@@ -614,13 +662,25 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use std::rc::Rc;
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
-/// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.project(|cow, _| &*cow)   
+/// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///    y.project_cloned(|cow, _| &*cow)   
 /// }
 /// ```
 ///
 /// In this case, the lifetime of `&*cow` is `&'this str`, however the function needs to be able to return
 /// `&'a str` _for all `'a`_, which isn't possible.
+///
+///
+/// ```rust, compile_fail
+/// # use std::rc::Rc;
+/// # use yoke::Yoke;
+/// # use std::borrow::Cow;
+/// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///    y.project(|cow, _| &*cow)   
+/// }
+/// ```
+///
+/// This has the same issue, `&*cow` is borrowing for a local lifetime.
 ///
 /// Similarly, trying to project an owned field of a struct will produce similar errors:
 ///
@@ -636,9 +696,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///     string_2: &'a str,
 /// }
 ///
-/// fn project_owned(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+/// fn project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
-///     bar.project(|bar, _| &*bar.owned)   
+///     bar.project_cloned(|bar, _| &*bar.owned)   
 /// }
 ///
 /// #
@@ -672,15 +732,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// it will never be valid for the borrowed data to escape for all lifetimes of 'a. Internally, `.project()`
 /// uses `.get()`, however the signature forces the callers to be able to handle every lifetime.
 ///
-/// `'this` and `'a` are the only two lifetimes that matter here; `Yokeable`s must be `'static` and since
+///  `'a` is the only lifetime that matters here; `Yokeable`s must be `'static` and since
 /// `Output` is an associated type it can only have one lifetime, `'a` (there's nowhere for it to get another from).
 /// `Yoke`s can get additional lifetimes via the cart, and indeed, `project()` can operate on `Yoke<_, &'b [u8]>`,
 /// however this lifetime is inaccessible to the closure, and even if it were accessible the `for<'a>` would force
-/// it out of the output the same way it does for `'this`. All external lifetimes (from other found outside the yoke/closures
+/// it out of the output. All external lifetimes (from other found outside the yoke/closures
 /// are similarly constrained here.
 ///
 /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
-/// the output yokeable can _only_ have borrowed data flow in to it from the input, and the `'this` ensures separation
-/// between `'a` data that the input is borrowing vs data that the input owns. All paths of unsoundness require the
+/// the output yokeable can _only_ have borrowed data flow in to it from the input. All paths of unsoundness require the
 /// unification of an existential and universal lifetime, which isn't possible.
 const _: () = ();
