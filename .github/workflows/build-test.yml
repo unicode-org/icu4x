@@ -694,7 +694,6 @@ jobs:
         echo "sudo npm install -g wasm-opt --unsafe-perm"
         sudo npm install wasm-opt
         find . -name wasm-opt -print
-        ls -l /usr/local/lib/node_modules/wasm-opt/bin/
         echo "sudo npm install -g wabt"        
         sudo npm install -g wabt
         cargo install twiggy
