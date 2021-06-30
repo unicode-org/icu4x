@@ -37,6 +37,9 @@ unsafe impl<'a> Yokeable<'a> for HelloAlt {
     fn transform(&'a self) -> &'a Self::Output {
         self
     }
+    fn transform_owned(self) -> Self::Output {
+        self
+    }
     unsafe fn make(from: Self::Output) -> Self {
         from
     }

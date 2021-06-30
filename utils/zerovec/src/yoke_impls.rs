@@ -15,7 +15,9 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
     fn transform(&'a self) -> &'a ZeroVec<'a, T> {
         self
     }
-
+    fn transform_owned(self) -> ZeroVec<'a, T> {
+        self
+    }
     unsafe fn make(from: ZeroVec<'a, T>) -> Self {
         debug_assert!(mem::size_of::<ZeroVec<'a, T>>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
@@ -38,7 +40,9 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
     fn transform(&'a self) -> &'a VarZeroVec<'a, T> {
         self
     }
-
+    fn transform_owned(self) -> VarZeroVec<'a, T> {
+        self
+    }
     unsafe fn make(from: VarZeroVec<'a, T>) -> Self {
         debug_assert!(mem::size_of::<VarZeroVec<'a, T>>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
@@ -74,7 +78,18 @@ where
             mem::transmute::<&Self, &Self::Output>(self)
         }
     }
-
+    fn transform_owned(self) -> ZeroMap<'a, K::Output, V::Output> {
+        debug_assert!(
+            mem::size_of::<Self::Output>() == mem::size_of::<Self>()
+        );
+        unsafe {
+            // Similar problem as transform(), but we need to use ptr::read since
+            // the compiler isn't sure of the sizes
+            let ptr: *const Self::Output = (&self as *const Self).cast();
+            mem::forget(self);
+            ptr::read(ptr)
+        }
+    }
     unsafe fn make(from: ZeroMap<'a, K::Output, V::Output>) -> Self {
         debug_assert!(
             mem::size_of::<ZeroMap<'a, K::Output, V::Output>>() == mem::size_of::<Self>()
