@@ -11,17 +11,12 @@
     "medium": "HH:mm:ss",
     "short": "HH:mm"
   },
-  "time_h11_h12": {
+  "preferred_hour_cycle": "H23H24",
+  "time_with_alt_hour_cycle": {
     "full": "hh:mm:ss",
     "long": "hh:mm:ss",
     "medium": "hh:mm:ss",
     "short": "h:mm a"
-  },
-  "time_h23_h24": {
-    "full": "HH:mm:ss zzzz",
-    "long": "HH:mm:ss z",
-    "medium": "HH:mm:ss",
-    "short": "HH:mm"
   },
   "datetime": {
     "length_patterns": {

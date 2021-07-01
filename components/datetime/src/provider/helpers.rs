@@ -140,10 +140,15 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
             hour_cycle: Some(hour_cycle_pref),
         }) = preferences
         {
-            let time = match hour_cycle_pref {
-                preferences::HourCycle::H11 | preferences::HourCycle::H12 => &self.time_h11_h12,
-                preferences::HourCycle::H23 | preferences::HourCycle::H24 => &self.time_h23_h24,
+            let time = if self
+                .preferred_hour_cycle
+                .matches_preference(&hour_cycle_pref)
+            {
+                &self.time
+            } else {
+                &self.time_with_alt_hour_cycle
             };
+
             let mut pattern = Pattern::from_bytes(match length {
                 length::Time::Full => &time.full,
                 length::Time::Long => &time.long,

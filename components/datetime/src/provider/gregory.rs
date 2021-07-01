@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::pattern;
 use std::borrow::Cow;
 
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -35,13 +36,12 @@ pub struct DatePatternsV1 {
     /// the default hour cycle preference for the locale given the length.
     pub time: patterns::LengthPatternsV1,
 
-    /// Patterns for the locale that can be used in the case of a preference for h11 or h12
-    /// hour cycles.
-    pub time_h11_h12: patterns::LengthPatternsV1,
+    /// The flexible hour cycle that is used in the `time`.
+    pub preferred_hour_cycle: pattern::FlexibleHourCycle,
 
-    /// Patterns for the locale that can be used in the case of a preference for h23 or h24
-    /// hour cycles.
-    pub time_h23_h24: patterns::LengthPatternsV1,
+    /// Users can override the hour cycle with a preference. These patterns contain the
+    /// non-preferred hour cycles.
+    pub time_with_alt_hour_cycle: patterns::LengthPatternsV1,
 
     pub datetime: patterns::DateTimeFormatsV1,
 }
