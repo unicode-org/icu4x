@@ -204,7 +204,7 @@ mod tests {
             (
                 "HH:mm:ss",
                 vec![
-                    (fields::Hour::H23.into(), FieldLength::TwoDigit).into(),
+                    (fields::Hour::H24.into(), FieldLength::TwoDigit).into(),
                     ":".into(),
                     (FieldSymbol::Minute, FieldLength::TwoDigit).into(),
                     ":".into(),

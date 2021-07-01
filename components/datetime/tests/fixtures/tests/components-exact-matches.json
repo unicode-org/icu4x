@@ -337,7 +337,7 @@
                     "weekday": "short",
                     "hour": "numeric",
                     "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
+                    "preferences": { "hourCycle": "h24" }
                 }
             }
         },
@@ -356,7 +356,7 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "numeric",
-                    "preferences": { "hourCycle": "h23" }
+                    "preferences": { "hourCycle": "h24" }
                 }
             }
         },
@@ -423,7 +423,7 @@
             "options": {
                 "components": {
                     "hour": "numeric",
-                    "preferences": { "hourCycle": "h23" }
+                    "preferences": { "hourCycle": "h24" }
                 }
             }
         },
@@ -440,7 +440,7 @@
                 "components": {
                     "hour": "numeric",
                     "minute": "numeric",
-                    "preferences": { "hourCycle": "h23" }
+                    "preferences": { "hourCycle": "h24" }
                 }
             }
         },
@@ -458,7 +458,7 @@
                     "hour": "numeric",
                     "minute": "numeric",
                     "second": "numeric",
-                    "preferences": { "hourCycle": "h23" }
+                    "preferences": { "hourCycle": "h24" }
                 }
             }
         },

@@ -147,8 +147,8 @@ impl From<FieldSymbol> for char {
             FieldSymbol::Hour(hour) => match hour {
                 Hour::H11 => 'K',
                 Hour::H12 => 'h',
-                Hour::H23 => 'H',
-                Hour::H24 => 'k',
+                Hour::H23 => 'k',
+                Hour::H24 => 'H',
             },
             FieldSymbol::Minute => 'm',
             FieldSymbol::Second(second) => match second {
@@ -315,8 +315,8 @@ impl TryFrom<u8> for Hour {
         match b {
             b'K' => Ok(Self::H11),
             b'h' => Ok(Self::H12),
-            b'H' => Ok(Self::H23),
-            b'k' => Ok(Self::H24),
+            b'k' => Ok(Self::H23),
+            b'H' => Ok(Self::H24),
             b => Err(SymbolError::Unknown(b)),
         }
     }

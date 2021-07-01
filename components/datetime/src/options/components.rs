@@ -212,9 +212,9 @@ impl Bag {
                     Some(preferences::Bag {
                         hour_cycle: Some(hour_cycle),
                     }) => match hour_cycle {
-                        // k - symbol
-                        preferences::HourCycle::H24 => fields::Hour::H24,
                         // H - symbol
+                        preferences::HourCycle::H24 => fields::Hour::H24,
+                        // K - symbol
                         preferences::HourCycle::H23 => fields::Hour::H23,
                         // h - symbol
                         preferences::HourCycle::H12 => fields::Hour::H12,
