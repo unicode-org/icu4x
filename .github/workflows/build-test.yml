@@ -692,11 +692,16 @@ jobs:
         rustup toolchain list
         rustup toolchain install nightly-2021-02-28
         echo "sudo npm install -g wasm-opt --unsafe-perm"
-        sudo npm install wasm-opt
-        find . -name wasm-opt -print
+        sudo npm install wasm-opt --unsafe-perm
         echo "sudo npm install -g wabt"        
         sudo npm install -g wabt
         cargo install twiggy
+
+    - name: Measure size of wasm executables.
+      run: |
+        cargo make wasm-examples
+        rustc tools/benchmark/binsize.rs
+        ./binsize                                                                                                                     
 
   binsize:
     runs-on: ubuntu-latest
@@ -724,4 +729,5 @@ jobs:
     - name: Measure size of wasm executables.
       run: |
         rustc tools/benchmark/binsize.rs
+        ls -l binsize
         ./binsize
