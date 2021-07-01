@@ -177,7 +177,7 @@ impl UnicodeSet {
         if idx >= self.get_range_count() {
             None
         } else {
-            self.inv_list.get(idx * 2).map(|c_ref| *c_ref)
+            self.inv_list.get(idx * 2).copied()
         }
     }
 
