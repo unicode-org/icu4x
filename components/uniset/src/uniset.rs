@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::ops::Range;
+use std::ops::RangeInclusive;
 use std::{char, ops::RangeBounds, slice::Chunks};
 
 #[cfg(feature = "serde")]
@@ -144,7 +144,12 @@ impl UnicodeSet {
         self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
     }
 
-    /// Yields an [`Iterator`] returning the ranges of the inversion list in the [`UnicodeSet`]
+    /// Yields an [`Iterator`] returning the ranges of the code points that are
+    /// included in the [`UnicodeSet`]
+    ///
+    /// Ranges are returned as [`RangeInclusive`], which is inclusive of its
+    /// `end` bound value. An end-inclusive behavior matches the ICU4C/J
+    /// behavior of ranges, ex: `UnicodeSet::contains(UChar32 start, UChar32 end)`.
     ///
     /// # Example
     ///
@@ -153,12 +158,37 @@ impl UnicodeSet {
     /// let example_list = vec![65, 68, 69, 70];
     /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
     /// let mut example_iter_ranges = example.iter_ranges();
-    /// assert_eq!(Some(65..68), example_iter_ranges.next());
-    /// assert_eq!(Some(69..70), example_iter_ranges.next());
+    /// assert_eq!(Some(65..=67), example_iter_ranges.next());
+    /// assert_eq!(Some(69..=69), example_iter_ranges.next());
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
-    pub fn iter_ranges(&self) -> impl Iterator<Item = Range<u32>> + '_ {
-        self.inv_list.chunks(2).map(|pair| Range { start: pair[0], end: pair[1] })
+    pub fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.inv_list.chunks(2).map(|pair| RangeInclusive::new(pair[0], pair[1] - 1))
+    }
+
+    /// Returns the number of ranges contained in this [`UnicodeSet`]
+    pub fn get_range_count(&self) -> usize {
+        self.inv_list.len() / 2
+    }
+
+    /// Returns the first code point in the specified range of this [`UnicodeSet`].
+    /// Returns `None` if `idx` is out of bounds.
+    pub fn get_range_start(&self, idx: usize) -> Option<u32> {
+        if idx >= self.get_range_count() {
+            None
+        } else {
+            self.inv_list.get(idx * 2).map(|c_ref| *c_ref)
+        }
+    }
+
+    /// Returns the last code point in the specified range of this [`UnicodeSet`].
+    /// Returns `None` if `idx` is out of bounds.
+    pub fn get_range_end(&self, idx: usize) -> Option<u32> {
+        if idx >= self.get_range_count() {
+            None
+        } else {
+            self.inv_list.get((idx * 2) + 1).map(|c| c - 1)
+        }
     }
 
     /// Returns the number of elements of the [`UnicodeSet`]
@@ -258,7 +288,7 @@ impl UnicodeSet {
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return [`false`] if the Range contains them but the
     /// [`UnicodeSet`] does not.
     ///
-    /// Note: when comparing to ICU4C/J, keep in mind that ranges in Rust are
+    /// Note: when comparing to ICU4C/J, keep in mind that `Range`s in Rust are
     /// constructed inclusive of start boundary and exclusive of end boundary.
     /// The ICU4C/J `UnicodeSet::contains(UChar32 start, UChar32 end)` method
     /// differs by including the end boundary.
@@ -510,10 +540,35 @@ mod tests {
         let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
         let set = UnicodeSet::from_inversion_list(ex).unwrap();
         let mut ranges = set.iter_ranges();
-        assert_eq!(Some(65..68), ranges.next());
-        assert_eq!(Some(69..70), ranges.next());
-        assert_eq!(Some(0xD800..0xD801), ranges.next());
+        assert_eq!(Some(65..=67), ranges.next());
+        assert_eq!(Some(69..=69), ranges.next());
+        assert_eq!(Some(0xD800..=0xD800), ranges.next());
         assert_eq!(None, ranges.next());
+    }
+
+    #[test]
+    fn test_unicodeset_range_count() {
+        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(3, set.get_range_count());
+    }
+
+    #[test]
+    fn test_unicodeset_range_start() {
+        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(Some(65), set.get_range_start(0));
+        assert_eq!(Some(0xD800), set.get_range_start(2));
+        assert_eq!(None, set.get_range_start(3));
+    }
+
+    #[test]
+    fn test_unicodeset_range_end() {
+        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(Some(67), set.get_range_end(0));
+        assert_eq!(Some(0xD800), set.get_range_end(2));
+        assert_eq!(None, set.get_range_end(3));
     }
 
     // Range<char> cannot represent the upper bound (non-inclusive) for
@@ -523,7 +578,7 @@ mod tests {
         let ex = vec![128, (char::MAX as u32) + 1];
         let set = UnicodeSet::from_inversion_list(ex).unwrap();
         let mut ranges = set.iter_ranges();
-        assert_eq!(Some(128..((char::MAX as u32) + 1)), ranges.next());
+        assert_eq!(Some(128..=(char::MAX as u32)), ranges.next());
         assert_eq!(None, ranges.next());
     }
 
