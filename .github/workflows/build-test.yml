@@ -724,4 +724,4 @@ jobs:
     - name: Measure size of wasm executables.
       run: |
         rustc tools/benchmark/binsize.rs
-        binsize
+        ./binsize
