@@ -25,6 +25,6 @@ fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
 
 fn main() {
     
-    wasm_filesize("/usr/local/google/home/nrunge/icu4x2/icu4x/wasmpkg");
+    wasm_filesize("wasmpkg");
 
 }
