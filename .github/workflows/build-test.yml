@@ -686,18 +686,16 @@ jobs:
         crate: cargo-make
         version: latest
 
-    - name: Build WASM binaries
+    - name: Install prerequisites for wasm build
       run: |
         rustup component add rust-src
         rustup toolchain list
         rustup toolchain install nightly-2021-02-28
-        echo "sudo npm install -g wasm-opt --unsafe-perm"
         sudo npm install -g wasm-opt --unsafe-perm
-        echo "sudo npm install -g wabt"        
         sudo npm install -g wabt
         cargo install twiggy
 
-    - name: Measure size of wasm executables.
+    - name: Build wasm executables and Measure size
       run: |
         cargo make wasm-examples
         rustc tools/benchmark/binsize.rs
