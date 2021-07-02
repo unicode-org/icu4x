@@ -12,11 +12,14 @@ use std::fs;
 
 fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
     let paths = fs::read_dir(dir).unwrap();
-    for	path in paths {
+    for path in paths {
       	let p = path.unwrap().path();
         if let Some(suffix) = p.extension() {
             if suffix == "wasm" {
-                println!("WASM file: {:?}, size: {}", p.file_stem().unwrap(), p.metadata()?.len());
+                println!(
+                    "WASM file: {:?}, size: {}",
+                    p.file_stem().unwrap(),
+                    p.metadata()?.len());
             }
         }
     }
@@ -24,7 +27,5 @@ fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
 }
 
 fn main() {
-    
     wasm_filesize("wasmpkg");
-
 }
