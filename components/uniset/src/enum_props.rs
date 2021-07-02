@@ -32,8 +32,8 @@ pub enum GeneralCategory {
     OtherLetter = 5,
     TitlecaseLetter = 3,
     UppercaseLetter = 1,
-    CombiningMark = 8,
-    // SpacingMark M = Mn | Me | Mc
+    // CombiningMark M = Mn | Me | Mc
+    SpacingMark = 8,
     EnclosingMark = 7,
     NonspacingMark = 6,
     // Number N = Nd | Nl | No

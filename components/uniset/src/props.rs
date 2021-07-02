@@ -314,7 +314,7 @@ pub fn get_general_category_val_set<'d, D: DataProvider<'d, UnicodeProperty<'d>>
         GeneralCategory::OtherLetter => get_prop(provider, key::GENERAL_CATEGORY_OTHER_LETTER_V1),
         GeneralCategory::TitlecaseLetter => get_prop(provider, key::GENERAL_CATEGORY_TITLECASE_LETTER_V1),
         GeneralCategory::UppercaseLetter => get_prop(provider, key::GENERAL_CATEGORY_UPPERCASE_LETTER_V1),
-        GeneralCategory::CombiningMark => get_prop(provider, key::GENERAL_CATEGORY_COMBINING_MARK_V1),
+        GeneralCategory::SpacingMark => get_prop(provider, key::GENERAL_CATEGORY_SPACING_MARK_V1),
         GeneralCategory::EnclosingMark => get_prop(provider, key::GENERAL_CATEGORY_ENCLOSING_MARK_V1),
         GeneralCategory::NonspacingMark => get_prop(provider, key::GENERAL_CATEGORY_NONSPACING_MARK_V1),
         GeneralCategory::Digit => get_prop(provider, key::GENERAL_CATEGORY_DIGIT_V1),
