@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1624727484847,
+  "lastUpdate": 1625242874355,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3887,6 +3887,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1222029,
             "range": "± 26593",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0d428d309b58300a577def53d257337df853f053",
+          "message": "Add projection utilities to Yoke (#833)\n\n* typo fix\r\n\r\n* Introduce CloneableCart\r\n\r\n* Add projection utilities\r\n\r\n* use a phantom lifetime\r\n\r\n* use const for safety docs\r\n\r\n* more safety comment\r\n\r\n* Improve safety comment\r\n\r\n* improve comment about compiler bugs\r\n\r\n* fix parentheses\r\n\r\n* Make project() moving\r\n\r\n* safety comment\r\n\r\n* Make project() completely moving\r\n\r\n* Update all Yokeable impls with transform_move\r\n\r\n* Add borrowing projects again\r\n\r\n* fmt\r\n\r\n* Bump yoke version\r\n\r\n* Temporarily ignore Yoke::project doctest",
+          "timestamp": "2021-07-02T09:12:54-07:00",
+          "tree_id": "08c93419a46c67379be45e15a6cf1fb498d082bb",
+          "url": "https://github.com/unicode-org/icu4x/commit/0d428d309b58300a577def53d257337df853f053"
+        },
+        "date": 1625242872191,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 712861,
+            "range": "± 19156",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1411665,
+            "range": "± 37669",
             "unit": "ns/iter"
           }
         ]
