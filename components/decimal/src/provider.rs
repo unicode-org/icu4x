@@ -7,6 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use std::borrow::Cow;
+use yoke::*;
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).
@@ -17,7 +18,7 @@ pub mod key {
 }
 
 /// A collection of strings to affix to a decimal number.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -34,7 +35,7 @@ pub struct AffixesV1<'s> {
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Yokeable, Copy, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -52,7 +53,7 @@ pub struct GroupingSizesV1 {
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -107,6 +108,5 @@ impl Default for DecimalSymbolsV1<'static> {
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     DecimalSymbolsV1<'s>,
     /// Marker type for [`DecimalSymbolsV1`]
-    DecimalSymbolsV1Marker,
-    TEMP_ZCF
+    DecimalSymbolsV1Marker
 );

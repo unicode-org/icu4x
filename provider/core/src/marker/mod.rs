@@ -35,6 +35,7 @@ use yoke::Yokeable;
 /// use std::borrow::Cow;
 /// use std::rc::Rc;
 ///
+/// #[derive(Yokeable, ZeroCopyFrom)]
 /// struct MyDataStruct<'s> {
 ///     message: Cow<'s, str>,
 /// }
@@ -47,38 +48,6 @@ use yoke::Yokeable;
 ///     // Note: the cart could also be just `str` since
 ///     // MyDataStruct has only one field.
 ///     type Cart = MyDataStruct<'s>;
-/// }
-///
-/// unsafe impl<'a> Yokeable<'a> for MyDataStruct<'static> {
-///     // (not shown; see the yoke crate for examples)
-/// #    type Output = MyDataStruct<'a>;
-/// #    fn transform(&'a self) -> &'a Self::Output {
-/// #        self
-/// #    }
-/// #    fn transform_owned(self) -> Self::Output {
-/// #        self
-/// #    }
-/// #    unsafe fn make(from: Self::Output) -> Self {
-/// #        std::mem::transmute(from)
-/// #    }
-/// #    fn transform_mut<F>(&'a mut self, f: F)
-/// #    where
-/// #        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-/// #    {
-/// #        unsafe {
-/// #            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-/// #                self,
-/// #            ))
-/// #        }
-/// #    }
-/// }
-///
-/// impl<'s> ZeroCopyFrom<MyDataStruct<'s>> for MyDataStruct<'static> {
-///     fn zero_copy_from<'b>(this: &'b MyDataStruct<'s>) -> MyDataStruct<'b> {
-///         MyDataStruct {
-///             message: Cow::Borrowed(&this.message),
-///         }
-///     }
 /// }
 ///
 /// // We can now use MyDataStruct with DataProvider:

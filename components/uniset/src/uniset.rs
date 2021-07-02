@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::{char, ops::RangeBounds, slice::Chunks};
+use yoke::*;
 
 #[cfg(feature = "serde")]
 use serde::ser::SerializeSeq;
@@ -17,7 +18,8 @@ const BMP_MAX: u32 = 0xFFFF;
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
-#[derive(Debug, PartialEq, Hash, Eq, Clone)]
+#[derive(Debug, PartialEq, Hash, Eq, Clone, Yokeable, ZeroCopyFrom)]
+#[yoke(CloningZCF)]
 pub struct UnicodeSet {
     // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
 

@@ -8,6 +8,7 @@
 
 use icu_locid::LanguageIdentifier;
 use tinystr::{TinyStr4, TinyStr8};
+use yoke::*;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
@@ -15,11 +16,12 @@ pub mod key {
     pub const LIKELY_SUBTAGS_V1: ResourceKey = resource_key!(likelysubtags, "likelysubtags", 1);
 }
 
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, ZeroCopyFrom, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct AliasesV1 {
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
@@ -40,11 +42,12 @@ icu_provider::impl_data_marker_no_lifetime!(
     AliasesV1Marker
 );
 
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, ZeroCopyFrom, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct LikelySubtagsV1 {
     pub language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
     pub language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,

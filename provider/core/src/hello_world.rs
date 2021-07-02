@@ -20,7 +20,7 @@ pub mod key {
 }
 
 /// A struct containing "Hello World" in the requested language.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -34,41 +34,6 @@ impl Default for HelloWorldV1<'_> {
     fn default() -> Self {
         HelloWorldV1 {
             message: Cow::Borrowed("(und) Hello World"),
-        }
-    }
-}
-
-// BEGIN YOKEABLE BOILERPLATE
-
-unsafe impl<'a> Yokeable<'a> for HelloWorldV1<'static> {
-    type Output = HelloWorldV1<'a>;
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    fn transform_owned(self) -> Self::Output {
-        self
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        std::mem::transmute(from)
-    }
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe {
-            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-                self,
-            ))
-        }
-    }
-}
-
-// END YOKEABLE BOILERPLATE
-
-impl<'s> ZeroCopyFrom<HelloWorldV1<'s>> for HelloWorldV1<'static> {
-    fn zero_copy_from<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
-        HelloWorldV1 {
-            message: Cow::Borrowed(&this.message),
         }
     }
 }

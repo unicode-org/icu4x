@@ -903,6 +903,7 @@ dependencies = [
  "thiserror",
  "tinystr",
  "writeable",
+ "yoke",
 ]
 
 [[package]]
@@ -924,6 +925,7 @@ dependencies = [
  "serde",
  "thiserror",
  "writeable",
+ "yoke",
 ]
 
 [[package]]
@@ -938,6 +940,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr",
+ "yoke",
 ]
 
 [[package]]
@@ -988,6 +991,7 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
+ "yoke",
 ]
 
 [[package]]
@@ -1134,6 +1138,7 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tinystr",
+ "yoke",
 ]
 
 [[package]]
@@ -2550,11 +2555,12 @@ dependencies = [
  "bincode",
  "serde",
  "stable_deref_trait",
+ "yoke-derive",
 ]
 
 [[package]]
 name = "yoke-derive"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -5,6 +5,7 @@
 use litemap::LiteMap;
 use std::borrow::Cow;
 use tinystr::TinyStr8;
+use yoke::*;
 
 /// Provides a few common map accessor methods to new-type structs that wrap a map type.
 /// The methods are all pass-through calls to the internal methods of the same name.
@@ -39,11 +40,12 @@ macro_rules! map_access {
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, ZeroCopyFrom, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct TimeZoneFormatsV1<'s> {
     /// The hour format for displaying GMT offsets.
     pub hour_format: (Cow<'s, str>, Cow<'s, str>),
@@ -63,111 +65,110 @@ pub struct TimeZoneFormatsV1<'s> {
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     TimeZoneFormatsV1<'s>,
     /// Marker type for [`TimeZoneFormatsV1`]
-    TimeZoneFormatsV1Marker,
-    TEMP_ZCF
+    TimeZoneFormatsV1Marker
 );
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, ZeroCopyFrom, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct ExemplarCitiesV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(ExemplarCitiesV1<'s>[str] => Cow<'s, str>: 's);
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     ExemplarCitiesV1<'s>,
     /// Marker type for [`ExemplarCitiesV1`]
-    ExemplarCitiesV1Marker,
-    TEMP_ZCF
+    ExemplarCitiesV1Marker
 );
 
 /// An ICU4X mapping to the long-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct MetaZoneGenericNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(MetaZoneGenericNamesLongV1<'s>[str] => Cow<'s, str>: 's);
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneGenericNamesLongV1<'s>,
     /// Marker type for [`MetaZoneGenericNamesLongV1`]
-    MetaZoneGenericNamesLongV1Marker,
-    TEMP_ZCF
+    MetaZoneGenericNamesLongV1Marker
 );
 
 /// An ICU4X mapping to the short-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct MetaZoneGenericNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(MetaZoneGenericNamesShortV1<'s>[str] => Cow<'s, str>: 's);
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneGenericNamesShortV1<'s>,
     /// Marker type for [`MetaZoneGenericNamesShortV1`]
-    MetaZoneGenericNamesShortV1Marker,
-    TEMP_ZCF
+    MetaZoneGenericNamesShortV1Marker
 );
 
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct MetaZoneSpecificNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
 map_access!(MetaZoneSpecificNamesLongV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesLongV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesLongV1`]
-    MetaZoneSpecificNamesLongV1Marker,
-    TEMP_ZCF
+    MetaZoneSpecificNamesLongV1Marker
 );
 
 /// An ICU4X mapping to the short-form specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct MetaZoneSpecificNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
 map_access!(MetaZoneSpecificNamesShortV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesShortV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesShortV1`]
-    MetaZoneSpecificNamesShortV1Marker,
-    TEMP_ZCF
+    MetaZoneSpecificNamesShortV1Marker
 );
 
 /// A general struct to hold metazone specific name variants.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(CloningZCF)]
 pub struct MetaZoneSpecificNamesV1<'s>(pub LiteMap<Cow<'s, TinyStr8>, Cow<'s, str>>);
 map_access!(MetaZoneSpecificNamesV1<'s>[TinyStr8] => Cow<'s, str>: 's);
 
 icu_provider::unsafe_impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesV1`]
-    MetaZoneSpecificNamesV1Marker,
-    TEMP_ZCF
+    MetaZoneSpecificNamesV1Marker
 );
