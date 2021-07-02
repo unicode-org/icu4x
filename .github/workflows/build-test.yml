@@ -486,7 +486,7 @@ jobs:
       - name: Run the example with dhat-rs to collect memory information
         run: |
           cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2021-03-15
-
+          cat ./benchmarks/memory/${{ matrix.os }}
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
       # dashboard HTML in a commit of a branch of the local repo.
 
@@ -698,34 +698,4 @@ jobs:
     - name: Build wasm executables and Measure size
       run: |
         cargo make wasm-examples
-        rustc tools/benchmark/binsize.rs
-        ./binsize                                                                                                                     
-
-  binsize:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install prereqs
-      run: |
-        cargo install cargo-make
-        echo "rustup component add rust-src"
-        rustup component add rust-src
-        echo "rustup toolchain list"
-        rustup toolchain list
-        echo "rustup toolchain install nightly-2021-02-28"
-        rustup toolchain install nightly-2021-02-28
-        echo "sudo npm install -g wabt"
-        sudo npm install -g wabt
-        echo "sudo sh -c 'npm install -g wasm-opt'"
-        sudo npm install -g wasm-opt --unsafe-perm
-        echo "cargo install twiggy"
-        cargo install twiggy
-        echo "cargo make wasm-examples"
-        cargo make wasm-examples
-
-    - name: Measure size of wasm executables.
-      run: |
-        rustc tools/benchmark/binsize.rs
-        ls -l binsize
-        ./binsize
+        cargo build --package icu_benchmark_binsize
