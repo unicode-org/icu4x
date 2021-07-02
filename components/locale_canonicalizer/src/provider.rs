@@ -21,7 +21,7 @@ pub mod key {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct AliasesV1 {
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
@@ -47,7 +47,7 @@ icu_provider::impl_data_marker_no_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct LikelySubtagsV1 {
     pub language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
     pub language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,

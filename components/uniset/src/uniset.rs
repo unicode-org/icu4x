@@ -19,7 +19,7 @@ const BMP_MAX: u32 = 0xFFFF;
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
 #[derive(Debug, PartialEq, Hash, Eq, Clone, Yokeable, ZeroCopyFrom)]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct UnicodeSet {
     // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
 

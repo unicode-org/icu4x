@@ -10,7 +10,7 @@ use yoke::*;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct DateSymbolsV1 {
     pub months: months::ContextsV1,
 
@@ -30,7 +30,7 @@ icu_provider::impl_data_marker_no_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct DatePatternsV1 {
     pub date: patterns::LengthPatternsV1,
 
@@ -89,7 +89,7 @@ macro_rules! symbols {
                 use super::*;
 
                 #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-                #[yoke(CloningZCF)]
+                #[yoke(cloning_zcf)]
                 #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
                 pub struct SymbolsV1 {
                     $($members)*
@@ -101,7 +101,7 @@ macro_rules! symbols {
             // UTS 35 specifies that `format` widths are mandatory
             // except of `short`.
             #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-            #[yoke(CloningZCF)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
@@ -112,7 +112,7 @@ macro_rules! symbols {
 
             // UTS 35 specifies that `stand_alone` widths are optional
             #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-            #[yoke(CloningZCF)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct StandAloneWidthsV1 {
                 pub abbreviated: Option<SymbolsV1>,
@@ -122,7 +122,7 @@ macro_rules! symbols {
             }
 
             #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
-            #[yoke(CloningZCF)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct ContextsV1 {
                 pub format: FormatWidthsV1,

@@ -45,7 +45,7 @@ macro_rules! map_access {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct TimeZoneFormatsV1<'s> {
     /// The hour format for displaying GMT offsets.
     pub hour_format: (Cow<'s, str>, Cow<'s, str>),
@@ -75,7 +75,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct ExemplarCitiesV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(ExemplarCitiesV1<'s>[str] => Cow<'s, str>: 's);
 
@@ -92,7 +92,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct MetaZoneGenericNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(MetaZoneGenericNamesLongV1<'s>[str] => Cow<'s, str>: 's);
 
@@ -109,7 +109,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct MetaZoneGenericNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(MetaZoneGenericNamesShortV1<'s>[str] => Cow<'s, str>: 's);
 
@@ -127,7 +127,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct MetaZoneSpecificNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
 map_access!(MetaZoneSpecificNamesLongV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
 
@@ -145,7 +145,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct MetaZoneSpecificNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
 map_access!(MetaZoneSpecificNamesShortV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
 
@@ -163,7 +163,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[yoke(CloningZCF)]
+#[yoke(cloning_zcf)]
 pub struct MetaZoneSpecificNamesV1<'s>(pub LiteMap<Cow<'s, TinyStr8>, Cow<'s, str>>);
 map_access!(MetaZoneSpecificNamesV1<'s>[TinyStr8] => Cow<'s, str>: 's);
 

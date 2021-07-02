@@ -108,7 +108,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 /// without a lifetime parameter, and `ZeroCopyFrom<Ty<'s>> for Ty<'static>`
 /// for types with a lifetime parameter.
 ///
-/// Apply the `#[yoke(CloningZCF)]` attribute if you wish for this custom derive
+/// Apply the `#[yoke(cloning_zcf)]` attribute if you wish for this custom derive
 /// to use `.clone()` for its implementation.
 #[proc_macro_derive(ZeroCopyFrom, attributes(yoke))]
 pub fn zcf_derive(input: TokenStream) -> TokenStream {
@@ -127,7 +127,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
     }
     let has_clone = input.attrs.iter().any(|a| {
         if let Ok(i) = a.parse_args::<Ident>() {
-            if i == "CloningZCF" {
+            if i == "cloning_zcf" {
                 return true;
             }
         }
