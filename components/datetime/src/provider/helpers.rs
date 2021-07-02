@@ -161,8 +161,8 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
         }
 
         let time = match self.preferred_hour_cycle {
-            crate::pattern::hour_cycle::CoarseHourCycle::H11H12 => &self.time_h11_h12,
-            crate::pattern::hour_cycle::CoarseHourCycle::H23H24 => &self.time_h23_h24,
+            crate::pattern::CoarseHourCycle::H11H12 => &self.time_h11_h12,
+            crate::pattern::CoarseHourCycle::H23H24 => &self.time_h23_h24,
         };
 
         Ok(Pattern::from_bytes(match length {

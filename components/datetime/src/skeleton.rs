@@ -11,7 +11,7 @@ use thiserror::Error;
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     options::length,
-    pattern::{Pattern, PatternItem},
+    pattern::Pattern,
     provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
 
@@ -204,11 +204,16 @@ impl TryFrom<&str> for Skeleton {
 /// the fields into the canonical sort order. Not all fields are supported by Skeletons, so map
 /// fields into skeleton-appropriate ones. For instance, in the "ja" locale the pattern "aK:mm"
 /// gets transformed into the skeleton "hmm".
+///
+/// At the time of this writing, it's being used for applying hour cycle preferences and should not
+/// be exposed as a public API for end users.
+#[doc(hidden)]
+#[cfg(feature = "provider_transform_utils")]
 impl From<&Pattern> for Skeleton {
     fn from(pattern: &Pattern) -> Self {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
         for item in pattern.items() {
-            if let PatternItem::Field(field) = item {
+            if let crate::pattern::PatternItem::Field(field) = item {
                 let mut field = *field;
 
                 // Skeletons only have a subset of available fields, these are then mapped to more
@@ -1049,6 +1054,7 @@ mod test {
         );
     }
 
+    #[cfg(feature = "provider_transform_utils")]
     fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
         assert_eq!(
             serde_json::to_string(skeleton).unwrap(),
@@ -1059,6 +1065,7 @@ mod test {
     }
 
     #[test]
+    #[cfg(feature = "provider_transform_utils")]
     fn test_pattern_to_skeleton() {
         assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
 

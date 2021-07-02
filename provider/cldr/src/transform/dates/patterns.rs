@@ -7,7 +7,7 @@ use crate::cldr_langid::CldrLangID;
 use crate::error::Error;
 use crate::reader::{get_subdirectories, open_reader};
 use crate::CldrPaths;
-use icu_datetime::pattern::hour_cycle::CoarseHourCycle;
+use icu_datetime::pattern::CoarseHourCycle;
 use icu_datetime::{pattern, provider::*, skeleton::SkeletonError};
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
@@ -198,10 +198,10 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
 
         let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
         for hour_cycle in [
-            pattern::hour_cycle::determine_coarse_hour_cycle(&pattern_full),
-            pattern::hour_cycle::determine_coarse_hour_cycle(&pattern_long),
-            pattern::hour_cycle::determine_coarse_hour_cycle(&pattern_medium),
-            pattern::hour_cycle::determine_coarse_hour_cycle(&pattern_short),
+            pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_full),
+            pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_long),
+            pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_medium),
+            pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_short),
         ]
         .iter()
         {
@@ -228,7 +228,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
         let (time_h11_h12, time_h23_h24) = {
             let time = (&other.calendars.gregorian.time_formats).into();
             let alt_time = gregory::patterns::LengthPatternsV1 {
-                full: pattern::hour_cycle::apply_coarse_hour_cycle(
+                full: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
                     &pattern_str_full,
                     pattern_full,
@@ -236,7 +236,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 )
                 .unwrap()
                 .into(),
-                long: pattern::hour_cycle::apply_coarse_hour_cycle(
+                long: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
                     &pattern_str_long,
                     pattern_long,
@@ -244,7 +244,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 )
                 .unwrap()
                 .into(),
-                medium: pattern::hour_cycle::apply_coarse_hour_cycle(
+                medium: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
                     &pattern_str_medium,
                     pattern_medium,
@@ -252,7 +252,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 )
                 .unwrap()
                 .into(),
-                short: pattern::hour_cycle::apply_coarse_hour_cycle(
+                short: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
                     &pattern_str_short,
                     pattern_short,
