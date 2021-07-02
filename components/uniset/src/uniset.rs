@@ -171,26 +171,6 @@ impl UnicodeSet {
         self.inv_list.len() / 2
     }
 
-    /// Returns the first code point in the specified range of this [`UnicodeSet`].
-    /// Returns `None` if `idx` is out of bounds.
-    pub fn get_range_start(&self, idx: usize) -> Option<u32> {
-        if idx >= self.get_range_count() {
-            None
-        } else {
-            self.inv_list.get(idx * 2).copied()
-        }
-    }
-
-    /// Returns the last code point in the specified range of this [`UnicodeSet`].
-    /// Returns `None` if `idx` is out of bounds.
-    pub fn get_range_end(&self, idx: usize) -> Option<u32> {
-        if idx >= self.get_range_count() {
-            None
-        } else {
-            self.inv_list.get((idx * 2) + 1).map(|c| c - 1)
-        }
-    }
-
     /// Returns the number of elements of the [`UnicodeSet`]
     pub fn size(&self) -> usize {
         if self.is_empty() {
@@ -551,24 +531,6 @@ mod tests {
         let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
         let set = UnicodeSet::from_inversion_list(ex).unwrap();
         assert_eq!(3, set.get_range_count());
-    }
-
-    #[test]
-    fn test_unicodeset_range_start() {
-        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
-        assert_eq!(Some(65), set.get_range_start(0));
-        assert_eq!(Some(0xD800), set.get_range_start(2));
-        assert_eq!(None, set.get_range_start(3));
-    }
-
-    #[test]
-    fn test_unicodeset_range_end() {
-        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
-        assert_eq!(Some(67), set.get_range_end(0));
-        assert_eq!(Some(0xD800), set.get_range_end(2));
-        assert_eq!(None, set.get_range_end(3));
     }
 
     // Range<char> cannot represent the upper bound (non-inclusive) for
