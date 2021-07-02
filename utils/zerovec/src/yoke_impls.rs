@@ -62,23 +62,20 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
 #[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<
         'a,
-        K: 'static + ZeroMapKV<'static> + Yokeable<'a>,
-        V: 'static + ZeroMapKV<'static> + Yokeable<'a>,
+        K: 'static + for<'b> ZeroMapKV<'b>,
+        V: 'static + for<'b> ZeroMapKV<'b>,
     > Yokeable<'a> for ZeroMap<'static, K, V>
-where
-    K::Output: ZeroMapKV<'a>,
-    V::Output: ZeroMapKV<'a>,
 {
-    type Output = ZeroMap<'a, K::Output, V::Output>;
-    fn transform(&'a self) -> &'a ZeroMap<'a, K::Output, V::Output> {
+    type Output = ZeroMap<'a, K, V>;
+    fn transform(&'a self) -> &'a ZeroMap<'a, K, V> {
         unsafe {
             // Unfortunately, because K and V are generic, rustc is
             // unaware that these are covariant types, and cannot perform this cast automatically.
-            // We transmute it instead, and enforce covariance with the `K, V: Yokeable<'a>` bounds
+            // We transmute it instead, and enforce the lack of a lifetime with the `K, V: 'static` bound
             mem::transmute::<&Self, &Self::Output>(self)
         }
     }
-    fn transform_owned(self) -> ZeroMap<'a, K::Output, V::Output> {
+    fn transform_owned(self) -> ZeroMap<'a, K, V> {
         debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
         unsafe {
             // Similar problem as transform(), but we need to use ptr::read since
@@ -88,9 +85,9 @@ where
             ptr::read(ptr)
         }
     }
-    unsafe fn make(from: ZeroMap<'a, K::Output, V::Output>) -> Self {
+    unsafe fn make(from: ZeroMap<'a, K, V>) -> Self {
         debug_assert!(
-            mem::size_of::<ZeroMap<'a, K::Output, V::Output>>() == mem::size_of::<Self>()
+            mem::size_of::<ZeroMap<'a, K, V>>() == mem::size_of::<Self>()
         );
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);

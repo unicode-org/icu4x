@@ -2567,11 +2567,12 @@ dependencies = [
  "syn",
  "synstructure",
  "yoke",
+ "zerovec",
 ]
 
 [[package]]
 name = "zerovec"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "bincode",
  "criterion",

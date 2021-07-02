@@ -6,6 +6,7 @@
 
 use std::borrow::Cow;
 use yoke_derive::{Yokeable, ZeroCopyFrom};
+use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
 pub struct Foo {
@@ -18,6 +19,14 @@ pub struct Bar<'a> {
     y: &'a str,
     z: Cow<'a, str>,
     w: Cow<'a, [u8]>,
+}
+
+#[derive(Yokeable)]
+pub struct Baz<'a> {
+    // https://github.com/unicode-org/icu4x/issues/844
+    // map: ZeroMap<'a, String, String>,
+    var: VarZeroVec<'a, String>,
+    vec: ZeroVec<'a, u16>,
 }
 
 fn main() {}

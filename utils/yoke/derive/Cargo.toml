@@ -27,3 +27,4 @@ synstructure = "0.12.4"
 
 [dev-dependencies]
 yoke = { path = "..", version = "0.2.0" }
+zerovec = { path = "../../zerovec", version = "0.2.3", features = ["yoke"] }
