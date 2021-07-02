@@ -43,7 +43,7 @@ pub struct DatePatternsV1 {
     pub time_h23_h24: patterns::LengthPatternsV1,
 
     /// By default a locale will prefer one hour cycle type over another.
-    pub preferred_hour_cycle: pattern::CoarseHourCycle,
+    pub preferred_hour_cycle: pattern::hour_cycle::CoarseHourCycle,
 
     pub datetime: patterns::DateTimeFormatsV1,
 }
