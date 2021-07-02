@@ -60,7 +60,7 @@ pub fn apply_coarse_hour_cycle(
                     // Mutate the pattern with the new symbol, so that it can be matched against.
                     *symbol = fields::FieldSymbol::Hour(match coarse_hour_cycle {
                         CoarseHourCycle::H11H12 => fields::Hour::H12,
-                        CoarseHourCycle::H23H24 => fields::Hour::H24,
+                        CoarseHourCycle::H23H24 => fields::Hour::H23,
                     });
                     break;
                 }

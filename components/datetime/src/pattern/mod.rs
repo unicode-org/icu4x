@@ -288,7 +288,7 @@ impl Serialize for Pattern {
 }
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
-/// hour cycles as H12 or H24.
+/// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(
     feature = "provider_serde",

@@ -236,13 +236,13 @@ impl From<&Pattern> for Skeleton {
                     //     FieldSymbol::DayPeriod(fields::DayPeriod::Flexible)
                     // }
 
-                    // Only the H12 and H24 symbols are used in skeletons, while the patterns may
+                    // Only the H12 and H23 symbols are used in skeletons, while the patterns may
                     // contain H11 or H23 depending on the localization.
                     FieldSymbol::Hour(fields::Hour::H11) | FieldSymbol::Hour(fields::Hour::H12) => {
                         FieldSymbol::Hour(fields::Hour::H12)
                     }
                     FieldSymbol::Hour(fields::Hour::H23) | FieldSymbol::Hour(fields::Hour::H24) => {
-                        FieldSymbol::Hour(fields::Hour::H24)
+                        FieldSymbol::Hour(fields::Hour::H23)
                     }
 
                     // Pass through all of the following preferences unchanged.
