@@ -292,6 +292,8 @@ fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
         anyhow::bail!("--out must be specified for --format=dir");
     };
 
+    log::info!("Writing to filesystem tree at: {}", output_path.display());
+
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
         Some("json") | None => {
             let mut options = serializers::json::Options::default();
@@ -335,6 +337,11 @@ fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter> {
         Some(PathBuf::from(v))
     } else {
         None
+    };
+
+    match output_path {
+        Some(ref p) => log::info!("Writing blob to filesystem at: {}", p.display()),
+        None => log::info!("Writing blob to standard out"),
     };
 
     let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {

@@ -65,6 +65,7 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter 
                 .expect_err("Same order");
         }
         let blob = BlobSchema::V001(schema);
+        log::info!("Serializing blob to output stream...");
         serialize(&blob, self.sink.as_mut())?;
         Ok(())
     }
