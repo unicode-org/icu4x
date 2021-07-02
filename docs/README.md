@@ -21,6 +21,8 @@ List of documents describing various aspects of the process which ICU4X project 
 
 Document | Summary
 ---------|---------
+[prd.md](process/prd.md) | Product Requirement Document for ICU4X 1.0
+[roadmap.md](process/roadmap.md) | ICU4X 1.0 Roadmap
 [benchmarking.md](process/benchmarking.md) | Description of the model and facets of performance benchmarking that ICU4X is using.
 [bylaws.md](process/bylaws.md) | ICU4X-SC abides by the bylaws listed in this document.
 [charter.md](process/charter.md) | ICU4X is a new project whose objective is to solve the needs of clients who wish to provide client-side i18n for their products in resource-constrained environments.
@@ -29,6 +31,7 @@ Document | Summary
 [style_guide.md](process/style_guide.md) | A guide to best practices for writing Rust code in ICU4x.
 [triaging.md](process/triaging.md) | ICU4X uses GitHub for tracking feature requests and work items.
 [ci_build.md](process/ci_build.md) | An overview of continuous integration setup in ICU4X.
+[rust_versions.md](process/rust_versions.md) | An overview of ICU4X's Rust version policy.
 
 ## Design
 
@@ -59,4 +62,5 @@ List of posts by ICU4X.
 
 Document | Summary
 ---------|---------
+[20210427_ICU4X_02_Release.md](posts/20210427_ICU4X_02_Release.md) | ICU4X 0.2 Release
 [20201015_ICU4X_Project_Announcement.md](posts/20201015_ICU4X_Project_Announcement.md) | ICU4X Project Announcement

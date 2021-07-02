@@ -44,6 +44,8 @@
 //!   types, such as [`Locale`].
 //! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
 //!   when running `cargo bench`.
+//! - `experimental`: Whether to enable experimental preview features. Modules enabled with
+//!   this feature may not be production-ready and could change at any time.
 //!
 //! # Example
 //!
@@ -130,7 +132,6 @@ pub mod decimal {
     //! ## Format a number with Bengali digits
     //!
     //! ```
-    //! # #[cfg(feature = "provider_serde")] {
     //! use icu::decimal::FixedDecimalFormat;
     //! use icu::locid::Locale;
     //! use icu::locid::macros::langid;
@@ -146,7 +147,6 @@ pub mod decimal {
     //! let formatted_str = formatted_value.writeable_to_string();
     //!
     //! assert_eq!("১০,০০,০০৭", formatted_str);
-    //! # } // feature = "provider_serde"
     //! ```
     //!
     //! ## Format a number with digits after the decimal separator
@@ -171,6 +171,58 @@ pub mod decimal {
     //!
     //! [`FixedDecimal`]: fixed_decimal::FixedDecimal
     pub use icu_decimal::*;
+}
+
+pub mod locale_canonicalizer {
+    //! This API provides functionality to canonicalize locale identifiers based
+    //! upon [`CLDR`] data.
+    //!
+    //! It currently supports the minimize and maximize likely subtags algorithms
+    //! as described in [`UTS #35: Unicode LDML 3. Likely Subtags`].
+    //!
+    //! # Examples
+    //!
+    //! ```
+    //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    //! use icu_locid::Locale;
+    //!
+    //! let provider = icu_testdata::get_provider();
+    //! let lc = LocaleCanonicalizer::new(&provider)
+    //!     .expect("create failed");
+    //!
+    //! let mut locale : Locale = "zh-CN".parse()
+    //!     .expect("parse failed");
+    //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
+    //! assert_eq!(locale.to_string(), "zh-Hans-CN");
+    //!
+    //! let mut locale : Locale = "zh-Hant-TW".parse()
+    //!     .expect("parse failed");
+    //! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
+    //! assert_eq!(locale.to_string(), "zh-Hant-TW");
+    //! ```
+    //!
+    //! ```
+    //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    //! use icu_locid::Locale;
+    //!
+    //! let provider = icu_testdata::get_provider();
+    //! let lc = LocaleCanonicalizer::new(&provider)
+    //!     .expect("create failed");
+    //!
+    //! let mut locale : Locale = "zh-Hans-CN".parse()
+    //!     .expect("parse failed");
+    //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
+    //! assert_eq!(locale.to_string(), "zh");
+    //!
+    //! let mut locale : Locale = "zh".parse()
+    //!     .expect("parse failed");
+    //! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
+    //! assert_eq!(locale.to_string(), "zh");
+    //! ```
+    //! [`ICU4X`]: ../icu/index.html
+    //! [`CLDR`]: http://cldr.unicode.org/
+    //! [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+    pub use icu_locale_canonicalizer::*;
 }
 
 pub mod locid {

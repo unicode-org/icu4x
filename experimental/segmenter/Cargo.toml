@@ -1,0 +1,44 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_segmenter"
+description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "../../LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "README.md"
+]
+
+[dependencies]
+unicode-width = "0.1.7"
+icu_segmenter_lstm = { version = "0.1", path = "../segmenter_lstm" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+lazy_static = "1.0"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[lib]
+path = "src/lib.rs"
+bench = false  # This option is required for Benchmark CI
+
+[[bench]]
+name = "bench"
+harness = false
+
+[features]
+default = []

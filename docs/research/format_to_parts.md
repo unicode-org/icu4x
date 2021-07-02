@@ -204,6 +204,7 @@ Pros:
 
 Cons:
 
+- **Complex nested fields:** Although nested fields are supported, it can be complex and bug-prone to implement logic for them, although most of that complexity can be hidden away from the user. Care must be taken when implementing this approach.
 - **Less intuitive:** Potentially less clear than the other options to ICU4X developers.
 
 ### Model E
@@ -230,7 +231,7 @@ Pros:
 
 Cons:
 
-- **Decoupled memory growtn:** Same as Model B
+- **Decoupled memory growth:** Same as Model B
 
 ## Appendix A: String Operations for i18n
 

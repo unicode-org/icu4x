@@ -17,7 +17,6 @@
 //! ## Format a number with Bengali digits
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu::decimal::FixedDecimalFormat;
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
@@ -33,7 +32,6 @@
 //! let formatted_str = formatted_value.writeable_to_string();
 //!
 //! assert_eq!("১০,০০,০০৭", formatted_str);
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator
@@ -71,7 +69,6 @@ pub use format::FormattedFixedDecimal;
 use fixed_decimal::FixedDecimal;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -84,14 +81,17 @@ use std::borrow::Cow;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
-pub struct FixedDecimalFormat<'d> {
+pub struct FixedDecimalFormat<'d, 's> {
     options: options::FixedDecimalFormatOptions,
-    symbols: Cow<'d, provider::DecimalSymbolsV1>,
+    symbols: DataPayload<'d, 's, provider::DecimalSymbolsV1Marker>,
 }
 
-impl<'d> FixedDecimalFormat<'d> {
+impl<'d, 's> FixedDecimalFormat<'d, 's> {
     /// Creates a new [`FixedDecimalFormat`] from locale data and an options bag.
-    pub fn try_new<T: Into<Locale>, D: DataProvider<'d, provider::DecimalSymbolsV1> + ?Sized>(
+    pub fn try_new<
+        T: Into<Locale>,
+        D: DataProvider<'d, 's, provider::DecimalSymbolsV1Marker> + ?Sized,
+    >(
         locale: T,
         data_provider: &D,
         options: options::FixedDecimalFormatOptions,
@@ -106,8 +106,7 @@ impl<'d> FixedDecimalFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
         Ok(Self { options, symbols })
     }
 
@@ -116,7 +115,7 @@ impl<'d> FixedDecimalFormat<'d> {
         FormattedFixedDecimal {
             value,
             options: &self.options,
-            symbols: &self.symbols,
+            symbols: self.symbols.get(),
         }
     }
 }

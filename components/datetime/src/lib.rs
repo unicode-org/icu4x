@@ -13,7 +13,6 @@
 //! # Examples
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
@@ -38,14 +37,12 @@
 //!
 //! let formatted_date = dtf.format(&date);
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
 //! convert a [`options::length::Bag`] into a [`DateTimeFormatOptions::Length`].
 //!
 //! ```
-//! # #[cfg(feature = "provider_serde")] {
 //! use icu::locid::Locale;
 //! use icu::locid::macros::langid;
 //! use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::datetime::MockDateTime, options::length};
@@ -58,7 +55,6 @@
 //! }.into();
 //!
 //! let dtf = DateTimeFormat::try_new(locale, &provider, &options);
-//! # } // feature = "provider_serde"
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,
@@ -84,6 +80,7 @@ pub mod options;
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
+#[doc(hidden)]
 pub mod skeleton;
 // TODO(#622) make the time_zone module public once TimeZoneFormat is public.
 pub(crate) mod time_zone;

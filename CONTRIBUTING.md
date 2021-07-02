@@ -2,9 +2,9 @@
 
 `ICU4X` is an open source project and welcomes everyone to participate.
 
-In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](docs/process/charter.md) and [style guide][style_guide] used by the project.
+The core team has identified good starter projects and gave them **[good first issue](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22+-label%3A%22blocked%22+) label**.  This is a great place to start as a volunteer.
 
-The list of [open issues](triaging.md) represent the current focus points of the project, and the [help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+label%3A%22help+wanted%22+no%3Aassignee+) lists the issues which we don't have resources to work on right now, but would consider accepting if someone volunteered to work on them.
+In order to provide meaningful contributions, it is important to familiarize yourself with a set of documents which describe the [structure](docs/process/charter.md) and [style guide][style_guide] used by the project.
 
 Issues are open to everyone to discuss and can be used to jump-start Pull Requests intended for the project.
 
@@ -16,14 +16,27 @@ The first step is to fork the repository to your namespace and create a branch o
 
 That branch may end up containing one of more commits that are constituting the full scope of the pull request.
 
+### Release Readiness
+
+When considering a contribution, we use the following rule of thumb: **all code in `components/`, `ffi/`, `provider/`, and `utils/` on the `main` branch must be ready for release at any time.**
+
+Practically, this means that new components or improvements to existing components should not be merged until they meet all requirements of code quality (see the checklist below).
+
+If working on a new component, consider starting it in the `experimental/` directory. We allow contributions to that directory even if they don't yet meet all of our code quality requirements. Once finished, the code can be moved from `experimental/` into `components/` or `utils/` as a separate pull request.
+
+If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"experimental"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"experimental"` feature can be removed from the crate.
+
+Note that the actual Cargo.toml version bumps will be done at release time, and crates under `utils/` may follow a different release cadence than those under other directory trees.
+
 ### Checklist
 
 Each commit and pull request should follow the [style guide][style_guide] and be properly formatted with `cargo fmt`. If the PR is adding any public API changes, we'd also like to ensure that full coverage of `cargo doc` is preserved and code coverage is above `90%`.
 
 Handy commands (run from the root directory):
 
+- `cargo tidy` runs tidy-checks (license, fmt, readmes)
 - `cargo quick` runs the fastest tests and lints.
-- `cargo ci` runs all tests and lints.
+- `cargo make ci-all` runs all tests and lints
 
 ### Structure of commits in a Pull Request
 
@@ -38,6 +51,8 @@ If the pull request is simple and short lived, it can be initialized with review
 If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
+If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `experimental/` directory, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
+
 By the end of this phase, and right before review is requested, it is helpful for the reviewers to have a clean list of commits in the pull request.
 
 In most cases, a single commit per pull request is enough.
@@ -49,7 +64,7 @@ Such commits do not have to pass tests in isolation, and need only to be meaning
 
 Once the pull request is ready for review and passes all tests, the author can switch from draft to regular pull request.
 
-At this point, the pull request will be triaged during the next triage session and reviewers will be assigned to it.
+At this point, the pull request will be triaged during the next triage session and reviewers will be assigned to it. The pull request author may also request reviews from specific individuals. When doing so, it is encouraged to communicate the desired review focus to these reviewers.
 
 In this phase, any changes applied to the pull request should result in additive commits to it. This allows reviewers to see what changes have been made in result of their feedback and evaluate them.
 
@@ -60,6 +75,10 @@ Every PR requires at least one review to be merged.
 If the author has the editing rights to the repository merging should be performed by the author of the pull request. If the author wants to grant another team member rights to merge, they can state so in the PR comment.
 
 If the pull request modifies code in one of the recognized components, one of the component owners should be on the reviewers list for the pull request. For the list of components and their owners, see [CODEOWNERS](CODEOWNERS).
+
+The author of the pull request should feel free to remove pending reviewers if they have at least one approving review and feel that the pull request is sufficiently reviewed.
+
+If minor changes have been made after the approving review that it is clear that the reviewer will not care about (e.g. applying `cargo fmt`, or addressing minor leftover review comments), it is acceptable to ask other maintainers for a "rubber stamp" review on Slack or elsewhere, as a workaround to GitHub not allowing self-approvals from maintainers.
 
 ## Review Model
 
@@ -78,10 +97,7 @@ The reviewer is responsible for accepting a pull request only once they feel the
 
 The *approve* can be set with pending review comments, if those comments don't affect whether the patch is ready to be merged (for example, they're stylistic suggestions).
 
-The reviewer should communicate the nature of their review comments - specifically, between the three types: *"blocking"*, *"suggestion"*, and *"optional"*.
-* **blocking** is when the reviewer considers the change to be unmergable and requires a new revision.
-* **suggestion** is for when the reviewer considers the change to be suboptimal, but usable, and wants to defer the decision to the PR author, while stating their opinion.
-* **optional** is for when the reviewer considers multiple options to be mostly comparable or tradeoffs, and wants to defer to the PR author for the final decision after bringing up a new option.
+We try to use [Conventional Comments](https://conventionalcomments.org/) for review comments, explicitly marking the weight and blocking nature of each review comment.
 
 ### Social Contract
 

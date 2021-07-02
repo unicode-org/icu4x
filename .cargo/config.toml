@@ -4,49 +4,23 @@
 
 [alias]
 
-### INDIVIDUAL TEST AND LINT TASKS ###
-
-# Build and run all code paths except docs
-test-all = "test --all-features --all-targets"
-
-# Build and run all docs tests
-test-docs = "test --all-features --doc"
-
-# Check for formatting on all code
-fmt-check = "fmt -- --check"
-
-# Check for license headers
-license-check = "make license-header-check"
-
-# Check for generated README.md
-readme-check = "make generated-readme-check"
+quick = "make quick"
+tidy = "make tidy"
 
 # Run Clippy on all code paths
+# Keep args in sync with `clippy` job in .github/workflows/build-test.yml
 # unknown-clippy-lints: to allow us to work with nightly clippy lints that we don't CI
 # field-reassign-with-default: https://github.com/rust-lang/rust-clippy/issues/6559 (fixed in nightly but not stable)
-clippy-all = "clippy --all-features --all-targets -- -Aclippy::unknown-clippy-lints -Aclippy::field-reassign-with-default"
-
-### META TASKS ###
-
-# Run quick version of all lints and tests
-quick = "make quick"
-
-# Run all lints and tests
-ci = "make ci"
-
-# Run all lints and tests
-bincode-gen-testdata = "make bincode-gen-testdata"
+clippy-all = "clippy --all-features --all-targets -- -D warnings -Aclippy::field-reassign-with-default"
 
 ### WASM TASKS ###
 
 # Re-build standard library with panic=abort.
-wasm-build = "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target wasm32-unknown-unknown --release"
+wasm-build-dev = "build -Z build-std=std,panic_abort --target wasm32-unknown-unknown"
+wasm-build-release = "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target wasm32-unknown-unknown --release"
 
 [target.wasm32-unknown-unknown]
 rustflags = [
-  # 10 KiB heap size, to fit in 1 page.
-  "-C", "link-args=-z stack-size=10240",
-  # Several options to reduce code size.
-  "-C", "panic=abort",
-  "-C", "opt-level=s",
+  # 20 KiB heap size, to fit in 2 pages.
+  "-C", "link-args=-z stack-size=20480"
 ]

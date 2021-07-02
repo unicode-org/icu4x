@@ -1,0 +1,72 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.build-all-features]
+description = "Build all permutations of all features"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.4"]
+command = "cargo"
+args = ["build-all-features"]
+
+[tasks.test-all-features]
+description = "Run all Rust tests with all features and targets"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--all-targets"]
+
+[tasks.test-docs]
+description = "Run all Rust doctests with all features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--doc"]
+
+[tasks.test-docs-default]
+description = "Run all Rust doctests with default features"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--doc"]
+
+[tasks.test-ffi]
+description = "Run FFI tests"
+category = "ICU4X Development"
+dependencies = [
+    "test-capi",
+    "test-cpp",
+]
+
+[tasks.test-capi]
+description = "Run C API tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/capi/examples/pluralrules;
+exec make
+cd ../fixeddecimal;
+exec make
+cd ../locale;
+exec make
+'''
+
+[tasks.test-cpp]
+description = "Run CPP tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/cpp/examples/pluralrules;
+exec make
+cd ../fixeddecimal;
+exec make
+'''
+
+[tasks.test-cppdoc]
+description = "Build the cpp tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/cpp/docs;
+exec make html
+'''

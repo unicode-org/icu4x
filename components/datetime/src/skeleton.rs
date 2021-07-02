@@ -5,7 +5,8 @@
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
 use smallvec::SmallVec;
-use std::{convert::TryFrom, fmt};
+use std::convert::TryFrom;
+use thiserror::Error;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
@@ -58,7 +59,7 @@ struct DeserializeSkeletonFieldsUTS35String;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(formatter, "Expected to find a valid skeleton.")
     }
 
@@ -87,7 +88,7 @@ struct DeserializeSkeletonBincode;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(formatter, "Unable to deserialize a bincode Pattern.")
     }
 
@@ -214,44 +215,27 @@ impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
     }
 }
 
-#[derive(Debug)]
-pub enum SkeletonError {
-    InvalidFieldLength,
-    DuplicateField,
-    SymbolUnknown(char),
-    SymbolInvalid(char),
-    SymbolUnimplemented(char),
-    UnimplementedField(char),
-    Fields(fields::Error),
-}
-
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
 /// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
-impl fmt::Display for SkeletonError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::InvalidFieldLength => write!(f, "field too long in skeleton"),
-            Self::DuplicateField => write!(f, "duplicate field in skeleton"),
-            Self::SymbolUnknown(ch) => write!(f, "symbol unknown {} in skeleton", ch),
-            Self::SymbolInvalid(ch) => write!(f, "symbol invalid {} in skeleton", ch),
-            Self::SymbolUnimplemented(ch) => {
-                write!(f, "symbol unimplemented {} in skeleton", ch)
-            }
-            Self::UnimplementedField(ch) => {
-                write!(f, "unimplemented field {} in skeleton", ch)
-            }
-            Self::Fields(err) => write!(f, "{} in skeleton", err),
-        }
-    }
-}
-
-impl From<fields::Error> for SkeletonError {
-    fn from(fields_error: fields::Error) -> Self {
-        Self::Fields(fields_error)
-    }
+#[derive(Error, Debug)]
+pub enum SkeletonError {
+    #[error("field too long in skeleton")]
+    InvalidFieldLength,
+    #[error("duplicate field in skeleton")]
+    DuplicateField,
+    #[error("symbol unknown {0} in skeleton")]
+    SymbolUnknown(char),
+    #[error("symbol invalid {0} in skeleton")]
+    SymbolInvalid(char),
+    #[error("symbol unimplemented {0} in skeleton")]
+    SymbolUnimplemented(char),
+    #[error("unimplemented field {0} in skeleton")]
+    UnimplementedField(char),
+    #[error(transparent)]
+    Fields(#[from] fields::Error),
 }
 
 impl From<fields::LengthError> for SkeletonError {
@@ -267,7 +251,7 @@ impl From<fields::SymbolError> for SkeletonError {
             fields::SymbolError::Unknown(byte) => {
                 // NOTE: If you remove a symbol due to it now being supported,
                 //       make sure to regenerate the test data.
-                //       https://github.com/unicode-org/icu4x/blob/main/resources/testdata/README.md
+                //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
                 match byte {
                     // TODO(#487) - Flexible day periods
                     b'B'
@@ -643,22 +627,21 @@ mod test {
     use super::*;
 
     use icu_locid_macros::langid;
-    use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
-    use std::borrow::Cow;
+    use icu_provider::prelude::*;
 
     use crate::{
         fields::{Day, Field, FieldLength, Month, Weekday},
         options::components,
-        provider::{gregory::DatesV1, key::GREGORY_V1},
+        provider::{gregory::DatePatternsV1Marker, key::GREGORY_DATE_PATTERNS_V1},
     };
 
-    fn get_data_provider() -> Cow<'static, DatesV1> {
+    fn get_data_payload() -> DataPayload<'static, 'static, DatePatternsV1Marker> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
-                    key: GREGORY_V1,
+                    key: GREGORY_DATE_PATTERNS_V1,
                     options: ResourceOptions {
                         variant: None,
                         langid: Some(langid),
@@ -666,8 +649,7 @@ mod test {
                 },
             })
             .unwrap()
-            .payload
-            .take()
+            .take_payload()
             .unwrap()
     }
 
@@ -675,12 +657,22 @@ mod test {
     /// testing see components/datetime/tests/fixtures/tests/components-*.json
     #[test]
     fn test_skeleton_matching() {
-        let components = components::Bag::default();
+        let components = components::Bag {
+            year: Some(components::Numeric::Numeric),
+            month: Some(components::Month::Long),
+            day: Some(components::Numeric::Numeric),
+
+            hour: Some(components::Numeric::Numeric),
+            minute: Some(components::Numeric::Numeric),
+            second: Some(components::Numeric::Numeric),
+
+            ..Default::default()
+        };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         match get_best_available_format_pattern(
-            &data_provider.patterns.datetime.skeletons,
+            &data_provider.get().datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
@@ -699,22 +691,15 @@ mod test {
     #[test]
     fn test_skeleton_matching_missing_fields() {
         let components = components::Bag {
-            era: None,
-            year: None,
             month: Some(components::Month::Numeric),
-            day: None,
             weekday: Some(components::Text::Short),
-            hour: None,
-            minute: None,
-            second: None,
-            time_zone_name: None,
-            preferences: None,
+            ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         match get_best_available_format_pattern(
-            &data_provider.patterns.datetime.skeletons,
+            &data_provider.get().datetime.skeletons,
             &requested_fields,
         ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
@@ -728,24 +713,19 @@ mod test {
     #[test]
     fn test_missing_append_items_support() {
         let components = components::Bag {
-            era: None,
             year: Some(components::Numeric::Numeric),
             month: Some(components::Month::Long),
             day: Some(components::Numeric::Numeric),
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
             // This will be appended.
             time_zone_name: Some(components::TimeZoneName::Long),
-            preferences: None,
+            ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         match create_best_pattern_for_fields(
-            &data_provider.patterns.datetime.skeletons,
-            &data_provider.patterns.datetime.length_patterns,
+            &data_provider.get().datetime.skeletons,
+            &data_provider.get().datetime.length_patterns,
             &requested_fields,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
@@ -762,24 +742,13 @@ mod test {
 
     #[test]
     fn test_skeleton_empty_bag() {
-        let components = components::Bag {
-            era: None,
-            year: None,
-            month: None,
-            day: None,
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
-            time_zone_name: None,
-            preferences: None,
-        };
+        let components: components::Bag = Default::default();
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.patterns.datetime.skeletons,
+                &data_provider.get().datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,
@@ -792,23 +761,15 @@ mod test {
     #[test]
     fn test_skeleton_no_match() {
         let components = components::Bag {
-            era: None,
-            year: None,
-            month: None,
-            day: None,
-            weekday: None,
-            hour: None,
-            minute: None,
-            second: None,
             time_zone_name: Some(components::TimeZoneName::Long),
-            preferences: None,
+            ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
-        let data_provider = get_data_provider();
+        let data_provider = get_data_payload();
 
         assert_eq!(
             get_best_available_format_pattern(
-                &data_provider.patterns.datetime.skeletons,
+                &data_provider.get().datetime.skeletons,
                 &requested_fields
             ),
             BestSkeleton::NoMatch,
@@ -834,7 +795,7 @@ mod test {
     // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
     //       on your symbol from impl From<fields::SymbolError> for SkeletonError
     //       and then regenerate the test data.
-    //       https://github.com/unicode-org/icu4x/blob/main/resources/testdata/README.md
+    //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
     #[rustfmt::skip]
     const UNSUPPORTED_STRING_SKELETONS: [&str; 19] = [
         // TODO(#487) - Flexible day periods

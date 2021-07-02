@@ -1,9 +1,15 @@
-Rust Best Practice for ICU4X
-============================
+ICU4X Style Guide
+=================
 
-# Introduction
+This document outlines the style guide and best practice for code in ICU4X, with a focus on Rust code style.
 
-This document outlines the Rust style guide and best practice for code in ICU4X.
+## Objectives
+
+This style guide is intended to help ICU4X code be readable and maintainable for many years to come, as well as run quickly on devices of all sizes and operating systems with low memory usage and code/data size.
+
+*All pull requests must fully abide by this style guide.* However, this is an evolving document; if you feel that a recommendation in this guide comes into conflict with correctness, readability, or performance, please suggest an update to the guide.
+
+## Preamble
 
 As Rust is a new programming language it is expected that the language guidelines will evolve over time, so care should be taken to keep this document up to date, and any new changes after the initially agreed upon version should be reflected in the change history at the bottom of this document.
 
@@ -13,11 +19,11 @@ Items in this document are categorized as **required** or **suggested**, which e
 
 Many of the practices here are collected from existing sources (which should be cited) and where applicable there may be some additional justification for including that practice in this document and why it is categorized as it is. In general where a practice is sensible, expected to be achievable, and has no obvious downside, it will be marked as required.
 
-Note however that none of this document is meant to trump common sense, if you're in a situation where it would be better to violate a **required** practice, then it just means we should have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However exceptions should always be commented clearly for the next maintainer.
+If you find yourself in a situation where it would be better to violate a **required** practice, please raise it with the group so that we can have a discussion about it. There will almost certainly be many cases where we need to update this doc and even go back to existing code to update it in the light of new information. However, exceptions should always be commented clearly for the next maintainer.
 
 If you're new to Rust, see the [Appendix](#appendix) for some, hopefully useful, links.
 
-# Naming Conventions
+## Naming Conventions
 
 ### No Special Naming :: required
 
@@ -602,6 +608,24 @@ fn main() {
 
 ## Data Types
 
+### Zero-copy in DataProvider structs :: required
+
+All data structs that can be passed through the DataProvider pipeline must support *zero-copy deserialization:* in practice, no heap allocations should be required when deserializing from Bincode-like formats. This means that if the type involves variable-length data like strings, vectors, and maps, it must use a zero-copy type backed by a byte buffer to represent them.
+
+Data structs with zero-copy data should have a `'s` lifetime parameter.
+
+Examples of types that can be used in zero-copy data structs:
+
+- Strings: `Cow<'s, str>`, except as noted below
+- Vectors of fixed-width types: `ZeroVec<'s, T>`
+    - Examples: `ZeroVec<'s, u32>`, `ZeroVec<'s, TinyStr8>`
+- Vectors of variable-width types: `VarZeroVec<'s, T>`
+    - Example: `VarZeroVec<'s, String>`
+- Maps: `ZeroMap<'s, K, V>`
+    - Example: `ZeroMap<'s, TinyStr4, String>`
+
+In addition to supporting zero-copy deserialization, data structs should also support being fully owned (`'static`). For example, `&str` or `&T` require that the data be borrowed from somewhere, and so cannot be used in a data struct. `Cow` and all the other types listed above support the optional ownership model.
+
 ### Conventions for strings in structs :: suggested
 
 Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
@@ -653,6 +677,21 @@ struct MyStructOptions {
     pub fraction_digits: FractionDigits,
 }
 ```
+
+### Pre-parsed fields (exotic types) :: suggested
+
+Main issue: [#523](https://github.com/unicode-org/icu4x/issues/523)
+
+Data in memory should be fully parsed and ready to use. For example, if a data struct contains a datetime pattern, that pattern should be represented as a `Pattern`, not as a string. We call these *exotic types*.
+
+Keep the following in mind when using exotic types:
+
+1. **Stability:** Since exotic types become part of the serialization format of the data struct, their serialized form must remain stable, according to the data struct versioning requirements discussed in [data_pipeline.md](../design/data_pipeline.md).
+2. **Zero-Copy:** If the exotic type involves variable-length data (like a string or a vector), it must also support zero-copy deserialization, as described above. This means that such an exotic type must have a lifetime parameter and internal `Cow`s or `ZeroVec`s for data storage.
+3. **Patching:** The exotic type should support an owned (`'static`) mode to allow users to patch their own data into a data struct, as explained above.
+4. **Data Integrity:** In most cases, it is insufficient to auto-derive `serde::Deserialize` on an exotic type. Deserialization must perform data validation in order to retain internal invariants of the exotic type.
+
+If it is not possible to obey these requirements in an exotic type, use a standard type instead, but make sure that it requires minimal parsing and post-processing.
 
 # Error Handling
 

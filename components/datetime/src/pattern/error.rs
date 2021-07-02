@@ -3,32 +3,23 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields;
-use std::fmt;
-
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    FieldLengthInvalid(fields::FieldSymbol),
-    UnknownSubstitution(char),
-    UnclosedLiteral,
-    UnclosedPlaceholder,
-}
+use thiserror::Error;
 
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
 /// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Self::FieldLengthInvalid(symbol) => {
-                write!(f, "{:?} invalid field length in pattern", symbol)
-            }
-            Self::UnknownSubstitution(ch) => write!(f, "unknown substitution {} in pattern", ch),
-            Self::UnclosedLiteral => write!(f, "unclosed literal in pattern"),
-            Self::UnclosedPlaceholder => write!(f, "unclosed placeholder in pattern"),
-        }
-    }
+#[derive(Error, Debug, PartialEq)]
+pub enum Error {
+    #[error("{0:?} invalid field length in pattern")]
+    FieldLengthInvalid(fields::FieldSymbol),
+    #[error("unknown substitution {0} in pattern")]
+    UnknownSubstitution(char),
+    #[error("unclosed literal in pattern")]
+    UnclosedLiteral,
+    #[error("unclosed placeholder in pattern")]
+    UnclosedPlaceholder,
 }
 
 impl From<fields::Error> for Error {

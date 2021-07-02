@@ -8,9 +8,9 @@ use crate::{
     date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
     provider, DateTimeFormatError,
 };
-use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1};
+use crate::{format::time_zone, provider::time_zones::TimeZoneFormatsV1Marker};
 use icu_locid::{LanguageIdentifier, Locale};
-use icu_provider::{DataProvider, DataRequest, ResourceKey, ResourceOptions, ResourcePath};
+use icu_provider::prelude::*;
 
 use crate::fields::{FieldSymbol, TimeZone};
 use crate::pattern::{Pattern, PatternItem};
@@ -19,13 +19,13 @@ use crate::pattern::{Pattern, PatternItem};
 fn load_resource<'d, D, L, P>(
     locale: &L,
     resource_key: ResourceKey,
-    destination: &mut Option<Cow<'d, D>>,
+    destination: &mut Option<DataPayload<'d, 'd, D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatError>
 where
-    D: std::fmt::Debug + Clone + 'd,
+    D: DataMarker<'d>,
     L: Clone + Into<LanguageIdentifier>,
-    P: DataProvider<'d, D> + ?Sized,
+    P: DataProvider<'d, 'd, D> + ?Sized,
 {
     if destination.is_none() {
         *destination = Some(
@@ -39,8 +39,7 @@ where
                         },
                     },
                 })?
-                .payload
-                .take()?,
+                .take_payload()?,
         );
     }
     Ok(())
@@ -89,21 +88,22 @@ pub(super) struct TimeZoneFormat<'d> {
     /// The pattern to format.
     pub(super) pattern: Pattern,
     /// The data that contains meta information about how to display content.
-    pub(super) zone_formats: Cow<'d, provider::time_zones::TimeZoneFormatsV1<'d>>,
+    pub(super) zone_formats: DataPayload<'d, 'd, provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
-    pub(super) exemplar_cities: Option<Cow<'d, provider::time_zones::ExemplarCitiesV1<'d>>>,
+    pub(super) exemplar_cities:
+        Option<DataPayload<'d, 'd, provider::time_zones::ExemplarCitiesV1Marker>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
-        Option<Cow<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1Marker>>,
     /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
-        Option<Cow<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1Marker>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
-        Option<Cow<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
-        Option<Cow<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>>,
+        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>>,
 }
 
 impl<'d> TimeZoneFormat<'d> {
@@ -136,17 +136,17 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        ZP: DataProvider<'d, provider::time_zones::TimeZoneFormatsV1<'d>>
-            + DataProvider<'d, provider::time_zones::ExemplarCitiesV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneGenericNamesShortV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesLongV1<'d>>
-            + DataProvider<'d, provider::time_zones::MetaZoneSpecificNamesShortV1<'d>>
+        ZP: DataProvider<'d, 'd, provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
 
-        let zone_formats: Cow<TimeZoneFormatsV1> = zone_provider
+        let zone_formats: DataPayload<TimeZoneFormatsV1Marker> = zone_provider
             .load_payload(&DataRequest {
                 resource_path: ResourcePath {
                     key: provider::key::TIMEZONE_FORMATS_V1,
@@ -156,8 +156,7 @@ impl<'d> TimeZoneFormat<'d> {
                     },
                 },
             })?
-            .payload
-            .take()?;
+            .take_payload()?;
 
         let mut time_zone_format = Self {
             pattern,
@@ -401,8 +400,14 @@ impl<'d> TimeZoneFormat<'d> {
             &self
                 .exemplar_cities
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
-                .map(|location| self.zone_formats.region_format.replace("{0}", location))
+                .map(|location| {
+                    self.zone_formats
+                        .get()
+                        .region_format
+                        .replace("{0}", location)
+                })
                 .ok_or(fmt::Error)?,
         )
         .map_err(DateTimeFormatError::from)
@@ -419,6 +424,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_generic_short
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .ok_or(fmt::Error)?,
         )
@@ -436,6 +442,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_generic_long
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .ok_or(fmt::Error)?,
         )
@@ -453,6 +460,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_specific_short
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .and_then(|specific_names| {
                     time_zone
@@ -475,6 +483,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.mz_specific_long
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|metazones| time_zone.metazone_id().and_then(|mz| metazones.get(mz)))
                 .and_then(|specific_names| {
                     time_zone
@@ -499,20 +508,21 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Result<(), DateTimeFormatError> {
         let gmt_offset = time_zone.gmt_offset();
         if gmt_offset.is_zero() {
-            sink.write_str(&self.zone_formats.gmt_zero_format.clone())
+            sink.write_str(&self.zone_formats.get().gmt_zero_format.clone())
                 .map_err(DateTimeFormatError::from)
         } else {
             // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
             sink.write_str(
                 &self
                     .zone_formats
+                    .get()
                     .gmt_format
                     .replace(
                         "{0}",
                         if gmt_offset.is_positive() {
-                            &self.zone_formats.hour_format.0
+                            &self.zone_formats.get().hour_format.0
                         } else {
-                            &self.zone_formats.hour_format.1
+                            &self.zone_formats.get().hour_format.1
                         },
                     )
                     // support all combos of "(HH|H):mm" by replacing longest patterns first.
@@ -533,6 +543,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.exemplar_cities
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|cities| time_zone.time_zone_id().and_then(|id| cities.get(id)))
                 .ok_or(fmt::Error)?,
         )
@@ -553,6 +564,7 @@ impl<'d> TimeZoneFormat<'d> {
         sink.write_str(
             self.exemplar_cities
                 .as_ref()
+                .map(|p| p.get())
                 .and_then(|cities| cities.get("Etc/Unknown"))
                 .unwrap_or(&Cow::Borrowed("Unknown")),
         )

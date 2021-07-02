@@ -17,9 +17,9 @@ To verify that, open a terminal and check that the results are similar to:
 
 ```
 user@host:~/projects/icu$ git --version
-git version 2.27.0
+git version 2.31.1
 user@host:~/projects/icu$ cargo --version
-cargo 1.47.0 (f3c7e066a 2020-08-28)
+cargo 1.51.0 (43b129a20 2021-03-16)
 ```
 
 In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu/`. The `~` in the path indicates the relative location of the user home directory.
@@ -42,7 +42,7 @@ The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs`
 
 ```toml
 [dependencies]
-icu = "0.1"
+icu = "0.2"
 ```
 
 After saving the changes, calling `cargo check` should vendor in `ICU4X` dependency.
@@ -54,27 +54,27 @@ Most of those features depend on the selection of a `Language Identifier` which 
 
 `LanguageIdentifier` is a low level struct which is commonly used to represent user selection, available localization data and management between them.
 
-In `ICU4X` `LanguageIdentifier` is a part of the `locale` component. If the user needs just this one feature, they can use `icu_locale` crate as a dependency, but since here we already added dependency on `icu`, we can refer to it via `icu::locale`.
+In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added dependency on `icu`, we can refer to it via `icu::locid`.
 
 Let's update our application to use it.
 
 Open `~/projects/icu/myapp/src/main.rs` and edit it to:
 
 ```rust
-use icu::locid::LanguageIdentifier;
+use icu::locid::Locale;
 
 fn main() {
-    let lid: LanguageIdentifier = "ES-AR".parse()
-        .expect("Failed to parse language identifier.");
+    let loc: Locale = "ES-AR".parse()
+        .expect("Failed to parse locale.");
 
-    if lid.language == "es" {
+    if loc.id.language == "es" {
         println!("¡Hola amigo!");
     }
 
-    println!("You are using: {}", lid);
+    println!("You are using: {}", loc);
 }
 ```
-*Notice:* `ICU4X` canonicalized the language identifier's syntax which uses lowercase letter for the language portion.
+*Notice:* `ICU4X` canonicalized the locales's syntax which uses lowercase letter for the language portion.
 
 After saving it, call `cargo run` in `~/projects/icu/myapp` and it should display:
 
@@ -83,30 +83,33 @@ After saving it, call `cargo run` in `~/projects/icu/myapp` and it should displa
 You are using: es-AR
 ```
 
-Congratulations! `ICU4X` has been used to semantically operate on a language identifier and the first string is now displayed only if the user is using a language identifier with Spanish `language` part!
+Congratulations! `ICU4X` has been used to semantically operate on a locale and the first string is now displayed only if the user is using a locale with Spanish `language` part!
 
 ## Convenience macro
 
-The scenario of working with statically declared Language Identifiers and their subtags is common.
+The scenario of working with statically declared Locales and their subtags is common.
 It's a bit unergonomic to have to perform the parsing of them at runtime and handle a parser error in such case.
 
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
+use icu::locid::Locale;
 use icu::locid::macros::langid;
 
 fn main() {
-    let lid = langid!("ES-AR");
+    let loc: Locale = langid!("ES-AR").into();
 
-    if lid.language == "es" {
+    if loc.id.language == "es" {
         println!("¡Hola amigo!");
     }
 
-    println!("You are using: {}", lid);
+    println!("You are using: {}", loc);
 }
 ```
 
 In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and try to call `cargo check`.
+
+*Notice:* ICU4X does not expose yet a macro for `locale!` compile time parsing. Instead, `langid!` macro constructs a `LanguageIdentifier`, which we then `Into` a `Locale`.
 
 Next, let's add some more complex functionality.
 
@@ -132,13 +135,14 @@ The `provider_fs` component has a binary application which will fetch the CLDR d
 ```
 cd ~/projects/icu
 git clone https://github.com/unicode-org/icu4x
-cd icu4x/components/provider_fs
-cargo run --features export-bin -- --cldr-tag 37.0.0 --out ~/projects/icu/icu4x-data --all-keys
+cd icu4x
+cargo run --bin icu4x-datagen -- --cldr-tag 37.0.0 --out ~/projects/icu/icu4x-data --all-keys --all-locales
 ```
 
 The last command is a bit dense, so let's dissect it.
-* First, we call `cargo run` which runs a binary in the crate. In our case, `fs-data-provider` has only one binary, so cargo knows which one we mean.
-* Then, we add a feature called `export-bin` which is required for the binary to work
+
+* First, we call `cargo run` which runs a binary in the crate
+* We tell it that the binary is named `icu4x-datagen`
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
 * Then we pass `--out` directory which is where the generated ICU4X data will be stored
@@ -146,7 +150,7 @@ The last command is a bit dense, so let's dissect it.
 
 After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
 
-*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --features export-bin -- --help` for details.
+*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
 *Notice:* In particular, in production, the `bincode` format will yield better performance results.
 *Notice:* For offline or unconventional use, the user can also pass `--cldr-core` and `--cldr-dates` paths to local clones of the repositories instead of `--cldr-tag`.
 
@@ -168,7 +172,7 @@ and then we can use it in our code:
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
-    let _provider = FsDataProvider::try_new("~/projects/icu/icu4x-data")
+    let _provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
         .expect("Failed to initialize Data Provider.");
 }
 ```
@@ -177,11 +181,12 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 
 ```rust
 use icu::locid::macros::langid;
-use icu::datetime::{DateTimeFormat, date::MockDateTime, options::length};
+use icu::locid::Locale;
+use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
-    let lid = langid!("pl");
+    let loc: Locale = langid!("pl").into();
 
     let date: MockDateTime = "2020-10-14T13:21:00".parse()
         .expect("Failed to parse a datetime.");
@@ -195,7 +200,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(lid, &provider, &options)
+    let dtf = DateTimeFormat::try_new(loc, &provider, &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);
@@ -219,7 +224,7 @@ Here's an internationalized date!
 
 This concludes this introduction tutorial. 
 
-With the help of `DateTimeFormat`, `LanguageIdentifier` and `DataProvider` we formatted a date to polish, but that's just a start.
+With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to polish, but that's just a start.
 
 The scope of internationalization domain is broad and there are many components with non-trivial interactions between them.
 

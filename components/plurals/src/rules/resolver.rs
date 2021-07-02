@@ -74,10 +74,13 @@ fn calculate_expression(expression: &ast::Expression, operands: &PluralOperands)
 }
 
 fn test_range(range: &ast::RangeList, value: u64, operator: ast::Operator) -> bool {
-    range
-        .0
-        .iter()
-        .any(|item| test_range_item(item, value, operator))
+    let connect = match operator {
+        ast::Operator::Eq => Iterator::any,
+        ast::Operator::NotEq => Iterator::all,
+    };
+    connect(&mut range.0.iter(), |item| {
+        test_range_item(item, value, operator)
+    })
 }
 
 fn test_range_item(item: &ast::RangeListItem, value: u64, operator: ast::Operator) -> bool {

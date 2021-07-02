@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::FixedDecimal;
-use icu_plurals::PluralOperands;
+use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType};
 use serde::Deserialize;
 use std::convert::TryInto;
 
@@ -121,3 +121,50 @@ pub enum RuleTestOutput {
 
 #[derive(Deserialize)]
 pub struct RuleTestSet(pub Vec<RuleTest>);
+
+#[derive(Clone, Copy, Debug, Deserialize)]
+pub enum PluralRuleTypeInput {
+    Cardinal,
+    Ordinal,
+}
+
+impl From<PluralRuleTypeInput> for PluralRuleType {
+    fn from(other: PluralRuleTypeInput) -> Self {
+        match other {
+            PluralRuleTypeInput::Cardinal => PluralRuleType::Cardinal,
+            PluralRuleTypeInput::Ordinal => PluralRuleType::Ordinal,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PluralCategoryInput {
+    Zero,
+    One,
+    Two,
+    Few,
+    Many,
+    Other,
+}
+
+impl PartialEq<PluralCategory> for PluralCategoryInput {
+    fn eq(&self, other: &PluralCategory) -> bool {
+        matches!(
+            (self, other),
+            (PluralCategoryInput::Zero, PluralCategory::Zero)
+                | (PluralCategoryInput::One, PluralCategory::One)
+                | (PluralCategoryInput::Two, PluralCategory::Two)
+                | (PluralCategoryInput::Few, PluralCategory::Few)
+                | (PluralCategoryInput::Many, PluralCategory::Many)
+                | (PluralCategoryInput::Other, PluralCategory::Other)
+        )
+    }
+}
+
+#[derive(Deserialize)]
+pub struct CategoriesTest {
+    pub langid: String,
+    pub plural_type: PluralRuleTypeInput,
+    pub categories: Vec<PluralCategoryInput>,
+}

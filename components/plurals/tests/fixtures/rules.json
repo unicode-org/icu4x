@@ -113,6 +113,16 @@
     "output": true
   },
   {
+    "rule": "n % 10 = 1 and n % 100 != 11, 71, 91",
+    "input": 11,
+    "output": false
+  },
+  {
+    "rule": "n % 10 = 1 and n % 100 != 11, 71, 91",
+    "input": 91,
+    "output": false
+  },
+  {
     "rule": "n % 0 = 1",
     "input": 1,
     "output": false

@@ -1,0 +1,70 @@
+[
+  {
+    "langid": "ar",
+    "plural_type": "Cardinal",
+    "categories": [
+      "few",
+      "many",
+      "one",
+      "other",
+      "two",
+      "zero"
+    ]
+  },
+  {
+    "langid": "ar",
+    "plural_type": "Ordinal",
+    "categories": [
+      "other"
+    ]
+  },
+  {
+    "langid": "en",
+    "plural_type": "Cardinal",
+    "categories": [
+      "one",
+      "other"
+    ]
+  },
+  {
+    "langid": "en",
+    "plural_type": "Ordinal",
+    "categories": [
+      "few",
+      "one",
+      "other",
+      "two"
+    ]
+  },
+  {
+    "langid": "fr",
+    "plural_type": "Cardinal",
+    "categories": [
+      "many",
+      "one",
+      "other"
+    ]
+  },
+  {
+    "langid": "fr",
+    "plural_type": "Ordinal",
+    "categories": [
+      "one",
+      "other"
+    ]
+  },
+  {
+    "langid": "ja",
+    "plural_type": "Cardinal",
+    "categories": [
+      "other"
+    ]
+  },
+  {
+    "langid": "ja",
+    "plural_type": "Ordinal",
+    "categories": [
+      "other"
+    ]
+  }
+]

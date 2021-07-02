@@ -126,6 +126,28 @@ impl Locale {
         let locale = Self::from_bytes(input.as_ref())?;
         Ok(locale.to_string())
     }
+
+    /// Accessor method for unicode extensions.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::{extensions::unicode::Key, Locale};
+    ///
+    /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes())
+    ///     .expect("Parsing failed.");
+    /// let key = "hc".parse::<Key>()
+    ///     .expect("Invalid key.");
+    /// let ext = loc.get_unicode_extension(&key)
+    ///     .expect("Extension not defined");
+    /// assert_eq!(ext.to_string(), "h12");
+    /// ```
+    pub fn get_unicode_extension(
+        &self,
+        key: &extensions::unicode::Key,
+    ) -> Option<&extensions::unicode::Value> {
+        self.extensions.unicode.keywords.get(key)
+    }
 }
 
 impl FromStr for Locale {

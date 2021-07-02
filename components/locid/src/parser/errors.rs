@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::error::Error;
-use std::fmt::{self, Display};
+use thiserror::Error;
 
 /// List of parser errors that can be generated
 /// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale),
 /// [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
-#[derive(Debug, PartialEq)]
+#[derive(Error, Debug, PartialEq)]
 pub enum ParserError {
     /// Invalid language subtag.
     ///
@@ -22,6 +21,7 @@ pub enum ParserError {
     ///
     /// assert_eq!(Language::from_str("x2"), Err(ParserError::InvalidLanguage));
     /// ```
+    #[error("The given language subtag is invalid")]
     InvalidLanguage,
 
     /// Invalid script, region or variant subtag.
@@ -36,6 +36,7 @@ pub enum ParserError {
     ///
     /// assert_eq!(Region::from_str("#@2X"), Err(ParserError::InvalidSubtag));
     /// ```
+    #[error("Invalid subtag")]
     InvalidSubtag,
 
     /// Invalid extension subtag.
@@ -50,18 +51,6 @@ pub enum ParserError {
     ///
     /// assert_eq!(Key::from_str("#@2X"), Err(ParserError::InvalidExtension));
     /// ```
+    #[error("Invalid extension")]
     InvalidExtension,
-}
-
-impl Error for ParserError {}
-
-impl Display for ParserError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let value = match self {
-            Self::InvalidLanguage => "The given language subtag is invalid",
-            Self::InvalidSubtag => "Invalid subtag",
-            Self::InvalidExtension => "Invalid extension",
-        };
-        f.write_str(value)
-    }
 }
