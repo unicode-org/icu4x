@@ -45,6 +45,9 @@ unsafe impl<'a> Yokeable<'a> for HelloWorldV1<'static> {
     fn transform(&'a self) -> &'a Self::Output {
         self
     }
+    fn transform_owned(self) -> Self::Output {
+        self
+    }
     unsafe fn make(from: Self::Output) -> Self {
         std::mem::transmute(from)
     }

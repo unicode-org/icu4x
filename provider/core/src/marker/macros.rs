@@ -33,6 +33,9 @@ macro_rules! unsafe_impl_data_marker_with_lifetime {
             fn transform(&'a self) -> &'a Self::Output {
                 self
             }
+            fn transform_owned(self) -> Self::Output {
+                self
+            }
             unsafe fn make(from: Self::Output) -> Self {
                 std::mem::transmute(from)
             }
@@ -65,6 +68,9 @@ macro_rules! impl_data_marker_no_lifetime {
         unsafe impl<'a> icu_provider::yoke::Yokeable<'a> for $struct {
             type Output = $struct;
             fn transform(&'a self) -> &'a Self::Output {
+                self
+            }
+            fn transform_owned(self) -> Self::Output {
                 self
             }
             unsafe fn make(from: Self::Output) -> Self {
