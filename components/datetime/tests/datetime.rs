@@ -341,6 +341,13 @@ fn test_components_hour_cycle() {
     test_fixture("components_hour_cycle");
 }
 
+/// Tests that time zones are included, which rely on the append items mechanism.
+#[test]
+fn test_components_with_zones() {
+    // components/datetime/tests/fixtures/tests/components_with_zones.json
+    test_fixture_with_time_zones("components_with_zones", TimeZoneConfig::default());
+}
+
 /// Tests that component::Bags can adjust for width differences in the final pattern.
 #[test]
 fn test_components_width_differences() {

@@ -279,10 +279,13 @@ impl Bag {
             // A - Milliseconds in day. Not used in skeletons.
         }
 
-        // TODO(#583) - Implement:
-        // if self.time_zone_name.is_some() {
-        //     unimplemented!();
-        // }
+        if self.time_zone_name.is_some() {
+            // Only the lower "v" field is used in skeletons.
+            fields.push(Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            });
+        }
 
         debug_assert!(
             fields.windows(2).all(|f| f[0] < f[1]),
@@ -362,16 +365,86 @@ pub enum Month {
     Narrow,
 }
 
+// Each enum variant is documented with the UTS 35 field information from:
+// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+//
 /// Options for displaying a time zone for the `components::`[`Bag`].
+///
+/// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
+/// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TimeZoneName {
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
-    Long,
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
+    // UTS-35 fields: z..zzz
+    //
+    /// Short localized form, without the location. (e.g.: PST, GMT-8)
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
+
+    // UTS-35 fields: zzzz
+    // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
+    //
+    /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
+    #[cfg_attr(feature = "serde", serde(rename = "long"))]
+    Long,
+
+    // UTS-35 fields: O
+    //
+    /// Short localized GMT format (e.g., GMT-8)
+    #[cfg_attr(feature = "serde", serde(rename = "shortOffset"))]
+    ShortOffset,
+
+    // UTS-35 fields: OOOO
+    // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
+    //
+    /// Long localized GMT format (e.g., GMT-0800),
+    #[cfg_attr(feature = "serde", serde(rename = "longOffset"))]
+    LongOffset,
+
+    // UTS-35 fields: v
+    //   * falling back to generic location (See UTS 35 for more specific rules)
+    //   * falling back to short localized GMT
+    /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
+    #[cfg_attr(feature = "serde", serde(rename = "shortGeneric"))]
+    ShortGeneric,
+
+    // UTS-35 fields: vvvv
+    //  * falling back to generic location (See UTS 35 for more specific rules)
+    //  * falling back to long localized GMT
+    /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
+    #[cfg_attr(feature = "serde", serde(rename = "longGeneric"))]
+    LongGeneric,
+}
+
+impl From<TimeZoneName> for Field {
+    fn from(time_zone_name: TimeZoneName) -> Self {
+        match time_zone_name {
+            TimeZoneName::Short => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                length: FieldLength::One,
+            },
+            TimeZoneName::Long => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                length: FieldLength::Wide,
+            },
+            TimeZoneName::ShortOffset => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                length: FieldLength::One,
+            },
+            TimeZoneName::LongOffset => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                length: FieldLength::Wide,
+            },
+            TimeZoneName::ShortGeneric => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            },
+            TimeZoneName::LongGeneric => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::Wide,
+            },
+        }
+    }
 }
 
 #[cfg(test)]
