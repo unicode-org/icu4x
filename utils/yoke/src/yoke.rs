@@ -494,7 +494,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can be used, for example, to transform data from one format to another:
     ///
-    /// ```rust
+    /// ```rust,ignore
+    /// # // This doctest is temporarily ignored because of https://github.com/rust-lang/rust/issues/86703
     /// # use std::rc::Rc;
     /// # use yoke::Yoke;
     /// #
@@ -506,7 +507,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can also be used to create a yoke for a subfield
     ///
-    /// ```rust
+    /// ```rust,ignore
+    /// # // This doctest is temporarily ignored because of https://github.com/rust-lang/rust/issues/86703
     /// # use std::borrow::Cow;
     /// # use yoke::{Yoke, Yokeable};
     /// # use std::mem;
