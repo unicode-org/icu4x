@@ -662,7 +662,7 @@ pub struct UnicodePropertyV1<'s> {
     pub inv_list: UnicodeSet,
 }
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     UnicodePropertyV1<'s>,
     /// Marker type for [`UnicodeProperty`]
     UnicodePropertyMarker

@@ -34,7 +34,7 @@ pub struct PluralRuleStringsV1<'s> {
     pub many: Option<Cow<'s, str>>,
 }
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     PluralRuleStringsV1<'s>,
     /// Marker type for [`PluralRuleStringsV1`]
     PluralRuleStringsV1Marker

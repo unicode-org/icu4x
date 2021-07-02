@@ -105,7 +105,7 @@ impl Default for DecimalSymbolsV1<'static> {
     }
 }
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     DecimalSymbolsV1<'s>,
     /// Marker type for [`DecimalSymbolsV1`]
     DecimalSymbolsV1Marker

@@ -12,7 +12,7 @@
 ///
 /// The data struct must have a covariant lifetime.
 #[macro_export]
-macro_rules! unsafe_impl_data_marker_with_lifetime {
+macro_rules! impl_data_marker_with_lifetime {
     ($struct:ident < $s:lifetime >, $(#[$meta:meta])* $marker:ident) => {
         $(#[$meta])*
         pub struct $marker {}

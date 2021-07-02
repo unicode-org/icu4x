@@ -62,7 +62,7 @@ pub struct TimeZoneFormatsV1<'s> {
     pub fallback_format: Cow<'s, str>,
 }
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     TimeZoneFormatsV1<'s>,
     /// Marker type for [`TimeZoneFormatsV1`]
     TimeZoneFormatsV1Marker
@@ -79,7 +79,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
 pub struct ExemplarCitiesV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(ExemplarCitiesV1<'s>[str] => Cow<'s, str>: 's);
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     ExemplarCitiesV1<'s>,
     /// Marker type for [`ExemplarCitiesV1`]
     ExemplarCitiesV1Marker
@@ -96,7 +96,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
 pub struct MetaZoneGenericNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(MetaZoneGenericNamesLongV1<'s>[str] => Cow<'s, str>: 's);
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     MetaZoneGenericNamesLongV1<'s>,
     /// Marker type for [`MetaZoneGenericNamesLongV1`]
     MetaZoneGenericNamesLongV1Marker
@@ -113,7 +113,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
 pub struct MetaZoneGenericNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
 map_access!(MetaZoneGenericNamesShortV1<'s>[str] => Cow<'s, str>: 's);
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     MetaZoneGenericNamesShortV1<'s>,
     /// Marker type for [`MetaZoneGenericNamesShortV1`]
     MetaZoneGenericNamesShortV1Marker
@@ -131,7 +131,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
 pub struct MetaZoneSpecificNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
 map_access!(MetaZoneSpecificNamesLongV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesLongV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesLongV1`]
     MetaZoneSpecificNamesLongV1Marker
@@ -149,7 +149,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
 pub struct MetaZoneSpecificNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
 map_access!(MetaZoneSpecificNamesShortV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesShortV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesShortV1`]
     MetaZoneSpecificNamesShortV1Marker
@@ -167,7 +167,7 @@ icu_provider::unsafe_impl_data_marker_with_lifetime!(
 pub struct MetaZoneSpecificNamesV1<'s>(pub LiteMap<Cow<'s, TinyStr8>, Cow<'s, str>>);
 map_access!(MetaZoneSpecificNamesV1<'s>[TinyStr8] => Cow<'s, str>: 's);
 
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
+icu_provider::impl_data_marker_with_lifetime!(
     MetaZoneSpecificNamesV1<'s>,
     /// Marker type for [`MetaZoneSpecificNamesV1`]
     MetaZoneSpecificNamesV1Marker
