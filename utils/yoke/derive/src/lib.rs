@@ -7,7 +7,6 @@
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
-use syn;
 use syn::spanned::Spanned;
 use syn::{parse_macro_input, DeriveInput, Ident, Lifetime, Type};
 use synstructure::Structure;
@@ -197,41 +196,38 @@ fn replace_lifetime(x: &Type, lt: Lifetime) -> Type {
     match *x {
         Type::Group(ref inner) => {
             let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt.clone()));
+            inner.elem = Box::new(replace_lifetime(&inner.elem, lt));
             Type::Group(inner)
         }
         Type::Array(ref inner) => {
             let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt.clone()));
+            inner.elem = Box::new(replace_lifetime(&inner.elem, lt));
             Type::Array(inner)
         }
         Type::Paren(ref inner) => {
             let mut inner = inner.clone();
-            inner.elem = Box::new(replace_lifetime(&inner.elem, lt.clone()));
+            inner.elem = Box::new(replace_lifetime(&inner.elem, lt));
             Type::Paren(inner)
         }
         Type::Reference(ref inner) => {
             let mut inner = inner.clone();
             inner.elem = Box::new(replace_lifetime(&inner.elem, lt.clone()));
-            inner.lifetime = inner.lifetime.as_ref().map(|_| lt.clone());
+            inner.lifetime = inner.lifetime.as_ref().map(|_| lt);
             Type::Reference(inner)
         }
         Type::Path(ref path) => {
             let mut path = path.clone();
             for segment in path.path.segments.iter_mut() {
-                match segment.arguments {
-                    syn::PathArguments::AngleBracketed(ref mut a) => {
-                        for arg in a.args.iter_mut() {
-                            match arg {
-                                syn::GenericArgument::Lifetime(ref mut l) => *l = lt.clone(),
-                                syn::GenericArgument::Type(ref mut t) => {
-                                    *t = replace_lifetime(t, lt.clone())
-                                }
-                                _ => (),
+                if let syn::PathArguments::AngleBracketed(ref mut a) = segment.arguments {
+                    for arg in a.args.iter_mut() {
+                        match arg {
+                            syn::GenericArgument::Lifetime(ref mut l) => *l = lt.clone(),
+                            syn::GenericArgument::Type(ref mut t) => {
+                                *t = replace_lifetime(t, lt.clone())
                             }
+                            _ => (),
                         }
                     }
-                    _ => (),
                 }
             }
             Type::Path(path)

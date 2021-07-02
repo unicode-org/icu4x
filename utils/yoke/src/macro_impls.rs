@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// In this case consistency between impls is more important
+// than using pointer casts
+#![allow(clippy::transmute_ptr_to_ptr)]
+
 use crate::{Yokeable, ZeroCopyFrom};
 use std::{mem, ptr};
 

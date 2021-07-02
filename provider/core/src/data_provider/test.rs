@@ -21,6 +21,7 @@ const HELLO_ALT_KEY: ResourceKey = crate::resource_key!(icu4x, "helloalt", 1);
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, ZeroCopyFrom)]
+#[yoke(CloningZCF)]
 struct HelloAlt {
     message: String,
 }
