@@ -9,17 +9,26 @@
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
+//! 
+//! To create a `RequestFilterDataProvider`, you can use the [`Filterable`] blanket function:
+//! 
+//! ```
+//! use icu_provider::filter::Filterable;
+//! 
+//! // now call .filterable() on any object to get a RequestFilterDataProvider
+//! ```
 //!
 //! # Examples
 //!
 //! ```
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
-//! use icu_provider::filter::LanguageIdentifierFilter;
+//! use icu_provider::filter::Filterable;
 //! use icu_locid_macros::language;
 //!
 //! // Only return German data from a HelloWorldProvider:
 //! HelloWorldProvider::new_with_placeholder_data()
+//!     .filterable()
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
@@ -101,5 +110,23 @@ where
                 Box::new(filtered_iter);
             boxed_filtered_iter
         })
+    }
+}
+
+pub trait Filterable: Sized {
+    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>;
+}
+
+impl<T> Filterable for T where T: Sized {
+    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>
+    {
+        fn noop(_: &DataRequest) -> bool {
+            true
+        }
+        RequestFilterDataProvider {
+            inner: self,
+            predicate: noop,
+            description: "some description".into(),
+        }
     }
 }
