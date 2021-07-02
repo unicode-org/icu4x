@@ -6,7 +6,7 @@ use anyhow::Context;
 use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
-use icu_provider::filter::LanguageIdentifierFilter;
+use icu_provider::filter::Filterable;
 use icu_provider::iter::IterableDataProvider;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use icu_provider_blob::export::BlobExporter;
@@ -364,7 +364,9 @@ fn export_cldr<'d, 's: 'd>(
     let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
 
     if let Some(allowlist) = allowed_locales {
-        filtered_provider = raw_provider.filter_by_langid_allowlist_strict(allowlist);
+        filtered_provider = raw_provider
+            .filterable()
+            .filter_by_langid_allowlist_strict(allowlist);
         provider = &filtered_provider;
     } else {
         provider = &raw_provider;

@@ -9,12 +9,12 @@
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
-//! 
+//!
 //! To create a `RequestFilterDataProvider`, you can use the [`Filterable`] blanket function:
-//! 
+//!
 //! ```
 //! use icu_provider::filter::Filterable;
-//! 
+//!
 //! // now call .filterable() on any object to get a RequestFilterDataProvider
 //! ```
 //!
@@ -117,9 +117,11 @@ pub trait Filterable: Sized {
     fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>;
 }
 
-impl<T> Filterable for T where T: Sized {
-    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>
-    {
+impl<T> Filterable for T
+where
+    T: Sized,
+{
+    fn filterable(self) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool> {
         fn noop(_: &DataRequest) -> bool {
             true
         }
