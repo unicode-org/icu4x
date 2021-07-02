@@ -14,7 +14,7 @@ use synstructure::Structure;
 /// Custom derive for `yoke::Yokeable`,
 ///
 /// If this fails to compile for lifetime issues, it means that
-/// the lifetime is not covariant and `Yokeable` is not
+/// the lifetime is not covariant and `Yokeable` is not safe to implement.
 ///
 /// Note that right now this will fail to compile on structs involving
 /// `zerovec::ZeroMap`.
@@ -172,6 +172,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 let binding = format!("__binding_{}", i);
                 let field = Ident::new(&binding, Span::call_site());
                 let fty = replace_lifetime(&f.ty, static_lt());
+                // By doing this we essentially require ZCF to be implemented
+                // on all fields
                 quote! {
                     <#fty as yoke::ZeroCopyFrom<_>>::zero_copy_from(#field)
                 }
