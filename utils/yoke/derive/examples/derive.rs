@@ -21,7 +21,7 @@ pub struct Bar<'a> {
     w: Cow<'a, [u8]>,
 }
 
-#[derive(Yokeable)]
+#[derive(Yokeable, ZeroCopyFrom)]
 pub struct Baz<'a> {
     // https://github.com/unicode-org/icu4x/issues/844
     // map: ZeroMap<'a, String, String>,
