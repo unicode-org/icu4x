@@ -32,16 +32,18 @@ icu_provider::impl_data_marker_no_lifetime!(
 pub struct DatePatternsV1 {
     pub date: patterns::LengthPatternsV1,
 
-    /// The time patterns are used if no hour cycle preference is set. These patterns also represent
-    /// the default hour cycle preference for the locale given the length.
-    pub time: patterns::LengthPatternsV1,
+    /// These patterns are common uses of time formatting, broken down by the length of the
+    /// pattern. Users can override the hour cycle with a preference, so there are two
+    /// pattern groups stored here. Note that the pattern will contain either h11 or h12.
+    pub time_h11_h12: patterns::LengthPatternsV1,
 
-    /// The flexible hour cycle that is used in the `time`.
-    pub preferred_hour_cycle: pattern::FlexibleHourCycle,
+    /// These patterns are common uses of time formatting, broken down by the length of the
+    /// pattern. Users can override the hour cycle with a preference, so there are two
+    /// pattern groups stored here. Note that the pattern will contain either h23 or h24.
+    pub time_h23_h24: patterns::LengthPatternsV1,
 
-    /// Users can override the hour cycle with a preference. These patterns contain the
-    /// non-preferred hour cycles.
-    pub time_with_alt_hour_cycle: patterns::LengthPatternsV1,
+    /// By default a locale will prefer one hour cycle type over another.
+    pub preferred_hour_cycle: pattern::CoarseHourCycle,
 
     pub datetime: patterns::DateTimeFormatsV1,
 }

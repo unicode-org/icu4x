@@ -140,15 +140,10 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
             hour_cycle: Some(hour_cycle_pref),
         }) = preferences
         {
-            let time = if self
-                .preferred_hour_cycle
-                .matches_preference(&hour_cycle_pref)
-            {
-                &self.time
-            } else {
-                &self.time_with_alt_hour_cycle
+            let time = match hour_cycle_pref {
+                preferences::HourCycle::H11 | preferences::HourCycle::H12 => &self.time_h11_h12,
+                preferences::HourCycle::H23 | preferences::HourCycle::H24 => &self.time_h23_h24,
             };
-
             let mut pattern = Pattern::from_bytes(match length {
                 length::Time::Full => &time.full,
                 length::Time::Long => &time.long,
@@ -165,11 +160,16 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
             return Ok(pattern);
         }
 
+        let time = match self.preferred_hour_cycle {
+            crate::pattern::CoarseHourCycle::H11H12 => &self.time_h11_h12,
+            crate::pattern::CoarseHourCycle::H23H24 => &self.time_h23_h24,
+        };
+
         Ok(Pattern::from_bytes(match length {
-            length::Time::Full => &self.time.full,
-            length::Time::Long => &self.time.long,
-            length::Time::Medium => &self.time.medium,
-            length::Time::Short => &self.time.short,
+            length::Time::Full => &time.full,
+            length::Time::Long => &time.long,
+            length::Time::Medium => &time.medium,
+            length::Time::Short => &time.short,
         })?)
     }
 }
