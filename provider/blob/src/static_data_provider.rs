@@ -10,10 +10,9 @@ use icu_provider::{
 };
 use serde::de::Deserialize;
 
-/// A data provider loading data statically baked in to the binary. Useful for testing in situations
-/// where setting up a filesystem is tricky (e.g. WASM).
+/// A data provider loading data statically baked in to the binary.
 ///
-/// This should probably not be used in production code since it bloats the binary.
+/// Since the data must be static, it must be baked into the binary, which increases binary size.
 pub struct StaticDataProvider {
     blob: BlobSchema<'static>,
 }
