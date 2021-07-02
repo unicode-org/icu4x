@@ -97,7 +97,7 @@ where
                 let request = DataRequest {
                     resource_path: ResourcePath {
                         key: resc_key,
-                        options: options,
+                        options,
                     },
                 };
                 if (self.predicate)(&request) {

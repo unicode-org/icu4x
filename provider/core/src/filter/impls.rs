@@ -216,10 +216,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                match &request.resource_path.options.langid {
-                    Some(_) => true,
-                    None => false,
-                }
+                request.resource_path.options.langid.is_some()
             }),
             description: "Locale is required".to_string(),
         }

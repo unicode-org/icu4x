@@ -13,7 +13,6 @@
 //! use icu_locid_macros::langid;
 //! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::{key, HelloWorldProvider, HelloWorldV1Marker};
-//! use icu_provider::export::DataExporter;
 //! use icu_provider_fs::FsDataProvider;
 //! use icu_provider_fs::export::fs_exporter;
 //! use icu_provider_fs::export::serializers;
@@ -32,10 +31,11 @@
 //!
 //! // Export a key
 //! let source_provider = HelloWorldProvider::new_with_placeholder_data();
-//! let result = exporter.put_key_from_provider(&key::HELLO_WORLD_V1, &source_provider);
-//! // Ensure flush() is called, even when the result is an error
-//! exporter.flush().expect("Should successfully flush");
-//! result.expect("Should successfully export");
+//! let result = icu_provider::export::export_from_iterable(
+//!     &key::HELLO_WORLD_V1,
+//!     &source_provider,
+//!     &mut exporter)
+//! .expect("Should successfully export");
 //!
 //! // Create a filesystem provider reading from the demo directory
 //! let fs_provider = FsDataProvider::try_new(demo_path.clone())
