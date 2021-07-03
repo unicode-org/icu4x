@@ -21,10 +21,10 @@
 
 use crate::error::Error;
 use crate::prelude::*;
+use crate::yoke::*;
 use std::ops::Deref;
 use std::rc::Rc;
 use yoke::trait_hack::YokeTraitHack;
-use yoke::*;
 
 /// An object that receives data from a Serde Deserializer.
 ///

@@ -903,7 +903,6 @@ dependencies = [
  "thiserror",
  "tinystr",
  "writeable",
- "yoke",
 ]
 
 [[package]]
@@ -925,7 +924,6 @@ dependencies = [
  "serde",
  "thiserror",
  "writeable",
- "yoke",
 ]
 
 [[package]]
@@ -940,7 +938,6 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr",
- "yoke",
 ]
 
 [[package]]
@@ -991,7 +988,6 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
- "yoke",
 ]
 
 [[package]]
@@ -1138,7 +1134,6 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tinystr",
- "yoke",
 ]
 
 [[package]]

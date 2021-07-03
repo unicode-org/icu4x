@@ -11,7 +11,7 @@ use super::*;
 use crate::erased::*;
 use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Marker};
 use crate::prelude::*;
-use yoke::*;
+use crate::yoke;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.

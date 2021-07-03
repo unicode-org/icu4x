@@ -10,7 +10,7 @@ mod macros;
 
 pub use impls::*;
 
-use yoke::Yokeable;
+use crate::yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.

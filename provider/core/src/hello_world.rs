@@ -6,13 +6,13 @@
 
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
+use crate::yoke::{self, *};
 use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::str::FromStr;
-use yoke::*;
 
 pub mod key {
     use crate::resource::ResourceKey;

@@ -6,7 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::yoke::*;
+use icu_provider::yoke::{self, *};
 use std::borrow::Cow;
 
 pub mod key {

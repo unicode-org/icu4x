@@ -8,7 +8,7 @@
 
 use icu_locid::LanguageIdentifier;
 use tinystr::{TinyStr4, TinyStr8};
-use yoke::*;
+use icu_provider::yoke::{self, *};
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};

@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
 use std::borrow::Cow;
 use tinystr::TinyStr8;
-use yoke::*;
 
 /// Provides a few common map accessor methods to new-type structs that wrap a map type.
 /// The methods are all pass-through calls to the internal methods of the same name.
@@ -40,7 +40,7 @@ macro_rules! map_access {
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default, ZeroCopyFrom, Yokeable)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::ZeroCopyFrom, yoke::Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -70,7 +70,7 @@ icu_provider::impl_data_marker_with_lifetime!(
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default, ZeroCopyFrom, Yokeable)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::ZeroCopyFrom, yoke::Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)

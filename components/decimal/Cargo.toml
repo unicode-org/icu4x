@@ -34,7 +34,6 @@ fixed_decimal = { version = "0.2", path = "../../utils/fixed_decimal" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 thiserror = "1.0"
-yoke = { version = "0.2", path = "../../utils/yoke", features = ["serde", "derive"] }
 
 [dev-dependencies]
 criterion = "0.3"
