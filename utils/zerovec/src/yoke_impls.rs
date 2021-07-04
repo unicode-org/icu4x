@@ -60,8 +60,10 @@ unsafe impl<'a, T: 'static + AsVarULE> Yokeable<'a> for VarZeroVec<'static, T> {
 
 /// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
-unsafe impl<'a, K: 'static + for<'b> ZeroMapKV<'b>, V: 'static + for<'b> ZeroMapKV<'b>> Yokeable<'a>
-    for ZeroMap<'static, K, V>
+unsafe impl<'a, K, V> Yokeable<'a> for ZeroMap<'static, K, V>
+where
+    K: 'static + for<'b> ZeroMapKV<'b>,
+    V: 'static + for<'b> ZeroMapKV<'b>,
 {
     type Output = ZeroMap<'a, K, V>;
     fn transform(&'a self) -> &'a ZeroMap<'a, K, V> {

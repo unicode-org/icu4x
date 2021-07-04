@@ -7,8 +7,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_locid::LanguageIdentifier;
-use tinystr::{TinyStr4, TinyStr8};
 use icu_provider::yoke::{self, *};
+use tinystr::{TinyStr4, TinyStr8};
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
