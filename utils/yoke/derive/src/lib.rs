@@ -158,8 +158,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
         if has_clone {
             return quote! {
-                impl<'s> ZeroCopyFrom<#name<'static>> for #name<'static> {
-                    fn zero_copy_from(this: &Self) -> Self {
+                impl<'s> ZeroCopyFrom<#name<'s>> for #name<'static> {
+                    fn zero_copy_from<'b>(this: &'b #name<'s>) -> #name<'b> {
                         this.clone()
                     }
                 }
