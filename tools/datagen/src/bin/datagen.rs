@@ -7,6 +7,7 @@ use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
 use icu_provider::filter::Filterable;
+use icu_provider::hello_world::{self, HelloWorldProvider};
 use icu_provider::iter::IterableDataProvider;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use icu_provider_blob::export::BlobExporter;
@@ -105,13 +106,6 @@ fn main() -> anyhow::Result<()> {
                 .long("cldr-testdata")
                 .help("Load CLDR JSON data from the icu_testdata project."),
         )
-        .group(
-            ArgGroup::with_name("CLDR_SOURCE")
-                .arg("CLDR_TAG")
-                .arg("CLDR_ROOT")
-                .arg("CLDR_TESTDATA")
-                .required(true),
-        )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
@@ -142,6 +136,11 @@ fn main() -> anyhow::Result<()> {
                 ),
         )
         .arg(
+            Arg::with_name("HELLO_WORLD")
+                .long("hello-world-key")
+                .help("Whether to include the 'hello world' key."),
+        )
+        .arg(
             Arg::with_name("ALL_KEYS")
                 .long("all-keys")
                 .help("Include all keys known to ICU4X."),
@@ -150,6 +149,7 @@ fn main() -> anyhow::Result<()> {
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
                 .arg("KEY_FILE")
+                .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
                 .required(true),
         )
@@ -217,7 +217,7 @@ fn main() -> anyhow::Result<()> {
         _ => anyhow::bail!("Only -v and -vv are supported"),
     }
 
-    if !matches.is_present("ALL_KEYS") {
+    if !matches.is_present("ALL_KEYS") && !matches.is_present("HELLO_WORLD") {
         anyhow::bail!("Lists of keys are not yet supported (see #192)",);
     }
 
@@ -230,23 +230,6 @@ fn main() -> anyhow::Result<()> {
     let format = matches
         .value_of("FORMAT")
         .expect("Option has default value");
-
-    let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
-    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
-    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        Box::new(CldrPathsAllInOne {
-            cldr_json_root: PathBuf::from(path),
-            locale_subset: locale_subset.to_string(),
-        })
-    } else if matches.is_present("CLDR_TESTDATA") {
-        Box::new(CldrPathsAllInOne {
-            cldr_json_root: icu_testdata::paths::cldr_json_root(),
-            locale_subset: "full".to_string(),
-        })
-    } else {
-        anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
-    };
 
     let locales_vec = if let Some(locale_strs) = matches.values_of("LOCALES") {
         Some(
@@ -274,7 +257,13 @@ fn main() -> anyhow::Result<()> {
         _ => unreachable!(),
     };
 
-    export_cldr(cldr_paths.as_ref(), exporter, locales_vec.as_deref())?;
+    if matches.is_present("ALL_KEYS") {
+        export_cldr(&matches, exporter, locales_vec.as_deref())?;
+    }
+
+    if matches.is_present("HELLO_WORLD") {
+        export_hello_world(&matches, exporter, locales_vec.as_deref())?;
+    }
 
     exporter.close()?;
 
@@ -360,13 +349,30 @@ fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter> {
 }
 
 fn export_cldr<'d, 's: 'd>(
-    cldr_paths: &dyn CldrPaths,
+    matches: &ArgMatches,
     exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> anyhow::Result<()> {
+    let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
+    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
+        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
+    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: PathBuf::from(path),
+            locale_subset: locale_subset.to_string(),
+        })
+    } else if matches.is_present("CLDR_TESTDATA") {
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: icu_testdata::paths::cldr_json_root(),
+            locale_subset: "full".to_string(),
+        })
+    } else {
+        anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
+    };
+
     let keys = get_all_cldr_keys();
 
-    let raw_provider = CldrJsonDataProvider::new(cldr_paths);
+    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
     let filtered_provider;
     let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
 
@@ -383,6 +389,31 @@ fn export_cldr<'d, 's: 'd>(
         log::info!("Writing key: {}", key);
         icu_provider::export::export_from_iterable(key, provider, exporter)?;
     }
+
+    Ok(())
+}
+
+fn export_hello_world<'d, 's: 'd>(
+    _: &ArgMatches,
+    exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
+    allowed_locales: Option<&[LanguageIdentifier]>,
+) -> anyhow::Result<()> {
+    let raw_provider = HelloWorldProvider::new_with_placeholder_data();
+    let filtered_provider;
+    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
+
+    if let Some(allowlist) = allowed_locales {
+        filtered_provider = raw_provider
+            .filterable()
+            .filter_by_langid_allowlist_strict(allowlist);
+        provider = &filtered_provider;
+    } else {
+        provider = &raw_provider;
+    }
+
+    let key = hello_world::key::HELLO_WORLD_V1;
+    log::info!("Writing key: {}", key);
+    icu_provider::export::export_from_iterable(&key, provider, exporter)?;
 
     Ok(())
 }
