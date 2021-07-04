@@ -40,7 +40,7 @@ macro_rules! map_access {
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default, yoke::ZeroCopyFrom, yoke::Yokeable)]
+#[derive(PartialEq, Debug, Clone, Default, ZeroCopyFrom, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -70,7 +70,7 @@ icu_provider::impl_data_marker_with_lifetime!(
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
-#[derive(PartialEq, Debug, Clone, Default, yoke::ZeroCopyFrom, yoke::Yokeable)]
+#[derive(PartialEq, Debug, Clone, Default, ZeroCopyFrom, Yokeable)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
