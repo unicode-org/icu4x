@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Utilities for dumping data to an ICU4X filesystem tree.
+//! 
 //! The `export` feature enables you to pull all data from some other data provider and persist it
 //! on the filesystem to be read by an FsDataProvider at runtime.
 //!
-//! Also see the `icu_datagen` crate.
+//! For a command-line user interface, see the `icu_datagen` crate.
 //!
 //! # Examples
 //!

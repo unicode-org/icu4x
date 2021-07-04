@@ -9,16 +9,27 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use litemap::LiteMap;
 
-pub struct BlobExporter {
+/// A data exporter that writes data to a single-file blob.
+/// See the module-level docs for an example.
+pub struct BlobExporter<'w> {
     resources: LiteMap<String, Vec<u8>>,
-    sink: Box<dyn std::io::Write>,
+    sink: Box<dyn std::io::Write + 'w>,
 }
 
-impl BlobExporter {
-    pub fn new_with_sink(sink: Box<dyn std::io::Write>) -> Self {
+impl<'w> BlobExporter<'w> {
+    /// Create a [`BlobExporter`] that writes to the given I/O stream.
+    pub fn new_with_sink(sink: Box<dyn std::io::Write + 'w>) -> Self {
         Self {
             resources: LiteMap::new(),
             sink,
+        }
+    }
+}
+
+impl Drop for BlobExporter<'_> {
+    fn drop(&mut self) {
+        if !self.resources.is_empty() {
+            panic!("Please call close before dropping FilesystemExporter");
         }
     }
 }
@@ -38,7 +49,7 @@ fn serialize(
     Ok(())
 }
 
-impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter {
+impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter<'_> {
     fn put_payload(
         &mut self,
         req: DataRequest,
@@ -67,6 +78,7 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter 
         let blob = BlobSchema::V001(schema);
         log::info!("Serializing blob to output stream...");
         serialize(&blob, self.sink.as_mut())?;
+        self.resources.clear();
         Ok(())
     }
 }

@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_provider_cldr` is one of the [`ICU4X`] components.
-//!
-//! It contains implementations of the [`DataProvider`] interface based on the JSON files
-//! shipped by CLDR. You create a [`CldrPaths`] and then pass it into [`CldrJsonDataProvider`].
+//! `icu_provider_cldr` contains implementations of the [`ICU4X`] [`DataProvider`] interface
+//! based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
+//! [`CldrJsonDataProvider`].
 //!
 //! This crate contains two implementations of [`CldrPaths`]:
 //!

@@ -12,7 +12,43 @@ use serde::de::Deserialize;
 
 /// A data provider loading data statically baked in to the binary.
 ///
-/// Since the data must be static, it must be baked into the binary, which increases binary size.
+/// Although static data is convenient and highly portable, it also increases binary size.
+///
+/// To bake blob data into your binary, use [`include_bytes!`](std::include_bytes), as shown in
+/// the example below.
+///
+/// # Examples
+///
+/// Load "hello world" data from a bincode blob statically linked at compile time:
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// use icu_provider_blob::StaticDataProvider;
+/// use icu_locid_macros::langid;
+///
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/hello_world.bincode"
+/// ));
+///
+/// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
+///     .expect("Deserialization should succeed");
+///
+/// let response: DataPayload<HelloWorldV1Marker> = provider.load_payload(
+///     &DataRequest {
+///         resource_path: ResourcePath {
+///             key: key::HELLO_WORLD_V1,
+///             options: langid!("la").into(),
+///         }
+///     }
+/// )
+/// .expect("Data should be valid")
+/// .take_payload()
+/// .expect("Data should be present");
+///
+/// assert_eq!(response.get().message, "Ave, munde");
+/// ```
 pub struct StaticDataProvider {
     blob: BlobSchema<'static>,
 }
@@ -29,6 +65,7 @@ macro_rules! get_bincode_deserializer_zc {
 }
 
 impl StaticDataProvider {
+    /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
     pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
             blob: BlobSchema::deserialize(&mut get_bincode_deserializer_zc!(blob))
