@@ -315,7 +315,7 @@ fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
     Ok(exporter)
 }
 
-fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter> {
+fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'static>> {
     if matches.value_of("SYNTAX") == Some("json") {
         anyhow::bail!("Cannot use --format=blob with --syntax=json");
     }

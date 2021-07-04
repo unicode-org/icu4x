@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Utilities for dumping data to an ICU4X filesystem tree.
-//! 
+//!
 //! The `export` feature enables you to pull all data from some other data provider and persist it
 //! on the filesystem to be read by an FsDataProvider at runtime.
 //!
