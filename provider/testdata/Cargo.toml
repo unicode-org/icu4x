@@ -126,6 +126,7 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_provider = { version = "0.2", path = "../../provider/core" }
+icu_provider_blob = { version = "0.2", path = "../../provider/blob" }
 icu_provider_fs = { version = "0.2", path = "../../provider/fs" }
 icu_locid = { version = "0.2", path = "../../components/locid" }
 

@@ -1,4 +1,4 @@
-# icu_provider_static [![crates.io](http://meritbadge.herokuapp.com/icu_provider_static)](https://crates.io/crates/icu_provider_static)
+# icu_calendar [![crates.io](http://meritbadge.herokuapp.com/icu_calendar)](https://crates.io/crates/icu_calendar)
 
 
 

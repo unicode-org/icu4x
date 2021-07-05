@@ -1,9 +1,8 @@
 # icu_provider_cldr [![crates.io](http://meritbadge.herokuapp.com/icu_provider_cldr)](https://crates.io/crates/icu_provider_cldr)
 
-`icu_provider_cldr` is one of the [`ICU4X`] components.
-
-It contains implementations of the [`DataProvider`] interface based on the JSON files
-shipped by CLDR. You create a [`CldrPaths`] and then pass it into [`CldrJsonDataProvider`].
+`icu_provider_cldr` contains implementations of the [`ICU4X`] [`DataProvider`] interface
+based on the JSON files shipped by CLDR. Create a [`CldrPaths`] and then pass it into
+[`CldrJsonDataProvider`].
 
 This crate contains two implementations of [`CldrPaths`]:
 

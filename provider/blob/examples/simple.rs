@@ -4,12 +4,11 @@
 
 use icu::locid::macros::langid;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-use icu_provider_static::StaticDataProvider;
 
 fn main() {
     let lid = langid!("en");
 
-    let dp = StaticDataProvider::new();
+    let dp = icu_testdata::get_static_provider();
 
     let pr = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal)
         .expect("Failed to construct a PluralRules struct.");

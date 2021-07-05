@@ -33,12 +33,30 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-build-blob]
+description = "Build ICU4X data as a Bincode blob, overwriting the existing Bincode blob."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "-v",
+    "--format=blob",
+    "--cldr-testdata",
+    "--out-testdata",
+    "--all-keys",
+    "--test-locales",
+    "--overwrite",
+]
+
 [tasks.testdata]
-description = "Download fresh data and then build ICU4X JSON from it"
+description = "Download fresh data and then build ICU4X JSON and Bincode blob from it"
 category = "ICU4X Data"
 dependencies = [
     "testdata-download",
     "testdata-build-json",
+    "testdata-build-blob",
 ]
 
 [tasks.bincode-clean]

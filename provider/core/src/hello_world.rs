@@ -206,7 +206,7 @@ impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruc
         &mut self,
         req: DataRequest,
         payload: DataPayload<'d, 'static, crate::erased::ErasedDataStructMarker>,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    ) -> Result<(), DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
@@ -215,9 +215,5 @@ impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruc
             Cow::Owned(downcast_payload.get().message.to_string()),
         );
         Ok(())
-    }
-
-    fn include_resource_options(&self, _resc_options: &ResourceOptions) -> bool {
-        true
     }
 }
