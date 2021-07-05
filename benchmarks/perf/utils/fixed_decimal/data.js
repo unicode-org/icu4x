@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1625242838515,
+  "lastUpdate": 1625449666058,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6959,6 +6959,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 140699,
             "range": "± 6349",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c5bebc5d17ed4e77173cdae45e663b2e52d41c41",
+          "message": "Add icu_provider_blob crate with StaticDataProvider (#835)",
+          "timestamp": "2021-07-04T20:42:00-05:00",
+          "tree_id": "fc3336c469387750144e4aeb40183f0e959eea6e",
+          "url": "https://github.com/unicode-org/icu4x/commit/c5bebc5d17ed4e77173cdae45e663b2e52d41c41"
+        },
+        "date": 1625449664172,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 156910,
+            "range": "± 1316",
             "unit": "ns/iter"
           }
         ]
