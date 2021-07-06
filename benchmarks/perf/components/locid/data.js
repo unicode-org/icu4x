@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1625449682598,
+  "lastUpdate": 1625612622363,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9029,6 +9029,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5087,
             "range": "± 19",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b9acfc49c983106924f0e201ccccf3453a05b73c",
+          "message": "Remove the binary of the pluralrules example (#850)\n\nIt was checked-in accidentally in #712.",
+          "timestamp": "2021-07-06T15:58:12-07:00",
+          "tree_id": "d41584dd4a106d70812036ad475d213348c47a5d",
+          "url": "https://github.com/unicode-org/icu4x/commit/b9acfc49c983106924f0e201ccccf3453a05b73c"
+        },
+        "date": 1625612620834,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2796,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4250,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
