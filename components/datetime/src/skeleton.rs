@@ -219,13 +219,9 @@ impl From<&Pattern> for Skeleton {
                 // Skeletons only have a subset of available fields, these are then mapped to more
                 // specific fields for the patterns they expand to.
                 field.symbol = match field.symbol {
-                    FieldSymbol::Year(year) => FieldSymbol::Year(year),
-                    // Remove the stand-alone designation. This will be provided by the pattern.
-                    FieldSymbol::Month(fields::Month::Format)
-                    | FieldSymbol::Month(fields::Month::StandAlone) => {
-                        FieldSymbol::Month(fields::Month::Format)
-                    }
-                    FieldSymbol::Day(day) => FieldSymbol::Day(day),
+                    // Only the format varieties are used in the skeletons, the matched patterns
+                    // will be more specific.
+                    FieldSymbol::Month(_) => FieldSymbol::Month(fields::Month::Format),
                     FieldSymbol::Weekday(_) => FieldSymbol::Weekday(fields::Weekday::Format),
 
                     // Only flexible day periods are used in skeletons, ignore all others.
@@ -246,9 +242,11 @@ impl From<&Pattern> for Skeleton {
                     }
 
                     // Pass through all of the following preferences unchanged.
-                    FieldSymbol::Minute => FieldSymbol::Minute,
-                    FieldSymbol::Second(second) => FieldSymbol::Second(second),
-                    FieldSymbol::TimeZone(time_zone) => FieldSymbol::TimeZone(time_zone),
+                    FieldSymbol::Minute
+                    | FieldSymbol::Second(_)
+                    | FieldSymbol::TimeZone(_)
+                    | FieldSymbol::Year(_)
+                    | FieldSymbol::Day(_) => field.symbol,
                 };
 
                 // Only insert if it's a unique field.
@@ -1068,6 +1066,11 @@ mod test {
     #[cfg(feature = "provider_transform_internals")]
     fn test_pattern_to_skeleton() {
         assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
+        assert_pattern_to_skeleton(
+            "v ss:mm:H",
+            "Hmmssv",
+            "Test the skeleton ordering is consistent",
+        );
 
         assert_pattern_to_skeleton("K:mm", "hmm", "H11 maps to H12");
         assert_pattern_to_skeleton("k:mm", "Hmm", "H23 maps to H24");
