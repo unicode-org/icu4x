@@ -208,7 +208,7 @@ impl TryFrom<&str> for Skeleton {
 /// At the time of this writing, it's being used for applying hour cycle preferences and should not
 /// be exposed as a public API for end users.
 #[doc(hidden)]
-#[cfg(feature = "provider_transform_utils")]
+#[cfg(feature = "provider_transform_internals")]
 impl From<&Pattern> for Skeleton {
     fn from(pattern: &Pattern) -> Self {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
@@ -1054,7 +1054,7 @@ mod test {
         );
     }
 
-    #[cfg(feature = "provider_transform_utils")]
+    #[cfg(feature = "provider_transform_internals")]
     fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
         assert_eq!(
             serde_json::to_string(skeleton).unwrap(),
@@ -1065,7 +1065,7 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "provider_transform_utils")]
+    #[cfg(feature = "provider_transform_internals")]
     fn test_pattern_to_skeleton() {
         assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
 

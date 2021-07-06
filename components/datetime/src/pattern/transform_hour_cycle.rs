@@ -6,7 +6,7 @@
 //! to apply a user preference.
 
 #![doc(hidden)]
-#![cfg(feature = "provider_transform_utils")]
+#![cfg(feature = "provider_transform_internals")]
 
 use crate::fields;
 use crate::pattern::{CoarseHourCycle, Pattern, PatternItem};
@@ -33,7 +33,7 @@ pub fn determine_coarse_hour_cycle(pattern: &Pattern) -> Option<CoarseHourCycle>
 /// Invoke the pattern matching machinery to transform the hour cycle of a pattern. This provides
 /// a safe mapping from a h11/h12 to h23/h24 for transforms.
 #[doc(hidden)]
-#[cfg(feature = "provider_transform_utils")]
+#[cfg(feature = "provider_transform_internals")]
 pub fn apply_coarse_hour_cycle(
     datetime: &provider::gregory::patterns::DateTimeFormatsV1,
     pattern_str: &str,
