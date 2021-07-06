@@ -17,13 +17,15 @@ use crate::skeleton;
 /// patterns for `length::Bag`.
 pub fn determine_coarse_hour_cycle(pattern: &Pattern) -> Option<CoarseHourCycle> {
     for item in pattern.items() {
-        if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
-            if let fields::FieldSymbol::Hour(pattern_hour) = symbol {
-                return Some(match pattern_hour {
-                    fields::Hour::H11 | fields::Hour::H12 => CoarseHourCycle::H11H12,
-                    fields::Hour::H23 | fields::Hour::H24 => CoarseHourCycle::H23H24,
-                });
-            }
+        if let PatternItem::Field(fields::Field {
+            symbol: fields::FieldSymbol::Hour(pattern_hour),
+            length: _,
+        }) = item
+        {
+            return Some(match pattern_hour {
+                fields::Hour::H11 | fields::Hour::H12 => CoarseHourCycle::H11H12,
+                fields::Hour::H23 | fields::Hour::H24 => CoarseHourCycle::H23H24,
+            });
         }
     }
 
