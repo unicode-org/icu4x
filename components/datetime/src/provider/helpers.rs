@@ -135,21 +135,36 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
         length: length::Time,
         preferences: &Option<preferences::Bag>,
     ) -> Result<Pattern> {
-        // Apply the hour cycle preference if it exists.
+        // Determine the coarse hour cycle patterns to use from either the preference bag,
+        // or the preferred hour cycle for the locale.
+        let time = if let Some(preferences::Bag {
+            hour_cycle: Some(hour_cycle_pref),
+        }) = preferences
+        {
+            match hour_cycle_pref {
+                preferences::HourCycle::H11 | preferences::HourCycle::H12 => &self.time_h11_h12,
+                preferences::HourCycle::H23 | preferences::HourCycle::H24 => &self.time_h23_h24,
+            }
+        } else {
+            match self.preferred_hour_cycle {
+                crate::pattern::CoarseHourCycle::H11H12 => &self.time_h11_h12,
+                crate::pattern::CoarseHourCycle::H23H24 => &self.time_h23_h24,
+            }
+        };
+
+        let mut pattern = Pattern::from_bytes(match length {
+            length::Time::Full => &time.full,
+            length::Time::Long => &time.long,
+            length::Time::Medium => &time.medium,
+            length::Time::Short => &time.short,
+        })?;
+
         if let Some(preferences::Bag {
             hour_cycle: Some(hour_cycle_pref),
         }) = preferences
         {
-            let time = match hour_cycle_pref {
-                preferences::HourCycle::H11 | preferences::HourCycle::H12 => &self.time_h11_h12,
-                preferences::HourCycle::H23 | preferences::HourCycle::H24 => &self.time_h23_h24,
-            };
-            let mut pattern = Pattern::from_bytes(match length {
-                length::Time::Full => &time.full,
-                length::Time::Long => &time.long,
-                length::Time::Medium => &time.medium,
-                length::Time::Short => &time.short,
-            })?;
+            // Apply the preference::Bag override and change the pattern from a coarse hour cycle
+            // to the specific hour cycle.
             for item in pattern.items_mut() {
                 if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
                     if let fields::FieldSymbol::Hour(_) = symbol {
@@ -160,17 +175,7 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
             return Ok(pattern);
         }
 
-        let time = match self.preferred_hour_cycle {
-            crate::pattern::CoarseHourCycle::H11H12 => &self.time_h11_h12,
-            crate::pattern::CoarseHourCycle::H23H24 => &self.time_h23_h24,
-        };
-
-        Ok(Pattern::from_bytes(match length {
-            length::Time::Full => &time.full,
-            length::Time::Long => &time.long,
-            length::Time::Medium => &time.medium,
-            length::Time::Short => &time.short,
-        })?)
+        Ok(pattern)
     }
 }
 
