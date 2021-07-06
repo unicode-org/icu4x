@@ -301,9 +301,10 @@ pub enum CoarseHourCycle {
     H23H24,
 }
 
-/// Default is required for serialization, arbitrarily pick one.
+/// Default is required for serialization. H23H24 is the more locale-agnostic choice, as it's
+/// less likely to have a day period in it.
 impl Default for CoarseHourCycle {
     fn default() -> Self {
-        CoarseHourCycle::H11H12
+        CoarseHourCycle::H23H24
     }
 }
