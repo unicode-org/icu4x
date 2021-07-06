@@ -191,10 +191,14 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
         let pattern_str_medium = other.calendars.gregorian.time_formats.medium.get_pattern();
         let pattern_str_short = other.calendars.gregorian.time_formats.short.get_pattern();
 
-        let pattern_full = pattern::Pattern::from_bytes(pattern_str_full).unwrap();
-        let pattern_long = pattern::Pattern::from_bytes(pattern_str_long).unwrap();
-        let pattern_medium = pattern::Pattern::from_bytes(pattern_str_medium).unwrap();
-        let pattern_short = pattern::Pattern::from_bytes(pattern_str_short).unwrap();
+        let pattern_full = pattern::Pattern::from_bytes(pattern_str_full)
+            .expect("Failed to create a full Pattern from bytes.");
+        let pattern_long = pattern::Pattern::from_bytes(pattern_str_long)
+            .expect("Failed to create a long Pattern from bytes.");
+        let pattern_medium = pattern::Pattern::from_bytes(pattern_str_medium)
+            .expect("Failed to create a medium Pattern from bytes.");
+        let pattern_short = pattern::Pattern::from_bytes(pattern_str_short)
+            .expect("Failed to create a short Pattern from bytes.");
 
         let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
         for hour_cycle in [
@@ -234,7 +238,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     pattern_full,
                     alt_hour_cycle,
                 )
-                .unwrap()
+                .expect("Failed to apply a coarse hour cycle to a full pattern.")
                 .into(),
                 long: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
@@ -242,7 +246,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     pattern_long,
                     alt_hour_cycle,
                 )
-                .unwrap()
+                .expect("Failed to apply a coarse hour cycle to a long pattern.")
                 .into(),
                 medium: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
@@ -250,7 +254,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     pattern_medium,
                     alt_hour_cycle,
                 )
-                .unwrap()
+                .expect("Failed to apply a coarse hour cycle to a medium pattern.")
                 .into(),
                 short: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
@@ -258,7 +262,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                     pattern_short,
                     alt_hour_cycle,
                 )
-                .unwrap()
+                .expect("Failed to apply a coarse hour cycle to a short pattern.")
                 .into(),
             };
 

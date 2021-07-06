@@ -1055,8 +1055,11 @@ mod test {
     #[cfg(feature = "provider_transform_internals")]
     fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
         assert_eq!(
-            serde_json::to_string(skeleton).unwrap(),
-            serde_json::to_string(&Skeleton::from(&Pattern::from_bytes(pattern).unwrap())).unwrap(),
+            serde_json::to_string(skeleton).expect("Failed to transform skeleton to string."),
+            serde_json::to_string(&Skeleton::from(
+                &Pattern::from_bytes(pattern).expect("Failed to create pattern from bytes.")
+            ))
+            .expect("Failed to transform skeleton to string."),
             "{}",
             message
         );
