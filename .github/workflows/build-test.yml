@@ -696,7 +696,7 @@ jobs:
         sudo npm install -g wabt
         cargo install twiggy
 
-    - name: Build wasm executables and Measure size
+    - name: Build wasm executables and measure size
       run: |
         cargo make wasm-examples
         cargo run --package icu_benchmark_binsize

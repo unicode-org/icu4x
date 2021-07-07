@@ -1,4 +1,6 @@
-# icu_benchmark_binsize
+# icu_benchmark_binsize [![crates.io](http://meritbadge.herokuapp.com/icu_benchmark_binsize)](https://crates.io/crates/icu_benchmark_binsize)
+
+
 
 ## More Information
 
