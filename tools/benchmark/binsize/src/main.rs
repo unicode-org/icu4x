@@ -9,6 +9,7 @@
 // I AM NOT DONE
 
 use std::fs;
+use std::string::String;
 
 fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
     let paths = fs::read_dir(dir).unwrap();
@@ -17,8 +18,8 @@ fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
         if let Some(suffix) = p.extension() {
             if suffix == "wasm" {
                 println!(
-                    "WASM file: {:?}, size: {}",
-                    p.file_stem().unwrap(),
+                    "test {} ... bench:      {} bytes (+/- 0)",
+                    String::from(p.file_stem().unwrap().to_str().unwrap()),
                     p.metadata()?.len()
                 );
             }
