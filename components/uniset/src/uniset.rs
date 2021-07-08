@@ -162,7 +162,7 @@ impl UnicodeSet {
     /// assert_eq!(Some(69..=69), example_iter_ranges.next());
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
-    pub fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+    pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
         self.inv_list.chunks(2).map(|pair| RangeInclusive::new(pair[0], pair[1] - 1))
     }
 
@@ -524,6 +524,14 @@ mod tests {
         assert_eq!(Some(69..=69), ranges.next());
         assert_eq!(Some(0xD800..=0xD800), ranges.next());
         assert_eq!(None, ranges.next());
+    }
+
+    #[test]
+    fn test_unicodeset_iter_ranges_exactsizeiter_trait() {
+        let ex = vec![65, 68, 69, 70, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let ranges = set.iter_ranges();
+        assert_eq!(3, ranges.len());
     }
 
     #[test]
