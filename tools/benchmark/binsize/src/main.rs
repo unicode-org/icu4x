@@ -18,7 +18,7 @@ fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
         if let Some(suffix) = p.extension() {
             if suffix == "wasm" {
                 println!(
-                    "test {} ... bench:      {} bs/iter (+/- 0)",
+                    "test {} ... bench:      {} ns/iter (+/- 0)",
                     String::from(p.file_stem().unwrap().to_str().unwrap()),
                     p.metadata()?.len()
                 );
