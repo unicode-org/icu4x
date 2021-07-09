@@ -716,7 +716,7 @@ jobs:
         benchmark-data-dir-path: ./benchmarks/binsize
         alert-threshold: '100%'
         fail-on-alert: true
-        gh-pages-branch: unmerged-pr-bench-data
+        gh-pages-branch: gh-pages
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
