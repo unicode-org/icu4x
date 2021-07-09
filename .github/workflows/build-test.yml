@@ -696,11 +696,16 @@ jobs:
         sudo npm install -g wabt
         cargo install twiggy
 
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/binsize
+
     - name: Build wasm executables and measure size
       run: |
         cargo make wasm-examples
         cargo run --package icu_benchmark_binsize | tee benchmarks/binsize/output.txt
         ls -l benchmarks/binsize
+        cat benchmarks/binsize
 
     - name: Store benchmark result
       uses: rhysd/github-action-benchmark@v1
