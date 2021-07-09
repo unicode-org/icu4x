@@ -8,14 +8,20 @@ import os
 import re
 import subprocess
 
-prop = []
+begin_plane2 = 0x20000
+
+# Set default value for line break class to 'XX' (Unknown) for all the
+# codepoints in Unicode Plane 0 and Plane 1
+# https://www.unicode.org/reports/tr14/tr14-41.html#XX
+lb_props = ["XX" for x in range(begin_plane2)]
+
+# Set default value for East Asian Width Properties to 'Neutral' (Not East
+# Asian) for all the codepoints in Unicode Plane 0 and Plane 1
+# http://www.unicode.org/reports/tr11/#ED7
+ea_props = ["N" for x in range(begin_plane2)]
+
 rule = []
 table = []
-ea_table = []
-
-for x in range(0x20000):
-    prop.append('XX')
-    ea_table.append('N')
 
 with open('EastAsianWidth.txt', 'r') as file:
     line = file.readline()
@@ -25,18 +31,18 @@ with open('EastAsianWidth.txt', 'r') as file:
             m = re.search("([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([A-Za-z]{1,})",
                           line)
             if m:
-                if int(m.group(2), 16) >= 0x20000:
+                if int(m.group(2), 16) >= begin_plane2:
                     break
                 length = int(m.group(2), 16) - int(m.group(1), 16) + 1
                 s = int(m.group(1), 16)
                 for x in range(length):
-                    ea_table[s + x] = m.group(3)
+                    ea_props[s + x] = m.group(3)
             else:
                 m = re.search("([0-9A-F]{1,6})\;([A-Za-z]{1,})", line)
                 if m:
-                    if int(m.group(1), 16) >= 0x20000:
+                    if int(m.group(1), 16) >= begin_plane2:
                         break
-                    ea_table[int(m.group(1), 16)] = m.group(2)
+                    ea_props[int(m.group(1), 16)] = m.group(2)
         line = file.readline()
 
 with open('LineBreak.txt', 'r') as file:
@@ -47,38 +53,37 @@ with open('LineBreak.txt', 'r') as file:
             m = re.search("([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([0-9A-Z]{2,})",
                           line)
             if m:
-                if int(m.group(2), 16) >= 0x20000:
+                if int(m.group(2), 16) >= begin_plane2:
                     break
                 length = int(m.group(2), 16) - int(m.group(1), 16) + 1
                 s = int(m.group(1), 16)
                 for x in range(length):
                     if m.group(3) == "OP":
-                        if ea_table[s + x] in ("F", "W", "H"):
-                            prop[s + x] = "OP_EA"
+                        if ea_props[s + x] in ("F", "W", "H"):
+                            lb_props[s + x] = "OP_EA"
                         else:
-                            prop[s + x] = "OP_OP30"
+                            lb_props[s + x] = "OP_OP30"
                     else:
-                        prop[s + x] = m.group(3)
+                        lb_props[s + x] = m.group(3)
             else:
                 m = re.search("([0-9A-F]{1,6})\;([0-9A-Z]{2,})", line)
                 if m:
-                    if int(m.group(1), 16) >= 0x20000:
+                    if int(m.group(1), 16) >= begin_plane2:
                         break
                     # for LB30
                     if m.group(2) == "OP":
-                        if ea_table[int(m.group(1), 16)] in ("F", "W", "H"):
-                            prop[int(m.group(1), 16)] = "OP_EA"
+                        if ea_props[int(m.group(1), 16)] in ("F", "W", "H"):
+                            lb_props[int(m.group(1), 16)] = "OP_EA"
                         else:
-                            prop[int(m.group(1), 16)] = "OP_OP30"
-                    elif m.group(2) == "CP" and ea_table[int(
+                            lb_props[int(m.group(1), 16)] = "OP_OP30"
+                    elif m.group(2) == "CP" and ea_props[int(
                             m.group(1), 16)] in ("F", "W", "H"):
-                        prop[int(m.group(1), 16)] = "CP_EA"
+                        lb_props[int(m.group(1), 16)] = "CP_EA"
                     else:
-                        prop[int(m.group(1), 16)] = m.group(2)
+                        lb_props[int(m.group(1), 16)] = m.group(2)
         line = file.readline()
 
-#prop_type = sorted([x for x in set(prop)])
-prop_type = sorted([x for x in set(prop)])
+prop_type = sorted([x for x in set(lb_props)])
 prop_type.append("B2_SP")
 prop_type.append("CL_CP_SP")
 prop_type.append("HL_HY")
@@ -438,7 +443,6 @@ header = """// This file is part of ICU4X. For terms of use, please see the file
 with open('lb_define.rs', 'w') as prop_file:
     prop_file.write(header)
 
-    #prop_type = sorted([x for x in set(prop)])
     prop_len = len(prop_type)
     count = 1
     for i in prop_type:
@@ -460,10 +464,10 @@ with open('properties_defines.rs', 'w') as properties_file:
     properties_file.write("use crate::lb_define::*;\n\n")
 
     for a in range(128):
-        first_value = prop[a * 1024]
+        first_value = lb_props[a * 1024]
         generate_table = False
         for i in range(1024):
-            if prop[a * 1024 + i] != first_value:
+            if lb_props[a * 1024 + i] != first_value:
                 generate_table = True
                 break
 
@@ -473,7 +477,7 @@ with open('properties_defines.rs', 'w') as properties_file:
 
         properties_file.write("pub const UAX14_PROPERTIES_%s: [u8; 1024] = [\n" % str(a))
         for i in range(int(1024)):
-            properties_file.write(" %s," % prop[a * 1024 + i])
+            properties_file.write(" %s," % lb_props[a * 1024 + i])
         properties_file.write("];\n\n")
 
         table.append("UAX14_PROPERTIES_%s" % str(a))
