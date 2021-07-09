@@ -43,43 +43,39 @@ with open('EastAsianWidth.txt', 'r') as eaw_file:
             for i in range(start, end + 1):
                 ea_props[i] = prop
 
-with open('LineBreak.txt', 'r') as file:
-    line = file.readline()
-    while line:
-        line = line.strip()
-        if not line.startswith('#'):
-            m = re.search("([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([0-9A-Z]{2,})",
-                          line)
-            if m:
-                if int(m.group(2), 16) >= begin_plane2:
-                    break
-                length = int(m.group(2), 16) - int(m.group(1), 16) + 1
-                s = int(m.group(1), 16)
-                for x in range(length):
-                    if m.group(3) == "OP":
-                        if ea_props[s + x] in ("F", "W", "H"):
-                            lb_props[s + x] = "OP_EA"
-                        else:
-                            lb_props[s + x] = "OP_OP30"
+with open('LineBreak.txt', 'r') as lb_file:
+    range_codepoint_pattern = r"([0-9A-F]{1,6})\.\.([0-9A-F]{1,6})\;([0-9A-Z]{2,})"
+    single_codepoint_pattern = r"([0-9A-F]{1,6})\;([0-9A-Z]{2,})"
+
+    for line in lb_file.readlines():
+        start = end = prop = None
+        if m := re.match(range_codepoint_pattern, line):
+            start = int(m[1], 16)
+            end = int(m[2], 16)
+            prop = m[3]
+        elif m := re.match(single_codepoint_pattern, line):
+            start = end = int(m[1], 16)
+            prop = m[2]
+
+        # We have a success match, and the codepoints are in plane 0 & 1. Store
+        # their line break class.
+        if prop and start < begin_plane2:
+            for i in range(start, end + 1):
+                # for LB30
+                # https://www.unicode.org/reports/tr14/tr14-45.html
+                if prop == "OP":
+                    if ea_props[i] in ("F", "W", "H"):
+                        lb_props[i] = "OP_EA"
                     else:
-                        lb_props[s + x] = m.group(3)
-            else:
-                m = re.search("([0-9A-F]{1,6})\;([0-9A-Z]{2,})", line)
-                if m:
-                    if int(m.group(1), 16) >= begin_plane2:
-                        break
-                    # for LB30
-                    if m.group(2) == "OP":
-                        if ea_props[int(m.group(1), 16)] in ("F", "W", "H"):
-                            lb_props[int(m.group(1), 16)] = "OP_EA"
-                        else:
-                            lb_props[int(m.group(1), 16)] = "OP_OP30"
-                    elif m.group(2) == "CP" and ea_props[int(
-                            m.group(1), 16)] in ("F", "W", "H"):
-                        lb_props[int(m.group(1), 16)] = "CP_EA"
-                    else:
-                        lb_props[int(m.group(1), 16)] = m.group(2)
-        line = file.readline()
+                        lb_props[i] = "OP_OP30"
+                elif prop == "CP" and ea_props[i] in ("F", "W", "H"):
+                    # Note: This branch has no effect because the only two
+                    # codepoints 0x0029 and 0x005D with CP line break class both
+                    # have EA property "Na".
+                    lb_props[i] = "CP_EA"
+                else:
+                    lb_props[i] = prop
+
 
 prop_type = sorted([x for x in set(lb_props)])
 prop_type.append("B2_SP")
