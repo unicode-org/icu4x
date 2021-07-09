@@ -361,6 +361,7 @@ jobs:
           cargo bench -- --output-format bencher |tee $OUTPUT_PATH/output.txt;
           echo "ls -l output.txt";
           ls -l $OUTPUT_PATH/output.txt;
+          cat $OUTPUT_PATH/output.txt;
           popd
 
       # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
