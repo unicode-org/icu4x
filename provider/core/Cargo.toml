@@ -30,6 +30,7 @@ all-features = true
 
 [features]
 provider_serde = ["serde", "erased-serde"]
+macros = ["icu_provider_macros"]
 
 [dependencies]
 icu_locid = { version = "0.2", path = "../../components/locid" }
@@ -37,6 +38,7 @@ tinystr = "0.4.5"
 writeable = { version = "0.2", path = "../../utils/writeable" }
 thiserror = "1.0"
 yoke = { version = "0.2", path = "../../utils/yoke", features = ["serde", "derive"] }
+icu_provider_macros = { version = "0.2", path = "../macros", optional = true }
 
 # For "provider_serde" feature
 erased-serde = { version = "0.3", optional = true }

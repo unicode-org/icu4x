@@ -126,6 +126,9 @@ pub mod marker;
 pub mod serde;
 pub mod struct_provider;
 
+#[cfg(feature = "macros")]
+pub use icu_provider_macros::data_struct;
+
 mod error;
 
 pub use error::Error as DataError;

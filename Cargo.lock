@@ -998,6 +998,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
+ "icu_provider_macros",
  "serde",
  "serde_json",
  "static_assertions",
@@ -1055,6 +1056,15 @@ dependencies = [
  "serde_json",
  "static_assertions",
  "thiserror",
+]
+
+[[package]]
+name = "icu_provider_macros"
+version = "0.2.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

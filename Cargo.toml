@@ -25,6 +25,7 @@ members = [
     "provider/cldr",
     "provider/core",
     "provider/fs",
+    "provider/macros",
     "provider/testdata",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
