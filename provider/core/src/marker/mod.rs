@@ -5,8 +5,6 @@
 //! Marker types and traits for DataProvider.
 
 mod impls;
-#[macro_use]
-mod macros;
 
 pub use impls::*;
 

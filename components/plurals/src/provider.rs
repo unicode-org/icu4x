@@ -21,7 +21,8 @@ pub mod resolver;
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
-#[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+#[icu_provider::data_struct]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -33,9 +34,3 @@ pub struct PluralRuleStringsV1<'s> {
     pub few: Option<Cow<'s, str>>,
     pub many: Option<Cow<'s, str>>,
 }
-
-icu_provider::impl_data_marker_with_lifetime!(
-    PluralRuleStringsV1<'s>,
-    /// Marker type for [`PluralRuleStringsV1`]
-    PluralRuleStringsV1Marker
-);

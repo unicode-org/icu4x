@@ -655,18 +655,13 @@ pub mod key {
     );
 }
 
-#[derive(Debug, Hash, Eq, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[icu_provider::data_struct]
+#[derive(Debug, Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnicodePropertyV1<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: UnicodeSet,
 }
-
-icu_provider::impl_data_marker_with_lifetime!(
-    UnicodePropertyV1<'s>,
-    /// Marker type for [`UnicodeProperty`]
-    UnicodePropertyMarker
-);
 
 impl Default for UnicodePropertyV1<'static> {
     /// Default empty nameless property

@@ -5,7 +5,8 @@
 use icu_provider::yoke::{self, *};
 use std::borrow::Cow;
 
-#[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+#[icu_provider::data_struct]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -19,13 +20,8 @@ pub struct DateSymbolsV1 {
     pub day_periods: day_periods::ContextsV1,
 }
 
-icu_provider::impl_data_marker_no_lifetime!(
-    DateSymbolsV1,
-    /// Marker type for [`DateSymbolsV1`]
-    DateSymbolsV1Marker
-);
-
-#[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+#[icu_provider::data_struct]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -38,13 +34,6 @@ pub struct DatePatternsV1 {
 
     pub datetime: patterns::DateTimeFormatsV1,
 }
-
-icu_provider::impl_data_marker_no_lifetime!(
-    DatePatternsV1,
-    /// Marker type for [`DatePatternsV1`]
-    DatePatternsV1Marker
-);
-
 macro_rules! symbols {
         ($name: ident, $expr: ty) => {
             pub mod $name {

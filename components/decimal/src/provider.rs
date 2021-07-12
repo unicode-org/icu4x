@@ -53,7 +53,8 @@ pub struct GroupingSizesV1 {
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
+#[icu_provider::data_struct]
+#[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -104,9 +105,3 @@ impl Default for DecimalSymbolsV1<'static> {
         }
     }
 }
-
-icu_provider::impl_data_marker_with_lifetime!(
-    DecimalSymbolsV1<'s>,
-    /// Marker type for [`DecimalSymbolsV1`]
-    DecimalSymbolsV1Marker
-);
