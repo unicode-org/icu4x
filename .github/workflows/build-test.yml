@@ -698,8 +698,7 @@ jobs:
         cargo install twiggy
 
     - name: Setup output data directory
-      run: |
-        mkdir -p benchmarks/binsize
+      run: mkdir -p benchmarks/binsize
 
     - name: Build wasm executables and measure size
       run: |
@@ -720,3 +719,12 @@ jobs:
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+
+    - name: Switch branch to get result of binsize output.
+      run: git checkout gh-pages
+
+    - name: Upload binsize data
+      uses: actions/upload-artifact@v2
+      with:
+        path: ./benchmarks/binsize/**
+        name: benchmark-binsize

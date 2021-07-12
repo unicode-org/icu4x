@@ -1,13 +1,6 @@
 // variables1.rs
 // Make me compile! Execute the command `rustlings hint variables1` if you want a hint :)
 
-// About this `I AM NOT DONE` thing:
-// We sometimes encourage you to keep trying things on a given exercise,
-// even after you already figured it out. If you got everything working and
-// feel ready for the next exercise, remove the `I AM NOT DONE` comment below.
-
-// I AM NOT DONE
-
 use std::fs;
 use std::string::String;
 
@@ -18,7 +11,7 @@ fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
         if let Some(suffix) = p.extension() {
             if suffix == "wasm" {
                 println!(
-                    "test {} ... bench:      {} ns/iter (+/- 0)",
+                    "test {} ... bench:      {} ns/iter",
                     String::from(p.file_stem().unwrap().to_str().unwrap()),
                     p.metadata()?.len()
                 );
@@ -29,5 +22,5 @@ fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
 }
 
 fn main() {
-    wasm_filesize("wasmpkg");
+    let _rc = wasm_filesize("wasmpkg");
 }
