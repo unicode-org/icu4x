@@ -41,9 +41,11 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
         .to_compile_error();
     }
 
+    let docs = format!("Marker type for [`{}`]", name);
+
     if let Some(lt) = lifetimes.get(0) {
         quote!(
-            /// Marker type for [`#name`]
+            #[doc = #docs]
             pub struct #marker;
 
             impl<#lt> icu_provider::DataMarker<#lt> for #marker {
@@ -56,7 +58,7 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
         )
     } else {
         quote!(
-            /// Marker type for [`#name`]
+            #[doc = #docs]
             pub struct #marker;
 
             impl<'s> icu_provider::DataMarker<'s> for #marker {
