@@ -7,6 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_locid::LanguageIdentifier;
+use icu_provider::yoke::{self, *};
 use tinystr::{TinyStr4, TinyStr8};
 
 pub mod key {
@@ -15,11 +16,13 @@ pub mod key {
     pub const LIKELY_SUBTAGS_V1: ResourceKey = resource_key!(likelysubtags, "likelysubtags", 1);
 }
 
+#[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(cloning_zcf)]
 pub struct AliasesV1 {
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
@@ -34,17 +37,13 @@ pub struct AliasesV1 {
     pub subdivision: Vec<(TinyStr8, TinyStr8)>,
 }
 
-icu_provider::impl_data_marker_no_lifetime!(
-    AliasesV1,
-    /// Marker type for [`AliasesV1`]
-    AliasesV1Marker
-);
-
+#[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(cloning_zcf)]
 pub struct LikelySubtagsV1 {
     pub language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
     pub language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
@@ -54,9 +53,3 @@ pub struct LikelySubtagsV1 {
     pub region: Vec<(TinyStr4, LanguageIdentifier)>,
     pub und: LanguageIdentifier,
 }
-
-icu_provider::impl_data_marker_no_lifetime!(
-    LikelySubtagsV1,
-    /// Marker type for [`LikelySubtagsV1`]
-    LikelySubtagsV1Marker
-);

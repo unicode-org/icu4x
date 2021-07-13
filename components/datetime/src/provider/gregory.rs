@@ -2,13 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::yoke::{self, *};
 use std::borrow::Cow;
 
+#[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(cloning_zcf)]
 pub struct DateSymbolsV1 {
     pub months: months::ContextsV1,
 
@@ -17,17 +20,13 @@ pub struct DateSymbolsV1 {
     pub day_periods: day_periods::ContextsV1,
 }
 
-icu_provider::impl_data_marker_no_lifetime!(
-    DateSymbolsV1,
-    /// Marker type for [`DateSymbolsV1`]
-    DateSymbolsV1Marker
-);
-
+#[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[yoke(cloning_zcf)]
 pub struct DatePatternsV1 {
     pub date: patterns::LengthPatternsV1,
 
@@ -35,13 +34,6 @@ pub struct DatePatternsV1 {
 
     pub datetime: patterns::DateTimeFormatsV1,
 }
-
-icu_provider::impl_data_marker_no_lifetime!(
-    DatePatternsV1,
-    /// Marker type for [`DatePatternsV1`]
-    DatePatternsV1Marker
-);
-
 macro_rules! symbols {
         ($name: ident, $expr: ty) => {
             pub mod $name {
@@ -85,7 +77,8 @@ macro_rules! symbols {
             pub mod $name {
                 use super::*;
 
-                #[derive(Debug, PartialEq, Clone, Default)]
+                #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+                #[yoke(cloning_zcf)]
                 #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
                 pub struct SymbolsV1 {
                     $($members)*
@@ -96,7 +89,8 @@ macro_rules! symbols {
         () => {
             // UTS 35 specifies that `format` widths are mandatory
             // except of `short`.
-            #[derive(Debug, PartialEq, Clone, Default)]
+            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct FormatWidthsV1 {
                 pub abbreviated: SymbolsV1,
@@ -106,7 +100,8 @@ macro_rules! symbols {
             }
 
             // UTS 35 specifies that `stand_alone` widths are optional
-            #[derive(Debug, PartialEq, Clone, Default)]
+            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct StandAloneWidthsV1 {
                 pub abbreviated: Option<SymbolsV1>,
@@ -115,7 +110,8 @@ macro_rules! symbols {
                 pub wide: Option<SymbolsV1>,
             }
 
-            #[derive(Debug, PartialEq, Clone, Default)]
+            #[derive(Debug, PartialEq, Clone, Default, Yokeable, ZeroCopyFrom)]
+            #[yoke(cloning_zcf)]
             #[cfg_attr(feature="provider_serde", derive(serde::Serialize, serde::Deserialize))]
             pub struct ContextsV1 {
                 pub format: FormatWidthsV1,

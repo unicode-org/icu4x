@@ -27,8 +27,8 @@ where
     K: ZeroMapKV<'a>,
     V: ZeroMapKV<'a>,
 {
-    keys: K::Container,
-    values: V::Container,
+    pub(crate) keys: K::Container,
+    pub(crate) values: V::Container,
 }
 
 impl<'a, K, V> Default for ZeroMap<'a, K, V>
