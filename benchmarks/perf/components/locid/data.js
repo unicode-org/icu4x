@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626201136129,
+  "lastUpdate": 1626214332895,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9137,6 +9137,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4915,
             "range": "± 305",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cce8f224c263fb579d3f5ff02e6589e3aa9d9717",
+          "message": "Bump yoke to 0.2.1 (#858)\n\n* Bump yoke to 0.2.1\r\n\r\n* lockfile",
+          "timestamp": "2021-07-13T15:06:24-07:00",
+          "tree_id": "7f0d12216417b3a7cb1740c6e812e91414debfd5",
+          "url": "https://github.com/unicode-org/icu4x/commit/cce8f224c263fb579d3f5ff02e6589e3aa9d9717"
+        },
+        "date": 1626214330876,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2759,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4243,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
