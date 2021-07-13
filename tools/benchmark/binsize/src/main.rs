@@ -1,11 +1,12 @@
-// variables1.rs
-// Make me compile! Execute the command `rustlings hint variables1` if you want a hint :)
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::fs;
 use std::string::String;
 
 fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
-    let paths = fs::read_dir(dir).unwrap();
+    let paths = fs::read_dir(dir).expect("Directory wasm/ not found!");
     for path in paths {
         let p = path.unwrap().path();
         if let Some(suffix) = p.extension() {
