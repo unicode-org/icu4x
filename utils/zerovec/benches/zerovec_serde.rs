@@ -7,7 +7,10 @@ use rand::SeedableRng;
 use rand_distr::{Distribution, LogNormal};
 use rand_pcg::Lcg64Xsh32;
 
-use zerovec::samples::*;
+#[path = "../src/samples.rs"]
+mod samples;
+use samples::*;
+
 use zerovec::ZeroVec;
 
 /// Generate a large list of u32s for stress testing.

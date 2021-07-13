@@ -4,7 +4,10 @@
 
 use iai::black_box;
 
-use zerovec::samples::*;
+#[path = "../src/samples.rs"]
+mod samples;
+use samples::*;
+
 use zerovec::ZeroVec;
 
 fn sum_slice() -> u32 {

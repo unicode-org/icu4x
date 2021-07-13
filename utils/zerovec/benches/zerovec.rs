@@ -8,7 +8,10 @@ use rand_distr::{Distribution, LogNormal};
 use rand_pcg::Lcg64Xsh32;
 use std::fmt;
 
-use zerovec::samples::*;
+#[path = "../src/samples.rs"]
+mod samples;
+use samples::*;
+
 use zerovec::ule::*;
 use zerovec::ZeroVec;
 
