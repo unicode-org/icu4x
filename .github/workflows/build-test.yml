@@ -358,10 +358,7 @@ jobs:
           mkdir -p $REL_OUTPUT_PATH;
           export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
           export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
-          cargo bench -- --output-format bencher |tee $OUTPUT_PATH/output.txt;
-          echo "ls -l output.txt";
-          ls -l $OUTPUT_PATH/output.txt;
-          cat $OUTPUT_PATH/output.txt;
+          cargo bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
           popd
 
       # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
@@ -487,8 +484,6 @@ jobs:
       - name: Run the example with dhat-rs to collect memory information
         run: |
           cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2021-03-15
-          ls -l ./benchmarks/memory/${{ matrix.os }}/output.ndjson
-          cat ./benchmarks/memory/${{ matrix.os }}/output.ndjson
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
       # dashboard HTML in a commit of a branch of the local repo.
 
