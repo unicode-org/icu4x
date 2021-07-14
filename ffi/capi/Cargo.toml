@@ -37,7 +37,7 @@ icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
 icu_provider_fs = { path = "../../provider/fs/" }
-tinystr = { version = "0.4.5", features = ["alloc"], default-features = false }
+tinystr = { version = "0.4.8", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
