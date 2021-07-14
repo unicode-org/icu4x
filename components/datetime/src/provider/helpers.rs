@@ -172,7 +172,6 @@ impl DateTimePatterns for provider::gregory::DatePatternsV1 {
                     }
                 }
             }
-            return Ok(pattern);
         }
 
         Ok(pattern)
