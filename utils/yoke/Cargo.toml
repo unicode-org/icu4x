@@ -28,7 +28,7 @@ all-features = true
 
 [dependencies]
 stable_deref_trait = { version = "1.2.0", features = ["alloc"], default-features = false }
-serde = { version = "1.0", optional = true }
+serde = { version = "1.0", optional = true, default-features = false, features = ["alloc"]}
 yoke-derive = { path = "./derive", version = "0.1.0", optional = true}
 
 [dev-dependencies]
