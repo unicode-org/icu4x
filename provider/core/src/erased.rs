@@ -6,10 +6,10 @@
 
 use crate::error::Error;
 use crate::prelude::*;
+use crate::yoke::*;
 use std::any::Any;
 use std::any::TypeId;
 use std::rc::Rc;
-use yoke::*;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///

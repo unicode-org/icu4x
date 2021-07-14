@@ -75,32 +75,32 @@ fn test_grouper() {
     let cases = [
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: western_sizes.clone(),
+            sizes: western_sizes,
             expected: ["1,000", "10,000", "100,000", "1,000,000"],
         },
         TestCase {
             strategy: GroupingStrategy::Min2,
-            sizes: western_sizes.clone(),
+            sizes: western_sizes,
             expected: ["1000", "10,000", "100,000", "1,000,000"],
         },
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: indic_sizes.clone(),
+            sizes: indic_sizes,
             expected: ["1,000", "10,000", "1,00,000", "10,00,000"],
         },
         TestCase {
             strategy: GroupingStrategy::Min2,
-            sizes: indic_sizes.clone(),
+            sizes: indic_sizes,
             expected: ["1000", "10,000", "1,00,000", "10,00,000"],
         },
         TestCase {
             strategy: GroupingStrategy::Auto,
-            sizes: western_sizes_min3.clone(),
+            sizes: western_sizes_min3,
             expected: ["1000", "10000", "100,000", "1,000,000"],
         },
         TestCase {
             strategy: GroupingStrategy::Min2,
-            sizes: western_sizes_min3.clone(),
+            sizes: western_sizes_min3,
             expected: ["1000", "10000", "100,000", "1,000,000"],
         },
     ];
@@ -110,7 +110,7 @@ fn test_grouper() {
                 .multiplied_pow10((i as i16) + 3)
                 .unwrap();
             let mut data_struct: crate::provider::DecimalSymbolsV1 = Default::default();
-            data_struct.grouping_sizes = cas.sizes.clone();
+            data_struct.grouping_sizes = cas.sizes;
             let provider = icu_provider::struct_provider::StructProvider {
                 key: crate::provider::key::SYMBOLS_V1,
                 data: &data_struct,

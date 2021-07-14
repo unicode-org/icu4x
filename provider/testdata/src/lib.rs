@@ -66,6 +66,9 @@
 #[cfg(feature = "metadata")]
 pub mod metadata;
 pub mod paths;
-mod test_data_provider;
 
-pub use test_data_provider::get_provider;
+mod blob;
+mod fs;
+
+pub use blob::get_static_provider;
+pub use fs::get_provider;

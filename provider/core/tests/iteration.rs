@@ -41,14 +41,15 @@ fn test_supported_langids() {
 
 #[test]
 fn test_export() {
-    use icu_provider::export::DataExporter;
-
     let source_provider = HelloWorldProvider::new_with_placeholder_data();
     let mut dest_provider = HelloWorldProvider::default();
 
-    dest_provider
-        .put_key_from_provider(&key::HELLO_WORLD_V1, &source_provider)
-        .unwrap();
+    icu_provider::export::export_from_iterable(
+        &key::HELLO_WORLD_V1,
+        &source_provider,
+        &mut dest_provider,
+    )
+    .expect("Export should be successful");
 
     assert_eq!(source_provider, dest_provider);
 }
