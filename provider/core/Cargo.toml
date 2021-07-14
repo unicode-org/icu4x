@@ -34,7 +34,7 @@ macros = ["icu_provider_macros"]
 
 [dependencies]
 icu_locid = { version = "0.2", path = "../../components/locid" }
-tinystr = "0.4.5"
+tinystr = { version = "0.4.5", features = ["alloc"], default-features = false }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.2", path = "../../utils/yoke", features = ["serde", "derive"] }
