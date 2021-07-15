@@ -61,7 +61,7 @@ pub enum GeneralCategory {
 
 //// Enumerated property Script.
 ///
-/// For more information, see UAX #24: http://www.unicode.org/reports/tr24/. 
+/// For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
 /// See UScriptCode in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum Script {
