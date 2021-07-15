@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_uniset::enum_props::*;
-use std::str::FromStr;
-use tinystr::TinyStr16;
 
 //
 // Single getter function for enumerated property name:
