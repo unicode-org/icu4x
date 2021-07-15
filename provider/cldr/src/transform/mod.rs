@@ -99,48 +99,48 @@ impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
-    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
         if let Some(resp) = self
             .aliases
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
             .date_symbols
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
             .date_patterns
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
             .likelysubtags
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
             .numbers
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
             .plurals
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         if let Some(resp) = self
             .time_zones
             .try_supported_options(resc_key, self.cldr_paths)?
         {
-            return Ok(resp);
+            return Ok(Box::new(resp.into_iter()));
         }
         Err(DataError::UnsupportedResourceKey(*resc_key))
     }

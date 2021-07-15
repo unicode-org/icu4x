@@ -326,6 +326,16 @@ impl Default for ResourceOptions {
     }
 }
 
+impl From<LanguageIdentifier> for ResourceOptions {
+    /// Create a ResourceOptions with the given language identifier and an empty variant field.
+    fn from(langid: LanguageIdentifier) -> Self {
+        Self {
+            langid: Some(langid),
+            variant: None,
+        }
+    }
+}
+
 impl ResourceOptions {
     /// Gets the standard path components of this [`ResourceOptions`]. These components should be used when
     /// persisting the [`ResourceOptions`] on the filesystem or in structured data.

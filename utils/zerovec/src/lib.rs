@@ -78,6 +78,7 @@
 //! ```
 
 pub mod map;
+#[cfg(test)]
 pub mod samples;
 pub mod ule;
 mod varzerovec;

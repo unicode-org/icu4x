@@ -11,7 +11,7 @@ use super::*;
 use crate::erased::*;
 use crate::hello_world::{key::HELLO_WORLD_V1, HelloWorldV1, HelloWorldV1Marker};
 use crate::prelude::*;
-use yoke::*;
+use crate::yoke;
 
 // This file tests DataProvider borrow semantics with a dummy data provider based on a
 // JSON string. It also exercises most of the data provider code paths.
@@ -20,7 +20,8 @@ use yoke::*;
 const HELLO_ALT_KEY: ResourceKey = crate::resource_key!(icu4x, "helloalt", 1);
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, ZeroCopyFrom)]
+#[yoke(cloning_zcf)]
 struct HelloAlt {
     message: String,
 }
@@ -31,29 +32,6 @@ struct HelloAltMarker {}
 impl<'s> DataMarker<'s> for HelloAltMarker {
     type Yokeable = HelloAlt;
     type Cart = HelloAlt;
-}
-unsafe impl<'a> Yokeable<'a> for HelloAlt {
-    type Output = HelloAlt;
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        from
-    }
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        f(self)
-    }
-}
-impl ZeroCopyFrom<HelloAlt> for HelloAlt {
-    fn zero_copy_from(this: &HelloAlt) -> HelloAlt {
-        HelloAlt {
-            // Note: We can't actually implement this in a zero-copy fashion
-            message: this.message.clone(),
-        }
-    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]

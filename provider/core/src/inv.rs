@@ -7,8 +7,8 @@
 use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
+use crate::yoke;
 use std::rc::Rc;
-use yoke::*;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -39,7 +39,7 @@ impl<'d, 's, M> DataProvider<'d, 's, M> for InvariantDataProvider
 where
     M: DataMarker<'s>,
     M::Cart: Default,
-    M::Yokeable: ZeroCopyFrom<M::Cart>,
+    M::Yokeable: yoke::ZeroCopyFrom<M::Cart>,
 {
     fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         Ok(DataResponse {

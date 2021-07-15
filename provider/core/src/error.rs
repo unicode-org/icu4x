@@ -18,6 +18,10 @@ pub enum Error {
     #[error("Unavailable resource options: {0}")]
     UnavailableResourceOptions(DataRequest),
 
+    /// The resource was not returned due to a filter. The resource may or may not be available.
+    #[error("Resource was filtered: {1}: {0}")]
+    FilteredResource(DataRequest, String),
+
     /// The data provider supports the key, but it requires a language identifier, which was
     /// missing from the request.
     #[error("Requested key needs language identifier in request: {0}")]

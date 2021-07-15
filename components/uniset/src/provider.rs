@@ -8,9 +8,9 @@
 
 use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
+use icu_provider::yoke::{self, *};
 use std::borrow::Cow;
 use std::convert::TryInto;
-
 //
 // resource key structs - the structs used directly by users of data provider
 //
@@ -140,19 +140,13 @@ pub mod key {
     );
 }
 
+#[icu_provider::data_struct]
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnicodePropertyV1<'s> {
     pub name: Cow<'s, str>,
     pub inv_list: UnicodeSet,
 }
-
-icu_provider::unsafe_impl_data_marker_with_lifetime!(
-    UnicodePropertyV1<'s>,
-    /// Marker type for [`UnicodeProperty`]
-    UnicodePropertyMarker,
-    TEMP_ZCF
-);
 
 impl Default for UnicodePropertyV1<'static> {
     /// Default empty nameless property

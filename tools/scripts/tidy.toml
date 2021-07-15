@@ -9,6 +9,7 @@ description = "Run clippy based on the alias in /.cargo/config.toml"
 category = "ICU4X Development"
 command = "cargo"
 args = ["clippy-all"]
+install_crate = false
 
 [tasks.fmt-check]
 description = "Check code is appropriately formatted"

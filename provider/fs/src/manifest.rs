@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::LanguageIdentifier;
 use serde::{Deserialize, Serialize};
 
 /// File name of the manifest. The manifest always uses JSON, even if the serializer isn't JSON.
@@ -16,15 +15,6 @@ pub enum AliasOption {
     /// De-duplicate data by using filesystem symlinks.
     Symlink,
     // TODO: Alias based on a field in the JSON file
-}
-
-#[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum LocalesOption {
-    /// Include all available locales.
-    IncludeAll,
-    /// Include only those locales that have an exact match in the given list.
-    IncludeList(Box<[LanguageIdentifier]>),
 }
 
 #[non_exhaustive]
@@ -55,8 +45,6 @@ impl SyntaxOption {
 pub(crate) struct Manifest {
     /// Strategy for de-duplicating locale data.
     pub aliasing: AliasOption,
-    /// Configuration for including locales in this data provider.
-    pub locales: LocalesOption,
     /// Which data serialization file format is used.
     pub syntax: SyntaxOption,
 }

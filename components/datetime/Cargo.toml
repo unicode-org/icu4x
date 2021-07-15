@@ -30,7 +30,7 @@ all-features = true
 
 [dependencies]
 icu_locid = { version = "0.2", path = "../locid" }
-icu_provider = { version = "0.2", path = "../../provider/core" }
+icu_provider = { version = "0.2", path = "../../provider/core", features = ["macros"] }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 litemap = { version = "0.2", path = "../../utils/litemap", features = ["serde"] }
 tinystr = { version = "0.4.5" }

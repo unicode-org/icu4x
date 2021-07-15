@@ -4,6 +4,10 @@
 
 //! Example data useful for testing ZeroVec.
 
+// This module is included directly in tests and can trigger the dead_code
+// warning since not all samples are used in each test
+#![allow(dead_code)]
+
 #[repr(align(8))]
 struct Aligned<T>(pub T);
 
