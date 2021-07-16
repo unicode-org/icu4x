@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::manifest::SyntaxOption;
-use std::path::{Path, PathBuf};
 use displaydoc::Display;
+use std::path::{Path, PathBuf};
 
 #[derive(Display, Debug)]
 pub enum Error {
@@ -13,10 +13,7 @@ pub enum Error {
     #[displaydoc("{0}")]
     DataProvider(icu_provider::DataError),
     #[displaydoc("Deserializer error: {0}: {1:?}")]
-    Deserializer(
-        Box<dyn std::error::Error + Send + Sync>,
-        Option<PathBuf>,
-    ),
+    Deserializer(Box<dyn std::error::Error + Send + Sync>, Option<PathBuf>),
     #[cfg(feature = "export")]
     #[displaydoc("Serializer error: {0}: {1:?}")]
     Serializer(erased_serde::Error, Option<PathBuf>),
@@ -25,7 +22,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 impl From<icu_provider::DataError> for Error {
     fn from(e: icu_provider::DataError) -> Self {

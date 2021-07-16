@@ -6,11 +6,11 @@
 //!
 //! Spec reference: https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns
 
+use displaydoc::Display;
 use icu_decimal::provider::AffixesV1;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::str::FromStr;
-use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum Error {
@@ -21,7 +21,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]

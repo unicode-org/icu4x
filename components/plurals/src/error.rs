@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rules::parser::ParserError;
-use icu_provider::prelude::DataError;
 use displaydoc::Display;
+use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///
@@ -18,7 +18,6 @@ pub enum PluralRulesError {
 }
 
 impl std::error::Error for PluralRulesError {}
-
 
 impl From<ParserError> for PluralRulesError {
     fn from(e: ParserError) -> Self {

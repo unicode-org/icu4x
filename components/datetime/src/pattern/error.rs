@@ -24,7 +24,6 @@ pub enum Error {
 
 impl std::error::Error for Error {}
 
-
 impl From<fields::Error> for Error {
     fn from(input: fields::Error) -> Self {
         match input {

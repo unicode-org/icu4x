@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use std::io;
 use std::path::{Path, PathBuf};
-use displaydoc::Display;
 
 #[derive(Display, Debug)]
 pub enum Error {
@@ -19,7 +19,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 impl From<reqwest::Error> for Error {
     fn from(e: reqwest::Error) -> Self {

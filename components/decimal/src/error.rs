@@ -14,7 +14,6 @@ pub enum Error {
 
 impl std::error::Error for Error {}
 
-
 impl From<icu_provider::DataError> for Error {
     fn from(e: icu_provider::DataError) -> Self {
         Error::Data(e)

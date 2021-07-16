@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::manifest::SyntaxOption;
+use displaydoc::Display;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider::yoke::trait_hack::YokeTraitHack;
@@ -10,7 +11,6 @@ use icu_provider::yoke::Yokeable;
 use serde::Deserialize;
 use std::path::Path;
 use std::rc::Rc;
-use displaydoc::Display;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Display, Debug)]
@@ -28,7 +28,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 impl From<serde_json::error::Error> for Error {
     fn from(e: serde_json::error::Error) -> Self {

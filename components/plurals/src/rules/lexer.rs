@@ -36,7 +36,6 @@ pub enum LexerError {
 
 impl std::error::Error for LexerError {}
 
-
 /// Unicode Plural Rule lexer is an iterator
 /// over tokens produced from an input string.
 ///

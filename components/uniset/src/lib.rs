@@ -60,8 +60,8 @@ mod utils;
 
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
-use icu_provider::DataError;
 use displaydoc::Display;
+use icu_provider::DataError;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 
@@ -77,7 +77,6 @@ pub enum UnicodeSetError {
 }
 
 impl std::error::Error for UnicodeSetError {}
-
 
 impl From<DataError> for UnicodeSetError {
     fn from(e: DataError) -> Self {

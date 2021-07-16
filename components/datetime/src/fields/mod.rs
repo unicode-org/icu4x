@@ -5,9 +5,9 @@
 mod length;
 pub(crate) mod symbols;
 
+use displaydoc::Display;
 pub use length::{FieldLength, LengthError};
 pub use symbols::*;
-use displaydoc::Display;
 
 use std::{
     cmp::{Ord, PartialOrd},
@@ -21,7 +21,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(

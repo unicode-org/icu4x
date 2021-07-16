@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use cargo_metadata::{self, camino::Utf8PathBuf, MetadataCommand};
+use displaydoc::Display;
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use displaydoc::Display;
 
 #[derive(Display, Debug)]
 pub enum Error {
@@ -20,7 +20,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 impl From<cargo_metadata::Error> for Error {
     fn from(e: cargo_metadata::Error) -> Self {

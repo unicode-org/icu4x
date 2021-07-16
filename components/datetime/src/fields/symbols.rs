@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::FieldLength;
-use std::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
+use std::{cmp::Ordering, convert::TryFrom};
 
 #[derive(Display, Debug, PartialEq)]
 pub enum SymbolError {
@@ -17,7 +17,6 @@ pub enum SymbolError {
 }
 
 impl std::error::Error for SymbolError {}
-
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(

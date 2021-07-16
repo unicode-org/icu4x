@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use icu_locid::Locale;
 use std::convert::TryFrom;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
-use displaydoc::Display;
 use tinystr::TinyStr8;
 
 #[derive(Display, Debug)]
@@ -22,7 +22,6 @@ pub enum DateTimeError {
 }
 
 impl std::error::Error for DateTimeError {}
-
 
 impl From<std::num::ParseIntError> for DateTimeError {
     fn from(e: std::num::ParseIntError) -> Self {

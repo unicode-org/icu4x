@@ -4,9 +4,9 @@
 
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
+use displaydoc::Display;
 use smallvec::SmallVec;
 use std::convert::TryFrom;
-use displaydoc::Display;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
@@ -239,7 +239,6 @@ pub enum SkeletonError {
 }
 
 impl std::error::Error for SkeletonError {}
-
 
 impl From<fields::Error> for SkeletonError {
     fn from(e: fields::Error) -> Self {

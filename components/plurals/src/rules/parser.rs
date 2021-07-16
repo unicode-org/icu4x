@@ -4,8 +4,8 @@
 
 use super::ast;
 use super::lexer::{Lexer, Token};
-use std::iter::Peekable;
 use displaydoc::Display;
+use std::iter::Peekable;
 
 #[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError {
@@ -24,7 +24,6 @@ pub enum ParserError {
 }
 
 impl std::error::Error for ParserError {}
-
 
 /// Unicode Plural Rule parser converts an
 /// input string into a Rule [`AST`].

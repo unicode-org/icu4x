@@ -43,8 +43,8 @@ pub mod signum;
 mod uint_iterator;
 
 pub use decimal::FixedDecimal;
-pub use signum::Signum;
 use displaydoc::Display;
+pub use signum::Signum;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum Error {
@@ -75,4 +75,3 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-

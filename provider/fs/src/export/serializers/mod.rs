@@ -8,9 +8,9 @@ pub mod json;
 pub mod bincode;
 
 use crate::manifest::SyntaxOption;
+use displaydoc::Display;
 use std::io;
 use std::ops::Deref;
-use displaydoc::Display;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 #[derive(Display, Debug)]
@@ -22,7 +22,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 impl From<io::Error> for Error {
     fn from(e: io::Error) -> Self {

@@ -5,8 +5,8 @@
 use crate::fields::FieldSymbol;
 use crate::pattern;
 use crate::skeleton::SkeletonError;
-use icu_provider::prelude::DataError;
 use displaydoc::Display;
+use icu_provider::prelude::DataError;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
 #[derive(Display, Debug)]
@@ -33,7 +33,6 @@ pub enum DateTimeFormatError {
 }
 
 impl std::error::Error for DateTimeFormatError {}
-
 
 impl From<pattern::Error> for DateTimeFormatError {
     fn from(e: pattern::Error) -> Self {

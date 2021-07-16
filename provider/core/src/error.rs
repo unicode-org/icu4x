@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use std::any::TypeId;
 use displaydoc::Display;
+use std::any::TypeId;
 
 /// Error enumeration for DataProvider.
 #[non_exhaustive]
@@ -61,7 +61,6 @@ pub enum Error {
 }
 
 impl std::error::Error for Error {}
-
 
 impl From<erased_serde::Error> for Error {
     fn from(e: erased_serde::Error) -> Self {
