@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626214341164,
+  "lastUpdate": 1626479697943,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8159,6 +8159,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30464500,
             "range": "± 1908940",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "56b5cf828609510cf667cbe3ae2437ba722a358c",
+          "message": "Replace thiserror with displaydoc (#863)\n\n* thiserror -> displaydoc\r\n\r\nfastmod \"thiserror = .*$\" \"displaydoc = { version = \\\"0.2.3\\\", default-features = false }\"\r\n\r\n* thiserror::Error -> displaydoc::Display\r\n\r\nfastmod thiserror::Error displaydoc::Display\r\n\r\n* fastmod \"#\\[error\" \"#[displaydoc\"\r\n\r\n* derive(Error) -> derive(Display)\r\n\r\nfastmod \"derive\\(Error\" \"derive(Display\"\r\n\r\n* Replace #[from] with manual impls\r\n\r\n* #[displaydoc(transparent) -> #[displaydoc(\"{0}\")]\r\n\r\n* Remove #[source]\r\n\r\n* Add explicit Error impls\r\n\r\nRun `find . -name *.rs | xargs -I{} gawk -f replace.awk -i inplace {}`\r\n\r\nwith\r\n\r\n```awk\r\nBEGIN { a = 0; enum = \"\" }\r\n\r\n/#\\[derive\\(Display/ {\r\n    a = 1\r\n}\r\n\r\nmatch($0, /enum ([a-zA-Z]+)/, arr) {\r\n    enum = arr[1]\r\n}\r\n\r\n{ print }\r\n\r\n/^}/ && a == 1 {\r\n    print \"\\nimpl std::error::Error for \" enum \" {}\\n\"\r\n    a = 0\r\n}\r\n```\r\n\r\n* Fix generic Error impls\r\n\r\n* Fix displaydoc panic\r\n\r\n* struct not enum\r\n\r\n* Fixup from impl\r\n\r\n* rustfmt\r\n\r\n* fix cfg\r\n\r\n* fix cfg",
+          "timestamp": "2021-07-16T16:49:17-07:00",
+          "tree_id": "998f2cd394040aa4a2cc7538e7cc9e9216bf52dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/56b5cf828609510cf667cbe3ae2437ba722a358c"
+        },
+        "date": 1626479695927,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30550632,
+            "range": "± 96727",
             "unit": "ns/iter"
           }
         ]
