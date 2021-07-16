@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{fmt::Debug, str::FromStr};
 use displaydoc::Display;
+use std::{fmt::Debug, str::FromStr};
 
 /// An error returned when interpolating a pattern.
 ///
@@ -26,5 +26,9 @@ where
     UnclosedQuotedLiteral,
 }
 
-impl std::error::Error for InterpolatorError {}
-
+impl<K> std::error::Error for InterpolatorError<K>
+where
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
+{
+}

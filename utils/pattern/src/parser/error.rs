@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::fmt::Debug;
 use displaydoc::Display;
+use std::fmt::Debug;
 
 /// An error returned when parsing a pattern.
 ///
@@ -44,5 +44,4 @@ where
     UnclosedQuotedLiteral,
 }
 
-impl std::error::Error for ParserError {}
-
+impl<E: Debug> std::error::Error for ParserError<E> {}

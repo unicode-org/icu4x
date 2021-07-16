@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::interpolator::InterpolatorError;
-use std::{fmt::Debug, str::FromStr};
 use displaydoc::Display;
+use std::{fmt::Debug, str::FromStr};
 
 /// An error returned from a pattern.
 ///
@@ -23,8 +23,12 @@ where
     Format(std::fmt::Error),
 }
 
-impl std::error::Error for PatternError {}
-
+impl<K> std::error::Error for PatternError<K>
+where
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
+{
+}
 
 impl<K> From<InterpolatorError<K>> for PatternError<K>
 where
