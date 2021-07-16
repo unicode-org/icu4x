@@ -16,12 +16,12 @@ where
     K: Debug + FromStr + PartialEq,
     K::Err: Debug + PartialEq,
 {
-    #[error("Invalid placeholder: {0:?}")]
+    #[displaydoc("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(K::Err),
-    #[error("Missing placeholder: {0:?}")]
+    #[displaydoc("Missing placeholder: {0:?}")]
     MissingPlaceholder(K),
-    #[error("Unclosed placeholder")]
+    #[displaydoc("Unclosed placeholder")]
     UnclosedPlaceholder,
-    #[error("Unclosed quoted literal")]
+    #[displaydoc("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
 }

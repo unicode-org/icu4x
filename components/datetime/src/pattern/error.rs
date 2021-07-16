@@ -12,13 +12,13 @@ use displaydoc::Display;
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
 #[derive(Error, Debug, PartialEq)]
 pub enum Error {
-    #[error("{0:?} invalid field length in pattern")]
+    #[displaydoc("{0:?} invalid field length in pattern")]
     FieldLengthInvalid(fields::FieldSymbol),
-    #[error("unknown substitution {0} in pattern")]
+    #[displaydoc("unknown substitution {0} in pattern")]
     UnknownSubstitution(char),
-    #[error("unclosed literal in pattern")]
+    #[displaydoc("unclosed literal in pattern")]
     UnclosedLiteral,
-    #[error("unclosed placeholder in pattern")]
+    #[displaydoc("unclosed placeholder in pattern")]
     UnclosedPlaceholder,
 }
 

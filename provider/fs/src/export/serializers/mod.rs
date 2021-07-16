@@ -15,9 +15,9 @@ use displaydoc::Display;
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     Io(#[from] io::Error),
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     Serializer(#[from] erased_serde::Error),
 }
 

@@ -17,9 +17,9 @@ where
     K: Debug + FromStr + PartialEq,
     K::Err: Debug + PartialEq,
 {
-    #[error("Interpolator error: {0:?}")]
+    #[displaydoc("Interpolator error: {0:?}")]
     Interpolator(InterpolatorError<K>),
-    #[error("Format error: {0:?}")]
+    #[displaydoc("Format error: {0:?}")]
     Format(std::fmt::Error),
 }
 

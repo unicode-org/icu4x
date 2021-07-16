@@ -9,13 +9,13 @@ use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("Cargo Error: {0}")]
+    #[displaydoc("Cargo Error: {0}")]
     Cargo(#[from] cargo_metadata::Error),
-    #[error("Serde Error: {0}")]
+    #[displaydoc("Serde Error: {0}")]
     SerdeJson(#[from] serde_json::Error),
-    #[error("{0}: package not found", env!("CARGO_PKG_NAME"))]
+    #[displaydoc("{0}: package not found", env!("CARGO_PKG_NAME"))]
     PackageNotFound,
-    #[error("package.metadata.icu4x_testdata not found")]
+    #[displaydoc("package.metadata.icu4x_testdata not found")]
     MetadataNotFound,
 }
 

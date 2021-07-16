@@ -6,12 +6,12 @@ use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     PpucdParse(#[from] PpucdParseError),
 }
 
 #[derive(Error, Debug, PartialEq, Copy, Clone)]
-#[error("Could not parse PPUCD file: {src}")]
+#[displaydoc("Could not parse PPUCD file: {src}")]
 pub struct PpucdParseError {
     pub src: &'static str,
 }

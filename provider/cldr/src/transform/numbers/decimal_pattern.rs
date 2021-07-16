@@ -14,9 +14,9 @@ use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum Error {
-    #[error("No body in decimal subpattern")]
+    #[displaydoc("No body in decimal subpattern")]
     NoBodyInSubpattern,
-    #[error("Unknown decimal body: {0}")]
+    #[displaydoc("Unknown decimal body: {0}")]
     UnknownPatternBody(String),
 }
 

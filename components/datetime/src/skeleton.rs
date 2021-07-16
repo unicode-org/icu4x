@@ -222,19 +222,19 @@ impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
 #[derive(Error, Debug)]
 pub enum SkeletonError {
-    #[error("field too long in skeleton")]
+    #[displaydoc("field too long in skeleton")]
     InvalidFieldLength,
-    #[error("duplicate field in skeleton")]
+    #[displaydoc("duplicate field in skeleton")]
     DuplicateField,
-    #[error("symbol unknown {0} in skeleton")]
+    #[displaydoc("symbol unknown {0} in skeleton")]
     SymbolUnknown(char),
-    #[error("symbol invalid {0} in skeleton")]
+    #[displaydoc("symbol invalid {0} in skeleton")]
     SymbolInvalid(char),
-    #[error("symbol unimplemented {0} in skeleton")]
+    #[displaydoc("symbol unimplemented {0} in skeleton")]
     SymbolUnimplemented(char),
-    #[error("unimplemented field {0} in skeleton")]
+    #[displaydoc("unimplemented field {0} in skeleton")]
     UnimplementedField(char),
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     Fields(#[from] fields::Error),
 }
 

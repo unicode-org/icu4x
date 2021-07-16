@@ -10,9 +10,9 @@ use displaydoc::Display;
 ///
 #[derive(Error, Debug)]
 pub enum PluralRulesError {
-    #[error("Parser error: {0}")]
+    #[displaydoc("Parser error: {0}")]
     Parser(#[from] ParserError),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)
-    #[error("Data provider error: {0}")]
+    #[displaydoc("Data provider error: {0}")]
     DataProvider(#[from] DataError),
 }

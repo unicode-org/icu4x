@@ -11,13 +11,13 @@ use tinystr::TinyStr8;
 
 #[derive(Error, Debug)]
 pub enum DateTimeError {
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     Parse(#[from] std::num::ParseIntError),
-    #[error("{field} must be between 0-{max}")]
+    #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
-    #[error("{field} must be between {min}-0")]
+    #[displaydoc("{field} must be between {min}-0")]
     Underflow { field: &'static str, min: isize },
-    #[error("Failed to parse time-zone offset")]
+    #[displaydoc("Failed to parse time-zone offset")]
     InvalidTimeZoneOffset,
 }
 

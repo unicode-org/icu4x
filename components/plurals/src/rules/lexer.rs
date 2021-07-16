@@ -28,9 +28,9 @@ pub enum Token {
 
 #[derive(Error, Debug)]
 pub enum LexerError {
-    #[error("Expected byte: {0}")]
+    #[displaydoc("Expected byte: {0}")]
     ExpectedByte(u8),
-    #[error("Unknown token: {0}")]
+    #[displaydoc("Unknown token: {0}")]
     UnknownToken(u8),
 }
 

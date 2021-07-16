@@ -21,7 +21,7 @@ pub enum ParserError {
     ///
     /// assert_eq!(Language::from_str("x2"), Err(ParserError::InvalidLanguage));
     /// ```
-    #[error("The given language subtag is invalid")]
+    #[displaydoc("The given language subtag is invalid")]
     InvalidLanguage,
 
     /// Invalid script, region or variant subtag.
@@ -36,7 +36,7 @@ pub enum ParserError {
     ///
     /// assert_eq!(Region::from_str("#@2X"), Err(ParserError::InvalidSubtag));
     /// ```
-    #[error("Invalid subtag")]
+    #[displaydoc("Invalid subtag")]
     InvalidSubtag,
 
     /// Invalid extension subtag.
@@ -51,6 +51,6 @@ pub enum ParserError {
     ///
     /// assert_eq!(Key::from_str("#@2X"), Err(ParserError::InvalidExtension));
     /// ```
-    #[error("Invalid extension")]
+    #[displaydoc("Invalid extension")]
     InvalidExtension,
 }

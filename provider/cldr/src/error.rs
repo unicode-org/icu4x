@@ -12,18 +12,18 @@ use crate::download;
 #[non_exhaustive]
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("{0}: {1:?}")]
+    #[displaydoc("{0}: {1:?}")]
     Io(#[source] std::io::Error, Option<PathBuf>),
-    #[error("JSON error: {0}: {1:?}")]
+    #[displaydoc("JSON error: {0}: {1:?}")]
     Json(#[source] serde_json::error::Error, Option<PathBuf>),
-    #[error("{0}: {1:?}")]
+    #[displaydoc("{0}: {1:?}")]
     Custom(String, Option<LanguageIdentifier>),
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     MissingSource(MissingSourceError),
     #[cfg(feature = "download")]
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     Download(download::Error),
-    #[error("poisoned lock on CLDR provider")]
+    #[displaydoc("poisoned lock on CLDR provider")]
     Poison,
 }
 
@@ -38,7 +38,7 @@ impl From<download::Error> for Error {
 }
 
 #[derive(Error, Debug, PartialEq, Copy, Clone)]
-#[error("Missing CLDR data source: {src}")]
+#[displaydoc("Missing CLDR data source: {src}")]
 pub struct MissingSourceError {
     pub src: &'static str,
 }

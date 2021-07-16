@@ -68,11 +68,11 @@ pub use utils::*;
 /// Custom Errors for [`UnicodeSet`].
 #[derive(Error, Debug)]
 pub enum UnicodeSetError {
-    #[error("Invalid set: {0:?}")]
+    #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
-    #[error("Invalid range: {0}..{1}")]
+    #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     PropDataLoad(#[from] DataError),
 }
 

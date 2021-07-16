@@ -8,13 +8,13 @@ use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("{0}: {1:?}")]
+    #[displaydoc("{0}: {1:?}")]
     Io(#[source] io::Error, Option<PathBuf>),
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     Reqwest(#[from] reqwest::Error),
-    #[error("HTTP request failed: {0}: {1}")]
+    #[displaydoc("HTTP request failed: {0}: {1}")]
     HttpStatus(reqwest::StatusCode, String),
-    #[error("dirs::cache_dir() returned None")]
+    #[displaydoc("dirs::cache_dir() returned None")]
     NoCacheDir,
 }
 

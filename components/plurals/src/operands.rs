@@ -89,10 +89,10 @@ impl PluralOperands {
 #[derive(Error, Debug, PartialEq, Eq)]
 pub enum OperandsError {
     /// Input to the Operands parsing was empty.
-    #[error("Input to the Operands parsing was empty")]
+    #[displaydoc("Input to the Operands parsing was empty")]
     Empty,
     /// Input to the Operands parsing was invalid.
-    #[error("Input to the Operands parsing was invalid")]
+    #[displaydoc("Input to the Operands parsing was invalid")]
     Invalid,
 }
 

@@ -8,19 +8,19 @@ use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("{0}: {1:?}")]
+    #[displaydoc("{0}: {1:?}")]
     Io(#[source] std::io::Error, Option<PathBuf>),
-    #[error(transparent)]
+    #[displaydoc(transparent)]
     DataProvider(#[from] icu_provider::DataError),
-    #[error("Deserializer error: {0}: {1:?}")]
+    #[displaydoc("Deserializer error: {0}: {1:?}")]
     Deserializer(
         #[source] Box<dyn std::error::Error + Send + Sync>,
         Option<PathBuf>,
     ),
     #[cfg(feature = "export")]
-    #[error("Serializer error: {0}: {1:?}")]
+    #[displaydoc("Serializer error: {0}: {1:?}")]
     Serializer(#[source] erased_serde::Error, Option<PathBuf>),
-    #[error("Unknown syntax {0:?}. Do you need to enable a feature?")]
+    #[displaydoc("Unknown syntax {0:?}. Do you need to enable a feature?")]
     UnknownSyntax(SyntaxOption),
 }
 

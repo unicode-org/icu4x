@@ -10,7 +10,7 @@ use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum LengthError {
-    #[error("Invalid length")]
+    #[displaydoc("Invalid length")]
     InvalidLength,
 }
 

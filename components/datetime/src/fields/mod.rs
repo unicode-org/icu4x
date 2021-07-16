@@ -16,7 +16,7 @@ use std::{
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("Field {0:?} is not a valid length")]
+    #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),
 }
 

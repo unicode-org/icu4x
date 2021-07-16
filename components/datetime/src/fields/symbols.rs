@@ -9,10 +9,10 @@ use displaydoc::Display;
 #[derive(Error, Debug, PartialEq)]
 pub enum SymbolError {
     /// Unknown field symbol.
-    #[error("Unknown field symbol: {0}")]
+    #[displaydoc("Unknown field symbol: {0}")]
     Unknown(u8),
     /// Invalid character for a field symbol.
-    #[error("Invalid character for a field symbol: {0}")]
+    #[displaydoc("Invalid character for a field symbol: {0}")]
     Invalid(char),
 }
 

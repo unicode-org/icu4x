@@ -28,18 +28,18 @@ where
     E: Debug,
 {
     /// Encountered an illegal character.
-    #[error("Illegal character: {0}.")]
+    #[displaydoc("Illegal character: {0}.")]
     IllegalCharacter(char),
 
     /// Placeholder hould not be parsed from the given string slice.
-    #[error("Invalid placeholder: {0:?}")]
+    #[displaydoc("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(E),
 
     /// The pattern contains an unclosed placeholder.
-    #[error("Unclosed placeholder")]
+    #[displaydoc("Unclosed placeholder")]
     UnclosedPlaceholder,
 
     /// The pattern contains an unclosed quoted literal.
-    #[error("Unclosed quoted literal")]
+    #[displaydoc("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
 }
