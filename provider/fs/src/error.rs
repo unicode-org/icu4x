@@ -9,17 +9,17 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
-    Io(#[source] std::io::Error, Option<PathBuf>),
+    Io(std::io::Error, Option<PathBuf>),
     #[displaydoc("{0}")]
     DataProvider(icu_provider::DataError),
     #[displaydoc("Deserializer error: {0}: {1:?}")]
     Deserializer(
-        #[source] Box<dyn std::error::Error + Send + Sync>,
+        Box<dyn std::error::Error + Send + Sync>,
         Option<PathBuf>,
     ),
     #[cfg(feature = "export")]
     #[displaydoc("Serializer error: {0}: {1:?}")]
-    Serializer(#[source] erased_serde::Error, Option<PathBuf>),
+    Serializer(erased_serde::Error, Option<PathBuf>),
     #[displaydoc("Unknown syntax {0:?}. Do you need to enable a feature?")]
     UnknownSyntax(SyntaxOption),
 }

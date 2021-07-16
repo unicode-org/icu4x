@@ -13,9 +13,9 @@ use crate::download;
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
-    Io(#[source] std::io::Error, Option<PathBuf>),
+    Io(std::io::Error, Option<PathBuf>),
     #[displaydoc("JSON error: {0}: {1:?}")]
-    Json(#[source] serde_json::error::Error, Option<PathBuf>),
+    Json(serde_json::error::Error, Option<PathBuf>),
     #[displaydoc("{0}: {1:?}")]
     Custom(String, Option<LanguageIdentifier>),
     #[displaydoc("{0}")]
