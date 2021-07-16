@@ -5,29 +5,55 @@
 use crate::fields::FieldSymbol;
 use crate::pattern;
 use crate::skeleton::SkeletonError;
+use displaydoc::Display;
 use icu_provider::prelude::DataError;
-use thiserror::Error;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
-    #[error(transparent)]
-    Pattern(#[from] pattern::Error),
+    #[displaydoc("{0}")]
+    Pattern(pattern::Error),
     /// An error originating from the [`Write`](std::fmt::Write) trait.
-    #[error(transparent)]
-    Format(#[from] std::fmt::Error),
+    #[displaydoc("{0}")]
+    Format(std::fmt::Error),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
-    #[error(transparent)]
-    DataProvider(#[from] DataError),
+    #[displaydoc("{0}")]
+    DataProvider(DataError),
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
-    #[error("Missing input field")]
+    #[displaydoc("Missing input field")]
     MissingInputField,
     /// An error originating from skeleton matching.
-    #[error(transparent)]
-    Skeleton(#[from] SkeletonError),
+    #[displaydoc("{0}")]
+    Skeleton(SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
-    #[error("Unsupported field: {0:?}")]
+    #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+}
+
+impl std::error::Error for DateTimeFormatError {}
+
+impl From<pattern::Error> for DateTimeFormatError {
+    fn from(e: pattern::Error) -> Self {
+        DateTimeFormatError::Pattern(e)
+    }
+}
+
+impl From<DataError> for DateTimeFormatError {
+    fn from(e: DataError) -> Self {
+        DateTimeFormatError::DataProvider(e)
+    }
+}
+
+impl From<std::fmt::Error> for DateTimeFormatError {
+    fn from(e: std::fmt::Error) -> Self {
+        DateTimeFormatError::Format(e)
+    }
+}
+
+impl From<SkeletonError> for DateTimeFormatError {
+    fn from(e: SkeletonError) -> Self {
+        DateTimeFormatError::Skeleton(e)
+    }
 }

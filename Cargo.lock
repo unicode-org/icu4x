@@ -447,6 +447,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "displaydoc"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3bf95dc3f046b9da4f2d51833c0d3547d8564ef6910f5c1ed130306a75b92886"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "dlmalloc"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -490,6 +501,7 @@ name = "fixed_decimal"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "getrandom 0.2.2",
  "icu_benchmark_macros",
  "rand",
@@ -497,7 +509,6 @@ dependencies = [
  "rand_pcg",
  "smallvec",
  "static_assertions",
- "thiserror",
  "writeable",
 ]
 
@@ -891,6 +902,7 @@ version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
+ "displaydoc",
  "icu",
  "icu_benchmark_macros",
  "icu_locid",
@@ -901,7 +913,6 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -911,6 +922,7 @@ name = "icu_decimal"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "fixed_decimal",
  "getrandom 0.2.2",
  "icu",
@@ -923,7 +935,6 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "serde",
- "thiserror",
  "writeable",
 ]
 
@@ -946,11 +957,11 @@ name = "icu_locid"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "icu",
  "icu_benchmark_macros",
  "serde",
  "serde_json",
- "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -969,8 +980,8 @@ dependencies = [
 name = "icu_pattern"
 version = "0.1.0"
 dependencies = [
+ "displaydoc",
  "iai",
- "thiserror",
  "writeable",
 ]
 
@@ -979,6 +990,7 @@ name = "icu_plurals"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "fixed_decimal",
  "icu",
  "icu_benchmark_macros",
@@ -988,13 +1000,13 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
- "thiserror",
 ]
 
 [[package]]
 name = "icu_provider"
 version = "0.2.0"
 dependencies = [
+ "displaydoc",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
@@ -1003,7 +1015,6 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "thiserror",
  "tinystr",
  "writeable",
  "yoke",
@@ -1030,6 +1041,7 @@ name = "icu_provider_cldr"
 version = "0.2.0"
 dependencies = [
  "dirs",
+ "displaydoc",
  "icu_datetime",
  "icu_decimal",
  "icu_locale_canonicalizer",
@@ -1050,7 +1062,6 @@ dependencies = [
  "serde_json",
  "smallstr",
  "smallvec",
- "thiserror",
  "tinystr",
  "unzip",
  "urlencoding",
@@ -1062,6 +1073,7 @@ version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
+ "displaydoc",
  "erased-serde",
  "icu_benchmark_macros",
  "icu_locid",
@@ -1072,7 +1084,6 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "thiserror",
 ]
 
 [[package]]
@@ -1088,11 +1099,11 @@ dependencies = [
 name = "icu_provider_ppucd"
 version = "0.1.0"
 dependencies = [
+ "displaydoc",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
  "icu_uniset",
- "thiserror",
  "tinystr",
 ]
 
@@ -1123,6 +1134,7 @@ name = "icu_testdata"
 version = "0.2.0"
 dependencies = [
  "cargo_metadata",
+ "displaydoc",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
@@ -1131,7 +1143,6 @@ dependencies = [
  "icu_provider_fs",
  "serde",
  "serde_json",
- "thiserror",
  "writeable",
 ]
 
@@ -1140,13 +1151,13 @@ name = "icu_uniset"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "icu",
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",
  "serde",
  "serde_json",
- "thiserror",
  "tinystr",
 ]
 

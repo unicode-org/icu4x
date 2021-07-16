@@ -2,26 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use std::{fmt::Debug, str::FromStr};
-use thiserror::Error;
 
 /// An error returned when interpolating a pattern.
 ///
 /// # Type parameters
 ///
 /// - `K`: A key for the replacement provider.
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum InterpolatorError<K>
 where
     K: Debug + FromStr + PartialEq,
     K::Err: Debug + PartialEq,
 {
-    #[error("Invalid placeholder: {0:?}")]
+    #[displaydoc("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(K::Err),
-    #[error("Missing placeholder: {0:?}")]
+    #[displaydoc("Missing placeholder: {0:?}")]
     MissingPlaceholder(K),
-    #[error("Unclosed placeholder")]
+    #[displaydoc("Unclosed placeholder")]
     UnclosedPlaceholder,
-    #[error("Unclosed quoted literal")]
+    #[displaydoc("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
+}
+
+impl<K> std::error::Error for InterpolatorError<K>
+where
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
+{
 }

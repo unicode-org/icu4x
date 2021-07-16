@@ -5,20 +5,22 @@
 mod length;
 pub(crate) mod symbols;
 
+use displaydoc::Display;
 pub use length::{FieldLength, LengthError};
 pub use symbols::*;
-use thiserror::Error;
 
 use std::{
     cmp::{Ord, PartialOrd},
     convert::{TryFrom, TryInto},
 };
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
-    #[error("Field {0:?} is not a valid length")]
+    #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),
 }
+
+impl std::error::Error for Error {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(

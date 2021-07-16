@@ -23,7 +23,7 @@ include = [
 all-features = true
 
 [dependencies]
-thiserror = "1"
+displaydoc = { version = "0.2.3", default-features = false }
 writeable = { version = "0.2", path = "../writeable" }
 
 [dev-dependencies]

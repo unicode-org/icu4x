@@ -3,24 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
 /// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum Error {
-    #[error("{0:?} invalid field length in pattern")]
+    #[displaydoc("{0:?} invalid field length in pattern")]
     FieldLengthInvalid(fields::FieldSymbol),
-    #[error("unknown substitution {0} in pattern")]
+    #[displaydoc("unknown substitution {0} in pattern")]
     UnknownSubstitution(char),
-    #[error("unclosed literal in pattern")]
+    #[displaydoc("unclosed literal in pattern")]
     UnclosedLiteral,
-    #[error("unclosed placeholder in pattern")]
+    #[displaydoc("unclosed placeholder in pattern")]
     UnclosedPlaceholder,
 }
+
+impl std::error::Error for Error {}
 
 impl From<fields::Error> for Error {
     fn from(input: fields::Error) -> Self {
