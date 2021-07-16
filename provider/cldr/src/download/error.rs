@@ -4,7 +4,7 @@
 
 use std::io;
 use std::path::{Path, PathBuf};
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {

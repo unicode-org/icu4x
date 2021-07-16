@@ -4,7 +4,7 @@
 
 use crate::rules::parser::ParserError;
 use icu_provider::prelude::DataError;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///

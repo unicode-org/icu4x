@@ -7,7 +7,7 @@ pub(crate) mod symbols;
 
 pub use length::{FieldLength, LengthError};
 pub use symbols::*;
-use thiserror::Error;
+use displaydoc::Display;
 
 use std::{
     cmp::{Ord, PartialOrd},

@@ -4,7 +4,7 @@
 
 use crate::fields::FieldLength;
 use std::{cmp::Ordering, convert::TryFrom};
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum SymbolError {

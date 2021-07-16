@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::fmt::Debug;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// An error returned when parsing a pattern.
 ///

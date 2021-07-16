@@ -44,7 +44,7 @@ mod uint_iterator;
 
 pub use decimal::FixedDecimal;
 pub use signum::Signum;
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum Error {

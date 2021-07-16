@@ -4,7 +4,7 @@
 
 use icu_locid::LanguageIdentifier;
 use std::path::{Path, PathBuf};
-use thiserror::Error;
+use displaydoc::Display;
 
 #[cfg(feature = "download")]
 use crate::download;

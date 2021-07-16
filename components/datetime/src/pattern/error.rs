@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
 /// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other

@@ -10,7 +10,7 @@ use icu_provider::yoke::Yokeable;
 use serde::Deserialize;
 use std::path::Path;
 use std::rc::Rc;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Error, Debug)]

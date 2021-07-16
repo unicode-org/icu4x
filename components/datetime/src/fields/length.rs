@@ -6,7 +6,7 @@ use std::{
     cmp::{Ord, PartialOrd},
     convert::TryFrom,
 };
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum LengthError {

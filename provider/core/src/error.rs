@@ -4,7 +4,7 @@
 
 use crate::prelude::*;
 use std::any::TypeId;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// Error enumeration for DataProvider.
 #[non_exhaustive]

@@ -4,7 +4,7 @@
 
 //! Error types for decimal formatting.
 
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {

@@ -61,7 +61,7 @@ mod utils;
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
 use icu_provider::DataError;
-use thiserror::Error;
+use displaydoc::Display;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 

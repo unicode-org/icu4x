@@ -10,7 +10,7 @@ pub mod bincode;
 use crate::manifest::SyntaxOption;
 use std::io;
 use std::ops::Deref;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
 #[derive(Error, Debug)]

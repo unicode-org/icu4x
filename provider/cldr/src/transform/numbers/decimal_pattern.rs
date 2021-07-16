@@ -10,7 +10,7 @@ use icu_decimal::provider::AffixesV1;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::str::FromStr;
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq)]
 pub enum Error {

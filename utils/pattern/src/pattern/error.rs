@@ -4,7 +4,7 @@
 
 use crate::interpolator::InterpolatorError;
 use std::{fmt::Debug, str::FromStr};
-use thiserror::Error;
+use displaydoc::Display;
 
 /// An error returned from a pattern.
 ///

@@ -5,7 +5,7 @@
 use super::ast;
 use super::lexer::{Lexer, Token};
 use std::iter::Peekable;
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug, PartialEq, Eq)]
 pub enum ParserError {

@@ -5,7 +5,7 @@
 use cargo_metadata::{self, camino::Utf8PathBuf, MetadataCommand};
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Error, Debug)]
 pub enum Error {

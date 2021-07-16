@@ -6,7 +6,7 @@ use icu_locid::Locale;
 use std::convert::TryFrom;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
-use thiserror::Error;
+use displaydoc::Display;
 use tinystr::TinyStr8;
 
 #[derive(Error, Debug)]

@@ -6,7 +6,7 @@
 
 use smallvec::SmallVec;
 use std::convert::TryFrom;
-use thiserror::Error;
+use displaydoc::Display;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},

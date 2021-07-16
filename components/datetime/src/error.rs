@@ -6,7 +6,7 @@ use crate::fields::FieldSymbol;
 use crate::pattern;
 use crate::skeleton::SkeletonError;
 use icu_provider::prelude::DataError;
-use thiserror::Error;
+use displaydoc::Display;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
 #[derive(Error, Debug)]

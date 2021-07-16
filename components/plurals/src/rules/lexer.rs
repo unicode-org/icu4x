@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ast;
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Debug, PartialEq)]
 pub enum Token {
