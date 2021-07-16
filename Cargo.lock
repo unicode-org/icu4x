@@ -998,7 +998,6 @@ dependencies = [
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
- "icu_plurals",
  "icu_provider_macros",
  "serde",
  "serde_json",

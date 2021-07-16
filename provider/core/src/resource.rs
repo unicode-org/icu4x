@@ -17,15 +17,13 @@ use tinystr::{TinyStr16, TinyStr4};
 #[non_exhaustive]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Debug)]
 pub enum ResourceCategory {
-    Aliases,
-    DatePatterns,
-    DateSymbols,
+    Core,
+    DateTime,
     Decimal,
-    Icu4x,
-    LikelySubtags,
+    LocaleCanonicalizer,
     Plurals,
-    TimeZones,
-    Uniset,
+    TimeZone,
+    UnicodeSet,
     PrivateUse(TinyStr4),
 }
 
@@ -33,15 +31,13 @@ impl ResourceCategory {
     /// Gets or builds a string form of this [`ResourceCategory`].
     pub fn as_str(&self) -> Cow<'static, str> {
         match self {
-            Self::Aliases => Cow::Borrowed("aliases"),
-            Self::DatePatterns => Cow::Borrowed("date_patterns"),
-            Self::DateSymbols => Cow::Borrowed("date_symbols"),
+            Self::Core => Cow::Borrowed("core"),
+            Self::DateTime => Cow::Borrowed("datetime"),
             Self::Decimal => Cow::Borrowed("decimal"),
-            Self::Icu4x => Cow::Borrowed("icu4x"),
-            Self::LikelySubtags => Cow::Borrowed("likelysubtags"),
+            Self::LocaleCanonicalizer => Cow::Borrowed("locale_canonicalizer"),
             Self::Plurals => Cow::Borrowed("plurals"),
-            Self::TimeZones => Cow::Borrowed("time_zones"),
-            Self::Uniset => Cow::Borrowed("uniset"),
+            Self::TimeZone => Cow::Borrowed("time_zone"),
+            Self::UnicodeSet => Cow::Borrowed("uniset"),
             Self::PrivateUse(id) => {
                 let mut result = String::from("x-");
                 result.push_str(id.as_str());
@@ -84,53 +80,27 @@ pub struct ResourceKey {
 ///
 /// # Examples
 ///
+/// Create a private-use ResourceKey:
+///
 /// ```
 /// use icu_provider::prelude::*;
 ///
-/// // Create a private-use ResourceKey
 /// const MY_PRIVATE_USE_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 /// assert_eq!("x-foo/bar@1", format!("{}", MY_PRIVATE_USE_KEY));
 /// ```
+///
+/// Create a ResourceKey for a specific [`ResourceCategory`] (for ICU4X library code only):
+///
+/// ```
+/// use icu_provider::prelude::*;
+///
+/// const MY_PRIVATE_USE_KEY: ResourceKey = icu_provider::resource_key!(Plurals, "ordinal", 1);
+/// assert_eq!("plurals/ordinal@1", format!("{}", MY_PRIVATE_USE_KEY));
+/// ```
 #[macro_export]
 macro_rules! resource_key {
-    (aliases, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Aliases, $sub_category, $version)
-    };
-    (date_patterns, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!(
-            $crate::ResourceCategory::DatePatterns,
-            $sub_category,
-            $version
-        )
-    };
-    (date_symbols, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!(
-            $crate::ResourceCategory::DateSymbols,
-            $sub_category,
-            $version
-        )
-    };
-    (icu4x, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Icu4x, $sub_category, $version)
-    };
-    (likelysubtags, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!(
-            $crate::ResourceCategory::LikelySubtags,
-            $sub_category,
-            $version
-        )
-    };
-    (plurals, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Plurals, $sub_category, $version)
-    };
-    (time_zones, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::TimeZones, $sub_category, $version)
-    };
-    (uniset, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Uniset, $sub_category, $version)
-    };
-    (decimal, $sub_category:literal, $version:tt) => {
-        $crate::resource_key!($crate::ResourceCategory::Decimal, $sub_category, $version)
+    ($category:ident, $sub_category:literal, $version:tt) => {
+        $crate::resource_key!($crate::ResourceCategory::$category, $sub_category, $version)
     };
     (x, $pu:literal, $sub_category:literal, $version:tt) => {
         $crate::resource_key!(
@@ -200,11 +170,11 @@ impl ResourceKey {
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// let resc_key = icu_plurals::provider::key::CARDINAL_V1;
+    /// let resc_key = icu_provider::hello_world::key::HELLO_WORLD_V1;
     /// let components = resc_key.get_components();
     ///
     /// assert_eq!(
-    ///     ["plurals", "cardinal@1"],
+    ///     ["core", "helloworld@1"],
     ///     components.iter().collect::<Vec<&str>>()[..]
     /// );
     /// ```
@@ -445,8 +415,8 @@ mod tests {
     fn get_key_test_cases() -> [KeyTestCase; 4] {
         [
             KeyTestCase {
-                resc_key: resource_key!(plurals, "cardinal", 1),
-                expected: "plurals/cardinal@1",
+                resc_key: resource_key!(Core, "cardinal", 1),
+                expected: "core/cardinal@1",
             },
             KeyTestCase {
                 resc_key: ResourceKey {
@@ -457,12 +427,12 @@ mod tests {
                 expected: "x-priv/cardinal@1",
             },
             KeyTestCase {
-                resc_key: resource_key!(plurals, "maxlengthsubcatg", 1),
-                expected: "plurals/maxlengthsubcatg@1",
+                resc_key: resource_key!(Core, "maxlengthsubcatg", 1),
+                expected: "core/maxlengthsubcatg@1",
             },
             KeyTestCase {
-                resc_key: resource_key!(plurals, "cardinal", 65535),
-                expected: "plurals/cardinal@65535",
+                resc_key: resource_key!(Core, "cardinal", 65535),
+                expected: "core/cardinal@65535",
             },
         ]
     }
