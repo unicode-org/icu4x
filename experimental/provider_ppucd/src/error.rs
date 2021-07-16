@@ -7,11 +7,17 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc(transparent)]
-    PpucdParse(#[from] PpucdParseError),
+    PpucdParse(PpucdParseError),
 }
 
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[displaydoc("Could not parse PPUCD file: {src}")]
 pub struct PpucdParseError {
     pub src: &'static str,
+}
+
+impl From<PpucdParseError> for Error {
+    fn from(e: PpucdParseError) -> Self {
+        Error::PpucdParse(e)
+    }
 }

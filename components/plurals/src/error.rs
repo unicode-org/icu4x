@@ -11,8 +11,20 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum PluralRulesError {
     #[displaydoc("Parser error: {0}")]
-    Parser(#[from] ParserError),
+    Parser(ParserError),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)
     #[displaydoc("Data provider error: {0}")]
-    DataProvider(#[from] DataError),
+    DataProvider(DataError),
+}
+
+impl From<ParserError> for PluralRulesError {
+    fn from(e: ParserError) -> Self {
+        PluralRulesError::Parser(e)
+    }
+}
+
+impl From<DataError> for PluralRulesError {
+    fn from(e: DataError) -> Self {
+        PluralRulesError::DataProvider(e)
+    }
 }

@@ -13,21 +13,45 @@ use displaydoc::Display;
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
     #[displaydoc(transparent)]
-    Pattern(#[from] pattern::Error),
+    Pattern(pattern::Error),
     /// An error originating from the [`Write`](std::fmt::Write) trait.
     #[displaydoc(transparent)]
-    Format(#[from] std::fmt::Error),
+    Format(std::fmt::Error),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
     #[displaydoc(transparent)]
-    DataProvider(#[from] DataError),
+    DataProvider(DataError),
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     #[displaydoc("Missing input field")]
     MissingInputField,
     /// An error originating from skeleton matching.
     #[displaydoc(transparent)]
-    Skeleton(#[from] SkeletonError),
+    Skeleton(SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+}
+
+impl From<pattern::Error> for DateTimeFormatError {
+    fn from(e: pattern::Error) -> Self {
+        DateTimeFormatError::Pattern(e)
+    }
+}
+
+impl From<DataError> for DateTimeFormatError {
+    fn from(e: DataError) -> Self {
+        DateTimeFormatError::DataProvider(e)
+    }
+}
+
+impl From<std::fmt::Error> for DateTimeFormatError {
+    fn from(e: std::fmt::Error) -> Self {
+        DateTimeFormatError::Format(e)
+    }
+}
+
+impl From<SkeletonError> for DateTimeFormatError {
+    fn from(e: SkeletonError) -> Self {
+        DateTimeFormatError::Skeleton(e)
+    }
 }

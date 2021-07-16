@@ -12,13 +12,19 @@ use tinystr::TinyStr8;
 #[derive(Display, Debug)]
 pub enum DateTimeError {
     #[displaydoc(transparent)]
-    Parse(#[from] std::num::ParseIntError),
+    Parse(std::num::ParseIntError),
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
     #[displaydoc("{field} must be between {min}-0")]
     Underflow { field: &'static str, min: isize },
     #[displaydoc("Failed to parse time-zone offset")]
     InvalidTimeZoneOffset,
+}
+
+impl From<std::num::ParseIntError> for Error {
+    fn from(e: std::num::ParseIntError) -> Self {
+        Error::Parse(e)
+    }
 }
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses

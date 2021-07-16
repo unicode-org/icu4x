@@ -53,11 +53,23 @@ pub enum Error {
     /// An error occured during serialization or deserialization.
     #[cfg(feature = "erased-serde")]
     #[displaydoc("Serde error: {0}")]
-    Serde(#[from] erased_serde::Error),
+    Serde(erased_serde::Error),
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
     #[displaydoc("Failed to load resource: {0}")]
-    Resource(#[from] Box<dyn std::error::Error + Send + Sync>),
+    Resource(Box<dyn std::error::Error + Send + Sync>),
+}
+
+impl From<erased_serde::Error> for Error {
+    fn from(e: erased_serde::Error) -> Self {
+        Error::Serde(e)
+    }
+}
+
+impl From<Box<dyn std::error::Error + Send + Sync>> for Error {
+    fn from(e: Box<dyn std::error::Error + Send + Sync>) -> Self {
+        Error::Resource(e)
+    }
 }
 
 impl Error {

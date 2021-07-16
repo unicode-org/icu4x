@@ -11,11 +11,17 @@ pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(#[source] io::Error, Option<PathBuf>),
     #[displaydoc(transparent)]
-    Reqwest(#[from] reqwest::Error),
+    Reqwest(reqwest::Error),
     #[displaydoc("HTTP request failed: {0}: {1}")]
     HttpStatus(reqwest::StatusCode, String),
     #[displaydoc("dirs::cache_dir() returned None")]
     NoCacheDir,
+}
+
+impl From<reqwest::Error> for Error {
+    fn from(e: reqwest::Error) -> Self {
+        Error::Reqwest(e)
+    }
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.

@@ -235,7 +235,13 @@ pub enum SkeletonError {
     #[displaydoc("unimplemented field {0} in skeleton")]
     UnimplementedField(char),
     #[displaydoc(transparent)]
-    Fields(#[from] fields::Error),
+    Fields(fields::Error),
+}
+
+impl From<fields::Error> for SkeletonError {
+    fn from(e: fields::Error) -> Self {
+        SkeletonError::Fields(e)
+    }
 }
 
 impl From<fields::LengthError> for SkeletonError {

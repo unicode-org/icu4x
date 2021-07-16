@@ -11,7 +11,7 @@ pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(#[source] std::io::Error, Option<PathBuf>),
     #[displaydoc(transparent)]
-    DataProvider(#[from] icu_provider::DataError),
+    DataProvider(icu_provider::DataError),
     #[displaydoc("Deserializer error: {0}: {1:?}")]
     Deserializer(
         #[source] Box<dyn std::error::Error + Send + Sync>,
@@ -22,6 +22,12 @@ pub enum Error {
     Serializer(#[source] erased_serde::Error, Option<PathBuf>),
     #[displaydoc("Unknown syntax {0:?}. Do you need to enable a feature?")]
     UnknownSyntax(SyntaxOption),
+}
+
+impl From<icu_provider::DataError> for Error {
+    fn from(e: icu_provider::DataError) -> Self {
+        Error::DataProvider(e)
+    }
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.

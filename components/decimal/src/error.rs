@@ -9,5 +9,11 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("error loading data: {0}")]
-    Data(#[from] icu_provider::DataError),
+    Data(icu_provider::DataError),
+}
+
+impl From<icu_provider::DataError> for Error {
+    fn from(e: icu_provider::DataError) -> Self {
+        Error::Data(e)
+    }
 }

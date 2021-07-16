@@ -73,7 +73,13 @@ pub enum UnicodeSetError {
     #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
     #[displaydoc(transparent)]
-    PropDataLoad(#[from] DataError),
+    PropDataLoad(DataError),
+}
+
+impl From<DataError> for UnicodeSetError {
+    fn from(e: DataError) -> Self {
+        UnicodeSetError::PropDataLoad(e)
+    }
 }
 
 #[derive(PartialEq)]

@@ -16,11 +16,22 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc(transparent)]
-    Io(#[from] io::Error),
+    Io(io::Error),
     #[displaydoc(transparent)]
-    Serializer(#[from] erased_serde::Error),
+    Serializer(erased_serde::Error),
 }
 
+impl From<io::Error> for Error {
+    fn from(e: io::Error) -> Self {
+        Error::Io(e)
+    }
+}
+
+impl From<erased_serde::Error> for Error {
+    fn from(e: erased_serde::Error) -> Self {
+        Error::Serializer(e)
+    }
+}
 /// A simple serializer trait that works on whole objects.
 pub trait AbstractSerializer: Deref<Target = SyntaxOption> {
     /// Serializes an object to a sink.

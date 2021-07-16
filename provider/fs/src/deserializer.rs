@@ -16,15 +16,33 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc(transparent)]
-    Json(#[from] serde_json::error::Error),
+    Json(serde_json::error::Error),
     #[cfg(feature = "bincode")]
     #[displaydoc(transparent)]
-    Bincode(#[from] bincode::Error),
+    Bincode(bincode::Error),
     #[displaydoc(transparent)]
-    DataProvider(#[from] DataError),
+    DataProvider(DataError),
     #[allow(dead_code)]
     #[displaydoc("Unknown syntax: {0:?}")]
     UnknownSyntax(SyntaxOption),
+}
+
+impl From<serde_json::error::Error> for Error {
+    fn from(e: serde_json::error::Error) -> Self {
+        Error::Json(e)
+    }
+}
+
+impl From<bincode::Error> for Error {
+    fn from(e: bincode::Error) -> Self {
+        Error::Bincode(e)
+    }
+}
+
+impl From<DataError> for Error {
+    fn from(e: DataError) -> Self {
+        Error::DataProvider(e)
+    }
 }
 
 impl Error {
