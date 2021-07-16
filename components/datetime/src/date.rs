@@ -24,9 +24,9 @@ pub enum DateTimeError {
 impl std::error::Error for DateTimeError {}
 
 
-impl From<std::num::ParseIntError> for Error {
+impl From<std::num::ParseIntError> for DateTimeError {
     fn from(e: std::num::ParseIntError) -> Self {
-        Error::Parse(e)
+        DateTimeError::Parse(e)
     }
 }
 
