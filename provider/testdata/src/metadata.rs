@@ -13,7 +13,7 @@ pub enum Error {
     Cargo(cargo_metadata::Error),
     #[displaydoc("Serde Error: {0}")]
     SerdeJson(serde_json::Error),
-    #[displaydoc("{0}: package not found", env!("CARGO_PKG_NAME"))]
+    #[displaydoc("Package not found")]
     PackageNotFound,
     #[displaydoc("package.metadata.icu4x_testdata not found")]
     MetadataNotFound,
