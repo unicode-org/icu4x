@@ -46,7 +46,7 @@ pub struct MissingSourceError {
     pub src: &'static str,
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for MissingSourceError {}
 
 
 /// To help with debugging, I/O errors should be paired with a file path.

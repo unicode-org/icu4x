@@ -19,7 +19,7 @@ pub struct PpucdParseError {
     pub src: &'static str,
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for PpucdParseError {}
 
 
 impl From<PpucdParseError> for Error {
