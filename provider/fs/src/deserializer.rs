@@ -35,6 +35,7 @@ impl From<serde_json::error::Error> for Error {
     }
 }
 
+#[cfg(feature = "bincode")]
 impl From<bincode::Error> for Error {
     fn from(e: bincode::Error) -> Self {
         Error::Bincode(e)
