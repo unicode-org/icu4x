@@ -6,7 +6,7 @@ use displaydoc::Display;
 
 #[derive(Display, Debug)]
 pub enum Error {
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     PpucdParse(PpucdParseError),
 }
 

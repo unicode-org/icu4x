@@ -10,7 +10,7 @@ use displaydoc::Display;
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(#[source] io::Error, Option<PathBuf>),
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Reqwest(reqwest::Error),
     #[displaydoc("HTTP request failed: {0}: {1}")]
     HttpStatus(reqwest::StatusCode, String),

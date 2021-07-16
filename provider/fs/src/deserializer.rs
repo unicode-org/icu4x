@@ -15,12 +15,12 @@ use displaydoc::Display;
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Display, Debug)]
 pub enum Error {
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Json(serde_json::error::Error),
     #[cfg(feature = "bincode")]
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Bincode(bincode::Error),
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     DataProvider(DataError),
     #[allow(dead_code)]
     #[displaydoc("Unknown syntax: {0:?}")]

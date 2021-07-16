@@ -10,7 +10,7 @@ use displaydoc::Display;
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(#[source] std::io::Error, Option<PathBuf>),
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     DataProvider(icu_provider::DataError),
     #[displaydoc("Deserializer error: {0}: {1:?}")]
     Deserializer(

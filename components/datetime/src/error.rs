@@ -12,20 +12,20 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Pattern(pattern::Error),
     /// An error originating from the [`Write`](std::fmt::Write) trait.
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Format(std::fmt::Error),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     DataProvider(DataError),
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     #[displaydoc("Missing input field")]
     MissingInputField,
     /// An error originating from skeleton matching.
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Skeleton(SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]

@@ -234,7 +234,7 @@ pub enum SkeletonError {
     SymbolUnimplemented(char),
     #[displaydoc("unimplemented field {0} in skeleton")]
     UnimplementedField(char),
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Fields(fields::Error),
 }
 

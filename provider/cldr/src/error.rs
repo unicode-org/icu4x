@@ -18,10 +18,10 @@ pub enum Error {
     Json(#[source] serde_json::error::Error, Option<PathBuf>),
     #[displaydoc("{0}: {1:?}")]
     Custom(String, Option<LanguageIdentifier>),
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     MissingSource(MissingSourceError),
     #[cfg(feature = "download")]
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Download(download::Error),
     #[displaydoc("poisoned lock on CLDR provider")]
     Poison,

@@ -11,7 +11,7 @@ use tinystr::TinyStr8;
 
 #[derive(Display, Debug)]
 pub enum DateTimeError {
-    #[displaydoc(transparent)]
+    #[displaydoc("{0}")]
     Parse(std::num::ParseIntError),
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
