@@ -8,7 +8,7 @@ use std::{
 };
 use displaydoc::Display;
 
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum LengthError {
     #[displaydoc("Invalid length")]
     InvalidLength,

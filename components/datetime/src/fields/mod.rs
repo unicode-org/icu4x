@@ -14,7 +14,7 @@ use std::{
     convert::{TryFrom, TryInto},
 };
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("Field {0:?} is not a valid length")]
     InvalidLength(FieldSymbol),

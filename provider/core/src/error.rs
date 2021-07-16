@@ -8,7 +8,7 @@ use displaydoc::Display;
 
 /// Error enumeration for DataProvider.
 #[non_exhaustive]
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     /// The data provider does not support the resource key.
     #[displaydoc("Unsupported resource key: {0}")]

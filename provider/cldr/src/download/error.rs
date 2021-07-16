@@ -6,7 +6,7 @@ use std::io;
 use std::path::{Path, PathBuf};
 use displaydoc::Display;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(#[source] io::Error, Option<PathBuf>),

@@ -10,7 +10,7 @@ use displaydoc::Display;
 use crate::download;
 
 #[non_exhaustive]
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("{0}: {1:?}")]
     Io(#[source] std::io::Error, Option<PathBuf>),
@@ -37,7 +37,7 @@ impl From<download::Error> for Error {
     }
 }
 
-#[derive(Error, Debug, PartialEq, Copy, Clone)]
+#[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[displaydoc("Missing CLDR data source: {src}")]
 pub struct MissingSourceError {
     pub src: &'static str,

@@ -13,7 +13,7 @@ use std::rc::Rc;
 use displaydoc::Display;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc(transparent)]
     Json(#[from] serde_json::error::Error),

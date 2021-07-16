@@ -12,7 +12,7 @@ use std::borrow::Cow;
 use std::str::FromStr;
 use displaydoc::Display;
 
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum Error {
     #[displaydoc("No body in decimal subpattern")]
     NoBodyInSubpattern,

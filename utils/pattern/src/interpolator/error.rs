@@ -10,7 +10,7 @@ use displaydoc::Display;
 /// # Type parameters
 ///
 /// - `K`: A key for the replacement provider.
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum InterpolatorError<K>
 where
     K: Debug + FromStr + PartialEq,

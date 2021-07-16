@@ -7,7 +7,7 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use displaydoc::Display;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("Cargo Error: {0}")]
     Cargo(#[from] cargo_metadata::Error),

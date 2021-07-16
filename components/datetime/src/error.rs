@@ -9,7 +9,7 @@ use icu_provider::prelude::DataError;
 use displaydoc::Display;
 
 /// A list of possible error outcomes for the [`DateTimeFormat`](crate::DateTimeFormat) struct.
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum DateTimeFormatError {
     /// An error originating from parsing a pattern.
     #[displaydoc(transparent)]

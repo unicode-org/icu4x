@@ -6,7 +6,7 @@ use crate::fields::FieldLength;
 use std::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum SymbolError {
     /// Unknown field symbol.
     #[displaydoc("Unknown field symbol: {0}")]

@@ -220,7 +220,7 @@ impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum SkeletonError {
     #[displaydoc("field too long in skeleton")]
     InvalidFieldLength,

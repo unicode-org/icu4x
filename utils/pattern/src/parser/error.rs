@@ -22,7 +22,7 @@ use displaydoc::Display;
 /// - `E`: An error of the replacement type which implements [`FromStr`].
 ///
 /// [`FromStr`]: std::str::FromStr
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum ParserError<E>
 where
     E: Debug,

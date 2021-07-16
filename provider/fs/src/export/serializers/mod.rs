@@ -13,7 +13,7 @@ use std::ops::Deref;
 use displaydoc::Display;
 
 /// An Error type specifically for the [`Serializer`](serde::Serializer) that doesn't carry filenames
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc(transparent)]
     Io(#[from] io::Error),

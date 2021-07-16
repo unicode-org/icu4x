@@ -7,7 +7,7 @@ use super::lexer::{Lexer, Token};
 use std::iter::Peekable;
 use displaydoc::Display;
 
-#[derive(Error, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError {
     #[displaydoc("expected 'AND' condition")]
     ExpectedAndCondition,

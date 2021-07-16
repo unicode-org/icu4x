@@ -66,7 +66,7 @@ pub use uniset::UnicodeSet;
 pub use utils::*;
 
 /// Custom Errors for [`UnicodeSet`].
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum UnicodeSetError {
     #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),

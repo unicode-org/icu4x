@@ -4,13 +4,13 @@
 
 use displaydoc::Display;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc(transparent)]
     PpucdParse(#[from] PpucdParseError),
 }
 
-#[derive(Error, Debug, PartialEq, Copy, Clone)]
+#[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[displaydoc("Could not parse PPUCD file: {src}")]
 pub struct PpucdParseError {
     pub src: &'static str,

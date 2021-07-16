@@ -46,7 +46,7 @@ pub use decimal::FixedDecimal;
 pub use signum::Signum;
 use displaydoc::Display;
 
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum Error {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
     /// magnitude of the most significant digit is std::i16::MAX, and the lowest magnitude of the

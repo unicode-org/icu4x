@@ -9,7 +9,7 @@ use std::str::FromStr;
 use displaydoc::Display;
 use tinystr::TinyStr8;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum DateTimeError {
     #[displaydoc(transparent)]
     Parse(#[from] std::num::ParseIntError),

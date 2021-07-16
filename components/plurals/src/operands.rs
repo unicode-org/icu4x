@@ -86,7 +86,7 @@ impl PluralOperands {
     }
 }
 
-#[derive(Error, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum OperandsError {
     /// Input to the Operands parsing was empty.
     #[displaydoc("Input to the Operands parsing was empty")]

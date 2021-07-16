@@ -8,7 +8,7 @@ use displaydoc::Display;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum PluralRulesError {
     #[displaydoc("Parser error: {0}")]
     Parser(#[from] ParserError),

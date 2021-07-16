@@ -10,7 +10,7 @@ use displaydoc::Display;
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum Error {
     #[displaydoc("{0:?} invalid field length in pattern")]
     FieldLengthInvalid(fields::FieldSymbol),

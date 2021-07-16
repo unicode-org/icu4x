@@ -6,7 +6,7 @@
 
 use displaydoc::Display;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("error loading data: {0}")]
     Data(#[from] icu_provider::DataError),
