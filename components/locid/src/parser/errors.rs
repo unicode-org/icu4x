@@ -54,3 +54,6 @@ pub enum ParserError {
     #[displaydoc("Invalid extension")]
     InvalidExtension,
 }
+
+impl std::error::Error for ParserError {}
+

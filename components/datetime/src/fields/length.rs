@@ -14,6 +14,9 @@ pub enum LengthError {
     InvalidLength,
 }
 
+impl std::error::Error for LengthError {}
+
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "provider_serde",

@@ -73,3 +73,6 @@ pub enum Error {
     #[displaydoc("Failed to parse the input string")]
     Syntax,
 }
+
+impl std::error::Error for Error {}
+

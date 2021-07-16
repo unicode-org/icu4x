@@ -21,6 +21,9 @@ pub enum Error {
     Serializer(erased_serde::Error),
 }
 
+impl std::error::Error for Error {}
+
+
 impl From<io::Error> for Error {
     fn from(e: io::Error) -> Self {
         Error::Io(e)

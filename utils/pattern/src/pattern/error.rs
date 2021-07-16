@@ -23,6 +23,9 @@ where
     Format(std::fmt::Error),
 }
 
+impl std::error::Error for PatternError {}
+
+
 impl<K> From<InterpolatorError<K>> for PatternError<K>
 where
     K: Debug + FromStr + PartialEq,

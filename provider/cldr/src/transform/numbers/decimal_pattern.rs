@@ -20,6 +20,9 @@ pub enum Error {
     UnknownPatternBody(String),
 }
 
+impl std::error::Error for Error {}
+
+
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
 pub struct DecimalSubPattern {

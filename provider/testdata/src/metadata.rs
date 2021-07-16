@@ -19,6 +19,9 @@ pub enum Error {
     MetadataNotFound,
 }
 
+impl std::error::Error for Error {}
+
+
 impl From<cargo_metadata::Error> for Error {
     fn from(e: cargo_metadata::Error) -> Self {
         Error::Cargo(e)

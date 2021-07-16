@@ -96,6 +96,9 @@ pub enum OperandsError {
     Invalid,
 }
 
+impl std::error::Error for OperandsError {}
+
+
 impl From<ParseIntError> for OperandsError {
     fn from(_: ParseIntError) -> Self {
         Self::Invalid

@@ -60,6 +60,9 @@ pub enum Error {
     Resource(Box<dyn std::error::Error + Send + Sync>),
 }
 
+impl std::error::Error for Error {}
+
+
 impl From<erased_serde::Error> for Error {
     fn from(e: erased_serde::Error) -> Self {
         Error::Serde(e)

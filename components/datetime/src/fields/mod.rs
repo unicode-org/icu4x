@@ -20,6 +20,9 @@ pub enum Error {
     InvalidLength(FieldSymbol),
 }
 
+impl std::error::Error for Error {}
+
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "provider_serde",

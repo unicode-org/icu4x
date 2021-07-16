@@ -16,6 +16,9 @@ pub enum SymbolError {
     Invalid(char),
 }
 
+impl std::error::Error for SymbolError {}
+
+
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(
     feature = "provider_serde",

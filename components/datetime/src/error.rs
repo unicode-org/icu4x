@@ -32,6 +32,9 @@ pub enum DateTimeFormatError {
     UnsupportedField(FieldSymbol),
 }
 
+impl std::error::Error for DateTimeFormatError {}
+
+
 impl From<pattern::Error> for DateTimeFormatError {
     fn from(e: pattern::Error) -> Self {
         DateTimeFormatError::Pattern(e)

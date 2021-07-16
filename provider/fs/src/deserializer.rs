@@ -27,6 +27,9 @@ pub enum Error {
     UnknownSyntax(SyntaxOption),
 }
 
+impl std::error::Error for Error {}
+
+
 impl From<serde_json::error::Error> for Error {
     fn from(e: serde_json::error::Error) -> Self {
         Error::Json(e)

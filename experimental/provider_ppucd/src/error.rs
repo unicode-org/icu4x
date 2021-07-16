@@ -10,11 +10,17 @@ pub enum Error {
     PpucdParse(PpucdParseError),
 }
 
+impl std::error::Error for Error {}
+
+
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[displaydoc("Could not parse PPUCD file: {src}")]
 pub struct PpucdParseError {
     pub src: &'static str,
 }
+
+impl std::error::Error for Error {}
+
 
 impl From<PpucdParseError> for Error {
     fn from(e: PpucdParseError) -> Self {

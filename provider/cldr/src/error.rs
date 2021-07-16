@@ -27,6 +27,9 @@ pub enum Error {
     Poison,
 }
 
+impl std::error::Error for Error {}
+
+
 #[cfg(feature = "download")]
 impl From<download::Error> for Error {
     fn from(err: download::Error) -> Error {
@@ -42,6 +45,9 @@ impl From<download::Error> for Error {
 pub struct MissingSourceError {
     pub src: &'static str,
 }
+
+impl std::error::Error for Error {}
+
 
 /// To help with debugging, I/O errors should be paired with a file path.
 /// If a path is unavailable, create the error directly: [`Error::Io`]`(err, `[`None`]`)`

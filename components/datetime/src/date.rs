@@ -21,6 +21,9 @@ pub enum DateTimeError {
     InvalidTimeZoneOffset,
 }
 
+impl std::error::Error for DateTimeError {}
+
+
 impl From<std::num::ParseIntError> for Error {
     fn from(e: std::num::ParseIntError) -> Self {
         Error::Parse(e)

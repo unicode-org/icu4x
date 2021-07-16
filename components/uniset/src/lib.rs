@@ -76,6 +76,9 @@ pub enum UnicodeSetError {
     PropDataLoad(DataError),
 }
 
+impl std::error::Error for UnicodeSetError {}
+
+
 impl From<DataError> for UnicodeSetError {
     fn from(e: DataError) -> Self {
         UnicodeSetError::PropDataLoad(e)

@@ -25,3 +25,6 @@ where
     #[displaydoc("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
 }
+
+impl std::error::Error for InterpolatorError {}
+
