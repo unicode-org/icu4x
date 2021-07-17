@@ -4,10 +4,13 @@
 
 use crate::Yokeable;
 use stable_deref_trait::StableDeref;
-use std::marker::PhantomData;
-use std::ops::Deref;
-use std::rc::Rc;
-use std::sync::Arc;
+use core::marker::PhantomData;
+use core::ops::Deref;
+
+#[cfg(feature = "alloc")]
+use alloc::rc::Rc;
+#[cfg(feature = "alloc")]
+use alloc::sync::Arc;
 
 /// A Cow-like borrowed object "yoked" to its backing data.
 ///
