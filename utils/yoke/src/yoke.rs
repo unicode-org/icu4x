@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::Yokeable;
-use stable_deref_trait::StableDeref;
 use core::marker::PhantomData;
 use core::ops::Deref;
+use stable_deref_trait::StableDeref;
 
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;

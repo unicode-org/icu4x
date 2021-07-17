@@ -7,9 +7,9 @@ use crate::Yokeable;
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
 #[cfg(feature = "alloc")]
-use alloc::rc::Rc;
-#[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+#[cfg(feature = "alloc")]
+use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::string::String;
 

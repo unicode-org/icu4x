@@ -55,8 +55,8 @@ extern crate alloc;
 
 mod ops;
 
-use core::fmt;
 use alloc::string::String;
+use core::fmt;
 
 /// A hint to help consumers of Writeable pre-allocate bytes before they call write_to.
 ///
