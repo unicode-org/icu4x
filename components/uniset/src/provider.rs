@@ -103,8 +103,8 @@ pub mod key {
         // Enumerated properties
         //
 
-        // Note: The ResourceKey subcategory strings are determined from the short
-        // alias name of the enumerated property and the short alias name of the
+        // Note: The ResourceKey subcategory strings are determined from the
+        // short name of the enumerated property and the short name of the
         // property value.
 
         (GENERAL_CATEGORY_CONTROL_V1, "gc=Cc"),

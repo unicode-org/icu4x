@@ -19,28 +19,22 @@ pub enum EnumeratedProperty {
 /// See UCharCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 pub enum GeneralCategory {
-    // Other C = Cn | Cc | Cf | Co | Cs
     Control = 15,
     Format = 16,
     Unassigned = 0,
     PrivateUse = 17,
     Surrogate = 18,
-    // Letter L = Lu | Ll | Lt | Lm | Lo
-    // CasedLetter LC = Lu | Ll | Lt
     LowercaseLetter = 2,
     ModifierLetter = 4,
     OtherLetter = 5,
     TitlecaseLetter = 3,
     UppercaseLetter = 1,
-    // CombiningMark M = Mn | Me | Mc
     SpacingMark = 8,
     EnclosingMark = 7,
     NonspacingMark = 6,
-    // Number N = Nd | Nl | No
     Digit = 9,
     LetterNumber = 10,
     OtherNumber = 11,
-    // Punctuation P = Pd | Ps | Pe | Pc | Po | Pi | Pf
     ConnectorPunctuation = 22,
     DashPunctuation = 19,
     ClosePunctuation = 21,
@@ -48,12 +42,10 @@ pub enum GeneralCategory {
     InitialPunctuation = 28,
     OtherPunctuation = 23,
     OpenPunctuation = 20,
-    // Symbol S = Sm | Sc | Sk | So
     CurrencySymbol = 25,
     ModifierSymbol = 26,
     MathSymbol = 24,
     OtherSymbol = 27,
-    // Separator Z = Zs | Zl | Zp
     LineSeparator = 13,
     ParagraphSeparator = 14,
     SpaceSeparator = 12,

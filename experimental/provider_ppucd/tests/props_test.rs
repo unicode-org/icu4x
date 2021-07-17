@@ -16,8 +16,8 @@ fn test_wspace_getter() {
     let wspace_uniset: UnicodeSet =
         icu_uniset::props::get_white_space_property(&ppucd_provider).unwrap();
     let exp_uniset: UnicodeSet = UnicodeSet::from_inversion_list(vec![
-        9, 14, 32, 33, 133, 134, 160, 161, 5760, 5761, 8192, 8203, 8232, 8234, 8239, 8240, 8287,
-        8288, 12288, 12289,
+        0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1680, 0x1681, 0x2000, 0x200B, 0x2028,
+        0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
     ])
     .unwrap();
     assert_eq!(wspace_uniset, exp_uniset);
@@ -36,6 +36,6 @@ fn test_enum_props_getters() {
     )
     .unwrap();
     let exp_gc_zs_uniset: UnicodeSet =
-        UnicodeSet::from_inversion_list(vec![32, 33, 160, 161]).unwrap();
+        UnicodeSet::from_inversion_list(vec![0x20, 0x21, 0xA0, 0xA1]).unwrap();
     assert_eq!(gc_zs_uniset, exp_gc_zs_uniset);
 }
