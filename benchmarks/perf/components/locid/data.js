@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626479739995,
+  "lastUpdate": 1626480607807,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9209,6 +9209,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5112,
             "range": "± 33",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e30e7c3f491feb84f30214bc0b1dc751b191e9dc",
+          "message": "Re-name data categories (#864)",
+          "timestamp": "2021-07-16T19:03:30-05:00",
+          "tree_id": "73d71da841c6ef23db46c68bef42c70fdb478815",
+          "url": "https://github.com/unicode-org/icu4x/commit/e30e7c3f491feb84f30214bc0b1dc751b191e9dc"
+        },
+        "date": 1626480604692,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3410,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5317,
+            "range": "± 12",
             "unit": "ns/iter"
           }
         ]
