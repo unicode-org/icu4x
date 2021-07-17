@@ -12,17 +12,18 @@ pub mod time_zones;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
-    pub const GREGORY_DATE_PATTERNS_V1: ResourceKey = resource_key!(date_patterns, "gregory", 1);
-    pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(date_symbols, "gregory", 1);
-    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(time_zones, "formats", 1);
+    pub const GREGORY_DATE_PATTERNS_V1: ResourceKey =
+        resource_key!(DateTime, "gregory_patterns", 1);
+    pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "gregory_symbols", 1);
+    pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(TimeZone, "formats", 1);
     pub const TIMEZONE_EXEMPLAR_CITIES_V1: ResourceKey =
-        resource_key!(time_zones, "exemplar-cities", 1);
+        resource_key!(TimeZone, "exemplar_cities", 1);
     pub const TIMEZONE_GENERIC_NAMES_LONG_V1: ResourceKey =
-        resource_key!(time_zones, "generic-long", 1);
+        resource_key!(TimeZone, "generic_long", 1);
     pub const TIMEZONE_GENERIC_NAMES_SHORT_V1: ResourceKey =
-        resource_key!(time_zones, "generic-short", 1);
+        resource_key!(TimeZone, "generic_short", 1);
     pub const TIMEZONE_SPECIFIC_NAMES_LONG_V1: ResourceKey =
-        resource_key!(time_zones, "specific-long", 1);
+        resource_key!(TimeZone, "specific_long", 1);
     pub const TIMEZONE_SPECIFIC_NAMES_SHORT_V1: ResourceKey =
-        resource_key!(time_zones, "specific-short", 1);
+        resource_key!(TimeZone, "specific_short", 1);
 }

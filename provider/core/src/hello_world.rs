@@ -16,7 +16,7 @@ use std::str::FromStr;
 
 pub mod key {
     use crate::resource::ResourceKey;
-    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(icu4x, "helloworld", 1);
+    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(Core, "helloworld", 1);
 }
 
 /// A struct containing "Hello World" in the requested language.

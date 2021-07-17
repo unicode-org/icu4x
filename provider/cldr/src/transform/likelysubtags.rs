@@ -42,10 +42,7 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
 
 impl<'d> KeyedDataProvider for LikelySubtagsProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::LikelySubtags || resc_key.version != 1 {
-            return Err(resc_key.into());
-        }
-        Ok(())
+        key::LIKELY_SUBTAGS_V1.match_key(*resc_key)
     }
 }
 

@@ -11,8 +11,8 @@ use std::borrow::Cow;
 
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
-    pub const CARDINAL_V1: ResourceKey = resource_key!(plurals, "cardinal", 1);
-    pub const ORDINAL_V1: ResourceKey = resource_key!(plurals, "ordinal", 1);
+    pub const CARDINAL_V1: ResourceKey = resource_key!(Plurals, "cardinal", 1);
+    pub const ORDINAL_V1: ResourceKey = resource_key!(Plurals, "ordinal", 1);
 }
 
 pub mod resolver;
