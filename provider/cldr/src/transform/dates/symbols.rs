@@ -52,10 +52,7 @@ impl TryFrom<&dyn CldrPaths> for DateSymbolsProvider<'_> {
 
 impl<'d> KeyedDataProvider for DateSymbolsProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::DateSymbols || resc_key.version != 1 {
-            return Err(resc_key.into());
-        }
-        Ok(())
+        key::GREGORY_DATE_SYMBOLS_V1.match_key(*resc_key)
     }
 }
 

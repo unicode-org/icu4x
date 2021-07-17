@@ -6,21 +6,21 @@
 
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
+use crate::yoke::{self, *};
 use icu_locid::LanguageIdentifier;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::str::FromStr;
-use yoke::*;
 
 pub mod key {
     use crate::resource::ResourceKey;
-    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(icu4x, "helloworld", 1);
+    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(Core, "helloworld", 1);
 }
 
 /// A struct containing "Hello World" in the requested language.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -34,38 +34,6 @@ impl Default for HelloWorldV1<'_> {
     fn default() -> Self {
         HelloWorldV1 {
             message: Cow::Borrowed("(und) Hello World"),
-        }
-    }
-}
-
-// BEGIN YOKEABLE BOILERPLATE
-
-unsafe impl<'a> Yokeable<'a> for HelloWorldV1<'static> {
-    type Output = HelloWorldV1<'a>;
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-    unsafe fn make(from: Self::Output) -> Self {
-        std::mem::transmute(from)
-    }
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe {
-            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-                self,
-            ))
-        }
-    }
-}
-
-// END YOKEABLE BOILERPLATE
-
-impl<'s> ZeroCopyFrom<HelloWorldV1<'s>> for HelloWorldV1<'static> {
-    fn zero_copy_from<'b>(this: &'b HelloWorldV1<'s>) -> HelloWorldV1<'b> {
-        HelloWorldV1 {
-            message: Cow::Borrowed(&this.message),
         }
     }
 }
@@ -203,7 +171,7 @@ impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruc
         &mut self,
         req: DataRequest,
         payload: DataPayload<'d, 'static, crate::erased::ErasedDataStructMarker>,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    ) -> Result<(), DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let downcast_payload: DataPayload<HelloWorldV1Marker> = payload.downcast()?;
@@ -212,9 +180,5 @@ impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStruc
             Cow::Owned(downcast_payload.get().message.to_string()),
         );
         Ok(())
-    }
-
-    fn include_resource_options(&self, _resc_options: &ResourceOptions) -> bool {
-        true
     }
 }

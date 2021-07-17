@@ -2,11 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::manifest::LocalesOption;
 use anyhow::Context;
-use clap::{App, Arg, ArgGroup};
+use clap::{App, Arg, ArgGroup, ArgMatches};
 use icu_locid::LanguageIdentifier;
 use icu_provider::export::DataExporter;
+use icu_provider::filter::Filterable;
+use icu_provider::hello_world::{self, HelloWorldProvider};
+use icu_provider::iter::IterableDataProvider;
+use icu_provider::serde::SerdeSeDataStructMarker;
+use icu_provider_blob::export::BlobExporter;
 use icu_provider_cldr::download::CldrAllInOneDownloader;
 use icu_provider_cldr::get_all_cldr_keys;
 use icu_provider_cldr::CldrJsonDataProvider;
@@ -39,6 +43,15 @@ fn main() -> anyhow::Result<()> {
                 .help("Do not touch the filesystem (consider using with -v)."),
         )
         .arg(
+            Arg::with_name("FORMAT")
+                .long("format")
+                .takes_value(true)
+                .possible_value("dir")
+                .possible_value("blob")
+                .help("Output to a directory on the filesystem or a single blob.")
+                .default_value("dir"),
+        )
+        .arg(
             Arg::with_name("ALIASING")
                 .long("aliasing")
                 .takes_value(true)
@@ -50,7 +63,7 @@ fn main() -> anyhow::Result<()> {
             Arg::with_name("OVERWRITE")
                 .short("W")
                 .long("overwrite")
-                .help("Delete the output directory before writing data."),
+                .help("Delete the output before writing data."),
         )
         .arg(
             Arg::with_name("SYNTAX")
@@ -59,8 +72,7 @@ fn main() -> anyhow::Result<()> {
                 .takes_value(true)
                 .possible_value("json")
                 .possible_value("bincode")
-                .help("File format syntax for data files (defaults to JSON).")
-                .default_value("json"),
+                .help("File format syntax for data files."),
         )
         .arg(
             Arg::with_name("PRETTY")
@@ -94,13 +106,6 @@ fn main() -> anyhow::Result<()> {
                 .long("cldr-testdata")
                 .help("Load CLDR JSON data from the icu_testdata project."),
         )
-        .group(
-            ArgGroup::with_name("CLDR_SOURCE")
-                .arg("CLDR_TAG")
-                .arg("CLDR_ROOT")
-                .arg("CLDR_TESTDATA")
-                .required(true),
-        )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
@@ -131,6 +136,11 @@ fn main() -> anyhow::Result<()> {
                 ),
         )
         .arg(
+            Arg::with_name("HELLO_WORLD")
+                .long("hello-world-key")
+                .help("Whether to include the 'hello world' key."),
+        )
+        .arg(
             Arg::with_name("ALL_KEYS")
                 .long("all-keys")
                 .help("Include all keys known to ICU4X."),
@@ -139,6 +149,7 @@ fn main() -> anyhow::Result<()> {
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
                 .arg("KEY_FILE")
+                .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
                 .required(true),
         )
@@ -175,8 +186,9 @@ fn main() -> anyhow::Result<()> {
                 .short("o")
                 .long("out")
                 .help(
-                    "Path to output data directory. Must be empty or non-existent, unless \
-                    --overwrite is present, in which case the directory is deleted first.",
+                    "Path to output directory or file. Must be empty or non-existent, unless \
+                    --overwrite is present, in which case the directory is deleted first. \
+                    For --format blob, omit this option to dump to stdout.",
                 )
                 .takes_value(true),
         )
@@ -188,8 +200,7 @@ fn main() -> anyhow::Result<()> {
         .group(
             ArgGroup::with_name("OUTPUT_MODE")
                 .arg("OUTPUT")
-                .arg("OUTPUT_TESTDATA")
-                .required(true),
+                .arg("OUTPUT_TESTDATA"),
         )
         .get_matches();
 
@@ -206,7 +217,7 @@ fn main() -> anyhow::Result<()> {
         _ => anyhow::bail!("Only -v and -vv are supported"),
     }
 
-    if !matches.is_present("ALL_KEYS") {
+    if !matches.is_present("ALL_KEYS") && !matches.is_present("HELLO_WORLD") {
         anyhow::bail!("Lists of keys are not yet supported (see #192)",);
     }
 
@@ -216,36 +227,61 @@ fn main() -> anyhow::Result<()> {
 
     // TODO: Build up this list from --keys and --key-file
 
-    let syntax = matches
-        .value_of("SYNTAX")
+    let format = matches
+        .value_of("FORMAT")
         .expect("Option has default value");
 
-    let output_path = if matches.is_present("OUTPUT_TESTDATA") {
-        icu_testdata::paths::data_root().join(syntax)
-    } else {
-        PathBuf::from(
-            matches
-                .value_of_os("OUTPUT")
-                .expect("--out is a required option"),
+    let locales_vec = if let Some(locale_strs) = matches.values_of("LOCALES") {
+        Some(
+            locale_strs
+                .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
+                .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?,
         )
+    } else if matches.is_present("TEST_LOCALES") {
+        Some(icu_testdata::metadata::load()?.package_metadata.locales)
+    } else {
+        None
     };
 
-    let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
-    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
-        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
-    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        Box::new(CldrPathsAllInOne {
-            cldr_json_root: PathBuf::from(path),
-            locale_subset: locale_subset.to_string(),
-        })
-    } else if matches.is_present("CLDR_TESTDATA") {
-        Box::new(CldrPathsAllInOne {
-            cldr_json_root: icu_testdata::paths::cldr_json_root(),
-            locale_subset: "full".to_string(),
-        })
-    } else {
-        anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
+    let mut anchor1;
+    let mut anchor2;
+    let exporter: &mut dyn DataExporter<SerdeSeDataStructMarker> = match format {
+        "dir" => {
+            anchor1 = get_fs_exporter(&matches)?;
+            &mut anchor1
+        }
+        "blob" => {
+            anchor2 = get_blob_exporter(&matches)?;
+            &mut anchor2
+        }
+        _ => unreachable!(),
     };
+
+    if matches.is_present("ALL_KEYS") {
+        export_cldr(&matches, exporter, locales_vec.as_deref())?;
+    }
+
+    if matches.is_present("HELLO_WORLD") {
+        export_hello_world(&matches, exporter, locales_vec.as_deref())?;
+    }
+
+    exporter.close()?;
+
+    Ok(())
+}
+
+fn get_fs_exporter(matches: &ArgMatches) -> anyhow::Result<FilesystemExporter> {
+    let syntax = matches.value_of("SYNTAX").unwrap_or("json");
+
+    let output_path: PathBuf = if matches.is_present("OUTPUT_TESTDATA") {
+        icu_testdata::paths::data_root().join(syntax)
+    } else if let Some(v) = matches.value_of_os("OUTPUT") {
+        PathBuf::from(v)
+    } else {
+        anyhow::bail!("--out must be specified for --format=dir");
+    };
+
+    log::info!("Writing to filesystem tree at: {}", output_path.display());
 
     let serializer: Box<dyn serializers::AbstractSerializer> = match matches.value_of("SYNTAX") {
         Some("json") | None => {
@@ -274,36 +310,110 @@ fn main() -> anyhow::Result<()> {
     if matches.is_present("OVERWRITE") {
         options.overwrite = fs_exporter::OverwriteOption::RemoveAndReplace
     }
-    if let Some(locale_strs) = matches.values_of("LOCALES") {
-        let locales_vec = locale_strs
-            .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
-            .collect::<Result<Vec<LanguageIdentifier>, anyhow::Error>>()?;
-        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
-    } else if matches.is_present("TEST_LOCALES") {
-        let locales_vec = icu_testdata::metadata::load()?.package_metadata.locales;
-        options.locales = LocalesOption::IncludeList(locales_vec.into_boxed_slice());
-    }
-    let mut exporter = FilesystemExporter::try_new(serializer, options)?;
 
-    export_cldr(cldr_paths.as_ref(), &mut exporter)?;
+    let exporter = FilesystemExporter::try_new(serializer, options)?;
+    Ok(exporter)
+}
+
+fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'static>> {
+    if matches.value_of("SYNTAX") == Some("json") {
+        anyhow::bail!("Cannot use --format=blob with --syntax=json");
+    }
+
+    let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
+        Some(icu_testdata::paths::data_root().join("testdata.bincode"))
+    } else if let Some(v) = matches.value_of_os("OUTPUT") {
+        Some(PathBuf::from(v))
+    } else {
+        None
+    };
+
+    match output_path {
+        Some(ref p) => log::info!("Writing blob to filesystem at: {}", p.display()),
+        None => log::info!("Writing blob to standard out"),
+    };
+
+    let sink: Box<dyn std::io::Write> = if let Some(path_buf) = output_path {
+        if !matches.is_present("OVERWRITE") && path_buf.exists() {
+            anyhow::bail!("Output path is present: {:?}", path_buf);
+        }
+        let context = path_buf.to_string_lossy().to_string();
+        let temp = std::fs::File::create(path_buf).with_context(|| context)?;
+        Box::new(temp)
+    } else {
+        let temp = std::io::stdout();
+        Box::new(temp)
+    };
+
+    Ok(BlobExporter::new_with_sink(sink))
+}
+
+fn export_cldr<'d, 's: 'd>(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
+    allowed_locales: Option<&[LanguageIdentifier]>,
+) -> anyhow::Result<()> {
+    let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
+    let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
+        Box::new(CldrAllInOneDownloader::try_new_from_github(tag, locale_subset)?.download()?)
+    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: PathBuf::from(path),
+            locale_subset: locale_subset.to_string(),
+        })
+    } else if matches.is_present("CLDR_TESTDATA") {
+        Box::new(CldrPathsAllInOne {
+            cldr_json_root: icu_testdata::paths::cldr_json_root(),
+            locale_subset: "full".to_string(),
+        })
+    } else {
+        anyhow::bail!("Either --cldr-tag or --cldr-root must be specified",)
+    };
+
+    let keys = get_all_cldr_keys();
+
+    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
+    let filtered_provider;
+    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
+
+    if let Some(allowlist) = allowed_locales {
+        filtered_provider = raw_provider
+            .filterable()
+            .filter_by_langid_allowlist_strict(allowlist);
+        provider = &filtered_provider;
+    } else {
+        provider = &raw_provider;
+    }
+
+    for key in keys.iter() {
+        log::info!("Writing key: {}", key);
+        icu_provider::export::export_from_iterable(key, provider, exporter)?;
+    }
 
     Ok(())
 }
 
-fn export_cldr(
-    cldr_paths: &dyn CldrPaths,
-    exporter: &mut FilesystemExporter,
+fn export_hello_world<'d, 's: 'd>(
+    _: &ArgMatches,
+    exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
+    allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> anyhow::Result<()> {
-    let keys = get_all_cldr_keys();
+    let raw_provider = HelloWorldProvider::new_with_placeholder_data();
+    let filtered_provider;
+    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
 
-    let provider = CldrJsonDataProvider::new(cldr_paths);
-    for key in keys.iter() {
-        log::info!("Writing key: {}", key);
-        let result = exporter.put_key_from_provider(key, &provider);
-        // Ensure flush() is called, even when the result is an error
-        exporter.flush()?;
-        result?;
+    if let Some(allowlist) = allowed_locales {
+        filtered_provider = raw_provider
+            .filterable()
+            .filter_by_langid_allowlist_strict(allowlist);
+        provider = &filtered_provider;
+    } else {
+        provider = &raw_provider;
     }
+
+    let key = hello_world::key::HELLO_WORLD_V1;
+    log::info!("Writing key: {}", key);
+    icu_provider::export::export_from_iterable(&key, provider, exporter)?;
 
     Ok(())
 }

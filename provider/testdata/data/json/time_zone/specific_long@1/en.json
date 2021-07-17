@@ -1,0 +1,350 @@
+{
+  "Acre": {
+    "daylight": "Acre Summer Time",
+    "standard": "Acre Standard Time"
+  },
+  "Africa_Western": {
+    "daylight": "West Africa Summer Time",
+    "standard": "West Africa Standard Time"
+  },
+  "Alaska": {
+    "daylight": "Alaska Daylight Time",
+    "standard": "Alaska Standard Time"
+  },
+  "Almaty": {
+    "daylight": "Almaty Summer Time",
+    "standard": "Almaty Standard Time"
+  },
+  "Amazon": {
+    "daylight": "Amazon Summer Time",
+    "standard": "Amazon Standard Time"
+  },
+  "America_Central": {
+    "daylight": "Central Daylight Time",
+    "standard": "Central Standard Time"
+  },
+  "America_Eastern": {
+    "daylight": "Eastern Daylight Time",
+    "standard": "Eastern Standard Time"
+  },
+  "America_Mountain": {
+    "daylight": "Mountain Daylight Time",
+    "standard": "Mountain Standard Time"
+  },
+  "America_Pacific": {
+    "daylight": "Pacific Daylight Time",
+    "standard": "Pacific Standard Time"
+  },
+  "Anadyr": {
+    "daylight": "Anadyr Summer Time",
+    "standard": "Anadyr Standard Time"
+  },
+  "Apia": {
+    "daylight": "Apia Daylight Time",
+    "standard": "Apia Standard Time"
+  },
+  "Aqtau": {
+    "daylight": "Aqtau Summer Time",
+    "standard": "Aqtau Standard Time"
+  },
+  "Aqtobe": {
+    "daylight": "Aqtobe Summer Time",
+    "standard": "Aqtobe Standard Time"
+  },
+  "Arabian": {
+    "daylight": "Arabian Daylight Time",
+    "standard": "Arabian Standard Time"
+  },
+  "Argentina": {
+    "daylight": "Argentina Summer Time",
+    "standard": "Argentina Standard Time"
+  },
+  "Argentina_Western": {
+    "daylight": "Western Argentina Summer Time",
+    "standard": "Western Argentina Standard Time"
+  },
+  "Armenia": {
+    "daylight": "Armenia Summer Time",
+    "standard": "Armenia Standard Time"
+  },
+  "Atlantic": {
+    "daylight": "Atlantic Daylight Time",
+    "standard": "Atlantic Standard Time"
+  },
+  "Australia_Central": {
+    "daylight": "Australian Central Daylight Time",
+    "standard": "Australian Central Standard Time"
+  },
+  "Australia_CentralWestern": {
+    "daylight": "Australian Central Western Daylight Time",
+    "standard": "Australian Central Western Standard Time"
+  },
+  "Australia_Eastern": {
+    "daylight": "Australian Eastern Daylight Time",
+    "standard": "Australian Eastern Standard Time"
+  },
+  "Australia_Western": {
+    "daylight": "Australian Western Daylight Time",
+    "standard": "Australian Western Standard Time"
+  },
+  "Azerbaijan": {
+    "daylight": "Azerbaijan Summer Time",
+    "standard": "Azerbaijan Standard Time"
+  },
+  "Azores": {
+    "daylight": "Azores Summer Time",
+    "standard": "Azores Standard Time"
+  },
+  "Bangladesh": {
+    "daylight": "Bangladesh Summer Time",
+    "standard": "Bangladesh Standard Time"
+  },
+  "Brasilia": {
+    "daylight": "Brasilia Summer Time",
+    "standard": "Brasilia Standard Time"
+  },
+  "Cape_Verde": {
+    "daylight": "Cape Verde Summer Time",
+    "standard": "Cape Verde Standard Time"
+  },
+  "Chatham": {
+    "daylight": "Chatham Daylight Time",
+    "standard": "Chatham Standard Time"
+  },
+  "Chile": {
+    "daylight": "Chile Summer Time",
+    "standard": "Chile Standard Time"
+  },
+  "China": {
+    "daylight": "China Daylight Time",
+    "standard": "China Standard Time"
+  },
+  "Choibalsan": {
+    "daylight": "Choibalsan Summer Time",
+    "standard": "Choibalsan Standard Time"
+  },
+  "Colombia": {
+    "daylight": "Colombia Summer Time",
+    "standard": "Colombia Standard Time"
+  },
+  "Cook": {
+    "daylight": "Cook Islands Half Summer Time",
+    "standard": "Cook Islands Standard Time"
+  },
+  "Cuba": {
+    "daylight": "Cuba Daylight Time",
+    "standard": "Cuba Standard Time"
+  },
+  "Easter": {
+    "daylight": "Easter Island Summer Time",
+    "standard": "Easter Island Standard Time"
+  },
+  "Europe_Central": {
+    "daylight": "Central European Summer Time",
+    "standard": "Central European Standard Time"
+  },
+  "Europe_Eastern": {
+    "daylight": "Eastern European Summer Time",
+    "standard": "Eastern European Standard Time"
+  },
+  "Europe_Western": {
+    "daylight": "Western European Summer Time",
+    "standard": "Western European Standard Time"
+  },
+  "Falkland": {
+    "daylight": "Falkland Islands Summer Time",
+    "standard": "Falkland Islands Standard Time"
+  },
+  "Fiji": {
+    "daylight": "Fiji Summer Time",
+    "standard": "Fiji Standard Time"
+  },
+  "Georgia": {
+    "daylight": "Georgia Summer Time",
+    "standard": "Georgia Standard Time"
+  },
+  "Greenland_Eastern": {
+    "daylight": "East Greenland Summer Time",
+    "standard": "East Greenland Standard Time"
+  },
+  "Greenland_Western": {
+    "daylight": "West Greenland Summer Time",
+    "standard": "West Greenland Standard Time"
+  },
+  "Hawaii_Aleutian": {
+    "daylight": "Hawaii-Aleutian Daylight Time",
+    "standard": "Hawaii-Aleutian Standard Time"
+  },
+  "Hong_Kong": {
+    "daylight": "Hong Kong Summer Time",
+    "standard": "Hong Kong Standard Time"
+  },
+  "Hovd": {
+    "daylight": "Hovd Summer Time",
+    "standard": "Hovd Standard Time"
+  },
+  "Iran": {
+    "daylight": "Iran Daylight Time",
+    "standard": "Iran Standard Time"
+  },
+  "Irkutsk": {
+    "daylight": "Irkutsk Summer Time",
+    "standard": "Irkutsk Standard Time"
+  },
+  "Israel": {
+    "daylight": "Israel Daylight Time",
+    "standard": "Israel Standard Time"
+  },
+  "Japan": {
+    "daylight": "Japan Daylight Time",
+    "standard": "Japan Standard Time"
+  },
+  "Kamchatka": {
+    "daylight": "Petropavlovsk-Kamchatski Summer Time",
+    "standard": "Petropavlovsk-Kamchatski Standard Time"
+  },
+  "Korea": {
+    "daylight": "Korean Daylight Time",
+    "standard": "Korean Standard Time"
+  },
+  "Krasnoyarsk": {
+    "daylight": "Krasnoyarsk Summer Time",
+    "standard": "Krasnoyarsk Standard Time"
+  },
+  "Lord_Howe": {
+    "daylight": "Lord Howe Daylight Time",
+    "standard": "Lord Howe Standard Time"
+  },
+  "Macau": {
+    "daylight": "Macao Summer Time",
+    "standard": "Macao Standard Time"
+  },
+  "Magadan": {
+    "daylight": "Magadan Summer Time",
+    "standard": "Magadan Standard Time"
+  },
+  "Mauritius": {
+    "daylight": "Mauritius Summer Time",
+    "standard": "Mauritius Standard Time"
+  },
+  "Mexico_Northwest": {
+    "daylight": "Northwest Mexico Daylight Time",
+    "standard": "Northwest Mexico Standard Time"
+  },
+  "Mexico_Pacific": {
+    "daylight": "Mexican Pacific Daylight Time",
+    "standard": "Mexican Pacific Standard Time"
+  },
+  "Mongolia": {
+    "daylight": "Ulaanbaatar Summer Time",
+    "standard": "Ulaanbaatar Standard Time"
+  },
+  "Moscow": {
+    "daylight": "Moscow Summer Time",
+    "standard": "Moscow Standard Time"
+  },
+  "New_Caledonia": {
+    "daylight": "New Caledonia Summer Time",
+    "standard": "New Caledonia Standard Time"
+  },
+  "New_Zealand": {
+    "daylight": "New Zealand Daylight Time",
+    "standard": "New Zealand Standard Time"
+  },
+  "Newfoundland": {
+    "daylight": "Newfoundland Daylight Time",
+    "standard": "Newfoundland Standard Time"
+  },
+  "Norfolk": {
+    "daylight": "Norfolk Island Daylight Time",
+    "standard": "Norfolk Island Standard Time"
+  },
+  "Noronha": {
+    "daylight": "Fernando de Noronha Summer Time",
+    "standard": "Fernando de Noronha Standard Time"
+  },
+  "Novosibirsk": {
+    "daylight": "Novosibirsk Summer Time",
+    "standard": "Novosibirsk Standard Time"
+  },
+  "Omsk": {
+    "daylight": "Omsk Summer Time",
+    "standard": "Omsk Standard Time"
+  },
+  "Pakistan": {
+    "daylight": "Pakistan Summer Time",
+    "standard": "Pakistan Standard Time"
+  },
+  "Paraguay": {
+    "daylight": "Paraguay Summer Time",
+    "standard": "Paraguay Standard Time"
+  },
+  "Peru": {
+    "daylight": "Peru Summer Time",
+    "standard": "Peru Standard Time"
+  },
+  "Philippines": {
+    "daylight": "Philippine Summer Time",
+    "standard": "Philippine Standard Time"
+  },
+  "Pierre_Miquelon": {
+    "daylight": "St. Pierre & Miquelon Daylight Time",
+    "standard": "St. Pierre & Miquelon Standard Time"
+  },
+  "Qyzylorda": {
+    "daylight": "Qyzylorda Summer Time",
+    "standard": "Qyzylorda Standard Time"
+  },
+  "Sakhalin": {
+    "daylight": "Sakhalin Summer Time",
+    "standard": "Sakhalin Standard Time"
+  },
+  "Samara": {
+    "daylight": "Samara Summer Time",
+    "standard": "Samara Standard Time"
+  },
+  "Samoa": {
+    "daylight": "Samoa Daylight Time",
+    "standard": "Samoa Standard Time"
+  },
+  "Taipei": {
+    "daylight": "Taipei Daylight Time",
+    "standard": "Taipei Standard Time"
+  },
+  "Tonga": {
+    "daylight": "Tonga Summer Time",
+    "standard": "Tonga Standard Time"
+  },
+  "Turkmenistan": {
+    "daylight": "Turkmenistan Summer Time",
+    "standard": "Turkmenistan Standard Time"
+  },
+  "Uruguay": {
+    "daylight": "Uruguay Summer Time",
+    "standard": "Uruguay Standard Time"
+  },
+  "Uzbekistan": {
+    "daylight": "Uzbekistan Summer Time",
+    "standard": "Uzbekistan Standard Time"
+  },
+  "Vanuatu": {
+    "daylight": "Vanuatu Summer Time",
+    "standard": "Vanuatu Standard Time"
+  },
+  "Vladivostok": {
+    "daylight": "Vladivostok Summer Time",
+    "standard": "Vladivostok Standard Time"
+  },
+  "Volgograd": {
+    "daylight": "Volgograd Summer Time",
+    "standard": "Volgograd Standard Time"
+  },
+  "Yakutsk": {
+    "daylight": "Yakutsk Summer Time",
+    "standard": "Yakutsk Standard Time"
+  },
+  "Yekaterinburg": {
+    "daylight": "Yekaterinburg Summer Time",
+    "standard": "Yekaterinburg Standard Time"
+  }
+}

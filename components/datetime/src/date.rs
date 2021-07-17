@@ -2,23 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use icu_locid::Locale;
 use std::convert::TryFrom;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
-use thiserror::Error;
 use tinystr::TinyStr8;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum DateTimeError {
-    #[error(transparent)]
-    Parse(#[from] std::num::ParseIntError),
-    #[error("{field} must be between 0-{max}")]
+    #[displaydoc("{0}")]
+    Parse(std::num::ParseIntError),
+    #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
-    #[error("{field} must be between {min}-0")]
+    #[displaydoc("{field} must be between {min}-0")]
     Underflow { field: &'static str, min: isize },
-    #[error("Failed to parse time-zone offset")]
+    #[displaydoc("Failed to parse time-zone offset")]
     InvalidTimeZoneOffset,
+}
+
+impl std::error::Error for DateTimeError {}
+
+impl From<std::num::ParseIntError> for DateTimeError {
+    fn from(e: std::num::ParseIntError) -> Self {
+        DateTimeError::Parse(e)
+    }
 }
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses

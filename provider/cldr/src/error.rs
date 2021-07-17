@@ -2,30 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use icu_locid::LanguageIdentifier;
 use std::path::{Path, PathBuf};
-use thiserror::Error;
 
 #[cfg(feature = "download")]
 use crate::download;
 
 #[non_exhaustive]
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
-    #[error("{0}: {1:?}")]
-    Io(#[source] std::io::Error, Option<PathBuf>),
-    #[error("JSON error: {0}: {1:?}")]
-    Json(#[source] serde_json::error::Error, Option<PathBuf>),
-    #[error("{0}: {1:?}")]
+    #[displaydoc("{0}: {1:?}")]
+    Io(std::io::Error, Option<PathBuf>),
+    #[displaydoc("JSON error: {0}: {1:?}")]
+    Json(serde_json::error::Error, Option<PathBuf>),
+    #[displaydoc("{0}: {1:?}")]
     Custom(String, Option<LanguageIdentifier>),
-    #[error(transparent)]
+    #[displaydoc("{0}")]
     MissingSource(MissingSourceError),
     #[cfg(feature = "download")]
-    #[error(transparent)]
+    #[displaydoc("{0}")]
     Download(download::Error),
-    #[error("poisoned lock on CLDR provider")]
+    #[displaydoc("poisoned lock on CLDR provider")]
     Poison,
 }
+
+impl std::error::Error for Error {}
 
 #[cfg(feature = "download")]
 impl From<download::Error> for Error {
@@ -37,11 +39,13 @@ impl From<download::Error> for Error {
     }
 }
 
-#[derive(Error, Debug, PartialEq, Copy, Clone)]
-#[error("Missing CLDR data source: {src}")]
+#[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[displaydoc("Missing CLDR data source: {src}")]
 pub struct MissingSourceError {
     pub src: &'static str,
 }
+
+impl std::error::Error for MissingSourceError {}
 
 /// To help with debugging, I/O errors should be paired with a file path.
 /// If a path is unavailable, create the error directly: [`Error::Io`]`(err, `[`None`]`)`

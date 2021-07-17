@@ -6,7 +6,7 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use yoke::*;
+use crate::yoke::*;
 
 /// A data provider that unconditionally returns references to borrowed data.
 ///

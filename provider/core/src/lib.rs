@@ -117,6 +117,7 @@ mod resource;
 #[macro_use]
 pub mod erased;
 pub mod export;
+pub mod filter;
 pub mod hello_world;
 pub mod inv;
 pub mod iter;
@@ -125,6 +126,9 @@ pub mod marker;
 #[cfg(feature = "provider_serde")]
 pub mod serde;
 pub mod struct_provider;
+
+#[cfg(feature = "macros")]
+pub use icu_provider_macros::data_struct;
 
 mod error;
 

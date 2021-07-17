@@ -42,6 +42,9 @@
 //! #    fn transform(&'a self) -> &'a Self::Output {
 //! #        self
 //! #    }
+//! #    fn transform_owned(self) -> Self::Output {
+//! #        self
+//! #    }
 //! #    unsafe fn make(from: Self::Output) -> Self {
 //! #        std::mem::transmute(from)
 //! #    }
@@ -90,6 +93,9 @@
 //!     // (not shown; see `Yokeable` for examples)
 //! #    type Output = MyStruct;
 //! #    fn transform(&'a self) -> &'a Self::Output {
+//! #        self
+//! #    }
+//! #    fn transform_owned(self) -> Self::Output {
 //! #        self
 //! #    }
 //! #    unsafe fn make(from: Self::Output) -> Self {
@@ -152,6 +158,9 @@
 //!     // (not shown; see `Yokeable` for examples)
 //! #    type Output = MyStruct;
 //! #    fn transform(&'a self) -> &'a Self::Output {
+//! #        self
+//! #    }
+//! #    fn transform_owned(self) -> Self::Output {
 //! #        self
 //! #    }
 //! #    unsafe fn make(from: Self::Output) -> Self {

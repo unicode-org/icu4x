@@ -21,10 +21,10 @@
 
 use crate::error::Error;
 use crate::prelude::*;
+use crate::yoke::*;
 use std::ops::Deref;
 use std::rc::Rc;
 use yoke::trait_hack::YokeTraitHack;
-use yoke::*;
 
 /// An object that receives data from a Serde Deserializer.
 ///
@@ -272,6 +272,15 @@ where
 unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
     type Output = SerdeSeDataStructWrap<'a, 'a>;
     fn transform(&'a self) -> &'a Self::Output {
+        // The compiler isn't able to guess the variance of the trait object,
+        // so we must transmute
+        // Note (Manishearth): this is technically unsound since SerdeDeDataStruct
+        // has no variance requirements. This will become a non-issue
+        // once Borrowed is removed (https://github.com/unicode-org/icu4x/issues/752)
+        unsafe { std::mem::transmute(self) }
+    }
+    fn transform_owned(self) -> Self::Output {
+        // (needs a transmute for the same reason as above)
         unsafe { std::mem::transmute(self) }
     }
     unsafe fn make(from: Self::Output) -> Self {

@@ -1,0 +1,30 @@
+{
+  "Alaska": {
+    "daylight": "AKDT",
+    "standard": "AKST"
+  },
+  "America_Central": {
+    "daylight": "CDT",
+    "standard": "CST"
+  },
+  "America_Eastern": {
+    "daylight": "EDT",
+    "standard": "EST"
+  },
+  "America_Mountain": {
+    "daylight": "MDT",
+    "standard": "MST"
+  },
+  "America_Pacific": {
+    "daylight": "PDT",
+    "standard": "PST"
+  },
+  "Atlantic": {
+    "daylight": "ADT",
+    "standard": "AST"
+  },
+  "Hawaii_Aleutian": {
+    "daylight": "HADT",
+    "standard": "HAST"
+  }
+}
