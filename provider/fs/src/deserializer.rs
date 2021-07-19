@@ -53,14 +53,14 @@ impl Error {
         use crate::error::Error as CrateError;
         let crate_error = match self {
             Self::Json(err) => {
-                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+                CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
             #[cfg(feature = "bincode")]
             Self::Bincode(err) => {
-                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+                CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
             Self::DataProvider(err) => {
-                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+                CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
             Self::UnknownSyntax(v) => CrateError::UnknownSyntax(v),
         };

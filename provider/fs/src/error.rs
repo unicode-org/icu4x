@@ -13,7 +13,7 @@ pub enum Error {
     #[displaydoc("{0}")]
     DataProvider(icu_provider::DataError),
     #[displaydoc("Deserializer error: {0}: {1:?}")]
-    Deserializer(Box<dyn std::error::Error + Send + Sync>, Option<PathBuf>),
+    Deserializer(String, Option<PathBuf>),
     #[cfg(feature = "export")]
     #[displaydoc("Serializer error: {0}: {1:?}")]
     Serializer(erased_serde::Error, Option<PathBuf>),
@@ -41,7 +41,7 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 /// If a path is unavailable, create the error directly: [`Error::Deserializer`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
-        Self::Deserializer(Box::new(pieces.0), Some(pieces.1.as_ref().to_path_buf()))
+        Self::Deserializer(format!("{}", pieces.0), Some(pieces.1.as_ref().to_path_buf()))
     }
 }
 
