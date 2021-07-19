@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626704953021,
+  "lastUpdate": 1626719789833,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4211,6 +4211,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1312258,
             "range": "± 15344",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a8377791ffc70c7c6f3aa7f6aa27023e0e59aaca",
+          "message": "Progress towards no_std (#865)\n\n* hardcode thumb\r\n\r\n* Fix writeable\r\n\r\n* Fix stable_deref_trait dep\r\n\r\n* no-default-features on tinystr\r\n\r\n* Update tinystr\r\n\r\n* Use serde/serde-json with alloc feature\r\n\r\n* Move to newer resolver\r\n\r\n* Bump tinystr\r\n\r\n* Bump tinystr again\r\n\r\n* fix optional=true after rebase\r\n\r\n* Add alloc feature to yoke\r\n\r\n* fmt\r\n\r\n* Move provider_fs to std for now\r\n\r\n* rm config.toml changes\r\n\r\n* not test in yoke\r\n\r\n* fix tinystr\r\n\r\n* fix features",
+          "timestamp": "2021-07-19T11:29:45-07:00",
+          "tree_id": "c063ff96e6ce96c0258946e3f6a69b833ab42d55",
+          "url": "https://github.com/unicode-org/icu4x/commit/a8377791ffc70c7c6f3aa7f6aa27023e0e59aaca"
+        },
+        "date": 1626719787391,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 625077,
+            "range": "± 30477",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1266338,
+            "range": "± 19276",
             "unit": "ns/iter"
           }
         ]
