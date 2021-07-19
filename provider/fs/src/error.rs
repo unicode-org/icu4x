@@ -41,7 +41,10 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 /// If a path is unavailable, create the error directly: [`Error::Deserializer`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
-        Self::Deserializer(format!("{}", pieces.0), Some(pieces.1.as_ref().to_path_buf()))
+        Self::Deserializer(
+            format!("{}", pieces.0),
+            Some(pieces.1.as_ref().to_path_buf()),
+        )
     }
 }
 
