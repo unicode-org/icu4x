@@ -100,8 +100,9 @@ pub struct CodePointTrieHeader {
 // TODO: add Rust-doc that includes examples
 
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
-    /// Create a new [`CodePointTrie`] backed by borrowed data for the `index`
-    /// array and `data` array.
+    /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
+    /// array and `data` array, whose data values have width `W`, for a trie
+    /// type `T`.
     pub fn try_new(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
@@ -131,12 +132,6 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
                 reason: "Length of data array does not match corresponding header value",
             });
         }
-
-        // Note: this particular constructor is "templatized" through Rust's
-        // generics type system, so callers to this constructor function must
-        // necessarily know ahead of time which trie type and value width their
-        // desired trie instance represents. There is no runtime matching ->
-        // dynamic dispatch here.
 
         let trie: CodePointTrie<'trie, W, T> = CodePointTrie {
             header,
@@ -187,9 +182,9 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         data_block + (code_point & SMALL_DATA_MASK)
     }
 
-    /// Internal trie getter for a code point at or above the fast limit that
-    /// is designed for this trie's trie type, [`T`]. Returns the position in
-    /// the `data` array for the value that is associated with `code_point`.
+    /// Returns the position in the `data` array for the given code point, 
+    /// where this code point is at or above the fast limit associated for the
+    /// trie type, `T`.
     fn trie_above_fastmax_index(&self, code_point: u32) -> u32 {
         if code_point >= self.header.high_start {
             self.header.data_length - HIGH_VALUE_NEG_DATA_OFFSET
@@ -198,17 +193,17 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         }
     }
 
-    /// Internal trie getter for a code point below the fast limit that
-    /// is designed for this trie's trie type, [`T`]. Returns the position in
-    /// the `data` array for the value that is associated with `code_point`.
-    fn trie_below_fastmax_index(&self, c: u32) -> u32 {
-        let index_array_pos: u32 = c >> FAST_TYPE_SHIFT;
-        let index_array_val: u16 = self.index.get(index_array_pos as usize).unwrap(); // 1. How to specify type parameter for .index() 2. How to avoid unwrap()?
-        let fast_index_val: u32 = index_array_val as u32 + (c & FAST_TYPE_DATA_MASK);
+    /// Returns the position in the `data` array for the given code point, 
+    /// where this code point is below the fast limit associated for the
+    /// trie type, `T`.
+    fn trie_below_fastmax_index(&self, code_point: u32) -> u32 {
+        let index_array_pos: u32 = code_point >> FAST_TYPE_SHIFT;
+        let index_array_val: u16 = self.index.get(index_array_pos as usize).unwrap();
+        let fast_index_val: u32 = index_array_val as u32 + (code_point & FAST_TYPE_DATA_MASK);
         fast_index_val
     }
 
-    /// Returns the value that is associated with `code_point` for this [`CodePointTrie`].
+    /// Returns the value that is associated with `code_point` in this [`CodePointTrie`].
     pub fn get(&self, code_point: u32) -> W {
         let data_pos: u32 = if code_point <= T::FAST_MAX {
             Self::trie_below_fastmax_index(self, code_point)
@@ -226,19 +221,12 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// as a `u32`. This API method maintains consistency with the corresponding
     /// originalICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
-        // CPTAuto will only expose get_u32() (probably will call it `get()`), but will not / cannot expose get() without using an enum for W
-        // CPT<W1,S1> will expose get() and get_u32(). You may not want get_u32() at this point, but it is necessary in order to implement CPTAuto
-
-        // u32 vs. char in Rust - unpaired surrogates are valid code points but are not UTF-32 code units, therefore not allowed in `char` type in Rust.
-        // But for the CodePointTrie, we do want to be able to look up surrogate code points, therefore we want to use the u32 type. (Note: this is also what we do in the `uniset` crate for `UnicodeSet`.)
-        // struct CodePoint(u32) ← enforce whatever invariants you'd like
-
         // this is the consistent API that is public-facing for users
         self.get(code_point).cast_to_widest()
     }
 }
 
-/// Convert the serialized `u8` value for the trie type into a `TrieTypeEnum`.
+/// Converts the serialized `u8` value for the trie type into a [`TrieTypeEnum`].
 pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
     match trie_type_int {
         0 => Some(TrieTypeEnum::Fast),
