@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626480626023,
+  "lastUpdate": 1626704953021,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4175,6 +4175,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1460126,
             "range": "± 98878",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aca8858ffa29cf0721647d59e52863c059b45b3c",
+          "message": "Cleanup line breaker data generation and rule table accessing APIs (#851)\n\n* Simplify some APIs accessing line break rule table\r\n\r\n* Simply the setup when parsing property files\r\n\r\n* Simplify the parsing logic of EastAsianWidth.txt\r\n\r\nNote: match() checks for a match at the beginning of the line, so we\r\ndon't need to skip lines start with \"#\".\r\n\r\nThis is a refactor and shouldn't change the behavior.\r\n\r\n* Simplify the parsing logic of LineBreak.txt\r\n\r\nUnified the logic setting line breaking class. Before this patch,\r\n\"CP_EA\" tweak was only set when we parsed a range of codepoints, but we\r\nreally should also apply it when we parsed a single codepoint, although\r\ncurrently the path doesn't do anything with current EastAsianWidth.txt\r\ndata.\r\n\r\nThis is a refactor and shouldn't change the behavior.\r\n\r\n* Update segmenter README\r\n\r\nThe cleanup in previous commits uses \"Assignment expressions\" [1], which\r\nwas added in Python 3.8 (released in Oct 2019), so update the README\r\naccordingly.\r\n\r\n[1] https://docs.python.org/release/3.8.0/whatsnew/3.8.html#assignment-expressions",
+          "timestamp": "2021-07-19T07:22:12-07:00",
+          "tree_id": "958c1557a868defcf8d8bacde6cac8c779feadb7",
+          "url": "https://github.com/unicode-org/icu4x/commit/aca8858ffa29cf0721647d59e52863c059b45b3c"
+        },
+        "date": 1626704951239,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 631396,
+            "range": "± 12310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1312258,
+            "range": "± 15344",
             "unit": "ns/iter"
           }
         ]
