@@ -57,7 +57,7 @@ pub enum Error {
 
     /// The data provider encountered some other error when loading the resource, such as I/O.
     #[displaydoc("Failed to load resource: {0}")]
-    Resource(Box<dyn std::error::Error + Send + Sync>),
+    Resource(String),
 }
 
 impl std::error::Error for Error {}
@@ -69,8 +69,8 @@ impl From<erased_serde::Error> for Error {
     }
 }
 
-impl From<Box<dyn std::error::Error + Send + Sync>> for Error {
-    fn from(e: Box<dyn std::error::Error + Send + Sync>) -> Self {
+impl From<String> for Error {
+    fn from(e: String) -> Self {
         Error::Resource(e)
     }
 }
@@ -78,9 +78,9 @@ impl From<Box<dyn std::error::Error + Send + Sync>> for Error {
 impl Error {
     pub fn new_resc_error<T>(err: T) -> Self
     where
-        T: 'static + std::error::Error + Send + Sync,
+        T: std::fmt::Display,
     {
-        Self::Resource(Box::new(err))
+        Self::Resource(format!("{}", err))
     }
 }
 

@@ -71,6 +71,6 @@ impl Error {
 
 impl From<Error> for icu_provider::DataError {
     fn from(err: Error) -> Self {
-        Self::Resource(Box::new(err))
+        Self::new_resc_error(&err)
     }
 }

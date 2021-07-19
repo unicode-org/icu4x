@@ -64,7 +64,7 @@ impl Error {
             }
             Self::UnknownSyntax(v) => CrateError::UnknownSyntax(v),
         };
-        DataError::Resource(Box::new(crate_error))
+        DataError::new_resc_error(crate_error)
     }
 }
 
