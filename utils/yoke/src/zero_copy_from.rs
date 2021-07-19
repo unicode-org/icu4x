@@ -197,6 +197,7 @@ impl ZeroCopyFrom<str> for &'static str {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl ZeroCopyFrom<String> for &'static str {
     fn zero_copy_from<'b>(cart: &'b String) -> &'b str {
         cart

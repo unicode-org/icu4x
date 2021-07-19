@@ -460,7 +460,9 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 /// handle to the same data".
 pub unsafe trait CloneableCart: Clone {}
 
+#[cfg(feature = "alloc")]
 unsafe impl<T: ?Sized> CloneableCart for Rc<T> {}
+#[cfg(feature = "alloc")]
 unsafe impl<T: ?Sized> CloneableCart for Arc<T> {}
 unsafe impl<T: CloneableCart> CloneableCart for Option<T> {}
 unsafe impl<'a, T: ?Sized> CloneableCart for &'a T {}
