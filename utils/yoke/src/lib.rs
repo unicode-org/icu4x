@@ -9,7 +9,7 @@
 //!
 //! See the documentation of [`Yoke`] for more details.
 
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 // The lifetimes here are important for safety and explicitly writing
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]
