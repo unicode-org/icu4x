@@ -75,9 +75,10 @@ pub(super) enum TimeGranularity {
 }
 
 #[derive(Default, Debug, Clone, PartialEq)]
-pub struct Pattern {
+pub struct Pattern<'s> {
     items: Vec<PatternItem>,
     time_granularity: Option<TimeGranularity>,
+    marker: std::marker::PhantomData<&'s str>,
 }
 
 /// Retrieves the granularity of time represented by a [`PatternItem`].
@@ -94,7 +95,7 @@ fn get_time_granularity(item: &PatternItem) -> Option<TimeGranularity> {
     }
 }
 
-impl Pattern {
+impl<'s> Pattern<'s> {
     pub fn items(&self) -> &[PatternItem] {
         &self.items
     }
@@ -115,11 +116,12 @@ impl Pattern {
     }
 }
 
-impl From<Vec<PatternItem>> for Pattern {
+impl<'s> From<Vec<PatternItem>> for Pattern<'s> {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
             time_granularity: items.iter().filter_map(get_time_granularity).max(),
             items,
+            marker: std::marker::PhantomData,
         }
     }
 }
@@ -129,7 +131,7 @@ impl From<Vec<PatternItem>> for Pattern {
 /// this was not done, as this code would need to implement the [`write_len()`] method, which would
 /// need to duplicate the branching logic of the [`fmt`](std::fmt) method here. This code is used in generating
 /// the data providers and is not as performance sensitive.
-impl fmt::Display for Pattern {
+impl<'s> fmt::Display for Pattern<'s> {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         for pattern_item in self.items().iter() {
             match pattern_item {
@@ -191,7 +193,7 @@ impl fmt::Display for Pattern {
     }
 }
 
-impl FromIterator<PatternItem> for Pattern {
+impl<'s> FromIterator<PatternItem> for Pattern<'s> {
     fn from_iter<I: IntoIterator<Item = PatternItem>>(iter: I) -> Self {
         Self::from(iter.into_iter().collect::<Vec<_>>())
     }
@@ -199,11 +201,11 @@ impl FromIterator<PatternItem> for Pattern {
 
 #[cfg(feature = "provider_serde")]
 #[allow(clippy::upper_case_acronyms)]
-struct DeserializePatternUTS35String;
+struct DeserializePatternUTS35String<'s>(std::marker::PhantomData<&'s str>);
 
 #[cfg(feature = "provider_serde")]
-impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
-    type Value = Pattern;
+impl<'de: 's, 's> de::Visitor<'de> for DeserializePatternUTS35String<'s> {
+    type Value = Pattern<'s>;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "Expected to find a valid pattern.")
@@ -224,17 +226,17 @@ impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
 }
 
 #[cfg(feature = "provider_serde")]
-struct DeserializePatternBincode;
+struct DeserializePatternBincode<'s>(std::marker::PhantomData<&'s str>);
 
 #[cfg(feature = "provider_serde")]
-impl<'de> de::Visitor<'de> for DeserializePatternBincode {
-    type Value = Pattern;
+impl<'de: 's, 's> de::Visitor<'de> for DeserializePatternBincode<'s> {
+    type Value = Pattern<'s>;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "Unable to deserialize a bincode Pattern.")
     }
 
-    fn visit_seq<V>(self, mut seq: V) -> Result<Pattern, V::Error>
+    fn visit_seq<V>(self, mut seq: V) -> Result<Pattern<'s>, V::Error>
     where
         V: de::SeqAccess<'de>,
     {
@@ -247,21 +249,23 @@ impl<'de> de::Visitor<'de> for DeserializePatternBincode {
 }
 
 #[cfg(feature = "provider_serde")]
-impl<'de> Deserialize<'de> for Pattern {
+impl<'de: 's, 's> Deserialize<'de> for Pattern<'s> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            deserializer.deserialize_str(DeserializePatternUTS35String)
+            // deserializer.deserialize_str(DeserializePatternUTS35String)
+            panic!();
         } else {
-            deserializer.deserialize_seq(DeserializePatternBincode)
+            // deserializer.deserialize_seq(DeserializePatternBincode)
+            panic!();
         }
     }
 }
 
 #[cfg(feature = "provider_serde")]
-impl Serialize for Pattern {
+impl<'s> Serialize for Pattern<'s> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: ser::Serializer,

@@ -45,7 +45,7 @@ pub struct FormattedDateTime<'l, T>
 where
     T: DateTimeInput,
 {
-    pub(crate) pattern: &'l Pattern,
+    pub(crate) pattern: &'l Pattern<'l>,
     pub(crate) symbols: Option<&'l provider::gregory::DateSymbolsV1>,
     pub(crate) datetime: &'l T,
     pub(crate) locale: &'l Locale,
@@ -251,7 +251,10 @@ where
 
 // This function determins whether the struct will load symbols data.
 // Keep it in sync with the `write_field` use of symbols.
-pub fn analyze_pattern(pattern: &Pattern, supports_time_zones: bool) -> Result<bool, &Field> {
+pub fn analyze_pattern<'s>(
+    pattern: &'s Pattern<'s>,
+    supports_time_zones: bool,
+) -> Result<bool, &'s Field> {
     let fields = pattern.items().iter().filter_map(|p| match p {
         PatternItem::Field(field) => Some(field),
         _ => None,
