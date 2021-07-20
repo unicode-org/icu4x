@@ -34,11 +34,13 @@ pub enum TrieTypeEnum {
 // AsULE is AsUnalignedLittleEndian, i.e. "allowed in a zerovec"
 pub trait ValueWidth: Copy + zerovec::ule::AsULE {
     const ENUM_VALUE: ValueWidthEnum;
+    const ERROR_VALUE_RUST: Self;
     fn cast_to_widest(self) -> u32;
 }
 
 impl ValueWidth for u8 {
     const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits8;
+    const ERROR_VALUE_RUST: u8 = u8::MAX;
 
     fn cast_to_widest(self) -> u32 {
         self as u32
@@ -47,6 +49,7 @@ impl ValueWidth for u8 {
 
 impl ValueWidth for u16 {
     const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits16;
+    const ERROR_VALUE_RUST: u16 = u16::MAX;
 
     fn cast_to_widest(self) -> u32 {
         self as u32
@@ -55,6 +58,7 @@ impl ValueWidth for u16 {
 
 impl ValueWidth for u32 {
     const ENUM_VALUE: ValueWidthEnum = ValueWidthEnum::Bits32;
+    const ERROR_VALUE_RUST: u32 = u32::MAX;
 
     fn cast_to_widest(self) -> u32 {
         self
@@ -142,6 +146,12 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         Ok(trie)
     }
 
+    /// Returns the position in the data array containing the trie's stored
+    /// error value.
+    fn trie_error_val_index(&self) -> u32 {
+        self.header.data_length - ERROR_VALUE_NEG_DATA_OFFSET
+    }
+
     fn trie_internal_small_index(&self, code_point: u32) -> u32 {
         let mut index1_pos: u32 = code_point >> SHIFT_1;
         if T::ENUM_VALUE == TrieTypeEnum::Fast {
@@ -153,29 +163,49 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
             assert!(code_point < self.header.high_start && self.header.high_start > SMALL_LIMIT);
             index1_pos += SMALL_INDEX_LENGTH;
         }
-        let index3_block_idx: u32 = (self.index.get(index1_pos as usize).unwrap() as u32)
+        let index1_val = 
+            if let Some(index1_val) = self.index.get(index1_pos as usize) {
+                index1_val
+            } else {
+                return self.trie_error_val_index()
+            };
+        let index3_block_idx: u32 = (index1_val as u32)
             + ((code_point >> SHIFT_2) & INDEX_2_MASK);
-        let mut index3_block: u32 = self.index.get(index3_block_idx as usize).unwrap() as u32;
+        let mut index3_block: u32 = 
+            if let Some(index3_block) = self.index.get(index3_block_idx as usize) {
+                index3_block as u32
+            } else {
+                return self.trie_error_val_index()
+            };
         let mut index3_pos: u32 = (code_point >> SHIFT_3) & INDEX_3_MASK;
         let mut data_block: u32;
         if index3_block & 0x8000 == 0 {
             // 16-bit indexes
-            data_block = self
-                .index
-                .get((index3_block + index3_pos) as usize)
-                .unwrap() as u32;
+            data_block = 
+                if let Some(data_block) = self.index.get((index3_block + index3_pos) as usize) {
+                    data_block as u32
+                } else {
+                    return self.trie_error_val_index()
+                };
         } else {
             // 18-bit indexes stored in groups of 9 entries per 8 indexes.
             index3_block = (index3_block & 0x7fff) + (index3_pos & !7) + (index3_pos >> 3);
             index3_pos &= 7;
-            data_block = ((self.index.get(index3_block as usize).unwrap() << (2 + (2 * index3_pos)))
-                as u32
-                & 0x30000) as u32;
+            data_block = 
+                if let Some(data_block) = self.index.get(index3_block as usize) {
+                    data_block as u32
+                } else {
+                    return self.trie_error_val_index()
+                };
+            data_block = ((data_block << (2 + (2 * index3_pos))) as u32
+                          & 0x30000) as u32;
             index3_block += 1;
-            data_block |= self
-                .index
-                .get((index3_block + index3_pos) as usize)
-                .unwrap() as u32;
+            data_block = 
+                if let Some(index3_val) = self.index.get((index3_block + index3_pos) as usize) {
+                    data_block | (index3_val as u32)
+                } else {
+                    return self.trie_error_val_index()
+                };
         }
         // Returns data_pos == data_block (offset) +
         //     portion of code_point bit field for last (4th) lookup
@@ -198,7 +228,12 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// trie type, `T`.
     fn trie_below_fastmax_index(&self, code_point: u32) -> u32 {
         let index_array_pos: u32 = code_point >> FAST_TYPE_SHIFT;
-        let index_array_val: u16 = self.index.get(index_array_pos as usize).unwrap();
+        let index_array_val: u16 = 
+            if let Some(index_array_val) = self.index.get(index_array_pos as usize) {
+                index_array_val
+            } else {
+                return self.trie_error_val_index()
+            };
         let fast_index_val: u32 = index_array_val as u32 + (code_point & FAST_TYPE_DATA_MASK);
         fast_index_val
     }
@@ -210,11 +245,12 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
         } else if code_point <= CODE_POINT_MAX {
             Self::trie_above_fastmax_index(self, code_point)
         } else {
-            self.header.data_length - ERROR_VALUE_NEG_DATA_OFFSET
+            self.trie_error_val_index()
         };
-        // We need the unwrap because the default value is stored in the data array,
-        // and getting that default value always returns an Option<W>, but need to return W
-        self.data.get(data_pos as usize).unwrap()
+        // Returns the trie value (or trie's error value). 
+        // If we cannot read from the data array, then return the associated constant
+        // ERROR_VALUE_RUST for the instance type for W: ValueWidth.
+        self.data.get(data_pos as usize).unwrap_or(W::ERROR_VALUE_RUST)
     }
 
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
