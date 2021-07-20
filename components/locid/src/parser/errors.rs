@@ -14,7 +14,7 @@ pub enum ParserError {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// use icu::locid::subtags::Language;
     /// use icu::locid::ParserError;
@@ -29,7 +29,7 @@ pub enum ParserError {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// use icu::locid::subtags::Region;
     /// use icu::locid::ParserError;
@@ -44,7 +44,7 @@ pub enum ParserError {
     /// # Examples
     ///
     /// ```
-    /// use std::str::FromStr;
+    /// use core::str::FromStr;
     ///
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::ParserError;
@@ -55,4 +55,5 @@ pub enum ParserError {
     InvalidExtension,
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for ParserError {}

@@ -4,14 +4,14 @@
 
 macro_rules! impl_writeable_for_single_subtag {
     ($type:tt, $sample:literal) => {
-        impl std::fmt::Display for $type {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        impl core::fmt::Display for $type {
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 f.write_str(&self.0)
             }
         }
 
         impl writeable::Writeable for $type {
-            fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 sink.write_str(self.as_str())
             }
             #[inline]
@@ -29,14 +29,14 @@ macro_rules! impl_writeable_for_single_subtag {
 
 macro_rules! impl_writeable_for_subtag_list {
     ($type:tt, $sample1:literal, $sample2:literal) => {
-        impl std::fmt::Display for $type {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        impl core::fmt::Display for $type {
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 writeable::Writeable::write_to(self, f)
             }
         }
 
         impl writeable::Writeable for $type {
-            fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
                 for subtag in self.iter() {
                     if initial {
@@ -67,11 +67,11 @@ macro_rules! impl_writeable_for_subtag_list {
             writeable::assert_writeable_eq!("", &$type::default());
             writeable::assert_writeable_eq!(
                 $sample1,
-                &$type::from_vec_unchecked(vec![$sample1.parse().unwrap()])
+                &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()])
             );
             writeable::assert_writeable_eq!(
-                std::concat!($sample1, "-", $sample2),
-                &$type::from_vec_unchecked(vec![
+                core::concat!($sample1, "-", $sample2),
+                &$type::from_vec_unchecked(alloc::vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
                 ])
@@ -82,14 +82,14 @@ macro_rules! impl_writeable_for_subtag_list {
 
 macro_rules! impl_writeable_for_tinystr_list {
     ($type:tt, $if_empty:literal, $sample1:literal, $sample2:literal) => {
-        impl std::fmt::Display for $type {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        impl core::fmt::Display for $type {
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 writeable::Writeable::write_to(self, f)
             }
         }
 
         impl writeable::Writeable for $type {
-            fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
                 if self.0.len() == 0 {
                     sink.write_str($if_empty)?;
@@ -126,7 +126,7 @@ macro_rules! impl_writeable_for_tinystr_list {
                 &$type::from_vec_unchecked(vec![$sample1.parse().unwrap()])
             );
             writeable::assert_writeable_eq!(
-                std::concat!($sample1, "-", $sample2),
+                core::concat!($sample1, "-", $sample2),
                 &$type::from_vec_unchecked(vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
@@ -138,14 +138,14 @@ macro_rules! impl_writeable_for_tinystr_list {
 
 macro_rules! impl_writeable_for_key_value {
     ($type:tt, $key1:literal, $value1:literal, $key2:literal, $expected2:literal) => {
-        impl std::fmt::Display for $type {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        impl core::fmt::Display for $type {
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 writeable::Writeable::write_to(self, f)
             }
         }
 
         impl writeable::Writeable for $type {
-            fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+            fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
                 for (key, value) in self.iter() {
                     if initial {
@@ -187,14 +187,14 @@ macro_rules! impl_writeable_for_key_value {
         fn test_writeable() {
             writeable::assert_writeable_eq!("", &$type::default());
             writeable::assert_writeable_eq!(
-                std::concat!($key1, "-", $value1),
+                core::concat!($key1, "-", $value1),
                 &$type::from_vec_unchecked(vec![(
                     $key1.parse().unwrap(),
                     $value1.parse().unwrap()
                 )])
             );
             writeable::assert_writeable_eq!(
-                std::concat!($key1, "-", $value1, "-", $expected2),
+                core::concat!($key1, "-", $value1, "-", $expected2),
                 &$type::from_vec_unchecked(vec![
                     ($key1.parse().unwrap(), $value1.parse().unwrap()),
                     ($key2.parse().unwrap(), "true".parse().unwrap())

@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Variant;
-use std::ops::Deref;
+use alloc::boxed::Box;
+
+use alloc::vec::Vec;
+use core::ops::Deref;
 
 /// A list of variants (examples: `["macos", "posix"]`, etc.)
 ///

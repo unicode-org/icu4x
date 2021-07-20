@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::iter::Peekable;
+use core::iter::Peekable;
 
 pub use super::errors::ParserError;
 use crate::parser::get_subtag_iterator;
 use crate::subtags;
 use crate::LanguageIdentifier;
+use alloc::vec::Vec;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum ParserMode {

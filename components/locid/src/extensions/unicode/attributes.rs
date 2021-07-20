@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::Attribute;
-use std::ops::Deref;
+use alloc::boxed::Box;
+
+use alloc::vec::Vec;
+use core::ops::Deref;
 
 /// A set of [`Attribute`] elements as defined in [`Unicode Extension Attributes`].
 ///

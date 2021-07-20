@@ -4,7 +4,9 @@
 
 use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
 use crate::{extensions, subtags, LanguageIdentifier};
-use std::str::FromStr;
+use alloc::string::String;
+use alloc::string::ToString;
+use core::str::FromStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -185,20 +187,20 @@ impl AsMut<LanguageIdentifier> for Locale {
     }
 }
 
-impl std::fmt::Debug for Locale {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Debug for Locale {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
-impl std::fmt::Display for Locale {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for Locale {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
 impl writeable::Writeable for Locale {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         writeable::Writeable::write_to(&self.id, sink)?;
         writeable::Writeable::write_to(&self.extensions, sink)?;
         Ok(())
