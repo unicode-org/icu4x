@@ -563,6 +563,100 @@ jobs:
           path: ./benchmarks/memory/**
           name: benchmark-memory
 
+  # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
+
+  binsize:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    - name: Install prerequisites for wasm build
+      run: |
+        rustup component add rust-src
+        rustup toolchain list
+        rustup toolchain install nightly-2021-02-28
+        sudo npm install -g wasm-opt --unsafe-perm
+        sudo npm install -g wabt
+        cargo install twiggy
+
+    - name: Setup output data directory
+      run: mkdir -p benchmarks/binsize
+
+    - name: Build wasm executables and measure size
+      run: |
+        cargo make wasm-examples
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt| tee benchmarks/binsize/output.txt
+
+    - name: Store benchmark result (non-merge action only)
+      # Data from anything that is not a merge to mainline goes to a preliminary branch
+      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/binsize/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '200%'
+        fail-on-alert: true
+        gh-pages-branch:  unmerged-pr-bench-data
+        auto-push: false
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+
+    - name: Store benchmark result (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/binsize/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '200%'
+        fail-on-alert: true
+        gh-pages-branch: gh-pages
+        auto-push: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran,@gregtatum'
+
+    - name: Switch to branch gh-pages for benchmark data storage (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: git checkout gh-pages
+
+    - name: Upload binsize with benchmark data in ndjson format (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      uses: actions/upload-artifact@v2
+      with:
+        path: ./benchmarks/binsize/**
+        name: benchmark-binsize
+
   # Doc-GH-Pages job
 
   doc_gh_pages:
@@ -570,7 +664,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [check, tidy, benchmark, memory]
+    needs: [check, tidy, benchmark, memory, binsize]
 
     ## Only create docs for merges/pushes to main (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
@@ -593,6 +687,9 @@ jobs:
     - name: Create (ensure existence of) folder for memory benchmark data to copy
       run: mkdir -p copy-to-ext-repo/benchmarks/memory
 
+    - name: Create (ensure existence of) folder for binary size benchmark data to copy
+      run: mkdir -p copy-to-ext-repo/benchmarks/binsize
+
     # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
 
     - name: Download previous content destined for GH pages
@@ -607,6 +704,13 @@ jobs:
       with:
         path: ./copy-to-ext-repo/benchmarks/memory
         name: benchmark-memory
+
+    # Doc-GH-Pages job > Download benchmark dashboard files from previous jobs into folder of files to copy to remote repo
+    - name: Download previous content destined for GH pages
+      uses: actions/download-artifact@v2
+      with:
+        path: ./copy-to-ext-repo/benchmarks/binsize
+        name: benchmark-binsize
 
     # Doc-GH-Pages job > Generate `cargo doc` step
 

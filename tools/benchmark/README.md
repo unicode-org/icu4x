@@ -100,3 +100,29 @@ dhat: The data in dhat-heap.json is viewable with dhat/dh_view.html
 This feature replaces the default system allocator with `dlmalloc`, the same Rust-based allocator used in the `wasm32-unknown-unknown` build target.  This results in more reliable benchmarks by removing the platform-dependent allocator.
 
 This feature is used by the `cargo make valgrind` build task.
+
+## icu_benchmark_binsize
+
+This is a continuous integration tool to monitor the size of ICU4X binaries.
+It is invoked by GitHub Action for each PR, measures the size of the ICU4X demo
+files compiled to wasm (WebAssembly) format, and stores the result in a
+branch of the repository for subsequent display.
+
+### Usage and Output
+
+```sh
+# Prerequisite: build wasm binaries.
+cargo make wasm-examples
+
+# Execute binsize benchmark
+cargo run --package icu_benchmark_binsize -- wasmpkg/wasm-opt
+```
+
+Benchmark output is written in ndjson format, e.g.
+`{"biggerIsBetter":false,"name":"simple","unit":"bytes","value":909161}`
+for binary `simple.wasm`.
+
+### Packages used
+
+[benchmarking action](https://github.com/gregtatum/github-action-benchmark) – This is a fork that allows collecting
+[ndjson](http://ndjson.org/) benchmark data.
