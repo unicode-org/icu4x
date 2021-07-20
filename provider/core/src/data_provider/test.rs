@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
+use alloc::rc::Rc;
+use alloc::string::String;
+use alloc::string::ToString;
+use core::fmt::Debug;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
-use std::fmt::Debug;
-use std::rc::Rc;
 
 use super::*;
 use crate::erased::*;

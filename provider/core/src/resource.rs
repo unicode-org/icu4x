@@ -5,12 +5,16 @@
 //! Resource paths and related types.
 
 use crate::error::Error;
+use alloc::borrow::Cow;
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use core::borrow::Borrow;
+use core::default::Default;
+use core::fmt;
+use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
-use std::borrow::Borrow;
-use std::borrow::Cow;
-use std::default::Default;
-use std::fmt;
-use std::fmt::Write;
 use tinystr::{TinyStr16, TinyStr4};
 
 /// A top-level collection of related resource keys.
@@ -54,7 +58,7 @@ impl fmt::Display for ResourceCategory {
 }
 
 impl writeable::Writeable for ResourceCategory {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         sink.write_str(&self.as_str())
     }
 
@@ -134,7 +138,7 @@ impl fmt::Display for ResourceKey {
 }
 
 impl writeable::Writeable for ResourceKey {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         sink.write_str(&self.category.as_str())?;
         sink.write_char('/')?;
         sink.write_str(self.sub_category.as_str())?;
@@ -259,7 +263,7 @@ impl fmt::Display for ResourceOptions {
 }
 
 impl writeable::Writeable for ResourceOptions {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let mut initial = true;
         for component in self.get_components().iter() {
             if initial {
@@ -313,7 +317,7 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use std::borrow::Cow;
+    /// use alloc::borrow::Cow;
     /// use icu_provider::prelude::*;
     /// use icu_locid_macros::langid;
     ///
@@ -384,7 +388,7 @@ impl fmt::Display for ResourcePath {
 }
 
 impl writeable::Writeable for ResourcePath {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         writeable::Writeable::write_to(&self.key, sink)?;
         if !self.options.is_empty() {
             sink.write_char('/')?;

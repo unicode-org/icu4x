@@ -8,7 +8,10 @@ use crate::error::Error;
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use crate::yoke;
-use std::rc::Rc;
+use alloc::boxed::Box;
+use alloc::rc::Rc;
+use alloc::vec;
+use alloc::vec::Vec;
 
 /// A locale-invariant data provider. Sometimes useful for testing. Not intended to be used in
 /// production environments.
@@ -22,7 +25,7 @@ use std::rc::Rc;
 /// use icu_provider::prelude::*;
 /// use icu_provider::inv::InvariantDataProvider;
 /// use icu_provider::hello_world::{key, HelloWorldV1Marker};
-/// use std::borrow::Cow;
+/// use alloc::borrow::Cow;
 ///
 /// let provider = InvariantDataProvider;
 /// let result: DataPayload<HelloWorldV1Marker> = provider

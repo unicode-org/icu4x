@@ -7,9 +7,13 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
-use std::any::Any;
-use std::any::TypeId;
-use std::rc::Rc;
+use alloc::boxed::Box;
+use alloc::rc::Rc;
+use alloc::string::String;
+use alloc::string::ToString;
+use core::any::Any;
+use core::any::Any;
+use core::any::TypeId;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.
 ///
@@ -307,7 +311,7 @@ mod test {
     use super::*;
     use crate::dynutil::UpcastDataPayload;
     use crate::marker::CowStringMarker;
-    use std::borrow::Cow;
+    use alloc::borrow::Cow;
 
     #[test]
     fn test_erased_case_1() {
@@ -346,7 +350,7 @@ mod test {
     fn test_erased_case_4() {
         let data: Rc<[u8]> = "foo".as_bytes().into();
         let original = DataPayload::<CowStringMarker>::try_from_rc_buffer_badly(data, |bytes| {
-            std::str::from_utf8(bytes).map(|s| Cow::Borrowed(s))
+            core::str::from_utf8(bytes).map(|s| Cow::Borrowed(s))
         })
         .expect("String is valid UTF-8");
         let upcasted = ErasedDataStructMarker::upcast(original);

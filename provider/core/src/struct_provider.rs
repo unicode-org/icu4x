@@ -7,6 +7,7 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
+use alloc::string::ToString;
 
 /// A data provider that unconditionally returns references to borrowed data.
 ///
@@ -16,7 +17,7 @@ use crate::yoke::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::struct_provider::StructProvider;
-/// use std::borrow::Cow;
+/// use alloc::borrow::Cow;
 ///
 /// let local_data = HelloWorldV1 {
 ///     message: Cow::Owned("hello world".to_string()),

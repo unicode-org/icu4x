@@ -22,8 +22,11 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
-use std::ops::Deref;
-use std::rc::Rc;
+use alloc::boxed::Box;
+use alloc::rc::Rc;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::ops::Deref;
 use yoke::trait_hack::YokeTraitHack;
 
 /// An object that receives data from a Serde Deserializer.
@@ -44,7 +47,7 @@ pub trait SerdeDeDataReceiver {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::serde::SerdeDeDataReceiver;
-    /// use std::rc::Rc;
+    /// use alloc::rc::Rc;
     ///
     /// let json_text = "{\"message\":\"Hello World\"}";
     /// let rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
@@ -239,7 +242,7 @@ impl<'d, 's: 'd> SerdeSeDataStructWrap<'d, 's> {
     fn shorten(self) -> SerdeSeDataStructWrap<'d, 'd> {
         // This is safe because 's exceeds 'd
         // TODO(#760): The types must be covariant for this to actually be safe.
-        unsafe { std::mem::transmute(self) }
+        unsafe { core::mem::transmute(self) }
     }
 }
 
@@ -277,21 +280,21 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
         // Note (Manishearth): this is technically unsound since SerdeDeDataStruct
         // has no variance requirements. This will become a non-issue
         // once Borrowed is removed (https://github.com/unicode-org/icu4x/issues/752)
-        unsafe { std::mem::transmute(self) }
+        unsafe { core::mem::transmute(self) }
     }
     fn transform_owned(self) -> Self::Output {
         // (needs a transmute for the same reason as above)
-        unsafe { std::mem::transmute(self) }
+        unsafe { core::mem::transmute(self) }
     }
     unsafe fn make(from: Self::Output) -> Self {
-        std::mem::transmute(from)
+        core::mem::transmute(from)
     }
     fn transform_mut<F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
     {
         unsafe {
-            f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
+            f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
                 self,
             ))
         }

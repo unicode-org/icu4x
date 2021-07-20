@@ -4,14 +4,14 @@
 
 //! Utilities for using trait objects with `DataPayload`.
 
-/// Implement [`ToOwned`](std::borrow::ToOwned) on a trait object, enabling it to be used in a [`Cow`](std::borrow::Cow).
+/// Implement [`ToOwned`](alloc::borrow::ToOwned) on a trait object, enabling it to be used in a [`Cow`](alloc::borrow::Cow).
 /// Requires the trait to have a method named `clone_into_box()`.
 macro_rules! impl_dyn_clone {
     ($trait:path) => {
         impl_dyn_clone!($trait, 's);
     };
     ($trait:path, $s:lifetime) => {
-        impl<$s> ToOwned for dyn $trait + $s {
+        impl<$s> alloc::borrow::ToOwned for dyn $trait + $s {
             type Owned = Box<dyn $trait + $s>;
             fn to_owned(&self) -> Self::Owned {
                 <dyn $trait + $s>::clone_into_box(self)
@@ -48,7 +48,7 @@ where
     /// use icu_provider::erased::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::marker::CowStringMarker;
-    /// use std::borrow::Cow;
+    /// use alloc::borrow::Cow;
     ///
     /// let data = "foo".to_string();
     /// let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
@@ -68,7 +68,7 @@ where
 ///
 /// Use this macro to add support to your data provider for:
 ///
-/// - [`ErasedDataStruct`] if your provider can return typed objects as [`Any`](std::any::Any)
+/// - [`ErasedDataStruct`] if your provider can return typed objects as [`Any`](core::any::Any)
 /// - [`SerdeSeDataStruct`] if your provider returns objects implementing [`serde::Serialize`]
 ///
 /// The second argument is a match-like construction mapping from resource keys to structs. To map
@@ -91,7 +91,7 @@ where
 /// use icu_provider::prelude::*;
 /// use icu_provider::erased::ErasedDataStructMarker;
 /// use icu_provider::marker::CowStringMarker;
-/// use std::borrow::Cow;
+/// use alloc::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
 /// // A small DataProvider that returns owned strings
@@ -130,7 +130,7 @@ where
 /// ```
 /// # use icu_provider::prelude::*;
 /// # use icu_provider::marker::CowStringMarker;
-/// # use std::borrow::Cow;
+/// # use alloc::borrow::Cow;
 /// # struct MyProvider(pub String);
 /// # impl<'d> DataProvider<'d, 'static, CowStringMarker> for MyProvider {
 /// #   fn load_payload(&self, req: &DataRequest)

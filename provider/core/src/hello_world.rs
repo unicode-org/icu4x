@@ -7,12 +7,15 @@
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use crate::yoke::{self, *};
+use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::rc::Rc;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use core::collections::HashMap;
+use core::fmt::Debug;
+use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
-use std::borrow::Cow;
-use std::collections::HashMap;
-use std::fmt::Debug;
-use std::rc::Rc;
-use std::str::FromStr;
 
 pub mod key {
     use crate::resource::ResourceKey;
