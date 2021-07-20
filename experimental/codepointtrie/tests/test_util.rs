@@ -32,11 +32,13 @@ pub fn check_trie<W: ValueWidth, T: TrieType>(trie: &CodePointTrie<W, T>, check_
     }
 }
 
+#[allow(dead_code)]
 #[derive(serde::Deserialize)]
 pub struct TestFile {
     code_point_trie: TestCodePointTrie,
 }
 
+#[allow(dead_code)]
 #[derive(serde::Deserialize)]
 pub struct TestCodePointTrie {
     // The trie_struct field for test data files is dumped from the same source
@@ -48,6 +50,7 @@ pub struct TestCodePointTrie {
     test_data: TestData,
 }
 
+#[allow(dead_code)]
 #[derive(serde::Deserialize)]
 pub struct TestData {
     #[serde(rename(deserialize = "checkRanges"))]
@@ -59,6 +62,7 @@ pub struct TestData {
 // the `CodePointTrie`, and test the constructed struct against the test file's
 // "check ranges" (inversion map ranges) using `check_trie` to verify the
 // validity of the `CodePointTrie`'s behavior for all code points.
+#[allow(dead_code)]
 pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
     let path = Path::new(test_file_path);
     let display = path.display();
