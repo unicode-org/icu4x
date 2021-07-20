@@ -31,9 +31,8 @@ fn planes_trie_deserialize_check_test() {
 
     let mut toml_str = String::new();
 
-    match file.read_to_string(&mut toml_str) {
-        Err(why) => panic!("couldn't read {}: {}", display, why),
-        _ => {}
+    if let Err(why) = file.read_to_string(&mut toml_str) {
+         panic!("couldn't read {}: {}", display, why)
     }
 
     let planes_enum_prop: UnicodeEnumeratedProperty = toml::from_str(&toml_str).unwrap();

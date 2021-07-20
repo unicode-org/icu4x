@@ -70,7 +70,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
 
     let mut toml_str = String::new();
 
-    if let Err(err) = file.read_to_string(&mut toml_str) { 
+    if let Err(err) = file.read_to_string(&mut toml_str) {
         panic!("couldn't read {}: {}", display, err)
     }
 
