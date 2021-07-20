@@ -12,7 +12,6 @@ use alloc::rc::Rc;
 use alloc::string::String;
 use alloc::string::ToString;
 use core::any::Any;
-use core::any::Any;
 use core::any::TypeId;
 
 /// Auto-implemented trait allowing for type erasure of data provider structs.

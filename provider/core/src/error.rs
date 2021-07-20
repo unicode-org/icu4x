@@ -62,7 +62,8 @@ pub enum Error {
     Resource(String),
 }
 
-impl core::error::Error for Error {}
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
 
 #[cfg(feature = "erased-serde")]
 impl From<erased_serde::Error> for Error {
