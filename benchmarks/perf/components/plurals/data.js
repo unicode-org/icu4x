@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626719800943,
+  "lastUpdate": 1626740081734,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10121,6 +10121,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 101339,
             "range": "± 6689",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5f7a5e5c737ee6e3ba0c53e789d131d3eb277a8",
+          "message": "Remove use of `dyn Error` in library code in favor of Strings (#867)\n\n* Remove std::error::Error from provider\r\n\r\n* Remove std::error::Error from fs data provider\r\n\r\n* Pull in serde std only when exporting\r\n\r\n* fmt",
+          "timestamp": "2021-07-19T17:07:01-07:00",
+          "tree_id": "332ef8ced9691040c640d1d282f255d16ce794ed",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5f7a5e5c737ee6e3ba0c53e789d131d3eb277a8"
+        },
+        "date": 1626740079284,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1327,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8220,
+            "range": "± 335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 126218,
+            "range": "± 5481",
             "unit": "ns/iter"
           }
         ]
