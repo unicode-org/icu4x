@@ -38,6 +38,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![cfg_attr(not(any(feature = "std", test)), no_std)]
+
 pub mod decimal;
 pub mod signum;
 mod uint_iterator;
@@ -49,8 +51,8 @@ pub use signum::Signum;
 #[derive(Display, Debug, PartialEq)]
 pub enum Error {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
-    /// magnitude of the most significant digit is std::i16::MAX, and the lowest magnitude of the
-    /// least significant digit is std::i16::MIN.
+    /// magnitude of the most significant digit is core::i16::MAX, and the lowest magnitude of the
+    /// least significant digit is core::i16::MIN.
     ///
     /// # Examples
     ///
@@ -59,7 +61,7 @@ pub enum Error {
     /// use fixed_decimal::Error;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
-    /// assert_eq!(Error::Limit, dec1.multiply_pow10(std::i16::MAX).unwrap_err());
+    /// assert_eq!(Error::Limit, dec1.multiply_pow10(core::i16::MAX).unwrap_err());
     /// ```
     #[displaydoc("Magnitude or number of digits exceeded")]
     Limit,
@@ -74,4 +76,5 @@ pub enum Error {
     Syntax,
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for Error {}

@@ -34,8 +34,8 @@ macro_rules! impl_from_signed_integer_type {
             fn from(value: $itype) -> Self {
                 Self {
                     unum: {
-                        if value == std::$itype::MIN {
-                            std::$itype::MAX as $utype + 1
+                        if value == core::$itype::MIN {
+                            core::$itype::MAX as $utype + 1
                         } else {
                             value.abs() as $utype
                         }
