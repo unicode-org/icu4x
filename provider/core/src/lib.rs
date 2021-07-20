@@ -108,6 +108,10 @@
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dyn_provider!`]: impl_dyn_provider
 
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 #[macro_use]
 pub mod dynutil;
 

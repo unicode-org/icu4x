@@ -29,6 +29,7 @@ skip_optional_dependencies = true
 all-features = true
 
 [features]
+std = ["icu_locid/std"]
 provider_serde = ["serde", "erased-serde"]
 macros = ["icu_provider_macros"]
 
