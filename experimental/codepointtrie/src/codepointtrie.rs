@@ -32,8 +32,19 @@ pub enum TrieTypeEnum {
 // ValueWidth trait
 
 // AsULE is AsUnalignedLittleEndian, i.e. "allowed in a zerovec"
+
+/// A trait representing the width of the values stored in the data array of a 
+/// [`CodePointTrie`]. This trait is used as a type parameter in constructing
+/// a `CodePointTrie`.
 pub trait ValueWidth: Copy + zerovec::ule::AsULE {
+    /// This enum variant represents the specific instance of `ValueWidth` such
+    /// that the enum discriminant values matches ICU4C's enum integer value.
     const ENUM_VALUE: ValueWidthEnum;
+    /// This value is used to indicate an error in the Rust code in accessing
+    /// a position in the trie's `data` array. In normal cases, the position in
+    /// the `data` array will return either the correct value, or in case of a
+    /// logical error in the trie's computation, the trie's own error value
+    /// which is stored that in the `data` array.
     const ERROR_VALUE_RUST: Self;
     fn cast_to_widest(self) -> u32;
 }
@@ -67,23 +78,45 @@ impl ValueWidth for u32 {
 
 // TrieType trait
 
+/// A trait representing the "trie type" of a [`CodePointTrie`]. 
+/// 
+/// Currently, the options are "fast" and "small", which differ in the "fast max"
+/// limit.
 pub trait TrieType {
     const FAST_MAX: u32;
     const ENUM_VALUE: TrieTypeEnum;
 }
 
+/// An empty struct to represent "fast" type code point tries for the
+///  [`TrieType`] trait. The "fast max" limit is set to 0xffff.
 pub struct Fast;
+
 impl TrieType for Fast {
+    // All code points up to the fast max limit are represented 
+    /// individually in the `index` array to hold their `data` array position, and
+    /// thus only need 2 lookups for a [`crate::codepointtrie::CodePointTrie::get`].
+    /// Code points above the "fast max" limit require 4 lookups.
     const FAST_MAX: u32 = FAST_TYPE_FAST_INDEXING_MAX;
+    /// This enum variant represents the specific instance of `TrieType` such
+    /// that the enum discriminant values matches ICU4C's enum integer value.
     const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Fast;
 }
 
+/// An empty struct to represent "small" type code point tries for the
+///  [`TrieType`] trait. The "fast max" limit is set to 0x0fff.
 pub struct Small;
+
 impl TrieType for Small {
     const FAST_MAX: u32 = SMALL_TYPE_FAST_INDEXING_MAX;
     const ENUM_VALUE: TrieTypeEnum = TrieTypeEnum::Small;
 }
 
+/// This struct represents a de-serialized CodePointTrie that was exported from
+/// ICU binary data.
+/// 
+/// For more information:
+/// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
+/// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
     header: CodePointTrieHeader,
     index: ZeroVec<'trie, u16>,
@@ -91,6 +124,7 @@ pub struct CodePointTrie<'trie, W: ValueWidth, T: TrieType> {
     _marker_ty: PhantomData<T>,
 }
 
+/// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 pub struct CodePointTrieHeader {
     pub index_length: u32,
     pub data_length: u32,
@@ -100,8 +134,6 @@ pub struct CodePointTrieHeader {
     pub data_null_offset: u32,
     pub null_value: u32,
 }
-
-// TODO: add Rust-doc that includes examples
 
 impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
@@ -239,6 +271,16 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    /// assert_eq!(0, trie.get(0x41));  // 'A' as u32
+    /// assert_eq!(0, trie.get(0x13E0));  // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get(0x10044));  // '𐁄' as u32
+    /// ```
     pub fn get(&self, code_point: u32) -> W {
         let data_pos: u32 = if code_point <= T::FAST_MAX {
             Self::trie_below_fastmax_index(self, code_point)
@@ -257,7 +299,6 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     /// as a `u32`. This API method maintains consistency with the corresponding
     /// originalICU APIs.
     pub fn get_u32(&self, code_point: u32) -> u32 {
-        // this is the consistent API that is public-facing for users
         self.get(code_point).cast_to_widest()
     }
 }
