@@ -4,7 +4,7 @@
 
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
-use core::{mem, ptr};
+use core::mem;
 
 /// A [`Yokeable`] type is essentially one with a covariant lifetime parameter,
 /// matched to the parameter in the trait definition. The trait allows one to cast
@@ -251,7 +251,7 @@ where
         debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
-        ptr::read(ptr)
+        core::ptr::read(ptr)
     }
 
     fn transform_mut<F>(&'a mut self, f: F)
