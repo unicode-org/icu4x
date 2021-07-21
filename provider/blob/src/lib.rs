@@ -17,7 +17,7 @@
 //!     --format blob \
 //!     --hello-world-key \
 //!     --all-locales \
-//!     --out hello_world.bincode
+//!     --out hello_world.postcard
 //! ```
 //!
 //! # Example
@@ -31,6 +31,10 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/tools/datagen#readme
+
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
 
 mod blob_schema;
 mod path_util;
