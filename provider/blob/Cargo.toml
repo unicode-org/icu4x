@@ -48,4 +48,5 @@ icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 path = "src/lib.rs"
 
 [features]
-export = ["log", "postcard/alloc"]
+export = ["log", "postcard/alloc", "std"]
+std = ["icu_locid/std", "icu_provider/std"]

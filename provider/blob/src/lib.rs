@@ -32,6 +32,10 @@
 //! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`icu4x-datagen`]: https://github.com/unicode-org/icu4x/tree/main/tools/datagen#readme
 
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 mod blob_schema;
 mod path_util;
 mod static_data_provider;
