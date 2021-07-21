@@ -1011,6 +1011,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_macros",
  "icu_provider_macros",
+ "litemap",
  "serde",
  "serde_json",
  "static_assertions",
@@ -1246,7 +1247,7 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "litemap"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "icu_benchmark_macros",
  "icu_locid",
