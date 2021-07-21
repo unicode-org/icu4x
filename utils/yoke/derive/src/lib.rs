@@ -84,7 +84,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     self
                 }
                 unsafe fn make(this: Self::Output) -> Self {
-                    use std::{mem, ptr};
+                    use core::{mem, ptr};
                     // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
                     // are the same
                     debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
@@ -95,7 +95,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 fn transform_mut<F>(&'a mut self, f: F)
                 where
                     F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
-                    unsafe { f(std::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+                    unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
         }

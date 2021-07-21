@@ -83,7 +83,7 @@
 //! ### `DataProvider<dyn ErasedDataStruct>`
 //!
 //! The trait [`ErasedDataProvider`] removes the type argument from [`DataProvider`] and requires
-//! that all data structs be convertible to the [`Any`](std::any::Any) type. This enables the processing of data
+//! that all data structs be convertible to the [`Any`](core::any::Any) type. This enables the processing of data
 //! without the caller knowing the underlying data struct.
 //!
 //! Since [`ErasedDataProvider`] is not specific to a single type, it can be useful for caches or
@@ -107,6 +107,10 @@
 //! [`SerdeSeDataStruct`]: serde::SerdeSeDataStruct
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dyn_provider!`]: impl_dyn_provider
+
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
 
 #[macro_use]
 pub mod dynutil;

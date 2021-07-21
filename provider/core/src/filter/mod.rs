@@ -40,6 +40,8 @@ pub use impls::*;
 
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
+use alloc::boxed::Box;
+use alloc::string::String;
 
 /// A data provider that selectively filters out data requests.
 ///

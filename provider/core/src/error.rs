@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
+use alloc::format;
+use alloc::string::String;
+use core::any::TypeId;
 use displaydoc::Display;
-use std::any::TypeId;
 
 /// Error enumeration for DataProvider.
 #[non_exhaustive]
@@ -60,6 +62,7 @@ pub enum Error {
     Resource(String),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
 #[cfg(feature = "erased-serde")]
@@ -78,7 +81,7 @@ impl From<String> for Error {
 impl Error {
     pub fn new_resc_error<T>(err: T) -> Self
     where
-        T: std::fmt::Display,
+        T: core::fmt::Display,
     {
         Self::Resource(format!("{}", err))
     }

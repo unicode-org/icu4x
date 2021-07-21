@@ -16,6 +16,10 @@
 //! and upgrades itself gracefully for larger inputs.
 //!
 
+#![no_std]
+
+extern crate alloc;
+
 mod map;
 
 pub use map::LiteMap;

@@ -29,6 +29,7 @@ skip_optional_dependencies = true
 all-features = true
 
 [features]
+std = ["icu_locid/std"]
 provider_serde = ["serde", "erased-serde"]
 macros = ["icu_provider_macros"]
 
@@ -37,7 +38,8 @@ icu_locid = { version = "0.2", path = "../../components/locid" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-yoke = { version = "0.2", path = "../../utils/yoke", features = ["serde", "derive"] }
+yoke = { version = "0.2.1", path = "../../utils/yoke", features = ["serde", "derive"] }
+litemap = { path = "../../utils/litemap", version = "0.2.1" }
 icu_provider_macros = { version = "0.2", path = "../macros", optional = true }
 
 # For "provider_serde" feature
