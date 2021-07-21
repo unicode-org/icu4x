@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626905196486,
+  "lastUpdate": 1626905860109,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4427,6 +4427,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1137723,
             "range": "± 58444",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6a7650eef7b24d2ac7f539d7b1d86249d036e316",
+          "message": "Move blob data provider to postcard; support no_std (#878)\n\n* Move blob provider to postcard\r\n\r\n* Move testdata.bincode to postcard\r\n\r\n* Support no_std in blob data provider\r\n\r\n* rm build.rs",
+          "timestamp": "2021-07-21T15:10:46-07:00",
+          "tree_id": "d4a6b9d19d494947d542b3642dcafdc3e80527af",
+          "url": "https://github.com/unicode-org/icu4x/commit/6a7650eef7b24d2ac7f539d7b1d86249d036e316"
+        },
+        "date": 1626905857420,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 729242,
+            "range": "± 44085",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1477864,
+            "range": "± 56032",
             "unit": "ns/iter"
           }
         ]
