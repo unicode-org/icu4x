@@ -11,9 +11,9 @@ use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use crate::yoke::*;
-use alloc::format;
+
 use alloc::rc::Rc;
-use alloc::string::ToString;
+
 use core::convert::TryFrom;
 use core::fmt;
 use core::fmt::Debug;
