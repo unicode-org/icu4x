@@ -90,6 +90,8 @@ pub struct ICU4XCreateDataProviderResult {
     pub success: bool,
 }
 
+
+#[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 #[no_mangle]
 /// Constructs an [`FsDataProvider`] and retirns it as an [`ICU4XDataProvider`].
 /// See [`FsDataProvider::try_new()`] for more details.
@@ -120,7 +122,7 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", target_os = "none"))]
 #[no_mangle]
 /// Constructs an [`StaticDataProvider`] and retirns it as an [`ICU4XDataProvider`].
 /// See [`StaticDataProvider::new()`] for more details.
