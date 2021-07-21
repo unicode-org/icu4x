@@ -447,6 +447,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "displaydoc"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3bf95dc3f046b9da4f2d51833c0d3547d8564ef6910f5c1ed130306a75b92886"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "dlmalloc"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -487,9 +498,10 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "criterion",
+ "displaydoc",
  "getrandom 0.2.2",
  "icu_benchmark_macros",
  "rand",
@@ -497,7 +509,6 @@ dependencies = [
  "rand_pcg",
  "smallvec",
  "static_assertions",
- "thiserror",
  "writeable",
 ]
 
@@ -891,6 +902,7 @@ version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
+ "displaydoc",
  "icu",
  "icu_benchmark_macros",
  "icu_locid",
@@ -901,7 +913,6 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -911,6 +922,7 @@ name = "icu_decimal"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "fixed_decimal",
  "getrandom 0.2.2",
  "icu",
@@ -923,7 +935,6 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "serde",
- "thiserror",
  "writeable",
 ]
 
@@ -946,11 +957,11 @@ name = "icu_locid"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "icu",
  "icu_benchmark_macros",
  "serde",
  "serde_json",
- "thiserror",
  "tinystr",
  "writeable",
 ]
@@ -969,8 +980,8 @@ dependencies = [
 name = "icu_pattern"
 version = "0.1.0"
 dependencies = [
+ "displaydoc",
  "iai",
- "thiserror",
  "writeable",
 ]
 
@@ -979,6 +990,7 @@ name = "icu_plurals"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "fixed_decimal",
  "icu",
  "icu_benchmark_macros",
@@ -988,22 +1000,21 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
- "thiserror",
 ]
 
 [[package]]
 name = "icu_provider"
 version = "0.2.0"
 dependencies = [
+ "displaydoc",
  "erased-serde",
  "icu_locid",
  "icu_locid_macros",
- "icu_plurals",
  "icu_provider_macros",
+ "litemap",
  "serde",
  "serde_json",
  "static_assertions",
- "thiserror",
  "tinystr",
  "writeable",
  "yoke",
@@ -1030,6 +1041,7 @@ name = "icu_provider_cldr"
 version = "0.2.0"
 dependencies = [
  "dirs",
+ "displaydoc",
  "icu_datetime",
  "icu_decimal",
  "icu_locale_canonicalizer",
@@ -1050,7 +1062,6 @@ dependencies = [
  "serde_json",
  "smallstr",
  "smallvec",
- "thiserror",
  "tinystr",
  "unzip",
  "urlencoding",
@@ -1062,6 +1073,7 @@ version = "0.2.0"
 dependencies = [
  "bincode",
  "criterion",
+ "displaydoc",
  "erased-serde",
  "icu_benchmark_macros",
  "icu_locid",
@@ -1072,7 +1084,6 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "thiserror",
 ]
 
 [[package]]
@@ -1088,11 +1099,11 @@ dependencies = [
 name = "icu_provider_ppucd"
 version = "0.1.0"
 dependencies = [
+ "displaydoc",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",
  "icu_uniset",
- "thiserror",
  "tinystr",
 ]
 
@@ -1123,6 +1134,7 @@ name = "icu_testdata"
 version = "0.2.0"
 dependencies = [
  "cargo_metadata",
+ "displaydoc",
  "icu_locid",
  "icu_locid_macros",
  "icu_plurals",
@@ -1131,7 +1143,6 @@ dependencies = [
  "icu_provider_fs",
  "serde",
  "serde_json",
- "thiserror",
  "writeable",
 ]
 
@@ -1140,13 +1151,13 @@ name = "icu_uniset"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "displaydoc",
  "icu",
  "icu_benchmark_macros",
  "icu_provider",
  "litemap",
  "serde",
  "serde_json",
- "thiserror",
  "tinystr",
 ]
 
@@ -1236,7 +1247,7 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "litemap"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "icu_benchmark_macros",
  "icu_locid",
@@ -2159,9 +2170,9 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.4.5"
+version = "0.4.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b0bc8f45dc08e13992f1596a7cbd410e3cdcac1d165ca909ab6ae5568566cbb"
+checksum = "01e8700bce17d12d9653596139d85039dd63b8728839a9f2e0c540d5301ea0cd"
 dependencies = [
  "serde",
  "tinystr-macros",
@@ -2179,9 +2190,9 @@ dependencies = [
 
 [[package]]
 name = "tinystr-raw"
-version = "0.1.1"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b975dd2af5824896acaeebf7336471fcafebfa417da0a290ded5509f297ccedb"
+checksum = "10f87ef8b0485e4efff5cac95608adc3251e412fef6039ecd56c5618c8003895"
 
 [[package]]
 name = "tinytemplate"
@@ -2559,7 +2570,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "bincode",
  "serde",
@@ -2569,7 +2580,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "proc-macro2",
  "quote",

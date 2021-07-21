@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::LanguageIdentifier;
+use alloc::string::ToString;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 impl Serialize for LanguageIdentifier {
@@ -24,7 +25,7 @@ impl<'de> Deserialize<'de> for LanguageIdentifier {
         impl<'de> serde::de::Visitor<'de> for LanguageIdentifierVisitor {
             type Value = LanguageIdentifier;
 
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
                 write!(formatter, "a valid Unicode Language Identifier")
             }
 

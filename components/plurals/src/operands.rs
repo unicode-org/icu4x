@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use fixed_decimal::FixedDecimal;
 use std::convert::TryFrom;
 use std::io::Error as IOError;
 use std::isize;
 use std::num::ParseIntError;
 use std::str::FromStr;
-use thiserror::Error;
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
@@ -86,15 +86,17 @@ impl PluralOperands {
     }
 }
 
-#[derive(Error, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum OperandsError {
     /// Input to the Operands parsing was empty.
-    #[error("Input to the Operands parsing was empty")]
+    #[displaydoc("Input to the Operands parsing was empty")]
     Empty,
     /// Input to the Operands parsing was invalid.
-    #[error("Input to the Operands parsing was invalid")]
+    #[displaydoc("Input to the Operands parsing was invalid")]
     Invalid,
 }
+
+impl std::error::Error for OperandsError {}
 
 impl From<ParseIntError> for OperandsError {
     fn from(_: ParseIntError) -> Self {

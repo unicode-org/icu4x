@@ -2,16 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use thiserror::Error;
+use displaydoc::Display;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
-    #[error(transparent)]
-    PpucdParse(#[from] PpucdParseError),
+    #[displaydoc("{0}")]
+    PpucdParse(PpucdParseError),
 }
 
-#[derive(Error, Debug, PartialEq, Copy, Clone)]
-#[error("Could not parse PPUCD file: {src}")]
+impl std::error::Error for Error {}
+
+#[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[displaydoc("Could not parse PPUCD file: {src}")]
 pub struct PpucdParseError {
     pub src: &'static str,
+}
+
+impl std::error::Error for PpucdParseError {}
+
+impl From<PpucdParseError> for Error {
+    fn from(e: PpucdParseError) -> Self {
+        Error::PpucdParse(e)
+    }
 }

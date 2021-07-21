@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::str::FromStr;
+use core::str::FromStr;
 
 use crate::parser::{get_subtag_iterator, parse_language_identifier, ParserError, ParserMode};
 use crate::subtags;
+use alloc::string::String;
+use alloc::string::ToString;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
@@ -154,9 +156,9 @@ impl AsMut<LanguageIdentifier> for LanguageIdentifier {
     }
 }
 
-impl std::fmt::Debug for LanguageIdentifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        std::fmt::Display::fmt(&self, f)
+impl core::fmt::Debug for LanguageIdentifier {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        core::fmt::Display::fmt(&self, f)
     }
 }
 
@@ -168,14 +170,14 @@ impl FromStr for LanguageIdentifier {
     }
 }
 
-impl std::fmt::Display for LanguageIdentifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for LanguageIdentifier {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
 impl writeable::Writeable for LanguageIdentifier {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         writeable::Writeable::write_to(&self.language, sink)?;
         if let Some(ref script) = self.script {
             sink.write_char('-')?;

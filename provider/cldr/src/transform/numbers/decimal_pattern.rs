@@ -6,19 +6,21 @@
 //!
 //! Spec reference: https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns
 
+use displaydoc::Display;
 use icu_decimal::provider::AffixesV1;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::str::FromStr;
-use thiserror::Error;
 
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum Error {
-    #[error("No body in decimal subpattern")]
+    #[displaydoc("No body in decimal subpattern")]
     NoBodyInSubpattern,
-    #[error("Unknown decimal body: {0}")]
+    #[displaydoc("Unknown decimal body: {0}")]
     UnknownPatternBody(String),
 }
+
+impl std::error::Error for Error {}
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]

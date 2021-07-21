@@ -60,20 +60,28 @@ mod utils;
 
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
+use displaydoc::Display;
 use icu_provider::DataError;
-use thiserror::Error;
 pub use uniset::UnicodeSet;
 pub use utils::*;
 
 /// Custom Errors for [`UnicodeSet`].
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum UnicodeSetError {
-    #[error("Invalid set: {0:?}")]
+    #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
-    #[error("Invalid range: {0}..{1}")]
+    #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
-    #[error(transparent)]
-    PropDataLoad(#[from] DataError),
+    #[displaydoc("{0}")]
+    PropDataLoad(DataError),
+}
+
+impl std::error::Error for UnicodeSetError {}
+
+impl From<DataError> for UnicodeSetError {
+    fn from(e: DataError) -> Self {
+        UnicodeSetError::PropDataLoad(e)
+    }
 }
 
 #[derive(PartialEq)]

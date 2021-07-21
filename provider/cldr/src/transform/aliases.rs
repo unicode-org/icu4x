@@ -54,10 +54,7 @@ impl<'d> TryFrom<&'d str> for AliasesProvider<'d> {
 
 impl<'d> KeyedDataProvider for AliasesProvider<'d> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
-        if resc_key.category != ResourceCategory::Aliases || resc_key.version != 1 {
-            return Err(resc_key.into());
-        }
-        Ok(())
+        key::ALIASES_V1.match_key(*resc_key)
     }
 }
 
