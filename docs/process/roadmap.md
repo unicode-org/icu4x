@@ -29,13 +29,16 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 	 		* [ ] Test262 evaluation
 		* [ ] 0.3 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/12))
 	* [ ] June-September
-		* [ ] NumberFormat (#275)
-		* [ ] DateTime Calendars (#534)
-		* [ ] Segmenter (#109)
-		* [ ] Unicode Regular Expressions (#168)
-		* [ ] Time Zone Calculations (#533)
-		* [ ] Novel DateTime Pattern Selection Algorithm (#645)
-		* [ ] C++ FFI (#674)
+		* [ ] DateTime Calendars ([#534](https://github.com/unicode-org/icu4x/issues/534))
+		* [ ] Segmenter ([#109](https://github.com/unicode-org/icu4x/issues/109))
+		* [ ] Unicode Regular Expressions ([#168](https://github.com/unicode-org/icu4x/issues/168))
+		* [ ] Full support for enumerated properties ([#148](https://github.com/unicode-org/icu4x/issues/148))
+		* [ ] Time Zone Calculations ([#533](https://github.com/unicode-org/icu4x/issues/533))
+		* [ ] Novel DateTime Pattern Selection Algorithm ([#645](https://github.com/unicode-org/icu4x/issues/645))
+		* [ ] C++ FFI ([#674](https://github.com/unicode-org/icu4x/issues/674))
+		* [ ] Data provider productionization ([#873](https://github.com/unicode-org/icu4x/issues/873))
+		* [ ] Enable core components on `#![no_std]` ([#812](https://github.com/unicode-org/icu4x/issues/812))
+		* [ ] Optimize code size of FFI ([#874](https://github.com/unicode-org/icu4x/issues/874))
 	* [ ] October
 		* [ ] 0.4 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/11))
 		* [ ] Migration to ICU4X is enabled
