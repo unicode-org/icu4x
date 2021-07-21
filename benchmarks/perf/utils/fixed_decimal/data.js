@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626832147456,
+  "lastUpdate": 1626903750874,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7319,6 +7319,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 131528,
             "range": "± 367",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4052c2ec46d082142f12c09e680d42fae6d62a82",
+          "message": "Modify patterns from a skeleton match to have the correct width (#832)",
+          "timestamp": "2021-07-21T16:36:33-05:00",
+          "tree_id": "77d6dcabe60d44573d2531361ee356e61b6761d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/4052c2ec46d082142f12c09e680d42fae6d62a82"
+        },
+        "date": 1626903749059,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147739,
+            "range": "± 7382",
             "unit": "ns/iter"
           }
         ]
