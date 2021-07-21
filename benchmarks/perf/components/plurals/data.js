@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626832199563,
+  "lastUpdate": 1626903829848,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10247,6 +10247,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 88580,
             "range": "± 418",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4052c2ec46d082142f12c09e680d42fae6d62a82",
+          "message": "Modify patterns from a skeleton match to have the correct width (#832)",
+          "timestamp": "2021-07-21T16:36:33-05:00",
+          "tree_id": "77d6dcabe60d44573d2531361ee356e61b6761d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/4052c2ec46d082142f12c09e680d42fae6d62a82"
+        },
+        "date": 1626903827903,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1310,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7961,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 114817,
+            "range": "± 983",
             "unit": "ns/iter"
           }
         ]
