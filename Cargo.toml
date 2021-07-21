@@ -27,6 +27,7 @@ members = [
     "provider/fs",
     "provider/macros",
     "provider/testdata",
+    "provider/uprops",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/datagen",
