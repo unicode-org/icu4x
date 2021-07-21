@@ -90,7 +90,6 @@ pub struct ICU4XCreateDataProviderResult {
     pub success: bool,
 }
 
-
 #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 #[no_mangle]
 /// Constructs an [`FsDataProvider`] and retirns it as an [`ICU4XDataProvider`].
