@@ -39,7 +39,7 @@ tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.2.1", path = "../../utils/yoke", features = ["serde", "derive"] }
-litemap = { path = "../../utils/litemap", version = "0.2.1", features = ["serde"]}
+litemap = { path = "../../utils/litemap", version = "0.2.1" }
 icu_provider_macros = { version = "0.2", path = "../macros", optional = true }
 
 # For "provider_serde" feature
