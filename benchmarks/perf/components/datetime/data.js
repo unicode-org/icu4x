@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626740026299,
+  "lastUpdate": 1626826026710,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4283,6 +4283,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1133012,
             "range": "± 97644",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ff56a70f588b63f134714956a8eb8e1ee37a99d3",
+          "message": "Move locid and fixed_decimal over to no_std (#868)\n\n* Fix fixed-decimal for no_std\r\n\r\n* Move locid to no_std\r\n\r\n* Fix unused error\r\n\r\n* remove displaydoc/std",
+          "timestamp": "2021-07-20T17:00:20-07:00",
+          "tree_id": "12046357894214fed8784d275b2d9e6ecac3e9f5",
+          "url": "https://github.com/unicode-org/icu4x/commit/ff56a70f588b63f134714956a8eb8e1ee37a99d3"
+        },
+        "date": 1626826024724,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 647210,
+            "range": "± 23533",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1394035,
+            "range": "± 103353",
             "unit": "ns/iter"
           }
         ]
