@@ -256,7 +256,7 @@ where
     /// # #[cfg(feature = "provider_serde")] {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use alloc::rc::Rc;
+    /// use std::rc::Rc;
     /// use icu_provider::yoke::Yokeable;
     ///
     /// let json_text = "{\"message\":\"Hello World\"}";

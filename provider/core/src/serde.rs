@@ -46,7 +46,7 @@ pub trait SerdeDeDataReceiver {
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::serde::SerdeDeDataReceiver;
-    /// use alloc::rc::Rc;
+    /// use std::rc::Rc;
     ///
     /// let json_text = "{\"message\":\"Hello World\"}";
     /// let rc_buffer: Rc<[u8]> = json_text.as_bytes().into();
