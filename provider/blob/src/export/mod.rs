@@ -34,15 +34,15 @@
 //!     exporter.close().expect("Should successfully dump to buffer");
 //! }
 //!
-//! // Assert that the exported data equals the pre-computed hello_world.bincode
+//! // Assert that the exported data equals the pre-computed hello_world.postcard
 //! let mut expected_buffer: Vec<u8> = Vec::new();
 //! std::fs::File::open(concat!(
 //!     env!("CARGO_MANIFEST_DIR"),
-//!     "/tests/data/hello_world.bincode"
+//!     "/tests/data/hello_world.postcard"
 //! ))
 //! .expect("File should exist")
 //! .read_to_end(&mut expected_buffer)
-//! .expect("Reading pre-computed bincode buffer");
+//! .expect("Reading pre-computed postcard buffer");
 //!
 //! assert_eq!(buffer, expected_buffer);
 //! ```

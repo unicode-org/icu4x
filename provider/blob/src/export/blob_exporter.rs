@@ -35,18 +35,12 @@ impl Drop for BlobExporter<'_> {
 }
 
 /// TODO(#837): De-duplicate this code from icu_provider_fs.
-fn serialize(
-    obj: &dyn erased_serde::Serialize,
-    mut sink: &mut (impl std::io::Write + ?Sized),
-) -> Result<(), DataError> {
-    use bincode::Options;
-    obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-        &mut bincode::Serializer::new(
-            &mut sink,
-            bincode::config::DefaultOptions::new().with_fixint_encoding(),
-        ),
-    ))?;
-    Ok(())
+fn serialize(obj: &dyn erased_serde::Serialize) -> Result<Vec<u8>, DataError> {
+    let mut serializer = postcard::Serializer {
+        output: postcard::flavors::AllocVec(Vec::new()),
+    };
+    obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(&mut serializer))?;
+    Ok(serializer.output.0)
 }
 
 impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter<'_> {
@@ -57,8 +51,7 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter<
     ) -> Result<(), DataError> {
         let path = path_util::resource_path_to_string(&req.resource_path);
         log::trace!("Adding: {}", path);
-        let mut buffer: Vec<u8> = Vec::new();
-        serialize(obj.get().as_serialize(), &mut buffer)?;
+        let buffer = serialize(obj.get().as_serialize())?;
         self.resources.insert(path, buffer);
         Ok(())
     }
@@ -77,7 +70,8 @@ impl<'d, 's: 'd> DataExporter<'d, 's, SerdeSeDataStructMarker> for BlobExporter<
         }
         let blob = BlobSchema::V001(schema);
         log::info!("Serializing blob to output stream...");
-        serialize(&blob, self.sink.as_mut())?;
+        let vec = serialize(&blob)?;
+        self.sink.write(&vec).map_err(|e| e.to_string())?;
         self.resources.clear();
         Ok(())
     }
