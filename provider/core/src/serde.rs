@@ -25,7 +25,6 @@ use crate::yoke::*;
 use alloc::boxed::Box;
 use alloc::rc::Rc;
 
-
 use core::ops::Deref;
 use yoke::trait_hack::YokeTraitHack;
 

@@ -268,11 +268,11 @@ impl<K, V> LiteMap<K, V> {
 #[cfg(feature = "serde")]
 mod serde {
     use super::LiteMap;
+    use core::fmt;
+    use core::marker::PhantomData;
     use serde::de::{MapAccess, Visitor};
     use serde::ser::SerializeMap;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
-    use core::fmt;
-    use core::marker::PhantomData;
 
     impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
