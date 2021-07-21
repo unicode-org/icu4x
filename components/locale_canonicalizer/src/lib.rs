@@ -75,6 +75,10 @@
 //! [`CLDR`]: http://cldr.unicode.org/
 //! [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 
+#![no_std]
+
+extern crate alloc;
+
 pub mod locale_canonicalizer;
 pub mod provider;
 
