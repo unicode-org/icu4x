@@ -36,9 +36,6 @@ litemap = { version = "0.2.0", path = "../../utils/litemap/", features = ["serde
 # For the export feature
 log = { version = "0.4", optional = true }
 
-[build-dependencies]
-postcard = { version = "0.7.0" }
-
 [dev-dependencies]
 icu = { version = "0.2", path = "../../components/icu" }
 icu_testdata = { version = "0.2", path = "../../provider/testdata" }
