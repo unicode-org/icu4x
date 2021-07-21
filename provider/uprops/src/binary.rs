@@ -4,6 +4,7 @@
 
 use crate::upropdump_serde;
 use icu_provider::prelude::*;
+use icu_provider::iter::IterableDataProviderCore;
 use icu_uniset::provider::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::borrow::Cow;
@@ -53,6 +54,21 @@ impl<'d, 's> DataProvider<'d, 's, UnicodePropertyV1Marker> for BinaryPropertiesD
         })
     }
 }
+
+icu_provider::impl_dyn_provider!(BinaryPropertiesDataProvider, {
+    _ => UnicodePropertyV1Marker,
+}, SERDE_SE, 'd, 's);
+
+impl IterableDataProviderCore for BinaryPropertiesDataProvider {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
+        Ok(Box::new(list.into_iter()))
+    }
+}
+
 
 #[test]
 fn test_basic() {
