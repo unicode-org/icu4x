@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626903786087,
+  "lastUpdate": 1626905211479,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8399,6 +8399,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30692185,
             "range": "± 1401661",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "832a4055c0a3228c14d8ca122405c135ba8a72e4",
+          "message": "Update roadmap.md (#875)",
+          "timestamp": "2021-07-21T17:00:20-05:00",
+          "tree_id": "844376f9087003ddaf175d4c8f85ae7e3c3befe6",
+          "url": "https://github.com/unicode-org/icu4x/commit/832a4055c0a3228c14d8ca122405c135ba8a72e4"
+        },
+        "date": 1626905208761,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 38640344,
+            "range": "± 1293579",
             "unit": "ns/iter"
           }
         ]
