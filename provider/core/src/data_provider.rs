@@ -171,8 +171,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use alloc::rc::Rc;
-    /// use alloc::borrow::Cow;
+    /// use std::rc::Rc;
+    /// use std::borrow::Cow;
     ///
     /// let local_data = "example".to_string();
     ///
@@ -201,7 +201,7 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use alloc::borrow::Cow;
+    /// use std::borrow::Cow;
     ///
     /// let local_data = "example".to_string();
     ///
@@ -296,7 +296,7 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use alloc::borrow::Cow;
+    /// use std::borrow::Cow;
     ///
     /// let local_struct = HelloWorldV1 {
     ///     message: Cow::Owned("example".to_string()),

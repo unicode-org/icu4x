@@ -30,8 +30,8 @@ use crate::yoke::Yokeable;
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::yoke::*;
-/// use alloc::borrow::Cow;
-/// use alloc::rc::Rc;
+/// use std::borrow::Cow;
+/// use std::rc::Rc;
 ///
 /// #[derive(Yokeable, ZeroCopyFrom)]
 /// struct MyDataStruct<'s> {

@@ -317,7 +317,7 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use alloc::borrow::Cow;
+    /// use std::borrow::Cow;
     /// use icu_provider::prelude::*;
     /// use icu_locid_macros::langid;
     ///

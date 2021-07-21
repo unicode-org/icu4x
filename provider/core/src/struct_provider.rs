@@ -16,7 +16,7 @@ use crate::yoke::*;
 /// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::struct_provider::StructProvider;
-/// use alloc::borrow::Cow;
+/// use std::borrow::Cow;
 ///
 /// let local_data = HelloWorldV1 {
 ///     message: Cow::Owned("hello world".to_string()),

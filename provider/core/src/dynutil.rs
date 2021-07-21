@@ -48,7 +48,7 @@ where
     /// use icu_provider::erased::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
     /// use icu_provider::marker::CowStringMarker;
-    /// use alloc::borrow::Cow;
+    /// use std::borrow::Cow;
     ///
     /// let data = "foo".to_string();
     /// let original = DataPayload::<CowStringMarker>::from_owned(Cow::Owned(data));
@@ -91,7 +91,7 @@ where
 /// use icu_provider::prelude::*;
 /// use icu_provider::erased::ErasedDataStructMarker;
 /// use icu_provider::marker::CowStringMarker;
-/// use alloc::borrow::Cow;
+/// use std::borrow::Cow;
 /// const DEMO_KEY: ResourceKey = icu_provider::resource_key!(x, "foo", "bar", 1);
 ///
 /// // A small DataProvider that returns owned strings
@@ -130,7 +130,7 @@ where
 /// ```
 /// # use icu_provider::prelude::*;
 /// # use icu_provider::marker::CowStringMarker;
-/// # use alloc::borrow::Cow;
+/// # use std::borrow::Cow;
 /// # struct MyProvider(pub String);
 /// # impl<'d> DataProvider<'d, 'static, CowStringMarker> for MyProvider {
 /// #   fn load_payload(&self, req: &DataRequest)
