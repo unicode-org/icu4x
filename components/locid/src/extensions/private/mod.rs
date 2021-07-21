@@ -29,7 +29,10 @@
 //!
 //! [`Keys`]: Key
 mod key;
-use std::ops::Deref;
+use alloc::boxed::Box;
+
+use alloc::vec::Vec;
+use core::ops::Deref;
 
 pub use key::Key;
 
@@ -132,14 +135,14 @@ impl Private {
     }
 }
 
-impl std::fmt::Display for Private {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for Private {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
 impl writeable::Writeable for Private {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         if self.is_empty() {
             return Ok(());
         }

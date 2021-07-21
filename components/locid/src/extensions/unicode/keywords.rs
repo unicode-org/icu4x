@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Borrow;
-use std::ops::Deref;
+use alloc::boxed::Box;
+
+use alloc::vec::Vec;
+use core::borrow::Borrow;
+use core::ops::Deref;
 
 use super::Key;
 use super::Value;

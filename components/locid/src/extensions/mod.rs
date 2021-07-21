@@ -52,7 +52,7 @@ pub use private::Private;
 pub use transform::Transform;
 pub use unicode::Unicode;
 
-use std::iter::Peekable;
+use core::iter::Peekable;
 
 use crate::parser::ParserError;
 
@@ -156,14 +156,14 @@ impl Extensions {
     }
 }
 
-impl std::fmt::Display for Extensions {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for Extensions {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
 impl writeable::Writeable for Extensions {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         // Alphabetic by singleton (t, u, x)
         writeable::Writeable::write_to(&self.transform, sink)?;
         writeable::Writeable::write_to(&self.unicode, sink)?;

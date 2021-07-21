@@ -4,12 +4,12 @@
 
 use smallvec::SmallVec;
 
-use std::cmp;
-use std::cmp::Ordering;
-use std::fmt;
-use std::ops::RangeInclusive;
+use core::cmp;
+use core::cmp::Ordering;
+use core::fmt;
+use core::ops::RangeInclusive;
 
-use std::str::FromStr;
+use core::str::FromStr;
 
 use static_assertions::const_assert;
 
@@ -19,7 +19,7 @@ use crate::uint_iterator::IntIterator;
 use crate::Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
-const_assert!(std::mem::size_of::<usize>() >= std::mem::size_of::<u16>());
+const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
@@ -147,8 +147,8 @@ impl FixedDecimal {
         let mut trailing_zeros: usize = 0;
         let mut i: usize = 0;
         for (x, d) in digits_iter.enumerate() {
-            // Take only up to std::i16::MAX values so that we have enough capacity
-            if x > std::i16::MAX as usize {
+            // Take only up to core::i16::MAX values so that we have enough capacity
+            if x > core::i16::MAX as usize {
                 return Err(Error::Limit);
             }
             // TODO: Should we check here that `d` is between 0 and 9?
@@ -167,7 +167,7 @@ impl FixedDecimal {
         let mut result: Self = Default::default();
         if i != 0 {
             let magnitude = trailing_zeros + i - 1;
-            debug_assert!(magnitude <= std::i16::MAX as usize);
+            debug_assert!(magnitude <= core::i16::MAX as usize);
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
             debug_assert!(i <= X);
@@ -739,7 +739,7 @@ fn test_from_str() {
 
 #[test]
 fn test_isize_limits() {
-    for num in &[std::isize::MAX, std::isize::MIN] {
+    for num in &[core::isize::MAX, core::isize::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
@@ -750,14 +750,14 @@ fn test_isize_limits() {
 
 #[test]
 fn test_ui128_limits() {
-    for num in &[std::i128::MAX, std::i128::MIN] {
+    for num in &[core::i128::MAX, core::i128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
         assert_eq!(dec, FixedDecimal::from_str(&dec_str).unwrap());
         writeable::assert_writeable_eq!(dec_str, dec);
     }
-    for num in &[std::u128::MAX, std::u128::MIN] {
+    for num in &[core::u128::MAX, core::u128::MIN] {
         let dec: FixedDecimal = (*num).into();
         let dec_str = dec.to_string();
         assert_eq!(num.to_string(), dec_str);
@@ -771,7 +771,7 @@ fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
     dec.multiply_pow10(32763).unwrap();
-    assert_eq!(dec.upper_magnitude, std::i16::MAX);
+    assert_eq!(dec.upper_magnitude, core::i16::MAX);
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
@@ -786,7 +786,7 @@ fn test_lower_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.lower_magnitude, 0);
     dec.multiply_pow10(-32768).unwrap();
-    assert_eq!(dec.lower_magnitude, std::i16::MIN);
+    assert_eq!(dec.lower_magnitude, core::i16::MIN);
     let dec_backup = dec.clone();
     assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
     assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
@@ -804,7 +804,7 @@ fn test_zero_str_bounds() {
         pub zeros_after_dot: usize,
         pub expected_err: Option<Error>,
     }
-    // Note that std::i16::MAX = 32768
+    // Note that core::i16::MAX = 32768
     let cases = [
         TestCase {
             zeros_before_dot: 32768,

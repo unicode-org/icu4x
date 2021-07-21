@@ -35,6 +35,7 @@ mod key;
 mod keywords;
 mod value;
 
+use alloc::vec;
 pub use attribute::Attribute;
 pub use attributes::Attributes;
 pub use key::Key;
@@ -43,7 +44,7 @@ pub use value::Value;
 
 use crate::parser::ParserError;
 
-use std::iter::Peekable;
+use core::iter::Peekable;
 
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///
@@ -163,14 +164,14 @@ impl Unicode {
     }
 }
 
-impl std::fmt::Display for Unicode {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Display for Unicode {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
 impl writeable::Writeable for Unicode {
-    fn write_to<W: std::fmt::Write + ?Sized>(&self, sink: &mut W) -> std::fmt::Result {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         if self.is_empty() {
             return Ok(());
         }
