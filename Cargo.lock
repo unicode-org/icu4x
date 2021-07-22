@@ -602,6 +602,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "freertos-rust"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ed4d1f7356542cd640004f488cc41358ced96b1efab1fead3753d868a93d504"
+
+[[package]]
 name = "futures"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -931,7 +937,9 @@ version = "0.2.0"
 name = "icu_capi"
 version = "0.1.0"
 dependencies = [
+ "cortex-m",
  "fixed_decimal",
+ "freertos-rust",
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",

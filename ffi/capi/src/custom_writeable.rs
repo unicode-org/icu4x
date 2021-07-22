@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::ffi::c_void;
-use std::{fmt, ptr};
+use alloc::boxed::Box;
+use alloc::vec::Vec;
+use core::ffi::c_void;
+use core::{fmt, ptr};
 
 #[repr(C)]
 /// An object that can one can write UTF-8 strings to
@@ -129,7 +131,7 @@ pub extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteab
             vec.reserve(new_cap);
             this.cap = vec.capacity();
             this.buf = vec.as_mut_ptr();
-            std::mem::forget(vec);
+            core::mem::forget(vec);
         }
         true
     }
@@ -146,7 +148,7 @@ pub extern "C" fn icu4x_buffer_writeable_create(cap: usize) -> *mut ICU4XWriteab
         grow,
     };
 
-    std::mem::forget(vec);
+    core::mem::forget(vec);
     Box::into_raw(Box::new(ret))
 }
 

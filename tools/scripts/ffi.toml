@@ -10,6 +10,7 @@ category = "ICU4X Development"
 dependencies = [
     "test-capi",
     "test-cpp",
+    "test-cortex",
 ]
 
 [tasks.test-capi]
@@ -47,3 +48,10 @@ exit_on_error true
 cd ffi/cpp/docs;
 exec make html
 '''
+
+[tasks.test-cortex]
+description = "Build ICU4X CAPI for Cortex"
+category = "ICU4X FFI"
+toolchain = "nightly"
+command = "cargo"
+args = ["build", "--package", "icu_capi", "--target", "thumbv7m-none-eabi"]

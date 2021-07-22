@@ -6,9 +6,10 @@ use crate::custom_writeable::ICU4XWriteable;
 use crate::fixed_decimal::ICU4XFixedDecimal;
 use crate::locale::ICU4XLocale;
 use crate::provider::ICU4XDataProvider;
+use alloc::boxed::Box;
+use core::ptr;
 use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay};
 use icu_decimal::FixedDecimalFormat;
-use std::ptr;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimalFormat`]
 ///

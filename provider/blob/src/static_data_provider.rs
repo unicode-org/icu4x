@@ -98,7 +98,7 @@ impl SerdeDeDataProvider for StaticDataProvider {
         receiver: &mut dyn SerdeDeDataReceiver,
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
-        receiver.receive_static(&mut erased_serde::Deserializer::erase(
+        receiver.receive_static(&mut <dyn erased_serde::Deserializer>::erase(
             &mut postcard::Deserializer::from_bytes(file),
         ))?;
 

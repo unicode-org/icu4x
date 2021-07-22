@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
+#[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
+use alloc::string::ToString;
+use core::{mem, ptr};
 use icu_provider::serde::SerdeDeDataProvider;
 #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 use icu_provider_fs::FsDataProvider;
-use std::{mem, ptr};
 
 #[repr(C)]
 /// FFI version of [`SerdeDeDataProvider`]. See its docs for more details.
@@ -106,7 +109,7 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     path: *const u8,
     len: usize,
 ) -> ICU4XCreateDataProviderResult {
-    use std::{slice, str};
+    use core::{slice, str};
     let path = str::from_utf8_unchecked(slice::from_raw_parts(path, len));
     match FsDataProvider::try_new(path.to_string()) {
         Ok(fs) => {

@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
 use fixed_decimal::FixedDecimal;
 
 use crate::custom_writeable::ICU4XWriteable;
-use std::slice;
+use core::slice;
 use writeable::Writeable;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimal`]
@@ -45,7 +46,7 @@ pub unsafe extern "C" fn icu4x_fixed_decimal_create_fromstr(
     len: usize,
 ) -> ICU4XCreateFixedDecimalResult {
     let bytes = slice::from_raw_parts(value, len);
-    if let Ok(as_str) = std::str::from_utf8(bytes) {
+    if let Ok(as_str) = core::str::from_utf8(bytes) {
         if let Ok(fd) = as_str.parse::<FixedDecimal>() {
             return ICU4XCreateFixedDecimalResult {
                 fd: Box::into_raw(Box::new(fd)),
@@ -54,7 +55,7 @@ pub unsafe extern "C" fn icu4x_fixed_decimal_create_fromstr(
         }
     }
     ICU4XCreateFixedDecimalResult {
-        fd: std::ptr::null_mut(),
+        fd: core::ptr::null_mut(),
         success: false,
     }
 }
