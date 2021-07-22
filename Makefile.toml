@@ -4,7 +4,7 @@
 
 extend = [{ path = "./tools/scripts/data.toml"}, { path = "./tools/scripts/valgrind.toml"},
           { path = "./tools/scripts/tidy.toml"}, { path = "./tools/scripts/wasm.toml"},
-          { path = "./tools/scripts/tests.toml"}]
+          { path = "./tools/scripts/tests.toml"}, { path = "./tools/scripts/ffi.toml"}]
 
 [config]
 default_to_workspace = false
