@@ -48,3 +48,7 @@ icu_testdata = { version = "0.2", path = "../../provider/testdata", default-feat
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { path = "../../provider/fs/" }
+
+[target.'cfg(target_os = "none")'.dependencies]
+freertos-rust = "0.1.2"
+cortex-m = "0.7.3"
