@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
-use alloc::string::ToString;
-use alloc::vec::Vec;
-use alloc::vec;
 use super::ast;
 use super::lexer::{Lexer, Token};
-use displaydoc::Display;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
 use core::iter::Peekable;
+use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError {

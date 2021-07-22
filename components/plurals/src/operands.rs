@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use displaydoc::Display;
-use fixed_decimal::FixedDecimal;
 use core::convert::TryFrom;
 use core::isize;
 use core::num::ParseIntError;
 use core::str::FromStr;
+use displaydoc::Display;
+use fixed_decimal::FixedDecimal;
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
