@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626975386405,
+  "lastUpdate": 1626975436893,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10499,6 +10499,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 101465,
             "range": "± 367",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b76cb7961957945b2a1576d5c8f1ad25eb280279",
+          "message": "Move icu_plurals and icu_decimal to no_std (#888)\n\n* no_std in pluralrules\r\n\r\n* autoreplace\r\n\r\n* fix errors\r\n\r\n* powi\r\n\r\n* Fix icu_plurals use in ffi/ecma402\r\n\r\n* fmt\r\n\r\n* add no_std to fixeddecimal\r\n\r\n* autoreplace\r\n\r\n* fmt\r\n\r\n* fix error\r\n\r\n* require std feature for pluralrules test",
+          "timestamp": "2021-07-22T10:29:28-07:00",
+          "tree_id": "c205d36691fc577a1b260990fefb3b167d2ff49b",
+          "url": "https://github.com/unicode-org/icu4x/commit/b76cb7961957945b2a1576d5c8f1ad25eb280279"
+        },
+        "date": 1626975434885,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1319,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7810,
+            "range": "± 365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 119133,
+            "range": "± 7508",
             "unit": "ns/iter"
           }
         ]
