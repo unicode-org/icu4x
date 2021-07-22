@@ -32,8 +32,8 @@ all-features = true
 fixed_decimal = { version = "0.2", path = "../../utils/fixed_decimal" }
 icu_provider = { version = "0.2", path = "../../provider/core", features = ["macros"] }
 icu_locid = { version = "0.2", path = "../locid" }
-serde = { version = "1.0", features = ["derive"], optional = true }
-thiserror = "1.0"
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -51,6 +51,7 @@ path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [features]
+std = ["icu_locid/std", "icu_provider/std"]
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde"]
@@ -72,6 +73,10 @@ required-features = ["provider_serde"]
 [[test]]
 name = "plurals"
 required-features = ["provider_serde"]
+
+[[test]]
+name = "operands"
+required-features = ["provider_serde", "std"]
 
 [[example]]
 name = "unread_emails"

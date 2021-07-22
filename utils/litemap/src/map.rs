@@ -2,9 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::mem;
-use std::ops::{Index, IndexMut};
-use std::{borrow::Borrow, iter::FromIterator};
+use alloc::borrow::Borrow;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::iter::FromIterator;
+use core::mem;
+use core::ops::{Index, IndexMut};
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -265,11 +268,11 @@ impl<K, V> LiteMap<K, V> {
 #[cfg(feature = "serde")]
 mod serde {
     use super::LiteMap;
+    use core::fmt;
+    use core::marker::PhantomData;
     use serde::de::{MapAccess, Visitor};
     use serde::ser::SerializeMap;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
-    use std::fmt;
-    use std::marker::PhantomData;
 
     impl<K: Serialize, V: Serialize> Serialize for LiteMap<K, V> {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

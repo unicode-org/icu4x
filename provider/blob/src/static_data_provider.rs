@@ -19,7 +19,7 @@ use serde::de::Deserialize;
 ///
 /// # Examples
 ///
-/// Load "hello world" data from a bincode blob statically linked at compile time:
+/// Load "hello world" data from a postcard blob statically linked at compile time:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -29,7 +29,7 @@ use serde::de::Deserialize;
 ///
 /// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
-///     "/tests/data/hello_world.bincode"
+///     "/tests/data/hello_world.postcard"
 /// ));
 ///
 /// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
@@ -53,22 +53,11 @@ pub struct StaticDataProvider {
     blob: BlobSchema<'static>,
 }
 
-/// TODO(#837): De-duplicate this code from icu_provider_fs.
-macro_rules! get_bincode_deserializer_zc {
-    ($bytes:tt) => {{
-        use bincode::Options;
-        let options = bincode::DefaultOptions::new()
-            .with_fixint_encoding()
-            .allow_trailing_bytes();
-        bincode::de::Deserializer::from_slice($bytes, options)
-    }};
-}
-
 impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
     pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
-            blob: BlobSchema::deserialize(&mut get_bincode_deserializer_zc!(blob))
+            blob: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob))
                 .map_err(DataError::new_resc_error)?,
         })
     }
@@ -91,7 +80,7 @@ where
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
         let file = self.get_file(req)?;
-        let data = M::Yokeable::deserialize(&mut get_bincode_deserializer_zc!(file))
+        let data = M::Yokeable::deserialize(&mut postcard::Deserializer::from_bytes(file))
             .map_err(DataError::new_resc_error)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
@@ -110,7 +99,7 @@ impl SerdeDeDataProvider for StaticDataProvider {
     ) -> Result<DataResponseMetadata, DataError> {
         let file = self.get_file(req)?;
         receiver.receive_static(&mut erased_serde::Deserializer::erase(
-            &mut get_bincode_deserializer_zc!(file),
+            &mut postcard::Deserializer::from_bytes(file),
         ))?;
 
         Ok(DataResponseMetadata {

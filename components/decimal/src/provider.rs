@@ -6,15 +6,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
-use std::borrow::Cow;
 
 pub mod key {
     //! Resource keys for [`icu_decimal`](crate).
     use icu_provider::{resource_key, ResourceKey};
 
     /// Resource key: symbols used for basic decimal formatting.
-    pub const SYMBOLS_V1: ResourceKey = resource_key!(decimal, "symbols", 1);
+    pub const SYMBOLS_V1: ResourceKey = resource_key!(Decimal, "symbols", 1);
 }
 
 /// A collection of strings to affix to a decimal number.

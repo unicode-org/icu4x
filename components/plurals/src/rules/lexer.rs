@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::ast;
-use thiserror::Error;
+use displaydoc::Display;
 
 #[derive(Debug, PartialEq)]
 pub enum Token {
@@ -26,13 +26,16 @@ pub enum Token {
     E,
 }
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum LexerError {
-    #[error("Expected byte: {0}")]
+    #[displaydoc("Expected byte: {0}")]
     ExpectedByte(u8),
-    #[error("Unknown token: {0}")]
+    #[displaydoc("Unknown token: {0}")]
     UnknownToken(u8),
 }
+
+#[cfg(feature = "std")]
+impl std::error::Error for LexerError {}
 
 /// Unicode Plural Rule lexer is an iterator
 /// over tokens produced from an input string.

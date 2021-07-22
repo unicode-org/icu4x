@@ -3,11 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::Yokeable;
+use core::marker::PhantomData;
+use core::ops::Deref;
 use stable_deref_trait::StableDeref;
-use std::marker::PhantomData;
-use std::ops::Deref;
-use std::rc::Rc;
-use std::sync::Arc;
+
+#[cfg(feature = "alloc")]
+use alloc::rc::Rc;
+#[cfg(feature = "alloc")]
+use alloc::sync::Arc;
 
 /// A Cow-like borrowed object "yoked" to its backing data.
 ///
@@ -457,7 +460,9 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 /// handle to the same data".
 pub unsafe trait CloneableCart: Clone {}
 
+#[cfg(feature = "alloc")]
 unsafe impl<T: ?Sized> CloneableCart for Rc<T> {}
+#[cfg(feature = "alloc")]
 unsafe impl<T: ?Sized> CloneableCart for Arc<T> {}
 unsafe impl<T: CloneableCart> CloneableCart for Option<T> {}
 unsafe impl<'a, T: ?Sized> CloneableCart for &'a T {}

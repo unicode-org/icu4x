@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::{Cow, ToOwned};
-use std::{mem, ptr};
+#[cfg(feature = "alloc")]
+use alloc::borrow::{Cow, ToOwned};
+use core::mem;
 
 /// A [`Yokeable`] type is essentially one with a covariant lifetime parameter,
 /// matched to the parameter in the trait definition. The trait allows one to cast
@@ -227,6 +228,7 @@ pub unsafe trait Yokeable<'a>: 'static {
         F: 'static + for<'b> FnOnce(&'b mut Self::Output);
 }
 
+#[cfg(feature = "alloc")]
 unsafe impl<'a, T: 'static + ToOwned + ?Sized> Yokeable<'a> for Cow<'static, T>
 where
     <T as ToOwned>::Owned: Sized,
@@ -249,7 +251,7 @@ where
         debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
         let ptr: *const Self = (&from as *const Self::Output).cast();
         mem::forget(from);
-        ptr::read(ptr)
+        core::ptr::read(ptr)
     }
 
     fn transform_mut<F>(&'a mut self, f: F)

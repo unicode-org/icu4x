@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use std::borrow::Cow;
+use alloc::borrow::Cow;
+use alloc::string::String;
 
 /// Marker type for [`Cow`]`<str>` where the backing cart is `str`.
 pub struct CowStrMarker;

@@ -32,8 +32,8 @@ icu_locid = { version = "0.2", path = "../locid" }
 icu_provider = { version = "0.2", path = "../../provider/core", features = ["macros"] }
 fixed_decimal = { version = "0.2", path = "../../utils/fixed_decimal" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
-serde = { version = "1.0", features = ["derive"], optional = true }
-thiserror = "1.0"
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -47,6 +47,7 @@ rand_distr = "0.4"
 getrandom = { version = "0.2", features = ["js"] }
 
 [features]
+std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde"]

@@ -3,25 +3,30 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::manifest::SyntaxOption;
+use displaydoc::Display;
 use std::path::{Path, PathBuf};
-use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
-    #[error("{0}: {1:?}")]
-    Io(#[source] std::io::Error, Option<PathBuf>),
-    #[error(transparent)]
-    DataProvider(#[from] icu_provider::DataError),
-    #[error("Deserializer error: {0}: {1:?}")]
-    Deserializer(
-        #[source] Box<dyn std::error::Error + Send + Sync>,
-        Option<PathBuf>,
-    ),
+    #[displaydoc("{0}: {1:?}")]
+    Io(std::io::Error, Option<PathBuf>),
+    #[displaydoc("{0}")]
+    DataProvider(icu_provider::DataError),
+    #[displaydoc("Deserializer error: {0}: {1:?}")]
+    Deserializer(String, Option<PathBuf>),
     #[cfg(feature = "export")]
-    #[error("Serializer error: {0}: {1:?}")]
-    Serializer(#[source] erased_serde::Error, Option<PathBuf>),
-    #[error("Unknown syntax {0:?}. Do you need to enable a feature?")]
+    #[displaydoc("Serializer error: {0}: {1:?}")]
+    Serializer(erased_serde::Error, Option<PathBuf>),
+    #[displaydoc("Unknown syntax {0:?}. Do you need to enable a feature?")]
     UnknownSyntax(SyntaxOption),
+}
+
+impl std::error::Error for Error {}
+
+impl From<icu_provider::DataError> for Error {
+    fn from(e: icu_provider::DataError) -> Self {
+        Error::DataProvider(e)
+    }
 }
 
 /// To help with debugging, I/O errors should be paired with a file path.
@@ -36,7 +41,10 @@ impl<P: AsRef<Path>> From<(std::io::Error, P)> for Error {
 /// If a path is unavailable, create the error directly: [`Error::Deserializer`]`(err, `[`None`]`)`
 impl<P: AsRef<Path>> From<(serde_json::error::Error, P)> for Error {
     fn from(pieces: (serde_json::error::Error, P)) -> Self {
-        Self::Deserializer(Box::new(pieces.0), Some(pieces.1.as_ref().to_path_buf()))
+        Self::Deserializer(
+            format!("{}", pieces.0),
+            Some(pieces.1.as_ref().to_path_buf()),
+        )
     }
 }
 
@@ -66,6 +74,6 @@ impl Error {
 
 impl From<Error> for icu_provider::DataError {
     fn from(err: Error) -> Self {
-        Self::Resource(Box::new(err))
+        Self::new_resc_error(&err)
     }
 }

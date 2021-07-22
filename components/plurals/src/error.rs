@@ -3,16 +3,31 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rules::parser::ParserError;
+use displaydoc::Display;
 use icu_provider::prelude::DataError;
-use thiserror::Error;
 
 /// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
 ///
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum PluralRulesError {
-    #[error("Parser error: {0}")]
-    Parser(#[from] ParserError),
+    #[displaydoc("Parser error: {0}")]
+    Parser(ParserError),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)
-    #[error("Data provider error: {0}")]
-    DataProvider(#[from] DataError),
+    #[displaydoc("Data provider error: {0}")]
+    DataProvider(DataError),
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for PluralRulesError {}
+
+impl From<ParserError> for PluralRulesError {
+    fn from(e: ParserError) -> Self {
+        PluralRulesError::Parser(e)
+    }
+}
+
+impl From<DataError> for PluralRulesError {
+    fn from(e: DataError) -> Self {
+        PluralRulesError::DataProvider(e)
+    }
 }

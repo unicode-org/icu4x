@@ -6,7 +6,7 @@ use icu_provider_blob::StaticDataProvider;
 
 const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(
     env!("CARGO_MANIFEST_DIR"),
-    "/data/testdata.bincode"
+    "/data/testdata.postcard"
 ));
 
 /// Get a `DataProvider`, loading from the statically initialized bincode blob.

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::manifest::SyntaxOption;
+use displaydoc::Display;
 use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider::yoke::trait_hack::YokeTraitHack;
@@ -10,21 +11,41 @@ use icu_provider::yoke::Yokeable;
 use serde::Deserialize;
 use std::path::Path;
 use std::rc::Rc;
-use thiserror::Error;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
-    #[error(transparent)]
-    Json(#[from] serde_json::error::Error),
+    #[displaydoc("{0}")]
+    Json(serde_json::error::Error),
     #[cfg(feature = "bincode")]
-    #[error(transparent)]
-    Bincode(#[from] bincode::Error),
-    #[error(transparent)]
-    DataProvider(#[from] DataError),
+    #[displaydoc("{0}")]
+    Bincode(bincode::Error),
+    #[displaydoc("{0}")]
+    DataProvider(DataError),
     #[allow(dead_code)]
-    #[error("Unknown syntax: {0:?}")]
+    #[displaydoc("Unknown syntax: {0:?}")]
     UnknownSyntax(SyntaxOption),
+}
+
+impl std::error::Error for Error {}
+
+impl From<serde_json::error::Error> for Error {
+    fn from(e: serde_json::error::Error) -> Self {
+        Error::Json(e)
+    }
+}
+
+#[cfg(feature = "bincode")]
+impl From<bincode::Error> for Error {
+    fn from(e: bincode::Error) -> Self {
+        Error::Bincode(e)
+    }
+}
+
+impl From<DataError> for Error {
+    fn from(e: DataError) -> Self {
+        Error::DataProvider(e)
+    }
 }
 
 impl Error {
@@ -32,18 +53,18 @@ impl Error {
         use crate::error::Error as CrateError;
         let crate_error = match self {
             Self::Json(err) => {
-                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+                CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
             #[cfg(feature = "bincode")]
             Self::Bincode(err) => {
-                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+                CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
             Self::DataProvider(err) => {
-                CrateError::Deserializer(Box::new(err), Some(path.as_ref().to_path_buf()))
+                CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
             Self::UnknownSyntax(v) => CrateError::UnknownSyntax(v),
         };
-        DataError::Resource(Box::new(crate_error))
+        DataError::new_resc_error(crate_error)
     }
 }
 

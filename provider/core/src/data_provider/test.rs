@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
+use alloc::rc::Rc;
+use alloc::string::String;
+use alloc::string::ToString;
+use core::fmt::Debug;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
-use std::fmt::Debug;
-use std::rc::Rc;
 
 use super::*;
 use crate::erased::*;
@@ -17,7 +19,7 @@ use crate::yoke;
 // JSON string. It also exercises most of the data provider code paths.
 
 /// Key for HelloAlt, used for testing mismatched types
-const HELLO_ALT_KEY: ResourceKey = crate::resource_key!(icu4x, "helloalt", 1);
+const HELLO_ALT_KEY: ResourceKey = crate::resource_key!(Core, "helloalt", 1);
 
 /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq, Yokeable, ZeroCopyFrom)]

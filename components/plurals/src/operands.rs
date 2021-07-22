@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::convert::TryFrom;
+use core::isize;
+use core::num::ParseIntError;
+use core::str::FromStr;
+use displaydoc::Display;
 use fixed_decimal::FixedDecimal;
-use std::convert::TryFrom;
-use std::io::Error as IOError;
-use std::isize;
-use std::num::ParseIntError;
-use std::str::FromStr;
-use thiserror::Error;
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
@@ -80,21 +79,27 @@ impl PluralOperands {
     /// Returns the number represented by this [`PluralOperands`] as floating point.
     /// The precision of the number returned is up to the representation accuracy
     /// of a double.
+    ///
+    /// This method requires the `"std"` feature be enabled
+    #[cfg(feature = "std")]
     pub fn n(&self) -> f64 {
         let fraction = self.t as f64 / 10_f64.powi(self.v as i32);
         self.i as f64 + fraction
     }
 }
 
-#[derive(Error, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum OperandsError {
     /// Input to the Operands parsing was empty.
-    #[error("Input to the Operands parsing was empty")]
+    #[displaydoc("Input to the Operands parsing was empty")]
     Empty,
     /// Input to the Operands parsing was invalid.
-    #[error("Input to the Operands parsing was invalid")]
+    #[displaydoc("Input to the Operands parsing was invalid")]
     Invalid,
 }
+
+#[cfg(feature = "std")]
+impl std::error::Error for OperandsError {}
 
 impl From<ParseIntError> for OperandsError {
     fn from(_: ParseIntError) -> Self {
@@ -102,8 +107,9 @@ impl From<ParseIntError> for OperandsError {
     }
 }
 
-impl From<IOError> for OperandsError {
-    fn from(_: IOError) -> Self {
+#[cfg(feature = "std")]
+impl From<std::io::Error> for OperandsError {
+    fn from(_: std::io::Error) -> Self {
         Self::Invalid
     }
 }
@@ -228,8 +234,8 @@ impl From<&FixedDecimal> for PluralOperands {
     /// digits each from the integer and fraction parts.
     fn from(dec: &FixedDecimal) -> Self {
         let mag_range = dec.magnitude_range();
-        let mag_high = std::cmp::min(17, *mag_range.end());
-        let mag_low = std::cmp::max(-18, *mag_range.start());
+        let mag_high = core::cmp::min(17, *mag_range.end());
+        let mag_low = core::cmp::max(-18, *mag_range.start());
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {

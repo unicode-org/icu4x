@@ -4,6 +4,11 @@
 
 use super::*;
 use crate::prelude::*;
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString;
+
 use icu_locid::LanguageIdentifier;
 
 impl<D, F> RequestFilterDataProvider<D, F>
@@ -140,7 +145,7 @@ where
     ///     provider.load_payload(&req_en);
     /// assert!(matches!(response, Err(DataError::FilteredResource(_, _))));
     /// assert_eq!(
-    ///     "Resource was filtered: Locale filter (allowlist: [de, zh]): icu4x/helloworld@1/en-US",
+    ///     "Resource was filtered: Locale filter (allowlist: [de, zh]): core/helloworld@1/en-US",
     ///     response.unwrap_err().to_string()
     /// );
     /// ```

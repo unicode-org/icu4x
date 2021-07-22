@@ -4,10 +4,19 @@
 
 //! Error types for decimal formatting.
 
-use thiserror::Error;
+use displaydoc::Display;
 
-#[derive(Error, Debug)]
+#[derive(Display, Debug)]
 pub enum Error {
-    #[error("error loading data: {0}")]
-    Data(#[from] icu_provider::DataError),
+    #[displaydoc("error loading data: {0}")]
+    Data(icu_provider::DataError),
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
+
+impl From<icu_provider::DataError> for Error {
+    fn from(e: icu_provider::DataError) -> Self {
+        Error::Data(e)
+    }
 }

@@ -8,6 +8,7 @@ description = "C interface to ICU4X"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
+resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
 license-file = "../../LICENSE"
 categories = ["internationalization"]
@@ -36,10 +37,14 @@ icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
 icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
-icu_provider_fs = { path = "../../provider/fs/" }
-tinystr = "0.4.5"
+tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
+
+[target.'cfg(any(target_arch = "wasm32", target_os = "none"))'.dependencies]
+icu_testdata = { version = "0.2", path = "../../provider/testdata", default-features = false, features = ["static"] }
+
+[target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
+icu_provider_fs = { path = "../../provider/fs/" }

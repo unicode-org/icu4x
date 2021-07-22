@@ -321,7 +321,7 @@ fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'stati
     }
 
     let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
-        Some(icu_testdata::paths::data_root().join("testdata.bincode"))
+        Some(icu_testdata::paths::data_root().join("testdata.postcard"))
     } else if let Some(v) = matches.value_of_os("OUTPUT") {
         Some(PathBuf::from(v))
     } else {

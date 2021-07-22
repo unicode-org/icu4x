@@ -15,7 +15,7 @@ $ cargo run --bin=icu4x-datagen -- \
     --format blob \
     --hello-world-key \
     --all-locales \
-    --out hello_world.bincode
+    --out hello_world.postcard
 ```
 
 ## Example

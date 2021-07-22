@@ -3,8 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::{get_subtag_iterator, ParserError};
-use std::ops::RangeInclusive;
-use std::str::FromStr;
+use alloc::boxed::Box;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::ops::RangeInclusive;
+use core::str::FromStr;
 use tinystr::TinyStr8;
 
 /// A value used in a list of [`Keywords`](super::Keywords).

@@ -11,11 +11,13 @@ use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
 use crate::yoke::*;
+
+use alloc::rc::Rc;
+
+use core::convert::TryFrom;
+use core::fmt;
+use core::fmt::Debug;
 use icu_locid::LanguageIdentifier;
-use std::convert::TryFrom;
-use std::fmt;
-use std::fmt::Debug;
-use std::rc::Rc;
 
 /// A struct to request a certain piece of data from a data provider.
 #[derive(Clone, Debug, PartialEq)]
@@ -132,7 +134,7 @@ where
     M: DataMarker<'s>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.get().fmt(f)
     }
 }
@@ -423,7 +425,7 @@ where
     M: DataMarker<'s>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
             "DataResponse {{ metadata: {:?}, payload: {:?} }}",
@@ -450,7 +452,7 @@ where
 #[test]
 fn test_debug() {
     use crate::hello_world::*;
-    use std::borrow::Cow;
+    use alloc::borrow::Cow;
     let resp = DataResponse::<HelloWorldV1Marker> {
         metadata: Default::default(),
         payload: Some(DataPayload::from_borrowed(&HelloWorldV1 {

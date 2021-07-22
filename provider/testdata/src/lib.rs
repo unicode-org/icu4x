@@ -63,12 +63,21 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 #[cfg(feature = "metadata")]
 pub mod metadata;
+#[cfg(feature = "fs")]
 pub mod paths;
 
+#[cfg(feature = "static")]
 mod blob;
+#[cfg(feature = "fs")]
 mod fs;
 
+#[cfg(feature = "static")]
 pub use blob::get_static_provider;
+#[cfg(feature = "fs")]
 pub use fs::get_provider;

@@ -78,7 +78,7 @@ impl FsDataProvider {
         }
         let file = match File::open(&path_buf) {
             Ok(file) => file,
-            Err(err) => return Err(Error::Resource(Box::new(err))),
+            Err(err) => return Err(Error::new_resc_error(err)),
         };
         Ok((BufReader::new(file), path_buf))
     }
@@ -88,7 +88,7 @@ impl FsDataProvider {
         let mut buffer = Vec::<u8>::new();
         reader
             .read_to_end(&mut buffer)
-            .map_err(|e| DataError::Resource(Box::new(Error::Io(e, Some(path_buf.clone())))))?;
+            .map_err(|e| DataError::new_resc_error(Error::Io(e, Some(path_buf.clone()))))?;
         let rc_buffer: Rc<[u8]> = buffer.into();
         Ok((rc_buffer, path_buf))
     }

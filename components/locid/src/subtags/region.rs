@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::errors::ParserError;
-use std::str::FromStr;
+use core::str::FromStr;
 use tinystr::TinyStr4;
 
 /// A region subtag (examples: `"US"`, `"CN"`, `"AR"` etc.)

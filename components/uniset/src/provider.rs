@@ -22,7 +22,7 @@ pub mod key {
     /// Macro to help define resource keys and store them in a list.
     macro_rules! define_resource_keys {
         ($count:expr; $(($k:ident, $s:literal)),+,) => {
-            $( pub const $k: ResourceKey = resource_key!(uniset, $s, 1); )+
+            $( pub const $k: ResourceKey = resource_key!(UnicodeSet, $s, 1); )+
             pub const ALL_KEYS: [ResourceKey; $count] = [$($k,)+];
         };
     }
@@ -37,7 +37,7 @@ pub mod key {
         (ALNUM_V1, "alnum"),
         (ALPHABETIC_V1, "Alpha"),
         (BIDI_CONTROL_V1, "Bidi_C"),
-        (BIDI_MIRRORED_V1, "BidiMarker"),
+        (BIDI_MIRRORED_V1, "Bidi_M"),
         (BLANK_V1, "blank"),
         (CASED_V1, "Cased"),
         (CASE_IGNORABLE_V1, "CI"),

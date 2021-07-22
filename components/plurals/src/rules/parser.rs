@@ -4,24 +4,31 @@
 
 use super::ast;
 use super::lexer::{Lexer, Token};
-use std::iter::Peekable;
-use thiserror::Error;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::iter::Peekable;
+use displaydoc::Display;
 
-#[derive(Error, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError {
-    #[error("expected 'AND' condition")]
+    #[displaydoc("expected 'AND' condition")]
     ExpectedAndCondition,
-    #[error("expected relation")]
+    #[displaydoc("expected relation")]
     ExpectedRelation,
-    #[error("expected operator")]
+    #[displaydoc("expected operator")]
     ExpectedOperator,
-    #[error("expected operand")]
+    #[displaydoc("expected operand")]
     ExpectedOperand,
-    #[error("expected value")]
+    #[displaydoc("expected value")]
     ExpectedValue,
-    #[error("expected sample type")]
+    #[displaydoc("expected sample type")]
     ExpectedSampleType,
 }
+
+#[cfg(feature = "std")]
+impl std::error::Error for ParserError {}
 
 /// Unicode Plural Rule parser converts an
 /// input string into a Rule [`AST`].

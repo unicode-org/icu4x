@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use displaydoc::Display;
 use std::fmt::Debug;
-use thiserror::Error;
 
 /// An error returned when parsing a pattern.
 ///
@@ -22,24 +22,26 @@ use thiserror::Error;
 /// - `E`: An error of the replacement type which implements [`FromStr`].
 ///
 /// [`FromStr`]: std::str::FromStr
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum ParserError<E>
 where
     E: Debug,
 {
     /// Encountered an illegal character.
-    #[error("Illegal character: {0}.")]
+    #[displaydoc("Illegal character: {0}.")]
     IllegalCharacter(char),
 
     /// Placeholder hould not be parsed from the given string slice.
-    #[error("Invalid placeholder: {0:?}")]
+    #[displaydoc("Invalid placeholder: {0:?}")]
     InvalidPlaceholder(E),
 
     /// The pattern contains an unclosed placeholder.
-    #[error("Unclosed placeholder")]
+    #[displaydoc("Unclosed placeholder")]
     UnclosedPlaceholder,
 
     /// The pattern contains an unclosed quoted literal.
-    #[error("Unclosed quoted literal")]
+    #[displaydoc("Unclosed quoted literal")]
     UnclosedQuotedLiteral,
 }
+
+impl<E: Debug> std::error::Error for ParserError<E> {}

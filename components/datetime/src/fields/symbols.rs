@@ -3,18 +3,20 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::FieldLength;
+use displaydoc::Display;
 use std::{cmp::Ordering, convert::TryFrom};
-use thiserror::Error;
 
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum SymbolError {
     /// Unknown field symbol.
-    #[error("Unknown field symbol: {0}")]
+    #[displaydoc("Unknown field symbol: {0}")]
     Unknown(u8),
     /// Invalid character for a field symbol.
-    #[error("Invalid character for a field symbol: {0}")]
+    #[displaydoc("Invalid character for a field symbol: {0}")]
     Invalid(char),
 }
+
+impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(

@@ -3,24 +3,31 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::interpolator::InterpolatorError;
+use displaydoc::Display;
 use std::{fmt::Debug, str::FromStr};
-use thiserror::Error;
 
 /// An error returned from a pattern.
 ///
 /// # Type parameters
 ///
 /// - `K`: A key for the replacement provider.
-#[derive(Error, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum PatternError<K>
 where
     K: Debug + FromStr + PartialEq,
     K::Err: Debug + PartialEq,
 {
-    #[error("Interpolator error: {0:?}")]
+    #[displaydoc("Interpolator error: {0:?}")]
     Interpolator(InterpolatorError<K>),
-    #[error("Format error: {0:?}")]
+    #[displaydoc("Format error: {0:?}")]
     Format(std::fmt::Error),
+}
+
+impl<K> std::error::Error for PatternError<K>
+where
+    K: Debug + FromStr + PartialEq,
+    K::Err: Debug + PartialEq,
+{
 }
 
 impl<K> From<InterpolatorError<K>> for PatternError<K>

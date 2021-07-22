@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::ops::RangeInclusive;
-use std::str::FromStr;
+use core::ops::RangeInclusive;
+use core::str::FromStr;
 
 use crate::parser::errors::ParserError;
 use tinystr::TinyStr8;

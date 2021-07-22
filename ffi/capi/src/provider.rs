@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_provider::serde::SerdeDeDataProvider;
+#[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 use icu_provider_fs::FsDataProvider;
-use std::{mem, ptr, slice, str};
+use std::{mem, ptr};
 
 #[repr(C)]
 /// FFI version of [`SerdeDeDataProvider`]. See its docs for more details.
@@ -90,6 +91,7 @@ pub struct ICU4XCreateDataProviderResult {
     pub success: bool,
 }
 
+#[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 #[no_mangle]
 /// Constructs an [`FsDataProvider`] and retirns it as an [`ICU4XDataProvider`].
 /// See [`FsDataProvider::try_new()`] for more details.
@@ -104,6 +106,7 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     path: *const u8,
     len: usize,
 ) -> ICU4XCreateDataProviderResult {
+    use std::{slice, str};
     let path = str::from_utf8_unchecked(slice::from_raw_parts(path, len));
     match FsDataProvider::try_new(path.to_string()) {
         Ok(fs) => {
@@ -120,7 +123,7 @@ pub unsafe extern "C" fn icu4x_fs_data_provider_create(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", target_os = "none"))]
 #[no_mangle]
 /// Constructs an [`StaticDataProvider`] and retirns it as an [`ICU4XDataProvider`].
 /// See [`StaticDataProvider::new()`] for more details.

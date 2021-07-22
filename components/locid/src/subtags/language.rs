@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::errors::ParserError;
-use std::fmt;
-use std::ops::RangeInclusive;
-use std::str::FromStr;
+use core::fmt;
+use core::ops::RangeInclusive;
+use core::str::FromStr;
 use tinystr::{tinystr4, TinyStr4};
 
 /// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)

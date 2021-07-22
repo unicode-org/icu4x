@@ -7,16 +7,19 @@
 use crate::iter::IterableDataProviderCore;
 use crate::prelude::*;
 use crate::yoke::{self, *};
+use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::rc::Rc;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use core::fmt::Debug;
+use core::str::FromStr;
 use icu_locid::LanguageIdentifier;
-use std::borrow::Cow;
-use std::collections::HashMap;
-use std::fmt::Debug;
-use std::rc::Rc;
-use std::str::FromStr;
+use litemap::LiteMap;
 
 pub mod key {
     use crate::resource::ResourceKey;
-    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(icu4x, "helloworld", 1);
+    pub const HELLO_WORLD_V1: ResourceKey = resource_key!(Core, "helloworld", 1);
 }
 
 /// A struct containing "Hello World" in the requested language.
@@ -77,7 +80,7 @@ impl<'s> DataMarker<'s> for HelloWorldV1Marker {
 /// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider<'s> {
-    map: HashMap<LanguageIdentifier, Cow<'s, str>>,
+    map: LiteMap<LanguageIdentifier, Cow<'s, str>>,
 }
 
 impl<'s> HelloWorldProvider<'s> {
@@ -153,7 +156,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
         resc_key.match_key(key::HELLO_WORLD_V1)?;
         let list: Vec<ResourceOptions> = self
             .map
-            .keys()
+            .iter_keys()
             .map(|langid| ResourceOptions {
                 variant: None,
                 langid: Some(langid.clone()),

@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
 use icu_locid::{
     extensions::unicode::{Key, Value},
     subtags, LanguageIdentifier, Locale,
