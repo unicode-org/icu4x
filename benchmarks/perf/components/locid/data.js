@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626980940203,
+  "lastUpdate": 1626986092188,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9677,6 +9677,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4040,
             "range": "± 167",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6df5ffc44246d68586ccf888b13a761a365a30c7",
+          "message": "Set explicit stable values for enum discriminants that match ICU4C (#698)",
+          "timestamp": "2021-07-22T13:28:13-07:00",
+          "tree_id": "3730e22970b9b9ddc0ac5cf7e8d5cd8395923789",
+          "url": "https://github.com/unicode-org/icu4x/commit/6df5ffc44246d68586ccf888b13a761a365a30c7"
+        },
+        "date": 1626986089701,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3335,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5130,
+            "range": "± 28",
             "unit": "ns/iter"
           }
         ]
