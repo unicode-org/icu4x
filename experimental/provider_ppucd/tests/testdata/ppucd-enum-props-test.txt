@@ -9,7 +9,7 @@ property;Binary;;alnum
 property;Binary;Alpha;Alphabetic
 property;Enumerated;bc;Bidi_Class
 property;Binary;Bidi_C;Bidi_Control
-property;Binary;BidiMarker;Bidi_Mirrored
+property;Binary;Bidi_M;Bidi_Mirrored
 property;Binary;;blank
 property;Catalog;blk;Block
 property;Miscellaneous;bmg;Bidi_Mirroring_Glyph
@@ -1276,8 +1276,8 @@ cp;0024;bc=ET;gc=Sc;lb=PR;na=DOLLAR SIGN;Pat_Syn
 cp;0025;bc=ET;gc=Po;lb=PO;na=PERCENT SIGN;Pat_Syn
 cp;0026;bc=ON;gc=Po;na=AMPERSAND;Pat_Syn
 cp;0027;bc=ON;CI;gc=Po;lb=QU;na=APOSTROPHE;Pat_Syn;QMark;SB=CL;WB=SQ
-cp;0028;bc=ON;BidiMarker;bmg=0029;bpb=0029;bpt=o;gc=Ps;lb=OP;na=LEFT PARENTHESIS;Pat_Syn;SB=CL
-cp;0029;bc=ON;BidiMarker;bmg=0028;bpb=0028;bpt=c;gc=Pe;lb=CP;na=RIGHT PARENTHESIS;Pat_Syn;SB=CL
+cp;0028;bc=ON;Bidi_M;bmg=0029;bpb=0029;bpt=o;gc=Ps;lb=OP;na=LEFT PARENTHESIS;Pat_Syn;SB=CL
+cp;0029;bc=ON;Bidi_M;bmg=0028;bpb=0028;bpt=c;gc=Pe;lb=CP;na=RIGHT PARENTHESIS;Pat_Syn;SB=CL
 cp;002A;bc=ON;EComp;Emoji;gc=Po;na=ASTERISK;Pat_Syn
 cp;002B;bc=ES;gc=Sm;lb=PR;Math;na=PLUS SIGN;Pat_Syn
 cp;002C;bc=CS;gc=Po;lb=IS;na=COMMA;Pat_Syn;SB=SC;Term;WB=MN
@@ -1298,9 +1298,9 @@ cp;0039;AHex;bc=EN;EComp;Emoji;gc=Nd;Hex;IDC;InSC=Number;lb=NU;na=DIGIT NINE;nt=
 # ASCII punctuation and symbols
 cp;003A;bc=CS;CI;gc=Po;lb=IS;na=COLON;Pat_Syn;SB=SC;Term;WB=ML
 cp;003B;bc=ON;gc=Po;lb=IS;na=SEMICOLON;Pat_Syn;Term;WB=MN
-cp;003C;bc=ON;BidiMarker;bmg=003E;gc=Sm;Math;na=LESS-THAN SIGN;Pat_Syn
+cp;003C;bc=ON;Bidi_M;bmg=003E;gc=Sm;Math;na=LESS-THAN SIGN;Pat_Syn
 cp;003D;bc=ON;gc=Sm;Math;na=EQUALS SIGN;Pat_Syn
-cp;003E;bc=ON;BidiMarker;bmg=003C;gc=Sm;Math;na=GREATER-THAN SIGN;Pat_Syn
+cp;003E;bc=ON;Bidi_M;bmg=003C;gc=Sm;Math;na=GREATER-THAN SIGN;Pat_Syn
 cp;003F;bc=ON;gc=Po;lb=EX;na=QUESTION MARK;Pat_Syn;SB=ST;STerm;Term
 cp;0040;bc=ON;gc=Po;na=COMMERCIAL AT;Pat_Syn
 # Uppercase Latin alphabet
@@ -1331,9 +1331,9 @@ cp;0058;Alpha;Cased;cf=0078;CWCF;CWCM;CWKCF;CWL;gc=Lu;IDC;IDS;na=LATIN CAPITAL L
 cp;0059;Alpha;Cased;cf=0079;CWCF;CWCM;CWKCF;CWL;gc=Lu;IDC;IDS;na=LATIN CAPITAL LETTER Y;NFKC_CF=0079;SB=UP;sc=Latn;scf=0079;slc=0079;Upper;WB=LE;XIDC;XIDS
 cp;005A;Alpha;Cased;cf=007A;CWCF;CWCM;CWKCF;CWL;gc=Lu;IDC;IDS;na=LATIN CAPITAL LETTER Z;NFKC_CF=007A;SB=UP;sc=Latn;scf=007A;slc=007A;Upper;WB=LE;XIDC;XIDS
 # ASCII punctuation and symbols
-cp;005B;bc=ON;BidiMarker;bmg=005D;bpb=005D;bpt=o;gc=Ps;lb=OP;na=LEFT SQUARE BRACKET;Pat_Syn;SB=CL
+cp;005B;bc=ON;Bidi_M;bmg=005D;bpb=005D;bpt=o;gc=Ps;lb=OP;na=LEFT SQUARE BRACKET;Pat_Syn;SB=CL
 cp;005C;bc=ON;gc=Po;lb=PR;na=REVERSE SOLIDUS;Pat_Syn
-cp;005D;bc=ON;BidiMarker;bmg=005B;bpb=005B;bpt=c;gc=Pe;lb=CP;na=RIGHT SQUARE BRACKET;Pat_Syn;SB=CL
+cp;005D;bc=ON;Bidi_M;bmg=005B;bpb=005B;bpt=c;gc=Pe;lb=CP;na=RIGHT SQUARE BRACKET;Pat_Syn;SB=CL
 cp;005E;bc=ON;CI;Dia;gc=Sk;Math;na=CIRCUMFLEX ACCENT;Pat_Syn
 cp;005F;bc=ON;gc=Pc;IDC;na=LOW LINE;WB=EX;XIDC
 cp;0060;bc=ON;CI;Dia;gc=Sk;na=GRAVE ACCENT;Pat_Syn
@@ -1365,9 +1365,9 @@ cp;0078;Alpha;Cased;CWCM;CWT;CWU;gc=Ll;IDC;IDS;Lower;na=LATIN SMALL LETTER X;SB=
 cp;0079;Alpha;Cased;CWCM;CWT;CWU;gc=Ll;IDC;IDS;Lower;na=LATIN SMALL LETTER Y;SB=LO;sc=Latn;stc=0059;suc=0059;WB=LE;XIDC;XIDS
 cp;007A;Alpha;Cased;CWCM;CWT;CWU;gc=Ll;IDC;IDS;Lower;na=LATIN SMALL LETTER Z;SB=LO;sc=Latn;stc=005A;suc=005A;WB=LE;XIDC;XIDS
 # ASCII punctuation and symbols
-cp;007B;bc=ON;BidiMarker;bmg=007D;bpb=007D;bpt=o;gc=Ps;lb=OP;na=LEFT CURLY BRACKET;Pat_Syn;SB=CL
+cp;007B;bc=ON;Bidi_M;bmg=007D;bpb=007D;bpt=o;gc=Ps;lb=OP;na=LEFT CURLY BRACKET;Pat_Syn;SB=CL
 cp;007C;bc=ON;gc=Sm;lb=BA;Math;na=VERTICAL LINE;Pat_Syn
-cp;007D;bc=ON;BidiMarker;bmg=007B;bpb=007B;bpt=c;gc=Pe;lb=CL;na=RIGHT CURLY BRACKET;Pat_Syn;SB=CL
+cp;007D;bc=ON;Bidi_M;bmg=007B;bpb=007B;bpt=c;gc=Pe;lb=CL;na=RIGHT CURLY BRACKET;Pat_Syn;SB=CL
 cp;007E;bc=ON;gc=Sm;Math;na=TILDE;Pat_Syn
 # Control character
 cp;007F;bc=BN;ea=N;GCB=CN;-Gr_Base;lb=CM;Name_Alias=control=DELETE,abbreviation=DEL
@@ -1419,7 +1419,7 @@ cp;00A7;bc=ON;ea=A;gc=Po;lb=AI;na=SECTION SIGN;NFKD_QC=Y;Pat_Syn;vo=U;WB=XX
 cp;00A8;bc=ON;CI;CWKCF;Dia;dm=0020 0308;dt=Com;ea=A;gc=Sk;lb=AI;na=DIAERESIS;NFKC_CF=0020 0308;NFKC_QC=N;WB=XX
 cp;00A9;bc=ON;Emoji;ExtPict;gc=So;na=COPYRIGHT SIGN;NFKD_QC=Y;Pat_Syn;vo=U;WB=XX
 cp;00AA;Alpha;Cased;CWKCF;dm=0061;dt=Sup;ea=A;gc=Lo;IDC;IDS;lb=AI;Lower;na=FEMININE ORDINAL INDICATOR;NFKC_CF=0061;NFKC_QC=N;SB=LO;sc=Latn;XIDC;XIDS
-cp;00AB;bc=ON;BidiMarker;bmg=00BB;gc=Pi;lb=QU;na=LEFT-POINTING DOUBLE ANGLE QUOTATION MARK;NFKD_QC=Y;Pat_Syn;QMark;SB=CL;WB=XX
+cp;00AB;bc=ON;Bidi_M;bmg=00BB;gc=Pi;lb=QU;na=LEFT-POINTING DOUBLE ANGLE QUOTATION MARK;NFKD_QC=Y;Pat_Syn;QMark;SB=CL;WB=XX
 cp;00AC;bc=ON;ea=Na;gc=Sm;Math;na=NOT SIGN;NFKD_QC=Y;Pat_Syn;WB=XX
 cp;00AD;bc=BN;CI;CWKCF;DI;ea=A;gc=Cf;GCB=CN;-Gr_Base;Hyphen;jt=T;lb=BA;na=SOFT HYPHEN;Name_Alias=abbreviation=SHY;NFKC_CF=;NFKD_QC=Y;SB=FO;WB=FO
 cp;00AE;bc=ON;ea=A;Emoji;ExtPict;gc=So;na=REGISTERED SIGN;NFKD_QC=Y;Pat_Syn;vo=U;WB=XX
@@ -1435,7 +1435,7 @@ cp;00B7;bc=ON;CI;Dia;ea=A;Ext;gc=Po;IDC;lb=AI;na=MIDDLE DOT;NFKD_QC=Y;WB=ML;XIDC
 cp;00B8;bc=ON;CI;CWKCF;Dia;dm=0020 0327;dt=Com;ea=A;gc=Sk;lb=AI;na=CEDILLA;NFKC_CF=0020 0327;NFKC_QC=N;WB=XX
 cp;00B9;bc=EN;CWKCF;dm=0031;dt=Sup;ea=A;gc=No;lb=AI;na=SUPERSCRIPT ONE;NFKC_CF=0031;NFKC_QC=N;nt=Di;nv=1;WB=XX
 cp;00BA;Alpha;Cased;CWKCF;dm=006F;dt=Sup;ea=A;gc=Lo;IDC;IDS;lb=AI;Lower;na=MASCULINE ORDINAL INDICATOR;NFKC_CF=006F;NFKC_QC=N;SB=LO;sc=Latn;XIDC;XIDS
-cp;00BB;bc=ON;BidiMarker;bmg=00AB;gc=Pf;lb=QU;na=RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK;NFKD_QC=Y;Pat_Syn;QMark;SB=CL;WB=XX
+cp;00BB;bc=ON;Bidi_M;bmg=00AB;gc=Pf;lb=QU;na=RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK;NFKD_QC=Y;Pat_Syn;QMark;SB=CL;WB=XX
 # Vulgar fractions
 cp;00BC;bc=ON;CWKCF;dm=0031 2044 0034;dt=Fra;ea=A;gc=No;lb=AI;na=VULGAR FRACTION ONE QUARTER;NFKC_CF=0031 2044 0034;NFKC_QC=N;nt=Nu;nv=1/4;vo=U;WB=XX
 cp;00BD;bc=ON;CWKCF;dm=0031 2044 0032;dt=Fra;ea=A;gc=No;lb=AI;na=VULGAR FRACTION ONE HALF;NFKC_CF=0031 2044 0032;NFKC_QC=N;nt=Nu;nv=1/2;vo=U;WB=XX
