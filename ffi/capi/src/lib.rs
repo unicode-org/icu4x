@@ -23,5 +23,6 @@ pub mod provider;
 mod wasm_glue;
 
 // Assume "none" is FreeRTOS for now
+// https://github.com/unicode-org/icu4x/issues/891
 #[cfg(target_os = "none")]
 mod freertos_glue;
