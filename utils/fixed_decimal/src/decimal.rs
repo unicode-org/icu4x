@@ -32,12 +32,12 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 /// - Integers, signed and unsigned
 /// - Strings representing an arbitrary-precision decimal
 ///
-/// To create a `FixedDecimal` with fraction digits, first create it from an integer and then
-/// call `.multiply_pow10()`.
+/// To create a `FixedDecimal` with fraction digits, either create it from an integer and then
+/// call [`FixedDecimal::multiplied_pow10`], or create it from a string.
 ///
 /// Floating point numbers will be supported pending a resolution to
 /// [#166](https://github.com/unicode-org/icu4x/issues/166). In the mean time, a third-party
-/// float-to-string library should be used.
+/// float-to-string library may be used.
 ///
 /// # Examples
 ///
