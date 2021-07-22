@@ -9,7 +9,7 @@ property;Binary;;alnum
 property;Binary;Alpha;Alphabetic
 property;Enumerated;bc;Bidi_Class
 property;Binary;Bidi_C;Bidi_Control
-property;Binary;BidiMarker;Bidi_Mirrored
+property;Binary;Bidi_M;Bidi_Mirrored
 property;Binary;;blank
 property;Catalog;blk;Block
 property;Miscellaneous;bmg;Bidi_Mirroring_Glyph
