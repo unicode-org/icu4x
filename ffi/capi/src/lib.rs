@@ -4,7 +4,6 @@
 
 #![cfg_attr(target_os = "none", feature(alloc_error_handler))]
 #![allow(clippy::upper_case_acronyms)]
-
 #![cfg_attr(not(target_arch = "wasm32"), no_std)]
 
 extern crate alloc;
