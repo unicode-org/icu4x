@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rules::ast;
-use std::fmt;
-use std::ops::RangeInclusive;
+use core::fmt;
+use core::ops::RangeInclusive;
 
 /// Unicode Plural Rule serializer converts an [`AST`] to a [`String`].
 ///

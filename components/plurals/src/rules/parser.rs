@@ -2,10 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec::Vec;
+use alloc::vec;
 use super::ast;
 use super::lexer::{Lexer, Token};
 use displaydoc::Display;
-use std::iter::Peekable;
+use core::iter::Peekable;
 
 #[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError {
@@ -23,7 +27,7 @@ pub enum ParserError {
     ExpectedSampleType,
 }
 
-impl std::error::Error for ParserError {}
+impl core::error::Error for ParserError {}
 
 /// Unicode Plural Rule parser converts an
 /// input string into a Rule [`AST`].

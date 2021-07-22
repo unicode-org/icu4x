@@ -80,7 +80,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::{resolver, PluralRuleStringsV1, PluralRuleStringsV1Marker};
-use std::convert::TryInto;
+use core::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 ///

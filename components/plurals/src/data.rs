@@ -7,8 +7,8 @@ use crate::provider::PluralRuleStringsV1;
 use crate::rules;
 use crate::rules::ast;
 use crate::{PluralCategory, PluralRulesError};
-use std::borrow::Cow;
-use std::convert::TryInto;
+use alloc::borrow::Cow;
+use core::convert::TryInto;
 
 /// A raw function pointer to a `PluralRulesFn`
 // pub type PluralRulesFn = fn(&PluralOperands) -> PluralCategory;

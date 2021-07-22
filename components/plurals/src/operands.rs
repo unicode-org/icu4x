@@ -4,11 +4,11 @@
 
 use displaydoc::Display;
 use fixed_decimal::FixedDecimal;
-use std::convert::TryFrom;
-use std::io::Error as IOError;
-use std::isize;
-use std::num::ParseIntError;
-use std::str::FromStr;
+use core::convert::TryFrom;
+use core::io::Error as IOError;
+use core::isize;
+use core::num::ParseIntError;
+use core::str::FromStr;
 
 /// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 /// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
@@ -96,7 +96,7 @@ pub enum OperandsError {
     Invalid,
 }
 
-impl std::error::Error for OperandsError {}
+impl core::error::Error for OperandsError {}
 
 impl From<ParseIntError> for OperandsError {
     fn from(_: ParseIntError) -> Self {
@@ -230,8 +230,8 @@ impl From<&FixedDecimal> for PluralOperands {
     /// digits each from the integer and fraction parts.
     fn from(dec: &FixedDecimal) -> Self {
         let mag_range = dec.magnitude_range();
-        let mag_high = std::cmp::min(17, *mag_range.end());
-        let mag_low = std::cmp::max(-18, *mag_range.start());
+        let mag_high = core::cmp::min(17, *mag_range.end());
+        let mag_low = core::cmp::max(-18, *mag_range.start());
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
