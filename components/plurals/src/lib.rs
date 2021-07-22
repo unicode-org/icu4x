@@ -64,18 +64,23 @@
 //! [`Plural Category`]: PluralCategory
 //! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 //! [`CLDR`]: http://cldr.unicode.org/
+
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 mod data;
 mod error;
 mod operands;
 pub mod provider;
 pub mod rules;
 
+use core::convert::TryInto;
 pub use error::PluralRulesError;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::{resolver, PluralRuleStringsV1, PluralRuleStringsV1Marker};
-use std::convert::TryInto;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 ///

@@ -899,6 +899,7 @@ dependencies = [
  "ecma402_traits",
  "icu",
  "icu_locid",
+ "icu_plurals",
  "icu_provider",
  "icu_testdata",
  "serde",

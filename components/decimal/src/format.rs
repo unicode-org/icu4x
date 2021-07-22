@@ -32,9 +32,9 @@ impl<'l> FormattedFixedDecimal<'l> {
 }
 
 impl<'l> Writeable for FormattedFixedDecimal<'l> {
-    fn write_to<W>(&self, sink: &mut W) -> std::result::Result<(), std::fmt::Error>
+    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
-        W: std::fmt::Write + ?Sized,
+        W: core::fmt::Write + ?Sized,
     {
         let affixes = self.get_affixes();
         if let Some(affixes) = affixes {

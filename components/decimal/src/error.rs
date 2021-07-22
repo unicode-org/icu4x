@@ -12,6 +12,7 @@ pub enum Error {
     Data(icu_provider::DataError),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
 impl From<icu_provider::DataError> for Error {

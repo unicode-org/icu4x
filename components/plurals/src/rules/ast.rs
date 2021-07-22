@@ -38,7 +38,9 @@
 //! [`PluralCategory`]: crate::PluralCategory
 //! [`parse`]: super::parse()
 //! [`test_condition`]: super::test_condition()
-use std::ops::RangeInclusive;
+use alloc::boxed::Box;
+use alloc::string::String;
+use core::ops::RangeInclusive;
 
 /// A complete AST representation of a plural rule.
 /// Comprises a vector of [`AndConditions`] and optionally a set of [`Samples`].
