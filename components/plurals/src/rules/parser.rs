@@ -27,7 +27,8 @@ pub enum ParserError {
     ExpectedSampleType,
 }
 
-impl core::error::Error for ParserError {}
+#[cfg(feature = "std")]
+impl std::error::Error for ParserError {}
 
 /// Unicode Plural Rule parser converts an
 /// input string into a Rule [`AST`].

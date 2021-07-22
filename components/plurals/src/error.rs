@@ -17,7 +17,8 @@ pub enum PluralRulesError {
     DataProvider(DataError),
 }
 
-impl core::error::Error for PluralRulesError {}
+#[cfg(feature = "std")]
+impl std::error::Error for PluralRulesError {}
 
 impl From<ParserError> for PluralRulesError {
     fn from(e: ParserError) -> Self {

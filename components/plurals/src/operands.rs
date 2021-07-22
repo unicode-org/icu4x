@@ -96,7 +96,8 @@ pub enum OperandsError {
     Invalid,
 }
 
-impl core::error::Error for OperandsError {}
+#[cfg(feature = "std")]
+impl std::error::Error for OperandsError {}
 
 impl From<ParseIntError> for OperandsError {
     fn from(_: ParseIntError) -> Self {
