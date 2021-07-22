@@ -210,7 +210,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 if let Some(preferred_hour_cycle) = preferred_hour_cycle {
                     assert_eq!(
                         *hour_cycle, preferred_hour_cycle,
-                        "A locale contained a mix of flexible hour cycle types"
+                        "A locale contained a mix of coarse hour cycle types"
                     );
                 } else {
                     preferred_hour_cycle = Some(*hour_cycle);

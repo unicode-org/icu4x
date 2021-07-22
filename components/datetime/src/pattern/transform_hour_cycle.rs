@@ -76,6 +76,9 @@ pub fn apply_coarse_hour_cycle(
         &datetime.skeletons,
         &datetime.length_patterns,
         &skeleton.as_slice(),
+        // Prefer using the matched pattern directly, rather than mutating it to match the
+        // requested fields.
+        true,
     ) {
         skeleton::BestSkeleton::AllFieldsMatch(pattern)
         | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(format!("{}", pattern)),
