@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626980979127,
+  "lastUpdate": 1626986138922,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10583,6 +10583,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 113240,
             "range": "± 13502",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6df5ffc44246d68586ccf888b13a761a365a30c7",
+          "message": "Set explicit stable values for enum discriminants that match ICU4C (#698)",
+          "timestamp": "2021-07-22T13:28:13-07:00",
+          "tree_id": "3730e22970b9b9ddc0ac5cf7e8d5cd8395923789",
+          "url": "https://github.com/unicode-org/icu4x/commit/6df5ffc44246d68586ccf888b13a761a365a30c7"
+        },
+        "date": 1626986136981,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1369,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8298,
+            "range": "± 360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 124659,
+            "range": "± 4902",
             "unit": "ns/iter"
           }
         ]
