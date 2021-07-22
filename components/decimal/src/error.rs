@@ -12,7 +12,8 @@ pub enum Error {
     Data(icu_provider::DataError),
 }
 
-impl core::error::Error for Error {}
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
 
 impl From<icu_provider::DataError> for Error {
     fn from(e: icu_provider::DataError) -> Self {
