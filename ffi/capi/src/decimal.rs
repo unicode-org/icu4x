@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
 use crate::custom_writeable::ICU4XWriteable;
 use crate::fixed_decimal::ICU4XFixedDecimal;
 use crate::locale::ICU4XLocale;
 use crate::provider::ICU4XDataProvider;
 use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay};
 use icu_decimal::FixedDecimalFormat;
-use std::ptr;
+use core::ptr;
 
 /// Opaque type for use behind a pointer, is [`FixedDecimalFormat`]
 ///

@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
 use crate::custom_writeable::ICU4XWriteable;
 use icu_locid::extensions::unicode::Key;
 use icu_locid::Locale;
-use std::slice;
+use core::slice;
 use writeable::Writeable;
 
 /// Opaque type for use behind a pointer, is [`Locale`]
@@ -33,7 +34,7 @@ pub unsafe extern "C" fn icu4x_locale_create(value: *const u8, len: usize) -> *m
     if let Ok(loc) = ICU4XLocale::from_bytes(bytes) {
         Box::into_raw(Box::new(loc))
     } else {
-        std::ptr::null_mut()
+        core::ptr::null_mut()
     }
 }
 

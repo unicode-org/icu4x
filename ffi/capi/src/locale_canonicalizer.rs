@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
 use crate::locale::ICU4XLocale;
 use crate::provider::ICU4XDataProvider;
 use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
-use std::ptr;
+use core::ptr;
 
 /// Opaque type for use behind a pointer, is [`LocaleCanonicalizer`]
 ///
