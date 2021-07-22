@@ -4,7 +4,7 @@
 
 extend = [{ path = "./tools/scripts/data.toml"}, { path = "./tools/scripts/valgrind.toml"},
           { path = "./tools/scripts/tidy.toml"}, { path = "./tools/scripts/wasm.toml"},
-          { path = "./tools/scripts/tests.toml"}]
+          { path = "./tools/scripts/tests.toml"}, { path = "./tools/scripts/ffi.toml"}]
 
 [config]
 default_to_workspace = false
@@ -40,11 +40,18 @@ description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
     "test-all-features",
-    "test-ffi",
     "test-docs-default",
     "test-docs",
     "bincode-gen-testdata",
 ]
+
+[tasks.ci-job-ffi]
+description = "Run all tests for the CI 'ffi' job"
+category = "CI"
+dependencies = [
+    "test-ffi",
+]
+
 
 [tasks.ci-job-features]
 description = "Run all tests for the CI 'features' job"
