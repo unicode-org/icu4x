@@ -4,10 +4,10 @@
 
 use alloc::boxed::Box;
 use alloc::string::ToString;
+use core::{mem, ptr};
 use icu_provider::serde::SerdeDeDataProvider;
 #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 use icu_provider_fs::FsDataProvider;
-use core::{mem, ptr};
 
 #[repr(C)]
 /// FFI version of [`SerdeDeDataProvider`]. See its docs for more details.

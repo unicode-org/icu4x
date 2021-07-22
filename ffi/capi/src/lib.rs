@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![allow(clippy::upper_case_acronyms)]
-
 #![no_std]
 extern crate alloc;
 
