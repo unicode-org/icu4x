@@ -154,6 +154,7 @@ pub extern "C" fn icu4x_locale_tostring(
     write: &mut ICU4XWriteable,
 ) -> ICU4XLocaleResult {
     let result = locale.write_to(write).is_ok();
+    println!("{:?}", result);
     write.flush();
     if result {
         ICU4XLocaleResult::Ok
