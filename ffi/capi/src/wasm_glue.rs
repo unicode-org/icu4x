@@ -7,14 +7,14 @@ use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::any::Any;
-use core::ffi::CString;
-use core::io;
-use core::os::raw::c_char;
+use std::ffi::CString;
+use std::io;
+use std::os::raw::c_char;
 
 use log::{Level, LevelFilter, Metadata, Record};
 
 #[cfg(debug_assertions)]
-use core::panic;
+use std::panic;
 
 // minimal WASM logger based on https://github.com/DeMille/wasm-glue
 extern "C" {
