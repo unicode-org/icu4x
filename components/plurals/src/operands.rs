@@ -23,14 +23,10 @@ use std::str::FromStr;
 /// - Strings representing an arbitrary-precision decimal
 /// - [`FixedDecimal`]
 ///
-/// All of these types support *trailing zeros*, which are important for PluralRules correctness.
-/// Floating-point types like `f32` and `f64` are not supported because:
-///
-/// - Floats do not support *trailing zeros*, which are important for PluralRules correctness. For
-///   example, the plural form of "1" is different than "1.0" ("1 star, 1.0 stars")
-/// - Numbers should be formatted for human consumption before plural rule selection.
-///
-/// Floating point numbers be converted to [`FixedDecimal`] before `PluralOperands`.
+/// PluralRules does not support selection from a floating-point number, because floats are not
+/// capable of carrying trailing zeros, which are required for proper plural rule selection. For
+/// example, in English, "1 star" has a different plural form than "1.0 stars", but this
+/// distinction cannot be represented using a float. Clients should use FixedDecimal instead.
 ///
 /// # Examples
 ///
@@ -61,6 +57,21 @@ use std::str::FromStr;
 ///    t: 45,
 ///    c: 0,
 /// }), "123.45".parse())
+/// ```
+///
+/// From `FixedDecimal`
+///
+/// ```
+/// use fixed_decimal::FixedDecimal;
+/// use icu::plurals::PluralOperands;
+/// assert_eq!(Ok(PluralOperands {
+///    i: 123,
+///    v: 2,
+///    w: 2,
+///    f: 45,
+///    t: 45,
+///    c: 0,
+/// }), FixedDecimal::from(12345).multiplied_pow10(-2).map(|d| (&d).into()))
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PluralOperands {
