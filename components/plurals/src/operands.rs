@@ -5,7 +5,6 @@
 use displaydoc::Display;
 use fixed_decimal::FixedDecimal;
 use core::convert::TryFrom;
-use core::io::Error as IOError;
 use core::isize;
 use core::num::ParseIntError;
 use core::str::FromStr;
@@ -80,6 +79,9 @@ impl PluralOperands {
     /// Returns the number represented by this [`PluralOperands`] as floating point.
     /// The precision of the number returned is up to the representation accuracy
     /// of a double.
+    ///
+    /// This method requires the `"std"` feature be enabled
+    #[cfg(feature = "std")]
     pub fn n(&self) -> f64 {
         let fraction = self.t as f64 / 10_f64.powi(self.v as i32);
         self.i as f64 + fraction
@@ -105,8 +107,9 @@ impl From<ParseIntError> for OperandsError {
     }
 }
 
-impl From<IOError> for OperandsError {
-    fn from(_: IOError) -> Self {
+#[cfg(feature = "std")]
+impl From<std::io::Error> for OperandsError {
+    fn from(_: std::io::Error) -> Self {
         Self::Invalid
     }
 }
