@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626971133891,
+  "lastUpdate": 1626974820453,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7439,6 +7439,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 119853,
             "range": "± 7844",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed677ed1baf0e2181edb8dc2a58ac10e3da8387b",
+          "message": "Add iterator of inversion list ranges to UnicodeSet (#839)",
+          "timestamp": "2021-07-22T10:20:51-07:00",
+          "tree_id": "3f2497ac364fefc2adb8df6cde79043822cf49e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/ed677ed1baf0e2181edb8dc2a58ac10e3da8387b"
+        },
+        "date": 1626974818033,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 141773,
+            "range": "± 10030",
             "unit": "ns/iter"
           }
         ]
