@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626974831401,
+  "lastUpdate": 1626975382560,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4535,6 +4535,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1105948,
             "range": "± 5212",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9acd1e99b12cc2c3eac2338fbe07f0059686b6e7",
+          "message": "Fix name of Bidi_M (#884)",
+          "timestamp": "2021-07-22T12:29:58-05:00",
+          "tree_id": "8d221a68e13801f21723f33ecff92e92651865ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/9acd1e99b12cc2c3eac2338fbe07f0059686b6e7"
+        },
+        "date": 1626975380215,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 597196,
+            "range": "± 39878",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1253360,
+            "range": "± 88694",
             "unit": "ns/iter"
           }
         ]
