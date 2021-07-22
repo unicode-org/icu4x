@@ -23,10 +23,10 @@ use std::str::FromStr;
 /// - Strings representing an arbitrary-precision decimal
 /// - [`FixedDecimal`]
 ///
-/// PluralRules does not support selection from a floating-point number, because floats are not
+/// This crate does not support selection from a floating-point number, because floats are not
 /// capable of carrying trailing zeros, which are required for proper plural rule selection. For
 /// example, in English, "1 star" has a different plural form than "1.0 stars", but this
-/// distinction cannot be represented using a float. Clients should use FixedDecimal instead.
+/// distinction cannot be represented using a float. Clients should use [`FixedDecimal`] instead.
 ///
 /// # Examples
 ///
