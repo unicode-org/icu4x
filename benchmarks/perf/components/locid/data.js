@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626905841545,
+  "lastUpdate": 1626971180126,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9497,6 +9497,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5085,
             "range": "± 260",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "77e8269d25798b7a4963bee1a0b639659bfe2d57",
+          "message": "Move locale_canonicalizer and StaticDataProvider to no_std, use SDP correctly in capi (#880)\n\n* make locale_canonicalizer no_std\r\n\r\n* Remove fs provider dep from capi when there is no OS\r\n\r\n* Move testdata to no_std\r\n\r\n* fmt\r\n\r\n* include sdp in test\r\n\r\n* fixup import",
+          "timestamp": "2021-07-22T09:19:40-07:00",
+          "tree_id": "1ad244828aae34b87a37b4124230d3df8bcfbc67",
+          "url": "https://github.com/unicode-org/icu4x/commit/77e8269d25798b7a4963bee1a0b639659bfe2d57"
+        },
+        "date": 1626971178168,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3332,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5091,
+            "range": "± 22",
             "unit": "ns/iter"
           }
         ]
