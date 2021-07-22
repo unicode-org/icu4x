@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626971196940,
+  "lastUpdate": 1626974859025,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10415,6 +10415,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 108920,
             "range": "± 4050",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed677ed1baf0e2181edb8dc2a58ac10e3da8387b",
+          "message": "Add iterator of inversion list ranges to UnicodeSet (#839)",
+          "timestamp": "2021-07-22T10:20:51-07:00",
+          "tree_id": "3f2497ac364fefc2adb8df6cde79043822cf49e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/ed677ed1baf0e2181edb8dc2a58ac10e3da8387b"
+        },
+        "date": 1626974857168,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1220,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7111,
+            "range": "± 397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 112785,
+            "range": "± 5917",
             "unit": "ns/iter"
           }
         ]
