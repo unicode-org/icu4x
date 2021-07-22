@@ -43,23 +43,29 @@ description = "Run C API tests"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-cd ffi/capi/examples/pluralrules;
-exec make
-cd ../fixeddecimal;
-exec make
-cd ../locale;
-exec make
+cd ffi/capi/examples/pluralrules/
+cm_run_task run-make
+cd ../fixeddecimal
+cm_run_task run-make
+cd ../locale
+cm_run_task run-make
 '''
+
+# This exists to get duckscript to exit on error
+[tasks.run-make]
+description = "Run make"
+category = "ICU4X Development"
+command = "make"
 
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-cd ffi/cpp/examples/pluralrules;
-exec make
-cd ../fixeddecimal;
-exec make
+cd ffi/cpp/examples/pluralrules
+cm_run_task run-make
+cd ../fixeddecimal
+cm_run_task run-make
 '''
 
 [tasks.test-cppdoc]
