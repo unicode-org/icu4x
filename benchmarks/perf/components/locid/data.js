@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626986092188,
+  "lastUpdate": 1626989732584,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9713,6 +9713,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5130,
             "range": "± 28",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9a25738b476593d40353e19a2dd0b2c5f9ab81a6",
+          "message": "Handle no_std for icu_capi (#890)\n\n* capi nostd\r\n\r\n* replace\r\n\r\n* fmt\r\n\r\n* fix warning\r\n\r\n* Add freertos glue\r\n\r\n* fix warning\r\n\r\n* Add tests for cortex\r\n\r\n* Fix wasm glue\r\n\r\n* fix attr\r\n\r\n* fmt\r\n\r\n* update test-cortex\r\n\r\n* fix actions\r\n\r\n* link to #891",
+          "timestamp": "2021-07-22T14:28:42-07:00",
+          "tree_id": "b2fbc849d3ba824f44f91de9233d4f1579d7e28f",
+          "url": "https://github.com/unicode-org/icu4x/commit/9a25738b476593d40353e19a2dd0b2c5f9ab81a6"
+        },
+        "date": 1626989730658,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3322,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4958,
+            "range": "± 196",
             "unit": "ns/iter"
           }
         ]
