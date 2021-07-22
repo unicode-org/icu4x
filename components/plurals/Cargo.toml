@@ -74,6 +74,10 @@ required-features = ["provider_serde"]
 name = "plurals"
 required-features = ["provider_serde"]
 
+[[test]]
+name = "operands"
+required-features = ["provider_serde", "std"]
+
 [[example]]
 name = "unread_emails"
 required-features = ["provider_serde"]
