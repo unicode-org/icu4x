@@ -4,6 +4,9 @@
 
 #![allow(clippy::upper_case_acronyms)]
 
+#![no_std]
+extern crate alloc;
+
 #[macro_use]
 mod macros;
 
