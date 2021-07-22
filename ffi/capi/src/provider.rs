@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::boxed::Box;
+#[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
 use alloc::string::ToString;
 use core::{mem, ptr};
 use icu_provider::serde::SerdeDeDataProvider;
