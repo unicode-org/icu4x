@@ -15,6 +15,23 @@ use std::str::FromStr;
 ///
 /// See [full operands description](http://unicode.org/reports/tr35/tr35-numbers.html#Operands).
 ///
+/// # Data Types
+///
+/// The following types can be converted to PluralOperands:
+///
+/// - Integers, signed and unsigned
+/// - Strings representing an arbitrary-precision decimal
+/// - [`FixedDecimal`]
+///
+/// All of these types support *trailing zeros*, which are important for PluralRules correctness.
+/// Floating-point types like `f32` and `f64` are not supported because:
+///
+/// - Floats do not support *trailing zeros*, which are important for PluralRules correctness. For
+///   example, the plural form of "1" is different than "1.0" ("1 star, 1.0 stars")
+/// - Numbers should be formatted for human consumption before plural rule selection.
+///
+/// Floating point numbers be converted to [`FixedDecimal`] before `PluralOperands`.
+///
 /// # Examples
 ///
 /// From int
@@ -29,21 +46,6 @@ use std::str::FromStr;
 ///    t: 0,
 ///    c: 0,
 /// }, PluralOperands::from(2_usize))
-/// ```
-///
-/// From float
-///
-/// ```
-/// use std::str::FromStr;
-/// use icu::plurals::PluralOperands;
-/// assert_eq!(Ok(PluralOperands {
-///    i: 1234,
-///    v: 3,
-///    w: 3,
-///    f: 567,
-///    t: 567,
-///    c: 0,
-/// }), "-1234.567".parse())
 /// ```
 ///
 /// From &str

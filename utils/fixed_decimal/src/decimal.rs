@@ -25,8 +25,19 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
 /// zeros, used for formatting and plural selection.
 ///
-/// You can create a `FixedDecimal` from a standard integer type. To represent fraction digits,
-/// call `.multiply_pow10()` after creating your `FixedDecimal`.
+/// # Data Types
+///
+/// The following types can be converted to a `FixedDecimal`:
+///
+/// - Integers, signed and unsigned
+/// - Strings representing an arbitrary-precision decimal
+///
+/// To create a `FixedDecimal` with fraction digits, first create it from an integer and then
+/// call `.multiply_pow10()`.
+///
+/// Floating point numbers will be supported pending a resolution to
+/// [#166](https://github.com/unicode-org/icu4x/issues/166). In the mean time, a third-party
+/// float-to-string library should be used.
 ///
 /// # Examples
 ///
