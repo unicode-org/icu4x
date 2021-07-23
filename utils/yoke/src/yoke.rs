@@ -481,7 +481,7 @@ where
     fn clone(&self) -> Self {
         let this: &Y::Output = self.get();
         // We have an &T not a T, and we can clone YokeTraitHack<T>
-        let this_hack = YokeTraitHack(this).to_ref();
+        let this_hack = YokeTraitHack(this).into_ref();
         Yoke {
             yokeable: unsafe { Y::make(this_hack.clone().0) },
             cart: self.cart.clone(),

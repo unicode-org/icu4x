@@ -221,7 +221,7 @@ impl<'a, T> YokeTraitHack<&'a T> {
     /// This is safe because `YokeTraitHack` is `repr(transparent)`.
     ///
     /// This method is required to implement `Clone` on `Yoke`.
-    pub fn to_ref(self) -> &'a YokeTraitHack<T> {
+    pub fn into_ref(self) -> &'a YokeTraitHack<T> {
         // YokeTraitHack is repr(transparent) so it's always safe
         // to transmute YTH<&T> to &YTH<T>
         unsafe { mem::transmute::<YokeTraitHack<&T>, &YokeTraitHack<T>>(self) }
