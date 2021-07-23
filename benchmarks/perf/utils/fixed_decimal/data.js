@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626989702337,
+  "lastUpdate": 1627048090266,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7619,6 +7619,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 140305,
             "range": "± 7802",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2fb8ea7943b3344555191bfdf0fbc5cfb13f7c82",
+          "message": "Correctly apply the hour cycle in the components::Bag (#846)",
+          "timestamp": "2021-07-23T08:42:21-05:00",
+          "tree_id": "ebd677c67f6136cb15ff12dd7a871e9934bd3080",
+          "url": "https://github.com/unicode-org/icu4x/commit/2fb8ea7943b3344555191bfdf0fbc5cfb13f7c82"
+        },
+        "date": 1627048087902,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 133885,
+            "range": "± 5123",
             "unit": "ns/iter"
           }
         ]
