@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627048106435,
+  "lastUpdate": 1627073580835,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9785,6 +9785,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4093,
             "range": "± 241",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "49ece439952c04a2a5e200c63fc696b176aa79e2",
+          "message": "Add working Clone impl for Yoke (#894)\n\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-07-23T15:46:29-05:00",
+          "tree_id": "dfba54fc9335730c157139a9fff228b1ec35ff2b",
+          "url": "https://github.com/unicode-org/icu4x/commit/49ece439952c04a2a5e200c63fc696b176aa79e2"
+        },
+        "date": 1627073578543,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2870,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4618,
+            "range": "± 212",
             "unit": "ns/iter"
           }
         ]
