@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627073545681,
+  "lastUpdate": 1627075312760,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8729,6 +8729,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 30749452,
             "range": "± 106199",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f5bc1660a2efa1c88f6ab3ee7a6e68af92498ffd",
+          "message": "Implement working Clone and PartialEq on DataPayload (#895)",
+          "timestamp": "2021-07-23T16:14:52-05:00",
+          "tree_id": "1d70b92ebb4a6063fc0ae09e2b27a283eda5fa93",
+          "url": "https://github.com/unicode-org/icu4x/commit/f5bc1660a2efa1c88f6ab3ee7a6e68af92498ffd"
+        },
+        "date": 1627075303984,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35292151,
+            "range": "± 1475813",
             "unit": "ns/iter"
           }
         ]
