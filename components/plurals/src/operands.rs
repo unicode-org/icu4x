@@ -17,7 +17,7 @@ use std::str::FromStr;
 ///
 /// # Data Types
 ///
-/// The following types can be converted to PluralOperands:
+/// The following types can be converted to [`PluralOperands`]:
 ///
 /// - Integers, signed and unsigned
 /// - Strings representing an arbitrary-precision decimal
@@ -47,7 +47,6 @@ use std::str::FromStr;
 /// From &str
 ///
 /// ```
-/// use std::convert::TryFrom;
 /// use icu::plurals::PluralOperands;
 /// assert_eq!(Ok(PluralOperands {
 ///    i: 123,
@@ -59,7 +58,7 @@ use std::str::FromStr;
 /// }), "123.45".parse())
 /// ```
 ///
-/// From `FixedDecimal`
+/// From [`FixedDecimal`]
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
