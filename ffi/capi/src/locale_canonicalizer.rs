@@ -4,8 +4,9 @@
 
 use crate::locale::ICU4XLocale;
 use crate::provider::ICU4XDataProvider;
+use alloc::boxed::Box;
+use core::ptr;
 use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
-use std::ptr;
 
 /// Opaque type for use behind a pointer, is [`LocaleCanonicalizer`]
 ///

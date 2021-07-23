@@ -23,8 +23,8 @@ class Locale {
   std::optional<std::string> ToString() const {
     std::string out;
     ICU4XWriteable writer = icu4x::internal::WriteableFromString(out);
-    bool success = icu4x_locale_tostring(this->inner.get(), &writer);
-    if (!success) {
+    ICU4XLocaleResult result = icu4x_locale_tostring(this->inner.get(), &writer);
+    if (result != ICU4XLocaleResult_Ok) {
       return {};
     }
     return out;

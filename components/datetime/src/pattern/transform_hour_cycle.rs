@@ -76,6 +76,7 @@ pub fn apply_coarse_hour_cycle(
         &datetime.skeletons,
         &datetime.length_patterns,
         &skeleton.as_slice(),
+        &None,
         // Prefer using the matched pattern directly, rather than mutating it to match the
         // requested fields.
         true,

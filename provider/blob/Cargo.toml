@@ -29,23 +29,21 @@ all-features = true
 icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
 icu_locid = { version = "0.2", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
-bincode = { version = "1.3.3" }
+postcard = { version = "0.7.0" }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 litemap = { version = "0.2.0", path = "../../utils/litemap/", features = ["serde"] }
 
 # For the export feature
 log = { version = "0.4", optional = true }
 
-[build-dependencies]
-bincode = { version = "1.3.3" }
-
 [dev-dependencies]
 icu = { version = "0.2", path = "../../components/icu" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
+icu_testdata = { version = "0.2", path = "../../provider/testdata", features = ["static"] }
 icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 
 [lib]
 path = "src/lib.rs"
 
 [features]
-export = ["log"]
+export = ["log", "postcard/alloc", "std"]
+std = ["icu_locid/std", "icu_provider/std"]

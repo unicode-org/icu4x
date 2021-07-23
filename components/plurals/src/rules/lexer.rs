@@ -34,6 +34,7 @@ pub enum LexerError {
     UnknownToken(u8),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for LexerError {}
 
 /// Unicode Plural Rule lexer is an iterator

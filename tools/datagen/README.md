@@ -32,7 +32,7 @@ $ cargo run --bin icu4x-datagen -- \
    --all-keys \
    --all-locales \
    --format blob \
-   --out /tmp/icu4x_data/icu4x_data.bincode \
+   --out /tmp/icu4x_data/icu4x_data.postcard \
    -v
 ```
 

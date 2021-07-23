@@ -126,8 +126,8 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_provider = { version = "0.2", path = "../../provider/core" }
-icu_provider_blob = { version = "0.2", path = "../../provider/blob" }
-icu_provider_fs = { version = "0.2", path = "../../provider/fs" }
+icu_provider_blob = { version = "0.2", path = "../../provider/blob", optional = true }
+icu_provider_fs = { version = "0.2", path = "../../provider/fs", optional = true }
 icu_locid = { version = "0.2", path = "../../components/locid" }
 
 # Dependencies for the "metadata" feature
@@ -142,6 +142,7 @@ icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.2", path = "../../components/plurals" }
 
 [features]
+default = ["fs", "std"]
 # Enables programmatic access to this Cargo.toml file
 metadata = [
     "cargo_metadata",
@@ -150,4 +151,9 @@ metadata = [
     "serde",
     "displaydoc",
     "writeable",
+    "std"
 ]
+
+fs = ["icu_provider_fs", "std"]
+static = ["icu_provider_blob"]
+std = []

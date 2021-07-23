@@ -6,6 +6,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::vec::Vec;
 use icu_locid::LanguageIdentifier;
 use icu_provider::yoke::{self, *};
 use tinystr::{TinyStr4, TinyStr8};

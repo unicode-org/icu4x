@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::any::Any;
 use std::ffi::CString;
 use std::io;
 use std::os::raw::c_char;
@@ -103,7 +108,7 @@ pub unsafe extern "C" fn icu4x_init() {
 pub unsafe extern "C" fn icu4x_alloc(size: usize) -> *mut u8 {
     let mut vec = Vec::<u8>::with_capacity(size);
     let ret = vec.as_mut_ptr();
-    std::mem::forget(vec);
+    core::mem::forget(vec);
     ret
 }
 

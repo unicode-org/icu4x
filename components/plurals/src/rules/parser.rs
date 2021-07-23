@@ -4,8 +4,12 @@
 
 use super::ast;
 use super::lexer::{Lexer, Token};
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::iter::Peekable;
 use displaydoc::Display;
-use std::iter::Peekable;
 
 #[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError {
@@ -23,6 +27,7 @@ pub enum ParserError {
     ExpectedSampleType,
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for ParserError {}
 
 /// Unicode Plural Rule parser converts an

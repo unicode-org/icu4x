@@ -37,10 +37,18 @@ icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
 icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
-icu_provider_fs = { path = "../../provider/fs/" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
+
+[target.'cfg(any(target_arch = "wasm32", target_os = "none"))'.dependencies]
+icu_testdata = { version = "0.2", path = "../../provider/testdata", default-features = false, features = ["static"] }
+
+[target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
+icu_provider_fs = { path = "../../provider/fs/" }
+
+[target.'cfg(target_os = "none")'.dependencies]
+freertos-rust = "0.1.2"
+cortex-m = "0.7.3"
