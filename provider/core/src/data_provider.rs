@@ -10,6 +10,7 @@ use crate::error::Error;
 use crate::marker::DataMarker;
 use crate::resource::ResourceKey;
 use crate::resource::ResourcePath;
+use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
 use alloc::rc::Rc;
@@ -142,10 +143,8 @@ where
 impl<'d, 's, M> Clone for DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
-    for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
-    /// Note: This function is currently inoperable. For more details, see
-    /// https://github.com/unicode-org/icu4x/issues/753
     fn clone(&self) -> Self {
         use DataPayloadInner::*;
         let new_inner = match &self.inner {
@@ -156,6 +155,31 @@ where
         };
         Self { inner: new_inner }
     }
+}
+
+impl<'d, 's, M> PartialEq for DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        YokeTraitHack(self.get()).into_ref() == YokeTraitHack(other.get()).into_ref()
+    }
+}
+
+impl<'d, 's, M> Eq for DataPayload<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
+{
+}
+
+#[test]
+fn test_clone_eq() {
+    use crate::marker::CowStrMarker;
+    let p1 = DataPayload::<CowStrMarker>::from_borrowed("Demo");
+    let p2 = p1.clone();
+    assert_eq!(p1, p2);
 }
 
 impl<'d, 's, M> DataPayload<'d, 's, M>
