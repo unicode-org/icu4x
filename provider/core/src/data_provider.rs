@@ -196,8 +196,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
     /// use std::borrow::Cow;
+    /// use std::rc::Rc;
     ///
     /// let local_data = "example".to_string();
     ///
@@ -321,9 +321,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
-    /// use std::borrow::Cow;
     ///
-    /// let mut payload = DataPayload::<CowStrMarker>::from_owned(Cow::Borrowed("Hello"));
+    /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
     ///
     /// payload.with_mut(|s| s.to_mut().push_str(" World"));
     ///
@@ -335,9 +334,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
-    /// use std::borrow::Cow;
     ///
-    /// let mut payload = DataPayload::<CowStrMarker>::from_owned(Cow::Borrowed("Hello"));
+    /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
     ///
     /// let suffix = " World".to_string();
     /// payload.with_mut(move |s| s.to_mut().push_str(&suffix));
@@ -367,9 +365,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
-    /// use std::borrow::Cow;
     ///
-    /// let payload = DataPayload::<CowStrMarker>::from_owned(Cow::Borrowed("Demo"));
+    /// let payload = DataPayload::<CowStrMarker>::from_static_str("Demo");
     ///
     /// assert_eq!("Demo", payload.get());
     /// ```
