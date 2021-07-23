@@ -178,7 +178,7 @@ where
 #[test]
 fn test_clone_eq() {
     use crate::marker::CowStrMarker;
-    let p1 = DataPayload::<CowStrMarker>::from_borrowed("Demo");
+    let p1 = DataPayload::<CowStrMarker>::from_static_str("Demo");
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 }

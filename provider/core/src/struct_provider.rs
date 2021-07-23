@@ -6,8 +6,8 @@
 
 use crate::error::Error;
 use crate::prelude::*;
-use crate::yoke::*;
 use crate::yoke::trait_hack::YokeTraitHack;
+use crate::yoke::*;
 
 /// A data provider that returns clones of a constant data payload.
 ///
