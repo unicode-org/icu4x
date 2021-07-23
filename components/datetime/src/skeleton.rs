@@ -474,10 +474,9 @@ pub fn create_best_pattern_for_fields<'a>(
         // TODO(#486) - Eras,
         // ... etc.
 
-        // TODO(#583) - Reviewer: this is commented out because TimeZone support is required
-        // here in order to generate length::Bag patterns correctly. For now I've commented out this
-        // line so that everything works for length::Bag with a preference, although it may lack
-        // a time zone.
+        // TODO(#583) - This is commented out because TimeZone support is required here in order to
+        // generate length::Bag patterns correctly. For now it's commented out so that everything
+        // works for length::Bag with a preference, although it may lack a time zone.
 
         // unimplemented!(
         //     "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
