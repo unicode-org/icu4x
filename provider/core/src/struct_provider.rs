@@ -7,6 +7,7 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
+use alloc::rc::Rc;
 
 /// A data provider that unconditionally returns references to borrowed data.
 ///
@@ -17,6 +18,7 @@ use crate::yoke::*;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::struct_provider::StructProvider;
 /// use std::borrow::Cow;
+/// use std::rc::Rc;
 ///
 /// let local_data = HelloWorldV1 {
 ///     message: Cow::Owned("hello world".to_string()),
@@ -27,7 +29,7 @@ use crate::yoke::*;
 ///
 /// let provider = StructProvider {
 ///     key: SAMPLE_KEY,
-///     data: &local_data,
+///     data: Rc::from(local_data.clone()),
 /// };
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
@@ -37,12 +39,12 @@ use crate::yoke::*;
 ///
 /// assert_eq!(payload.get(), &local_data);
 /// ```
-pub struct StructProvider<'d, T: ?Sized> {
+pub struct StructProvider<T: ?Sized> {
     pub key: ResourceKey,
-    pub data: &'d T,
+    pub data: Rc<T>,
 }
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<'d, M::Cart>
+impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<M::Cart>
 where
     M: DataMarker<'s>,
     M::Yokeable: ZeroCopyFrom<M::Cart>,
@@ -51,7 +53,7 @@ where
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_borrowed(self.data)),
+            payload: Some(DataPayload::from_partial_owned(self.data.clone())),
         })
     }
 }
