@@ -216,6 +216,11 @@ use core::mem;
 pub struct YokeTraitHack<T>(pub T);
 
 impl<'a, T> YokeTraitHack<&'a T> {
+    /// Converts from `YokeTraitHack<&T>` to `&YokeTraitHack<T>`.
+    ///
+    /// This is safe because `YokeTraitHack` is `repr(transparent)`.
+    ///
+    /// This method is required to implement `Clone` on `Yoke`.
     pub fn to_ref(self) -> &'a YokeTraitHack<T> {
         // YokeTraitHack is repr(transparent) so it's always safe
         // to transmute YTH<&T> to &YTH<T>

@@ -469,8 +469,11 @@ unsafe impl<T: CloneableCart> CloneableCart for Option<T> {}
 unsafe impl<'a, T: ?Sized> CloneableCart for &'a T {}
 unsafe impl CloneableCart for () {}
 
-/// Clone requires that the cart derefs to the same address after it is cloned. This works for Rc, Arc, and &'a T.
-/// For all other cart types, clone `.backing_cart()` and re-use `attach_to_cart()`.
+/// Clone requires that the cart derefs to the same address after it is cloned. This works for
+/// Rc, Arc, and &'a T.
+///
+/// For other cart types, clone `.backing_cart()` and re-use `.attach_to_cart()`; however, doing
+/// so may lose mutations performed via `.with_mut()`.
 impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Clone for Yoke<Y, C>
 where
     for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: Clone,
@@ -492,8 +495,30 @@ fn test_clone() {
     let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_rc_cart(Rc::new(
         local_data,
     ));
+
+    // Test basic clone
     let y2 = y1.clone();
-    assert_eq!(y1.get(), y2.get());
+    assert_eq!(y1.get(), "foo");
+    assert_eq!(y2.get(), "foo");
+
+    // Test clone with mutation on target
+    let mut y3 = y1.clone();
+    y3.with_mut(|y| {
+        y.to_mut().push_str("bar");
+    });
+    assert_eq!(y1.get(), "foo");
+    assert_eq!(y2.get(), "foo");
+    assert_eq!(y3.get(), "foobar");
+
+    // Test that mutations on source do not affect target
+    let y4 = y3.clone();
+    y3.with_mut(|y| {
+        y.to_mut().push_str("baz");
+    });
+    assert_eq!(y1.get(), "foo");
+    assert_eq!(y2.get(), "foo");
+    assert_eq!(y3.get(), "foobarbaz");
+    assert_eq!(y4.get(), "foobar");
 }
 
 impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
