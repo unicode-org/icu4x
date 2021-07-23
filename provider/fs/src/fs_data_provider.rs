@@ -66,7 +66,7 @@ impl FsDataProvider {
             path_buf.set_extension(self.manifest.syntax.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(Error::UnsupportedResourceKey(req.resource_path.key));
+            return Err(Error::MissingResourceKey(req.resource_path.key));
         }
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
@@ -74,7 +74,7 @@ impl FsDataProvider {
             path_buf.set_extension(self.manifest.syntax.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(Error::UnavailableResourceOptions(req.clone()));
+            return Err(Error::MissingResourceOptions(req.clone()));
         }
         let file = match File::open(&path_buf) {
             Ok(file) => file,
