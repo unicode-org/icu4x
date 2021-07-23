@@ -207,12 +207,29 @@ use core::mem;
 
 /// A wrapper around a type `T`, forwarding trait calls down to the inner type.
 ///
-/// `YokeTraitHack` supports [`Clone`] and [`serde::Deserialize`] out of the box. Other traits can
-/// be implemented by the caller.
+/// `YokeTraitHack` supports [`Clone`], [`PartialEq`], [`Eq`], and [`serde::Deserialize`] out of
+/// the box. Other traits can be implemented by the caller.
 ///
 /// For more information, see the module-level documentation.
+///
+/// # Example
+///
+/// Using `YokeTraitHack` as a type bound in a function comparing two `Yoke`s:
+///
+/// ```
+/// use yoke::*;
+/// use yoke::trait_hack::YokeTraitHack;
+///
+/// fn compare_yokes<Y, C1, C2>(y1: Yoke<Y, C1>, y2: Yoke<Y, C2>) -> bool
+/// where
+///     Y: for<'a> Yokeable<'a>,
+///     for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: PartialEq,
+/// {
+///     YokeTraitHack(y1.get()).into_ref() == YokeTraitHack(y2.get()).into_ref()
+/// }
+/// ```
 #[repr(transparent)]
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct YokeTraitHack<T>(pub T);
 
 impl<'a, T> YokeTraitHack<&'a T> {
