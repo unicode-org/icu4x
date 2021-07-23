@@ -294,8 +294,7 @@ impl<'trie, W: ValueWidth, T: TrieType> CodePointTrie<'trie, W, T> {
     }
 
     /// Returns the value that is associated with `code_point` for this [`CodePointTrie`]
-    /// as a `u32`. This API method maintains consistency with the corresponding
-    /// originalICU APIs.
+    /// as a `u32`.
     pub fn get_u32(&self, code_point: u32) -> u32 {
         self.get(code_point).cast_to_widest()
     }
