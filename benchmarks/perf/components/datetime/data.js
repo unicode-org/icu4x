@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1626989735345,
+  "lastUpdate": 1627048145278,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4715,6 +4715,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1338002,
             "range": "± 38074",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2fb8ea7943b3344555191bfdf0fbc5cfb13f7c82",
+          "message": "Correctly apply the hour cycle in the components::Bag (#846)",
+          "timestamp": "2021-07-23T08:42:21-05:00",
+          "tree_id": "ebd677c67f6136cb15ff12dd7a871e9934bd3080",
+          "url": "https://github.com/unicode-org/icu4x/commit/2fb8ea7943b3344555191bfdf0fbc5cfb13f7c82"
+        },
+        "date": 1627048141274,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 747730,
+            "range": "± 29244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1512860,
+            "range": "± 52450",
             "unit": "ns/iter"
           }
         ]
