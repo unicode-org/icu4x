@@ -135,9 +135,5 @@ pub fn get_planes_trie() -> CodePointTrie<'static, u8, Small> {
 
     let trie_result: Result<CodePointTrie<u8, Small>, Error> =
         CodePointTrie::try_new(trie_header, index, data);
-    assert!(
-        trie_result.is_ok(),
-        "Statically constructed CodePointTrie should not have errors during construction"
-    );
-    trie_result.unwrap()
+    trie_result.expect("Statically constructed CodePointTrie should not have errors during construction")
 }
