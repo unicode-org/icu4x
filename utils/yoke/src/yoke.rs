@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::trait_hack::YokeTraitHack;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -472,11 +473,14 @@ unsafe impl CloneableCart for () {}
 /// For all other cart types, clone `.backing_cart()` and re-use `attach_to_cart()`.
 impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Clone for Yoke<Y, C>
 where
-    for<'a> <Y as Yokeable<'a>>::Output: Clone,
+    for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
+        let this: &Y::Output = self.get();
+        // We have an &T not a T, and we can clone YokeTraitHack<T>
+        let this_hack = YokeTraitHack(this).to_ref();
         Yoke {
-            yokeable: unsafe { Y::make(self.get().clone()) },
+            yokeable: unsafe { Y::make(this_hack.clone().0) },
             cart: self.cart.clone(),
         }
     }
@@ -485,10 +489,9 @@ where
 #[test]
 fn test_clone() {
     let local_data = "foo".to_string();
-    let y1 = Yoke::<
-        alloc::borrow::Cow<'static, str>,
-        Rc<String>
-    >::attach_to_rc_cart(Rc::new(local_data));
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_rc_cart(Rc::new(
+        local_data,
+    ));
     let y2 = y1.clone();
     assert_eq!(y1.get(), y2.get());
 }
