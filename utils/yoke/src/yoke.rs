@@ -482,6 +482,17 @@ where
     }
 }
 
+#[test]
+fn test_clone() {
+    let local_data = "foo".to_string();
+    let y1 = Yoke::<
+        alloc::borrow::Cow<'static, str>,
+        Rc<String>
+    >::attach_to_rc_cart(Rc::new(local_data));
+    let y2 = y1.clone();
+    assert_eq!(y1.get(), y2.get());
+}
+
 impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Allows one to "project" a yoke to perform a transformation on the data, potentially
     /// looking at a subfield, and producing a new yoke. This will move cart, and the provided
