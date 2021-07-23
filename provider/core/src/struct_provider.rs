@@ -7,9 +7,9 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
-use alloc::rc::Rc;
+use crate::yoke::trait_hack::YokeTraitHack;
 
-/// A data provider that unconditionally returns references to borrowed data.
+/// A data provider that returns clones of a constant data payload.
 ///
 /// # Examples
 ///
@@ -18,7 +18,6 @@ use alloc::rc::Rc;
 /// use icu_provider::hello_world::*;
 /// use icu_provider::struct_provider::StructProvider;
 /// use std::borrow::Cow;
-/// use std::rc::Rc;
 ///
 /// let local_data = HelloWorldV1 {
 ///     message: Cow::Owned("hello world".to_string()),
@@ -29,7 +28,7 @@ use alloc::rc::Rc;
 ///
 /// let provider = StructProvider {
 ///     key: SAMPLE_KEY,
-///     data: Rc::from(local_data.clone()),
+///     data: DataPayload::from_owned(local_data),
 /// };
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
@@ -37,23 +36,26 @@ use alloc::rc::Rc;
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!(payload.get(), &local_data);
+/// assert_eq!(payload.get().message, "hello world");
 /// ```
-pub struct StructProvider<T: ?Sized> {
-    pub key: ResourceKey,
-    pub data: Rc<T>,
-}
-
-impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<M::Cart>
+pub struct StructProvider<'d, 's, M>
 where
     M: DataMarker<'s>,
-    M::Yokeable: ZeroCopyFrom<M::Cart>,
+{
+    pub key: ResourceKey,
+    pub data: DataPayload<'d, 's, M>,
+}
+
+impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<'d, 's, M>
+where
+    M: DataMarker<'s>,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(self.data.clone())),
+            payload: Some(self.data.clone()),
         })
     }
 }
