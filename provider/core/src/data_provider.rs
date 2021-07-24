@@ -18,6 +18,7 @@ use alloc::rc::Rc;
 use core::convert::TryFrom;
 use core::fmt;
 use core::fmt::Debug;
+use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
 /// A struct to request a certain piece of data from a data provider.
@@ -378,6 +379,33 @@ where
             RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
             RcBuf(yoke) => yoke.get(),
+        }
+    }
+
+    pub fn project<M2>(
+        self,
+        f: for<'a> fn(
+            _: <M::Yokeable as Yokeable<'a>>::Output,
+            _: PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'d, 's, M2>
+    where
+        M2: DataMarker<'s, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match self.inner {
+            Borrowed(yoke) => DataPayload {
+                inner: Borrowed(yoke.project(f)),
+            },
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project(f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project(f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project(f)),
+            },
         }
     }
 }
