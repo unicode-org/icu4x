@@ -98,6 +98,8 @@ pub(crate) enum DataPayloadInner<'d, 's: 'd, M>
 where
     M: DataMarker<'s>,
 {
+    // TODO(#752): Remove the Borrowed variant and rename the lifetime parameter
+    #[allow(dead_code)]
     Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
     Owned(Yoke<M::Yokeable, ()>),
