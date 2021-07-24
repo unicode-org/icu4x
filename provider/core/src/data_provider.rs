@@ -140,6 +140,8 @@ where
     }
 }
 
+/// Cloning a DataPayload is generally a cheap operation.
+/// See notes in the `Clone` impl for [`Yoke`].
 impl<'d, 's, M> Clone for DataPayload<'d, 's, M>
 where
     M: DataMarker<'s>,
