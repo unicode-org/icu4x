@@ -13,15 +13,15 @@ use writeable::Writeable;
 use super::datetime;
 use super::time_zone;
 
-pub struct FormattedZonedDateTime<'l, T>
+pub struct FormattedZonedDateTime<'l, 'd, T>
 where
     T: ZonedDateTimeInput,
 {
-    pub(crate) zoned_datetime_format: &'l ZonedDateTimeFormat<'l>,
+    pub(crate) zoned_datetime_format: &'l ZonedDateTimeFormat<'d>,
     pub(crate) zoned_datetime: &'l T,
 }
 
-impl<'l, T> Writeable for FormattedZonedDateTime<'l, T>
+impl<'l, 'd, T> Writeable for FormattedZonedDateTime<'l, 'd, T>
 where
     T: ZonedDateTimeInput,
 {
@@ -33,7 +33,7 @@ where
     // TODO(#489): Implement write_len
 }
 
-impl<'l, T> fmt::Display for FormattedZonedDateTime<'l, T>
+impl<'l, 'd, T> fmt::Display for FormattedZonedDateTime<'l, 'd, T>
 where
     T: ZonedDateTimeInput,
 {
