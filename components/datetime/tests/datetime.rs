@@ -13,7 +13,7 @@ use icu_datetime::{
 };
 use icu_datetime::{
     provider::{
-        gregory::{DatePatternsV1, DatePatternsV1Marker, DateSymbolsV1, DateSymbolsV1Marker},
+        gregory::{DatePatternsV1Marker, DateSymbolsV1Marker},
         key::{GREGORY_DATE_PATTERNS_V1, GREGORY_DATE_SYMBOLS_V1},
     },
     DateTimeFormat,
@@ -32,12 +32,12 @@ use std::borrow::Cow;
 use std::fmt::Write;
 use tinystr::tinystr8;
 
-struct MultiKeyStructProvider<'s> {
-    pub symbols: StructProvider<'s, DateSymbolsV1>,
-    pub patterns: StructProvider<'s, DatePatternsV1>,
+struct MultiKeyStructProvider<'d, 's> {
+    pub symbols: StructProvider<'d, 's, DateSymbolsV1Marker>,
+    pub patterns: StructProvider<'d, 's, DatePatternsV1Marker>,
 }
 
-impl<'d, 's> DataProvider<'d, 's, DateSymbolsV1Marker> for MultiKeyStructProvider<'s> {
+impl<'d, 's> DataProvider<'d, 's, DateSymbolsV1Marker> for MultiKeyStructProvider<'d, 's> {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -46,7 +46,7 @@ impl<'d, 's> DataProvider<'d, 's, DateSymbolsV1Marker> for MultiKeyStructProvide
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, DatePatternsV1Marker> for MultiKeyStructProvider<'s> {
+impl<'d, 's> DataProvider<'d, 's, DatePatternsV1Marker> for MultiKeyStructProvider<'d, 's> {
     fn load_payload(
         &self,
         req: &DataRequest,
@@ -170,19 +170,22 @@ fn test_dayperiod_patterns() {
                         patterns_data.with_mut(move |data| {
                             data.time.long = new_pattern_cow;
                         });
-                        let provider = MultiKeyStructProvider {
+                        let local_provider = MultiKeyStructProvider {
                             symbols: StructProvider {
                                 key: GREGORY_DATE_SYMBOLS_V1,
-                                data: symbols_data.get(),
+                                data: symbols_data.clone(),
                             },
                             patterns: StructProvider {
                                 key: GREGORY_DATE_PATTERNS_V1,
-                                data: patterns_data.get(),
+                                data: patterns_data.clone(),
                             },
                         };
-                        let dtf =
-                            DateTimeFormat::try_new(langid.clone(), &provider, &format_options)
-                                .unwrap();
+                        let dtf = DateTimeFormat::try_new(
+                            langid.clone(),
+                            &local_provider,
+                            &format_options,
+                        )
+                        .unwrap();
                         assert_eq!(
                             dtf.format(&datetime).to_string(),
                             *expected,
@@ -252,20 +255,20 @@ fn test_time_zone_patterns() {
                 patterns_data.with_mut(move |data| {
                     data.time.long = new_pattern_cow;
                 });
-                let date_provider = MultiKeyStructProvider {
+                let local_provider = MultiKeyStructProvider {
                     symbols: StructProvider {
                         key: GREGORY_DATE_SYMBOLS_V1,
-                        data: symbols_data.get(),
+                        data: symbols_data.clone(),
                     },
                     patterns: StructProvider {
                         key: GREGORY_DATE_PATTERNS_V1,
-                        data: patterns_data.get(),
+                        data: patterns_data.clone(),
                     },
                 };
 
                 let dtf = ZonedDateTimeFormat::try_new(
                     langid.clone(),
-                    &date_provider,
+                    &local_provider,
                     &zone_provider,
                     &format_options,
                 )
