@@ -474,6 +474,10 @@ unsafe impl CloneableCart for () {}
 ///
 /// For other cart types, clone `.backing_cart()` and re-use `.attach_to_cart()`; however, doing
 /// so may lose mutations performed via `.with_mut()`.
+///
+/// Cloning a `Yoke` is often a cheap operation requiring no heap allocations, in much the same
+/// way that cloning an `Rc` is a cheap operation. However, if the `yokeable` contains owned data
+/// (e.g., from `.with_mut()`), that data will need to be cloned.
 impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Clone for Yoke<Y, C>
 where
     for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: Clone,
