@@ -2,24 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/decimal.h"
+#include "../../include/api.h"
 #include <string.h>
 #include <stdio.h>
 
 const char* path = "../../../../provider/testdata/data/json/";
 int main() {
-    ICU4XLocale* locale = icu4x_locale_create("bn", 2);
-    ICU4XCreateDataProviderResult result = icu4x_fs_data_provider_create(path, strlen(path));
+    ICU4XLocale* locale = ICU4XLocale_create("bn", 2);
+    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_fs(path, strlen(path));
     if (!result.success) {
         printf("Failed to create FsDataProvider\n");
         return 1;
     }
-    ICU4XDataProvider provider = result.provider;
-    ICU4XFixedDecimal* decimal = icu4x_fixed_decimal_create(1000007);
+    ICU4XDataProvider* provider = result.provider;
+    ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
-    ICU4XFixedDecimalFormatOptions opts = {ICU4XGroupingStrategy_Auto, ICU4XSignDisplay_Auto};
+    ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    ICU4XCreateFixedDecimalFormatResult fdf_result = icu4x_fixed_decimal_format_create(locale, &provider, opts);
+    ICU4XFixedDecimalFormatResult fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
     if (!fdf_result.success)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;
@@ -27,9 +27,9 @@ int main() {
     ICU4XFixedDecimalFormat* fdf = fdf_result.fdf;
     char output[40];
 
-    ICU4XWriteable write = icu4x_simple_writeable(output, 40);
+    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
 
-    bool success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
+    bool success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
@@ -42,17 +42,17 @@ int main() {
         return 1;
     }
 
-    success = icu4x_fixed_decimal_multiply_pow10(decimal, 2);
+    success = ICU4XFixedDecimal_multiply_pow10(decimal, 2);
     if (!success) {
         printf("Failed to multiply FixedDecimal\n");
         return 1;
     }
 
-    icu4x_fixed_decimal_negate(decimal);
+    ICU4XFixedDecimal_negate(decimal);
 
-    write = icu4x_simple_writeable(output, 40);
+    write = diplomat_simple_writeable(output, 40);
 
-    success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
+    success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
@@ -65,18 +65,18 @@ int main() {
         return 1;
     }
 
-    icu4x_fixed_decimal_destroy(decimal);
+    ICU4XFixedDecimal_destroy(decimal);
 
-    ICU4XCreateFixedDecimalResult fd_result = icu4x_fixed_decimal_create_fromstr("1000007.070", 11);
+    ICU4XCreateFixedDecimalResult fd_result = ICU4XFixedDecimal_create_fromstr("1000007.070", 11);
     if (!fd_result.success) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;
     }
     decimal = fd_result.fd;
 
-    write = icu4x_simple_writeable(output, 40);
+    write = diplomat_simple_writeable(output, 40);
 
-    success = icu4x_fixed_decimal_format_write(fdf, decimal, &write);
+    success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
@@ -89,8 +89,8 @@ int main() {
         return 1;
     }
 
-    icu4x_fixed_decimal_destroy(decimal);
-    icu4x_fixed_decimal_format_destroy(fdf);
+    ICU4XFixedDecimal_destroy(decimal);
+    ICU4XFixedDecimalFormat_destroy(fdf);
 
     return 0;
 }

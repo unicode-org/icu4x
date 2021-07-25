@@ -2,77 +2,57 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::locale::ICU4XLocale;
-use crate::provider::ICU4XDataProvider;
-use alloc::boxed::Box;
-use core::ptr;
-use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+#[diplomat::bridge]
+pub mod ffi {
+    use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    use alloc::boxed::Box;
 
-/// Opaque type for use behind a pointer, is [`LocaleCanonicalizer`]
-///
-/// Can be obtained via [`icu4x_localecanonicalizer_create()`] and
-/// destroyed via [`icu4x_localecanonicalizer_destroy()`]
-pub type ICU4XLocaleCanonicalizer<'d, 's> = LocaleCanonicalizer<'d, 'static>;
+    use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
-#[repr(C)]
-c_enum! {
-    /// FFI version of [`CanonicalizationResult`]. See its docs for more details.
-    pub c_enum ICU4XCanonicalizationResult is CanonicalizationResult {
+    /// FFI version of `CanonicalizationResult`.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/enum.CanonicalizationResult.html) for more details.
+    pub enum ICU4XCanonicalizationResult {
         Modified,
         Unmodified,
     }
-}
 
-#[no_mangle]
-/// FFI version of [`LocaleCanonicalizer::new()`], see its docs for more details
-///
-/// # Safety
-/// - `provider` should be constructed via one of the functions in [`crate::provider`](crate::provider)
-pub unsafe extern "C" fn icu4x_localecanonicalizer_create(
-    provider: &ICU4XDataProvider,
-) -> *mut ICU4XLocaleCanonicalizer {
-    let provider = provider.as_dyn_ref();
-    if let Ok(lc) = ICU4XLocaleCanonicalizer::new(provider) {
-        let boxed = Box::new(lc);
-        Box::into_raw(boxed)
-    } else {
-        ptr::null_mut()
+    // TODO(shadaj): replace with diplomat-ignored from impl
+    fn canonicalization_result_to_ffi(result: CanonicalizationResult) -> ICU4XCanonicalizationResult {
+        match result {
+            CanonicalizationResult::Modified => ICU4XCanonicalizationResult::Modified,
+            CanonicalizationResult::Unmodified => ICU4XCanonicalizationResult::Unmodified,
+        }
     }
-}
 
-#[no_mangle]
-/// FFI version of [`LocaleCanonicalizer::canonicalize()`]. See its docs for more details.
-pub extern "C" fn icu4x_localecanonicalizer_canonicalize(
-    lc: &ICU4XLocaleCanonicalizer,
-    locale: &mut ICU4XLocale,
-) -> ICU4XCanonicalizationResult {
-    lc.canonicalize(locale).into()
-}
+    /// A locale canonicalizer.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html) for more details.
+    #[diplomat::opaque]
+    pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer<'static, 'static>);
 
-#[no_mangle]
-/// FFI version of [`LocaleCanonicalizer::maximize()`]. See its docs for more details.
-pub extern "C" fn icu4x_localecanonicalizer_maximize(
-    lc: &ICU4XLocaleCanonicalizer,
-    locale: &mut ICU4XLocale,
-) -> ICU4XCanonicalizationResult {
-    lc.maximize(locale).into()
-}
+    impl ICU4XLocaleCanonicalizer {
+        /// Create a new [`ICU4XLocaleCanonicalizer`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
+        fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
+            let provider = provider.0.as_ref();
+            LocaleCanonicalizer::new(provider).ok().map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
+        }
 
-#[no_mangle]
-/// FFI version of [`LocaleCanonicalizer::minimize()`]. See its docs for more details.
-pub extern "C" fn icu4x_localecanonicalizer_minimize(
-    lc: &ICU4XLocaleCanonicalizer,
-    locale: &mut ICU4XLocale,
-) -> ICU4XCanonicalizationResult {
-    lc.minimize(locale).into()
-}
+        /// FFI version of `LocaleCanonicalizer::canonicalize()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more details.
+        fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
+            canonicalization_result_to_ffi(self.0.canonicalize(&mut locale.0))
+        }
 
-#[no_mangle]
-/// Destructor for [`ICU4XLocaleCanonicalizer`].
-///
-/// # Safety
-///
-/// `lc` must be a pointer to a locale allocated by `icu4x_localecanonicalizer_create`.
-pub unsafe extern "C" fn icu4x_localecanonicalizer_destroy(lc: *mut ICU4XLocaleCanonicalizer) {
-    let _ = Box::from_raw(lc);
+        /// FFI version of `LocaleCanonicalizer::maximize()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more details.
+        fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
+            canonicalization_result_to_ffi(self.0.maximize(&mut locale.0).into())
+        }
+
+        /// FFI version of `LocaleCanonicalizer::minimize()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more details.
+        fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
+            canonicalization_result_to_ffi(self.0.minimize(&mut locale.0).into())
+        }
+    }
 }

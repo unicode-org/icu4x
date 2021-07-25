@@ -2,93 +2,60 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
-use fixed_decimal::FixedDecimal;
+#[diplomat::bridge]
+pub mod ffi {
+    use fixed_decimal::FixedDecimal;
+    use writeable::Writeable;
+    use alloc::boxed::Box;
 
-use crate::custom_writeable::ICU4XWriteable;
-use core::slice;
-use writeable::Writeable;
+    #[diplomat::opaque]
+    /// A decimal number. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+    pub struct ICU4XFixedDecimal(pub FixedDecimal);
 
-/// Opaque type for use behind a pointer, is [`FixedDecimal`]
-///
-/// Can be obtained via [`icu4x_fixed_decimal_create()`] and destroyed via [`icu4x_fixed_decimal_destroy()`]
-pub type ICU4XFixedDecimal = FixedDecimal;
+    pub struct ICU4XCreateFixedDecimalResult {
+        /// Will be None if `success` is [`false`]
+        pub fd: Option<Box<ICU4XFixedDecimal>>,
+        /// Currently just a boolean, but we might add a proper error enum as necessary
+        pub success: bool
+    }
 
-#[repr(C)]
-/// This is the result returned by [`icu4x_fixed_decimal_create_fromstr()`]
-pub struct ICU4XCreateFixedDecimalResult {
-    /// Will be null if `success` is [`false`]
-    pub fd: *mut ICU4XFixedDecimal,
-    /// Currently just a boolean, but we might add a proper error enum as necessary
-    pub success: bool,
-}
+    impl ICU4XFixedDecimal {
+        /// Construct an [`ICU4XFixedDecimal`] from an integer.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+        fn create(v: i32) -> Box<ICU4XFixedDecimal> {
+            Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
+        }
 
-#[no_mangle]
-/// FFI version of [`FixedDecimal`]'s constructors. This constructs a [`FixedDecimal`] of the provided
-/// `number`.
-pub extern "C" fn icu4x_fixed_decimal_create(number: i64) -> *mut ICU4XFixedDecimal {
-    let fd = FixedDecimal::from(number);
-    Box::into_raw(Box::new(fd))
-}
+        /// Construct an [`ICU4XFixedDecimal`] from a string.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
+        fn create_fromstr(v: &str) -> ICU4XCreateFixedDecimalResult {
+            v.parse::<FixedDecimal>().map(|v| {
+                ICU4XCreateFixedDecimalResult {
+                    fd: Some(Box::new(ICU4XFixedDecimal(v))),
+                    success: true
+                }
+            }).unwrap_or(ICU4XCreateFixedDecimalResult {
+                fd: None,
+                success: false
+            })
+        }
 
-#[no_mangle]
-/// FFI version of [`FixedDecimal::FromStr()`], see its docs for more details
-///
-/// # Safety
-/// `value` and `len` should point to a valid ASCII string of length `len`.
-///
-/// It does not need to be be null terminated, and `len` should not include a null
-/// terminator (this will just cause the function to panic, and is not a safety requirement).
-///
-/// Returns nullptr if passed an invalid string.
-pub unsafe extern "C" fn icu4x_fixed_decimal_create_fromstr(
-    value: *const u8,
-    len: usize,
-) -> ICU4XCreateFixedDecimalResult {
-    let bytes = slice::from_raw_parts(value, len);
-    if let Ok(as_str) = core::str::from_utf8(bytes) {
-        if let Ok(fd) = as_str.parse::<FixedDecimal>() {
-            return ICU4XCreateFixedDecimalResult {
-                fd: Box::into_raw(Box::new(fd)),
-                success: true,
-            };
+        /// Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
+        fn multiply_pow10(&mut self, power: i16) -> bool {
+            self.0.multiply_pow10(power).is_ok()
+        }
+
+        /// Invert the sign of the [`ICU4XFixedDecimal`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate) for more information.
+        fn negate(&mut self) {
+            self.0.negate()
+        }
+
+        /// Format the [`ICU4XFixedDecimal`] as a string.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to) for more information.
+        fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
+            self.0.write_to(to).unwrap();
         }
     }
-    ICU4XCreateFixedDecimalResult {
-        fd: core::ptr::null_mut(),
-        success: false,
-    }
-}
-
-#[no_mangle]
-/// FFI version of [`FixedDecimal::multiply_pow10()`]. See its docs for more details.
-///
-/// Returns a boolean indicating whether the operation was successful.
-pub extern "C" fn icu4x_fixed_decimal_multiply_pow10(
-    fd: &mut ICU4XFixedDecimal,
-    power: i16,
-) -> bool {
-    fd.multiply_pow10(power).is_ok()
-}
-
-#[no_mangle]
-/// FFI version of [`FixedDecimal::negate()`]. See its docs for more details.
-pub extern "C" fn icu4x_fixed_decimal_negate(fd: &mut ICU4XFixedDecimal) {
-    fd.negate()
-}
-
-#[no_mangle]
-/// FFI version of [`FixedDecimal::write_to()`]. See its docs for more details.
-pub extern "C" fn icu4x_fixed_decimal_write_to(fd: &ICU4XFixedDecimal, to: &mut ICU4XWriteable) {
-    fd.write_to(to).unwrap();
-}
-
-#[no_mangle]
-/// Destructor for [`ICU4XFixedDecimal`]
-///
-/// # Safety
-/// `fd` must be a pointer to a valid [`ICU4XFixedDecimal`] constructed by
-/// [`icu4x_fixed_decimal_create()`].
-pub unsafe extern "C" fn icu4x_fixed_decimal_destroy(fd: *mut ICU4XFixedDecimal) {
-    let _ = Box::from_raw(fd);
 }

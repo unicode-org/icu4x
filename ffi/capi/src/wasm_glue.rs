@@ -6,7 +6,6 @@ use alloc::boxed::Box;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::any::Any;
 use std::ffi::CString;
 use std::io;
 use std::os::raw::c_char;

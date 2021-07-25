@@ -463,6 +463,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "diplomat"
+version = "0.1.0"
+source = "git+https://github.com/rust-diplomat/diplomat?branch=no-std-macro#e9f30ef433f4eb0d7c4c216fb44bc778427b2b3d"
+dependencies = [
+ "diplomat_core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "diplomat-runtime"
+version = "0.1.0"
+source = "git+https://github.com/rust-diplomat/diplomat?branch=no-std-macro#e9f30ef433f4eb0d7c4c216fb44bc778427b2b3d"
+
+[[package]]
+name = "diplomat_core"
+version = "0.1.0"
+source = "git+https://github.com/rust-diplomat/diplomat?branch=no-std-macro#e9f30ef433f4eb0d7c4c216fb44bc778427b2b3d"
+dependencies = [
+ "impls",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn",
+]
+
+[[package]]
 name = "dirs"
 version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -938,6 +967,8 @@ name = "icu_capi"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
+ "diplomat",
+ "diplomat-runtime",
  "fixed_decimal",
  "freertos-rust",
  "icu_decimal",
@@ -1247,6 +1278,12 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
 ]
+
+[[package]]
+name = "impls"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a46645bbd70538861a90d0f26c31537cdf1e44aae99a794fb75a664b70951bc"
 
 [[package]]
 name = "indexmap"

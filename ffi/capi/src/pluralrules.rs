@@ -2,159 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
-use icu_locid::Locale as ICULocale;
-use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules};
+#[diplomat::bridge]
+pub mod ffi {
+    use core::str::FromStr;
 
-use crate::provider::ICU4XDataProvider;
-use core::ptr;
-use core::slice;
-use core::str::{self, FromStr};
+    use alloc::boxed::Box;
 
-/// Opaque type for use behind a pointer, is [`PluralRules`]
-///
-/// Can be obtained via [`icu4x_plural_rules_create()`] and destroyed via [`icu4x_plural_rules_destroy()`]
-pub type ICU4XPluralRules = PluralRules;
+    use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules};
 
-#[repr(C)]
-/// This is the result returned by [`icu4x_plural_rules_create()`]
-pub struct ICU4XCreatePluralRulesResult {
-    /// Will be null if `success` is [`false`]
-    pub rules: *mut ICU4XPluralRules,
-    /// Currently just a boolean, but we might add a proper error enum as necessary
-    pub success: bool,
-}
+    use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
-#[no_mangle]
-/// FFI version of [`PluralRules::try_new()`]. See its docs for more details.
-///
-/// # Safety
-/// - `locale` should be constructed via [`icu4x_locale_create()`](crate::locale::icu4x_locale_create)
-/// - `provider` should be constructed via one of the functions in [`crate::locale`](crate::locale)
-/// - Only access `rules` in the result if `success` is [`true`].
-pub extern "C" fn icu4x_plural_rules_create(
-    locale: &ICULocale,
-    provider: &ICU4XDataProvider,
-    ty: ICU4XPluralRuleType,
-) -> ICU4XCreatePluralRulesResult {
-    // cheap as long as there are no variants
-    let langid = locale.as_ref().clone();
-    let provider = provider.as_dyn_ref();
-    match ICU4XPluralRules::try_new(langid, provider, ty.into()) {
-        Ok(pr) => {
-            let pr = Box::new(pr);
-            ICU4XCreatePluralRulesResult {
-                rules: Box::into_raw(pr),
-                success: true,
-            }
-        }
-        Err(_) => ICU4XCreatePluralRulesResult {
-            rules: ptr::null_mut(),
-            success: false,
-        },
+    pub struct ICU4XCreatePluralRulesResult {
+        pub rules: Option<Box<ICU4XPluralRules>>,
+        pub success: bool,
     }
-}
 
-#[repr(C)]
-/// This is the result returned by [`icu4x_plural_operands_create()`]
-pub struct ICU4XCreatePluralOperandsResult {
-    /// Will default initialized if `success` is [`false`]
-    pub operands: ICU4XPluralOperands,
-    /// Currently just a boolean, but we might add a proper error enum as necessary
-    pub success: bool,
-}
-
-#[no_mangle]
-/// FFI version of [`PluralOperands::from_str()`]. See its docs for more details.
-///
-/// # Safety
-/// `number` and `len` should point to a valid ASCII string of length `len`.
-/// The string `number` should be able to parse as a floating-point value.
-///
-/// It does not need to be be null terminated, and `len` should not include a null
-/// terminator (this will just cause the function to panic, and is not a safety requirement).
-pub unsafe extern "C" fn icu4x_plural_operands_create(
-    number: *const u8,
-    len: usize,
-) -> ICU4XCreatePluralOperandsResult {
-    str::from_utf8(slice::from_raw_parts(number, len))
-        .ok()
-        .and_then(|s| {
-            PluralOperands::from_str(s)
-                .ok()
-                .map(|ops| ICU4XCreatePluralOperandsResult {
-                    operands: ops.into(),
-                    success: true,
-                })
-        })
-        .unwrap_or(ICU4XCreatePluralOperandsResult {
-            operands: ICU4XPluralOperands::default(),
-            success: false,
-        })
-}
-
-#[no_mangle]
-/// FFI version of [`PluralRules::select()`]. See its docs for more details.
-pub extern "C" fn icu4x_plural_rules_select(
-    pr: &ICU4XPluralRules,
-    op: &ICU4XPluralOperands,
-) -> ICU4XPluralCategory {
-    pr.select(*op).into()
-}
-
-#[no_mangle]
-/// FFI version of [`PluralRules::categories()`]. See its docs for more details.
-pub extern "C" fn icu4x_plural_rules_categories(pr: &ICU4XPluralRules) -> ICU4XPluralCategories {
-    pr.categories().fold(
-        ICU4XPluralCategories::default(),
-        |mut categories, category| {
-            match category {
-                PluralCategory::Zero => categories.zero = true,
-                PluralCategory::One => categories.one = true,
-                PluralCategory::Two => categories.two = true,
-                PluralCategory::Few => categories.few = true,
-                PluralCategory::Many => categories.many = true,
-                PluralCategory::Other => categories.other = true,
-            };
-            categories
-        },
-    )
-}
-
-#[no_mangle]
-/// Destructor for [`ICU4XPluralRules`]
-///
-/// # Safety
-/// `pr` must be a pointer to a valid [`ICU4XPluralRules`] constructed by
-/// [`icu4x_plural_rules_create()`].
-pub unsafe extern "C" fn icu4x_plural_rules_destroy(pr: *mut ICU4XPluralRules) {
-    let _ = Box::from_raw(pr);
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, Default)]
-/// FFI version of [`PluralOperands`]. See its docs for more details.
-pub struct ICU4XPluralOperands {
-    pub i: u64,
-    pub v: usize,
-    pub w: usize,
-    pub f: u64,
-    pub t: u64,
-    pub c: usize,
-}
-
-c_enum! {
-    /// FFI version of [`PluralRuleType`]. See its docs for more details.
-    pub c_enum ICU4XPluralRuleType is PluralRuleType {
+    /// FFI version of `PluralRuleType`.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralRuleType.html) for more details.
+    pub enum ICU4XPluralRuleType {
         Cardinal,
         Ordinal,
     }
-}
 
-#[repr(C)]
-c_enum! {
-    /// FFI version of [`PluralCategory`]. See its docs for more details.
-    pub c_enum ICU4XPluralCategory is PluralCategory {
+    /// FFI version of `PluralCategory`.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralCategory.html) for more details.
+    pub enum ICU4XPluralCategory {
         Zero,
         One,
         Two,
@@ -162,42 +34,133 @@ c_enum! {
         Many,
         Other,
     }
-}
 
-#[repr(C)]
-#[derive(Default)]
-/// FFI version of [`PluralRules::categories()`] data. See its docs for more details.
-pub struct ICU4XPluralCategories {
-    zero: bool,
-    one: bool,
-    two: bool,
-    few: bool,
-    many: bool,
-    other: bool,
-}
+    /// FFI version of `PluralRules`.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html) for more details.
+    #[diplomat::opaque]
+    pub struct ICU4XPluralRules(PluralRules);
 
-impl From<PluralOperands> for ICU4XPluralOperands {
-    fn from(other: PluralOperands) -> Self {
-        Self {
-            i: other.i,
-            v: other.v,
-            w: other.w,
-            f: other.f,
-            t: other.t,
-            c: other.c,
+    impl ICU4XPluralRules {
+        /// FFI version of `PluralRules::try_new()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
+        fn create(locale: &ICU4XLocale, provider: &ICU4XDataProvider, ty: ICU4XPluralRuleType) -> ICU4XCreatePluralRulesResult {
+            let langid = locale.0.as_ref().clone();
+            let provider = provider.0.as_ref().clone();
+
+            PluralRules::try_new(langid, provider, match ty {
+                ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,
+                ICU4XPluralRuleType::Ordinal => PluralRuleType::Ordinal,
+            }).ok().map(|r|  ICU4XCreatePluralRulesResult {
+                rules: Some(Box::new(ICU4XPluralRules(r))),
+                success: true,
+            }).unwrap_or(ICU4XCreatePluralRulesResult {
+                rules: None,
+                success: false,
+            })
+        }
+
+        /// FFI version of `PluralRules::select()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more details.
+        fn select(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
+            let res = self.0.select(PluralOperands {
+                i: op.i,
+                v: op.v,
+                w: op.w,
+                f: op.f,
+                t: op.t,
+                c: op.c,
+            });
+
+            match res {
+                PluralCategory::Zero => ICU4XPluralCategory::Zero,
+                PluralCategory::One => ICU4XPluralCategory::One,
+                PluralCategory::Two => ICU4XPluralCategory::Two,
+                PluralCategory::Few => ICU4XPluralCategory::Few,
+                PluralCategory::Many => ICU4XPluralCategory::Many,
+                PluralCategory::Other => ICU4XPluralCategory::Other,
+            }
+        }
+
+        /// FFI version of `PluralRules::categories()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.categories) for more details.
+        fn categories(&self) -> ICU4XPluralCategories {
+            self.0.categories().fold(
+                ICU4XPluralCategories {
+                    zero: false,
+                    one: false,
+                    two: false,
+                    few: false,
+                    many: false,
+                    other: false,
+                },
+                |mut categories, category| {
+                    match category {
+                        PluralCategory::Zero => categories.zero = true,
+                        PluralCategory::One => categories.one = true,
+                        PluralCategory::Two => categories.two = true,
+                        PluralCategory::Few => categories.few = true,
+                        PluralCategory::Many => categories.many = true,
+                        PluralCategory::Other => categories.other = true,
+                    };
+                    categories
+                },
+            )
         }
     }
-}
 
-impl From<ICU4XPluralOperands> for PluralOperands {
-    fn from(other: ICU4XPluralOperands) -> Self {
-        Self {
-            i: other.i,
-            v: other.v,
-            w: other.w,
-            f: other.f,
-            t: other.t,
-            c: other.c,
+    /// This is the result returned by [`ICU4XPluralOperands::create()`]
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+    pub struct ICU4XCreatePluralOperandsResult {
+        pub operands: ICU4XPluralOperands,
+        pub success: bool,
+    }
+
+    /// FFI version of `PluralOperands`.
+    /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
+    pub struct ICU4XPluralOperands {
+        pub i: u64,
+        pub v: usize,
+        pub w: usize,
+        pub f: u64,
+        pub t: u64,
+        pub c: usize,
+    }
+
+    impl ICU4XPluralOperands {
+        /// FFI version of `PluralOperands::from_str()`.
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more details.
+        fn create(s: &str) -> ICU4XCreatePluralOperandsResult {
+            PluralOperands::from_str(s).ok().map(|ops| ICU4XCreatePluralOperandsResult {
+                operands: ICU4XPluralOperands {
+                    i: ops.i,
+                    v: ops.v,
+                    w: ops.w,
+                    f: ops.f,
+                    t: ops.t,
+                    c: ops.c,
+                },
+                success: true,
+            }).unwrap_or(ICU4XCreatePluralOperandsResult {
+                operands: ICU4XPluralOperands {
+                    i: 0,
+                    v: 0,
+                    w: 0,
+                    f: 0,
+                    t: 0,
+                    c: 0,
+                },
+                success: false,
+            })
         }
+    }
+
+    /// FFI version of `PluralRules::categories()` data.
+    pub struct ICU4XPluralCategories {
+        pub zero: bool,
+        pub one: bool,
+        pub two: bool,
+        pub few: bool,
+        pub many: bool,
+        pub other: bool,
     }
 }

@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/locale.h"
-#include "../../include/locale_canonicalizer.h"
+#include "../../include/api.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -12,9 +11,9 @@ int main() {
     char output[40];
 
     // Test creating a locale.
-    ICU4XWriteable write = icu4x_simple_writeable(output, 40);
-    ICU4XLocale* locale = icu4x_locale_create("ar", 2);
-    ICU4XLocaleResult result = icu4x_locale_tostring(locale, &write);
+    DiplomatWriteable write = diplomat_simple_writeable(output, 40);
+    ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
+    ICU4XLocaleResult result = ICU4XLocale_tostring(locale, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -24,12 +23,12 @@ int main() {
         printf("Output does not match expected output!\n");
         return 1;
     }
-    icu4x_locale_destroy(locale);
+    ICU4XLocale_destroy(locale);
 
     // Test some accessors.
-    write = icu4x_simple_writeable(output, 40);
-    locale = icu4x_locale_create("fr-FR-u-hc-h23", 14);
-    result = icu4x_locale_language(locale, &write);
+    write = diplomat_simple_writeable(output, 40);
+    locale = ICU4XLocale_create("fr-FR-u-hc-h23", 14);
+    result = ICU4XLocale_language(locale, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -40,8 +39,8 @@ int main() {
         return 1;
     }
 
-    write = icu4x_simple_writeable(output, 40);
-    result = icu4x_locale_region(locale, &write);
+    write = diplomat_simple_writeable(output, 40);
+    result = ICU4XLocale_region(locale, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -52,8 +51,8 @@ int main() {
         return 1;
     }
 
-    write = icu4x_simple_writeable(output, 40);
-    result = icu4x_locale_get_unicode_extension(locale, "hc", 2, &write);
+    write = diplomat_simple_writeable(output, 40);
+    result = ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -64,27 +63,27 @@ int main() {
         return 1;
     }
 
-    result = icu4x_locale_get_unicode_extension(locale, "ca", 2, &write);
+    result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
     if (result != ICU4XLocaleResult_Undefined) {
         return 1;
     }
 
-    icu4x_locale_destroy(locale);
+    ICU4XLocale_destroy(locale);
 
     // Create a LocaleCanonicalizer.
-    ICU4XCreateDataProviderResult provider_result = icu4x_fs_data_provider_create(path, strlen(path));
+    ICU4XCreateDataProviderResult provider_result = ICU4XDataProvider_create_fs(path, strlen(path));
     if (!provider_result.success) {
         printf("Failed to create FsDataProvider\n");
         return 1;
     }
-    ICU4XDataProvider provider = provider_result.provider;
-    ICU4XLocaleCanonicalizer* lc = icu4x_localecanonicalizer_create(&provider);
+    ICU4XDataProvider* provider = provider_result.provider;
+    ICU4XLocaleCanonicalizer* lc = ICU4XLocaleCanonicalizer_create(provider);
 
     // Test maximize.
-    write = icu4x_simple_writeable(output, 40);
-    locale = icu4x_locale_create("und", 3);
-    icu4x_localecanonicalizer_maximize(lc, locale);
-    result = icu4x_locale_tostring(locale, &write);
+    write = diplomat_simple_writeable(output, 40);
+    locale = ICU4XLocale_create("und", 3);
+    ICU4XLocaleCanonicalizer_maximize(lc, locale);
+    result = ICU4XLocale_tostring(locale, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -94,13 +93,13 @@ int main() {
         printf("Output does not match expected output!\n");
         return 1;
     }
-    icu4x_locale_destroy(locale);
+    ICU4XLocale_destroy(locale);
 
     // Test minimize.
-    write = icu4x_simple_writeable(output, 40);
-    locale = icu4x_locale_create("zh-Hant", 7);
-    icu4x_localecanonicalizer_minimize(lc, locale);
-    result = icu4x_locale_tostring(locale, &write);
+    write = diplomat_simple_writeable(output, 40);
+    locale = ICU4XLocale_create("zh-Hant", 7);
+    ICU4XLocaleCanonicalizer_minimize(lc, locale);
+    result = ICU4XLocale_tostring(locale, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -110,13 +109,13 @@ int main() {
         printf("Output does not match expected output!\n");
         return 1;
     }
-    icu4x_locale_destroy(locale);
+    ICU4XLocale_destroy(locale);
 
     // Test canonicalize.
-    write = icu4x_simple_writeable(output, 40);
-    locale = icu4x_locale_create("no-nynorsk", 10);
-    icu4x_localecanonicalizer_canonicalize(lc, locale);
-    result = icu4x_locale_tostring(locale, &write);
+    write = diplomat_simple_writeable(output, 40);
+    locale = ICU4XLocale_create("no-nynorsk", 10);
+    ICU4XLocaleCanonicalizer_canonicalize(lc, locale);
+    result = ICU4XLocale_tostring(locale, &write);
     if (result != ICU4XLocaleResult_Ok) {
         return 1;
     }
@@ -126,9 +125,9 @@ int main() {
         printf("Output does not match expected output!\n");
         return 1;
     }
-    icu4x_locale_destroy(locale);
+    ICU4XLocale_destroy(locale);
 
-    icu4x_localecanonicalizer_destroy(lc);
+    ICU4XLocaleCanonicalizer_destroy(lc);
 
     return 0;
 }
