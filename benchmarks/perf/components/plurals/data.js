@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627075337889,
+  "lastUpdate": 1627233601669,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10793,6 +10793,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 119165,
             "range": "± 17978",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d82dabc1dbc2b41e7467b769d736af02b738227",
+          "message": "Make `cargo quick` quicker (#897)",
+          "timestamp": "2021-07-25T12:13:22-05:00",
+          "tree_id": "aad69299b0283402d2e72e41f6ac028b6504324c",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d82dabc1dbc2b41e7467b769d736af02b738227"
+        },
+        "date": 1627233599157,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1092,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6684,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 99558,
+            "range": "± 252",
             "unit": "ns/iter"
           }
         ]
