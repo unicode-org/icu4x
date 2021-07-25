@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627233601669,
+  "lastUpdate": 1627233656602,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10835,6 +10835,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 99558,
             "range": "± 252",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "774ee840a9630b225496caf797badb6bb6e38094",
+          "message": "Improve Yoke Clone docs, saying it is not generally expensive (#899)",
+          "timestamp": "2021-07-25T12:13:44-05:00",
+          "tree_id": "8420afcc00ca207da960205fe6dc79d8b3dc38c1",
+          "url": "https://github.com/unicode-org/icu4x/commit/774ee840a9630b225496caf797badb6bb6e38094"
+        },
+        "date": 1627233654220,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1331,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7466,
+            "range": "± 590",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 118052,
+            "range": "± 7787",
             "unit": "ns/iter"
           }
         ]
