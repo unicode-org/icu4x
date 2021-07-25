@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627233582976,
+  "lastUpdate": 1627233623147,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4859,6 +4859,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1092970,
             "range": "± 2765",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "774ee840a9630b225496caf797badb6bb6e38094",
+          "message": "Improve Yoke Clone docs, saying it is not generally expensive (#899)",
+          "timestamp": "2021-07-25T12:13:44-05:00",
+          "tree_id": "8420afcc00ca207da960205fe6dc79d8b3dc38c1",
+          "url": "https://github.com/unicode-org/icu4x/commit/774ee840a9630b225496caf797badb6bb6e38094"
+        },
+        "date": 1627233621093,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 622536,
+            "range": "± 6773",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1293011,
+            "range": "± 12164",
             "unit": "ns/iter"
           }
         ]
