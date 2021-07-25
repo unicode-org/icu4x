@@ -108,7 +108,7 @@ pub mod ffi {
         }
     }
 
-    /// This is the result returned by [`ICU4XPluralOperands::create()`]
+    /// This is the result returned by `ICU4XPluralOperands::create()`
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html) for more details.
     pub struct ICU4XCreatePluralOperandsResult {
         pub operands: ICU4XPluralOperands,

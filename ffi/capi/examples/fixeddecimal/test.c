@@ -29,11 +29,13 @@ int main() {
 
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
 
-    bool success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
-        return 1;
-    }
+    
+    ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
+    // TODO(shadaj): return result
+    // if (!success) {
+    //     printf("Failed to write result of FixedDecimalFormat::format to string.\n");
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
 
     const char* expected = u8"১০,০০,০০৭";
@@ -42,7 +44,7 @@ int main() {
         return 1;
     }
 
-    success = ICU4XFixedDecimal_multiply_pow10(decimal, 2);
+    bool success = ICU4XFixedDecimal_multiply_pow10(decimal, 2);
     if (!success) {
         printf("Failed to multiply FixedDecimal\n");
         return 1;
@@ -52,11 +54,12 @@ int main() {
 
     write = diplomat_simple_writeable(output, 40);
 
-    success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
-        return 1;
-    }
+    ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
+    // TODO(shadaj): return result
+    // if (!success) {
+    //     printf("Failed to write result of FixedDecimalFormat::format to string.\n");
+    //     return 1;
+    // }
     printf("Output x100 and negated is %s\n", output);
 
     expected = u8"-১০,০০,০০,৭০০";
@@ -76,11 +79,12 @@ int main() {
 
     write = diplomat_simple_writeable(output, 40);
 
-    success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
-        return 1;
-    }
+    ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write);
+    // TODO(shadaj): return result
+    // if (!success) {
+    //     printf("Failed to write result of FixedDecimalFormat::format to string.\n");
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
 
     expected = u8"১০,০০,০০৭.০৭০";

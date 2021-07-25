@@ -1,13 +1,13 @@
-import { FixedDecimal, StaticDataProvider, Locale, FixedDecimalFormat } from "../lib/high-level.mjs"
+import { ICU4XFixedDecimal, ICU4XDataProvider, ICU4XLocale, ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatOptions } from "../lib/api.mjs"
 
-const decimal = new FixedDecimal(BigInt(1234));
+const decimal = ICU4XFixedDecimal.create(1234);
 decimal.multiply_pow10(-2);
 decimal.negate();
-console.log(decimal.toString());
+console.log(decimal.to_string());
 
-const dataProvider = new StaticDataProvider();
+const dataProvider = ICU4XDataProvider.create_static().provider;
 
-const locale = new Locale("bn");
+const locale = ICU4XLocale.create("bn");
 
-const format = new FixedDecimalFormat(locale, dataProvider, {});
-console.log(format.format(decimal));
+const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default()).fdf;
+console.log(format.format_write(decimal));

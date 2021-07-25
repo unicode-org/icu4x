@@ -2,26 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/pluralrules.hpp"
+#include "../../include/api.hpp"
 
 #include <iostream>
 
 const std::string_view path = "../../../../provider/testdata/data/json/";
-using namespace icu4x;
 
 int main() {
-    Locale locale("ar");
-    std::cout << "Running test for locale " << locale.ToString().value() << std::endl;
-    DataProvider dp = DataProvider::FsDataProvider(path).value();
-    PluralRules pr = PluralRules::Create(locale, dp, PluralRuleType::Cardinal).value();
+    ICU4XLocale locale = ICU4XLocale::create("ar").value();
+    std::cout << "Running test for locale " << locale.tostring() << std::endl;
+    ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).provider.value();
+    ICU4XPluralRules pr = ICU4XPluralRules::create(locale, dp, ICU4XPluralRuleType::Cardinal).rules.value();
 
-    PluralOperands op = { .i = 3 };
-    PluralCategory cat = pr.Select(op);
+    ICU4XPluralOperands op = { .i = 3 };
+    ICU4XPluralCategory cat = pr.select(op);
 
     std::cout << "Category is " << static_cast<int32_t>(cat)
-                                << " (should be " << static_cast<int32_t>(PluralCategory::Few) << ")"
+                                << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Few) << ")"
                                 << std::endl;
-    if (cat != PluralCategory::Few) {
+    if (cat != ICU4XPluralCategory::Few) {
         return 1;
     }
     return 0;

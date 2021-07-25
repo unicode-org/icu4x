@@ -13,10 +13,11 @@ int main() {
     // Test creating a locale.
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
     ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
-    ICU4XLocaleResult result = ICU4XLocale_tostring(locale, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_tostring(locale, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     const char* expected = u8"ar";
     if (strcmp(output, expected) != 0) {
@@ -28,10 +29,11 @@ int main() {
     // Test some accessors.
     write = diplomat_simple_writeable(output, 40);
     locale = ICU4XLocale_create("fr-FR-u-hc-h23", 14);
-    result = ICU4XLocale_language(locale, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_language(locale, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     expected = u8"fr";
     if (strcmp(output, expected) != 0) {
@@ -40,10 +42,11 @@ int main() {
     }
 
     write = diplomat_simple_writeable(output, 40);
-    result = ICU4XLocale_region(locale, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_region(locale, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     expected = u8"FR";
     if (strcmp(output, expected) != 0) {
@@ -52,10 +55,11 @@ int main() {
     }
 
     write = diplomat_simple_writeable(output, 40);
-    result = ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_get_unicode_extension(locale, "hc", 2, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     expected = u8"h23";
     if (strcmp(output, expected) != 0) {
@@ -63,10 +67,11 @@ int main() {
         return 1;
     }
 
-    result = ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
-    if (result != ICU4XLocaleResult_Undefined) {
-        return 1;
-    }
+    ICU4XLocale_get_unicode_extension(locale, "ca", 2, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Undefined) {
+    //     return 1;
+    // }
 
     ICU4XLocale_destroy(locale);
 
@@ -83,10 +88,11 @@ int main() {
     write = diplomat_simple_writeable(output, 40);
     locale = ICU4XLocale_create("und", 3);
     ICU4XLocaleCanonicalizer_maximize(lc, locale);
-    result = ICU4XLocale_tostring(locale, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_tostring(locale, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     expected = u8"en-Latn-US";
     if (strcmp(output, expected) != 0) {
@@ -99,10 +105,11 @@ int main() {
     write = diplomat_simple_writeable(output, 40);
     locale = ICU4XLocale_create("zh-Hant", 7);
     ICU4XLocaleCanonicalizer_minimize(lc, locale);
-    result = ICU4XLocale_tostring(locale, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_tostring(locale, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     expected = u8"zh-TW";
     if (strcmp(output, expected) != 0) {
@@ -115,10 +122,11 @@ int main() {
     write = diplomat_simple_writeable(output, 40);
     locale = ICU4XLocale_create("no-nynorsk", 10);
     ICU4XLocaleCanonicalizer_canonicalize(lc, locale);
-    result = ICU4XLocale_tostring(locale, &write);
-    if (result != ICU4XLocaleResult_Ok) {
-        return 1;
-    }
+    ICU4XLocale_tostring(locale, &write);
+    // TODO(shadaj): return result
+    // if (result != ICU4XLocaleResult_Ok) {
+    //     return 1;
+    // }
     printf("Output is %s\n", output);
     expected = u8"nn";
     if (strcmp(output, expected) != 0) {

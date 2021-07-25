@@ -38,92 +38,106 @@ pub mod ffi {
         /// Write a string representation of the `LanguageIdentifier` part of
         /// [`ICU4XLocale`] to `write`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn basename(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> ICU4XLocaleResult {
+        fn basename(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
             let result = self.0.id.write_to(write).is_ok();
             write.flush();
-            if result {
-                ICU4XLocaleResult::Ok
-            } else {
-                ICU4XLocaleResult::Error
-            }
+            // TODO(shadaj): return result
+            // if result {
+            //     ICU4XLocaleResult::Ok
+            // } else {
+            //     ICU4XLocaleResult::Error
+            // }
         }
 
         /// Write a string representation of the unicode extension to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
-        fn get_unicode_extension(&self, bytes: &str, write: &mut diplomat_runtime::DiplomatWriteable) -> ICU4XLocaleResult {
+        fn get_unicode_extension(&self, bytes: &str, write: &mut diplomat_runtime::DiplomatWriteable) {
             if let Ok(key) = Key::from_bytes(bytes.as_bytes()) {
                 if let Some(value) = self.0.get_unicode_extension(&key) {
                     let result = value.write_to(write).is_ok();
                     write.flush();
-                    if result {
-                        ICU4XLocaleResult::Ok
-                    } else {
-                        ICU4XLocaleResult::Error
-                    }
+                    // TODO(shadaj): return result
+                    // if result {
+                    //     ICU4XLocaleResult::Ok
+                    // } else {
+                    //     ICU4XLocaleResult::Error
+                    // }
                 } else {
-                    ICU4XLocaleResult::Undefined
+                    // TODO(shadaj): return result
+                    // ICU4XLocaleResult::Undefined
                 }
             } else {
-                ICU4XLocaleResult::Error
+                // TODO(shadaj): return result
+                // ICU4XLocaleResult::Error
             }
         }
 
         /// Write a string representation of [`ICU4XLocale`] language to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn language(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> ICU4XLocaleResult {
+        fn language(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
             let result = self.0.id.language.write_to(write).is_ok();
             write.flush();
-            if result {
-                ICU4XLocaleResult::Ok
-            } else {
-                ICU4XLocaleResult::Error
-            }
+            // TODO(shadaj): return result
+            // if result {
+            //     ICU4XLocaleResult::Ok
+            // } else {
+            //     ICU4XLocaleResult::Error
+            // }
         }
 
         /// Write a string representation of [`ICU4XLocale`] region to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn region(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> ICU4XLocaleResult {
+        fn region(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
             match self.0.id.region {
                 Some(region) => {
                     let result = region.write_to(write).is_ok();
                     write.flush();
-                    if result {
-                        ICU4XLocaleResult::Ok
-                    } else {
-                        ICU4XLocaleResult::Error
-                    }
+                    // TODO(shadaj): return result
+                    // if result {
+                    //     ICU4XLocaleResult::Ok
+                    // } else {
+                    //     ICU4XLocaleResult::Error
+                    // }
                 }
-                None => ICU4XLocaleResult::Undefined,
+                None => {
+                    // TODO(shadaj): return result
+                    // ICU4XLocaleResult::Undefined
+                },
             }
         }
 
         /// Write a string representation of [`ICU4XLocale`] script to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn script(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> ICU4XLocaleResult {
+        fn script(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
             match self.0.id.script {
                 Some(script) => {
                     let result = script.write_to(write).is_ok();
                     write.flush();
-                    if result {
-                        ICU4XLocaleResult::Ok
-                    } else {
-                        ICU4XLocaleResult::Error
-                    }
+                    // TODO(shadaj): return result
+                    // if result {
+                    //     ICU4XLocaleResult::Ok
+                    // } else {
+                    //     ICU4XLocaleResult::Error
+                    // }
                 }
-                None => ICU4XLocaleResult::Undefined,
+                None => {
+                    // TODO(shadaj): return result
+                    // ICU4XLocaleResult::Undefined
+                },
             }
         }
 
         /// Write a string representation of [`ICU4XLocale`] to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
-        fn tostring(&self, write: &mut diplomat_runtime::DiplomatWriteable) -> ICU4XLocaleResult {
+        fn tostring(&self, write: &mut diplomat_runtime::DiplomatWriteable) {
             let result = self.0.write_to(write).is_ok();
             write.flush();
-            if result {
-                ICU4XLocaleResult::Ok
-            } else {
-                ICU4XLocaleResult::Error
-            }
+            // TODO(shadaj): return result
+            // if result {
+            //     ICU4XLocaleResult::Ok
+            // } else {
+            //     ICU4XLocaleResult::Error
+            // }
         }
     }
 }

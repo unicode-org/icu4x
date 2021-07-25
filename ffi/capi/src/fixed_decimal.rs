@@ -13,7 +13,7 @@ pub mod ffi {
     pub struct ICU4XFixedDecimal(pub FixedDecimal);
 
     pub struct ICU4XCreateFixedDecimalResult {
-        /// Will be None if `success` is [`false`]
+        /// Will be None if `success` is `false`
         pub fd: Option<Box<ICU4XFixedDecimal>>,
         /// Currently just a boolean, but we might add a proper error enum as necessary
         pub success: bool

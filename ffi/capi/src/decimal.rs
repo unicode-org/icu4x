@@ -97,10 +97,10 @@ pub mod ffi {
             &self,
             value: &ICU4XFixedDecimal,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> bool {
+        ) {
             let result = self.0.format(&value.0).write_to(write).is_ok();
             write.flush();
-            result
+            // TODO(shadaj): return bool: result
         }
     }
 }
