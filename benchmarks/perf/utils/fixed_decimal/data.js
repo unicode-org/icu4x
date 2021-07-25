@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627233575410,
+  "lastUpdate": 1627233578330,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7739,6 +7739,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 153463,
             "range": "± 2334",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9d82dabc1dbc2b41e7467b769d736af02b738227",
+          "message": "Make `cargo quick` quicker (#897)",
+          "timestamp": "2021-07-25T12:13:22-05:00",
+          "tree_id": "aad69299b0283402d2e72e41f6ac028b6504324c",
+          "url": "https://github.com/unicode-org/icu4x/commit/9d82dabc1dbc2b41e7467b769d736af02b738227"
+        },
+        "date": 1627233575317,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147213,
+            "range": "± 12234",
             "unit": "ns/iter"
           }
         ]
