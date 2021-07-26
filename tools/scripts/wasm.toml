@@ -319,9 +319,9 @@ description = "Run WASM tests in release mode"
 category = "ICU4X WASM"
 script_runner = "@duckscript"
 script = '''
-cd ./ffi/wasm/test;
-exec npm install;
-exec npm test;
+cd ./ffi/wasm/test
+exec npm install
+exec npm test
 '''
 dependencies = ["wasm-release"]
 

@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
 use alloc::format;
-use alloc::string::String;
-use alloc::vec::Vec;
 use std::ffi::CString;
 use std::io;
 use std::os::raw::c_char;
