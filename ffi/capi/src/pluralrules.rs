@@ -43,17 +43,29 @@ pub mod ffi {
     impl ICU4XPluralRules {
         /// FFI version of `PluralRules::try_new()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
-        fn create(locale: &ICU4XLocale, provider: &ICU4XDataProvider, ty: ICU4XPluralRuleType) -> ICU4XCreatePluralRulesResult {
+        fn create(
+            locale: &ICU4XLocale,
+            provider: &ICU4XDataProvider,
+            ty: ICU4XPluralRuleType,
+        ) -> ICU4XCreatePluralRulesResult {
             let langid = locale.0.as_ref().clone();
-            let provider = provider.0.as_ref().clone();
+            let provider =
+                <&dyn icu_provider::serde::SerdeDeDataProvider>::clone(&provider.0.as_ref());
 
-            PluralRules::try_new(langid, provider, match ty {
-                ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,
-                ICU4XPluralRuleType::Ordinal => PluralRuleType::Ordinal,
-            }).ok().map(|r|  ICU4XCreatePluralRulesResult {
+            PluralRules::try_new(
+                langid,
+                provider,
+                match ty {
+                    ICU4XPluralRuleType::Cardinal => PluralRuleType::Cardinal,
+                    ICU4XPluralRuleType::Ordinal => PluralRuleType::Ordinal,
+                },
+            )
+            .ok()
+            .map(|r| ICU4XCreatePluralRulesResult {
                 rules: Some(Box::new(ICU4XPluralRules(r))),
                 success: true,
-            }).unwrap_or(ICU4XCreatePluralRulesResult {
+            })
+            .unwrap_or(ICU4XCreatePluralRulesResult {
                 rules: None,
                 success: false,
             })
@@ -130,27 +142,30 @@ pub mod ffi {
         /// FFI version of `PluralOperands::from_str()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more details.
         fn create(s: &str) -> ICU4XCreatePluralOperandsResult {
-            PluralOperands::from_str(s).ok().map(|ops| ICU4XCreatePluralOperandsResult {
-                operands: ICU4XPluralOperands {
-                    i: ops.i,
-                    v: ops.v,
-                    w: ops.w,
-                    f: ops.f,
-                    t: ops.t,
-                    c: ops.c,
-                },
-                success: true,
-            }).unwrap_or(ICU4XCreatePluralOperandsResult {
-                operands: ICU4XPluralOperands {
-                    i: 0,
-                    v: 0,
-                    w: 0,
-                    f: 0,
-                    t: 0,
-                    c: 0,
-                },
-                success: false,
-            })
+            PluralOperands::from_str(s)
+                .ok()
+                .map(|ops| ICU4XCreatePluralOperandsResult {
+                    operands: ICU4XPluralOperands {
+                        i: ops.i,
+                        v: ops.v,
+                        w: ops.w,
+                        f: ops.f,
+                        t: ops.t,
+                        c: ops.c,
+                    },
+                    success: true,
+                })
+                .unwrap_or(ICU4XCreatePluralOperandsResult {
+                    operands: ICU4XPluralOperands {
+                        i: 0,
+                        v: 0,
+                        w: 0,
+                        f: 0,
+                        t: 0,
+                        c: 0,
+                    },
+                    success: false,
+                })
         }
     }
 

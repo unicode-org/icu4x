@@ -4,9 +4,9 @@
 
 #[diplomat::bridge]
 pub mod ffi {
+    use alloc::boxed::Box;
     use fixed_decimal::FixedDecimal;
     use writeable::Writeable;
-    use alloc::boxed::Box;
 
     #[diplomat::opaque]
     /// A decimal number. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
@@ -16,7 +16,7 @@ pub mod ffi {
         /// Will be None if `success` is `false`
         pub fd: Option<Box<ICU4XFixedDecimal>>,
         /// Currently just a boolean, but we might add a proper error enum as necessary
-        pub success: bool
+        pub success: bool,
     }
 
     impl ICU4XFixedDecimal {
@@ -29,15 +29,15 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from a string.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html) for more information.
         fn create_fromstr(v: &str) -> ICU4XCreateFixedDecimalResult {
-            v.parse::<FixedDecimal>().map(|v| {
-                ICU4XCreateFixedDecimalResult {
+            v.parse::<FixedDecimal>()
+                .map(|v| ICU4XCreateFixedDecimalResult {
                     fd: Some(Box::new(ICU4XFixedDecimal(v))),
-                    success: true
-                }
-            }).unwrap_or(ICU4XCreateFixedDecimalResult {
-                fd: None,
-                success: false
-            })
+                    success: true,
+                })
+                .unwrap_or(ICU4XCreateFixedDecimalResult {
+                    fd: None,
+                    success: false,
+                })
         }
 
         /// Multiply the [`ICU4XFixedDecimal`] by a given power of ten.

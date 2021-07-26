@@ -4,11 +4,17 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use icu_decimal::{FixedDecimalFormat, options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay}};
     use alloc::boxed::Box;
+    use icu_decimal::{
+        options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+        FixedDecimalFormat,
+    };
     use writeable::Writeable;
 
-    use crate::{fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
+    use crate::{
+        fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
+    };
 
     #[diplomat::opaque]
     /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
@@ -98,6 +104,7 @@ pub mod ffi {
             value: &ICU4XFixedDecimal,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) {
+            #[allow(unused_variables)]
             let result = self.0.format(&value.0).write_to(write).is_ok();
             write.flush();
             // TODO(shadaj): return bool: result

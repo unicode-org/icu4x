@@ -55,7 +55,8 @@ pub mod ffi {
             #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
             unimplemented!();
 
-            #[cfg(any(target_arch = "wasm32", target_os = "none"))] {
+            #[cfg(any(target_arch = "wasm32", target_os = "none"))]
+            {
                 let provider = icu_testdata::get_static_provider();
                 let erased = Box::new(provider);
                 ICU4XCreateDataProviderResult {

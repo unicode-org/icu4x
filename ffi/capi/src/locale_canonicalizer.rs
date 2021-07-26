@@ -4,8 +4,8 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
     use alloc::boxed::Box;
+    use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
@@ -17,7 +17,9 @@ pub mod ffi {
     }
 
     // TODO(shadaj): replace with diplomat-ignored from impl
-    fn canonicalization_result_to_ffi(result: CanonicalizationResult) -> ICU4XCanonicalizationResult {
+    fn canonicalization_result_to_ffi(
+        result: CanonicalizationResult,
+    ) -> ICU4XCanonicalizationResult {
         match result {
             CanonicalizationResult::Modified => ICU4XCanonicalizationResult::Modified,
             CanonicalizationResult::Unmodified => ICU4XCanonicalizationResult::Unmodified,
@@ -34,7 +36,9 @@ pub mod ffi {
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
         fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
             let provider = provider.0.as_ref();
-            LocaleCanonicalizer::new(provider).ok().map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
+            LocaleCanonicalizer::new(provider)
+                .ok()
+                .map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
         }
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
@@ -46,13 +50,13 @@ pub mod ffi {
         /// FFI version of `LocaleCanonicalizer::maximize()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more details.
         fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
-            canonicalization_result_to_ffi(self.0.maximize(&mut locale.0).into())
+            canonicalization_result_to_ffi(self.0.maximize(&mut locale.0))
         }
 
         /// FFI version of `LocaleCanonicalizer::minimize()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more details.
         fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
-            canonicalization_result_to_ffi(self.0.minimize(&mut locale.0).into())
+            canonicalization_result_to_ffi(self.0.minimize(&mut locale.0))
         }
     }
 }
