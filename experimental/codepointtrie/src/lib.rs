@@ -6,4 +6,3 @@ pub mod codepointtrie;
 pub mod error;
 mod impl_const;
 pub mod planes;
-pub mod provider;

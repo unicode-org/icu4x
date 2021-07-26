@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_codepointtrie::codepointtrie::get_code_point_trie_type_enum;
 use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
-use icu_codepointtrie::provider::EnumPropSerializedCPTStruct;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -31,6 +29,81 @@ pub fn check_trie<W: ValueWidth, T: TrieType>(trie: &CodePointTrie<W, T>, check_
         }
     }
 }
+
+/// Converts the serialized `u8` value for the trie type into a [`TrieTypeEnum`].
+pub fn get_code_point_trie_type_enum(trie_type_int: u8) -> Option<TrieTypeEnum> {
+    match trie_type_int {
+        0 => Some(TrieTypeEnum::Fast),
+        1 => Some(TrieTypeEnum::Small),
+        _ => None,
+    }
+}
+
+// The following structs might be useful later for de-/serialization of the
+// main `CodePointTrie` struct in the corresponding data provider.
+
+#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+pub struct UnicodeEnumeratedProperty {
+    pub code_point_map: EnumPropCodePointMap,
+    pub code_point_trie: EnumPropSerializedCPT,
+}
+
+#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+pub struct EnumPropCodePointMap {
+    pub data: EnumPropCodePointMapData,
+}
+
+#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+pub struct EnumPropCodePointMapData {
+    pub long_name: String,
+    pub name: String,
+    pub ranges: Vec<(u32, u32, u32)>,
+}
+
+#[allow(clippy::upper_case_acronyms)]
+#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+pub struct EnumPropSerializedCPT {
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "struct"))]
+    pub trie_struct: EnumPropSerializedCPTStruct,
+}
+
+// These structs support the test data dumped as TOML files from ICU.
+// Because the properties CodePointMap data will also be dumped from ICU
+// using similar functions, some of these structs may be useful to refactor
+// into main code at a later point.
+
+#[allow(clippy::upper_case_acronyms)]
+#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+pub struct EnumPropSerializedCPTStruct {
+    #[cfg_attr(any(feature = "serde", test), serde(skip))]
+    pub long_name: String,
+    pub name: String,
+    pub index: Vec<u16>,
+    pub data_8: Option<Vec<u8>>,
+    pub data_16: Option<Vec<u16>>,
+    pub data_32: Option<Vec<u32>>,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "indexLength"))]
+    pub index_length: u32,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "dataLength"))]
+    pub data_length: u32,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "highStart"))]
+    pub high_start: u32,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "shifted12HighStart"))]
+    pub shifted12_high_start: u16,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "type"))]
+    pub trie_type_enum_val: u8,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "valueWidth"))]
+    pub value_width_enum_val: u8,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "index3NullOffset"))]
+    pub index3_null_offset: u16,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "dataNullOffset"))]
+    pub data_null_offset: u32,
+    #[cfg_attr(any(feature = "serde", test), serde(rename = "nullValue"))]
+    pub null_value: u32,
+}
+
+// The following structs are specific to the TOML format files for dumped ICU
+// test data.
 
 #[allow(dead_code)]
 #[derive(serde::Deserialize)]

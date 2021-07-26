@@ -7,10 +7,10 @@ mod test_util;
 use icu_codepointtrie::codepointtrie::*;
 use icu_codepointtrie::error::Error;
 use icu_codepointtrie::planes::get_planes_trie;
-use icu_codepointtrie::provider::UnicodeEnumeratedProperty;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
+use test_util::UnicodeEnumeratedProperty;
 use zerovec::ZeroVec;
 
 #[test]
