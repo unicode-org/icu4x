@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627233623147,
+  "lastUpdate": 1627322124573,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4895,6 +4895,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1293011,
             "range": "± 12164",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ed372f52c29b3740a885f48fdfc00a795f13112",
+          "message": "Remove DataPayload::from_borrowed (#898)",
+          "timestamp": "2021-07-26T12:49:28-05:00",
+          "tree_id": "8f987676e0441709baccc8064395c3e7dcefc885",
+          "url": "https://github.com/unicode-org/icu4x/commit/7ed372f52c29b3740a885f48fdfc00a795f13112"
+        },
+        "date": 1627322122218,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 466379,
+            "range": "± 3238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 969295,
+            "range": "± 2267",
             "unit": "ns/iter"
           }
         ]
