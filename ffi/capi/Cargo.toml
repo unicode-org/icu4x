@@ -39,8 +39,8 @@ icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", branch = "no-std-macro" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", branch = "no-std-macro" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", branch = "no-std-runtime" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", branch = "no-std-runtime" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }

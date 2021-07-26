@@ -148,7 +148,7 @@ jobs:
       with:
         command: build
         args: --all-targets --all-features
-    - name: Run `cargo make ci-job-test`
+    - name: Run `cargo make ci-job-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
