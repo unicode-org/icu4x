@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627233578330,
+  "lastUpdate": 1627322101049,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7769,6 +7769,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 147213,
             "range": "± 12234",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7ed372f52c29b3740a885f48fdfc00a795f13112",
+          "message": "Remove DataPayload::from_borrowed (#898)",
+          "timestamp": "2021-07-26T12:49:28-05:00",
+          "tree_id": "8f987676e0441709baccc8064395c3e7dcefc885",
+          "url": "https://github.com/unicode-org/icu4x/commit/7ed372f52c29b3740a885f48fdfc00a795f13112"
+        },
+        "date": 1627322098624,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130910,
+            "range": "± 363",
             "unit": "ns/iter"
           }
         ]
