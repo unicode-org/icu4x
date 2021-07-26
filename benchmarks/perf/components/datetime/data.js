@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627322124573,
+  "lastUpdate": 1627340602675,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4931,6 +4931,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 969295,
             "range": "± 2267",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4b48cf79996c997658606e30503ad46f4c586003",
+          "message": "Change FsDataProvider to 'static (#902)",
+          "timestamp": "2021-07-26T17:56:18-05:00",
+          "tree_id": "a468d7cb22248c65686416aa7fe1ebc82dfa08e3",
+          "url": "https://github.com/unicode-org/icu4x/commit/4b48cf79996c997658606e30503ad46f4c586003"
+        },
+        "date": 1627340600402,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 625052,
+            "range": "± 5214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1290929,
+            "range": "± 11301",
             "unit": "ns/iter"
           }
         ]
