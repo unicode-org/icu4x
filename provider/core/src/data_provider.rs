@@ -98,6 +98,8 @@ pub(crate) enum DataPayloadInner<'d, 's: 'd, M>
 where
     M: DataMarker<'s>,
 {
+    // TODO(#752): Remove the Borrowed variant and rename the lifetime parameter
+    #[allow(dead_code)]
     Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
     Owned(Yoke<M::Yokeable, ()>),
@@ -118,8 +120,9 @@ where
 /// ```
 /// use icu_provider::prelude::*;
 /// use icu_provider::marker::CowStrMarker;
+/// use std::borrow::Cow;
 ///
-/// let payload = DataPayload::<CowStrMarker>::from_borrowed("Demo");
+/// let payload = DataPayload::<CowStrMarker>::from_owned(Cow::Borrowed("Demo"));
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
@@ -179,7 +182,7 @@ where
 #[test]
 fn test_clone_eq() {
     use crate::marker::CowStrMarker;
-    let p1 = DataPayload::<CowStrMarker>::from_borrowed("Demo");
+    let p1 = DataPayload::<CowStrMarker>::from_static_str("Demo");
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 }
@@ -197,8 +200,8 @@ where
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::hello_world::*;
-    /// use std::rc::Rc;
     /// use std::borrow::Cow;
+    /// use std::rc::Rc;
     ///
     /// let local_data = "example".to_string();
     ///
@@ -216,35 +219,6 @@ where
     pub fn from_partial_owned(data: Rc<M::Cart>) -> Self {
         Self {
             inner: DataPayloadInner::RcStruct(Yoke::attach_to_rc_cart(data)),
-        }
-    }
-
-    /// Convert an `&'d `[`Cart`] into a [`DataPayload`]. The data need not be fully owned;
-    /// it may be constrained by the `'s` lifetime.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
-    /// use std::borrow::Cow;
-    ///
-    /// let local_data = "example".to_string();
-    ///
-    /// let local_struct = HelloWorldV1 {
-    ///     message: Cow::Borrowed(&local_data),
-    /// };
-    ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_borrowed(&local_struct);
-    ///
-    /// assert_eq!(payload.get(), &local_struct);
-    /// ```
-    ///
-    /// [`Cart`]: crate::marker::DataMarker::Cart
-    #[inline]
-    pub fn from_borrowed(data: &'d M::Cart) -> Self {
-        Self {
-            inner: DataPayloadInner::Borrowed(Yoke::attach_to_borrowed_cart(data)),
         }
     }
 }
@@ -352,7 +326,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
     ///
-    /// let mut payload = DataPayload::<CowStrMarker>::from_borrowed("Hello");
+    /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
     ///
     /// payload.with_mut(|s| s.to_mut().push_str(" World"));
     ///
@@ -365,7 +339,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
     ///
-    /// let mut payload = DataPayload::<CowStrMarker>::from_borrowed("Hello");
+    /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
     ///
     /// let suffix = " World".to_string();
     /// payload.with_mut(move |s| s.to_mut().push_str(&suffix));
@@ -396,7 +370,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider::marker::CowStrMarker;
     ///
-    /// let payload = DataPayload::<CowStrMarker>::from_borrowed("Demo");
+    /// let payload = DataPayload::<CowStrMarker>::from_static_str("Demo");
     ///
     /// assert_eq!("Demo", payload.get());
     /// ```
@@ -481,7 +455,7 @@ fn test_debug() {
     use alloc::borrow::Cow;
     let resp = DataResponse::<HelloWorldV1Marker> {
         metadata: Default::default(),
-        payload: Some(DataPayload::from_borrowed(&HelloWorldV1 {
+        payload: Some(DataPayload::from_owned(HelloWorldV1 {
             message: Cow::Borrowed("foo"),
         })),
     };

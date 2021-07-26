@@ -94,12 +94,8 @@ where
     ) -> DataPayload<'d, 'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
-            Borrowed(yoke) => {
-                // Case 1: Cast the cart of the Borrowed Yoke to the trait object.
-                // TODO(#752): This is not completely sound, because calling `.into_backing_cart()`
-                // throws away overrides stored in the Yokeable, such as those from `.with_mut()`.
-                let cart: &'d dyn ErasedDataStruct = yoke.into_backing_cart();
-                DataPayload::from_borrowed(cart)
+            Borrowed(_) => {
+                panic!("#752")
             }
             RcStruct(yoke) => {
                 // Case 2: Cast the whole RcStruct Yoke to the trait object.
@@ -170,17 +166,8 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
-            Borrowed(yoke) => {
-                // Case 1: The trait object originated from a Borrowed Yoke.
-                let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
-                let y1 = any_ref.downcast_ref::<M::Cart>();
-                match y1 {
-                    Some(t_ref) => Ok(DataPayload::from_borrowed(t_ref)),
-                    None => Err(Error::MismatchedType {
-                        actual: Some(any_ref.type_id()),
-                        generic: Some(TypeId::of::<M::Cart>()),
-                    }),
-                }
+            Borrowed(_) => {
+                panic!("#752")
             }
             RcStruct(yoke) => {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
@@ -310,17 +297,6 @@ mod test {
     use crate::dynutil::UpcastDataPayload;
     use crate::marker::CowStringMarker;
     use alloc::borrow::Cow;
-
-    #[test]
-    fn test_erased_case_1() {
-        let data = "foo".to_string();
-        let original = DataPayload::<CowStringMarker>::from_borrowed(&data);
-        let upcasted = ErasedDataStructMarker::upcast(original);
-        let downcasted = upcasted
-            .downcast::<CowStringMarker>()
-            .expect("Type conversion");
-        assert_eq!(downcasted.get(), "foo");
-    }
 
     #[test]
     fn test_erased_case_2() {

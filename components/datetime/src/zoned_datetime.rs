@@ -196,7 +196,7 @@ impl<'d> ZonedDateTimeFormat<'d> {
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
-    pub fn format<'l: 'd, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, 'd, T>
     where
         T: ZonedDateTimeInput,
     {
