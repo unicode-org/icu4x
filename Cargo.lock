@@ -2729,6 +2729,7 @@ dependencies = [
  "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",
+ "postcard",
  "rand",
  "rand_distr",
  "rand_pcg",

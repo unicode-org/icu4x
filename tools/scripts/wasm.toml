@@ -30,7 +30,12 @@ toolchain = "nightly-2021-02-28"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
-args = ["wasm-build-release", "--examples", "--workspace", "--exclude", "icu_datagen"]
+# Add features here and below if a desired example is not being built
+args = [
+    "wasm-build-release", "--examples", "--workspace",
+    "--features", "zerovec/serde",
+    "--exclude", "icu_datagen"
+]
 
 [tasks.wasm-dir]
 description = "Make the WASM package directory"
@@ -55,9 +60,37 @@ dependencies = ["wasm-build-release", "wasm-dir"]
 [tasks.wasm-wasm-examples]
 description = "Copy the WASM files from examples into wasmpkg"
 category = "ICU4X WASM"
-command = "cp"
-args = ["-a", "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/examples/.", "wasmpkg/"]
 dependencies = ["wasm-build-examples", "wasm-dir"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+# Re-run the build command only to generate the JSON output (--message-format=json)
+set_env RUSTFLAGS "-C panic=abort -C opt-level=s"
+output = exec cargo +nightly-2021-02-28 wasm-build-release --message-format=json --examples --workspace --features zerovec/serde --exclude icu_datagen
+if ${output.code}
+    echo ${output.stderr}
+    trigger_error "Build failed! See output above."
+end
+
+# Parse the JSON messages from --message-format=json line by line
+trimmed_stdout = trim ${output.stdout}
+json_messages = split ${trimmed_stdout} "\n"
+for json_message in ${json_messages}
+    json_obj = json_parse ${json_message}
+
+    # The following two JSON keys determine whether this is an example artifact
+    is_compiler_artifact = eq ${json_obj.reason} "compiler-artifact"
+    is_example = eq ${json_obj.target.kind[0]} "example"
+    if ${is_compiler_artifact} and ${is_example}
+
+        # Copy the wasm file to the output directory
+        filename = basename ${json_obj.executable}
+        out_path = concat wasmpkg/ ${filename}
+        cp ${json_obj.executable} ${out_path}
+    end
+end
+'''
 
 [tasks.wasm-wat]
 description = "Create WebAssembly Text files from the WASM files"
