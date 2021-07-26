@@ -100,9 +100,9 @@ pub trait SerdeDeDataReceiver {
     ) -> Result<(), Error>;
 }
 
-impl<'d, 's, M> SerdeDeDataReceiver for Option<DataPayload<'d, 's, M>>
+impl<'data, M> SerdeDeDataReceiver for Option<DataPayload<'data, M>>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -159,17 +159,17 @@ pub trait SerdeDeDataProvider {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for dyn SerdeDeDataProvider + 'd
+impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'data
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    /// Serve objects implementing [`serde::Deserialize<'s>`] from a [`SerdeDeDataProvider`].
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
+    /// Serve objects implementing [`serde::Deserialize<'data>`] from a [`SerdeDeDataProvider`].
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse { metadata, payload })
@@ -178,9 +178,9 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
-pub trait SerdeSeDataStruct<'s>: 's {
+pub trait SerdeSeDataStruct<'data>: 'data {
     /// Clone this trait object reference, returning a boxed trait object.
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's>;
+    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'data> + 'data>;
 
     /// Return this trait object reference for Serde serialization.
     ///
@@ -209,14 +209,14 @@ pub trait SerdeSeDataStruct<'s>: 's {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
-impl_dyn_clone!(SerdeSeDataStruct<'s>, 's);
+impl_dyn_clone!(SerdeSeDataStruct<'data>, 'data);
 
-impl<'s, T> SerdeSeDataStruct<'s> for T
+impl<'data, T> SerdeSeDataStruct<'data> for T
 where
-    T: 's + serde::Serialize,
+    T: 'data + serde::Serialize,
     for<'a> &'a T: Clone,
 {
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'s> + 's> {
+    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'data> + 'data> {
         todo!("#753")
         // Box::new(self.clone())
     }
@@ -225,44 +225,42 @@ where
     }
 }
 
-/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'s>` for integration with DataProvider.
-pub struct SerdeSeDataStructWrap<'d, 's> {
-    inner: &'d (dyn SerdeSeDataStruct<'s> + 's),
+/// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'data>` for integration with DataProvider.
+pub struct SerdeSeDataStructWrap<'b, 'data> {
+    inner: &'b (dyn SerdeSeDataStruct<'data> + 'data),
 }
 
-impl<'d, 's> Deref for SerdeSeDataStructWrap<'d, 's> {
-    type Target = dyn SerdeSeDataStruct<'s> + 's;
+impl<'b, 'data> Deref for SerdeSeDataStructWrap<'b, 'data> {
+    type Target = dyn SerdeSeDataStruct<'data> + 'data;
     fn deref(&self) -> &Self::Target {
         self.inner.deref()
     }
 }
 
-impl<'d, 's: 'd> SerdeSeDataStructWrap<'d, 's> {
-    fn shorten(self) -> SerdeSeDataStructWrap<'d, 'd> {
-        // This is safe because 's exceeds 'd
+impl<'b, 'data: 'b> SerdeSeDataStructWrap<'b, 'data> {
+    fn shorten(self) -> SerdeSeDataStructWrap<'b, 'b> {
+        // This is safe because 'data exceeds 'b
         // TODO(#760): The types must be covariant for this to actually be safe.
         unsafe { core::mem::transmute(self) }
     }
 }
 
-impl<'s> ZeroCopyFrom<dyn SerdeSeDataStruct<'s> + 's> for SerdeSeDataStructWrap<'static, 'static> {
+impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data> for SerdeSeDataStructWrap<'static, 'static> {
     fn zero_copy_from<'b>(
-        this: &'b (dyn SerdeSeDataStruct<'s> + 's),
+        this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
     ) -> SerdeSeDataStructWrap<'b, 'b> {
         SerdeSeDataStructWrap { inner: this }.shorten()
     }
 }
 
-impl<'d, 's, M> crate::dynutil::UpcastDataPayload<'d, 's, M> for SerdeSeDataStructMarker
+impl<'data, M> crate::dynutil::UpcastDataPayload<'data, M> for SerdeSeDataStructMarker
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: serde::Serialize,
-    's: 'd,
 {
-    fn upcast(other: DataPayload<'d, 's, M>) -> DataPayload<'d, 's, SerdeSeDataStructMarker> {
+    fn upcast(other: DataPayload<'data, M>) -> DataPayload<'data, SerdeSeDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
-        let cart: Rc<dyn SerdeSeDataStruct<'s> + 's> = match other.inner {
-            Borrowed(_) => todo!("#752"),
+        let cart: Rc<dyn SerdeSeDataStruct<'data> + 'data> = match other.inner {
             RcStruct(yoke) => Rc::from(yoke),
             Owned(yoke) => Rc::from(yoke),
             RcBuf(yoke) => Rc::from(yoke),
@@ -303,7 +301,7 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
 /// Marker type for [`SerdeSeDataStruct`].
 pub struct SerdeSeDataStructMarker {}
 
-impl<'s> DataMarker<'s> for SerdeSeDataStructMarker {
+impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
     type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
-    type Cart = dyn SerdeSeDataStruct<'s>;
+    type Cart = dyn SerdeSeDataStruct<'data>;
 }

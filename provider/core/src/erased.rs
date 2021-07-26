@@ -60,7 +60,7 @@ pub trait ErasedDataStruct: 'static {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
+impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
     #[allow(clippy::needless_lifetimes)]
     fn zero_copy_from<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
         this
@@ -70,12 +70,12 @@ impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 /// Marker type for [`ErasedDataStruct`].
 pub struct ErasedDataStructMarker {}
 
-impl<'s> DataMarker<'s> for ErasedDataStructMarker {
+impl DataMarker<'static> for ErasedDataStructMarker {
     type Yokeable = &'static dyn ErasedDataStruct;
     type Cart = dyn ErasedDataStruct;
 }
 
-impl<'d, M> crate::dynutil::UpcastDataPayload<'d, 'static, M> for ErasedDataStructMarker
+impl<'d, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
@@ -90,13 +90,10 @@ where
     /// - `Yoke<Y, _>` (fully owned) => `Yoke<S, Rc<dyn ErasedDataStruct>>`, by casting the
     ///   whole input Yoke to `ErasedDataStruct` as above
     fn upcast(
-        other: DataPayload<'d, 'static, M>,
-    ) -> DataPayload<'d, 'static, ErasedDataStructMarker> {
+        other: DataPayload<'static, M>,
+    ) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
-            Borrowed(_) => {
-                panic!("#752")
-            }
             RcStruct(yoke) => {
                 // Case 2: Cast the whole RcStruct Yoke to the trait object.
                 let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
@@ -116,7 +113,7 @@ where
     }
 }
 
-impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
+impl<'d> DataPayload<'static, ErasedDataStructMarker> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a
     /// concrete type.
     ///
@@ -158,7 +155,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
     ///
     /// assert_eq!("Hallo Welt", downcast_payload.get().message);
     /// ```
-    pub fn downcast<M>(self) -> Result<DataPayload<'d, 'static, M>, Error>
+    pub fn downcast<M>(self) -> Result<DataPayload<'static, M>, Error>
     where
         M: DataMarker<'static>,
         M::Cart: Sized,
@@ -166,9 +163,6 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
-            Borrowed(_) => {
-                panic!("#752")
-            }
             RcStruct(yoke) => {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
                 // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
@@ -258,23 +252,23 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStructMarker>, Error>;
+    ) -> Result<DataResponse<'static, ErasedDataStructMarker>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
 impl<'d, T> ErasedDataProvider<'d> for T
 where
-    T: DataProvider<'d, 'static, ErasedDataStructMarker>,
+    T: DataProvider<'static, ErasedDataStructMarker>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStructMarker>, Error> {
+    ) -> Result<DataResponse<'static, ErasedDataStructMarker>, Error> {
         DataProvider::<ErasedDataStructMarker>::load_payload(self, req)
     }
 }
 
-impl<'d, M> DataProvider<'d, 'static, M> for dyn ErasedDataProvider<'d> + 'd
+impl<'d, M> DataProvider<'static, M> for dyn ErasedDataProvider<'d> + 'd
 where
     M: DataMarker<'static>,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
@@ -282,7 +276,7 @@ where
     M::Cart: Sized,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, Error> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,

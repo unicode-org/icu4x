@@ -94,13 +94,10 @@ pub struct DataResponseMetadata {
     pub data_langid: Option<LanguageIdentifier>,
 }
 
-pub(crate) enum DataPayloadInner<'d, 's: 'd, M>
+pub(crate) enum DataPayloadInner<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
-    // TODO(#752): Remove the Borrowed variant and rename the lifetime parameter
-    #[allow(dead_code)]
-    Borrowed(Yoke<M::Yokeable, &'d M::Cart>),
     RcStruct(Yoke<M::Yokeable, Rc<M::Cart>>),
     Owned(Yoke<M::Yokeable, ()>),
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
@@ -126,16 +123,16 @@ where
 ///
 /// assert_eq!("Demo", payload.get());
 /// ```
-pub struct DataPayload<'d, 's, M>
+pub struct DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
-    pub(crate) inner: DataPayloadInner<'d, 's, M>,
+    pub(crate) inner: DataPayloadInner<'data, M>,
 }
 
-impl<'d, 's, M> Debug for DataPayload<'d, 's, M>
+impl<'data, M> Debug for DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -145,15 +142,14 @@ where
 
 /// Cloning a DataPayload is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
-impl<'d, 's, M> Clone for DataPayload<'d, 's, M>
+impl<'data, M> Clone for DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
     fn clone(&self) -> Self {
         use DataPayloadInner::*;
         let new_inner = match &self.inner {
-            Borrowed(yoke) => Borrowed(yoke.clone()),
             RcStruct(yoke) => RcStruct(yoke.clone()),
             Owned(yoke) => Owned(yoke.clone()),
             RcBuf(yoke) => RcBuf(yoke.clone()),
@@ -162,9 +158,9 @@ where
     }
 }
 
-impl<'d, 's, M> PartialEq for DataPayload<'d, 's, M>
+impl<'data, M> PartialEq for DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
@@ -172,9 +168,9 @@ where
     }
 }
 
-impl<'d, 's, M> Eq for DataPayload<'d, 's, M>
+impl<'data, M> Eq for DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Eq,
 {
 }
@@ -187,13 +183,13 @@ fn test_clone_eq() {
     assert_eq!(p1, p2);
 }
 
-impl<'d, 's, M> DataPayload<'d, 's, M>
+impl<'data, M> DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
     /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`]. The data need not be fully owned;
-    /// it may be constrained by the `'s` lifetime.
+    /// it may be constrained by the `'data` lifetime.
     ///
     /// # Examples
     ///
@@ -223,9 +219,9 @@ where
     }
 }
 
-impl<'d, 's, M> DataPayload<'d, 's, M>
+impl<'data, M> DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
@@ -285,9 +281,9 @@ where
     }
 }
 
-impl<'d, 's, M> DataPayload<'d, 's, M>
+impl<'data, M> DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
@@ -352,7 +348,6 @@ where
     {
         use DataPayloadInner::*;
         match &mut self.inner {
-            Borrowed(yoke) => yoke.with_mut(f),
             RcStruct(yoke) => yoke.with_mut(f),
             Owned(yoke) => yoke.with_mut(f),
             RcBuf(yoke) => yoke.with_mut(f),
@@ -378,7 +373,6 @@ where
     pub fn get<'a>(&'a self) -> &'a <M::Yokeable as Yokeable<'a>>::Output {
         use DataPayloadInner::*;
         match &self.inner {
-            Borrowed(yoke) => yoke.get(),
             RcStruct(yoke) => yoke.get(),
             Owned(yoke) => yoke.get(),
             RcBuf(yoke) => yoke.get(),
@@ -387,42 +381,42 @@ where
 }
 
 /// A response object containing an object as payload and metadata about it.
-pub struct DataResponse<'d, 's, M>
+pub struct DataResponse<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
     /// The object itself; None if it was not loaded.
-    pub payload: Option<DataPayload<'d, 's, M>>,
+    pub payload: Option<DataPayload<'data, M>>,
 }
 
-impl<'d, 's, M> DataResponse<'d, 's, M>
+impl<'data, M> DataResponse<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
     /// Takes ownership of the underlying payload. Error if not present.
     #[inline]
-    pub fn take_payload(self) -> Result<DataPayload<'d, 's, M>, Error> {
+    pub fn take_payload(self) -> Result<DataPayload<'data, M>, Error> {
         self.payload.ok_or(Error::MissingPayload)
     }
 }
 
-impl<'d, 's, M> TryFrom<DataResponse<'d, 's, M>> for DataPayload<'d, 's, M>
+impl<'data, M> TryFrom<DataResponse<'data, M>> for DataPayload<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
     type Error = Error;
 
-    fn try_from(response: DataResponse<'d, 's, M>) -> Result<Self, Self::Error> {
+    fn try_from(response: DataResponse<'data, M>) -> Result<Self, Self::Error> {
         response.take_payload()
     }
 }
 
-impl<'d, 's, M> Debug for DataResponse<'d, 's, M>
+impl<'data, M> Debug for DataResponse<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> &'a <M::Yokeable as Yokeable<'a>>::Output: Debug,
 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -434,9 +428,9 @@ where
     }
 }
 
-impl<'d, 's, M> Clone for DataResponse<'d, 's, M>
+impl<'data, M> Clone for DataResponse<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 {
     /// Note: This function is currently inoperable. For more details, see
@@ -469,13 +463,13 @@ fn test_debug() {
 /// - [`HelloWorldProvider`](crate::hello_world::HelloWorldProvider)
 /// - [`StructProvider`](crate::struct_provider::StructProvider)
 /// - [`InvariantDataProvider`](crate::inv::InvariantDataProvider)
-pub trait DataProvider<'d, 's, M>
+pub trait DataProvider<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
     /// Query the provider for data, returning the result.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error>;
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error>;
 }
