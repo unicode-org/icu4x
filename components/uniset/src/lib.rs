@@ -62,6 +62,7 @@ pub mod provider;
 mod uniset;
 mod utils;
 
+use alloc::vec::Vec;
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
 use displaydoc::Display;
@@ -80,6 +81,7 @@ pub enum UnicodeSetError {
     PropDataLoad(DataError),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for UnicodeSetError {}
 
 impl From<DataError> for UnicodeSetError {

@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::format;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 use icu_provider::yoke::{self, *};
-use std::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 
 #[cfg(feature = "serde")]
 use serde::ser::SerializeSeq;
@@ -368,7 +371,7 @@ impl UnicodeSet {
 #[cfg(test)]
 mod tests {
     use super::{UnicodeSet, UnicodeSetError, BMP_MAX};
-    use std::{char, vec::Vec};
+    use core::{char, vec::Vec};
 
     #[test]
     fn test_unicodeset_try_from_vec() {
