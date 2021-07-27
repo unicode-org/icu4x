@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::Error;
 use crate::upropdump_serde;
-use icu_provider::prelude::*;
 use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::prelude::*;
 use icu_uniset::provider::*;
 use icu_uniset::UnicodeSetBuilder;
 use std::borrow::Cow;
@@ -15,14 +16,16 @@ pub struct BinaryPropertiesDataProvider {
     root_dir: PathBuf,
 }
 
+/// A data provider reading from .toml files produced by the ICU4C upropdump tool.
 impl BinaryPropertiesDataProvider {
     pub fn new(root_dir: PathBuf) -> Self {
         BinaryPropertiesDataProvider { root_dir }
     }
-    fn get_toml_as_string(&self, name: &str) -> Result<String, DataError> {
+    fn get_toml_data(&self, name: &str) -> Result<upropdump_serde::binary::Main, Error> {
         let mut path: PathBuf = self.root_dir.clone().join(name);
         path.set_extension("toml");
-        fs::read_to_string(&path).map_err(DataError::new_resc_error)
+        let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
+        toml::from_str(&toml_str).map_err(|e| Error::Toml(e, path))
     }
 }
 
@@ -31,14 +34,17 @@ impl<'d, 's> DataProvider<'d, 's, UnicodePropertyV1Marker> for BinaryPropertiesD
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<'d, 's, UnicodePropertyV1Marker>, DataError> {
-        let toml_str: String = self.get_toml_as_string(&req.resource_path.key.sub_category)?;
-        let toml_data: upropdump_serde::binary::Main =
-            toml::from_str(&toml_str).map_err(DataError::new_resc_error)?;
+        let toml_data: upropdump_serde::binary::Main = self
+            .get_toml_data(&req.resource_path.key.sub_category)
+            .map_err(DataError::new_resc_error)?;
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in toml_data.unicode_set.data.ranges {
-            let start = std::char::from_u32(start).ok_or(DataError::InvalidPayload)?;
-            let end = std::char::from_u32(end).ok_or(DataError::InvalidPayload)?;
+            let (start, end) = match (std::char::from_u32(start), std::char::from_u32(end)) {
+                (Some(s), Some(e)) => Ok((s, e)),
+                _ => Err(Error::InvalidCharRange(start, end)),
+            }
+            .map_err(DataError::new_resc_error)?;
             builder.add_range(&(start..=end));
         }
         let uniset = builder.build();
@@ -69,7 +75,6 @@ impl IterableDataProviderCore for BinaryPropertiesDataProvider {
     }
 }
 
-
 #[test]
 fn test_basic() {
     use icu_uniset::UnicodeSet;
@@ -78,20 +83,22 @@ fn test_basic() {
     let root_dir = icu_testdata::paths::data_root().join("uprops");
     let provider = BinaryPropertiesDataProvider::new(root_dir);
 
-    let whitespace: UnicodeSet = provider
+    let payload: DataPayload<'_, '_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::WHITE_SPACE_V1,
                 options: ResourceOptions::default(),
             },
         })
-        .unwrap()
+        .expect("The data should be valid")
         .take_payload()
-        .unwrap()
-        .get()
-        .clone()
-        .try_into()
-        .unwrap();
+        .expect("Loading was successful");
+
+    let whitespace: UnicodeSet = payload.get().clone().try_into().expect("Valid unicode set");
 
     assert!(whitespace.contains(' '));
+    assert!(whitespace.contains('\n'));
+    assert!(whitespace.contains('\u{3000}')); // U+3000 IDEOGRAPHIC SPACE
+
+    assert!(!whitespace.contains('A'));
 }

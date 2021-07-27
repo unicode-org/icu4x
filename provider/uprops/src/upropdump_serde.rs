@@ -23,5 +23,5 @@ pub mod binary {
 }
 
 pub mod enumerated {
-    // TODO
+    // TODO(#883)
 }
