@@ -10,14 +10,14 @@ use alloc::string::String;
 /// Marker type for [`Cow`]`<str>` where the backing cart is `str`.
 pub struct CowStrMarker;
 
-impl<'s> DataMarker<'s> for CowStrMarker {
+impl<'data> DataMarker<'data> for CowStrMarker {
     type Yokeable = Cow<'static, str>;
     type Cart = str;
 }
 
-impl DataPayload<'static, 'static, CowStrMarker> {
+impl DataPayload<'static, CowStrMarker> {
     /// Make a [`DataPayload`]`<`[`CowStrMarker`]`>` from a static string slice.
-    pub fn from_static_str(s: &'static str) -> DataPayload<'static, 'static, CowStrMarker> {
+    pub fn from_static_str(s: &'static str) -> DataPayload<'static, CowStrMarker> {
         DataPayload::from_owned(Cow::Borrowed(s))
     }
 }
@@ -26,7 +26,7 @@ impl DataPayload<'static, 'static, CowStrMarker> {
 /// `ErasedDataStruct` is to be used.
 pub struct CowStringMarker;
 
-impl<'s> DataMarker<'s> for CowStringMarker {
+impl<'data> DataMarker<'data> for CowStringMarker {
     type Yokeable = Cow<'static, str>;
     type Cart = String;
 }

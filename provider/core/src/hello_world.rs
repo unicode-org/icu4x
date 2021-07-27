@@ -28,9 +28,9 @@ pub mod key {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct HelloWorldV1<'s> {
+pub struct HelloWorldV1<'data> {
     #[cfg_attr(feature = "provider_serde", serde(borrow))]
-    pub message: Cow<'s, str>,
+    pub message: Cow<'data, str>,
 }
 
 impl Default for HelloWorldV1<'_> {
@@ -44,9 +44,9 @@ impl Default for HelloWorldV1<'_> {
 /// Marker type for [`HelloWorldV1`].
 pub struct HelloWorldV1Marker;
 
-impl<'s> DataMarker<'s> for HelloWorldV1Marker {
+impl<'data> DataMarker<'data> for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
-    type Cart = HelloWorldV1<'s>;
+    type Cart = HelloWorldV1<'data>;
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -79,11 +79,11 @@ impl<'s> DataMarker<'s> for HelloWorldV1Marker {
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
 #[derive(Debug, PartialEq, Default)]
-pub struct HelloWorldProvider<'s> {
-    map: LiteMap<LanguageIdentifier, Cow<'s, str>>,
+pub struct HelloWorldProvider<'data> {
+    map: LiteMap<LanguageIdentifier, Cow<'data, str>>,
 }
 
-impl<'s> HelloWorldProvider<'s> {
+impl<'data> HelloWorldProvider<'data> {
     /// Creates a [`HelloWorldProvider`] pre-populated with hardcoded data from Wiktionary.
     pub fn new_with_placeholder_data() -> HelloWorldProvider<'static> {
         // Data from https://en.wiktionary.org/wiki/Hello_World#Translations
@@ -118,11 +118,11 @@ impl<'s> HelloWorldProvider<'s> {
     }
 }
 
-impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Marker> for HelloWorldProvider<'s> {
+impl<'data, 't> DataProvider<'data, HelloWorldV1Marker> for HelloWorldProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;
         let data = self
@@ -141,14 +141,14 @@ impl<'d, 's, 't> DataProvider<'d, 's, HelloWorldV1Marker> for HelloWorldProvider
 
 impl_dyn_provider!(HelloWorldProvider<'static>, {
     _ => HelloWorldV1Marker,
-}, ERASED, 'd);
+}, ERASED);
 
 #[cfg(feature = "provider_serde")]
-impl_dyn_provider!(HelloWorldProvider<'s>, {
+impl_dyn_provider!(HelloWorldProvider<'data>, {
     _ => HelloWorldV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
-impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
+impl<'data> IterableDataProviderCore for HelloWorldProvider<'data> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -167,13 +167,13 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'d, 'static, crate::erased::ErasedDataStructMarker>
+impl<'data> crate::export::DataExporter<'static, crate::erased::ErasedDataStructMarker>
     for HelloWorldProvider<'static>
 {
     fn put_payload(
         &mut self,
         req: DataRequest,
-        payload: DataPayload<'d, 'static, crate::erased::ErasedDataStructMarker>,
+        payload: DataPayload<'static, crate::erased::ErasedDataStructMarker>,
     ) -> Result<(), DataError> {
         req.resource_path.key.match_key(key::HELLO_WORLD_V1)?;
         let langid = req.try_langid()?;

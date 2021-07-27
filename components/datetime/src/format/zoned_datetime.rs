@@ -13,11 +13,11 @@ use writeable::Writeable;
 use super::datetime;
 use super::time_zone;
 
-pub struct FormattedZonedDateTime<'l, 'd, T>
+pub struct FormattedZonedDateTime<'l, 'data, T>
 where
     T: ZonedDateTimeInput,
 {
-    pub(crate) zoned_datetime_format: &'l ZonedDateTimeFormat<'d>,
+    pub(crate) zoned_datetime_format: &'l ZonedDateTimeFormat<'data>,
     pub(crate) zoned_datetime: &'l T,
 }
 

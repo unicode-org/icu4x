@@ -72,13 +72,13 @@ impl StaticDataProvider {
     }
 }
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for StaticDataProvider
+impl<'data, M> DataProvider<'data, M> for StaticDataProvider
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     // 'static is what we want here, because we are deserializing from a static buffer.
     M::Yokeable: serde::de::Deserialize<'static>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
         let file = self.get_file(req)?;
         let data = M::Yokeable::deserialize(&mut postcard::Deserializer::from_bytes(file))
             .map_err(DataError::new_resc_error)?;

@@ -32,25 +32,25 @@ use std::borrow::Cow;
 use std::fmt::Write;
 use tinystr::tinystr8;
 
-struct MultiKeyStructProvider<'d, 's> {
-    pub symbols: StructProvider<'d, 's, DateSymbolsV1Marker>,
-    pub patterns: StructProvider<'d, 's, DatePatternsV1Marker>,
+struct MultiKeyStructProvider<'data> {
+    pub symbols: StructProvider<'data, DateSymbolsV1Marker>,
+    pub patterns: StructProvider<'data, DatePatternsV1Marker>,
 }
 
-impl<'d, 's> DataProvider<'d, 's, DateSymbolsV1Marker> for MultiKeyStructProvider<'d, 's> {
+impl<'data> DataProvider<'data, DateSymbolsV1Marker> for MultiKeyStructProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, DateSymbolsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<'data, DateSymbolsV1Marker>, icu_provider::DataError> {
         self.symbols.load_payload(req)
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, DatePatternsV1Marker> for MultiKeyStructProvider<'d, 's> {
+impl<'data> DataProvider<'data, DatePatternsV1Marker> for MultiKeyStructProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, DatePatternsV1Marker>, icu_provider::DataError> {
+    ) -> Result<DataResponse<'data, DatePatternsV1Marker>, icu_provider::DataError> {
         self.patterns.load_payload(req)
     }
 }

@@ -27,10 +27,10 @@ pub mod resolver;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct PluralRuleStringsV1<'s> {
-    pub zero: Option<Cow<'s, str>>,
-    pub one: Option<Cow<'s, str>>,
-    pub two: Option<Cow<'s, str>>,
-    pub few: Option<Cow<'s, str>>,
-    pub many: Option<Cow<'s, str>>,
+pub struct PluralRuleStringsV1<'data> {
+    pub zero: Option<Cow<'data, str>>,
+    pub one: Option<Cow<'data, str>>,
+    pub two: Option<Cow<'data, str>>,
+    pub few: Option<Cow<'data, str>>,
+    pub many: Option<Cow<'data, str>>,
 }

@@ -699,7 +699,7 @@ mod test {
         provider::{gregory::DatePatternsV1Marker, key::GREGORY_DATE_PATTERNS_V1},
     };
 
-    fn get_data_payload() -> DataPayload<'static, 'static, DatePatternsV1Marker> {
+    fn get_data_payload() -> DataPayload<'static, DatePatternsV1Marker> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider

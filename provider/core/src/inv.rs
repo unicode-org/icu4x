@@ -38,13 +38,13 @@ use alloc::vec::Vec;
 /// ```
 pub struct InvariantDataProvider;
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for InvariantDataProvider
+impl<'data, M> DataProvider<'data, M> for InvariantDataProvider
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     M::Cart: Default,
     M::Yokeable: yoke::ZeroCopyFrom<M::Cart>,
 {
-    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
+    fn load_payload(&self, _req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_partial_owned(

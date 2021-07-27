@@ -348,9 +348,9 @@ fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'stati
     Ok(BlobExporter::new_with_sink(sink))
 }
 
-fn export_cldr<'d, 's: 'd>(
+fn export_cldr<'data>(
     matches: &ArgMatches,
-    exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> anyhow::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
@@ -393,9 +393,9 @@ fn export_cldr<'d, 's: 'd>(
     Ok(())
 }
 
-fn export_hello_world<'d, 's: 'd>(
+fn export_hello_world<'data>(
     _: &ArgMatches,
-    exporter: &mut (impl DataExporter<'d, 's, SerdeSeDataStructMarker> + ?Sized),
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
 ) -> anyhow::Result<()> {
     let raw_provider = HelloWorldProvider::new_with_placeholder_data();

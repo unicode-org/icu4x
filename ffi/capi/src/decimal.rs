@@ -14,13 +14,13 @@ use icu_decimal::FixedDecimalFormat;
 /// Opaque type for use behind a pointer, is [`FixedDecimalFormat`]
 ///
 /// Can be obtained via [`icu4x_fixed_decimal_format_create()`] and destroyed via [`icu4x_fixed_decimal_format_destroy()`]
-pub type ICU4XFixedDecimalFormat<'d> = FixedDecimalFormat<'d, 'static>;
+pub type ICU4XFixedDecimalFormat<'data> = FixedDecimalFormat<'data>;
 
 #[repr(C)]
 /// This is the result returned by [`icu4x_fixed_decimal_format_create()`]
-pub struct ICU4XCreateFixedDecimalFormatResult<'d> {
+pub struct ICU4XCreateFixedDecimalFormatResult<'data> {
     /// Will be null if `success` is [`false`]
-    pub fdf: *mut ICU4XFixedDecimalFormat<'d>,
+    pub fdf: *mut ICU4XFixedDecimalFormat<'data>,
     /// Currently just a boolean, but we might add a proper error enum as necessary
     pub success: bool,
 }
@@ -32,11 +32,11 @@ pub struct ICU4XCreateFixedDecimalFormatResult<'d> {
 /// - `locale` should be constructed via [`icu4x_locale_create()`](crate::locale::icu4x_locale_create)
 /// - `provider` should be constructed via one of the functions in [`crate::locale`](crate::locale)
 /// - Only access `fdf` in the result if `success` is [`true`].
-pub extern "C" fn icu4x_fixed_decimal_format_create<'d>(
+pub extern "C" fn icu4x_fixed_decimal_format_create<'data>(
     locale: &ICU4XLocale,
-    provider: &'d ICU4XDataProvider,
+    provider: &'data ICU4XDataProvider,
     options: ICU4XFixedDecimalFormatOptions,
-) -> ICU4XCreateFixedDecimalFormatResult<'d> {
+) -> ICU4XCreateFixedDecimalFormatResult<'data> {
     // cheap as long as there are no variants
     let langid = locale.as_ref().clone();
     let provider = provider.as_dyn_ref();
