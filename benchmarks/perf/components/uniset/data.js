@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627426141740,
+  "lastUpdate": 1627429461829,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8999,6 +8999,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34267625,
             "range": "± 1179055",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd4b7c536c0b573aa68510bc8e1776fa78b1c0fd",
+          "message": "Move the `icu` crate to no_std (#911)\n\n* Move uniset to no_std\r\n\r\n* Autoreplace\r\n\r\n* Migrate datetime to no_std\r\n\r\n* Autoreplace\r\n\r\n* fix errors\r\n\r\n* fix import\r\n\r\n* cargo fix\r\n\r\n* Move icu core crate to no-std\r\n\r\n* Add task for testing all of icu4x builds on nostd\r\n\r\n* fix import\r\n\r\n* fix warnings",
+          "timestamp": "2021-07-27T16:38:02-07:00",
+          "tree_id": "60f8120c2300a934d50144fcc57353e4f63f2d5c",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd4b7c536c0b573aa68510bc8e1776fa78b1c0fd"
+        },
+        "date": 1627429459324,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31763420,
+            "range": "± 1424078",
             "unit": "ns/iter"
           }
         ]
