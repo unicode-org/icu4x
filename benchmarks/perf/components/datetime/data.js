@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627340602675,
+  "lastUpdate": 1627416546333,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -4967,6 +4967,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1290929,
             "range": "± 11301",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e97c8c3b3d9c129bbf63ffc8162080dd01931ee1",
+          "message": "Remove second lifetime parameter from DataProvider (#904)",
+          "timestamp": "2021-07-27T15:02:37-05:00",
+          "tree_id": "fd8ed04e3dfdb5aac06301f67a34be462d8f07d6",
+          "url": "https://github.com/unicode-org/icu4x/commit/e97c8c3b3d9c129bbf63ffc8162080dd01931ee1"
+        },
+        "date": 1627416542048,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 535730,
+            "range": "± 5781",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1106412,
+            "range": "± 6235",
             "unit": "ns/iter"
           }
         ]
