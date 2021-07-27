@@ -9,9 +9,9 @@ use crate::options::{components, length, DateTimeFormatOptions};
 use crate::pattern::Pattern;
 use crate::provider;
 use crate::skeleton;
-use std::borrow::Cow;
+use alloc::borrow::Cow;
 
-type Result<T> = std::result::Result<T, DateTimeFormatError>;
+type Result<T> = core::result::Result<T, DateTimeFormatError>;
 
 pub trait DateTimePatterns {
     fn get_pattern_for_options(&self, options: &DateTimeFormatOptions) -> Result<Option<Pattern>>;

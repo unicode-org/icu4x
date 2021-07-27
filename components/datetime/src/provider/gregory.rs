@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
-use std::borrow::Cow;
 
 #[icu_provider::data_struct]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -139,8 +139,8 @@ pub mod patterns {
         pattern::{self, Pattern},
         skeleton::{Skeleton, SkeletonError},
     };
+    use core::convert::TryFrom;
     use litemap::LiteMap;
-    use std::convert::TryFrom;
 
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(

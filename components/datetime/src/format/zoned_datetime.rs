@@ -7,7 +7,7 @@ use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::PatternItem;
 use crate::{date::ZonedDateTimeInput, zoned_datetime::ZonedDateTimeFormat};
-use std::fmt;
+use core::fmt;
 use writeable::Writeable;
 
 use super::datetime;
@@ -27,7 +27,7 @@ where
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern(self.zoned_datetime_format, self.zoned_datetime, sink)
-            .map_err(|_| std::fmt::Error)
+            .map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -39,7 +39,7 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write_pattern(self.zoned_datetime_format, self.zoned_datetime, f)
-            .map_err(|_| std::fmt::Error)
+            .map_err(|_| core::fmt::Error)
     }
 }
 

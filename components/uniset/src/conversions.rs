@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{
+use alloc::vec;
+use core::{
     convert::TryFrom,
     ops::{Range, RangeBounds, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
@@ -73,7 +74,7 @@ impl TryFrom<&RangeToInclusive<char>> for UnicodeSet {
 mod tests {
     use super::UnicodeSetError;
     use crate::UnicodeSet;
-    use std::{char, convert::TryFrom};
+    use core::{char, convert::TryFrom};
 
     #[test]
     fn test_try_from_range() {

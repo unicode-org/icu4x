@@ -9,8 +9,10 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeSymbols;
+
+use alloc::string::ToString;
+use core::fmt;
 use icu_locid::Locale;
-use std::fmt;
 use writeable::Writeable;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
@@ -57,7 +59,7 @@ where
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         write_pattern(self.pattern, self.symbols, self.datetime, self.locale, sink)
-            .map_err(|_| std::fmt::Error)
+            .map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -69,12 +71,12 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write_pattern(self.pattern, self.symbols, self.datetime, self.locale, f)
-            .map_err(|_| std::fmt::Error)
+            .map_err(|_| core::fmt::Error)
     }
 }
 
 // Temporary formatting number with length.
-fn format_number<W>(result: &mut W, num: isize, length: FieldLength) -> Result<(), std::fmt::Error>
+fn format_number<W>(result: &mut W, num: isize, length: FieldLength) -> Result<(), core::fmt::Error>
 where
     W: fmt::Write + ?Sized,
 {

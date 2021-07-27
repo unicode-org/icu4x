@@ -10,8 +10,8 @@
 use crate::enum_props::*;
 use crate::provider::*;
 use crate::{UnicodeSet, UnicodeSetError};
+use core::convert::TryInto;
 use icu_provider::prelude::*;
-use std::convert::TryInto;
 
 type UnisetResult = Result<UnicodeSet, UnicodeSetError>;
 

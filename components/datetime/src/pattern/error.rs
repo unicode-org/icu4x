@@ -22,6 +22,7 @@ pub enum Error {
     UnclosedPlaceholder,
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
 impl From<fields::Error> for Error {

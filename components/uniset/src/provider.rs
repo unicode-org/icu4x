@@ -8,9 +8,9 @@
 
 use crate::builder::UnicodeSetBuilder;
 use crate::uniset::UnicodeSet;
+use alloc::borrow::Cow;
+use core::convert::TryInto;
 use icu_provider::yoke::{self, *};
-use std::borrow::Cow;
-use std::convert::TryInto;
 //
 // resource key structs - the structs used directly by users of data provider
 //

@@ -2,10 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
 use tinystr::TinyStr8;
 
 use crate::date::*;
-use std::str::FromStr;
+use core::str::FromStr;
 
 // TODO(#622) link [`TimeZoneFormat`] appropriately once it is public.
 /// A temporary struct that implements [`TimeZoneInput`]

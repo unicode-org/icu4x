@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 use litemap::LiteMap;
-use std::borrow::Cow;
 use tinystr::TinyStr8;
 
 /// Provides a few common map accessor methods to new-type structs that wrap a map type.
@@ -15,7 +15,7 @@ macro_rules! map_access {
             pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
             where
                 Q: Ord,
-                Cow<'data, $key>: std::borrow::Borrow<Q>,
+                Cow<'data, $key>: core::borrow::Borrow<Q>,
             {
                 self.0.get(key)
             }
@@ -25,10 +25,10 @@ macro_rules! map_access {
             }
         }
 
-        impl<$lt, Q: ?Sized> std::ops::Index<&Q> for $outer
+        impl<$lt, Q: ?Sized> core::ops::Index<&Q> for $outer
         where
             Q: Ord,
-            Cow<'data, $key>: std::borrow::Borrow<Q>,
+            Cow<'data, $key>: core::borrow::Borrow<Q>,
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
