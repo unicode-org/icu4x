@@ -140,9 +140,20 @@ pub struct CodePointTrieHeader {
     /// stored at the second-to-last position of the `data` array.
     /// (See `impl_const::HIGH_VALUE_NEG_DATA_OFFSET`.)
     pub high_start: u32,
+    /// A version of the `high_start` value that is right-shifted 12 spaces,
+    /// but is rounded up to a multiple 0x1000 for easy testing from UTF-8
+    /// lead bytes.
     pub shifted12_high_start: u16,
+    /// Offset for the null block in the "index-3" table of the `index` array.
+    /// Set to an impossibly high value (e.g., 0xffff) if there is no
+    /// dedicated index-3 null block.
     pub index3_null_offset: u16,
+    /// Internal data null block offset, not shifted.
+    /// Set to an impossibly high value (e.g., 0xfffff) if there is no
+    /// dedicated data null block.
     pub data_null_offset: u32,
+    /// The value stored in the trie that represents a null value being
+    /// associated to a code point.
     pub null_value: u32,
 }
 
