@@ -109,7 +109,9 @@ map_access!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesLongV1<'data>(pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>);
+pub struct MetaZoneSpecificNamesLongV1<'data>(
+    pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+);
 map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// An ICU4X mapping to the short-form specific metazone names.
@@ -122,7 +124,9 @@ map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesShortV1<'data>(pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>);
+pub struct MetaZoneSpecificNamesShortV1<'data>(
+    pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>,
+);
 map_access!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// A general struct to hold metazone specific name variants.

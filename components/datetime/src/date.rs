@@ -183,7 +183,9 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
     }
 }
 
-impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'data, T> {
+impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
+    for ZonedDateTimeInputWithLocale<'data, T>
+{
     fn datetime(&self) -> &T {
         self.data
     }

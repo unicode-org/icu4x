@@ -104,10 +104,7 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'static, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {

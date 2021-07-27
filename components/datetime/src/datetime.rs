@@ -98,20 +98,18 @@ impl<'data> DateTimeFormat<'data> {
     ) -> Result<Self, DateTimeFormatError> {
         let locale = locale.into();
 
-        let patterns_data: icu_provider::DataPayload<
-            '_,
-            provider::gregory::DatePatternsV1Marker,
-        > = data_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::GREGORY_DATE_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
+        let patterns_data: icu_provider::DataPayload<'_, provider::gregory::DatePatternsV1Marker> =
+            data_provider
+                .load_payload(&DataRequest {
+                    resource_path: ResourcePath {
+                        key: provider::key::GREGORY_DATE_PATTERNS_V1,
+                        options: ResourceOptions {
+                            variant: None,
+                            langid: Some(locale.clone().into()),
+                        },
                     },
-                },
-            })?
-            .take_payload()?;
+                })?
+                .take_payload()?;
 
         let pattern = patterns_data
             .get()

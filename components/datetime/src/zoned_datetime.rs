@@ -111,20 +111,18 @@ impl<'data> ZonedDateTimeFormat<'data> {
             + ?Sized,
     {
         let locale = locale.into();
-        let pattern_data: icu_provider::DataPayload<
-            '_,
-            provider::gregory::DatePatternsV1Marker,
-        > = date_provider
-            .load_payload(&DataRequest {
-                resource_path: ResourcePath {
-                    key: provider::key::GREGORY_DATE_PATTERNS_V1,
-                    options: ResourceOptions {
-                        variant: None,
-                        langid: Some(locale.clone().into()),
+        let pattern_data: icu_provider::DataPayload<'_, provider::gregory::DatePatternsV1Marker> =
+            date_provider
+                .load_payload(&DataRequest {
+                    resource_path: ResourcePath {
+                        key: provider::key::GREGORY_DATE_PATTERNS_V1,
+                        options: ResourceOptions {
+                            variant: None,
+                            langid: Some(locale.clone().into()),
+                        },
                     },
-                },
-            })?
-            .take_payload()?;
+                })?
+                .take_payload()?;
 
         let pattern = pattern_data
             .get()

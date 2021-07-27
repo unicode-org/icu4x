@@ -82,9 +82,7 @@ where
 {
     /// Upcast for ErasedDataStruct creates an `Rc<dyn ErasedDataStruct>` from the current inner
     /// `Yoke` (i.e., `Rc::from(yoke)`).
-    fn upcast(
-        other: DataPayload<'static, M>,
-    ) -> DataPayload<'static, ErasedDataStructMarker> {
+    fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
             RcStruct(yoke) => {

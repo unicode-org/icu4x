@@ -245,7 +245,9 @@ impl<'b, 'data: 'b> SerdeSeDataStructWrap<'b, 'data> {
     }
 }
 
-impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data> for SerdeSeDataStructWrap<'static, 'static> {
+impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
+    for SerdeSeDataStructWrap<'static, 'static>
+{
     fn zero_copy_from<'b>(
         this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
     ) -> SerdeSeDataStructWrap<'b, 'b> {

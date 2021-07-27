@@ -99,7 +99,10 @@ impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
 macro_rules! impl_data_provider {
     ($id:ident: $lt:lifetime, $marker:ident) => {
         impl<$lt> DataProvider<$lt, $marker> for TimeZonesProvider<$lt> {
-            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<$lt, $marker>, DataError> {
+            fn load_payload(
+                &self,
+                req: &DataRequest,
+            ) -> Result<DataResponse<$lt, $marker>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
                 let time_zones = match self
