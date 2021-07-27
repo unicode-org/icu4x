@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use displaydoc::Display;
-use std::{
+use core::{
     cmp::{Ord, PartialOrd},
     convert::TryFrom,
 };
+use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq)]
 pub enum LengthError {
@@ -14,7 +14,7 @@ pub enum LengthError {
     InvalidLength,
 }
 
-impl std::error::Error for LengthError {}
+impl core::error::Error for LengthError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(

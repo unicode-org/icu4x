@@ -6,10 +6,15 @@ mod error;
 mod parser;
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::{convert::TryFrom, fmt};
+use core::{fmt::Write, iter::FromIterator};
 pub use error::Error;
 use parser::Parser;
-use std::{convert::TryFrom, fmt};
-use std::{fmt::Write, iter::FromIterator};
 
 #[cfg(feature = "provider_serde")]
 use serde::{

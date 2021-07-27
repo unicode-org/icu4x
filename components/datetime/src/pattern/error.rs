@@ -22,7 +22,7 @@ pub enum Error {
     UnclosedPlaceholder,
 }
 
-impl std::error::Error for Error {}
+impl core::error::Error for Error {}
 
 impl From<fields::Error> for Error {
     fn from(input: fields::Error) -> Self {

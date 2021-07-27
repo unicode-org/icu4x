@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::string::String;
 use icu_locid::Locale;
 use icu_provider::{DataProvider, DataRequest, ResourceOptions, ResourcePath};
 
@@ -233,10 +234,10 @@ impl<'data> ZonedDateTimeFormat<'data> {
     /// ```
     pub fn format_to_write(
         &self,
-        w: &mut impl std::fmt::Write,
+        w: &mut impl core::fmt::Write,
         value: &impl ZonedDateTimeInput,
-    ) -> std::fmt::Result {
-        zoned_datetime::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
+    ) -> core::fmt::Result {
+        zoned_datetime::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.

@@ -16,7 +16,7 @@ pub enum DateTimeFormatError {
     Pattern(pattern::Error),
     /// An error originating from the [`Write`](std::fmt::Write) trait.
     #[displaydoc("{0}")]
-    Format(std::fmt::Error),
+    Format(core::fmt::Error),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider).
     #[displaydoc("{0}")]
     DataProvider(DataError),
@@ -32,7 +32,7 @@ pub enum DateTimeFormatError {
     UnsupportedField(FieldSymbol),
 }
 
-impl std::error::Error for DateTimeFormatError {}
+impl core::error::Error for DateTimeFormatError {}
 
 impl From<pattern::Error> for DateTimeFormatError {
     fn from(e: pattern::Error) -> Self {
@@ -46,8 +46,8 @@ impl From<DataError> for DateTimeFormatError {
     }
 }
 
-impl From<std::fmt::Error> for DateTimeFormatError {
-    fn from(e: std::fmt::Error) -> Self {
+impl From<core::fmt::Error> for DateTimeFormatError {
+    fn from(e: core::fmt::Error) -> Self {
         DateTimeFormatError::Format(e)
     }
 }

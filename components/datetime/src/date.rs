@@ -2,17 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::convert::TryFrom;
+use core::ops::{Add, Sub};
+use core::str::FromStr;
 use displaydoc::Display;
 use icu_locid::Locale;
-use std::convert::TryFrom;
-use std::ops::{Add, Sub};
-use std::str::FromStr;
 use tinystr::TinyStr8;
 
 #[derive(Display, Debug)]
 pub enum DateTimeError {
     #[displaydoc("{0}")]
-    Parse(std::num::ParseIntError),
+    Parse(core::num::ParseIntError),
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
     #[displaydoc("{field} must be between {min}-0")]
@@ -21,10 +21,10 @@ pub enum DateTimeError {
     InvalidTimeZoneOffset,
 }
 
-impl std::error::Error for DateTimeError {}
+impl core::error::Error for DateTimeError {}
 
-impl From<std::num::ParseIntError> for DateTimeError {
-    fn from(e: std::num::ParseIntError) -> Self {
+impl From<core::num::ParseIntError> for DateTimeError {
+    fn from(e: core::num::ParseIntError) -> Self {
         DateTimeError::Parse(e)
     }
 }
@@ -299,7 +299,7 @@ impl From<usize> for IsoWeekday {
         if ordinal == 0 {
             ordinal = 7;
         }
-        unsafe { std::mem::transmute(ordinal) }
+        unsafe { core::mem::transmute(ordinal) }
     }
 }
 
