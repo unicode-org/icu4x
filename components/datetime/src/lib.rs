@@ -69,6 +69,11 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`Length`]: options::length
 //! [`MockDateTime`]: mock::datetime::MockDateTime
+
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
+
 mod arithmetic;
 pub mod date;
 pub mod datetime;
