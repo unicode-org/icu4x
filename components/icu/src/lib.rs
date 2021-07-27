@@ -80,6 +80,8 @@
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
 pub mod datetime {
     //! Date and Time operations
     //!
