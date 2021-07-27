@@ -219,9 +219,9 @@ where
     }
 }
 
-impl<'data, M> DataPayload<'data, M>
+impl<M> DataPayload<'static, M>
 where
-    M: DataMarker<'data>,
+    M: DataMarker<'static>,
 {
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
@@ -279,12 +279,7 @@ where
             inner: DataPayloadInner::RcBuf(yoke),
         })
     }
-}
 
-impl<'data, M> DataPayload<'data, M>
-where
-    M: DataMarker<'data>,
-{
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
     /// # Examples
@@ -308,7 +303,12 @@ where
             inner: DataPayloadInner::Owned(Yoke::new_always_owned(data)),
         }
     }
+}
 
+impl<'data, M> DataPayload<'data, M>
+where
+    M: DataMarker<'data>,
+{
     /// Mutate the data contained in this DataPayload.
     ///
     /// For safety, all mutation operations must take place within a helper function that cannot

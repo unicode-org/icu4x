@@ -100,9 +100,9 @@ pub trait SerdeDeDataReceiver {
     ) -> Result<(), Error>;
 }
 
-impl<'data, M> SerdeDeDataReceiver for Option<DataPayload<'data, M>>
+impl<M> SerdeDeDataReceiver for Option<DataPayload<'static, M>>
 where
-    M: DataMarker<'data>,
+    M: DataMarker<'static>,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
@@ -159,17 +159,17 @@ pub trait SerdeDeDataProvider {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'data
+impl<M> DataProvider<'static, M> for dyn SerdeDeDataProvider
 where
-    M: DataMarker<'data>,
+    M: DataMarker<'static>,
     M::Yokeable: serde::de::Deserialize<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    /// Serve objects implementing [`serde::Deserialize<'data>`] from a [`SerdeDeDataProvider`].
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
+    /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
         Ok(DataResponse { metadata, payload })
