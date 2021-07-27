@@ -41,9 +41,10 @@ This crate also contains some concrete implementations for testing purposes:
 Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
 associated with a marker type implementing [`DataMarker`].
 
-Most [`DataProvider`] traits take one lifetime argument: `'data`. This represents the lifetime
-of fields within a data struct. [`DataMarker`] also takes the `'data` lifetime, and this is
-also the lifetime that [`Yokeable`] should handle.
+Most [`DataProvider`] traits take one lifetime argument: `'data`. This lifetime allows data
+structs to borrow zero-copy data. In practice, it also represents the lifetime of data that
+the Cart of the Yoke of the DataPayload borrows; for more information on carts and yokes,
+see [`yoke`].
 
 ### Additional Traits
 
