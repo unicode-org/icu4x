@@ -371,7 +371,7 @@ impl UnicodeSet {
 #[cfg(test)]
 mod tests {
     use super::{UnicodeSet, UnicodeSetError, BMP_MAX};
-    use core::{char, vec::Vec};
+    use std::{char, vec::Vec};
 
     #[test]
     fn test_unicodeset_try_from_vec() {
