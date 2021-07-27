@@ -6,8 +6,10 @@ mod error;
 mod parser;
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+#[cfg(feature = "provider_serde")]
 use alloc::format;
 use alloc::string::String;
+#[cfg(feature = "provider_serde")]
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;

@@ -4,7 +4,9 @@
 
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
+#[cfg(feature = "provider_serde")]
 use alloc::format;
+#[cfg(feature = "provider_serde")]
 use alloc::string::String;
 
 use alloc::vec::Vec;
