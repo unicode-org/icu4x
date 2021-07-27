@@ -18,7 +18,6 @@
 //! [`FsDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 //! [`BinaryPropertiesDataProvider`]: binary::BinaryPropertiesDataProvider
 
-
 mod binary;
 mod error;
 mod upropdump_serde;
