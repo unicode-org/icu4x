@@ -29,11 +29,11 @@ impl BinaryPropertiesDataProvider {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, UnicodePropertyV1Marker> for BinaryPropertiesDataProvider {
+impl<'d> DataProvider<'d, UnicodePropertyV1Marker> for BinaryPropertiesDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, UnicodePropertyV1Marker>, DataError> {
+    ) -> Result<DataResponse<'d, UnicodePropertyV1Marker>, DataError> {
         let toml_data: upropdump_serde::binary::Main = self
             .get_toml_data(&req.resource_path.key.sub_category)
             .map_err(DataError::new_resc_error)?;
@@ -63,7 +63,7 @@ impl<'d, 's> DataProvider<'d, 's, UnicodePropertyV1Marker> for BinaryPropertiesD
 
 icu_provider::impl_dyn_provider!(BinaryPropertiesDataProvider, {
     _ => UnicodePropertyV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'd);
 
 impl IterableDataProviderCore for BinaryPropertiesDataProvider {
     fn supported_options_for_key(
@@ -83,7 +83,7 @@ fn test_basic() {
     let root_dir = icu_testdata::paths::data_root().join("uprops");
     let provider = BinaryPropertiesDataProvider::new(root_dir);
 
-    let payload: DataPayload<'_, '_, UnicodePropertyV1Marker> = provider
+    let payload: DataPayload<'_, UnicodePropertyV1Marker> = provider
         .load_payload(&DataRequest {
             resource_path: ResourcePath {
                 key: key::WHITE_SPACE_V1,
