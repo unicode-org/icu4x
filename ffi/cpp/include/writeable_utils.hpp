@@ -37,6 +37,18 @@ inline ICU4XWriteable WriteableFromString(std::string& string) {
   return w;
 };
 
+template<typename T> struct WriteableTrait {
+  // static inline ICU4XWriteable Construct(T& t);
+};
+
+
+template<> struct WriteableTrait<std::string> {
+  static inline ICU4XWriteable Construct(std::string& t) {
+    return WriteableFromString(t);
+  }
+};
+
+
 }  // namespace icu4x::internal
 
 #endif  // ICU4X_WRITEABLE_UTILS_HPP

@@ -68,6 +68,12 @@ class FixedDecimalFormat {
     return out;
   }
 
+  template<typename T> bool FormatToWriteable(const FixedDecimal& dec, T& writeable) const {
+    ICU4XWriteable writer = icu4x::internal::WriteableTrait<T>::Construct(writeable);
+    bool success = icu4x_fixed_decimal_format_write(this->inner.get(),
+                                                    dec.AsFFI(), &writer);
+    return success;
+  }
  private:
   FixedDecimalFormat(ICU4XFixedDecimalFormat* i) : inner(i) {}
   std::unique_ptr<ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatDeleter>

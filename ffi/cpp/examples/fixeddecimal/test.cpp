@@ -25,6 +25,19 @@ int main() {
         return 1;
     }
 
+    std::string out2;
+    bool success = fdf.FormatToWriteable(decimal, out2);
+    if (!success) {
+        std::cout << "FormatToWriteable failed" << std::endl;
+        return 1;
+    }
+    std::cout << "Formatted Writeable value is " << out2 << std::endl;
+
+    if (out2 != "১০,০০,০০৭") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
     decimal.MultiplyPow10(2);
     decimal.Negate();
     out = fdf.Format(decimal).value();

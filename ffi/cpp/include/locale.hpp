@@ -29,6 +29,14 @@ class Locale {
     }
     return out;
   }
+  template<typename T> bool ToWriteable(T& writeable) const {
+    ICU4XWriteable writer = icu4x::internal::WriteableTrait<T>::Construct(writeable);
+    ICU4XLocaleResult result = icu4x_locale_tostring(this->inner.get(), &writer);
+    if (result != ICU4XLocaleResult_Ok) {
+      return false;
+    }
+    return true;
+  }
   inline const ICU4XLocale* AsFFI() const { return this->inner.get(); }
 
  private:
