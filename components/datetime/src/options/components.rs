@@ -73,7 +73,7 @@
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
-use alloc::vec;
+
 use alloc::vec::Vec;
 
 use super::preferences;

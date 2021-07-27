@@ -9,7 +9,7 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::pattern::{Pattern, PatternItem};
 use crate::provider;
 use crate::provider::helpers::DateTimeSymbols;
-use alloc::string::String;
+
 use alloc::string::ToString;
 use core::fmt;
 use icu_locid::Locale;
