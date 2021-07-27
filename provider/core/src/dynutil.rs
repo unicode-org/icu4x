@@ -94,7 +94,7 @@ where
 ///
 /// // A small DataProvider that returns owned strings
 /// struct MyProvider(pub String);
-/// impl<'d> DataProvider<'static, CowStringMarker> for MyProvider {
+/// impl<'data> DataProvider<'static, CowStringMarker> for MyProvider {
 ///     fn load_payload(&self, req: &DataRequest)
 ///             -> Result<DataResponse<'static, CowStringMarker>, DataError> {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
@@ -108,7 +108,7 @@ where
 /// // Implement DataProvider<ErasedDataStructMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowStringMarker,
-/// }, ERASED, 'd);
+/// }, ERASED);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
@@ -130,7 +130,7 @@ where
 /// # use icu_provider::marker::CowStringMarker;
 /// # use std::borrow::Cow;
 /// # struct MyProvider(pub String);
-/// # impl<'d> DataProvider<'static, CowStringMarker> for MyProvider {
+/// # impl<'data> DataProvider<'static, CowStringMarker> for MyProvider {
 /// #   fn load_payload(&self, req: &DataRequest)
 /// #           -> Result<DataResponse<'static, CowStringMarker>, DataError> {
 /// #       Ok(DataResponse {
@@ -142,7 +142,7 @@ where
 /// // Send all keys to the `CowStringMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => CowStringMarker,
-/// }, ERASED, 'd);
+/// }, ERASED);
 /// ```
 ///
 /// [`DataProvider`]: crate::DataProvider

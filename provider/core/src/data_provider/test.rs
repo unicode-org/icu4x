@@ -136,7 +136,7 @@ fn get_payload_v1<'data, P: DataProvider<'data, HelloWorldV1Marker> + ?Sized>(
     provider.load_payload(&get_request_v1())?.take_payload()
 }
 
-fn get_payload_alt<'d, P: DataProvider<'static, HelloAltMarker> + ?Sized>(
+fn get_payload_alt<'data, P: DataProvider<'static, HelloAltMarker> + ?Sized>(
     d: &P,
 ) -> Result<DataPayload<'static, HelloAltMarker>, DataError> {
     d.load_payload(&get_request_alt())?.take_payload()

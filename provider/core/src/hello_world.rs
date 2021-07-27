@@ -148,7 +148,7 @@ impl_dyn_provider!(HelloWorldProvider<'data>, {
     _ => HelloWorldV1Marker,
 }, SERDE_SE, 'data);
 
-impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
+impl<'data> IterableDataProviderCore for HelloWorldProvider<'data> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
@@ -167,7 +167,7 @@ impl<'d> IterableDataProviderCore for HelloWorldProvider<'d> {
 }
 
 /// Adds entries to a [`HelloWorldProvider`] from [`ErasedDataStruct`](crate::erased::ErasedDataStruct)
-impl<'d> crate::export::DataExporter<'static, crate::erased::ErasedDataStructMarker>
+impl<'data> crate::export::DataExporter<'static, crate::erased::ErasedDataStructMarker>
     for HelloWorldProvider<'static>
 {
     fn put_payload(

@@ -127,14 +127,14 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn flexible_day_period(&self);
 }
 
-pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
-    data: &'s T,
+pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
+    data: &'data T,
     _first_weekday: u8,
     _anchor_weekday: u8,
 }
 
-impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
-    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
+    pub fn new(data: &'data T, _locale: &Locale) -> Self {
         Self {
             data,
             // TODO(#488): Implement week calculations.
@@ -144,14 +144,14 @@ impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
     }
 }
 
-pub(crate) struct ZonedDateTimeInputWithLocale<'s, T: ZonedDateTimeInput> {
-    data: &'s T,
+pub(crate) struct ZonedDateTimeInputWithLocale<'data, T: ZonedDateTimeInput> {
+    data: &'data T,
     _first_weekday: u8,
     _anchor_weekday: u8,
 }
 
-impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
-    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+impl<'data, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'data, T> {
+    pub fn new(data: &'data T, _locale: &Locale) -> Self {
         Self {
             data,
             // TODO(#488): Implement week calculations.
@@ -161,7 +161,7 @@ impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
     }
 }
 
-impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'data, T> {
     fn datetime(&self) -> &T {
         self.data
     }
@@ -183,7 +183,7 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
     }
 }
 
-impl<'s, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'s, T> {
+impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'data, T> {
     fn datetime(&self) -> &T {
         self.data
     }

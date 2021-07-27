@@ -7,7 +7,7 @@ The primary trait is [`DataProvider`]. It has one method, which transforms a [`R
 a [`Response`]:
 
 ```rust
-fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
+fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data>, DataError>
 ```
 
 A [`Request`] contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,

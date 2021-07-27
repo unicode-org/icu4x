@@ -57,13 +57,13 @@ use crate::{
 ///
 /// This model replicates that of `ICU` and `ECMA402`. In the future this will become even more pronounced
 /// when we introduce asynchronous [`DataProvider`] and corresponding asynchronous constructor.
-pub struct DateTimeFormat<'d> {
+pub struct DateTimeFormat<'data> {
     pub(super) locale: Locale,
     pub(super) pattern: Pattern,
-    pub(super) symbols: Option<DataPayload<'d, 'd, DateSymbolsV1Marker>>,
+    pub(super) symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
 }
 
-impl<'d> DateTimeFormat<'d> {
+impl<'data> DateTimeFormat<'data> {
     /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -88,8 +88,8 @@ impl<'d> DateTimeFormat<'d> {
     /// ```
     pub fn try_new<
         T: Into<Locale>,
-        D: DataProvider<'d, 'd, DateSymbolsV1Marker>
-            + DataProvider<'d, 'd, DatePatternsV1Marker>
+        D: DataProvider<'data, DateSymbolsV1Marker>
+            + DataProvider<'data, DatePatternsV1Marker>
             + ?Sized,
     >(
         locale: T,
@@ -99,7 +99,6 @@ impl<'d> DateTimeFormat<'d> {
         let locale = locale.into();
 
         let patterns_data: icu_provider::DataPayload<
-            '_,
             '_,
             provider::gregory::DatePatternsV1Marker,
         > = data_provider
@@ -159,7 +158,7 @@ impl<'d> DateTimeFormat<'d> {
     pub(super) fn new<T: Into<Locale>>(
         locale: T,
         pattern: Pattern,
-        symbols: Option<DataPayload<'d, 'd, DateSymbolsV1Marker>>,
+        symbols: Option<DataPayload<'data, DateSymbolsV1Marker>>,
     ) -> Self {
         let locale = locale.into();
 

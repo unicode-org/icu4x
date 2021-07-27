@@ -96,7 +96,7 @@ impl FsDataProvider {
 
 /// FsDataProvider never returns data payloads with external borrows, so its lifetime parameter
 /// is set to `'static`. Data payloads may still have internal self-referential borrows.
-impl<M> DataProvider<'static, 'static, M> for FsDataProvider
+impl<M> DataProvider<'static, M> for FsDataProvider
 where
     M: DataMarker<'static>,
     // Actual bound:
@@ -107,7 +107,7 @@ where
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'static, 'static, M>, DataError> {
+    ) -> Result<DataResponse<'static, M>, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {

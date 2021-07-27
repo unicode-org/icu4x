@@ -15,7 +15,7 @@ macro_rules! map_access {
             pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&$inner>
             where
                 Q: Ord,
-                Cow<'s, $key>: std::borrow::Borrow<Q>,
+                Cow<'data, $key>: std::borrow::Borrow<Q>,
             {
                 self.0.get(key)
             }
@@ -28,7 +28,7 @@ macro_rules! map_access {
         impl<$lt, Q: ?Sized> std::ops::Index<&Q> for $outer
         where
             Q: Ord,
-            Cow<'s, $key>: std::borrow::Borrow<Q>,
+            Cow<'data, $key>: std::borrow::Borrow<Q>,
         {
             type Output = $inner;
             fn index(&self, key: &Q) -> &Self::Output {
@@ -47,20 +47,20 @@ macro_rules! map_access {
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct TimeZoneFormatsV1<'s> {
+pub struct TimeZoneFormatsV1<'data> {
     /// The hour format for displaying GMT offsets.
-    pub hour_format: (Cow<'s, str>, Cow<'s, str>),
+    pub hour_format: (Cow<'data, str>, Cow<'data, str>),
     /// The localized GMT-offset format.
-    pub gmt_format: Cow<'s, str>,
+    pub gmt_format: Cow<'data, str>,
     /// The localized GMT format with no offset.
-    pub gmt_zero_format: Cow<'s, str>,
+    pub gmt_zero_format: Cow<'data, str>,
     /// The format string for a region.
-    pub region_format: Cow<'s, str>,
+    pub region_format: Cow<'data, str>,
     /// The format strings for region format variants
     /// e.g. daylight, standard.
-    pub region_format_variants: LiteMap<Cow<'s, TinyStr8>, Cow<'s, str>>,
+    pub region_format_variants: LiteMap<Cow<'data, TinyStr8>, Cow<'data, str>>,
     /// The format string to fall back to if data is unavailable.
-    pub fallback_format: Cow<'s, str>,
+    pub fallback_format: Cow<'data, str>,
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
@@ -72,8 +72,8 @@ pub struct TimeZoneFormatsV1<'s> {
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct ExemplarCitiesV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
-map_access!(ExemplarCitiesV1<'s>[str] => Cow<'s, str>: 's);
+pub struct ExemplarCitiesV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
+map_access!(ExemplarCitiesV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -84,8 +84,8 @@ map_access!(ExemplarCitiesV1<'s>[str] => Cow<'s, str>: 's);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
-map_access!(MetaZoneGenericNamesLongV1<'s>[str] => Cow<'s, str>: 's);
+pub struct MetaZoneGenericNamesLongV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
+map_access!(MetaZoneGenericNamesLongV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the short-form generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -96,8 +96,8 @@ map_access!(MetaZoneGenericNamesLongV1<'s>[str] => Cow<'s, str>: 's);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneGenericNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, Cow<'s, str>>);
-map_access!(MetaZoneGenericNamesShortV1<'s>[str] => Cow<'s, str>: 's);
+pub struct MetaZoneGenericNamesShortV1<'data>(pub LiteMap<Cow<'data, str>, Cow<'data, str>>);
+map_access!(MetaZoneGenericNamesShortV1<'data>[str] => Cow<'data, str>: 'data);
 
 /// An ICU4X mapping to the long-form specific metazone names.
 /// Specific names include time variants such as "daylight."
@@ -109,8 +109,8 @@ map_access!(MetaZoneGenericNamesShortV1<'s>[str] => Cow<'s, str>: 's);
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesLongV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
-map_access!(MetaZoneSpecificNamesLongV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
+pub struct MetaZoneSpecificNamesLongV1<'data>(pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>);
+map_access!(MetaZoneSpecificNamesLongV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// An ICU4X mapping to the short-form specific metazone names.
 /// Specific names include time variants such as "daylight."
@@ -122,8 +122,8 @@ map_access!(MetaZoneSpecificNamesLongV1<'s>[str] => MetaZoneSpecificNamesV1<'s>:
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesShortV1<'s>(pub LiteMap<Cow<'s, str>, MetaZoneSpecificNamesV1<'s>>);
-map_access!(MetaZoneSpecificNamesShortV1<'s>[str] => MetaZoneSpecificNamesV1<'s>: 's);
+pub struct MetaZoneSpecificNamesShortV1<'data>(pub LiteMap<Cow<'data, str>, MetaZoneSpecificNamesV1<'data>>);
+map_access!(MetaZoneSpecificNamesShortV1<'data>[str] => MetaZoneSpecificNamesV1<'data>: 'data);
 
 /// A general struct to hold metazone specific name variants.
 /// Specific names include time variants such as "daylight."
@@ -135,5 +135,5 @@ map_access!(MetaZoneSpecificNamesShortV1<'s>[str] => MetaZoneSpecificNamesV1<'s>
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct MetaZoneSpecificNamesV1<'s>(pub LiteMap<Cow<'s, TinyStr8>, Cow<'s, str>>);
-map_access!(MetaZoneSpecificNamesV1<'s>[TinyStr8] => Cow<'s, str>: 's);
+pub struct MetaZoneSpecificNamesV1<'data>(pub LiteMap<Cow<'data, TinyStr8>, Cow<'data, str>>);
+map_access!(MetaZoneSpecificNamesV1<'data>[TinyStr8] => Cow<'data, str>: 'data);

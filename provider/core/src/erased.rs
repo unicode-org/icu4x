@@ -75,20 +75,13 @@ impl DataMarker<'static> for ErasedDataStructMarker {
     type Cart = dyn ErasedDataStruct;
 }
 
-impl<'d, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
+impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
-    /// Upcast for ErasedDataStruct performs the following mapping of the data payload variants,
-    /// where `Y` is the concrete Yokeable and `S` is ErasedDataStruct Yokeable:
-    ///
-    /// - `Yoke<Y, &'d C>` => `Yoke<S, &'d dyn ErasedDataStruct>`, where the trait object in the
-    ///   cart is obtained by calling `.into_backing_cart()` on the input Yoke
-    /// - `Yoke<Y, Rc<C>>` => `Yoke<S, Rc<dyn ErasedDataStruct>`, where the trait object in the
-    ///   cart is the result of casting the whole input Yoke to `ErasedDataStruct`
-    /// - `Yoke<Y, _>` (fully owned) => `Yoke<S, Rc<dyn ErasedDataStruct>>`, by casting the
-    ///   whole input Yoke to `ErasedDataStruct` as above
+    /// Upcast for ErasedDataStruct creates an `Rc<dyn ErasedDataStruct>` from the current inner
+    /// `Yoke` (i.e., `Rc::from(yoke)`).
     fn upcast(
         other: DataPayload<'static, M>,
     ) -> DataPayload<'static, ErasedDataStructMarker> {
@@ -113,7 +106,7 @@ where
     }
 }
 
-impl<'d> DataPayload<'static, ErasedDataStructMarker> {
+impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a
     /// concrete type.
     ///
@@ -244,7 +237,7 @@ where
 ///
 /// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
 /// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
-pub trait ErasedDataProvider<'d> {
+pub trait ErasedDataProvider<'data> {
     /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
@@ -256,7 +249,7 @@ pub trait ErasedDataProvider<'d> {
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
-impl<'d, T> ErasedDataProvider<'d> for T
+impl<'data, T> ErasedDataProvider<'data> for T
 where
     T: DataProvider<'static, ErasedDataStructMarker>,
 {
@@ -268,7 +261,7 @@ where
     }
 }
 
-impl<'d, M> DataProvider<'static, M> for dyn ErasedDataProvider<'d> + 'd
+impl<'data, M> DataProvider<'static, M> for dyn ErasedDataProvider<'data> + 'data
 where
     M: DataMarker<'static>,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,

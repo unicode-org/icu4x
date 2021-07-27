@@ -29,9 +29,9 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
 
 /// A data provider reading from CLDR JSON zones files.
 #[derive(PartialEq, Debug)]
-pub struct TimeZonesProvider<'d> {
+pub struct TimeZonesProvider<'data> {
     data: Vec<(CldrLangID, cldr_json::LangTimeZones)>,
-    phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
+    phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
 impl TryFrom<&dyn CldrPaths> for TimeZonesProvider<'_> {
@@ -70,7 +70,7 @@ impl TryFrom<&str> for TimeZonesProvider<'_> {
     }
 }
 
-impl<'d> KeyedDataProvider for TimeZonesProvider<'d> {
+impl<'data> KeyedDataProvider for TimeZonesProvider<'data> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::TimeZone || resc_key.version != 1 {
             return Err(resc_key.into());
@@ -79,7 +79,7 @@ impl<'d> KeyedDataProvider for TimeZonesProvider<'d> {
     }
 }
 
-impl<'d> IterableDataProviderCore for TimeZonesProvider<'d> {
+impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -98,8 +98,8 @@ impl<'d> IterableDataProviderCore for TimeZonesProvider<'d> {
 
 macro_rules! impl_data_provider {
     ($id:ident: $lt:lifetime, $marker:ident) => {
-        impl<$lt, 'dp: $lt> DataProvider<'dp, 'dp, $marker> for TimeZonesProvider<$lt> {
-            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'dp, 'dp, $marker>, DataError> {
+        impl<$lt> DataProvider<$lt, $marker> for TimeZonesProvider<$lt> {
+            fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<$lt, $marker>, DataError> {
                 TimeZonesProvider::supports_key(&req.resource_path.key)?;
                 let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
                 let time_zones = match self
@@ -120,23 +120,23 @@ macro_rules! impl_data_provider {
     };
 }
 
-icu_provider::impl_dyn_provider!(TimeZonesProvider<'d>, {
+icu_provider::impl_dyn_provider!(TimeZonesProvider<'data>, {
     key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1Marker,
     key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1Marker,
     key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1Marker,
     key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
-}, ERASED, 'd);
+}, ERASED);
 
-icu_provider::impl_dyn_provider!(TimeZonesProvider<'d>, {
+icu_provider::impl_dyn_provider!(TimeZonesProvider<'data>, {
     key::TIMEZONE_FORMATS_V1 => TimeZoneFormatsV1Marker,
     key::TIMEZONE_EXEMPLAR_CITIES_V1 => ExemplarCitiesV1Marker,
     key::TIMEZONE_GENERIC_NAMES_LONG_V1 => MetaZoneGenericNamesLongV1Marker,
     key::TIMEZONE_GENERIC_NAMES_SHORT_V1 => MetaZoneGenericNamesShortV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_LONG_V1 => MetaZoneSpecificNamesLongV1Marker,
     key::TIMEZONE_SPECIFIC_NAMES_SHORT_V1 => MetaZoneSpecificNamesShortV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
 impl_data_provider!(TimeZoneFormatsV1: 'd, TimeZoneFormatsV1Marker);
 impl_data_provider!(ExemplarCitiesV1: 'd, ExemplarCitiesV1Marker);
