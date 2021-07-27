@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627425918302,
+  "lastUpdate": 1627426026185,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8939,6 +8939,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31932477,
             "range": "± 2109748",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5970335819dd63caf5653ca76529bd9e9e90650e",
+          "message": "Fix FFI lifetimes for DataProvider (#914)",
+          "timestamp": "2021-07-27T17:39:49-05:00",
+          "tree_id": "5e873125b3716f751c3ccd3acf1a7c938dd499af",
+          "url": "https://github.com/unicode-org/icu4x/commit/5970335819dd63caf5653ca76529bd9e9e90650e"
+        },
+        "date": 1627426015945,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34582249,
+            "range": "± 540096",
             "unit": "ns/iter"
           }
         ]
