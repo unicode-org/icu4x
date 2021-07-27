@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
 use alloc::format;
 use alloc::string::String;
-use core::{borrow::Cow, fmt};
+use core::fmt;
 
 use crate::{
     date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
