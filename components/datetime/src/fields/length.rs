@@ -14,7 +14,8 @@ pub enum LengthError {
     InvalidLength,
 }
 
-impl core::error::Error for LengthError {}
+#[cfg(feature = "std")]
+impl std::error::Error for LengthError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(

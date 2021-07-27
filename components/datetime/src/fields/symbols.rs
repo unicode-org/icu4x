@@ -16,7 +16,8 @@ pub enum SymbolError {
     Invalid(char),
 }
 
-impl core::error::Error for SymbolError {}
+#[cfg(feature = "std")]
+impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(

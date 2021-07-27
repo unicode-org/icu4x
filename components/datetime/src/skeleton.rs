@@ -243,7 +243,8 @@ pub enum SkeletonError {
     Fields(fields::Error),
 }
 
-impl core::error::Error for SkeletonError {}
+#[cfg(feature = "std")]
+impl std::error::Error for SkeletonError {}
 
 impl From<fields::Error> for SkeletonError {
     fn from(e: fields::Error) -> Self {

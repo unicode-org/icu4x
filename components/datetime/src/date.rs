@@ -21,7 +21,8 @@ pub enum DateTimeError {
     InvalidTimeZoneOffset,
 }
 
-impl core::error::Error for DateTimeError {}
+#[cfg(feature = "std")]
+impl std::error::Error for DateTimeError {}
 
 impl From<core::num::ParseIntError> for DateTimeError {
     fn from(e: core::num::ParseIntError) -> Self {

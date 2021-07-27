@@ -32,7 +32,8 @@ pub enum DateTimeFormatError {
     UnsupportedField(FieldSymbol),
 }
 
-impl core::error::Error for DateTimeFormatError {}
+#[cfg(feature = "std")]
+impl std::error::Error for DateTimeFormatError {}
 
 impl From<pattern::Error> for DateTimeFormatError {
     fn from(e: pattern::Error) -> Self {
