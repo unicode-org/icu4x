@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627426016809,
+  "lastUpdate": 1627426163784,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5075,6 +5075,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1255496,
             "range": "± 74537",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ea601271e0cb3122b1ed00c28f0ef4cd9a366a6",
+          "message": "Add zv_serde example, plus improvements to Makefile.toml (#901)",
+          "timestamp": "2021-07-27T17:42:13-05:00",
+          "tree_id": "0dbdf8a7cb2b0ea1137bd37e7ab9c26a490abc7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/4ea601271e0cb3122b1ed00c28f0ef4cd9a366a6"
+        },
+        "date": 1627426161162,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 729845,
+            "range": "± 30416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1475594,
+            "range": "± 50866",
             "unit": "ns/iter"
           }
         ]
