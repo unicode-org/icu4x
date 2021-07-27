@@ -12,7 +12,7 @@ use std::fs;
 use std::process;
 
 fn wasm_filesize(dir: &str) -> Result<u64, std::io::Error> {
-    let paths = fs::read_dir(dir).expect("Directory wih wasm binaries not found!");
+    let paths = fs::read_dir(dir).expect("Directory with wasm binaries not found!");
     let mut count: u64 = 0;
     for path in paths {
         let p = path.unwrap().path();
