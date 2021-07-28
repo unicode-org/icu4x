@@ -69,7 +69,7 @@ class FixedDecimalFormat {
   }
 
   template<typename T> bool FormatToWriteable(const FixedDecimal& dec, T& writeable) const {
-    ICU4XWriteable writer = icu4x::internal::WriteableTrait<T>::Construct(writeable);
+    ICU4XWriteable writer = icu4x::writeable::WriteableTrait<T>::Construct(writeable);
     bool success = icu4x_fixed_decimal_format_write(this->inner.get(),
                                                     dec.AsFFI(), &writer);
     return success;
