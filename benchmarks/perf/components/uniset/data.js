@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627429461829,
+  "lastUpdate": 1627504078686,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9029,6 +9029,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31763420,
             "range": "± 1424078",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3d49bb1e03c399ebb5927fac6678ea8518841905",
+          "message": "Teach length::Bag how to switch hour cycles (#840)",
+          "timestamp": "2021-07-28T15:22:16-05:00",
+          "tree_id": "2a213c1f287155b7212a110cb12b7ad4333c5f70",
+          "url": "https://github.com/unicode-org/icu4x/commit/3d49bb1e03c399ebb5927fac6678ea8518841905"
+        },
+        "date": 1627504076703,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 31125012,
+            "range": "± 88884",
             "unit": "ns/iter"
           }
         ]
