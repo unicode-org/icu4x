@@ -54,6 +54,11 @@ impl Skeleton {
     fn fields_len(&self) -> usize {
         self.0.len()
     }
+
+    /// Return the underlying fields as a slice.
+    pub fn as_slice(&self) -> &[fields::Field] {
+        self.0.as_slice()
+    }
 }
 
 /// This is an implementation of the serde deserialization visitor pattern.
@@ -198,6 +203,65 @@ impl TryFrom<&str> for Skeleton {
         }
 
         Ok(Self(fields))
+    }
+}
+
+/// Convert a Pattern into a Skeleton. This will remove all of the string literals, and sort
+/// the fields into the canonical sort order. Not all fields are supported by Skeletons, so map
+/// fields into skeleton-appropriate ones. For instance, in the "ja" locale the pattern "aK:mm"
+/// gets transformed into the skeleton "hmm".
+///
+/// At the time of this writing, it's being used for applying hour cycle preferences and should not
+/// be exposed as a public API for end users.
+#[doc(hidden)]
+#[cfg(feature = "provider_transform_internals")]
+impl From<&Pattern> for Skeleton {
+    fn from(pattern: &Pattern) -> Self {
+        let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
+        for item in pattern.items() {
+            if let crate::pattern::PatternItem::Field(field) = item {
+                let mut field = *field;
+
+                // Skeletons only have a subset of available fields, these are then mapped to more
+                // specific fields for the patterns they expand to.
+                field.symbol = match field.symbol {
+                    // Only the format varieties are used in the skeletons, the matched patterns
+                    // will be more specific.
+                    FieldSymbol::Month(_) => FieldSymbol::Month(fields::Month::Format),
+                    FieldSymbol::Weekday(_) => FieldSymbol::Weekday(fields::Weekday::Format),
+
+                    // Only flexible day periods are used in skeletons, ignore all others.
+                    FieldSymbol::DayPeriod(fields::DayPeriod::AmPm)
+                    | FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight) => continue,
+                    // TODO(#487) - Flexible day periods should be included here.
+                    // FieldSymbol::DayPeriod(fields::DayPeriod::Flexible) => {
+                    //     FieldSymbol::DayPeriod(fields::DayPeriod::Flexible)
+                    // }
+
+                    // Only the H12 and H23 symbols are used in skeletons, while the patterns may
+                    // contain H11 or H23 depending on the localization.
+                    FieldSymbol::Hour(fields::Hour::H11) | FieldSymbol::Hour(fields::Hour::H12) => {
+                        FieldSymbol::Hour(fields::Hour::H12)
+                    }
+                    FieldSymbol::Hour(fields::Hour::H23) | FieldSymbol::Hour(fields::Hour::H24) => {
+                        FieldSymbol::Hour(fields::Hour::H23)
+                    }
+
+                    // Pass through all of the following preferences unchanged.
+                    FieldSymbol::Minute
+                    | FieldSymbol::Second(_)
+                    | FieldSymbol::TimeZone(_)
+                    | FieldSymbol::Year(_)
+                    | FieldSymbol::Day(_) => field.symbol,
+                };
+
+                // Only insert if it's a unique field.
+                if let Err(pos) = fields.binary_search(&field) {
+                    fields.insert(pos, field)
+                }
+            }
+        }
+        Self(fields)
     }
 }
 
@@ -382,13 +446,26 @@ fn naively_apply_hour_cycle_preferences(
 // add a lifetime here. The pattern returned here could be one that we've already constructed in
 // the CLDR as an exotic type, or it could be one that was modified to meet the requirements of
 // the components bag.
+
+/// Given a set of fields (which represents a skeleton), try to create a best localized pattern
+// for those fields.
+///
+/// * `skeletons` - The skeletons that will be matched against
+/// * `length_patterns` - Contains information on how to combine date and time patterns.
+/// * `fields` - The desired fields to match against.
+/// * `prefer_matched_pattern` - This algorithm does some extra steps of trying to respect
+///         the desired fields, even if the provider data doesn't completely match. This
+///         configuration option makes it so that the final pattern won't have additional work
+///         done to mutate it to match the fields. It will prefer the actual matched pattern.
 pub fn create_best_pattern_for_fields<'a>(
     skeletons: &'a SkeletonsV1,
     length_patterns: &LengthPatternsV1,
     fields: &[Field],
     preferences: &Option<preferences::Bag>,
+    prefer_matched_pattern: bool,
 ) -> BestSkeleton<Pattern> {
-    let first_pattern_match = get_best_available_format_pattern(skeletons, fields);
+    let first_pattern_match =
+        get_best_available_format_pattern(skeletons, fields, prefer_matched_pattern);
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern) = first_pattern_match {
@@ -403,9 +480,14 @@ pub fn create_best_pattern_for_fields<'a>(
         // TODO(#583) - TimeZones
         // TODO(#486) - Eras,
         // ... etc.
-        unimplemented!(
-            "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
-        );
+
+        // TODO(#583) - This is commented out because TimeZone support is required here in order to
+        // generate length::Bag patterns correctly. For now it's commented out so that everything
+        // works for length::Bag with a preference, although it may lack a time zone.
+
+        // unimplemented!(
+        //     "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
+        // );
     }
 
     if date.is_empty() || time.is_empty() {
@@ -426,14 +508,14 @@ pub fn create_best_pattern_for_fields<'a>(
     // Match the date and time, and then simplify the combinatorial logic of the results into
     // an optional values of the results, and a boolean value.
     let (date_pattern, date_missing_or_extra) =
-        match get_best_available_format_pattern(skeletons, &date) {
+        match get_best_available_format_pattern(skeletons, &date, prefer_matched_pattern) {
             BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
             BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
             BestSkeleton::NoMatch => (None, true),
         };
 
     let (mut time_pattern, time_missing_or_extra) =
-        match get_best_available_format_pattern(skeletons, &time) {
+        match get_best_available_format_pattern(skeletons, &time, prefer_matched_pattern) {
             BestSkeleton::MissingOrExtraFields(fields) => (Some(fields), true),
             BestSkeleton::AllFieldsMatch(fields) => (Some(fields), false),
             BestSkeleton::NoMatch => (None, true),
@@ -561,6 +643,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
 pub fn get_best_available_format_pattern(
     skeletons: &SkeletonsV1,
     fields: &[Field],
+    prefer_matched_pattern: bool,
 ) -> BestSkeleton<Pattern> {
     let mut closest_format_pattern = None;
     let mut closest_distance: u32 = u32::MAX;
@@ -657,28 +740,37 @@ pub fn get_best_available_format_pattern(
     }
 
     // Modify the resulting pattern to have fields of the same length.
-    let expanded_pattern = Pattern::from(
-        closest_format_pattern
-            .items()
-            .iter()
-            .map(|item| {
-                if let PatternItem::Field(pattern_field) = item {
-                    if let Some(requested_field) = fields
-                        .iter()
-                        .find(|field| field.symbol == pattern_field.symbol)
-                    {
-                        if requested_field.length != pattern_field.length
-                            && requested_field.get_length_type() == pattern_field.get_length_type()
+    let expanded_pattern = if prefer_matched_pattern {
+        #[cfg(not(feature = "provider_transform_internals"))]
+        panic!("This code branch should only be run when transforming provider code.");
+
+        #[cfg(feature = "provider_transform_internals")]
+        closest_format_pattern.clone()
+    } else {
+        Pattern::from(
+            closest_format_pattern
+                .items()
+                .iter()
+                .map(|item| {
+                    if let PatternItem::Field(pattern_field) = item {
+                        if let Some(requested_field) = fields
+                            .iter()
+                            .find(|field| field.symbol == pattern_field.symbol)
                         {
-                            return PatternItem::Field(*requested_field);
+                            if requested_field.length != pattern_field.length
+                                && requested_field.get_length_type()
+                                    == pattern_field.get_length_type()
+                            {
+                                return PatternItem::Field(*requested_field);
+                            }
                         }
                     }
-                }
-                // There's no match, or this is a string literal return the original item.
-                item.clone()
-            })
-            .collect::<Vec<PatternItem>>(),
-    );
+                    // There's no match, or this is a string literal return the original item.
+                    item.clone()
+                })
+                .collect::<Vec<PatternItem>>(),
+        )
+    };
 
     if closest_distance >= SKELETON_EXTRA_SYMBOL {
         return BestSkeleton::MissingOrExtraFields(expanded_pattern);
@@ -745,6 +837,7 @@ mod test {
         match get_best_available_format_pattern(
             &data_provider.get().datetime.skeletons,
             &requested_fields,
+            false,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern)
             | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
@@ -772,6 +865,7 @@ mod test {
         match get_best_available_format_pattern(
             &data_provider.get().datetime.skeletons,
             &requested_fields,
+            false,
         ) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
                 assert_eq!(available_format_pattern.to_string(), String::from("L"))
@@ -799,6 +893,7 @@ mod test {
             &data_provider.get().datetime.length_patterns,
             &requested_fields,
             &None,
+            false,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
                 // TODO - This needs to support the "Z" pattern. This test will begin to fail
@@ -821,7 +916,8 @@ mod test {
         assert_eq!(
             get_best_available_format_pattern(
                 &data_provider.get().datetime.skeletons,
-                &requested_fields
+                &requested_fields,
+                false
             ),
             BestSkeleton::NoMatch,
             "No match was found"
@@ -842,7 +938,8 @@ mod test {
         assert_eq!(
             get_best_available_format_pattern(
                 &data_provider.get().datetime.skeletons,
-                &requested_fields
+                &requested_fields,
+                false
             ),
             BestSkeleton::NoMatch,
             "No match was found"
@@ -1052,5 +1149,52 @@ mod test {
             format!("{}", err),
             "invalid value: field item out of order or duplicate: Field { symbol: Day(DayOfMonth), length: One }, expected ordered field symbols representing a skeleton"
         );
+    }
+
+    #[cfg(feature = "provider_transform_internals")]
+    fn assert_pattern_to_skeleton(pattern: &str, skeleton: &str, message: &str) {
+        assert_eq!(
+            serde_json::to_string(skeleton).expect("Failed to transform skeleton to string."),
+            serde_json::to_string(&Skeleton::from(
+                &Pattern::from_bytes(pattern).expect("Failed to create pattern from bytes.")
+            ))
+            .expect("Failed to transform skeleton to string."),
+            "{}",
+            message
+        );
+    }
+
+    #[test]
+    #[cfg(feature = "provider_transform_internals")]
+    fn test_pattern_to_skeleton() {
+        assert_pattern_to_skeleton("H:mm:ss v", "Hmmssv", "Test a complicated time pattern");
+        assert_pattern_to_skeleton(
+            "v ss:mm:H",
+            "Hmmssv",
+            "Test the skeleton ordering is consistent",
+        );
+
+        assert_pattern_to_skeleton("K:mm", "hmm", "H11 maps to H12");
+        assert_pattern_to_skeleton("k:mm", "Hmm", "H23 maps to H24");
+
+        assert_pattern_to_skeleton("ha mm", "hmm", "Day periods get removed");
+        assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");
+
+        assert_pattern_to_skeleton("y", "y", "The year is passed through");
+        assert_pattern_to_skeleton("Y", "Y", "The year is passed through");
+
+        assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
+
+        assert_pattern_to_skeleton("s", "s", "Seconds pass through");
+        assert_pattern_to_skeleton("S", "S", "Seconds pass through");
+        assert_pattern_to_skeleton("A", "A", "Seconds pass through");
+
+        assert_pattern_to_skeleton("z", "z", "Timezones get passed through");
+        assert_pattern_to_skeleton("Z", "Z", "Timezones get passed through");
+        assert_pattern_to_skeleton("O", "O", "Timezones get passed through");
+        assert_pattern_to_skeleton("v", "v", "Timezones get passed through");
+        assert_pattern_to_skeleton("V", "V", "Timezones get passed through");
+        assert_pattern_to_skeleton("X", "X", "Timezones get passed through");
+        assert_pattern_to_skeleton("x", "x", "Timezones get passed through");
     }
 }
