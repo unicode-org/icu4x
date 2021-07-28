@@ -61,7 +61,7 @@ fn data_struct_impl(item: ItemStruct) -> TokenStream2 {
             #[doc = #docs]
             pub struct #marker;
 
-            impl<'s> icu_provider::DataMarker<'s> for #marker {
+            impl<'data> icu_provider::DataMarker<'data> for #marker {
                 type Yokeable = #name;
                 type Cart = #name;
             }

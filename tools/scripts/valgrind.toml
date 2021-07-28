@@ -9,7 +9,13 @@ description = "Pre-build artifacts for use with the Valgrind task"
 category = "ICU4X Valgrind"
 command = "cargo"
 toolchain = "nightly-2021-02-28"
-args = ["build", "--examples", "--features", "icu_benchmark_macros/rust_global_allocator", "--profile", "bench", "-Z", "unstable-options"]
+# Add features here and below if a desired example is not being built
+args = [
+    "build", "--examples",
+    "--features", "icu_benchmark_macros/rust_global_allocator",
+    "--features", "zerovec/serde",
+    "--profile", "bench", "-Z", "unstable-options"
+]
 
 [tasks.valgrind]
 description = "Build ICU4X example files with default features and run through Valgrind"
@@ -28,7 +34,7 @@ mkdir benchmarks
 mkdir benchmarks/valgrind
 
 # Re-run the build command only to generate the JSON output (--message-format=json)
-output = exec cargo +nightly-2021-02-28 build --examples --message-format=json --features icu_benchmark_macros/rust_global_allocator --profile bench -Z unstable-options
+output = exec cargo +nightly-2021-02-28 build --examples --message-format=json --features icu_benchmark_macros/rust_global_allocator --features zerovec/serde --profile bench -Z unstable-options
 if ${output.code}
     trigger_error "Build failed! To debug, build examples with `--features icu_benchmark_macros/rust_global_allocator`"
 end

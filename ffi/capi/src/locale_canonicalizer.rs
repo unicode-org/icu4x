@@ -12,7 +12,7 @@ use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 ///
 /// Can be obtained via [`icu4x_localecanonicalizer_create()`] and
 /// destroyed via [`icu4x_localecanonicalizer_destroy()`]
-pub type ICU4XLocaleCanonicalizer<'d, 's> = LocaleCanonicalizer<'d, 'static>;
+pub type ICU4XLocaleCanonicalizer = LocaleCanonicalizer<'static>;
 
 #[repr(C)]
 c_enum! {

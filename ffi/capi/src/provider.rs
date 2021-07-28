@@ -43,7 +43,7 @@ impl ICU4XDataProvider {
     }
 
     /// Construct a [`ICU4XDataProvider`] this from a boxed [`SerdeDeDataProvider`]
-    pub fn from_boxed(x: Box<dyn SerdeDeDataProvider>) -> Self {
+    pub fn from_boxed(x: Box<dyn SerdeDeDataProvider + 'static>) -> Self {
         unsafe {
             // If the layout changes this will error
             // Once Rust gets pointer metadata APIs we should switch to using those
@@ -52,7 +52,7 @@ impl ICU4XDataProvider {
     }
 
     /// Obtain the original boxed Rust [`SerdeDeDataProvider`] for this
-    pub fn into_boxed(self) -> Box<dyn SerdeDeDataProvider> {
+    pub fn into_boxed(self) -> Box<dyn SerdeDeDataProvider + 'static> {
         debug_assert!(self._field1 != 0);
         // If the layout changes this will error
         // Once Rust gets pointer metadata APIs we should switch to using those
@@ -60,7 +60,7 @@ impl ICU4XDataProvider {
     }
 
     /// Convert a borrowed reference to a borrowed [`SerdeDeDataProvider`]
-    pub fn as_dyn_ref(&self) -> &dyn SerdeDeDataProvider {
+    pub fn as_dyn_ref(&self) -> &(dyn SerdeDeDataProvider + 'static) {
         debug_assert!(self._field1 != 0);
         unsafe {
             // &dyn Trait and Box<dyn Trait> have the same layout

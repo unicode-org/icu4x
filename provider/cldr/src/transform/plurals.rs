@@ -21,10 +21,10 @@ pub const ALL_KEYS: [ResourceKey; 2] = [
 
 /// A data provider reading from CLDR JSON plural rule files.
 #[derive(PartialEq, Debug)]
-pub struct PluralsProvider<'d> {
+pub struct PluralsProvider<'data> {
     cardinal_rules: Option<cldr_json::Rules>,
     ordinal_rules: Option<cldr_json::Rules>,
-    _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
+    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
 impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
@@ -56,7 +56,7 @@ impl TryFrom<&dyn CldrPaths> for PluralsProvider<'_> {
     }
 }
 
-impl<'d> KeyedDataProvider for PluralsProvider<'d> {
+impl<'data> KeyedDataProvider for PluralsProvider<'data> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         if resc_key.category != ResourceCategory::Plurals || resc_key.version != 1 {
             return Err(resc_key.into());
@@ -65,7 +65,7 @@ impl<'d> KeyedDataProvider for PluralsProvider<'d> {
     }
 }
 
-impl<'d> PluralsProvider<'d> {
+impl<'data> PluralsProvider<'data> {
     fn get_rules_for(&self, resc_key: &ResourceKey) -> Result<&cldr_json::Rules, DataError> {
         PluralsProvider::supports_key(resc_key)?;
         match *resc_key {
@@ -77,11 +77,11 @@ impl<'d> PluralsProvider<'d> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, PluralRuleStringsV1Marker> for PluralsProvider<'d> {
+impl<'data> DataProvider<'data, PluralRuleStringsV1Marker> for PluralsProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, PluralRuleStringsV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, PluralRuleStringsV1Marker>, DataError> {
         let cldr_rules = self.get_rules_for(&req.resource_path.key)?;
         // TODO: Implement language fallback?
         let cldr_langid = req.try_langid()?.clone().into();
@@ -98,11 +98,11 @@ impl<'d, 's> DataProvider<'d, 's, PluralRuleStringsV1Marker> for PluralsProvider
     }
 }
 
-icu_provider::impl_dyn_provider!(PluralsProvider<'d>, {
+icu_provider::impl_dyn_provider!(PluralsProvider<'data>, {
     _ => PluralRuleStringsV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
-impl<'d> IterableDataProviderCore for PluralsProvider<'d> {
+impl<'data> IterableDataProviderCore for PluralsProvider<'data> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

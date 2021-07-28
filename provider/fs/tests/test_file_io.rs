@@ -79,7 +79,7 @@ fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
         .expect("Loading file from testdata directory");
 
-    type Provider<'d, 's> = dyn DataProvider<'d, 's, PluralRuleStringsV1Marker>;
+    type Provider<'data> = dyn DataProvider<'data, PluralRuleStringsV1Marker>;
 
     assert!(matches!(
         Provider::load_payload(

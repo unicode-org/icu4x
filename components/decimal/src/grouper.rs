@@ -46,6 +46,8 @@ fn test_grouper() {
     use crate::FixedDecimalFormat;
     use fixed_decimal::FixedDecimal;
     use icu_locid::LanguageIdentifier;
+    use icu_provider::prelude::*;
+    use icu_provider::struct_provider::StructProvider;
     use writeable::Writeable;
 
     let western_sizes = GroupingSizesV1 {
@@ -111,9 +113,9 @@ fn test_grouper() {
                 .unwrap();
             let mut data_struct: crate::provider::DecimalSymbolsV1 = Default::default();
             data_struct.grouping_sizes = cas.sizes;
-            let provider = icu_provider::struct_provider::StructProvider {
+            let provider = StructProvider {
                 key: crate::provider::key::SYMBOLS_V1,
-                data: &data_struct,
+                data: DataPayload::from_owned(data_struct),
             };
             let options = options::FixedDecimalFormatOptions {
                 grouping_strategy: cas.strategy,

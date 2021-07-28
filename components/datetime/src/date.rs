@@ -2,17 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::convert::TryFrom;
+use core::ops::{Add, Sub};
+use core::str::FromStr;
 use displaydoc::Display;
 use icu_locid::Locale;
-use std::convert::TryFrom;
-use std::ops::{Add, Sub};
-use std::str::FromStr;
 use tinystr::TinyStr8;
 
 #[derive(Display, Debug)]
 pub enum DateTimeError {
     #[displaydoc("{0}")]
-    Parse(std::num::ParseIntError),
+    Parse(core::num::ParseIntError),
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
     #[displaydoc("{field} must be between {min}-0")]
@@ -21,10 +21,11 @@ pub enum DateTimeError {
     InvalidTimeZoneOffset,
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
 
-impl From<std::num::ParseIntError> for DateTimeError {
-    fn from(e: std::num::ParseIntError) -> Self {
+impl From<core::num::ParseIntError> for DateTimeError {
+    fn from(e: core::num::ParseIntError) -> Self {
         DateTimeError::Parse(e)
     }
 }
@@ -127,14 +128,14 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn flexible_day_period(&self);
 }
 
-pub(crate) struct DateTimeInputWithLocale<'s, T: DateTimeInput> {
-    data: &'s T,
+pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
+    data: &'data T,
     _first_weekday: u8,
     _anchor_weekday: u8,
 }
 
-impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
-    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
+    pub fn new(data: &'data T, _locale: &Locale) -> Self {
         Self {
             data,
             // TODO(#488): Implement week calculations.
@@ -144,14 +145,14 @@ impl<'s, T: DateTimeInput> DateTimeInputWithLocale<'s, T> {
     }
 }
 
-pub(crate) struct ZonedDateTimeInputWithLocale<'s, T: ZonedDateTimeInput> {
-    data: &'s T,
+pub(crate) struct ZonedDateTimeInputWithLocale<'data, T: ZonedDateTimeInput> {
+    data: &'data T,
     _first_weekday: u8,
     _anchor_weekday: u8,
 }
 
-impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
-    pub fn new(data: &'s T, _locale: &Locale) -> Self {
+impl<'data, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'data, T> {
+    pub fn new(data: &'data T, _locale: &Locale) -> Self {
         Self {
             data,
             // TODO(#488): Implement week calculations.
@@ -161,7 +162,7 @@ impl<'s, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'s, T> {
     }
 }
 
-impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'s, T> {
+impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'data, T> {
     fn datetime(&self) -> &T {
         self.data
     }
@@ -183,7 +184,9 @@ impl<'s, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale
     }
 }
 
-impl<'s, T: ZonedDateTimeInput> LocalizedDateTimeInput<T> for ZonedDateTimeInputWithLocale<'s, T> {
+impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
+    for ZonedDateTimeInputWithLocale<'data, T>
+{
     fn datetime(&self) -> &T {
         self.data
     }
@@ -297,7 +300,7 @@ impl From<usize> for IsoWeekday {
         if ordinal == 0 {
             ordinal = 7;
         }
-        unsafe { std::mem::transmute(ordinal) }
+        unsafe { core::mem::transmute(ordinal) }
     }
 }
 

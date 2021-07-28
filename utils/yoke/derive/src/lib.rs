@@ -105,7 +105,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
 /// Custom derive for `yoke::ZeroCopyFrom`,
 ///
 /// This implements `ZeroCopyFrom<Ty> for Ty` for types
-/// without a lifetime parameter, and `ZeroCopyFrom<Ty<'s>> for Ty<'static>`
+/// without a lifetime parameter, and `ZeroCopyFrom<Ty<'data>> for Ty<'static>`
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[yoke(cloning_zcf)]` attribute if you wish for this custom derive
@@ -158,8 +158,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         }
         if has_clone {
             return quote! {
-                impl<'s> ZeroCopyFrom<#name<'s>> for #name<'static> {
-                    fn zero_copy_from<'b>(this: &'b #name<'s>) -> #name<'b> {
+                impl<'data> ZeroCopyFrom<#name<'data>> for #name<'static> {
+                    fn zero_copy_from<'b>(this: &'b #name<'data>) -> #name<'b> {
                         this.clone()
                     }
                 }
@@ -181,8 +181,8 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
         });
 
         quote! {
-            impl<'s> yoke::ZeroCopyFrom<#name<'s>> for #name<'static> {
-                fn zero_copy_from<'b>(this: &'b #name<'s>) -> #name<'b> {
+            impl<'data> yoke::ZeroCopyFrom<#name<'data>> for #name<'static> {
+                fn zero_copy_from<'b>(this: &'b #name<'data>) -> #name<'b> {
                     match *this { #body }
                 }
             }

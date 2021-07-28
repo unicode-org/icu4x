@@ -6,9 +6,10 @@
 
 use crate::error::Error;
 use crate::prelude::*;
+use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 
-/// A data provider that unconditionally returns references to borrowed data.
+/// A data provider that returns clones of a constant data payload.
 ///
 /// # Examples
 ///
@@ -27,7 +28,7 @@ use crate::yoke::*;
 ///
 /// let provider = StructProvider {
 ///     key: SAMPLE_KEY,
-///     data: &local_data,
+///     data: DataPayload::from_owned(local_data),
 /// };
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider.load_payload(&DataRequest::from(SAMPLE_KEY))
@@ -35,23 +36,26 @@ use crate::yoke::*;
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!(payload.get(), &local_data);
+/// assert_eq!(payload.get().message, "hello world");
 /// ```
-pub struct StructProvider<'d, T: ?Sized> {
+pub struct StructProvider<'data, M>
+where
+    M: DataMarker<'data>,
+{
     pub key: ResourceKey,
-    pub data: &'d T,
+    pub data: DataPayload<'data, M>,
 }
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for StructProvider<'d, M::Cart>
+impl<'data, M> DataProvider<'data, M> for StructProvider<'data, M>
 where
-    M: DataMarker<'s>,
-    M::Yokeable: ZeroCopyFrom<M::Cart>,
+    M: DataMarker<'data>,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         req.resource_path.key.match_key(self.key)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_borrowed(self.data)),
+            payload: Some(self.data.clone()),
         })
     }
 }

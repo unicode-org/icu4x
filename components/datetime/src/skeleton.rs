@@ -4,9 +4,15 @@
 
 //! Skeletons are used for pattern matching. See the [`Skeleton`] struct for more information.
 
+#[cfg(feature = "provider_serde")]
+use alloc::format;
+#[cfg(feature = "provider_serde")]
+use alloc::string::String;
+
+use alloc::vec::Vec;
+use core::convert::TryFrom;
 use displaydoc::Display;
 use smallvec::SmallVec;
-use std::convert::TryFrom;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
@@ -64,7 +70,7 @@ struct DeserializeSkeletonFieldsUTS35String;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonFieldsUTS35String {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         write!(formatter, "Expected to find a valid skeleton.")
     }
 
@@ -93,7 +99,7 @@ struct DeserializeSkeletonBincode;
 impl<'de> de::Visitor<'de> for DeserializeSkeletonBincode {
     type Value = Skeleton;
 
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         write!(formatter, "Unable to deserialize a bincode Pattern.")
     }
 
@@ -302,6 +308,7 @@ pub enum SkeletonError {
     Fields(fields::Error),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for SkeletonError {}
 
 impl From<fields::Error> for SkeletonError {
@@ -791,7 +798,7 @@ mod test {
         provider::{gregory::DatePatternsV1Marker, key::GREGORY_DATE_PATTERNS_V1},
     };
 
-    fn get_data_payload() -> DataPayload<'static, 'static, DatePatternsV1Marker> {
+    fn get_data_payload() -> DataPayload<'static, DatePatternsV1Marker> {
         let provider = icu_testdata::get_provider();
         let langid = langid!("en");
         provider
@@ -1045,7 +1052,7 @@ mod test {
             .collect();
 
         for (strings, fields) in skeletons_strings.windows(2).zip(skeleton_fields.windows(2)) {
-            if fields[0].cmp(&fields[1]) != std::cmp::Ordering::Less {
+            if fields[0].cmp(&fields[1]) != core::cmp::Ordering::Less {
                 panic!("Expected {:?} < {:?}", strings[0], strings[1]);
             }
         }

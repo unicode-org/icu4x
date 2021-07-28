@@ -94,15 +94,17 @@ impl FsDataProvider {
     }
 }
 
-impl<'d, 's, M> DataProvider<'d, 's, M> for FsDataProvider
+/// FsDataProvider never returns data payloads with external borrows, so its lifetime parameter
+/// is set to `'static`. Data payloads may still have internal self-referential borrows.
+impl<M> DataProvider<'static, M> for FsDataProvider
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'static>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {

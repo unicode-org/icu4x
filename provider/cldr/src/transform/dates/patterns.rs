@@ -22,9 +22,9 @@ pub const ALL_KEYS: [ResourceKey; 1] = [
 
 /// A data provider reading from CLDR JSON dates files.
 #[derive(PartialEq, Debug)]
-pub struct DatePatternsProvider<'d> {
+pub struct DatePatternsProvider<'data> {
     data: Vec<(CldrLangID, cldr_json::LangDates)>,
-    _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
+    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
 impl TryFrom<&dyn CldrPaths> for DatePatternsProvider<'_> {
@@ -51,17 +51,17 @@ impl TryFrom<&dyn CldrPaths> for DatePatternsProvider<'_> {
     }
 }
 
-impl<'d> KeyedDataProvider for DatePatternsProvider<'d> {
+impl<'data> KeyedDataProvider for DatePatternsProvider<'data> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         key::GREGORY_DATE_PATTERNS_V1.match_key(*resc_key)
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, gregory::DatePatternsV1Marker> for DatePatternsProvider<'d> {
+impl<'data> DataProvider<'data, gregory::DatePatternsV1Marker> for DatePatternsProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, gregory::DatePatternsV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, gregory::DatePatternsV1Marker>, DataError> {
         DatePatternsProvider::supports_key(&req.resource_path.key)?;
         let cldr_langid: CldrLangID = req.try_langid()?.clone().into();
         let dates = match self
@@ -82,11 +82,11 @@ impl<'d, 's> DataProvider<'d, 's, gregory::DatePatternsV1Marker> for DatePattern
     }
 }
 
-icu_provider::impl_dyn_provider!(DatePatternsProvider<'d>, {
+icu_provider::impl_dyn_provider!(DatePatternsProvider<'data>, {
     _ => gregory::DatePatternsV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
-impl<'d> IterableDataProviderCore for DatePatternsProvider<'d> {
+impl<'data> IterableDataProviderCore for DatePatternsProvider<'data> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

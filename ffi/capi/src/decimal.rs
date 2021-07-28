@@ -14,13 +14,13 @@ use icu_decimal::FixedDecimalFormat;
 /// Opaque type for use behind a pointer, is [`FixedDecimalFormat`]
 ///
 /// Can be obtained via [`icu4x_fixed_decimal_format_create()`] and destroyed via [`icu4x_fixed_decimal_format_destroy()`]
-pub type ICU4XFixedDecimalFormat<'d> = FixedDecimalFormat<'d, 'static>;
+pub type ICU4XFixedDecimalFormat = FixedDecimalFormat<'static>;
 
 #[repr(C)]
 /// This is the result returned by [`icu4x_fixed_decimal_format_create()`]
-pub struct ICU4XCreateFixedDecimalFormatResult<'d> {
+pub struct ICU4XCreateFixedDecimalFormatResult {
     /// Will be null if `success` is [`false`]
-    pub fdf: *mut ICU4XFixedDecimalFormat<'d>,
+    pub fdf: *mut ICU4XFixedDecimalFormat,
     /// Currently just a boolean, but we might add a proper error enum as necessary
     pub success: bool,
 }
@@ -32,11 +32,11 @@ pub struct ICU4XCreateFixedDecimalFormatResult<'d> {
 /// - `locale` should be constructed via [`icu4x_locale_create()`](crate::locale::icu4x_locale_create)
 /// - `provider` should be constructed via one of the functions in [`crate::locale`](crate::locale)
 /// - Only access `fdf` in the result if `success` is [`true`].
-pub extern "C" fn icu4x_fixed_decimal_format_create<'d>(
+pub extern "C" fn icu4x_fixed_decimal_format_create(
     locale: &ICU4XLocale,
-    provider: &'d ICU4XDataProvider,
+    provider: &ICU4XDataProvider,
     options: ICU4XFixedDecimalFormatOptions,
-) -> ICU4XCreateFixedDecimalFormatResult<'d> {
+) -> ICU4XCreateFixedDecimalFormatResult {
     // cheap as long as there are no variants
     let langid = locale.as_ref().clone();
     let provider = provider.as_dyn_ref();
@@ -60,7 +60,7 @@ pub extern "C" fn icu4x_fixed_decimal_format_create<'d>(
 ///
 /// Returns `false` when there were errors writing to `write`
 pub extern "C" fn icu4x_fixed_decimal_format_write(
-    fdf: &ICU4XFixedDecimalFormat<'_>,
+    fdf: &ICU4XFixedDecimalFormat,
     value: &ICU4XFixedDecimal,
     write: &mut ICU4XWriteable,
 ) -> bool {
@@ -78,7 +78,7 @@ pub extern "C" fn icu4x_fixed_decimal_format_write(
 /// # Safety
 /// `fdf` must be a pointer to a valid [`ICU4XFixedDecimalFormat`] constructed by
 /// [`icu4x_fixed_decimal_format_create()`].
-pub unsafe extern "C" fn icu4x_fixed_decimal_format_destroy(fdf: *mut ICU4XFixedDecimalFormat<'_>) {
+pub unsafe extern "C" fn icu4x_fixed_decimal_format_destroy(fdf: *mut ICU4XFixedDecimalFormat) {
     let _ = Box::from_raw(fdf);
 }
 

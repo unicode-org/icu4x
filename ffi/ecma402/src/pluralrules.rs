@@ -255,14 +255,14 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
 
 impl PluralRules {
     /// Creates a new [`PluralRules`], using the specified data provider.
-    pub fn try_new_with_provider<'d, L, P>(
+    pub fn try_new_with_provider<'data, L, P>(
         l: L,
         opts: ecma402_traits::pluralrules::Options,
         provider: &P,
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<'d, 'd, ipr::provider::PluralRuleStringsV1Marker>,
+        P: icu_provider::DataProvider<'data, ipr::provider::PluralRuleStringsV1Marker>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);

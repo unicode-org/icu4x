@@ -74,6 +74,7 @@ icu_testdata = { version = "0.2", path = "../../provider/testdata" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [features]
+std = ["icu_datetime/std", "icu_locid/std", "icu_plurals/std", "icu_uniset/std", "fixed_decimal/std"]
 default = ["provider_serde"]
 serde = [
     "icu_locid/serde"

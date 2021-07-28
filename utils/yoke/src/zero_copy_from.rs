@@ -33,8 +33,8 @@ use alloc::string::String;
 /// use yoke::ZeroCopyFrom;
 /// use std::borrow::Cow;
 ///
-/// struct MyStruct<'s> {
-///     message: Cow<'s, str>,
+/// struct MyStruct<'data> {
+///     message: Cow<'data, str>,
 /// }
 ///
 /// unsafe impl<'a> Yokeable<'a> for MyStruct<'static> {
@@ -63,8 +63,8 @@ use alloc::string::String;
 /// }
 ///
 /// // Reference from a borrowed version of self
-/// impl<'s> ZeroCopyFrom<MyStruct<'s>> for MyStruct<'static> {
-///     fn zero_copy_from<'b>(cart: &'b MyStruct<'s>) -> MyStruct<'b> {
+/// impl<'data> ZeroCopyFrom<MyStruct<'data>> for MyStruct<'static> {
+///     fn zero_copy_from<'b>(cart: &'b MyStruct<'data>) -> MyStruct<'b> {
 ///         MyStruct {
 ///             message: Cow::Borrowed(&cart.message)
 ///         }

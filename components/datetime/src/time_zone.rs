@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{borrow::Cow, fmt};
+use alloc::borrow::Cow;
+use alloc::format;
+use alloc::string::String;
+use core::fmt;
 
 use crate::{
     date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
@@ -16,16 +19,16 @@ use crate::fields::{FieldSymbol, TimeZone};
 use crate::pattern::{Pattern, PatternItem};
 
 /// Loads a resource into its destination if the destination has not already been filled.
-fn load_resource<'d, D, L, P>(
+fn load_resource<'data, D, L, P>(
     locale: &L,
     resource_key: ResourceKey,
-    destination: &mut Option<DataPayload<'d, 'd, D>>,
+    destination: &mut Option<DataPayload<'data, D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatError>
 where
-    D: DataMarker<'d>,
+    D: DataMarker<'data>,
     L: Clone + Into<LanguageIdentifier>,
-    P: DataProvider<'d, 'd, D> + ?Sized,
+    P: DataProvider<'data, D> + ?Sized,
 {
     if destination.is_none() {
         *destination = Some(
@@ -84,29 +87,29 @@ where
 /// // let value = tzf.format_to_string(&time_zone);
 /// // ```
 // TODO(#622) Make TimeZoneFormat public once we have a clean way to provide it options.
-pub(super) struct TimeZoneFormat<'d> {
+pub(super) struct TimeZoneFormat<'data> {
     /// The pattern to format.
     pub(super) pattern: Pattern,
     /// The data that contains meta information about how to display content.
-    pub(super) zone_formats: DataPayload<'d, 'd, provider::time_zones::TimeZoneFormatsV1Marker>,
+    pub(super) zone_formats: DataPayload<'data, provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
     pub(super) exemplar_cities:
-        Option<DataPayload<'d, 'd, provider::time_zones::ExemplarCitiesV1Marker>>,
+        Option<DataPayload<'data, provider::time_zones::ExemplarCitiesV1Marker>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
-        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1Marker>>,
+        Option<DataPayload<'data, provider::time_zones::MetaZoneGenericNamesLongV1Marker>>,
     /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
-        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1Marker>>,
+        Option<DataPayload<'data, provider::time_zones::MetaZoneGenericNamesShortV1Marker>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
-        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>>,
+        Option<DataPayload<'data, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
-        Option<DataPayload<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>>,
+        Option<DataPayload<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>>,
 }
 
-impl<'d> TimeZoneFormat<'d> {
+impl<'data> TimeZoneFormat<'data> {
     /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
     ///
@@ -136,12 +139,12 @@ impl<'d> TimeZoneFormat<'d> {
     ) -> Result<Self, DateTimeFormatError>
     where
         L: Into<Locale>,
-        ZP: DataProvider<'d, 'd, provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<'d, 'd, provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<'d, 'd, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<'d, 'd, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<'data, provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<'data, provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<'data, provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
@@ -293,7 +296,7 @@ impl<'d> TimeZoneFormat<'d> {
     // TODO(#622) Make this public once TimeZoneFormat is public.
     //           And remove #[allow(unused)]
     #[allow(unused)]
-    pub(super) fn format<'l: 'd, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
+    pub(super) fn format<'l: 'data, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
     where
         T: TimeZoneInput,
     {
@@ -342,10 +345,10 @@ impl<'d> TimeZoneFormat<'d> {
     #[allow(unused)]
     pub(super) fn format_to_write(
         &self,
-        w: &mut impl std::fmt::Write,
+        w: &mut impl core::fmt::Write,
         value: &impl TimeZoneInput,
     ) -> fmt::Result {
-        time_zone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
+        time_zone::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.

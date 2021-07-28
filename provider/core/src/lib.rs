@@ -9,7 +9,7 @@
 //! a [`Response`]:
 //!
 //! ```ignore
-//! fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d>, DataError>
+//! fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data>, DataError>
 //! ```
 //!
 //! A [`Request`] contains a [`ResourceKey`] (a composition of a [`Category`] and sub-category, e.g.,
@@ -43,16 +43,10 @@
 //! Types compatible with [`Yokeable`] can be passed through the data provider, so long as they are
 //! associated with a marker type implementing [`DataMarker`].
 //!
-//! Most [`DataProvider`] traits take two lifetime arguments: `'d` and `'s`. These represent data
-//! lifetimes for different ownership models of the data.
-//!
-//! - `'d` is the lifetime of a reference to the whole data struct being borrowed.
-//! - `'s` is the lifetime of fields within a data struct.
-//!
-//! Data structs and [`DataMarker`] use the `'s` lifetime, and this is also the lifetime that the
-//! [`Yokeable`] implementation should handle.
-//!
-//! `'s` should exceed `'d` (i.e., `'s: 'd`). If a data struct is fully owned, `'s: 'static`.
+//! Most [`DataProvider`] traits take one lifetime argument: `'data`. This lifetime allows data
+//! structs to borrow zero-copy data. In practice, it also represents the lifetime of data that
+//! the Cart of the Yoke of the DataPayload borrows; for more information on carts and yokes,
+//! see [`yoke`].
 //!
 //! ## Additional Traits
 //!

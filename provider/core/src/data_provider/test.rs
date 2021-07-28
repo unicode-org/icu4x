@@ -31,106 +31,85 @@ struct HelloAlt {
 /// Marker type for [`HelloAlt`].
 struct HelloAltMarker {}
 
-impl<'s> DataMarker<'s> for HelloAltMarker {
+impl<'data> DataMarker<'data> for HelloAltMarker {
     type Yokeable = HelloAlt;
     type Cart = HelloAlt;
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
-struct HelloCombined<'s> {
+struct HelloCombined<'data> {
     #[serde(borrow)]
-    pub hello_v1: HelloWorldV1<'s>,
+    pub hello_v1: HelloWorldV1<'data>,
     pub hello_alt: HelloAlt,
 }
 
-/// A DataProvider that owns its data. DataProvider is implemented on `DataWarehouse`, returning
-/// owned data, and on `&'d DataWarehouse`, returning borrowed data. Both support only
-/// HELLO_WORLD_V1 and use `impl_dyn_provider!()`.
+/// A DataProvider that owns its data, returning an Rc-variant DataPayload.
+/// Supports only HELLO_WORLD_V1. Uses `impl_dyn_provider!()`.
 #[derive(Debug)]
-struct DataWarehouse<'s> {
-    data: HelloCombined<'s>,
+struct DataWarehouse<'data> {
+    hello_v1: Rc<HelloWorldV1<'data>>,
+    hello_alt: Rc<HelloAlt>,
 }
 
-impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Marker> for DataWarehouse<'s> {
+impl<'data> DataProvider<'data, HelloWorldV1Marker> for DataWarehouse<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_partial_owned(Rc::from(
-                self.data.hello_v1.clone(),
-            ))),
+            payload: Some(DataPayload::from_partial_owned(self.hello_v1.clone())),
         })
     }
 }
 
 crate::impl_dyn_provider!(DataWarehouse<'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Marker,
-}, ERASED, 'd);
+}, ERASED);
 
-impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Marker> for &'d DataWarehouse<'s> {
-    fn load_payload(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Marker>, DataError> {
-        req.resource_path.key.match_key(HELLO_WORLD_V1)?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_borrowed(&self.data.hello_v1)),
-        })
-    }
-}
-
-crate::impl_dyn_provider!(&'d DataWarehouse<'static>, {
-    HELLO_WORLD_V1 => HelloWorldV1Marker,
-}, ERASED, 'd);
-
-/// A DataProvider that returns borrowed data. Supports both HELLO_WORLD_V1 and HELLO_ALT.
+/// A DataProvider that supports both HELLO_WORLD_V1 and HELLO_ALT.
 #[derive(Debug)]
-struct DataProviderBorrowing<'d, 's> {
-    borrowed_data: &'d HelloCombined<'s>,
+struct DataProvider2<'data> {
+    data: DataWarehouse<'data>,
 }
 
-impl<'d, 's> From<&'d DataWarehouse<'s>> for DataProviderBorrowing<'d, 's> {
-    fn from(warehouse: &'d DataWarehouse<'s>) -> Self {
-        DataProviderBorrowing {
-            borrowed_data: &warehouse.data,
-        }
+impl<'data> From<DataWarehouse<'data>> for DataProvider2<'data> {
+    fn from(warehouse: DataWarehouse<'data>) -> Self {
+        DataProvider2 { data: warehouse }
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, HelloWorldV1Marker> for DataProviderBorrowing<'d, 's> {
+impl<'data> DataProvider<'data, HelloWorldV1Marker> for DataProvider2<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloWorldV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, HelloWorldV1Marker>, DataError> {
         req.resource_path.key.match_key(HELLO_WORLD_V1)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_borrowed(&self.borrowed_data.hello_v1)),
+            payload: Some(DataPayload::from_partial_owned(self.data.hello_v1.clone())),
         })
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, HelloAltMarker> for DataProviderBorrowing<'d, 's> {
+impl<'data> DataProvider<'data, HelloAltMarker> for DataProvider2<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, HelloAltMarker>, DataError> {
+    ) -> Result<DataResponse<'data, HelloAltMarker>, DataError> {
         req.resource_path.key.match_key(HELLO_ALT_KEY)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_borrowed(&self.borrowed_data.hello_alt)),
+            payload: Some(DataPayload::from_partial_owned(self.data.hello_alt.clone())),
         })
     }
 }
 
-crate::impl_dyn_provider!(DataProviderBorrowing<'d, 'static>, {
+crate::impl_dyn_provider!(DataProvider2<'static>, {
     HELLO_WORLD_V1 => HelloWorldV1Marker,
     HELLO_ALT_KEY => HelloAltMarker,
-}, ERASED, 'd);
+}, ERASED);
 
 #[allow(clippy::redundant_static_lifetimes)]
 const DATA: &'static str = r#"{
@@ -143,20 +122,23 @@ const DATA: &'static str = r#"{
 }"#;
 
 #[allow(clippy::needless_lifetimes)]
-fn get_warehouse<'s>(data: &'s str) -> DataWarehouse<'s> {
+fn get_warehouse<'data>(data: &'data str) -> DataWarehouse<'data> {
     let data: HelloCombined = serde_json::from_str(data).expect("Well-formed data");
-    DataWarehouse { data }
+    DataWarehouse {
+        hello_v1: Rc::from(data.hello_v1),
+        hello_alt: Rc::from(data.hello_alt),
+    }
 }
 
-fn get_payload_v1<'d, 's, P: DataProvider<'d, 's, HelloWorldV1Marker> + ?Sized + 'd>(
+fn get_payload_v1<'data, P: DataProvider<'data, HelloWorldV1Marker> + ?Sized>(
     provider: &P,
-) -> Result<DataPayload<'d, 's, HelloWorldV1Marker>, DataError> {
+) -> Result<DataPayload<'data, HelloWorldV1Marker>, DataError> {
     provider.load_payload(&get_request_v1())?.take_payload()
 }
 
-fn get_payload_alt<'d, P: DataProvider<'d, 'static, HelloAltMarker> + ?Sized>(
+fn get_payload_alt<'data, P: DataProvider<'data, HelloAltMarker> + ?Sized>(
     d: &P,
-) -> Result<DataPayload<'d, 'static, HelloAltMarker>, DataError> {
+) -> Result<DataPayload<'data, HelloAltMarker>, DataError> {
     d.load_payload(&get_request_alt())?.take_payload()
 }
 
@@ -228,60 +210,11 @@ fn test_warehouse_owned_dyn_erased_alt() {
 }
 
 #[test]
-fn test_warehouse_ref() {
+fn test_provider2() {
     let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
-    assert!(matches!(
-        hello_data.get(),
-        HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }
-    ));
-}
-
-#[test]
-fn test_warehouse_ref_dyn_erased() {
-    let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
-    assert!(matches!(
-        hello_data.get(),
-        HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }
-    ));
-}
-
-#[test]
-fn test_warehouse_ref_dyn_generic() {
-    let warehouse = get_warehouse(DATA);
-    let hello_data = get_payload_v1(&&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
-    assert!(matches!(
-        hello_data.get(),
-        HelloWorldV1 {
-            message: Cow::Borrowed(_),
-        }
-    ));
-}
-
-#[test]
-fn test_warehouse_ref_dyn_erased_alt() {
-    let warehouse = get_warehouse(DATA);
-    let response = get_payload_alt(&&warehouse as &dyn ErasedDataProvider);
-    assert!(matches!(
-        response,
-        Err(DataError::UnsupportedResourceKey { .. })
-    ));
-}
-
-#[test]
-fn test_borrowing() {
-    let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -291,11 +224,11 @@ fn test_borrowing() {
 }
 
 #[test]
-fn test_borrowing_dyn_erased() {
+fn test_provider2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -305,20 +238,20 @@ fn test_borrowing_dyn_erased() {
 }
 
 #[test]
-fn test_borrowing_dyn_erased_alt() {
+fn test_provider2_dyn_erased_alt() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_alt(&provider as &dyn ErasedDataProvider).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 
 #[test]
-fn test_borrowing_dyn_generic() {
+fn test_provider2_dyn_generic() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {
@@ -328,18 +261,18 @@ fn test_borrowing_dyn_generic() {
 }
 
 #[test]
-fn test_borrowing_dyn_generic_alt() {
+fn test_provider2_dyn_generic_alt() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarker>).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
+    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(hello_data.get(), HelloAlt { .. }));
 }
 
 #[test]
 fn test_mismatched_types() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     // Request is for v2, but type argument is for v1
     let response: Result<DataPayload<HelloWorldV1Marker>, DataError> =
         ErasedDataProvider::load_erased(&provider, &get_request_alt())
@@ -350,17 +283,16 @@ fn test_mismatched_types() {
     assert!(matches!(response, Err(DataError::MismatchedType { .. })));
 }
 
-fn check_v1_v2<'d, 's, P>(d: &P)
+fn check_v1_v2<'data, P>(d: &P)
 where
-    's: 'd,
-    P: DataProvider<'d, 's, HelloWorldV1Marker> + DataProvider<'d, 's, HelloAltMarker> + ?Sized,
+    P: DataProvider<'data, HelloWorldV1Marker> + DataProvider<'data, HelloAltMarker> + ?Sized,
 {
-    let v1: DataPayload<'d, 's, HelloWorldV1Marker> = d
+    let v1: DataPayload<'data, HelloWorldV1Marker> = d
         .load_payload(&get_request_v1())
         .unwrap()
         .take_payload()
         .unwrap();
-    let v2: DataPayload<'d, 's, HelloAltMarker> = d
+    let v2: DataPayload<'data, HelloAltMarker> = d
         .load_payload(&get_request_alt())
         .unwrap()
         .take_payload()
@@ -373,14 +305,14 @@ where
 #[test]
 fn test_v1_v2_generic() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     check_v1_v2(&provider);
 }
 
 #[test]
 fn test_v1_v2_dyn_erased() {
     let warehouse = get_warehouse(DATA);
-    let provider = DataProviderBorrowing::from(&warehouse);
+    let provider = DataProvider2::from(warehouse);
     check_v1_v2(&provider as &dyn ErasedDataProvider);
 }
 
@@ -402,8 +334,8 @@ fn test_local() {
 fn test_local_ref() {
     let local_data = DATA.to_string();
     let warehouse = get_warehouse(&local_data);
-    let hello_data = get_payload_v1(&&warehouse).unwrap();
-    assert!(matches!(hello_data.inner, DataPayloadInner::Borrowed(_)));
+    let hello_data = get_payload_v1(&warehouse).unwrap();
+    assert!(matches!(hello_data.inner, DataPayloadInner::RcStruct(_)));
     assert!(matches!(
         hello_data.get(),
         HelloWorldV1 {

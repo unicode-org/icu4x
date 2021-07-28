@@ -63,11 +63,11 @@ impl<'s> PpucdDataProvider<'s> {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, UnicodePropertyV1Marker> for PpucdDataProvider<'s> {
+impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for PpucdDataProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, UnicodePropertyV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
         let resc_key: &ResourceKey = &req.resource_path.key;
         let resc_key_str: &str = resc_key.sub_category.as_str();
         let props_data: &UnicodeProperties = &self.ppucd_props;
@@ -95,9 +95,9 @@ impl<'s> TryFrom<&'s str> for PpucdDataProvider<'s> {
     }
 }
 
-icu_provider::impl_dyn_provider!(PpucdDataProvider<'s>, {
+icu_provider::impl_dyn_provider!(PpucdDataProvider<'data>, {
     _ => UnicodePropertyV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
 impl<'d> IterableDataProviderCore for PpucdDataProvider<'d> {
     fn supported_options_for_key(

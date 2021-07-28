@@ -11,14 +11,14 @@ default_to_workspace = false
 
 
 [tasks.quick]
-description = "Run quick version of all lints and tests"
+description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
 category = "ICU4X Development"
 dependencies = [
-    "test-all-features",
-    "tidy",
+    "ci-job-check",
+    "check-no-features",
+    "fmt-check",
     "clippy-all",
-    "test-ffi",
-    "test-cppdoc",
+    "ci-job-tidy",
 ]
 
 [tasks.tidy]
@@ -28,6 +28,12 @@ dependencies = [
     "fmt-check",
     "ci-job-tidy",
 ]
+
+[tasks.check-no-features]
+description = "Check ICU4X build with no features (covered in CI via cargo build-all-features)"
+category = "ICU4X Development"
+command = "cargo"
+args = ["check", "--all-targets", "--no-default-features"]
 
 [tasks.ci-job-check]
 description = "Run all tests for the CI 'check' job"
