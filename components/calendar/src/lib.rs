@@ -24,6 +24,7 @@ mod error;
 pub mod gregorian;
 pub mod iso;
 pub mod types;
+pub mod utils;
 
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date};
