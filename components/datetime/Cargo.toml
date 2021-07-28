@@ -58,7 +58,7 @@ std = ["icu_provider/std", "icu_locid/std"]
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde", "litemap/serde"]
-provider_transform_internals = []
+provider_transform_internals = ["std"]
 
 [[bench]]
 name = "datetime"
