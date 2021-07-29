@@ -4,10 +4,11 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <variant>
 #include "diplomat_runtime.hpp"
 
 
-enum struct ICU4XCanonicalizationResult : ssize_t {
+enum struct ICU4XCanonicalizationResult {
   Modified = 0,
   Unmodified = 1,
 };
@@ -30,14 +31,14 @@ struct ICU4XFixedDecimalFormatOptions;
 
 struct ICU4XFixedDecimalFormatResult;
 
-enum struct ICU4XFixedDecimalGroupingStrategy : ssize_t {
+enum struct ICU4XFixedDecimalGroupingStrategy {
   Auto = 0,
   Never = 1,
   Always = 2,
   Min2 = 3,
 };
 
-enum struct ICU4XFixedDecimalSignDisplay : ssize_t {
+enum struct ICU4XFixedDecimalSignDisplay {
   Auto = 0,
   Never = 1,
   Always = 2,
@@ -49,15 +50,14 @@ class ICU4XLocale;
 
 class ICU4XLocaleCanonicalizer;
 
-enum struct ICU4XLocaleResult : ssize_t {
-  Ok = 0,
-  Undefined = 1,
-  Error = 2,
+enum struct ICU4XLocaleError {
+  Undefined = 0,
+  Error = 1,
 };
 
 struct ICU4XPluralCategories;
 
-enum struct ICU4XPluralCategory : ssize_t {
+enum struct ICU4XPluralCategory {
   Zero = 0,
   One = 1,
   Two = 2,
@@ -68,7 +68,7 @@ enum struct ICU4XPluralCategory : ssize_t {
 
 struct ICU4XPluralOperands;
 
-enum struct ICU4XPluralRuleType : ssize_t {
+enum struct ICU4XPluralRuleType {
   Cardinal = 0,
   Ordinal = 1,
 };
@@ -118,7 +118,7 @@ struct ICU4XFixedDecimalFormatDeleter {
 class ICU4XFixedDecimalFormat {
  public:
   static ICU4XFixedDecimalFormatResult try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
-  std::string format_write(const ICU4XFixedDecimal& value);
+  diplomat::result<std::string, std::monostate> format_write(const ICU4XFixedDecimal& value);
   inline const capi::ICU4XFixedDecimalFormat* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XFixedDecimalFormat* AsFFIMut() { return this->inner.get(); }
   ICU4XFixedDecimalFormat(capi::ICU4XFixedDecimalFormat* i) : inner(i) {}
@@ -135,12 +135,12 @@ class ICU4XLocale {
  public:
   static std::optional<ICU4XLocale> create(const std::string_view name);
   ICU4XLocale clone();
-  std::string basename();
-  std::string get_unicode_extension(const std::string_view bytes);
-  std::string language();
-  std::string region();
-  std::string script();
-  std::string tostring();
+  diplomat::result<std::string, ICU4XLocaleError> basename();
+  diplomat::result<std::string, ICU4XLocaleError> get_unicode_extension(const std::string_view bytes);
+  diplomat::result<std::string, ICU4XLocaleError> language();
+  diplomat::result<std::string, ICU4XLocaleError> region();
+  diplomat::result<std::string, ICU4XLocaleError> script();
+  diplomat::result<std::string, ICU4XLocaleError> tostring();
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocale* AsFFIMut() { return this->inner.get(); }
   ICU4XLocale(capi::ICU4XLocale* i) : inner(i) {}
@@ -338,7 +338,7 @@ std::string ICU4XFixedDecimal::to_string() {
 
 ICU4XFixedDecimalFormatResult ICU4XFixedDecimalFormat::try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XFixedDecimalFormatOptions options) {
   ICU4XFixedDecimalFormatOptions diplomat_wrapped_struct_options = options;
-  capi::ICU4XFixedDecimalFormatResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimalFormat_try_new(locale.AsFFI(), provider.AsFFI(), capi::ICU4XFixedDecimalFormatOptions{ .grouping_strategy = static_cast<ssize_t>(diplomat_wrapped_struct_options.grouping_strategy), .sign_display = static_cast<ssize_t>(diplomat_wrapped_struct_options.sign_display) });
+  capi::ICU4XFixedDecimalFormatResult diplomat_raw_struct_out_value = capi::ICU4XFixedDecimalFormat_try_new(locale.AsFFI(), provider.AsFFI(), capi::ICU4XFixedDecimalFormatOptions{ .grouping_strategy = static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(diplomat_wrapped_struct_options.grouping_strategy), .sign_display = static_cast<capi::ICU4XFixedDecimalSignDisplay>(diplomat_wrapped_struct_options.sign_display) });
   auto diplomat_optional_raw_out_value_fdf = diplomat_raw_struct_out_value.fdf;
   std::optional<ICU4XFixedDecimalFormat> diplomat_optional_out_value_fdf;
   if (diplomat_optional_raw_out_value_fdf != nullptr) {
@@ -348,11 +348,21 @@ ICU4XFixedDecimalFormatResult ICU4XFixedDecimalFormat::try_new(const ICU4XLocale
   }
   return ICU4XFixedDecimalFormatResult{ .fdf = std::move(diplomat_optional_out_value_fdf), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
-std::string ICU4XFixedDecimalFormat::format_write(const ICU4XFixedDecimal& value) {
+diplomat::result<std::string, std::monostate> ICU4XFixedDecimalFormat::format_write(const ICU4XFixedDecimal& value) {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XFixedDecimalFormat_format_write(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_format_write(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+  }
+  diplomat::result<std::monostate, std::monostate> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, std::monostate>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, std::monostate>::new_err_void();
+  }
 }
 
 ICU4XFixedDecimalFormatOptions ICU4XFixedDecimalFormatOptions::default_() {
@@ -376,41 +386,107 @@ std::optional<ICU4XLocale> ICU4XLocale::create(const std::string_view name) {
 ICU4XLocale ICU4XLocale::clone() {
   return ICU4XLocale(capi::ICU4XLocale_clone(this->inner.get()));
 }
-std::string ICU4XLocale::basename() {
+diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::basename() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocale_basename(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_basename(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+  }
+  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
+  }
 }
-std::string ICU4XLocale::get_unicode_extension(const std::string_view bytes) {
+diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::get_unicode_extension(const std::string_view bytes) {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.length(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.length(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+  }
+  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
+  }
 }
-std::string ICU4XLocale::language() {
+diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::language() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocale_language(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_language(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+  }
+  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
+  }
 }
-std::string ICU4XLocale::region() {
+diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::region() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocale_region(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_region(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+  }
+  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
+  }
 }
-std::string ICU4XLocale::script() {
+diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::script() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocale_script(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_script(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+  }
+  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
+  }
 }
-std::string ICU4XLocale::tostring() {
+diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::tostring() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  capi::ICU4XLocale_tostring(this->inner.get(), &diplomat_writeable_out);
-  return diplomat_writeable_string;
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_tostring(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
+  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  if (diplomat_result_raw_out_value.is_ok) {
+  } else {
+    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+  }
+  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
+  if (out_value.is_ok) {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
+  } else {
+    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
+  }
 }
 
 std::optional<ICU4XLocaleCanonicalizer> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
@@ -444,7 +520,7 @@ ICU4XCreatePluralOperandsResult ICU4XPluralOperands::create(const std::string_vi
 
 
 ICU4XCreatePluralRulesResult ICU4XPluralRules::create(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XPluralRuleType ty) {
-  capi::ICU4XCreatePluralRulesResult diplomat_raw_struct_out_value = capi::ICU4XPluralRules_create(locale.AsFFI(), provider.AsFFI(), static_cast<ssize_t>(ty));
+  capi::ICU4XCreatePluralRulesResult diplomat_raw_struct_out_value = capi::ICU4XPluralRules_create(locale.AsFFI(), provider.AsFFI(), static_cast<capi::ICU4XPluralRuleType>(ty));
   auto diplomat_optional_raw_out_value_rules = diplomat_raw_struct_out_value.rules;
   std::optional<ICU4XPluralRules> diplomat_optional_out_value_rules;
   if (diplomat_optional_raw_out_value_rules != nullptr) {

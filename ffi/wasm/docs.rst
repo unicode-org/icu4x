@@ -203,7 +203,7 @@
 
         FFI version of ``LocaleCanonicalizer::minimize()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize>`__ for more details.
 
-.. js:class:: ICU4XLocaleResult
+.. js:class:: ICU4XLocaleError
 
 
 

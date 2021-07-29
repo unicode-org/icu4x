@@ -1,4 +1,5 @@
 #include <string>
+#include <variant>
 
 namespace capi {
 #include "api.h"
@@ -30,6 +31,50 @@ inline capi::DiplomatWriteable WriteableFromString(std::string& string) {
   w.flush = Flush;
   w.grow = Grow;
   return w;
+};
+
+template<class T, class E>
+struct result
+{
+  union {
+    T ok;
+    E err;
+  };
+  bool is_ok;
+
+  ~result() {
+    if (is_ok) {
+      ok.~T();
+    } else {
+      err.~E();
+    }
+  }
+
+  static result<T, E> new_ok(T x) {
+    return {
+      .ok = x,
+      .is_ok = true
+    };
+  }
+
+  static result<std::monostate, E> new_ok_void() {
+    return {
+      .is_ok = true
+    };
+  }
+
+  static result<T, E> new_err(E x) {
+    return {
+      .err = x,
+      .is_ok = false
+    };
+  }
+
+  static result<T, std::monostate> new_err_void() {
+    return {
+      .is_ok = false
+    };
+  }
 };
 
 }

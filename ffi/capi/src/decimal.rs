@@ -5,6 +5,7 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
+    use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
         options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
         FixedDecimalFormat,
@@ -103,11 +104,16 @@ pub mod ffi {
             &self,
             value: &ICU4XFixedDecimal,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) {
+        ) -> DiplomatResult<(), ()> {
             #[allow(unused_variables)]
-            let result = self.0.format(&value.0).write_to(write).is_ok();
+            let result = self
+                .0
+                .format(&value.0)
+                .write_to(write)
+                .map_err(|_| ())
+                .into();
             write.flush();
-            // TODO(shadaj): return bool: result
+            result
         }
     }
 }

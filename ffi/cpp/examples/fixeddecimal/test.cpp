@@ -10,14 +10,14 @@ const std::string_view path = "../../../../provider/testdata/data/json/";
 
 int main() {
     ICU4XLocale locale = ICU4XLocale::create("bn").value();
-    std::cout << "Running test for locale " << locale.tostring() << std::endl;
+    std::cout << "Running test for locale " << locale.tostring().ok << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).provider.value();
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy::Auto, ICU4XFixedDecimalSignDisplay::Auto};
     ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(locale, dp, opts).fdf.value();
 
     ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create(1000007);
-    std::string out = fdf.format_write(decimal);
+    std::string out = fdf.format_write(decimal).ok;
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "১০,০০,০০৭") {
         std::cout << "Output does not match expected output" << std::endl;
@@ -26,7 +26,7 @@ int main() {
 
     decimal.multiply_pow10(2);
     decimal.negate();
-    out = fdf.format_write(decimal);
+    out = fdf.format_write(decimal).ok;
     std::cout << "Value x100 and negated is " << out << std::endl;
     if (out != "-১০,০০,০০,৭০০") {
         std::cout << "Output does not match expected output" << std::endl;
