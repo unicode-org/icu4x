@@ -200,14 +200,14 @@ impl ResourceKey {
     /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!(x, "bar", "baz", 1);
     ///
     /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
-    /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::UnsupportedResourceKey(_))));
-    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::UnsupportedResourceKey(_))));
+    /// assert!(matches!(FOO_BAR.match_key(FOO_BAZ), Err(DataError::MissingResourceKey(_))));
+    /// assert!(matches!(FOO_BAR.match_key(BAR_BAZ), Err(DataError::MissingResourceKey(_))));
     /// ```
     pub fn match_key(&self, key: Self) -> Result<(), Error> {
         if *self == key {
             Ok(())
         } else {
-            Err(Error::UnsupportedResourceKey(*self))
+            Err(Error::MissingResourceKey(*self))
         }
     }
 }

@@ -112,7 +112,7 @@ impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
             .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
         {
             Ok(idx) => &self.cldr_numbers_data[idx].1.numbers,
-            Err(_) => return Err(DataError::UnavailableResourceOptions(req.clone())),
+            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
         };
         let nsname = numbers.default_numbering_system;
 

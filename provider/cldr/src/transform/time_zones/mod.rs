@@ -110,7 +110,7 @@ macro_rules! impl_data_provider {
                     .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
                 {
                     Ok(idx) => &self.data[idx].1.dates.time_zone_names,
-                    Err(_) => return Err(DataError::UnavailableResourceOptions(req.clone())),
+                    Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
                 };
                 Ok(DataResponse {
                     metadata: DataResponseMetadata {

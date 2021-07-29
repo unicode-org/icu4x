@@ -13,12 +13,12 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 pub enum Error {
     /// The data provider does not support the resource key.
-    #[displaydoc("Unsupported resource key: {0}")]
-    UnsupportedResourceKey(ResourceKey),
+    #[displaydoc("Missing resource for key: {0}")]
+    MissingResourceKey(ResourceKey),
 
     /// The data provider supports the key, but does not have data for the specific entry.
-    #[displaydoc("Unavailable resource options: {0}")]
-    UnavailableResourceOptions(DataRequest),
+    #[displaydoc("Missing resource for request: {0}")]
+    MissingResourceOptions(DataRequest),
 
     /// The resource was not returned due to a filter. The resource may or may not be available.
     #[displaydoc("Resource was filtered: {1}: {0}")]
@@ -89,12 +89,12 @@ impl Error {
 
 impl From<&ResourceKey> for Error {
     fn from(resc_key: &ResourceKey) -> Self {
-        Self::UnsupportedResourceKey(*resc_key)
+        Self::MissingResourceKey(*resc_key)
     }
 }
 
 impl From<DataRequest> for Error {
     fn from(req: DataRequest) -> Self {
-        Self::UnavailableResourceOptions(req)
+        Self::MissingResourceOptions(req)
     }
 }

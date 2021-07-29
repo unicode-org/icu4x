@@ -89,7 +89,7 @@ impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataPro
         if let Some(result) = self.time_zones.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
-        Err(DataError::UnsupportedResourceKey(req.resource_path.key))
+        Err(DataError::MissingResourceKey(req.resource_path.key))
     }
 }
 
@@ -140,7 +140,7 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
         {
             return Ok(Box::new(resp.into_iter()));
         }
-        Err(DataError::UnsupportedResourceKey(*resc_key))
+        Err(DataError::MissingResourceKey(*resc_key))
     }
 }
 

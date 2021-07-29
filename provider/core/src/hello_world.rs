@@ -129,7 +129,7 @@ impl<'data, 't> DataProvider<'data, HelloWorldV1Marker> for HelloWorldProvider<'
             .map
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataError::UnavailableResourceOptions(req.clone()))?;
+            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
