@@ -188,8 +188,9 @@ where
     M: DataMarker<'data>,
     M::Yokeable: ZeroCopyFrom<M::Cart>,
 {
-    /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`]. The data need not be fully owned;
-    /// it may be constrained by the `'data` lifetime.
+    /// Convert an [`Rc`]`<`[`Cart`]`>` into a [`DataPayload`].
+    ///
+    /// The data need not be fully owned; this constructor creates payloads bounded by `'data`.
     ///
     /// # Examples
     ///
@@ -226,6 +227,8 @@ where
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
     ///
+    /// This constructor creates `'static` payloads; borrowing is handled by [`Yoke`].
+    ///
     /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
     /// for this function may not compile; if this happens, use
     /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
@@ -242,6 +245,8 @@ where
 
     /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
     /// conversion. This can often be a Serde deserialization operation.
+    ///
+    /// This constructor creates `'static` payloads; borrowing is handled by [`Yoke`].
     ///
     /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
     /// see [`try_from_rc_buffer()`](Self::try_from_rc_buffer).
@@ -279,13 +284,10 @@ where
             inner: DataPayloadInner::RcBuf(yoke),
         })
     }
-}
 
-impl<'data, M> DataPayload<'data, M>
-where
-    M: DataMarker<'data>,
-{
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
+    ///
+    /// This constructor creates `'static` payloads.
     ///
     /// # Examples
     ///
