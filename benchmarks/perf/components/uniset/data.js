@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627582899897,
+  "lastUpdate": 1627596377726,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9149,6 +9149,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 37240439,
             "range": "± 2219167",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b38c6f03d4c182d6dd899e300b8e1b207b74895",
+          "message": "Rename data errors to MissingResource (#893)",
+          "timestamp": "2021-07-29T16:59:43-05:00",
+          "tree_id": "fe3cc86ca1fb9881c8571afffd60f5b2d058b6c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b38c6f03d4c182d6dd899e300b8e1b207b74895"
+        },
+        "date": 1627596375274,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 28016241,
+            "range": "± 1539774",
             "unit": "ns/iter"
           }
         ]
