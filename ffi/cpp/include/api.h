@@ -107,10 +107,15 @@ typedef struct ICU4XPluralCategories {
     bool many;
     bool other;
 } ICU4XPluralCategories;
+
 void ICU4XCanonicalizationResult_destroy(ssize_t* self);
+
 void ICU4XCreateDataProviderResult_destroy(ICU4XCreateDataProviderResult* self);
+
 void ICU4XCreateFixedDecimalResult_destroy(ICU4XCreateFixedDecimalResult* self);
+
 void ICU4XCreatePluralOperandsResult_destroy(ICU4XCreatePluralOperandsResult* self);
+
 void ICU4XCreatePluralRulesResult_destroy(ICU4XCreatePluralRulesResult* self);
 
 ICU4XCreateDataProviderResult ICU4XDataProvider_create_fs(const char* path_data, size_t path_len);
@@ -136,8 +141,11 @@ void ICU4XFixedDecimalFormat_destroy(ICU4XFixedDecimalFormat* self);
 
 ICU4XFixedDecimalFormatOptions ICU4XFixedDecimalFormatOptions_default();
 void ICU4XFixedDecimalFormatOptions_destroy(ICU4XFixedDecimalFormatOptions* self);
+
 void ICU4XFixedDecimalFormatResult_destroy(ICU4XFixedDecimalFormatResult* self);
+
 void ICU4XFixedDecimalGroupingStrategy_destroy(ssize_t* self);
+
 void ICU4XFixedDecimalSignDisplay_destroy(ssize_t* self);
 
 ICU4XLocale* ICU4XLocale_create(const char* name_data, size_t name_len);
@@ -165,12 +173,16 @@ ssize_t ICU4XLocaleCanonicalizer_maximize(const ICU4XLocaleCanonicalizer* self, 
 
 ssize_t ICU4XLocaleCanonicalizer_minimize(const ICU4XLocaleCanonicalizer* self, ICU4XLocale* locale);
 void ICU4XLocaleCanonicalizer_destroy(ICU4XLocaleCanonicalizer* self);
+
 void ICU4XLocaleResult_destroy(ssize_t* self);
+
 void ICU4XPluralCategories_destroy(ICU4XPluralCategories* self);
+
 void ICU4XPluralCategory_destroy(ssize_t* self);
 
 ICU4XCreatePluralOperandsResult ICU4XPluralOperands_create(const char* s_data, size_t s_len);
 void ICU4XPluralOperands_destroy(ICU4XPluralOperands* self);
+
 void ICU4XPluralRuleType_destroy(ssize_t* self);
 
 ICU4XCreatePluralRulesResult ICU4XPluralRules_create(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ssize_t ty);

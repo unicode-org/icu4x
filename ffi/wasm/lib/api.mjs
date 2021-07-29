@@ -195,11 +195,13 @@ export class ICU4XFixedDecimal {
   }
 
   negate() {
-    wasm.ICU4XFixedDecimal_negate(this.underlying)
+    const diplomat_out = wasm.ICU4XFixedDecimal_negate(this.underlying);
   }
 
   to_string() {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XFixedDecimal_to_string(this.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XFixedDecimal_to_string(this.underlying, writeable);
+    });
     return diplomat_out;
   }
 }
@@ -233,7 +235,9 @@ export class ICU4XFixedDecimalFormat {
   }
 
   format_write(value) {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XFixedDecimalFormat_format_write(this.underlying, value.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XFixedDecimalFormat_format_write(this.underlying, value.underlying, writeable);
+    });
     return diplomat_out;
   }
 }
@@ -358,7 +362,9 @@ export class ICU4XLocale {
   }
 
   basename() {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XLocale_basename(this.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XLocale_basename(this.underlying, writeable);
+    });
     return diplomat_out;
   }
 
@@ -367,28 +373,38 @@ export class ICU4XLocale {
     let bytes_diplomat_ptr = wasm.diplomat_alloc(bytes_diplomat_bytes.length);
     let bytes_diplomat_buf = new Uint8Array(wasm.memory.buffer, bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     bytes_diplomat_buf.set(bytes_diplomat_bytes, 0);
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XLocale_get_unicode_extension(this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XLocale_get_unicode_extension(this.underlying, bytes_diplomat_ptr, bytes_diplomat_bytes.length, writeable);
+    });
     wasm.diplomat_free(bytes_diplomat_ptr, bytes_diplomat_bytes.length);
     return diplomat_out;
   }
 
   language() {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XLocale_language(this.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XLocale_language(this.underlying, writeable);
+    });
     return diplomat_out;
   }
 
   region() {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XLocale_region(this.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XLocale_region(this.underlying, writeable);
+    });
     return diplomat_out;
   }
 
   script() {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XLocale_script(this.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XLocale_script(this.underlying, writeable);
+    });
     return diplomat_out;
   }
 
   tostring() {
-    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => wasm.ICU4XLocale_tostring(this.underlying, writeable));
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return wasm.ICU4XLocale_tostring(this.underlying, writeable);
+    });
     return diplomat_out;
   }
 }
@@ -588,7 +604,7 @@ export class ICU4XPluralRules {
   categories() {
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(6);
-      wasm.ICU4XPluralRules_categories(this.underlying, diplomat_receive_buffer);
+      wasm.ICU4XPluralRules_categories(diplomat_receive_buffer, this.underlying);
       const out = new ICU4XPluralCategories(diplomat_receive_buffer);
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
