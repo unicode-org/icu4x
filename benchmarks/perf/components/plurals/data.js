@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627580232570,
+  "lastUpdate": 1627582947816,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11297,6 +11297,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 136474,
             "range": "± 6977",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "871b9869064b1c056dd7ee13128a33158762bfaa",
+          "message": "Improve docs in PluralRules and FixedDecimal (#886)",
+          "timestamp": "2021-07-29T13:14:47-05:00",
+          "tree_id": "ed5feea1dc9c049874e3d44751986631ccd6d33e",
+          "url": "https://github.com/unicode-org/icu4x/commit/871b9869064b1c056dd7ee13128a33158762bfaa"
+        },
+        "date": 1627582945058,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1420,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8157,
+            "range": "± 200",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 121450,
+            "range": "± 4744",
             "unit": "ns/iter"
           }
         ]
