@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627580051099,
+  "lastUpdate": 1627580166588,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10253,6 +10253,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5117,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd5b0d278ce455c13dfbd29a4a84694aa9f026fc",
+          "message": "Document certain DataProvider impls that return `'static` (#916)\n\nReverts 4b48cf79996c997658606e30503ad46f4c586003",
+          "timestamp": "2021-07-29T12:29:28-05:00",
+          "tree_id": "5d8a17a8ec99b48a6c6fefc01cbbd1ee9c37eec7",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd5b0d278ce455c13dfbd29a4a84694aa9f026fc"
+        },
+        "date": 1627580164485,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2928,
+            "range": "± 187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4604,
+            "range": "± 293",
             "unit": "ns/iter"
           }
         ]
