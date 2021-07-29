@@ -2,8 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "serde")]
+use alloc::format;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 use icu_provider::yoke::{self, *};
-use std::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 
 #[cfg(feature = "serde")]
 use serde::ser::SerializeSeq;

@@ -99,11 +99,11 @@ impl NumbersProvider {
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1Marker> for NumbersProvider {
+impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, DecimalSymbolsV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, DecimalSymbolsV1Marker>, DataError> {
         Self::supports_key(&req.resource_path.key)?;
         let langid = req.try_langid()?;
         let cldr_langid: CldrLangID = langid.clone().into();
@@ -140,9 +140,9 @@ impl<'d, 's> DataProvider<'d, 's, DecimalSymbolsV1Marker> for NumbersProvider {
 
 icu_provider::impl_dyn_provider!(NumbersProvider, {
     _ => DecimalSymbolsV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
-impl<'d> IterableDataProviderCore for NumbersProvider {
+impl<'data> IterableDataProviderCore for NumbersProvider {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

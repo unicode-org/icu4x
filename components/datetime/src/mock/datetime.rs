@@ -4,8 +4,8 @@
 
 use crate::arithmetic;
 use crate::date::*;
-use std::convert::TryInto;
-use std::str::FromStr;
+use core::convert::TryInto;
+use core::str::FromStr;
 use tinystr::tinystr8;
 
 /// A temporary struct that implements [`DateTimeInput`]

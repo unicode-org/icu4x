@@ -60,7 +60,7 @@ pub trait ErasedDataStruct: 'static {
 
 impl_dyn_clone!(ErasedDataStruct);
 
-impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
+impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
     #[allow(clippy::needless_lifetimes)]
     fn zero_copy_from<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
         this
@@ -70,37 +70,21 @@ impl<'s> ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
 /// Marker type for [`ErasedDataStruct`].
 pub struct ErasedDataStructMarker {}
 
-impl<'s> DataMarker<'s> for ErasedDataStructMarker {
+impl DataMarker<'static> for ErasedDataStructMarker {
     type Yokeable = &'static dyn ErasedDataStruct;
     type Cart = dyn ErasedDataStruct;
 }
 
-impl<'d, M> crate::dynutil::UpcastDataPayload<'d, 'static, M> for ErasedDataStructMarker
+impl<'data, M> crate::dynutil::UpcastDataPayload<'static, M> for ErasedDataStructMarker
 where
     M: DataMarker<'static>,
     M::Cart: Sized,
 {
-    /// Upcast for ErasedDataStruct performs the following mapping of the data payload variants,
-    /// where `Y` is the concrete Yokeable and `S` is ErasedDataStruct Yokeable:
-    ///
-    /// - `Yoke<Y, &'d C>` => `Yoke<S, &'d dyn ErasedDataStruct>`, where the trait object in the
-    ///   cart is obtained by calling `.into_backing_cart()` on the input Yoke
-    /// - `Yoke<Y, Rc<C>>` => `Yoke<S, Rc<dyn ErasedDataStruct>`, where the trait object in the
-    ///   cart is the result of casting the whole input Yoke to `ErasedDataStruct`
-    /// - `Yoke<Y, _>` (fully owned) => `Yoke<S, Rc<dyn ErasedDataStruct>>`, by casting the
-    ///   whole input Yoke to `ErasedDataStruct` as above
-    fn upcast(
-        other: DataPayload<'d, 'static, M>,
-    ) -> DataPayload<'d, 'static, ErasedDataStructMarker> {
+    /// Upcast for ErasedDataStruct creates an `Rc<dyn ErasedDataStruct>` from the current inner
+    /// `Yoke` (i.e., `Rc::from(yoke)`).
+    fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
         match other.inner {
-            Borrowed(yoke) => {
-                // Case 1: Cast the cart of the Borrowed Yoke to the trait object.
-                // TODO(#752): This is not completely sound, because calling `.into_backing_cart()`
-                // throws away overrides stored in the Yokeable, such as those from `.with_mut()`.
-                let cart: &'d dyn ErasedDataStruct = yoke.into_backing_cart();
-                DataPayload::from_borrowed(cart)
-            }
             RcStruct(yoke) => {
                 // Case 2: Cast the whole RcStruct Yoke to the trait object.
                 let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
@@ -120,7 +104,7 @@ where
     }
 }
 
-impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
+impl<'data> DataPayload<'static, ErasedDataStructMarker> {
     /// Convert this [`DataPayload`] of an [`ErasedDataStruct`] into a [`DataPayload`] of a
     /// concrete type.
     ///
@@ -162,7 +146,7 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
     ///
     /// assert_eq!("Hallo Welt", downcast_payload.get().message);
     /// ```
-    pub fn downcast<M>(self) -> Result<DataPayload<'d, 'static, M>, Error>
+    pub fn downcast<M>(self) -> Result<DataPayload<'static, M>, Error>
     where
         M: DataMarker<'static>,
         M::Cart: Sized,
@@ -170,18 +154,6 @@ impl<'d> DataPayload<'d, 'static, ErasedDataStructMarker> {
     {
         use crate::data_provider::DataPayloadInner::*;
         match self.inner {
-            Borrowed(yoke) => {
-                // Case 1: The trait object originated from a Borrowed Yoke.
-                let any_ref: &dyn Any = yoke.into_backing_cart().as_any();
-                let y1 = any_ref.downcast_ref::<M::Cart>();
-                match y1 {
-                    Some(t_ref) => Ok(DataPayload::from_borrowed(t_ref)),
-                    None => Err(Error::MismatchedType {
-                        actual: Some(any_ref.type_id()),
-                        generic: Some(TypeId::of::<M::Cart>()),
-                    }),
-                }
-            }
             RcStruct(yoke) => {
                 let any_rc: Rc<dyn Any> = yoke.into_backing_cart().into_any_rc();
                 // `any_rc` is the Yoke that was converted into the `dyn ErasedDataStruct`. It
@@ -263,7 +235,7 @@ where
 ///
 /// - [#41517](https://github.com/rust-lang/rust/issues/41517) (trait aliases are not supported)
 /// - [#68636](https://github.com/rust-lang/rust/issues/68636) (identical traits can't be auto-implemented)
-pub trait ErasedDataProvider<'d> {
+pub trait ErasedDataProvider<'data> {
     /// Query the provider for data, returning the result as an [`ErasedDataStruct`] trait object.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
@@ -271,23 +243,23 @@ pub trait ErasedDataProvider<'d> {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStructMarker>, Error>;
+    ) -> Result<DataResponse<'static, ErasedDataStructMarker>, Error>;
 }
 
 // Auto-implement `ErasedDataProvider` on types implementing `DataProvider<dyn ErasedDataStruct>`
-impl<'d, T> ErasedDataProvider<'d> for T
+impl<'data, T> ErasedDataProvider<'data> for T
 where
-    T: DataProvider<'d, 'static, ErasedDataStructMarker>,
+    T: DataProvider<'static, ErasedDataStructMarker>,
 {
     fn load_erased(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 'static, ErasedDataStructMarker>, Error> {
+    ) -> Result<DataResponse<'static, ErasedDataStructMarker>, Error> {
         DataProvider::<ErasedDataStructMarker>::load_payload(self, req)
     }
 }
 
-impl<'d, M> DataProvider<'d, 'static, M> for dyn ErasedDataProvider<'d> + 'd
+impl<'data, M> DataProvider<'static, M> for dyn ErasedDataProvider<'data> + 'data
 where
     M: DataMarker<'static>,
     <M::Yokeable as Yokeable<'static>>::Output: Clone + Any,
@@ -295,7 +267,7 @@ where
     M::Cart: Sized,
 {
     /// Serve [`Sized`] objects from an [`ErasedDataProvider`] via downcasting.
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 'static, M>, Error> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, Error> {
         let result = ErasedDataProvider::load_erased(self, req)?;
         Ok(DataResponse {
             metadata: result.metadata,
@@ -310,17 +282,6 @@ mod test {
     use crate::dynutil::UpcastDataPayload;
     use crate::marker::CowStringMarker;
     use alloc::borrow::Cow;
-
-    #[test]
-    fn test_erased_case_1() {
-        let data = "foo".to_string();
-        let original = DataPayload::<CowStringMarker>::from_borrowed(&data);
-        let upcasted = ErasedDataStructMarker::upcast(original);
-        let downcasted = upcasted
-            .downcast::<CowStringMarker>()
-            .expect("Type conversion");
-        assert_eq!(downcasted.get(), "foo");
-    }
 
     #[test]
     fn test_erased_case_2() {

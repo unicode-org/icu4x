@@ -9,7 +9,7 @@ use displaydoc::Display;
 pub use length::{FieldLength, LengthError};
 pub use symbols::*;
 
-use std::{
+use core::{
     cmp::{Ord, PartialOrd},
     convert::{TryFrom, TryInto},
 };
@@ -20,6 +20,7 @@ pub enum Error {
     InvalidLength(FieldSymbol),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]

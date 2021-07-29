@@ -34,18 +34,18 @@ use crate::yoke::Yokeable;
 /// use std::rc::Rc;
 ///
 /// #[derive(Yokeable, ZeroCopyFrom)]
-/// struct MyDataStruct<'s> {
-///     message: Cow<'s, str>,
+/// struct MyDataStruct<'data> {
+///     message: Cow<'data, str>,
 /// }
 ///
 /// struct MyDataStructMarker;
 ///
-/// impl<'s> DataMarker<'s> for MyDataStructMarker {
+/// impl<'data> DataMarker<'data> for MyDataStructMarker {
 ///     type Yokeable = MyDataStruct<'static>;
 ///
 ///     // Note: the cart could also be just `str` since
 ///     // MyDataStruct has only one field.
-///     type Cart = MyDataStruct<'s>;
+///     type Cart = MyDataStruct<'data>;
 /// }
 ///
 /// // We can now use MyDataStruct with DataProvider:
@@ -55,12 +55,12 @@ use crate::yoke::Yokeable;
 /// let payload = DataPayload::<MyDataStructMarker>::from_partial_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
-pub trait DataMarker<'s> {
+pub trait DataMarker<'data> {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
 
     /// A type that is capable of owning all data necessary for the Yokeable type. This can often
-    /// be the `'s` version of the data struct.
-    type Cart: 's + ?Sized;
+    /// be the `'data` version of the data struct.
+    type Cart: 'data + ?Sized;
 }

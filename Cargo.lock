@@ -942,6 +942,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_benchmark_binsize"
+version = "0.1.0"
+dependencies = [
+ "cargo_metadata",
+]
+
+[[package]]
 name = "icu_benchmark_macros"
 version = "0.2.0"
 dependencies = [
@@ -2766,6 +2773,7 @@ dependencies = [
  "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",
+ "postcard",
  "rand",
  "rand_distr",
  "rand_pcg",

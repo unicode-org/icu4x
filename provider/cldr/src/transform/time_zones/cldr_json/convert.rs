@@ -12,7 +12,7 @@ use litemap::LiteMap;
 use std::borrow::Cow;
 use tinystr::TinyStr8;
 
-fn parse_hour_format<'d>(hour_format: &str) -> (Cow<'d, str>, Cow<'d, str>) {
+fn parse_hour_format<'data>(hour_format: &str) -> (Cow<'data, str>, Cow<'data, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
     let index = hour_format.rfind(';').unwrap();
     let positive = String::from(&hour_format[0..index]);
@@ -20,7 +20,7 @@ fn parse_hour_format<'d>(hour_format: &str) -> (Cow<'d, str>, Cow<'d, str>) {
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl<'d> From<TimeZoneNames> for TimeZoneFormatsV1<'d> {
+impl<'data> From<TimeZoneNames> for TimeZoneFormatsV1<'data> {
     fn from(other: TimeZoneNames) -> Self {
         Self {
             hour_format: parse_hour_format(&other.hour_format),
@@ -55,7 +55,7 @@ impl Location {
     }
 }
 
-impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
+impl<'data> From<TimeZoneNames> for ExemplarCitiesV1<'data> {
     fn from(other: TimeZoneNames) -> Self {
         Self(
             other
@@ -92,7 +92,7 @@ impl<'d> From<TimeZoneNames> for ExemplarCitiesV1<'d> {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'d> {
+impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'data> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -119,7 +119,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesLongV1<'d> {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'d> {
+impl<'data> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'data> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -146,7 +146,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneGenericNamesShortV1<'d> {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'d> {
+impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'data> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -167,7 +167,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesLongV1<'d> {
     }
 }
 
-impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'d> {
+impl<'data> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'data> {
     fn from(other: TimeZoneNames) -> Self {
         match other.metazone {
             None => Self(LiteMap::new()),
@@ -188,7 +188,7 @@ impl<'d> From<TimeZoneNames> for MetaZoneSpecificNamesShortV1<'d> {
     }
 }
 
-impl<'d> From<ZoneFormat> for MetaZoneSpecificNamesV1<'d> {
+impl<'data> From<ZoneFormat> for MetaZoneSpecificNamesV1<'data> {
     fn from(other: ZoneFormat) -> Self {
         let len = other.0.len();
         Self(

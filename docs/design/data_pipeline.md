@@ -97,9 +97,9 @@ pub mod key {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct SampleDataStructV1<'s> {
+pub struct SampleDataStructV1<'data> {
     /// This field is always present, and it may be borrowed or owned.
-    pub normal_value: Cow<'s, str>,
+    pub normal_value: Cow<'data, str>,
 
     /// This field may or may not be present in the data struct.
     ///

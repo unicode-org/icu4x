@@ -5,7 +5,7 @@
 use crate::Yoke;
 use crate::Yokeable;
 
-impl<'s, Y, C> serde::Serialize for Yoke<Y, C>
+impl<Y, C> serde::Serialize for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
     for<'a> &'a <Y as Yokeable<'a>>::Output: serde::Serialize,

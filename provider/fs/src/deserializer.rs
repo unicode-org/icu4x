@@ -89,11 +89,11 @@ macro_rules! get_bincode_deserializer_zc {
 
 /// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
 #[allow(clippy::type_complexity)]
-pub fn deserialize_zero_copy<'s, M>(
+pub fn deserialize_zero_copy<'data, M>(
     syntax_option: &SyntaxOption,
 ) -> for<'de> fn(bytes: &'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, Error>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

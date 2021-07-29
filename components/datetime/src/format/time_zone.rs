@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::fmt;
+use core::fmt;
 
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
@@ -26,7 +26,7 @@ where
     T: TimeZoneInput,
 {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.time_zone_format, self.time_zone, sink).map_err(|_| std::fmt::Error)
+        write_pattern(self.time_zone_format, self.time_zone, sink).map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -37,7 +37,7 @@ where
     T: TimeZoneInput,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.time_zone_format, self.time_zone, f).map_err(|_| std::fmt::Error)
+        write_pattern(self.time_zone_format, self.time_zone, f).map_err(|_| core::fmt::Error)
     }
 }
 

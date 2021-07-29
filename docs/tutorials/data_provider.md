@@ -25,7 +25,7 @@ pub struct MyComponent {
 }
 
 impl MyComponent {
-    pub fn try_new<'d, D: DataProvider<'d>>(
+    pub fn try_new<'data, D: DataProvider<'data>>(
         langid: LanguageIdentifier,
         data_provider: &D,
     ) -> Result<Self, MyError> {

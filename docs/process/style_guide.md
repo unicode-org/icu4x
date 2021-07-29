@@ -616,13 +616,13 @@ Data structs with zero-copy data should have a `'s` lifetime parameter.
 
 Examples of types that can be used in zero-copy data structs:
 
-- Strings: `Cow<'s, str>`, except as noted below
-- Vectors of fixed-width types: `ZeroVec<'s, T>`
-    - Examples: `ZeroVec<'s, u32>`, `ZeroVec<'s, TinyStr8>`
-- Vectors of variable-width types: `VarZeroVec<'s, T>`
-    - Example: `VarZeroVec<'s, String>`
-- Maps: `ZeroMap<'s, K, V>`
-    - Example: `ZeroMap<'s, TinyStr4, String>`
+- Strings: `Cow<'data, str>`, except as noted below
+- Vectors of fixed-width types: `ZeroVec<'data, T>`
+    - Examples: `ZeroVec<'data, u32>`, `ZeroVec<'data, TinyStr8>`
+- Vectors of variable-width types: `VarZeroVec<'data, T>`
+    - Example: `VarZeroVec<'data, String>`
+- Maps: `ZeroMap<'data, K, V>`
+    - Example: `ZeroMap<'data, TinyStr4, String>`
 
 In addition to supporting zero-copy deserialization, data structs should also support being fully owned (`'static`). For example, `&str` or `&T` require that the data be borrowed from somewhere, and so cannot be used in a data struct. `Cow` and all the other types listed above support the optional ownership model.
 
@@ -632,14 +632,14 @@ Main issue: [#113](https://github.com/unicode-org/icu4x/issues/113)
 
 When structs with public string fields contain strings, use the following type conventions:
 
-- `&'s str` if the struct does not need to own the string.
-- `Cow<'s, str>`  if the string could be borrowed or owned.
+- `&'data str` if the struct does not need to own the string.
+- `Cow<'data, str>`  if the string could be borrowed or owned.
 - [TinyStr](https://github.com/zbraniecki/tinystr) if the string is ASCII-only.
 - [SmallString](https://crates.io/crates/smallstr) for shorter strings, with a stack size ∈ {8, 12, 16, 20} that fits a large majority of cases.
 
-For `SmallString`, when determining what constitutes a "large majority of cases", consider 99% as a rule of thumb. If in doubt, start with `Cow<'s, str>`; `SmallString` is an additional optimization when the strings are almost always short.  Another advantage of `SmallString` is the lack of a lifetime parameter.  The stack sizes of 8, 12, 16, and 20 for `SmallString` were chosen because these are the sizes that cause SmallString to have a round number of 32-bit-aligned stack bytes.
+For `SmallString`, when determining what constitutes a "large majority of cases", consider 99% as a rule of thumb. If in doubt, start with `Cow<'data, str>`; `SmallString` is an additional optimization when the strings are almost always short.  Another advantage of `SmallString` is the lack of a lifetime parameter.  The stack sizes of 8, 12, 16, and 20 for `SmallString` were chosen because these are the sizes that cause SmallString to have a round number of 32-bit-aligned stack bytes.
 
-In general, use `Cow<'s, str>` instead of `String` in structs if the struct can often use zero-cost construction. Use `String` if the struct always owns its data, such as when the string is always dynamically generated at runtime, or if a lifetime parameter cannot be used ergonomically.
+In general, use `Cow<'data, str>` instead of `String` in structs if the struct can often use zero-cost construction. Use `String` if the struct always owns its data, such as when the string is always dynamically generated at runtime, or if a lifetime parameter cannot be used ergonomically.
 
 ### Pre-validation of options :: suggested
 

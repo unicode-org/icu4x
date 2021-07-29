@@ -8,7 +8,7 @@
 /// Requires the trait to have a method named `clone_into_box()`.
 macro_rules! impl_dyn_clone {
     ($trait:path) => {
-        impl_dyn_clone!($trait, 's);
+        impl_dyn_clone!($trait, 'data);
     };
     ($trait:path, $s:lifetime) => {
         impl<$s> alloc::borrow::ToOwned for dyn $trait + $s {
@@ -31,10 +31,10 @@ macro_rules! impl_dyn_clone {
 /// code. You may be looking for [`DataPayload::downcast`], which converts in the other direction.
 ///
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
-pub trait UpcastDataPayload<'d, 's, M>
+pub trait UpcastDataPayload<'data, M>
 where
-    M: crate::prelude::DataMarker<'s>,
-    Self: Sized + crate::prelude::DataMarker<'s>,
+    M: crate::prelude::DataMarker<'data>,
+    Self: Sized + crate::prelude::DataMarker<'data>,
 {
     /// Upcast a `DataPayload<T>` to a `DataPayload<S>` where `T` implements trait `S`.
     ///
@@ -59,8 +59,8 @@ where
     /// assert_eq!(downcasted.get(), "foo");
     /// ```
     fn upcast(
-        other: crate::prelude::DataPayload<'d, 's, M>,
-    ) -> crate::prelude::DataPayload<'d, 's, Self>;
+        other: crate::prelude::DataPayload<'data, M>,
+    ) -> crate::prelude::DataPayload<'data, Self>;
 }
 
 /// Implement [`DataProvider`] for a trait object `S` on a type that already implements [`DataProvider`]
@@ -79,9 +79,7 @@ where
 ///
 /// Lifetimes:
 ///
-/// - `$d` is the lifetime parameter for [`DataProvider`](crate::DataProvider); usually `'d`.
-/// - `$s` is the lifetime bound for the struct trait; usually `'s`. However, in the `ERASED` variant,
-///     this lifetime is always set to `'static`.
+/// - `$data` is the lifetime parameter for [`DataProvider`](crate::DataProvider); usually `'data`.
 ///
 /// # Examples
 ///
@@ -96,9 +94,9 @@ where
 ///
 /// // A small DataProvider that returns owned strings
 /// struct MyProvider(pub String);
-/// impl<'d> DataProvider<'d, 'static, CowStringMarker> for MyProvider {
+/// impl<'data> DataProvider<'static, CowStringMarker> for MyProvider {
 ///     fn load_payload(&self, req: &DataRequest)
-///             -> Result<DataResponse<'d, 'static, CowStringMarker>, DataError> {
+///             -> Result<DataResponse<'static, CowStringMarker>, DataError> {
 ///         req.resource_path.key.match_key(DEMO_KEY)?;
 ///         Ok(DataResponse {
 ///             metadata: Default::default(),
@@ -110,7 +108,7 @@ where
 /// // Implement DataProvider<ErasedDataStructMarker>
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     DEMO_KEY => CowStringMarker,
-/// }, ERASED, 'd);
+/// }, ERASED);
 ///
 /// // Usage example
 /// let provider = MyProvider("demo".to_string());
@@ -132,9 +130,9 @@ where
 /// # use icu_provider::marker::CowStringMarker;
 /// # use std::borrow::Cow;
 /// # struct MyProvider(pub String);
-/// # impl<'d> DataProvider<'d, 'static, CowStringMarker> for MyProvider {
+/// # impl<'data> DataProvider<'static, CowStringMarker> for MyProvider {
 /// #   fn load_payload(&self, req: &DataRequest)
-/// #           -> Result<DataResponse<'d, 'static, CowStringMarker>, DataError> {
+/// #           -> Result<DataResponse<'static, CowStringMarker>, DataError> {
 /// #       Ok(DataResponse {
 /// #           metadata: Default::default(),
 /// #           payload: Some(DataPayload::from_owned(self.0.to_string().into()))
@@ -144,7 +142,7 @@ where
 /// // Send all keys to the `CowStringMarker` provider.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
 ///     _ => CowStringMarker,
-/// }, ERASED, 'd);
+/// }, ERASED);
 /// ```
 ///
 /// [`DataProvider`]: crate::DataProvider
@@ -153,35 +151,33 @@ where
 /// [`SerdeSeDataStructMarker`]: (crate::serde::SerdeSeDataStructMarker)
 #[macro_export]
 macro_rules! impl_dyn_provider {
-    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED, $d:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, ERASED) => {
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
             $crate::erased::ErasedDataStructMarker,
-            $d,
-            's: 'static
+            'data: 'static
         );
     };
-    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE, $d:lifetime, $s:lifetime) => {
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, SERDE_SE, $data:lifetime) => {
         // If this fails to compile, enable the "provider_serde" feature on this crate.
         $crate::impl_dyn_provider!(
             $provider,
             { $($pat => $struct_m),+, },
             $crate::serde::SerdeSeDataStructMarker,
-            $d,
-            $s: $d
+            $data: $data
         );
     };
-    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, $dyn_m:path, $d:lifetime, $s:lifetime : $sb:lifetime) => {
-        impl<$d, $s> $crate::prelude::DataProvider<$d, $s, $dyn_m> for $provider
+    ($provider:ty, { $($pat:pat => $struct_m:ty),+, }, $dyn_m:path, $data:lifetime : $sb:lifetime) => {
+        impl<$data> $crate::prelude::DataProvider<$data, $dyn_m> for $provider
         where
-            $s: $sb,
+            $data: $sb,
         {
             fn load_payload(
                 &self,
                 req: &$crate::prelude::DataRequest,
             ) -> Result<
-                $crate::prelude::DataResponse<$d, $s, $dyn_m>,
+                $crate::prelude::DataResponse<$data, $dyn_m>,
                 $crate::prelude::DataError,
             > {
                 match req.resource_path.key {

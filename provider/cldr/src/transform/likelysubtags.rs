@@ -18,9 +18,9 @@ pub const ALL_KEYS: [ResourceKey; 1] = [key::LIKELY_SUBTAGS_V1];
 
 /// A data provider reading from CLDR JSON likely subtags rule files.
 #[derive(PartialEq, Debug)]
-pub struct LikelySubtagsProvider<'d> {
+pub struct LikelySubtagsProvider<'data> {
     data: cldr_json::Resource,
-    _phantom: PhantomData<&'d ()>, // placeholder for when we need the lifetime param
+    _phantom: PhantomData<&'data ()>, // placeholder for when we need the lifetime param
 }
 
 impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
@@ -40,17 +40,17 @@ impl TryFrom<&dyn CldrPaths> for LikelySubtagsProvider<'_> {
     }
 }
 
-impl<'d> KeyedDataProvider for LikelySubtagsProvider<'d> {
+impl<'data> KeyedDataProvider for LikelySubtagsProvider<'data> {
     fn supports_key(resc_key: &ResourceKey) -> Result<(), DataError> {
         key::LIKELY_SUBTAGS_V1.match_key(*resc_key)
     }
 }
 
-impl<'d, 's> DataProvider<'d, 's, LikelySubtagsV1Marker> for LikelySubtagsProvider<'d> {
+impl<'data> DataProvider<'data, LikelySubtagsV1Marker> for LikelySubtagsProvider<'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, LikelySubtagsV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, LikelySubtagsV1Marker>, DataError> {
         LikelySubtagsProvider::supports_key(&req.resource_path.key)?;
         let langid = &req.resource_path.options.langid;
 
@@ -69,11 +69,11 @@ impl<'d, 's> DataProvider<'d, 's, LikelySubtagsV1Marker> for LikelySubtagsProvid
     }
 }
 
-icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'d>, {
+icu_provider::impl_dyn_provider!(LikelySubtagsProvider<'data>, {
     _ => LikelySubtagsV1Marker,
-}, SERDE_SE, 'd, 's);
+}, SERDE_SE, 'data);
 
-impl<'d> IterableDataProviderCore for LikelySubtagsProvider<'d> {
+impl<'data> IterableDataProviderCore for LikelySubtagsProvider<'data> {
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

@@ -22,17 +22,17 @@ pub trait IterableDataProviderCore {
 
 /// A super-trait combining [`DataProvider`] and [`IterableDataProviderCore`], auto-implemented
 /// for all types implementing both of those traits.
-pub trait IterableDataProvider<'d, 's, M>:
-    IterableDataProviderCore + DataProvider<'d, 's, M>
+pub trait IterableDataProvider<'data, M>:
+    IterableDataProviderCore + DataProvider<'data, M>
 where
-    M: DataMarker<'s>,
+    M: DataMarker<'data>,
 {
 }
 
-impl<'d, 's, S, M> IterableDataProvider<'d, 's, M> for S
+impl<'data, S, M> IterableDataProvider<'data, M> for S
 where
-    S: IterableDataProviderCore + DataProvider<'d, 's, M>,
-    M: DataMarker<'s>,
+    S: IterableDataProviderCore + DataProvider<'data, M>,
+    M: DataMarker<'data>,
 {
 }
 

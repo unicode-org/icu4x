@@ -15,7 +15,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/trait.DataProvider.html) for more information.
-    pub struct ICU4XDataProvider(pub Box<dyn SerdeDeDataProvider>);
+    pub struct ICU4XDataProvider(pub Box<dyn SerdeDeDataProvider + 'static>);
 
     /// A result type for `ICU4XDataProvider::create`.
     pub struct ICU4XCreateDataProviderResult {

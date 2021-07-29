@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{char, cmp::Ordering, ops::RangeBounds};
+use alloc::vec;
+use alloc::vec::Vec;
+use core::{char, cmp::Ordering, ops::RangeBounds};
 
 use crate::{uniset::UnicodeSet, utils::deconstruct_range};
 
@@ -423,7 +425,7 @@ impl UnicodeSetBuilder {
 #[cfg(test)]
 mod tests {
     use super::{UnicodeSet, UnicodeSetBuilder};
-    use std::char;
+    use core::char;
 
     fn generate_tester(ex: Vec<u32>) -> UnicodeSetBuilder {
         let check = UnicodeSet::from_inversion_list(ex).unwrap();

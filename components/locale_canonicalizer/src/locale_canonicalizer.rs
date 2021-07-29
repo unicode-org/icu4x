@@ -20,9 +20,9 @@ pub enum CanonicalizationResult {
     Unmodified,
 }
 
-pub struct LocaleCanonicalizer<'d, 's> {
-    aliases: DataPayload<'d, 's, AliasesV1Marker>,
-    likely_subtags: DataPayload<'d, 's, LikelySubtagsV1Marker>,
+pub struct LocaleCanonicalizer<'data> {
+    aliases: DataPayload<'data, AliasesV1Marker>,
+    likely_subtags: DataPayload<'data, LikelySubtagsV1Marker>,
     extension_keys: Vec<Key>,
 }
 
@@ -126,12 +126,12 @@ macro_rules! maximize_locale {
     }};
 }
 
-impl<'d, 's> LocaleCanonicalizer<'d, 's> {
+impl<'data> LocaleCanonicalizer<'data> {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
-    pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer<'d, 's>, DataError>
+    pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer<'data>, DataError>
     where
-        P: DataProvider<'d, 's, AliasesV1Marker>
-            + DataProvider<'d, 's, LikelySubtagsV1Marker>
+        P: DataProvider<'data, AliasesV1Marker>
+            + DataProvider<'data, LikelySubtagsV1Marker>
             + ?Sized,
     {
         // The `rg` region override and `sd` regional subdivision keys may contain

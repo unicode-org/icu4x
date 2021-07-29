@@ -54,11 +54,11 @@
 //!
 //! // This example requires the "serde" feature
 //! #[derive(serde::Serialize, serde::Deserialize)]
-//! pub struct DataStruct<'s> {
+//! pub struct DataStruct<'data> {
 //!     #[serde(borrow)]
-//!     nums: ZeroVec<'s, u32>,
+//!     nums: ZeroVec<'data, u32>,
 //!     #[serde(borrow)]
-//!     strs: VarZeroVec<'s, String>,
+//!     strs: VarZeroVec<'data, String>,
 //! }
 //!
 //! let data = DataStruct {

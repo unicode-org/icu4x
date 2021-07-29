@@ -5,7 +5,7 @@
 use tinystr::TinyStr8;
 
 use crate::date::*;
-use std::str::FromStr;
+use core::str::FromStr;
 
 use super::{datetime::MockDateTime, time_zone::MockTimeZone};
 

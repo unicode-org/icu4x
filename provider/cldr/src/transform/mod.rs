@@ -37,18 +37,18 @@ pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
 }
 
 #[derive(Debug)]
-pub struct CldrJsonDataProvider<'a, 'd> {
+pub struct CldrJsonDataProvider<'a, 'data> {
     pub cldr_paths: &'a dyn CldrPaths,
-    aliases: LazyCldrProvider<AliasesProvider<'d>>,
-    date_symbols: LazyCldrProvider<DateSymbolsProvider<'d>>,
-    date_patterns: LazyCldrProvider<DatePatternsProvider<'d>>,
-    likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'d>>,
+    aliases: LazyCldrProvider<AliasesProvider<'data>>,
+    date_symbols: LazyCldrProvider<DateSymbolsProvider<'data>>,
+    date_patterns: LazyCldrProvider<DatePatternsProvider<'data>>,
+    likelysubtags: LazyCldrProvider<LikelySubtagsProvider<'data>>,
     numbers: LazyCldrProvider<NumbersProvider>,
-    plurals: LazyCldrProvider<PluralsProvider<'d>>,
-    time_zones: LazyCldrProvider<TimeZonesProvider<'d>>,
+    plurals: LazyCldrProvider<PluralsProvider<'data>>,
+    time_zones: LazyCldrProvider<TimeZonesProvider<'data>>,
 }
 
-impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
+impl<'a> CldrJsonDataProvider<'a, '_> {
     pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
         CldrJsonDataProvider {
             cldr_paths,
@@ -63,13 +63,11 @@ impl<'a, 'd> CldrJsonDataProvider<'a, 'd> {
     }
 }
 
-impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker>
-    for CldrJsonDataProvider<'a, 'd>
-{
+impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataProvider<'a, 'data> {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, 's, SerdeSeDataStructMarker>, DataError> {
+    ) -> Result<DataResponse<'data, SerdeSeDataStructMarker>, DataError> {
         if let Some(result) = self.aliases.try_load_serde(req, self.cldr_paths)? {
             return Ok(result);
         }
@@ -95,7 +93,7 @@ impl<'a, 'd, 's: 'd> DataProvider<'d, 's, SerdeSeDataStructMarker>
     }
 }
 
-impl<'a, 'd> IterableDataProviderCore for CldrJsonDataProvider<'a, 'd> {
+impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

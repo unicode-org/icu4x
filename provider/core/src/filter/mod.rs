@@ -65,13 +65,13 @@ where
     pub description: String,
 }
 
-impl<'d, 's, D, F, M> DataProvider<'d, 's, M> for RequestFilterDataProvider<D, F>
+impl<'data, D, F, M> DataProvider<'data, M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
-    M: DataMarker<'s>,
-    D: DataProvider<'d, 's, M>,
+    M: DataMarker<'data>,
+    D: DataProvider<'data, M>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'d, 's, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
         if (self.predicate)(req) {
             self.inner.load_payload(req)
         } else {

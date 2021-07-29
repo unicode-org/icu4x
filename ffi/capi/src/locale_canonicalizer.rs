@@ -29,7 +29,7 @@ pub mod ffi {
     /// A locale canonicalizer.
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html) for more details.
     #[diplomat::opaque]
-    pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer<'static, 'static>);
+    pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer<'static>);
 
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
