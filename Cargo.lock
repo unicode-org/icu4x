@@ -1235,6 +1235,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr",
+ "zerovec",
 ]
 
 [[package]]

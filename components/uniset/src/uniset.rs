@@ -8,6 +8,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 use icu_provider::yoke::{self, *};
+use zerovec::{ZeroVec, ule::AsULE};
 
 #[cfg(feature = "serde")]
 use serde::ser::SerializeSeq;
@@ -32,7 +33,7 @@ pub struct UnicodeSet {
     // Allows for traits of fixed size arrays
 
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    inv_list: Vec<u32>,
+    inv_list: ZeroVec<u32>,
     size: usize,
 }
 
@@ -60,8 +61,8 @@ impl serde::Serialize for UnicodeSet {
         S: serde::Serializer,
     {
         let mut seq = serializer.serialize_seq(Some(self.inv_list.len()))?;
-        for e in &self.inv_list {
-            seq.serialize_element(e)?;
+        for e in self.inv_list.iter() {
+            seq.serialize_element(&e)?;
         }
         seq.end()
     }
@@ -127,7 +128,7 @@ impl UnicodeSet {
     ///
     /// Public only to the crate, not exposed to public
     pub(crate) fn as_inversion_list(&self) -> &[u32] {
-        &self.inv_list
+        &self.inv_list.to_vec()
     }
 
     /// Yields an [`Iterator`] going through the character set in the [`UnicodeSet`]
@@ -146,7 +147,11 @@ impl UnicodeSet {
     /// assert_eq!(None, ex_iter_chars.next());
     /// ```
     pub fn iter_chars(&self) -> impl Iterator<Item = char> + '_ {
-        self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
+        self.inv_list
+            .as_slice()
+            .chunks(2)
+            .flat_map(|pair| (AsULE::from_unaligned(&pair[0])..AsULE::from_unaligned(&pair[1])))
+            .filter_map(char::from_u32)
     }
 
     /// Yields an [`Iterator`] returning the ranges of the code points that are
@@ -168,7 +173,14 @@ impl UnicodeSet {
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
     pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
-        self.inv_list.chunks(2).map(|pair| RangeInclusive::new(pair[0], pair[1] - 1))
+        self.inv_list
+            .as_slice()
+            .chunks(2)
+            .map(|pair| {
+                    let range_start: u32 = AsULE::from_unaligned(&pair[0]);
+                    let range_limit: u32 = AsULE::from_unaligned(&pair[1]);
+                    RangeInclusive::new(range_start, range_limit - 1)
+                })
     }
 
     /// Returns the number of ranges contained in this [`UnicodeSet`]
@@ -320,10 +332,11 @@ impl UnicodeSet {
         }
         let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
         let mut check = set_ranges.next();
-        for range in self.inv_list.chunks(2) {
+        let ranges = self.iter_ranges();
+        for range in ranges {
             match check {
                 Some(r) => {
-                    if r[0] >= range[0] && r[1] <= range[1] {
+                    if r[0] >= *range.start() && r[1] <= (range.end() + 1) {
                         check = set_ranges.next();
                     }
                 }
