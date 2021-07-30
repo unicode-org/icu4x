@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627598222445,
+  "lastUpdate": 1627603593097,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5363,6 +5363,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 1318072,
             "range": "± 13621",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "d3a5153c6da23e434a05ddfae441d2ecc39f1d5c",
+          "message": "Bump Yoke to 0.2.3",
+          "timestamp": "2021-07-29T18:53:06-05:00",
+          "tree_id": "1188c87119763cbcb4f1fcb9241477b585b128fd",
+          "url": "https://github.com/unicode-org/icu4x/commit/d3a5153c6da23e434a05ddfae441d2ecc39f1d5c"
+        },
+        "date": 1627603590321,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 599109,
+            "range": "± 17353",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 1254377,
+            "range": "± 36689",
             "unit": "ns/iter"
           }
         ]
