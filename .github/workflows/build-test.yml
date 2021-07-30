@@ -143,6 +143,12 @@ jobs:
           sphinx
           sphinx-rtd-theme
 
+    - name: Install Diplomat
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: --git https://github.com/rust-diplomat/diplomat.git --rev ff3e85bf94c12ea0110a57aa5fc61e82f0034def diplomat-tool
+
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -230,6 +236,12 @@ jobs:
         with:
           crate: cargo-make
           version: latest
+
+      - name: Install Diplomat
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: install
+          args: --git https://github.com/rust-diplomat/diplomat.git --rev ff3e85bf94c12ea0110a57aa5fc61e82f0034def diplomat-tool
 
       - name: Build
         uses: actions-rs/cargo@v1.0.1

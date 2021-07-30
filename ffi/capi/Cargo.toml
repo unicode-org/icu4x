@@ -39,8 +39,10 @@ icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", branch = "main" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", branch = "main" }
+
+# make sure to update GitHub actions to use the appropriate revision
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "ff3e85bf94c12ea0110a57aa5fc61e82f0034def" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "ff3e85bf94c12ea0110a57aa5fc61e82f0034def" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }

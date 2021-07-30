@@ -350,13 +350,26 @@ dependencies = [
 [tasks.wasm-test-release]
 description = "Run WASM tests in release mode"
 category = "ICU4X WASM"
+dependencies = [
+    "wasm-release",
+    "gen-js-diplomat"
+]
 script_runner = "@duckscript"
 script = '''
 cd ./ffi/wasm/test
 exec npm install
 exec npm test
 '''
-dependencies = ["wasm-release"]
+
+[tasks.gen-js-diplomat]
+description = "Generate JS bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/capi;
+exec diplomat-tool js ../wasm/lib/ ../wasm/docs.rst
+'''
 
 [tasks.wasm-clean]
 description = "Clean up WASM build artifacts"
