@@ -10,4 +10,4 @@ const dataProvider = ICU4XDataProvider.create_static().provider;
 const locale = ICU4XLocale.create("bn");
 
 const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default()).fdf;
-console.log(format.format_write(decimal).ok);
+console.log(format.format_write(decimal));

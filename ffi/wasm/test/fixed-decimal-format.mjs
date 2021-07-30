@@ -10,13 +10,13 @@ test("format a simple decimal", t => {
   const decimal = ICU4XFixedDecimal.create(1234);
   decimal.multiply_pow10(-2);
 
-  t.is(format.format_write(decimal).ok, "১২.৩৪");
+  t.is(format.format_write(decimal), "১২.৩৪");
 });
 
 test("format a long decimal", t => {
   const decimal = ICU4XFixedDecimal.create(1000007);
 
-  t.is(format.format_write(decimal).ok, "১০,০০,০০৭");
+  t.is(format.format_write(decimal), "১০,০০,০০৭");
 });
 
 test("format a negated, scaled decimal", t => {
@@ -24,5 +24,5 @@ test("format a negated, scaled decimal", t => {
   decimal.multiply_pow10(2);
   decimal.negate();
 
-  t.is(format.format_write(decimal).ok, "-১০,০০,০০,৭০০");
+  t.is(format.format_write(decimal), "-১০,০০,০০,৭০০");
 });

@@ -1,3 +1,6 @@
+#ifndef DIPLOMAT_RUNTIME_C_H
+#define DIPLOMAT_RUNTIME_C_H
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -19,4 +22,6 @@ DiplomatWriteable diplomat_simple_writeable(char* buf, size_t buf_size);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -1,8 +1,11 @@
+#ifndef DIPLOMAT_RUNTIME_CPP_H
+#define DIPLOMAT_RUNTIME_CPP_H
+
 #include <string>
 #include <variant>
 
 namespace capi {
-#include "api.h"
+#include "diplomat_runtime.h"
 }
 
 namespace diplomat {
@@ -78,3 +81,5 @@ struct result
 };
 
 }
+
+#endif
