@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/locale_canonicalizer_ffi_ICU4XLocaleCanonicalizer.h"
+#include "../../include/ICU4XLocaleCanonicalizer.h"
 #include <string.h>
 #include <stdio.h>
 
