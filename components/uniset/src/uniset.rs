@@ -90,6 +90,7 @@ impl<'d> UnicodeSet<'d> {
     pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError> {
         if is_valid(&inv_list) {
             let size: usize = inv_list.chunks(2).map(|end_points| end_points[1] - end_points[0]).sum::<u32>() as usize;
+            // TODO: how to convert a `Vec<u32>` into ZeroVec?
             Ok(Self { inv_list, size })
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list))
