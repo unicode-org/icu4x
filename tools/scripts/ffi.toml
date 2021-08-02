@@ -26,7 +26,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error git diff --exit-code
+exec --fail-on-error git diff --exit-code -- ffi
 '''
 
 [tasks.test-capi]
