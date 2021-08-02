@@ -39,7 +39,7 @@ fn overview_bench(c: &mut Criterion) {
             let fds: Vec<_> = values
                 .iter()
                 .map(black_box)
-                .map(|v| FixedDecimal::from_str(&v).expect("Failed to parse"))
+                .map(|v| FixedDecimal::from_str(v).expect("Failed to parse"))
                 .collect();
             fds.iter().map(black_box).map(|v| v.to_string()).count();
         });
