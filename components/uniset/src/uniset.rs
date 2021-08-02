@@ -25,7 +25,7 @@ const BMP_MAX: u32 = 0xFFFF;
 /// and predefined ranges.
 #[derive(Debug, PartialEq, Hash, Eq, Clone, Yokeable, ZeroCopyFrom)]
 #[yoke(cloning_zcf)]
-pub struct UnicodeSet {
+pub struct UnicodeSet<'d> {
     // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
 
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
@@ -33,12 +33,12 @@ pub struct UnicodeSet {
     // Allows for traits of fixed size arrays
 
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    inv_list: ZeroVec<u32>,
+    inv_list: ZeroVec<'d, u32>,
     size: usize,
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for UnicodeSet {
+impl<'de, 'd> serde::Deserialize<'de> for UnicodeSet<'d> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
