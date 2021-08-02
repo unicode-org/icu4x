@@ -318,7 +318,7 @@ mod tests {
         let mut sink = String::new();
         write_pattern(
             &pattern,
-            Some(&data.get()),
+            Some(data.get()),
             &datetime,
             &"und".parse().unwrap(),
             &mut sink,

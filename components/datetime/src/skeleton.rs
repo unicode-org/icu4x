@@ -469,7 +469,7 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern) = first_pattern_match {
-        naively_apply_hour_cycle_preferences(&mut pattern, &preferences);
+        naively_apply_hour_cycle_preferences(&mut pattern, preferences);
         return BestSkeleton::AllFieldsMatch(pattern);
     }
 
@@ -497,7 +497,7 @@ pub fn create_best_pattern_for_fields<'a>(
             }
             BestSkeleton::MissingOrExtraFields(mut pattern) => {
                 if date.is_empty() {
-                    naively_apply_hour_cycle_preferences(&mut pattern, &preferences);
+                    naively_apply_hour_cycle_preferences(&mut pattern, preferences);
                 }
                 BestSkeleton::MissingOrExtraFields(pattern)
             }
@@ -522,7 +522,7 @@ pub fn create_best_pattern_for_fields<'a>(
         };
 
     if let Some(ref mut pattern) = time_pattern {
-        naively_apply_hour_cycle_preferences(pattern, &preferences)
+        naively_apply_hour_cycle_preferences(pattern, preferences)
     }
 
     // Determine how to combine the date and time.

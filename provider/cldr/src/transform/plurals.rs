@@ -103,6 +103,7 @@ icu_provider::impl_dyn_provider!(PluralsProvider<'data>, {
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for PluralsProvider<'data> {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

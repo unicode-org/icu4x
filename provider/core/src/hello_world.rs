@@ -149,6 +149,7 @@ impl_dyn_provider!(HelloWorldProvider<'data>, {
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for HelloWorldProvider<'data> {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,

@@ -391,7 +391,7 @@ impl<'data> LocaleCanonicalizer<'data> {
                         .binary_search_by_key(&value_as_tinystr, |alias| alias.0)
                     {
                         if let Ok(modified_value) =
-                            Value::from_bytes(&self.aliases.get().subdivision[index].1.as_bytes())
+                            Value::from_bytes(self.aliases.get().subdivision[index].1.as_bytes())
                         {
                             *value = modified_value;
                             result = CanonicalizationResult::Modified;
