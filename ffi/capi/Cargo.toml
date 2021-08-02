@@ -41,8 +41,8 @@ tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 # make sure to update GitHub actions to use the appropriate revision
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "ff3e85bf94c12ea0110a57aa5fc61e82f0034def" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "ff3e85bf94c12ea0110a57aa5fc61e82f0034def" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "e57b0c16837f580117c040701fcd372f3b3fdce9" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "e57b0c16837f580117c040701fcd372f3b3fdce9" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
