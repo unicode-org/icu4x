@@ -206,8 +206,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_short),
         ];
         let iter = arr.iter().flatten();
-        for hour_cycle in iter
-        {
+        for hour_cycle in iter {
             if let Some(preferred_hour_cycle) = preferred_hour_cycle {
                 assert_eq!(
                     *hour_cycle, preferred_hour_cycle,
