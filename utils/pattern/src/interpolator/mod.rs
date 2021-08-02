@@ -306,7 +306,7 @@ mod tests {
     fn simple_interpolate() {
         for sample in SAMPLES.iter() {
             let pattern: Pattern<usize> = Parser::new(
-                &sample.0,
+                sample.0,
                 ParserOptions {
                     allow_raw_letters: false,
                 },
@@ -340,7 +340,7 @@ mod tests {
 
         for sample in &named_samples {
             let pattern: Pattern<String> = Parser::new(
-                &sample.0,
+                sample.0,
                 ParserOptions {
                     allow_raw_letters: false,
                 },
@@ -367,7 +367,7 @@ mod tests {
 
         for sample in &samples {
             let pattern: Pattern<usize> = Parser::new(
-                &sample.0,
+                sample.0,
                 ParserOptions {
                     allow_raw_letters: true,
                 },

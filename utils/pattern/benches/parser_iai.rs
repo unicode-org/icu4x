@@ -27,7 +27,7 @@ fn iai_parse() {
 
     for sample in &samples {
         let mut p = Parser::<usize>::new(
-            &sample.0,
+            sample.0,
             ParserOptions {
                 allow_raw_letters: false,
             },
@@ -65,7 +65,7 @@ fn iai_interpolate() {
 
     for sample in &samples {
         let pattern: Pattern<usize> = Parser::new(
-            &sample.0,
+            sample.0,
             ParserOptions {
                 allow_raw_letters: false,
             },
@@ -254,7 +254,7 @@ fn iai_named_interpolate() {
 
     for sample in &named_samples {
         let pattern: Pattern<_> = Parser::new(
-            &sample.0,
+            sample.0,
             ParserOptions {
                 allow_raw_letters: false,
             },
