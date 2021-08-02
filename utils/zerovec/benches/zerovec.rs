@@ -61,7 +61,7 @@ where
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("zerovec/overview", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE))
+            ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE))
                 .unwrap()
                 .iter()
                 .sum::<u32>()
