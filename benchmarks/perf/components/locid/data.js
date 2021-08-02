@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627603607831,
+  "lastUpdate": 1627926408067,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10433,6 +10433,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5168,
             "range": "± 180",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d12a5c53366b650f27e1bad8bec9791f432df4ad",
+          "message": "Fix clippy warnings arising from Rust version upgrade (#923)",
+          "timestamp": "2021-08-02T12:40:47-05:00",
+          "tree_id": "72f8596d3fd41a8f668b6130084b302f95b67524",
+          "url": "https://github.com/unicode-org/icu4x/commit/d12a5c53366b650f27e1bad8bec9791f432df4ad"
+        },
+        "date": 1627926405391,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2237,
+            "range": "± 81",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3740,
+            "range": "± 165",
             "unit": "ns/iter"
           }
         ]
