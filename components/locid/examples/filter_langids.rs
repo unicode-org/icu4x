@@ -22,17 +22,12 @@ const DEFAULT_INPUT: &str =
 
 fn filter_input(input: &str) -> String {
     // 1. Parse the input string into a list of language identifiers.
-    let langids: Vec<LanguageIdentifier> = input
-        .split(',')
-        .filter_map(|s| s.trim().parse().ok())
-        .collect();
+    let langids = input.split(',').filter_map(|s| s.trim().parse().ok());
 
     // 2. Filter for LanguageIdentifiers with Language subtag `en`.
     let en_lang: subtags::Language = "en".parse().expect("Failed to parse language subtag.");
 
-    let en_langids = langids
-        .into_iter()
-        .filter(|langid| langid.language == en_lang);
+    let en_langids = langids.filter(|langid: &LanguageIdentifier| langid.language == en_lang);
 
     // 3. Serialize the output.
     let en_strs: Vec<String> = en_langids.map(|langid| langid.to_string()).collect();
@@ -50,7 +45,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     } else {
         DEFAULT_INPUT
     };
-    let _output = filter_input(&input);
+    let _output = filter_input(input);
 
     #[cfg(debug_assertions)]
     println!("\nInput: {}\nOutput: {}", input, _output);

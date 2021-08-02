@@ -844,6 +844,6 @@ mod tests {
     #[test]
     fn test_is_empty() {
         let mut builder = UnicodeSetBuilder::new();
-        assert_eq!(true, builder.is_empty());
+        assert!(builder.is_empty());
     }
 }

@@ -79,7 +79,7 @@ impl<'a> ZeroMapKV<'a> for String {
     type GetType = str;
     type SerializeType = str;
     fn as_needle(&self) -> &str {
-        &self
+        self
     }
     fn cmp_get(&self, g: &str) -> Ordering {
         (&**self).cmp(g)

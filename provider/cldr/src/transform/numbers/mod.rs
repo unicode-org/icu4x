@@ -143,6 +143,7 @@ icu_provider::impl_dyn_provider!(NumbersProvider, {
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for NumbersProvider {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,

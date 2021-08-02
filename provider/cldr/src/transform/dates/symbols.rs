@@ -84,6 +84,7 @@ icu_provider::impl_dyn_provider!(DateSymbolsProvider<'data>, {
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for DateSymbolsProvider<'data> {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
