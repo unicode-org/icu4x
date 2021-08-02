@@ -357,8 +357,8 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 cd ./ffi/wasm/test
-exec npm install
-exec npm test
+exec --fail-on-error npm install
+exec --fail-on-error npm test
 '''
 
 [tasks.gen-js-diplomat]
@@ -367,8 +367,8 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/capi;
-exec diplomat-tool js ../wasm/lib/ ../wasm/docs.rst
+cd ffi/capi
+exec --fail-on-error diplomat-tool js ../wasm/lib/ ../wasm/docs.rst
 '''
 
 [tasks.wasm-clean]

@@ -8,11 +8,26 @@
 description = "Run FFI tests"
 category = "ICU4X Development"
 dependencies = [
+    "verify-diplomat-gen",
     "test-capi",
     "test-cpp",
     "test-cortex-ffi",
     "test-nostd",
 ]
+
+[tasks.verify-diplomat-gen]
+description = "Verify that checked-in Diplomat bindings are up to date"
+category = "ICU4X Development"
+dependencies = [
+    "gen-c-diplomat",
+    "gen-cpp-diplomat",
+    "gen-js-diplomat",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+exec --fail-on-error git diff --exit-code
+'''
 
 [tasks.test-capi]
 description = "Run C API tests"
@@ -24,9 +39,9 @@ exit_on_error true
 cd ffi/capi/examples/pluralrules
 exec make
 cd ../fixeddecimal
-exec make
+exec --fail-on-error make
 cd ../locale
-exec make
+exec --fail-on-error make
 '''
 
 [tasks.test-cpp]
@@ -37,9 +52,9 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/cpp/examples/pluralrules
-exec make
+exec --fail-on-error make
 cd ../fixeddecimal
-exec make
+exec --fail-on-error make
 '''
 
 [tasks.test-cppdoc]
@@ -49,7 +64,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/cpp/docs;
-exec make html
+exec --fail-on-error make html
 '''
 
 [tasks.gen-c-diplomat]
@@ -59,7 +74,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
-exec diplomat-tool c ./include
+exec --fail-on-error diplomat-tool c ./include
 '''
 
 [tasks.gen-cpp-diplomat]
@@ -69,7 +84,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
-exec diplomat-tool cpp ../cpp/include
+exec --fail-on-error diplomat-tool cpp ../cpp/include
 '''
 
 [tasks.test-cortex-ffi]
