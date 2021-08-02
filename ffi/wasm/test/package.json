@@ -1,6 +1,8 @@
 {
   "ava": {
-    "files": [ "*.mjs" ],
+    "files": [
+      "*.mjs"
+    ],
     "require": [
       "esm"
     ],
