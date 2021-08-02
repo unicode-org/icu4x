@@ -55,7 +55,7 @@ impl<'de, 'd> serde::Deserialize<'de> for UnicodeSet<'d> {
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
 #[cfg(feature = "serde")]
-impl serde::Serialize for UnicodeSet {
+impl serde::Serialize for UnicodeSet<'d> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -68,7 +68,7 @@ impl serde::Serialize for UnicodeSet {
     }
 }
 
-impl UnicodeSet {
+impl UnicodeSet<'d> {
     /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
     ///

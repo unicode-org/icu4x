@@ -23,7 +23,7 @@ impl UnicodeSetBuilder {
     }
 
     /// Returns a [`UnicodeSet`] and consumes the [`UnicodeSetBuilder`]
-    pub fn build(self) -> UnicodeSet {
+    pub fn build(self) -> UnicodeSet<'d> {
         UnicodeSet::from_inversion_list(self.intervals).unwrap()
     }
 
