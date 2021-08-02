@@ -57,7 +57,7 @@ fn test_langid_invalid() {
 #[test]
 fn test_locale_is_empty() {
     let locale: Locale = Locale::default();
-    assert_eq!(locale.extensions.is_empty(), true);
+    assert!(locale.extensions.is_empty());
     assert_eq!(locale.to_string(), "und".to_string());
 }
 
