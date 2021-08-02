@@ -205,7 +205,7 @@ fn test_warehouse_owned_dyn_erased_alt() {
     let response = get_payload_alt(&warehouse as &dyn ErasedDataProvider);
     assert!(matches!(
         response,
-        Err(DataError::UnsupportedResourceKey { .. })
+        Err(DataError::MissingResourceKey { .. })
     ));
 }
 

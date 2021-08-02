@@ -499,11 +499,10 @@ mod gen_properties_test {
 
     #[test]
     fn skip_ppucd_line_test() {
-        assert_eq!(true, is_skip_ppucd_line("ucd;13.0.0"));
-        assert_eq!(
-            false,
-            is_skip_ppucd_line("value;InSC;Gemination_Mark;Gemination_Mark")
-        );
+        assert!(is_skip_ppucd_line("ucd;13.0.0"));
+        assert!(!is_skip_ppucd_line(
+            "value;InSC;Gemination_Mark;Gemination_Mark"
+        ));
     }
 
     #[test]
@@ -522,7 +521,7 @@ mod gen_properties_test {
             "WB=WSegSpace",
             "WSpace",
         ];
-        let line_parts = split_line(&line);
+        let line_parts = split_line(line);
         assert_eq!(exp_parts, line_parts);
     }
 
@@ -541,7 +540,7 @@ mod gen_properties_test {
         exp_prop_vals.insert("WB", "WSegSpace");
         exp_prop_vals.insert("WSpace", "WSpace");
 
-        let line_parts = split_line(&line);
+        let line_parts = split_line(line);
         let act_props_vals = get_data_line_prop_vals(&line_parts);
 
         assert_eq!(exp_prop_vals, act_props_vals);
@@ -552,7 +551,7 @@ mod gen_properties_test {
         let line = "property;Binary;Upper;Uppercase";
         let mut prop_aliases: HashMap<&str, HashSet<&str>> = HashMap::new();
 
-        update_aliases(&mut prop_aliases, &line);
+        update_aliases(&mut prop_aliases, line);
 
         let mut exp_prop_aliases: HashMap<&str, HashSet<&str>> = HashMap::new();
         let exp_aliases = vec!["Uppercase", "Upper"]; // order won't matter
@@ -579,7 +578,7 @@ mod gen_properties_test {
                                                          // inversion list: end val exclusive
         let exp_range = UnicodeSet::from_inversion_list(exp_range_inv_list).unwrap();
 
-        let (range, prop_vals) = get_block_range_prop_vals(&line);
+        let (range, prop_vals) = get_block_range_prop_vals(line);
 
         assert_eq!(exp_range, range);
         assert_eq!(exp_prop_vals, prop_vals);
@@ -634,19 +633,19 @@ mod gen_properties_test {
         exp_code_point_prop_vals.insert("Gr_Base", "Gr_Base");
         exp_code_point_prop_vals.insert("WSpace", "WSpace");
         exp_code_point_prop_vals.insert("Pat_WS", "Pat_WS");
-        let defaults: HashMap<&str, &str> = get_defaults_prop_vals(&defaults_line);
+        let defaults: HashMap<&str, &str> = get_defaults_prop_vals(defaults_line);
         let mut exp_code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
         exp_code_points.insert(exp_code_point, exp_code_point_prop_vals);
 
         let mut blocks: HashMap<UnicodeSet, HashMap<&str, &str>> = HashMap::new();
-        let (range, prop_vals) = get_block_range_prop_vals(&block_line);
+        let (range, prop_vals) = get_block_range_prop_vals(block_line);
         blocks.insert(range, prop_vals);
 
         let mut code_point_overrides: HashMap<UnicodeSet, HashMap<&str, &str>> = HashMap::new();
-        let (code_point_range, prop_vals) = get_code_point_overrides(&code_point_line);
+        let (code_point_range, prop_vals) = get_code_point_overrides(code_point_line);
         code_point_overrides.insert(code_point_range, prop_vals);
 
-        let (code_point_range, _) = get_code_point_overrides(&code_point_line);
+        let (code_point_range, _) = get_code_point_overrides(code_point_line);
         let mut code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
         for code_point_char in code_point_range.iter_chars() {
             let code_point = code_point_char as u32;
@@ -724,19 +723,19 @@ mod gen_properties_test {
         // exp_code_point_prop_vals.insert("Gr_Base"), "Gr_Base"));
         exp_code_point_prop_vals.insert("WSpace", "WSpace");
         exp_code_point_prop_vals.insert("Pat_WS", "Pat_WS");
-        let defaults: HashMap<&str, &str> = get_defaults_prop_vals(&defaults_line);
+        let defaults: HashMap<&str, &str> = get_defaults_prop_vals(defaults_line);
         let mut exp_code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
         exp_code_points.insert(exp_code_point, exp_code_point_prop_vals);
 
         let mut blocks: HashMap<UnicodeSet, HashMap<&str, &str>> = HashMap::new();
-        let (range, prop_vals) = get_block_range_prop_vals(&block_line);
+        let (range, prop_vals) = get_block_range_prop_vals(block_line);
         blocks.insert(range, prop_vals);
 
         let mut code_point_overrides: HashMap<UnicodeSet, HashMap<&str, &str>> = HashMap::new();
-        let (code_point_range, prop_vals) = get_code_point_overrides(&code_point_line);
+        let (code_point_range, prop_vals) = get_code_point_overrides(code_point_line);
         code_point_overrides.insert(code_point_range, prop_vals);
 
-        let (code_point_range, _) = get_code_point_overrides(&code_point_line);
+        let (code_point_range, _) = get_code_point_overrides(code_point_line);
         let mut code_points: HashMap<u32, HashMap<&str, &str>> = HashMap::new();
         for code_point_char in code_point_range.iter_chars() {
             let code_point = code_point_char as u32;
@@ -776,10 +775,10 @@ mod gen_properties_test {
         let line2 = "value;gcm;Sk;Modifier_Symbol";
         let line3 = "value;gcm;Sm;Math_Symbol";
         let line4 = "value;gcm;So;Other_Symbol";
-        update_enum_val_aliases(&mut act_enum_val_aliases, &line1);
-        update_enum_val_aliases(&mut act_enum_val_aliases, &line2);
-        update_enum_val_aliases(&mut act_enum_val_aliases, &line3);
-        update_enum_val_aliases(&mut act_enum_val_aliases, &line4);
+        update_enum_val_aliases(&mut act_enum_val_aliases, line1);
+        update_enum_val_aliases(&mut act_enum_val_aliases, line2);
+        update_enum_val_aliases(&mut act_enum_val_aliases, line3);
+        update_enum_val_aliases(&mut act_enum_val_aliases, line4);
 
         assert_eq!(exp_enum_val_aliases, act_enum_val_aliases);
     }

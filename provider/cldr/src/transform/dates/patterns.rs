@@ -69,7 +69,7 @@ impl<'data> DataProvider<'data, gregory::DatePatternsV1Marker> for DatePatternsP
             .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
         {
             Ok(idx) => &self.data[idx].1.dates,
-            Err(_) => return Err(DataError::UnavailableResourceOptions(req.clone())),
+            Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
         };
         Ok(DataResponse {
             metadata: DataResponseMetadata {
@@ -87,6 +87,7 @@ icu_provider::impl_dyn_provider!(DatePatternsProvider<'data>, {
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for DatePatternsProvider<'data> {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -198,23 +199,21 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             .expect("Failed to create a short Pattern from bytes.");
 
         let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
-        for hour_cycle in [
+        let arr = [
             pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_full),
             pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_long),
             pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_medium),
             pattern::transform_hour_cycle::determine_coarse_hour_cycle(&pattern_short),
-        ]
-        .iter()
-        {
-            if let Some(hour_cycle) = hour_cycle {
-                if let Some(preferred_hour_cycle) = preferred_hour_cycle {
-                    assert_eq!(
-                        *hour_cycle, preferred_hour_cycle,
-                        "A locale contained a mix of coarse hour cycle types"
-                    );
-                } else {
-                    preferred_hour_cycle = Some(*hour_cycle);
-                }
+        ];
+        let iter = arr.iter().flatten();
+        for hour_cycle in iter {
+            if let Some(preferred_hour_cycle) = preferred_hour_cycle {
+                assert_eq!(
+                    *hour_cycle, preferred_hour_cycle,
+                    "A locale contained a mix of coarse hour cycle types"
+                );
+            } else {
+                preferred_hour_cycle = Some(*hour_cycle);
             }
         }
 
@@ -231,7 +230,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             let alt_time = gregory::patterns::LengthPatternsV1 {
                 full: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
-                    &pattern_str_full,
+                    pattern_str_full,
                     pattern_full,
                     alt_hour_cycle,
                 )
@@ -239,7 +238,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 .into(),
                 long: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
-                    &pattern_str_long,
+                    pattern_str_long,
                     pattern_long,
                     alt_hour_cycle,
                 )
@@ -247,7 +246,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 .into(),
                 medium: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
-                    &pattern_str_medium,
+                    pattern_str_medium,
                     pattern_medium,
                     alt_hour_cycle,
                 )
@@ -255,7 +254,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
                 .into(),
                 short: pattern::transform_hour_cycle::apply_coarse_hour_cycle(
                     &date_time_formats_v1,
-                    &pattern_str_short,
+                    pattern_str_short,
                     pattern_short,
                     alt_hour_cycle,
                 )

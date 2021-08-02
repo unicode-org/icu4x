@@ -4,6 +4,18 @@
 
   - …
 
+## icu4x 0.3.0 (July 29, 2021)
+
+  - Static data provider without filesystem dependency (#78)
+  - Infrastructure around zero-copy deserialization, including `ZeroVec` and `Yoke` (#652, #667)
+  - Most ICU4X components support `no_std` (#812)
+  - Hour cycle preferences are used by DateTimeFormat (#671)
+  - Skeleton matching supports additional field widths (#584)
+  - Add canonicalize method to LocaleCanonicalizer (#747)
+  - Added range iterator on UnicodeSet (#836)
+  - Add PluralRules::categories() function (#789)
+  - Consolidated data generation tool into new binary `icu4x-datagen`
+
 ## icu4x 0.2.0 (April 29, 2021)
   - Updated CLDR to 39 (#640)
   - Initial release of:

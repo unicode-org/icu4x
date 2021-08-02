@@ -111,8 +111,10 @@ fn test_grouper() {
             let dec = FixedDecimal::from(1)
                 .multiplied_pow10((i as i16) + 3)
                 .unwrap();
-            let mut data_struct: crate::provider::DecimalSymbolsV1 = Default::default();
-            data_struct.grouping_sizes = cas.sizes;
+            let data_struct = crate::provider::DecimalSymbolsV1 {
+                grouping_sizes: cas.sizes,
+                ..Default::default()
+            };
             let provider = StructProvider {
                 key: crate::provider::key::SYMBOLS_V1,
                 data: DataPayload::from_owned(data_struct),

@@ -736,6 +736,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
         // LB4
         assert_eq!(is_break(BK, AL), true);

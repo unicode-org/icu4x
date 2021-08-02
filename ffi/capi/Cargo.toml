@@ -48,7 +48,7 @@ diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "f
 log = { version = "0.4" }
 
 [target.'cfg(any(target_arch = "wasm32", target_os = "none"))'.dependencies]
-icu_testdata = { version = "0.2", path = "../../provider/testdata", default-features = false, features = ["static"] }
+icu_testdata = { version = "0.3", path = "../../provider/testdata", default-features = false, features = ["static"] }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { path = "../../provider/fs/" }

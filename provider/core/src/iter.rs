@@ -46,16 +46,16 @@ pub trait KeyedDataProvider {
     /// Given a [`ResourceKey`], checks whether this type of [`DataProvider`] supports it.
     ///
     /// Returns Ok if the key is supported, or an Error with more information if not. The Error
-    /// should be [`UnsupportedResourceKey`].
+    /// should be [`MissingResourceKey`].
     ///
-    /// [`UnsupportedResourceKey`]: crate::error::Error::UnsupportedResourceKey
+    /// [`MissingResourceKey`]: crate::error::Error::MissingResourceKey
     fn supports_key(resc_key: &ResourceKey) -> Result<(), Error>;
 
     /// Auto-implemented function that enables chaining of [`KeyedDataProviders`] while preserving
-    /// [`UnsupportedResourceKey`].
+    /// [`MissingResourceKey`].
     ///
     /// [`KeyedDataProviders`]: KeyedDataProvider
-    /// [`UnsupportedResourceKey`]: crate::error::Error::UnsupportedResourceKey
+    /// [`MissingResourceKey`]: crate::error::Error::MissingResourceKey
     ///
     /// # Examples
     ///
@@ -68,7 +68,7 @@ pub trait KeyedDataProvider {
         match Self::supports_key(resc_key) {
             Ok(()) => Ok(()),
             Err(new_err) => {
-                if let Error::UnsupportedResourceKey(_) = err {
+                if let Error::MissingResourceKey(_) = err {
                     Err(err)
                 } else {
                     Err(new_err)

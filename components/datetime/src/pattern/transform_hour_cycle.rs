@@ -75,7 +75,7 @@ pub fn apply_coarse_hour_cycle(
     match skeleton::create_best_pattern_for_fields(
         &datetime.skeletons,
         &datetime.length_patterns,
-        &skeleton.as_slice(),
+        skeleton.as_slice(),
         &None,
         // Prefer using the matched pattern directly, rather than mutating it to match the
         // requested fields.

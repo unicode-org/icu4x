@@ -110,7 +110,7 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::UnavailableResourceOptions(_))
+        Err(DataError::MissingResourceOptions(_))
     ));
 
     assert!(matches!(
@@ -126,7 +126,7 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::UnsupportedResourceKey(_))
+        Err(DataError::MissingResourceKey(_))
     ));
 
     assert!(matches!(
@@ -142,7 +142,7 @@ fn test_json_errors() {
                 }
             },
         ),
-        Err(DataError::UnsupportedResourceKey(_))
+        Err(DataError::MissingResourceKey(_))
     ));
 }
 

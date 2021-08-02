@@ -129,7 +129,7 @@ impl<'data, 't> DataProvider<'data, HelloWorldV1Marker> for HelloWorldProvider<'
             .map
             .get(langid)
             .map(|s| HelloWorldV1 { message: s.clone() })
-            .ok_or_else(|| DataError::UnavailableResourceOptions(req.clone()))?;
+            .ok_or_else(|| DataError::MissingResourceOptions(req.clone()))?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: Some(langid.clone()),
@@ -149,6 +149,7 @@ impl_dyn_provider!(HelloWorldProvider<'data>, {
 }, SERDE_SE, 'data);
 
 impl<'data> IterableDataProviderCore for HelloWorldProvider<'data> {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         resc_key: &ResourceKey,
