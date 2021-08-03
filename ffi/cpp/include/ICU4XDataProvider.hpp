@@ -26,14 +26,14 @@ class ICU4XDataProvider {
   static ICU4XCreateDataProviderResult create_static();
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDataProvider* AsFFIMut() { return this->inner.get(); }
-  ICU4XDataProvider(capi::ICU4XDataProvider* i) : inner(i) {}
+  inline ICU4XDataProvider(capi::ICU4XDataProvider* i) : inner(i) {}
  private:
   std::unique_ptr<capi::ICU4XDataProvider, ICU4XDataProviderDeleter> inner;
 };
 
 #include "ICU4XCreateDataProviderResult.hpp"
 
-ICU4XCreateDataProviderResult ICU4XDataProvider::create_fs(const std::string_view path) {
+inline ICU4XCreateDataProviderResult ICU4XDataProvider::create_fs(const std::string_view path) {
   capi::ICU4XCreateDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XDataProvider_create_fs(path.data(), path.length());
   auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
   std::optional<ICU4XDataProvider> diplomat_optional_out_value_provider;
@@ -44,7 +44,7 @@ ICU4XCreateDataProviderResult ICU4XDataProvider::create_fs(const std::string_vie
   }
   return ICU4XCreateDataProviderResult{ .provider = std::move(diplomat_optional_out_value_provider), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
-ICU4XCreateDataProviderResult ICU4XDataProvider::create_static() {
+inline ICU4XCreateDataProviderResult ICU4XDataProvider::create_static() {
   capi::ICU4XCreateDataProviderResult diplomat_raw_struct_out_value = capi::ICU4XDataProvider_create_static();
   auto diplomat_optional_raw_out_value_provider = diplomat_raw_struct_out_value.provider;
   std::optional<ICU4XDataProvider> diplomat_optional_out_value_provider;

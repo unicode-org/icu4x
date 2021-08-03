@@ -30,7 +30,7 @@ struct ICU4XFixedDecimalFormatOptions {
 };
 
 
-ICU4XFixedDecimalFormatOptions ICU4XFixedDecimalFormatOptions::default_() {
+inline ICU4XFixedDecimalFormatOptions ICU4XFixedDecimalFormatOptions::default_() {
   capi::ICU4XFixedDecimalFormatOptions diplomat_raw_struct_out_value = capi::ICU4XFixedDecimalFormatOptions_default();
   return ICU4XFixedDecimalFormatOptions{ .grouping_strategy = std::move(ICU4XFixedDecimalGroupingStrategy{ diplomat_raw_struct_out_value.grouping_strategy }), .sign_display = std::move(ICU4XFixedDecimalSignDisplay{ diplomat_raw_struct_out_value.sign_display }) };
 }

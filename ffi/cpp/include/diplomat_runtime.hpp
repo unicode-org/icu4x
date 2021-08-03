@@ -36,6 +36,17 @@ inline capi::DiplomatWriteable WriteableFromString(std::string& string) {
   return w;
 };
 
+template<typename T> struct WriteableTrait {
+  // static inline capi::DiplomatWriteable Construct(T& t);
+};
+
+
+template<> struct WriteableTrait<std::string> {
+  static inline capi::DiplomatWriteable Construct(std::string& t) {
+    return diplomat::WriteableFromString(t);
+  }
+};
+
 template<class T, class E>
 struct result
 {
