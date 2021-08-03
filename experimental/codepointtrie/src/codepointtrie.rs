@@ -83,7 +83,7 @@ impl ValueWidth for u32 {
 /// Currently, the options are "fast" and "small", which differ in the "fast max"
 /// limit.
 pub trait TrieType {
-    // All code points up to the fast max limit are represented
+    /// All code points up to the fast max limit are represented
     /// individually in the `index` array to hold their `data` array position, and
     /// thus only need 2 lookups for a [`crate::codepointtrie::CodePointTrie::get`].
     /// Code points above the "fast max" limit require 4 lookups.
