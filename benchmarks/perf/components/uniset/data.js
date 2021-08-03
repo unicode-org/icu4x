@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1627929033909,
+  "lastUpdate": 1628007658823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9299,6 +9299,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 40435135,
             "range": "± 441842",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "455d57aed9ecec54467412c1d34b731702a163a5",
+          "message": "Port ICU4C code point trie (#711)\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2021-08-03T09:14:32-07:00",
+          "tree_id": "e477ec2415c0b0ec31988c86179ddbbae3a04739",
+          "url": "https://github.com/unicode-org/icu4x/commit/455d57aed9ecec54467412c1d34b731702a163a5"
+        },
+        "date": 1628007656256,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40402841,
+            "range": "± 2580341",
             "unit": "ns/iter"
           }
         ]
