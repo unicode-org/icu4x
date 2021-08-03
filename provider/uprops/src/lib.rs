@@ -15,7 +15,7 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: icu_provider::prelude::DataProvider
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`FsDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
+//! [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
 //! [`BinaryPropertiesDataProvider`]: binary::BinaryPropertiesDataProvider
 
 mod binary;

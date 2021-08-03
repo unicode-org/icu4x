@@ -29,11 +29,11 @@ impl BinaryPropertiesDataProvider {
     }
 }
 
-impl<'d> DataProvider<'d, UnicodePropertyV1Marker> for BinaryPropertiesDataProvider {
+impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertiesDataProvider {
     fn load_payload(
         &self,
         req: &DataRequest,
-    ) -> Result<DataResponse<'d, UnicodePropertyV1Marker>, DataError> {
+    ) -> Result<DataResponse<'data, UnicodePropertyV1Marker>, DataError> {
         let toml_data: upropdump_serde::binary::Main = self
             .get_toml_data(&req.resource_path.key.sub_category)
             .map_err(DataError::new_resc_error)?;
@@ -63,7 +63,7 @@ impl<'d> DataProvider<'d, UnicodePropertyV1Marker> for BinaryPropertiesDataProvi
 
 icu_provider::impl_dyn_provider!(BinaryPropertiesDataProvider, {
     _ => UnicodePropertyV1Marker,
-}, SERDE_SE, 'd);
+}, SERDE_SE, 'data);
 
 impl IterableDataProviderCore for BinaryPropertiesDataProvider {
     fn supported_options_for_key(
