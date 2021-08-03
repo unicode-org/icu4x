@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628007712917,
+  "lastUpdate": 1628025263687,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11591,6 +11591,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 111619,
             "range": "± 6122",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ae65821858b61560d984c28e2c2153ae39e087e2",
+          "message": "Regen FFI with new diplomat (#932)\n\n* Update diplomat\r\n\r\n* Regen FFI\r\n\r\n* Update test with to_writeable\r\n\r\n* Rename format_write() to format()",
+          "timestamp": "2021-08-03T14:07:14-07:00",
+          "tree_id": "e766adf2562ccc0373d1875d8ee76d1be4431ce5",
+          "url": "https://github.com/unicode-org/icu4x/commit/ae65821858b61560d984c28e2c2153ae39e087e2"
+        },
+        "date": 1628025260647,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1513,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8512,
+            "range": "± 849",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 133406,
+            "range": "± 9685",
             "unit": "ns/iter"
           }
         ]
