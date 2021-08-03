@@ -33,7 +33,11 @@ The data struct definitions should live in the crate that uses them. By conventi
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
 - `icu::uniset::provider::UnicodePropertyV1`
 
-If adding a new crate, you may also need to add a new data category to the [`ResourceCategory` enum](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/enum.ResourceCategory.html) in `icu_provider`. This may change in the future.
+In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
+
+As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md#zero-copy-in-dataprovider-structs--required).
+
+If adding a new crate, you may need to add a new data category to the [`ResourceCategory` enum](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/enum.ResourceCategory.html) in `icu_provider`. This may change in the future.
 
 ### Source Data Providers
 
@@ -101,4 +105,202 @@ If everything is hooked together properly, JSON files for your new data struct s
 
 ## Example
 
-TODO
+The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV1`.
+
+### Data Struct
+
+*components/decimal/src/provider.rs*
+
+```rust
+#[icu_provider::data_struct]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct DecimalSymbolsV1<'data> {
+    /// Prefix and suffix to apply when a negative sign is needed.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub minus_sign_affixes: AffixesV1<'data>,
+
+    /// Prefix and suffix to apply when a plus sign is needed.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub plus_sign_affixes: AffixesV1<'data>,
+
+    /// Character used to separate the integer and fraction parts of the number.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
+    pub decimal_separator: Cow<'data, str>,
+
+    // ...
+}
+```
+
+The above example is an abridged definition for `DecimalSymbolsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
+
+### CLDR JSON Deserialize
+
+*provider/cldr/src/transform/numbers/cldr_serde.rs*
+
+```rust
+pub mod numbers_json {
+    //! Serde structs representing CLDR JSON numbers.json files.
+    //!
+    //! Sample file:
+    //! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json
+
+    use super::*;
+
+    // ...
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct Numbers {
+        #[serde(rename = "defaultNumberingSystem")]
+        pub default_numbering_system: TinyStr8,
+        #[serde(rename = "minimumGroupingDigits")]
+        #[serde(deserialize_with = "deserialize_number_from_string")]
+        pub minimum_grouping_digits: u8,
+        #[serde(flatten)]
+        pub numsys_data: NumberingSystemData,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct LangNumbers {
+        pub numbers: Numbers,
+    }
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct LangData(#[serde(with = "tuple_vec_map")] pub(crate) Vec<(CldrLangID, LangNumbers)>);
+
+    #[derive(PartialEq, Debug, Deserialize)]
+    pub struct Resource {
+        pub main: LangData,
+    }
+}
+```
+
+The above example is an abridged definition of the Serde structure corresponding to CLDR JSON. Since this Serde definition is not used at runtime, it does not need to be zero-copy.
+
+### Transformer
+
+*provider/cldr/src/transform/numbers/mod.rs*
+
+```rust
+impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'data, DecimalSymbolsV1Marker>, DataError> {
+        // Load the data from CLDR JSON and emit it as an ICU4X data struct.
+        // The most important line in this impl is:
+        let mut result = DecimalSymbolsV1::try_from(numbers);
+    }
+}
+
+icu_provider::impl_dyn_provider!(NumbersProvider, {
+    _ => DecimalSymbolsV1Marker,
+}, SERDE_SE, 'data);
+
+impl<'data> IterableDataProviderCore for NumbersProvider {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        // This should list all supported locales, for example.
+    }
+}
+
+impl TryFrom<&cldr_serde::numbers_json::Numbers> for DecimalSymbolsV1<'static> {
+    type Error = Cow<'static, str>;
+
+    fn try_from(other: &cldr_serde::numbers_json::Numbers) -> Result<Self, Self::Error> {
+        // This is the core transform operation. This step could take a lot of
+        // work, such as pre-parsing patterns, re-organizing the data, etc.
+    }
+}
+```
+
+The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
+
+### `CldrJsonDataProvider`
+
+New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit *provider/cldr/src/transform/mod.rs* and fill in your data provider in every function, struct, and match. For example:
+
+```rust
+pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
+    // ...
+    result.extend(&numbers::ALL_KEYS);
+    // ...
+}
+
+#[derive(Debug)]
+pub struct CldrJsonDataProvider<'a, 'data> {
+    // ...
+    numbers: LazyCldrProvider<NumbersProvider>,
+    // ...
+}
+
+impl<'a> CldrJsonDataProvider<'a, '_> {
+    pub fn new(cldr_paths: &'a dyn CldrPaths) -> Self {
+        CldrJsonDataProvider {
+            // ...
+            numbers: Default::default(),
+            // ...
+        }
+    }
+}
+
+impl<'a, 'data> DataProvider<'data, SerdeSeDataStructMarker> for CldrJsonDataProvider<'a, 'data> {
+    fn load_payload(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<'data, SerdeSeDataStructMarker>, DataError> {
+        // ...
+        if let Some(result) = self.numbers.try_load_serde(req, self.cldr_paths)? {
+            return Ok(result);
+        }
+        // ...
+    }
+}
+
+impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
+    fn supported_options_for_key(
+        &self,
+        resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions> + '_>, DataError> {
+        // ...
+        if let Some(resp) = self
+            .numbers
+            .try_supported_options(resc_key, self.cldr_paths)?
+        {
+            return Ok(Box::new(resp.into_iter()));
+        }
+        // ...
+    }
+}
+```
+
+### Data Generation Tool
+
+```rust
+fn export_cldr<'data>(
+    matches: &ArgMatches,
+    exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
+    allowed_locales: Option<&[LanguageIdentifier]>,
+) -> anyhow::Result<()> {
+    // Create the provider after parsing options (not shown):
+    let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
+
+    // Apply locale filters (not shown):
+    let provider: &dyn IterableDataProvider<SerdeSeDataStructMarker>;
+
+    // Dump data from the source provider to the data exporter:
+    for key in keys.iter() {
+        log::info!("Writing key: {}", key);
+        icu_provider::export::export_from_iterable(key, provider, exporter)?;
+    }
+
+    Ok(())
+}
+```
+
+The above example is a snippet from `icu4x-datagen` illustrating how `CldrJsonDataProvider` ties in with the data generation tool. Most contributors will not need to touch this part of the code.
