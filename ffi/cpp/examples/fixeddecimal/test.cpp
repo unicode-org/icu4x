@@ -24,6 +24,14 @@ int main() {
         return 1;
     }
 
+    std::string out2;
+    fdf.format_write_to_writeable(decimal, out2);
+    std::cout << "Formatted writeable value is " << out2 << std::endl;
+    if (out2 != "১০,০০,০০৭") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
     decimal.multiply_pow10(2);
     decimal.negate();
     out = fdf.format_write(decimal).ok;
