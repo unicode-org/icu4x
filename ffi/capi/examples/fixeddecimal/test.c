@@ -30,7 +30,7 @@ int main() {
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
 
     
-    bool success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write).is_ok;
+    bool success = ICU4XFixedDecimalFormat_format(fdf, decimal, &write).is_ok;
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
@@ -53,7 +53,7 @@ int main() {
 
     write = diplomat_simple_writeable(output, 40);
 
-    success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write).is_ok;
+    success = ICU4XFixedDecimalFormat_format(fdf, decimal, &write).is_ok;
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
@@ -77,7 +77,7 @@ int main() {
 
     write = diplomat_simple_writeable(output, 40);
 
-    success = ICU4XFixedDecimalFormat_format_write(fdf, decimal, &write).is_ok;
+    success = ICU4XFixedDecimalFormat_format(fdf, decimal, &write).is_ok;
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
         return 1;
