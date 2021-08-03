@@ -17,16 +17,24 @@ int main() {
     ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(locale, dp, opts).fdf.value();
 
     ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create(1000007);
-    std::string out = fdf.format_write(decimal).ok;
+    std::string out = fdf.format(decimal).ok;
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "১০,০০,০০৭") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
 
+    std::string out2;
+    fdf.format_to_writeable(decimal, out2);
+    std::cout << "Formatted writeable value is " << out2 << std::endl;
+    if (out2 != "১০,০০,০০৭") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
     decimal.multiply_pow10(2);
     decimal.negate();
-    out = fdf.format_write(decimal).ok;
+    out = fdf.format(decimal).ok;
     std::cout << "Value x100 and negated is " << out << std::endl;
     if (out != "-১০,০০,০০,৭০০") {
         std::cout << "Output does not match expected output" << std::endl;

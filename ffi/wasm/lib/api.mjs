@@ -239,10 +239,10 @@ export class ICU4XFixedDecimalFormat {
     return diplomat_out;
   }
 
-  format_write(value) {
+  format(value) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const is_ok = wasm.ICU4XFixedDecimalFormat_format_write(this.underlying, value.underlying, writeable) == 1;
+        const is_ok = wasm.ICU4XFixedDecimalFormat_format(this.underlying, value.underlying, writeable) == 1;
         if (!is_ok) {
           throw {};
         }
