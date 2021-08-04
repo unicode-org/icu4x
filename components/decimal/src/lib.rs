@@ -114,6 +114,16 @@ impl<'data> FixedDecimalFormat<'data> {
         Ok(Self { options, symbols })
     }
 
+    pub fn new_from_data(
+        data: DataPayload<'data, provider::DecimalSymbolsV1Marker>,
+        options: options::FixedDecimalFormatOptions,
+    ) -> Self {
+        Self {
+            options,
+            symbols: data,
+        }
+    }
+
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {
         FormattedFixedDecimal {
