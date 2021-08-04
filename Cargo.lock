@@ -674,6 +674,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "formatted_string_builder"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+]
+
+[[package]]
 name = "freertos-rust"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

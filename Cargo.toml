@@ -19,6 +19,7 @@ members = [
     "experimental/codepointtrie",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
+    "experimental/string_builder",
     "ffi/diplomat",
     "ffi/ecma402",
     "provider/blob",
