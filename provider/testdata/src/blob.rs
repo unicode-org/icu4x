@@ -4,11 +4,17 @@
 
 use icu_provider_blob::StaticDataProvider;
 
+#[cfg(feature = "smaller_static")]
+const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/data/decimal-bn-en.postcard"
+));
+
+#[cfg(not(feature = "smaller_static"))]
 const STATIC_STR_DATA: &[u8] = include_bytes!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/data/testdata.postcard"
 ));
-
 /// Get a `DataProvider`, loading from the statically initialized bincode blob.
 /// Panics if unable to load the data.
 pub fn get_static_provider() -> StaticDataProvider {
