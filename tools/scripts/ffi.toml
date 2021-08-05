@@ -92,7 +92,7 @@ description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
 toolchain = "nightly"
 command = "cargo"
-args = ["build", "--package", "icu_capi", "--target", "thumbv7m-none-eabi"]
+args = ["build", "--package", "icu_capi", "--target", "thumbv7m-none-eabi", "--no-default-features", "--features=wearos"]
 
 [tasks.test-nostd]
 description = "Ensure ICU4X core builds on no-std"

@@ -9,10 +9,14 @@
 extern crate alloc;
 
 pub mod custom_writeable;
+#[cfg(feature = "decimal")]
 pub mod decimal;
+#[cfg(feature = "decimal")]
 pub mod fixed_decimal;
 pub mod locale;
+#[cfg(feature = "locale_canonicalizer")]
 pub mod locale_canonicalizer;
+#[cfg(feature = "plurals")]
 pub mod pluralrules;
 pub mod provider;
 
@@ -21,5 +25,5 @@ mod wasm_glue;
 
 // Assume "none" is FreeRTOS for now
 // https://github.com/unicode-org/icu4x/issues/891
-#[cfg(target_os = "none")]
+#[cfg(all(target_os = "none", feature = "freertos"))]
 mod freertos_glue;
