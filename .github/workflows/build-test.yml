@@ -112,8 +112,9 @@ jobs:
       run: rustup show
     - name: Load cortex target for no_std build.
       run: |
-        rustup install nightly
+        rustup install nightly -c rust-src
         rustup target add thumbv7m-none-eabi --toolchain nightly
+        rustup target add thumbv8m.main-none-eabihf --toolchain nightly
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
