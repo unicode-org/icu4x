@@ -141,10 +141,12 @@ pub mod key {
 }
 
 #[icu_provider::data_struct]
-#[derive(Debug, Hash, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct UnicodePropertyV1<'data> {
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub name: Cow<'data, str>,
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub inv_list: UnicodeSet<'data>,
 }
 
@@ -158,14 +160,8 @@ impl Default for UnicodePropertyV1<'static> {
     }
 }
 
-impl<'data> UnicodePropertyV1<'data> {
-    pub fn from_uniset(set: &'data UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
-        UnicodePropertyV1 { name, inv_list: set.clone() }
-    }
-}
-
 impl<'data> TryInto<UnicodeSet<'data>> for UnicodePropertyV1<'data> {
-    type Error = crate::UnicodeSetError;
+    type Error = crate::UnicodeSetError<'data>;
     fn try_into(self) -> Result<UnicodeSet<'data>, Self::Error> {
         Ok(self.inv_list)
     }

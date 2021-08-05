@@ -62,19 +62,19 @@ pub mod provider;
 mod uniset;
 mod utils;
 
-use alloc::vec::Vec;
 pub use builder::UnicodeSetBuilder;
 pub use conversions::*;
 use displaydoc::Display;
 use icu_provider::DataError;
 pub use uniset::UnicodeSet;
 pub use utils::*;
+use zerovec::ZeroVec;
 
 /// Custom Errors for [`UnicodeSet`].
 #[derive(Display, Debug)]
-pub enum UnicodeSetError {
+pub enum UnicodeSetError<'data> {
     #[displaydoc("Invalid set: {0:?}")]
-    InvalidSet(Vec<u32>),
+    InvalidSet(ZeroVec<'data, u32>),
     #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
     #[displaydoc("{0}")]
@@ -84,7 +84,7 @@ pub enum UnicodeSetError {
 #[cfg(feature = "std")]
 impl std::error::Error for UnicodeSetError {}
 
-impl From<DataError> for UnicodeSetError {
+impl<'data> From<DataError> for UnicodeSetError<'data> {
     fn from(e: DataError) -> Self {
         UnicodeSetError::PropDataLoad(e)
     }

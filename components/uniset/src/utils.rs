@@ -6,11 +6,19 @@ use core::{
     char,
     ops::{Bound::*, RangeBounds},
 };
+use zerovec::ule::AsULE;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
     v.is_empty() || (v.len() % 2 == 0 && v.windows(2).all(|chunk| chunk[0] < chunk[1]) && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
+}
+
+pub fn is_slice_valid(slice: &[<u32 as AsULE>::ULE]) -> bool {
+    slice.is_empty() || 
+        (slice.len() % 2 == 0 && 
+            slice.windows(2).all(|chunk| <u32 as AsULE>::from_unaligned(&chunk[0]) < AsULE::from_unaligned(&chunk[1])) && 
+            slice.last().map_or(false, |e| <u32 as AsULE>::from_unaligned(e) <= ((char::MAX as u32) + 1)))
 }
 
 /// Returns start (inclusive) and end (exclusive) bounds of [`RangeBounds`]

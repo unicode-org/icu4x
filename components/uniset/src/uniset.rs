@@ -14,7 +14,7 @@ use zerovec::{ZeroVec, ule::AsULE};
 use serde::ser::SerializeSeq;
 
 use super::UnicodeSetError;
-use crate::utils::{deconstruct_range, is_valid};
+use crate::utils::{deconstruct_range, is_slice_valid};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -23,28 +23,26 @@ const BMP_MAX: u32 = 0xFFFF;
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
-#[derive(Debug, PartialEq, Hash, Eq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, Yokeable, ZeroCopyFrom)]
 #[yoke(cloning_zcf)]
-pub struct UnicodeSet<'d> {
-    // TODO: need advice - how should we remove Hash and Eq from UnicodeSet unless we need it?
-
+pub struct UnicodeSet<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
     // https://doc.rust-lang.org/nightly/core/array/trait.FixedSizeArray.html
     // Allows for traits of fixed size arrays
 
     // Implements an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    inv_list: ZeroVec<'d, u32>,
+    inv_list: ZeroVec<'data, u32>,
     size: usize,
 }
 
 #[cfg(feature = "serde")]
-impl<'de, 'd> serde::Deserialize<'de> for UnicodeSet<'d> {
+impl<'de> serde::Deserialize<'de> for UnicodeSet<'de> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error;
-        let parsed_inv_list = Vec::<u32>::deserialize(deserializer)?;
+        let parsed_inv_list = ZeroVec::<u32>::deserialize(deserializer)?;
 
         UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
     }
@@ -55,7 +53,7 @@ impl<'de, 'd> serde::Deserialize<'de> for UnicodeSet<'d> {
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
 #[cfg(feature = "serde")]
-impl<'d> serde::Serialize for UnicodeSet<'d> {
+impl<'data> serde::Serialize for UnicodeSet<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -68,7 +66,7 @@ impl<'d> serde::Serialize for UnicodeSet<'d> {
     }
 }
 
-impl<'d> UnicodeSet<'d> {
+impl<'data> UnicodeSet<'data> {
     /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
     ///
@@ -87,14 +85,21 @@ impl<'d> UnicodeSet<'d> {
     ///     assert_eq!(invalid, actual);
     /// }
     /// ```
-    pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError> {
-        if is_valid(&inv_list) {
-            let size: usize = inv_list.chunks(2).map(|end_points| end_points[1] - end_points[0]).sum::<u32>() as usize;
-            // TODO: how to convert a `Vec<u32>` into ZeroVec?
+    pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError<'data>> {
+        if is_slice_valid(inv_list.as_slice()) {
+            let size: usize = 
+                inv_list.as_slice().chunks(2)
+                    .map(|end_points| <u32 as AsULE>::from_unaligned(&end_points[1]) - <u32 as AsULE>::from_unaligned(&end_points[0]))
+                    .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list))
         }
+    }
+
+    // // TODO: doc strings + doc test
+    pub fn clone_from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError<'data>> {
+
     }
 
     /// Returns an owned inversion list representing the current [`UnicodeSet`]
@@ -110,7 +115,7 @@ impl<'d> UnicodeSet<'d> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
         Self {
-            inv_list: vec![0x0, (char::MAX as u32) + 1],
+            inv_list: ZeroVec::<u32>::from_aligned(&vec![0x0, (char::MAX as u32) + 1]),
             size: (char::MAX as usize) + 1,
         }
     }
@@ -120,7 +125,7 @@ impl<'d> UnicodeSet<'d> {
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
         Self {
-            inv_list: vec![0x0, BMP_MAX + 1],
+            inv_list: ZeroVec::<u32>::from_aligned(&vec![0x0, BMP_MAX + 1]),
             size: (BMP_MAX as usize) + 1,
         }
     }
@@ -307,7 +312,14 @@ impl<'d> UnicodeSet<'d> {
             return false;
         }
         match self.contains_query(from) {
-            Some(pos) => (till) <= self.inv_list[pos + 1],
+            Some(pos) => {
+                if let Some(x) = self.inv_list.get(pos + 1) {
+                    (till) <= x
+                } else {
+                    debug_assert!(true, "Inversion list query should not return out of bounds index");
+                    false
+                }
+            },
             None => false,
         }
     }
