@@ -73,6 +73,7 @@ pub struct DecimalSymbolsV1<'data> {
     pub decimal_separator: Cow<'data, str>,
 
     /// Character used to separate groups in the integer part of the number.
+    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub grouping_separator: Cow<'data, str>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
