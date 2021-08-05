@@ -50,6 +50,24 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-build-blob-smaller]
+description = "Build a small subset of ICU4X data as a Postcard blob."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "-v",
+    "--format=blob",
+    "--cldr-testdata",
+    "--out=provider/testdata/data/decimal-bn-en.postcard",
+    "--keys=decimal/symbols@1",
+    "--locales=bn",
+    "--locales=en",
+    "--overwrite",
+]
+
 [tasks.testdata]
 description = "Download fresh data and then build ICU4X JSON and Bincode blob from it"
 category = "ICU4X Data"
@@ -57,6 +75,7 @@ dependencies = [
     "testdata-download",
     "testdata-build-json",
     "testdata-build-blob",
+    "testdata-build-blob-smaller",
 ]
 
 [tasks.bincode-clean]
