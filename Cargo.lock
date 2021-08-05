@@ -1018,6 +1018,7 @@ dependencies = [
  "serde",
  "simple_logger",
  "tokio",
+ "writeable",
 ]
 
 [[package]]
