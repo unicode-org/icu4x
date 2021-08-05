@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628147384759,
+  "lastUpdate": 1628205685801,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9389,6 +9389,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 38888262,
             "range": "± 3904384",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2c2f611bb6e4d604bdd40fa4d12687272bae0533",
+          "message": "Support --keys in datagen (#938)\n\n* Add --keys support to datagen\r\n\r\n* use writeable",
+          "timestamp": "2021-08-05T16:16:01-07:00",
+          "tree_id": "db6cccf4ec2f7d50743f21f53201e23fb720b8db",
+          "url": "https://github.com/unicode-org/icu4x/commit/2c2f611bb6e4d604bdd40fa4d12687272bae0533"
+        },
+        "date": 1628205683667,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34189454,
+            "range": "± 87586",
             "unit": "ns/iter"
           }
         ]
