@@ -24,6 +24,7 @@ use simple_logger::SimpleLogger;
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::str::FromStr;
+use writeable::Writeable;
 
 fn main() -> anyhow::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -375,7 +376,7 @@ fn export_cldr<'data>(
 
     let keys = if let Some(allowed_keys) = allowed_keys {
         keys.into_iter()
-            .filter(|k| allowed_keys.contains(&*k.to_string()))
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
             .collect()
     } else {
         keys
