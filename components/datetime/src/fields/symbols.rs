@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::FieldLength;
+use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
-use std::{cmp::Ordering, convert::TryFrom};
 
 #[derive(Display, Debug, PartialEq)]
 pub enum SymbolError {
@@ -16,6 +16,7 @@ pub enum SymbolError {
     Invalid(char),
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for SymbolError {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -261,6 +262,7 @@ impl From<Month> for FieldSymbol {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[allow(clippy::enum_variant_names)]
 pub enum Day {
     DayOfMonth,
     DayOfYear,
@@ -335,6 +337,7 @@ impl From<Hour> for FieldSymbol {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[allow(clippy::enum_variant_names)]
 pub enum Second {
     Second,
     FractionalSecond,

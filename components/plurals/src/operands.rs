@@ -14,6 +14,19 @@ use fixed_decimal::FixedDecimal;
 ///
 /// See [full operands description](http://unicode.org/reports/tr35/tr35-numbers.html#Operands).
 ///
+/// # Data Types
+///
+/// The following types can be converted to [`PluralOperands`]:
+///
+/// - Integers, signed and unsigned
+/// - Strings representing an arbitrary-precision decimal
+/// - [`FixedDecimal`]
+///
+/// This crate does not support selection from a floating-point number, because floats are not
+/// capable of carrying trailing zeros, which are required for proper plural rule selection. For
+/// example, in English, "1 star" has a different plural form than "1.0 stars", but this
+/// distinction cannot be represented using a float. Clients should use [`FixedDecimal`] instead.
+///
 /// # Examples
 ///
 /// From int
@@ -30,25 +43,9 @@ use fixed_decimal::FixedDecimal;
 /// }, PluralOperands::from(2_usize))
 /// ```
 ///
-/// From float
-///
-/// ```
-/// use std::str::FromStr;
-/// use icu::plurals::PluralOperands;
-/// assert_eq!(Ok(PluralOperands {
-///    i: 1234,
-///    v: 3,
-///    w: 3,
-///    f: 567,
-///    t: 567,
-///    c: 0,
-/// }), "-1234.567".parse())
-/// ```
-///
 /// From &str
 ///
 /// ```
-/// use std::convert::TryFrom;
 /// use icu::plurals::PluralOperands;
 /// assert_eq!(Ok(PluralOperands {
 ///    i: 123,
@@ -58,6 +55,21 @@ use fixed_decimal::FixedDecimal;
 ///    t: 45,
 ///    c: 0,
 /// }), "123.45".parse())
+/// ```
+///
+/// From [`FixedDecimal`]
+///
+/// ```
+/// use fixed_decimal::FixedDecimal;
+/// use icu::plurals::PluralOperands;
+/// assert_eq!(Ok(PluralOperands {
+///    i: 123,
+///    v: 2,
+///    w: 2,
+///    f: 45,
+///    t: 45,
+///    c: 0,
+/// }), FixedDecimal::from(12345).multiplied_pow10(-2).map(|d| (&d).into()))
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PluralOperands {

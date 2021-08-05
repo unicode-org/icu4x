@@ -53,6 +53,7 @@ pub struct LocationWithLong {
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
+#[allow(clippy::enum_variant_names)]
 pub enum Location {
     LocationWithCity(LocationWithExemplarCity),
     LocationWithLong(LocationWithLong),

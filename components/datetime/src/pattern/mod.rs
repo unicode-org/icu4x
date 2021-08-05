@@ -4,12 +4,20 @@
 
 mod error;
 mod parser;
+pub mod transform_hour_cycle;
 
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
+#[cfg(feature = "provider_serde")]
+use alloc::format;
+use alloc::string::String;
+#[cfg(feature = "provider_serde")]
+use alloc::string::ToString;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::{convert::TryFrom, fmt};
+use core::{fmt::Write, iter::FromIterator};
 pub use error::Error;
 use parser::Parser;
-use std::{convert::TryFrom, fmt};
-use std::{fmt::Write, iter::FromIterator};
 
 #[cfg(feature = "provider_serde")]
 use serde::{
@@ -283,5 +291,27 @@ impl Serialize for Pattern {
             }
             seq.end()
         }
+    }
+}
+
+/// Used to represent either H11/H12, or H23/H24. Skeletons only store these
+/// hour cycles as H12 or H23.
+#[derive(Debug, PartialEq, Clone, Copy)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub enum CoarseHourCycle {
+    /// Can either be fields::Hour::H11 or fields::Hour::H12
+    H11H12,
+    /// Can either be fields::Hour::H23 or fields::Hour::H24
+    H23H24,
+}
+
+/// Default is required for serialization. H23H24 is the more locale-agnostic choice, as it's
+/// less likely to have a day period in it.
+impl Default for CoarseHourCycle {
+    fn default() -> Self {
+        CoarseHourCycle::H23H24
     }
 }

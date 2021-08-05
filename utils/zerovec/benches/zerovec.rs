@@ -61,7 +61,7 @@ where
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("zerovec/overview", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE))
+            ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE))
                 .unwrap()
                 .iter()
                 .sum::<u32>()
@@ -83,7 +83,7 @@ fn sum_benches(c: &mut Criterion) {
 
     c.bench_function("zerovec/sum/sample/zerovec", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE))
+            ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE))
                 .unwrap()
                 .iter()
                 .sum::<u32>()
@@ -98,7 +98,7 @@ fn binary_search_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec/binary_search/sample/zerovec", |b| {
-        let zerovec = ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap();
+        let zerovec = ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE)).unwrap();
         b.iter(|| zerovec.binary_search(&0x0c0d0c));
     });
 
@@ -111,7 +111,7 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| {
             black_box(&needles_50)
                 .iter()
-                .map(|needle| black_box(&haystack).binary_search(&needle))
+                .map(|needle| black_box(&haystack).binary_search(needle))
                 .filter(|r| r.is_ok())
                 .count()
         });
@@ -126,7 +126,7 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| {
             black_box(&needles_50)
                 .iter()
-                .map(|needle| black_box(&zerovec).binary_search(&needle))
+                .map(|needle| black_box(&zerovec).binary_search(needle))
                 .filter(|r| r.is_ok())
                 .count()
         });

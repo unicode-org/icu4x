@@ -80,6 +80,7 @@ impl<'data> KeyedDataProvider for TimeZonesProvider<'data> {
 }
 
 impl<'data> IterableDataProviderCore for TimeZonesProvider<'data> {
+    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_options_for_key(
         &self,
         _resc_key: &ResourceKey,
@@ -110,7 +111,7 @@ macro_rules! impl_data_provider {
                     .binary_search_by_key(&&cldr_langid, |(lid, _)| lid)
                 {
                     Ok(idx) => &self.data[idx].1.dates.time_zone_names,
-                    Err(_) => return Err(DataError::UnavailableResourceOptions(req.clone())),
+                    Err(_) => return Err(DataError::MissingResourceOptions(req.clone())),
                 };
                 Ok(DataResponse {
                     metadata: DataResponseMetadata {

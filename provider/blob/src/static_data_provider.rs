@@ -67,7 +67,7 @@ impl StaticDataProvider {
         let BlobSchema::V001(blob) = &self.blob;
         blob.resources
             .get(&*path)
-            .ok_or(DataError::UnsupportedResourceKey(req.resource_path.key))
+            .ok_or(DataError::MissingResourceKey(req.resource_path.key))
             .map(|v| *v)
     }
 }

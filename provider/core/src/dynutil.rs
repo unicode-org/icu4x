@@ -195,7 +195,7 @@ macro_rules! impl_dyn_provider {
                     )+,
                     // Don't complain if the call site has its own wildcard match
                     #[allow(unreachable_patterns)]
-                    _ => Err(DataError::UnsupportedResourceKey(req.resource_path.key))
+                    _ => Err(DataError::MissingResourceKey(req.resource_path.key))
                 }
             }
         }

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{
+use core::{
     char,
     ops::{Bound::*, RangeBounds},
 };
@@ -31,7 +31,7 @@ pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
 #[cfg(test)]
 mod tests {
     use super::{deconstruct_range, is_valid};
-    use std::char;
+    use core::char;
 
     #[test]
     fn test_is_valid() {

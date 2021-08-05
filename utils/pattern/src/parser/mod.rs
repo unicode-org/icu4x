@@ -476,7 +476,7 @@ mod tests {
 
         for (input, expected) in samples {
             let parser = Parser::new(
-                &input,
+                input,
                 ParserOptions {
                     allow_raw_letters: true,
                 },
@@ -511,7 +511,7 @@ mod tests {
 
         for (input, error) in broken {
             let parser = Parser::<usize>::new(
-                &input,
+                input,
                 ParserOptions {
                     allow_raw_letters: false,
                 },

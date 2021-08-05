@@ -433,7 +433,7 @@ mod tests {
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
         }
         {
-            let zerovec = ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE).unwrap();
+            let zerovec = ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE).unwrap();
             assert_eq!(zerovec.get(0), Some(TEST_SLICE[0]));
             assert_eq!(zerovec.get(1), Some(TEST_SLICE[1]));
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
@@ -448,7 +448,7 @@ mod tests {
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
         {
-            let zerovec = ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE).unwrap();
+            let zerovec = ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE).unwrap();
             assert_eq!(Ok(3), zerovec.binary_search(&0x0e0d0c));
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
@@ -458,7 +458,7 @@ mod tests {
     fn test_odd_alignment() {
         assert_eq!(
             Some(0x020100),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE)
+            ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE)
                 .unwrap()
                 .get(0)
         );
@@ -506,7 +506,7 @@ mod tests {
         );
         assert_eq!(
             Some(0x4e4d4c),
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE)
+            ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE)
                 .unwrap()
                 .get(19)
         );
@@ -518,7 +518,7 @@ mod tests {
         );
         assert_eq!(
             None,
-            ZeroVec::<u32>::try_from_bytes(&TEST_BUFFER_LE)
+            ZeroVec::<u32>::try_from_bytes(TEST_BUFFER_LE)
                 .unwrap()
                 .get(20)
         );

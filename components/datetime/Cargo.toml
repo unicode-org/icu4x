@@ -5,7 +5,7 @@
 [package]
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -29,8 +29,8 @@ skip_optional_dependencies = true
 all-features = true
 
 [dependencies]
-icu_locid = { version = "0.2", path = "../locid" }
-icu_provider = { version = "0.2", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "0.3", path = "../locid" }
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 litemap = { version = "0.2", path = "../../utils/litemap", features = ["serde"] }
 tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
@@ -41,10 +41,10 @@ displaydoc = { version = "0.2.3", default-features = false }
 [dev-dependencies]
 criterion = "0.3"
 icu = { path = "../icu", default-features = false }
-icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "0.2", path = "../../provider/core" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
-icu_locid_macros = { version = "0.2", path = "../locid/macros" }
+icu_benchmark_macros = { version = "0.3", path = "../../tools/benchmark/macros" }
+icu_provider = { version = "0.3", path = "../../provider/core" }
+icu_testdata = { version = "0.3", path = "../../provider/testdata" }
+icu_locid_macros = { version = "0.3", path = "../locid/macros" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 bincode = "1.3"
@@ -54,9 +54,11 @@ path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [features]
+std = ["icu_provider/std", "icu_locid/std"]
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde", "litemap/serde"]
+provider_transform_internals = ["std"]
 
 [[bench]]
 name = "datetime"

@@ -159,7 +159,8 @@ pub trait SerdeDeDataProvider {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'data
+/// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
+impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'static
 where
     M: DataMarker<'data>,
     M::Yokeable: serde::de::Deserialize<'static>,
@@ -168,7 +169,7 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    /// Serve objects implementing [`serde::Deserialize<'data>`] from a [`SerdeDeDataProvider`].
+    /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;

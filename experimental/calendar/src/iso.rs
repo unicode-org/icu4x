@@ -198,6 +198,7 @@ impl Calendar for Iso {
         }
     }
 
+    #[allow(clippy::field_reassign_with_default)] // it's more clear this way
     fn until(
         &self,
         date1: &Self::DateInner,

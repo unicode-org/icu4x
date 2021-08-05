@@ -8,9 +8,6 @@
 
 extern crate alloc;
 
-#[macro_use]
-mod macros;
-
 pub mod custom_writeable;
 pub mod decimal;
 pub mod fixed_decimal;

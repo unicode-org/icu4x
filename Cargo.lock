@@ -463,6 +463,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "diplomat"
+version = "0.2.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=1307d215e1c8482bfa37082427389b240a81481d#1307d215e1c8482bfa37082427389b240a81481d"
+dependencies = [
+ "diplomat_core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "diplomat-runtime"
+version = "0.2.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=1307d215e1c8482bfa37082427389b240a81481d#1307d215e1c8482bfa37082427389b240a81481d"
+
+[[package]]
+name = "diplomat_core"
+version = "0.2.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=1307d215e1c8482bfa37082427389b240a81481d#1307d215e1c8482bfa37082427389b240a81481d"
+dependencies = [
+ "impls",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn",
+]
+
+[[package]]
 name = "dirs"
 version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -878,7 +907,7 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
 name = "icu"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "fixed_decimal",
  "icu_datetime",
@@ -899,7 +928,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "ecma402_traits",
@@ -913,8 +942,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_benchmark_binsize"
+version = "0.1.0"
+dependencies = [
+ "cargo_metadata",
+]
+
+[[package]]
 name = "icu_benchmark_macros"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "dhat",
  "dlmalloc",
@@ -931,13 +967,15 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "0.2.0"
+version = "0.3.0"
 
 [[package]]
 name = "icu_capi"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
+ "diplomat",
+ "diplomat-runtime",
  "fixed_decimal",
  "freertos-rust",
  "icu_decimal",
@@ -953,8 +991,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_datagen"
+name = "icu_codepointtrie"
 version = "0.2.0"
+dependencies = [
+ "serde",
+ "thiserror",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_datagen"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -974,7 +1022,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -995,7 +1043,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1016,7 +1064,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_canonicalizer"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "icu_locid",
@@ -1030,7 +1078,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1044,7 +1092,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_macros"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "icu",
  "icu_locid",
@@ -1063,7 +1111,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1080,7 +1128,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "displaydoc",
  "erased-serde",
@@ -1098,7 +1146,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "erased-serde",
  "icu",
@@ -1114,7 +1162,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_cldr"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "dirs",
  "displaydoc",
@@ -1145,7 +1193,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1164,7 +1212,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1219,7 +1267,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "cargo_metadata",
  "displaydoc",
@@ -1236,7 +1284,7 @@ dependencies = [
 
 [[package]]
 name = "icu_uniset"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1259,6 +1307,12 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
 ]
+
+[[package]]
+name = "impls"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a46645bbd70538861a90d0f26c31537cdf1e44aae99a794fb75a664b70951bc"
 
 [[package]]
 name = "indexmap"
@@ -2711,7 +2765,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "bincode",
  "serde",
@@ -2741,6 +2795,7 @@ dependencies = [
  "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",
+ "postcard",
  "rand",
  "rand_distr",
  "rand_pcg",

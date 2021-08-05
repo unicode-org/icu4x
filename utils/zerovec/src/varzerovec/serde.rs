@@ -96,7 +96,7 @@ where
             }
             seq.end()
         } else if let Some(slice) = self.get_slice_for_borrowed() {
-            serializer.serialize_bytes(&slice)
+            serializer.serialize_bytes(slice)
         } else {
             // This creates an additional Vec allocation to enable code reuse of
             // VarZeroVec::to_vec()'s. The alternative is to write a different

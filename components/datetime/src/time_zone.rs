@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{borrow::Cow, fmt};
+use alloc::borrow::Cow;
+use alloc::format;
+use alloc::string::String;
+use core::fmt;
 
 use crate::{
     date::TimeZoneInput, format::time_zone::FormattedTimeZone, pattern::Error as PatternError,
@@ -342,10 +345,10 @@ impl<'data> TimeZoneFormat<'data> {
     #[allow(unused)]
     pub(super) fn format_to_write(
         &self,
-        w: &mut impl std::fmt::Write,
+        w: &mut impl core::fmt::Write,
         value: &impl TimeZoneInput,
     ) -> fmt::Result {
-        time_zone::write_pattern(self, value, w).map_err(|_| std::fmt::Error)
+        time_zone::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.

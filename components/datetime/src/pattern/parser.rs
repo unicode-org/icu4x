@@ -5,7 +5,10 @@
 use super::error::Error;
 use super::{Pattern, PatternItem};
 use crate::fields::FieldSymbol;
-use std::convert::{TryFrom, TryInto};
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::convert::{TryFrom, TryInto};
 
 #[derive(Debug, PartialEq)]
 enum Segment {
@@ -32,7 +35,7 @@ impl<'p> Parser<'p> {
     fn handle_quoted_literal(
         &mut self,
         ch: char,
-        chars: &mut std::iter::Peekable<std::str::Chars>,
+        chars: &mut core::iter::Peekable<core::str::Chars>,
         result: &mut Vec<PatternItem>,
     ) -> Result<bool, Error> {
         if ch == '\'' {

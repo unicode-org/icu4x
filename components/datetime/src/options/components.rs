@@ -74,6 +74,8 @@
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use crate::fields::{self, Field, FieldLength, FieldSymbol};
 
+use alloc::vec::Vec;
+
 use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};

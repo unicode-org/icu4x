@@ -10,6 +10,7 @@ use crate::{
         helpers::DateTimePatterns,
     },
 };
+use alloc::string::String;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
@@ -235,9 +236,9 @@ impl<'data> DateTimeFormat<'data> {
     /// ```
     pub fn format_to_write(
         &self,
-        w: &mut impl std::fmt::Write,
+        w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput,
-    ) -> std::fmt::Result {
+    ) -> core::fmt::Result {
         datetime::write_pattern(
             &self.pattern,
             self.symbols.as_ref().map(|s| s.get()),
@@ -245,7 +246,7 @@ impl<'data> DateTimeFormat<'data> {
             &self.locale,
             w,
         )
-        .map_err(|_| std::fmt::Error)
+        .map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
