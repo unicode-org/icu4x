@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_uprops"
 description = "Data provider that reads from `upropdump` output from ICU4C"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
