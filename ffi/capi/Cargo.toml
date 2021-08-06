@@ -40,7 +40,7 @@ wearos = ["smaller_static", "freertos"]
 
 provider_fs = ["icu_provider_fs"]
 provider_static = ["icu_testdata"]
-smaller_static = ["provider_static", "icu_testdata/smaller_static"]
+smaller_static = ["provider_static"]
 freertos = ["freertos-rust", "cortex-m"]
 
 [dependencies]

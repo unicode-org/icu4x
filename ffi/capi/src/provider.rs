@@ -69,6 +69,9 @@ pub mod ffi {
 
             #[cfg(feature = "provider_static")]
             {
+                #[cfg(feature = "smaller_static")]
+                let provider = icu_testdata::get_smaller_static_provider();
+                #[cfg(not(feature = "smaller_static"))]
                 let provider = icu_testdata::get_static_provider();
                 let erased = Box::new(provider);
                 ICU4XCreateDataProviderResult {
