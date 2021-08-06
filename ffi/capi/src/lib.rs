@@ -6,8 +6,14 @@
     all(target_os = "none", feature = "freertos"),
     feature(alloc_error_handler)
 )]
+#![no_std]
 #![allow(clippy::upper_case_acronyms)]
-#![cfg_attr(target_os = "none", no_std)]
+
+// Needed to be able to build cdylibs/etc
+//
+// Renamed so you can't accidentally use it
+#[cfg(not(target_os = "none"))]
+extern crate std as rust_std;
 
 extern crate alloc;
 
