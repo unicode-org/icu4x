@@ -7,7 +7,7 @@
     feature(alloc_error_handler)
 )]
 #![allow(clippy::upper_case_acronyms)]
-#![cfg_attr(target_arch = "none", no_std)]
+#![cfg_attr(target_os = "none", no_std)]
 
 extern crate alloc;
 
