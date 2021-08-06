@@ -26,9 +26,22 @@ include = [
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-all-features]
+# Omit most optional dependency features from permutation testing
+skip_optional_dependencies = true
+
 [lib]
 crate-type = ["staticlib", "rlib", "cdylib"]
 path = "src/lib.rs"
+
+[features]
+default = ["provider_fs", "provider_static"]
+wearos = ["smaller_static", "freertos"]
+
+provider_fs = ["icu_provider_fs"]
+provider_static = ["icu_testdata"]
+smaller_static = ["provider_static"]
+freertos = ["freertos-rust", "cortex-m"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal" }
@@ -36,23 +49,21 @@ icu_decimal = { path = "../../components/decimal/" }
 icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
 icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/" }
-icu_provider = { path = "../../provider/core" }
+icu_provider = { path = "../../provider/core", features = ["provider_serde"] }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 # make sure to update GitHub actions to use the appropriate revision
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "1307d215e1c8482bfa37082427389b240a81481d" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "1307d215e1c8482bfa37082427389b240a81481d" }
+icu_testdata = { version = "0.3", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
 
-[target.'cfg(any(target_arch = "wasm32", target_os = "none"))'.dependencies]
-icu_testdata = { version = "0.3", path = "../../provider/testdata", default-features = false, features = ["static"] }
-
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
-icu_provider_fs = { path = "../../provider/fs/" }
+icu_provider_fs = { path = "../../provider/fs/", optional = true }
 
 [target.'cfg(target_os = "none")'.dependencies]
-freertos-rust = "0.1.2"
-cortex-m = "0.7.3"
+freertos-rust = { version = "0.1.2", optional = true }
+cortex-m = { version = "0.7.3", optional = true }

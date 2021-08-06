@@ -5,11 +5,17 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
+    #[cfg(all(
+        feature = "provider_fs",
+        not(any(target_arch = "wasm32", target_os = "none"))
+    ))]
     use alloc::string::ToString;
 
     use icu_provider::serde::SerdeDeDataProvider;
-    #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
+    #[cfg(all(
+        feature = "provider_fs",
+        not(any(target_arch = "wasm32", target_os = "none"))
+    ))]
     use icu_provider_fs::FsDataProvider;
 
     #[diplomat::opaque]
@@ -30,7 +36,10 @@ pub mod ffi {
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more details.
         #[allow(unused_variables)]
         fn create_fs(path: &str) -> ICU4XCreateDataProviderResult {
-            #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
+            #[cfg(all(
+                feature = "provider_fs",
+                not(any(target_arch = "wasm32", target_os = "none"))
+            ))]
             match FsDataProvider::try_new(path.to_string()) {
                 Ok(fs) => {
                     let erased = Box::new(fs);
@@ -45,18 +54,24 @@ pub mod ffi {
                 },
             }
 
-            #[cfg(any(target_arch = "wasm32", target_os = "none"))]
+            #[cfg(not(all(
+                feature = "provider_fs",
+                not(any(target_arch = "wasm32", target_os = "none"))
+            )))]
             unimplemented!();
         }
 
         /// Constructs an `StaticDataProvider` and retirns it as an [`ICU4XDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
         fn create_static() -> ICU4XCreateDataProviderResult {
-            #[cfg(not(any(target_arch = "wasm32", target_os = "none")))]
+            #[cfg(not(feature = "provider_static"))]
             unimplemented!();
 
-            #[cfg(any(target_arch = "wasm32", target_os = "none"))]
+            #[cfg(feature = "provider_static")]
             {
+                #[cfg(feature = "smaller_static")]
+                let provider = icu_testdata::get_smaller_static_provider();
+                #[cfg(not(feature = "smaller_static"))]
                 let provider = icu_testdata::get_static_provider();
                 let erased = Box::new(provider);
                 ICU4XCreateDataProviderResult {

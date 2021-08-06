@@ -78,6 +78,6 @@ mod blob;
 mod fs;
 
 #[cfg(feature = "static")]
-pub use blob::get_static_provider;
+pub use blob::{get_smaller_static_provider, get_static_provider};
 #[cfg(feature = "fs")]
 pub use fs::get_provider;
