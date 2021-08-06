@@ -35,23 +35,20 @@ crate-type = ["staticlib", "rlib", "cdylib"]
 path = "src/lib.rs"
 
 [features]
-default = ["plurals", "decimal", "locale_canonicalizer", "provider_fs", "provider_static"]
-wearos = ["decimal", "smaller_static", "freertos"]
+default = ["provider_fs", "provider_static"]
+wearos = ["smaller_static", "freertos"]
 
-plurals = ["icu_plurals"]
-decimal = ["icu_decimal", "fixed_decimal"]
-locale_canonicalizer = ["icu_locale_canonicalizer"]
 provider_fs = ["icu_provider_fs"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static", "icu_testdata/smaller_static"]
 freertos = ["freertos-rust", "cortex-m"]
 
 [dependencies]
-fixed_decimal = { path = "../../utils/fixed_decimal", optional = true }
-icu_decimal = { path = "../../components/decimal/", optional = true }
-icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer", optional = true }
+fixed_decimal = { path = "../../utils/fixed_decimal" }
+icu_decimal = { path = "../../components/decimal/" }
+icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer" }
 icu_locid = { path = "../../components/locid" }
-icu_plurals = { path = "../../components/plurals/", optional = true }
+icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core", features = ["provider_serde"] }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }

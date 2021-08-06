@@ -12,14 +12,10 @@
 extern crate alloc;
 
 pub mod custom_writeable;
-#[cfg(feature = "decimal")]
 pub mod decimal;
-#[cfg(feature = "decimal")]
 pub mod fixed_decimal;
 pub mod locale;
-#[cfg(feature = "locale_canonicalizer")]
 pub mod locale_canonicalizer;
-#[cfg(feature = "plurals")]
 pub mod pluralrules;
 pub mod provider;
 
