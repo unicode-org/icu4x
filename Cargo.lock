@@ -1233,6 +1233,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_uprops"
+version = "0.3.0"
+dependencies = [
+ "displaydoc",
+ "icu_provider",
+ "icu_testdata",
+ "icu_uniset",
+ "serde",
+ "toml",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "0.1.0"
 dependencies = [
