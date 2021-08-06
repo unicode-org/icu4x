@@ -48,7 +48,7 @@ icu_decimal = { path = "../../components/decimal/", optional = true }
 icu_locale_canonicalizer = { path = "../../components/locale_canonicalizer", optional = true }
 icu_locid = { path = "../../components/locid" }
 icu_plurals = { path = "../../components/plurals/", optional = true }
-icu_provider = { path = "../../provider/core", features = ["serde"] }
+icu_provider = { path = "../../provider/core", features = ["provider_serde"] }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
