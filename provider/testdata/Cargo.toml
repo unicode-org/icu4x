@@ -156,5 +156,4 @@ metadata = [
 
 fs = ["icu_provider_fs", "std"]
 static = ["icu_provider_blob"]
-# Uses a smaller set of testdata for the static data provider (only decimal data for bn/en)
 std = []
