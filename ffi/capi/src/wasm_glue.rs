@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::format;
-use std::ffi::CString;
-use std::io;
-use std::os::raw::c_char;
+use rust_std::ffi::CString;
+use rust_std::io;
+use rust_std::os::raw::c_char;
 
 use log::{Level, LevelFilter, Metadata, Record};
 
