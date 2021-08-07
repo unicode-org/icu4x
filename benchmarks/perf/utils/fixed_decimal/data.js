@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628283867871,
+  "lastUpdate": 1628303059469,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8459,6 +8459,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 117336,
             "range": "± 541",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "220f4590e91bebe1aa71a1c60b78fe6c4e68abec",
+          "message": "Make icu_capi always no_std (#941)",
+          "timestamp": "2021-08-06T19:18:20-07:00",
+          "tree_id": "e9bd413f14e3089b569be6ea09df4c7831afb914",
+          "url": "https://github.com/unicode-org/icu4x/commit/220f4590e91bebe1aa71a1c60b78fe6c4e68abec"
+        },
+        "date": 1628303056696,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 132321,
+            "range": "± 12666",
             "unit": "ns/iter"
           }
         ]
