@@ -23,6 +23,8 @@ include = [
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [dependencies]
 icu_locid = { version = "0.3", path = "../../components/locid" }
