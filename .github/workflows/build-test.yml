@@ -176,7 +176,7 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: install
-        args: cargo-all-features --version "^1.4"
+        args: cargo-all-features --version "^1.6"
 
     - name: Get cargo-make version
       id: cargo-make-version

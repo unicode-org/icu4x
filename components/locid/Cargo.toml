@@ -24,6 +24,8 @@ include = [
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 # "serde" is an intentional feature, enabling serialization of LanguageIdentifier and others:
 extra_features = ["serde"]
 
