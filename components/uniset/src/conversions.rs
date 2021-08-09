@@ -16,7 +16,7 @@ fn try_from_range<'data, 'r>(range: &'r impl RangeBounds<char>) -> Result<Unicod
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
-        Ok(UnicodeSet::from_inversion_list(set).unwrap())
+        Ok(UnicodeSet::clone_from_inversion_list(set).unwrap())
     } else {
         Err(UnicodeSetError::InvalidRange(from, till))
     }

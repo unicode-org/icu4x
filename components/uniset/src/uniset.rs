@@ -10,11 +10,8 @@ use core::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 use icu_provider::yoke::{self, *};
 use zerovec::{ZeroVec, ule::AsULE};
 
-#[cfg(feature = "serde")]
-use serde::ser::SerializeSeq;
-
 use super::UnicodeSetError;
-use crate::utils::{deconstruct_range, is_slice_valid};
+use crate::utils::{deconstruct_range, is_valid_zv};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -23,7 +20,7 @@ const BMP_MAX: u32 = 0xFFFF;
 ///
 /// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
 /// and predefined ranges.
-#[derive(Debug, PartialEq, Eq, Clone, Yokeable, ZeroCopyFrom)]
+#[derive(Debug, PartialEq, Clone, Yokeable, ZeroCopyFrom)]
 #[yoke(cloning_zcf)]
 pub struct UnicodeSet<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
@@ -58,35 +55,17 @@ impl<'data> serde::Serialize for UnicodeSet<'data> {
     where
         S: serde::Serializer,
     {
-        let mut seq = serializer.serialize_seq(Some(self.inv_list.len()))?;
-        for e in self.inv_list.iter() {
-            seq.serialize_element(&e)?;
-        }
-        seq.end()
+        self.inv_list.serialize(serializer)
     }
 }
 
+impl<'data> Eq for UnicodeSet<'data> {}
+
 impl<'data> UnicodeSet<'data> {
-    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
-    /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
-    ///
-    /// The inversion list must be of even length, sorted ascending non-overlapping,
-    /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::uniset::UnicodeSet;
-    /// use icu::uniset::UnicodeSetError;
-    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let result = UnicodeSet::from_inversion_list(invalid.clone());
-    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
-    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
-    ///     assert_eq!(invalid, actual);
-    /// }
-    /// ```
+
+    /// TODO: doc strings + doc test
     pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError<'data>> {
-        if is_slice_valid(inv_list.as_slice()) {
+        if is_valid_zv(&inv_list) {
             let size: usize = 
                 inv_list.as_slice().chunks(2)
                     .map(|end_points| <u32 as AsULE>::from_unaligned(&end_points[1]) - <u32 as AsULE>::from_unaligned(&end_points[0]))
@@ -97,9 +76,30 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
-    // // TODO: doc strings + doc test
+    /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
+    /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
+    /// 
+    /// Note: this function currently causes an allocation due to the requirements from
+    /// the constructors of the underlying [`ZeroVec`].
+    ///
+    /// The inversion list must be of even length, sorted ascending non-overlapping,
+    /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::uniset::UnicodeSet;
+    /// use icu::uniset::UnicodeSetError;
+    /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
+    /// let result = UnicodeSet::clone_from_inversion_list(invalid.clone());
+    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
+    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
+    ///     assert_eq!(invalid, actual);
+    /// }
+    /// ```
     pub fn clone_from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError<'data>> {
-
+        let inv_list_zv: ZeroVec<u32> = ZeroVec::from_aligned(&inv_list);
+        UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
     /// Returns an owned inversion list representing the current [`UnicodeSet`]

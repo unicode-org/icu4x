@@ -24,7 +24,7 @@ impl<'d> UnicodeSetBuilder {
 
     /// Returns a [`UnicodeSet`] and consumes the [`UnicodeSetBuilder`]
     pub fn build(self) -> UnicodeSet<'static> {
-        UnicodeSet::from_inversion_list(self.intervals).unwrap()
+        UnicodeSet::clone_from_inversion_list(self.intervals).unwrap()
     }
 
     /// Abstraction for adding/removing a range from start..end
