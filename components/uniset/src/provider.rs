@@ -27,7 +27,7 @@ pub mod key {
         };
     }
 
-    define_resource_keys!(95;
+    define_resource_keys!(103;
 
         //
         // Binary properties
@@ -107,22 +107,28 @@ pub mod key {
         // short name of the enumerated property and the short name of the
         // property value.
 
+        (GENERAL_CATEGORY_OTHER_V1, "gc=C"),
         (GENERAL_CATEGORY_CONTROL_V1, "gc=Cc"),
         (GENERAL_CATEGORY_FORMAT_V1, "gc=Cf"),
         (GENERAL_CATEGORY_UNASSIGNED_V1, "gc=Cn"),
         (GENERAL_CATEGORY_PRIVATE_USE_V1, "gc=Co"),
         (GENERAL_CATEGORY_SURROGATE_V1, "gc=S"),
+        (GENERAL_CATEGORY_LETTER_V1, "gc=L"),
+        (GENERAL_CATEGORY_CASED_LETTER_V1, "gc=LC"),
         (GENERAL_CATEGORY_LOWERCASE_LETTER_V1, "gc=Ll"),
         (GENERAL_CATEGORY_MODIFIER_LETTER_V1, "gc=Lm"),
         (GENERAL_CATEGORY_OTHER_LETTER_V1, "gc=Lo"),
         (GENERAL_CATEGORY_TITLECASE_LETTER_V1, "gc=Lt"),
         (GENERAL_CATEGORY_UPPERCASE_LETTER_V1, "gc=Lu"),
+        (GENERAL_CATEGORY_MARK_V1, "gc=M"),
         (GENERAL_CATEGORY_SPACING_MARK_V1, "gc=Mc"),
         (GENERAL_CATEGORY_ENCLOSING_MARK_V1, "gc=Me"),
         (GENERAL_CATEGORY_NONSPACING_MARK_V1, "gc=Mn"),
+        (GENERAL_CATEGORY_NUMBER_V1, "gc=N"),
         (GENERAL_CATEGORY_DIGIT_V1, "gc=Nd"),
         (GENERAL_CATEGORY_LETTER_NUMBER_V1, "gc=Nl"),
         (GENERAL_CATEGORY_OTHER_NUMBER_V1, "gc=No"),
+        (GENERAL_CATEGORY_PUNCTUATION_V1, "gc=P"),
         (GENERAL_CATEGORY_CONNECTOR_PUNCTUATION_V1, "gc=Pc"),
         (GENERAL_CATEGORY_DASH_PUNCTUATION_V1, "gc=Pd"),
         (GENERAL_CATEGORY_CLOSE_PUNCTUATION_V1, "gc=Pe"),
@@ -130,10 +136,12 @@ pub mod key {
         (GENERAL_CATEGORY_INITIAL_PUNCTUATION_V1, "gc=Pi"),
         (GENERAL_CATEGORY_OTHER_PUNCTUATION_V1, "gc=Po"),
         (GENERAL_CATEGORY_OPEN_PUNCTUATION_V1, "gc=Ps"),
+        (GENERAL_CATEGORY_SYMBOL_V1, "gc=S"),
         (GENERAL_CATEGORY_CURRENCY_SYMBOL_V1, "gc=Sc"),
         (GENERAL_CATEGORY_MODIFIER_SYMBOL_V1, "gc=Sk"),
         (GENERAL_CATEGORY_MATH_SYMBOL_V1, "gc=Sm"),
         (GENERAL_CATEGORY_OTHER_SYMBOL_V1, "gc=So"),
+        (GENERAL_CATEGORY_SEPARATOR_V1, "gc=Z"),
         (GENERAL_CATEGORY_LINE_SEPARATOR_V1, "gc=Zl"),
         (GENERAL_CATEGORY_PARAGRAPH_SEPARATOR_V1, "gc=Zp"),
         (GENERAL_CATEGORY_SPACE_SEPARATOR_V1, "gc=Zs"),

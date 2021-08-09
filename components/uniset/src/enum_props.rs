@@ -15,40 +15,65 @@ pub enum EnumeratedProperty {
 }
 
 /// Enumerated Unicode general category types.
+/// The discriminants correspond to the U_GC_XX_MASK constants in ICU4C.
+/// This supports groups of general categories: for example, `Letter`
+/// is the union of `UppercaseLetter`, `LowercaseLetter`, etc...
 /// See https://www.unicode.org/reports/tr44/ .
-/// See UCharCategory in ICU4C.
+/// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[repr(u32)]
 pub enum GeneralCategory {
-    Control = 15,
-    Format = 16,
     Unassigned = 0,
-    PrivateUse = 17,
-    Surrogate = 18,
-    LowercaseLetter = 2,
-    ModifierLetter = 4,
-    OtherLetter = 5,
-    TitlecaseLetter = 3,
-    UppercaseLetter = 1,
-    SpacingMark = 8,
-    EnclosingMark = 7,
-    NonspacingMark = 6,
-    Digit = 9,
-    LetterNumber = 10,
-    OtherNumber = 11,
-    ConnectorPunctuation = 22,
-    DashPunctuation = 19,
-    ClosePunctuation = 21,
-    FinalPunctuation = 29,
-    InitialPunctuation = 28,
-    OtherPunctuation = 23,
-    OpenPunctuation = 20,
-    CurrencySymbol = 25,
-    ModifierSymbol = 26,
-    MathSymbol = 24,
-    OtherSymbol = 27,
-    LineSeparator = 13,
-    ParagraphSeparator = 14,
-    SpaceSeparator = 12,
+
+    UppercaseLetter = 1 << 1,
+    LowercaseLetter = 1 << 2,
+    TitlecaseLetter = 1 << 3,
+    ModifierLetter = 1 << 4,
+    OtherLetter = 1 << 5,
+    CasedLetter = Self::UppercaseLetter as u32 | Self::LowercaseLetter as u32 | Self::TitlecaseLetter as u32,
+    Letter = Self::CasedLetter as u32 | Self::ModifierLetter as u32 | Self::OtherLetter as u32,
+
+    NonspacingMark = 1 << 6,
+    EnclosingMark = 1 << 7,
+    SpacingMark = 1 << 8,
+    Mark = Self::NonspacingMark as u32 | Self::EnclosingMark as u32 | Self::SpacingMark as u32,
+
+    Digit = 1 << 9,
+    LetterNumber = 1 << 10,
+    OtherNumber = 1 << 11,
+    Number = Self::Digit as u32 | Self::LetterNumber as u32 | Self::OtherNumber as u32,
+
+    SpaceSeparator = 1 << 12,
+    LineSeparator = 1 << 13,
+    ParagraphSeparator = 1 << 14,
+    Separator = Self::SpaceSeparator as u32 | Self::LineSeparator as u32 | Self::ParagraphSeparator as u32,
+
+    Control = 1 << 15,
+    Format = 1 << 16,
+    PrivateUse = 1 << 17,
+    Surrogate = 1 << 18,
+    Other = Self::Control as u32 | Self::Format as u32 | Self::PrivateUse as u32 | Self::Surrogate as u32,
+
+    DashPunctuation = 1 << 19,
+    OpenPunctuation = 1 << 20,
+    ClosePunctuation = 1 << 21,
+    ConnectorPunctuation = 1 << 22,
+    OtherPunctuation = 1 << 23,
+    InitialPunctuation = 1 << 28,
+    FinalPunctuation = 1 << 29,
+    Punctuation = Self::DashPunctuation as u32
+        | Self::OpenPunctuation as u32
+        | Self::ClosePunctuation as u32
+        | Self::ConnectorPunctuation as u32
+        | Self::OtherPunctuation as u32
+        | Self::InitialPunctuation as u32
+        | Self::FinalPunctuation as u32,
+
+    MathSymbol = 1 << 24,
+    CurrencySymbol = 1 << 25,
+    ModifierSymbol = 1 << 26,
+    OtherSymbol = 1 << 27,
+    Symbol = Self::MathSymbol as u32 | Self::CurrencySymbol as u32 | Self::ModifierSymbol as u32 | Self::OtherSymbol as u32,
 }
 
 //// Enumerated property Script.
