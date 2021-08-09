@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628303059469,
+  "lastUpdate": 1628529823765,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8489,6 +8489,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 132321,
             "range": "± 12666",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f0977050566fcac7d8b8427feba50eed91f9d1a5",
+          "message": "Use cargo-all-features' new denylist feature to improve our CI time (#942)\n\n* Update cargo-all-features version\r\n\r\n* Stop including bench feature in cargo-all-features\r\n\r\n* Deny more features for capi crate",
+          "timestamp": "2021-08-09T10:17:29-07:00",
+          "tree_id": "c83289bcca60a0624f03ef3382fb9124e7b72393",
+          "url": "https://github.com/unicode-org/icu4x/commit/f0977050566fcac7d8b8427feba50eed91f9d1a5"
+        },
+        "date": 1628529820845,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129990,
+            "range": "± 6191",
             "unit": "ns/iter"
           }
         ]
