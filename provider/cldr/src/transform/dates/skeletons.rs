@@ -107,8 +107,8 @@ impl<'data> IterableDataProviderCore for DateSkeletonPatternsProvider<'data> {
 
 impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
     fn from(other: &cldr_json::DateTimeFormats) -> Self {
-        use gregory::patterns::PatternV1;
         use gregory::SkeletonV1;
+        use icu_datetime::pattern::reference::Pattern;
         use litemap::LiteMap;
 
         let mut skeletons = LiteMap::new();
@@ -147,10 +147,10 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
                 continue;
             }
 
-            let pattern_v1 =
-                PatternV1::try_from(pattern_str as &str).expect("Unable to parse a pattern");
+            let pattern =
+                Pattern::from_bytes(pattern_str as &str).expect("Unable to parse a pattern");
 
-            skeletons.insert(skeleton_fields_v1, pattern_v1);
+            skeletons.insert(skeleton_fields_v1, pattern.into());
         }
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -160,8 +160,9 @@ impl From<&cldr_json::DateTimeFormats> for gregory::DateSkeletonPatternsV1 {
 
 #[test]
 fn test_datetime_skeletons() {
-    use gregory::patterns::PatternV1;
+    use gregory::patterns::PatternPluralsV1;
     use gregory::SkeletonV1;
+    use icu_datetime::pattern::reference::Pattern;
     use icu_locid_macros::langid;
 
     let cldr_paths = crate::cldr_paths::for_test();
@@ -183,7 +184,9 @@ fn test_datetime_skeletons() {
     let skeletons = skeletons.get();
 
     assert_eq!(
-        Some(&PatternV1::try_from("L").expect("Failed to create pattern")),
+        Some(&PatternPluralsV1::from(
+            Pattern::from_bytes("L").expect("Failed to create pattern")
+        )),
         skeletons
             .0
             .get(&SkeletonV1::try_from("M").expect("Failed to create Skeleton"))

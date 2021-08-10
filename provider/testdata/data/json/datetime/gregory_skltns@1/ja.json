@@ -1,41 +1,119 @@
 {
-  "y": "y年",
-  "yM": "y/M",
-  "yMd": "y/M/d",
-  "yMdE": "y/M/d(E)",
-  "yMdEEEE": "y/M/dEEEE",
-  "yMM": "y/MM",
-  "yMMM": "y年M月",
-  "yMMMd": "y年M月d日",
-  "yMMMdE": "y年M月d日(E)",
-  "yMMMdEEEE": "y年M月d日EEEE",
-  "yMMMM": "y年M月",
-  "M": "M月",
-  "Md": "M/d",
-  "MdE": "M/d(E)",
-  "MdEEEE": "M/dEEEE",
-  "MMM": "M月",
-  "MMMd": "M月d日",
-  "MMMdE": "M月d日(E)",
-  "MMMdEEEE": "M月d日EEEE",
-  "MMMMd": "M月d日",
-  "d": "d日",
-  "dE": "d日(E)",
-  "dEEEE": "d日EEEE",
-  "E": "ccc",
-  "Ehm": "aK:mm (E)",
-  "Ehms": "aK:mm:ss (E)",
-  "EHm": "H:mm (E)",
-  "EHms": "H:mm:ss (E)",
-  "h": "aK時",
-  "hm": "aK:mm",
-  "hms": "aK:mm:ss",
-  "hmsv": "aK:mm:ss v",
-  "hmv": "aK:mm v",
-  "H": "H時",
-  "Hm": "H:mm",
-  "Hms": "H:mm:ss",
-  "Hmsv": "H:mm:ss v",
-  "Hmv": "H:mm v",
-  "ms": "mm:ss"
+  "y": {
+    "pattern": "y年"
+  },
+  "yM": {
+    "pattern": "y/M"
+  },
+  "yMd": {
+    "pattern": "y/M/d"
+  },
+  "yMdE": {
+    "pattern": "y/M/d(E)"
+  },
+  "yMdEEEE": {
+    "pattern": "y/M/dEEEE"
+  },
+  "yMM": {
+    "pattern": "y/MM"
+  },
+  "yMMM": {
+    "pattern": "y年M月"
+  },
+  "yMMMd": {
+    "pattern": "y年M月d日"
+  },
+  "yMMMdE": {
+    "pattern": "y年M月d日(E)"
+  },
+  "yMMMdEEEE": {
+    "pattern": "y年M月d日EEEE"
+  },
+  "yMMMM": {
+    "pattern": "y年M月"
+  },
+  "M": {
+    "pattern": "M月"
+  },
+  "Md": {
+    "pattern": "M/d"
+  },
+  "MdE": {
+    "pattern": "M/d(E)"
+  },
+  "MdEEEE": {
+    "pattern": "M/dEEEE"
+  },
+  "MMM": {
+    "pattern": "M月"
+  },
+  "MMMd": {
+    "pattern": "M月d日"
+  },
+  "MMMdE": {
+    "pattern": "M月d日(E)"
+  },
+  "MMMdEEEE": {
+    "pattern": "M月d日EEEE"
+  },
+  "MMMMd": {
+    "pattern": "M月d日"
+  },
+  "d": {
+    "pattern": "d日"
+  },
+  "dE": {
+    "pattern": "d日(E)"
+  },
+  "dEEEE": {
+    "pattern": "d日EEEE"
+  },
+  "E": {
+    "pattern": "ccc"
+  },
+  "Ehm": {
+    "pattern": "aK:mm (E)"
+  },
+  "Ehms": {
+    "pattern": "aK:mm:ss (E)"
+  },
+  "EHm": {
+    "pattern": "H:mm (E)"
+  },
+  "EHms": {
+    "pattern": "H:mm:ss (E)"
+  },
+  "h": {
+    "pattern": "aK時"
+  },
+  "hm": {
+    "pattern": "aK:mm"
+  },
+  "hms": {
+    "pattern": "aK:mm:ss"
+  },
+  "hmsv": {
+    "pattern": "aK:mm:ss v"
+  },
+  "hmv": {
+    "pattern": "aK:mm v"
+  },
+  "H": {
+    "pattern": "H時"
+  },
+  "Hm": {
+    "pattern": "H:mm"
+  },
+  "Hms": {
+    "pattern": "H:mm:ss"
+  },
+  "Hmsv": {
+    "pattern": "H:mm:ss v"
+  },
+  "Hmv": {
+    "pattern": "H:mm v"
+  },
+  "ms": {
+    "pattern": "mm:ss"
+  }
 }

@@ -4,7 +4,7 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
-use super::patterns::PatternV1;
+use super::patterns::PatternPluralsV1;
 use crate::skeleton::{reference::Skeleton, SkeletonError};
 use core::convert::TryFrom;
 use icu_provider::yoke::{self, *};
@@ -17,7 +17,7 @@ use litemap::LiteMap;
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-pub struct DateSkeletonPatternsV1(pub LiteMap<SkeletonV1, PatternV1>);
+pub struct DateSkeletonPatternsV1(pub LiteMap<SkeletonV1, PatternPluralsV1>);
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
 /// access to the serialization and deserialization capabilities, without exposing the

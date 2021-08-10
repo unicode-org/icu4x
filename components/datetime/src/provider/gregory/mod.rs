@@ -42,7 +42,7 @@ pub struct DatePatternsV1 {
 
 pub mod patterns {
     use super::*;
-    use crate::pattern::{self, reference::Pattern};
+    use crate::pattern::reference::{Pattern, PatternPlurals, PluralPattern};
     use core::convert::TryFrom;
 
     #[derive(Debug, PartialEq, Clone, Default)]
@@ -85,6 +85,28 @@ pub mod patterns {
                 Ok(pattern) => Ok(Self::from(pattern)),
                 Err(err) => Err(err),
             }
+        }
+    }
+
+    /// This struct is a public wrapper around the internal [`PatternPlurals`]
+    /// struct. This allows access to the serialization and deserialization
+    /// capabilities, without exposing the internals of the pattern machinery.
+    #[derive(Debug, PartialEq, Clone)]
+    #[cfg_attr(
+        feature = "provider_serde",
+        derive(serde::Serialize, serde::Deserialize)
+    )]
+    pub struct PatternPluralsV1(pub PatternPlurals);
+
+    impl From<Pattern> for PatternPluralsV1 {
+        fn from(pattern: Pattern) -> Self {
+            Self(PatternPlurals::SinglePattern(pattern))
+        }
+    }
+
+    impl From<PluralPattern> for PatternPluralsV1 {
+        fn from(plural_pattern: PluralPattern) -> Self {
+            Self(PatternPlurals::MultipleVariants(plural_pattern))
         }
     }
 }

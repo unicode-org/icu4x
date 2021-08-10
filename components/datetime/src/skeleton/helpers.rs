@@ -379,9 +379,13 @@ pub fn get_best_available_format_pattern(
         }
     }
 
-    let mut closest_format_pattern = closest_format_pattern
-        .expect("At least one closest format pattern will always be found.")
-        .clone();
+    let mut closest_format_pattern = PatternV1(
+        closest_format_pattern
+            .expect("At least one closest format pattern will always be found.")
+            .0
+            .expect_pattern_ref("todo #488")
+            .clone(),
+    );
 
     if closest_missing_fields == fields.len() {
         return BestSkeleton::NoMatch;

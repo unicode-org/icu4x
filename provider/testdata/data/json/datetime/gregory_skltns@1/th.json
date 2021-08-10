@@ -1,43 +1,125 @@
 {
-  "y": "y",
-  "yM": "M/y",
-  "yMd": "d/M/y",
-  "yMdE": "E d/M/y",
-  "yMMM": "MMM y",
-  "yMMMd": "d MMM y",
-  "yMMMdE": "E d MMM y",
-  "yMMMdEEEE": "EEEEที่ d MMM y",
-  "yMMMM": "MMMM 'G' y",
-  "yMMMMd": "d MMMM 'G' y",
-  "yMMMMdE": "E d MMMM 'G' y",
-  "yMMMMdEEEE": "EEEEที่ d MMMM 'G' y",
-  "M": "L",
-  "Md": "d/M",
-  "MdE": "E d/M",
-  "MMM": "LLL",
-  "MMMd": "d MMM",
-  "MMMdE": "E d MMM",
-  "MMMdEEEE": "EEEEที่ d MMM",
-  "MMMMd": "d MMMM",
-  "MMMMdE": "E d MMMM",
-  "MMMMdEEEE": "EEEEที่ d MMMM",
-  "d": "d",
-  "dE": "E d",
-  "E": "ccc",
-  "Ehm": "E h:mm a",
-  "Ehms": "E h:mm:ss a",
-  "EHm": "E HH:mm น.",
-  "EHms": "E HH:mm:ss",
-  "h": "h a",
-  "hm": "h:mm a",
-  "hms": "h:mm:ss a",
-  "hmsv": "h:mm:ss a v",
-  "hmv": "h:mm น. a v",
-  "H": "HH",
-  "Hm": "HH:mm น.",
-  "Hms": "HH:mm:ss",
-  "Hmsv": "HH:mm:ss v",
-  "Hmv": "HH:mm v",
-  "ms": "mm:ss",
-  "mmss": "mm:ss"
+  "y": {
+    "pattern": "y"
+  },
+  "yM": {
+    "pattern": "M/y"
+  },
+  "yMd": {
+    "pattern": "d/M/y"
+  },
+  "yMdE": {
+    "pattern": "E d/M/y"
+  },
+  "yMMM": {
+    "pattern": "MMM y"
+  },
+  "yMMMd": {
+    "pattern": "d MMM y"
+  },
+  "yMMMdE": {
+    "pattern": "E d MMM y"
+  },
+  "yMMMdEEEE": {
+    "pattern": "EEEEที่ d MMM y"
+  },
+  "yMMMM": {
+    "pattern": "MMMM 'G' y"
+  },
+  "yMMMMd": {
+    "pattern": "d MMMM 'G' y"
+  },
+  "yMMMMdE": {
+    "pattern": "E d MMMM 'G' y"
+  },
+  "yMMMMdEEEE": {
+    "pattern": "EEEEที่ d MMMM 'G' y"
+  },
+  "M": {
+    "pattern": "L"
+  },
+  "Md": {
+    "pattern": "d/M"
+  },
+  "MdE": {
+    "pattern": "E d/M"
+  },
+  "MMM": {
+    "pattern": "LLL"
+  },
+  "MMMd": {
+    "pattern": "d MMM"
+  },
+  "MMMdE": {
+    "pattern": "E d MMM"
+  },
+  "MMMdEEEE": {
+    "pattern": "EEEEที่ d MMM"
+  },
+  "MMMMd": {
+    "pattern": "d MMMM"
+  },
+  "MMMMdE": {
+    "pattern": "E d MMMM"
+  },
+  "MMMMdEEEE": {
+    "pattern": "EEEEที่ d MMMM"
+  },
+  "d": {
+    "pattern": "d"
+  },
+  "dE": {
+    "pattern": "E d"
+  },
+  "E": {
+    "pattern": "ccc"
+  },
+  "Ehm": {
+    "pattern": "E h:mm a"
+  },
+  "Ehms": {
+    "pattern": "E h:mm:ss a"
+  },
+  "EHm": {
+    "pattern": "E HH:mm น."
+  },
+  "EHms": {
+    "pattern": "E HH:mm:ss"
+  },
+  "h": {
+    "pattern": "h a"
+  },
+  "hm": {
+    "pattern": "h:mm a"
+  },
+  "hms": {
+    "pattern": "h:mm:ss a"
+  },
+  "hmsv": {
+    "pattern": "h:mm:ss a v"
+  },
+  "hmv": {
+    "pattern": "h:mm น. a v"
+  },
+  "H": {
+    "pattern": "HH"
+  },
+  "Hm": {
+    "pattern": "HH:mm น."
+  },
+  "Hms": {
+    "pattern": "HH:mm:ss"
+  },
+  "Hmsv": {
+    "pattern": "HH:mm:ss v"
+  },
+  "Hmv": {
+    "pattern": "HH:mm v"
+  },
+  "ms": {
+    "pattern": "mm:ss"
+  },
+  "mmss": {
+    "pattern": "mm:ss"
+  }
 }
