@@ -17,15 +17,16 @@ components/plurals/               @zbraniecki @sffc
 components/uniset/                @echeran @iainireland
 experimental/bies/                @sffc
 experimental/calendar/            @Manishearth @sffc
+experimental/codepointtrie/       @echeran
 experimental/provider_ppucd/      @echeran
-experimental/segmenter/           @aethanyc @makotokato
+experimental/segmenter/           @aethanyc @makotokato @makotokato
 experimental/segmenter_lstm/      @aethanyc @sffc
 ffi/capi/                         @Manishearth
 ffi/cpp/                          @Manishearth
 ffi/ecma402/                      @filmil
 ffi/wasm/                         @Manishearth
 provider/blob/                    @sffc @Manishearth
-provider/cldr/                    @sffc
+provider/cldr/                    @sffc @nordzilla
 provider/core/                    @sffc @Manishearth
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
