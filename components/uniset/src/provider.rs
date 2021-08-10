@@ -146,11 +146,8 @@ pub mod key {
 
 #[icu_provider::data_struct]
 #[derive(Debug, Eq, PartialEq, Clone)]
-// #[cfg_attr(feature = "provider_serde", derive(serde::Deserialize))]
 pub struct UnicodePropertyV1<'data> {
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub name: Cow<'data, str>,
-    #[cfg_attr(feature = "provider_serde", serde(borrow))]
     pub inv_list: UnicodeSet<'data>,
 }
 
@@ -190,8 +187,7 @@ impl<'de> serde::Deserialize<'de> for UnicodePropertyV1<'de> {
     where
         D: serde::Deserializer<'de>,
     {
-        // Should this be `tinystr::std`?
-        use std::fmt;
+        use core::fmt;
 
         #[derive(serde::Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]

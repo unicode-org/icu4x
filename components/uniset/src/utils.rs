@@ -7,65 +7,26 @@ use core::{
     ops::{Bound::*, RangeBounds},
 };
 use zerovec::ZeroVec;
+// use zerovec::ule::AsULE;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
-    // v.is_empty() || (v.len() % 2 == 0 && v.windows(2).all(|chunk| chunk[0] < chunk[1]) && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
-    let v_iter = v.iter();
-    let v_len = v.len();
-    let v_last = v.last();
-    is_iter_valid(v_iter, v_len, v_last)
+    v.is_empty() || (v.len() % 2 == 0 && v.windows(2).all(|chunk| chunk[0] < chunk[1]) && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
+    // let v_iter = v.iter();
+    // let v_len = v.len();
+    // let v_last = v.last();
+    // is_iter_valid(v_iter, v_len, v_last)
 }
 
-// // TODO: how do share impl code between `is_valid(&[u32])` and `is_slice_valid(&<u32 as AsULE>::ULE)`?
-// pub fn is_slice_valid(slice: &[<u32 as AsULE>::ULE]) -> bool {
-//     slice.is_empty() || 
-//         (slice.len() % 2 == 0 && 
-//             slice.windows(2).all(|chunk| <u32 as AsULE>::from_unaligned(&chunk[0]) < <u32 as AsULE>::from_unaligned(&chunk[1])) && 
-//             slice.last().map_or(false, |e| <u32 as AsULE>::from_unaligned(e) <= ((char::MAX as u32) + 1)))
-// }
-
-// pub fn is_iter_valid(v_iter: dyn Iterator<Item = u32>, v_len: usize, v_last: Option<u32>) -> bool {
-//     v_len == 0 || (v_len % 2 == 0 && v_iter.windows(2).all(|chunk| chunk[0] < chunk[1]) && v_last.map_or(false, |e| e <= ((char::MAX as u32) + 1)))
-// }
-
+/// TODO: fill out doc strings / examples
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
-    let v_iter = inv_list_zv.iter().map(|x| &x);
-    let v_len = inv_list_zv.len();
-    let v_last = inv_list_zv.last().as_ref();
-    is_iter_valid(v_iter, v_len, v_last)
+    let slice = inv_list_zv.as_slice();
+    slice.is_empty() || 
+        (slice.len() % 2 == 0
+            && slice.windows(2).all(|chunk| <u32 as AsULE>::from_unaligned(&chunk[0]) < <u32 as AsULE>::from_unaligned(&chunk[1]))
+            && slice.last().map_or(false, |e| <u32 as AsULE>::from_unaligned(e) <= ((char::MAX as u32) + 1)))
 }
-
-fn is_iter_valid<'a, I>(v_iter: I, v_len: usize, v_last: Option<&u32>) -> bool 
-where
-    I: Iterator<Item = &'a u32>,
-{
-    if v_len == 0 {
-        true
-    } else if v_len % 2 != 0 {
-        false
-    } else if !v_last.map_or(false, |e| e <= &((char::MAX as u32) + 1)) {
-        // Assert that we have a last element of the inversion list, and that it is a valid
-        // code point range limit. The test of having a last element should pass if the caller
-        // is giving the last element of the iterator
-        false
-    } else {
-        // Perform the equivalent of slice::windows(2) on an iterator
-        while let Some(range_start) = v_iter.next() {
-            if let Some(range_limit) = v_iter.next() {
-                if range_start >= range_limit {
-                    return false;
-                }
-            } else {
-                // Should not arrive here if v_len is accurate length of iterator
-                return false;
-            }
-        }
-        true
-    }
-}
-
 
 /// Returns start (inclusive) and end (exclusive) bounds of [`RangeBounds`]
 pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {

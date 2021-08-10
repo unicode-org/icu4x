@@ -105,8 +105,7 @@ impl<'data> UnicodeSet<'data> {
     /// Returns an owned inversion list representing the current [`UnicodeSet`]
     pub fn get_inversion_list(&self) -> Vec<u32> {
         let result: Vec<u32> = self
-            .as_inversion_list() // Only crate public, to not leak impl
-            .to_vec();
+            .as_inversion_list(); // Only crate public, to not leak impl
         result
     }
 
@@ -133,8 +132,8 @@ impl<'data> UnicodeSet<'data> {
     /// Returns the inversion list as a slice
     ///
     /// Public only to the crate, not exposed to public
-    pub(crate) fn as_inversion_list(&self) -> &[u32] {
-        &self.inv_list.to_vec()
+    pub(crate) fn as_inversion_list(&self) -> Vec<u32> {
+        self.inv_list.to_vec()
     }
 
     /// Yields an [`Iterator`] going through the character set in the [`UnicodeSet`]
@@ -343,7 +342,8 @@ impl<'data> UnicodeSet<'data> {
         if set.size() > self.size() {
             return false;
         }
-        let mut set_ranges: Chunks<u32> = set.as_inversion_list().chunks(2);
+        let inv_list = set.as_inversion_list();
+        let mut set_ranges: Chunks<u32> = inv_list.chunks(2);
         let mut check = set_ranges.next();
         let ranges = self.iter_ranges();
         for range in ranges {

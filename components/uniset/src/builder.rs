@@ -404,7 +404,7 @@ impl<'d> UnicodeSetBuilder {
     /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &UnicodeSet) {
-        self.complement_list(set.as_inversion_list());
+        self.complement_list(&set.as_inversion_list());
     }
 
     /// Returns whether the build is empty.
