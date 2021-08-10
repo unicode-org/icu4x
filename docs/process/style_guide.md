@@ -612,7 +612,9 @@ fn main() {
 
 All data structs that can be passed through the DataProvider pipeline must support *zero-copy deserialization:* in practice, no heap allocations should be required when deserializing from Bincode-like formats. This means that if the type involves variable-length data like strings, vectors, and maps, it must use a zero-copy type backed by a byte buffer to represent them.
 
-Data structs with zero-copy data should have a `'s` lifetime parameter.
+Data structs with zero-copy data should have a `'data` lifetime parameter.
+
+In order to enable zero-copy deserialization via Serde, the `#[serde(borrow)]` annotation is most likely required. However, be aware of [known bugs](https://github.com/serde-rs/serde/issues/2016) regarding `#[serde(borrow)]` with `Option` types.
 
 Examples of types that can be used in zero-copy data structs:
 

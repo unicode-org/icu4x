@@ -14,6 +14,7 @@ Document | Summary
 [intro.md](tutorials/intro.md) | Introduction tutorial to ICU4X for users
 [data_provider.md](tutorials/data_provider.md) | Tutorial on using Data Provider in a component
 [markdown_tips.md](tutorials/markdown_tips.md) | According to bylaws.md, designs should make their way to GitHub Markdown files somewhat early in the process. However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice. This document contains tips on the workflow.
+[writing_a_new_data_struct.md](tutorials/writing_a_new_data_struct.md) | Tutorial for ICU4X contributors on how to add locale data to the data provider pipeline.
 
 ## Process
 
@@ -51,7 +52,7 @@ Document | Summary
 ---------|---------
 [datetime.md](research/datetime.md) | High-level outline of how ICU4X sees Date & Time formatting separation of concerns between Internationalization and Date & Time management.
 [datetime_input.md](research/datetime_input.md) | Exploration of potential design models for Date & Time APIs with support for calendar systems and open to strong integration with internationalization.
-[format_to_parts.md](research/datetime_input.md) | Discussion on alternate data models to support ECMA-402 formatToParts
+[format_to_parts.md](research/format_to_parts.md) | Discussion on alternate data models to support ECMA-402 formatToParts
 [wasm_vs_transpiler.md](research/wasm_vs_transpiler.md) | We've considered two approaches to a problem of write logic once, deploy it on multiple platforms/languages with minimal effort.
 [wrapper_layer.md](research/wrapper_layer.md) | A key piece of rolling out ergonomic ICU4X APIs for Rust and other target languages is the *wrapper layer*: code that sits between the client and the lower-level ICU4X libraries.  This document explains the design behind the ICU4X wrapper layer.
 [ecosystem.md](research/ecosystem.md) | This document tracks the crates that already exist in the ecosystem that cover functionality that we may wish to cover in ICU4X.
