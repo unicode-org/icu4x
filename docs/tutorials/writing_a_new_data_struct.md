@@ -17,6 +17,8 @@ The following steps take place at build time:
 3. Third, we transform from the source data struct to the ICU4X runtime data struct. This step can be expensive, because it is normally run as an offline build step.
 4. Fourth, the ICU4X runtime data struct is serialized to either JSON, if debugging is important, or to a blob store, if being prepared for use in production.
 
+Step 1 is generally a manual step for clients, but may be automated for ICU4X testdata in tools such as `icu4x-testdata-download`. Steps 2-4 are performed as part of `icu4x-datagen`. Both of these tools are explained in more detail below.
+
 At runtime, only one step is performed: the data struct is deserialized from the JSON or blob emitted in step 4.
 
 When deserializing from the blob store, it is a design principle of ICU4X that no heap allocations will be required. We have many utilities and abstractions to help make this safe and easy.
@@ -35,13 +37,19 @@ The data struct definitions should live in the crate that uses them. By conventi
 
 In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
 
-As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md#zero-copy-in-dataprovider-structs--required).
+As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
 If adding a new crate, you may need to add a new data category to the [`ResourceCategory` enum](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/prelude/enum.ResourceCategory.html) in `icu_provider`. This may change in the future.
 
+### Data Download
+
+The first step to introduce data into the ICU4X pipeline is to download it from an external source. This corresponds to step 1 above.
+
+When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool [`icu4x-testdata-download`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html) should automatically download data from the external source and save it in the ICU4X tree. `icu4x-testdata-download` should not do anything other than downloading the raw source data.
+
 ### Source Data Providers
 
-"Source data providers" read from a source data file, deserialize it, and transform it to an ICU4X data struct. This corresponds to steps 1, 2, and 3 above.
+"Source data providers" read from a source data file, deserialize it, and transform it to an ICU4X data struct. This corresponds to steps 2 and 3 above.
 
 Although they may share common code, source data providers are implemented specific to their data source. There are therefore many source data providers in ICU4X.
 
@@ -109,7 +117,7 @@ The following example shows all the pieces that make up the data pipeline for `D
 
 ### Data Struct
 
-*components/decimal/src/provider.rs*
+[*components/decimal/src/provider.rs*](https://github.com/unicode-org/icu4x/blob/main/components/decimal/src/provider.rs)
 
 ```rust
 #[icu_provider::data_struct]
@@ -139,7 +147,7 @@ The above example is an abridged definition for `DecimalSymbolsV1`. Note how the
 
 ### CLDR JSON Deserialize
 
-*provider/cldr/src/transform/numbers/cldr_serde.rs*
+[*provider/cldr/src/transform/numbers/cldr_serde.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/numbers/cldr_serde.rs)
 
 ```rust
 pub mod numbers_json {
@@ -182,7 +190,7 @@ The above example is an abridged definition of the Serde structure corresponding
 
 ### Transformer
 
-*provider/cldr/src/transform/numbers/mod.rs*
+[*provider/cldr/src/transform/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/numbers/mod.rs)
 
 ```rust
 impl<'data> DataProvider<'data, DecimalSymbolsV1Marker> for NumbersProvider {
@@ -223,7 +231,7 @@ The above example is an abridged snippet of code illustrating the most important
 
 ### `CldrJsonDataProvider`
 
-New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit *provider/cldr/src/transform/mod.rs* and fill in your data provider in every function, struct, and match. For example:
+New CLDR JSON transformers need to be discoverable from `CldrJsonDataProvider`. To do this, edit [*provider/cldr/src/transform/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/cldr/src/transform/mod.rs) and fill in your data provider in every function, struct, and match. For example:
 
 ```rust
 pub fn get_all_cldr_keys() -> Vec<ResourceKey> {
@@ -280,6 +288,8 @@ impl<'a> IterableDataProviderCore for CldrJsonDataProvider<'a, '_> {
 ```
 
 ### Data Generation Tool
+
+[*tools/datagen/src/bin/datagen.rs*](https://github.com/unicode-org/icu4x/blob/main/tools/datagen/src/bin/datagen.rs)
 
 ```rust
 fn export_cldr<'data>(
