@@ -19,7 +19,9 @@
 //! [`BinaryPropertiesDataProvider`]: binary::BinaryPropertiesDataProvider
 
 mod binary;
+mod enumerated;
 mod error;
 mod upropdump_serde;
 
 pub use binary::BinaryPropertiesDataProvider;
+pub use enumerated::EnumeratedPropertiesDataProvider;

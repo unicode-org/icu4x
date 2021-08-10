@@ -23,5 +23,30 @@ pub mod binary {
 }
 
 pub mod enumerated {
-    // TODO(#883)
+    #[derive(serde::Deserialize)]
+    pub struct EnumeratedPropertyMapRange {
+        pub start: u32,
+        pub end: u32,
+        pub name_idx: u32,
+        pub long_name: String,
+        pub short_name: String,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct EnumeratedPropertyMap {
+        pub long_name: String,
+        pub name: String,
+        pub ranges: Vec<EnumeratedPropertyMapRange>,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct CodePointMapLevel1 {
+        pub data: EnumeratedPropertyMap,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Main {
+        pub code_point_map: CodePointMapLevel1,
+        // omitted: code_point_trie.data
+    }
 }
