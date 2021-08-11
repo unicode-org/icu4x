@@ -563,7 +563,6 @@ impl<'a> LineBreakIteratorLatin1<'a> {
         input: &[u8],
         line_break_rule: LineBreakRule,
         word_break_rule: WordBreakRule,
-        ja_zh: bool,
     ) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
             iter: Latin1Indices {
@@ -575,7 +574,7 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             result_cache: Vec::new(),
             line_break_rule,
             word_break_rule,
-            ja_zh,
+            ja_zh: false,
         }
     }
 

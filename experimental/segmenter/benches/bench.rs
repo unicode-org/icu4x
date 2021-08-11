@@ -28,7 +28,6 @@ fn line_break_iter_latin1(c: &mut Criterion) {
                 TEST_STR.as_bytes(),
                 LineBreakRule::Anywhere,
                 WordBreakRule::BreakAll,
-                true,
             )
             .count()
         })
