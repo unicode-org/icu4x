@@ -5,6 +5,8 @@ Phases of Information in Data Provider
 
 This document discusses the point in the app lifecycle at which specific inputs to i18n libraries are known, with implications on data layout and fallback behavior.
 
+By delineating the lifecycle phases in which information is known, we can build a more modular library with tooling to optimize for code and data bundle sizes.
+
 ## Three Phases of Information
 
 There are three points at which information may be known to the data provider:
@@ -47,6 +49,8 @@ Date formatting is more complicated, but suppose you are formatting a date witho
 
 ## Resource Paths
 
+*Background reading: data_pipeline.md*
+
 The phase in which information is known should influence whether that information ends up in the resource key, resource options, or data struct. As a general rule of thumb:
 
 - If information is known at *compile time*, it should be in the *resource key*.
@@ -66,7 +70,7 @@ Let's take duration formatting as an example. If we consider the width to be kno
 - `duration-narrow@1`
 - `duration-digital@1`
 
-Having separate data keys means that you can strip out all the keys you definitely don't need from your data bundle via static code analysis.
+Having separate data keys means that you can strip out all the keys you definitely don't need from your data bundle. This can be done via static code analysis, as discussed in [#948](https://github.com/unicode-org/icu4x/issues/948).
 
 The resource options might look like this ("arab" and "latn" are examples of numbering systems):
 
@@ -129,7 +133,7 @@ Resource keys are hard-coded at compile time, and data structs are transparent t
 
 Resource options contain two types of fields: the language identifier, and what I'm calling a "variant", which may be the numbering system, for example.
 
-Fallbacking within the langauge identifier field is its own discussion, which is out of scope of this doc.  *For simplicity of illustration,* this doc assumes we were to implement the "en-GB, en-001, en" fallback chain found in ICU.
+Fallbacking within the language identifier field is its own discussion, which is out of scope of this doc.  *For simplicity of illustration,* this doc assumes we were to implement the "en-GB, en-001, en" fallback chain found in ICU.
 
 Suppose we had a single variant, the numbering system.  Suppose the numbering system is `arab`.  The following resource options would need to be visited, in some order:
 
@@ -147,7 +151,7 @@ The rows that don't have an explicit numbering system should contain the default
 The question is then: in what order do we visit these locale/variant combos?
 
 1. Fall back on language first, all the way to root (shown above)
-2. Fall back on langauge first, but stop before getting to root:
+2. Fall back on language first, but stop before getting to root:
     - `en-GB/arab`
     - `en-001/arab`
     - `en/arab`
