@@ -17,15 +17,18 @@ pub fn is_valid(v: &[u32]) -> bool {
 }
 
 /// Returns start (inclusive) and end (exclusive) bounds of [`RangeBounds`]
-pub fn deconstruct_range(range: &impl RangeBounds<char>) -> (u32, u32) {
+pub fn deconstruct_range<T, R: RangeBounds<T>>(range: &R) -> (u32, u32)
+where
+    T: Into<u32> + Copy,
+{
     let from = match range.start_bound() {
-        Included(b) => (*b as u32),
+        Included(b) => (*b).into(),
         Excluded(_) => unreachable!(),
         Unbounded => 0,
     };
     let till = match range.end_bound() {
-        Included(b) => (*b as u32) + 1,
-        Excluded(b) => (*b as u32),
+        Included(b) => (*b).into() + 1,
+        Excluded(b) => (*b).into(),
         Unbounded => (char::MAX as u32) + 1,
     };
     (from, till)
@@ -85,7 +88,7 @@ mod tests {
         assert_eq!(check, (0x0, 0x41));
         let check = deconstruct_range(&(..='A')); // Range To Inclusive
         assert_eq!(check, (0x0, 0x42));
-        let check = deconstruct_range(&(..)); // Range Full
+        let check = deconstruct_range::<char, _>(&(..)); // Range Full
         assert_eq!(check, (0x0, (char::MAX as u32) + 1));
     }
 }

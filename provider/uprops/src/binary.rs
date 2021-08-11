@@ -40,12 +40,7 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertiesDat
 
         let mut builder = UnicodeSetBuilder::new();
         for (start, end) in toml_data.unicode_set.data.ranges {
-            let (start, end) = match (std::char::from_u32(start), std::char::from_u32(end)) {
-                (Some(s), Some(e)) => Ok((s, e)),
-                _ => Err(Error::InvalidCharRange(start, end)),
-            }
-            .map_err(DataError::new_resc_error)?;
-            builder.add_range(&(start..=end));
+            builder.add_range_u32(&(start..=end));
         }
         let uniset = builder.build();
 

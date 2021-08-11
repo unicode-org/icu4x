@@ -276,7 +276,7 @@ impl UnicodeSet {
         self.contains_query(query).is_some()
     }
 
-    /// Checks to see if the range is in the [`UnicodeSet`], returns a [`Result`]
+    /// Checks to see if the range is in the [`UnicodeSet`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using [`Vec`] implementation. Only runs the search once on the `start`

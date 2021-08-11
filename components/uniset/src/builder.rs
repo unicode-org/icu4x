@@ -133,6 +133,24 @@ impl UnicodeSetBuilder {
         self.add(start, end);
     }
 
+    /// Add the range of characters, represented as u32, to the [`UnicodeSetBuilder`]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::uniset::UnicodeSetBuilder;
+    /// let mut builder = UnicodeSetBuilder::new();
+    /// builder.add_range_u32(&(0xd800..=0xdfff));
+    /// let check = builder.build();
+    /// assert_eq!(check.contains_u32(0xd900), true);
+    /// ```
+    pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
+        let (start, end) = deconstruct_range(range);
+        if start <= end && end <= char::MAX as u32 {
+            self.add(start, end);
+        }
+    }
+
     /// Add the [`UnicodeSet`] reference to the [`UnicodeSetBuilder`]
     ///
     /// # Examples
@@ -631,6 +649,14 @@ mod tests {
         let mut builder = UnicodeSetBuilder::new();
         builder.add_range(&('A'..='Z'));
         let expected = vec![0x41, 0x5B];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_add_range_u32() {
+        let mut builder = UnicodeSetBuilder::new();
+        builder.add_range_u32(&(0xd800..=0xdfff));
+        let expected = vec![0xd800, 0xe000];
         assert_eq!(builder.intervals, expected);
     }
 
