@@ -112,7 +112,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 -uno
+output = exec git status --porcelain=v1
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     if contains ${output.stdout} README.md
