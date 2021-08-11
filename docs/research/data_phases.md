@@ -85,7 +85,7 @@ All resource options within a resource key must be included in your data bundle,
 The data struct then looks something like this:
 
 ```rust
-// This is as INCOMPLETE EXAMPLE struct for illustrative purposes.
+// This is an INCOMPLETE EXAMPLE struct for illustrative purposes.
 // Real duration formatting data will be more detailed than this.
 
 struct SymbolsByPlural<'s> {
