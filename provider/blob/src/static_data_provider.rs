@@ -70,6 +70,15 @@ impl StaticDataProvider {
             .ok_or(DataError::MissingResourceKey(req.resource_path.key))
             .map(|v| *v)
     }
+
+    pub fn get_file_at_path(&self, path: &str) -> Result<&'static [u8], DataError> {
+        use alloc::string::ToString;
+        let BlobSchema::V001(blob) = &self.blob;
+        blob.resources
+            .get(&*path)
+            .ok_or(DataError::Resource("Path not available".to_string()))
+            .map(|v| *v)
+    }
 }
 
 impl<'data, M> DataProvider<'data, M> for StaticDataProvider

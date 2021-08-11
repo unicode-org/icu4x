@@ -1024,6 +1024,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "litemap",
+ "postcard",
  "serde",
  "serde_json",
  "smallvec",
