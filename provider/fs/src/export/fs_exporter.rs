@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::aliasing::{self, AliasCollection};
-use super::serializers::AbstractSerializer;
+use super::serializers::{json, AbstractSerializer};
 use crate::error::Error;
 use crate::manifest::AliasOption;
 use crate::manifest::Manifest;
@@ -13,7 +13,6 @@ use icu_provider::prelude::*;
 use icu_provider::serde::SerdeSeDataStructMarker;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::Write;
 use std::path::PathBuf;
 
 #[non_exhaustive]
@@ -123,12 +122,12 @@ impl FilesystemExporter {
         manifest_path.push(MANIFEST_FILE);
         let mut manifest_file =
             fs::File::create(&manifest_path).map_err(|e| (e, &manifest_path))?;
-        let mut manifest_writer = serde_json::Serializer::pretty(&mut manifest_file);
-        result
-            .manifest
-            .serialize(&mut manifest_writer)
-            .map_err(|e| (e, &manifest_path))?;
-        writeln!(&mut manifest_file).map_err(|e| (e, &manifest_path))?;
+        let manifest_serializer = json::Serializer::new(json::Options {
+            style: json::StyleOption::Pretty,
+        });
+        manifest_serializer
+            .serialize(&result.manifest, &mut manifest_file)
+            .map_err(|e| (e, manifest_path))?;
         Ok(result)
     }
 

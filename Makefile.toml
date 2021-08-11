@@ -49,6 +49,7 @@ dependencies = [
     "test-docs-default",
     "test-docs",
     "bincode-gen-testdata",
+    "testdata-check",
 ]
 
 [tasks.ci-job-ffi]

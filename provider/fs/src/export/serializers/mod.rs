@@ -34,6 +34,7 @@ impl From<erased_serde::Error> for Error {
         Error::Serializer(e)
     }
 }
+
 /// A simple serializer trait that works on whole objects.
 pub trait AbstractSerializer: Deref<Target = SyntaxOption> {
     /// Serializes an object to a sink.
