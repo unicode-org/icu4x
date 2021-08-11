@@ -75,19 +75,6 @@ if greater_than ${output_length} 0
     array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata`:"
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
-
-    h1 = read_binary_file "provider/testdata/data/json/decimal/symbols@1/en.json"
-    b1 = base64 ${h1}
-    release ${h1}
-    array_push ${msg} "${b1}"
-
-    exec git checkout provider/testdata/data/json/decimal/symbols@1/en.json
-
-    h2 = read_binary_file "provider/testdata/data/json/decimal/symbols@1/en.json"
-    b2 = base64 ${h2}
-    release ${h2}
-    array_push ${msg} "${b2}"
-
     msg = array_join ${msg} "\n"
     trigger_error ${msg}
 end
