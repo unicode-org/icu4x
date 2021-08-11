@@ -5,7 +5,7 @@
 use super::AbstractSerializer;
 use super::Error;
 use crate::manifest::SyntaxOption;
-use std::io;
+use std::io::{self, Write};
 use std::ops::Deref;
 
 /// A small helper class to convert LF to CRLF on Windows.
@@ -15,19 +15,6 @@ struct BufWriterWithLineEndingFix<W: io::Write>(io::BufWriter<W>);
 impl<W: io::Write> BufWriterWithLineEndingFix<W> {
     pub fn new(inner: W) -> Self {
         Self(io::BufWriter::with_capacity(4096, inner))
-    }
-
-    #[rustversion::before(1.55)]
-    pub fn into_inner(self) -> io::Result<W> {
-        // Workaround for https://github.com/rust-lang/rust/issues/79704
-        self.0
-            .into_inner()
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))
-    }
-
-    #[rustversion::since(1.55)]
-    pub fn into_inner(self) -> io::Result<W> {
-        self.0.into_inner().map_err(|e| e.into_error())
     }
 }
 
@@ -107,8 +94,9 @@ impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
         obj: &dyn erased_serde::Serialize,
-        mut sink: &mut dyn io::Write,
+        sink: &mut dyn io::Write,
     ) -> Result<(), Error> {
+        let mut sink = BufWriterWithLineEndingFix::new(sink);
         match self.style {
             StyleOption::Compact => {
                 obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
@@ -116,12 +104,9 @@ impl AbstractSerializer for Serializer {
                 ))?;
             }
             StyleOption::Pretty => {
-                let mut new_sink = BufWriterWithLineEndingFix::new(sink);
                 obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-                    &mut serde_json::Serializer::pretty(&mut new_sink),
+                    &mut serde_json::Serializer::pretty(&mut sink),
                 ))?;
-                // Return the object to the outer scope
-                sink = new_sink.into_inner()?;
             }
         };
         // Write an empty line at the end of the document
