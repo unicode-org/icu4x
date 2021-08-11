@@ -51,10 +51,9 @@ args = [
 ]
 
 [tasks.testdata]
-description = "Download fresh data and then build ICU4X JSON and Bincode blob from it"
+description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
 dependencies = [
-    "testdata-download",
     "testdata-build-json",
     "testdata-build-blob",
 ]
