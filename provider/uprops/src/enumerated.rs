@@ -4,7 +4,7 @@
 
 use crate::error::Error;
 use crate::upropdump_serde;
-// use icu_provider::iter::IterableDataProviderCore;
+use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::provider::*;
 use icu_uniset::UnicodeSetBuilder;
@@ -27,7 +27,6 @@ impl EnumeratedPropertiesDataProvider {
         let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
         toml::from_str(&toml_str).map_err(|e| Error::Toml(e, path))
     }
-
 }
 
 fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
@@ -104,19 +103,19 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for EnumeratedPropertie
     }
 }
 
-// icu_provider::impl_dyn_provider!(EnumeratedPropertiesDataProvider, {
-//     _ => UnicodePropertyV1Marker,
-// }, SERDE_SE, 'data);
+icu_provider::impl_dyn_provider!(EnumeratedPropertiesDataProvider, {
+    _ => UnicodePropertyV1Marker,
+}, SERDE_SE, 'data);
 
-// impl IterableDataProviderCore for EnumeratedPropertiesDataProvider {
-//     fn supported_options_for_key(
-//         &self,
-//         _resc_key: &ResourceKey,
-//     ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
-//         let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
-//         Ok(Box::new(list.into_iter()))
-//     }
-// }
+impl IterableDataProviderCore for EnumeratedPropertiesDataProvider {
+    fn supported_options_for_key(
+        &self,
+        _resc_key: &ResourceKey,
+    ) -> Result<Box<dyn Iterator<Item = ResourceOptions>>, DataError> {
+        let list: Vec<ResourceOptions> = vec![ResourceOptions::default()];
+        Ok(Box::new(list.into_iter()))
+    }
+}
 
 #[test]
 fn test_general_category() {
