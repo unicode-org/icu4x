@@ -76,16 +76,17 @@ if greater_than ${output_length} 0
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
 
-    out2 = exec git diff --porcelain=v1 provider/testdata/data/json/decimal/symbols@1/en.json
-    array_push ${msg} "${out2.stdout}"
-
-    out3 = exec hexdump provider/testdata/data/json/decimal/symbols@1/en.json
-    array_push ${msg} "${out3.stdout}"
+    h1 = read_binary_file "provider/testdata/data/json/decimal/symbols@1/en.json"
+    b1 = base64 ${h1}
+    release ${h1}
+    array_push ${msg} "${b1}"
 
     exec git checkout provider/testdata/data/json/decimal/symbols@1/en.json
 
-    out4 = exec hexdump provider/testdata/data/json/decimal/symbols@1/en.json
-    array_push ${msg} "${out4.stdout}"
+    h2 = read_binary_file "provider/testdata/data/json/decimal/symbols@1/en.json"
+    b2 = base64 ${h2}
+    release ${h2}
+    array_push ${msg} "${b2}"
 
     msg = array_join ${msg} "\n"
     trigger_error ${msg}
