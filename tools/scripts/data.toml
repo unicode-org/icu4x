@@ -75,6 +75,18 @@ if greater_than ${output_length} 0
     array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata`:"
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
+
+    out2 = exec git diff --porcelain=v1 provider/testdata/data/json/decimal/symbols@1/en.json
+    array_push ${msg} "${out2.stdout}"
+
+    out3 = exec hexdump provider/testdata/data/json/decimal/symbols@1/en.json
+    array_push ${msg} "${out3.stdout}"
+
+    exec git checkout provider/testdata/data/json/decimal/symbols@1/en.json
+
+    out4 = exec hexdump provider/testdata/data/json/decimal/symbols@1/en.json
+    array_push ${msg} "${out4.stdout}"
+
     msg = array_join ${msg} "\n"
     trigger_error ${msg}
 end
