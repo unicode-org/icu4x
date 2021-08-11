@@ -42,7 +42,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let locale: Locale = langid!("en").into();
 
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::get_static_provider();
 
     let dates = DATES_ISO
         .iter()
