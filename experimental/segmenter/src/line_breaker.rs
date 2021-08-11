@@ -237,7 +237,7 @@ macro_rules! break_iterator_impl {
             len: usize,
             current_pos_data: Option<(usize, $char_type)>,
             result_cache: Vec<usize>,
-            break_rule: LineBreakRule,
+            line_break_rule: LineBreakRule,
             word_break_rule: WordBreakRule,
             ja_zh: bool,
         }
@@ -298,7 +298,7 @@ macro_rules! break_iterator_impl {
                     }
 
                     // CSS line-break property handling
-                    match self.break_rule {
+                    match self.line_break_rule {
                         LineBreakRule::Normal => {
                             if self.is_break_by_normal() {
                                 return Some(self.current_pos_data.unwrap().0);
@@ -446,7 +446,7 @@ impl<'a> LineBreakIterator<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -464,7 +464,7 @@ impl<'a> LineBreakIterator<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -475,7 +475,7 @@ impl<'a> LineBreakIterator<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: char) -> u8 {
-        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule)
+        get_linebreak_property_with_rule(c, self.line_break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -552,7 +552,7 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -573,7 +573,7 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -652,7 +652,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -673,7 +673,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -684,7 +684,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: u32) -> u8 {
-        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule)
+        get_linebreak_property_utf32_with_rule(c, self.line_break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
