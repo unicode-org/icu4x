@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628529823765,
+  "lastUpdate": 1628640253779,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -8519,6 +8519,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 129990,
             "range": "± 6191",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c5f62dfc5f15c88581d69279634b6087da42768c",
+          "message": "Data struct tutorial (#929)",
+          "timestamp": "2021-08-10T18:58:13-05:00",
+          "tree_id": "8f65327cdddac0173da8ea1fbdfc6aded27a76ac",
+          "url": "https://github.com/unicode-org/icu4x/commit/c5f62dfc5f15c88581d69279634b6087da42768c"
+        },
+        "date": 1628640251414,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 127315,
+            "range": "± 6937",
             "unit": "ns/iter"
           }
         ]
