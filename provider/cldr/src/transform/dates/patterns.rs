@@ -273,7 +273,7 @@ impl From<&cldr_json::Dates> for gregory::DatePatternsV1 {
             time_h11_h12,
             time_h23_h24,
             preferred_hour_cycle,
-            datetime: (&other.calendars.gregorian.datetime_formats).into(),
+            datetime: date_time_formats_v1,
         }
     }
 }
