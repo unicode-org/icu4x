@@ -8,6 +8,52 @@ use crate::manifest::SyntaxOption;
 use std::io;
 use std::ops::Deref;
 
+/// A small helper class to convert LF to CRLF on Windows.
+/// Workaround for https://github.com/serde-rs/json/issues/535
+struct LineEndingFixer<W: io::Write>(pub W);
+
+impl<W: io::Write> io::Write for LineEndingFixer<W> {
+    #[cfg(windows)]
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        if buf.contains(&b'\n') {
+            // Note: std::io::Write::write returns the number of bytes of the input buffer that
+            // were successfully written.
+            let mut bytes_of_buf_written = 0;
+            for b in buf.iter() {
+                match if *b == b'\n' {
+                    self.0.write(b"\r\n")
+                } else {
+                    self.0.write(&[*b])
+                } {
+                    Ok(_) => bytes_of_buf_written += 1,
+                    Err(e) => {
+                        if bytes_of_buf_written == 0 {
+                            return Err(e);
+                        } else {
+                            return Ok(bytes_of_buf_written);
+                        }
+                    }
+                }
+            }
+            assert_eq!(bytes_of_buf_written, buf.len());
+            Ok(buf.len())
+        } else {
+            self.0.write(buf)
+        }
+    }
+
+    #[cfg(not(windows))]
+    #[inline]
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        self.0.write(buf)
+    }
+
+    #[inline]
+    fn flush(&mut self) -> io::Result<()> {
+        self.0.flush()
+    }
+}
+
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum StyleOption {
@@ -60,9 +106,11 @@ impl AbstractSerializer for Serializer {
                 ))?;
             }
             StyleOption::Pretty => {
+                let mut new_sink = LineEndingFixer(sink);
                 obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
-                    &mut serde_json::Serializer::pretty(&mut sink),
+                    &mut serde_json::Serializer::pretty(&mut new_sink),
                 ))?;
+                sink = new_sink.0; // return the object to the outer scope
             }
         };
         // Write an empty line at the end of the document
