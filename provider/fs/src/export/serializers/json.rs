@@ -10,32 +10,42 @@ use std::ops::Deref;
 
 /// A small helper class to convert LF to CRLF on Windows.
 /// Workaround for https://github.com/serde-rs/json/issues/535
-struct LineEndingFixer<W: io::Write>(pub W);
+struct BufWriterWithLineEndingFix<W: io::Write>(io::BufWriter<W>);
 
-impl<W: io::Write> io::Write for LineEndingFixer<W> {
+impl<W: io::Write> BufWriterWithLineEndingFix<W> {
+    pub fn new(inner: W) -> Self {
+        Self(io::BufWriter::with_capacity(4096, inner))
+    }
+
+    #[rustversion::before(1.55)]
+    pub fn into_inner(self) -> io::Result<W> {
+        // Workaround for https://github.com/rust-lang/rust/issues/79704
+        self.0
+            .into_inner()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))
+    }
+
+    #[rustversion::since(1.55)]
+    pub fn into_inner(self) -> io::Result<W> {
+        self.0.into_inner().map_err(|e| e.into_error())
+    }
+}
+
+impl<W: io::Write> io::Write for BufWriterWithLineEndingFix<W> {
     #[cfg(windows)]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         if buf.contains(&b'\n') {
-            // Note: std::io::Write::write returns the number of bytes of the input buffer that
-            // were successfully written.
-            let mut bytes_of_buf_written = 0;
             for b in buf.iter() {
-                match if *b == b'\n' {
+                if *b == b'\n' {
+                    // Note: Since we need to emit the \r, we are adding extra bytes than were in
+                    // the input buffer. BufWriter helps because short writes (less than 4096 B)
+                    // will always write or fail in their entirety.
                     self.0.write(b"\r\n")
                 } else {
                     self.0.write(&[*b])
-                } {
-                    Ok(_) => bytes_of_buf_written += 1,
-                    Err(e) => {
-                        if bytes_of_buf_written == 0 {
-                            return Err(e);
-                        } else {
-                            return Ok(bytes_of_buf_written);
-                        }
-                    }
-                }
+                }?;
             }
-            assert_eq!(bytes_of_buf_written, buf.len());
+            // The return value is the number of *input* bytes that were written.
             Ok(buf.len())
         } else {
             self.0.write(buf)
@@ -106,11 +116,12 @@ impl AbstractSerializer for Serializer {
                 ))?;
             }
             StyleOption::Pretty => {
-                let mut new_sink = LineEndingFixer(sink);
+                let mut new_sink = BufWriterWithLineEndingFix::new(sink);
                 obj.erased_serialize(&mut <dyn erased_serde::Serializer>::erase(
                     &mut serde_json::Serializer::pretty(&mut new_sink),
                 ))?;
-                sink = new_sink.0; // return the object to the outer scope
+                // Return the object to the outer scope
+                sink = new_sink.into_inner()?;
             }
         };
         // Write an empty line at the end of the document

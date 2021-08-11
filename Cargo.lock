@@ -1195,6 +1195,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "log",
+ "rustversion",
  "serde",
  "serde_json",
  "static_assertions",
@@ -1992,6 +1993,12 @@ checksum = "138e3e0acb6c9fb258b19b67cb8abd63c00679d2851805ea151465464fe9030a"
 dependencies = [
  "semver 0.9.0",
 ]
+
+[[package]]
+name = "rustversion"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61b3909d758bb75c79f23d4736fac9433868679d3ad2ea7a61e3c25cfda9a088"
 
 [[package]]
 name = "ryu"
