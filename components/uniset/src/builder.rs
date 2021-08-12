@@ -41,7 +41,8 @@ impl UnicodeSetBuilder {
 
         if start_eq_end && start_pos_check && end_res.is_err() {
             let ins = &[start, end];
-            self.intervals.splice(start_ind..end_ind, ins.iter().copied());
+            self.intervals
+                .splice(start_ind..end_ind, ins.iter().copied());
         } else {
             if start_pos_check {
                 self.intervals[start_ind] = start;
@@ -611,7 +612,8 @@ mod tests {
     #[test]
     fn test_add_unicodeset() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        let check = UnicodeSet::from_inversion_list(vec![0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
+        let check =
+            UnicodeSet::from_inversion_list(vec![0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
         builder.add_set(&check);
         let expected = vec![0x5, 0x14, 0x16, 0x21, 0x28, 0x33];
         assert_eq!(builder.intervals, expected);
@@ -769,7 +771,8 @@ mod tests {
     #[test]
     fn test_retain_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let retain = UnicodeSet::from_inversion_list(vec![0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
+        let retain =
+            UnicodeSet::from_inversion_list(vec![0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
         builder.retain_set(&retain);
         let expected = vec![0xE, 0x14, 0x28, 0x32, 0x4D, 0x50];
         assert_eq!(builder.intervals, expected);

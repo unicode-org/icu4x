@@ -2,11 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! *** Note: DO NOT USE THESE APIs FOR NOW. ****
-//!  Performance improvements and other fixes are still needed on this component.
-
-#![allow(clippy::unreadable_literal, dead_code)]
-
 use crate::enum_props::*;
 use crate::provider::*;
 use crate::{UnicodeSet, UnicodeSetError};
@@ -23,7 +18,10 @@ where
     let data_req = DataRequest {
         resource_path: ResourcePath {
             key: resc_key,
-            options: ResourceOptions { variant: None, langid: None },
+            options: ResourceOptions {
+                variant: None,
+                langid: None,
+            },
         },
     };
     let resp: DataResponse<UnicodePropertyV1Marker> = ppucd_provider.load_payload(&data_req)?;
@@ -499,7 +497,10 @@ where
 /// Return a [`UnicodeSet`] for a particular value of the General_Category Unicode enumerated property
 /// General_Category specifies enumerated Unicode general category types.
 /// See https://www.unicode.org/reports/tr44/ .
-pub fn get_general_category_val_set<'data, D>(provider: &D, enum_val: GeneralCategory) -> UnisetResult
+pub fn get_general_category_val_set<'data, D>(
+    provider: &D,
+    enum_val: GeneralCategory,
+) -> UnisetResult
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
 {

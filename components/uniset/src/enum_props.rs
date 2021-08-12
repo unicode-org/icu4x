@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(clippy::upper_case_acronyms)]
-
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
@@ -30,7 +28,8 @@ pub enum GeneralCategory {
     TitlecaseLetter = 1 << 3,
     ModifierLetter = 1 << 4,
     OtherLetter = 1 << 5,
-    CasedLetter = Self::UppercaseLetter as u32 | Self::LowercaseLetter as u32 | Self::TitlecaseLetter as u32,
+    CasedLetter =
+        Self::UppercaseLetter as u32 | Self::LowercaseLetter as u32 | Self::TitlecaseLetter as u32,
     Letter = Self::CasedLetter as u32 | Self::ModifierLetter as u32 | Self::OtherLetter as u32,
 
     NonspacingMark = 1 << 6,
@@ -46,13 +45,17 @@ pub enum GeneralCategory {
     SpaceSeparator = 1 << 12,
     LineSeparator = 1 << 13,
     ParagraphSeparator = 1 << 14,
-    Separator = Self::SpaceSeparator as u32 | Self::LineSeparator as u32 | Self::ParagraphSeparator as u32,
+    Separator =
+        Self::SpaceSeparator as u32 | Self::LineSeparator as u32 | Self::ParagraphSeparator as u32,
 
     Control = 1 << 15,
     Format = 1 << 16,
     PrivateUse = 1 << 17,
     Surrogate = 1 << 18,
-    Other = Self::Control as u32 | Self::Format as u32 | Self::PrivateUse as u32 | Self::Surrogate as u32,
+    Other = Self::Control as u32
+        | Self::Format as u32
+        | Self::PrivateUse as u32
+        | Self::Surrogate as u32,
 
     DashPunctuation = 1 << 19,
     OpenPunctuation = 1 << 20,
@@ -73,7 +76,10 @@ pub enum GeneralCategory {
     CurrencySymbol = 1 << 25,
     ModifierSymbol = 1 << 26,
     OtherSymbol = 1 << 27,
-    Symbol = Self::MathSymbol as u32 | Self::CurrencySymbol as u32 | Self::ModifierSymbol as u32 | Self::OtherSymbol as u32,
+    Symbol = Self::MathSymbol as u32
+        | Self::CurrencySymbol as u32
+        | Self::ModifierSymbol as u32
+        | Self::OtherSymbol as u32,
 }
 
 //// Enumerated property Script.

@@ -150,7 +150,10 @@ pub mod key {
 
 #[icu_provider::data_struct]
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
-#[cfg_attr(feature = "provider_serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct UnicodePropertyV1<'data> {
     pub name: Cow<'data, str>,
     pub inv_list: UnicodeSet,
@@ -168,7 +171,10 @@ impl Default for UnicodePropertyV1<'static> {
 
 impl<'data> UnicodePropertyV1<'data> {
     pub fn from_uniset(set: &UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
-        UnicodePropertyV1 { name, inv_list: set.clone() }
+        UnicodePropertyV1 {
+            name,
+            inv_list: set.clone(),
+        }
     }
 }
 
