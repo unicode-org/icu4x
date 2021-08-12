@@ -59,7 +59,7 @@ The phase in which information is known should influence whether that informatio
 
 Exceptions to the above rules of thumb could include:
 
-- If the amount of data is small, the pivot could be moved into the data struct. For example, different widths of currency symbols are often the same, so they could be combined into a single resource key, rather than having different resource keys for each width.
+- If the amount of data is small, it could be moved into the data struct even if the information is known at compile time or construction time. For example, different widths of currency symbols are often the same, so they could be combined into a single resource key, rather than having different resource keys for each width.
 
 ### Example: Duration Formatting
 
@@ -80,7 +80,7 @@ The resource options might look like this ("arab" and "latn" are examples of num
 - `en/latn`
 - `und`
 
-All resource options within a resource key must be included in your data bundle, since they are user-dependent, but they need not be loaded into memory until requested.
+All resource options within a resource key must be generally included in your data bundle, since they are user-dependent, but they need not be loaded into memory until requested. Additional fine-grained filtering may be performed to further reduce bundle size; details are discussed in [#953](https://github.com/unicode-org/icu4x/issues/953).
 
 The data struct then looks something like this:
 
