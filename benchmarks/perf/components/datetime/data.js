@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628724033912,
+  "lastUpdate": 1628796308523,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5867,6 +5867,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 638626,
             "range": "± 40968",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f52429e0ca3505eee821bd57218c20a80013283a",
+          "message": "Add design doc explaining phases of data provider information (#498)",
+          "timestamp": "2021-08-12T14:18:08-05:00",
+          "tree_id": "e0077c8d2fa7aa2e7c0b5aa896ee0419cad0132b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f52429e0ca3505eee821bd57218c20a80013283a"
+        },
+        "date": 1628796305464,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 356426,
+            "range": "± 18039",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 681676,
+            "range": "± 14568",
             "unit": "ns/iter"
           }
         ]
