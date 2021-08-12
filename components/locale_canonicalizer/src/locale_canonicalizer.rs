@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! The collection of code for locale canonicalization.
+
 use crate::provider::*;
 use alloc::string::ToString;
 use alloc::vec;
@@ -13,6 +15,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use tinystr::{tinystr4, TinyStr4, TinyStr8};
 
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
 pub enum CanonicalizationResult {
@@ -20,6 +23,7 @@ pub enum CanonicalizationResult {
     Unmodified,
 }
 
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct LocaleCanonicalizer<'data> {
     aliases: DataPayload<'data, AliasesV1Marker>,
     likely_subtags: DataPayload<'data, LikelySubtagsV1Marker>,
