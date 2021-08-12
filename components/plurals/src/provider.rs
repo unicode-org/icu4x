@@ -9,6 +9,7 @@
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};
 
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
     pub const CARDINAL_V1: ResourceKey = resource_key!(Plurals, "cardinal", 1);
@@ -27,6 +28,7 @@ pub mod resolver;
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct PluralRuleStringsV1<'data> {
     pub zero: Option<Cow<'data, str>>,
     pub one: Option<Cow<'data, str>>,

@@ -10,6 +10,7 @@ use icu_provider::prelude::DataError;
 ///
 #[derive(Display, Debug)]
 pub enum PluralRulesError {
+    /// A parsing error for the plural rules.
     #[displaydoc("Parser error: {0}")]
     Parser(ParserError),
     /// An error originating inside of the [`DataProvider`](icu_provider::DataProvider)

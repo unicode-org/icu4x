@@ -85,6 +85,7 @@ use core::ops::RangeInclusive;
 ///
 /// [`AndConditions`]: AndCondition
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Rule {
     pub condition: Condition,
     pub samples: Option<Samples>,
@@ -196,6 +197,7 @@ pub struct AndCondition(pub Box<[Relation]>);
 ///
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Relation {
     pub expression: Expression,
     pub operator: Operator,
@@ -212,6 +214,7 @@ pub struct Relation {
 /// | `NotEq` | "!=" |
 ///
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum Operator {
     Eq,
     NotEq,
@@ -240,6 +243,7 @@ pub enum Operator {
 ///
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Expression {
     pub operand: Operand,
     pub modulus: Option<Value>,
@@ -264,6 +268,7 @@ pub struct Expression {
 /// Operand::I;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum Operand {
     /// Absolute value of input
     N,
@@ -332,6 +337,7 @@ pub struct RangeList(pub Box<[RangeListItem]>);
 /// let _ = RangeListItem::Range(Value(11)..=Value(15));
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum RangeListItem {
     Range(RangeInclusive<Value>),
     Value(Value),
@@ -386,6 +392,7 @@ pub struct Value(pub u64);
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Samples {
     pub integer: Option<SampleList>,
     pub decimal: Option<SampleList>,
@@ -412,6 +419,7 @@ pub struct Samples {
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct SampleList {
     pub sample_ranges: Box<[SampleRange]>,
     pub ellipsis: bool,
@@ -433,6 +441,7 @@ pub struct SampleList {
 /// };
 /// ```
 #[derive(Debug, Clone, PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct SampleRange {
     pub lower_val: DecimalValue,
     pub upper_val: Option<DecimalValue>,
