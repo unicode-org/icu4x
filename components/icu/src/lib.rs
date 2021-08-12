@@ -83,6 +83,7 @@
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
+#![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 pub mod datetime {
@@ -280,6 +281,7 @@ pub mod locid {
     //! [`Unicode Extensions`]: extensions
     pub use icu_locid::*;
 
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     pub mod macros {
         pub use icu_locid_macros::*;
     }
