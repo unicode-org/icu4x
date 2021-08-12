@@ -68,6 +68,7 @@ use core::str::FromStr;
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Locale {
     // Language component of the Locale
     pub id: LanguageIdentifier,

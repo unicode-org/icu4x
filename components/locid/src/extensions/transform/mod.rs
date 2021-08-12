@@ -78,6 +78,7 @@ use core::iter::Peekable;
 /// [`RFC 6497`]: https://www.ietf.org/rfc/rfc6497.txt
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Transform {
     pub lang: Option<LanguageIdentifier>,
     pub fields: Fields,

@@ -68,6 +68,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     pub fn from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
@@ -81,6 +82,7 @@ impl ExtensionType {
 
 /// A map of extensions associated with a given [`Locale`](crate::Locale).
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Extensions {
     pub unicode: Unicode,
     pub transform: Transform,

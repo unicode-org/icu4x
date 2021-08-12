@@ -74,6 +74,7 @@ use core::iter::Peekable;
 ///            Some(&value));
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Unicode {
     pub keywords: Keywords,
     pub attributes: Attributes,

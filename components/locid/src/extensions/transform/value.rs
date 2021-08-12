@@ -11,6 +11,7 @@ use core::str::FromStr;
 use tinystr::TinyStr8;
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct Value(Box<[TinyStr8]>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
