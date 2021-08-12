@@ -49,6 +49,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 extern crate alloc;
@@ -72,6 +73,7 @@ pub use utils::*;
 
 /// Custom Errors for [`UnicodeSet`].
 #[derive(Display, Debug)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum UnicodeSetError {
     #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
@@ -91,6 +93,7 @@ impl From<DataError> for UnicodeSetError {
 }
 
 #[derive(PartialEq)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum UnicodeSetSpanCondition {
     Contained,
     NotContained,

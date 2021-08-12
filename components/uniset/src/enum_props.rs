@@ -2,12 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A collection of enums for enumerated properties.
+
 #![allow(clippy::upper_case_acronyms)]
 
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     Script = 0x100A,
@@ -18,6 +21,7 @@ pub enum EnumeratedProperty {
 /// See https://www.unicode.org/reports/tr44/ .
 /// See UCharCategory in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub enum GeneralCategory {
     Control = 15,
     Format = 16,
@@ -56,6 +60,7 @@ pub enum GeneralCategory {
 /// For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
 /// See UScriptCode in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[allow(missing_docs)] // The variants should not need documenting.
 pub enum Script {
     Adlam = 167,
     Afaka = 147,
