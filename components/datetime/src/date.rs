@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A collection of utilities for representing and working with dates as an input to
+//! formatting operations.
+
 use core::convert::TryFrom;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
@@ -17,8 +20,10 @@ pub enum DateTimeError {
     #[displaydoc("{0}")]
     Parse(core::num::ParseIntError),
     /// An input overflowed its range.
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[displaydoc("{field} must be between {min}-0")]
     /// An input underflowed its range.
     Underflow { field: &'static str, min: isize },

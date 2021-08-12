@@ -43,6 +43,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
+    /// The hour cycle can be adjusts according to user preferences, for instance at the OS-level.
+    /// That preference can be applied here to change the hour cycle from the default for the
+    /// given locale.
     #[cfg_attr(feature = "serde", serde(rename = "hourCycle"))]
     pub hour_cycle: Option<HourCycle>,
 }
@@ -102,6 +105,7 @@ pub enum HourCycle {
 }
 
 impl HourCycle {
+    /// Convert the HourCycle preference to a field.
     pub fn field(self) -> fields::Hour {
         match self {
             Self::H11 => fields::Hour::H11,

@@ -84,15 +84,15 @@ mod fields;
 mod format;
 pub mod mock;
 pub mod options;
-#[allow(missing_docs)]
 #[doc(hidden)]
 pub mod pattern;
 pub mod provider;
-#[allow(missing_docs)]
 #[doc(hidden)]
 pub mod skeleton;
 // TODO(#622) make the time_zone module public once TimeZoneFormat is public.
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub(crate) mod time_zone;
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod zoned_datetime;
 
 pub use datetime::DateTimeFormat;

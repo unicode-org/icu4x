@@ -80,8 +80,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
+    /// Configure the date part of the datetime.
     pub date: Option<Date>,
+    /// Configure the time part of the datetime.
     pub time: Option<Time>,
+    /// Configure the preferences for the datetime, such as the hour cycle.
     pub preferences: Option<preferences::Bag>,
 }
 
