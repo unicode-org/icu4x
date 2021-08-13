@@ -590,13 +590,13 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_get_range() {
+    fn test_unicodeset_get_nth_range() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let set = UnicodeSet::from_inversion_list(ex).unwrap();
-        assert_eq!(Some(0x41..=0x43), set.get_range(0));
-        assert_eq!(Some(0x45..=0x45), set.get_range(1));
-        assert_eq!(Some(0xD800..=0xD800), set.get_range(2));
-        assert_eq!(None, set.get_range(3));
+        assert_eq!(Some(0x41..=0x43), set.get_nth_range(0));
+        assert_eq!(Some(0x45..=0x45), set.get_nth_range(1));
+        assert_eq!(Some(0xD800..=0xD800), set.get_nth_range(2));
+        assert_eq!(None, set.get_nth_range(3));
     }
 
     // Range<char> cannot represent the upper bound (non-inclusive) for
