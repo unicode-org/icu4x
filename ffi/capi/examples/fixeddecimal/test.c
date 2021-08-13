@@ -93,6 +93,7 @@ int main() {
     ICU4XFixedDecimal_destroy(decimal);
     ICU4XFixedDecimalFormat_destroy(fdf);
     ICU4XLocale_destroy(locale);
+    ICU4XDataProvider_destroy(provider);
 
     return 0;
 }
