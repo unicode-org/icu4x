@@ -6,6 +6,7 @@
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
+#[non_exhaustive]
 pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     Script = 0x100A,
@@ -20,6 +21,7 @@ pub enum EnumeratedProperty {
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
 #[repr(u32)]
+#[non_exhaustive]
 pub enum GeneralCategory {
     Unassigned = 0,
 
@@ -82,7 +84,7 @@ pub enum GeneralCategory {
         | Self::OtherSymbol as u32,
 }
 
-//// Enumerated property Script.
+/// Enumerated property Script.
 ///
 /// For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
 /// See UScriptCode in ICU4C.
@@ -90,6 +92,7 @@ pub enum GeneralCategory {
 /// This enum only contains variants for scripts that are used in the Unicode
 /// Property Database.
 #[derive(Clone, PartialEq, Debug)]
+#[non_exhaustive]
 pub enum Script {
     Adlam = 167,
     Ahom = 161,

@@ -191,7 +191,7 @@ impl UnicodeSet {
 
     /// Returns a specific range contained in this [`UnicodeSet`] by index.
     /// Intended for use in FFI.
-    pub fn get_range(&self, idx: usize) -> Option<RangeInclusive<u32>> {
+    pub fn get_nth_range(&self, idx: usize) -> Option<RangeInclusive<u32>> {
         let start_idx = idx * 2;
         let end_idx = start_idx + 1;
         let start = self.inv_list.get(start_idx)?;
