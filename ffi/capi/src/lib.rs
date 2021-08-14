@@ -9,6 +9,11 @@
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]
 
+// Use Dlmalloc to remove the system allocator dependency
+#[cfg(feature = "rust_global_allocator")]
+#[global_allocator]
+static ALLOCATOR: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
+
 // Needed to be able to build cdylibs/etc
 //
 // Renamed so you can't accidentally use it

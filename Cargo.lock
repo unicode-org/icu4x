@@ -976,6 +976,7 @@ dependencies = [
  "cortex-m",
  "diplomat",
  "diplomat-runtime",
+ "dlmalloc",
  "fixed_decimal",
  "freertos-rust",
  "icu_decimal",

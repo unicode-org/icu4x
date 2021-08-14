@@ -39,13 +39,16 @@ crate-type = ["staticlib", "rlib", "cdylib"]
 path = "src/lib.rs"
 
 [features]
-default = ["provider_fs", "provider_static"]
+default = ["provider_fs", "provider_static", "rust_global_allocator"]
 wearos = ["smaller_static", "freertos"]
 
 provider_fs = ["icu_provider_fs"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
 freertos = ["freertos-rust", "cortex-m"]
+
+# Enables `dlmalloc` in example files to bypass the system allocator.
+rust_global_allocator = ["dlmalloc"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal" }
@@ -61,6 +64,10 @@ writeable = { path = "../../utils/writeable/" }
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "1307d215e1c8482bfa37082427389b240a81481d" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "1307d215e1c8482bfa37082427389b240a81481d" }
 icu_testdata = { version = "0.3", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
+
+# This cfg originates in dlmalloc/lib.rs
+[target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
+dlmalloc = { version = "0.2", optional = true, features = ["global"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
