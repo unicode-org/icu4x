@@ -26,6 +26,17 @@
   "yMMMM": {
     "pattern": "LLLL y г."
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "one": "w-я неделя Y г.",
+        "few": "w-я неделя Y г.",
+        "many": "w-я неделя Y г.",
+        "other": "w-я неделя Y г."
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

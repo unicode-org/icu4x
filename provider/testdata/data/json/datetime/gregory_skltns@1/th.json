@@ -35,6 +35,14 @@
   "yMMMMdEEEE": {
     "pattern": "EEEEที่ d MMMM 'G' y"
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "other": "สัปดาห์ที่ w ของปี Y"
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

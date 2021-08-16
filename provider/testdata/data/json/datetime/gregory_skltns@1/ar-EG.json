@@ -26,6 +26,19 @@
   "yMMMM": {
     "pattern": "MMMM y"
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "zero": "الأسبوع w من سنة Y",
+        "one": "الأسبوع w من سنة Y",
+        "two": "الأسبوع w من سنة Y",
+        "few": "الأسبوع w من سنة Y",
+        "many": "الأسبوع w من سنة Y",
+        "other": "الأسبوع w من سنة Y"
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

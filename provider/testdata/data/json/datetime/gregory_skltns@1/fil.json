@@ -26,6 +26,15 @@
   "yMMMM": {
     "pattern": "MMMM y"
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "one": "'ika-'w 'linggo ng' Y",
+        "other": "'linggo' w 'ng' Y"
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

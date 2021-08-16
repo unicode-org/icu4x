@@ -32,6 +32,14 @@
   "yMMMM": {
     "pattern": "y年M月"
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "other": "Y年第w週"
+      }
+    }
+  },
   "M": {
     "pattern": "M月"
   },

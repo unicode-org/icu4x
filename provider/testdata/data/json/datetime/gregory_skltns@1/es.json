@@ -32,6 +32,15 @@
   "yMMMMdE": {
     "pattern": "EEE, d 'de' MMMM 'de' y"
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "one": "'semana' w 'de' Y",
+        "other": "'semana' w 'de' Y"
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

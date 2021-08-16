@@ -29,6 +29,16 @@
   "yMMMM": {
     "pattern": "MMMM y."
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "one": "w'. sedmica u' Y.",
+        "few": "w'. sedmica u' Y.",
+        "other": "w'. sedmica u' Y."
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

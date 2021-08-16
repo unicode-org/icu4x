@@ -26,6 +26,15 @@
   "yMMMM": {
     "pattern": "MMMM y"
   },
+  "yw": {
+    "plural_patterns": {
+      "pivot_field": "w",
+      "variants": {
+        "one": "Y এর wতম সপ্তাহ",
+        "other": "Y এর wতম সপ্তাহ"
+      }
+    }
+  },
   "M": {
     "pattern": "L"
   },

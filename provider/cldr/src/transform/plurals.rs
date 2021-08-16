@@ -7,6 +7,7 @@ use crate::reader::open_reader;
 use crate::CldrPaths;
 use icu_plurals::provider::*;
 use icu_plurals::rules::{parse, serialize};
+use icu_plurals::PluralCategory;
 use icu_provider::iter::{IterableDataProviderCore, KeyedDataProvider};
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -182,6 +183,18 @@ pub(self) mod cldr_json {
     #[derive(PartialEq, Debug, Deserialize)]
     pub struct Resource {
         pub supplemental: Supplemental,
+    }
+}
+
+pub(crate) fn parse_plural_category(category: &str) -> Option<PluralCategory> {
+    match category {
+        "zero" => Some(PluralCategory::Zero),
+        "one" => Some(PluralCategory::One),
+        "two" => Some(PluralCategory::Two),
+        "few" => Some(PluralCategory::Few),
+        "many" => Some(PluralCategory::Many),
+        "other" => Some(PluralCategory::Other),
+        _ => None,
     }
 }
 
