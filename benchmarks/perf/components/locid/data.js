@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1628796315114,
+  "lastUpdate": 1629134529284,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10973,6 +10973,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4688,
             "range": "± 211",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "acfb8f4151f978edcb731a029ce22793830ff24a",
+          "message": "Improve documentation for line breaker's public interfaces (#950)",
+          "timestamp": "2021-08-16T10:14:59-07:00",
+          "tree_id": "8bee46fd0c9a9c95d5130ee62058b96354d778ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/acfb8f4151f978edcb731a029ce22793830ff24a"
+        },
+        "date": 1629134525858,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3182,
+            "range": "± 82",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4860,
+            "range": "± 192",
             "unit": "ns/iter"
           }
         ]
