@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![warn(missing_docs)]
+
 //! A line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 //!
 //! [UAX14]: http://www.unicode.org/reports/tr14/
