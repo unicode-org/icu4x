@@ -39,16 +39,17 @@ crate-type = ["staticlib", "rlib", "cdylib"]
 path = "src/lib.rs"
 
 [features]
-default = ["provider_fs", "provider_static", "rust_global_allocator"]
+default = ["provider_fs", "provider_static", "std"]
 wearos = ["smaller_static", "freertos"]
 
 provider_fs = ["icu_provider_fs"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
 freertos = ["freertos-rust", "cortex-m"]
+std = []
 
-# Enables `dlmalloc` in example files to bypass the system allocator.
-rust_global_allocator = ["dlmalloc"]
+# Enables size-optimized builds on x86_64
+x86tiny = ["dlmalloc"]
 
 [dependencies]
 fixed_decimal = { path = "../../utils/fixed_decimal" }

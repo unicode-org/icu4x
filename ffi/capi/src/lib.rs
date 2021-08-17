@@ -3,21 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![cfg_attr(
-    all(target_os = "none", feature = "freertos"),
+    any(
+        all(target_os = "none", feature = "freertos"),
+        feature = "x86tiny",
+    ),
     feature(alloc_error_handler)
 )]
 #![no_std]
 #![allow(clippy::upper_case_acronyms)]
 
-// Use Dlmalloc to remove the system allocator dependency
-#[cfg(feature = "rust_global_allocator")]
-#[global_allocator]
-static ALLOCATOR: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
-
 // Needed to be able to build cdylibs/etc
 //
 // Renamed so you can't accidentally use it
-#[cfg(not(target_os = "none"))]
+#[cfg(feature = "std")]
 extern crate std as rust_std;
 
 extern crate alloc;
@@ -37,3 +35,6 @@ mod wasm_glue;
 // https://github.com/unicode-org/icu4x/issues/891
 #[cfg(all(target_os = "none", feature = "freertos"))]
 mod freertos_glue;
+
+#[cfg(feature = "x86tiny")]
+mod x86tiny_glue;
