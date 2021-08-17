@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629232513212,
+  "lastUpdate": 1629234335428,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11045,6 +11045,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4466,
             "range": "± 242",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2edf576106fe276e2e811e8d2869070729af800d",
+          "message": "Add \"x86tiny\" feature to icu_capi (#957)",
+          "timestamp": "2021-08-17T15:58:43-05:00",
+          "tree_id": "51351e73881d1851ab4434ff7dd516c7837ead09",
+          "url": "https://github.com/unicode-org/icu4x/commit/2edf576106fe276e2e811e8d2869070729af800d"
+        },
+        "date": 1629234329962,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2551,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4255,
+            "range": "± 315",
             "unit": "ns/iter"
           }
         ]
