@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![cfg_attr(
-    all(target_os = "none", feature = "freertos"),
+    any(
+        all(feature = "freertos", not(feature = "x86tiny")),
+        all(feature = "x86tiny", not(feature = "freertos")),
+    ),
     feature(alloc_error_handler)
 )]
 #![no_std]
@@ -12,7 +15,7 @@
 // Needed to be able to build cdylibs/etc
 //
 // Renamed so you can't accidentally use it
-#[cfg(not(target_os = "none"))]
+#[cfg(all(not(feature = "freertos"), not(feature = "x86tiny")))]
 extern crate std as rust_std;
 
 extern crate alloc;
@@ -28,7 +31,8 @@ pub mod provider;
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;
 
-// Assume "none" is FreeRTOS for now
-// https://github.com/unicode-org/icu4x/issues/891
-#[cfg(all(target_os = "none", feature = "freertos"))]
+#[cfg(all(feature = "freertos", not(feature = "x86tiny")))]
 mod freertos_glue;
+
+#[cfg(all(feature = "x86tiny", not(feature = "freertos")))]
+mod x86tiny_glue;
