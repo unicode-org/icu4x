@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629134522076,
+  "lastUpdate": 1629232464475,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2669,6 +2669,132 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/acfb8f4151f978edcb731a029ce22793830ff24a"
         },
         "date": 1629134517749,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "derive+opt",
+            "value": 9386,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt",
+            "value": 15470,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt",
+            "value": 13303,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt",
+            "value": 9118,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt",
+            "value": 9662,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt",
+            "value": 16377,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt",
+            "value": 9728,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt",
+            "value": 236,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt",
+            "value": 13315,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt",
+            "value": 611948,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt",
+            "value": 7299,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt",
+            "value": 13303,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt",
+            "value": 13426,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt",
+            "value": 13303,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt",
+            "value": 13303,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt",
+            "value": 12750,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt",
+            "value": 34103,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6a964cb21137a18405e9adaadfe4e5352b479be5",
+          "message": "Uniset cleanup (#956)\n\n* Use where clauses to make fn signatures more readable\r\n\r\n* Support groups of general categories\r\n\r\n* Remove clippy and rustfmt exceptions\r\n\r\n* Clean up enum_props::Script\r\n\r\n* Fix incorrect key for gc=Surrogate\r\n\r\n* Implement get_script_val_set\r\n\r\n* Add UnicodeSet::get_range\r\n\r\n* Add UnicodeSetBuilder::add_range_u32\r\n\r\n* Address review comments\r\n\r\n* Update test\r\n\r\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-08-17T13:28:46-07:00",
+          "tree_id": "dc428cf324c85a3b1142766e62ea23b64953cf78",
+          "url": "https://github.com/unicode-org/icu4x/commit/6a964cb21137a18405e9adaadfe4e5352b479be5"
+        },
+        "date": 1629232461886,
         "tool": "ndjson",
         "benches": [
           {
