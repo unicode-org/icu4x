@@ -365,7 +365,8 @@ impl UnicodeSetBuilder {
                 self.intervals.push((char::MAX as u32) + 1);
             }
         } else {
-            self.intervals.extend_from_slice(&[0, (char::MAX as u32 + 1)]);
+            self.intervals
+                .extend_from_slice(&[0, (char::MAX as u32 + 1)]);
         }
     }
 
