@@ -6,10 +6,9 @@
 #include <string.h>
 #include <stdio.h>
 
-const char* path = "../../../../provider/testdata/data/json/";
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create("bn", 2);
-    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_fs(path, strlen(path));
+    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_static();
     if (!result.success) {
         printf("Failed to create FsDataProvider\n");
         return 1;
@@ -29,7 +28,6 @@ int main() {
 
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
 
-    
     bool success = ICU4XFixedDecimalFormat_format(fdf, decimal, &write).is_ok;
     if (!success) {
         printf("Failed to write result of FixedDecimalFormat::format to string.\n");
