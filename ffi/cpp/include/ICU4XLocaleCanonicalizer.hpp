@@ -16,7 +16,7 @@ namespace capi {
 class ICU4XDataProvider;
 class ICU4XLocaleCanonicalizer;
 class ICU4XLocale;
-enum struct ICU4XCanonicalizationResult;
+#include "ICU4XCanonicalizationResult.hpp"
 
 struct ICU4XLocaleCanonicalizerDeleter {
   void operator()(capi::ICU4XLocaleCanonicalizer* l) const noexcept {
@@ -38,7 +38,6 @@ class ICU4XLocaleCanonicalizer {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XCanonicalizationResult.hpp"
 
 inline std::optional<ICU4XLocaleCanonicalizer> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
   auto diplomat_optional_raw_out_value = capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());

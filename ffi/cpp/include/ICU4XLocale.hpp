@@ -14,7 +14,7 @@ namespace capi {
 }
 
 class ICU4XLocale;
-enum struct ICU4XLocaleError;
+#include "ICU4XLocaleError.hpp"
 
 struct ICU4XLocaleDeleter {
   void operator()(capi::ICU4XLocale* l) const noexcept {
@@ -44,7 +44,6 @@ class ICU4XLocale {
   std::unique_ptr<capi::ICU4XLocale, ICU4XLocaleDeleter> inner;
 };
 
-#include "ICU4XLocaleError.hpp"
 
 inline std::optional<ICU4XLocale> ICU4XLocale::create(const std::string_view name) {
   auto diplomat_optional_raw_out_value = capi::ICU4XLocale_create(name.data(), name.length());
@@ -62,11 +61,10 @@ inline ICU4XLocale ICU4XLocale::clone() {
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::basename_to_writeable(W& write) {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_basename(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
   return diplomat_result_out_value;
 }
@@ -74,27 +72,20 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::basename() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_basename(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
-  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
-  if (out_value.is_ok) {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
-  } else {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
-  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::get_unicode_extension_to_writeable(const std::string_view bytes, W& write) {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.length(), &write_writer);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
   return diplomat_result_out_value;
 }
@@ -102,27 +93,20 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::get_unicode_
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_get_unicode_extension(this->inner.get(), bytes.data(), bytes.length(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
-  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
-  if (out_value.is_ok) {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
-  } else {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
-  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::language_to_writeable(W& write) {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_language(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
   return diplomat_result_out_value;
 }
@@ -130,27 +114,20 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::language() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_language(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
-  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
-  if (out_value.is_ok) {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
-  } else {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
-  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::region_to_writeable(W& write) {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_region(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
   return diplomat_result_out_value;
 }
@@ -158,27 +135,20 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::region() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_region(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
-  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
-  if (out_value.is_ok) {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
-  } else {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
-  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::script_to_writeable(W& write) {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_script(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
   return diplomat_result_out_value;
 }
@@ -186,27 +156,20 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::script() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_script(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
-  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
-  if (out_value.is_ok) {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
-  } else {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
-  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 template<typename W> inline diplomat::result<std::monostate, ICU4XLocaleError> ICU4XLocale::tostring_to_writeable(W& write) {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_tostring(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
   return diplomat_result_out_value;
 }
@@ -214,17 +177,11 @@ inline diplomat::result<std::string, ICU4XLocaleError> ICU4XLocale::tostring() {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_tostring(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value;
-  diplomat_result_out_value.is_ok = diplomat_result_raw_out_value.is_ok;
+  diplomat::result<std::monostate, ICU4XLocaleError> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   if (diplomat_result_raw_out_value.is_ok) {
   } else {
-    diplomat_result_out_value.err = ICU4XLocaleError{ diplomat_result_raw_out_value.err };
+    diplomat_result_out_value.set_err((std::move(ICU4XLocaleError{ diplomat_result_raw_out_value.err })));
   }
-  diplomat::result<std::monostate, ICU4XLocaleError> out_value = diplomat_result_out_value;
-  if (out_value.is_ok) {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_ok(diplomat_writeable_string);
-  } else {
-    return diplomat::result<std::string, ICU4XLocaleError>::new_err(out_value.err);
-  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 #endif

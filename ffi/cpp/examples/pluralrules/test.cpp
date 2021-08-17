@@ -10,7 +10,7 @@ const std::string_view path = "../../../../provider/testdata/data/json/";
 
 int main() {
     ICU4XLocale locale = ICU4XLocale::create("ar").value();
-    std::cout << "Running test for locale " << locale.tostring().ok << std::endl;
+    std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).provider.value();
     ICU4XPluralRules pr = ICU4XPluralRules::create(locale, dp, ICU4XPluralRuleType::Cardinal).rules.value();
 
