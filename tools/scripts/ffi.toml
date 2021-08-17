@@ -84,7 +84,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
-exec --fail-on-error diplomat-tool cpp ../cpp/include
+exec --fail-on-error diplomat-tool cpp ../cpp/include --docs ../cpp/docs/source
 '''
 
 [tasks.build-wearos-ffi]
