@@ -270,7 +270,7 @@ macro_rules! break_iterator_impl {
             len: usize,
             current_pos_data: Option<(usize, $char_type)>,
             result_cache: Vec<usize>,
-            break_rule: LineBreakRule,
+            line_break_rule: LineBreakRule,
             word_break_rule: WordBreakRule,
             ja_zh: bool,
         }
@@ -331,7 +331,7 @@ macro_rules! break_iterator_impl {
                     }
 
                     // CSS line-break property handling
-                    match self.break_rule {
+                    match self.line_break_rule {
                         LineBreakRule::Normal => {
                             if self.is_break_by_normal() {
                                 return Some(self.current_pos_data.unwrap().0);
@@ -479,7 +479,7 @@ impl<'a> LineBreakIterator<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -502,7 +502,7 @@ impl<'a> LineBreakIterator<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -513,7 +513,7 @@ impl<'a> LineBreakIterator<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: char) -> u8 {
-        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule)
+        get_linebreak_property_with_rule(c, self.line_break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -590,7 +590,7 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -602,7 +602,6 @@ impl<'a> LineBreakIteratorLatin1<'a> {
         input: &[u8],
         line_break_rule: LineBreakRule,
         word_break_rule: WordBreakRule,
-        ja_zh: bool,
     ) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
             iter: Latin1Indices {
@@ -612,9 +611,9 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
-            ja_zh,
+            ja_zh: false,
         }
     }
 
@@ -691,7 +690,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -717,7 +716,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -728,7 +727,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: u32) -> u8 {
-        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule)
+        get_linebreak_property_utf32_with_rule(c, self.line_break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -754,6 +753,9 @@ mod tests {
     use crate::lb_define::*;
     use crate::line_breaker::get_linebreak_property_with_rule;
     use crate::line_breaker::is_break;
+    use crate::LineBreakIterator;
+    use crate::LineBreakIteratorLatin1;
+    use crate::LineBreakIteratorUtf16;
     use crate::LineBreakRule;
     use crate::WordBreakRule;
 
@@ -871,5 +873,86 @@ mod tests {
         assert_eq!(is_break(EB, EM), false);
         // LB31
         assert_eq!(is_break(ID, ID), true);
+    }
+
+    #[test]
+    fn linebreak() {
+        let mut iter = LineBreakIterator::new("hello world");
+        assert_eq!(Some(6), iter.next());
+        assert_eq!(Some(11), iter.next());
+        assert_eq!(None, iter.next());
+
+        iter = LineBreakIterator::new("$10 $10");
+        assert_eq!(Some(4), iter.next());
+        assert_eq!(Some(7), iter.next());
+
+        // LB10
+
+        // LB14
+        iter = LineBreakIterator::new("[  abc def");
+        assert_eq!(Some(7), iter.next());
+        assert_eq!(Some(10), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: [u8; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
+        let mut iter_u8 = LineBreakIteratorLatin1::new(&input);
+        assert_eq!(Some(7), iter_u8.next());
+        assert_eq!(Some(10), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: [u16; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(7), iter_u16.next());
+
+        // LB15
+        iter = LineBreakIterator::new("abc\u{0022}  (def");
+        assert_eq!(Some(10), iter.next());
+
+        let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
+        let mut iter_u8 = LineBreakIteratorLatin1::new(&input);
+        assert_eq!(Some(10), iter_u8.next());
+
+        let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(10), iter_u16.next());
+
+        // LB16
+        iter = LineBreakIterator::new("\u{0029}\u{203C}");
+        assert_eq!(Some(4), iter.next());
+        iter = LineBreakIterator::new("\u{0029}  \u{203C}");
+        assert_eq!(Some(6), iter.next());
+
+        let input: [u16; 4] = [0x29, 0x20, 0x20, 0x203c];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(4), iter_u16.next());
+
+        // LB17
+        iter = LineBreakIterator::new("\u{2014}\u{2014}aa");
+        assert_eq!(Some(6), iter.next());
+        iter = LineBreakIterator::new("\u{2014}  \u{2014}aa");
+        assert_eq!(Some(8), iter.next());
+
+        iter = LineBreakIterator::new("\u{2014}\u{2014}  \u{2014}\u{2014}123 abc");
+        assert_eq!(Some(14), iter.next());
+        assert_eq!(Some(18), iter.next());
+        assert_eq!(Some(21), iter.next());
+
+        // LB25
+        let mut iter = LineBreakIterator::new("(0,1)+(2,3)");
+        assert_eq!(Some(11), iter.next());
+        let input: [u16; 11] = [
+            0x28, 0x30, 0x2C, 0x31, 0x29, 0x2B, 0x28, 0x32, 0x2C, 0x33, 0x29,
+        ];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(11), iter_u16.next());
+
+        let input: [u16; 13] = [
+            0x2014, 0x2014, 0x20, 0x20, 0x2014, 0x2014, 0x31, 0x32, 0x33, 0x20, 0x61, 0x62, 0x63,
+        ];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(6), iter_u16.next());
+
+        iter = LineBreakIterator::new("\u{1F3FB} \u{1F3FB}");
+        assert_eq!(Some(5), iter.next());
     }
 }
