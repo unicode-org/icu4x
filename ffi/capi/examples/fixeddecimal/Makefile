@@ -55,11 +55,15 @@ optim5.o: $(ALL_HEADERS)
 optim5.elf: optim5.o ../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a
 	clang -flto=thin -fuse-ld=lld -L . -o optim5.elf optim5.o ../../../../target/x86_64-unknown-linux-gnu/release/libicu_capi.a -Wl,--gc-sections -Wl,--strip-all
 
-build: a.out optim.elf optim2.elf optim3.elf optim4.elf optim5.elf
+build: a.out
 
-# note: optim2.elf and optim3.elf crash when run with error "Illegal instruction" (investigate?)
 test: build
 	./a.out
+
+build-optim: optim.elf optim2.elf optim3.elf optim4.elf optim5.elf
+
+# note: optim2.elf and optim3.elf crash when run with error "Illegal instruction" (investigate?)
+test-optim: build-optim
 	./optim.elf
 	./optim4.elf
 	./optim5.elf
