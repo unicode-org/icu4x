@@ -9,6 +9,14 @@
 
         Construct an :js:class:`ICU4XLocale` from an locale identifier. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
 
+    .. js:staticfunction:: create_en()
+
+        Construct an :js:class:`ICU4XLocale` for the English language.
+
+    .. js:staticfunction:: create_bn()
+
+        Construct an :js:class:`ICU4XLocale` for the Bangla language.
+
     .. js:function:: clone()
 
         Clones the :js:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.

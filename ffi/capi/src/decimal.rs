@@ -104,7 +104,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
-        fn try_new_from_static(
+        pub fn try_new_from_static(
             locale: &ICU4XLocale,
             provider: &ICU4XStaticDataProvider,
             options: ICU4XFixedDecimalFormatOptions,

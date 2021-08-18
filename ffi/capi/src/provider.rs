@@ -102,7 +102,7 @@ pub mod ffi {
         /// Constructs an `StaticDataProvider` and returns it as an [`ICU4XStaticDataProvider`].
         ///
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
-        fn create() -> ICU4XCreateStaticDataProviderResult {
+        pub fn create() -> ICU4XCreateStaticDataProviderResult {
             #[cfg(not(feature = "provider_static"))]
             unimplemented!();
 

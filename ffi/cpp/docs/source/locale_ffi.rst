@@ -9,6 +9,14 @@
 
         Construct an :cpp:class:`ICU4XLocale` from an locale identifier. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
 
+    .. cpp:function:: static ICU4XLocale create_en()
+
+        Construct an :cpp:class:`ICU4XLocale` for the English language.
+
+    .. cpp:function:: static ICU4XLocale create_bn()
+
+        Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
+
     .. cpp:function:: ICU4XLocale clone()
 
         Clones the :cpp:class:`ICU4XLocale`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
