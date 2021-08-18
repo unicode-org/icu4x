@@ -17,6 +17,7 @@ pub mod ffi {
     use crate::{
         fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider,
+        provider::ffi::ICU4XStaticDataProvider,
     };
 
     #[diplomat::opaque]
@@ -56,41 +57,6 @@ pub mod ffi {
             ICU4XFixedDecimalFormatOptions {
                 grouping_strategy: ICU4XFixedDecimalGroupingStrategy::Auto,
                 sign_display: ICU4XFixedDecimalSignDisplay::Auto,
-            }
-        }
-    }
-
-    #[diplomat::opaque]
-    /// A DataProvider specific to FixedDecimalFormat.
-    pub struct ICU4XFixedDecimalFormatDataProvider(
-        pub Box<dyn DataProvider<'static, DecimalSymbolsV1Marker>>,
-    );
-
-    /// A result type for `ICU4XDataProvider::create`.
-    pub struct ICU4XCreateFixedDecimalFormatDataProviderResult {
-        /// Will be `None` if `success` is `false`, do not use in that case.
-        pub provider: Option<Box<ICU4XFixedDecimalFormatDataProvider>>,
-        // May potentially add a better error type in the future
-        pub success: bool,
-    }
-
-    impl ICU4XFixedDecimalFormatDataProvider {
-        /// Create a DataProvider reading from static data specific to FixedDecimalFormat.
-        fn create_static() -> ICU4XCreateFixedDecimalFormatDataProviderResult {
-            #[cfg(not(feature = "provider_static"))]
-            unimplemented!();
-
-            #[cfg(feature = "provider_static")]
-            {
-                #[cfg(feature = "smaller_static")]
-                let provider = icu_testdata::get_smaller_static_provider();
-                #[cfg(not(feature = "smaller_static"))]
-                let provider = icu_testdata::get_static_provider();
-                let fdf_provider = Box::new(provider);
-                ICU4XCreateFixedDecimalFormatDataProviderResult {
-                    provider: Some(Box::new(ICU4XFixedDecimalFormatDataProvider(fdf_provider))),
-                    success: true,
-                }
             }
         }
     }
@@ -136,10 +102,11 @@ pub mod ffi {
             }
         }
 
-        /// Creates a new [`ICU4XFixedDecimalFormat`] from a data provider specific to FixedDecimalFormat. See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
-        fn try_new_specific(
+        /// Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
+        fn try_new_from_static(
             locale: &ICU4XLocale,
-            provider: &ICU4XFixedDecimalFormatDataProvider,
+            provider: &ICU4XStaticDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
             let langid = locale.0.as_ref().clone();

@@ -64,6 +64,7 @@ icu_locid = { path = "../../components/locid" }
 icu_locid_macros = { path = "../../components/locid/macros" }
 icu_plurals = { path = "../../components/plurals/" }
 icu_provider = { path = "../../provider/core", features = ["provider_serde"] }
+icu_provider_blob = { path = "../../provider/blob" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
