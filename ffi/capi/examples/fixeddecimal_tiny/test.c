@@ -41,53 +41,6 @@ int main() {
         return 1;
     }
 
-    ICU4XFixedDecimal_multiply_pow10(decimal, 2);
-    if (!success) {
-        printf("Failed to multiply FixedDecimal\n");
-        return 1;
-    }
-
-    ICU4XFixedDecimal_negate(decimal);
-
-    write = diplomat_simple_writeable(output, 40);
-
-    success = ICU4XFixedDecimalFormat_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
-        return 1;
-    }
-    printf("Output x100 and negated is %s\n", output);
-
-    expected = u8"-১০,০০,০০,৭০০";
-    if (strcmp(output, expected) != 0) {
-        printf("Output does not match expected output!\n");
-        return 1;
-    }
-
-    ICU4XFixedDecimal_destroy(decimal);
-
-    ICU4XCreateFixedDecimalResult fd_result = ICU4XFixedDecimal_create_fromstr("1000007.070", 11);
-    if (!fd_result.success) {
-        printf("Failed to create FixedDecimal from string.\n");
-        return 1;
-    }
-    decimal = fd_result.fd;
-
-    write = diplomat_simple_writeable(output, 40);
-
-    success = ICU4XFixedDecimalFormat_format(fdf, decimal, &write).is_ok;
-    if (!success) {
-        printf("Failed to write result of FixedDecimalFormat::format to string.\n");
-        return 1;
-    }
-    printf("Output is %s\n", output);
-
-    expected = u8"১০,০০,০০৭.০৭০";
-    if (strcmp(output, expected) != 0) {
-        printf("Output does not match expected output!\n");
-        return 1;
-    }
-
     ICU4XFixedDecimal_destroy(decimal);
     ICU4XFixedDecimalFormat_destroy(fdf);
     ICU4XLocale_destroy(locale);
