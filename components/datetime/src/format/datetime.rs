@@ -167,6 +167,7 @@ where
                 w.write_str(symbol)?
             }
         },
+        field @ FieldSymbol::Week(_) => return Err(Error::UnsupportedField(field)),
         FieldSymbol::Weekday(weekday) => {
             let dow = datetime
                 .datetime()

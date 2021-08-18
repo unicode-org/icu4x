@@ -29,6 +29,7 @@ impl std::error::Error for SymbolError {}
 pub enum FieldSymbol {
     Year(Year),
     Month(Month),
+    Week(Week),
     Day(Day),
     Weekday(Weekday),
     DayPeriod(DayPeriod),
@@ -80,13 +81,14 @@ impl FieldSymbol {
         match field_type {
             0 => Year::idx_in_range(&symbol),
             1 => Month::idx_in_range(&symbol),
-            2 => Day::idx_in_range(&symbol),
-            3 => Weekday::idx_in_range(&symbol),
-            4 => DayPeriod::idx_in_range(&symbol),
-            5 => Hour::idx_in_range(&symbol),
-            6 => symbol == 0,
-            7 => Second::idx_in_range(&symbol),
-            8 => TimeZone::idx_in_range(&symbol),
+            2 => Week::idx_in_range(&symbol),
+            3 => Day::idx_in_range(&symbol),
+            4 => Weekday::idx_in_range(&symbol),
+            5 => DayPeriod::idx_in_range(&symbol),
+            6 => Hour::idx_in_range(&symbol),
+            7 => symbol == 0,
+            8 => Second::idx_in_range(&symbol),
+            9 => TimeZone::idx_in_range(&symbol),
             _ => false,
         }
     }
@@ -96,13 +98,14 @@ impl FieldSymbol {
         let (high, low) = match self {
             FieldSymbol::Year(year) => (0, year.idx()),
             FieldSymbol::Month(month) => (1, month.idx()),
-            FieldSymbol::Day(day) => (2, day.idx()),
-            FieldSymbol::Weekday(wd) => (3, wd.idx()),
-            FieldSymbol::DayPeriod(dp) => (4, dp.idx()),
-            FieldSymbol::Hour(hour) => (5, hour.idx()),
-            FieldSymbol::Minute => (6, 0),
-            FieldSymbol::Second(second) => (7, second.idx()),
-            FieldSymbol::TimeZone(tz) => (8, tz.idx()),
+            FieldSymbol::Week(w) => (2, w.idx()),
+            FieldSymbol::Day(day) => (3, day.idx()),
+            FieldSymbol::Weekday(wd) => (4, wd.idx()),
+            FieldSymbol::DayPeriod(dp) => (5, dp.idx()),
+            FieldSymbol::Hour(hour) => (6, hour.idx()),
+            FieldSymbol::Minute => (7, 0),
+            FieldSymbol::Second(second) => (8, second.idx()),
+            FieldSymbol::TimeZone(tz) => (9, tz.idx()),
         };
         let result = high << 4;
         result | low
@@ -118,13 +121,14 @@ impl FieldSymbol {
         Ok(match high {
             0 => Self::Year(Year::from_idx(low)?),
             1 => Self::Month(Month::from_idx(low)?),
-            2 => Self::Day(Day::from_idx(low)?),
-            3 => Self::Weekday(Weekday::from_idx(low)?),
-            4 => Self::DayPeriod(DayPeriod::from_idx(low)?),
-            5 => Self::Hour(Hour::from_idx(low)?),
-            6 if low == 0 => Self::Minute,
-            7 => Self::Second(Second::from_idx(low)?),
-            8 => Self::TimeZone(TimeZone::from_idx(low)?),
+            2 => Self::Week(Week::from_idx(low)?),
+            3 => Self::Day(Day::from_idx(low)?),
+            4 => Self::Weekday(Weekday::from_idx(low)?),
+            5 => Self::DayPeriod(DayPeriod::from_idx(low)?),
+            6 => Self::Hour(Hour::from_idx(low)?),
+            7 if low == 0 => Self::Minute,
+            8 => Self::Second(Second::from_idx(low)?),
+            9 => Self::TimeZone(TimeZone::from_idx(low)?),
             _ => return Err(SymbolError::InvalidIndex(idx)),
         })
     }
@@ -157,30 +161,32 @@ impl FieldSymbol {
             Self::Year(Year::WeekOf) => 1,
             Self::Month(Month::Format) => 2,
             Self::Month(Month::StandAlone) => 3,
-            Self::Day(Day::DayOfMonth) => 4,
-            Self::Day(Day::DayOfYear) => 5,
-            Self::Day(Day::DayOfWeekInMonth) => 6,
-            Self::Day(Day::ModifiedJulianDay) => 7,
-            Self::Weekday(Weekday::Format) => 8,
-            Self::Weekday(Weekday::Local) => 9,
-            Self::Weekday(Weekday::StandAlone) => 10,
-            Self::DayPeriod(DayPeriod::AmPm) => 11,
-            Self::DayPeriod(DayPeriod::NoonMidnight) => 12,
-            Self::Hour(Hour::H11) => 13,
-            Self::Hour(Hour::H12) => 14,
-            Self::Hour(Hour::H23) => 15,
-            Self::Hour(Hour::H24) => 16,
-            Self::Minute => 17,
-            Self::Second(Second::Second) => 18,
-            Self::Second(Second::FractionalSecond) => 19,
-            Self::Second(Second::Millisecond) => 20,
-            Self::TimeZone(TimeZone::LowerZ) => 21,
-            Self::TimeZone(TimeZone::UpperZ) => 22,
-            Self::TimeZone(TimeZone::UpperO) => 23,
-            Self::TimeZone(TimeZone::LowerV) => 24,
-            Self::TimeZone(TimeZone::UpperV) => 25,
-            Self::TimeZone(TimeZone::LowerX) => 26,
-            Self::TimeZone(TimeZone::UpperX) => 27,
+            Self::Week(Week::WeekOfYear) => 4,
+            Self::Week(Week::WeekOfMonth) => 5,
+            Self::Day(Day::DayOfMonth) => 6,
+            Self::Day(Day::DayOfYear) => 7,
+            Self::Day(Day::DayOfWeekInMonth) => 8,
+            Self::Day(Day::ModifiedJulianDay) => 9,
+            Self::Weekday(Weekday::Format) => 10,
+            Self::Weekday(Weekday::Local) => 11,
+            Self::Weekday(Weekday::StandAlone) => 12,
+            Self::DayPeriod(DayPeriod::AmPm) => 13,
+            Self::DayPeriod(DayPeriod::NoonMidnight) => 14,
+            Self::Hour(Hour::H11) => 15,
+            Self::Hour(Hour::H12) => 16,
+            Self::Hour(Hour::H23) => 17,
+            Self::Hour(Hour::H24) => 18,
+            Self::Minute => 19,
+            Self::Second(Second::Second) => 20,
+            Self::Second(Second::FractionalSecond) => 21,
+            Self::Second(Second::Millisecond) => 22,
+            Self::TimeZone(TimeZone::LowerZ) => 23,
+            Self::TimeZone(TimeZone::UpperZ) => 24,
+            Self::TimeZone(TimeZone::UpperO) => 25,
+            Self::TimeZone(TimeZone::LowerV) => 26,
+            Self::TimeZone(TimeZone::UpperV) => 27,
+            Self::TimeZone(TimeZone::LowerX) => 28,
+            Self::TimeZone(TimeZone::UpperX) => 29,
         }
     }
 }
@@ -194,6 +200,14 @@ impl TryFrom<char> for FieldSymbol {
         Year::try_from(ch)
             .map(Self::Year)
             .or_else(|_| Month::try_from(ch).map(Self::Month))
+            .or_else(|_| {
+                if ch == 'w' {
+                    Week::try_from(ch).map(Self::Week)
+                } else {
+                    // TODO(#488): Add support for 'W'.
+                    Err(SymbolError::Unknown(ch))
+                }
+            })
             .or_else(|_| Day::try_from(ch).map(Self::Day))
             .or_else(|_| Weekday::try_from(ch).map(Self::Weekday))
             .or_else(|_| DayPeriod::try_from(ch).map(Self::DayPeriod))
@@ -215,6 +229,7 @@ impl From<FieldSymbol> for char {
         match symbol {
             FieldSymbol::Year(year) => year.into(),
             FieldSymbol::Month(month) => month.into(),
+            FieldSymbol::Week(week) => week.into(),
             FieldSymbol::Day(day) => day.into(),
             FieldSymbol::Weekday(weekday) => weekday.into(),
             FieldSymbol::DayPeriod(dayperiod) => dayperiod.into(),
@@ -279,6 +294,11 @@ field_type!(Second; {
     's' => Second,
     'S' => FractionalSecond,
     'A' => Millisecond
+}; Numeric);
+
+field_type!(Week; {
+    'w' => WeekOfYear,
+    'W' => WeekOfMonth
 }; Numeric);
 
 field_type!(Weekday; {

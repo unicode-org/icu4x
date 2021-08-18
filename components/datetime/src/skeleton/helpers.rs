@@ -256,6 +256,7 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             //  - Solo example: "E"
             FieldSymbol::Year(_)
             | FieldSymbol::Month(_)
+            | FieldSymbol::Week(_)
             | FieldSymbol::Day(_)
             | FieldSymbol::Weekday(_) => date.push(*field),
 

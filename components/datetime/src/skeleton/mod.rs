@@ -17,7 +17,6 @@ pub use helpers::*;
 mod test {
     use super::reference::Skeleton;
     use super::*;
-    use crate::pattern::reference::Pattern;
     use icu_locid_macros::langid;
     use icu_provider::prelude::*;
 
@@ -190,12 +189,12 @@ mod test {
     // https://gist.github.com/gregtatum/1d76bbdb87132f71a969a10f0c1d2d9c
 
     #[rustfmt::skip]
-    const SUPPORTED_STRING_SKELETONS: [&str; 60] = [
+    const SUPPORTED_STRING_SKELETONS: [&str; 61] = [
         "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
         "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
-        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd",
+        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", "yw",
         // Timezones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
     ];
@@ -205,7 +204,7 @@ mod test {
     //       and then regenerate the test data.
     //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
     #[rustfmt::skip]
-    const UNSUPPORTED_STRING_SKELETONS: [&str; 19] = [
+    const UNSUPPORTED_STRING_SKELETONS: [&str; 18] = [
         // TODO(#487) - Flexible day periods
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
         // TODO(#486) - Era
@@ -214,8 +213,6 @@ mod test {
         "MMMMW",
         // TODO(#501) - Quarters
         "yQ", "yQQQ", "yQQQQ",
-        // TODO (#488) - Week of year
-        "yw"
     ];
 
     #[test]
@@ -278,8 +275,8 @@ mod test {
     #[test]
     fn test_skeleton_tuple_ordering() {
         let skeletons_strings = Vec::from([
-            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h", "hm",
-            "hms", "Hm", "Hms", "ms", "mmss",
+            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "yw", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h",
+            "hm", "hms", "Hm", "Hms", "ms", "mmss",
         ]);
 
         let skeleton_fields: Vec<Skeleton> = skeletons_strings
