@@ -39,7 +39,7 @@ dependencies = [
 [tasks.test-capi]
 description = "Run C API tests"
 category = "ICU4X Development"
-dependencies = [ "gen-c-diplomat" ]
+dependencies = [ "diplomat-gen-c" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -97,6 +97,7 @@ cd ffi/capi
 
 
 # Duckscript doesn't support globs in rm, so we do this instead
+# (we need .gitignore and conf.py to stick around)
 include = glob_array ../cpp/include/**/*.hpp
 for path in ${include}
     rm ${path}
