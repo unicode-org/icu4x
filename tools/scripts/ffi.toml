@@ -10,6 +10,7 @@ category = "ICU4X Development"
 dependencies = [
     "verify-diplomat-gen",
     "test-capi",
+    "test-capi-tiny",
     "test-cpp",
     "build-wearos-ffi",
     "test-nostd",
@@ -44,11 +45,23 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi/examples/pluralrules
-exec make
+exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
 cd ../locale
 exec --fail-on-error make
+'''
+
+[tasks.test-capi-tiny]
+description = "Run C API tests for tiny targets"
+category = "ICU4X Development"
+dependencies = [ "diplomat-gen-c" ]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/capi/examples/fixeddecimal_tiny
+exec --fail-on-error make
+exec ls -l
 '''
 
 [tasks.test-cpp]
