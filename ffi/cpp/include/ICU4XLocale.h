@@ -15,6 +15,10 @@ typedef struct ICU4XLocale ICU4XLocale;
 
 ICU4XLocale* ICU4XLocale_create(const char* name_data, size_t name_len);
 
+ICU4XLocale* ICU4XLocale_create_en();
+
+ICU4XLocale* ICU4XLocale_create_bn();
+
 ICU4XLocale* ICU4XLocale_clone(const ICU4XLocale* self);
 
 locale_ffi_result_void_ICU4XLocaleError ICU4XLocale_basename(const ICU4XLocale* self, DiplomatWriteable* write);

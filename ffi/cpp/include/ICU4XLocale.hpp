@@ -24,6 +24,8 @@ struct ICU4XLocaleDeleter {
 class ICU4XLocale {
  public:
   static std::optional<ICU4XLocale> create(const std::string_view name);
+  static ICU4XLocale create_en();
+  static ICU4XLocale create_bn();
   ICU4XLocale clone();
   template<typename W> diplomat::result<std::monostate, ICU4XLocaleError> basename_to_writeable(W& write);
   diplomat::result<std::string, ICU4XLocaleError> basename();
@@ -54,6 +56,12 @@ inline std::optional<ICU4XLocale> ICU4XLocale::create(const std::string_view nam
     diplomat_optional_out_value = std::nullopt;
   }
   return diplomat_optional_out_value;
+}
+inline ICU4XLocale ICU4XLocale::create_en() {
+  return ICU4XLocale(capi::ICU4XLocale_create_en());
+}
+inline ICU4XLocale ICU4XLocale::create_bn() {
+  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 inline ICU4XLocale ICU4XLocale::clone() {
   return ICU4XLocale(capi::ICU4XLocale_clone(this->inner.get()));

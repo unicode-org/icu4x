@@ -982,8 +982,10 @@ dependencies = [
  "icu_decimal",
  "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_macros",
  "icu_plurals",
  "icu_provider",
+ "icu_provider_blob",
  "icu_provider_fs",
  "icu_testdata",
  "log",
@@ -1160,6 +1162,7 @@ dependencies = [
  "log",
  "postcard",
  "serde",
+ "writeable",
 ]
 
 [[package]]

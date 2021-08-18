@@ -16,6 +16,7 @@ use core::fmt;
 use core::fmt::Write;
 use icu_locid::LanguageIdentifier;
 use tinystr::{TinyStr16, TinyStr4};
+use writeable::{LengthHint, Writeable};
 
 /// A top-level collection of related resource keys.
 #[non_exhaustive]
@@ -133,35 +134,25 @@ impl fmt::Debug for ResourceKey {
 
 impl fmt::Display for ResourceKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
+        Writeable::write_to(self, f)
     }
 }
 
-impl writeable::Writeable for ResourceKey {
+impl Writeable for ResourceKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         sink.write_str(&self.category.as_str())?;
         sink.write_char('/')?;
         sink.write_str(self.sub_category.as_str())?;
         sink.write_char('@')?;
-        write!(sink, "{}", self.version)?;
+        self.version.write_to(sink)?;
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
-        writeable::LengthHint::Exact(2)
+    fn write_len(&self) -> LengthHint {
+        LengthHint::Exact(2)
             + self.category.as_str().len()
             + self.sub_category.len()
-            + if self.version < 10 {
-                1
-            } else if self.version < 100 {
-                2
-            } else if self.version < 1000 {
-                3
-            } else if self.version < 10000 {
-                4
-            } else {
-                5
-            }
+            + self.version.write_len()
     }
 }
 

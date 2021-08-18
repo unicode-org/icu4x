@@ -101,6 +101,28 @@ export class ICU4XCreatePluralRulesResult {
   }
 }
 
+const ICU4XCreateStaticDataProviderResult_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XCreateStaticDataProviderResult_destroy(underlying);
+});
+
+export class ICU4XCreateStaticDataProviderResult {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  get provider() {
+    return (() => {
+      const out = new ICU4XStaticDataProvider((new Uint32Array(wasm.memory.buffer, this.underlying + 0, 1))[0]);
+      out.owner = null;
+      return out;
+    })();
+  }
+
+  get success() {
+    return (new Uint8Array(wasm.memory.buffer, this.underlying + 4, 1))[0] == 1;
+  }
+}
+
 const ICU4XDataProvider_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XDataProvider_destroy(underlying);
 });
@@ -239,6 +261,25 @@ export class ICU4XFixedDecimalFormat {
     return diplomat_out;
   }
 
+  static try_new_from_static(locale, provider, options) {
+    const diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy = options["grouping_strategy"];
+    const diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display = options["sign_display"];
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      wasm.ICU4XFixedDecimalFormat_try_new_from_static(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_grouping_strategy], ICU4XFixedDecimalSignDisplay_js_to_rust[diplomat_ICU4XFixedDecimalFormatOptions_extracted_sign_display]);
+      const out = new ICU4XFixedDecimalFormatResult(diplomat_receive_buffer);
+      const out_fdf_value = out.fdf;
+      ICU4XFixedDecimalFormat_box_destroy_registry.register(out_fdf_value, out_fdf_value.underlying);
+      Object.defineProperty(out, "fdf", { value: out_fdf_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+
   format(value) {
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
@@ -358,6 +399,32 @@ export class ICU4XLocale {
       return out;
     })();
     wasm.diplomat_free(name_diplomat_ptr, name_diplomat_bytes.length);
+    return diplomat_out;
+  }
+
+  static create_en() {
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XLocale(wasm.ICU4XLocale_create_en());
+        out.owner = null;
+        return out;
+      })();
+      ICU4XLocale_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
+    return diplomat_out;
+  }
+
+  static create_bn() {
+    const diplomat_out = (() => {
+      const out = (() => {
+        const out = new ICU4XLocale(wasm.ICU4XLocale_create_bn());
+        out.owner = null;
+        return out;
+      })();
+      ICU4XLocale_box_destroy_registry.register(out, out.underlying)
+      return out;
+    })();
     return diplomat_out;
   }
 
@@ -717,6 +784,33 @@ export class ICU4XPluralRules {
       diplomat_alloc_destroy_registry.register(out, {
         ptr: out.underlying,
         size: 6
+      });
+      return out;
+    })();
+    return diplomat_out;
+  }
+}
+
+const ICU4XStaticDataProvider_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XStaticDataProvider_destroy(underlying);
+});
+
+export class ICU4XStaticDataProvider {
+  constructor(underlying) {
+    this.underlying = underlying;
+  }
+
+  static create() {
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5);
+      wasm.ICU4XStaticDataProvider_create(diplomat_receive_buffer);
+      const out = new ICU4XCreateStaticDataProviderResult(diplomat_receive_buffer);
+      const out_provider_value = out.provider;
+      ICU4XStaticDataProvider_box_destroy_registry.register(out_provider_value, out_provider_value.underlying);
+      Object.defineProperty(out, "provider", { value: out_provider_value });
+      diplomat_alloc_destroy_registry.register(out, {
+        ptr: out.underlying,
+        size: 5
       });
       return out;
     })();

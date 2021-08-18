@@ -8,13 +8,15 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_decimal::{
         options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+        provider::DecimalSymbolsV1Marker,
         FixedDecimalFormat,
     };
+    use icu_provider::prelude::DataProvider;
     use writeable::Writeable;
 
     use crate::{
         fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
+        provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider,
     };
 
     #[diplomat::opaque]
@@ -65,8 +67,30 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
-            let langid = locale.0.as_ref().clone();
             let provider = provider.0.as_ref();
+            Self::try_new_impl(locale, provider, options)
+        }
+
+        /// Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].
+        /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new) for more information.
+        pub fn try_new_from_static(
+            locale: &ICU4XLocale,
+            provider: &ICU4XStaticDataProvider,
+            options: ICU4XFixedDecimalFormatOptions,
+        ) -> ICU4XFixedDecimalFormatResult {
+            let provider = provider.0.as_ref();
+            Self::try_new_impl(locale, provider, options)
+        }
+
+        fn try_new_impl<D>(
+            locale: &ICU4XLocale,
+            provider: &D,
+            options: ICU4XFixedDecimalFormatOptions,
+        ) -> ICU4XFixedDecimalFormatResult
+        where
+            D: DataProvider<'static, DecimalSymbolsV1Marker> + ?Sized,
+        {
+            let langid = locale.0.as_ref().clone();
 
             if let Result::Ok(fdf) = FixedDecimalFormat::try_new(
                 langid,

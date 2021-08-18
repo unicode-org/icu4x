@@ -31,6 +31,16 @@ pub mod ffi {
                 .map(|l| Box::new(ICU4XLocale(l)))
         }
 
+        /// Construct an [`ICU4XLocale`] for the English language.
+        pub fn create_en() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid_macros::langid!("en").into()))
+        }
+
+        /// Construct an [`ICU4XLocale`] for the Bangla language.
+        pub fn create_bn() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid_macros::langid!("bn").into()))
+        }
+
         /// Clones the [`ICU4XLocale`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
         #[allow(clippy::should_implement_trait)]

@@ -10,6 +10,8 @@ category = "ICU4X Development"
 dependencies = [
     "verify-diplomat-gen",
     "test-capi",
+    # TODO(#964): Enable this CI test.
+    # "test-capi-tiny",
     "test-cpp",
     "build-wearos-ffi",
     "test-nostd",
@@ -44,11 +46,23 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi/examples/pluralrules
-exec make
+exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
 cd ../locale
 exec --fail-on-error make
+'''
+
+[tasks.test-capi-tiny]
+description = "Run C API tests for tiny targets"
+category = "ICU4X Development"
+dependencies = [ "diplomat-gen-c" ]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/capi/examples/fixeddecimal_tiny
+exec --fail-on-error make
+exec ls -l
 '''
 
 [tasks.test-cpp]
@@ -112,7 +126,7 @@ exec --fail-on-error diplomat-tool cpp ../cpp/include --docs ../cpp/docs/source
 [tasks.build-wearos-ffi]
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
-toolchain = "nightly"
+toolchain = "nightly-2021-02-28"
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33" }
 command = "cargo"
 args = ["build", "--package", "icu_capi",
@@ -124,6 +138,6 @@ args = ["build", "--package", "icu_capi",
 [tasks.test-nostd]
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
-toolchain = "nightly"
+toolchain = "nightly-2021-02-28"
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
