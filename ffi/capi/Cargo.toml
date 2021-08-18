@@ -67,8 +67,8 @@ tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
 # make sure to update GitHub actions to use the appropriate revision
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "f2d891eaff4487657167c687522e7a98db60d8d4" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "f2d891eaff4487657167c687522e7a98db60d8d4" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d" }
 icu_testdata = { version = "0.3", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
 
 # This cfg originates in dlmalloc/lib.rs

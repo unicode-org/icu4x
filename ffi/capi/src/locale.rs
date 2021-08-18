@@ -17,7 +17,7 @@ pub mod ffi {
     /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
     pub struct ICU4XLocale(pub Locale);
 
-    enum ICU4XLocaleError {
+    pub enum ICU4XLocaleError {
         Undefined,
         Error,
     }
@@ -25,7 +25,7 @@ pub mod ffi {
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
-        fn create(name: &str) -> Option<Box<ICU4XLocale>> {
+        pub fn create(name: &str) -> Option<Box<ICU4XLocale>> {
             Locale::from_str(name)
                 .ok()
                 .map(|l| Box::new(ICU4XLocale(l)))
@@ -33,14 +33,15 @@ pub mod ffi {
 
         /// Clones the [`ICU4XLocale`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
-        fn clone(&self) -> Box<ICU4XLocale> {
+        #[allow(clippy::should_implement_trait)]
+        pub fn clone(&self) -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(self.0.clone()))
         }
 
         /// Write a string representation of the `LanguageIdentifier` part of
         /// [`ICU4XLocale`] to `write`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn basename(
+        pub fn basename(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XLocaleError> {
@@ -57,7 +58,7 @@ pub mod ffi {
 
         /// Write a string representation of the unicode extension to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
-        fn get_unicode_extension(
+        pub fn get_unicode_extension(
             &self,
             bytes: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
@@ -81,7 +82,7 @@ pub mod ffi {
 
         /// Write a string representation of [`ICU4XLocale`] language to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn language(
+        pub fn language(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XLocaleError> {
@@ -99,7 +100,7 @@ pub mod ffi {
 
         /// Write a string representation of [`ICU4XLocale`] region to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn region(
+        pub fn region(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XLocaleError> {
@@ -118,7 +119,7 @@ pub mod ffi {
 
         /// Write a string representation of [`ICU4XLocale`] script to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
-        fn script(
+        pub fn script(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XLocaleError> {
@@ -137,7 +138,7 @@ pub mod ffi {
 
         /// Write a string representation of [`ICU4XLocale`] to `write`
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
-        fn tostring(
+        pub fn tostring(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XLocaleError> {

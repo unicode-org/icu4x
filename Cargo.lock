@@ -465,7 +465,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f2d891eaff4487657167c687522e7a98db60d8d4#f2d891eaff4487657167c687522e7a98db60d8d4"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d#3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -476,12 +476,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f2d891eaff4487657167c687522e7a98db60d8d4#f2d891eaff4487657167c687522e7a98db60d8d4"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d#3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d"
 
 [[package]]
 name = "diplomat_core"
 version = "0.2.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f2d891eaff4487657167c687522e7a98db60d8d4#f2d891eaff4487657167c687522e7a98db60d8d4"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d#3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d"
 dependencies = [
  "impls",
  "lazy_static",

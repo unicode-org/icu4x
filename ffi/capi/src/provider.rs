@@ -35,7 +35,7 @@ pub mod ffi {
         /// Constructs an `FsDataProvider` and retirns it as an [`ICU4XDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more details.
         #[allow(unused_variables)]
-        fn create_fs(path: &str) -> ICU4XCreateDataProviderResult {
+        pub fn create_fs(path: &str) -> ICU4XCreateDataProviderResult {
             #[cfg(all(
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
@@ -63,7 +63,7 @@ pub mod ffi {
 
         /// Constructs an `StaticDataProvider` and retirns it as an [`ICU4XDataProvider`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more details.
-        fn create_static() -> ICU4XCreateDataProviderResult {
+        pub fn create_static() -> ICU4XCreateDataProviderResult {
             #[cfg(not(feature = "provider_static"))]
             unimplemented!();
 
