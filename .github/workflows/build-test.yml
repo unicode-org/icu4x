@@ -145,8 +145,6 @@ jobs:
         packages: |
           sphinx
           sphinx-rtd-theme
-    - name: Install LLVM tooling
-      run: sudo apt-get install clang lld
 
     - name: Install Diplomat
       uses: actions-rs/cargo@v1.0.1

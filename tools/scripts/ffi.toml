@@ -10,7 +10,8 @@ category = "ICU4X Development"
 dependencies = [
     "verify-diplomat-gen",
     "test-capi",
-    "test-capi-tiny",
+    # TODO(#964): Enable this CI test.
+    # "test-capi-tiny",
     "test-cpp",
     "build-wearos-ffi",
     "test-nostd",
