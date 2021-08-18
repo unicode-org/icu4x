@@ -81,6 +81,9 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
+# Duckscript doesn't support globs in rm, so we delete the dir
+rm -r include/
+mkdir include
 exec --fail-on-error diplomat-tool c ./include
 '''
 
@@ -91,6 +94,17 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
+
+
+# Duckscript doesn't support globs in rm, so we do this instead
+include = glob_array ../cpp/include/**/*.hpp
+for path in ${include}
+    rm ${path}
+end
+docs = glob_array ../cpp/docs/source/*.rst
+for path in ${docs}
+    rm ${path}
+end
 exec --fail-on-error diplomat-tool cpp ../cpp/include --docs ../cpp/docs/source
 '''
 
