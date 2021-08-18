@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629267403120,
+  "lastUpdate": 1629268955854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11153,6 +11153,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5119,
             "range": "± 511",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "245eb95ee01b2cabdea611a2f1b8436b4ad7890b",
+          "message": "Update Diplomat and add `pub` to all exported functions (#963)",
+          "timestamp": "2021-08-17T23:36:13-07:00",
+          "tree_id": "02b981699dd728b559fcc90e4e47b7d1f049da58",
+          "url": "https://github.com/unicode-org/icu4x/commit/245eb95ee01b2cabdea611a2f1b8436b4ad7890b"
+        },
+        "date": 1629268952862,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3063,
+            "range": "± 380",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5339,
+            "range": "± 292",
             "unit": "ns/iter"
           }
         ]
