@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629244527380,
+  "lastUpdate": 1629267387799,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12263,6 +12263,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 27986,
             "range": "± 1160",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "305643d72bbb6a1b9fd09e0aedad46b32bc938d8",
+          "message": "Update diplomat; improve diplomat makefiles (#959)\n\n* Update Diplomat\r\n\r\n* Include cpp docs\r\n\r\n* Consistently name diplomat tasks, add diplomat-gen task\r\n\r\n* Have Diplomat clean up before regenerating\r\n\r\n* fix",
+          "timestamp": "2021-08-17T23:10:04-07:00",
+          "tree_id": "2165f97f6ac06ea6123100bc1fe529d83994cc07",
+          "url": "https://github.com/unicode-org/icu4x/commit/305643d72bbb6a1b9fd09e0aedad46b32bc938d8"
+        },
+        "date": 1629267385437,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1210,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6846,
+            "range": "± 338",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23115,
+            "range": "± 1109",
             "unit": "ns/iter"
           }
         ]
