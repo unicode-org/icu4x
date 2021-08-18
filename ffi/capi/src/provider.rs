@@ -12,12 +12,12 @@ pub mod ffi {
     use alloc::string::ToString;
 
     use icu_provider::serde::SerdeDeDataProvider;
+    use icu_provider_blob::StaticDataProvider;
     #[cfg(all(
         feature = "provider_fs",
         not(any(target_arch = "wasm32", target_os = "none"))
     ))]
     use icu_provider_fs::FsDataProvider;
-    use icu_provider_blob::StaticDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.

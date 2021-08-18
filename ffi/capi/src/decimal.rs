@@ -16,8 +16,7 @@ pub mod ffi {
 
     use crate::{
         fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
-        provider::ffi::ICU4XStaticDataProvider,
+        provider::ffi::ICU4XDataProvider, provider::ffi::ICU4XStaticDataProvider,
     };
 
     #[diplomat::opaque]
@@ -68,38 +67,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
-            let langid = locale.0.as_ref().clone();
             let provider = provider.0.as_ref();
-
-            if let Result::Ok(fdf) = FixedDecimalFormat::try_new(
-                langid,
-                provider,
-                FixedDecimalFormatOptions {
-                    grouping_strategy: match options.grouping_strategy {
-                        ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
-                        ICU4XFixedDecimalGroupingStrategy::Never => GroupingStrategy::Never,
-                        ICU4XFixedDecimalGroupingStrategy::Always => GroupingStrategy::Always,
-                        ICU4XFixedDecimalGroupingStrategy::Min2 => GroupingStrategy::Min2,
-                    },
-                    sign_display: match options.sign_display {
-                        ICU4XFixedDecimalSignDisplay::Auto => SignDisplay::Auto,
-                        ICU4XFixedDecimalSignDisplay::Never => SignDisplay::Never,
-                        ICU4XFixedDecimalSignDisplay::Always => SignDisplay::Always,
-                        ICU4XFixedDecimalSignDisplay::ExceptZero => SignDisplay::ExceptZero,
-                        ICU4XFixedDecimalSignDisplay::Negative => SignDisplay::Negative,
-                    },
-                },
-            ) {
-                ICU4XFixedDecimalFormatResult {
-                    fdf: Some(Box::new(ICU4XFixedDecimalFormat(fdf))),
-                    success: true,
-                }
-            } else {
-                ICU4XFixedDecimalFormatResult {
-                    fdf: None,
-                    success: false,
-                }
-            }
+            Self::try_new_impl(locale, provider, options)
         }
 
         /// Creates a new [`ICU4XFixedDecimalFormat`] from a [`ICU4XStaticDataProvider`].
@@ -109,8 +78,19 @@ pub mod ffi {
             provider: &ICU4XStaticDataProvider,
             options: ICU4XFixedDecimalFormatOptions,
         ) -> ICU4XFixedDecimalFormatResult {
-            let langid = locale.0.as_ref().clone();
             let provider = provider.0.as_ref();
+            Self::try_new_impl(locale, provider, options)
+        }
+
+        fn try_new_impl<D>(
+            locale: &ICU4XLocale,
+            provider: &D,
+            options: ICU4XFixedDecimalFormatOptions,
+        ) -> ICU4XFixedDecimalFormatResult
+        where
+            D: DataProvider<'static, DecimalSymbolsV1Marker> + ?Sized,
+        {
+            let langid = locale.0.as_ref().clone();
 
             if let Result::Ok(fdf) = FixedDecimalFormat::try_new(
                 langid,
