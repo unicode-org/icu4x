@@ -352,7 +352,7 @@ description = "Run WASM tests in release mode"
 category = "ICU4X WASM"
 dependencies = [
     "wasm-release",
-    "gen-js-diplomat"
+    "diplomat-gen-js"
 ]
 script_runner = "@duckscript"
 script = '''
@@ -361,14 +361,21 @@ exec --fail-on-error npm install
 exec --fail-on-error npm test
 '''
 
-[tasks.gen-js-diplomat]
+[tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
-exec --fail-on-error diplomat-tool js ../wasm/lib/ ../wasm/docs.rst
+
+# Duckscript doesn't support globs in rm, so we delete the relevant files
+rm ../wasm/lib/api.mjs
+rm ../wasm/lib/diplomat-runtime.mjs
+rm -r ../wasm/docs/
+mkdir ../wasm/docs
+
+exec --fail-on-error diplomat-tool js ../wasm/lib/ --docs ../wasm/docs
 '''
 
 [tasks.wasm-clean]
