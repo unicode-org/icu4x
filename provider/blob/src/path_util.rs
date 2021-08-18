@@ -9,7 +9,8 @@ use writeable::Writeable;
 pub fn resource_path_to_string(resource_path: &ResourcePath) -> String {
     let mut output = String::with_capacity(resource_path.write_len().capacity() + 1);
     output.push('/');
-    resource_path.write_to(&mut output)
+    resource_path
+        .write_to(&mut output)
         .expect("impl Write for String is infallible");
     output
 }
