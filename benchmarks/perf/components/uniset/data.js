@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629312112085,
+  "lastUpdate": 1629315991165,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9869,6 +9869,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 38154825,
             "range": "± 1147698",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "803af54cdb0d263fe372912a0647fa8a0e50a247",
+          "message": "Package LICENSE with each component (#790)\n\n* Package LICENSE with each component\r\n\r\n* Address review feedback\r\n\r\n* Add LICENSE for new components",
+          "timestamp": "2021-08-18T15:40:00-04:00",
+          "tree_id": "f7e848173bcdb9a02dbf33b6c39302dabd82fbc8",
+          "url": "https://github.com/unicode-org/icu4x/commit/803af54cdb0d263fe372912a0647fa8a0e50a247"
+        },
+        "date": 1629315987979,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41357028,
+            "range": "± 803367",
             "unit": "ns/iter"
           }
         ]
