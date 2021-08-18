@@ -7,18 +7,18 @@
 #include <stdio.h>
 
 int main() {
-    ICU4XLocale* locale = ICU4XLocale_create("bn", 2);
-    ICU4XCreateDataProviderResult result = ICU4XDataProvider_create_static();
+    ICU4XLocale* locale = ICU4XLocale_create_bn();
+    ICU4XCreateFixedDecimalFormatDataProviderResult result = ICU4XFixedDecimalFormatDataProvider_create_static();
     if (!result.success) {
         printf("Failed to create FsDataProvider\n");
         return 1;
     }
-    ICU4XDataProvider* provider = result.provider;
+    ICU4XFixedDecimalFormatDataProvider* provider = result.provider;
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    ICU4XFixedDecimalFormatResult fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
+    ICU4XFixedDecimalFormatResult fdf_result = ICU4XFixedDecimalFormat_try_new_specific(locale, provider, opts);
     if (!fdf_result.success)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;
@@ -91,7 +91,7 @@ int main() {
     ICU4XFixedDecimal_destroy(decimal);
     ICU4XFixedDecimalFormat_destroy(fdf);
     ICU4XLocale_destroy(locale);
-    ICU4XDataProvider_destroy(provider);
+    ICU4XFixedDecimalFormatDataProvider_destroy(provider);
 
     return 0;
 }
