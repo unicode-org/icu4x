@@ -31,11 +31,11 @@ all-features = true
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # wearos/freertos/x86tiny are not relevant in normal environments,
-# and smaller_static gets tested on the FFI job anyway
+# smaller_static gets tested on the FFI job anyway
 denylist = ["bench", "wearos", "freertos", "x86tiny", "smaller_static"]
 
 [lib]
-crate-type = ["staticlib", "rlib", "cdylib"]
+crate-type = ["staticlib", "rlib"]
 path = "src/lib.rs"
 
 [features]

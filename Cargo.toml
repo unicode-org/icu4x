@@ -56,3 +56,6 @@ lto = true
 [profile.bench]
 debug = true
 debug-assertions = false
+
+[patch.crates-io]
+serde = { path = "../Git/serde/serde" }

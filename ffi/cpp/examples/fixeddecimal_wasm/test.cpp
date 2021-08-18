@@ -2,16 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include <emscripten/bind.h>
+
 #include "../../include/ICU4XFixedDecimalFormat.hpp"
 
 #include <iostream>
 
-const std::string_view path = "../../../../provider/testdata/data/json/";
+extern "C" void diplomat_init();
+extern "C" void log_js(char* s) {
+    std::cout<<"LOG: " <<s <<std::endl;
+}
 
-int main() {
+int runFixedDecimal() {
+    diplomat_init();
     ICU4XLocale locale = ICU4XLocale::create("bn").value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
-    ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).provider.value();
+    ICU4XDataProvider dp = ICU4XDataProvider::create_static().provider.value();
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy::Auto, ICU4XFixedDecimalSignDisplay::Auto};
     ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(locale, dp, opts).fdf.value();
 
@@ -41,3 +47,13 @@ int main() {
     }
     return 0;
 }
+
+EMSCRIPTEN_BINDINGS(testFixedDecimal) {
+  emscripten::function("runFixedDecimal", &runFixedDecimal);
+}
+
+#ifndef NOMAIN
+int main() {
+    //return runFixedDecimal();
+}
+#endif

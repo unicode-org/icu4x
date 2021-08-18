@@ -365,7 +365,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_cbor",
- "serde_derive",
+ "serde_derive 1.0.125",
  "serde_json",
  "tinytemplate",
  "walkdir",
@@ -1740,9 +1740,9 @@ checksum = "b18befed8bc2b61abc79a457295e7e838417326da1586050b919414073977f19"
 
 [[package]]
 name = "postcard"
-version = "0.7.0"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9083a4e478606d952014ad10e2fad31c43030942cec1f2bf8f12d4cc7089e62d"
+checksum = "c8863e251332eb18520388099b8b0acc4810ed6e602e3b6f674e8a46ba20e15c"
 dependencies = [
  "heapless",
  "postcard-cobs",
@@ -2110,11 +2110,9 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.125"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "558dc50e1a5a5fa7112ca2ce4effcb321b0300c0d4ccf0776a9f60cd89031171"
+version = "1.0.127"
 dependencies = [
- "serde_derive",
+ "serde_derive 1.0.127",
 ]
 
 [[package]]
@@ -2152,6 +2150,15 @@ name = "serde_derive"
 version = "1.0.125"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b093b7a2bb58203b5da3056c05b4ec1fed827dcfdb37347a8841695263b3d06d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "serde_derive"
+version = "1.0.127"
 dependencies = [
  "proc-macro2",
  "quote",
