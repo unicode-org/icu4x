@@ -53,6 +53,7 @@
 
 extern crate alloc;
 
+mod impls;
 mod ops;
 
 use alloc::string::String;
