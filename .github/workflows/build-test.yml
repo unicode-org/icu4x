@@ -150,7 +150,7 @@ jobs:
       with:
         command: install
         # Keep this in sync with ffi/capi/Cargo.toml
-        args: --git https://github.com/rust-diplomat/diplomat.git --rev f2d891eaff4487657167c687522e7a98db60d8d4 diplomat-tool
+        args: --git https://github.com/rust-diplomat/diplomat.git --rev 3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d diplomat-tool
 
     - name: Build
       uses: actions-rs/cargo@v1.0.1
@@ -244,7 +244,7 @@ jobs:
         uses: actions-rs/cargo@v1.0.1
         with:
           command: install
-          args: --git https://github.com/rust-diplomat/diplomat.git --rev f2d891eaff4487657167c687522e7a98db60d8d4 diplomat-tool
+          args: --git https://github.com/rust-diplomat/diplomat.git --rev 3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d diplomat-tool
 
       - name: Build
         uses: actions-rs/cargo@v1.0.1

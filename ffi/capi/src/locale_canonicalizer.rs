@@ -34,7 +34,7 @@ pub mod ffi {
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more details.
-        fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
+        pub fn create(provider: &ICU4XDataProvider) -> Option<Box<ICU4XLocaleCanonicalizer>> {
             let provider = provider.0.as_ref();
             LocaleCanonicalizer::new(provider)
                 .ok()
@@ -43,19 +43,19 @@ pub mod ffi {
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more details.
-        fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
+        pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
             canonicalization_result_to_ffi(self.0.canonicalize(&mut locale.0))
         }
 
         /// FFI version of `LocaleCanonicalizer::maximize()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more details.
-        fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
+        pub fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
             canonicalization_result_to_ffi(self.0.maximize(&mut locale.0))
         }
 
         /// FFI version of `LocaleCanonicalizer::minimize()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more details.
-        fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
+        pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XCanonicalizationResult {
             canonicalization_result_to_ffi(self.0.minimize(&mut locale.0))
         }
     }
