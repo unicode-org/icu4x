@@ -352,7 +352,7 @@ description = "Run WASM tests in release mode"
 category = "ICU4X WASM"
 dependencies = [
     "wasm-release",
-    "gen-js-diplomat"
+    "diplomat-gen-js"
 ]
 script_runner = "@duckscript"
 script = '''
@@ -361,7 +361,7 @@ exec --fail-on-error npm install
 exec --fail-on-error npm test
 '''
 
-[tasks.gen-js-diplomat]
+[tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 script_runner = "@duckscript"
