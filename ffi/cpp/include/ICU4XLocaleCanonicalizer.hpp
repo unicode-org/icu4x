@@ -50,12 +50,12 @@ inline std::optional<ICU4XLocaleCanonicalizer> ICU4XLocaleCanonicalizer::create(
   return diplomat_optional_out_value;
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::canonicalize(ICU4XLocale& locale) {
-  return ICU4XCanonicalizationResult{ capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()) };
+  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()));
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::maximize(ICU4XLocale& locale) {
-  return ICU4XCanonicalizationResult{ capi::ICU4XLocaleCanonicalizer_maximize(this->inner.get(), locale.AsFFIMut()) };
+  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_maximize(this->inner.get(), locale.AsFFIMut()));
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::minimize(ICU4XLocale& locale) {
-  return ICU4XCanonicalizationResult{ capi::ICU4XLocaleCanonicalizer_minimize(this->inner.get(), locale.AsFFIMut()) };
+  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_minimize(this->inner.get(), locale.AsFFIMut()));
 }
 #endif
