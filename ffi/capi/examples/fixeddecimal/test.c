@@ -8,17 +8,17 @@
 
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create_bn();
-    ICU4XCreateFixedDecimalFormatDataProviderResult result = ICU4XFixedDecimalFormatDataProvider_create_static();
+    ICU4XCreateStaticDataProviderResult result = ICU4XStaticDataProvider_create();
     if (!result.success) {
         printf("Failed to create FsDataProvider\n");
         return 1;
     }
-    ICU4XFixedDecimalFormatDataProvider* provider = result.provider;
+    ICU4XStaticDataProvider* provider = result.provider;
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
     ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
 
-    ICU4XFixedDecimalFormatResult fdf_result = ICU4XFixedDecimalFormat_try_new_specific(locale, provider, opts);
+    ICU4XFixedDecimalFormatResult fdf_result = ICU4XFixedDecimalFormat_try_new_from_static(locale, provider, opts);
     if (!fdf_result.success)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;
@@ -91,7 +91,7 @@ int main() {
     ICU4XFixedDecimal_destroy(decimal);
     ICU4XFixedDecimalFormat_destroy(fdf);
     ICU4XLocale_destroy(locale);
-    ICU4XFixedDecimalFormatDataProvider_destroy(provider);
+    ICU4XStaticDataProvider_destroy(provider);
 
     return 0;
 }
