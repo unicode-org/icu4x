@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629268955854,
+  "lastUpdate": 1629312137547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11189,6 +11189,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5339,
             "range": "± 292",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d320b0439d7cc48d2b9ac579245f43a16c439705",
+          "message": "Add size-optimized FFI functions for Locale and DataProvider (#962)",
+          "timestamp": "2021-08-18T13:35:47-05:00",
+          "tree_id": "4a9f5d7fa3ad807ff877c351757d8fc6e5333859",
+          "url": "https://github.com/unicode-org/icu4x/commit/d320b0439d7cc48d2b9ac579245f43a16c439705"
+        },
+        "date": 1629312134713,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2500,
+            "range": "± 226",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4037,
+            "range": "± 404",
             "unit": "ns/iter"
           }
         ]
