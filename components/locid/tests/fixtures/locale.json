@@ -244,5 +244,35 @@
       "type": "Locale",
       "identifier": "und-t-c0-mixed-m0-true"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "da-u-ca-gregory-ca-buddhist"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "da-u-ca-gregory"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pt-u-attr2-attr1-ca-gregory"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "pt-u-attr1-attr2-ca-gregory"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pt-u-attr1-attr2-attr1-ca-gregory"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "pt-u-attr1-attr2-ca-gregory"
+    }
   }
 ]
