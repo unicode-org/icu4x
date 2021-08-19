@@ -161,6 +161,11 @@ impl Unicode {
             }
         }
 
+        // Ensure we've defined at least one attribute or keyword
+        if attributes.is_empty() && keywords.is_empty() {
+            return Err(ParserError::InvalidExtension);
+        }
+
         Ok(Self {
             keywords: Keywords::from_vec_unchecked(keywords),
             attributes: Attributes::from_vec_unchecked(attributes),

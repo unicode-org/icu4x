@@ -78,5 +78,45 @@
       "error": "InvalidExtension",
       "text": "Invalid subtag"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "da-u"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "da-u--"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "da-u-t-latn"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "cmn-hans-cn-u-u"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
   }
 ]
