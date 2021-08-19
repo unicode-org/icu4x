@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629316032151,
+  "lastUpdate": 1629378584864,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12431,6 +12431,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 23913,
             "range": "± 532",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ccfb206002f52cd363291d0070a27084e167bc22",
+          "message": "Reject duplicate variants (#965)\n\nWe currently silently drop duplicate variants, but according to BCP47,\r\nthis is not valid:\r\n\r\n   5.  The same variant subtag MUST NOT be used more than once within a\r\n       language tag.\r\n\r\n       *  For example, the tag \"de-DE-1901-1901\" is not valid.\r\n\r\nThis changes the code to reject duplicate variants.",
+          "timestamp": "2021-08-19T09:02:44-04:00",
+          "tree_id": "da4965acfa3d71be73ba32313b11ada7c6c2c66e",
+          "url": "https://github.com/unicode-org/icu4x/commit/ccfb206002f52cd363291d0070a27084e167bc22"
+        },
+        "date": 1629378581710,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1243,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7042,
+            "range": "± 560",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23195,
+            "range": "± 1797",
             "unit": "ns/iter"
           }
         ]
