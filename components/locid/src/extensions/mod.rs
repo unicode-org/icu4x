@@ -11,7 +11,7 @@
 //!  * [`Unicode Extensions`] - marked as `u`.
 //!  * [`Transform Extensions`] - marked as `t`.
 //!  * [`Private Use Extensions`] - marked as `x`.
-//!  * Other extensions - marked as any `a-z` except of `u`, `t` and `x`.
+//!  * [`Other Extensions`] - marked as any `a-z` except of `u`, `t` and `x`.
 //!
 //! One can think of extensions as a bag of extra information on top of basic 4 [`subtags`].
 //!
@@ -41,17 +41,21 @@
 //! [`LanguageIdentifier`]: super::LanguageIdentifier
 //! [`Locale`]: super::Locale
 //! [`subtags`]: super::subtags
-//! [`Unicode Extensions`]: unicode
-//! [`Transform Extensions`]: transform
+//! [`Other Extensions`]: other
 //! [`Private Use Extensions`]: private
+//! [`Transform Extensions`]: transform
+//! [`Unicode Extensions`]: unicode
+pub mod other;
 pub mod private;
 pub mod transform;
 pub mod unicode;
 
+pub use other::Other;
 pub use private::Private;
 pub use transform::Transform;
 pub use unicode::Unicode;
 
+use alloc::vec::Vec;
 use core::iter::Peekable;
 
 use crate::parser::ParserError;
@@ -65,6 +69,8 @@ pub enum ExtensionType {
     Unicode,
     /// Private Extension Type marked as `x`.
     Private,
+    /// All other extension types.
+    Other(u8),
 }
 
 impl ExtensionType {
@@ -74,7 +80,7 @@ impl ExtensionType {
             b'u' => Ok(Self::Unicode),
             b't' => Ok(Self::Transform),
             b'x' => Ok(Self::Private),
-            _ => Err(ParserError::InvalidExtension),
+            _ => Ok(Self::Other(key)),
         }
     }
 }
@@ -85,6 +91,7 @@ pub struct Extensions {
     pub unicode: Unicode,
     pub transform: Transform,
     pub private: Private,
+    pub other: Vec<Other>,
 }
 
 impl Extensions {
@@ -103,6 +110,7 @@ impl Extensions {
             unicode: Unicode::new(),
             transform: Transform::new(),
             private: Private::new(),
+            other: Vec::new(),
         }
     }
 
@@ -119,7 +127,7 @@ impl Extensions {
     /// assert_eq!(loc.extensions.is_empty(), false);
     /// ```
     pub fn is_empty(&self) -> bool {
-        self.unicode.is_empty() && self.transform.is_empty() && self.private.is_empty()
+        self.unicode.is_empty() && self.transform.is_empty() && self.private.is_empty() && self.other.is_empty()
     }
 
     pub(crate) fn try_from_iter<'a>(
@@ -128,6 +136,7 @@ impl Extensions {
         let mut unicode = None;
         let mut transform = None;
         let mut private = None;
+        let mut other = Vec::new();
 
         let mut st = iter.next();
         while let Some(subtag) = st {
@@ -141,6 +150,14 @@ impl Extensions {
                 Some(Ok(ExtensionType::Private)) => {
                     private = Some(Private::try_from_iter(iter)?);
                 }
+                Some(Ok(ExtensionType::Other(ext))) => {
+                    let parsed = Other::try_from_iter(ext, iter)?;
+                    if let Err(idx) = other.binary_search(&parsed) {
+                        other.insert(idx, parsed);
+                    } else {
+                        return Err(ParserError::InvalidExtension);
+                    }
+                }
                 None => {}
                 _ => return Err(ParserError::InvalidExtension),
             }
@@ -152,6 +169,7 @@ impl Extensions {
             unicode: unicode.unwrap_or_default(),
             transform: transform.unwrap_or_default(),
             private: private.unwrap_or_default(),
+            other,
         })
     }
 }
@@ -164,9 +182,24 @@ impl core::fmt::Display for Extensions {
 
 impl writeable::Writeable for Extensions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        // Alphabetic by singleton (t, u, x)
-        writeable::Writeable::write_to(&self.transform, sink)?;
-        writeable::Writeable::write_to(&self.unicode, sink)?;
+        let mut wrote_tu = false;
+        self.other.iter().try_for_each(|other| {
+            if other.get_ext() > 't' && !wrote_tu {
+                writeable::Writeable::write_to(&self.transform, sink)?;
+                writeable::Writeable::write_to(&self.unicode, sink)?;
+                wrote_tu = true;
+            }
+            writeable::Writeable::write_to(other, sink)})?;
+
+        if !wrote_tu {
+            writeable::Writeable::write_to(&self.transform, sink)?;
+            writeable::Writeable::write_to(&self.unicode, sink)?;
+        }
+
+        // Private must be written last, since it allows single character
+        // keys. Extensions must also be written in alphabetical order,
+        // which would seem to imply that other extensions `y` and `z` are
+        // invalid, but this is not specified.
         writeable::Writeable::write_to(&self.private, sink)?;
         Ok(())
     }
@@ -176,6 +209,8 @@ impl writeable::Writeable for Extensions {
         result += writeable::Writeable::write_len(&self.transform);
         result += writeable::Writeable::write_len(&self.unicode);
         result += writeable::Writeable::write_len(&self.private);
+        self.other.iter().for_each(|other|
+            result += writeable::Writeable::write_len(other));
         result
     }
 }
