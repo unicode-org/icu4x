@@ -233,7 +233,26 @@ jobs:
       - name: Install WASM tools
         run: |
           sudo apt-get install wabt binaryen
-          cargo install twiggy
+
+      - name: Get twiggy version
+        id: twiggy-version
+        run: |
+          echo "::set-output name=hash::$(cargo search twiggy | grep '^twiggy =' | md5sum)"
+        shell: bash
+      - name: Attempt to load cached twiggy
+        uses: actions/cache@v2
+        id: twiggy-cache
+        with:
+          path: |
+            ~/.cargo/bin/twiggy
+            ~/.cargo/bin/twiggy.exe
+          key: ${{ runner.os }}-${{ steps.twiggy-version.outputs.hash }}
+      - name: Install twiggy
+        if: steps.twiggy-cache.outputs.cache-hit != 'true'
+        uses: actions-rs/install@v0.1.2
+        with:
+          crate: twiggy
+          version: latest
 
       - name: Get cargo-make version
         id: cargo-make-version
@@ -684,6 +703,26 @@ jobs:
         crate: cargo-make
         version: latest
 
+    - name: Get twiggy version
+      id: twiggy-version
+      run: |
+        echo "::set-output name=hash::$(cargo search twiggy | grep '^twiggy =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached twiggy
+      uses: actions/cache@v2
+      id: twiggy-cache
+      with:
+        path: |
+          ~/.cargo/bin/twiggy
+          ~/.cargo/bin/twiggy.exe
+        key: ${{ runner.os }}-${{ steps.twiggy-version.outputs.hash }}
+    - name: Install twiggy
+      if: steps.twiggy-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: twiggy
+        version: latest
+
     - name: Install prerequisites for wasm build
       run: |
         rustup component add rust-src
@@ -691,7 +730,7 @@ jobs:
         rustup toolchain install nightly-2021-02-28
         sudo npm install -g wasm-opt --unsafe-perm
         sudo npm install -g wabt
-        cargo install twiggy
+
 
     - name: Setup output data directory
       run: mkdir -p benchmarks/binsize
