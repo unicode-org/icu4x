@@ -54,6 +54,6 @@ EMSCRIPTEN_BINDINGS(testFixedDecimal) {
 
 #ifndef NOMAIN
 int main() {
-    //return runFixedDecimal();
+    return runFixedDecimal();
 }
 #endif

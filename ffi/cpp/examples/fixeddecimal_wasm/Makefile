@@ -12,28 +12,22 @@ $(ALL_RUST):
 
 $(ALL_HEADERS):
 
-
-
-
 ../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a: $(ALL_RUST)
 	RUSTFLAGS="-Cpanic=abort" cargo +nightly build --release -p icu_capi --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 
-# Currently this doesn't run successfully, however it's the status quo of compiling ICU4X in C++ to WASM
 web-version.html: ../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a $(ALL_HEADERS) test.cpp
-	emcc -std=c++17 test.cpp ../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1
+	emcc -std=c++17 test.cpp ../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sENVIRONMENT=web -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1
 
-
-# Currently this doesn't run successfully, however it's the status quo of compiling ICU4X in C++ to WASM
 node-version.js: ../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a $(ALL_HEADERS) test.cpp
 	emcc -std=c++17 test.cpp ../../../../target/wasm32-unknown-emscripten/release/libicu_capi.a -ldl -lpthread -lm -g  -o node-version.js --bind -sWASM=1 -sENVIRONMENT=node -sWASM_ASYNC_COMPILATION=0 -DNOMAIN
 
-build: web.html node-version.js
+build: web-version.html node-version.js
 
 test: node-version.js
 	exec node ./node-test.js
 
-serve: web.html
-	python3 -m http.server
+serve: web-version.html
+	emrun web-version.html
 
 clean:
 	rm -f web-version.html
