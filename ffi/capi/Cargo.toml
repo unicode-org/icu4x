@@ -68,7 +68,7 @@ icu_provider_blob = { path = "../../provider/blob" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 writeable = { path = "../../utils/writeable/" }
 
-# make sure to update GitHub actions to use the appropriate revision
+# Run `cargo make diplomat-install` to get the right diplomat binary installed
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "38cffa9bc2ef21d0aba89ed7d76236de4153248a" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "38cffa9bc2ef21d0aba89ed7d76236de4153248a" }
 icu_testdata = { version = "0.3", path = "../../provider/testdata", default-features = false, features = ["static"], optional = true }
