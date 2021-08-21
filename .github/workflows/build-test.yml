@@ -273,7 +273,13 @@ jobs:
         with:
           crate: cargo-make
           version: latest
-
+      - name: Install emsdk
+        run: |
+          cd ~
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
       - name: Get Diplomat version
         id: diplomat-version
         run: |
@@ -310,6 +316,13 @@ jobs:
         with:
           command: make
           args: wasm-test-release
+      # This has to be a separate test since the emscripten sdk
+      # will otherwise interfere with other node-using tests
+      - name: Run emscripten test
+        run: |
+          . ~/emsdk/emsdk_env.sh
+          cd ffi/cpp/examples/fixeddecimal_wasm
+          make test
 
   # Fmt job - runs cargo fmt
   fmt:

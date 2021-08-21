@@ -365,7 +365,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_cbor",
- "serde_derive 1.0.125",
+ "serde_derive",
  "serde_json",
  "tinytemplate",
  "walkdir",
@@ -2110,9 +2110,11 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.127"
+version = "1.0.128"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1056a0db1978e9dbf0f6e4fca677f6f9143dc1c19de346f22cac23e422196834"
 dependencies = [
- "serde_derive 1.0.127",
+ "serde_derive",
 ]
 
 [[package]]
@@ -2147,18 +2149,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.125"
+version = "1.0.128"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b093b7a2bb58203b5da3056c05b4ec1fed827dcfdb37347a8841695263b3d06d"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "serde_derive"
-version = "1.0.127"
+checksum = "13af2fbb8b60a8950d6c72a56d2095c28870367cc8e10c55e9745bac4995a2c4"
 dependencies = [
  "proc-macro2",
  "quote",
