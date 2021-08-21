@@ -76,6 +76,8 @@ cd ffi/cpp/examples/pluralrules
 exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
+cd ../fixeddecimal_wasm
+exec --fail-on-error make test-host
 '''
 
 [tasks.test-cppdoc]

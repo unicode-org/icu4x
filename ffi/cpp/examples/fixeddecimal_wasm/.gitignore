@@ -5,3 +5,4 @@ node-version.js
 node-version.wasm
 package-lock.json
 node_modules
+a.out

@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#ifdef __EMSCRIPTEN__
 #include <emscripten/bind.h>
+#endif
 
 #include "../../include/ICU4XFixedDecimalFormat.hpp"
 
@@ -14,7 +16,9 @@ extern "C" void log_js(char* s) {
 }
 
 int runFixedDecimal() {
+#ifdef __EMSCRIPTEN__
     diplomat_init();
+#endif
     ICU4XLocale locale = ICU4XLocale::create("bn").value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_static().provider.value();
@@ -48,9 +52,11 @@ int runFixedDecimal() {
     return 0;
 }
 
+#ifdef __EMSCRIPTEN__
 EMSCRIPTEN_BINDINGS(testFixedDecimal) {
   emscripten::function("runFixedDecimal", &runFixedDecimal);
 }
+#endif
 
 #ifndef NOMAIN
 int main() {
