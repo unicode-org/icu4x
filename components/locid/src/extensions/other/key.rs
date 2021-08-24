@@ -29,7 +29,6 @@ pub struct Key(TinyStr8);
 const KEY_LENGTH: RangeInclusive<usize> = 2..=8;
 
 impl Key {
-
     pub fn valid_key(v: &[u8]) -> bool {
         KEY_LENGTH.contains(&v.len())
     }

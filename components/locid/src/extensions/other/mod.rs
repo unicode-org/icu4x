@@ -24,9 +24,9 @@
 mod key;
 use alloc::boxed::Box;
 
+use crate::parser::ParserError;
 use alloc::vec::Vec;
 use core::iter::Peekable;
-use crate::parser::ParserError;
 
 pub use key::Key;
 
@@ -76,11 +76,12 @@ impl Other {
     }
 
     pub(crate) fn try_from_iter<'a>(
-        ext: u8, iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
+        ext: u8,
+        iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
     ) -> Result<Self, ParserError> {
         let mut keys = Vec::new();
         while let Some(subtag) = iter.peek() {
-            if !Key::valid_key(&subtag) {
+            if !Key::valid_key(subtag) {
                 break;
             }
             if let Ok(key) = Key::from_bytes(subtag) {
@@ -93,7 +94,7 @@ impl Other {
     }
 
     pub fn get_ext(&self) -> char {
-        self.0.0 as char
+        self.0 .0 as char
     }
 }
 
@@ -118,7 +119,7 @@ impl writeable::Writeable for Other {
 
     fn write_len(&self) -> writeable::LengthHint {
         let mut result = writeable::LengthHint::Exact(2);
-        for key in self.0.1.iter() {
+        for key in self.0 .1.iter() {
             result += writeable::Writeable::write_len(key) + 1;
         }
         result

@@ -127,7 +127,10 @@ impl Extensions {
     /// assert_eq!(loc.extensions.is_empty(), false);
     /// ```
     pub fn is_empty(&self) -> bool {
-        self.unicode.is_empty() && self.transform.is_empty() && self.private.is_empty() && self.other.is_empty()
+        self.unicode.is_empty()
+            && self.transform.is_empty()
+            && self.private.is_empty()
+            && self.other.is_empty()
     }
 
     pub(crate) fn try_from_iter<'a>(
@@ -189,7 +192,8 @@ impl writeable::Writeable for Extensions {
                 writeable::Writeable::write_to(&self.unicode, sink)?;
                 wrote_tu = true;
             }
-            writeable::Writeable::write_to(other, sink)})?;
+            writeable::Writeable::write_to(other, sink)
+        })?;
 
         if !wrote_tu {
             writeable::Writeable::write_to(&self.transform, sink)?;
@@ -209,8 +213,9 @@ impl writeable::Writeable for Extensions {
         result += writeable::Writeable::write_len(&self.transform);
         result += writeable::Writeable::write_len(&self.unicode);
         result += writeable::Writeable::write_len(&self.private);
-        self.other.iter().for_each(|other|
-            result += writeable::Writeable::write_len(other));
+        self.other
+            .iter()
+            .for_each(|other| result += writeable::Writeable::write_len(other));
         result
     }
 }
