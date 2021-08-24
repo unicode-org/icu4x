@@ -41,7 +41,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -80,7 +80,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -129,7 +129,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -157,7 +157,7 @@ jobs:
         path: |
           ~/.cargo/bin/diplomat-tool
           ~/.cargo/bin/diplomat-tool.exe
-        key: ${{ runner.os }}-${{ steps.diplomat-version.outputs.rev }}
+        key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
 
     - name: Install Diplomat
       if: steps.diplomat-cache.outputs.cache-hit != 'true'
@@ -205,7 +205,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -246,7 +246,7 @@ jobs:
           path: |
             ~/.cargo/bin/twiggy
             ~/.cargo/bin/twiggy.exe
-          key: ${{ runner.os }}-${{ steps.twiggy-version.outputs.hash }}
+          key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
       - name: Install twiggy
         if: steps.twiggy-cache.outputs.cache-hit != 'true'
         uses: actions-rs/install@v0.1.2
@@ -266,7 +266,7 @@ jobs:
           path: |
             ~/.cargo/bin/cargo-make
             ~/.cargo/bin/cargo-make.exe
-          key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+          key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
       - name: Install cargo-make
         if: steps.cargo-make-cache.outputs.cache-hit != 'true'
         uses: actions-rs/install@v0.1.2
@@ -286,7 +286,7 @@ jobs:
           path: |
             ~/.cargo/bin/diplomat-tool
             ~/.cargo/bin/diplomat-tool.exe
-          key: ${{ runner.os }}-${{ steps.diplomat-version.outputs.rev }}
+          key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
 
       - name: Install Diplomat
         if: steps.diplomat-cache.outputs.cache-hit != 'true'
@@ -336,7 +336,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -373,7 +373,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -393,7 +393,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-readme
           ~/.cargo/bin/cargo-readme.exe
-        key: ${{ runner.os }}-${{ steps.cargo-readme-version.outputs.hash }}
+        key: ${{ runner.os }}-readme-${{ steps.cargo-readme-version.outputs.hash }}
     - name: Install cargo-readme
       if: steps.cargo-readme-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -694,7 +694,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
 
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
@@ -715,7 +715,7 @@ jobs:
         path: |
           ~/.cargo/bin/twiggy
           ~/.cargo/bin/twiggy.exe
-        key: ${{ runner.os }}-${{ steps.twiggy-version.outputs.hash }}
+        key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
