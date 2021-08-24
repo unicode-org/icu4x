@@ -41,7 +41,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -80,7 +80,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -129,7 +129,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -145,13 +145,27 @@ jobs:
         packages: |
           sphinx
           sphinx-rtd-theme
+    - name: Get Diplomat version
+      id: diplomat-version
+      run: |
+        echo "::set-output name=rev::$(cargo make diplomat-get-rev --loglevel error |  tr -d '[:space:]')"
+      shell: bash
+    - name: Attempt to load cached Diplomat
+      uses: actions/cache@v2
+      id: diplomat-cache
+      with:
+        path: |
+          ~/.cargo/bin/diplomat-tool
+          ~/.cargo/bin/diplomat-tool.exe
+        key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
 
     - name: Install Diplomat
+      if: steps.diplomat-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1
       with:
         command: install
         # Keep this in sync with ffi/capi/Cargo.toml
-        args: --git https://github.com/rust-diplomat/diplomat.git --rev 3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d diplomat-tool
+        args: --git https://github.com/rust-diplomat/diplomat.git --rev ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
     - name: Build
       uses: actions-rs/cargo@v1.0.1
@@ -191,7 +205,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -219,7 +233,26 @@ jobs:
       - name: Install WASM tools
         run: |
           sudo apt-get install wabt binaryen
-          cargo install twiggy
+
+      - name: Get twiggy version
+        id: twiggy-version
+        run: |
+          echo "::set-output name=hash::$(cargo search twiggy | grep '^twiggy =' | md5sum)"
+        shell: bash
+      - name: Attempt to load cached twiggy
+        uses: actions/cache@v2
+        id: twiggy-cache
+        with:
+          path: |
+            ~/.cargo/bin/twiggy
+            ~/.cargo/bin/twiggy.exe
+          key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
+      - name: Install twiggy
+        if: steps.twiggy-cache.outputs.cache-hit != 'true'
+        uses: actions-rs/install@v0.1.2
+        with:
+          crate: twiggy
+          version: latest
 
       - name: Get cargo-make version
         id: cargo-make-version
@@ -233,7 +266,7 @@ jobs:
           path: |
             ~/.cargo/bin/cargo-make
             ~/.cargo/bin/cargo-make.exe
-          key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+          key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
       - name: Install cargo-make
         if: steps.cargo-make-cache.outputs.cache-hit != 'true'
         uses: actions-rs/install@v0.1.2
@@ -241,11 +274,27 @@ jobs:
           crate: cargo-make
           version: latest
 
+      - name: Get Diplomat version
+        id: diplomat-version
+        run: |
+          echo "::set-output name=rev::$(cargo make diplomat-get-rev --loglevel error |  tr -d '[:space:]')"
+        shell: bash
+      - name: Attempt to load cached Diplomat
+        uses: actions/cache@v2
+        id: diplomat-cache
+        with:
+          path: |
+            ~/.cargo/bin/diplomat-tool
+            ~/.cargo/bin/diplomat-tool.exe
+          key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
+
       - name: Install Diplomat
+        if: steps.diplomat-cache.outputs.cache-hit != 'true'
         uses: actions-rs/cargo@v1.0.1
         with:
           command: install
-          args: --git https://github.com/rust-diplomat/diplomat.git --rev 3ac8c3e8e31353a2f3eb02d015eb23a1feb84b4d diplomat-tool
+          # Keep this in sync with ffi/capi/Cargo.toml
+          args: --git https://github.com/rust-diplomat/diplomat.git --rev ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
       - name: Build
         uses: actions-rs/cargo@v1.0.1
@@ -287,7 +336,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -324,7 +373,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -344,7 +393,7 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-readme
           ~/.cargo/bin/cargo-readme.exe
-        key: ${{ runner.os }}-${{ steps.cargo-readme-version.outputs.hash }}
+        key: ${{ runner.os }}-readme-${{ steps.cargo-readme-version.outputs.hash }}
     - name: Install cargo-readme
       if: steps.cargo-readme-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -645,13 +694,33 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-${{ steps.cargo-make-version.outputs.hash }}
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
 
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
+        version: latest
+
+    - name: Get twiggy version
+      id: twiggy-version
+      run: |
+        echo "::set-output name=hash::$(cargo search twiggy | grep '^twiggy =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached twiggy
+      uses: actions/cache@v2
+      id: twiggy-cache
+      with:
+        path: |
+          ~/.cargo/bin/twiggy
+          ~/.cargo/bin/twiggy.exe
+        key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
+    - name: Install twiggy
+      if: steps.twiggy-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: twiggy
         version: latest
 
     - name: Install prerequisites for wasm build
@@ -661,7 +730,7 @@ jobs:
         rustup toolchain install nightly-2021-02-28
         sudo npm install -g wasm-opt --unsafe-perm
         sudo npm install -g wabt
-        cargo install twiggy
+
 
     - name: Setup output data directory
       run: mkdir -p benchmarks/binsize

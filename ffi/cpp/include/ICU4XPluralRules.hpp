@@ -56,7 +56,7 @@ inline ICU4XCreatePluralRulesResult ICU4XPluralRules::create(const ICU4XLocale& 
   return ICU4XCreatePluralRulesResult{ .rules = std::move(diplomat_optional_out_value_rules), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
 inline ICU4XPluralCategory ICU4XPluralRules::select(const ICU4XPluralOperands& op) {
-  return ICU4XPluralCategory{ capi::ICU4XPluralRules_select(this->inner.get(), (capi::ICU4XPluralOperands*) &op) };
+  return static_cast<ICU4XPluralCategory>(capi::ICU4XPluralRules_select(this->inner.get(), (capi::ICU4XPluralOperands*) &op));
 }
 inline ICU4XPluralCategories ICU4XPluralRules::categories() {
   capi::ICU4XPluralCategories diplomat_raw_struct_out_value = capi::ICU4XPluralRules_categories(this->inner.get());

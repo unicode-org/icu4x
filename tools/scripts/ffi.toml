@@ -141,3 +141,49 @@ category = "ICU4X FFI"
 toolchain = "nightly-2021-02-28"
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
+
+[tasks.diplomat-get-rev]
+description = "Get current Diplomat revision"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+metadata = exec --fail-on-error cargo metadata
+metadata = set ${metadata.stdout}
+# Parse output
+metadata = json_parse --collection ${metadata}
+# packages = metadata.packages
+packages = map_get ${metadata} packages
+for pkg in ${packages}
+    # find pkg.name
+    name = map_get ${pkg} name
+    # check if it is "diplomat"
+    e = eq ${name} "diplomat"
+    if ${e}
+        # get pkg.source
+        source = map_get ${pkg} source
+        # extract the bit between `rev=` and `#`
+        handle = split ${source} "rev="
+        hash = array_get ${handle} 1
+        release handle
+        handle = split ${hash} "#"
+        rev = array_get ${handle} 0
+        release handle
+        # print it
+        echo ${rev}
+    end
+end
+release --recursive ${metadata}
+'''
+
+[tasks.diplomat-install]
+description = "Install Diplomat at current Diplomat revision"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+rev = exec cargo make diplomat-get-rev --loglevel error
+rev = trim ${rev.stdout}
+echo "Installing Diplomat rev ${rev}"
+exec cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
+'''
