@@ -280,7 +280,7 @@ jobs:
       - name: Install emsdk
         run: |
           cd ~
-          git clone https://github.com/emscripten-core/emsdk.git
+          git clone https://github.com/emscripten-core/emsdk.git --branch 2.0.27
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
