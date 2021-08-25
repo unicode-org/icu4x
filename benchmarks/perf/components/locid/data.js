@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629839263913,
+  "lastUpdate": 1629869880384,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11405,6 +11405,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4980,
             "range": "± 281",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19c05d9785c2ab7eafc25f4e204948b2394320dc",
+          "message": "Add cpp-to-wasm test (#968)\n\n* Add cpp-to-wasm test\r\n\r\n* Run wasm test on CI\r\n\r\n* Fix CI\r\n\r\n* Add host test to test-ffi\r\n\r\n* pin emsdk\r\n\r\n* Pin emscripten test to older nightly too",
+          "timestamp": "2021-08-24T22:31:57-07:00",
+          "tree_id": "fa49db00c5b98cbb54c04cecdb3249d13dc265e0",
+          "url": "https://github.com/unicode-org/icu4x/commit/19c05d9785c2ab7eafc25f4e204948b2394320dc"
+        },
+        "date": 1629869878137,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2472,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4025,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
