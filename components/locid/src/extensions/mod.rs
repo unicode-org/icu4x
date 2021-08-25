@@ -80,7 +80,8 @@ impl ExtensionType {
             b'u' => Ok(Self::Unicode),
             b't' => Ok(Self::Transform),
             b'x' => Ok(Self::Private),
-            _ => Ok(Self::Other(key)),
+            b'a'..=b'z' => Ok(Self::Other(key)),
+            _ => Err(ParserError::InvalidExtension),
         }
     }
 }
@@ -186,8 +187,11 @@ impl core::fmt::Display for Extensions {
 impl writeable::Writeable for Extensions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         let mut wrote_tu = false;
+        // Alphabetic by singleton
         self.other.iter().try_for_each(|other| {
             if other.get_ext() > 't' && !wrote_tu {
+                // Since 't' and 'u' are next to each other in alphabetical
+                // order, write both now.
                 writeable::Writeable::write_to(&self.transform, sink)?;
                 writeable::Writeable::write_to(&self.unicode, sink)?;
                 wrote_tu = true;
@@ -213,9 +217,11 @@ impl writeable::Writeable for Extensions {
         result += writeable::Writeable::write_len(&self.transform);
         result += writeable::Writeable::write_len(&self.unicode);
         result += writeable::Writeable::write_len(&self.private);
-        self.other
+        result += self
+            .other
             .iter()
-            .for_each(|other| result += writeable::Writeable::write_len(other));
+            .map(writeable::Writeable::write_len)
+            .sum::<writeable::LengthHint>();
         result
     }
 }

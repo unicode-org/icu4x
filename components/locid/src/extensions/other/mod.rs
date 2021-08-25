@@ -46,7 +46,7 @@ pub use key::Key;
 /// let key2: Key = "bar".parse()
 ///     .expect("Failed to parse a Key.");
 ///
-/// let other = Other::from_vec_unchecked('a' as u8, vec![key1, key2]);
+/// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
 /// assert_eq!(&other.to_string(), "-a-foo-bar");
 /// ```
 ///
@@ -68,10 +68,11 @@ impl Other {
     /// let key2: Key = "bar".parse()
     ///     .expect("Failed to parse a Key.");
     ///
-    /// let other = Other::from_vec_unchecked('a' as u8, vec![key1, key2]);
+    /// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
     /// assert_eq!(&other.to_string(), "-a-foo-bar");
     /// ```
     pub fn from_vec_unchecked(ext: u8, input: Vec<Key>) -> Self {
+        debug_assert!(ext.is_ascii_alphabetic());
         Self((ext, input.into_boxed_slice()))
     }
 
@@ -79,6 +80,8 @@ impl Other {
         ext: u8,
         iter: &mut Peekable<impl Iterator<Item = &'a [u8]>>,
     ) -> Result<Self, ParserError> {
+        debug_assert!(ext.is_ascii_alphabetic());
+
         let mut keys = Vec::new();
         while let Some(subtag) = iter.peek() {
             if !Key::valid_key(subtag) {
