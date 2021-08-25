@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629869910593,
+  "lastUpdate": 1629934514446,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10049,6 +10049,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35837489,
             "range": "± 1100758",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "569d0c0347d650a4cc6b9f45492067a6edf428c3",
+          "message": "Enhance binary size benchmark: monitor size of the gzip'd wasm (#980)\n\nexecutables as well.\r\n\r\nResolves ticket #912.",
+          "timestamp": "2021-08-25T16:28:30-07:00",
+          "tree_id": "d77852153e52c38b11070795b2ec786b074f728a",
+          "url": "https://github.com/unicode-org/icu4x/commit/569d0c0347d650a4cc6b9f45492067a6edf428c3"
+        },
+        "date": 1629934511868,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 48456747,
+            "range": "± 1517789",
             "unit": "ns/iter"
           }
         ]
