@@ -691,6 +691,10 @@ jobs:
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
 
   binsize:
+    strategy:
+      fail-fast: false
+      matrix:
+        type: [wasm, gz]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -747,12 +751,19 @@ jobs:
 
 
     - name: Setup output data directory
-      run: mkdir -p benchmarks/binsize
-
-    - name: Build wasm executables and measure size
       run: |
-        cargo make wasm-examples
-        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt| tee benchmarks/binsize/output.txt
+        mkdir -p benchmarks/binsize/${{ matrix.type }}
+
+    - name: Build wasm executables
+      run: cargo make wasm-examples
+
+    - name: gzip wasm executables if requested
+      if: ${{ matrix.type == 'gz' }}
+      run: (cd wasmpkg/wasm-opt && gzip *+opt.wasm)
+
+    - name: Measure size of executables
+      run: |
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt ${{ matrix.type }} | tee benchmarks/binsize/${{ matrix.type }}/output.txt
 
     - name: Store benchmark result (non-merge action only)
       # Data from anything that is not a merge to mainline goes to a preliminary branch
@@ -761,8 +772,8 @@ jobs:
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:
         tool: 'ndjson'
-        output-file-path: benchmarks/binsize/output.txt
-        benchmark-data-dir-path: ./benchmarks/binsize
+        output-file-path: benchmarks/binsize/${{ matrix.type }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize/${{ matrix.type }}
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
@@ -778,8 +789,8 @@ jobs:
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:
         tool: 'ndjson'
-        output-file-path: benchmarks/binsize/output.txt
-        benchmark-data-dir-path: ./benchmarks/binsize
+        output-file-path: benchmarks/binsize/${{ matrix.type }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize${{ matrix.type }}
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
