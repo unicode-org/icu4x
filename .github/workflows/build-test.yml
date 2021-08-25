@@ -229,7 +229,9 @@ jobs:
       - name: Load nightly Rust toolchain for WASM.
         run: |
           rustup install nightly-2021-02-28
-          rustup target add wasm32-unknown-unknown --toolchain nightly-2021-02-28-x86_64-unknown-linux-gnu
+          rustup target add wasm32-unknown-unknown --toolchain nightly-2021-02-28
+          rustup target add wasm32-unknown-emscripten --toolchain nightly-2021-02-28
+          rustup component add rust-src --toolchain nightly-2021-02-28
       - name: Install WASM tools
         run: |
           sudo apt-get install wabt binaryen
@@ -273,7 +275,13 @@ jobs:
         with:
           crate: cargo-make
           version: latest
-
+      - name: Install emsdk
+        run: |
+          cd ~
+          git clone https://github.com/emscripten-core/emsdk.git --branch 2.0.27
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
       - name: Get Diplomat version
         id: diplomat-version
         run: |
@@ -310,6 +318,12 @@ jobs:
         with:
           command: make
           args: wasm-test-release
+      # This has to be a separate test since the emscripten sdk
+      # will otherwise interfere with other node-using tests
+      - name: Run emscripten test
+        run: |
+          . ~/emsdk/emsdk_env.sh
+          cargo make wasm-cpp-emscripten
 
   # Fmt job - runs cargo fmt
   fmt:
