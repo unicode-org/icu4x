@@ -480,7 +480,7 @@ mod tests {
     #[test]
     fn test_get() {
         {
-            let zerovec = ZeroVec::clone_from_slice(TEST_SLICE);
+            let zerovec = ZeroVec::from_slice(TEST_SLICE);
             assert_eq!(zerovec.get(0), Some(TEST_SLICE[0]));
             assert_eq!(zerovec.get(1), Some(TEST_SLICE[1]));
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
@@ -496,7 +496,7 @@ mod tests {
     #[test]
     fn test_binary_search() {
         {
-            let zerovec = ZeroVec::clone_from_slice(TEST_SLICE);
+            let zerovec = ZeroVec::from_slice(TEST_SLICE);
             assert_eq!(Ok(3), zerovec.binary_search(&0x0e0d0c));
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }
