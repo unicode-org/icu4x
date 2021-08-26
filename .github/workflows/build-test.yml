@@ -719,22 +719,22 @@ jobs:
         crate: cargo-make
         version: latest
 
-      - name: Attempt to load cached twiggy
-        uses: actions/cache@v2
-        id: twiggy-cache
-        with:
-          path: |
-            ~/.cargo/bin/twiggy
-            ~/.cargo/bin/twiggy.exe
-          key: ${{ runner.os }}-twiggy-92d59f439821cd6514a88e807dd6576bfece6244
-      - name: Install twiggy
-        if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
+    - name: Attempt to load cached twiggy
+      uses: actions/cache@v2
+      id: twiggy-cache
       with:
-        command: install
-        # We install a specific version since we need https://github.com/rustwasm/twiggy/pull/576 and
-        # twiggy has not been updated yet. Switch this back to a regular cargo install when twiggy is updated.
-        args: --git https://github.com/rustwasm/twiggy.git --rev 92d59f439821cd6514a88e807dd6576bfece6244 twiggy
+        path: |
+          ~/.cargo/bin/twiggy
+          ~/.cargo/bin/twiggy.exe
+        key: ${{ runner.os }}-twiggy-92d59f439821cd6514a88e807dd6576bfece6244
+    - name: Install twiggy
+      if: steps.twiggy-cache.outputs.cache-hit != 'true'
+    uses: actions-rs/cargo@v1.0.1
+    with:
+      command: install
+      # We install a specific version since we need https://github.com/rustwasm/twiggy/pull/576 and
+      # twiggy has not been updated yet. Switch this back to a regular cargo install when twiggy is updated.
+      args: --git https://github.com/rustwasm/twiggy.git --rev 92d59f439821cd6514a88e807dd6576bfece6244 twiggy
 
     - name: Install prerequisites for wasm build
       run: |
