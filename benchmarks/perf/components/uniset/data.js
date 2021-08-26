@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629959393415,
+  "lastUpdate": 1629979076074,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10169,6 +10169,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 33916739,
             "range": "± 1568570",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6ad8b6403b4cda34e7773d5493ffc8d5161edbc",
+          "message": "Support `other` extensions (#976)\n\n* Support `other` extensions\r\n\r\nFor test262 compliance, we need to be able to parse and write `other`\r\nextensions.\r\n\r\n* Add missing key.rs file\r\n\r\n* Run fmt and clippy\r\n\r\n* Apply review feedback",
+          "timestamp": "2021-08-26T07:51:19-04:00",
+          "tree_id": "6a3950abcaa5b691cd95a904be7a3ece9a4bf153",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6ad8b6403b4cda34e7773d5493ffc8d5161edbc"
+        },
+        "date": 1629979073243,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 41879679,
+            "range": "± 241099",
             "unit": "ns/iter"
           }
         ]
