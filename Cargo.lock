@@ -1435,7 +1435,7 @@ checksum = "c7d73b3f436185384286bd8098d17ec07c9a7d2388a6599f824d8502b529702a"
 
 [[package]]
 name = "litemap"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "bincode",
  "bytecheck",
