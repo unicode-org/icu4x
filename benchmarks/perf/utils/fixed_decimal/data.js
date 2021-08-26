@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629952590174,
+  "lastUpdate": 1629959380032,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9119,6 +9119,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 130676,
             "range": "± 5639",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7136f99745d3ac01ecc4baebd66a2dbbdbc9a97e",
+          "message": "Remove ErasedDataStruct::clone_into_box() (#1013)",
+          "timestamp": "2021-08-26T01:23:09-05:00",
+          "tree_id": "209a5bae0de7793c4308206163a1f7bb44ff09f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/7136f99745d3ac01ecc4baebd66a2dbbdbc9a97e"
+        },
+        "date": 1629959376754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 131069,
+            "range": "± 9935",
             "unit": "ns/iter"
           }
         ]
