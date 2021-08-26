@@ -20,20 +20,6 @@ pub struct LiteMap<K, V> {
     values: Vec<(K, V)>,
 }
 
-/// A version of [`LiteMap`] with a public field, used by `rkyv`.
-#[cfg(feature = "rkyv")]
-#[cfg_attr(
-    feature = "rkyv",
-    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
-)]
-#[cfg_attr(
-    feature = "bytecheck",
-    archive(derive(bytecheck::CheckBytes))
-)]
-pub struct LiteMapPub<K, V> {
-    pub values: Vec<(K, V)>,
-}
-
 impl<K, V> LiteMap<K, V> {
     /// Construct a new [`LiteMap`]
     pub fn new() -> Self {
@@ -70,24 +56,20 @@ impl<K, V> LiteMap<K, V> {
         self.values.reserve(additional)
     }
 
-    /// Convert a [`LiteMapPub`] into a [`LiteMap`].
-    /// 
+    /// Convert a `Vec<(K, V)>` into a [`LiteMap`].
+    ///
     /// # Safety
-    /// 
-    /// The [`LiteMapPub`]'s `values` slot must be sorted and have no duplicate keys.
-    #[cfg(feature = "rkyv")]
-    pub unsafe fn from_pub(litemap_pub: LiteMapPub<K, V>) -> Self {
-        Self {
-            values: litemap_pub.values
-        }
+    ///
+    /// The vec must be sorted and have no duplicate keys.
+    #[inline]
+    pub unsafe fn from_tuple_vec_unchecked(values: Vec<(K, V)>) -> Self {
+        Self { values }
     }
 
-    /// Convert a [`LiteMap`] into a [`LiteMapPub`].
-    #[cfg(feature = "rkyv")]
-    pub fn into_pub(self) -> LiteMapPub<K, V> {
-        LiteMapPub {
-            values: self.values
-        }
+    /// Convert a [`LiteMap`] into a `Vec<(K, V)>`.
+    #[inline]
+    pub fn into_tuple_vec(self) -> Vec<(K, V)> {
+        self.values
     }
 }
 

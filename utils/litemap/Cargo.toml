@@ -28,12 +28,12 @@ all-features = true
 
 [dependencies]
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
-rkyv = { version = "0.5", optional = true, features = ["validation"] }
-bytecheck = { version = "0.4", optional = true }
 
 [dev-dependencies]
 serde = "1"
 serde_json = "1"
+rkyv = { version = "0.5", features = ["validation"] }
+bytecheck = "0.4"
 bincode = "1"
 postcard = { version = "0.6", features = ["use-std"] }
 icu_locid = { version = "0.3", path = "../../components/locid" }
@@ -57,14 +57,11 @@ required-features = ["serde"]
 [[example]]
 name = "litemap_rkyv_archive"
 path = "benches/bin/litemap_rkyv_archive.rs"
-required-features = ["rkyv"]
 
 [[example]]
 name = "litemap_rkyv_check"
 path = "benches/bin/litemap_rkyv_check.rs"
-required-features = ["rkyv", "bytecheck"]
 
 [[example]]
 name = "litemap_rkyv_deserialize"
 path = "benches/bin/litemap_rkyv_deserialize.rs"
-required-features = ["rkyv"]
