@@ -11,3 +11,7 @@ ignore:
   - "**/benches/**/*"
   - "**/examples/**/*"
   - "provider/testdata/**/*"
+
+# Disable Codecov action from leaving comments on PRs
+# https://docs.codecov.com/docs/pull-request-comments#disable-comment
+comment: false
