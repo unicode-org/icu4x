@@ -2792,7 +2792,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.2.3"
+version = "0.3.0"
 dependencies = [
  "bincode",
  "criterion",
