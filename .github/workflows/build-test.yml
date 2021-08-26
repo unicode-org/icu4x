@@ -795,7 +795,7 @@ jobs:
       with:
         tool: 'ndjson'
         output-file-path: benchmarks/binsize/${{ matrix.type }}/output.txt
-        benchmark-data-dir-path: ./benchmarks/binsize${{ matrix.type }}
+        benchmark-data-dir-path: ./benchmarks/binsize/${{ matrix.type }}
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
