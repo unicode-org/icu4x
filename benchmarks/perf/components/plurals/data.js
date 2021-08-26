@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630003472258,
+  "lastUpdate": 1630008530100,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12977,6 +12977,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20715,
             "range": "± 62",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9cd784ed0a39196644cea04525b3f8669e1b4902",
+          "message": "Incorporate codesize reduction work into wearos build (#1017)",
+          "timestamp": "2021-08-26T13:01:27-07:00",
+          "tree_id": "c2576a301b98a5b56fb8c3061063f9b7d4615cf5",
+          "url": "https://github.com/unicode-org/icu4x/commit/9cd784ed0a39196644cea04525b3f8669e1b4902"
+        },
+        "date": 1630008527072,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1158,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6508,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20473,
+            "range": "± 236",
             "unit": "ns/iter"
           }
         ]
