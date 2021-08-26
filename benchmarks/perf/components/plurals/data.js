@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629991676085,
+  "lastUpdate": 1630001146471,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12893,6 +12893,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24965,
             "range": "± 2730",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0bd9e98b0bce1cc6724f596e91f51332fd266b28",
+          "message": "Add LICENSE to Cargo.toml include section (#1016)\n\nWe need to actually add LICENSE to the Cargo.toml include\r\nsection in order for it to be vendored properly.",
+          "timestamp": "2021-08-26T13:58:26-04:00",
+          "tree_id": "e6d9d779bae57b5480cbd008a90e0a95a503e757",
+          "url": "https://github.com/unicode-org/icu4x/commit/0bd9e98b0bce1cc6724f596e91f51332fd266b28"
+        },
+        "date": 1630001143675,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1369,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7743,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24327,
+            "range": "± 214",
             "unit": "ns/iter"
           }
         ]
