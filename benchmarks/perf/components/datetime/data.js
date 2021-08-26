@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630003441844,
+  "lastUpdate": 1630008487518,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6659,6 +6659,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 566848,
             "range": "± 961",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9cd784ed0a39196644cea04525b3f8669e1b4902",
+          "message": "Incorporate codesize reduction work into wearos build (#1017)",
+          "timestamp": "2021-08-26T13:01:27-07:00",
+          "tree_id": "c2576a301b98a5b56fb8c3061063f9b7d4615cf5",
+          "url": "https://github.com/unicode-org/icu4x/commit/9cd784ed0a39196644cea04525b3f8669e1b4902"
+        },
+        "date": 1630008484382,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 302858,
+            "range": "± 4878",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 560207,
+            "range": "± 1265",
             "unit": "ns/iter"
           }
         ]
