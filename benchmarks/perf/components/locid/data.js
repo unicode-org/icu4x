@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630001149539,
+  "lastUpdate": 1630003468636,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11693,6 +11693,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 5014,
             "range": "± 273",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9858aac7b581729580809cac02f556ee827a4c9e",
+          "message": "Fix a typo in the destination directory path of binsize benchmark data. (#1021)\n\nPart of resolution of ticket# 1019.",
+          "timestamp": "2021-08-26T11:38:07-07:00",
+          "tree_id": "f193f5530a8ad0a8f63115321fd6b456c2b715dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/9858aac7b581729580809cac02f556ee827a4c9e"
+        },
+        "date": 1630003465602,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2599,
+            "range": "± 183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4388,
+            "range": "± 265",
             "unit": "ns/iter"
           }
         ]
