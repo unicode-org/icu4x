@@ -292,7 +292,7 @@ mod tests {
         let index_array_as_bytes: &[u8] = super::INDEX_ARRAY_AS_BYTES;
         let index_zv_bytes: ZeroVec<u16> =
             ZeroVec::try_from_bytes(index_array_as_bytes).expect("infallible");
-        let index_zv_aligned: ZeroVec<u16> = ZeroVec::from_aligned(INDEX_ARRAY);
+        let index_zv_aligned: ZeroVec<u16> = ZeroVec::from_slice(INDEX_ARRAY);
         assert_eq!(index_zv_bytes, index_zv_aligned);
     }
 }

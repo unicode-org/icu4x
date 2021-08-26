@@ -140,7 +140,7 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
-    /// let zerovec = ZeroVec::from_aligned(nums);
+    /// let zerovec = ZeroVec::clone_from_slice(nums);
     ///
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
@@ -205,9 +205,9 @@ impl<T> ZeroVec<'_, T>
 where
     T: AsULE,
 {
-    /// Creates a `ZeroVec<T>` from a `&[T]`.
+    /// Creates a `ZeroVec<T>` from a `&[T]` by allocating memory.
     ///
-    /// This function allocates memory and results in an `Owned` instance of `ZeroVec<T>`.
+    /// This function results in an `Owned` instance of `ZeroVec<T>`.
     ///
     /// # Example
     ///
@@ -218,13 +218,13 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
     /// let nums: &[u16] = &[211, 281, 421, 461];
     ///
-    /// let zerovec = ZeroVec::from_aligned(nums);
+    /// let zerovec = ZeroVec::clone_from_slice(nums);
     ///
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
     #[inline]
-    pub fn from_aligned(other: &[T]) -> Self {
+    pub fn clone_from_slice(other: &[T]) -> Self {
         Self::Owned(other.iter().map(T::as_unaligned).collect())
     }
 
@@ -236,13 +236,66 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let nums: &[u16] = &[211, 281, 421, 461];
-    /// let vec: Vec<u16> = ZeroVec::from_aligned(nums).to_vec();
+    /// let vec: Vec<u16> = ZeroVec::clone_from_slice(nums).to_vec();
     ///
     /// assert_eq!(nums, vec.as_slice());
     /// ```
     #[inline]
     pub fn to_vec(&self) -> Vec<T> {
         self.as_slice().iter().map(T::from_unaligned).collect()
+    }
+}
+
+impl<'a, T> ZeroVec<'a, T>
+where
+    T: AsULE + SliceAsULE,
+{
+    /// Attempts to create a `ZeroVec<'a, T>` from a `&'a [T]` by borrowing the argument.
+    ///
+    /// If this is not possible, such as on a big-endian platform, `None` is returned.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// // The little-endian bytes correspond to the numbers on the following line.
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let nums: &[u16] = &[211, 281, 421, 461];
+    ///
+    /// if let Some(zerovec) = ZeroVec::try_from_slice(nums) {
+    ///     assert!(matches!(zerovec, ZeroVec::Borrowed(_)));
+    ///     assert_eq!(bytes, zerovec.as_bytes());
+    /// }
+    /// ```
+    #[inline]
+    pub fn try_from_slice(slice: &'a [T]) -> Option<Self> {
+        T::slice_as_unaligned(slice).map(|ule_slice| Self::Borrowed(ule_slice))
+    }
+
+    /// Creates a `ZeroVec<'a, T>` from a `&'a [T]`, either by borrowing the argument or by
+    /// allocating a new vector.
+    ///
+    /// This is a cheap operation on little-endian platforms, falling back to a more expensive
+    /// operation on big-endian platforms.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// // The little-endian bytes correspond to the numbers on the following line.
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let nums: &[u16] = &[211, 281, 421, 461];
+    ///
+    /// let zerovec = ZeroVec::from_slice(nums);
+    ///
+    /// // Note: zerovec could be either borrowed or owned.
+    /// assert_eq!(bytes, zerovec.as_bytes());
+    /// ```
+    #[inline]
+    pub fn from_slice(slice: &'a [T]) -> Self {
+        Self::try_from_slice(slice).unwrap_or_else(|| Self::clone_from_slice(slice))
     }
 }
 
@@ -427,7 +480,7 @@ mod tests {
     #[test]
     fn test_get() {
         {
-            let zerovec = ZeroVec::from_aligned(TEST_SLICE);
+            let zerovec = ZeroVec::from_slice(TEST_SLICE);
             assert_eq!(zerovec.get(0), Some(TEST_SLICE[0]));
             assert_eq!(zerovec.get(1), Some(TEST_SLICE[1]));
             assert_eq!(zerovec.get(2), Some(TEST_SLICE[2]));
@@ -443,7 +496,7 @@ mod tests {
     #[test]
     fn test_binary_search() {
         {
-            let zerovec = ZeroVec::from_aligned(TEST_SLICE);
+            let zerovec = ZeroVec::from_slice(TEST_SLICE);
             assert_eq!(Ok(3), zerovec.binary_search(&0x0e0d0c));
             assert_eq!(Err(3), zerovec.binary_search(&0x0c0d0c));
         }

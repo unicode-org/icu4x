@@ -77,6 +77,56 @@ pub trait AsULE {
     fn from_unaligned(unaligned: &Self::ULE) -> Self;
 }
 
+/// An [`EqULE`] type is one whose byte sequence equals the byte sequence of its ULE type on
+/// little-endian platforms. This enables certain performance optimizations.
+///
+/// # Implementation safety
+///
+/// This trait is safe to implement if the type's ULE (as defined by `impl `[`AsULE`]` for T`)
+/// has an equal byte sequence as the type itself on little-endian platforms; i.e., one where
+/// `*const T` can be cast to a valid `*const T::ULE`.
+pub unsafe trait EqULE: AsULE {}
+
+/// A trait for a type where aligned slices can be cast to unaligned slices.
+///
+/// Auto-implemented on all types implementing [`EqULE`].
+pub trait SliceAsULE
+where
+    Self: AsULE + Sized,
+{
+    /// Converts from `&[Self]` to `&[Self::ULE]` if possible.
+    ///
+    /// In general, this function returns `Some` on little-endian and `None` on big-endian.
+    fn slice_as_unaligned(slice: &[Self]) -> Option<&[Self::ULE]>;
+}
+
+#[cfg(target_endian = "little")]
+impl<T> SliceAsULE for T
+where
+    T: EqULE,
+{
+    #[inline]
+    fn slice_as_unaligned(slice: &[Self]) -> Option<&[Self::ULE]> {
+        // This is safe because on little-endian platforms, the byte sequence of &[T]
+        // is equivalent to the byte sequence of &[T::ULE] by the contract of EqULE,
+        // and &[T::ULE] has equal or looser alignment than &[T].
+        let ule_slice =
+            unsafe { core::slice::from_raw_parts(slice.as_ptr() as *const Self::ULE, slice.len()) };
+        Some(ule_slice)
+    }
+}
+
+#[cfg(not(target_endian = "little"))]
+impl<T> SliceAsULE for T
+where
+    T: EqULE,
+{
+    #[inline]
+    fn slice_as_unaligned(_: &[Self]) -> Option<&[Self::ULE]> {
+        None
+    }
+}
+
 /// A trait for any type that has a 1:1 mapping with an variable-width unaligned little-endian (VarULE) type.
 ///
 /// One such type is `String`, which can be handled as an [`str`], which has no alignment or endianness requirements.

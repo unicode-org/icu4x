@@ -30,7 +30,7 @@ path = "src/lib.rs"
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
 thiserror = "1.0"
-zerovec = { version = "0.2", path = "../../utils/zerovec" }
+zerovec = { version = "0.3", path = "../../utils/zerovec" }
 
 [features]
 default = ["provider_serde"]
@@ -40,4 +40,4 @@ provider_serde = ["serde", "zerovec/serde"]
 [dev-dependencies]
 toml = "0.5"
 serde = { version = "1.0", features = ["derive"] }
-zerovec = { version = "0.2", path = "../../utils/zerovec", features = ["serde"] }
+zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["serde"] }
