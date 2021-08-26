@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629979094387,
+  "lastUpdate": 1629991652023,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6551,6 +6551,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 566683,
             "range": "± 2649",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9bcfb461c75ea93697647079b4a7025f12bbcfbe",
+          "message": "Update pinned nightly for memory benchmarks and coverage (#1015)",
+          "timestamp": "2021-08-26T08:20:17-07:00",
+          "tree_id": "7936878bf9317b1c5183a45b1abd5884012ac071",
+          "url": "https://github.com/unicode-org/icu4x/commit/9bcfb461c75ea93697647079b4a7025f12bbcfbe"
+        },
+        "date": 1629991649024,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 387877,
+            "range": "± 13105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 705323,
+            "range": "± 32320",
             "unit": "ns/iter"
           }
         ]
