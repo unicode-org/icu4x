@@ -19,6 +19,7 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md",
     # Exception: We want to be able to run tests, so
     # we include the test data
