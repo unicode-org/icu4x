@@ -17,9 +17,6 @@ use core::any::TypeId;
 ///
 /// Requires the static lifetime in order to be convertible to [`Any`].
 pub trait ErasedDataStruct: 'static {
-    /// Clone this trait object reference, returning a boxed trait object.
-    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
-
     /// Return this boxed trait object as [`Box`]`<dyn `[`Any`]`>`.
     ///
     /// # Examples
@@ -210,10 +207,6 @@ where
     T: Any,
     for<'a> &'a T: Clone,
 {
-    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
-        todo!("#753")
-        // Box::new(self.clone())
-    }
     fn into_any(self: Box<Self>) -> Box<dyn Any> {
         self
     }
