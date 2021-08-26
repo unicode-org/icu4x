@@ -53,15 +53,3 @@ required-features = ["serde"]
 name = "litemap_postcard"
 path = "benches/bin/litemap_postcard.rs"
 required-features = ["serde"]
-
-[[example]]
-name = "litemap_rkyv_archive"
-path = "benches/bin/litemap_rkyv_archive.rs"
-
-[[example]]
-name = "litemap_rkyv_check"
-path = "benches/bin/litemap_rkyv_check.rs"
-
-[[example]]
-name = "litemap_rkyv_deserialize"
-path = "benches/bin/litemap_rkyv_deserialize.rs"

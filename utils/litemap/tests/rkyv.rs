@@ -2,19 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// LiteMap is intended as a small and low-memory drop-in replacement for
-// HashMap. This example demonstrates how it works with rkyv.
-
-#![no_main] // https://github.com/unicode-org/icu4x/issues/395
-
-icu_benchmark_macros::static_setup!();
-
 use litemap::LiteMap;
-use rkyv::{
-    archived_root,
-    ser::{serializers::AllocSerializer, Serializer},
-    util::AlignedBytes,
-};
+use rkyv::archived_root;
+use rkyv::check_archived_root;
+use rkyv::ser::serializers::AllocSerializer;
+use rkyv::ser::Serializer;
+use rkyv::util::AlignedBytes;
+use rkyv::util::AlignedVec;
+use rkyv::Deserialize;
+use rkyv::Infallible;
 
 const DATA: [(&str, &str); 11] = [
     ("ar", "Arabic"),
@@ -44,9 +40,7 @@ const RKYV: AlignedBytes<192> = AlignedBytes([
 type LiteMapOfStrings = LiteMap<String, String>;
 type TupleVecOfStrings = Vec<(String, String)>;
 
-/// Run this function to print new data to the console.
-#[allow(dead_code)]
-fn generate() {
+fn generate() -> AlignedVec {
     let mut map: LiteMapOfStrings = LiteMap::new();
     for (lang, name) in DATA.iter() {
         map.try_append(lang.to_string(), name.to_string())
@@ -59,20 +53,34 @@ fn generate() {
     serializer
         .serialize_value(&tuple_vec)
         .expect("failed to archive test");
-    let buf = serializer.into_serializer().into_inner();
-    println!("{:?}", buf);
+    serializer.into_serializer().into_inner()
 }
 
-#[no_mangle]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    icu_benchmark_macros::main_setup!();
+#[test]
+fn rkyv_serialize() {
+    let serialized = generate();
+    assert_eq!(RKYV.0, serialized.as_slice());
+}
 
-    // Uncomment the following line to re-generate the binary data.
-    // generate();
-
+#[test]
+fn rkyv_archive() {
     let archived = unsafe { archived_root::<TupleVecOfStrings>(&RKYV.0) };
     let s = archived[0].1.as_str();
     assert_eq!(s, "Arabic");
+}
 
-    0
+#[test]
+fn rkyv_checked_archive() {
+    let archived = check_archived_root::<TupleVecOfStrings>(&RKYV.0).unwrap();
+    let s = archived[0].1.as_str();
+    assert_eq!(s, "Arabic");
+}
+
+#[test]
+fn rkyv_deserialize() {
+    let archived = unsafe { archived_root::<TupleVecOfStrings>(&RKYV.0) };
+    let deserialized = archived.deserialize(&mut Infallible).unwrap();
+    // Safe because we are deserializing a buffer from a trusted source
+    let deserialized: LiteMapOfStrings = unsafe { LiteMap::from_tuple_vec_unchecked(deserialized) };
+    assert_eq!(deserialized.get("tr"), Some(&"Turkish".to_string()));
 }
