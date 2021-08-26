@@ -12,8 +12,8 @@ icu_benchmark_macros::static_setup!();
 use litemap::LiteMap;
 use rkyv::{
     archived_root,
-    ser::{serializers::WriteSerializer, Serializer},
-    Aligned, AlignedVec,
+    ser::{serializers::AllocSerializer, Serializer},
+    util::AlignedBytes,
 };
 
 const DATA: [(&'static str, &'static str); 11] = [
@@ -30,7 +30,7 @@ const DATA: [(&'static str, &'static str); 11] = [
     ("tr", "Turkish"),
 ];
 
-const RKYV: Aligned<[u8; 280]> = Aligned([
+const RKYV: AlignedBytes<280> = AlignedBytes([
     65, 114, 97, 98, 105, 99, 97, 114, 66, 97, 110, 103, 108, 97, 98, 110, 67, 104, 97, 107, 109,
     97, 99, 99, 112, 69, 110, 103, 108, 105, 115, 104, 101, 110, 83, 112, 97, 110, 105, 115, 104,
     101, 115, 70, 114, 101, 110, 99, 104, 102, 114, 74, 97, 112, 97, 110, 101, 115, 101, 106, 97,
@@ -60,11 +60,11 @@ fn generate() {
     }
     let tuple_vec = map.into_tuple_vec();
 
-    let mut serializer = WriteSerializer::new(AlignedVec::new());
+    let mut serializer = AllocSerializer::<4096>::default();
     serializer
         .serialize_value(&tuple_vec)
         .expect("failed to archive test");
-    let buf = serializer.into_inner();
+    let buf = serializer.into_serializer().into_inner();
     println!("{:?}", buf);
 }
 

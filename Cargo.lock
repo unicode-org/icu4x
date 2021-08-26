@@ -18,6 +18,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
+name = "ahash"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43bb833f0bf979d8475d38fbf09ed3b8a55e1885fe93ad3f93239fc6a4f17b98"
+dependencies = [
+ "getrandom 0.2.2",
+ "once_cell",
+ "version_check",
+]
+
+[[package]]
 name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -43,18 +54,6 @@ name = "arrayvec"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
-
-[[package]]
-name = "as-slice"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45403b49e3954a4b8428a0ac21a4b7afadccf92bfd96273f1a58cd4812496ae0"
-dependencies = [
- "generic-array 0.12.4",
- "generic-array 0.13.3",
- "generic-array 0.14.4",
- "stable_deref_trait",
-]
 
 [[package]]
 name = "async-compression"
@@ -191,20 +190,19 @@ checksum = "63396b8a4b9de3f4fdfb320ab6080762242f66a8ef174c49d8e19b674db4cdbe"
 
 [[package]]
 name = "bytecheck"
-version = "0.4.1"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc01d00caeff7a3d27dd7afd3a2dec62557d28684ee88e5c5ef2a8ff8a715913"
+checksum = "fb738a1e65989ecdcd5bba16079641bd7209688fa546e1064832fd6e012fd32a"
 dependencies = [
  "bytecheck_derive",
- "memoffset",
  "ptr_meta",
 ]
 
 [[package]]
 name = "bytecheck_derive"
-version = "0.4.1"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a9ccb631a8071909d61ede2a33ea6f0305c72999cd02245c85eec9ccb48844a"
+checksum = "c3b4dff26fdc9f847dab475c9fec16f2cba82d5aa1f09981b87c44520721e10a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -763,34 +761,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "generic-array"
-version = "0.12.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffdf9f34f1447443d37393cc6c2b8313aebddcd96906caf34e54c68d8e57d7bd"
-dependencies = [
- "typenum",
-]
-
-[[package]]
-name = "generic-array"
-version = "0.13.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f797e67af32588215eaaab8327027ee8e71b9dd0b2b26996aedf20c030fce309"
-dependencies = [
- "typenum",
-]
-
-[[package]]
-name = "generic-array"
-version = "0.14.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "501466ecc8a30d1d3b7fc9229b122b2ce8ed6e9d9223f1138d4babb253e51817"
-dependencies = [
- "typenum",
- "version_check",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -847,15 +817,6 @@ checksum = "62aca2aba2d62b4a7f5b33f3712cb1b0692779a56fb510499d5c0aa594daeaf3"
 
 [[package]]
 name = "hash32"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4041af86e63ac4298ce40e5cca669066e75b6f1aa3390fe2561ffa5e1d9f4cc"
-dependencies = [
- "byteorder",
-]
-
-[[package]]
-name = "hash32"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b0c35f58762feb77d74ebe43bdbc3210f09be9fe6742234d573bacc26ed92b67"
@@ -870,16 +831,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
 
 [[package]]
-name = "heapless"
-version = "0.6.1"
+name = "hashbrown"
+version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "634bd4d29cbf24424d0a4bfcbf80c6960129dc24424752a7d1d1390607023422"
+checksum = "ab5ef0d4909ef3724cc8cce6ccc8572c5c817592e9285f5464f8e86f8bd3726e"
 dependencies = [
- "as-slice",
- "generic-array 0.14.4",
- "hash32 0.1.1",
- "serde",
- "stable_deref_trait",
+ "ahash",
 ]
 
 [[package]]
@@ -889,7 +846,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34e26526e7168021f34243a3c8faac4dc4f938cde75a0f9b8e373cca5eb4e7ce"
 dependencies = [
  "atomic-polyfill",
- "hash32 0.2.1",
+ "hash32",
  "serde",
  "stable_deref_trait",
 ]
@@ -1244,7 +1201,7 @@ dependencies = [
  "icu_testdata",
  "litemap",
  "log",
- "postcard 0.7.2",
+ "postcard",
  "serde",
  "writeable",
 ]
@@ -1410,7 +1367,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "824845a0bf897a9042383849b02c1bc219c2383772efcd5c6f9766fa4b81aef3"
 dependencies = [
  "autocfg",
- "hashbrown",
+ "hashbrown 0.9.1",
 ]
 
 [[package]]
@@ -1485,7 +1442,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_locid",
  "icu_locid_macros",
- "postcard 0.6.1",
+ "postcard",
  "rkyv",
  "serde",
  "serde_json",
@@ -1828,22 +1785,11 @@ checksum = "b18befed8bc2b61abc79a457295e7e838417326da1586050b919414073977f19"
 
 [[package]]
 name = "postcard"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "66acf3cf8ab62785852a0f67ae3bfcd38324da6561e52e7f4a049ca555c6d55e"
-dependencies = [
- "heapless 0.6.1",
- "postcard-cobs",
- "serde",
-]
-
-[[package]]
-name = "postcard"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c8863e251332eb18520388099b8b0acc4810ed6e602e3b6f674e8a46ba20e15c"
 dependencies = [
- "heapless 0.7.3",
+ "heapless",
  "postcard-cobs",
  "serde",
 ]
@@ -2070,6 +2016,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rend"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d0351a2e529ee30d571ef31faa5a4e0b9addaad087697b77efb20d2809e41c7"
+dependencies = [
+ "bytecheck",
+]
+
+[[package]]
 name = "reqwest"
 version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2108,22 +2063,23 @@ dependencies = [
 
 [[package]]
 name = "rkyv"
-version = "0.5.2"
+version = "0.7.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3150eaa6653706f52d9bf1f8b9c85e800872e014f069b3099d26a65768f16c1"
+checksum = "caf9c52e588936066adb8146e31e038393317dbd6b41e5aaf6fad67c34f7156a"
 dependencies = [
  "bytecheck",
- "memoffset",
+ "hashbrown 0.11.2",
  "ptr_meta",
+ "rend",
  "rkyv_derive",
  "seahash",
 ]
 
 [[package]]
 name = "rkyv_derive"
-version = "0.5.1"
+version = "0.7.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8460ab714767ced2855344a673d49a7fddc5066fd0ee368ce40a6425c4d774f8"
+checksum = "5d9615d20d68fdcd5c7b85d502f965b2b5559944829f7a20d241437f3d163e3e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2646,12 +2602,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
 
 [[package]]
-name = "typenum"
-version = "1.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "879f6906492a7cd215bfa4cf595b600146ccfac0c79bcbd1f3000162af5e8b06"
-
-[[package]]
 name = "ucd-trie"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2961,7 +2911,7 @@ dependencies = [
  "getrandom 0.2.2",
  "iai",
  "icu_benchmark_macros",
- "postcard 0.7.2",
+ "postcard",
  "rand",
  "rand_distr",
  "rand_pcg",
