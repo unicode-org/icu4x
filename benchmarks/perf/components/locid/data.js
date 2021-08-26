@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629952639320,
+  "lastUpdate": 1629959413667,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11549,6 +11549,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4420,
             "range": "± 259",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7136f99745d3ac01ecc4baebd66a2dbbdbc9a97e",
+          "message": "Remove ErasedDataStruct::clone_into_box() (#1013)",
+          "timestamp": "2021-08-26T01:23:09-05:00",
+          "tree_id": "209a5bae0de7793c4308206163a1f7bb44ff09f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/7136f99745d3ac01ecc4baebd66a2dbbdbc9a97e"
+        },
+        "date": 1629959409505,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2922,
+            "range": "± 269",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4952,
+            "range": "± 269",
             "unit": "ns/iter"
           }
         ]
