@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629934516104,
+  "lastUpdate": 1629943723094,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -11477,6 +11477,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 4006,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a807a847bff2e8608d73a9881db0376a406e5125",
+          "message": "Update pinned nightly (#1010)\n\n* Update pinned nightly rustc to nightly-2021-08-20\r\n\r\n* Install prerelease twiggy from git\r\n\r\n* fix indent\r\n\r\n* set hash as variable\r\n\r\n* fix indent more\r\n\r\n* Install newer wasm-opt on wasm task",
+          "timestamp": "2021-08-25T19:01:38-07:00",
+          "tree_id": "cdd0442822805569a7642e2d4949409d40d61015",
+          "url": "https://github.com/unicode-org/icu4x/commit/a807a847bff2e8608d73a9881db0376a406e5125"
+        },
+        "date": 1629943720140,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2650,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4655,
+            "range": "± 241",
             "unit": "ns/iter"
           }
         ]
