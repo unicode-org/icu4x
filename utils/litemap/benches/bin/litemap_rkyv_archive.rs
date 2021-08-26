@@ -16,7 +16,7 @@ use rkyv::{
     util::AlignedBytes,
 };
 
-const DATA: [(&'static str, &'static str); 11] = [
+const DATA: [(&str, &str); 11] = [
     ("ar", "Arabic"),
     ("bn", "Bangla"),
     ("ccp", "Chakma"),
