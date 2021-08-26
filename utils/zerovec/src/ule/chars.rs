@@ -83,6 +83,10 @@ impl AsULE for char {
     }
 }
 
+// EqULE is true because `char` is transmutable to `u32`, which in turn has the same byte sequence
+// as CharULE on little-endian platforms.
+unsafe impl EqULE for char {}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -99,6 +103,13 @@ mod test {
         assert_eq!(char_ules, parsed_ules);
         let parsed_chars: Vec<char> = parsed_ules.iter().map(char::from_unaligned).collect();
         assert_eq!(&chars, parsed_chars.as_slice());
+
+        // Check EqULE
+        let char_ule_slice = char::slice_as_unaligned(&chars);
+        #[cfg(target_endian = "little")]
+        assert_eq!(char_ule_slice, Some(char_ules.as_slice()));
+        #[cfg(not(target_endian = "little"))]
+        assert_eq!(char_ule_slice, None);
 
         // Compare to u32
         let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();

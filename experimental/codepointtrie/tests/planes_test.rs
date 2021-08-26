@@ -49,8 +49,8 @@ fn planes_trie_deserialize_check_test() {
         null_value: code_point_trie_struct.null_value,
     };
 
-    let data = ZeroVec::from_aligned(&code_point_trie_struct.data_8.unwrap());
-    let index = ZeroVec::from_aligned(&code_point_trie_struct.index);
+    let data = ZeroVec::from_slice(code_point_trie_struct.data_8.as_ref().unwrap());
+    let index = ZeroVec::from_slice(&code_point_trie_struct.index);
     let trie_result: Result<CodePointTrie<u8, Small>, Error> =
         CodePointTrie::try_new(trie_header, index, data);
     let act_planes_trie = trie_result.unwrap();
