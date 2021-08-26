@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1629943685048,
+  "lastUpdate": 1629952590174,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9089,6 +9089,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 119214,
             "range": "± 5711",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3d668128cfd7f4f04406950f779120c1c4b3d1a9",
+          "message": "Remove obsolete ToOwned impls for [SerdeSe/Erased]DataStruct (#1011)",
+          "timestamp": "2021-08-25T23:30:22-05:00",
+          "tree_id": "4c4920fdf7d06cfec9348867524d80285a58f397",
+          "url": "https://github.com/unicode-org/icu4x/commit/3d668128cfd7f4f04406950f779120c1c4b3d1a9"
+        },
+        "date": 1629952587519,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130676,
+            "range": "± 5639",
             "unit": "ns/iter"
           }
         ]
