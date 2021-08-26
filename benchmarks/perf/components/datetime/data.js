@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630008487518,
+  "lastUpdate": 1630011668584,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6695,6 +6695,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 560207,
             "range": "± 1265",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee3da0d8310e6adafea99f713893c5e61ed81533",
+          "message": "Add EqULE trait to make ZeroVec::from_aligned more efficient (#1012)\n\n* Bumps ZeroVec to 0.3.0 since this is a breaking change (new fn name)",
+          "timestamp": "2021-08-26T15:54:06-05:00",
+          "tree_id": "516599893c6f434c786758ca445656cffe69ac75",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee3da0d8310e6adafea99f713893c5e61ed81533"
+        },
+        "date": 1630011665316,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 356235,
+            "range": "± 38178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 674881,
+            "range": "± 59850",
             "unit": "ns/iter"
           }
         ]
