@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630008530100,
+  "lastUpdate": 1630011642335,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13019,6 +13019,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20473,
             "range": "± 236",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee3da0d8310e6adafea99f713893c5e61ed81533",
+          "message": "Add EqULE trait to make ZeroVec::from_aligned more efficient (#1012)\n\n* Bumps ZeroVec to 0.3.0 since this is a breaking change (new fn name)",
+          "timestamp": "2021-08-26T15:54:06-05:00",
+          "tree_id": "516599893c6f434c786758ca445656cffe69ac75",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee3da0d8310e6adafea99f713893c5e61ed81533"
+        },
+        "date": 1630011639568,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1018,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5789,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17991,
+            "range": "± 135",
             "unit": "ns/iter"
           }
         ]
