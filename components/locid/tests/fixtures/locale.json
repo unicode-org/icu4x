@@ -274,5 +274,25 @@
       "type": "Locale",
       "identifier": "pt-u-attr1-attr2-ca-gregory"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-a-not-assigned"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "en-a-not-assigned"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-w-bar-u-foo-a-bar-x-u-foo"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "en-a-bar-u-foo-w-bar-x-u-foo"
+    }
   }
 ]
