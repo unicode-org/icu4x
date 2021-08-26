@@ -253,10 +253,10 @@ jobs:
           key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
       - name: Install twiggy
         if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: install
-        args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
+        uses: actions-rs/cargo@v1.0.1
+        with:
+          command: install
+          args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
 
 
       - name: Get cargo-make version
@@ -741,10 +741,10 @@ jobs:
         key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
-    uses: actions-rs/cargo@v1.0.1
-    with:
-      command: install
-      args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
 
     - name: Install prerequisites for wasm build
       run: |
