@@ -234,8 +234,8 @@ jobs:
           rustup component add rust-src --toolchain nightly-2021-08-20
       - name: Install WASM tools
         run: |
-          sudo apt-get install wabt binaryen
-
+          sudo npm install -g wasm-opt --unsafe-perm
+          sudo npm install -g wabt
       - name: Get twiggy version
         id: twiggy-version
         run: |
