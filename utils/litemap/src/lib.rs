@@ -23,3 +23,6 @@ extern crate alloc;
 mod map;
 
 pub use map::LiteMap;
+
+#[cfg(feature = "rkyv")]
+pub use map::LiteMapPub;
