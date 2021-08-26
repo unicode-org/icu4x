@@ -112,11 +112,11 @@ jobs:
       run: rustup show
     - name: Load cortex target for no_std build.
       run: |
-        rustup install nightly-2021-02-28
-        rustup component add --toolchain nightly-2021-02-28 rust-src
-        rustup target add thumbv7m-none-eabi --toolchain nightly-2021-02-28
-        rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2021-02-28
-        rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2021-02-28
+        rustup install nightly-2021-08-20
+        rustup component add --toolchain nightly-2021-08-20 rust-src
+        rustup target add thumbv7m-none-eabi --toolchain nightly-2021-08-20
+        rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2021-08-20
+        rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2021-08-20
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -228,18 +228,20 @@ jobs:
       - uses: actions/checkout@v2
       - name: Load nightly Rust toolchain for WASM.
         run: |
-          rustup install nightly-2021-02-28
-          rustup target add wasm32-unknown-unknown --toolchain nightly-2021-02-28
-          rustup target add wasm32-unknown-emscripten --toolchain nightly-2021-02-28
-          rustup component add rust-src --toolchain nightly-2021-02-28
+          rustup install nightly-2021-08-20
+          rustup target add wasm32-unknown-unknown --toolchain nightly-2021-08-20
+          rustup target add wasm32-unknown-emscripten --toolchain nightly-2021-08-20
+          rustup component add rust-src --toolchain nightly-2021-08-20
       - name: Install WASM tools
         run: |
-          sudo apt-get install wabt binaryen
-
+          sudo npm install -g wasm-opt --unsafe-perm
+          sudo npm install -g wabt
       - name: Get twiggy version
         id: twiggy-version
         run: |
-          echo "::set-output name=hash::$(cargo search twiggy | grep '^twiggy =' | md5sum)"
+          # We install a specific version since we need https://github.com/rustwasm/twiggy/pull/576 and
+          # twiggy has not been updated yet. Switch this back to a regular cargo install when twiggy is updated.
+          echo "::set-output name=hash::92d59f439821cd6514a88e807dd6576bfece6244"
         shell: bash
       - name: Attempt to load cached twiggy
         uses: actions/cache@v2
@@ -251,10 +253,11 @@ jobs:
           key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
       - name: Install twiggy
         if: steps.twiggy-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/install@v0.1.2
+        uses: actions-rs/cargo@v1.0.1
         with:
-          crate: twiggy
-          version: latest
+          command: install
+          args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
+
 
       - name: Get cargo-make version
         id: cargo-make-version
@@ -724,7 +727,9 @@ jobs:
     - name: Get twiggy version
       id: twiggy-version
       run: |
-        echo "::set-output name=hash::$(cargo search twiggy | grep '^twiggy =' | md5sum)"
+        # We install a specific version since we need https://github.com/rustwasm/twiggy/pull/576 and
+        # twiggy has not been updated yet. Switch this back to a regular cargo install when twiggy is updated.
+        echo "::set-output name=hash::92d59f439821cd6514a88e807dd6576bfece6244"
       shell: bash
     - name: Attempt to load cached twiggy
       uses: actions/cache@v2
@@ -736,16 +741,16 @@ jobs:
         key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
+      uses: actions-rs/cargo@v1.0.1
       with:
-        crate: twiggy
-        version: latest
+        command: install
+        args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
 
     - name: Install prerequisites for wasm build
       run: |
         rustup component add rust-src
         rustup toolchain list
-        rustup toolchain install nightly-2021-02-28
+        rustup toolchain install nightly-2021-08-20
         sudo npm install -g wasm-opt --unsafe-perm
         sudo npm install -g wabt
 
