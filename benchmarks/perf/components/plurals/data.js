@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630001146471,
+  "lastUpdate": 1630003472258,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12935,6 +12935,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24327,
             "range": "± 214",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41129501+gnrunge@users.noreply.github.com",
+            "name": "Norbert Runge",
+            "username": "gnrunge"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9858aac7b581729580809cac02f556ee827a4c9e",
+          "message": "Fix a typo in the destination directory path of binsize benchmark data. (#1021)\n\nPart of resolution of ticket# 1019.",
+          "timestamp": "2021-08-26T11:38:07-07:00",
+          "tree_id": "f193f5530a8ad0a8f63115321fd6b456c2b715dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/9858aac7b581729580809cac02f556ee827a4c9e"
+        },
+        "date": 1630003469087,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1171,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6497,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 20715,
+            "range": "± 62",
             "unit": "ns/iter"
           }
         ]
