@@ -55,6 +55,22 @@ impl<K, V> LiteMap<K, V> {
     pub fn reserve(&mut self, additional: usize) {
         self.values.reserve(additional)
     }
+
+    /// Convert a `Vec<(K, V)>` into a [`LiteMap`].
+    ///
+    /// # Safety
+    ///
+    /// The vec must be sorted and have no duplicate keys.
+    #[inline]
+    pub unsafe fn from_tuple_vec_unchecked(values: Vec<(K, V)>) -> Self {
+        Self { values }
+    }
+
+    /// Convert a [`LiteMap`] into a `Vec<(K, V)>`.
+    #[inline]
+    pub fn into_tuple_vec(self) -> Vec<(K, V)> {
+        self.values
+    }
 }
 
 impl<K: Ord, V> LiteMap<K, V> {
