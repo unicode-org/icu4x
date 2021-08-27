@@ -382,21 +382,18 @@ where
         }
     }
 
-    pub fn project<M2>(
+    pub fn map_project<M2>(
         self,
         f: for<'a> fn(
-            _: <M::Yokeable as Yokeable<'a>>::Output,
-            _: PhantomData<&'a ()>,
+            <M::Yokeable as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<'d, 's, M2>
+    ) -> DataPayload<'data, M2>
     where
-        M2: DataMarker<'s, Cart = M::Cart>,
+        M2: DataMarker<'data, Cart = M::Cart>,
     {
         use DataPayloadInner::*;
         match self.inner {
-            Borrowed(yoke) => DataPayload {
-                inner: Borrowed(yoke.project(f)),
-            },
             RcStruct(yoke) => DataPayload {
                 inner: RcStruct(yoke.project(f)),
             },
@@ -405,6 +402,82 @@ where
             },
             RcBuf(yoke) => DataPayload {
                 inner: RcBuf(yoke.project(f)),
+            },
+        }
+    }
+
+    pub fn map_project_cloned<'this, M2>(
+        &'this self,
+        f: for<'a> fn(
+            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match &self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project_cloned(f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project_cloned(f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project_cloned(f)),
+            },
+        }
+    }
+
+    pub fn map_project_with_capture<M2, T>(
+        self,
+        capture: T,
+        f: for<'a> fn(
+            <M::Yokeable as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project_with_capture(capture, f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project_with_capture(capture, f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project_with_capture(capture, f)),
+            },
+        }
+    }
+
+    pub fn map_project_cloned_with_capture<'this, M2, T>(
+        &'this self,
+        capture: T,
+        f: for<'a> fn(
+            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            capture: T,
+            PhantomData<&'a ()>,
+        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
+    ) -> DataPayload<'data, M2>
+    where
+        M2: DataMarker<'data, Cart = M::Cart>,
+    {
+        use DataPayloadInner::*;
+        match &self.inner {
+            RcStruct(yoke) => DataPayload {
+                inner: RcStruct(yoke.project_cloned_with_capture(capture, f)),
+            },
+            Owned(yoke) => DataPayload {
+                inner: Owned(yoke.project_cloned_with_capture(capture, f)),
+            },
+            RcBuf(yoke) => DataPayload {
+                inner: RcBuf(yoke.project_cloned_with_capture(capture, f)),
             },
         }
     }
