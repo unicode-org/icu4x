@@ -7,7 +7,7 @@ use core::{
     ops::{Bound::*, RangeBounds},
 };
 use zerovec::ZeroVec;
-// use zerovec::ule::AsULE;
+use zerovec::ule::AsULE;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
