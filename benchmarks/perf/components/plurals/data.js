@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630011642335,
+  "lastUpdate": 1630088010431,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13061,6 +13061,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 17991,
             "range": "± 135",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3c019c9c1ce1476a6e41325e22fbce1447dab127",
+          "message": "Add LiteMap benchmark binaries for Bincode, Postcard and tests for Rkyv (#1014)\n\n* Bump minor version number of LiteMap for new methods",
+          "timestamp": "2021-08-27T13:06:22-05:00",
+          "tree_id": "8dafae9d6a0ceebd64a76ee406ee4505667acbd9",
+          "url": "https://github.com/unicode-org/icu4x/commit/3c019c9c1ce1476a6e41325e22fbce1447dab127"
+        },
+        "date": 1630088006671,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1377,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7670,
+            "range": "± 322",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24129,
+            "range": "± 966",
             "unit": "ns/iter"
           }
         ]
