@@ -560,31 +560,6 @@ where
     }
 }
 
-#[test]
-fn test_map_project_docs() {
-    use crate::hello_world::*;
-    use crate::prelude::*;
-    use std::borrow::Cow;
-
-    struct HelloWorldV1MessageMarker;
-    impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
-        type Yokeable = Cow<'static, str>;
-        type Cart = HelloWorldV1<'data>;
-    }
-    
-    let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-        message: Cow::Borrowed("Hello World")
-    });
-    
-    assert_eq!("Hello World", p1.get().message);
-    
-    let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project(|obj, _| {
-        obj.message
-    });
-    
-    assert_eq!("Hello World", p2.get());
-}
-
 /// A response object containing an object as payload and metadata about it.
 pub struct DataResponse<'data, M>
 where
