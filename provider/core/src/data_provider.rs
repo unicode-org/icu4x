@@ -104,12 +104,38 @@ where
     RcBuf(Yoke<M::Yokeable, Rc<[u8]>>),
 }
 
-/// A wrapper around the payload returned in a [`DataResponse`].
+/// A container for data payloads returned from a [`DataProvider`].
 ///
-/// Internally, the data is represented using the [`yoke`] crate, with several variations for
-/// different ownership models.
+/// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
+/// operations on data via the use of self-references. A [`DataPayload`] may be backed by one of
+/// several data stores ("carts"):
 ///
-/// `DataPayload` is closely coupled with [`DataMarker`].
+/// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
+/// 2. Partially-owned structured data in an [`Rc`] ([`DataPayload::from_partial_owned()`])
+/// 3. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
+///
+/// The type of the data stored in [`DataPayload`], and the type of the structured data store
+/// (cart), is determined by the [`DataMarker`] type parameter.
+///
+/// ## Accessing the data
+///
+/// To get a reference to the data inside [`DataPayload`], use [`DataPayload::get()`]. If you need
+/// to store the data for later use, it is recommended to store the [`DataPayload`] itself, not
+/// the ephemeral reference, since the reference results in a short-lived lifetime.
+///
+/// ## Mutating the data
+///
+/// To modify the data stored in a [`DataPayload`], use [`DataPayload::with_mut()`].
+///
+/// ## Transforming the data to a different type
+///
+/// To transform a [`DataPayload`] to a different type backed by the same data store (cart), use
+/// [`DataPayload::map_project()`] or one of its sister methods.
+///
+/// ## Downcasting from a trait object
+///
+/// If you have a [`DataPayload`]`<`[`ErasedDataStructMarker`]`>`, use [`DataPayload::downcast()`]
+/// to transform it into a payload of a concrete type.
 ///
 /// # Examples
 ///
@@ -382,6 +408,52 @@ where
         }
     }
 
+    /// Maps `DataPayload<M>` to `DataPayload<M2>` by projecting it with [`Yoke::project`].
+    ///
+    /// This is accomplished by a function that takes `M`'s data type and returns `M2`'s data
+    /// type. The function takes a second argument which should be ignored. For more details,
+    /// see [`Yoke::project()`].
+    ///
+    /// Both `M` and `M2` have the same [`DataMarker::Cart`]. This means that when using
+    /// `map_project`, it is usually necessary to define a custom [`DataMarker`] type.
+    ///
+    /// The standard [`DataPayload::map_project()`] function moves `self` and cannot capture any
+    /// data from its context. Use one of the sister methods if you need these capabilities:
+    ///
+    /// - [`DataPayload::map_project_cloned()`] if you don't have ownership of `self`
+    /// - [`DataPayload::map_project_with_capture()`] to pass context to the mapping function
+    /// - [`DataPayload::map_project_cloned_with_capture()`] to do both of these things
+    ///
+    /// # Example
+    ///
+    /// Map from `HelloWorldV1` to a `Cow<str>` containing just the message:
+    ///
+    /// ```
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    /// use std::borrow::Cow;
+    ///
+    /// // A custom marker type is required when using `map_project`. The Yokeable should be the
+    /// // target type, and the Cart should correspond to the type being transformed.
+    ///
+    /// struct HelloWorldV1MessageMarker;
+    /// impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+    ///     type Yokeable = Cow<'static, str>;
+    ///     type Cart = HelloWorldV1<'data>;
+    /// }
+    ///
+    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+    ///     message: Cow::Borrowed("Hello World")
+    /// });
+    ///
+    /// assert_eq!("Hello World", p1.get().message);
+    ///
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project(|obj, _| {
+    ///     obj.message
+    /// });
+    ///
+    /// assert_eq!("Hello World", p2.get());
+    /// ```
     pub fn map_project<M2>(
         self,
         f: for<'a> fn(
@@ -406,6 +478,7 @@ where
         }
     }
 
+    /// Version of [`DataPayload::map_project()`] that borrows `self` instead of moving `self`.
     pub fn map_project_cloned<'this, M2>(
         &'this self,
         f: for<'a> fn(
@@ -430,6 +503,8 @@ where
         }
     }
 
+    /// Version of [`DataPayload::map_project()`] that moves `self` and takes a `capture`
+    /// parameter to pass additional data to `f`.
     pub fn map_project_with_capture<M2, T>(
         self,
         capture: T,
@@ -456,6 +531,8 @@ where
         }
     }
 
+    /// Version of [`DataPayload::map_project()`] that borrows `self` and takes a `capture`
+    /// parameter to pass additional data to `f`.
     pub fn map_project_cloned_with_capture<'this, M2, T>(
         &'this self,
         capture: T,
@@ -481,6 +558,31 @@ where
             },
         }
     }
+}
+
+#[test]
+fn test_map_project_docs() {
+    use crate::hello_world::*;
+    use crate::prelude::*;
+    use std::borrow::Cow;
+
+    struct HelloWorldV1MessageMarker;
+    impl<'data> DataMarker<'data> for HelloWorldV1MessageMarker {
+        type Yokeable = Cow<'static, str>;
+        type Cart = HelloWorldV1<'data>;
+    }
+    
+    let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        message: Cow::Borrowed("Hello World")
+    });
+    
+    assert_eq!("Hello World", p1.get().message);
+    
+    let p2: DataPayload<HelloWorldV1MessageMarker> = p1.map_project(|obj, _| {
+        obj.message
+    });
+    
+    assert_eq!("Hello World", p2.get());
 }
 
 /// A response object containing an object as payload and metadata about it.
