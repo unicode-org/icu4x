@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630087950598,
+  "lastUpdate": 1630350936773,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6767,6 +6767,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 559432,
             "range": "± 4754",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "36524d6f40f45a18e5afade7c1010adcd4659ab2",
+          "message": "Fix UnicodeSetBuilder::complement for empty sets (#961)\n\n* Fix UnicodeSetBuilder::complement for empty sets\r\n\r\n* Cargo fmt\r\n\r\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-08-30T12:08:58-07:00",
+          "tree_id": "97f4c6cea5cc5156477600529327695ef6822995",
+          "url": "https://github.com/unicode-org/icu4x/commit/36524d6f40f45a18e5afade7c1010adcd4659ab2"
+        },
+        "date": 1630350934383,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 302747,
+            "range": "± 543",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 564582,
+            "range": "± 3407",
             "unit": "ns/iter"
           }
         ]
