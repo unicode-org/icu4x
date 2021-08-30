@@ -22,7 +22,6 @@
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
-use alloc::boxed::Box;
 use alloc::rc::Rc;
 
 use core::ops::Deref;
@@ -180,9 +179,6 @@ where
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
 pub trait SerdeSeDataStruct<'data>: 'data {
-    /// Clone this trait object reference, returning a boxed trait object.
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'data> + 'data>;
-
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Examples
@@ -210,17 +206,10 @@ pub trait SerdeSeDataStruct<'data>: 'data {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
-impl_dyn_clone!(SerdeSeDataStruct<'data>, 'data);
-
 impl<'data, T> SerdeSeDataStruct<'data> for T
 where
     T: 'data + serde::Serialize,
-    for<'a> &'a T: Clone,
 {
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'data> + 'data> {
-        todo!("#753")
-        // Box::new(self.clone())
-    }
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }

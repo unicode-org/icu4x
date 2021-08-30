@@ -47,49 +47,73 @@ template<> struct WriteableTrait<std::string> {
   }
 };
 
-template<class T, class E>
-struct result
-{
-  union {
-    T ok;
-    E err;
-  };
-  bool is_ok;
+template<class T> struct Ok {
+  T inner;
+  Ok(T&& i): inner(i) {}
+  explicit Ok() {}
+};
 
-  ~result() {
+template<class T> struct Err {
+  T inner;
+  Err(T&& i): inner(i) {}
+  explicit Err() {}
+};
+
+template<class T, class E>
+class result {
+private:
+    std::variant<Ok<T>, Err<E>> val;
+public:
+  result(bool is_ok) {
     if (is_ok) {
-      ok.~T();
+      this->val = std::variant<Ok<T>, Err<E>>(Ok<T>());
     } else {
-      err.~E();
+      this->val = std::variant<Ok<T>, Err<E>>(Err<E>());
     }
   }
+  result(Ok<T>&& v): val(std::move(v)) {}
+  result(Err<E>&& v): val(std::move(v)) {}
+  result(const result &) = default;
+  result(result &&) noexcept = default;
+  ~result() = default;
+  bool is_ok() const {
+    return std::holds_alternative<Ok<T>>(this->val);
+  };
+  bool is_err() const {
+    return std::holds_alternative<Err<E>>(this->val);
+  };
 
-  static result<T, E> new_ok(T x) {
-    return {
-      .ok = x,
-      .is_ok = true
-    };
+  std::optional<T> ok() const {
+    if (!this->is_ok()) {
+      return std::nullopt;
+    }
+    return std::make_optional(std::get<Ok<T>>(this->val).inner);
+  };
+  std::optional<E> err() const {
+    if (!this->is_err()) {
+      return std::nullopt;
+    }
+    return std::make_optional(std::get<Err<E>>(this->val).inner);
   }
 
-  static result<std::monostate, E> new_ok_void() {
-    return {
-      .is_ok = true
-    };
+  void set_ok(T&& t) {
+    this->val = Ok<T>(std::move(t));
   }
 
-  static result<T, E> new_err(E x) {
-    return {
-      .err = x,
-      .is_ok = false
-    };
+  void set_err(E&& e) {
+    this->val = Err<E>(std::move(e));
   }
 
-  static result<T, std::monostate> new_err_void() {
-    return {
-      .is_ok = false
-    };
+  template<typename T2>
+  result<T2, E> replace_ok(T2&& t) {
+    if (this->is_err()) {
+      return result<T2, E>(Err<E>(std::get<Err<E>>(this->val)));
+    } else {
+      return result<T2, E>(Ok<T2>(std::move(t)));
+    }
   }
 };
+
 
 }
 

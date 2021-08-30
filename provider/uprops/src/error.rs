@@ -12,8 +12,6 @@ pub enum Error {
     Io(std::io::Error, PathBuf),
     #[displaydoc("{0}: {1:?}")]
     Toml(toml::de::Error, PathBuf),
-    #[displaydoc("Invalid range: {0}-{1}")]
-    InvalidCharRange(u32, u32),
 }
 
 impl std::error::Error for Error {}

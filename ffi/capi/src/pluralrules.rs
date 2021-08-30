@@ -43,7 +43,7 @@ pub mod ffi {
     impl ICU4XPluralRules {
         /// FFI version of `PluralRules::try_new()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new) for more details.
-        fn create(
+        pub fn create(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
             ty: ICU4XPluralRuleType,
@@ -73,7 +73,7 @@ pub mod ffi {
 
         /// FFI version of `PluralRules::select()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more details.
-        fn select(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
+        pub fn select(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
             let res = self.0.select(PluralOperands {
                 i: op.i,
                 v: op.v,
@@ -95,7 +95,7 @@ pub mod ffi {
 
         /// FFI version of `PluralRules::categories()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.categories) for more details.
-        fn categories(&self) -> ICU4XPluralCategories {
+        pub fn categories(&self) -> ICU4XPluralCategories {
             self.0.categories().fold(
                 ICU4XPluralCategories {
                     zero: false,
@@ -141,7 +141,7 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// FFI version of `PluralOperands::from_str()`.
         /// See [the Rust docs](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str) for more details.
-        fn create(s: &str) -> ICU4XCreatePluralOperandsResult {
+        pub fn create(s: &str) -> ICU4XCreatePluralOperandsResult {
             PluralOperands::from_str(s)
                 .ok()
                 .map(|ops| ICU4XCreatePluralOperandsResult {

@@ -97,3 +97,8 @@ The [memory benchmarks](tools/benchmark#icu_benchmark_memory) are run separately
 * [macOS](https://unicode-org.github.io/icu4x-docs/benchmarks/memory/macos-latest/)
 * [Ubuntu](https://unicode-org.github.io/icu4x-docs/benchmarks/memory/ubuntu-latest/)
 * [Windows](https://unicode-org.github.io/icu4x-docs/benchmarks/memory/windows-latest/)
+
+The [binary size benchmarks](docs/process/benchmarking.md) run on Ubuntu, and are broken out by file type.
+
+* [wasm binaries](https://unicode-org.github.io/icu4x-docs/benchmarks/binsize/wasm/)
+* [gzip'd wasm binaries](https://unicode-org.github.io/icu4x-docs/benchmarks/binsize/gz)

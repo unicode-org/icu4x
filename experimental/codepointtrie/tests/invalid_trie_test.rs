@@ -74,8 +74,8 @@ fn try_new_error_test() {
         null_value,
     };
 
-    let index = ZeroVec::from_aligned(&INDEX);
-    let data = ZeroVec::from_aligned(&DATA_8);
+    let index = ZeroVec::from_slice(&INDEX);
+    let data = ZeroVec::from_slice(&DATA_8);
     let trie_new_result: Result<CodePointTrie<u8, Fast>, Error> =
         CodePointTrie::try_new(header, index, data);
     match trie_new_result {

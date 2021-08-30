@@ -169,7 +169,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         null_value: test_struct.null_value,
     };
 
-    let index = ZeroVec::from_aligned(&test_struct.index);
+    let index = ZeroVec::from_slice(&test_struct.index);
 
     let trie_type_enum = get_code_point_trie_type_enum(test_struct.trie_type_enum_val);
 
@@ -180,7 +180,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         trie_type_enum,
     ) {
         (Some(data_8), _, _, Some(TrieTypeEnum::Fast)) => {
-            let data = ZeroVec::from_aligned(&data_8);
+            let data = ZeroVec::from_slice(&data_8);
             let trie_result: Result<CodePointTrie<u8, Fast>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
@@ -195,7 +195,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (_, Some(data_16), _, Some(TrieTypeEnum::Fast)) => {
-            let data = ZeroVec::from_aligned(&data_16);
+            let data = ZeroVec::from_slice(&data_16);
             let trie_result: Result<CodePointTrie<u16, Fast>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
@@ -210,7 +210,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (_, _, Some(data_32), Some(TrieTypeEnum::Fast)) => {
-            let data = ZeroVec::from_aligned(&data_32);
+            let data = ZeroVec::from_slice(&data_32);
             let trie_result: Result<CodePointTrie<u32, Fast>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
@@ -225,7 +225,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (Some(data_8), _, _, Some(TrieTypeEnum::Small)) => {
-            let data = ZeroVec::from_aligned(&data_8);
+            let data = ZeroVec::from_slice(&data_8);
             let trie_result: Result<CodePointTrie<u8, Small>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
@@ -240,7 +240,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (_, Some(data_16), _, Some(TrieTypeEnum::Small)) => {
-            let data = ZeroVec::from_aligned(&data_16);
+            let data = ZeroVec::from_slice(&data_16);
             let trie_result: Result<CodePointTrie<u16, Small>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
@@ -255,7 +255,7 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (_, _, Some(data_32), Some(TrieTypeEnum::Small)) => {
-            let data = ZeroVec::from_aligned(&data_32);
+            let data = ZeroVec::from_slice(&data_32);
             let trie_result: Result<CodePointTrie<u32, Small>, Error> =
                 CodePointTrie::try_new(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");

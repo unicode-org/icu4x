@@ -16,7 +16,7 @@ namespace capi {
 class ICU4XDataProvider;
 class ICU4XLocaleCanonicalizer;
 class ICU4XLocale;
-enum struct ICU4XCanonicalizationResult;
+#include "ICU4XCanonicalizationResult.hpp"
 
 struct ICU4XLocaleCanonicalizerDeleter {
   void operator()(capi::ICU4XLocaleCanonicalizer* l) const noexcept {
@@ -38,7 +38,6 @@ class ICU4XLocaleCanonicalizer {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XCanonicalizationResult.hpp"
 
 inline std::optional<ICU4XLocaleCanonicalizer> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
   auto diplomat_optional_raw_out_value = capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());
@@ -51,12 +50,12 @@ inline std::optional<ICU4XLocaleCanonicalizer> ICU4XLocaleCanonicalizer::create(
   return diplomat_optional_out_value;
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::canonicalize(ICU4XLocale& locale) {
-  return ICU4XCanonicalizationResult{ capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()) };
+  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()));
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::maximize(ICU4XLocale& locale) {
-  return ICU4XCanonicalizationResult{ capi::ICU4XLocaleCanonicalizer_maximize(this->inner.get(), locale.AsFFIMut()) };
+  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_maximize(this->inner.get(), locale.AsFFIMut()));
 }
 inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::minimize(ICU4XLocale& locale) {
-  return ICU4XCanonicalizationResult{ capi::ICU4XLocaleCanonicalizer_minimize(this->inner.get(), locale.AsFFIMut()) };
+  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_minimize(this->inner.get(), locale.AsFFIMut()));
 }
 #endif

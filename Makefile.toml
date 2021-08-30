@@ -80,13 +80,18 @@ category = "CI"
 dependencies = [
     "license-header-check",
     "generated-readme-check",
+    "license-file-check",
 ]
 
 [tasks.ci-job-wasm]
 description = "Run all tests for the CI 'wasm' job"
 category = "CI"
 dependencies = [
-    "wasm-test-release",
+    # note: CI does not call `cargo make ci-job-wasm` since
+    # we have to set up the environment for the emscripten job separately
+    # Instead, each of these is called individually.
+    "wasm-release",
+    "wasm-cpp-emscripten",
 ]
 
 [tasks.ci-all]

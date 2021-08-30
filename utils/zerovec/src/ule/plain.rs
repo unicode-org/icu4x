@@ -65,6 +65,9 @@ macro_rules! impl_byte_slice_type {
                 <$type>::from_le_bytes(unaligned.0)
             }
         }
+        // EqULE is true because $type and PlainOldULE<$size>
+        // have the same byte sequence on little-endian
+        unsafe impl EqULE for $type {}
     };
 }
 

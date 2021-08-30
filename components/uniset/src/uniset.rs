@@ -45,7 +45,12 @@ impl<'de> serde::Deserialize<'de> for UnicodeSet {
         use serde::de::Error;
         let parsed_inv_list = Vec::<u32>::deserialize(deserializer)?;
 
-        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
+        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| {
+            Error::custom(format!(
+                "Cannot deserialize invalid inversion list for UnicodeSet: {:?}",
+                e
+            ))
+        })
     }
 }
 
@@ -88,7 +93,10 @@ impl UnicodeSet {
     /// ```
     pub fn from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError> {
         if is_valid(&inv_list) {
-            let size: usize = inv_list.chunks(2).map(|end_points| end_points[1] - end_points[0]).sum::<u32>() as usize;
+            let size: usize = inv_list
+                .chunks(2)
+                .map(|end_points| end_points[1] - end_points[0])
+                .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list))
@@ -146,7 +154,10 @@ impl UnicodeSet {
     /// assert_eq!(None, ex_iter_chars.next());
     /// ```
     pub fn iter_chars(&self) -> impl Iterator<Item = char> + '_ {
-        self.inv_list.chunks(2).flat_map(|pair| (pair[0]..pair[1])).filter_map(char::from_u32)
+        self.inv_list
+            .chunks(2)
+            .flat_map(|pair| (pair[0]..pair[1]))
+            .filter_map(char::from_u32)
     }
 
     /// Yields an [`Iterator`] returning the ranges of the code points that are
@@ -168,12 +179,24 @@ impl UnicodeSet {
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
     pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
-        self.inv_list.chunks(2).map(|pair| RangeInclusive::new(pair[0], pair[1] - 1))
+        self.inv_list
+            .chunks(2)
+            .map(|pair| RangeInclusive::new(pair[0], pair[1] - 1))
     }
 
     /// Returns the number of ranges contained in this [`UnicodeSet`]
     pub fn get_range_count(&self) -> usize {
         self.inv_list.len() / 2
+    }
+
+    /// Returns a specific range contained in this [`UnicodeSet`] by index.
+    /// Intended for use in FFI.
+    pub fn get_nth_range(&self, idx: usize) -> Option<RangeInclusive<u32>> {
+        let start_idx = idx * 2;
+        let end_idx = start_idx + 1;
+        let start = self.inv_list.get(start_idx)?;
+        let end = self.inv_list.get(end_idx)?;
+        Some(RangeInclusive::new(*start, *end - 1))
     }
 
     /// Returns the number of elements of the [`UnicodeSet`]
@@ -253,7 +276,7 @@ impl UnicodeSet {
         self.contains_query(query).is_some()
     }
 
-    /// Checks to see if the range is in the [`UnicodeSet`], returns a [`Result`]
+    /// Checks to see if the range is in the [`UnicodeSet`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using [`Vec`] implementation. Only runs the search once on the `start`
@@ -348,7 +371,10 @@ impl UnicodeSet {
     /// assert_eq!(example.span("ABC", false), 0);
     /// ```
     pub fn span(&self, span_str: &str, contained: bool) -> usize {
-        span_str.chars().take_while(|&x| self.contains(x) == contained).count()
+        span_str
+            .chars()
+            .take_while(|&x| self.contains(x) == contained)
+            .count()
     }
 
     /// Returns the start of the trailing substring (starting from end of string) where the characters are
@@ -365,7 +391,12 @@ impl UnicodeSet {
     /// assert_eq!(example.span_back("CABXYZ", false), 3);
     /// ```
     pub fn span_back(&self, span_str: &str, contained: bool) -> usize {
-        span_str.len() - span_str.chars().rev().take_while(|&x| self.contains(x) == contained).count()
+        span_str.len()
+            - span_str
+                .chars()
+                .rev()
+                .take_while(|&x| self.contains(x) == contained)
+                .count()
     }
 }
 
@@ -396,14 +427,20 @@ mod tests {
     fn test_unicodeset_all() {
         let expected = vec![0x0, (char::MAX as u32) + 1];
         assert_eq!(UnicodeSet::all().inv_list, expected);
-        assert_eq!(UnicodeSet::all().size(), (expected[1] - expected[0]) as usize)
+        assert_eq!(
+            UnicodeSet::all().size(),
+            (expected[1] - expected[0]) as usize
+        )
     }
 
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0x0, BMP_MAX + 1];
         assert_eq!(UnicodeSet::bmp().inv_list, expected);
-        assert_eq!(UnicodeSet::bmp().size(), (expected[1] - expected[0]) as usize);
+        assert_eq!(
+            UnicodeSet::bmp().size(),
+            (expected[1] - expected[0]) as usize
+        );
     }
 
     // UnicodeSet membership functions
@@ -492,13 +529,19 @@ mod tests {
         let check = UnicodeSet::all();
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
-        let check = UnicodeSet { inv_list: Vec::new(), size: 0 };
+        let check = UnicodeSet {
+            inv_list: Vec::new(),
+            size: 0,
+        };
         assert_eq!(check.size(), 0);
     }
 
     #[test]
     fn test_unicodeset_is_empty() {
-        let check = UnicodeSet { inv_list: vec![], size: 0 };
+        let check = UnicodeSet {
+            inv_list: vec![],
+            size: 0,
+        };
         assert!(check.is_empty());
     }
 
@@ -544,6 +587,16 @@ mod tests {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
         let set = UnicodeSet::from_inversion_list(ex).unwrap();
         assert_eq!(3, set.get_range_count());
+    }
+
+    #[test]
+    fn test_unicodeset_get_nth_range() {
+        let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(Some(0x41..=0x43), set.get_nth_range(0));
+        assert_eq!(Some(0x45..=0x45), set.get_nth_range(1));
+        assert_eq!(Some(0xD800..=0xD800), set.get_nth_range(2));
+        assert_eq!(None, set.get_nth_range(3));
     }
 
     // Range<char> cannot represent the upper bound (non-inclusive) for
@@ -592,7 +645,8 @@ mod tests {
     #[test]
     fn test_uniset_to_inv_list() {
         let inv_list: Vec<u32> = vec![
-            0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028, 0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
+            0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028,
+            0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
         ];
         let inv_list_clone = (&inv_list).clone();
         let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();

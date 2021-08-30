@@ -18,6 +18,20 @@
 
 
 
+.. js:class:: ICU4XCreateFixedDecimalFormatDataProviderResult
+
+
+    A result type for ``ICU4XDataProvider::create``.
+
+    .. js:attribute:: provider
+
+
+        Will be ``None`` if ``success`` is ``false``, do not use in that case.
+
+    .. js:attribute:: success
+
+
+
 .. js:class:: ICU4XCreateFixedDecimalResult
 
 
@@ -104,9 +118,22 @@
 
         Creates a new :js:class:`ICU4XFixedDecimalFormat` from locale data. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new>`__ for more information.
 
+    .. js:staticfunction:: try_new_specific(locale, provider, options)
+
+        Creates a new :js:class:`ICU4XFixedDecimalFormat` from a data provider specific to FixedDecimalFormat. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.try_new>`__ for more information.
+
     .. js:function:: format(value)
 
         Formats a :js:class:`ICU4XFixedDecimal` to a string. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormat.html#method.format>`__ for more information.
+
+.. js:class:: ICU4XFixedDecimalFormatDataProvider
+
+
+    A DataProvider specific to FixedDecimalFormat.
+
+    .. js:staticfunction:: create_static()
+
+        Create a DataProvider reading from static data specific to FixedDecimalFormat.
 
 .. js:class:: ICU4XFixedDecimalFormatOptions
 
@@ -153,6 +180,14 @@
     .. js:staticfunction:: create(name)
 
         Construct an :js:class:`ICU4XLocale` from an locale identifier. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+
+    .. js:staticfunction:: create_en()
+
+        Construct an :js:class:`ICU4XLocale` for the English language.
+
+    .. js:staticfunction:: create_bn()
+
+        Construct an :js:class:`ICU4XLocale` for the Bangla language.
 
     .. js:function:: clone()
 

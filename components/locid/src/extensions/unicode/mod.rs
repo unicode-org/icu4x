@@ -125,7 +125,9 @@ impl Unicode {
 
         while let Some(subtag) = iter.peek() {
             if let Ok(attr) = Attribute::from_bytes(subtag) {
-                attributes.push(attr);
+                if let Err(idx) = attributes.binary_search(&attr) {
+                    attributes.insert(idx, attr);
+                }
             } else {
                 break;
             }
@@ -136,7 +138,9 @@ impl Unicode {
             let slen = subtag.len();
             if slen == 2 {
                 if let Some(kw) = current_keyword.take() {
-                    keywords.push((kw, Value::from_vec_unchecked(current_type)));
+                    if let Err(idx) = keywords.binary_search_by_key(&kw, |(k, _)| *k) {
+                        keywords.insert(idx, (kw, Value::from_vec_unchecked(current_type)));
+                    }
                     current_type = vec![];
                 }
                 current_keyword = Some(Key::from_bytes(subtag)?);
@@ -153,10 +157,15 @@ impl Unicode {
         }
 
         if let Some(kw) = current_keyword.take() {
-            keywords.push((kw, Value::from_vec_unchecked(current_type)));
+            if let Err(idx) = keywords.binary_search_by_key(&kw, |(k, _)| *k) {
+                keywords.insert(idx, (kw, Value::from_vec_unchecked(current_type)));
+            }
         }
 
-        keywords.sort_by_key(|i| i.0);
+        // Ensure we've defined at least one attribute or keyword
+        if attributes.is_empty() && keywords.is_empty() {
+            return Err(ParserError::InvalidExtension);
+        }
 
         Ok(Self {
             keywords: Keywords::from_vec_unchecked(keywords),

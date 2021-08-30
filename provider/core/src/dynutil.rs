@@ -4,27 +4,6 @@
 
 //! Utilities for using trait objects with `DataPayload`.
 
-/// Implement [`ToOwned`](alloc::borrow::ToOwned) on a trait object, enabling it to be used in a [`Cow`](alloc::borrow::Cow).
-/// Requires the trait to have a method named `clone_into_box()`.
-macro_rules! impl_dyn_clone {
-    ($trait:path) => {
-        impl_dyn_clone!($trait, 'data);
-    };
-    ($trait:path, $s:lifetime) => {
-        impl<$s> alloc::borrow::ToOwned for dyn $trait + $s {
-            type Owned = Box<dyn $trait + $s>;
-            fn to_owned(&self) -> Self::Owned {
-                <dyn $trait + $s>::clone_into_box(self)
-            }
-        }
-        impl<$s> Clone for Box<(dyn $trait + $s)> {
-            fn clone(&self) -> Self {
-                <dyn $trait + $s>::clone_into_box(self.as_ref())
-            }
-        }
-    };
-}
-
 /// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>` where `T` implements `S`.
 ///
 /// This is used internally by [`impl_dyn_provider!`] and is not intended to be called from userland

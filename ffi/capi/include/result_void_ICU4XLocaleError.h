@@ -12,7 +12,6 @@ extern "C" {
 #include "ICU4XLocaleError.h"
 typedef struct locale_ffi_result_void_ICU4XLocaleError {
     union {
-        uint8_t ok[0];
         ICU4XLocaleError err;
     };
     bool is_ok;

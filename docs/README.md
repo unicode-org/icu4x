@@ -50,6 +50,7 @@ List of research documenting ICU4X's findings and architectural explorations.
 
 Document | Summary
 ---------|---------
+[data_phases.md](research/data_phases.md) | The situations when information is known and how that influenced the design of ResourcePath.
 [datetime.md](research/datetime.md) | High-level outline of how ICU4X sees Date & Time formatting separation of concerns between Internationalization and Date & Time management.
 [datetime_input.md](research/datetime_input.md) | Exploration of potential design models for Date & Time APIs with support for calendar systems and open to strong integration with internationalization.
 [format_to_parts.md](research/format_to_parts.md) | Discussion on alternate data models to support ECMA-402 formatToParts

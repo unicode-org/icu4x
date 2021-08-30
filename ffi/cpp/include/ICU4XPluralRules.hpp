@@ -15,10 +15,10 @@ namespace capi {
 
 class ICU4XLocale;
 class ICU4XDataProvider;
-enum struct ICU4XPluralRuleType;
+#include "ICU4XPluralRuleType.hpp"
 struct ICU4XCreatePluralRulesResult;
 struct ICU4XPluralOperands;
-enum struct ICU4XPluralCategory;
+#include "ICU4XPluralCategory.hpp"
 struct ICU4XPluralCategories;
 
 struct ICU4XPluralRulesDeleter {
@@ -40,10 +40,8 @@ class ICU4XPluralRules {
 
 #include "ICU4XLocale.hpp"
 #include "ICU4XDataProvider.hpp"
-#include "ICU4XPluralRuleType.hpp"
 #include "ICU4XCreatePluralRulesResult.hpp"
 #include "ICU4XPluralOperands.hpp"
-#include "ICU4XPluralCategory.hpp"
 #include "ICU4XPluralCategories.hpp"
 
 inline ICU4XCreatePluralRulesResult ICU4XPluralRules::create(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XPluralRuleType ty) {
@@ -58,7 +56,7 @@ inline ICU4XCreatePluralRulesResult ICU4XPluralRules::create(const ICU4XLocale& 
   return ICU4XCreatePluralRulesResult{ .rules = std::move(diplomat_optional_out_value_rules), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
 inline ICU4XPluralCategory ICU4XPluralRules::select(const ICU4XPluralOperands& op) {
-  return ICU4XPluralCategory{ capi::ICU4XPluralRules_select(this->inner.get(), (capi::ICU4XPluralOperands*) &op) };
+  return static_cast<ICU4XPluralCategory>(capi::ICU4XPluralRules_select(this->inner.get(), (capi::ICU4XPluralOperands*) &op));
 }
 inline ICU4XPluralCategories ICU4XPluralRules::categories() {
   capi::ICU4XPluralCategories diplomat_raw_struct_out_value = capi::ICU4XPluralRules_categories(this->inner.get());
