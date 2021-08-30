@@ -8,7 +8,7 @@
 /// These constants are used to select one of the Unicode properties.
 /// See UProperty in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[non_exhaustive]
 pub enum EnumeratedProperty {
     GeneralCategory = 0x1005,
@@ -23,7 +23,7 @@ pub enum EnumeratedProperty {
 /// See https://www.unicode.org/reports/tr44/ .
 /// See UCharCategory and U_GET_GC_MASK in ICU4C.
 #[derive(Clone, PartialEq, Debug)]
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[repr(u32)]
 #[non_exhaustive]
 pub enum GeneralCategory {

@@ -281,7 +281,7 @@ pub mod locid {
     //! [`Unicode Extensions`]: extensions
     pub use icu_locid::*;
 
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
+    #[allow(missing_docs)] // TODO(#1026) - Add missing docs.
     pub mod macros {
         pub use icu_locid_macros::*;
     }

@@ -6,7 +6,7 @@
 
 use displaydoc::Display;
 
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1025) - Add missing docs.
 #[derive(Display, Debug)]
 pub enum Error {
     #[displaydoc("error loading data: {0}")]

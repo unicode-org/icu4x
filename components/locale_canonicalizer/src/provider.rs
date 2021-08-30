@@ -11,7 +11,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::yoke::{self, *};
 use tinystr::{TinyStr4, TinyStr8};
 
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
 pub mod key {
     use icu_provider::{resource_key, ResourceKey};
     pub const ALIASES_V1: ResourceKey = resource_key!(LocaleCanonicalizer, "aliases", 1);
@@ -26,7 +26,7 @@ pub mod key {
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
 pub struct AliasesV1 {
     pub language: Vec<(LanguageIdentifier, LanguageIdentifier)>,
     pub language_variants: Vec<(LanguageIdentifier, LanguageIdentifier)>,
@@ -48,7 +48,7 @@ pub struct AliasesV1 {
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[yoke(cloning_zcf)]
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
 pub struct LikelySubtagsV1 {
     pub language_script: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,
     pub language_region: Vec<(TinyStr4, TinyStr4, LanguageIdentifier)>,

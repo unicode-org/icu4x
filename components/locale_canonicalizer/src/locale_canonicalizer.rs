@@ -15,7 +15,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use tinystr::{tinystr4, TinyStr4, TinyStr8};
 
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
 pub enum CanonicalizationResult {
@@ -23,7 +23,7 @@ pub enum CanonicalizationResult {
     Unmodified,
 }
 
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
 pub struct LocaleCanonicalizer<'data> {
     aliases: DataPayload<'data, AliasesV1Marker>,
     likely_subtags: DataPayload<'data, LikelySubtagsV1Marker>,

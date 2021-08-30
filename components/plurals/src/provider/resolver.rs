@@ -9,7 +9,7 @@ use crate::{PluralRuleType, PluralRulesError};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub fn resolve_plural_data<'data, D: DataProvider<'data, PluralRuleStringsV1Marker> + ?Sized>(
     langid: LanguageIdentifier,
     data_provider: &D,
