@@ -364,6 +364,9 @@ impl UnicodeSetBuilder {
             } else {
                 self.intervals.push((char::MAX as u32) + 1);
             }
+        } else {
+            self.intervals
+                .extend_from_slice(&[0, (char::MAX as u32 + 1)]);
         }
     }
 
@@ -809,6 +812,18 @@ mod tests {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
         builder.complement();
         let expected = vec![0x0, 0xA, 0x14, 0x28, 0x32, (char::MAX as u32) + 1];
+        assert_eq!(builder.intervals, expected);
+    }
+
+    #[test]
+    fn test_complement_empty() {
+        let mut builder = generate_tester(vec![]);
+        builder.complement();
+        let expected = vec![0x0, (char::MAX as u32) + 1];
+        assert_eq!(builder.intervals, expected);
+
+        builder.complement();
+        let expected: Vec<u32> = vec![];
         assert_eq!(builder.intervals, expected);
     }
 
