@@ -462,7 +462,7 @@ pub enum FractionalSecond {
 pub struct GmtOffset(i32);
 
 impl GmtOffset {
-    /// Attempt to create a `GmtOffset` from a seconds input. It returns an error when the seconds
+    /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
     /// overflows or underflows.
     pub fn try_new(seconds: i32) -> Result<Self, DateTimeError> {
         // Valid range is from GMT-12 to GMT+14 in seconds.

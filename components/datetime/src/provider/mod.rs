@@ -6,6 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(doc)]
+use icu_provider::prelude::ResourceKey;
+
 /// Data providers for the Gregorian Calendar.
 pub mod gregory;
 
@@ -14,45 +17,40 @@ pub(crate) mod helpers;
 /// Data providers for time zones.
 pub mod time_zones;
 
-/// A collection of [`ResourceKey`](icu_provider::prelude::ResourceKey) structs for DateTime providers.
+/// A collection of [`ResourceKey`] structs for DateTime providers.
 pub mod key {
+    #[cfg(doc)]
+    use crate::provider::{gregory, time_zones};
+
     use icu_provider::{resource_key, ResourceKey};
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`gregory::DatesV1`](crate::provider::gregory::DatePatternsV1).
+    /// A [`ResourceKey`] to [`gregory::DatePatternsV1`].
     pub const GREGORY_DATE_PATTERNS_V1: ResourceKey =
         resource_key!(DateTime, "gregory_patterns", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`gregory::DatesV1`](crate::provider::gregory::DateSymbolsV1).
+    /// A [`ResourceKey`] to [`gregory::DateSymbolsV1`]
     pub const GREGORY_DATE_SYMBOLS_V1: ResourceKey = resource_key!(DateTime, "gregory_symbols", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`time_zones::TimeZoneFormatsV1`](crate::provider::time_zones::TimeZoneFormatsV1).
+    /// A [`ResourceKey`] to [`time_zones::TimeZoneFormatsV1`].
     pub const TIMEZONE_FORMATS_V1: ResourceKey = resource_key!(TimeZone, "formats", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`time_zones::ExemplarCitiesV1`](crate::provider::time_zones::ExemplarCitiesV1).
+    /// A [`ResourceKey`] to [`time_zones::ExemplarCitiesV1`].
     pub const TIMEZONE_EXEMPLAR_CITIES_V1: ResourceKey =
         resource_key!(TimeZone, "exemplar_cities", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`time_zones::MetaZoneGenericNamesLongV1`](crate::provider::time_zones::MetaZoneGenericNamesLongV1).
+    /// A [`ResourceKey`] to [`time_zones::MetaZoneGenericNamesLongV1`].
     pub const TIMEZONE_GENERIC_NAMES_LONG_V1: ResourceKey =
         resource_key!(TimeZone, "generic_long", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`time_zones::MetaZoneGenericNamesShortV1`](crate::provider::time_zones::MetaZoneGenericNamesShortV1).
+    /// A [`ResourceKey`] to [`time_zones::MetaZoneGenericNamesShortV1`].
     pub const TIMEZONE_GENERIC_NAMES_SHORT_V1: ResourceKey =
         resource_key!(TimeZone, "generic_short", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`time_zones::MetaZoneSpecificNamesLongV1`](crate::provider::time_zones::MetaZoneSpecificNamesLongV1).
+    /// A [`ResourceKey`] to [`time_zones::MetaZoneSpecificNamesLongV1`].
     pub const TIMEZONE_SPECIFIC_NAMES_LONG_V1: ResourceKey =
         resource_key!(TimeZone, "specific_long", 1);
 
-    /// A [`ResourceKey`](icu_provider::prelude::ResourceKey) to
-    /// [`time_zones::MetaZoneSpecificNamesShortV1`](crate::provider::time_zones::MetaZoneSpecificNamesShortV1).
+    /// A [`ResourceKey`] to [`time_zones::MetaZoneSpecificNamesShortV1`].
     pub const TIMEZONE_SPECIFIC_NAMES_SHORT_V1: ResourceKey =
         resource_key!(TimeZone, "specific_short", 1);
 }
