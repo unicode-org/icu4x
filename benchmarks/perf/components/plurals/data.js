@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630351003840,
+  "lastUpdate": 1630423512192,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13145,6 +13145,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25627,
             "range": "± 1289",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "22d4384959540d71da32831a3f8e62901aa60551",
+          "message": "Add missing docs warnings and suppressions to the components directory (#955)",
+          "timestamp": "2021-08-31T10:10:59-05:00",
+          "tree_id": "ef9246121450628cf3059625d62e0fd962cc809b",
+          "url": "https://github.com/unicode-org/icu4x/commit/22d4384959540d71da32831a3f8e62901aa60551"
+        },
+        "date": 1630423508753,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1311,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7367,
+            "range": "± 373",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 23301,
+            "range": "± 1269",
             "unit": "ns/iter"
           }
         ]
