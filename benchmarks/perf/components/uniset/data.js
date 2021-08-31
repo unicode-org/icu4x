@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630423464757,
+  "lastUpdate": 1630423816507,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10439,6 +10439,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 29967338,
             "range": "± 1480688",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "26b1be1d27a533ae9254c38c76573929fcf14491",
+          "message": "Lint missing docs in icu_datetime (#725)",
+          "timestamp": "2021-08-31T10:23:54-05:00",
+          "tree_id": "fcfbb60de2b4549617d9271414663d2820394abb",
+          "url": "https://github.com/unicode-org/icu4x/commit/26b1be1d27a533ae9254c38c76573929fcf14491"
+        },
+        "date": 1630423813281,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29874974,
+            "range": "± 1936178",
             "unit": "ns/iter"
           }
         ]
