@@ -15,18 +15,22 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use tinystr::{tinystr4, TinyStr4, TinyStr8};
 
-#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
 /// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
 pub enum CanonicalizationResult {
+    /// The canonicalization operation modified the locale.
     Modified,
+    /// The canonicalization operation did not modify the locale.
     Unmodified,
 }
 
-#[allow(missing_docs)] // TODO(#1027) - Add missing docs.
+/// LocaleCanonicalizer implementation.
 pub struct LocaleCanonicalizer<'data> {
+    /// Data to support canonicalization.
     aliases: DataPayload<'data, AliasesV1Marker>,
+    /// Data to support likely subtags maximize and minimize.
     likely_subtags: DataPayload<'data, LikelySubtagsV1Marker>,
+    /// Extension keys that require canonicalization.
     extension_keys: Vec<Key>,
 }
 
