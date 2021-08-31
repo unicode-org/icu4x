@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![warn(missing_docs)]
+
 //! `icu_datetime` is one of the [`ICU4X`] components.
 //!
 //! This API provides necessary functionality for formatting date and time to user readable textual representation.
@@ -88,7 +90,9 @@ pub mod provider;
 #[doc(hidden)]
 pub mod skeleton;
 // TODO(#622) make the time_zone module public once TimeZoneFormat is public.
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub(crate) mod time_zone;
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod zoned_datetime;
 
 pub use datetime::DateTimeFormat;

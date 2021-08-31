@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A collection of utilities for representing and working with dates as an input to
+//! formatting operations.
+
 use core::convert::TryFrom;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
@@ -9,14 +12,22 @@ use displaydoc::Display;
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
+/// A list of possible error outcomes for working with various inputs to DateTime inputs
+/// and operations.
 #[derive(Display, Debug)]
 pub enum DateTimeError {
+    /// An input could not be parsed.
     #[displaydoc("{0}")]
     Parse(core::num::ParseIntError),
+    /// An input overflowed its range.
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[displaydoc("{field} must be between 0-{max}")]
     Overflow { field: &'static str, max: usize },
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[displaydoc("{field} must be between {min}-0")]
+    /// An input underflowed its range.
     Underflow { field: &'static str, min: isize },
+    /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]
     InvalidTimeZoneOffset,
 }
@@ -249,11 +260,18 @@ pub struct Month {
     pub code: MonthCode,
 }
 
+/// A struct containing various details about the position of the day within a year. It is returned
+// by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
+// [`DateInput`] trait.
 #[derive(Clone, Debug, PartialEq)]
 pub struct DayOfYearInfo {
+    /// The current day of the year, 1-based.
     pub day_of_year: u32,
+    /// The number of days in a year.
     pub days_in_year: u32,
+    /// The previous year.
     pub prev_year: Year,
+    /// The next year.
     pub next_year: Year,
 }
 
@@ -270,6 +288,7 @@ pub struct DayOfYearInfo {
 /// assert_eq!(7, IsoWeekday::Sunday as usize);
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(missing_docs)] // The weekday variants should be self-obvious.
 #[repr(i8)]
 pub enum IsoWeekday {
     Monday = 1,
@@ -319,11 +338,13 @@ pub struct WeekOfYear(pub u32);
 /// unit is bounded by a range. The traits implemented here will return a Result on
 /// whether or not the unit is in range from the given input.
 macro_rules! dt_unit {
-    ($name:ident, $value:expr) => {
+    ($name:ident, $value:expr, $docs:expr) => {
+        #[doc=$docs]
         #[derive(Debug, Default, Clone, Copy, PartialEq, Hash)]
         pub struct $name(u8);
 
         impl $name {
+            /// Do not validate the numeric input for this component.
             pub const fn new_unchecked(input: u8) -> Self {
                 Self(input)
             }
@@ -405,17 +426,34 @@ macro_rules! dt_unit {
     };
 }
 
-dt_unit!(IsoHour, 24);
+dt_unit!(
+    IsoHour,
+    24,
+    "An ISO-8601 hour component, for use with the [`IsoTimeInput`]."
+);
 
-dt_unit!(IsoMinute, 60);
+dt_unit!(
+    IsoMinute,
+    60,
+    "An ISO-8601 minute component, for use with the [`IsoTimeInput`]."
+);
 
-dt_unit!(IsoSecond, 61);
+dt_unit!(
+    IsoSecond,
+    61,
+    "An ISO-8601 second component, for use with the [`IsoTimeInput`]."
+);
 
 // TODO(#485): Improve FractionalSecond.
+/// A placeholder for fractional seconds support. See [Issue #485](https://github.com/unicode-org/icu4x/issues/485)
+/// for tracking the support of this feature.
 #[derive(Clone, Debug, PartialEq)]
 pub enum FractionalSecond {
+    /// The millisecond component of the fractional second.
     Millisecond(u16),
+    /// The microsecond component of the fractional second.
     Microsecond(u32),
+    /// The nanosecond component of the fractional second.
     Nanosecond(u32),
 }
 
@@ -424,6 +462,8 @@ pub enum FractionalSecond {
 pub struct GmtOffset(i32);
 
 impl GmtOffset {
+    /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
+    /// overflows or underflows.
     pub fn try_new(seconds: i32) -> Result<Self, DateTimeError> {
         // Valid range is from GMT-12 to GMT+14 in seconds.
         if seconds < -(12 * 60 * 60) {

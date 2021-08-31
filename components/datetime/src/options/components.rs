@@ -84,18 +84,28 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Bag {
+    /// Include the era, such as "AD" or "CE".
     pub era: Option<Text>,
+    /// Include the year, such as "1970" or "70".
     pub year: Option<Numeric>,
+    /// Include the month, such as "April" or "Apr".
     pub month: Option<Month>,
+    /// Include the day, such as "07" or "7".
     pub day: Option<Numeric>,
+    /// Include the weekday, such as "Wednesday" or "Wed".
     pub weekday: Option<Text>,
 
+    /// Include the hour such as "2" or "14".
     pub hour: Option<Numeric>,
+    /// Include the minute such as "3" or "03".
     pub minute: Option<Numeric>,
+    /// Include the second such as "3" or "03".
     pub second: Option<Numeric>,
 
+    /// Include the time zone, such as "GMT+05:00".
     pub time_zone_name: Option<TimeZoneName>,
 
+    /// Adjust the preferences for the date, such as setting the hour cycle.
     pub preferences: Option<preferences::Bag>,
 }
 
@@ -303,46 +313,63 @@ impl Default for Bag {
     }
 }
 
+/// A numeric component for the `components::`[`Bag`]. It is used for the year, day, hour, minute,
+/// and second.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Numeric {
+    /// Display the numeric value. For instance in a year this would be "1970".
     #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
+    /// Display the two digit value. For instance in a year this would be "70".
     #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
 }
 
+/// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Text {
+    /// Display the long form of the text, such as "Wednesday" for the weekday.
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
+    /// Display the short form of the text, such as "Wed" for the weekday.
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
+    /// Display the narrow form of the text, such as "W" for the weekday.
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 
+/// Options for displaying a Month for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Month {
+    /// The numeric value of the month, such as "4".
     #[cfg_attr(feature = "serde", serde(rename = "numeric"))]
     Numeric,
+    /// The two-digit value of the month, such as "04".
     #[cfg_attr(feature = "serde", serde(rename = "two-digit"))]
     TwoDigit,
+    /// The two-digit value of the month, such as "April".
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
+    /// The short value of the month, such as "Apr".
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
+    /// The narrow value of the month, such as "A".
     #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 
+/// Options for displaying a time zone for the `components::`[`Bag`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TimeZoneName {
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[cfg_attr(feature = "serde", serde(rename = "long"))]
     Long,
+    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
 }
