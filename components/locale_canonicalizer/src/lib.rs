@@ -7,7 +7,9 @@
 //! This API provides functionality to canonicalize locale identifiers based
 //! upon [`CLDR`] data.
 //!
-//! It currently supports the minimize and maximize likely subtags algorithms
+//! It currently supports locale canonicalization based upon the canonicalization
+//! algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`],
+//! as well as the minimize and maximize likely subtags algorithms
 //! as described in [`UTS #35: Unicode LDML 3. Likely Subtags`].
 //!
 //! The maximize method potentially updates a passed in locale in place
@@ -18,6 +20,20 @@
 //! 'Remove Likely Subtags' algorithm from [`UTS #35: Unicode LDML 3. Likely Subtags`].
 //!
 //! # Examples
+//!
+//! ```
+//! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid::Locale;
+//!
+//! let provider = icu_testdata::get_provider();
+//! let lc = LocaleCanonicalizer::new(&provider)
+//!     .expect("create failed");
+//!
+//! let mut locale : Locale = "ja-Latn-fonipa-hepburn-heploc".parse()
+//!     .expect("parse failed");
+//! assert_eq!(lc.canonicalize(&mut locale), CanonicalizationResult::Modified);
+//! assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+//! ```
 //!
 //! ```
 //! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
@@ -57,23 +73,10 @@
 //! assert_eq!(locale.to_string(), "zh");
 //! ```
 //!
-//! ```
-//! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
-//! use icu_locid::Locale;
-//!
-//! let provider = icu_testdata::get_provider();
-//! let lc = LocaleCanonicalizer::new(&provider)
-//!     .expect("create failed");
-//!
-//! let mut locale : Locale = "ja-Latn-fonipa-hepburn-heploc".parse()
-//!     .expect("parse failed");
-//! assert_eq!(lc.canonicalize(&mut locale), CanonicalizationResult::Modified);
-//! assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
-//! ```
-//!
 //! [`ICU4X`]: ../icu/index.html
 //! [`CLDR`]: http://cldr.unicode.org/
 //! [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+//! [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 
 #![warn(missing_docs)]
 #![no_std]
