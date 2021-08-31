@@ -15,6 +15,7 @@ use icu_provider::yoke::{self, *};
 // resource key structs - the structs used directly by users of data provider
 //
 
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub mod key {
     use icu_provider::resource_key;
     use icu_provider::ResourceKey;
@@ -312,6 +313,7 @@ pub mod key {
 
 #[icu_provider::data_struct]
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 #[cfg_attr(
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
@@ -332,6 +334,7 @@ impl Default for UnicodePropertyV1<'static> {
 }
 
 impl<'data> UnicodePropertyV1<'data> {
+    #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
     pub fn from_uniset(set: &UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
         UnicodePropertyV1 {
             name,

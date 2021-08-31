@@ -75,6 +75,7 @@
 //! [`CLDR`]: http://cldr.unicode.org/
 //! [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 
+#![warn(missing_docs)]
 #![no_std]
 
 extern crate alloc;

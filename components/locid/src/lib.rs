@@ -50,6 +50,7 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`Unicode Extensions`]: extensions
 
+#![warn(missing_docs)]
 #![cfg_attr(not(any(feature = "std", test)), no_std)]
 
 extern crate alloc;

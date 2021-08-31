@@ -2,11 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Code for resolving plural data.
+
 use super::PluralRuleStringsV1Marker;
 use crate::{PluralRuleType, PluralRulesError};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
+#[allow(missing_docs)] // TODO(#1029) - Add missing docs.
 pub fn resolve_plural_data<'data, D: DataProvider<'data, PluralRuleStringsV1Marker> + ?Sized>(
     langid: LanguageIdentifier,
     data_provider: &D,
