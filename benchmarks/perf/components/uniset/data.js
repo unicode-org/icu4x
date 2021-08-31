@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630350959994,
+  "lastUpdate": 1630423464757,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10409,6 +10409,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 34250033,
             "range": "± 1341097",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "22d4384959540d71da32831a3f8e62901aa60551",
+          "message": "Add missing docs warnings and suppressions to the components directory (#955)",
+          "timestamp": "2021-08-31T10:10:59-05:00",
+          "tree_id": "ef9246121450628cf3059625d62e0fd962cc809b",
+          "url": "https://github.com/unicode-org/icu4x/commit/22d4384959540d71da32831a3f8e62901aa60551"
+        },
+        "date": 1630423462158,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 29967338,
+            "range": "± 1480688",
             "unit": "ns/iter"
           }
         ]
