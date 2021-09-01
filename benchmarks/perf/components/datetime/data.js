@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630423869694,
+  "lastUpdate": 1630516873121,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6875,6 +6875,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 690884,
             "range": "± 28957",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a305081cde7d46598c5a2acf8c8681d237c54dfc",
+          "message": "Add documentation for LocaleCanonicalizer (#1031)\n\n* Add documentation for LocaleCanonicalizer\r\n\r\n* Address review feedback\r\n\r\n* Update generated readme",
+          "timestamp": "2021-09-01T13:13:55-04:00",
+          "tree_id": "7ae03d964d0280e872b26ac0813ce7cdb1ec3808",
+          "url": "https://github.com/unicode-org/icu4x/commit/a305081cde7d46598c5a2acf8c8681d237c54dfc"
+        },
+        "date": 1630516869325,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 332518,
+            "range": "± 43107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 661219,
+            "range": "± 46672",
             "unit": "ns/iter"
           }
         ]
