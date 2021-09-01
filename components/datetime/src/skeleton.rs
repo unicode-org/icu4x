@@ -565,7 +565,10 @@ pub fn create_best_pattern_for_fields<'a>(
                 length::Date::Short => &length_patterns.short,
             };
 
-            Some(Pattern::from_bytes_combination(bytes, date_pattern, time_pattern).expect("TODO"))
+            Some(
+                Pattern::from_bytes_combination(bytes, date_pattern, time_pattern)
+                    .expect("Failed to create a Pattern from bytes"),
+            )
         }
         (None, Some(pattern)) => Some(pattern),
         (Some(pattern), None) => Some(pattern),
