@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630600960922,
+  "lastUpdate": 1630625898560,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -6947,6 +6947,42 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 706188,
             "range": "± 25811",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cee2fc64dbd39f58039e427eae4fc6f988822162",
+          "message": "Disable Codecov comments on PRs (#1023)",
+          "timestamp": "2021-09-02T16:32:03-07:00",
+          "tree_id": "149d4d5b5d08017ae0643ece3805ee268b24105a",
+          "url": "https://github.com/unicode-org/icu4x/commit/cee2fc64dbd39f58039e427eae4fc6f988822162"
+        },
+        "date": 1630625895585,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_overview",
+            "value": 303682,
+            "range": "± 731",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 565161,
+            "range": "± 7335",
             "unit": "ns/iter"
           }
         ]
