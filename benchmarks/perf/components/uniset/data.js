@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630516815500,
+  "lastUpdate": 1630600888103,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10499,6 +10499,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35089523,
             "range": "± 92037",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "35db5543a9009d8eb394d25bc18962e588bd4978",
+          "message": "Update diplomat (const APIs in C++) (#1035)\n\n* Update diplomat\r\n\r\n* Update and regen diplomat",
+          "timestamp": "2021-09-02T09:35:21-07:00",
+          "tree_id": "cfdd7d9fb1e8d4b42d816f253d0049a4f4ac99c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/35db5543a9009d8eb394d25bc18962e588bd4978"
+        },
+        "date": 1630600885089,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35029584,
+            "range": "± 130434",
             "unit": "ns/iter"
           }
         ]
