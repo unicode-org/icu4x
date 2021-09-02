@@ -31,10 +31,10 @@
 
         Invert the sign of the :cpp:class:`ICU4XFixedDecimal`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.negate>`__ for more information.
 
-    .. cpp:function:: template<typename W> void to_string_to_writeable(W& to)
+    .. cpp:function:: template<typename W> void to_string_to_writeable(W& to) const
 
         Format the :cpp:class:`ICU4XFixedDecimal` as a string. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to>`__ for more information.
 
-    .. cpp:function:: std::string to_string()
+    .. cpp:function:: std::string to_string() const
 
         Format the :cpp:class:`ICU4XFixedDecimal` as a string. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.write_to>`__ for more information.
