@@ -17,14 +17,14 @@
 
         Create a new :cpp:class:`ICU4XLocaleCanonicalizer`. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new>`__ for more details.
 
-    .. cpp:function:: ICU4XCanonicalizationResult canonicalize(ICU4XLocale& locale)
+    .. cpp:function:: ICU4XCanonicalizationResult canonicalize(ICU4XLocale& locale) const
 
         FFI version of ``LocaleCanonicalizer::canonicalize()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize>`__ for more details.
 
-    .. cpp:function:: ICU4XCanonicalizationResult maximize(ICU4XLocale& locale)
+    .. cpp:function:: ICU4XCanonicalizationResult maximize(ICU4XLocale& locale) const
 
         FFI version of ``LocaleCanonicalizer::maximize()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize>`__ for more details.
 
-    .. cpp:function:: ICU4XCanonicalizationResult minimize(ICU4XLocale& locale)
+    .. cpp:function:: ICU4XCanonicalizationResult minimize(ICU4XLocale& locale) const
 
         FFI version of ``LocaleCanonicalizer::minimize()``. See `the Rust docs <https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize>`__ for more details.

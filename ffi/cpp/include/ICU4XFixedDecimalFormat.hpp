@@ -29,8 +29,8 @@ class ICU4XFixedDecimalFormat {
  public:
   static ICU4XFixedDecimalFormatResult try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
   static ICU4XFixedDecimalFormatResult try_new_from_static(const ICU4XLocale& locale, const ICU4XStaticDataProvider& provider, ICU4XFixedDecimalFormatOptions options);
-  template<typename W> diplomat::result<std::monostate, std::monostate> format_to_writeable(const ICU4XFixedDecimal& value, W& write);
-  diplomat::result<std::string, std::monostate> format(const ICU4XFixedDecimal& value);
+  template<typename W> diplomat::result<std::monostate, std::monostate> format_to_writeable(const ICU4XFixedDecimal& value, W& write) const;
+  diplomat::result<std::string, std::monostate> format(const ICU4XFixedDecimal& value) const;
   inline const capi::ICU4XFixedDecimalFormat* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XFixedDecimalFormat* AsFFIMut() { return this->inner.get(); }
   inline ICU4XFixedDecimalFormat(capi::ICU4XFixedDecimalFormat* i) : inner(i) {}
@@ -69,13 +69,13 @@ inline ICU4XFixedDecimalFormatResult ICU4XFixedDecimalFormat::try_new_from_stati
   }
   return ICU4XFixedDecimalFormatResult{ .fdf = std::move(diplomat_optional_out_value_fdf), .success = std::move(diplomat_raw_struct_out_value.success) };
 }
-template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XFixedDecimalFormat::format_to_writeable(const ICU4XFixedDecimal& value, W& write) {
+template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XFixedDecimalFormat::format_to_writeable(const ICU4XFixedDecimal& value, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_format(this->inner.get(), value.AsFFI(), &write_writer);
   diplomat::result<std::monostate, std::monostate> diplomat_result_out_value(diplomat_result_raw_out_value.is_ok);
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, std::monostate> ICU4XFixedDecimalFormat::format(const ICU4XFixedDecimal& value) {
+inline diplomat::result<std::string, std::monostate> ICU4XFixedDecimalFormat::format(const ICU4XFixedDecimal& value) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormat_format(this->inner.get(), value.AsFFI(), &diplomat_writeable_out);
