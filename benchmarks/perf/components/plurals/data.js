@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630516884356,
+  "lastUpdate": 1630600966915,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13271,6 +13271,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22506,
             "range": "± 1101",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "35db5543a9009d8eb394d25bc18962e588bd4978",
+          "message": "Update diplomat (const APIs in C++) (#1035)\n\n* Update diplomat\r\n\r\n* Update and regen diplomat",
+          "timestamp": "2021-09-02T09:35:21-07:00",
+          "tree_id": "cfdd7d9fb1e8d4b42d816f253d0049a4f4ac99c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/35db5543a9009d8eb394d25bc18962e588bd4978"
+        },
+        "date": 1630600963301,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1382,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8204,
+            "range": "± 391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 25555,
+            "range": "± 4074",
             "unit": "ns/iter"
           }
         ]
