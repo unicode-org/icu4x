@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1630600966915,
+  "lastUpdate": 1630625960911,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13313,6 +13313,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 25555,
             "range": "± 4074",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@google.com",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cee2fc64dbd39f58039e427eae4fc6f988822162",
+          "message": "Disable Codecov comments on PRs (#1023)",
+          "timestamp": "2021-09-02T16:32:03-07:00",
+          "tree_id": "149d4d5b5d08017ae0643ece3805ee268b24105a",
+          "url": "https://github.com/unicode-org/icu4x/commit/cee2fc64dbd39f58039e427eae4fc6f988822162"
+        },
+        "date": 1630625957594,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1409,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 7833,
+            "range": "± 405",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24959,
+            "range": "± 924",
             "unit": "ns/iter"
           }
         ]
