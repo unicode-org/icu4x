@@ -378,28 +378,27 @@ pub enum TimeZoneName {
     // UTS-35 fields: z..zzz
     //
     /// Short localized form, without the location. (e.g.: PST, GMT-8)
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
-    Short,
+    #[cfg_attr(feature = "serde", serde(rename = "shortSpecific"))]
+    ShortSpecific,
 
     // UTS-35 fields: zzzz
     // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
     //
     /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
-    Long,
+    #[cfg_attr(feature = "serde", serde(rename = "longSpecific"))]
+    LongSpecific,
 
-    // UTS-35 fields: O
-    //
-    /// Short localized GMT format (e.g., GMT-8)
-    #[cfg_attr(feature = "serde", serde(rename = "shortOffset"))]
-    ShortOffset,
-
-    // UTS-35 fields: OOOO
+    // UTS-35 fields: O, OOOO
     // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
+    // Per UTS-35: Short localized GMT format (e.g., GMT-8)
+    // This enum variant is combining the two types of fields, as the CLDR specifices the preferred
+    // hour-format for the locale, and ICU4X uses the preferred one.
+    //   e.g.
+    //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
     //
-    /// Long localized GMT format (e.g., GMT-0800),
-    #[cfg_attr(feature = "serde", serde(rename = "longOffset"))]
-    LongOffset,
+    /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
+    #[cfg_attr(feature = "serde", serde(rename = "gmtOffset"))]
+    GmtOffset,
 
     // UTS-35 fields: v
     //   * falling back to generic location (See UTS 35 for more specific rules)
@@ -419,19 +418,15 @@ pub enum TimeZoneName {
 impl From<TimeZoneName> for Field {
     fn from(time_zone_name: TimeZoneName) -> Self {
         match time_zone_name {
-            TimeZoneName::Short => Field {
+            TimeZoneName::ShortSpecific => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
                 length: FieldLength::One,
             },
-            TimeZoneName::Long => Field {
+            TimeZoneName::LongSpecific => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
                 length: FieldLength::Wide,
             },
-            TimeZoneName::ShortOffset => Field {
-                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
-                length: FieldLength::One,
-            },
-            TimeZoneName::LongOffset => Field {
+            TimeZoneName::GmtOffset => Field {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
                 length: FieldLength::Wide,
             },

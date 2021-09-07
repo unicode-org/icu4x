@@ -891,7 +891,7 @@ mod test {
             month: Some(components::Month::Long),
             day: Some(components::Numeric::Numeric),
             // This will be appended.
-            time_zone_name: Some(components::TimeZoneName::Long),
+            time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
@@ -937,7 +937,7 @@ mod test {
     #[test]
     fn test_skeleton_no_match() {
         let components = components::Bag {
-            time_zone_name: Some(components::TimeZoneName::Long),
+            time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();

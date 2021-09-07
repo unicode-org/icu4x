@@ -57,7 +57,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "short"
+                    "time_zone_name": "shortSpecific"
                 }
             }
         },
@@ -79,7 +79,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "long"
+                    "time_zone_name": "longSpecific"
                 }
             }
         },
@@ -88,7 +88,7 @@
         }
     },
     {
-        "description": "Full date time example with short offset time zone",
+        "description": "Full date time example with GMT offset time zone",
         "input": {
             "locale": "en",
             "value": "2020-01-21T08:25:07.000+05:00",
@@ -101,29 +101,7 @@
                     "hour": "two-digit",
                     "minute": "two-digit",
                     "second": "two-digit",
-                    "time_zone_name": "shortOffset"
-                }
-            }
-        },
-        "output": {
-            "value": "Tuesday, January 21, 2020 at 08:25:07 GMT+05:00"
-        }
-    },
-    {
-        "description": "Full date time example with long offset time zone",
-        "input": {
-            "locale": "en",
-            "value": "2020-01-21T08:25:07.000+05:00",
-            "options": {
-                "components": {
-                    "weekday": "long",
-                    "month": "long",
-                    "day": "numeric",
-                    "year": "numeric",
-                    "hour": "two-digit",
-                    "minute": "two-digit",
-                    "second": "two-digit",
-                    "time_zone_name": "longOffset"
+                    "time_zone_name": "gmtOffset"
                 }
             }
         },
