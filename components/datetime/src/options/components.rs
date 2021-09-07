@@ -241,7 +241,7 @@ impl Bag {
                     // region-based (h12 for US, h23 for GB, etc). This is in CLDR, but we need
                     // to load it as well as think about the best architecture for where that
                     // data loading code should reside.
-                    _ => fields::Hour::H24,
+                    _ => fields::Hour::H23,
                 }),
                 length: match hour {
                     // Example for h: (note that this is the same for k, K, and H)
@@ -279,10 +279,13 @@ impl Bag {
             // A - Milliseconds in day. Not used in skeletons.
         }
 
-        // TODO(#583) - Implement:
-        // if self.time_zone_name.is_some() {
-        //     unimplemented!();
-        // }
+        if self.time_zone_name.is_some() {
+            // Only the lower "v" field is used in skeletons.
+            fields.push(Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            });
+        }
 
         debug_assert!(
             fields.windows(2).all(|f| f[0] < f[1]),
@@ -362,16 +365,81 @@ pub enum Month {
     Narrow,
 }
 
+// Each enum variant is documented with the UTS 35 field information from:
+// https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+//
 /// Options for displaying a time zone for the `components::`[`Bag`].
+///
+/// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
+/// options.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum TimeZoneName {
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
-    #[cfg_attr(feature = "serde", serde(rename = "long"))]
-    Long,
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
-    #[cfg_attr(feature = "serde", serde(rename = "short"))]
-    Short,
+    // UTS-35 fields: z..zzz
+    //
+    /// Short localized form, without the location. (e.g.: PST, GMT-8)
+    #[cfg_attr(feature = "serde", serde(rename = "shortSpecific"))]
+    ShortSpecific,
+
+    // UTS-35 fields: zzzz
+    // Per UTS-35: [long form] specific non-location (falling back to long localized GMT)
+    //
+    /// Long localized form, without the location (e.g., Pacific Standard Time, Nordamerikanische Westküsten-Normalzeit)
+    #[cfg_attr(feature = "serde", serde(rename = "longSpecific"))]
+    LongSpecific,
+
+    // UTS-35 fields: O, OOOO
+    // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
+    // Per UTS-35: Short localized GMT format (e.g., GMT-8)
+    // This enum variant is combining the two types of fields, as the CLDR specifices the preferred
+    // hour-format for the locale, and ICU4X uses the preferred one.
+    //   e.g.
+    //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13
+    //
+    /// Localized GMT format, in the locale's preferred hour format. (e.g., GMT-0800),
+    #[cfg_attr(feature = "serde", serde(rename = "gmtOffset"))]
+    GmtOffset,
+
+    // UTS-35 fields: v
+    //   * falling back to generic location (See UTS 35 for more specific rules)
+    //   * falling back to short localized GMT
+    /// Short generic non-location format (e.g.: PT, Los Angeles, Zeit).
+    #[cfg_attr(feature = "serde", serde(rename = "shortGeneric"))]
+    ShortGeneric,
+
+    // UTS-35 fields: vvvv
+    //  * falling back to generic location (See UTS 35 for more specific rules)
+    //  * falling back to long localized GMT
+    /// Long generic non-location format (e.g.: Pacific Time, Nordamerikanische Westküstenzeit),
+    #[cfg_attr(feature = "serde", serde(rename = "longGeneric"))]
+    LongGeneric,
+}
+
+impl From<TimeZoneName> for Field {
+    fn from(time_zone_name: TimeZoneName) -> Self {
+        match time_zone_name {
+            TimeZoneName::ShortSpecific => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                length: FieldLength::One,
+            },
+            TimeZoneName::LongSpecific => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerZ),
+                length: FieldLength::Wide,
+            },
+            TimeZoneName::GmtOffset => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::UpperO),
+                length: FieldLength::Wide,
+            },
+            TimeZoneName::ShortGeneric => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::One,
+            },
+            TimeZoneName::LongGeneric => Field {
+                symbol: FieldSymbol::TimeZone(fields::TimeZone::LowerV),
+                length: FieldLength::Wide,
+            },
+        }
+    }
 }
 
 #[cfg(test)]
@@ -401,7 +469,7 @@ mod test {
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),
-                (Symbol::Hour(fields::Hour::H24), Length::One).into(),
+                (Symbol::Hour(fields::Hour::H23), Length::One).into(),
                 (Symbol::Minute, Length::One).into(),
                 (Symbol::Second(fields::Second::Second), Length::One).into(),
             ]
