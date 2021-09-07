@@ -18,31 +18,38 @@ fn datetime_benches(c: &mut Criterion) {
     let provider = icu_testdata::get_static_provider();
     let mut group = c.benchmark_group("datetime");
 
-    let fxs = fixtures::get_fixture("lengths").unwrap();
-    group.bench_function("datetime_overview", |b| {
-        b.iter(|| {
-            for fx in &fxs.0 {
-                let datetimes: Vec<MockDateTime> = fx
-                    .values
-                    .iter()
-                    .map(|value| value.parse().unwrap())
-                    .collect();
-                for setup in &fx.setups {
-                    let locale: Locale = setup.locale.parse().unwrap();
-                    let options = fixtures::get_options(&setup.options);
-                    let dtf = DateTimeFormat::try_new(locale, &provider, &options).unwrap();
+    let mut bench_datetime_with_fixture = |name| {
+        let fxs = fixtures::get_fixture(name).expect("Failed to get fixture.");
+        group.bench_function(&format!("datetime_{}", name), |b| {
+            b.iter(|| {
+                for fx in &fxs.0 {
+                    let datetimes: Vec<MockDateTime> = fx
+                        .values
+                        .iter()
+                        .map(|value| value.parse().expect("Failed to parse value."))
+                        .collect();
+                    for setup in &fx.setups {
+                        let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
+                        let options = fixtures::get_options(&setup.options);
+                        let dtf = DateTimeFormat::try_new(locale, &provider, &options)
+                            .expect("Failed to create DateTimeFormat.");
 
-                    let mut result = String::new();
+                        let mut result = String::new();
 
-                    for dt in &datetimes {
-                        let fdt = dtf.format(dt);
-                        write!(result, "{}", fdt).unwrap();
-                        result.clear();
+                        for dt in &datetimes {
+                            let fdt = dtf.format(dt);
+                            write!(result, "{}", fdt)
+                                .expect("Failed to write to date time format.");
+                            result.clear();
+                        }
                     }
                 }
-            }
-        })
-    });
+            })
+        });
+    };
+
+    bench_datetime_with_fixture("lengths");
+    bench_datetime_with_fixture("components");
 
     let fxs = fixtures::get_fixture("lengths_with_zones").unwrap();
     group.bench_function("zoned_datetime_overview", |b| {
