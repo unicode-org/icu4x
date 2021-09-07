@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631029781330,
+  "lastUpdate": 1631039521056,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10589,6 +10589,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31663213,
             "range": "± 1225722",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gregtatum@users.noreply.github.com",
+            "name": "Greg Tatum",
+            "username": "gregtatum"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bccef3f99cb816738e05f1e07e0a6ebf2bab305d",
+          "message": "Add initial support for timezones in component::Bag (#845)",
+          "timestamp": "2021-09-07T13:24:51-05:00",
+          "tree_id": "4f46975bb7cd5de8a833f0dff0fbf88b258a2677",
+          "url": "https://github.com/unicode-org/icu4x/commit/bccef3f99cb816738e05f1e07e0a6ebf2bab305d"
+        },
+        "date": 1631039517331,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35949653,
+            "range": "± 1624147",
             "unit": "ns/iter"
           }
         ]
