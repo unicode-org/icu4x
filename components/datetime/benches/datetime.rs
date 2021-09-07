@@ -19,14 +19,14 @@ fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
 
     let mut bench_datetime_with_fixture = |name| {
-        let fxs = fixtures::get_fixture(name).expect("Failed to get fixture");
+        let fxs = fixtures::get_fixture(name).expect("Failed to get fixture.");
         group.bench_function(&format!("datetime_{}", name), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
                     let datetimes: Vec<MockDateTime> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().expect("Failed to parse value"))
+                        .map(|value| value.parse().expect("Failed to parse value."))
                         .collect();
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
