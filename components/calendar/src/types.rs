@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::DateTimeError;
 use core::convert::TryFrom;
 use core::ops::{Add, Sub};
 use core::str::FromStr;
 use tinystr::TinyStr8;
-use crate::error::DateTimeError;
 
 /// TODO(#486): Implement era codes.
 #[derive(Clone, Debug, PartialEq)]
@@ -305,7 +305,6 @@ impl FromStr for GmtOffset {
     }
 }
 
-
 /// A weekday in a 7-day week, according to ISO-8601.
 ///
 /// The discriminant values correspond to ISO-8601 weekday numbers (Monday = 1, Sunday = 7).
@@ -353,4 +352,3 @@ impl From<usize> for IsoWeekday {
         unsafe { core::mem::transmute(ordinal) }
     }
 }
-

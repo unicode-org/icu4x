@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Calendar, Date, DateDuration, DurationUnit, DateTimeError};
+use crate::{Calendar, Date, DateDuration, DateTimeError, DurationUnit};
 use core::convert::{TryFrom, TryInto};
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -222,7 +222,11 @@ impl Calendar for Iso {
 }
 
 impl Date<Iso> {
-    pub fn new_iso_date(day: IsoDay, month: IsoMonth, year: IsoYear) -> Result<Date<Iso>, DateTimeError> {
+    pub fn new_iso_date(
+        day: IsoDay,
+        month: IsoMonth,
+        year: IsoYear,
+    ) -> Result<Date<Iso>, DateTimeError> {
         if day.0 > 28 {
             let bound = Iso::days_in_month(year, month);
             if day.0 < bound {
@@ -232,7 +236,11 @@ impl Date<Iso> {
 
         Ok(Date::from_raw(IsoDateInner { day, month, year }, Iso))
     }
-    pub fn new_iso_date_from_integers(day: u8, month: u8, year: i32) -> Result<Date<Iso>, DateTimeError> {
+    pub fn new_iso_date_from_integers(
+        day: u8,
+        month: u8,
+        year: i32,
+    ) -> Result<Date<Iso>, DateTimeError> {
         Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
     }
 }
