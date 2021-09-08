@@ -11,6 +11,7 @@ mod date;
 mod duration;
 mod error;
 pub mod iso;
+pub mod types;
 
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date};

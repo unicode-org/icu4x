@@ -34,6 +34,7 @@ all-features = true
 [dependencies]
 icu_locid = { version = "0.3", path = "../locid" }
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
+icu_calendar = { version = "0.3", path = "../calendar" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 litemap = { version = "0.2", path = "../../utils/litemap", features = ["serde"] }
 tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
@@ -57,7 +58,7 @@ path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [features]
-std = ["icu_provider/std", "icu_locid/std"]
+std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = ["provider_serde"]
 bench = []
 provider_serde = ["serde", "litemap/serde"]

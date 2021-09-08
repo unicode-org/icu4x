@@ -1011,6 +1011,7 @@ name = "icu_calendar"
 version = "0.3.0"
 dependencies = [
  "displaydoc",
+ "tinystr",
 ]
 
 [[package]]
@@ -1077,6 +1078,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
+ "icu_calendar",
  "icu_locid",
  "icu_locid_macros",
  "icu_provider",

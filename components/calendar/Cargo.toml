@@ -36,3 +36,4 @@ denylist = ["bench"]
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
+tinystr = { version = "0.4.10", features = ["alloc", "serde"], default-features = false }
