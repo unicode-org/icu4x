@@ -1009,6 +1009,9 @@ dependencies = [
 [[package]]
 name = "icu_calendar"
 version = "0.3.0"
+dependencies = [
+ "displaydoc",
+]
 
 [[package]]
 name = "icu_capi"

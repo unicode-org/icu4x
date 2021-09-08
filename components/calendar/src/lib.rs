@@ -15,5 +15,5 @@ pub mod iso;
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date};
 pub use duration::{DateDuration, DurationUnit};
-pub use error::Error;
+pub use error::DateTimeError;
 pub use iso::Iso;
