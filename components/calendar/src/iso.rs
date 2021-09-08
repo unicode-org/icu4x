@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{Calendar, Date, DateDuration, DurationUnit, Error};
-use std::convert::{TryFrom, TryInto};
+use core::convert::{TryFrom, TryInto};
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar

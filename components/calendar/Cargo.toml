@@ -23,6 +23,9 @@ include = [
     "README.md"
 ]
 
+[features]
+std = []
+
 [package.metadata.docs.rs]
 all-features = true
 
@@ -30,3 +33,6 @@ all-features = true
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
+
+[dependencies]
+displaydoc = { version = "0.2.3", default-features = false }
