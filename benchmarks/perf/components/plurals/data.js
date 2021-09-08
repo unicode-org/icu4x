@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631039526973,
+  "lastUpdate": 1631119885535,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13439,6 +13439,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 20345,
             "range": "± 1639",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9cf6367ccef3c741c559c9ce04ec1ab08c22a3bb",
+          "message": "Move datetime types into calendars crate (#1038)\n\n* Move experimental/calendar to components/calendar\r\n\r\n* Move calendar crate to no_std\r\n\r\n* Import DateTimeError type\r\n\r\n* Migrate datetime types to icu_calendar crate\r\n\r\n* fix test imports\r\n\r\n* fmt",
+          "timestamp": "2021-09-08T09:43:36-07:00",
+          "tree_id": "7615c5f781ceb540bed30b02ee3ce84db2b39e37",
+          "url": "https://github.com/unicode-org/icu4x/commit/9cf6367ccef3c741c559c9ce04ec1ab08c22a3bb"
+        },
+        "date": 1631119882244,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1394,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6959,
+            "range": "± 588",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 22132,
+            "range": "± 1217",
             "unit": "ns/iter"
           }
         ]
