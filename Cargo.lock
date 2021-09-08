@@ -1011,6 +1011,7 @@ name = "icu_calendar"
 version = "0.3.0"
 dependencies = [
  "displaydoc",
+ "icu",
  "tinystr",
 ]
 
