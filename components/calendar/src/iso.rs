@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Calendar, Date, DateDuration, DurationUnit, Error};
-use std::convert::{TryFrom, TryInto};
+use crate::{Calendar, Date, DateDuration, DateTimeError, DurationUnit};
+use core::convert::{TryFrom, TryInto};
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The ISO Calendar
@@ -20,20 +20,20 @@ pub struct IsoMonth(u8);
 pub struct IsoYear(pub i32);
 
 impl TryFrom<u8> for IsoDay {
-    type Error = Error;
-    fn try_from(int: u8) -> Result<Self, Error> {
+    type Error = DateTimeError;
+    fn try_from(int: u8) -> Result<Self, DateTimeError> {
         if !(1..=31).contains(&int) {
-            return Err(Error::OutOfRange);
+            return Err(DateTimeError::OutOfRange);
         }
         Ok(Self(int))
     }
 }
 
 impl TryFrom<u8> for IsoMonth {
-    type Error = Error;
-    fn try_from(int: u8) -> Result<Self, Error> {
+    type Error = DateTimeError;
+    fn try_from(int: u8) -> Result<Self, DateTimeError> {
         if !(1..=12).contains(&int) {
-            return Err(Error::OutOfRange);
+            return Err(DateTimeError::OutOfRange);
         }
         Ok(Self(int))
     }
@@ -222,17 +222,25 @@ impl Calendar for Iso {
 }
 
 impl Date<Iso> {
-    pub fn new_iso_date(day: IsoDay, month: IsoMonth, year: IsoYear) -> Result<Date<Iso>, Error> {
+    pub fn new_iso_date(
+        day: IsoDay,
+        month: IsoMonth,
+        year: IsoYear,
+    ) -> Result<Date<Iso>, DateTimeError> {
         if day.0 > 28 {
             let bound = Iso::days_in_month(year, month);
             if day.0 < bound {
-                return Err(Error::OutOfRange);
+                return Err(DateTimeError::OutOfRange);
             }
         }
 
         Ok(Date::from_raw(IsoDateInner { day, month, year }, Iso))
     }
-    pub fn new_iso_date_from_integers(day: u8, month: u8, year: i32) -> Result<Date<Iso>, Error> {
+    pub fn new_iso_date_from_integers(
+        day: u8,
+        month: u8,
+        year: i32,
+    ) -> Result<Date<Iso>, DateTimeError> {
         Self::new_iso_date(day.try_into()?, month.try_into()?, year.into())
     }
 }

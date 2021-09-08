@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{Calendar, DateDuration, DurationUnit, Iso};
-use std::fmt;
+use core::fmt;
 
 pub trait AsCalendar {
     type Calendar: Calendar;
