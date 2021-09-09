@@ -49,6 +49,12 @@ impl<C: Calendar + ?Sized> Default for DateDuration<C> {
 
 impl<C: Calendar + ?Sized> DateDuration<C> {
     /// Construct a DateDuration
+    ///
+    /// ```rust
+    /// # use icu_calendar::*;
+    /// // two years, three months, and five days
+    /// let duration: DateDuration<Iso> = DateDuration::new(2, 3, 0, 5);
+    /// ```
     pub fn new(years: i32, months: i32, weeks: i32, days: i32) -> Self {
         DateDuration {
             years,
