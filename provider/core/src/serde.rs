@@ -217,9 +217,9 @@ where
 }
 
 /// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'data>` for integration with DataProvider.
-pub struct SerdeSeDataStructWrap<'b, 'data>(&'b (dyn SerdeSeDataStruct<'data> + 'data));
+pub struct SerdeSeDataStructWrap<'data>(&'data (dyn SerdeSeDataStruct<'data> + 'data));
 
-impl<'b, 'data> Deref for SerdeSeDataStructWrap<'b, 'data> {
+impl<'data> Deref for SerdeSeDataStructWrap<'data> {
     type Target = dyn SerdeSeDataStruct<'data> + 'data;
     fn deref(&self) -> &Self::Target {
         self.0.deref()
@@ -240,7 +240,7 @@ where
         };
         let yoke_helper: for<'b> fn(
             &'b (dyn SerdeSeDataStruct<'data> + 'data)
-        ) -> <SerdeSeDataStructWrap<'static, 'static> as Yokeable<'b>>::Output = |obj| {
+        ) -> <SerdeSeDataStructWrap<'static> as Yokeable<'b>>::Output = |obj| {
             // The following block casts 'data to '_ on the trait object. This is safe because:
             //   1. '_ (the local scope lifetime) is shorter than 'data
             //   2. This impl is only defined on types implementing Yokeable, so the lifetime on
@@ -256,8 +256,8 @@ where
     }
 }
 
-unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
-    type Output = SerdeSeDataStructWrap<'a, 'a>;
+unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static> {
+    type Output = SerdeSeDataStructWrap<'a>;
     fn transform(&'a self) -> &'a Self::Output {
         // This is only safe to the extent that the only way to create a SerdeSeDataStructWrap is
         // via the `upcast()` function above, which asserts that the lifetimes are covariant.
@@ -286,6 +286,6 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
 pub struct SerdeSeDataStructMarker {}
 
 impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
-    type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
+    type Yokeable = SerdeSeDataStructWrap<'static>;
     type Cart = dyn SerdeSeDataStruct<'data>;
 }
