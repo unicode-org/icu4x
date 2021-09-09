@@ -4,7 +4,7 @@
 
 //! This module contains types and implementations for the ISO calendar
 
-use crate::{Calendar, Date, DateDuration, DateTimeError, DateDurationUnit};
+use crate::{Calendar, Date, DateDuration, DateDurationUnit, DateTimeError};
 use core::convert::{TryFrom, TryInto};
 
 #[derive(Copy, Clone, Debug, Default)]
