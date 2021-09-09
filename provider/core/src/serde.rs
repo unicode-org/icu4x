@@ -216,16 +216,6 @@ where
     }
 }
 
-/* Alt:
-CovariantLifetime<'lt>
-Yokeable::Output : CL
-trait CovariantLifetime
-trait DataStruct
-trait DataStruct<'a>
-unsafe trait
-trait SSDS<'data> : 'data + CovaraintLife<'data>
-*/
-
 /// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'data>` for integration with DataProvider.
 pub struct SerdeSeDataStructWrap<'b, 'data>(&'b (dyn SerdeSeDataStruct<'data> + 'data));
 
