@@ -15,13 +15,21 @@ pub enum DateTimeError {
     #[displaydoc("{0}")]
     Parse(core::num::ParseIntError),
     /// An input overflowed its range.
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
     #[displaydoc("{field} must be between 0-{max}")]
-    Overflow { field: &'static str, max: usize },
-    #[allow(missing_docs)] // TODO(#686) - Add missing docs.
+    Overflow {
+        /// The name of the field
+        field: &'static str,
+        /// The maximum value
+        max: usize,
+    },
     #[displaydoc("{field} must be between {min}-0")]
     /// An input underflowed its range.
-    Underflow { field: &'static str, min: isize },
+    Underflow {
+        /// The name of the field
+        field: &'static str,
+        /// The minimum value
+        min: isize,
+    },
     /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]
     InvalidTimeZoneOffset,

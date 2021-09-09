@@ -9,18 +9,29 @@ use core::marker::PhantomData;
 #[derive(Copy, Clone, Eq, PartialEq)]
 /// A duration between two dates
 pub struct DateDuration<C: Calendar + ?Sized> {
+    /// The number of years
     pub years: i32,
+    /// The number of months
     pub months: i32,
+    /// The number of weeks
     pub weeks: i32,
+    /// The number of days
     pub days: i32,
+    /// A marker for the calendar
     pub marker: PhantomData<C>,
 }
 
+/// A "duration unit" used to specify the minimum or maximum duration of time to
+/// care about
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum DurationUnit {
+    /// Duration in years
     Years,
+    /// Duration in months
     Months,
+    /// Duration in weeks
     Weeks,
+    /// Duration in days
     Days,
 }
 
@@ -37,6 +48,7 @@ impl<C: Calendar + ?Sized> Default for DateDuration<C> {
 }
 
 impl<C: Calendar + ?Sized> DateDuration<C> {
+    /// Construct a DateDuration
     pub fn new(years: i32, months: i32, weeks: i32, days: i32) -> Self {
         DateDuration {
             years,

@@ -5,8 +5,14 @@
 use crate::{Calendar, DateDuration, DurationUnit, Iso};
 use core::fmt;
 
+/// Types that contain a calendar
+///
+/// This allows one to use [`Date`] with wrappers around calendars,
+/// e.g. reference counted calendars.
 pub trait AsCalendar {
+    /// The calendar being wrapped
     type Calendar: Calendar;
+    /// Obtain the inner calendar
     fn as_calendar(&self) -> &Self::Calendar;
 }
 
@@ -18,6 +24,10 @@ impl<C: Calendar> AsCalendar for C {
     }
 }
 
+/// A date for a given calendar
+///
+/// This can work with wrappers arount [`Calendar`] types,
+/// e.g. `Rc<C>`, via the [`AsCalendar`] trait
 pub struct Date<A: AsCalendar> {
     inner: <A::Calendar as Calendar>::DateInner,
     calendar: A,
@@ -31,6 +41,7 @@ impl<A: AsCalendar> Date<A> {
         Date { inner, calendar }
     }
 
+    /// Convert the Date to an ISO Date
     #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
         self.calendar.as_calendar().date_to_iso(self.inner())
