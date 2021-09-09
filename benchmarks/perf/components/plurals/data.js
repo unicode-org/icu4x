@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631214381964,
+  "lastUpdate": 1631222972604,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13523,6 +13523,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 24421,
             "range": "± 1804",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61c5aa3a716da2580aaeecb45d35df0fa39801ca",
+          "message": "Document icu_calendars (#1039)\n\n* Document icu_calendars\r\n\r\n* DateDurationUnit\r\n\r\n* Add DateDuration example\r\n\r\n* fmt",
+          "timestamp": "2021-09-09T14:22:01-07:00",
+          "tree_id": "2f45ce46cc8c48bca8c75b6e46e01f1d941b0bc8",
+          "url": "https://github.com/unicode-org/icu4x/commit/61c5aa3a716da2580aaeecb45d35df0fa39801ca"
+        },
+        "date": 1631222969514,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1146,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 6548,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 21011,
+            "range": "± 120",
             "unit": "ns/iter"
           }
         ]
