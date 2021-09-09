@@ -239,15 +239,14 @@ where
             RcBuf(yoke) => Rc::from(yoke),
         };
         let yoke_helper: for<'b> fn(
-            &'b (dyn SerdeSeDataStruct<'data> + 'data)
-        ) -> <SerdeSeDataStructWrap<'static> as Yokeable<'b>>::Output = |obj| {
+            &'b (dyn SerdeSeDataStruct<'data> + 'data),
+        )
+            -> <SerdeSeDataStructWrap<'static> as Yokeable<'b>>::Output = |obj| {
             // The following block casts 'data to '_ on the trait object. This is safe because:
             //   1. '_ (the local scope lifetime) is shorter than 'data
             //   2. This impl is only defined on types implementing Yokeable, so the lifetime on
             //      the resulting trait object is covariant
-            let shortened: &(dyn SerdeSeDataStruct<'_> + '_) = unsafe {
-                core::mem::transmute(obj)
-            };
+            let shortened: &(dyn SerdeSeDataStruct<'_> + '_) = unsafe { core::mem::transmute(obj) };
             SerdeSeDataStructWrap(shortened)
         };
         DataPayload {
