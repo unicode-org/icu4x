@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631214322702,
+  "lastUpdate": 1631222909267,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10679,6 +10679,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 31852421,
             "range": "± 1655749",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "61c5aa3a716da2580aaeecb45d35df0fa39801ca",
+          "message": "Document icu_calendars (#1039)\n\n* Document icu_calendars\r\n\r\n* DateDurationUnit\r\n\r\n* Add DateDuration example\r\n\r\n* fmt",
+          "timestamp": "2021-09-09T14:22:01-07:00",
+          "tree_id": "2f45ce46cc8c48bca8c75b6e46e01f1d941b0bc8",
+          "url": "https://github.com/unicode-org/icu4x/commit/61c5aa3a716da2580aaeecb45d35df0fa39801ca"
+        },
+        "date": 1631222906424,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 35518901,
+            "range": "± 52895",
             "unit": "ns/iter"
           }
         ]
