@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Calendar, DateDuration, DurationUnit, Iso};
+use crate::{Calendar, DateDuration, DateDurationUnit, Iso};
 use core::fmt;
 
 /// Types that contain a calendar
@@ -93,8 +93,8 @@ impl<A: AsCalendar> Date<A> {
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
         other: &Date<B>,
-        largest_unit: DurationUnit,
-        smallest_unit: DurationUnit,
+        largest_unit: DateDurationUnit,
+        smallest_unit: DateDurationUnit,
     ) -> DateDuration<A::Calendar> {
         self.calendar
             .as_calendar()

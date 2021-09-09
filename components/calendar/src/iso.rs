@@ -4,7 +4,7 @@
 
 //! This module contains types and implementations for the ISO calendar
 
-use crate::{Calendar, Date, DateDuration, DateTimeError, DurationUnit};
+use crate::{Calendar, Date, DateDuration, DateTimeError, DateDurationUnit};
 use core::convert::{TryFrom, TryInto};
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -206,8 +206,8 @@ impl Calendar for Iso {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _largest_unit: DurationUnit,
-        _smallest_unit: DurationUnit,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
         let mut difference = DateDuration::default();
         // TODO (Manishearth) handle the unit bounds and rounding behavior

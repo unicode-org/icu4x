@@ -24,7 +24,7 @@ pub struct DateDuration<C: Calendar + ?Sized> {
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum DurationUnit {
+pub enum DateDurationUnit {
     /// Duration in years
     Years,
     /// Duration in months

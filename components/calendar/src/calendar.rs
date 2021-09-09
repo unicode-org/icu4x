@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{Date, DateDuration, DurationUnit, Iso};
+use crate::{Date, DateDuration, DateDurationUnit, Iso};
 
 /// A calendar implementation
 ///
@@ -47,8 +47,8 @@ pub trait Calendar {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        largest_unit: DurationUnit,
-        smallest_unit: DurationUnit,
+        largest_unit: DateDurationUnit,
+        smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;
 
     /// Obtain a name for the calendar for debug printing
