@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631119885535,
+  "lastUpdate": 1631214381964,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -13481,6 +13481,48 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/overview",
             "value": 22132,
             "range": "± 1217",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8e66c5ea835b43a6a46e9b994b31b6d92f224aed",
+          "message": "Improve safety of SerdeSeDataStructWrap (#1040)",
+          "timestamp": "2021-09-09T13:58:59-05:00",
+          "tree_id": "cda8af44ed85c96b7a5f746befed84dc89b660cd",
+          "url": "https://github.com/unicode-org/icu4x/commit/8e66c5ea835b43a6a46e9b994b31b6d92f224aed"
+        },
+        "date": 1631214377628,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 1469,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 8208,
+            "range": "± 351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 24421,
+            "range": "± 1804",
             "unit": "ns/iter"
           }
         ]
