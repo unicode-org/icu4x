@@ -8,6 +8,7 @@
 mod chars;
 mod plain;
 mod string;
+mod vec;
 
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
@@ -15,7 +16,11 @@ pub use plain::PlainOldULE;
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
 /// "ULE" stands for "Unaligned little-endian"
-pub trait ULE
+///
+/// # Safety
+///
+/// See the safety invariant documented on [`Self::from_byte_slice_unchecked()`] to implement this trait.
+pub unsafe trait ULE
 where
     Self: Sized,
     Self: 'static,
@@ -33,7 +38,29 @@ where
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety. Keep in mind that
     /// `&[Self]` and `&[u8]` may have different lengths.
+    ///
+    /// Ideally, implementations call [`ULE::from_byte_slice_unchecked()`] after validation.
     fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], Self::Error>;
+
+    /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming that
+    /// this byte slice has previously been run through [`ULE::parse_byte_slice()`] with success.
+    ///
+    /// There is no need to perform any validation here, this should almost always be a straight pointer
+    /// cast.
+    ///
+    /// # Safety
+    ///
+    /// ## Callers
+    /// Callers of this method must take care to ensure that `bytes` was previously passed through
+    /// [`ULE::parse_byte_slice()`] with success (and was not changed since then).
+    ///
+    /// ## Implementors
+    /// This method _must_ be implemented to return the same result as [`ULE::parse_byte_slice()`].
+    ///
+    /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
+    /// correct type. It is up to the implementation to reason about the safety, assuming the invariant
+    /// above.
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self];
 
     /// Given `&[Self]`, returns a `&[u8]` with the same lifetime.
     ///
@@ -159,11 +186,15 @@ pub trait AsVarULE {
 ///
 /// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types,
 /// however it is much more preferable to use [`ULE`] for that purpose.
-pub trait VarULE: 'static {
+///
+/// # Safety
+///
+/// See the safety invariant documented on [`Self::from_byte_slice_unchecked()`] to implement this trait.
+pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
     type Error;
 
-    /// Parses a byte slice, `&[u8]`, and return it as `&self` with the same lifetime.
+    /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
     /// and `Self::Error` should be returned if they are not valid.
@@ -182,8 +213,12 @@ pub trait VarULE: 'static {
     ///
     /// # Safety
     ///
+    /// ## Callers
     /// Callers of this method must take care to ensure that `bytes` was previously passed through
     /// [`VarULE::parse_byte_slice()`] with success (and was not changed since then).
+    ///
+    /// ## Implementors
+    /// This method _must_ be implemented to return the same result as [`VarULE::parse_byte_slice()`].
     ///
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety, assuming the invariant
