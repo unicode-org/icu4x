@@ -30,5 +30,6 @@ mod serde;
 pub use yoke_derive::{Yokeable, ZeroCopyFrom};
 
 pub use crate::yoke::{CloneableCart, Yoke};
+pub use crate::yokeable::IsCovariant;
 pub use crate::yokeable::Yokeable;
 pub use crate::zero_copy_from::ZeroCopyFrom;
