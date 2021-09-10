@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631222909267,
+  "lastUpdate": 1631312813576,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10709,6 +10709,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 35518901,
             "range": "± 52895",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "369215a1184e85d524bcd121edd769a6ccf0dfdb",
+          "message": "Add [As]VarULE impls for Vec<T>/[T] (#1042)\n\n* Clarify safety of from_byte_slice_unchecked\n\n* Add from_byte_slice_unchecked to ULE\n\n* Add VarULE impl for Vec<T>\n\n* Add example for VarULE vec\n\n* Make ULE and VarULE unsafe traits\n\nSee https://twitter.com/ManishEarth/status/1436387041114157057 , in\ngeneral people think traits should be `unsafe` even if their only\nimplementor-side safety invaraints are in `unsafe` fns\n\n* Add impl for ZeroVec<'static>\n\n* add test",
+          "timestamp": "2021-09-10T15:19:55-07:00",
+          "tree_id": "740b9ad066ce03d53feadd7db7cf2a14edef7e4d",
+          "url": "https://github.com/unicode-org/icu4x/commit/369215a1184e85d524bcd121edd769a6ccf0dfdb"
+        },
+        "date": 1631312810555,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 42431585,
+            "range": "± 64063",
             "unit": "ns/iter"
           }
         ]
