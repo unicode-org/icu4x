@@ -50,10 +50,15 @@ impl ULE for CharULE {
             let u = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
             char::try_from(u)?;
         }
+        // Safe because Self is transparent over [u8; 4] and has been validated
+        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+    }
+
+    #[inline]
+    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
         let data = bytes.as_ptr();
         let len = bytes.len() / 4;
-        // Safe because Self is transparent over [u8; 4]
-        Ok(unsafe { std::slice::from_raw_parts(data as *const Self, len) })
+        std::slice::from_raw_parts(data as *const Self, len)
     }
 
     #[inline]
