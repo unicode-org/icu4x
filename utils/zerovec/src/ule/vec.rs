@@ -4,7 +4,10 @@
 
 use crate::ule::*;
 
-impl<T> AsVarULE for Vec<T> where T: ULE + Clone {
+impl<T> AsVarULE for Vec<T>
+where
+    T: ULE + Clone,
+{
     type VarULE = [T];
     #[inline]
     fn as_unaligned(&self) -> &[T] {
@@ -26,8 +29,6 @@ where
     fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, Self::Error> {
         T::parse_byte_slice(bytes)
     }
-    /// Invariant: must be safe to call when called on a slice that previously
-    /// succeeded with `parse_byte_slice`
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
         T::from_byte_slice_unchecked(bytes)
