@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
+use crate::ZeroVec;
 
 impl<T> AsVarULE for Vec<T>
 where
@@ -16,6 +17,22 @@ where
     #[inline]
     fn from_unaligned(unaligned: &[T]) -> Self {
         unaligned.into()
+    }
+}
+
+impl<T> AsVarULE for ZeroVec<'static, T>
+where
+    T: AsULE,
+    T::ULE: Clone,
+{
+    type VarULE = [T::ULE];
+    #[inline]
+    fn as_unaligned(&self) -> &[T::ULE] {
+        self.as_slice()
+    }
+    #[inline]
+    fn from_unaligned(unaligned: &[T::ULE]) -> Self {
+        ZeroVec::Owned(unaligned.into())
     }
 }
 
