@@ -16,7 +16,6 @@ members = [
     "components/uniset",
     "experimental/bies",
     "experimental/calendar",
-    "experimental/provider_ppucd",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi",

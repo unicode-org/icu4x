@@ -176,7 +176,7 @@ fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
     let inv_list_start: u32 = *range_start;
     let inv_list_end: u32 = *range_end + 1;
     let inv_list: Vec<u32> = vec![inv_list_start, inv_list_end];
-    let range_result = UnicodeSet::from_inversion_list(inv_list);
+    let range_result = UnicodeSet::clone_from_inversion_list(inv_list);
 
     let props_vals = get_data_line_prop_vals(&line_parts);
 
@@ -184,7 +184,7 @@ fn get_block_range_prop_vals(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
         range
     } else {
         let inv_list: Vec<u32> = Vec::default();
-        UnicodeSet::from_inversion_list(inv_list).unwrap()
+        UnicodeSet::clone_from_inversion_list(inv_list).unwrap()
     };
     (range, props_vals)
 }
@@ -209,12 +209,12 @@ fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
         let inv_list_start: u32 = *range_start;
         let inv_list_end: u32 = *range_end + 1;
         let inv_list: Vec<u32> = vec![inv_list_start, inv_list_end];
-        UnicodeSet::from_inversion_list(inv_list)
+        UnicodeSet::clone_from_inversion_list(inv_list)
     } else {
         let code_point_str = range_str;
         let code_point: u32 = u32::from_str_radix(code_point_str, 16).unwrap();
         let inv_list: Vec<u32> = vec![code_point, code_point + 1];
-        UnicodeSet::from_inversion_list(inv_list)
+        UnicodeSet::clone_from_inversion_list(inv_list)
     };
 
     let props_vals = get_data_line_prop_vals(&line_parts);
@@ -223,7 +223,7 @@ fn get_code_point_overrides(line: &str) -> (UnicodeSet, HashMap<&str, &str>) {
         range
     } else {
         let inv_list: Vec<u32> = Vec::default();
-        UnicodeSet::from_inversion_list(inv_list).unwrap()
+        UnicodeSet::clone_from_inversion_list(inv_list).unwrap()
     };
     (range, props_vals)
 }
@@ -274,7 +274,7 @@ fn get_code_point_prop_vals<'s>(
 fn get_binary_prop_unisets<'s>(
     prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
-) -> HashMap<&'s str, UnicodeSet> {
+) -> HashMap<&'s str, UnicodeSet<'s>> {
     let mut m: HashMap<&'s str, UnicodeSet> = HashMap::new();
 
     for (canonical_name, all_names) in prop_aliases {
@@ -304,7 +304,7 @@ fn get_enum_prop_unisets<'s>(
     enum_prop_aliases: &HashMap<&'s str, HashSet<&'s str>>,
     enum_val_aliases: &HashMap<&'s str, HashMap<&'s str, HashSet<&'s str>>>,
     code_points: &HashMap<u32, HashMap<&'s str, &'s str>>,
-) -> HashMap<Cow<'s, TinyStr16>, UnicodeSet> {
+) -> HashMap<Cow<'s, TinyStr16>, UnicodeSet<'s>> {
     let mut m: HashMap<&str, HashMap<&str, UnicodeSetBuilder>> = HashMap::new();
 
     let enum_val_mappings: HashMap<&str, HashMap<&str, &str>> =

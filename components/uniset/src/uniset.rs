@@ -90,11 +90,13 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// use icu::uniset::UnicodeSetError;
+    /// use zerovec::ZeroVec;
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let result = UnicodeSet::clone_from_inversion_list(invalid.clone());
+    /// let inv_list: ZeroVec<u32> = ZeroVec::from_aligned(&invalid);
+    /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
     /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
-    ///     assert_eq!(invalid, actual);
+    ///     assert_eq!(ZeroVec::from_aligned(&invalid), actual);
     /// }
     /// ```
     pub fn clone_from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError<'data>> {
@@ -143,7 +145,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x44, 0x45, 0x46];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// let mut ex_iter_chars = example.iter_chars();
     /// assert_eq!(Some('A'), ex_iter_chars.next());
     /// assert_eq!(Some('B'), ex_iter_chars.next());
@@ -171,7 +173,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x44, 0x45, 0x46];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// let mut example_iter_ranges = example.iter_ranges();
     /// assert_eq!(Some(0x41..=0x43), example_iter_ranges.next());
     /// assert_eq!(Some(0x45..=0x45), example_iter_ranges.next());
@@ -239,7 +241,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x43, 0x44, 0x45];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// assert!(example.contains('A'));
     /// assert!(!example.contains('C'));
     /// ```
@@ -262,7 +264,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x43, 0x44, 0x45];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// assert!(example.contains_u32(0x41));
     /// assert!(!example.contains_u32(0x43));
     /// ```
@@ -281,7 +283,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x43, 0x44, 0x45];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// assert!(example.contains_range(&('A'..'C')));
     /// assert!(example.contains_range(&('A'..='B')));
     /// assert!(!example.contains_range(&('A'..='C')));
@@ -302,7 +304,7 @@ impl<'data> UnicodeSet<'data> {
     /// use std::char;
     /// let check = char::from_u32(0xD7FE).unwrap() .. char::from_u32(0xE001).unwrap();
     /// let example_list = vec![0xD7FE, 0xD7FF, 0xE000, 0xE001];
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// assert!(!example.contains_range(&(check)));
     /// ```
     pub fn contains_range(&self, range: &impl RangeBounds<char>) -> bool {
@@ -330,10 +332,10 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x46, 0x55, 0x5B]; // A - E, U - Z
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
-    /// let a_to_d = UnicodeSet::from_inversion_list(vec![0x41, 0x45]).unwrap();
-    /// let f_to_t = UnicodeSet::from_inversion_list(vec![0x46, 0x55]).unwrap();
-    /// let r_to_x = UnicodeSet::from_inversion_list(vec![0x52, 0x58]).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
+    /// let a_to_d = UnicodeSet::clone_from_inversion_list(vec![0x41, 0x45]).unwrap();
+    /// let f_to_t = UnicodeSet::clone_from_inversion_list(vec![0x46, 0x55]).unwrap();
+    /// let r_to_x = UnicodeSet::clone_from_inversion_list(vec![0x52, 0x58]).unwrap();
     /// assert!(example.contains_set(&a_to_d)); // contains all
     /// assert!(!example.contains_set(&f_to_t)); // contains none
     /// assert!(!example.contains_set(&r_to_x)); // contains some
@@ -367,7 +369,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x44]; // {A, B, C}
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// assert_eq!(example.span("CABXYZ", true), 3);
     /// assert_eq!(example.span("XYZC", false), 3);
     /// assert_eq!(example.span("XYZ", true), 0);
@@ -385,7 +387,7 @@ impl<'data> UnicodeSet<'data> {
     /// ```
     /// use icu::uniset::UnicodeSet;
     /// let example_list = vec![0x41, 0x44]; // {A, B, C}
-    /// let example = UnicodeSet::from_inversion_list(example_list).unwrap();
+    /// let example = UnicodeSet::clone_from_inversion_list(example_list).unwrap();
     /// assert_eq!(example.span_back("XYZCAB", true), 3);
     /// assert_eq!(example.span_back("ABCXYZ", true), 6);
     /// assert_eq!(example.span_back("CABXYZ", false), 3);
@@ -399,36 +401,38 @@ impl<'data> UnicodeSet<'data> {
 mod tests {
     use super::{UnicodeSet, UnicodeSetError, BMP_MAX};
     use std::{char, vec::Vec};
+    use zerovec::ZeroVec;
 
     #[test]
     fn test_unicodeset_try_from_vec() {
         let ex = vec![0x2, 0x3, 0x4, 0x5];
-        let check = UnicodeSet::from_inversion_list(ex.clone()).unwrap();
-        assert_eq!(ex, check.inv_list);
-        assert_eq!(0x2, check.size());
+        let check = UnicodeSet::clone_from_inversion_list(ex.clone()).unwrap();
+        assert_eq!(ex, check.get_inversion_list());
+        assert_eq!(2, check.size());
     }
 
     #[test]
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
-        let set = UnicodeSet::from_inversion_list(check.clone());
+        let inv_list = ZeroVec::from_aligned(&check);
+        let set = UnicodeSet::from_inversion_list(inv_list);
         assert!(matches!(set, Err(UnicodeSetError::InvalidSet(_))));
         if let Err(UnicodeSetError::InvalidSet(actual)) = set {
-            assert_eq!(check, actual);
+            assert_eq!(ZeroVec::from_aligned(&check), actual);
         }
     }
 
     #[test]
     fn test_unicodeset_all() {
         let expected = vec![0x0, (char::MAX as u32) + 1];
-        assert_eq!(UnicodeSet::all().inv_list, expected);
+        assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_aligned(&expected));
         assert_eq!(UnicodeSet::all().size(), (expected[1] - expected[0]) as usize)
     }
 
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0x0, BMP_MAX + 1];
-        assert_eq!(UnicodeSet::bmp().inv_list, expected);
+        assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_aligned(&expected));
         assert_eq!(UnicodeSet::bmp().size(), (expected[1] - expected[0]) as usize);
     }
 
@@ -436,7 +440,7 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_query() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert!(check.contains_query(0x40).is_none());
         assert_eq!(check.contains_query(0x41).unwrap(), 0);
         assert_eq!(check.contains_query(0x44).unwrap(), 0);
@@ -448,7 +452,7 @@ mod tests {
     #[test]
     fn test_unicodeset_contains() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert!(check.contains(0x2 as char));
         assert!(check.contains(0x4 as char));
         assert!(check.contains(0xA as char));
@@ -458,7 +462,7 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_false() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert!(!check.contains(0x1 as char));
         assert!(!check.contains(0x5 as char));
         assert!(!check.contains(0x9 as char));
@@ -469,7 +473,7 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_range() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert!(check.contains_range(&('A'..='E'))); // 65 - 69
         assert!(check.contains_range(&('C'..'D'))); // 67 - 67
         assert!(check.contains_range(&('L'..'P'))); // 76 - 80
@@ -479,7 +483,7 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_range_false() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert!(!check.contains_range(&('!'..'A'))); // 33 - 65
         assert!(!check.contains_range(&('F'..'K'))); // 70 - 74
         assert!(!check.contains_range(&('U'..))); // 85 - ..
@@ -495,36 +499,38 @@ mod tests {
     #[test]
     fn test_unicodeset_contains_set_u() {
         let ex = vec![0xA, 0x14, 0x28, 0x32, 0x46, 0x50, 0x64, 0x6E];
-        let u = UnicodeSet::from_inversion_list(ex).unwrap();
+        let u = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let inside = vec![0xF, 0x14, 0x2C, 0x31, 0x46, 0x50, 0x64, 0x6D];
-        let s = UnicodeSet::from_inversion_list(inside).unwrap();
+        let s = UnicodeSet::clone_from_inversion_list(inside).unwrap();
         assert!(u.contains_set(&s));
     }
 
     #[test]
     fn test_unicodeset_contains_set_u_false() {
         let ex = vec![0xA, 0x14, 0x28, 0x32, 0x46, 0x50, 0x64, 0x78];
-        let u = UnicodeSet::from_inversion_list(ex).unwrap();
+        let u = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let outside = vec![0x0, 0xA, 0x16, 0x2C, 0x32, 0x46, 0x4F, 0x51, 0x6D, 0x6F];
-        let s = UnicodeSet::from_inversion_list(outside).unwrap();
+        let s = UnicodeSet::clone_from_inversion_list(outside).unwrap();
         assert!(!u.contains_set(&s));
     }
 
     #[test]
     fn test_unicodeset_size() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(8, check.size());
         let check = UnicodeSet::all();
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
-        let check = UnicodeSet { inv_list: Vec::new(), size: 0 };
+        let inv_list_vec: Vec<u32> = vec![];
+        let check = UnicodeSet { inv_list: ZeroVec::from_aligned(&inv_list_vec), size: 0 };
         assert_eq!(check.size(), 0);
     }
 
     #[test]
     fn test_unicodeset_is_empty() {
-        let check = UnicodeSet { inv_list: vec![], size: 0 };
+        let inv_list_vec: Vec<u32> = vec![];
+        let check = UnicodeSet { inv_list: ZeroVec::from_aligned(&inv_list_vec), size: 0 };
         assert!(check.is_empty());
     }
 
@@ -537,7 +543,7 @@ mod tests {
     #[test]
     fn test_unicodeset_iter_chars() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let mut iter = check.iter_chars();
         assert_eq!(Some('A'), iter.next());
         assert_eq!(Some('B'), iter.next());
@@ -549,7 +555,7 @@ mod tests {
     #[test]
     fn test_unicodeset_iter_ranges() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let set = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let mut ranges = set.iter_ranges();
         assert_eq!(Some(0x41..=0x43), ranges.next());
         assert_eq!(Some(0x45..=0x45), ranges.next());
@@ -560,7 +566,7 @@ mod tests {
     #[test]
     fn test_unicodeset_iter_ranges_exactsizeiter_trait() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let set = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let ranges = set.iter_ranges();
         assert_eq!(3, ranges.len());
     }
@@ -568,7 +574,7 @@ mod tests {
     #[test]
     fn test_unicodeset_range_count() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let set = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(3, set.get_range_count());
     }
 
@@ -577,7 +583,7 @@ mod tests {
     #[test]
     fn test_unicodeset_iter_ranges_with_max_code_point() {
         let ex = vec![0x80, (char::MAX as u32) + 1];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let set = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let mut ranges = set.iter_ranges();
         assert_eq!(Some(0x80..=(char::MAX as u32)), ranges.next());
         assert_eq!(None, ranges.next());
@@ -586,7 +592,7 @@ mod tests {
     #[test]
     fn test_unicodeset_span_contains() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(check.span("ABCDE", true), 3);
         assert_eq!(check.span("E", true), 0);
     }
@@ -594,7 +600,7 @@ mod tests {
     #[test]
     fn test_unicodeset_span_does_not_contain() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(check.span("DEF", false), 2);
         assert_eq!(check.span("KLMA", false), 3);
     }
@@ -602,7 +608,7 @@ mod tests {
     #[test]
     fn test_unicodeset_span_back_contains() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(check.span_back("XYZABFH", true), 3);
         assert_eq!(check.span_back("ABCXYZ", true), 6);
     }
@@ -610,7 +616,7 @@ mod tests {
     #[test]
     fn test_unicodeset_span_back_does_not_contain() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(check.span_back("ABCXYZ", false), 3);
         assert_eq!(check.span_back("XYZABC", false), 6);
     }
@@ -621,7 +627,7 @@ mod tests {
             0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028, 0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
         ];
         let inv_list_clone = (&inv_list).clone();
-        let s: UnicodeSet = UnicodeSet::from_inversion_list(inv_list_clone).unwrap();
+        let s: UnicodeSet = UnicodeSet::clone_from_inversion_list(inv_list_clone).unwrap();
         let round_trip_inv_list = s.get_inversion_list();
         assert_eq!(round_trip_inv_list, inv_list);
     }
@@ -629,7 +635,7 @@ mod tests {
     #[test]
     fn test_serde_serialize() {
         let inv_list = vec![0x41, 0x46, 0x4B, 0x55];
-        let uniset = UnicodeSet::from_inversion_list(inv_list).unwrap();
+        let uniset = UnicodeSet::clone_from_inversion_list(inv_list).unwrap();
         let json_str = serde_json::to_string(&uniset).unwrap();
         assert_eq!(json_str, "[65,70,75,85]");
     }
@@ -638,7 +644,7 @@ mod tests {
     fn test_serde_deserialize() {
         let inv_list_str = "[65,70,75,85]";
         let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
-        let exp_uniset = UnicodeSet::from_inversion_list(exp_inv_list).unwrap();
+        let exp_uniset = UnicodeSet::clone_from_inversion_list(exp_inv_list).unwrap();
         let act_uniset: UnicodeSet = serde_json::from_str(inv_list_str).unwrap();
         assert_eq!(act_uniset, exp_uniset);
     }

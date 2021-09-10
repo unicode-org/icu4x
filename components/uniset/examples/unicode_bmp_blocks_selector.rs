@@ -18,13 +18,13 @@ icu_benchmark_macros::static_setup!();
 
 use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
 
-fn get_basic_latin_block() -> UnicodeSet {
+fn get_basic_latin_block<'data>() -> UnicodeSet<'data> {
     let mut builder = UnicodeSetBuilder::new();
     builder.add_range(&('\u{0000}'..='\u{007F}'));
     builder.build()
 }
 
-fn get_latin1_supplement_block() -> UnicodeSet {
+fn get_latin1_supplement_block<'data>() -> UnicodeSet<'data> {
     let mut builder = UnicodeSetBuilder::new();
     builder.add_range(&('\u{0080}'..='\u{00FF}'));
     builder.build()
@@ -37,11 +37,11 @@ enum BmpBlock {
     Unknown,
 }
 
-struct BmpBlockSelector {
-    blocks: Vec<(BmpBlock, UnicodeSet)>,
+struct BmpBlockSelector<'data> {
+    blocks: Vec<(BmpBlock, UnicodeSet<'data>)>,
 }
 
-impl BmpBlockSelector {
+impl<'data> BmpBlockSelector<'data> {
     pub fn new() -> Self {
         let blocks = vec![
             (BmpBlock::Basic, get_basic_latin_block()),

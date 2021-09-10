@@ -139,7 +139,7 @@ impl<'d> UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x41, 0x4C]).unwrap();
+    /// let set = UnicodeSet::clone_from_inversion_list(vec![0x41, 0x4C]).unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
@@ -206,7 +206,7 @@ impl<'d> UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSet, UnicodeSetBuilder};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x41, 0x46]).unwrap();
+    /// let set = UnicodeSet::clone_from_inversion_list(vec![0x41, 0x46]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
@@ -265,7 +265,7 @@ impl<'d> UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![65, 70]).unwrap();
+    /// let set = UnicodeSet::clone_from_inversion_list(vec![65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
@@ -327,7 +327,7 @@ impl<'d> UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x0, 0x41, 0x46, (std::char::MAX as u32) + 1]).unwrap();
+    /// let set = UnicodeSet::clone_from_inversion_list(vec![0x0, 0x41, 0x46, (std::char::MAX as u32) + 1]).unwrap();
     /// builder.add_set(&set);
     /// builder.complement();
     /// let check = builder.build();
@@ -396,7 +396,7 @@ impl<'d> UnicodeSetBuilder {
     /// ```
     /// use icu::uniset::{UnicodeSetBuilder, UnicodeSet};
     /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list(vec![0x41, 0x46, 0x4B, 0x5A]).unwrap();
+    /// let set = UnicodeSet::clone_from_inversion_list(vec![0x41, 0x46, 0x4B, 0x5A]).unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
     /// builder.complement_set(&set);
     /// let check = builder.build();
@@ -428,7 +428,7 @@ mod tests {
     use core::char;
 
     fn generate_tester(ex: Vec<u32>) -> UnicodeSetBuilder {
-        let check = UnicodeSet::from_inversion_list(ex).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         let mut builder = UnicodeSetBuilder::new();
         builder.add_set(&check);
         builder
@@ -611,7 +611,7 @@ mod tests {
     #[test]
     fn test_add_unicodeset() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        let check = UnicodeSet::from_inversion_list(vec![0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
+        let check = UnicodeSet::clone_from_inversion_list(vec![0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
         builder.add_set(&check);
         let expected = vec![0x5, 0x14, 0x16, 0x21, 0x28, 0x33];
         assert_eq!(builder.intervals, expected);
@@ -737,7 +737,7 @@ mod tests {
     #[test]
     fn test_remove_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let remove = UnicodeSet::from_inversion_list(vec![0xA, 0x14, 0x2D, 0x4B]).unwrap();
+        let remove = UnicodeSet::clone_from_inversion_list(vec![0xA, 0x14, 0x2D, 0x4B]).unwrap();
         builder.remove_set(&remove);
         let expected = vec![0x28, 0x2D, 0x4B, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -769,7 +769,7 @@ mod tests {
     #[test]
     fn test_retain_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let retain = UnicodeSet::from_inversion_list(vec![0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
+        let retain = UnicodeSet::clone_from_inversion_list(vec![0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
         builder.retain_set(&retain);
         let expected = vec![0xE, 0x14, 0x28, 0x32, 0x4D, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -835,7 +835,7 @@ mod tests {
     #[test]
     fn test_complement_set() {
         let mut builder = generate_tester(vec![0x43, 0x4E]);
-        let set = UnicodeSet::from_inversion_list(vec![0x41, 0x46, 0x4B, 0x5A]).unwrap();
+        let set = UnicodeSet::clone_from_inversion_list(vec![0x41, 0x46, 0x4B, 0x5A]).unwrap();
         builder.complement_set(&set);
         let expected = vec![0x41, 0x43, 0x46, 0x4B, 0x4E, 0x5A];
         assert_eq!(builder.intervals, expected);
