@@ -19,7 +19,6 @@
 //!
 //! [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>` is used by data exporters such as `FilesystemExporter`.
 
-use crate::data_provider::DataPayloadInner;
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
@@ -179,6 +178,9 @@ where
 
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
+///
+/// This trait requires [`IsCovariant`] such that it can be safely used as a trait object in
+/// [`DataProvider`].
 pub trait SerdeSeDataStruct<'data>: IsCovariant<'data> {
     /// Return this trait object reference for Serde serialization.
     ///
@@ -219,6 +221,17 @@ where
 /// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'a>` for integration with DataProvider.
 pub struct SerdeSeDataStructDynRef<'a>(&'a (dyn SerdeSeDataStruct<'a> + 'a));
 
+impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
+    for SerdeSeDataStructDynRef<'static>
+{
+    fn zero_copy_from<'b>(
+        this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
+    ) -> SerdeSeDataStructDynRef<'b> {
+        // This is safe because the trait object requires IsCovariant.
+        SerdeSeDataStructDynRef(unsafe { core::mem::transmute(this) })
+    }
+}
+
 impl<'a> Deref for SerdeSeDataStructDynRef<'a> {
     type Target = dyn SerdeSeDataStruct<'a> + 'a;
     fn deref(&self) -> &Self::Target {
@@ -239,20 +252,7 @@ where
             Owned(yoke) => Rc::from(yoke),
             RcBuf(yoke) => Rc::from(yoke),
         };
-        let yoke_helper: for<'b> fn(
-            &'b (dyn SerdeSeDataStruct<'data> + 'data),
-        )
-            -> <SerdeSeDataStructDynRef<'static> as Yokeable<'b>>::Output = |obj| {
-            // The following block casts 'data to '_ on the trait object. This is safe because:
-            //   1. '_ (the local scope lifetime) is shorter than 'data
-            //   2. M::Cart is bounded by IsCovariant, which means the the trait object lifetime
-            //      is covariant
-            let shortened: &(dyn SerdeSeDataStruct<'_> + '_) = unsafe { core::mem::transmute(obj) };
-            SerdeSeDataStructDynRef(shortened)
-        };
-        DataPayload {
-            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(cart, yoke_helper)),
-        }
+        DataPayload::from_partial_owned(cart)
     }
 }
 

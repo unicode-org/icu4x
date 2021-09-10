@@ -35,7 +35,7 @@ use alloc::{
 /// ```
 ///
 /// By constraining the trait `ExampleTrait<'a>` on `IsCovariant<'a>`, we can safely implement
-/// [`Yokeable`] on its trait object.
+/// [`Yokeable`] and [`ZeroCopyFrom`] on its trait object:
 ///
 /// ```
 /// # use yoke::*;
@@ -47,7 +47,7 @@ use alloc::{
 /// // This wrapper is required because of the blanket Yokeable impl on &'static T
 /// pub struct ExampleTraitDynRef<'a>(pub &'a dyn ExampleTrait<'a>);
 ///
-/// // The following impl is safe because the lifetime in the trait object is covariant.
+/// // The following impl is safe because the trait object requires IsCovariant.
 /// unsafe impl<'a> Yokeable<'a> for ExampleTraitDynRef<'static> {
 ///     type Output = ExampleTraitDynRef<'a>;
 ///     fn transform(&'a self) -> &'a Self::Output {
@@ -70,6 +70,13 @@ use alloc::{
 ///     }
 /// }
 ///
+/// impl<'a> ZeroCopyFrom<dyn ExampleTrait<'a> + 'a> for ExampleTraitDynRef<'static> {
+///     fn zero_copy_from<'b>(this: &'b (dyn ExampleTrait<'a> + 'a)) -> ExampleTraitDynRef<'b> {
+///         // This is safe because the trait object requires IsCovariant.
+///         ExampleTraitDynRef(unsafe { core::mem::transmute(this) })
+///     }
+/// }
+///
 /// // Implement ExampleTrait on the struct from the previous example
 /// # struct MyStruct<'a>(&'a str);
 /// # unsafe impl<'a> IsCovariant<'a> for MyStruct<'a> {}
@@ -81,15 +88,14 @@ use alloc::{
 ///
 /// // Example usage: a Yoke of a trait object
 /// let s = "Hello World".to_string();
-/// let data = MyStruct(&s);
-/// let yoke: Yoke<ExampleTraitDynRef<'static>, Box<MyStruct>> = Yoke::attach_to_cart_badly(
-///     Box::new(data),
-///     |obj| {
-///         ExampleTraitDynRef(obj)
-///     });
+/// let yoke: Yoke<ExampleTraitDynRef<'static>, Box<dyn ExampleTrait>> =
+///     Yoke::attach_to_box_cart(Box::new(MyStruct(&s)));
 ///
 /// assert_eq!(yoke.get().0.get_message(), "Hello World");
 /// ```
+/// 
+/// [`Yokeable`]: crate::Yokeable
+/// [`ZeroCopyFrom`]: crate::ZeroCopyFrom
 pub unsafe trait IsCovariant<'a>: 'a {}
 
 // IsCovariant is implemented on the standard library Copy types in macro_impls.rs
