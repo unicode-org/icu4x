@@ -93,7 +93,7 @@ use alloc::{
 ///
 /// assert_eq!(yoke.get().0.get_message(), "Hello World");
 /// ```
-/// 
+///
 /// [`Yokeable`]: crate::Yokeable
 /// [`ZeroCopyFrom`]: crate::ZeroCopyFrom
 pub unsafe trait IsCovariant<'a>: 'a {}
