@@ -19,7 +19,8 @@ mod serde;
 /// where `T`'s data is variable-length (e.g. `String`)
 ///
 /// `T` must implement [`AsVarULE`], which is already implemented for [`String`] and `Vec<T>` where
-/// `T` implements [`ULE`]. References are obtained
+/// `T` implements [`ULE`]. It is also implemented on `VarZeroVec<'static, T>` if the inconvenience of
+/// converting to/from ULE is not desired. References are obtained
 /// as its [`AsVarULE::VarULE`] type, which in the case of [`String`] is [`str`].
 ///
 /// `VarZeroVec<T>` behaves much like [`std::borrow::Cow`], where it can be constructed from owned data
@@ -64,12 +65,13 @@ mod serde;
 /// # Ok::<(), VarZeroVecError<Utf8Error>>(())
 /// ```
 ///
-/// Here's another example with `Vec<T>`:
+/// Here's another example with `Vec<T>` and `ZeroVec<'static, T>`:
 ///
 /// ```rust
 /// # use std::str::Utf8Error;
 /// # use zerovec::VarZeroVecError;
 /// use zerovec::VarZeroVec;
+/// use zerovec::ZeroVec;
 /// use zerovec::ule::*;
 ///
 /// // The little-endian bytes correspond to the list of integers.
@@ -85,9 +87,14 @@ mod serde;
 ///              9, 0, 0, 0];
 ///
 /// let zerovec: VarZeroVec<Vec<PlainOldULE<4>>> = VarZeroVec::try_from_bytes(bytes)?;
+/// let zerovec2: VarZeroVec<ZeroVec<'static, u32>> = VarZeroVec::try_from_bytes(bytes)?;
 ///
 /// assert_eq!(zerovec.get(2).and_then(|v| v.get(1)), Some(&55555.into()));
+/// assert_eq!(zerovec2.get(2).and_then(|v| v.get(1)), Some(&55555.into()));
 /// assert_eq!(zerovec, &*numbers);
+/// for (zv, v) in zerovec.iter().zip(numbers.iter()) {
+///     assert_eq!(zv, v);   
+/// }
 /// # Ok::<(), VarZeroVecError<std::convert::Infallible>>(())
 /// ```
 ///
