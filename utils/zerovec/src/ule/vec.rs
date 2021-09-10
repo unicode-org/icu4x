@@ -19,7 +19,9 @@ where
     }
 }
 
-impl<T> VarULE for [T]
+// This is safe to implement because from_byte_slice_unchecked returns
+// the same value as parse_byte_slice
+unsafe impl<T> VarULE for [T]
 where
     T: ULE,
 {

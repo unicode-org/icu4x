@@ -16,7 +16,11 @@ pub use plain::PlainOldULE;
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
 ///
 /// "ULE" stands for "Unaligned little-endian"
-pub trait ULE
+///
+/// # Safety
+///
+/// See the safety invariant documented on [`Self::from_byte_slice_unchecked()`] to implement this trait.
+pub unsafe trait ULE
 where
     Self: Sized,
     Self: 'static,
@@ -182,7 +186,11 @@ pub trait AsVarULE {
 ///
 /// This trait is mostly for unsized types like `str` and `[T]`. It can be implemented on sized types,
 /// however it is much more preferable to use [`ULE`] for that purpose.
-pub trait VarULE: 'static {
+///
+/// # Safety
+///
+/// See the safety invariant documented on [`Self::from_byte_slice_unchecked()`] to implement this trait.
+pub unsafe trait VarULE: 'static {
     /// The error type to used by [`VarULE::parse_byte_slice()`]
     type Error;
 

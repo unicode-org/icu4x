@@ -39,7 +39,9 @@ use std::convert::TryFrom;
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct CharULE([u8; 4]);
 
-impl ULE for CharULE {
+// This is safe to implement because from_byte_slice_unchecked returns
+// the same value as parse_byte_slice
+unsafe impl ULE for CharULE {
     type Error = std::char::CharTryFromError;
 
     #[inline]
