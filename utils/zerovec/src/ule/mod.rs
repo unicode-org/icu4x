@@ -8,6 +8,7 @@
 mod chars;
 mod plain;
 mod string;
+mod vec;
 
 pub use chars::CharULE;
 pub use plain::PlainOldULE;
