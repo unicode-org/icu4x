@@ -182,8 +182,12 @@ pub trait VarULE: 'static {
     ///
     /// # Safety
     ///
+    /// ## Callers
     /// Callers of this method must take care to ensure that `bytes` was previously passed through
     /// [`VarULE::parse_byte_slice()`] with success (and was not changed since then).
+    ///
+    /// ## Implementors
+    /// This method _must_ be implemented to return the same result as [`VarULE::parse_byte_slice()`].
     ///
     /// Implementations of this method may involve `unsafe{}` blocks to cast the pointer to the
     /// correct type. It is up to the implementation to reason about the safety, assuming the invariant
