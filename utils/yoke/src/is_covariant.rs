@@ -17,6 +17,7 @@ use alloc::{
 /// useful in trait bounds when a type needs to be covariant for another unsafe operation.
 ///
 /// The primary use case is to safely perform lifetime casting on trait objects (`dyn Trait`).
+/// This enables a type-erased [`Yoke`] consisting of only trait objects.
 ///
 /// # Implementation safety
 ///
@@ -94,6 +95,7 @@ use alloc::{
 /// assert_eq!(yoke.get().0.get_message(), "Hello World");
 /// ```
 ///
+/// [`Yoke`]: crate::Yoke
 /// [`Yokeable`]: crate::Yokeable
 /// [`ZeroCopyFrom`]: crate::ZeroCopyFrom
 pub unsafe trait IsCovariant<'a>: 'a {}

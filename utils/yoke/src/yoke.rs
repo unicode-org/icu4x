@@ -29,6 +29,9 @@ use alloc::sync::Arc;
 /// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
 /// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
 ///
+/// In general, `C` is a concrete type, but it is also possible for it to be a trait object;
+/// for more information, see [`IsCovariant`].
+///
 /// # Example
 ///
 /// For example, we can use this to store zero-copy deserialized data in a cache:
