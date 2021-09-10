@@ -8,25 +8,25 @@
 description = "Build WASM FFI into the target directory (dev mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2021-02-28"
+toolchain = "nightly-2021-08-20"
 command = "cargo"
-args = ["wasm-build-dev", "--package", "icu_capi"]
+args = ["wasm-build-dev", "--package", "icu_capi", "--example", "icu_capi_cdylib"]
 
 [tasks.wasm-build-release]
 description = "Build WASM FFI into the target directory (release mode)"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2021-02-28"
+toolchain = "nightly-2021-08-20"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
-args = ["wasm-build-release", "--package", "icu_capi"]
+args = ["wasm-build-release", "--package", "icu_capi", "--example", "icu_capi_cdylib"]
 
 [tasks.wasm-build-examples]
 description = "Build WASM examples into the target directory"
 category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2021-02-28"
+toolchain = "nightly-2021-08-20"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
@@ -47,15 +47,25 @@ args = ["-p", "wasmpkg"]
 description = "Copy the WASM files from dev into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/debug/icu_capi.wasm", "wasmpkg/"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/debug/examples/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
 dependencies = ["wasm-build-dev", "wasm-dir"]
 
 [tasks.wasm-wasm-release]
 description = "Copy the WASM files from release into wasmpkg"
 category = "ICU4X WASM"
 command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/icu_capi.wasm", "wasmpkg/"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release/examples/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
 dependencies = ["wasm-build-release", "wasm-dir"]
+
+[tasks.wasm-cpp-emscripten]
+description = "Run the C++-emscripten test (needs emsdk)"
+category = "ICU4X WASM"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/cpp/examples/fixeddecimal_wasm
+exec make test
+'''
 
 [tasks.wasm-wasm-examples]
 description = "Copy the WASM files from examples into wasmpkg"
@@ -67,7 +77,7 @@ exit_on_error true
 
 # Re-run the build command only to generate the JSON output (--message-format=json)
 set_env RUSTFLAGS "-C panic=abort -C opt-level=s"
-output = exec cargo +nightly-2021-02-28 wasm-build-release --message-format=json --examples --workspace --features zerovec/serde --exclude icu_datagen
+output = exec cargo +nightly-2021-08-20 wasm-build-release --message-format=json --examples --workspace --features zerovec/serde --exclude icu_datagen
 if ${output.code}
     echo ${output.stderr}
     trigger_error "Build failed! See output above."
@@ -83,11 +93,15 @@ for json_message in ${json_messages}
     is_compiler_artifact = eq ${json_obj.reason} "compiler-artifact"
     is_example = eq ${json_obj.target.kind[0]} "example"
     if ${is_compiler_artifact} and ${is_example}
-
         # Copy the wasm file to the output directory
         filename = basename ${json_obj.executable}
-        out_path = concat wasmpkg/ ${filename}
-        cp ${json_obj.executable} ${out_path}
+        # We have the icu_capi_cdylib hack example, which is not a real "example"
+        # and won't produce an executable here. We should filter it out.
+        empty = is_empty ${filename}
+        if not ${empty}
+            out_path = concat wasmpkg/ ${filename}
+            cp ${json_obj.executable} ${out_path}
+        end
     end
 end
 '''
@@ -350,13 +364,33 @@ dependencies = [
 [tasks.wasm-test-release]
 description = "Run WASM tests in release mode"
 category = "ICU4X WASM"
+dependencies = [
+    "wasm-release",
+    "diplomat-gen-js"
+]
 script_runner = "@duckscript"
 script = '''
-cd ./ffi/wasm/test;
-exec npm install;
-exec npm test;
+cd ./ffi/wasm/test
+exec --fail-on-error npm install
+exec --fail-on-error npm test
 '''
-dependencies = ["wasm-release"]
+
+[tasks.diplomat-gen-js]
+description = "Generate JS bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/capi
+
+# Duckscript doesn't support globs in rm, so we delete the relevant files
+rm ../wasm/lib/api.mjs
+rm ../wasm/lib/diplomat-runtime.mjs
+rm -r ../wasm/docs/
+mkdir ../wasm/docs
+
+exec --fail-on-error diplomat-tool js ../wasm/lib/ --docs ../wasm/docs
+'''
 
 [tasks.wasm-clean]
 description = "Clean up WASM build artifacts"

@@ -19,7 +19,7 @@ fn test_deserializer_static() {
     let deserializer = &mut serde_json::Deserializer::from_str(DATA_JSON);
     let mut receiver: Option<DataPayload<HelloWorldV1Marker>> = None;
     receiver
-        .receive_static(&mut erased_serde::Deserializer::erase(deserializer))
+        .receive_static(&mut <dyn erased_serde::Deserializer>::erase(deserializer))
         .expect("Well-formed data");
     let payload = receiver.expect("Data is present");
 
@@ -39,7 +39,7 @@ fn test_deserializer_owned() {
     receiver
         .receive_rc_buffer(rc_buffer, |bytes, f2| {
             let mut d = serde_json::Deserializer::from_slice(bytes);
-            f2(&mut erased_serde::Deserializer::erase(&mut d))
+            f2(&mut <dyn erased_serde::Deserializer>::erase(&mut d))
         })
         .expect("Well-formed data");
     let payload = receiver.expect("Data is present");

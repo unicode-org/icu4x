@@ -83,6 +83,10 @@ impl AsULE for char {
     }
 }
 
+// EqULE is true because `char` is transmutable to `u32`, which in turn has the same byte sequence
+// as CharULE on little-endian platforms.
+unsafe impl EqULE for char {}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -95,10 +99,17 @@ mod test {
         let char_bytes: &[u8] = CharULE::as_byte_slice(&char_ules);
 
         // Check parsing
-        let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(&char_bytes).unwrap();
+        let parsed_ules: &[CharULE] = CharULE::parse_byte_slice(char_bytes).unwrap();
         assert_eq!(char_ules, parsed_ules);
         let parsed_chars: Vec<char> = parsed_ules.iter().map(char::from_unaligned).collect();
         assert_eq!(&chars, parsed_chars.as_slice());
+
+        // Check EqULE
+        let char_ule_slice = char::slice_as_unaligned(&chars);
+        #[cfg(target_endian = "little")]
+        assert_eq!(char_ule_slice, Some(char_ules.as_slice()));
+        #[cfg(not(target_endian = "little"))]
+        assert_eq!(char_ule_slice, None);
 
         // Compare to u32
         let u32s: Vec<u32> = chars.iter().copied().map(u32::from).collect();
@@ -119,14 +130,14 @@ mod test {
         let u32s = [119, 0xD800, 120];
         let u32_ules: Vec<PlainOldULE<4>> = u32s.iter().map(<u32 as AsULE>::as_unaligned).collect();
         let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
-        let parsed_ules_result = CharULE::parse_byte_slice(&u32_bytes);
+        let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
 
         // 0x20FFFF is out of range for a char
         let u32s = [0x20FFFF];
         let u32_ules: Vec<PlainOldULE<4>> = u32s.iter().map(<u32 as AsULE>::as_unaligned).collect();
         let u32_bytes: &[u8] = PlainOldULE::<4>::as_byte_slice(&u32_ules);
-        let parsed_ules_result = CharULE::parse_byte_slice(&u32_bytes);
+        let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
         assert!(matches!(parsed_ules_result, Err(_)));
     }
 }

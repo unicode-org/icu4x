@@ -47,21 +47,21 @@ fn get_needles_and_haystack() -> (Vec<u32>, Vec<u32>) {
 #[allow(dead_code, clippy::ptr_arg)]
 fn vec_to_unaligned_uvec<'a, T>(vec: &Vec<T>, buffer: &'a mut AlignedBuffer) -> ZeroVec<'a, T>
 where
-    T: AsULE + Copy + PartialEq + fmt::Debug,
-    <<T as AsULE>::ULE as ULE>::Error: fmt::Debug,
+    T: EqULE + Copy + PartialEq + fmt::Debug,
+    <T::ULE as ULE>::Error: fmt::Debug,
 {
     // Pad with zero to ensure it is not aligned
     buffer.0.push(0);
     buffer
         .0
-        .extend(ZeroVec::from_aligned(vec.as_slice()).as_bytes());
+        .extend(ZeroVec::from_slice(vec.as_slice()).as_bytes());
     ZeroVec::<T>::try_from_bytes(&buffer.0[1..]).unwrap()
 }
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("zerovec/overview", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE))
+            ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE))
                 .unwrap()
                 .iter()
                 .sum::<u32>()
@@ -83,7 +83,7 @@ fn sum_benches(c: &mut Criterion) {
 
     c.bench_function("zerovec/sum/sample/zerovec", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE))
+            ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE))
                 .unwrap()
                 .iter()
                 .sum::<u32>()
@@ -98,7 +98,7 @@ fn binary_search_benches(c: &mut Criterion) {
     });
 
     c.bench_function("zerovec/binary_search/sample/zerovec", |b| {
-        let zerovec = ZeroVec::<u32>::try_from_bytes(black_box(&TEST_BUFFER_LE)).unwrap();
+        let zerovec = ZeroVec::<u32>::try_from_bytes(black_box(TEST_BUFFER_LE)).unwrap();
         b.iter(|| zerovec.binary_search(&0x0c0d0c));
     });
 
@@ -111,7 +111,7 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| {
             black_box(&needles_50)
                 .iter()
-                .map(|needle| black_box(&haystack).binary_search(&needle))
+                .map(|needle| black_box(&haystack).binary_search(needle))
                 .filter(|r| r.is_ok())
                 .count()
         });
@@ -126,7 +126,7 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| {
             black_box(&needles_50)
                 .iter()
-                .map(|needle| black_box(&zerovec).binary_search(&needle))
+                .map(|needle| black_box(&zerovec).binary_search(needle))
                 .filter(|r| r.is_ok())
                 .count()
         });

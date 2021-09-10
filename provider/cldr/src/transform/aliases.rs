@@ -76,7 +76,7 @@ impl<'data> DataProvider<'data, AliasesV1Marker> for AliasesProvider<'data> {
                 payload: Some(DataPayload::from_owned(AliasesV1::from(&self.data))),
             })
         } else {
-            Err(DataError::UnavailableResourceOptions(req.clone()))
+            Err(DataError::MissingResourceOptions(req.clone()))
         }
     }
 }

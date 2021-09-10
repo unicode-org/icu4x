@@ -262,6 +262,7 @@ impl From<Month> for FieldSymbol {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[allow(clippy::enum_variant_names)]
 pub enum Day {
     DayOfMonth,
     DayOfYear,
@@ -336,6 +337,7 @@ impl From<Hour> for FieldSymbol {
     feature = "provider_serde",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[allow(clippy::enum_variant_names)]
 pub enum Second {
     Second,
     FractionalSecond,

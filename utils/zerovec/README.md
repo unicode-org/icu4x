@@ -59,7 +59,7 @@ pub struct DataStruct<'data> {
 }
 
 let data = DataStruct {
-    nums: ZeroVec::from_aligned(&[211, 281, 421, 461]),
+    nums: ZeroVec::from_slice(&[211, 281, 421, 461]),
     strs: VarZeroVec::from(vec!["hello".to_string(), "world".to_string()]),
 };
 let bincode_bytes = bincode::serialize(&data)

@@ -244,5 +244,55 @@
       "type": "Locale",
       "identifier": "und-t-c0-mixed-m0-true"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "da-u-ca-gregory-ca-buddhist"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "da-u-ca-gregory"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pt-u-attr2-attr1-ca-gregory"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "pt-u-attr1-attr2-ca-gregory"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "pt-u-attr1-attr2-attr1-ca-gregory"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "pt-u-attr1-attr2-ca-gregory"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-a-not-assigned"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "en-a-not-assigned"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-w-bar-u-foo-a-bar-x-u-foo"
+    },
+    "output": {
+      "type": "Locale",
+      "identifier": "en-a-bar-u-foo-w-bar-x-u-foo"
+    }
   }
 ]

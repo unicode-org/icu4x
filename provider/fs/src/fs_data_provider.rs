@@ -66,7 +66,7 @@ impl FsDataProvider {
             path_buf.set_extension(self.manifest.syntax.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(Error::UnsupportedResourceKey(req.resource_path.key));
+            return Err(Error::MissingResourceKey(req.resource_path.key));
         }
         if !req.resource_path.options.is_empty() {
             // TODO: Implement proper locale fallback
@@ -74,7 +74,7 @@ impl FsDataProvider {
             path_buf.set_extension(self.manifest.syntax.get_file_extension());
         }
         if !path_buf.exists() {
-            return Err(Error::UnavailableResourceOptions(req.clone()));
+            return Err(Error::MissingResourceOptions(req.clone()));
         }
         let file = match File::open(&path_buf) {
             Ok(file) => file,
@@ -94,17 +94,16 @@ impl FsDataProvider {
     }
 }
 
-/// FsDataProvider never returns data payloads with external borrows, so its lifetime parameter
-/// is set to `'static`. Data payloads may still have internal self-referential borrows.
-impl<M> DataProvider<'static, M> for FsDataProvider
+/// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
+impl<'data, M> DataProvider<'data, M> for FsDataProvider
 where
-    M: DataMarker<'static>,
+    M: DataMarker<'data>,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'static, M>, DataError> {
+    fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, DataError> {
         let (rc_buffer, path_buf) = self.get_rc_buffer(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata {

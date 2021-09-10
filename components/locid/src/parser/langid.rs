@@ -80,6 +80,8 @@ pub fn parse_language_identifier_from_iter<'a>(
         } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
             if let Err(idx) = variants.binary_search(&v) {
                 variants.insert(idx, v);
+            } else {
+                return Err(ParserError::InvalidSubtag);
             }
         } else if mode == ParserMode::Partial {
             break;

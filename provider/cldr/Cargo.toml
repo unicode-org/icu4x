@@ -5,12 +5,12 @@
 [package]
 name = "icu_provider_cldr"
 description = "Data provider that reads from a CLDR JSON data source"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -19,12 +19,15 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 extra_features = [
     "log",
 ]
@@ -33,12 +36,12 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
-icu_locid = { version = "0.2", path = "../../components/locid" }
-icu_plurals = { version = "0.2", path = "../../components/plurals" }
-icu_datetime = { version = "0.2", path = "../../components/datetime", features = ["provider_transform_internals"] }
-icu_locale_canonicalizer = { version = "0.2", path = "../../components/locale_canonicalizer" }
-icu_decimal = { version = "0.2", path = "../../components/decimal" }
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["provider_serde"] }
+icu_locid = { version = "0.3", path = "../../components/locid" }
+icu_plurals = { version = "0.3", path = "../../components/plurals" }
+icu_datetime = { version = "0.3", path = "../../components/datetime", features = ["provider_transform_internals"] }
+icu_locale_canonicalizer = { version = "0.3", path = "../../components/locale_canonicalizer" }
+icu_decimal = { version = "0.3", path = "../../components/decimal" }
 itertools = "0.10"
 json = "0.12"
 litemap = { version = "0.2", path = "../../utils/litemap" }
@@ -60,8 +63,8 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 mktemp = "0.4"
-icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
+icu_locid_macros = { version = "0.3", path = "../../components/locid/macros" }
+icu_testdata = { version = "0.3", path = "../../provider/testdata" }
 
 [features]
 # Automatically download CLDR data from a host

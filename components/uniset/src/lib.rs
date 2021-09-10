@@ -49,6 +49,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
+#![warn(missing_docs)]
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 
 // Workaround for https://github.com/rust-lang/rust/issues/87932
@@ -61,6 +62,7 @@ extern crate alloc;
 mod builder;
 mod conversions;
 pub mod enum_props;
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub mod props;
 pub mod provider;
 mod uniset;
@@ -95,6 +97,7 @@ impl<'data> From<DataError> for UnicodeSetError<'data> {
 }
 
 #[derive(PartialEq)]
+#[allow(missing_docs)] // TODO(#1030) - Add missing docs.
 pub enum UnicodeSetSpanCondition {
     Contained,
     NotContained,

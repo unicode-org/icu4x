@@ -19,10 +19,10 @@
 //!
 //! [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>` is used by data exporters such as `FilesystemExporter`.
 
+use crate::data_provider::DataPayloadInner;
 use crate::error::Error;
 use crate::prelude::*;
 use crate::yoke::*;
-use alloc::boxed::Box;
 use alloc::rc::Rc;
 
 use core::ops::Deref;
@@ -159,7 +159,8 @@ pub trait SerdeDeDataProvider {
     ) -> Result<DataResponseMetadata, Error>;
 }
 
-impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'data
+/// Note: This impl returns `'static` payloads because borrowing is handled by [`Yoke`].
+impl<'data, M> DataProvider<'data, M> for dyn SerdeDeDataProvider + 'static
 where
     M: DataMarker<'data>,
     M::Yokeable: serde::de::Deserialize<'static>,
@@ -168,7 +169,7 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
-    /// Serve objects implementing [`serde::Deserialize<'data>`] from a [`SerdeDeDataProvider`].
+    /// Serve objects implementing [`serde::Deserialize<'de>`] from a [`SerdeDeDataProvider`].
     fn load_payload(&self, req: &DataRequest) -> Result<DataResponse<'data, M>, Error> {
         let mut payload = None;
         let metadata = self.load_to_receiver(req, &mut payload)?;
@@ -179,9 +180,6 @@ where
 /// Auto-implemented trait for all data structs that support [`serde::Serialize`]. This trait is
 /// usually used as a trait object in [`DataProvider`]`<dyn `[`SerdeSeDataStruct`]`>`.
 pub trait SerdeSeDataStruct<'data>: 'data {
-    /// Clone this trait object reference, returning a boxed trait object.
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'data> + 'data>;
-
     /// Return this trait object reference for Serde serialization.
     ///
     /// # Examples
@@ -209,49 +207,22 @@ pub trait SerdeSeDataStruct<'data>: 'data {
     fn as_serialize(&self) -> &dyn erased_serde::Serialize;
 }
 
-impl_dyn_clone!(SerdeSeDataStruct<'data>, 'data);
-
 impl<'data, T> SerdeSeDataStruct<'data> for T
 where
     T: 'data + serde::Serialize,
-    for<'a> &'a T: Clone,
 {
-    fn clone_into_box(&self) -> Box<dyn SerdeSeDataStruct<'data> + 'data> {
-        todo!("#753")
-        // Box::new(self.clone())
-    }
     fn as_serialize(&self) -> &dyn erased_serde::Serialize {
         self
     }
 }
 
 /// A wrapper around `&dyn `[`SerdeSeDataStruct`]`<'data>` for integration with DataProvider.
-pub struct SerdeSeDataStructWrap<'b, 'data> {
-    inner: &'b (dyn SerdeSeDataStruct<'data> + 'data),
-}
+pub struct SerdeSeDataStructWrap<'data>(&'data (dyn SerdeSeDataStruct<'data> + 'data));
 
-impl<'b, 'data> Deref for SerdeSeDataStructWrap<'b, 'data> {
+impl<'data> Deref for SerdeSeDataStructWrap<'data> {
     type Target = dyn SerdeSeDataStruct<'data> + 'data;
     fn deref(&self) -> &Self::Target {
-        self.inner.deref()
-    }
-}
-
-impl<'b, 'data: 'b> SerdeSeDataStructWrap<'b, 'data> {
-    fn shorten(self) -> SerdeSeDataStructWrap<'b, 'b> {
-        // This is safe because 'data exceeds 'b
-        // TODO(#760): The types must be covariant for this to actually be safe.
-        unsafe { core::mem::transmute(self) }
-    }
-}
-
-impl<'data> ZeroCopyFrom<dyn SerdeSeDataStruct<'data> + 'data>
-    for SerdeSeDataStructWrap<'static, 'static>
-{
-    fn zero_copy_from<'b>(
-        this: &'b (dyn SerdeSeDataStruct<'data> + 'data),
-    ) -> SerdeSeDataStructWrap<'b, 'b> {
-        SerdeSeDataStructWrap { inner: this }.shorten()
+        self.0.deref()
     }
 }
 
@@ -267,18 +238,28 @@ where
             Owned(yoke) => Rc::from(yoke),
             RcBuf(yoke) => Rc::from(yoke),
         };
-        DataPayload::from_partial_owned(cart)
+        let yoke_helper: for<'b> fn(
+            &'b (dyn SerdeSeDataStruct<'data> + 'data),
+        )
+            -> <SerdeSeDataStructWrap<'static> as Yokeable<'b>>::Output = |obj| {
+            // The following block casts 'data to '_ on the trait object. This is safe because:
+            //   1. '_ (the local scope lifetime) is shorter than 'data
+            //   2. This impl is only defined on types implementing Yokeable, so the lifetime on
+            //      the resulting trait object is covariant
+            let shortened: &(dyn SerdeSeDataStruct<'_> + '_) = unsafe { core::mem::transmute(obj) };
+            SerdeSeDataStructWrap(shortened)
+        };
+        DataPayload {
+            inner: DataPayloadInner::RcStruct(Yoke::attach_to_cart_badly(cart, yoke_helper)),
+        }
     }
 }
 
-unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
-    type Output = SerdeSeDataStructWrap<'a, 'a>;
+unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static> {
+    type Output = SerdeSeDataStructWrap<'a>;
     fn transform(&'a self) -> &'a Self::Output {
-        // The compiler isn't able to guess the variance of the trait object,
-        // so we must transmute
-        // Note (Manishearth): this is technically unsound since SerdeDeDataStruct
-        // has no variance requirements. This will become a non-issue
-        // once Borrowed is removed (https://github.com/unicode-org/icu4x/issues/752)
+        // This is only safe to the extent that the only way to create a SerdeSeDataStructWrap is
+        // via the `upcast()` function above, which asserts that the lifetimes are covariant.
         unsafe { core::mem::transmute(self) }
     }
     fn transform_owned(self) -> Self::Output {
@@ -304,6 +285,6 @@ unsafe impl<'a> Yokeable<'a> for SerdeSeDataStructWrap<'static, 'static> {
 pub struct SerdeSeDataStructMarker {}
 
 impl<'data> DataMarker<'data> for SerdeSeDataStructMarker {
-    type Yokeable = SerdeSeDataStructWrap<'static, 'static>;
+    type Yokeable = SerdeSeDataStructWrap<'static>;
     type Cart = dyn SerdeSeDataStruct<'data>;
 }

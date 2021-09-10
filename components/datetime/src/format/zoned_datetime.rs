@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A collection of code for formatting DateTimes with time zones.
+
 use crate::date::{LocalizedDateTimeInput, ZonedDateTimeInputWithLocale};
 use crate::error::DateTimeFormatError as Error;
 use crate::fields::{self, FieldSymbol};
@@ -13,6 +15,7 @@ use writeable::Writeable;
 use super::datetime;
 use super::time_zone;
 
+#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct FormattedZonedDateTime<'l, 'data, T>
 where
     T: ZonedDateTimeInput,

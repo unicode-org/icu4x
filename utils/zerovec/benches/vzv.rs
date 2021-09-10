@@ -108,7 +108,7 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| {
             black_box(&needles)
                 .iter()
-                .map(|needle| black_box(&string_vec).binary_search(&needle))
+                .map(|needle| black_box(&string_vec).binary_search(needle))
                 .filter(|r| r.is_ok())
                 .count()
         });
@@ -119,7 +119,7 @@ fn binary_search_benches(c: &mut Criterion) {
         b.iter(|| {
             black_box(&needles)
                 .iter()
-                .map(|needle| black_box(&vzv).binary_search(&needle))
+                .map(|needle| black_box(&vzv).binary_search(needle))
                 .filter(|r| r.is_ok())
                 .count()
         });

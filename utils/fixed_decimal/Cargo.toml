@@ -10,7 +10,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -19,6 +19,7 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
@@ -33,7 +34,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 criterion = "0.3.4"
-icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.3", path = "../../tools/benchmark/macros" }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"

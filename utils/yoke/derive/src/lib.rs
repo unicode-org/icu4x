@@ -166,7 +166,7 @@ fn zcf_derive_impl(input: &DeriveInput) -> TokenStream2 {
             };
         }
 
-        let structure = Structure::new(&input);
+        let structure = Structure::new(input);
         let body = structure.each_variant(|vi| {
             vi.construct(|f, i| {
                 let binding = format!("__binding_{}", i);

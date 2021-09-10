@@ -32,7 +32,7 @@ fn main() {
     } else {
         DEFAULT_INPUT
     };
-    let _output = syntatically_canonicalize_locales(&input);
+    let _output = syntatically_canonicalize_locales(input);
 
     #[cfg(debug_assertions)]
     println!("\nInput: {}\nOutput: {}", input, _output);

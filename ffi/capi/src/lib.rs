@@ -2,14 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(target_os = "none", feature(alloc_error_handler))]
+#![cfg_attr(
+    any(
+        all(feature = "freertos", not(feature = "x86tiny")),
+        all(feature = "x86tiny", not(feature = "freertos")),
+    ),
+    feature(alloc_error_handler)
+)]
+#![no_std]
 #![allow(clippy::upper_case_acronyms)]
-#![cfg_attr(not(target_arch = "wasm32"), no_std)]
+
+// Needed to be able to build cdylibs/etc
+//
+// Renamed so you can't accidentally use it
+#[cfg(all(not(feature = "freertos"), not(feature = "x86tiny")))]
+extern crate std as rust_std;
 
 extern crate alloc;
-
-#[macro_use]
-mod macros;
 
 pub mod custom_writeable;
 pub mod decimal;
@@ -22,7 +31,8 @@ pub mod provider;
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;
 
-// Assume "none" is FreeRTOS for now
-// https://github.com/unicode-org/icu4x/issues/891
-#[cfg(target_os = "none")]
+#[cfg(all(feature = "freertos", not(feature = "x86tiny")))]
 mod freertos_glue;
+
+#[cfg(all(feature = "x86tiny", not(feature = "freertos")))]
+mod x86tiny_glue;

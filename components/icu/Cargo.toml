@@ -5,12 +5,12 @@
 [package]
 name = "icu"
 description = "International Components for Unicode"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -19,47 +19,50 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies.icu_datetime]
-version = "0.2"
+version = "0.3"
 path = "../datetime"
 default-features = false
 
 [dependencies.icu_decimal]
-version = "0.2"
+version = "0.3"
 path = "../decimal"
 default-features = false
 
 [dependencies.icu_locid]
-version = "0.2"
+version = "0.3"
 path = "../locid"
 default-features = false
 
 [dependencies.icu_locid_macros]
-version = "0.2"
+version = "0.3"
 path = "../locid/macros"
 default-features = false
 
 [dependencies.icu_locale_canonicalizer]
-version = "0.2"
+version = "0.3"
 path = "../locale_canonicalizer"
 default-features = false
 
 [dependencies.icu_plurals]
-version = "0.2"
+version = "0.3"
 path = "../plurals"
 default-features = false
 
 [dependencies.icu_uniset]
-version = "0.2"
+version = "0.3"
 path = "../uniset"
 default-features = false
 
@@ -69,8 +72,8 @@ path = "../../utils/fixed_decimal"
 default-features = false
 
 [dev-dependencies]
-icu_provider = { version = "0.2", path = "../../provider/core" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
+icu_provider = { version = "0.3", path = "../../provider/core" }
+icu_testdata = { version = "0.3", path = "../../provider/testdata" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [features]

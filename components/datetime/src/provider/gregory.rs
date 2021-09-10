@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(missing_docs)] // TODO(#686) - Add missing docs.
+
 use crate::pattern;
 use alloc::borrow::Cow;
 use icu_provider::yoke::{self, *};

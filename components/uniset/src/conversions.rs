@@ -78,7 +78,10 @@ mod tests {
 
     #[test]
     fn test_try_from_range() {
-        let check: Vec<char> = UnicodeSet::try_from(&('A'..'B')).unwrap().iter_chars().collect();
+        let check: Vec<char> = UnicodeSet::try_from(&('A'..'B'))
+            .unwrap()
+            .iter_chars()
+            .collect();
         assert_eq!(vec!['A'], check);
     }
     #[test]
@@ -88,7 +91,10 @@ mod tests {
     }
     #[test]
     fn test_try_from_range_inclusive() {
-        let check: Vec<char> = UnicodeSet::try_from(&('A'..='A')).unwrap().iter_chars().collect();
+        let check: Vec<char> = UnicodeSet::try_from(&('A'..='A'))
+            .unwrap()
+            .iter_chars()
+            .collect();
         assert_eq!(vec!['A'], check);
     }
     #[test]

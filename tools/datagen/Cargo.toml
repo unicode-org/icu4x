@@ -5,12 +5,12 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -19,6 +19,7 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md",
 ]
 
@@ -29,17 +30,18 @@ all-features = true
 anyhow = "1.0"
 clap = "2.33"
 futures = "0.3"
-icu_locid = { version = "0.2", path = "../../components/locid", features = ["std"]}
-icu_provider = { version = "0.2", path = "../../provider/core", features = ["std"]}
-icu_provider_blob = { version = "0.2", path = "../../provider/blob", features = ["export"] }
-icu_provider_cldr = { version = "0.2", path = "../../provider/cldr", features = ["download"] }
-icu_provider_fs = { version = "0.2", path = "../../provider/fs", features = ["export", "bincode"] }
-icu_testdata = { version = "0.2", path = "../../provider/testdata", features = ["metadata"] }
+icu_locid = { version = "0.3", path = "../../components/locid", features = ["std"]}
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["std"]}
+icu_provider_blob = { version = "0.3", path = "../../provider/blob", features = ["export"] }
+icu_provider_cldr = { version = "0.3", path = "../../provider/cldr", features = ["download"] }
+icu_provider_fs = { version = "0.3", path = "../../provider/fs", features = ["export", "bincode"] }
+icu_testdata = { version = "0.3", path = "../../provider/testdata", features = ["metadata"] }
 log = "0.4"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 simple_logger = "1.11"
 tokio = { version = "1.5", features = ["rt-multi-thread", "macros", "fs"] }
+writeable = { version = "0.2", path = "../../utils/writeable" }
 
 [[bin]]
 name = "icu4x-datagen"

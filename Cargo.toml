@@ -5,6 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "components/calendar",
     "components/datetime",
     "components/decimal",
     "components/icu",
@@ -15,7 +16,8 @@ members = [
     "components/plurals",
     "components/uniset",
     "experimental/bies",
-    "experimental/calendar",
+    # "experimental/calendar",
+    "experimental/codepointtrie",
     "experimental/segmenter",
     "experimental/segmenter_lstm",
     "ffi/capi",
@@ -26,8 +28,10 @@ members = [
     "provider/fs",
     "provider/macros",
     "provider/testdata",
+    "provider/uprops",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
+    "tools/benchmark/binsize",
     "tools/datagen",
     "utils/fixed_decimal",
     "utils/litemap",

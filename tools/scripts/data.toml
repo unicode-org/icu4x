@@ -50,14 +50,54 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-build-blob-smaller]
+description = "Build a small subset of ICU4X data as a Postcard blob."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "-v",
+    "--format=blob",
+    "--cldr-testdata",
+    "--out=provider/testdata/data/decimal-bn-en.postcard",
+    "--keys=decimal/symbols@1",
+    "--locales=bn",
+    "--locales=en",
+    "--overwrite",
+]
+
 [tasks.testdata]
-description = "Download fresh data and then build ICU4X JSON and Bincode blob from it"
+description = "Rebuild all ICU4X testdata from source data checked into the repository"
 category = "ICU4X Data"
 dependencies = [
-    "testdata-download",
     "testdata-build-json",
     "testdata-build-blob",
+    "testdata-build-blob-smaller",
 ]
+
+[tasks.testdata-check]
+description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
+category = "ICU4X Data"
+dependencies = [
+    "testdata"
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1 provider/testdata/data
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata`:"
+    array_push ${msg} ""
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''
 
 [tasks.bincode-clean]
 description = "Clean out the bincode data."

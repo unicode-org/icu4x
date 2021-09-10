@@ -9,7 +9,7 @@ version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -18,16 +18,19 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [dependencies]
-icu_locid = { version = "0.2", path = "../../components/locid" }
-icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
-icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
-icu_uniset = { version = "0.2", path = "../../components/uniset" }
+icu_locid = { version = "0.3", path = "../../components/locid" }
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["provider_serde"] }
+icu_locid_macros = { version = "0.3", path = "../../components/locid/macros" }
+icu_uniset = { version = "0.3", path = "../../components/uniset" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }

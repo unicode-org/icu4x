@@ -5,12 +5,12 @@
 [package]
 name = "icu_locid_macros"
 description = "proc-macros for icu_locid"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -19,6 +19,7 @@ include = [
     "benches/**/*",
     "benches/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
@@ -31,7 +32,7 @@ proc_macro = true
 
 [dependencies]
 proc-macro-crate = "1.0"
-icu_locid = { version = "0.2", path = "../" }
+icu_locid = { version = "0.3", path = "../" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 
 [dev-dependencies]

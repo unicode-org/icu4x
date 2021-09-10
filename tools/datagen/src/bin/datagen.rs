@@ -21,8 +21,10 @@ use icu_provider_fs::export::serializers;
 use icu_provider_fs::export::FilesystemExporter;
 use icu_provider_fs::manifest;
 use simple_logger::SimpleLogger;
+use std::collections::HashSet;
 use std::path::PathBuf;
 use std::str::FromStr;
+use writeable::Writeable;
 
 fn main() -> anyhow::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -217,8 +219,8 @@ fn main() -> anyhow::Result<()> {
         _ => anyhow::bail!("Only -v and -vv are supported"),
     }
 
-    if !matches.is_present("ALL_KEYS") && !matches.is_present("HELLO_WORLD") {
-        anyhow::bail!("Lists of keys are not yet supported (see #192)",);
+    if matches.is_present("KEY_FILE") {
+        anyhow::bail!("Key file is not yet supported (see #192)",);
     }
 
     if matches.is_present("DRY_RUN") {
@@ -257,8 +259,9 @@ fn main() -> anyhow::Result<()> {
         _ => unreachable!(),
     };
 
-    if matches.is_present("ALL_KEYS") {
-        export_cldr(&matches, exporter, locales_vec.as_deref())?;
+    if matches.is_present("ALL_KEYS") || matches.is_present("KEYS") {
+        let keys = matches.values_of("KEYS").map(|values| values.collect());
+        export_cldr(&matches, exporter, locales_vec.as_deref(), keys.as_ref())?;
     }
 
     if matches.is_present("HELLO_WORLD") {
@@ -322,10 +325,8 @@ fn get_blob_exporter(matches: &ArgMatches) -> anyhow::Result<BlobExporter<'stati
 
     let output_path: Option<PathBuf> = if matches.is_present("OUTPUT_TESTDATA") {
         Some(icu_testdata::paths::data_root().join("testdata.postcard"))
-    } else if let Some(v) = matches.value_of_os("OUTPUT") {
-        Some(PathBuf::from(v))
     } else {
-        None
+        matches.value_of_os("OUTPUT").map(PathBuf::from)
     };
 
     match output_path {
@@ -352,6 +353,7 @@ fn export_cldr<'data>(
     matches: &ArgMatches,
     exporter: &mut (impl DataExporter<'data, SerdeSeDataStructMarker> + ?Sized),
     allowed_locales: Option<&[LanguageIdentifier]>,
+    allowed_keys: Option<&HashSet<&str>>,
 ) -> anyhow::Result<()> {
     let locale_subset = matches.value_of("CLDR_LOCALE_SUBSET").unwrap_or("full");
     let cldr_paths: Box<dyn CldrPaths> = if let Some(tag) = matches.value_of("CLDR_TAG") {
@@ -371,6 +373,14 @@ fn export_cldr<'data>(
     };
 
     let keys = get_all_cldr_keys();
+
+    let keys = if let Some(allowed_keys) = allowed_keys {
+        keys.into_iter()
+            .filter(|k| allowed_keys.contains(&*k.writeable_to_string()))
+            .collect()
+    } else {
+        keys
+    };
 
     let raw_provider = CldrJsonDataProvider::new(cldr_paths.as_ref());
     let filtered_provider;

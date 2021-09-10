@@ -65,19 +65,25 @@ macro_rules! impl_byte_slice_type {
                 <$type>::from_le_bytes(unaligned.0)
             }
         }
+        // EqULE is true because $type and PlainOldULE<$size>
+        // have the same byte sequence on little-endian
+        unsafe impl EqULE for $type {}
     };
 }
 
+impl_byte_slice_size!(1);
 impl_byte_slice_size!(2);
 impl_byte_slice_size!(4);
 impl_byte_slice_size!(8);
 impl_byte_slice_size!(16);
 
+impl_byte_slice_type!(u8, 1);
 impl_byte_slice_type!(u16, 2);
 impl_byte_slice_type!(u32, 4);
 impl_byte_slice_type!(u64, 8);
 impl_byte_slice_type!(u128, 16);
 
+impl_byte_slice_type!(i8, 1);
 impl_byte_slice_type!(i16, 2);
 impl_byte_slice_type!(i32, 4);
 impl_byte_slice_type!(i64, 8);

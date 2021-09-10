@@ -5,12 +5,12 @@
 [package]
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -19,12 +19,15 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 extra_features = [
     "log",
 ]
@@ -33,8 +36,8 @@ extra_features = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "0.2", path = "../../provider/core", features = ["provider_serde"] }
-icu_locid = { version = "0.2", path = "../../components/locid", features = ["serde"] }
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["provider_serde"] }
+icu_locid = { version = "0.3", path = "../../components/locid", features = ["serde"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 erased-serde = { version = "0.3", default-features = false, features = ["alloc"] }
 displaydoc = { version = "0.2.3", default-features = false }
@@ -49,9 +52,9 @@ log = { version = "0.4", optional = true }
 static_assertions = { version = "1.1", optional = true }
 
 [dev-dependencies]
-icu_benchmark_macros = { version = "0.2", path = "../../tools/benchmark/macros" }
-icu_locid_macros = { version = "0.2", path = "../../components/locid/macros" }
-icu_plurals = { version = "0.2", path = "../../components/plurals" }
+icu_benchmark_macros = { version = "0.3", path = "../../tools/benchmark/macros" }
+icu_locid_macros = { version = "0.3", path = "../../components/locid/macros" }
+icu_plurals = { version = "0.3", path = "../../components/plurals" }
 criterion = "0.3.3"
 
 [features]

@@ -3,17 +3,42 @@
 
 # Fallback to core group for crates or folders without specific owners, like docs/.
 
-* @unicode-org/icu4x-sc
+* @unicode-org/icu4x-owners
 
 # List of components with at least two owners as specified in docs/crate-ownership.
 
-components/datetime/            @zbraniecki @sffc
-components/locid/               @zbraniecki @nciric
-components/plurals/             @zbraniecki @sffc
-components/uniset/              @echeran
-ffi/ecma402/             @filmil
-provider/cldr/       @sffc
-provider/core/            @sffc
-provider/fs/         @sffc
-provider/testdata/             @sffc
-utils/fixed_decimal/            @sffc
+components/datetime/              @zbraniecki @gregtatum @nordzilla
+components/decimal/               @sffc
+components/icu/                   @unicode-org/icu4x-owners
+components/icu4x/                 @unicode-org/icu4x-owners
+components/locale_canonicalizer/  @dminor @zbraniecki
+components/locid/                 @zbraniecki @nciric
+components/plurals/               @zbraniecki @sffc
+components/uniset/                @echeran @iainireland
+experimental/bies/                @sffc
+experimental/calendar/            @Manishearth @sffc
+experimental/codepointtrie/       @echeran
+experimental/provider_ppucd/      @echeran
+experimental/segmenter/           @aethanyc @makotokato @makotokato
+experimental/segmenter_lstm/      @aethanyc @sffc
+ffi/capi/                         @Manishearth
+ffi/cpp/                          @Manishearth
+ffi/ecma402/                      @filmil
+ffi/wasm/                         @Manishearth
+provider/blob/                    @sffc @Manishearth
+provider/cldr/                    @sffc @nordzilla
+provider/core/                    @sffc @Manishearth
+provider/fs/                      @sffc
+provider/macros/                  @Manishearth @sffc
+provider/testdata/                @unicode-org/icu4x-owners
+tools/benchmark/binsize/          @gnrunge
+tools/benchmark/macros/           @gregtatum
+tools/benchmark/memory/           @gregtatum
+tools/datagen/                    @sffc
+tools/scripts/                    @Manishearth @sffc
+utils/fixed_decimal/              @sffc
+utils/litemap/                    @Manishearth @sffc
+utils/pattern/                    @zbraniecki
+utils/writeable/                  @sffc
+utils/yoke/                       @Manishearth @sffc
+utils/zerovec/                    @Manishearth @sffc

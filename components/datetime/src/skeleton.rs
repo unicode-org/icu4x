@@ -16,7 +16,7 @@ use smallvec::SmallVec;
 
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
-    options::{length, preferences},
+    options::{components, length, preferences},
     pattern::{Pattern, PatternItem},
     provider::gregory::patterns::{LengthPatternsV1, PatternV1, SkeletonV1, SkeletonsV1},
 };
@@ -286,7 +286,7 @@ impl<'a> From<(&'a SkeletonV1, &'a PatternV1)> for AvailableFormatPattern<'a> {
 }
 
 /// These strings follow the recommendations for the serde::de::Unexpected::Other type.
-/// https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other
+/// <https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other>
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
@@ -442,6 +442,26 @@ fn naively_apply_hour_cycle_preferences(
     }
 }
 
+/// This function swaps out the the time zone name field for the appropriate one. Skeleton matching
+/// only needs to find a single "v" field, and then the time zone name can expand from there.
+fn naively_apply_time_zone_name(
+    pattern: &mut Pattern,
+    time_zone_name: &Option<components::TimeZoneName>,
+) {
+    // If there is a preference overiding the hour cycle, apply it now.
+    if let Some(time_zone_name) = time_zone_name {
+        for item in pattern.items_mut() {
+            if let PatternItem::Field(fields::Field {
+                symbol: fields::FieldSymbol::TimeZone(_),
+                length: _,
+            }) = item
+            {
+                *item = PatternItem::Field((*time_zone_name).into());
+            }
+        }
+    }
+}
+
 // TODO - This could return a Cow<'a, Pattern>, but it affects every other part of the API to
 // add a lifetime here. The pattern returned here could be one that we've already constructed in
 // the CLDR as an exotic type, or it could be one that was modified to meet the requirements of
@@ -461,7 +481,7 @@ pub fn create_best_pattern_for_fields<'a>(
     skeletons: &'a SkeletonsV1,
     length_patterns: &LengthPatternsV1,
     fields: &[Field],
-    preferences: &Option<preferences::Bag>,
+    components: &components::Bag,
     prefer_matched_pattern: bool,
 ) -> BestSkeleton<Pattern> {
     let first_pattern_match =
@@ -469,26 +489,12 @@ pub fn create_best_pattern_for_fields<'a>(
 
     // Try to match a skeleton to all of the fields.
     if let BestSkeleton::AllFieldsMatch(mut pattern) = first_pattern_match {
-        naively_apply_hour_cycle_preferences(&mut pattern, &preferences);
+        naively_apply_hour_cycle_preferences(&mut pattern, &components.preferences);
+        naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
         return BestSkeleton::AllFieldsMatch(pattern);
     }
 
-    let FieldsByType { date, time, other } = group_fields_by_type(fields);
-
-    if !other.is_empty() {
-        // These require "append items" support, see #586.
-        // TODO(#583) - TimeZones
-        // TODO(#486) - Eras,
-        // ... etc.
-
-        // TODO(#583) - This is commented out because TimeZone support is required here in order to
-        // generate length::Bag patterns correctly. For now it's commented out so that everything
-        // works for length::Bag with a preference, although it may lack a time zone.
-
-        // unimplemented!(
-        //     "There are no \"other\" fields supported, these need to be appended to the pattern. {:?}", other
-        // );
-    }
+    let FieldsByType { date, time } = group_fields_by_type(fields);
 
     if date.is_empty() || time.is_empty() {
         return match first_pattern_match {
@@ -497,7 +503,8 @@ pub fn create_best_pattern_for_fields<'a>(
             }
             BestSkeleton::MissingOrExtraFields(mut pattern) => {
                 if date.is_empty() {
-                    naively_apply_hour_cycle_preferences(&mut pattern, &preferences);
+                    naively_apply_hour_cycle_preferences(&mut pattern, &components.preferences);
+                    naively_apply_time_zone_name(&mut pattern, &components.time_zone_name);
                 }
                 BestSkeleton::MissingOrExtraFields(pattern)
             }
@@ -522,7 +529,8 @@ pub fn create_best_pattern_for_fields<'a>(
         };
 
     if let Some(ref mut pattern) = time_pattern {
-        naively_apply_hour_cycle_preferences(pattern, &preferences)
+        naively_apply_hour_cycle_preferences(pattern, &components.preferences);
+        naively_apply_time_zone_name(pattern, &components.time_zone_name);
     }
 
     // Determine how to combine the date and time.
@@ -565,7 +573,10 @@ pub fn create_best_pattern_for_fields<'a>(
                 length::Date::Short => &length_patterns.short,
             };
 
-            Some(Pattern::from_bytes_combination(bytes, date_pattern, time_pattern).expect("TODO"))
+            Some(
+                Pattern::from_bytes_combination(bytes, date_pattern, time_pattern)
+                    .expect("Failed to create a Pattern from bytes"),
+            )
         }
         (None, Some(pattern)) => Some(pattern),
         (Some(pattern), None) => Some(pattern),
@@ -587,13 +598,11 @@ pub fn create_best_pattern_for_fields<'a>(
 struct FieldsByType {
     pub date: Vec<Field>,
     pub time: Vec<Field>,
-    pub other: Vec<Field>,
 }
 
 fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
     let mut date = Vec::new();
     let mut time = Vec::new();
-    let mut other = Vec::new();
 
     for field in fields {
         match field.symbol {
@@ -611,17 +620,16 @@ fn group_fields_by_type(fields: &[Field]) -> FieldsByType {
             FieldSymbol::DayPeriod(_)
             | FieldSymbol::Hour(_)
             | FieldSymbol::Minute
-            | FieldSymbol::Second(_) => time.push(*field),
-
+            | FieldSymbol::Second(_)
+            | FieldSymbol::TimeZone(_) => time.push(*field),
             // Other components
-            FieldSymbol::TimeZone(_) => other.push(*field),
             // TODO(#486)
             // FieldSymbol::Era(_) => other.push(*field),
             // Plus others...
         };
     }
 
-    FieldsByType { date, time, other }
+    FieldsByType { date, time }
 }
 
 /// A partial implementation of the [UTS 35 skeleton matching algorithm](https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons).
@@ -876,13 +884,14 @@ mod test {
 
     // TODO(#586) - Append items support needs to be added.
     #[test]
+    #[should_panic]
     fn test_missing_append_items_support() {
         let components = components::Bag {
             year: Some(components::Numeric::Numeric),
             month: Some(components::Month::Long),
             day: Some(components::Numeric::Numeric),
             // This will be appended.
-            time_zone_name: Some(components::TimeZoneName::Long),
+            time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();
@@ -892,15 +901,14 @@ mod test {
             &data_provider.get().datetime.skeletons,
             &data_provider.get().datetime.length_patterns,
             &requested_fields,
-            &None,
+            &Default::default(),
             false,
         ) {
             BestSkeleton::AllFieldsMatch(available_format_pattern) => {
-                // TODO - This needs to support the "Z" pattern. This test will begin to fail
-                // once support is added.
+                // TODO - Append items are needed here.
                 assert_eq!(
                     available_format_pattern.to_string(),
-                    String::from("MMMM d, y")
+                    String::from("MMMM d, y vvvv")
                 )
             }
             best => panic!("Unexpected {:?}", best),
@@ -929,7 +937,7 @@ mod test {
     #[test]
     fn test_skeleton_no_match() {
         let components = components::Bag {
-            time_zone_name: Some(components::TimeZoneName::Long),
+            time_zone_name: Some(components::TimeZoneName::LongSpecific),
             ..Default::default()
         };
         let requested_fields = components.to_vec_fields();

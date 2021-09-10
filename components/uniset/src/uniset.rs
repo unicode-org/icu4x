@@ -11,7 +11,7 @@ use icu_provider::yoke::{self, *};
 use zerovec::{ZeroVec, ule::AsULE};
 
 use super::UnicodeSetError;
-use crate::utils::{deconstruct_range, is_valid_zv};
+use crate::utils::{deconstruct_range, is_valid, is_valid_zv};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -41,7 +41,12 @@ impl<'de> serde::Deserialize<'de> for UnicodeSet<'de> {
         use serde::de::Error;
         let parsed_inv_list = ZeroVec::<u32>::deserialize(deserializer)?;
 
-        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| Error::custom(format!("Cannot deserialize invalid inversion list for UnicodeSet: {:?}", e)))
+        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| {
+            Error::custom(format!(
+                "Cannot deserialize invalid inversion list for UnicodeSet: {:?}",
+                e
+            ))
+        })
     }
 }
 
@@ -195,6 +200,16 @@ impl<'data> UnicodeSet<'data> {
         self.inv_list.len() / 2
     }
 
+    /// Returns a specific range contained in this [`UnicodeSet`] by index.
+    /// Intended for use in FFI.
+    pub fn get_nth_range(&self, idx: usize) -> Option<RangeInclusive<u32>> {
+        let start_idx = idx * 2;
+        let end_idx = start_idx + 1;
+        let start = self.inv_list.get(start_idx)?;
+        let end = self.inv_list.get(end_idx)?;
+        Some(RangeInclusive::new(*start, *end - 1))
+    }
+
     /// Returns the number of elements of the [`UnicodeSet`]
     pub fn size(&self) -> usize {
         if self.is_empty() {
@@ -272,7 +287,7 @@ impl<'data> UnicodeSet<'data> {
         self.contains_query(query).is_some()
     }
 
-    /// Checks to see if the range is in the [`UnicodeSet`], returns a [`Result`]
+    /// Checks to see if the range is in the [`UnicodeSet`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using [`Vec`] implementation. Only runs the search once on the `start`
@@ -376,7 +391,10 @@ impl<'data> UnicodeSet<'data> {
     /// assert_eq!(example.span("ABC", false), 0);
     /// ```
     pub fn span(&self, span_str: &str, contained: bool) -> usize {
-        span_str.chars().take_while(|&x| self.contains(x) == contained).count()
+        span_str
+            .chars()
+            .take_while(|&x| self.contains(x) == contained)
+            .count()
     }
 
     /// Returns the start of the trailing substring (starting from end of string) where the characters are
@@ -393,7 +411,12 @@ impl<'data> UnicodeSet<'data> {
     /// assert_eq!(example.span_back("CABXYZ", false), 3);
     /// ```
     pub fn span_back(&self, span_str: &str, contained: bool) -> usize {
-        span_str.len() - span_str.chars().rev().take_while(|&x| self.contains(x) == contained).count()
+        span_str.len()
+            - span_str
+                .chars()
+                .rev()
+                .take_while(|&x| self.contains(x) == contained)
+                .count()
     }
 }
 
@@ -578,6 +601,16 @@ mod tests {
         assert_eq!(3, set.get_range_count());
     }
 
+    #[test]
+    fn test_unicodeset_get_nth_range() {
+        let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
+        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        assert_eq!(Some(0x41..=0x43), set.get_nth_range(0));
+        assert_eq!(Some(0x45..=0x45), set.get_nth_range(1));
+        assert_eq!(Some(0xD800..=0xD800), set.get_nth_range(2));
+        assert_eq!(None, set.get_nth_range(3));
+    }
+
     // Range<char> cannot represent the upper bound (non-inclusive) for
     // char::MAX, whereas Range<u32> can.
     #[test]
@@ -624,7 +657,8 @@ mod tests {
     #[test]
     fn test_uniset_to_inv_list() {
         let inv_list: Vec<u32> = vec![
-            0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028, 0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
+            0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028,
+            0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
         ];
         let inv_list_clone = (&inv_list).clone();
         let s: UnicodeSet = UnicodeSet::clone_from_inversion_list(inv_list_clone).unwrap();

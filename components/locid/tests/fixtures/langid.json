@@ -141,7 +141,7 @@
     }
   },
   {
-    "input": "pl-macos-Windows-nedis-macos-nedis-aRabic",
+    "input": "pl-macos-Windows-nedis-aRabic",
     "output": {
       "type": "LanguageIdentifier",
       "language": "pl",

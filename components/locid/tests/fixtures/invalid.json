@@ -71,5 +71,15 @@
       "error": "InvalidSubtag",
       "text": "Invalid subtag"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "en-variant-emodeng-emodeng"
+    },
+    "output": {
+      "error": "InvalidSubtag",
+      "text": "Invalid subtag"
+    }
   }
 ]

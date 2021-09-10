@@ -13,25 +13,52 @@ use core::char;
 use core::str::CharIndices;
 use unicode_width::UnicodeWidthChar;
 
+/// An enum specifies the strictness of line-breaking rules. It can be passed as
+/// an argument when creating a line breaker.
+///
+/// Each enum value has the same meaning with respect to the `line-break`
+/// property values in the CSS Text spec. See the details in
+/// <https://drafts.csswg.org/css-text-3/#line-break-property>.
 #[derive(Copy, Clone, PartialEq)]
 pub enum LineBreakRule {
-    /// Use `line-break: normal;` line break rule
+    /// Breaks text using the most common set of line-breaking rules.
+    /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-normal>
     Normal,
-    /// Use `line-break: strict;` line break rule
+
+    /// Breaks text using the most stringent set of line-breaking rules.
+    /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-strict>
     Strict,
-    /// Use `line-break: loose;` line break rule
+
+    /// Breaks text using the least restrictive set of line-breaking rules.
+    /// Typically used for short lines, such as in newspapers.
+    /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-loose>
     Loose,
-    /// Use `line-break: anywhere;` line break rule
+
+    /// Breaks text assuming there is a soft wrap opportunity around every
+    /// typographic character unit, disregarding any prohibition against line
+    /// breaks. See more details in
+    /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-anywhere>.
     Anywhere,
 }
 
+/// An enum specifies the line break opportunities between letters. It can be
+/// passed as an argument when creating a line breaker.
+///
+/// Each enum value has the same meaning with respect to the `word-break`
+/// property values in the CSS Text spec. See the details in
+/// <https://drafts.csswg.org/css-text-3/#word-break-property>
 #[derive(Copy, Clone, PartialEq)]
 pub enum WordBreakRule {
-    /// Use `word-break: normal;` line break rule
+    /// Words break according to their customary rules. See the details in
+    /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-normal>.
     Normal,
-    /// Use `word-break: break-all;` line break rule
+
+    /// Breaking is allowed within "words".
+    /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-break-all>
     BreakAll,
-    /// Use `word-break: keep-all;` line break rule
+
+    /// Breaking is forbidden within "word".
+    /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-keep-all>
     KeepAll,
 }
 
@@ -232,12 +259,18 @@ fn use_complex_breaking_utf32(codepoint: u32) -> bool {
 macro_rules! break_iterator_impl {
     ($name:ident, $iter_attr:ty, $char_type:ty) => {
         #[allow(dead_code)]
+        /// The struct implementing the [`Iterator`] trait over the line break
+        /// opportunities of the given string. Please see the [module-level
+        /// documentation] for its usages.
+        ///
+        /// [`Iterator`]: core::iter::Iterator
+        /// [module-level documentation]: ../index.html
         pub struct $name<'a> {
             iter: $iter_attr,
             len: usize,
             current_pos_data: Option<(usize, $char_type)>,
             result_cache: Vec<usize>,
-            break_rule: LineBreakRule,
+            line_break_rule: LineBreakRule,
             word_break_rule: WordBreakRule,
             ja_zh: bool,
         }
@@ -298,7 +331,7 @@ macro_rules! break_iterator_impl {
                     }
 
                     // CSS line-break property handling
-                    match self.break_rule {
+                    match self.line_break_rule {
                         LineBreakRule::Normal => {
                             if self.is_break_by_normal() {
                                 return Some(self.current_pos_data.unwrap().0);
@@ -439,20 +472,25 @@ macro_rules! break_iterator_impl {
 break_iterator_impl!(LineBreakIterator, CharIndices<'a>, char);
 
 impl<'a> LineBreakIterator<'a> {
-    /// Create line break iterator
+    /// Create a line break iterator for an `str` (a UTF-8 string).
     pub fn new(input: &str) -> LineBreakIterator {
         LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
     }
 
-    /// Create line break iterator with CSS rules
+    /// Create line break iterator with CSS rules for an `str` (a UTF-8 string).
+    ///
+    /// * `ja_zh` - Use `true` as a hint to the line breaker that the writing
+    /// system is Chinese or Japanese. This allows more break opportunities when
+    /// `LineBreakRule` is `Normal` or `Loose`. See
+    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
     pub fn new_with_break_rule(
         input: &str,
         line_break_rule: LineBreakRule,
@@ -464,7 +502,7 @@ impl<'a> LineBreakIterator<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -475,7 +513,7 @@ impl<'a> LineBreakIterator<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: char) -> u8 {
-        get_linebreak_property_with_rule(c, self.break_rule, self.word_break_rule)
+        get_linebreak_property_with_rule(c, self.line_break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -542,7 +580,7 @@ impl<'a> Iterator for Latin1Indices<'a> {
 break_iterator_impl!(LineBreakIteratorLatin1, Latin1Indices<'a>, u8);
 
 impl<'a> LineBreakIteratorLatin1<'a> {
-    /// Create line break iterator using Latin-1/8-bit string.
+    /// Create a line break iterator for a Latin-1 (8-bit) string.
     pub fn new(input: &[u8]) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
             iter: Latin1Indices {
@@ -552,18 +590,18 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
     }
 
-    /// Create line break iterator with CSS rules using Latin-1/8-bit string.
+    /// Create a line break iterator with CSS rules for a Latin-1 (8-bit)
+    /// string.
     pub fn new_with_break_rule(
         input: &[u8],
         line_break_rule: LineBreakRule,
         word_break_rule: WordBreakRule,
-        ja_zh: bool,
     ) -> LineBreakIteratorLatin1 {
         LineBreakIteratorLatin1 {
             iter: Latin1Indices {
@@ -573,9 +611,9 @@ impl<'a> LineBreakIteratorLatin1<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
-            ja_zh,
+            ja_zh: false,
         }
     }
 
@@ -642,7 +680,7 @@ impl<'a> Iterator for Utf16Indices<'a> {
 break_iterator_impl!(LineBreakIteratorUtf16, Utf16Indices<'a>, u32);
 
 impl<'a> LineBreakIteratorUtf16<'a> {
-    /// Create line break iterator using UTF-16 string.
+    /// Create a line break iterator for a UTF-16 string.
     pub fn new(input: &[u16]) -> LineBreakIteratorUtf16 {
         LineBreakIteratorUtf16 {
             iter: Utf16Indices {
@@ -652,13 +690,18 @@ impl<'a> LineBreakIteratorUtf16<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: LineBreakRule::Strict,
+            line_break_rule: LineBreakRule::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
     }
 
-    /// Create line break iterator with CSS rules using UTF-16 string.
+    /// Create a line break iterator with CSS rules for a UTF-16 string.
+    ///
+    /// * `ja_zh` - Use `true` as a hint to the line breaker that the writing
+    /// system is Chinese or Japanese. This allows more break opportunities when
+    /// [`LineBreakRule`] is `Normal` or `Loose`. See
+    /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
     pub fn new_with_break_rule(
         input: &[u16],
         line_break_rule: LineBreakRule,
@@ -673,7 +716,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            break_rule: line_break_rule,
+            line_break_rule,
             word_break_rule,
             ja_zh,
         }
@@ -684,7 +727,7 @@ impl<'a> LineBreakIteratorUtf16<'a> {
     }
 
     fn get_linebreak_property_with_rule(&mut self, c: u32) -> u8 {
-        get_linebreak_property_utf32_with_rule(c, self.break_rule, self.word_break_rule)
+        get_linebreak_property_utf32_with_rule(c, self.line_break_rule, self.word_break_rule)
     }
 
     fn is_break_by_normal(&mut self) -> bool {
@@ -710,6 +753,9 @@ mod tests {
     use crate::lb_define::*;
     use crate::line_breaker::get_linebreak_property_with_rule;
     use crate::line_breaker::is_break;
+    use crate::LineBreakIterator;
+    use crate::LineBreakIteratorLatin1;
+    use crate::LineBreakIteratorUtf16;
     use crate::LineBreakRule;
     use crate::WordBreakRule;
 
@@ -736,6 +782,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
         // LB4
         assert_eq!(is_break(BK, AL), true);
@@ -826,5 +873,86 @@ mod tests {
         assert_eq!(is_break(EB, EM), false);
         // LB31
         assert_eq!(is_break(ID, ID), true);
+    }
+
+    #[test]
+    fn linebreak() {
+        let mut iter = LineBreakIterator::new("hello world");
+        assert_eq!(Some(6), iter.next());
+        assert_eq!(Some(11), iter.next());
+        assert_eq!(None, iter.next());
+
+        iter = LineBreakIterator::new("$10 $10");
+        assert_eq!(Some(4), iter.next());
+        assert_eq!(Some(7), iter.next());
+
+        // LB10
+
+        // LB14
+        iter = LineBreakIterator::new("[  abc def");
+        assert_eq!(Some(7), iter.next());
+        assert_eq!(Some(10), iter.next());
+        assert_eq!(None, iter.next());
+
+        let input: [u8; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
+        let mut iter_u8 = LineBreakIteratorLatin1::new(&input);
+        assert_eq!(Some(7), iter_u8.next());
+        assert_eq!(Some(10), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
+
+        let input: [u16; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(7), iter_u16.next());
+
+        // LB15
+        iter = LineBreakIterator::new("abc\u{0022}  (def");
+        assert_eq!(Some(10), iter.next());
+
+        let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
+        let mut iter_u8 = LineBreakIteratorLatin1::new(&input);
+        assert_eq!(Some(10), iter_u8.next());
+
+        let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(10), iter_u16.next());
+
+        // LB16
+        iter = LineBreakIterator::new("\u{0029}\u{203C}");
+        assert_eq!(Some(4), iter.next());
+        iter = LineBreakIterator::new("\u{0029}  \u{203C}");
+        assert_eq!(Some(6), iter.next());
+
+        let input: [u16; 4] = [0x29, 0x20, 0x20, 0x203c];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(4), iter_u16.next());
+
+        // LB17
+        iter = LineBreakIterator::new("\u{2014}\u{2014}aa");
+        assert_eq!(Some(6), iter.next());
+        iter = LineBreakIterator::new("\u{2014}  \u{2014}aa");
+        assert_eq!(Some(8), iter.next());
+
+        iter = LineBreakIterator::new("\u{2014}\u{2014}  \u{2014}\u{2014}123 abc");
+        assert_eq!(Some(14), iter.next());
+        assert_eq!(Some(18), iter.next());
+        assert_eq!(Some(21), iter.next());
+
+        // LB25
+        let mut iter = LineBreakIterator::new("(0,1)+(2,3)");
+        assert_eq!(Some(11), iter.next());
+        let input: [u16; 11] = [
+            0x28, 0x30, 0x2C, 0x31, 0x29, 0x2B, 0x28, 0x32, 0x2C, 0x33, 0x29,
+        ];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(11), iter_u16.next());
+
+        let input: [u16; 13] = [
+            0x2014, 0x2014, 0x20, 0x20, 0x2014, 0x2014, 0x31, 0x32, 0x33, 0x20, 0x61, 0x62, 0x63,
+        ];
+        let mut iter_u16 = LineBreakIteratorUtf16::new(&input);
+        assert_eq!(Some(6), iter_u16.next());
+
+        iter = LineBreakIterator::new("\u{1F3FB} \u{1F3FB}");
+        assert_eq!(Some(5), iter.next());
     }
 }

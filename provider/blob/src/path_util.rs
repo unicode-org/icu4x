@@ -2,13 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::{String, ToString};
-use alloc::vec::Vec;
+use alloc::string::String;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 pub fn resource_path_to_string(resource_path: &ResourcePath) -> String {
-    let key_components = resource_path.key.get_components();
-    let opt_components = resource_path.options.get_components();
-    let all_components: Vec<&str> = key_components.iter().chain(opt_components.iter()).collect();
-    "/".to_string() + &all_components.join("/")
+    let mut output = String::with_capacity(resource_path.write_len().capacity() + 1);
+    output.push('/');
+    resource_path
+        .write_to(&mut output)
+        .expect("impl Write for String is infallible");
+    output
 }

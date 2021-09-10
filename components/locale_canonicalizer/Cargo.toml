@@ -5,11 +5,11 @@
 [package]
 name = "icu_locale_canonicalizer"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "../../LICENSE"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -18,25 +18,28 @@ include = [
     "benches/**/*",
     "tests/**/*",
     "Cargo.toml",
+    "LICENSE",
     "README.md"
 ]
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "0.2", path = "../locid" }
-icu_provider = { version = "0.2", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "0.3", path = "../locid" }
+icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
 tinystr = { version = "0.4.10", default-features = false, features = ["alloc", "serde"] }
 
 [dev-dependencies]
 criterion = "0.3.3"
-icu_locid_macros = { version = "0.2", path = "../locid/macros" }
-icu_testdata = { version = "0.2", path = "../../provider/testdata" }
+icu_locid_macros = { version = "0.3", path = "../locid/macros" }
+icu_testdata = { version = "0.3", path = "../../provider/testdata", features = ["static"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 

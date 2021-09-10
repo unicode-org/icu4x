@@ -17,9 +17,6 @@ use core::any::TypeId;
 ///
 /// Requires the static lifetime in order to be convertible to [`Any`].
 pub trait ErasedDataStruct: 'static {
-    /// Clone this trait object reference, returning a boxed trait object.
-    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct>;
-
     /// Return this boxed trait object as [`Box`]`<dyn `[`Any`]`>`.
     ///
     /// # Examples
@@ -58,8 +55,6 @@ pub trait ErasedDataStruct: 'static {
     fn as_any(&self) -> &dyn Any;
 }
 
-impl_dyn_clone!(ErasedDataStruct);
-
 impl ZeroCopyFrom<dyn ErasedDataStruct> for &'static dyn ErasedDataStruct {
     #[allow(clippy::needless_lifetimes)]
     fn zero_copy_from<'b>(this: &'b (dyn ErasedDataStruct)) -> &'b dyn ErasedDataStruct {
@@ -84,23 +79,12 @@ where
     /// `Yoke` (i.e., `Rc::from(yoke)`).
     fn upcast(other: DataPayload<'static, M>) -> DataPayload<'static, ErasedDataStructMarker> {
         use crate::data_provider::DataPayloadInner::*;
-        match other.inner {
-            RcStruct(yoke) => {
-                // Case 2: Cast the whole RcStruct Yoke to the trait object.
-                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
-                DataPayload::from_partial_owned(cart)
-            }
-            Owned(yoke) => {
-                // Case 3: Cast the whole Owned Yoke to the trait object.
-                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
-                DataPayload::from_partial_owned(cart)
-            }
-            RcBuf(yoke) => {
-                // Case 4: Cast the whole RcBuf Yoke to the trait object.
-                let cart: Rc<dyn ErasedDataStruct> = Rc::from(yoke);
-                DataPayload::from_partial_owned(cart)
-            }
-        }
+        let cart: Rc<dyn ErasedDataStruct> = match other.inner {
+            RcStruct(yoke) => Rc::from(yoke),
+            Owned(yoke) => Rc::from(yoke),
+            RcBuf(yoke) => Rc::from(yoke),
+        };
+        DataPayload::from_partial_owned(cart)
     }
 }
 
@@ -212,10 +196,6 @@ where
     T: Any,
     for<'a> &'a T: Clone,
 {
-    fn clone_into_box(&self) -> Box<dyn ErasedDataStruct> {
-        todo!("#753")
-        // Box::new(self.clone())
-    }
     fn into_any(self: Box<Self>) -> Box<dyn Any> {
         self
     }

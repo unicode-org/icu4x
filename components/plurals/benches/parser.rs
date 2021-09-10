@@ -14,7 +14,7 @@ fn parser(c: &mut Criterion) {
 
     let fixture_data = helpers::get_plurals_data();
 
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::get_static_provider();
 
     let mut rules = vec![];
 
@@ -34,12 +34,16 @@ fn parser(c: &mut Criterion) {
             .unwrap();
         let data = data_payload.get();
 
-        let r = &[&data.zero, &data.one, &data.two, &data.few, &data.many];
+        let r = [
+            data.zero.as_ref(),
+            data.one.as_ref(),
+            data.two.as_ref(),
+            data.few.as_ref(),
+            data.many.as_ref(),
+        ];
 
-        for i in r {
-            if let Some(x) = i {
-                rules.push(x.to_string());
-            }
+        for x in r.iter().flatten() {
+            rules.push(x.to_string());
         }
     }
 
