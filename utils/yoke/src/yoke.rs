@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::trait_hack::YokeTraitHack;
+use crate::IsCovariant;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -492,6 +493,9 @@ where
         }
     }
 }
+
+// This is safe because Y is 'static and C has a covariant lifetime
+unsafe impl<'b, Y: for<'a> Yokeable<'a>, C: IsCovariant<'b>> IsCovariant<'b> for Yoke<Y, C> {}
 
 #[test]
 fn test_clone() {
