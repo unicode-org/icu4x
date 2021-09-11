@@ -441,7 +441,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         }
     }
     /// Temporary version of [`Yoke::attach_to_option_cart()`]
-    /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
+    /// that doesn't hit <https://github.com/rust-lang/rust/issues/84937>
     ///
     /// See its docs for more details
     pub fn attach_to_option_cart_badly(

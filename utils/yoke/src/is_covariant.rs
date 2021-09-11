@@ -11,21 +11,26 @@ use alloc::{
 
 /// A type implementing `IsCovariant<'a>` is covariant with respect to lifetime `'a`.
 ///
-/// All types on which it is safe to implement [`Yokeable`] can also safely
-/// implement `IsCovariant`. The difference is that `Yokeable` is defined on the `'static` version
-/// of the type, whereas `IsCovariant` is defined on the `'a` version of the type. This makes it
-/// useful in trait bounds when a type needs to be covariant for another unsafe operation.
+/// Lifetime parameters that are safely cast in [`Yokeable`] are also valid for `IsCovariant`.
 ///
-/// The primary use case is to safely perform lifetime casting on trait objects (`dyn Trait`).
-/// This enables a type-erased [`Yoke`] consisting of only trait objects.
+/// `IsCovariant` exists primarily to serve in trait bounds. The primary use case is to safely
+/// perform lifetime casting on trait objects (`dyn Trait`). This enables a type-erased [`Yoke`]
+/// consisting of only trait objects. See the examples.
+///
+/// `IsCovariant` is auto-implemented in [`#[derive(Yokeable)]`](yoke_derive::Yokeable).
 ///
 /// # Implementation safety
 ///
-/// See the notes in [`Yokeable`].
+/// This trait is safe to implement on types with a _covariant_ lifetime parameter. This will
+/// occur when the lifetime parameter is used within references, but not in the arguments of
+/// function pointers or in mutable positions (either in `&mut` or via interior mutability).
 ///
-/// # Example
+/// If a struct has multiple lifetime parameters, only the one used in `IsCovariant<'a>` needs to
+/// be covariant.
 ///
-/// The trait is safe to implement on types whose lifetime parameter is covariant:
+/// # Examples
+///
+/// Implementing on a simple struct with a single covariant lifetime:
 ///
 /// ```
 /// # use yoke::*;

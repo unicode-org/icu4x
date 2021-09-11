@@ -18,7 +18,7 @@ use synstructure::Structure;
 ///
 /// Note that right now this will fail to compile on structs involving
 /// `zerovec::ZeroMap`.
-/// Please comment on https://github.com/unicode-org/icu4x/issues/844
+/// Please comment on <https://github.com/unicode-org/icu4x/issues/844>
 /// if you need this
 #[proc_macro_derive(Yokeable)]
 pub fn yokeable_derive(input: TokenStream) -> TokenStream {
