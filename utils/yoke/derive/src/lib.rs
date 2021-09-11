@@ -18,7 +18,7 @@ use synstructure::Structure;
 ///
 /// Note that right now this will fail to compile on structs involving
 /// `zerovec::ZeroMap`.
-/// Please comment on https://github.com/unicode-org/icu4x/issues/844
+/// Please comment on <https://github.com/unicode-org/icu4x/issues/844>
 /// if you need this
 #[proc_macro_derive(Yokeable)]
 pub fn yokeable_derive(input: TokenStream) -> TokenStream {
@@ -39,6 +39,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
     if lts == 0 {
         let name = &input.ident;
         quote! {
+            // This is safe because there are no lifetime parameters.
             unsafe impl<'a> yoke::Yokeable<'a> for #name {
                 type Output = Self;
                 fn transform(&self) -> &Self::Output {
@@ -56,6 +57,8 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     f(self)
                 }
             }
+            // This is safe because there are no lifetime parameters.
+            unsafe impl<'a> yoke::IsCovariant<'a> for #name {}
         }
     } else {
         if lts != 1 {
@@ -98,6 +101,9 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
+            // This is safe because it is in the same block as the above impl, which only compiles
+            // if 'a is a covariant lifetime.
+            unsafe impl<'a> yoke::IsCovariant<'a> for #name<'a> {}
         }
     }
 }

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::trait_hack::YokeTraitHack;
+use crate::IsCovariant;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -27,6 +28,9 @@ use alloc::sync::Arc;
 ///
 /// The primary constructor for [`Yoke`] is [`Yoke::attach_to_cart()`]. Several variants of that
 /// constructor are provided to serve numerous types of call sites and `Yoke` signatures.
+///
+/// In general, `C` is a concrete type, but it is also possible for it to be a trait object;
+/// for more information, see [`IsCovariant`].
 ///
 /// # Example
 ///
@@ -437,7 +441,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         }
     }
     /// Temporary version of [`Yoke::attach_to_option_cart()`]
-    /// that doesn't hit https://github.com/rust-lang/rust/issues/84937
+    /// that doesn't hit <https://github.com/rust-lang/rust/issues/84937>
     ///
     /// See its docs for more details
     pub fn attach_to_option_cart_badly(
@@ -492,6 +496,9 @@ where
         }
     }
 }
+
+// This is safe because Y is 'static and C has a covariant lifetime
+unsafe impl<'b, Y: for<'a> Yokeable<'a>, C: IsCovariant<'b>> IsCovariant<'b> for Yoke<Y, C> {}
 
 #[test]
 fn test_clone() {

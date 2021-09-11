@@ -6,7 +6,7 @@
 // than using pointer casts
 #![allow(clippy::transmute_ptr_to_ptr)]
 
-use crate::{Yokeable, ZeroCopyFrom};
+use crate::{IsCovariant, Yokeable, ZeroCopyFrom};
 use core::{mem, ptr};
 
 macro_rules! copy_yoke_impl {
@@ -40,6 +40,7 @@ macro_rules! impl_copy_type {
                 *this
             }
         }
+        unsafe impl<'a> IsCovariant<'a> for $ty {}
     };
 }
 
