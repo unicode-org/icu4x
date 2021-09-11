@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631312860444,
+  "lastUpdate": 1631322134366,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -7235,6 +7235,48 @@ window.BENCHMARK_DATA = {
             "name": "datetime/zoned_datetime_overview",
             "value": 687606,
             "range": "± 5787",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a252023697c67309f4118e35c2b1923f99a88356",
+          "message": "Add IsCovariant trait (#1041)",
+          "timestamp": "2021-09-10T19:54:19-05:00",
+          "tree_id": "39fd66f8b1fdde87279693fe1a8cefe92921c1c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/a252023697c67309f4118e35c2b1923f99a88356"
+        },
+        "date": 1631322131178,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 368577,
+            "range": "± 28737",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1849359,
+            "range": "± 123150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 736262,
+            "range": "± 39692",
             "unit": "ns/iter"
           }
         ]
