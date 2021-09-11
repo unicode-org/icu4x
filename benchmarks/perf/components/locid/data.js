@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631312844244,
+  "lastUpdate": 1631322099322,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -12269,6 +12269,42 @@ window.BENCHMARK_DATA = {
             "name": "locale/overview",
             "value": 6025,
             "range": "± 260",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a252023697c67309f4118e35c2b1923f99a88356",
+          "message": "Add IsCovariant trait (#1041)",
+          "timestamp": "2021-09-10T19:54:19-05:00",
+          "tree_id": "39fd66f8b1fdde87279693fe1a8cefe92921c1c6",
+          "url": "https://github.com/unicode-org/icu4x/commit/a252023697c67309f4118e35c2b1923f99a88356"
+        },
+        "date": 1631322095839,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3121,
+            "range": "± 209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 5087,
+            "range": "± 220",
             "unit": "ns/iter"
           }
         ]
