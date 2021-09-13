@@ -30,24 +30,24 @@ lazy_static! {
 
 #[derive(PartialEq)]
 enum Language {
-    BURMESE,
-    THAI,
-    UNKNOWN,
+    Burmese,
+    Thai,
+    Unknown,
 }
 
 fn get_language(codepoint: u32) -> Language {
     match codepoint {
-        0xe01..=0xe7f => Language::THAI,
-        0x1000..=0x109f => Language::BURMESE,
-        _ => Language::UNKNOWN,
+        0xe01..=0xe7f => Language::Thai,
+        0x1000..=0x109f => Language::Burmese,
+        _ => Language::Unknown,
     }
 }
 
 fn get_best_lstm_model(codepoint: u32) -> &'static Lstm {
     let lang = get_language(codepoint);
     match lang {
-        Language::THAI => &*THAI_LSTM,
-        Language::BURMESE => &*BURMESE_LSTM,
+        Language::Thai => &*THAI_LSTM,
+        Language::Burmese => &*BURMESE_LSTM,
         _ => panic!("Unsupported"),
     }
 }
@@ -75,10 +75,7 @@ impl<'a> Iterator for LanguageIterator<'a> {
         if self.last.is_none() {
             self.last = self.input.next();
         }
-        if self.last.is_none() {
-            return None;
-        }
-        let lang = get_language(self.last.unwrap() as u32);
+        let lang = get_language(self.last? as u32);
         s.push(self.last.unwrap());
         loop {
             let c = self.input.next();
