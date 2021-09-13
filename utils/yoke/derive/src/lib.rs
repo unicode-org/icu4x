@@ -18,7 +18,7 @@ use synstructure::Structure;
 /// the `ZeroMap` itself. You must add the following attribute in order for
 /// the custom derive to work with `ZeroMap`.
 ///
-/// ```text
+/// ```rust,ignore
 /// #[derive(Yokeable)]
 /// #[yoke(manually_prove_covariance)]
 /// ```
