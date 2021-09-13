@@ -82,8 +82,9 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     let binding = format!("__binding_{}", i);
                     let field = Ident::new(&binding, Span::call_site());
                     let fty = replace_lifetime(&f.ty, static_lt());
-                    // By doing this we essentially require transform_owned to be implemented
-                    // on all fields
+                    // By calling transform_owned on all fields, we manually prove
+                    // that the lifetimes are covariant, since this requirement
+                    // must already be true for the type that implements transform_owned().
                     quote! {
                         <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
                     }
