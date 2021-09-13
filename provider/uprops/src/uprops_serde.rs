@@ -6,8 +6,7 @@ pub mod binary {
     #[derive(serde::Deserialize)]
     pub struct BinaryProperty {
         pub long_name: String,
-        pub name: String,
-        pub serialized: Vec<u32>,
+        pub short_name: String,
         pub ranges: Vec<(u32, u32)>,
     }
 
@@ -18,35 +17,34 @@ pub mod binary {
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        pub unicode_set: Level1,
+        pub binary_property: Level1,
     }
 }
 
 pub mod enumerated {
     #[derive(serde::Deserialize)]
     pub struct EnumeratedPropertyMapRange {
-        pub start: u32,
-        pub end: u32,
-        pub name_idx: u32,
-        pub long_name: String,
-        pub short_name: String,
+        pub a: u32,
+        pub b: u32,
+        pub v: u32,
+        pub name: String,
     }
 
     #[derive(serde::Deserialize)]
     pub struct EnumeratedPropertyMap {
         pub long_name: String,
-        pub name: String,
+        pub short_name: String,
         pub ranges: Vec<EnumeratedPropertyMapRange>,
     }
 
     #[derive(serde::Deserialize)]
-    pub struct CodePointMapLevel1 {
+    pub struct Level1 {
         pub data: EnumeratedPropertyMap,
     }
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        pub code_point_map: CodePointMapLevel1,
-        // omitted: code_point_trie.data
+        pub enum_property: Level1,
+        // omitted: enum_property.code_point_trie
     }
 }

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::Error;
-use crate::upropdump_serde;
+use crate::uprops_serde;
 use icu_provider::iter::IterableDataProviderCore;
 use icu_provider::prelude::*;
 use icu_uniset::provider::*;
@@ -16,12 +16,12 @@ pub struct EnumeratedPropertiesDataProvider {
     root_dir: PathBuf,
 }
 
-/// A data provider reading from .toml files produced by the ICU4C upropdump tool.
+/// A data provider reading from .toml files produced by the ICU4C icuwriteuprops tool.
 impl EnumeratedPropertiesDataProvider {
     pub fn new(root_dir: PathBuf) -> Self {
         EnumeratedPropertiesDataProvider { root_dir }
     }
-    fn get_toml_data(&self, name: &str) -> Result<upropdump_serde::enumerated::Main, Error> {
+    fn get_toml_data(&self, name: &str) -> Result<uprops_serde::enumerated::Main, Error> {
         let mut path: PathBuf = self.root_dir.clone().join(name);
         path.set_extension("toml");
         let toml_str = fs::read_to_string(&path).map_err(|e| Error::Io(e, path.clone()))?;
@@ -76,22 +76,22 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for EnumeratedPropertie
             (parts[0], parts[1])
         };
 
-        let toml_data: upropdump_serde::enumerated::Main = self
+        let toml_data: uprops_serde::enumerated::Main = self
             .get_toml_data(prop_name)
             .map_err(DataError::new_resc_error)?;
 
         let valid_names = expand_groupings(prop_name, prop_value);
 
         let mut builder = UnicodeSetBuilder::new();
-        let ranges = toml_data.code_point_map.data.ranges;
+        let ranges = toml_data.enum_property.data.ranges;
         for range in ranges {
-            if valid_names.iter().any(|&name| name == range.short_name) {
-                builder.add_range_u32(&(range.start..=range.end));
+            if valid_names.iter().any(|&name| name == range.name) {
+                builder.add_range_u32(&(range.a..=range.b));
             }
         }
         let uniset = builder.build();
 
-        let name = Cow::from(toml_data.code_point_map.data.name);
+        let name = Cow::from(toml_data.enum_property.data.long_name);
         Ok(DataResponse {
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
