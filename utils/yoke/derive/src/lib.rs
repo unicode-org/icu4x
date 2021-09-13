@@ -5,7 +5,7 @@
 //! Custom derives for `Yokeable` and `ZeroCopyFrom` from the `yoke` crate.
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2, TokenTree};
+use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse_macro_input, DeriveInput, Ident, Lifetime, Type};
@@ -78,17 +78,17 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             false
         });
         if manual_covariance {
-            let structure = Structure::new(input);
+            let mut structure = Structure::new(input);
+            structure.bind_with(|_| synstructure::BindStyle::Move);
             let body = structure.each_variant(|vi| {
                 vi.construct(|f, i| {
                     let binding = format!("__binding_{}", i);
                     let field = Ident::new(&binding, Span::call_site());
-                    //let fty = replace_lifetime(&f.ty, static_lt());
-                    let fty = &f.ty;
+                    let fty = replace_lifetime(&f.ty, static_lt());
                     // By doing this we essentially require transform_owned to be implemented
                     // on all fields
                     quote! {
-                        <#fty as yoke::Yokeable<_>>::transform_owned(#field)
+                        <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
                     }
                 })
             });
@@ -96,7 +96,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
                     type Output = #name<'a>;
                     fn transform(&'a self) -> &'a Self::Output {
-                        self
+                        unsafe {
+                            // safety: we have asserted covariance in
+                            // transform_owned
+                            ::core::mem::transmute(self)
+                        }
                     }
                     fn transform_owned(self) -> Self::Output {
                         match self { #body }
