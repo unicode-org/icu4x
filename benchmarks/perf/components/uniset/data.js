@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631322036518,
+  "lastUpdate": 1631576056464,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10769,6 +10769,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36868340,
             "range": "± 1868920",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54d3b85100eb10aaed26f5f40e44a4cca5996f1b",
+          "message": "Derive Yokeable for ZeroMap (#1046)\n\n* WIP: Asking Questions\r\n\r\n* Make it work\r\n\r\n* Clean up comments\r\n\r\n* Update documentation\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2021-09-13T16:27:52-07:00",
+          "tree_id": "f893d7bd949e0236f4cae7f224b5bdc456fa2d9f",
+          "url": "https://github.com/unicode-org/icu4x/commit/54d3b85100eb10aaed26f5f40e44a4cca5996f1b"
+        },
+        "date": 1631576053086,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 30530177,
+            "range": "± 1439707",
             "unit": "ns/iter"
           }
         ]
