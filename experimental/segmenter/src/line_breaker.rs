@@ -245,7 +245,9 @@ fn get_break_state(left: u8, right: u8) -> i8 {
 #[inline]
 fn use_complex_breaking_utf32(codepoint: u32) -> bool {
     // Thai
-    (0xe01..=0xe7f).contains(&codepoint)
+    (0xe01..=0xe7f).contains(&codepoint) ||
+    // Burmese
+    (0x1000..=0x109f).contains(&codepoint)
 }
 
 /*
