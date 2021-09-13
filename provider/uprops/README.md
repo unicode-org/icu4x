@@ -4,7 +4,7 @@
 [`DataProvider`] interface backed by TOML files exported by the
 ICU4C upropdump tool. Create a directory containing TOML files for
 the necessary Unicode properties and then pass the path into the
-[`BinaryPropertiesDataProvider`].
+[`PropertiesDataProvider`].
 
 **Important:** This data provider implementation is not optimized
 for production use.  It is much more efficient if you use
@@ -14,7 +14,7 @@ for production use.  It is much more efficient if you use
 [`DataProvider`]: icu_provider::prelude::DataProvider
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`StaticDataProvider`]: ../icu_provider_blob/struct.StaticDataProvider.html
-[`BinaryPropertiesDataProvider`]: binary::BinaryPropertiesDataProvider
+[`PropertiesDataProvider`]: binary::PropertiesDataProvider
 
 ## More Information
 
