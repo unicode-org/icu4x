@@ -34,7 +34,6 @@ pub struct ZeroVecExample<'a> {
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
 pub struct ZeroMapExample<'a> {
-    // https://github.com/unicode-org/icu4x/issues/844
     map: ZeroMap<'a, String, u16>,
 }
 
