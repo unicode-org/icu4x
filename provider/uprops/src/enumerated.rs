@@ -30,32 +30,35 @@ impl EnumeratedPropertiesDataProvider {
 }
 
 fn expand_groupings<'a>(prop_name: &str, prop_val: &'a str) -> Vec<&'a str> {
-    match (prop_name, prop_val) {
-        // General_Category::CasedLetter
-        ("gc", "LC") => vec!["Lu", "Ll", "Lt"],
+    match prop_name {
+        "gc" => match prop_val {
+            // General_Category::CasedLetter
+            "LC" => vec!["Lu", "Ll", "Lt"],
 
-        // General_Category::Letter
-        ("gc", "L") => vec!["Lu", "Ll", "Lt", "Lm", "Lo"],
+            // General_Category::Letter
+            "L" => vec!["Lu", "Ll", "Lt", "Lm", "Lo"],
 
-        // General_Category::Mark
-        ("gc", "M") => vec!["Mn", "Mc", "Me"],
+            // General_Category::Mark
+            "M" => vec!["Mn", "Mc", "Me"],
 
-        // General_Category::Number
-        ("gc", "N") => vec!["Nd", "Nl", "No"],
+            // General_Category::Number
+            "N" => vec!["Nd", "Nl", "No"],
 
-        // General_Category::Punctuation
-        ("gc", "P") => vec!["Pc", "Pd", "Ps", "Pe", "Pi", "Pf", "Po"],
+            // General_Category::Punctuation
+            "P" => vec!["Pc", "Pd", "Ps", "Pe", "Pi", "Pf", "Po"],
 
-        // General_Category::Symbol
-        ("gc", "S") => vec!["Sm", "Sc", "Sk", "So"],
+            // General_Category::Symbol
+            "S" => vec!["Sm", "Sc", "Sk", "So"],
 
-        // General_Category::Separator
-        ("gc", "Z") => vec!["Zs", "Zl", "Zp"],
+            // General_Category::Separator
+            "Z" => vec!["Zs", "Zl", "Zp"],
 
-        // General_Category::Control
-        ("gc", "C") => vec!["Cc", "Cf", "Cs", "Co", "Cn"],
+            // General_Category::Control
+            "C" => vec!["Cc", "Cf", "Cs", "Co", "Cn"],
 
-        (_, prop_val) => vec![prop_val],
+            _ => vec![prop_val],
+        },
+        _ => vec![prop_val],
     }
 }
 
