@@ -164,7 +164,7 @@ impl LstmSegmenterIteratorUtf16 {
 #[cfg(test)]
 pub fn get_line_break_utf8(input: &str) -> Option<Vec<usize>> {
     let mut result: Vec<usize> = Vec::new();
-    let mut lang_iter = LanguageIterator::new(&input);
+    let mut lang_iter = LanguageIterator::new(input);
     let mut offset = 0;
     loop {
         let str_per_lang = lang_iter.next();
