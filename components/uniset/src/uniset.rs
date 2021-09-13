@@ -97,15 +97,15 @@ impl<'data> UnicodeSet<'data> {
     /// use icu::uniset::UnicodeSetError;
     /// use zerovec::ZeroVec;
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let inv_list: ZeroVec<u32> = ZeroVec::from_aligned(&invalid);
+    /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice(&invalid);
     /// let result = UnicodeSet::from_inversion_list(inv_list);
     /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
     /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
-    ///     assert_eq!(ZeroVec::from_aligned(&invalid), actual);
+    ///     assert_eq!(ZeroVec::from_slice(&invalid), actual);
     /// }
     /// ```
     pub fn clone_from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError<'data>> {
-        let inv_list_zv: ZeroVec<u32> = ZeroVec::from_aligned(&inv_list);
+        let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice(&inv_list);
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
@@ -121,7 +121,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::from_aligned(&vec![0x0, (char::MAX as u32) + 1]),
+            inv_list: ZeroVec::<u32>::from_slice(&vec![0x0, (char::MAX as u32) + 1]),
             size: (char::MAX as usize) + 1,
         }
     }
@@ -131,7 +131,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::from_aligned(&vec![0x0, BMP_MAX + 1]),
+            inv_list: ZeroVec::<u32>::from_slice(&vec![0x0, BMP_MAX + 1]),
             size: (BMP_MAX as usize) + 1,
         }
     }
@@ -207,7 +207,7 @@ impl<'data> UnicodeSet<'data> {
         let end_idx = start_idx + 1;
         let start = self.inv_list.get(start_idx)?;
         let end = self.inv_list.get(end_idx)?;
-        Some(RangeInclusive::new(*start, *end - 1))
+        Some(RangeInclusive::new(start, end - 1))
     }
 
     /// Returns the number of elements of the [`UnicodeSet`]
@@ -437,25 +437,25 @@ mod tests {
     #[test]
     fn test_unicodeset_try_from_vec_error() {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
-        let inv_list = ZeroVec::from_aligned(&check);
+        let inv_list = ZeroVec::from_slice(&check);
         let set = UnicodeSet::from_inversion_list(inv_list);
         assert!(matches!(set, Err(UnicodeSetError::InvalidSet(_))));
         if let Err(UnicodeSetError::InvalidSet(actual)) = set {
-            assert_eq!(ZeroVec::from_aligned(&check), actual);
+            assert_eq!(ZeroVec::from_slice(&check), actual);
         }
     }
 
     #[test]
     fn test_unicodeset_all() {
         let expected = vec![0x0, (char::MAX as u32) + 1];
-        assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_aligned(&expected));
+        assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_slice(&expected));
         assert_eq!(UnicodeSet::all().size(), (expected[1] - expected[0]) as usize)
     }
 
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0x0, BMP_MAX + 1];
-        assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_aligned(&expected));
+        assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_slice(&expected));
         assert_eq!(UnicodeSet::bmp().size(), (expected[1] - expected[0]) as usize);
     }
 
@@ -546,14 +546,14 @@ mod tests {
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
         let inv_list_vec: Vec<u32> = vec![];
-        let check = UnicodeSet { inv_list: ZeroVec::from_aligned(&inv_list_vec), size: 0 };
+        let check = UnicodeSet { inv_list: ZeroVec::from_slice(&inv_list_vec), size: 0 };
         assert_eq!(check.size(), 0);
     }
 
     #[test]
     fn test_unicodeset_is_empty() {
         let inv_list_vec: Vec<u32> = vec![];
-        let check = UnicodeSet { inv_list: ZeroVec::from_aligned(&inv_list_vec), size: 0 };
+        let check = UnicodeSet { inv_list: ZeroVec::from_slice(&inv_list_vec), size: 0 };
         assert!(check.is_empty());
     }
 

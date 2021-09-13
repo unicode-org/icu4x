@@ -316,12 +316,8 @@ pub mod key {
 }
 
 #[icu_provider::data_struct]
-#[derive(Debug, Hash, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-#[cfg_attr(
-    feature = "provider_serde",
-    derive(serde::Serialize, serde::Deserialize)
-)]
 pub struct UnicodePropertyV1<'data> {
     pub name: Cow<'data, str>,
     pub inv_list: UnicodeSet<'data>,
@@ -339,7 +335,7 @@ impl Default for UnicodePropertyV1<'static> {
 
 impl<'data> UnicodePropertyV1<'data> {
     #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
-    pub fn from_uniset(set: &UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
+    pub fn from_uniset(set: &'data UnicodeSet, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
         UnicodePropertyV1 {
             name,
             inv_list: set.clone(),
