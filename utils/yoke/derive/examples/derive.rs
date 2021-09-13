@@ -8,25 +8,33 @@ use std::borrow::Cow;
 use yoke_derive::{Yokeable, ZeroCopyFrom};
 use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
+// #[derive(Yokeable)]
+// pub struct StringExample {
+//     x: String,
+//}
+
+// #[derive(Yokeable, ZeroCopyFrom)]
+// pub struct CowExample<'a> {
+//     x: u8,
+//     y: &'a str,
+//     z: Cow<'a, str>,
+//     w: Cow<'a, [u8]>,
+// }
+
+// #[derive(Yokeable, ZeroCopyFrom)]
+// #[yoke(prove_covariance_manually)]
+// pub struct ZeroVecExample<'a> {
+//     // https://github.com/unicode-org/icu4x/issues/844
+//     // map: ZeroMap<'a, String, String>,
+//     var: VarZeroVec<'a, String>,
+//     vec: ZeroVec<'a, u16>,
+// }
+
 #[derive(Yokeable)]
-pub struct Foo {
-    x: String,
-}
-
-#[derive(Yokeable, ZeroCopyFrom)]
-pub struct Bar<'a> {
-    x: u8,
-    y: &'a str,
-    z: Cow<'a, str>,
-    w: Cow<'a, [u8]>,
-}
-
-#[derive(Yokeable, ZeroCopyFrom)]
-pub struct Baz<'a> {
+#[yoke(prove_covariance_manually)]
+pub struct ZeroMapExample<'a> {
     // https://github.com/unicode-org/icu4x/issues/844
-    // map: ZeroMap<'a, String, String>,
-    var: VarZeroVec<'a, String>,
-    vec: ZeroVec<'a, u16>,
+    map: ZeroMap<'a, String, u16>,
 }
 
 fn main() {}

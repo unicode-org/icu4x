@@ -5,7 +5,7 @@
 //! Custom derives for `Yokeable` and `ZeroCopyFrom` from the `yoke` crate.
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2};
+use proc_macro2::{Span, TokenStream as TokenStream2, TokenTree};
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse_macro_input, DeriveInput, Ident, Lifetime, Type};
@@ -20,7 +20,7 @@ use synstructure::Structure;
 /// `zerovec::ZeroMap`.
 /// Please comment on <https://github.com/unicode-org/icu4x/issues/844>
 /// if you need this
-#[proc_macro_derive(Yokeable)]
+#[proc_macro_derive(Yokeable, attributes(yoke))]
 pub fn yokeable_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(yokeable_derive_impl(&input))
@@ -69,6 +69,55 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .to_compile_error();
         }
         let name = &input.ident;
+        let manual_covariance = input.attrs.iter().any(|a| {
+            if let Ok(i) = a.parse_args::<Ident>() {
+                if i == "prove_covariance_manually" {
+                    return true;
+                }
+            }
+            false
+        });
+        if manual_covariance {
+            let structure = Structure::new(input);
+            let body = structure.each_variant(|vi| {
+                vi.construct(|f, i| {
+                    let binding = format!("__binding_{}", i);
+                    let field = Ident::new(&binding, Span::call_site());
+                    //let fty = replace_lifetime(&f.ty, static_lt());
+                    let fty = &f.ty;
+                    // By doing this we essentially require transform_owned to be implemented
+                    // on all fields
+                    quote! {
+                        <#fty as yoke::Yokeable<_>>::transform_owned(#field)
+                    }
+                })
+            });
+            return quote! {
+                unsafe impl<'a> yoke::Yokeable<'a> for #name<'static> {
+                    type Output = #name<'a>;
+                    fn transform(&'a self) -> &'a Self::Output {
+                        self
+                    }
+                    fn transform_owned(self) -> Self::Output {
+                        match self { #body }
+                    }
+                    unsafe fn make(this: Self::Output) -> Self {
+                        use core::{mem, ptr};
+                        // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
+                        // are the same
+                        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+                        let ptr: *const Self = (&this as *const Self::Output).cast();
+                        mem::forget(this);
+                        ptr::read(ptr)
+                    }
+                    fn transform_mut<F>(&'a mut self, f: F)
+                    where
+                        F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
+                        unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
+                    }
+                }
+            };
+        }
         quote! {
             // This is safe because as long as `transform()` compiles,
             // we can be sure that `'a` is a covariant lifetime on `Self`
