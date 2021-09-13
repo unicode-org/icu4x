@@ -359,7 +359,7 @@ fn test_components_width_differences() {
 #[test]
 fn test_components_combine_datetime() {
     // components/datetime/tests/fixtures/tests/components-combine-date-time.json
-    test_fixture("components-combine-date-time");
+    test_fixture("components-combine-datetime");
 }
 
 #[test]
