@@ -51,6 +51,12 @@ fn get_request(langid: LanguageIdentifier) -> DataRequest {
     }
 }
 
+#[cfg(not(feature = "provider_json"))]
+#[test]
+fn test_json_feature() {
+    FsDataProvider::try_new("./tests/testdata/json").expect_err("JSON is not enabled");
+}
+
 #[cfg(feature = "provider_json")]
 #[test]
 fn test_json() {

@@ -94,6 +94,22 @@ macro_rules! get_bincode_deserializer_zc {
     }};
 }
 
+/// Returns an error if the syntax option is not supported.
+pub fn check_format_supported(syntax_option: &SyntaxOption) -> Result<(), crate::error::Error> {
+    #[allow(unused_imports)]
+    use crate::error::Error;
+    match syntax_option {
+        #[cfg(feature = "provider_json")]
+        SyntaxOption::Json => Ok(()),
+        #[cfg(not(feature = "provider_json"))]
+        SyntaxOption::Json => Err(Error::UnknownSyntax(SyntaxOption::Json)),
+        #[cfg(feature = "provider_bincode")]
+        SyntaxOption::Bincode => Ok(()),
+        #[cfg(not(feature = "provider_bincode"))]
+        SyntaxOption::Bincode => Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
+    }
+}
+
 /// Deserialize into a generic type ([`DataProvider`]). Covers all supported data formats.
 #[allow(clippy::type_complexity)]
 pub fn deserialize_zero_copy<'data, M>(

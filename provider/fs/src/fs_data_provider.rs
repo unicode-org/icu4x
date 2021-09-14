@@ -53,6 +53,7 @@ impl FsDataProvider {
         let manifest: Manifest = serde_json_core::from_str(&manifest_str)
             .map(|(obj, _)| obj)
             .map_err(|e| (e, &manifest_path))?;
+        deserializer::check_format_supported(&manifest.syntax)?;
         Ok(Self {
             res_root: root_path_buf,
             manifest,
