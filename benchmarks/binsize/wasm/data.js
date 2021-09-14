@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631575994479,
+  "lastUpdate": 1631640341362,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -2333,6 +2333,144 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/54d3b85100eb10aaed26f5f40e44a4cca5996f1b"
         },
         "date": 1631575990876,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "litemap_bincode+opt.wasm",
+            "value": 17571,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm",
+            "value": 6534,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm",
+            "value": 7925,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm",
+            "value": 197,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm",
+            "value": 9040,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm",
+            "value": 10136,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm",
+            "value": 7191,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm",
+            "value": 6577,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm",
+            "value": 12859,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derive+opt.wasm",
+            "value": 8677,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm",
+            "value": 15992,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm",
+            "value": 13475,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm",
+            "value": 8772,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple+opt.wasm",
+            "value": 609724,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm",
+            "value": 6577,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm",
+            "value": 30649,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm",
+            "value": 6534,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm",
+            "value": 12281,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm",
+            "value": 6569,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d5a9f48d2b533825fbccb94077fd504a5f34041c",
+          "message": "Add binary enumerated properties data provider; update uprop toml files (#1047)\n\n* Add EnumeratedPropertiesDataProvider\r\n\r\n* Implement IterableDataProviderCore\r\n\r\n* Implement unified PropertyDataProvider\r\n\r\n* Re-run cargo make generate-readmes\r\n\r\n* Update uprops data to use new icuwriteuprops data format\r\n\r\n* Refactor expand_groupings\r\n\r\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-09-14T10:21:10-07:00",
+          "tree_id": "e3dfa72898eb38ee3354b272e6b0d5f803394de7",
+          "url": "https://github.com/unicode-org/icu4x/commit/d5a9f48d2b533825fbccb94077fd504a5f34041c"
+        },
+        "date": 1631640338362,
         "tool": "ndjson",
         "benches": [
           {
