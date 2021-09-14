@@ -55,6 +55,7 @@ static_assertions = { version = "1.1", optional = true }
 icu_benchmark_macros = { version = "0.3", path = "../../tools/benchmark/macros" }
 icu_locid_macros = { version = "0.3", path = "../../components/locid/macros" }
 icu_plurals = { version = "0.3", path = "../../components/plurals" }
+serde-json-core = { version = "0.4", features = ["std"] }
 criterion = "0.3.3"
 
 [features]
@@ -62,7 +63,7 @@ criterion = "0.3.3"
 provider_json = ["serde_json"]
 provider_bincode = ["bincode", "std"]
 # Enables the "export" module and FilesystemExporter
-export = ["static_assertions", "log", "std"]
+export = ["static_assertions", "log", "std", "provider_json"]
 std = ["serde_json/std", "serde-json-core/std"]
 bench = []
 

@@ -43,7 +43,7 @@ path = "src/lib.rs"
 default = ["provider_fs", "provider_static"]
 wearos = ["smaller_static", "freertos"]
 
-provider_fs = ["icu_provider_fs"]
+provider_fs = ["icu_provider_fs", "icu_provider_fs/provider_json"]
 provider_static = ["icu_testdata"]
 smaller_static = ["provider_static"]
 

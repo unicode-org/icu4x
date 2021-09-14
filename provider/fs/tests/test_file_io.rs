@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(unused_imports)]
+
 use icu_locid::LanguageIdentifier;
 use icu_locid_macros::langid;
 use icu_plurals::provider::*;
@@ -10,6 +12,7 @@ use icu_provider::serde::*;
 use icu_provider_fs::FsDataProvider;
 use std::borrow::Cow;
 
+#[cfg(feature = "provider_json")]
 const EXPECTED_RU_DATA: PluralRuleStringsV1 = PluralRuleStringsV1 {
     zero: None,
     one: Some(Cow::Borrowed("v = 0 and i % 10 = 1 and i % 100 != 11")),
@@ -35,6 +38,7 @@ const EXPECTED_SR_DATA: PluralRuleStringsV1 = PluralRuleStringsV1 {
     many: None,
 };
 
+#[allow(dead_code)]
 fn get_request(langid: LanguageIdentifier) -> DataRequest {
     DataRequest {
         resource_path: ResourcePath {
@@ -47,6 +51,7 @@ fn get_request(langid: LanguageIdentifier) -> DataRequest {
     }
 }
 
+#[cfg(feature = "provider_json")]
 #[test]
 fn test_json() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
@@ -60,6 +65,7 @@ fn test_json() {
     assert_eq!(plurals_data.get(), &EXPECTED_RU_DATA);
 }
 
+#[cfg(feature = "provider_json")]
 #[test]
 fn test_json_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")
@@ -74,6 +80,7 @@ fn test_json_dyn_erased_serde() {
     assert_eq!(plurals_data.get(), &EXPECTED_RU_DATA);
 }
 
+#[cfg(feature = "provider_json")]
 #[test]
 fn test_json_errors() {
     let provider = FsDataProvider::try_new("./tests/testdata/json")

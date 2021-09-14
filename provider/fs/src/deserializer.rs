@@ -18,7 +18,7 @@ use serde::Deserialize;
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Display, Debug)]
 pub enum Error {
-    #[cfg(feature = "json")]
+    #[cfg(feature = "provider_json")]
     #[displaydoc("{0}")]
     Json(serde_json::error::Error),
     #[cfg(feature = "provider_bincode")]
@@ -33,7 +33,7 @@ pub enum Error {
 
 impl std::error::Error for Error {}
 
-#[cfg(feature = "json")]
+#[cfg(feature = "provider_json")]
 impl From<serde_json::error::Error> for Error {
     fn from(e: serde_json::error::Error) -> Self {
         Error::Json(e)
@@ -57,7 +57,7 @@ impl Error {
     pub fn into_resource_error<P: AsRef<Path>>(self, path: P) -> DataError {
         use crate::error::Error as CrateError;
         let crate_error = match self {
-            #[cfg(feature = "json")]
+            #[cfg(feature = "provider_json")]
             Self::Json(err) => {
                 CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
@@ -75,7 +75,7 @@ impl Error {
 }
 
 /// Get a JSON zero-copy deserializer. Implemeted as a macro because the return type is complex/private.
-#[cfg(feature = "json")]
+#[cfg(feature = "provider_json")]
 macro_rules! get_json_deserializer_zc {
     ($bytes:tt) => {
         serde_json::Deserializer::from_slice($bytes)
@@ -107,13 +107,13 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     match syntax_option {
-        #[cfg(feature = "json")]
+        #[cfg(feature = "provider_json")]
         SyntaxOption::Json => |bytes| {
             let mut d = get_json_deserializer_zc!(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
-        #[cfg(not(feature = "json"))]
+        #[cfg(not(feature = "provider_json"))]
         SyntaxOption::Json => |_| Err(Error::UnknownSyntax(SyntaxOption::Json)),
         #[cfg(feature = "provider_bincode")]
         SyntaxOption::Bincode => |bytes| {
@@ -135,7 +135,7 @@ pub fn deserialize_into_receiver(
     receiver: &mut dyn SerdeDeDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
-        #[cfg(feature = "json")]
+        #[cfg(feature = "provider_json")]
         SyntaxOption::Json => {
             receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_json_deserializer_zc!(bytes);
@@ -143,7 +143,7 @@ pub fn deserialize_into_receiver(
             })?;
             Ok(())
         }
-        #[cfg(not(feature = "json"))]
+        #[cfg(not(feature = "provider_json"))]
         SyntaxOption::Json => Err(Error::UnknownSyntax(SyntaxOption::Json)),
         #[cfg(feature = "provider_bincode")]
         SyntaxOption::Bincode => {
