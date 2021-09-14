@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631640485485,
+  "lastUpdate": 1631647744175,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10829,6 +10829,36 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 32342464,
             "range": "± 708025",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sffc@google.com",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0719bef4e5e77ebc0dfe5f8cade17707baa81f7e",
+          "message": "Add provider_json and provider_bincode features (#1049)\n\n- Migrates manifest to serde-json-core\r\n- Renames bincode to provider_bincode\r\n- Fails early when syntax is not supported",
+          "timestamp": "2021-09-14T14:20:55-05:00",
+          "tree_id": "89bb880f2dce4e5076374c935f9845d80c20547f",
+          "url": "https://github.com/unicode-org/icu4x/commit/0719bef4e5e77ebc0dfe5f8cade17707baa81f7e"
+        },
+        "date": 1631647740805,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 34530567,
+            "range": "± 2083287",
             "unit": "ns/iter"
           }
         ]
