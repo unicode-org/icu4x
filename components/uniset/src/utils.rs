@@ -6,13 +6,16 @@ use core::{
     char,
     ops::{Bound::*, RangeBounds},
 };
-use zerovec::ZeroVec;
 use zerovec::ule::AsULE;
+use zerovec::ZeroVec;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
 /// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
 pub fn is_valid(v: &[u32]) -> bool {
-    v.is_empty() || (v.len() % 2 == 0 && v.windows(2).all(|chunk| chunk[0] < chunk[1]) && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
+    v.is_empty()
+        || (v.len() % 2 == 0
+            && v.windows(2).all(|chunk| chunk[0] < chunk[1])
+            && v.last().map_or(false, |e| e <= &((char::MAX as u32) + 1)))
     // let v_iter = v.iter();
     // let v_len = v.len();
     // let v_last = v.last();
@@ -22,10 +25,15 @@ pub fn is_valid(v: &[u32]) -> bool {
 /// TODO: fill out doc strings / examples
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
     let slice = inv_list_zv.as_slice();
-    slice.is_empty() || 
-        (slice.len() % 2 == 0
-            && slice.windows(2).all(|chunk| <u32 as AsULE>::from_unaligned(&chunk[0]) < <u32 as AsULE>::from_unaligned(&chunk[1]))
-            && slice.last().map_or(false, |e| <u32 as AsULE>::from_unaligned(e) <= ((char::MAX as u32) + 1)))
+    slice.is_empty()
+        || (slice.len() % 2 == 0
+            && slice.windows(2).all(|chunk| {
+                <u32 as AsULE>::from_unaligned(&chunk[0])
+                    < <u32 as AsULE>::from_unaligned(&chunk[1])
+            })
+            && slice.last().map_or(false, |e| {
+                <u32 as AsULE>::from_unaligned(e) <= ((char::MAX as u32) + 1)
+            }))
 }
 
 /// Returns start (inclusive) and end (exclusive) bounds of [`RangeBounds`]

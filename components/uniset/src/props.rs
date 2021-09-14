@@ -4,11 +4,11 @@
 
 use crate::enum_props::*;
 use crate::provider::*;
-use crate::{UnicodeSet, UnicodeSetError};
-use core::convert::TryInto;
+use crate::UnicodeSetError;
 use icu_provider::prelude::*;
 
-type UnisetResult<'data> = Result<DataPayload<'data, UnicodePropertyV1Marker>, UnicodeSetError<'data>>;
+type UnisetResult<'data> =
+    Result<DataPayload<'data, UnicodePropertyV1Marker>, UnicodeSetError<'data>>;
 
 // helper fn
 fn get_prop<'data, D>(provider: &'data D, resc_key: ResourceKey) -> UnisetResult<'data>
@@ -112,7 +112,9 @@ where
     get_prop(provider, key::CHANGES_WHEN_CASEMAPPED_V1)
 }
 
-pub fn get_changes_when_nfkc_casefolded_property<'data, D>(provider: &'data D) -> UnisetResult<'data>
+pub fn get_changes_when_nfkc_casefolded_property<'data, D>(
+    provider: &'data D,
+) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
 {
@@ -154,7 +156,9 @@ where
     get_prop(provider, key::DEPRECATED_V1)
 }
 
-pub fn get_default_ignorable_code_point_property<'data, D>(provider: &'data D) -> UnisetResult<'data>
+pub fn get_default_ignorable_code_point_property<'data, D>(
+    provider: &'data D,
+) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
 {
@@ -371,7 +375,9 @@ where
     get_prop(provider, key::PATTERN_WHITE_SPACE_V1)
 }
 
-pub fn get_prepended_concatenation_mark_property<'data, D>(provider: &'data D) -> UnisetResult<'data>
+pub fn get_prepended_concatenation_mark_property<'data, D>(
+    provider: &'data D,
+) -> UnisetResult<'data>
 where
     D: DataProvider<'data, UnicodePropertyV1Marker> + ?Sized,
 {

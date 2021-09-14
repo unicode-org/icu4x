@@ -342,7 +342,11 @@ impl<'data> UnicodePropertyV1<'data> {
         }
     }
 
-    pub fn from_owned_uniset(set: UnicodeSet<'data>, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
+    #[allow(missing_docs)] // TODO(#1030) - Add missing docs.
+    pub fn from_owned_uniset(
+        set: UnicodeSet<'data>,
+        name: Cow<'data, str>,
+    ) -> UnicodePropertyV1<'data> {
         UnicodePropertyV1 {
             name,
             inv_list: set,
@@ -364,8 +368,8 @@ impl<'data> serde::Serialize for UnicodePropertyV1<'data> {
         S: serde::Serializer,
     {
         let mut state = serializer.serialize_struct("UnicodePropertyV1", 2)?;
-        state.serialize_field("name", &self.name);
-        state.serialize_field("inv_list", &self.inv_list);
+        state.serialize_field("name", &self.name)?;
+        state.serialize_field("inv_list", &self.inv_list)?;
         state.end()
     }
 }
@@ -380,7 +384,10 @@ impl<'de> serde::Deserialize<'de> for UnicodePropertyV1<'de> {
 
         #[derive(serde::Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
-        enum Field { Name, InvList }
+        enum Field {
+            Name,
+            InvList,
+        }
 
         struct UnicodePropertyV1Visitor;
 
@@ -395,16 +402,18 @@ impl<'de> serde::Deserialize<'de> for UnicodePropertyV1<'de> {
             where
                 V: serde::de::SeqAccess<'de>,
             {
-                let name = seq.next_element()?
+                let name = seq
+                    .next_element()?
                     .ok_or_else(|| serde::de::Error::invalid_length(0, &self))?;
-                let inv_list = seq.next_element()?
+                let inv_list = seq
+                    .next_element()?
                     .ok_or_else(|| serde::de::Error::invalid_length(1, &self))?;
-                Ok(UnicodePropertyV1 {name, inv_list})
+                Ok(UnicodePropertyV1 { name, inv_list })
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<UnicodePropertyV1<'de>, V::Error>
             where
-                V: serde::de::MapAccess<'de>
+                V: serde::de::MapAccess<'de>,
             {
                 let mut name = None;
                 let mut inv_list = None;
@@ -425,13 +434,13 @@ impl<'de> serde::Deserialize<'de> for UnicodePropertyV1<'de> {
                     }
                 }
                 let name = name.ok_or_else(|| serde::de::Error::missing_field("name"))?;
-                let inv_list = inv_list.ok_or_else(|| serde::de::Error::missing_field("inv_list"))?;
-                Ok(UnicodePropertyV1{ name, inv_list })
-            }            
+                let inv_list =
+                    inv_list.ok_or_else(|| serde::de::Error::missing_field("inv_list"))?;
+                Ok(UnicodePropertyV1 { name, inv_list })
+            }
         }
 
-        const FIELDS: &'static [&'static str] = &["name", "inv_list"];
+        const FIELDS: &[&str] = &["name", "inv_list"];
         deserializer.deserialize_struct("UnicodePropertyV1", FIELDS, UnicodePropertyV1Visitor)
-
     }
 }

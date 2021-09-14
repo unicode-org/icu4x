@@ -49,9 +49,9 @@ impl<'data> DataProvider<'data, UnicodePropertyV1Marker> for BinaryPropertiesDat
             metadata: DataResponseMetadata {
                 data_langid: req.resource_path.options.langid.clone(),
             },
-            payload: Some(DataPayload::from_owned(UnicodePropertyV1::from_owned_uniset(
-                uniset, name,
-            ))),
+            payload: Some(DataPayload::from_owned(
+                UnicodePropertyV1::from_owned_uniset(uniset, name),
+            )),
         })
     }
 }

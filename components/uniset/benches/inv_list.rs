@@ -8,9 +8,9 @@ use std::char;
 
 fn uniset_bench(c: &mut Criterion) {
     let best_ex = vec![0x41, 0x46];
-    let best_sample = UnicodeSet::from_inversion_list(best_ex).unwrap();
+    let best_sample = UnicodeSet::clone_from_inversion_list(best_ex).unwrap();
     let worst_ex: Vec<u32> = (0x0..((char::MAX as u32) + 1)).collect();
-    let worst_sample = UnicodeSet::from_inversion_list(worst_ex).unwrap();
+    let worst_sample = UnicodeSet::clone_from_inversion_list(worst_ex).unwrap();
 
     c.bench_function("uniset/overview", |b| {
         #[allow(clippy::suspicious_map)]

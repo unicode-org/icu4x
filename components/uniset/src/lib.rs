@@ -88,7 +88,7 @@ pub enum UnicodeSetError<'data> {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for UnicodeSetError {}
+impl<'data> std::error::Error for UnicodeSetError<'data> {}
 
 impl<'data> From<DataError> for UnicodeSetError<'data> {
     fn from(e: DataError) -> Self {

@@ -12,7 +12,9 @@ use super::UnicodeSetError;
 use crate::utils::deconstruct_range;
 use crate::UnicodeSet;
 
-fn try_from_range<'data, 'r>(range: &'r impl RangeBounds<char>) -> Result<UnicodeSet<'data>, UnicodeSetError<'data>> {
+fn try_from_range<'data, 'r>(
+    range: &'r impl RangeBounds<char>,
+) -> Result<UnicodeSet<'data>, UnicodeSetError<'data>> {
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];

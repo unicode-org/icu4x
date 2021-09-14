@@ -4,14 +4,13 @@
 
 #[cfg(feature = "serde")]
 use alloc::format;
-use alloc::vec;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive, slice::Chunks};
 use icu_provider::yoke::{self, *};
-use zerovec::{ZeroVec, ule::AsULE};
+use zerovec::{ule::AsULE, ZeroVec};
 
 use super::UnicodeSetError;
-use crate::utils::{deconstruct_range, is_valid, is_valid_zv};
+use crate::utils::{deconstruct_range, is_valid_zv};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -67,14 +66,19 @@ impl<'data> serde::Serialize for UnicodeSet<'data> {
 impl<'data> Eq for UnicodeSet<'data> {}
 
 impl<'data> UnicodeSet<'data> {
-
     /// TODO: doc strings + doc test
-    pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError<'data>> {
+    pub fn from_inversion_list(
+        inv_list: ZeroVec<'data, u32>,
+    ) -> Result<Self, UnicodeSetError<'data>> {
         if is_valid_zv(&inv_list) {
-            let size: usize = 
-                inv_list.as_slice().chunks(2)
-                    .map(|end_points| <u32 as AsULE>::from_unaligned(&end_points[1]) - <u32 as AsULE>::from_unaligned(&end_points[0]))
-                    .sum::<u32>() as usize;
+            let size: usize = inv_list
+                .as_slice()
+                .chunks(2)
+                .map(|end_points| {
+                    <u32 as AsULE>::from_unaligned(&end_points[1])
+                        - <u32 as AsULE>::from_unaligned(&end_points[0])
+                })
+                .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
             Err(UnicodeSetError::InvalidSet(inv_list))
@@ -83,7 +87,7 @@ impl<'data> UnicodeSet<'data> {
 
     /// Returns [`UnicodeSet`] from an [inversion list.](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented by a [`Vec`]`<`[`u32`]`>` of codepoints.
-    /// 
+    ///
     /// Note: this function currently causes an allocation due to the requirements from
     /// the constructors of the underlying [`ZeroVec`].
     ///
@@ -111,8 +115,7 @@ impl<'data> UnicodeSet<'data> {
 
     /// Returns an owned inversion list representing the current [`UnicodeSet`]
     pub fn get_inversion_list(&self) -> Vec<u32> {
-        let result: Vec<u32> = self
-            .as_inversion_list(); // Only crate public, to not leak impl
+        let result: Vec<u32> = self.as_inversion_list(); // Only crate public, to not leak impl
         result
     }
 
@@ -121,7 +124,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::clone_from_slice(&vec![0x0, (char::MAX as u32) + 1]),
+            inv_list: ZeroVec::<u32>::clone_from_slice(&[0x0, (char::MAX as u32) + 1]),
             size: (char::MAX as usize) + 1,
         }
     }
@@ -131,7 +134,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::clone_from_slice(&vec![0x0, BMP_MAX + 1]),
+            inv_list: ZeroVec::<u32>::clone_from_slice(&[0x0, BMP_MAX + 1]),
             size: (BMP_MAX as usize) + 1,
         }
     }
@@ -185,14 +188,11 @@ impl<'data> UnicodeSet<'data> {
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
     pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
-        self.inv_list
-            .as_slice()
-            .chunks(2)
-            .map(|pair| {
-                    let range_start: u32 = AsULE::from_unaligned(&pair[0]);
-                    let range_limit: u32 = AsULE::from_unaligned(&pair[1]);
-                    RangeInclusive::new(range_start, range_limit - 1)
-                })
+        self.inv_list.as_slice().chunks(2).map(|pair| {
+            let range_start: u32 = AsULE::from_unaligned(&pair[0]);
+            let range_limit: u32 = AsULE::from_unaligned(&pair[1]);
+            RangeInclusive::new(range_start, range_limit - 1)
+        })
     }
 
     /// Returns the number of ranges contained in this [`UnicodeSet`]
@@ -332,10 +332,11 @@ impl<'data> UnicodeSet<'data> {
                 if let Some(x) = self.inv_list.get(pos + 1) {
                     (till) <= x
                 } else {
-                    debug_assert!(true, "Inversion list query should not return out of bounds index");
+                    // This code should be unreachable because:
+                    // Inversion list query should not return out of bounds index
                     false
                 }
-            },
+            }
             None => false,
         }
     }
@@ -449,14 +450,20 @@ mod tests {
     fn test_unicodeset_all() {
         let expected = vec![0x0, (char::MAX as u32) + 1];
         assert_eq!(UnicodeSet::all().inv_list, ZeroVec::from_slice(&expected));
-        assert_eq!(UnicodeSet::all().size(), (expected[1] - expected[0]) as usize)
+        assert_eq!(
+            UnicodeSet::all().size(),
+            (expected[1] - expected[0]) as usize
+        )
     }
 
     #[test]
     fn test_unicodeset_bmp() {
         let expected = vec![0x0, BMP_MAX + 1];
         assert_eq!(UnicodeSet::bmp().inv_list, ZeroVec::from_slice(&expected));
-        assert_eq!(UnicodeSet::bmp().size(), (expected[1] - expected[0]) as usize);
+        assert_eq!(
+            UnicodeSet::bmp().size(),
+            (expected[1] - expected[0]) as usize
+        );
     }
 
     // UnicodeSet membership functions
@@ -546,14 +553,20 @@ mod tests {
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
         let inv_list_vec: Vec<u32> = vec![];
-        let check = UnicodeSet { inv_list: ZeroVec::from_slice(&inv_list_vec), size: 0 };
+        let check = UnicodeSet {
+            inv_list: ZeroVec::from_slice(&inv_list_vec),
+            size: 0,
+        };
         assert_eq!(check.size(), 0);
     }
 
     #[test]
     fn test_unicodeset_is_empty() {
         let inv_list_vec: Vec<u32> = vec![];
-        let check = UnicodeSet { inv_list: ZeroVec::from_slice(&inv_list_vec), size: 0 };
+        let check = UnicodeSet {
+            inv_list: ZeroVec::from_slice(&inv_list_vec),
+            size: 0,
+        };
         assert!(check.is_empty());
     }
 
