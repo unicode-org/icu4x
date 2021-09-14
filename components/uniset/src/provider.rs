@@ -341,6 +341,13 @@ impl<'data> UnicodePropertyV1<'data> {
             inv_list: set.clone(),
         }
     }
+
+    pub fn from_owned_uniset(set: UnicodeSet<'data>, name: Cow<'data, str>) -> UnicodePropertyV1<'data> {
+        UnicodePropertyV1 {
+            name,
+            inv_list: set,
+        }
+    }
 }
 
 impl<'data> TryInto<UnicodeSet<'data>> for UnicodePropertyV1<'data> {

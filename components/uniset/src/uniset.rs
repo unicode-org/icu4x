@@ -105,7 +105,7 @@ impl<'data> UnicodeSet<'data> {
     /// }
     /// ```
     pub fn clone_from_inversion_list(inv_list: Vec<u32>) -> Result<Self, UnicodeSetError<'data>> {
-        let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice(&inv_list);
+        let inv_list_zv: ZeroVec<u32> = ZeroVec::clone_from_slice(&inv_list);
         UnicodeSet::from_inversion_list(inv_list_zv)
     }
 
@@ -121,7 +121,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0x10FFFF` inclusive
     pub fn all() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::from_slice(&vec![0x0, (char::MAX as u32) + 1]),
+            inv_list: ZeroVec::<u32>::clone_from_slice(&vec![0x0, (char::MAX as u32) + 1]),
             size: (char::MAX as usize) + 1,
         }
     }
@@ -131,7 +131,7 @@ impl<'data> UnicodeSet<'data> {
     /// The range spans from `0x0 -> 0xFFFF` inclusive
     pub fn bmp() -> Self {
         Self {
-            inv_list: ZeroVec::<u32>::from_slice(&vec![0x0, BMP_MAX + 1]),
+            inv_list: ZeroVec::<u32>::clone_from_slice(&vec![0x0, BMP_MAX + 1]),
             size: (BMP_MAX as usize) + 1,
         }
     }
@@ -604,7 +604,7 @@ mod tests {
     #[test]
     fn test_unicodeset_get_nth_range() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list(ex).unwrap();
+        let set = UnicodeSet::clone_from_inversion_list(ex).unwrap();
         assert_eq!(Some(0x41..=0x43), set.get_nth_range(0));
         assert_eq!(Some(0x45..=0x45), set.get_nth_range(1));
         assert_eq!(Some(0xD800..=0xD800), set.get_nth_range(2));
