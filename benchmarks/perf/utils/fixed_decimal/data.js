@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1631576058263,
+  "lastUpdate": 1631640466741,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9779,6 +9779,36 @@ window.BENCHMARK_DATA = {
             "name": "fixed_decimal/overview",
             "value": 141583,
             "range": "± 8041",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "iireland@mozilla.com",
+            "name": "iainireland",
+            "username": "iainireland"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d5a9f48d2b533825fbccb94077fd504a5f34041c",
+          "message": "Add binary enumerated properties data provider; update uprop toml files (#1047)\n\n* Add EnumeratedPropertiesDataProvider\r\n\r\n* Implement IterableDataProviderCore\r\n\r\n* Implement unified PropertyDataProvider\r\n\r\n* Re-run cargo make generate-readmes\r\n\r\n* Update uprops data to use new icuwriteuprops data format\r\n\r\n* Refactor expand_groupings\r\n\r\nCo-authored-by: Iain Ireland <iain.i.ireland@gmail.com>",
+          "timestamp": "2021-09-14T10:21:10-07:00",
+          "tree_id": "e3dfa72898eb38ee3354b272e6b0d5f803394de7",
+          "url": "https://github.com/unicode-org/icu4x/commit/d5a9f48d2b533825fbccb94077fd504a5f34041c"
+        },
+        "date": 1631640463104,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 129448,
+            "range": "± 6443",
             "unit": "ns/iter"
           }
         ]
