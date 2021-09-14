@@ -754,7 +754,6 @@ jobs:
         sudo npm install -g wasm-opt --unsafe-perm
         sudo npm install -g wabt
 
-
     - name: Setup output data directory
       run: |
         mkdir -p benchmarks/binsize/${{ matrix.type }}
@@ -817,6 +816,69 @@ jobs:
       with:
         path: ./benchmarks/binsize/**
         name: benchmark-binsize
+
+  # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
+
+  datasize:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/datasize
+
+    - name: Measure size of selected data package provider/testdata/data/testdata.postcard
+      run: |
+        cargo run --package icu_benchmark_binsize  -- provider/testdata/data/testdata.postcard file | tee benchmarks/datasize/output.txt
+
+    - name: Store benchmark result (non-merge action only)
+      # Data from anything that is not a merge to mainline goes to a preliminary branch
+      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/datasize/output.txt
+        benchmark-data-dir-path: ./benchmarks/datasize
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '100%'
+        fail-on-alert: true
+        gh-pages-branch:  unmerged-pr-bench-data
+        auto-push: false
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+
+    - name: Store benchmark result (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/datasize/output.txt
+        benchmark-data-dir-path: ./benchmarks/datasize
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '100%'
+        fail-on-alert: true
+        gh-pages-branch: gh-pages
+        auto-push: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran,@gregtatum'
+
+    - name: Switch to branch gh-pages for benchmark data storage (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: git checkout gh-pages
+
+    - name: Upload datasize with benchmark data in ndjson format (merge to main only)
+      # Only for PRs that merge into the ICU4X mainline.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      uses: actions/upload-artifact@v2
+      with:
+        path: ./benchmarks/datasize/**
+        name: benchmark-datasize
 
   # Doc-GH-Pages job
 
