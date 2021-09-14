@@ -34,7 +34,7 @@ icu_locid = { version = "0.3", path = "../../components/locid", features = ["std
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["std"]}
 icu_provider_blob = { version = "0.3", path = "../../provider/blob", features = ["export"] }
 icu_provider_cldr = { version = "0.3", path = "../../provider/cldr", features = ["download"] }
-icu_provider_fs = { version = "0.3", path = "../../provider/fs", features = ["export", "bincode"] }
+icu_provider_fs = { version = "0.3", path = "../../provider/fs", features = ["export", "provider_json", "provider_bincode"] }
 icu_testdata = { version = "0.3", path = "../../provider/testdata", features = ["metadata"] }
 log = "0.4"
 reqwest = { version = "0.11", features = ["json", "stream", "gzip"] }

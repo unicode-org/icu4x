@@ -8,16 +8,20 @@ use icu_provider::prelude::*;
 use icu_provider::serde::*;
 use icu_provider::yoke::trait_hack::YokeTraitHack;
 use icu_provider::yoke::Yokeable;
-use serde::Deserialize;
 use std::path::Path;
 use std::rc::Rc;
+
+// This import is unused if no deserializer features are enabled
+#[allow(unused_imports)]
+use serde::Deserialize;
 
 /// An Error type specifically for the [`Deserializer`](serde::Deserializer) that doesn't carry filenames
 #[derive(Display, Debug)]
 pub enum Error {
+    #[cfg(feature = "json")]
     #[displaydoc("{0}")]
     Json(serde_json::error::Error),
-    #[cfg(feature = "bincode")]
+    #[cfg(feature = "provider_bincode")]
     #[displaydoc("{0}")]
     Bincode(bincode::Error),
     #[displaydoc("{0}")]
@@ -29,13 +33,14 @@ pub enum Error {
 
 impl std::error::Error for Error {}
 
+#[cfg(feature = "json")]
 impl From<serde_json::error::Error> for Error {
     fn from(e: serde_json::error::Error) -> Self {
         Error::Json(e)
     }
 }
 
-#[cfg(feature = "bincode")]
+#[cfg(feature = "provider_bincode")]
 impl From<bincode::Error> for Error {
     fn from(e: bincode::Error) -> Self {
         Error::Bincode(e)
@@ -52,10 +57,11 @@ impl Error {
     pub fn into_resource_error<P: AsRef<Path>>(self, path: P) -> DataError {
         use crate::error::Error as CrateError;
         let crate_error = match self {
+            #[cfg(feature = "json")]
             Self::Json(err) => {
                 CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
-            #[cfg(feature = "bincode")]
+            #[cfg(feature = "provider_bincode")]
             Self::Bincode(err) => {
                 CrateError::Deserializer(format!("{}", err), Some(path.as_ref().to_path_buf()))
             }
@@ -69,6 +75,7 @@ impl Error {
 }
 
 /// Get a JSON zero-copy deserializer. Implemeted as a macro because the return type is complex/private.
+#[cfg(feature = "json")]
 macro_rules! get_json_deserializer_zc {
     ($bytes:tt) => {
         serde_json::Deserializer::from_slice($bytes)
@@ -76,7 +83,7 @@ macro_rules! get_json_deserializer_zc {
 }
 
 /// Get a Bincode zero-copy Deserializer. Implemeted as a macro because the return type is complex/private.
-#[cfg(feature = "bincode")]
+#[cfg(feature = "provider_bincode")]
 macro_rules! get_bincode_deserializer_zc {
     ($bytes:tt) => {{
         use bincode::Options;
@@ -100,30 +107,35 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::de::Deserialize<'de>,
 {
     match syntax_option {
+        #[cfg(feature = "json")]
         SyntaxOption::Json => |bytes| {
             let mut d = get_json_deserializer_zc!(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
-        #[cfg(feature = "bincode")]
+        #[cfg(not(feature = "json"))]
+        SyntaxOption::Json => |_| Err(Error::UnknownSyntax(SyntaxOption::Json)),
+        #[cfg(feature = "provider_bincode")]
         SyntaxOption::Bincode => |bytes| {
             let mut d = get_bincode_deserializer_zc!(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
             Ok(data.0)
         },
-        #[cfg(not(feature = "bincode"))]
+        #[cfg(not(feature = "provider_bincode"))]
         SyntaxOption::Bincode => |_| Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
     }
 }
 
 /// Deserialize into a receiver used by [`SerdeDeDataProvider`](icu_provider::serde::SerdeDeDataProvider).
 /// Covers all supported data formats.
+#[allow(unused_variables)]
 pub fn deserialize_into_receiver(
     rc_buffer: Rc<[u8]>,
     syntax_option: &SyntaxOption,
     receiver: &mut dyn SerdeDeDataReceiver,
 ) -> Result<(), Error> {
     match syntax_option {
+        #[cfg(feature = "json")]
         SyntaxOption::Json => {
             receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_json_deserializer_zc!(bytes);
@@ -131,7 +143,9 @@ pub fn deserialize_into_receiver(
             })?;
             Ok(())
         }
-        #[cfg(feature = "bincode")]
+        #[cfg(not(feature = "json"))]
+        SyntaxOption::Json => Err(Error::UnknownSyntax(SyntaxOption::Json)),
+        #[cfg(feature = "provider_bincode")]
         SyntaxOption::Bincode => {
             receiver.receive_rc_buffer(rc_buffer, |bytes, f2| {
                 let mut d = get_bincode_deserializer_zc!(bytes);
@@ -139,7 +153,7 @@ pub fn deserialize_into_receiver(
             })?;
             Ok(())
         }
-        #[cfg(not(feature = "bincode"))]
+        #[cfg(not(feature = "provider_bincode"))]
         SyntaxOption::Bincode => Err(Error::UnknownSyntax(SyntaxOption::Bincode)),
     }
 }

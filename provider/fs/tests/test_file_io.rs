@@ -22,7 +22,7 @@ const EXPECTED_RU_DATA: PluralRuleStringsV1 = PluralRuleStringsV1 {
     )),
 };
 
-#[cfg(feature = "bincode")]
+#[cfg(feature = "provider_bincode")]
 const EXPECTED_SR_DATA: PluralRuleStringsV1 = PluralRuleStringsV1 {
     zero: None,
     one: Some(Cow::Borrowed(
@@ -147,13 +147,7 @@ fn test_json_errors() {
 }
 
 #[test]
-#[cfg(feature = "export")]
-fn test_json_export() {
-    //
-}
-
-#[test]
-#[cfg(feature = "bincode")]
+#[cfg(feature = "provider_bincode")]
 fn test_bincode() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
@@ -167,7 +161,7 @@ fn test_bincode() {
 }
 
 #[test]
-#[cfg(feature = "bincode")]
+#[cfg(feature = "provider_bincode")]
 fn test_bincode_dyn_erased_serde() {
     let provider = FsDataProvider::try_new("./tests/testdata/bincode")
         .expect("Loading file from testdata directory");
