@@ -16,7 +16,7 @@ pub struct UnicodeSetBuilder {
     intervals: Vec<u32>,
 }
 
-impl<'d> UnicodeSetBuilder {
+impl UnicodeSetBuilder {
     /// Returns empty [`UnicodeSetBuilder`]
     pub const fn new() -> Self {
         Self { intervals: vec![] }
