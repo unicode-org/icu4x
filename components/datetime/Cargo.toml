@@ -33,6 +33,7 @@ all-features = true
 
 [dependencies]
 icu_locid = { version = "0.3", path = "../locid" }
+icu_plurals = { version = "0.3", path = "../plurals" }
 icu_provider = { version = "0.3", path = "../../provider/core", features = ["macros"] }
 icu_calendar = { version = "0.3", path = "../calendar" }
 writeable = { version = "0.2", path = "../../utils/writeable" }
@@ -40,6 +41,7 @@ litemap = { version = "0.2", path = "../../utils/litemap" }
 tinystr = { version = "0.4.10", features = ["alloc"], default-features = false }
 zerovec = { version = "0.3", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde-tuple-vec-map = { version = "1.0", optional = true }
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
 num_enum = { version = "0.5", default_features = false }
@@ -63,7 +65,7 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = ["provider_serde"]
 bench = []
-provider_serde = ["serde", "litemap/serde", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde"]
+provider_serde = ["serde", "litemap/serde", "smallvec/serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "serde-tuple-vec-map"]
 provider_transform_internals = ["std"]
 
 [[bench]]

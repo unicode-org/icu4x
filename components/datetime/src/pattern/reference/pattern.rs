@@ -6,6 +6,7 @@ use super::{
     super::{PatternError, PatternItem, TimeGranularity},
     Parser,
 };
+use crate::fields::{Field, FieldSymbol, Week};
 use alloc::fmt::{self, Write};
 #[cfg(feature = "provider_serde")]
 use alloc::format;
@@ -14,6 +15,7 @@ use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec;
 use alloc::vec::Vec;
+use icu_plurals::PluralCategory;
 #[cfg(feature = "provider_serde")]
 use serde::{
     de,
@@ -235,5 +237,213 @@ impl Serialize for Pattern {
             }
             seq.end()
         }
+    }
+}
+
+#[cfg(feature = "provider_serde")]
+mod week_field_serialization {
+    use crate::fields::{FieldSymbol, Week};
+    use alloc::format;
+    use core::convert::TryInto;
+    use serde::{self, de, Deserialize};
+
+    pub fn serialize<S>(week: &Week, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_char(FieldSymbol::Week(*week).into())
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Week, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let c = char::deserialize(deserializer)?;
+        let symbol: FieldSymbol = c.try_into().map_err(|err| {
+            de::Error::invalid_value(
+                de::Unexpected::Other(&format!("{}", err)),
+                &"a valid UTS 35 symbol",
+            )
+        })?;
+        match symbol {
+            FieldSymbol::Week(w) => Ok(w),
+            _ => Err(de::Error::invalid_value(
+                de::Unexpected::Char(c),
+                &"a UTS 35 week symbol",
+            )),
+        }
+    }
+}
+
+/// A collection of plural variants of a pattern.
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub struct PluralPattern {
+    /// The field that 'variants' are predicated on.
+    #[cfg_attr(feature = "provider_serde", serde(with = "week_field_serialization"))]
+    pivot_field: Week,
+    #[cfg_attr(feature = "provider_serde", serde(with = "tuple_vec_map"))]
+    variants: Vec<(PluralCategory, Pattern)>,
+}
+
+impl PluralPattern {
+    /// Creates a new PluralPattern containing the given 'pattern'. The latter must contain either a
+    /// week-of-month or week-of-year field.
+    pub fn new(
+        plural_category: PluralCategory,
+        pattern: Pattern,
+    ) -> Result<PluralPattern, PatternError> {
+        let pivot_field = pattern
+            .items()
+            .iter()
+            .find_map(|pattern_item| match pattern_item {
+                PatternItem::Field(Field {
+                    symbol: FieldSymbol::Week(w),
+                    ..
+                }) => Some(w),
+                _ => None,
+            })
+            .ok_or(PatternError::UnsupportedPluralPivot)?;
+
+        let mut plural_pattern = PluralPattern {
+            pivot_field: *pivot_field,
+            variants: Vec::new(),
+        };
+        plural_pattern.add_variant(plural_category, pattern);
+        Ok(plural_pattern)
+    }
+
+    pub fn pivot_field(&self) -> Week {
+        self.pivot_field
+    }
+
+    pub fn add_variant(&mut self, plural_category: PluralCategory, pattern: Pattern) {
+        self.variants.push((plural_category, pattern));
+    }
+
+    pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
+        self.variants.iter().map(|(_, pattern)| pattern)
+    }
+
+    pub fn patterns_iter_mut(&mut self) -> impl Iterator<Item = &mut Pattern> {
+        self.variants.iter_mut().map(|(_, pattern)| pattern)
+    }
+
+    // Returns the pattern with given category, falling back to the pattern with the Other category if not present.
+    pub fn get(&self, category: PluralCategory) -> Option<&Pattern> {
+        self.variants
+            .iter()
+            .filter(|(c, _)| *c == category || *c == PluralCategory::Other)
+            .reduce(|a, b| if a.0 == PluralCategory::Other { b } else { a })
+            .map(|(_, v)| v)
+    }
+}
+
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "provider_serde",
+    derive(serde::Serialize, serde::Deserialize)
+)]
+pub enum PatternPlurals {
+    #[cfg_attr(feature = "provider_serde", serde(rename = "plural_patterns"))]
+    MultipleVariants(PluralPattern),
+    #[cfg_attr(feature = "provider_serde", serde(rename = "pattern"))]
+    SinglePattern(Pattern),
+}
+
+enum PatternPluralsIterator<'a, T>
+where
+    T: Iterator<Item = &'a Pattern>,
+{
+    MultipleVariants(T),
+    SinglePattern(Option<&'a Pattern>),
+}
+
+impl<'a, T> Iterator for PatternPluralsIterator<'a, T>
+where
+    T: Iterator<Item = &'a Pattern>,
+{
+    type Item = &'a Pattern;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            PatternPluralsIterator::MultipleVariants(iter) => iter.next(),
+            PatternPluralsIterator::SinglePattern(opt_pattern) => opt_pattern.take(),
+        }
+    }
+}
+
+enum PatternPluralsMutIterator<'a, T>
+where
+    T: Iterator<Item = &'a mut Pattern>,
+{
+    MultipleVariants(T),
+    SinglePattern(Option<&'a mut Pattern>),
+}
+
+impl<'a, T> Iterator for PatternPluralsMutIterator<'a, T>
+where
+    T: Iterator<Item = &'a mut Pattern>,
+{
+    type Item = &'a mut Pattern;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            PatternPluralsMutIterator::MultipleVariants(iter) => iter.next(),
+            PatternPluralsMutIterator::SinglePattern(opt_pattern) => opt_pattern.take(),
+        }
+    }
+}
+
+impl PatternPlurals {
+    pub fn patterns_iter(&self) -> impl Iterator<Item = &Pattern> {
+        match self {
+            PatternPlurals::SinglePattern(pattern) => {
+                PatternPluralsIterator::SinglePattern(Some(pattern))
+            }
+            PatternPlurals::MultipleVariants(plural_pattern) => {
+                PatternPluralsIterator::MultipleVariants(plural_pattern.patterns_iter())
+            }
+        }
+    }
+
+    pub fn patterns_iter_mut(&mut self) -> impl Iterator<Item = &mut Pattern> {
+        match self {
+            PatternPlurals::SinglePattern(pattern) => {
+                PatternPluralsMutIterator::SinglePattern(Some(pattern))
+            }
+            PatternPlurals::MultipleVariants(plural_pattern) => {
+                PatternPluralsMutIterator::MultipleVariants(plural_pattern.patterns_iter_mut())
+            }
+        }
+    }
+
+    pub fn expect_pattern(self, msg: &str) -> Pattern {
+        match self {
+            PatternPlurals::SinglePattern(pattern) => pattern,
+            _ => panic!("{}", msg),
+        }
+    }
+
+    pub fn expect_pattern_ref(&self, msg: &str) -> &Pattern {
+        match self {
+            PatternPlurals::SinglePattern(pattern) => pattern,
+            _ => panic!("{}", msg),
+        }
+    }
+}
+
+impl From<Pattern> for PatternPlurals {
+    fn from(pattern: Pattern) -> PatternPlurals {
+        PatternPlurals::SinglePattern(pattern)
+    }
+}
+
+impl Default for PatternPlurals {
+    fn default() -> Self {
+        PatternPlurals::SinglePattern(Pattern::default())
     }
 }
